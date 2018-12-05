@@ -1,0 +1,164 @@
+<?xml version="1.0"?>
+<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN"
+                         "http://castor.org/mapping.dtd">
+
+<mapping>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.influenza.ResultXmit">
+    <field name="code" type="java.lang.String">
+       <bind-xml name="result_code" node="element" />
+    </field>
+    <field name="description" type="java.lang.String">
+       <bind-xml name="result_desc" node="element" />
+    </field>
+   <field name="valueType" type="java.lang.String">
+       <bind-xml name="value_type" node="element" />
+    </field>
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.influenza.TestNameXmit">
+    <field name="code" type="java.lang.String">
+       <bind-xml name="test_code" node="element" />
+    </field>
+    <field name="description" type="java.lang.String">
+       <bind-xml name="test_desc" node="element" />
+    </field>
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.influenza.TestXmit">
+    <field name="name" type="us.mn.state.health.lims.reports.send.sample.valueholder.influenza.TestNameXmit">
+      <bind-xml name="test_name"/>
+    </field>
+    <field name="status" type="java.lang.String">
+       <bind-xml name="result_status" node="element" />
+    </field>
+    <field name="testType" type="java.lang.String">
+       <bind-xml name="test_type" node="element" />
+    </field>
+    <field name="results" collection="arraylist" type="us.mn.state.health.lims.reports.send.sample.valueholder.influenza.ResultXmit">
+      <bind-xml name="result"/>
+    </field>
+    <field name="comment" type="java.lang.String">
+       <bind-xml name="comment" node="element" />
+    </field>
+    <field name="releasedDate" type="java.util.Date" handler="us.mn.state.health.lims.reports.send.common.handler.DateHandler">
+       <bind-xml name="result_date" node="element" />
+    </field>
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.influenza.MNPHLXmit">
+    <map-to xml="MNPHL"/>
+    <field name="id" type="java.lang.String">
+       <bind-xml name="MNPHL_id" node="element"/>
+    </field>
+    <field name="sendingApplication" type="java.lang.String">
+       <bind-xml name="sending_application" node="element" />
+    </field>
+    <field name="messageTime" type="java.lang.String">
+       <bind-xml name="message_time" node="element" />
+    </field>
+    <field name="processingId" type="java.lang.String">
+       <bind-xml name="processing_id" node="element" />
+    </field>
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.influenza.PatientXmit" identity="id">
+    <map-to xml="patient"/>
+    <field name="id" required="true">
+       <bind-xml name="id" transient="true"/>
+    </field>
+    <!--first name and last name are derived from Person valueholder and transferred to PatientXmit valueholder-->
+    <field name="lastName" type="java.lang.String">
+       <bind-xml name="pt_last_name" node="element" />
+    </field>
+    <field name="firstName" type="java.lang.String">
+       <bind-xml name="pt_first_name" node="element" />
+    </field>
+    <field name="middleName" type="java.lang.String">
+       <bind-xml name="pt_middle_name" node="element" />
+    </field>
+    <field name="gender" type="java.lang.String">
+       <bind-xml name="gender" node="element" />
+    </field>
+    <field name="birthDate" type="java.util.Date" handler="us.mn.state.health.lims.reports.send.common.handler.DateHandler">
+       <bind-xml name="birthdate" node="element" />
+    </field>
+    <field name="streetAddress" type="java.lang.String">
+       <bind-xml name="pt_street_address" node="element" />
+    </field>
+    <field name="multipleUnit" type="java.lang.String">
+       <bind-xml name="pt_multiple_unit" node="element" />
+    </field> 
+    <field name="city" type="java.lang.String">
+       <bind-xml name="pt_city" node="element" />
+    </field>
+    <field name="state" type="java.lang.String">
+       <bind-xml name="pt_state" node="element" />
+    </field>
+    <field name="zipCode" type="java.lang.String">
+       <bind-xml name="pt_zip" node="element" />
+    </field>
+    <field name="county" type="java.lang.String">
+       <bind-xml name="pt_county" node="element" />
+    </field>
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.influenza.ProviderXmit" identity="id">
+    <map-to xml="requestor"/>
+    <field name="id" required="true">
+       <bind-xml name="id" transient="true"/>
+    </field>
+    <field name="lastName" type="java.lang.String">
+       <bind-xml name="req_last_name" node="element" />
+    </field> 
+    <field name="firstName" type="java.lang.String">
+       <bind-xml name="req_first_name" node="element" />
+    </field>
+    <field name="workPhone" type="java.lang.String">
+       <bind-xml name="req_phone" node="element" />
+    </field>
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.influenza.SampleXmit" identity="id">
+    <map-to xml="specimen"/>
+    <field name="id" required="true">
+       <bind-xml name="id" transient="true"/>
+    </field>
+    <field name="accessionNumber" type="string" node="element">
+        <bind-xml name="accession_number"/>
+    </field>
+    <field name="collectionDate" type="java.util.Date" handler="us.mn.state.health.lims.reports.send.common.handler.TimestampHandler" node="element">
+        <bind-xml name="collected_date" type="java.lang.String" />
+    </field>
+    <field name="receivedDate" type="java.util.Date" handler="us.mn.state.health.lims.reports.send.common.handler.DateHandler" node="element">
+        <bind-xml name="received_date" type="java.lang.String" />
+    </field>
+    <field name="typeOfSampleCode" type="java.lang.String" node="element">
+       <bind-xml name="specimen_source_cd" />
+    </field>
+    <field name="typeOfSample" type="java.lang.String" node="element">
+       <bind-xml name="specimen_source" />
+    </field>
+    <field name="sourceOfSample" type="java.lang.String" node="element">
+       <bind-xml name="body_site" />
+    </field>
+    <field name="patient" type="us.mn.state.health.lims.reports.send.sample.valueholder.influenza.PatientXmit">
+      <bind-xml name="patient"/>
+    </field>
+    <field name="provider" type="us.mn.state.health.lims.reports.send.sample.valueholder.influenza.ProviderXmit">
+      <bind-xml name="requestor"/>
+    </field>
+    <field name="tests" collection="arraylist" type="us.mn.state.health.lims.reports.send.sample.valueholder.influenza.TestXmit">
+      <bind-xml name="test"/>
+    </field>
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.influenza.MessageXmit">
+    <map-to xml="message"/>
+    <field name="mnphl" type="us.mn.state.health.lims.reports.send.sample.valueholder.influenza.MNPHLXmit">
+      <bind-xml name="MNPHL"/>
+    </field>
+    <field name="sample" type="us.mn.state.health.lims.reports.send.sample.valueholder.influenza.SampleXmit">
+      <bind-xml name="specimen"/>
+    </field>
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.influenza.BatchMessageXmit" identity="id">
+    <map-to xml="batchmessage"/>
+    <field name="messages" collection="arraylist" type="us.mn.state.health.lims.reports.send.sample.valueholder.influenza.MessageXmit">
+      <bind-xml name="message"/>
+    </field>
+  </class>
+</mapping>
+

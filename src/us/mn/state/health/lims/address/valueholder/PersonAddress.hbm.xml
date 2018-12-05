@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="us.mn.state.health.lims.address.valueholder">
+    <class name="PersonAddress" table="person_address" optimistic-lock="version" dynamic-update="true">
+		  <composite-id name="compoundId" class="us.mn.state.health.lims.address.valueholder.AddressPK" >
+			   <key-property name="targetId" column="person_id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType" />
+			   <key-property name="addressPartId" column="address_part_id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType" />
+		  </composite-id>
+		  <property name="type" column="type" type="java.lang.String" />
+		  <property name="value" column="value" type="java.lang.String" />
+ </class>
+</hibernate-mapping>

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.county.valueholder.County" table="COUNTY" optimistic-lock="version" dynamic-update="true" >
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+            	<param name="sequence">county_seq</param>
+            </generator> 
+        </id>
+        <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
+
+        <many-to-one name="region" class="us.mn.state.health.lims.region.valueholder.Region" fetch="select">
+            <column name="REGION_ID" precision="10" scale="0" />
+        </many-to-one>
+        <property name="county" type="java.lang.String">
+            <column name="COUNTY" length="75" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

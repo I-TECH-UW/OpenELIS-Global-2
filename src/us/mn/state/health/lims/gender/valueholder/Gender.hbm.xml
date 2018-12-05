@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="us.mn.state.health.lims.gender.valueholder">
+    <class name="Gender" table="GENDER" optimistic-lock="version" dynamic-update="true">
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+               <param name="sequence">gender_seq</param>
+            </generator>   
+        </id>                                            
+        <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field" />
+        
+        <property name="genderType" type="java.lang.String">
+            <column name="GENDER_TYPE" length="1" />
+        </property>
+        <property name="description" type="java.lang.String">
+            <column name="DESCRIPTION" length="20" />
+        </property>
+        <property name="nameKey" type="java.lang.String">
+            <column name="NAME_KEY" length="60" />
+        </property>
+     </class>
+    <query name="gender.getNext">
+         from Gender g order by g.description, g.genderType
+      </query>
+      <query name="gender.getPrevious">
+         from Gender g order by g.description desc, g.genderType desc
+      </query>
+</hibernate-mapping>

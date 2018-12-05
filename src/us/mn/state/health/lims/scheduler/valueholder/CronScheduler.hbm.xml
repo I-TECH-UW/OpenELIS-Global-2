@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.scheduler.valueholder.CronScheduler" table="quartz_cron_scheduler" optimistic-lock="version" dynamic-update="true" >
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+            	<param name="sequence">quartz_cron_scheduler_seq</param>
+            </generator>
+        </id>
+
+		<property name="cronStatement" column="cron_statement" type="string" />
+		<property name="lastRun" column="last_run" type="timestamp" />
+		<property name="active" column="active" type="boolean" />
+		<property name="runIfPast" column="run_if_past" type="boolean" />
+		<property name="name" column="name" type="string" />
+		<property name="jobName" column="job_name" type="string" />
+		<property name="displayKey" column="display_key" type="string" />
+		<property name="descriptionKey" column="description_key" type="string" />
+    </class>
+</hibernate-mapping>

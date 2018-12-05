@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Confirmation report" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="MessageResources" whenResourceMissingType="Empty">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<import value="java.util.*"/>
+	<style name="table" isDefault="false" isBlankWhenNull="false">
+		<pen lineStyle="Solid"/>
+		<box>
+			<pen lineStyle="Double"/>
+			<topPen lineStyle="Double"/>
+			<leftPen lineStyle="Double"/>
+			<bottomPen lineStyle="Double"/>
+			<rightPen lineStyle="Double"/>
+		</box>
+	</style>
+	<style name="table TH" isDefault="false" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="table CH" isDefault="false" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table TD" isDefault="false" mode="Opaque" backcolor="#F5F5F5" pattern=""/>
+	<style name="clearTable" isDefault="false" scaleImage="FillFrame" isBlankWhenNull="true"/>
+	<style name="table 1_TH" isDefault="false" mode="Opaque" backcolor="#F0F8FF"/>
+	<style name="table 1_CH" isDefault="false" mode="Opaque" backcolor="#BFE1FF"/>
+	<style name="table 1_TD" isDefault="false" mode="Opaque" backcolor="#FFFFFF"/>
+	<subDataset name="labResult Dataset">
+		<parameter name="testNames" class="java.util.List" isForPrompting="false"/>
+		<parameter name="testResults" class="java.util.List" isForPrompting="false"/>
+		<parameter name="compleationDate" class="java.util.List"/>
+		<parameter name="localization" class="java.util.Map" isForPrompting="false"/>
+	</subDataset>
+	<subDataset name="requesterResultDataset">
+		<parameter name="testNames" class="java.util.List" isForPrompting="false"/>
+		<parameter name="testResults" class="java.util.List" isForPrompting="false"/>
+		<parameter name="localization" class="java.util.Map" isForPrompting="false">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+	</subDataset>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["../reports/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="headerName" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["GeneralHeader.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="siteId" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="usePageNumbers" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["true"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="startDate" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="stopDate" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="directorName" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="labName1" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="labName2" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="reportTitle" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="localization" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="leftHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="rightHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="organizationName" class="java.lang.String"/>
+	<field name="requesterAccession" class="java.lang.String"/>
+	<field name="labAccession" class="java.lang.String"/>
+	<field name="sampleType" class="java.lang.String"/>
+	<field name="requesterTest" class="java.util.List"/>
+	<field name="requesterResult" class="java.util.List"/>
+	<field name="labTest" class="java.util.List"/>
+	<field name="labResult" class="java.util.List"/>
+	<field name="requesterName" class="java.lang.String"/>
+	<field name="requesterPhone" class="java.lang.String"/>
+	<field name="requesterFax" class="java.lang.String"/>
+	<field name="requesterEMail" class="java.lang.String"/>
+	<field name="note" class="java.lang.String"/>
+	<field name="maxRequesterIndex" class="java.lang.Integer"/>
+	<field name="receptionDate" class="java.lang.String"/>
+	<field name="compleationDate" class="java.util.List"/>
+	<group name="organization" isStartNewPage="true" keepTogether="true">
+		<groupExpression><![CDATA[$F{organizationName}]]></groupExpression>
+		<groupHeader>
+			<band height="27" splitType="Prevent">
+				<textField>
+					<reportElement x="1" y="0" width="571" height="26"/>
+					<textElement>
+						<font size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("site") + ": " + $F{organizationName}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="8"/>
+		</groupFooter>
+	</group>
+	<group name="accession" keepTogether="true">
+		<groupExpression><![CDATA[$F{labAccession}]]></groupExpression>
+		<groupHeader>
+			<band height="85" splitType="Prevent">
+				<rectangle>
+					<reportElement positionType="Float" mode="Opaque" x="0" y="0" width="572" height="40" forecolor="#000000" backcolor="#F1F1F1"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineColor="#444444"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="5" y="0" width="140" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("requestOrderNumber")]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="5" y="20" width="140" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{requesterAccession}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="145" y="0" width="140" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("confirmationOrderNumber")]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="145" y="20" width="140" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{labAccession}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="285" y="0" width="140" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("sampleType")]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="285" y="20" width="140" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{sampleType}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="425" y="0" width="140" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("reception")]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="425" y="20" width="140" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{receptionDate}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="24" y="44" width="420" height="18"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("requesterContact") + ": " + $F{requesterName}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="24" y="62" width="140" height="18"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("telephoneAbv") + ": " + $F{requesterPhone}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="170" y="62" width="140" height="18"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("fax") + ": " + $F{requesterFax}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="310" y="62" width="140" height="18"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("email") + ": " + $F{requesterEMail}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="98">
+				<frame>
+					<reportElement positionType="FixRelativeToBottom" x="5" y="20" width="560" height="78" isPrintWhenDetailOverflows="true"/>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="38" y="10" width="500" height="20"/>
+						<textElement>
+							<font size="10"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("note") + ": " + $F{note}]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="560" height="20"/>
+					<componentElement>
+						<reportElement key="table 1" style="table" stretchType="RelativeToTallestObject" x="40" y="0" width="500" height="20" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5"/>
+						<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+							<datasetRun subDataset="labResult Dataset">
+								<datasetParameter name="testNames">
+									<datasetParameterExpression><![CDATA[((List)$F{labTest})]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="testResults">
+									<datasetParameterExpression><![CDATA[$F{labResult}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="compleationDate">
+									<datasetParameterExpression><![CDATA[$F{compleationDate}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="localization">
+									<datasetParameterExpression><![CDATA[$P{localization}]]></datasetParameterExpression>
+								</datasetParameter>
+								<dataSourceExpression><![CDATA[new JREmptyDataSource($F{labTest}.size())]]></dataSourceExpression>
+							</datasetRun>
+							<jr:column width="155">
+								<jr:detailCell style="table TD" height="20" rowSpan="1">
+									<textField>
+										<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="155" height="20">
+											<printWhenExpression><![CDATA[$V{REPORT_COUNT} == 1]]></printWhenExpression>
+										</reportElement>
+										<textElement verticalAlignment="Middle" markup="none">
+											<font isBold="true"/>
+										</textElement>
+										<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("confirmationResults")]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column width="120">
+								<jr:detailCell style="table TD" height="20" rowSpan="1">
+									<box leftPadding="0"/>
+									<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+										<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="120" height="20" backcolor="#F5F5F5"/>
+										<textElement verticalAlignment="Middle"/>
+										<textFieldExpression class="java.lang.String"><![CDATA[$P{testNames}.get($V{REPORT_COUNT} - 1)]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column width="120">
+								<jr:detailCell style="table TD" height="20" rowSpan="1">
+									<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+										<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="120" height="20" backcolor="#F5F5F5"/>
+										<textElement verticalAlignment="Middle"/>
+										<textFieldExpression class="java.lang.String"><![CDATA[$P{testResults}.get($V{REPORT_COUNT} - 1).equals("") ? $R{report.test.status.inProgress} : $P{testResults}.get($V{REPORT_COUNT} - 1)]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column width="123">
+								<jr:detailCell height="20" rowSpan="1">
+									<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+										<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="123" height="20" backcolor="#F5F5F5"/>
+										<textElement verticalAlignment="Middle"/>
+										<textFieldExpression class="java.lang.String"><![CDATA[$P{compleationDate}.get($V{REPORT_COUNT} - 1)]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+						</jr:table>
+					</componentElement>
+				</frame>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="2" splitType="Stretch">
+			<line>
+				<reportElement key="line" x="0" y="-45" width="534" height="1" forecolor="#000000"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="162" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
+			<textField>
+				<reportElement x="2" y="140" width="570" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{startDate} + " - " + $P{stopDate}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="160" width="572" height="1"/>
+			</line>
+			<subreport>
+				<reportElement x="2" y="1" width="572" height="136"/>
+				<subreportParameter name="leftHeaderImage">
+					<subreportParameterExpression><![CDATA[$P{leftHeaderImage}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="labName2">
+					<subreportParameterExpression><![CDATA[$P{labName2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="startDate">
+					<subreportParameterExpression><![CDATA[$P{startDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="stopDate">
+					<subreportParameterExpression><![CDATA[$P{stopDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="labName1">
+					<subreportParameterExpression><![CDATA[$P{labName1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="siteId">
+					<subreportParameterExpression><![CDATA[$P{siteId}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="localization">
+					<subreportParameterExpression><![CDATA[$P{localization}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="reportTitle">
+					<subreportParameterExpression><![CDATA[$P{reportTitle}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="usePageNumbers">
+					<subreportParameterExpression><![CDATA[$P{usePageNumbers}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="rightHeaderImage">
+					<subreportParameterExpression><![CDATA[$P{rightHeaderImage}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="directorName">
+					<subreportParameterExpression><![CDATA[$P{directorName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="headerName">
+					<subreportParameterExpression><![CDATA[$P{headerName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + $P{headerName}]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Prevent"/>
+	</columnHeader>
+	<detail>
+		<band height="47" splitType="Prevent">
+			<frame>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="12" width="559" height="31"/>
+				<frame>
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="3" width="559" height="28"/>
+					<componentElement>
+						<reportElement key="requesterTable" style="table" stretchType="RelativeToTallestObject" x="40" y="0" width="500" height="20"/>
+						<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+							<datasetRun subDataset="requesterResultDataset">
+								<parametersMapExpression><![CDATA[$P{localization}]]></parametersMapExpression>
+								<datasetParameter name="testNames">
+									<datasetParameterExpression><![CDATA[$F{requesterTest}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="testResults">
+									<datasetParameterExpression><![CDATA[$F{requesterResult}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="localization">
+									<datasetParameterExpression><![CDATA[$P{localization}]]></datasetParameterExpression>
+								</datasetParameter>
+								<dataSourceExpression><![CDATA[new JREmptyDataSource($F{requesterTest}.size())]]></dataSourceExpression>
+							</datasetRun>
+							<jr:column width="155">
+								<jr:columnHeader height="30" rowSpan="1">
+									<staticText>
+										<reportElement x="0" y="0" width="155" height="24"/>
+										<box>
+											<bottomPen lineWidth="1.0" lineColor="#333333"/>
+										</box>
+										<textElement textAlignment="Left" verticalAlignment="Middle">
+											<font isBold="true"/>
+										</textElement>
+										<text><![CDATA[ ]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
+									<textField>
+										<reportElement x="0" y="0" width="155" height="20">
+											<printWhenExpression><![CDATA[$V{REPORT_COUNT} == 1]]></printWhenExpression>
+										</reportElement>
+										<textElement markup="none"/>
+										<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("initialResults")]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column width="120">
+								<jr:columnHeader height="30" rowSpan="1">
+									<textField>
+										<reportElement x="0" y="0" width="120" height="24"/>
+										<box>
+											<bottomPen lineWidth="1.0"/>
+										</box>
+										<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+											<font isBold="true"/>
+										</textElement>
+										<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("test")]]></textFieldExpression>
+									</textField>
+								</jr:columnHeader>
+								<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
+									<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+										<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="120" height="20"/>
+										<textElement/>
+										<textFieldExpression class="java.lang.String"><![CDATA[$P{testNames}.get($V{REPORT_COUNT} - 1)]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column width="120">
+								<jr:columnHeader height="30" rowSpan="1">
+									<textField>
+										<reportElement x="0" y="0" width="120" height="24"/>
+										<box>
+											<bottomPen lineWidth="1.0"/>
+										</box>
+										<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+											<font isBold="true"/>
+										</textElement>
+										<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("result")]]></textFieldExpression>
+									</textField>
+								</jr:columnHeader>
+								<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
+									<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+										<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="120" height="20"/>
+										<textElement/>
+										<textFieldExpression class="java.lang.String"><![CDATA[$P{testResults}.get($V{REPORT_COUNT} - 1).equals("") ? "No data" : $P{testResults}.get($V{REPORT_COUNT} - 1)]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column width="123">
+								<jr:columnHeader height="30" rowSpan="1">
+									<textField>
+										<reportElement x="0" y="0" width="123" height="24"/>
+										<box>
+											<bottomPen lineWidth="1.0"/>
+										</box>
+										<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+											<font isBold="true"/>
+										</textElement>
+										<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("completionDate")]]></textFieldExpression>
+									</textField>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1"/>
+							</jr:column>
+						</jr:table>
+					</componentElement>
+				</frame>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="56" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="27" splitType="Stretch">
+			<line>
+				<reportElement key="line" x="0" y="1" width="572" height="1" forecolor="#000000"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="5" y="6" width="275" height="20">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER} > 1]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{reportTitle}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="429" y="4" width="80" height="20">
+					<printWhenExpression><![CDATA[$P{usePageNumbers}.equals("true")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" " + $P{localization}.get("pageNumberOf")]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="509" y="4" width="40" height="20">
+					<printWhenExpression><![CDATA[$P{usePageNumbers}.equals("true")]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

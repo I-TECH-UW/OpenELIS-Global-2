@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.dictionary.valueholder.Dictionary" table="DICTIONARY" optimistic-lock="version" dynamic-update="true">
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+            	<param name="sequence">dictionary_seq</param>
+            </generator> 
+        </id>
+        <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
+        <many-to-one name="dictionaryCategory" class="us.mn.state.health.lims.dictionarycategory.valueholder.DictionaryCategory" fetch="select">
+            <column name="DICTIONARY_CATEGORY_ID" precision="10" scale="0" />
+        </many-to-one>
+        <property name="isActive" type="java.lang.String">
+            <column name="IS_ACTIVE" length="1" />
+        </property>
+        <property name="dictEntry" type="java.lang.String">
+            <column name="DICT_ENTRY" length="4000" />
+        </property>
+        <property name="localAbbreviation" type="java.lang.String">
+            <column name="LOCAL_ABBREV" length="10" unique="true" />
+        </property>
+        <property name="nameKey" type="java.lang.String">
+            <column name="display_key" length="60" not-null="false" />
+        </property>
+        <property name="sortOrder" column="sort_order" type="java.lang.Integer" />
+    </class>
+    <query name="dictionary.getNext">
+         from Dictionary d order by d.dictionaryCategory.categoryName, d.dictEntry
+      </query>
+      <query name="dictionary.getPrevious">
+         from Dictionary d order by d.dictionaryCategory.categoryName desc, d.dictEntry desc
+      </query>
+</hibernate-mapping>

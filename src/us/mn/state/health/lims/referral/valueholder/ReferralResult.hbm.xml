@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.referral.valueholder.ReferralResult" table="referral_result" optimistic-lock="version" dynamic-update="true" >
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+            	<param name="sequence">referral_result_seq</param>
+            </generator>
+        </id>
+        <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
+        <property name="referralId" column="referral_id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType" />
+        <property name="testId" column="test_id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType" />
+		<many-to-one name="result" class="us.mn.state.health.lims.result.valueholder.Result" >
+			<column name="result_id" />
+		</many-to-one>
+		<property name="referralReportDate" column="referral_report_date" type="timestamp" />
+    </class>
+</hibernate-mapping>

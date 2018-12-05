@@ -1,0 +1,36 @@
+/*=====================*/
+/* 
+* OpenELIS Menu Stylesheet - IE7 Quirks
+* 
+* Authored by:
+* Clinical Informatics Research Group, University of Washington School of Nursing.
+* http://cirg.washington.edu
+*/
+/*=====================*/
+
+/* Removes filter - breaks dropdowns in IE7 and below */
+.nav-menu li, .nav-menu li:hover, .nav-menu li.sfHover, .nav-menu a:focus, .nav-menu a:hover, .nav-menu a:active {
+  filter: none
+}
+.nav-menu li {
+	background-color: #ffa73d; /*ffc57f */
+	line-height: 13px; /* IE7 doesn't support inherit */
+}
+.nav-menu li:hover, .nav-menu li.sfHover {
+	background-color: #ffd5a3
+}
+/*** shadows for all but IE6 ***/
+.sf-shadow ul {
+	padding: 0;
+}
+.sf-shadow ul.sf-shadow-off {
+	background: transparent;
+}
+
+#header {
+	margin: 0 -10px; /* FIXME - temporarily using negative margin b/c default body settings and need to create content area with padding for main tables */
+}
+
+#menu_home {
+    height: 13px
+}

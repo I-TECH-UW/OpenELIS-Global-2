@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte" table="TEST_ANALYTE" optimistic-lock="version" dynamic-update="true">
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+            	<param name="sequence">test_analyte_seq</param>
+            </generator>	
+        </id>
+        <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
+        
+        <many-to-one name="analyte" class="us.mn.state.health.lims.analyte.valueholder.Analyte" fetch="select">
+            <column name="ANALYTE_ID" precision="10" scale="0" />
+        </many-to-one>
+        <many-to-one name="test" class="us.mn.state.health.lims.test.valueholder.Test" fetch="select">
+            <column name="TEST_ID" precision="10" scale="0" />
+        </many-to-one>
+        <property name="resultGroup" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="RESULT_GROUP" precision="22" scale="0" />
+        </property>
+        <property name="sortOrder" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="SORT_ORDER" precision="22" scale="0" />
+        </property>
+        <property name="testAnalyteType" type="java.lang.String">
+            <column name="TESTALYT_TYPE" length="1" />
+        </property>
+        <property name="isReportable" type="java.lang.String">
+            <column name="IS_REPORTABLE" length="1" />
+        </property>
+    </class>
+</hibernate-mapping>

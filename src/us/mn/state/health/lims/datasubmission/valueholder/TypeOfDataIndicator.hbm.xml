@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.datasubmission.valueholder.TypeOfDataIndicator" table="TYPE_OF_DATA_INDICATOR" optimistic-lock="version" dynamic-update="true">
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+              <param name="sequence">type_of_data_indicator_seq</param>
+            </generator> 
+        </id>
+        <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
+        <property name="name" type="java.lang.String">
+          <column name="name" />
+        </property>
+        <property name="nameKey" type="java.lang.String">
+          <column name="name_key" />
+        </property>
+        <property name="description" type="java.lang.String">
+          <column name="description" />
+        </property>
+        <property name="descriptionKey" type="java.lang.String">
+          <column name="description_key" />
+        </property>
+    </class>
+</hibernate-mapping>

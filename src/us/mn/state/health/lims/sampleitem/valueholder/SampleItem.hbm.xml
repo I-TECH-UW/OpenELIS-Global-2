@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.sampleitem.valueholder.SampleItem" table="SAMPLE_ITEM" optimistic-lock="version" dynamic-update="true" >
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+            	<param name="sequence">sample_item_seq</param>
+            </generator>
+        </id>
+        <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
+
+        <property name="sortOrder" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="SORT_ORDER" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="sampleItemId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="SAMPITEM_ID" precision="10" scale="0" />
+        </property>
+		
+        <many-to-one name="sample" class="us.mn.state.health.lims.sample.valueholder.Sample" fetch="select">
+            <column name="SAMP_ID" precision="10" scale="0" />
+        </many-to-one>
+        <property name="sourceOfSampleId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="SOURCE_ID" precision="10" scale="0" />
+        </property>
+
+		<many-to-one name="typeOfSample" class="us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample" fetch="select">
+            <column name="TYPEOSAMP_ID" precision="10" scale="0" />
+        </many-to-one>
+
+        <property name="sourceOther" type="java.lang.String">
+            <column name="SOURCE_OTHER" length="40" />
+        </property>
+        <property name="quantity" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="QUANTITY" precision="22" scale="0" />
+        </property>
+
+        <property name="externalId" type="java.lang.String" column="external_id" />
+        <property name="collectionDate" type="java.sql.Timestamp" column="collection_date" />
+		<property name="statusId" column="status_id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType" />
+	    <property name="collector" column="collector"  type="java.lang.String" />
+    </class>
+</hibernate-mapping>

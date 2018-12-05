@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.organization.valueholder.OrganizationType" table="ORGANIZATION_TYPE" optimistic-lock="version" dynamic-update="true" >
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+            	<param name="sequence">organization_type_seq</param>
+            </generator>   
+        </id>
+        <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
+
+        <property name="name" type="java.lang.String">
+            <column name="SHORT_NAME" length="20" not-null="true" />
+        </property>
+
+        <property name="description" type="java.lang.String">
+            <column name="DESCRIPTION" length="60" not-null="false" />
+        </property>
+        
+        <property name="nameKey" type="java.lang.String">
+            <column name="name_display_key" length="60" not-null="false" />
+        </property>
+		<set name="organizations" table="organization_organization_type" cascade="all" lazy="false">
+            <key column="org_type_id" />
+            <many-to-many column="org_id"  class="us.mn.state.health.lims.organization.valueholder.Organization" />
+        </set>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.address.valueholder.AddressPart" table="address_part" optimistic-lock="version" dynamic-update="true" >
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+            	<param name="sequence">address_part_seq</param>
+            </generator>
+        </id>
+
+		<property name="partName" column="part_name" type="string" />
+		<property name="displayOrder" column="display_order" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType" />
+ 		<property name="nameKey" type="java.lang.String">
+            <column name="display_key" length="60" not-null="false" />
+        </property>
+    </class>
+</hibernate-mapping>

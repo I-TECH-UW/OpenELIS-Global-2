@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.test.valueholder.Test" table="TEST" optimistic-lock="version" dynamic-update="true">
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+            	<param name="sequence">test_seq</param>
+            </generator>
+        </id>
+        <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
+        <many-to-one name="testSection" class="us.mn.state.health.lims.test.valueholder.TestSection" fetch="select">
+            <column name="TEST_SECTION_ID" precision="10" scale="0" />
+        </many-to-one>
+        <many-to-one name="label" class="us.mn.state.health.lims.label.valueholder.Label" fetch="select">
+            <column name="LABEL_ID" precision="10" scale="0" />
+        </many-to-one>
+        <many-to-one name="localizedTestName" class="us.mn.state.health.lims.localization.valueholder.Localization" fetch="select">
+            <column name="name_localization_id" precision="10" scale="0" />
+        </many-to-one>
+        <many-to-one name="localizedReportingName" class="us.mn.state.health.lims.localization.valueholder.Localization" fetch="select">
+            <column name="reporting_name_localization_id" precision="10" scale="0" />
+        </many-to-one>
+        <many-to-one name="unitOfMeasure" class="us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure" fetch="select">
+            <column name="UOM_ID" precision="10" scale="0" />
+        </many-to-one>
+        <many-to-one name="scriptlet" class="us.mn.state.health.lims.scriptlet.valueholder.Scriptlet" fetch="select">
+            <column name="SCRIPTLET_ID" precision="10" scale="0" />
+        </many-to-one>
+        <many-to-one name="method" class="us.mn.state.health.lims.method.valueholder.Method" fetch="select">
+            <column name="METHOD_ID" precision="10" scale="0" />
+        </many-to-one>
+        <many-to-one name="testTrailer" class="us.mn.state.health.lims.testtrailer.valueholder.TestTrailer" fetch="select">
+            <column name="TEST_TRAILER_ID" precision="10" scale="0" />
+        </many-to-one>
+        <property name="localCode" type="java.lang.String">
+            <column name="LOCAL_CODE" length="10" unique="true" />
+        </property>
+        <property name="testName" type="java.lang.String">
+            <column name="name" length="60" unique="false" />
+        </property>
+        <property name="description" type="java.lang.String">
+            <column name="DESCRIPTION" length="60" not-null="true" unique="true" />
+        </property>
+        <property name="loinc" type="java.lang.String">
+            <column name="LOINC" length="240" />
+        </property>
+        <property name="reportingDescription" type="java.lang.String">
+            <column name="REPORTING_DESCRIPTION" length="60" />
+        </property>
+        <property name="stickerRequiredFlag" type="java.lang.String">
+            <column name="STICKER_REQ_FLAG" length="1" />
+        </property>
+        <property name="isActive" type="java.lang.String">
+            <column name="IS_ACTIVE" length="1" />
+        </property>
+        <property name="activeBeginDate" type="java.sql.Date">
+            <column name="ACTIVE_BEGIN" length="7" />
+        </property>
+        <property name="activeEndDate" type="java.sql.Date">
+            <column name="ACTIVE_END" length="7" />
+        </property>
+        <property name="isReportable" type="java.lang.String">
+            <column name="IS_REPORTABLE" length="1" />
+        </property>
+        <property name="timeHolding" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="TIME_HOLDING" precision="22" scale="0" />
+        </property>
+        <property name="timeWait" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="TIME_WAIT" precision="22" scale="0" />
+        </property>
+        <property name="timeAverage" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="TIME_TA_AVERAGE" precision="22" scale="0" />
+        </property>
+        <property name="timeWarning" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="TIME_TA_WARNING" precision="22" scale="0" />
+        </property>
+        <property name="timeMax" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="TIME_TA_MAX" precision="22" scale="0" />
+        </property>
+        <property name="labelQuantity" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="LABEL_QTY" precision="22" scale="0" />
+        </property>
+        <property name="sortOrder" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="SORT_ORDER" precision="22" scale="0" />
+        </property>
+        <property name="orderable" type="java.lang.Boolean" column="orderable" />
+        <property name="guid" type="java.lang.String" column="guid" />
+    </class>
+    <query name="test.getNext">
+         from Test t order by t.testSection.testSectionName, t.testName
+      </query>
+      <query name="test.getPrevious">
+         from Test t order by t.testSection.testSectionName desc, t.testName desc
+      </query>
+</hibernate-mapping>

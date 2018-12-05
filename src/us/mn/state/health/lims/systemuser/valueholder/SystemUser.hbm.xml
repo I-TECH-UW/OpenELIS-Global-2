@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.systemuser.valueholder.SystemUser" table="SYSTEM_USER" optimistic-lock="version" dynamic-update="true" >
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+			<generator class="sequence">
+            	<param name="sequence">system_user_seq</param>
+            </generator>
+        </id>
+        <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
+
+        <property name="externalId" type="java.lang.String">
+            <column name="EXTERNAL_ID" length="80" />
+        </property>
+        <property name="loginName" type="java.lang.String">
+            <column name="LOGIN_NAME" length="20" not-null="true" />
+        </property>
+        <property name="lastName" type="java.lang.String">
+            <column name="LAST_NAME" length="30" not-null="true" />
+        </property>
+        <property name="firstName" type="java.lang.String">
+            <column name="FIRST_NAME" length="20" not-null="true" />
+        </property>
+        <property name="initials" type="java.lang.String">
+            <column name="INITIALS" length="3" />
+        </property>
+        <property name="isActive" type="java.lang.String">
+            <column name="IS_ACTIVE" length="1" not-null="true" />
+        </property>
+        <property name="isEmployee" type="java.lang.String">
+            <column name="IS_EMPLOYEE" length="1" not-null="true" />
+        </property>
+    </class>
+    <query name="systemuser.getNext">
+         from SystemUser su order by su.lastName, su.firstName
+      </query>
+      <query name="systemuser.getPrevious">
+         from SystemUser su order by su.lastName desc, su.firstName desc
+      </query>
+</hibernate-mapping>

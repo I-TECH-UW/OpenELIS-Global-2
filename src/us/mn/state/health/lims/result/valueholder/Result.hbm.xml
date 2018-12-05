@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.result.valueholder.Result" table="RESULT" optimistic-lock="version" dynamic-update="true">
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+               <param name="sequence">result_seq</param>
+            </generator>
+        </id>
+        <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
+
+        <many-to-one name="analysis" class="us.mn.state.health.lims.analysis.valueholder.Analysis" fetch="select">
+            <column name="ANALYSIS_ID" precision="10" scale="0" />
+        </many-to-one>
+        <many-to-one name="analyte" class="us.mn.state.health.lims.analyte.valueholder.Analyte" fetch="select">
+            <column name="ANALYTE_ID" precision="10" scale="0" />
+        </many-to-one>
+        <many-to-one name="testResult" class="us.mn.state.health.lims.testresult.valueholder.TestResult" fetch="select">
+            <column name="TEST_RESULT_ID" precision="10" scale="0" />
+        </many-to-one>
+        <property name="sortOrder" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="SORT_ORDER" precision="22" scale="0" />
+        </property>
+        <property name="isReportable" type="java.lang.String">
+            <column name="IS_REPORTABLE" length="1" />
+        </property>
+        <property name="resultType" type="java.lang.String">
+            <column name="RESULT_TYPE" length="1" />
+        </property>
+        <property name="value" type="java.lang.String">
+            <column name="VALUE" length="200" />
+        </property>
+        <property name="minNormal" type="java.lang.Double" column="min_normal" />
+        <property name="maxNormal" type="java.lang.Double" column="max_normal" />
+        <property name="significantDigits" type="java.lang.Integer" column="significant_digits" />
+        <property name="grouping" type="java.lang.Integer" column="grouping" />
+        <many-to-one name="parentResult" class="us.mn.state.health.lims.result.valueholder.Result" fetch="select">
+            <column name="parent_id" precision="10" scale="0" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

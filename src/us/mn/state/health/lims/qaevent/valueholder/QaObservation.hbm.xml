@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.qaevent.valueholder.QaObservation" table="QA_OBSERVATION" optimistic-lock="version" dynamic-update="true" >
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+            	<param name="sequence">qa_observation_seq</param>
+            </generator>
+        </id>
+        
+        <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
+
+        <property name="observedId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="observed_id" precision="10" scale="0"  not-null="true" />
+        </property>
+        <property name="observedType" type="java.lang.String">
+            <column name="observed_type" length="30" not-null="true"/>
+        </property>
+
+        <many-to-one name="observationType" class="us.mn.state.health.lims.qaevent.valueholder.QaObservationType" fetch="select">
+            <column name="qa_observation_type_id" precision="10" scale="0" not-null="true" />
+        </many-to-one>
+    
+        <property name="valueType" type="java.lang.String">
+            <column name="value_type" length="1" not-null="true"/>
+        </property>
+        <property name="value" type="java.lang.String">
+            <column name="value" length="1" />
+        </property>
+     </class>
+</hibernate-mapping>

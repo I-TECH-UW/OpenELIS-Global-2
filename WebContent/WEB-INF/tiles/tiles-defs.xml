@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+ <!DOCTYPE tiles-definitions PUBLIC  
+        "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"  
+        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<!--
+     This is a blank Tiles definition file with a commented example.
+-->
+
+<tiles-definitions>
+
+    <!-- sample tiles definitions
+    <definition name=".mainLayout" template="/common/layouts/classicLayout.jsp">
+        <put-attribute name="title"  value="Sample Page Title" />
+        <put-attribute name="header" value="/common/header.jsp" />
+        <put-attribute name="menu"   value=".mainMenu" />
+        <put-attribute name="footer" value="/common/footer.jsp" />
+        <put-attribute name="body"   value=".portal.body" />
+    </definition>
+
+    <definition name=".mainMenu" template="/common/layouts/vboxLayout.jsp" >
+        <putList name="list" >
+            <add value=".menu.links" />
+            <add value=".menu.taglib.references" />
+            <add value=".menu.printer.friendly" />
+            <add value=".menu.old.documents" />
+      </putList>
+    </definition>
+
+    <definition name="aPage" extends=".mainLayout">
+        <put-attribute name="title"  value="Another Title" />
+        <put-attribute name="body"   value=".aPage.body" />
+    </definition>
+
+    end samples -->
+    
+    <definition name="404ErrorPage" template="/pages/common/defaultNotFoundPage.jsp">
+    </definition>
+    
+    <definition name="endpointdoc" template="/pages/dev/endpointdoc.jsp">
+    </definition>
+
+  <definition name="baseDefinition" template="/pages/common/formTemplate.jsp">
+    <put-attribute name="banner" value="/pages/common/banner.jsp" />
+    <put-attribute name="login" value="/pages/common/loginHeader.jsp" />
+    <put-attribute name="error" value="/pages/common/actionError.jsp" />
+    <put-attribute name="preSelectionHeader" value="/pages/common/emptyPlaceHolder.jsp" />
+    <put-attribute name="header" value="/pages/common/formHeaderButtons.jsp" />
+    <put-attribute name="body" value="/pages/common/emptyPlaceHolder.jsp" />
+    <put-attribute name="footer" value="/pages/common/formFooterButtons.jsp" />
+  </definition>
+
+  <definition name="baseDefinitionNoDefaultFocus" template="/pages/common/formTemplateNoDefaultFocus.jsp">
+    <put-attribute name="banner" value="/pages/common/banner.jsp" />
+    <put-attribute name="login" value="/pages/common/loginHeader.jsp" />
+    <put-attribute name="error" value="/pages/common/actionError.jsp" />
+    <put-attribute name="preSelectionHeader" value="/pages/common/emptyPlaceHolder.jsp" />
+    <put-attribute name="header" value="/pages/common/formHeaderButtons.jsp" />
+    <put-attribute name="body" value="/pages/common/emptyPlaceHolder.jsp" />
+    <put-attribute name="footer" value="/pages/common/formFooterButtons.jsp" />
+  </definition>
+
+  <definition name="batchResultsEntryBaseDefinition" template="/pages/result/batchResultsEntryFormTemplate.jsp">
+    <put-attribute name="banner" value="/pages/common/banner.jsp" />
+    <put-attribute name="login" value="/pages/common/loginHeader.jsp" />
+    <put-attribute name="error" value="/pages/common/actionError.jsp" />
+    <put-attribute name="preSelectionHeader" value="/pages/common/emptyPlaceHolder.jsp" />
+    <put-attribute name="header" value="/pages/common/formHeaderButtons.jsp" />
+    <put-attribute name="body" value="/pages/common/emptyPlaceHolder.jsp" />
+    <put-attribute name="footer" value="/pages/common/formFooterButtons.jsp" />
+  </definition>
+
+  <definition name="batchResultsVerificationBaseDefinition" template="/pages/result/batchResultsVerificationFormTemplate.jsp">
+    <put-attribute name="banner" value="/pages/common/banner.jsp" />
+    <put-attribute name="login" value="/pages/common/loginHeader.jsp" />
+    <put-attribute name="error" value="/pages/common/actionError.jsp" />
+    <put-attribute name="preSelectionHeader" value="/pages/common/emptyPlaceHolder.jsp" />
+    <put-attribute name="header" value="/pages/common/formHeaderButtons.jsp" />
+    <put-attribute name="body" value="/pages/common/emptyPlaceHolder.jsp" />
+    <put-attribute name="footer" value="/pages/common/formFooterButtons.jsp" />
+  </definition>
+     
+     <!--bugzilla 2501-->
+  <definition name="qaEventsEntryBaseDefinition" template="/pages/qaevent/qaEventsEntryFormTemplate.jsp">
+    <put-attribute name="banner" value="/pages/common/banner.jsp" />
+    <put-attribute name="login" value="/pages/common/loginHeader.jsp" />
+    <put-attribute name="error" value="/pages/common/actionError.jsp" />
+    <put-attribute name="preSelectionHeader" value="/pages/common/emptyPlaceHolder.jsp" />
+    <put-attribute name="header" value="/pages/common/formHeaderButtons.jsp" />
+    <put-attribute name="samplebody" value="/pages/common/emptyPlaceHolder.jsp" />
+    <put-attribute name="samplefooter" value="/pages/common/formFooterButtons.jsp" />
+    <put-attribute name="testbody" value="/pages/common/emptyPlaceHolder.jsp" />
+    <put-attribute name="testfooter" value="/pages/common/formFooterButtons.jsp" />
+  </definition>
+
+  <definition name="baseMenuSelectListDefinition" template="/pages/common/menuSelectListTemplate.jsp">
+    <put-attribute name="preSelectionHeader" value="/pages/common/emptyPlaceHolder.jsp" />
+    <put-attribute name="header" value="/pages/common/menuSelectListHeaderButtons.jsp" />
+    <put-attribute name="body" value="/pages/common/emptyPlaceHolder.jsp" />
+    <put-attribute name="footer" value="/pages/common/menuSelectListFooterButtons.jsp" />
+  </definition>
+
+  <definition name="baseMenuDefinition" template="/pages/common/menuTemplate.jsp">
+    <put-attribute name="banner" value="/pages/common/banner.jsp" />
+    <put-attribute name="login" value="/pages/common/loginHeader.jsp" />
+    <put-attribute name="error" value="/pages/common/actionError.jsp" />
+    <put-attribute name="header" value="/pages/menu/common/homePageHeader.jsp" />
+    <put-attribute name="body" value="/pages/common/emptyPlaceHolder.jsp" />
+    <put-attribute name="footer" value="/pages/menu/common/homePageFooter.jsp" />
+  </definition>
+
+
+
+  <definition name="homePageDefinition" extends="baseMenuDefinition">
+    <put-attribute name="body" value="homePageBodyDefinition" />
+  </definition>
+
+  <definition name="homePageBodyDefinition" template="/pages/menu/myHomeTab/homePage.jsp">
+    <put-attribute name="left" value="/pages/menu/myHomeTab/homePageLeft.jsp" />
+    <put-attribute name="right" value="/pages/menu/myHomeTab/homePageRight.jsp" />
+    <put-attribute name="homePageContent" value="/pages/common/homeMenuContents.jsp" />
+  </definition>
+    
+<!-- LOGIN -->
+  <definition name="loginPageDefinition" extends="baseDefinition">
+    <put-attribute name="body" value="/pages/login/loginPage.jsp" />
+    <put-attribute name="footer" value="/pages/login/loginButtons.jsp" />
+  </definition>
+  <definition name="loginChangePasswordDefinition" extends="baseDefinition">
+    <put-attribute name="body" value="/pages/login/loginChangePassword.jsp" />
+    <put-attribute name="footer" value="/pages/login/loginChangePasswordButtons.jsp" />
+  </definition>   
+    
+ <!--MASTERLISTSTAB-->
+  <definition name="masterListsPageDefinition" extends="baseMenuDefinition">
+    <put-attribute name="body" value="masterListsPageBodyDefinition" />
+  </definition>
+
+  <definition name="masterListsPageBodyDefinition" template="/pages/menu/masterListsTab/masterListsPage.jsp">
+    <put-attribute name="left" value="/pages/menu/masterListsTab/masterListsPageLeft.jsp" />
+    <put-attribute name="right" value="masterListsPageRightDefinition" />
+  </definition>
+
+  <definition name="masterListsPageRightDefinition" template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
+    <put-attribute name="rightDictionary" value="dictionaryMenuDefinition" />
+    <put-attribute name="rightOrganization" value="organizationMenuDefinition" />
+    <put-attribute name="rightTestSection" value="testSectionMenuDefinition" />
+    <put-attribute name="rightTypeOfSamplePanel" value="/pages/common/emptyPlaceHolder.jsp" />
+    <put-attribute name="rightTypeOfSampleTest" value="/pages/common/emptyPlaceHolder.jsp" />
+    <put-attribute name="right" value="/pages/menu/masterListsTab/masterListsPageRightDefault.jsp" />
+  </definition>
+
+  <definition name="dictionaryMenuDefinition" extends="baseMenuSelectListDefinition">
+    <put-attribute name="body" value="/pages/dictionary/dictionaryMenu.jsp" />
+  </definition>
+    
+    <!--bugzilla 1413-->
+  <definition name="dictionaryMenuBodyDefinition" template="/pages/menu/masterListsTab/masterListsPage.jsp">
+    <put-attribute name="left" value="/pages/menu/masterListsTab/masterListsPageLeft.jsp" />
+    <put-attribute name="right" value="dictionaryMenuDefinition" />
+  </definition>
+  <definition name="dictionaryMenuPageDefinition" extends="masterListsPageDefinition">
+    <put-attribute name="body" value="dictionaryMenuBodyDefinition" />
+  </definition> 
+  <!--end bugzilla 1413-->
+
+  <definition name="organizationMenuDefinition" extends="baseMenuSelectListDefinition">
+    <put-attribute name="body" value="/pages/organization/organizationMenu.jsp" />
+  </definition>
+     
+    <!--bugzilla 2372-->
+  <definition name="organizationMenuBodyDefinition" template="/pages/menu/masterListsTab/masterListsPage.jsp">
+    <put-attribute name="left" value="/pages/menu/masterListsTab/masterListsPageLeft.jsp" />
+    <put-attribute name="right" value="organizationMenuDefinition" />
+  </definition>
+  <definition name="organizationMenuPageDefinition" extends="masterListsPageDefinition">
+    <put-attribute name="body" value="organizationMenuBodyDefinition" />
+  </definition> 
+  <!--end bugzilla 2372-->
+
+
+  <definition name="testSectionMenuDefinition" extends="baseMenuSelectListDefinition">
+    <put-attribute name="body" value="/pages/test/testSectionMenu.jsp" />
+  </definition>
+
+  <definition name="dictionaryDefinition" extends="baseDefinition">
+    <put-attribute name="body" value="/pages/dictionary/dictionary.jsp" />
+    <put-attribute name="footer" value="/pages/dictionary/dictionaryFormFooterButtons.jsp" />
+  </definition>
+
+  <definition name="organizationDefinition" extends="baseDefinition">
+    <put-attribute name="body" value="/pages/organization/organization.jsp" />
+  </definition>
+
+
+</tiles-definitions>

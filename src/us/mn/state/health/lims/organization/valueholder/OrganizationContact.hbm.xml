@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.organization.valueholder.OrganizationContact" table="organization_contact" optimistic-lock="version" dynamic-update="true">
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+            	<param name="sequence">organization_contact_seq</param>
+            </generator>
+        </id>
+		<property name="position" column="position" type="java.lang.String" />
+		<property name="organizationId" column="organization_id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType"/>
+
+		<many-to-one name="person" class="us.mn.state.health.lims.person.valueholder.Person" fetch="select">
+            <column name="person_id" precision="10" scale="0" />
+        </many-to-one>
+	</class>
+</hibernate-mapping>

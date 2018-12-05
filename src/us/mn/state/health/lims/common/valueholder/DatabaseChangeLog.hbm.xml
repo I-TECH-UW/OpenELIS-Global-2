@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.common.valueholder.DatabaseChangeLog" table="databasechangelog" optimistic-lock="version" dynamic-update="true">
+        <id name="id" type="java.lang.Integer" column="ID" />
+
+        <property name="author" type="java.lang.String" column="author" length="63" />
+        <property name="fileName" type="java.lang.String" column="filename" length="200" />
+        <property name="comment" type="java.lang.String" column="comments" length="255" />
+        <property name="executed" type="java.sql.Timestamp" column="dateexecuted" />
+
+    </class>
+</hibernate-mapping>

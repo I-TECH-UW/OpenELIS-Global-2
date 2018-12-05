@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+    
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.result.valueholder.ResultSignature" table="RESULT_SIGNATURE" optimistic-lock="version" dynamic-update="true">
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+               <param name="sequence">result_signature_seq</param>
+            </generator> 
+        </id>
+        <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
+
+        <property name="systemUserId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="SYSTEM_USER_ID" precision="10" scale="0" />
+        </property>
+        <property name="resultId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="result_id" precision="10" scale="0" />
+        </property>
+        <property name="isSupervisor" type="boolean">
+            <column name="is_supervisor" />
+        </property>
+        
+         <property name="nonUserName" type="java.lang.String">
+            <column name="non_user_name" />
+        </property>
+    </class>
+</hibernate-mapping>

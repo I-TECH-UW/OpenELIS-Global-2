@@ -1,0 +1,188 @@
+/**
+* The contents of this file are subject to the Mozilla Public License
+* Version 1.1 (the "License"); you may not use this file except in
+* compliance with the License. You may obtain a copy of the License at
+* http://www.mozilla.org/MPL/ 
+* 
+* Software distributed under the License is distributed on an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific language governing rights and limitations under
+* the License.
+* 
+* The Original Code is OpenELIS code.
+* 
+* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+*/
+package us.mn.state.health.lims.testresult.valueholder;
+
+import us.mn.state.health.lims.common.valueholder.BaseObject;
+import us.mn.state.health.lims.common.valueholder.ValueHolder;
+import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
+import us.mn.state.health.lims.scriptlet.valueholder.Scriptlet;
+import us.mn.state.health.lims.test.valueholder.Test;
+
+public class TestResult extends BaseObject{
+
+	private static final long serialVersionUID = 1L;
+	private String id;
+	private ValueHolderInterface test;
+	private String testName;
+	private String resultGroup;
+	private String sortOrder;
+	private String flags;
+	private String testResultType;
+	private String value;
+	private String significantDigits;
+	private String quantLimit;
+	private String contLevel;
+	private String scriptletName;
+	private ValueHolderInterface scriptlet;
+    private Boolean isQuantifiable = false;
+    private Boolean isActive = true;
+
+    public TestResult() {
+		super();
+		this.test = new ValueHolder();
+		this.scriptlet = new ValueHolder();
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public Test getTest() {
+		return (Test) this.test.getValue();
+	}
+
+	public void setTest(Test test) {
+		this.test.setValue(test);
+	}
+
+	protected ValueHolderInterface getTestHolder() {
+		return this.test;
+	}
+
+	public String getTestName() {
+		return this.testName;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	protected void setTestHolder(ValueHolderInterface test) {
+		this.test = test;
+	}
+
+	public void setTestName(String testName) {
+		this.testName = testName;
+	}
+
+	public String getContLevel() {
+		return contLevel;
+	}
+
+	public void setContLevel(String contLevel) {
+		this.contLevel = contLevel;
+	}
+
+	public String getFlags() {
+		return flags;
+	}
+
+	public void setFlags(String flags) {
+		this.flags = flags;
+	}
+
+	public String getQuantLimit() {
+		return quantLimit;
+	}
+
+	public void setQuantLimit(String quantLimit) {
+		this.quantLimit = quantLimit;
+	}
+
+	public String getResultGroup() {
+		return resultGroup;
+	}
+
+	public void setResultGroup(String resultGroup) {
+		this.resultGroup = resultGroup;
+	}
+
+	public String getSignificantDigits() {
+		return significantDigits;
+	}
+
+	public void setSignificantDigits(String significantDigits) {
+		this.significantDigits = significantDigits;
+	}
+
+	public String getTestResultType() {
+		return testResultType;
+	}
+
+	public void setTestResultType(String testResultType) {
+		this.testResultType = testResultType;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	public void setTest(ValueHolderInterface test) {
+		this.test = test;
+	}
+	
+	public String getScriptletName() {
+		return scriptletName;
+	}
+
+	public void setScriptletName(String scriptletName) {
+		this.scriptletName = scriptletName;
+	}
+	
+	public void setScriptlet(Scriptlet scriptlet) {
+		this.scriptlet.setValue(scriptlet);
+	}
+
+	protected void setScriptletHolder(ValueHolderInterface scriptlet) {
+		this.scriptlet = scriptlet;
+	}
+
+	public Scriptlet getScriptlet() {
+		return (Scriptlet) this.scriptlet.getValue();
+	}
+
+	protected ValueHolderInterface getScriptletHolder() {
+		return this.scriptlet;
+	}
+
+	public String getSortOrder() {
+		return sortOrder;
+	}
+
+	public void setSortOrder(String sortOrder) {
+		this.sortOrder = sortOrder;
+	}
+
+    public Boolean getIsQuantifiable(){
+        return isQuantifiable;
+    }
+
+    public void setIsQuantifiable( Boolean isQuantifiable ){
+        this.isQuantifiable = isQuantifiable;
+    }
+
+    public Boolean getIsActive(){
+        return isActive;
+    }
+
+    public void setIsActive( Boolean isActive ){
+        this.isActive = isActive;
+    }
+}

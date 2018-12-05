@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="us.mn.state.health.lims.login.valueholder">
+    <class name="Login" table="LOGIN_USER" optimistic-lock="version" dynamic-update="true">
+		<id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+               <param name="sequence">login_user_seq</param>
+            </generator>   
+        </id>      		
+        
+		<property name="loginName" type="java.lang.String">
+            <column name="LOGIN_NAME" precision="20" scale="0" />
+        </property>           
+        <property name="password" type="java.lang.String">
+            <column name="PASSWORD" length="255" />
+        </property>
+        <property name="passwordExpiredDate" type="java.sql.Date">
+            <column name="PASSWORD_EXPIRED_DT" length="7" />
+        </property>
+		<property name="accountLocked" type="java.lang.String">
+            <column name="ACCOUNT_LOCKED" length="1" />
+        </property>
+		<property name="accountDisabled" type="java.lang.String">
+            <column name="ACCOUNT_DISABLED" length="1" />
+        </property>
+		<property name="isAdmin" type="java.lang.String">
+            <column name="IS_ADMIN" length="1" />
+        </property>        
+		<property name="userTimeOut" type="java.lang.String">
+            <column name="USER_TIME_OUT" length="3" />
+        </property>                                        
+    </class>
+    
+	<query name="login.getNext">
+		from Login login order by login.loginName
+	</query>
+ 	<query name="login.getPrevious">
+         from Login login order by login.loginName
+	</query>     
+    <!-- Get password expired day -->
+		<sql-query name="login.getAnalysisPasswordExpiredDayCount">
+           <return-scalar column="cnt" type="integer"/>   
+           <![CDATA[  
+	       		SELECT 
+	       			floor(current_date-password_expired_dt)*-1 as cnt
+	       		FROM Login_User l where l.LOGIN_NAME = :loginName       
+			]]>
+       	</sql-query>
+		<sql-query name="login.getSystemUserId">
+			<return-scalar column="id" type="integer"/>   
+           <![CDATA[         
+            	 SELECT id from System_User su Where su.login_name = :loginName and su.is_active='Y'
+			]]>
+       	</sql-query>                   
+</hibernate-mapping>

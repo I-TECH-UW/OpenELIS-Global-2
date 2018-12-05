@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="us.mn.state.health.lims.testcodes.valueholder">
+    <class name="TestCode" table="test_code" optimistic-lock="version" dynamic-update="true">
+		  <composite-id name="compoundId" class="us.mn.state.health.lims.testcodes.valueholder.TestSchemaPK" >
+			   <key-property name="testId" column="test_id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType" />
+			   <key-property name="codeTypeId" column="code_type_id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType" />
+		  </composite-id>
+		   <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field" />
+		   <property name="value" column="value" type="java.lang.String" length="20" />
+ </class>
+</hibernate-mapping>

@@ -1,0 +1,280 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+          "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<!--suppress HibernateConfigDomInspection -->
+<hibernate-configuration>
+
+<session-factory>
+	<!--  ENABLE FOR DATASOURCE -->
+	<!--bugzilla 1908 modified for Vietnam: added prefix java:comp/env/-->
+	<property name="connection.datasource">
+		java:comp/env/jdbc/LimsDS
+	</property>
+	<property name="hibernate.default_schema">clinlims</property>
+	<!--
+		<property name="dialect">org.hibernate.dialect.Oracle9Dialect</property>
+	-->
+	<!-- use in Vietnam -->
+	<property name="dialect">
+		org.hibernate.dialect.PostgreSQLDialect
+	</property>
+
+	<property name="show_sql">false</property>
+	<property name="hibernate.format_sql">true</property>
+	<property name="hibernate.jdbc.batch_size">50</property>
+	<property name="hibernate.jdbc.batch_versioned_data">true</property>
+	<!--
+		<property name="transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
+		<property name="current_session_context_class">thread</property>
+	-->
+	<property name="hibernate.query.factory_class">
+		org.hibernate.hql.classic.ClassicQueryTranslatorFactory
+	</property>
+	<property name="hibernate.cache.provider_class">
+		org.hibernate.cache.NoCacheProvider
+	</property>
+	<property name="hibernate.cache.use_second_level_cache">
+		false
+	</property>
+	<property name="hibernate.cache.use_query_cache">false</property>
+
+	<mapping
+		resource="us/mn/state/health/lims/action/valueholder/Action.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/analysis/valueholder/Analysis.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/analysisqaevent/valueholder/AnalysisQaEvent.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/analysisqaeventaction/valueholder/AnalysisQaEventAction.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/analyte/valueholder/Analyte.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/audittrail/valueholder/History.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/citystatezip/valueholder/CityStateZip.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/citystatezip/valueholder/CityView.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/citystatezip/valueholder/StateView.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/county/valueholder/County.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/dictionary/valueholder/Dictionary.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/dictionarycategory/valueholder/DictionaryCategory.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/gender/valueholder/Gender.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/label/valueholder/Label.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/method/valueholder/Method.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/note/valueholder/Note.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/organization/valueholder/Organization.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/panel/valueholder/Panel.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/panelitem/valueholder/PanelItem.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/patient/valueholder/Patient.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/patienttype/valueholder/PatientType.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/person/valueholder/Person.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/program/valueholder/Program.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/project/valueholder/Project.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/provider/valueholder/Provider.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/qaevent/valueholder/QaEvent.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/referencetables/valueholder/ReferenceTables.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/region/valueholder/Region.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/reports/send/sample/valueholder/SampleTransmissionSequence.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/result/valueholder/Result.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/result/valueholder/ResultSignature.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/result/valueholder/ResultInventory.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/resultlimits/valueholder/ResultLimit.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/sample/valueholder/Sample.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/sampledomain/valueholder/SampleDomain.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/samplehuman/valueholder/SampleHuman.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/sampleitem/valueholder/SampleItem.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/sampleorganization/valueholder/SampleOrganization.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/sampleproject/valueholder/SampleProject.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/sampleqaevent/valueholder/SampleQaEvent.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/sampleqaeventaction/valueholder/SampleQaEventAction.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/sampletracking/valueholder/SampleTracking.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/scriptlet/valueholder/Scriptlet.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/sourceofsample/valueholder/SourceOfSample.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/statusofsample/valueholder/StatusOfSample.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/systemuser/valueholder/SystemUser.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/test/valueholder/Test.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/test/valueholder/TestSection.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/renametestsection/valueholder/RenameTestSection.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/testanalyte/valueholder/TestAnalyte.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/testanalyte/valueholder/TestAnalyteTestResult.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/testreflex/valueholder/TestReflex.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/testresult/valueholder/TestResult.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/testtrailer/valueholder/TestTrailer.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/typeofsample/valueholder/TypeOfSample.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/typeoftestresult/valueholder/TypeOfTestResult.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/unitofmeasure/valueholder/UnitOfMeasure.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/systemmodule/valueholder/SystemModule.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/systemusermodule/valueholder/SystemUserModule.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/systemusersection/valueholder/SystemUserSection.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/login/valueholder/Login.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/samplepdf/valueholder/SamplePdf.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/samplenewborn/valueholder/SampleNewborn.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/patientrelation/valueholder/PatientRelation.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/patientidentity/valueholder/PatientIdentity.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/patientidentitytype/valueholder/PatientIdentityType.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/patienttype/valueholder/PatientPatientType.hbm.xml"/>
+	<mapping
+		resource="us/mn/state/health/lims/typeofsample/valueholder/TypeOfSamplePanel.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/typeofsample/valueholder/TypeOfSampleTest.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/inventory/valueholder/InventoryItem.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/inventory/valueholder/InventoryLocation.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/inventory/valueholder/InventoryReceipt.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/role/valueholder/Role.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/userrole/valueholder/UserRole.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/systemusermodule/valueholder/SystemRoleModule.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/analyzer/valueholder/Analyzer.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/analyzerresults/valueholder/AnalyzerResults.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/organization/valueholder/OrganizationType.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/requester/valueholder/SampleRequester.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/common/valueholder/DatabaseChangeLog.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/siteinformation/valueholder/SiteInformation.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/siteinformation/valueholder/SiteInformationDomain.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/observationhistory/valueholder/ObservationHistory.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/observationhistorytype/valueholder/ObservationHistoryType.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/analyzerimport/valueholder/AnalyzerTestMapping.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/referral/valueholder/ReferralReason.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/referral/valueholder/ReferralType.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/referral/valueholder/Referral.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/referral/valueholder/ReferralResult.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/testcodes/valueholder/TestCodeType.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/testcodes/valueholder/OrganizationHL7Schema.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/testcodes/valueholder/TestCode.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/requester/valueholder/RequesterType.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/address/valueholder/AddressPart.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/address/valueholder/OrganizationAddress.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/address/valueholder/PersonAddress.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/organization/valueholder/OrganizationContact.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/menu/valueholder/Menu.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/scheduler/valueholder/CronScheduler.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/dataexchange/aggregatereporting/valueholder/ReportExternalExport.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/dataexchange/aggregatereporting/valueholder/ReportQueueType.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/dataexchange/aggregatereporting/valueholder/ReportExternalImport.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/reports/valueholder/DocumentTrack.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/reports/valueholder/DocumentType.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/qaevent/valueholder/QaObservationType.hbm.xml" />
+	<mapping
+		resource="us/mn/state/health/lims/qaevent/valueholder/QaObservation.hbm.xml" />
+    <mapping
+        resource="us/mn/state/health/lims/dataexchange/order/valueholder/ElectronicOrder.hbm.xml" />
+    <mapping
+        resource="us/mn/state/health/lims/testdictionary/valueholder/TestDictionary.hbm.xml" />
+    <mapping
+        resource="us/mn/state/health/lims/localization/valueholder/Localization.hbm.xml" />
+    <mapping
+            resource="us/mn/state/health/lims/image/valueholder/Image.hbm.xml" />
+    <mapping
+            resource="us/mn/state/health/lims/referral/valueholder/ReferringTestResult.hbm.xml" />
+    <mapping
+            resource="us/mn/state/health/lims/barcode/valueholder/BarcodeLabelInfo.hbm.xml" />
+    <mapping
+            resource="us/mn/state/health/lims/dataexchange/orderresult/valueholder/HL7MessageOut.hbm.xml" />
+    <mapping
+            resource="us/mn/state/health/lims/datasubmission/valueholder/DataIndicator.hbm.xml"/>    
+    <mapping
+            resource="us/mn/state/health/lims/datasubmission/valueholder/DataResource.hbm.xml"/>
+    <mapping
+            resource="us/mn/state/health/lims/datasubmission/valueholder/DataValue.hbm.xml"/>
+    <mapping
+            resource="us/mn/state/health/lims/datasubmission/valueholder/TypeOfDataIndicator.hbm.xml"/>
+
+</session-factory>
+
+</hibernate-configuration>

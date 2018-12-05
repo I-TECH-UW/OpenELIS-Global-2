@@ -1,0 +1,242 @@
+<?xml version="1.0"?>
+<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN"
+                         "http://castor.org/mapping.dtd">
+
+<mapping>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.CodeElementXmit">
+    <field name="identifier" type="java.lang.String" required="true">
+       <bind-xml name="identifier" node="element" />
+    </field>
+    <field name="text" type="java.lang.String">
+       <bind-xml name="text" node="element" />
+    </field>
+    <field name="codeSystemType" type="java.lang.String">
+       <bind-xml name="code_system_type" node="element" />
+    </field>
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.CommentXmit">
+    <field name="comment" type="java.lang.String">
+       <bind-xml name="comment" node="element" />
+    </field>
+    <field name="commentSource" type="java.lang.String">
+       <bind-xml name="comment_source" node="element" />
+    </field>
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.ObservationXmit">
+    <field name="identifier" type="us.mn.state.health.lims.reports.send.sample.valueholder.CodeElementXmit">
+       <bind-xml name="identifier" node="element" />
+    </field>
+    <field name="value" type="java.lang.String">
+       <bind-xml name="value" node="element" />
+    </field>
+    <field name="valueType" type="java.lang.String">
+       <bind-xml name="value_type" node="element" />
+    </field>
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.ResultXmit">
+    <field name="observation" type="us.mn.state.health.lims.reports.send.sample.valueholder.ObservationXmit">
+       <bind-xml name="observation" node="element" />
+    </field>
+    <field name="referenceRange" type="java.lang.String">
+       <bind-xml name="reference_range" node="element" />
+    </field>
+    <field name="unit" type="us.mn.state.health.lims.reports.send.sample.valueholder.CodeElementXmit">
+       <bind-xml name="unit" node="element" />
+    </field>
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.TestXmit">
+    <field name="name" type="us.mn.state.health.lims.reports.send.sample.valueholder.CodeElementXmit">
+      <bind-xml name="name"/>
+    </field>
+    <field name="method" type="java.lang.String">
+       <bind-xml name="method" node="element" />
+    </field>
+    <field name="status" type="java.lang.String">
+       <bind-xml name="status" node="element" />
+    </field>
+    <field name="testType" type="java.lang.String">
+       <bind-xml name="test_type" node="element" />
+    </field>
+    <field name="typeOfSample" type="java.lang.String">
+       <bind-xml name="specimen_type" node="element" />
+    </field>
+    <field name="sourceOfSample" type="java.lang.String">
+       <bind-xml name="specimen_source" node="element" />
+    </field>
+    <field name="results" collection="arraylist" type="us.mn.state.health.lims.reports.send.sample.valueholder.ResultXmit">
+      <bind-xml name="result"/>
+    </field>
+    <field name="comment" type="us.mn.state.health.lims.reports.send.sample.valueholder.CommentXmit">
+       <bind-xml name="comment" node="element" />
+    </field>
+    <field name="releasedDate" type="java.util.Date" handler="us.mn.state.health.lims.reports.send.common.handler.DateHandler">
+       <bind-xml name="released" node="element" />
+    </field>
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.TestingFacilityXmit">
+    <field name="organizationName" type="java.lang.String">
+       <bind-xml name="name" node="element" />
+    </field>
+    <field name="universalId" type="java.lang.String">
+       <bind-xml name="universal_id" node="element" />
+    </field>
+    <field name="universalIdType" type="java.lang.String">
+       <bind-xml name="universal_id_type" node="element" />
+    </field>
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.UHLXmit" identity="id">
+    <map-to xml="UHL"/>
+    <field name="id" required="true">
+       <bind-xml name="id" node="attribute"/>
+    </field>
+    <field name="facility" type="us.mn.state.health.lims.reports.send.sample.valueholder.TestingFacilityXmit">
+      <bind-xml name="facility"/>
+    </field>
+    <field name="applicationName" type="java.lang.String">
+       <bind-xml name="application" node="element" />
+    </field>
+    <field name="messageTime" type="java.lang.String">
+       <bind-xml name="message_time" node="element" />
+    </field>
+    <field name="processingId" type="java.lang.String">
+       <bind-xml name="processing_id" node="element" />
+    </field>
+    <field name="transportMethod" type="java.lang.String">
+       <bind-xml name="transport_method" node="element" />
+    </field>
+    <field name="transportDestination" type="java.lang.String">
+       <bind-xml name="transport_destination" node="element" />
+    </field>
+    <field name="transportDestinationPort" type="java.lang.String">
+       <bind-xml name="transport_destination_port" node="element" />
+    </field>
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.PatientXmit" identity="id">
+    <map-to xml="patient"/>
+    <field name="id" required="true">
+       <bind-xml name="id" node="attribute"/>
+    </field>
+    <!--first name and last name are derived from Person valueholder and transferred to PatientXmit valueholder-->
+    <field name="lastName" type="java.lang.String">
+       <bind-xml name="last" node="element" />
+    </field>
+    <field name="firstName" type="java.lang.String">
+       <bind-xml name="first" node="element" />
+    </field>
+    <field name="gender" type="java.lang.String">
+       <bind-xml name="gender" node="element" />
+    </field>
+    <field name="birthDate" type="java.util.Date" handler="us.mn.state.health.lims.reports.send.common.handler.DateHandler">
+       <bind-xml name="birthdate" node="element" />
+    </field>
+    <!--INSERT CODE ELEMENT for RACE here-->
+    <!--INSERT CODE ELEMENT for ETHNICITY here-->
+    <field name="streetAddress" type="java.lang.String">
+       <bind-xml name="address" node="element" />
+    </field> 
+    <field name="city" type="java.lang.String">
+       <bind-xml name="city" node="element" />
+    </field>
+    <field name="state" type="java.lang.String">
+       <bind-xml name="state" node="element" />
+    </field>
+    <field name="zipCode" type="java.lang.String">
+       <bind-xml name="zip" node="element" />
+    </field>
+    <field name="homePhone" type="java.lang.String">
+       <bind-xml name="phone" node="element" />
+    </field>
+    <!--INSERT MOTHER LAST NAME HERE (newborn?)-->
+    <!--INSERT MOTHER FIRST NAME HERE (newborn?) -->
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.FacilityXmit" identity="id">
+    <map-to xml="facility"/>
+    <field name="id" required="true">
+       <bind-xml name="id" node="attribute"/>
+    </field>
+    <field name="organizationName" type="java.lang.String">
+       <bind-xml name="name" node="element" />
+    </field>
+    <field name="streetAddress" type="java.lang.String">
+       <bind-xml name="address1" node="element" />
+    </field> 
+    <!--INSERT address2 here?-->
+    <field name="city" type="java.lang.String">
+       <bind-xml name="city" node="element" />
+    </field>
+    <field name="state" type="java.lang.String">
+       <bind-xml name="state" node="element" />
+    </field>
+    <field name="zipCode" type="java.lang.String">
+       <bind-xml name="zip" node="element" />
+    </field>
+    <!--where do we get department? Per Nancy: This is not required. Dari has used the same value for name and department.-->
+    <field name="department" type="java.lang.String">
+       <bind-xml name="department" node="element" />
+    </field>
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.ProviderXmit" identity="id">
+    <map-to xml="provider"/>
+    <field name="id" required="true">
+       <bind-xml name="id" transient="true"/>
+    </field>
+    <field name="firstName" type="java.lang.String">
+       <bind-xml name="first" node="element" />
+    </field>
+    <field name="lastName" type="java.lang.String">
+       <bind-xml name="last" node="element" />
+    </field> 
+    <field name="workPhone" type="java.lang.String">
+       <bind-xml name="phone" node="element" />
+    </field>
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.SampleXmit" identity="id">
+    <map-to xml="specimen"/>
+    <field name="id" required="true">
+       <bind-xml name="id" transient="true"/>
+    </field>
+    <field name="accessionNumber" type="string" node="element">
+        <bind-xml name="lab_number"/>
+    </field>
+    <field name="revision" type="string" node="element">
+        <bind-xml name="revision" type="java.lang.Integer" />
+    </field>
+    <field name="collectionDate" type="java.util.Date" handler="us.mn.state.health.lims.reports.send.common.handler.TimestampHandler" node="element">
+        <bind-xml name="collected" type="java.lang.String" />
+    </field>
+    <field name="receivedDate" type="java.util.Date" handler="us.mn.state.health.lims.reports.send.common.handler.DateHandler" node="element">
+        <bind-xml name="received" type="java.lang.String" />
+    </field>
+    <field name="enteredDate" type="java.util.Date" handler="us.mn.state.health.lims.reports.send.common.handler.DateHandler" node="element">
+        <bind-xml name="entered" type="java.lang.String" />
+    </field>
+    <field name="externalId" type="string" node="element">
+        <bind-xml name="patient_id_number" type="java.lang.String" />
+    </field>
+    <field name="status" type="string" node="element">
+        <bind-xml name="status" type="java.lang.String" />
+    </field>
+    <field name="facility" type="us.mn.state.health.lims.reports.send.sample.valueholder.FacilityXmit">
+      <bind-xml name="facility"/>
+    </field>
+    <field name="patient" type="us.mn.state.health.lims.reports.send.sample.valueholder.PatientXmit">
+      <bind-xml name="patient"/>
+    </field>
+    <field name="provider" type="us.mn.state.health.lims.reports.send.sample.valueholder.ProviderXmit">
+      <bind-xml name="provider"/>
+    </field>
+    <field name="tests" collection="arraylist" type="us.mn.state.health.lims.reports.send.sample.valueholder.TestXmit">
+      <bind-xml name="test"/>
+    </field>
+  </class>
+  <class name="us.mn.state.health.lims.reports.send.sample.valueholder.MessageXmit">
+    <map-to xml="message"/>
+    <field name="uhl" type="us.mn.state.health.lims.reports.send.sample.valueholder.UHLXmit">
+      <bind-xml name="UHL"/>
+    </field>
+    <field name="sample" type="us.mn.state.health.lims.reports.send.sample.valueholder.SampleXmit">
+      <bind-xml name="specimen"/>
+    </field>
+  </class>
+</mapping>
+

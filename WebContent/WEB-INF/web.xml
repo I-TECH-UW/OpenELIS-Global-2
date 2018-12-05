@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<web-app version="3.1"
+  xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
+		 http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+  metadata-complete="true">
+    
+  <display-name>LIMS Application</display-name>
+
+  <filter>
+    <filter-name>UTF8Filter</filter-name>
+    <filter-class>us.mn.state.health.lims.common.util.UTF8Filter</filter-class>
+  </filter>
+  <filter>
+    <filter-name>SecurityFilter</filter-name>
+    <filter-class>us.mn.state.health.lims.security.SecurityFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+    <filter-name>UTF8Filter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>  
+  <filter-mapping>
+    <filter-name>SecurityFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping> 
+  
+  <listener>
+    <listener-class>
+      us.mn.state.health.lims.common.servlet.startup.StartStopListener
+    </listener-class>
+  </listener>
+  
+  <servlet>
+    <servlet-name>dispatcher</servlet-name>
+    <servlet-class>
+            org.springframework.web.servlet.DispatcherServlet
+        </servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet>
+    <display-name>ajaxText</display-name> 
+    <servlet-name>ajaxText</servlet-name>
+    <servlet-class>us.mn.state.health.lims.common.servlet.validation.AjaxTextServlet</servlet-class>
+    <load-on-startup>3</load-on-startup>
+  </servlet>
+  
+  <servlet>
+    <display-name>ajaxXML</display-name> 
+    <servlet-name>ajaxXML</servlet-name>
+    <servlet-class>us.mn.state.health.lims.common.servlet.validation.AjaxXMLServlet</servlet-class>
+    <load-on-startup>4</load-on-startup>
+  </servlet>
+  
+   <servlet>
+    <display-name>ajaxQueryXML</display-name> 
+    <servlet-name>ajaxQueryXML</servlet-name>
+    <servlet-class>us.mn.state.health.lims.common.servlet.query.AjaxQueryXMLServlet</servlet-class>
+    <load-on-startup>5</load-on-startup>
+  </servlet>
+  
+   <servlet>
+    <display-name>ajaxAutocompleteXML</display-name> 
+    <servlet-name>ajaxAutocompleteXML</servlet-name>
+    <servlet-class>us.mn.state.health.lims.common.servlet.autocomplete.AjaxXMLServlet</servlet-class>
+    <load-on-startup>6</load-on-startup>
+  </servlet>
+  
+  <servlet>
+    <display-name>ajaxSelectDropDownXML</display-name> 
+    <servlet-name>ajaxSelectDropDownXML</servlet-name>
+    <servlet-class>us.mn.state.health.lims.common.servlet.selectdropdown.AjaxXMLServlet</servlet-class>
+    <load-on-startup>7</load-on-startup>
+  </servlet>
+  
+  <servlet>
+    <display-name>reportsServlet</display-name> 
+    <servlet-name>reportsServlet</servlet-name>
+    <servlet-class>us.mn.state.health.lims.common.servlet.reports.ReportsServlet</servlet-class>
+    <load-on-startup>8</load-on-startup>
+  </servlet>
+
+  <servlet>
+    <display-name>ajaxPopup</display-name> 
+    <servlet-name>ajaxPopup</servlet-name>
+    <servlet-class>us.mn.state.health.lims.common.servlet.popup.AjaxCityStateZipPopupXMLServlet</servlet-class>
+    <load-on-startup>9</load-on-startup>
+  </servlet>
+  
+   <servlet>
+    <display-name>ajaxDataXML</display-name> 
+    <servlet-name>ajaxDataXML</servlet-name>
+    <servlet-class>us.mn.state.health.lims.common.servlet.data.AjaxXMLServlet</servlet-class>
+    <load-on-startup>10</load-on-startup>
+  </servlet> 
+ 
+  <servlet>
+    <display-name>importAnalyzer</display-name>
+    <servlet-name>importAnalyzer</servlet-name> 
+    <servlet-class>us.mn.state.health.lims.analyzerimport.action.AnalyzerImportServlet</servlet-class>
+    <load-on-startup>11</load-on-startup>
+  </servlet>
+  
+  <servlet>
+    <display-name>MetricServicesServlet</display-name>
+    <servlet-name>MetricServicesServlet</servlet-name>
+    <servlet-class>us.mn.state.health.lims.metricservice.action.MetricServicesServlet</servlet-class>
+    <load-on-startup>12</load-on-startup>
+  </servlet>
+ 
+   <servlet>
+    <display-name>IndicatorAggregationServlet</display-name>
+    <servlet-name>IndicatorAggregationServlet</servlet-name>
+    <servlet-class>us.mn.state.health.lims.dataexchange.aggregatereporting.IndicatorAggregationReportingServlet</servlet-class>
+    <load-on-startup>13</load-on-startup>
+  </servlet>
+
+  <servlet>
+    <display-name>OrderRequestServlet</display-name>
+    <servlet-name>OrderRequestServlet</servlet-name>
+    <servlet-class>us.mn.state.health.lims.dataexchange.order.action.OrderServlet</servlet-class>
+    <load-on-startup>14</load-on-startup>
+  </servlet>
+  
+   <servlet>
+    <display-name>OrderRequestRawServlet</display-name>
+    <servlet-name>OrderRequestRawServlet</servlet-name>
+    <servlet-class>us.mn.state.health.lims.dataexchange.order.action.OrderRawServlet</servlet-class>
+    <load-on-startup>15</load-on-startup>
+  </servlet>
+
+ <servlet>
+    <display-name>logoUpload</display-name> 
+    <servlet-name>logoUpload</servlet-name>
+    <servlet-class>us.mn.state.health.lims.common.servlet.reports.LogoUploadServlet</servlet-class>
+    <load-on-startup>3</load-on-startup>
+  </servlet>
+  
+  <servlet>
+  	<display-name>LabelMakerServlet</display-name>
+  	<servlet-name>LabelMakerServlet</servlet-name>
+  	<servlet-class>us.mn.state.health.lims.common.servlet.barcode.LabelMakerServlet</servlet-class>
+  	<load-on-startup>16</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>dispatcher</servlet-name>
+    <url-pattern>*.html</url-pattern>
+    <url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>ajaxText</servlet-name>
+    <url-pattern>/ajaxText</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>ajaxXML</servlet-name>
+    <url-pattern>/ajaxXML</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>ajaxQueryXML</servlet-name>
+    <url-pattern>/ajaxQueryXML</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>ajaxAutocompleteXML</servlet-name>
+    <url-pattern>/ajaxAutocompleteXML</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>ajaxSelectDropDownXML</servlet-name>
+    <url-pattern>/ajaxSelectDropDownXML</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>ajaxPopup</servlet-name>
+    <url-pattern>/ajaxPopup</url-pattern>
+  </servlet-mapping>
+    
+  <servlet-mapping>
+    <servlet-name>reportsServlet</servlet-name>
+    <url-pattern>/reportsServlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>ajaxDataXML</servlet-name>
+    <url-pattern>/ajaxDataXML</url-pattern>
+  </servlet-mapping>
+  
+   <servlet-mapping>
+    <servlet-name>importAnalyzer</servlet-name>
+    <url-pattern>/importAnalyzer</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>MetricServicesServlet</servlet-name>
+    <url-pattern>/MetricServices</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>IndicatorAggregationServlet</servlet-name>
+    <url-pattern>/IndicatorAggregation</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>OrderRequestServlet</servlet-name>
+    <url-pattern>/OrderRequest</url-pattern>
+  </servlet-mapping>
+  
+   <servlet-mapping>
+    <servlet-name>OrderRequestRawServlet</servlet-name>
+    <url-pattern>/OrderRequest_Raw</url-pattern>
+  </servlet-mapping>
+  
+   <servlet-mapping>
+    <servlet-name>logoUpload</servlet-name>
+    <url-pattern>/logoUpload</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+  	<servlet-name>LabelMakerServlet</servlet-name>
+  	<url-pattern>/LabelMakerServlet</url-pattern>	
+  </servlet-mapping>
+ 
+  <!-- The Usual Welcome File List -->
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+
+  <error-page>
+    <error-code>500</error-code>
+  	<location>/pages/common/defaultErrorPage.jsp</location>
+  </error-page>
+  
+  <error-page>
+    <error-code>404</error-code>
+  	<location>/pages/common/defaultNotFoundPage.jsp</location>
+  </error-page>
+  
+  <!-- Struts Tag Library Descriptors -->
+  <jsp-config>
+    <taglib>
+      <taglib-uri>/tags/struts-bean</taglib-uri>
+      <taglib-location>/WEB-INF/taglib/struts-bean.tld</taglib-location>
+    </taglib>
+
+    <taglib>
+      <taglib-uri>/tags/struts-html</taglib-uri>
+      <taglib-location>/WEB-INF/taglib/struts-html.tld</taglib-location>
+    </taglib>
+
+    <taglib>
+      <taglib-uri>/tags/struts-logic</taglib-uri>
+      <taglib-location>/WEB-INF/taglib/struts-logic.tld</taglib-location>
+    </taglib>
+
+    <taglib>
+      <taglib-uri>/tags/struts-nested</taglib-uri>
+      <taglib-location>/WEB-INF/taglib/struts-nested.tld</taglib-location>
+    </taglib>
+
+    <taglib>
+      <taglib-uri>/tags/struts-tiles</taglib-uri>
+      <taglib-location>/WEB-INF/taglib/struts-tiles.tld</taglib-location>
+    </taglib>
+    
+    <taglib>
+      <taglib-uri>/tags/labdev-view</taglib-uri>
+      <taglib-location>/WEB-INF/taglib/labdev-view.tld</taglib-location>
+    </taglib>
+    
+    <taglib>
+      <taglib-uri>/tags/sourceforge-ajax</taglib-uri>
+      <taglib-location>/WEB-INF/taglib/ajaxtags.tld</taglib-location>
+    </taglib>
+  </jsp-config>
+  
+  <!--bugzilla 1908 added resource-ref for Vietnam tomcat/linux-->
+  <resource-ref>
+   <description>Database connection</description>
+   <res-ref-name>jdbc/LimsDS</res-ref-name>
+   <res-type>javax.sql.DataSource</res-type>
+   <res-auth>Container</res-auth>
+  </resource-ref>
+  
+  <!--tomcat disallowed Http method configuration-->
+  <security-constraint>
+    <web-resource-collection>
+    <web-resource-name>Forbidden</web-resource-name>
+    <url-pattern>/*</url-pattern>
+      <http-method>PUT</http-method>
+      <http-method>DELETE</http-method>
+      <http-method>OPTIONS</http-method>
+      <http-method>TRACE</http-method>
+    </web-resource-collection>
+    <auth-constraint />
+  </security-constraint>
+
+</web-app>

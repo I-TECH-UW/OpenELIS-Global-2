@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.method.valueholder.Method" table="METHOD" optimistic-lock="version" dynamic-update="true" >
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+            	<param name="sequence">method_seq</param>
+            </generator>	
+        </id>
+        <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
+
+        <property name="methodName" type="java.lang.String">
+            <column name="NAME" length="20" not-null="true" />
+        </property>
+        <property name="description" type="java.lang.String">
+            <column name="DESCRIPTION" length="60" not-null="true" />
+        </property>
+        <property name="reportingDescription" type="java.lang.String">
+            <column name="REPORTING_DESCRIPTION" length="60" />
+        </property>
+        <property name="isActive" type="java.lang.String">
+            <column name="IS_ACTIVE" length="1" />
+        </property>
+        <property name="activeBeginDate" type="java.sql.Date">
+            <column name="ACTIVE_BEGIN" length="7" />
+        </property>
+        <property name="activeEndDate" type="java.sql.Date">
+            <column name="ACTIVE_END" length="7" />
+        </property>
+
+<!--         
+        <set name="instrumentAnalytes" inverse="true">
+            <key>
+                <column name="METHOD_ID" precision="10" scale="0" />
+            </key>
+            <one-to-many class="us.mn.state.health.lims.instrumentanalyte.valueholder.InstrumentAnalyte" />
+        </set>
+        <set name="methodResults" inverse="true">
+            <key>
+                <column name="METHOD_ID" precision="10" scale="0" />
+            </key>
+            <one-to-many class="us.mn.state.health.lims.methodresult.valueholder.MethodResult" />
+        </set>
+        <set name="methodAnalytes" inverse="true">
+            <key>
+                <column name="METHOD_ID" precision="10" scale="0" />
+            </key>
+            <one-to-many class="us.mn.state.health.lims.methodanalyte.valueholder.MethodAnalyte" />
+        </set>
+        <set name="tests" inverse="true">
+            <key>
+                <column name="METHOD_ID" precision="10" scale="0" />
+            </key>
+            <one-to-many class="us.mn.state.health.lims.test.valueholder.Test" />
+        </set>
+-->        
+    </class>
+</hibernate-mapping>

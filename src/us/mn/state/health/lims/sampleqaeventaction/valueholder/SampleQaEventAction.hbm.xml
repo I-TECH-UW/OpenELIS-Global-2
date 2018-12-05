@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.sampleqaeventaction.valueholder.SampleQaEventAction" table="SAMPLE_QAEVENT_ACTION" optimistic-lock="version" dynamic-update="true" >
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+             	<param name="sequence">sample_qaevent_action_seq</param>
+            </generator>   
+        </id>
+        <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
+
+        <many-to-one name="action" class="us.mn.state.health.lims.action.valueholder.Action" fetch="select">
+            <column name="ACTION_ID" precision="10" scale="0" />
+        </many-to-one>
+        <many-to-one name="sampleQaEvent" class="us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent" fetch="select">
+            <column name="SAMPLE_QAEVENT_ID" precision="10" scale="0" />
+        </many-to-one>            
+
+        <property name="createdDate" type="java.sql.Date">
+            <column name="CREATED_DATE" length="7" />
+        </property>
+        <!--bugzilla 2481-->
+        <many-to-one name="systemUser" class="us.mn.state.health.lims.systemuser.valueholder.SystemUser" fetch="select">
+            <column name="SYS_USER_ID" precision="10" scale="0" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

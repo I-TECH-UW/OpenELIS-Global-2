@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder" table="ELECTRONIC_ORDER" optimistic-lock="version" dynamic-update="true" >
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+                <param name="sequence">electronic_order_seq</param>
+            </generator> 
+        </id>
+        <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
+        <property name="orderTimestamp" type="java.sql.Timestamp">
+            <column name="ORDER_TIMESTAMP" length="7" not-null="true" />
+        </property>
+        <property name="externalId" type="java.lang.String">
+            <column name="EXTERNAL_ID" length="60" not-null="true" />
+        </property>
+        <many-to-one name="patient" class="us.mn.state.health.lims.patient.valueholder.Patient" fetch="select">
+            <column name="patient_id" precision="10" scale="0" />
+        </many-to-one>
+        <property name="statusId" 
+        		  type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType"
+            	  column="status_id"
+            	  precision="10" 
+            	  not-null="true"/>
+        <property name="data" type="java.lang.String">
+            <column name="data" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>
