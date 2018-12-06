@@ -245,31 +245,6 @@
   <!-- Struts Tag Library Descriptors -->
   <jsp-config>
     <taglib>
-      <taglib-uri>/tags/struts-bean</taglib-uri>
-      <taglib-location>/WEB-INF/taglib/struts-bean.tld</taglib-location>
-    </taglib>
-
-    <taglib>
-      <taglib-uri>/tags/struts-html</taglib-uri>
-      <taglib-location>/WEB-INF/taglib/struts-html.tld</taglib-location>
-    </taglib>
-
-    <taglib>
-      <taglib-uri>/tags/struts-logic</taglib-uri>
-      <taglib-location>/WEB-INF/taglib/struts-logic.tld</taglib-location>
-    </taglib>
-
-    <taglib>
-      <taglib-uri>/tags/struts-nested</taglib-uri>
-      <taglib-location>/WEB-INF/taglib/struts-nested.tld</taglib-location>
-    </taglib>
-
-    <taglib>
-      <taglib-uri>/tags/struts-tiles</taglib-uri>
-      <taglib-location>/WEB-INF/taglib/struts-tiles.tld</taglib-location>
-    </taglib>
-    
-    <taglib>
       <taglib-uri>/tags/labdev-view</taglib-uri>
       <taglib-location>/WEB-INF/taglib/labdev-view.tld</taglib-location>
     </taglib>

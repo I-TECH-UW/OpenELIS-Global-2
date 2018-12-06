@@ -8,10 +8,12 @@ import us.mn.state.health.lims.common.util.StringUtil;
 
 public abstract class BaseFormValidator implements Validator {
 	
+	@Override
 	public boolean supports(Class<?> clazz) {
 		return BaseForm.class.equals(clazz);
 	}
 
+	@Override
 	public void validate(Object target, Errors errors) {
 		BaseForm form = (BaseForm) target;
 		validateBaseForm(form, errors);

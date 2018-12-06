@@ -13,7 +13,6 @@ public class LoginValidateForm extends BaseForm {
 
   private String confirmPassword = "";
 
-  private Timestamp lastupdated;
 
   public String getLoginName() {
     return this.loginName;
@@ -47,11 +46,4 @@ public class LoginValidateForm extends BaseForm {
     this.confirmPassword = confirmPassword;
   }
 
-  public Timestamp getLastupdated() {
-    return this.lastupdated;
-  }
-
-  public void setLastupdated(Timestamp lastupdated) {
-    this.lastupdated = lastupdated;
-  }
 }

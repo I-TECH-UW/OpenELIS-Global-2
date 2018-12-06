@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
+import org.springframework.validation.Errors;
 
 import us.mn.state.health.lims.common.action.BaseActionForm;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -31,7 +32,7 @@ import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 
 public interface IPatientUpdate {
 
-	public abstract ActionMessages preparePatientData(ActionMapping mapping, HttpServletRequest request,
+	public abstract Errors preparePatientData(ActionMapping mapping, HttpServletRequest request,
 			PatientManagementInfo patientInfo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
 
 	public abstract void setPatientUpdateStatus(PatientManagementInfo patientInfo);

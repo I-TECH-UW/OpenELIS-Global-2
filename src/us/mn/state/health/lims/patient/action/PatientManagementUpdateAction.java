@@ -34,7 +34,9 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 import org.hibernate.StaleObjectStateException;
 import org.hibernate.Transaction;
+import org.springframework.validation.Errors;
 
+import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.address.dao.AddressPartDAO;
 import us.mn.state.health.lims.address.dao.PersonAddressDAO;
 import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
@@ -114,12 +116,11 @@ public class PatientManagementUpdateAction extends BaseAction implements IPatien
 
 		if (patientUpdateStatus != PatientUpdateStatus.NO_ACTION) {
 
-			ActionMessages errors;
+			Errors errors;
 
 			errors = preparePatientData(mapping, request, patientInfo);
 
-			if (!errors.isEmpty()) {
-                saveErrors(request, errors);
+			if (errors.hasErrors()) {
                 request.setAttribute(Globals.ERROR_KEY, errors);
 				return mapping.findForward(FWD_FAIL);
 			}
@@ -134,16 +135,16 @@ public class PatientManagementUpdateAction extends BaseAction implements IPatien
 
 			} catch (LIMSRuntimeException lre) {
 				tx.rollback();
-				errors = new ActionMessages();
+				errors = new BaseErrors();
 
 				if (lre.getException() instanceof StaleObjectStateException) {
-                    errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionError("errors.OptimisticLockException", null, null));
+                    errors.reject("errors.OptimisticLockException", null, null);
 				} else {
 					lre.printStackTrace();
-                    errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionError("errors.UpdateException", null, null));
+                    errors.reject("errors.UpdateException", null, null);
 				}
 
-				saveErrors(request, errors);
+				//saveErrors(request, errors);
 				request.setAttribute(Globals.ERROR_KEY, errors);
 				request.setAttribute(ALLOW_EDITS_KEY, "false");
 				return mapping.findForward(FWD_FAIL);
@@ -170,15 +171,15 @@ public class PatientManagementUpdateAction extends BaseAction implements IPatien
 	 * javax.servlet.http.HttpServletRequest,
 	 * us.mn.state.health.lims.common.action.BaseActionForm)
 	 */
-	public ActionMessages preparePatientData(ActionMapping mapping, HttpServletRequest request, PatientManagementInfo patientInfo)
+	public Errors preparePatientData(ActionMapping mapping, HttpServletRequest request, PatientManagementInfo patientInfo)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		if( currentUserId == null){
 			currentUserId = getSysUserId(request);
 		}
 
-		ActionMessages errors = validatePatientInfo(patientInfo);
-        if( !errors.isEmpty()){
+		Errors errors = validatePatientInfo(patientInfo);
+		if( errors.hasErrors()){
             return errors;
         }
 
@@ -197,8 +198,8 @@ public class PatientManagementUpdateAction extends BaseAction implements IPatien
 		return errors;
 	}
 
-    private ActionMessages validatePatientInfo( PatientManagementInfo patientInfo ){
-        ActionMessages errors = new ActionMessages();
+    private Errors validatePatientInfo( PatientManagementInfo patientInfo ){
+        Errors errors = new BaseErrors();
         if( ConfigurationProperties.getInstance().isPropertyValueEqual( ConfigurationProperties.Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "false" )){
             String newSTNumber = GenericValidator.isBlankOrNull( patientInfo.getSTnumber() ) ? null :patientInfo.getSTnumber();
             String newSubjectNumber = GenericValidator.isBlankOrNull( patientInfo.getSubjectNumber() ) ? null :patientInfo.getSubjectNumber();
@@ -212,13 +213,13 @@ public class PatientManagementUpdateAction extends BaseAction implements IPatien
                 for( PatientSearchResults result : results){
                     if( !result.getPatientID().equals( patientInfo.getPatientPK() )){
                         if( newSTNumber != null && newSTNumber.equals( result.getSTNumber() )){
-                            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionError("error.duplicate.STNumber", null, null));
+                            errors.reject("error.duplicate.STNumber", null, null);
                         }
                         if( newSubjectNumber != null && newSubjectNumber.equals( result.getSubjectNumber() )){
-                            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionError("error.duplicate.subjectNumber", null, null));
+                            errors.reject("error.duplicate.subjectNumber", null, null);
                         }
                         if( newNationalId != null && newNationalId.equals( result.getNationalId() )){
-                            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionError("error.duplicate.nationalId", null, null));
+                            errors.reject("error.duplicate.nationalId", null, null);
                         }
                     }
                 }
@@ -230,7 +231,7 @@ public class PatientManagementUpdateAction extends BaseAction implements IPatien
         return errors;
     }
 
-	private void validateBirthdateFormat(PatientManagementInfo patientInfo, ActionMessages errors) {
+	private void validateBirthdateFormat(PatientManagementInfo patientInfo, Errors errors) {
 		String birthDate = patientInfo.getBirthDateForDisplay();
 		boolean validBirthDateFormat = true;
 
@@ -242,7 +243,7 @@ public class PatientManagementUpdateAction extends BaseAction implements IPatien
 			}
 
 			if( !validBirthDateFormat){
-				errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionError("error.birthdate.format", null, null ));
+				errors.reject("error.birthdate.format", null, null );
 			}
 		}
 	}

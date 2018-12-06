@@ -22,6 +22,8 @@ import java.util.Properties;
 import org.apache.struts.config.MessageResourcesConfig;
 import org.apache.struts.util.MessageResources;
 import org.apache.struts.util.MessageResourcesFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
 
 import us.mn.state.health.lims.common.log.LogEvent;
 
@@ -29,11 +31,13 @@ import us.mn.state.health.lims.common.log.LogEvent;
  * Diane Benz Oct 29, 2005
  * 
  */
-public class ResourceLocator {
+public class ResourceLocator implements MessageSourceAware {
 	private static ResourceLocator me; // Holder for Singleton
 
 	// Holds the ApplicationResources.properties information
 	private MessageResources messageResources = null;
+	
+	private MessageSource messageSource;
 
 	// Name of file that contains resource mappings. This class loads this into
 	// the propertyFilePairs object
@@ -171,5 +175,13 @@ public class ResourceLocator {
 	 */
 	public String getFilePath(String fileName) {
 		return this.getClass().getResource(fileName).getPath();
+	}
+
+	@Override
+	public void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+	public MessageSource getMessageSource() {
+		return messageSource;
 	}
 }

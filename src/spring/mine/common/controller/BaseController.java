@@ -9,17 +9,17 @@ import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.form.BaseForm;
-import us.mn.state.health.lims.common.util.resources.ResourceLocator;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
-import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
-import us.mn.state.health.lims.login.valueholder.UserSessionData;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.security.PageIdentityUtil;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
+import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
+import us.mn.state.health.lims.common.util.resources.ResourceLocator;
+import us.mn.state.health.lims.login.dao.UserModuleDAO;
+import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
+import us.mn.state.health.lims.login.valueholder.UserSessionData;
 
 public abstract class BaseController implements IActionConstants {
 
@@ -51,10 +51,8 @@ public abstract class BaseController implements IActionConstants {
 	 * This getPageTitleKey method accepts a request and form parameter so that a
 	 * subclass can override the method and conditionally return different titles.
 	 * 
-	 * @param request
-	 *            the request
-	 * @param form
-	 *            the form associated with this request.
+	 * @param request the request
+	 * @param form    the form associated with this request.
 	 * @return the title key for this page.
 	 */
 	protected String getPageTitleKey(HttpServletRequest request, BaseForm form) {
@@ -70,10 +68,8 @@ public abstract class BaseController implements IActionConstants {
 	 * subclass can override the method and conditionally return different
 	 * subtitles.
 	 * 
-	 * @param request
-	 *            the request
-	 * @param form
-	 *            the form associated with this request.
+	 * @param request the request
+	 * @param form    the form associated with this request.
 	 * @return the subtitle key this page.
 	 */
 	protected String getPageSubtitleKey(HttpServletRequest request, BaseForm form) {
@@ -88,8 +84,7 @@ public abstract class BaseController implements IActionConstants {
 	 * Template method to allow subclasses to handle special cases. The default is
 	 * to return the message
 	 * 
-	 * @param message
-	 *            The message
+	 * @param message The message
 	 * @return The message
 	 */
 	protected String getActualMessage(String message) {
@@ -100,8 +95,7 @@ public abstract class BaseController implements IActionConstants {
 	 * Utility method to simplify the lookup of MessageResource Strings in the
 	 * ApplicationResources.properties file for this application.
 	 * 
-	 * @param messageKey
-	 *            the message key to look up
+	 * @param messageKey the message key to look up
 	 */
 	protected String getMessageForKey(String messageKey) throws Exception {
 		String message = StringUtil.getContextualMessageForKey(messageKey);
@@ -112,10 +106,8 @@ public abstract class BaseController implements IActionConstants {
 	 * Utility method to simplify the lookup of MessageResource Strings in the
 	 * ApplicationResources.properties file for this application.
 	 * 
-	 * @param request
-	 *            the HttpServletRequest
-	 * @param messageKey
-	 *            the message key to look up
+	 * @param request    the HttpServletRequest
+	 * @param messageKey the message key to look up
 	 */
 	protected String getMessageForKey(HttpServletRequest request, String messageKey) throws Exception {
 		if (null == messageKey)
@@ -267,7 +259,7 @@ public abstract class BaseController implements IActionConstants {
 			return new ModelAndView("redirect:LoginPage.html", "errors", form.getErrors());
 		}
 
-		
+		// insert global forwards here
 		return findLocalForward(forward, form);
 	}
 

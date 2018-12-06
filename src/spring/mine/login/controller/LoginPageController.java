@@ -1,15 +1,16 @@
 package spring.mine.login.controller;
 
 import java.lang.String;
+
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import spring.generated.forms.LoginForm;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
+import spring.mine.login.form.LoginForm;
 
 @Controller
 public class LoginPageController extends BaseController {

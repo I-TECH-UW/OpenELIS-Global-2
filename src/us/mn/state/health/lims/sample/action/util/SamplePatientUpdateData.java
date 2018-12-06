@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMessages;
+import org.springframework.validation.Errors;
 
 import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
 import us.mn.state.health.lims.common.formfields.FormFields;
@@ -72,7 +73,7 @@ public class SamplePatientUpdateData{
     private SampleRequester requesterSite;
     private List<SampleTestCollection> sampleItemsTests;
     private SampleAddService sampleAddService;
-    private ActionMessages patientErrors;
+    private Errors patientErrors;
     private Organization newOrganization;
     private Organization currentOrganization;
     private ElectronicOrder electronicOrder = null;
@@ -170,7 +171,7 @@ public class SamplePatientUpdateData{
         this.sampleAddService = sampleAddService;
     }
 
-    public void setPatientErrors( ActionMessages patientErrors ){
+    public void setPatientErrors( Errors patientErrors ){
         this.patientErrors = patientErrors;
     }
 
@@ -230,7 +231,7 @@ public class SamplePatientUpdateData{
         }
     }
 
-    public void validateSample(ActionMessages errors) {
+    public void validateSample(Errors errors) {
         // assure accession number
 
         //TODO
@@ -238,22 +239,22 @@ public class SamplePatientUpdateData{
 
         if (result != IAccessionNumberValidator.ValidationResults.SUCCESS) {
             String message = AccessionNumberUtil.getInvalidMessage(result);
-            errors.add( ActionErrors.GLOBAL_MESSAGE, new ActionError(message));
+            errors.reject(message);
         }
 
         // assure that there is at least 1 sample
         if (sampleItemsTests.isEmpty()) {
-            errors.add(ActionErrors.GLOBAL_MESSAGE, new ActionError("errors.no.sample"));
+            errors.reject("errors.no.sample");
         }
 
         // assure that all samples have tests
         if (!allSamplesHaveTests()) {
-            errors.add(ActionErrors.GLOBAL_MESSAGE, new ActionError("errors.samples.with.no.tests"));
+            errors.reject("errors.samples.with.no.tests");
         }
 
         // check patient errors
-        if (patientErrors.size(ActionErrors.GLOBAL_MESSAGE) > 0) {
-            errors.add(patientErrors);
+        if (patientErrors.hasErrors()) {
+            errors.addAllErrors(patientErrors);
         }
     }
 

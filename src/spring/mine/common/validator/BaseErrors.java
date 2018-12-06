@@ -1,6 +1,10 @@
 package spring.mine.common.validator;
 
+import java.util.List;
+
 import org.springframework.validation.AbstractBindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 
 public class BaseErrors extends AbstractBindingResult {
     

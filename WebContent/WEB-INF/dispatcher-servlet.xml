@@ -31,7 +31,7 @@
     
 	<!--configure where message resource file is located -->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        <property name="basename" value="WEB-INF/message"/>
+        <property name="basename" value="WEB-INF/languages/message"/>
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>
 

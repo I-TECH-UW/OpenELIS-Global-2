@@ -34,7 +34,6 @@ function submitOnClick(button){
 
 <form:hidden path="formName" id="formName" />
 <form:hidden path="formAction" id="formAction" />
-<form:hidden path="lastupdated" id="lastUpdated" />
 <table width="100%">
 <tr>
     <td width="50%" valign="top">

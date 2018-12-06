@@ -42,13 +42,14 @@ import org.apache.commons.beanutils.DynaBean;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionMessages;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.hibernate.Transaction;
+import org.springframework.validation.Errors;
 
+import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -227,7 +228,7 @@ public abstract class Accessioner {
 	protected String patientIdentifier;
 	protected String patientSiteSubjectNo;
 	protected StatusSet statusSet;
-	ActionMessages messages = new ActionMessages();
+	Errors messages = new BaseErrors();
 
 	protected java.sql.Date today;
 	protected String todayAsText;
@@ -542,7 +543,7 @@ public abstract class Accessioner {
 		// had better be same one we found when we loading the sampleSet
 		if (sample != null && !isNewSample()) {
 			if (!sample.getId().equals(sampleId)) {
-				messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionError("errors.may_not_reuse_accession_number", accessionNumber));
+				messages.reject("errors.may_not_reuse_accession_number", accessionNumber);
 				throw new RuntimeException("You can not re-use an existing accessionNumber " + accessionNumber);
 			}
 			return true;
@@ -834,7 +835,7 @@ public abstract class Accessioner {
 		sampleItemsAnalysis = new ArrayList<SampleItemAnalysisCollection>();
 
 		if (typeofSampleTestList.size() == 0) {
-			messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionError("errors.no.tests"));
+	    	messages.reject("errors.no.tests");
 			throw new Exception("No tests selected.");
 		}
 
@@ -1264,11 +1265,11 @@ public abstract class Accessioner {
 		return new SampleDAOImpl();
 	}
 
-	public ActionMessages getMessages() {
+	public Errors getMessages() {
 		return messages;
 	}
 
-	public void setMessages(ActionMessages messages) {
+	public void setMessages(Errors messages) {
 		this.messages = messages;
 	}
 
@@ -1285,9 +1286,8 @@ public abstract class Accessioner {
 	public void logAndAddMessage(String methodName, String messageKey, Exception e) {
 		e.printStackTrace();
 		LogEvent.logError(this.getClass().getSimpleName(), methodName, e.toString());
-		if (messages.size() == 0) {
-			ActionError error = new ActionError(messageKey, null, null);
-			messages.add(ActionMessages.GLOBAL_MESSAGE, error);
+		if (!messages.hasErrors()) {
+			messages.reject(messageKey);
 		}
 	}
 
