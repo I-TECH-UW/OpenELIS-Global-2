@@ -27,6 +27,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.address.dao.AddressPartDAO;
 import us.mn.state.health.lims.address.dao.OrganizationAddressDAO;
 import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
@@ -185,9 +186,10 @@ public class OrganizationUpdateAction extends BaseAction {
 			} else {
 				// bugzilla 1482
 				if (lre.getException() instanceof LIMSDuplicateRecordException) {
-					java.util.Locale locale = (java.util.Locale) request.getSession().getAttribute("org.apache.struts.action.LOCALE");
+					//java.util.Locale locale = (java.util.Locale) request.getSession().getAttribute("org.apache.struts.action.LOCALE");
 					String messageKey = "organization.organization";
-					String msg = ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey);
+					String msg = MessageUtil.getMessage(messageKey);
+							//ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey);
 					error = new ActionError("errors.DuplicateRecord.activeonly", msg, null);
 
 				} else {

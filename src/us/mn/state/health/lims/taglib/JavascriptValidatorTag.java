@@ -43,6 +43,7 @@ import org.apache.struts.util.MessageResources;
 import org.apache.struts.validator.Resources;
 import org.apache.struts.validator.ValidatorPlugIn;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.util.resources.ResourceLocator;
 
 /**
@@ -491,8 +492,9 @@ public class JavascriptValidatorTag extends org.apache.struts.taglib.html.Javasc
                     if (varName.startsWith("datePattern")) {
                     	if (var.getValue().equals("date.format.validate")) {
             			String messageKey = var.getValue();
-            			 varValue =  ResourceLocator.getInstance().getMessageResources().getMessage(
-    							locale, messageKey);  
+            			 varValue =  MessageUtil.getMessage(messageKey);
+            					 //ResourceLocator.getInstance().getMessageResources().getMessage(
+    							//locale, messageKey);  
                     	} else {
                             varValue = var.getValue();
                     	}

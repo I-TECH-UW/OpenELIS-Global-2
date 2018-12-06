@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -213,7 +214,8 @@ public class UserTestSectionDAOImpl extends BaseDAOImpl implements UserTestSecti
 			List sampleList = sampleDAO.getSamplesByStatusAndDomain(statuses,humanDomain);		
 			FileValidationProvider fvp = new FileValidationProvider();
 	
-			String pdfMsg = ResourceLocator.getInstance().getMessageResources().getMessage(locale, "human.sample.pdf.message");			
+			String pdfMsg = MessageUtil.getMessage("human.sample.pdf.message");
+					//ResourceLocator.getInstance().getMessageResources().getMessage(locale, "human.sample.pdf.message");			
 		     
 			for ( int i=0; i<sampleList.size(); i++ ) {
 				Sample sam = (Sample)sampleList.get(i);

@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -136,8 +137,9 @@ public abstract class BaseReportsProvider implements IActionConstants {
 		java.util.Locale locale = (java.util.Locale) request.getSession()
 				.getAttribute("org.apache.struts.action.LOCALE");
 		// Return the message for the user's locale.
-		return ResourceLocator.getInstance().getMessageResources().getMessage(
-				locale, messageKey);
+		return MessageUtil.getMessage(messageKey);
+		//return ResourceLocator.getInstance().getMessageResources().getMessage(
+				//locale, messageKey);
 	}
 
     //bugzilla 2264
@@ -148,8 +150,9 @@ public abstract class BaseReportsProvider implements IActionConstants {
 		java.util.Locale locale = (java.util.Locale) request.getSession()
 				.getAttribute("org.apache.struts.action.LOCALE");
 		// Return the message for the user's locale.
-		return ResourceLocator.getInstance().getMessageResources().getMessage(
-				locale, messageKey, arg0);
+		return MessageUtil.getMessage(messageKey);
+		//return ResourceLocator.getInstance().getMessageResources().getMessage(
+				//locale, messageKey, arg0);
 	}
 	
 	//bugzilla 1856

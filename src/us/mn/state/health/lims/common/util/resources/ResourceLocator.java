@@ -19,11 +19,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.struts.config.MessageResourcesConfig;
 import org.apache.struts.util.MessageResources;
 import org.apache.struts.util.MessageResourcesFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.log.LogEvent;
 
@@ -31,13 +36,12 @@ import us.mn.state.health.lims.common.log.LogEvent;
  * Diane Benz Oct 29, 2005
  * 
  */
-public class ResourceLocator implements MessageSourceAware {
+public class ResourceLocator {
 	private static ResourceLocator me; // Holder for Singleton
 
 	// Holds the ApplicationResources.properties information
 	private MessageResources messageResources = null;
 	
-	private MessageSource messageSource;
 
 	// Name of file that contains resource mappings. This class loads this into
 	// the propertyFilePairs object
@@ -146,6 +150,7 @@ public class ResourceLocator implements MessageSourceAware {
 
 	/*
 	 */
+	@Deprecated
 	private void initializeMessageResources() {
 		MessageResourcesConfig config = new MessageResourcesConfig();
 		config.setParameter(propertyFilePairs
@@ -164,6 +169,7 @@ public class ResourceLocator implements MessageSourceAware {
 	 * 
 	 * @return MessageResources
 	 */
+	@Deprecated //use MessageUtils for interacting with message resources
 	public MessageResources getMessageResources() {
 		return messageResources;
 	}
@@ -175,13 +181,5 @@ public class ResourceLocator implements MessageSourceAware {
 	 */
 	public String getFilePath(String fileName) {
 		return this.getClass().getResource(fileName).getPath();
-	}
-
-	@Override
-	public void setMessageSource(MessageSource messageSource) {
-		this.messageSource = messageSource;
-	}
-	public MessageSource getMessageSource() {
-		return messageSource;
 	}
 }

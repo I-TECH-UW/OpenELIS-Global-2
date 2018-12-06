@@ -541,7 +541,7 @@ public class TestDAOImpl extends BaseDAOImpl implements TestDAO{
             return t;
 
         }catch(Exception e){
-            LogEvent.logError("TestDAOImpl", "getTestByName()", e.toString());
+            LogEvent.logError("TestDAOImpl", "getTestByName() " + testName, e.toString());
             throw new LIMSRuntimeException("Error in Test getTestByName()", e);
         }
     }

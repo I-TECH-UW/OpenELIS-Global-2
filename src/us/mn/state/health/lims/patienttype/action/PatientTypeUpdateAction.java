@@ -17,6 +17,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.action.BaseActionForm;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -97,9 +98,10 @@ public class PatientTypeUpdateAction extends BaseAction {
 			} else {
 				if (lre.getException() instanceof LIMSDuplicateRecordException) {
 					String messageKey = "patienttype.description";
-					String msg = ResourceLocator.getInstance()
-							.getMessageResources().getMessage(locale,
-									messageKey);
+					String msg = MessageUtil.getMessage(messageKey);
+							//ResourceLocator.getInstance()
+							//.getMessageResources().getMessage(locale,
+							//		messageKey);
 					error = new ActionError("errors.DuplicateRecord", msg, null);
 
 				} else {

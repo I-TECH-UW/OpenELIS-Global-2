@@ -35,7 +35,7 @@ function /*void*/ setLanguage( language ){
 	//this weirdness is because we want the language to which we are changing, not the one we are in
 	if( language == 'en_US'){
 	    update = confirm("Changing the language will affect all logged in users ");
-	} else if( language == 'fr-FR' ){
+	} else if( language == 'fr_FR' ){
 		update = confirm( "Modification de la langue affectera tous les utilisateurs enregistrés");
 	}
 	
@@ -123,6 +123,6 @@ function displayHelp(){
 
 
 <% if( languageSwitch && "loginForm".equals((String)request.getAttribute(IActionConstants.FORM_NAME)) ){ %>
-  <div id="language-chooser"><a href="#" onclick="setLanguage('fr-FR')">Français</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setLanguage('en_US')">English</a></div>
+  <div id="language-chooser"><a href="#" onclick="setLanguage('fr_FR')">Français</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setLanguage('en_US')">English</a></div>
 <% } %>
 

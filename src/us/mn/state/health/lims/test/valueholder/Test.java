@@ -150,7 +150,8 @@ public class Test extends EnumValueItemImpl {
 
 	public void setActiveBeginDate(Date activeBeginDate) {
 		this.activeBeginDate = activeBeginDate;
-		this.activeBeginDateForDisplay = DateUtil.convertSqlDateToStringDate(activeBeginDate);
+		if (activeBeginDate != null)
+			this.activeBeginDateForDisplay = DateUtil.convertSqlDateToStringDate(activeBeginDate);
 	}
 
 	public String getActiveBeginDateForDisplay() {
@@ -172,7 +173,8 @@ public class Test extends EnumValueItemImpl {
 
 	public void setActiveEndDate(Date activeEndDate) {
 		this.activeEndDate = activeEndDate;
-		this.activeEndDateForDisplay = DateUtil.convertSqlDateToStringDate(	activeEndDate);
+		if (activeEndDate != null)
+			this.activeEndDateForDisplay = DateUtil.convertSqlDateToStringDate(	activeEndDate);
 	}
 
 	public String getActiveEndDateForDisplay() {

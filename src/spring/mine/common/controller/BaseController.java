@@ -5,10 +5,13 @@ import java.util.HashSet;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.Globals;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.security.PageIdentityUtil;
@@ -21,8 +24,11 @@ import us.mn.state.health.lims.login.dao.UserModuleDAO;
 import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
 
+@Component
 public abstract class BaseController implements IActionConstants {
-
+	
+	@Autowired
+	MessageUtil messageUtil;
 	private static final boolean USE_PARAMETERS = true;
 
 	protected String currentUserId;
@@ -115,7 +121,8 @@ public abstract class BaseController implements IActionConstants {
 		java.util.Locale locale = (java.util.Locale) request.getSession()
 				.getAttribute("org.apache.struts.action.LOCALE");
 		// Return the message for the user's locale.
-		return ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey);
+		return MessageUtil.getMessage(messageKey);
+		//return ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey);
 	}
 
 	protected String getMessageForKey(HttpServletRequest request, String messageKey, String arg0) throws Exception {
@@ -124,7 +131,8 @@ public abstract class BaseController implements IActionConstants {
 		java.util.Locale locale = (java.util.Locale) request.getSession()
 				.getAttribute("org.apache.struts.action.LOCALE");
 		// Return the message for the user's locale.
-		return ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey, arg0);
+		return MessageUtil.getMessage(messageKey);
+		//return ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey, arg0);
 	}
 
 	protected void setFormAttributes(BaseForm form, HttpServletRequest request) {

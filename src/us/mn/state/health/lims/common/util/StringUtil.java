@@ -25,7 +25,10 @@ import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
@@ -305,12 +308,14 @@ public class StringUtil {
 		return list;
 	}
 
+	//TO DO: Caleb remove these functions and directly call MessageUtils
 	public static String getMessageForKey(String messageKey) {
 		if (null == messageKey) {
 			return null;
 		}
 		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
-		return ResourceLocator.getInstance().getMessageResources().getMessage(new Locale(locale), messageKey);
+		return MessageUtil.getMessage(messageKey);
+		//return ResourceLocator.getInstance().getMessageResources().getMessage(new Locale(locale), messageKey);
 	}
 
     public static String getMessageForKeyAndLocale(String messageKey, Locale locale) {
@@ -318,7 +323,8 @@ public class StringUtil {
             return null;
         }
 
-        return ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey);
+        return MessageUtil.getMessage(messageKey, locale);
+		//return ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey);
     }
 
     public static String getMessageForKeyAndLocale(String messageKey, String arg0, String arg1, Locale locale) {
@@ -326,7 +332,8 @@ public class StringUtil {
             return null;
         }
 
-        return ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey, arg0, arg1);
+        return MessageUtil.getMessage(messageKey, new String[] {arg0, arg1}, locale);
+        //return ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey, arg0, arg1);
     }
 
 	public static String getMessageForKey(String messageKey, String arg) {
@@ -336,7 +343,8 @@ public class StringUtil {
 
 		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
 
-		return ResourceLocator.getInstance().getMessageResources().getMessage(new Locale(locale), messageKey, arg);
+		return MessageUtil.getMessage(messageKey, new String[] {arg});
+		//return ResourceLocator.getInstance().getMessageResources().getMessage(new Locale(locale), messageKey, arg);
 	}
 
 	public static String getMessageForKey(String messageKey, String arg0, String arg1) {
@@ -346,7 +354,8 @@ public class StringUtil {
 
 		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
 
-		return ResourceLocator.getInstance().getMessageResources().getMessage(new Locale(locale), messageKey, arg0, arg1);
+		return MessageUtil.getMessage(messageKey, new String[] {arg0, arg1});
+		//return ResourceLocator.getInstance().getMessageResources().getMessage(new Locale(locale), messageKey, arg0, arg1);
 	}
 	
 	public static String getContextualMessageForKey(String messageKey) {

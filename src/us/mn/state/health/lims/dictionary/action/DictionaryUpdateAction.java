@@ -28,6 +28,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.action.BaseActionForm;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -206,15 +207,17 @@ public class DictionaryUpdateAction extends BaseAction {
 				//bugzilla 1386
 				if (lre.getException() instanceof LIMSDuplicateRecordException) {
 					String messageKey = "dictionary.dictEntryByCategory";
-					String msg =  ResourceLocator.getInstance().getMessageResources().getMessage(
-							locale, messageKey);
+					String msg =  MessageUtil.getMessage(messageKey);
+							//ResourceLocator.getInstance().getMessageResources().getMessage(
+							//locale, messageKey);
 					error = new ActionError("errors.DuplicateRecord.activate", msg,
 							null);
 
 				} else if (lre.getException() instanceof LIMSFrozenRecordException){
 					String messageKey = "dictionary.dictEntry";
-					String msg =  ResourceLocator.getInstance().getMessageResources().getMessage(
-							locale, messageKey);
+					String msg = MessageUtil.getMessage(messageKey); 
+							//ResourceLocator.getInstance().getMessageResources().getMessage(
+							//locale, messageKey);
 					error = new ActionError("errors.FrozenRecord", msg,
 							null);
 					//Now disallow further edits RECORD_FROZEN_EDIT_DISABLED_KEY
