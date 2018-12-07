@@ -3,6 +3,7 @@ package spring.generated.dataexchange.aggregatereporting.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class UpdateTestUsageConfigurationController extends BaseController {
       value = "/UpdateTestUsageConfiguration",
       method = RequestMethod.GET
   )
-  public ModelAndView showUpdateTestUsageConfiguration(HttpServletRequest request) {
+  public ModelAndView showUpdateTestUsageConfiguration(HttpServletRequest request,
+      @ModelAttribute("form") TestUsageConfigurationForm form) {
     String forward = FWD_SUCCESS;
-    TestUsageConfigurationForm form = new TestUsageConfigurationForm();
+    if (form == null) {
+    	form = new TestUsageConfigurationForm();
+    }
     form.setFormName("TestUsageConfigurationForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

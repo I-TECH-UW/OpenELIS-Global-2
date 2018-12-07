@@ -3,6 +3,7 @@ package spring.generated.testconfiguration.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class TestCatalogController extends BaseController {
       value = "/TestCatalog",
       method = RequestMethod.GET
   )
-  public ModelAndView showTestCatalog(HttpServletRequest request) {
+  public ModelAndView showTestCatalog(HttpServletRequest request,
+      @ModelAttribute("form") TestCatalogForm form) {
     String forward = FWD_SUCCESS;
-    TestCatalogForm form = new TestCatalogForm();
+    if (form == null) {
+    	form = new TestCatalogForm();
+    }
     form.setFormName("testCatalogForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

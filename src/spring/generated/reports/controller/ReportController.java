@@ -3,6 +3,7 @@ package spring.generated.reports.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class ReportController extends BaseController {
       value = "/Report",
       method = RequestMethod.GET
   )
-  public ModelAndView showReport(HttpServletRequest request) {
+  public ModelAndView showReport(HttpServletRequest request,
+      @ModelAttribute("form") ReportForm form) {
     String forward = FWD_SUCCESS;
-    ReportForm form = new ReportForm();
+    if (form == null) {
+    	form = new ReportForm();
+    }
     form.setFormName("ReportForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

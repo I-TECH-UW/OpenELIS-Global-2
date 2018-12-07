@@ -3,6 +3,7 @@ package spring.generated.systemuser.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class UnifiedSystemUserMenuController extends BaseController {
       value = "/UnifiedSystemUserMenu",
       method = RequestMethod.GET
   )
-  public ModelAndView showUnifiedSystemUserMenu(HttpServletRequest request) {
+  public ModelAndView showUnifiedSystemUserMenu(HttpServletRequest request,
+      @ModelAttribute("form") UnifiedSystemUserMenuForm form) {
     String forward = FWD_SUCCESS;
-    UnifiedSystemUserMenuForm form = new UnifiedSystemUserMenuForm();
+    if (form == null) {
+    	form = new UnifiedSystemUserMenuForm();
+    }
     form.setFormName("unifiedSystemUserMenuForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

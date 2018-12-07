@@ -63,12 +63,12 @@ myActionForm = document.forms["<%= (String)request.getAttribute(IActionConstants
 <center><h1>
 <c:if test="${!empty form.errors}">
 	<c:forEach items="${form.errors}" var="error">
-		<spring:message code="${error.defaultMessage}" text="${error.defaultMessage}" /><br>
+		<spring:message code="${error.code}" text="${error.defaultMessage}" /><br>
 	</c:forEach>
 </c:if>
 <c:if test="${!empty errors}">
 	<c:forEach items="${errors}" var="error">
-		<spring:message code="${error.defaultMessage}" text="${error.defaultMessage}" /><br>
+		<spring:message code="${error.code}" text="${error.defaultMessage}" /><br>
 	</c:forEach>
 </c:if>
 </h1></center>

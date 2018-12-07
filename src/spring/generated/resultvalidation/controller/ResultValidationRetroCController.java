@@ -3,6 +3,7 @@ package spring.generated.resultvalidation.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class ResultValidationRetroCController extends BaseController {
       value = "/ResultValidationRetroC",
       method = RequestMethod.GET
   )
-  public ModelAndView showResultValidationRetroC(HttpServletRequest request) {
+  public ModelAndView showResultValidationRetroC(HttpServletRequest request,
+      @ModelAttribute("form") ResultValidationForm form) {
     String forward = FWD_SUCCESS;
-    ResultValidationForm form = new ResultValidationForm();
+    if (form == null) {
+    	form = new ResultValidationForm();
+    }
     form.setFormName("ResultValidationForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

@@ -3,6 +3,7 @@ package spring.generated.testconfiguration.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class SampleTypeRenameUpdateController extends BaseController {
       value = "/SampleTypeRenameUpdate",
       method = RequestMethod.GET
   )
-  public ModelAndView showSampleTypeRenameUpdate(HttpServletRequest request) {
+  public ModelAndView showSampleTypeRenameUpdate(HttpServletRequest request,
+      @ModelAttribute("form") SampleTypeRenameEntryForm form) {
     String forward = FWD_SUCCESS;
-    SampleTypeRenameEntryForm form = new SampleTypeRenameEntryForm();
+    if (form == null) {
+    	form = new SampleTypeRenameEntryForm();
+    }
     form.setFormName("sampleTypeRenameEntryForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

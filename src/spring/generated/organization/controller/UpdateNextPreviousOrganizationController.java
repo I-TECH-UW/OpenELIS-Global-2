@@ -3,6 +3,7 @@ package spring.generated.organization.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class UpdateNextPreviousOrganizationController extends BaseController {
       value = "/UpdateNextPreviousOrganization",
       method = RequestMethod.GET
   )
-  public ModelAndView showUpdateNextPreviousOrganization(HttpServletRequest request) {
+  public ModelAndView showUpdateNextPreviousOrganization(HttpServletRequest request,
+      @ModelAttribute("form") OrganizationForm form) {
     String forward = FWD_SUCCESS;
-    OrganizationForm form = new OrganizationForm();
+    if (form == null) {
+    	form = new OrganizationForm();
+    }
     form.setFormName("organizationForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

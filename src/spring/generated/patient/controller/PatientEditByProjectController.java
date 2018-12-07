@@ -3,6 +3,7 @@ package spring.generated.patient.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class PatientEditByProjectController extends BaseController {
       value = "/PatientEditByProject",
       method = RequestMethod.GET
   )
-  public ModelAndView showPatientEditByProject(HttpServletRequest request) {
+  public ModelAndView showPatientEditByProject(HttpServletRequest request,
+      @ModelAttribute("form") PatientEditByProjectForm form) {
     String forward = FWD_SUCCESS;
-    PatientEditByProjectForm form = new PatientEditByProjectForm();
+    if (form == null) {
+    	form = new PatientEditByProjectForm();
+    }
     form.setFormName("PatientEditByProjectForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

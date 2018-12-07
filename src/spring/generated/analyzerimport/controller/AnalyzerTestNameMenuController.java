@@ -3,6 +3,7 @@ package spring.generated.analyzerimport.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class AnalyzerTestNameMenuController extends BaseController {
       value = "/AnalyzerTestNameMenu",
       method = RequestMethod.GET
   )
-  public ModelAndView showAnalyzerTestNameMenu(HttpServletRequest request) {
+  public ModelAndView showAnalyzerTestNameMenu(HttpServletRequest request,
+      @ModelAttribute("form") AnalyzerTestNameMenuForm form) {
     String forward = FWD_SUCCESS;
-    AnalyzerTestNameMenuForm form = new AnalyzerTestNameMenuForm();
+    if (form == null) {
+    	form = new AnalyzerTestNameMenuForm();
+    }
     form.setFormName("analyzerTestNameMenuForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

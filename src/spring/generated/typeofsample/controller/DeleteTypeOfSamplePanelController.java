@@ -3,6 +3,7 @@ package spring.generated.typeofsample.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class DeleteTypeOfSamplePanelController extends BaseController {
       value = "/DeleteTypeOfSamplePanel",
       method = RequestMethod.GET
   )
-  public ModelAndView showDeleteTypeOfSamplePanel(HttpServletRequest request) {
+  public ModelAndView showDeleteTypeOfSamplePanel(HttpServletRequest request,
+      @ModelAttribute("form") TypeOfSamplePanelMenuForm form) {
     String forward = FWD_SUCCESS;
-    TypeOfSamplePanelMenuForm form = new TypeOfSamplePanelMenuForm();
+    if (form == null) {
+    	form = new TypeOfSamplePanelMenuForm();
+    }
     form.setFormName("typeOfSamplePanelMenuForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

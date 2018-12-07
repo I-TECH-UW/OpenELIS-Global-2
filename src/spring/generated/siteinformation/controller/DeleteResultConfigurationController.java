@@ -3,6 +3,7 @@ package spring.generated.siteinformation.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class DeleteResultConfigurationController extends BaseController {
       value = "/DeleteResultConfiguration",
       method = RequestMethod.GET
   )
-  public ModelAndView showDeleteResultConfiguration(HttpServletRequest request) {
+  public ModelAndView showDeleteResultConfiguration(HttpServletRequest request,
+      @ModelAttribute("form") ResultConfigurationMenuForm form) {
     String forward = FWD_SUCCESS;
-    ResultConfigurationMenuForm form = new ResultConfigurationMenuForm();
+    if (form == null) {
+    	form = new ResultConfigurationMenuForm();
+    }
     form.setFormName("resultConfigurationMenuForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

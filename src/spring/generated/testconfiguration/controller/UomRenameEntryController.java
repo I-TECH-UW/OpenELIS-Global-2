@@ -3,6 +3,7 @@ package spring.generated.testconfiguration.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class UomRenameEntryController extends BaseController {
       value = "/UomRenameEntry",
       method = RequestMethod.GET
   )
-  public ModelAndView showUomRenameEntry(HttpServletRequest request) {
+  public ModelAndView showUomRenameEntry(HttpServletRequest request,
+      @ModelAttribute("form") UnitOfMeasureRenameEntryForm form) {
     String forward = FWD_SUCCESS;
-    UnitOfMeasureRenameEntryForm form = new UnitOfMeasureRenameEntryForm();
+    if (form == null) {
+    	form = new UnitOfMeasureRenameEntryForm();
+    }
     form.setFormName("unitOfMeasureRenameEntryForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

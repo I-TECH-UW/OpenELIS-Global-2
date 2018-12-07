@@ -3,6 +3,7 @@ package spring.generated.inventory.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class ManageInventoryUpdateController extends BaseController {
       value = "/ManageInventoryUpdate",
       method = RequestMethod.GET
   )
-  public ModelAndView showManageInventoryUpdate(HttpServletRequest request) {
+  public ModelAndView showManageInventoryUpdate(HttpServletRequest request,
+      @ModelAttribute("form") InventoryForm form) {
     String forward = FWD_SUCCESS;
-    InventoryForm form = new InventoryForm();
+    if (form == null) {
+    	form = new InventoryForm();
+    }
     form.setFormName("InventoryForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

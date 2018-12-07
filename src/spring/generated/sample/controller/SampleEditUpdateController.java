@@ -3,6 +3,7 @@ package spring.generated.sample.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class SampleEditUpdateController extends BaseController {
       value = "/SampleEditUpdate",
       method = RequestMethod.GET
   )
-  public ModelAndView showSampleEditUpdate(HttpServletRequest request) {
+  public ModelAndView showSampleEditUpdate(HttpServletRequest request,
+      @ModelAttribute("form") SampleEditForm form) {
     String forward = FWD_SUCCESS;
-    SampleEditForm form = new SampleEditForm();
+    if (form == null) {
+    	form = new SampleEditForm();
+    }
     form.setFormName("SampleEditForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

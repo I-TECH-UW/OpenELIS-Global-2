@@ -3,6 +3,7 @@ package spring.generated.menu.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class HomePageController extends BaseController {
       value = "/HomePage",
       method = RequestMethod.GET
   )
-  public ModelAndView showHomePage(HttpServletRequest request) {
+  public ModelAndView showHomePage(HttpServletRequest request,
+      @ModelAttribute("form") MainForm form) {
     String forward = FWD_SUCCESS;
-    MainForm form = new MainForm();
+    if (form == null) {
+    	form = new MainForm();
+    }
     form.setFormName("mainForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

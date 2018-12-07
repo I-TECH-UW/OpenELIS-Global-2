@@ -3,6 +3,7 @@ package spring.generated.siteinformation.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class NextPreviousMenuStatementConfigController extends BaseController {
       value = "/NextPreviousMenuStatementConfig",
       method = RequestMethod.GET
   )
-  public ModelAndView showNextPreviousMenuStatementConfig(HttpServletRequest request) {
+  public ModelAndView showNextPreviousMenuStatementConfig(HttpServletRequest request,
+      @ModelAttribute("form") MenuStatementConfigForm form) {
     String forward = FWD_SUCCESS;
-    MenuStatementConfigForm form = new MenuStatementConfigForm();
+    if (form == null) {
+    	form = new MenuStatementConfigForm();
+    }
     form.setFormName("MenuStatementConfigForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

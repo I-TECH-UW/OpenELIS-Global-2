@@ -3,6 +3,7 @@ package spring.generated.datasubmission.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class DataSubmissionSaveController extends BaseController {
       value = "/DataSubmissionSave",
       method = RequestMethod.GET
   )
-  public ModelAndView showDataSubmissionSave(HttpServletRequest request) {
+  public ModelAndView showDataSubmissionSave(HttpServletRequest request,
+      @ModelAttribute("form") DataSubmissionForm form) {
     String forward = FWD_SUCCESS;
-    DataSubmissionForm form = new DataSubmissionForm();
+    if (form == null) {
+    	form = new DataSubmissionForm();
+    }
     form.setFormName("DataSubmissionForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

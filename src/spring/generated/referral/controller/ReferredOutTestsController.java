@@ -3,6 +3,7 @@ package spring.generated.referral.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class ReferredOutTestsController extends BaseController {
       value = "/ReferredOutTests",
       method = RequestMethod.GET
   )
-  public ModelAndView showReferredOutTests(HttpServletRequest request) {
+  public ModelAndView showReferredOutTests(HttpServletRequest request,
+      @ModelAttribute("form") ReferredOutTestsForm form) {
     String forward = FWD_SUCCESS;
-    ReferredOutTestsForm form = new ReferredOutTestsForm();
+    if (form == null) {
+    	form = new ReferredOutTestsForm();
+    }
     form.setFormName("referredOutTestsForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

@@ -2,10 +2,10 @@
 	contentType="text/html; charset=utf-8"
 %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %> 
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <table width="100%">
 <tr>
@@ -18,12 +18,12 @@
                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
             <td colspan="2" align="left">
-                <html:button onclick="setAction(window.document.forms[0], 'Update', 'yes', '');"  property="save" >
-  		            <bean:message key="label.button.submit"/>
-                </html:button>
-                <html:button onclick="setAction(window.document.forms[0], 'Exit', 'no', '');"  property="cancel" >
-  		            <bean:message key="label.button.exit"/>
-                </html:button>
+                <button type="submit" form='form' value="submit" >
+  		            <spring:message code="label.button.submit"/>
+                </button>
+                <a href="LoginPage.do">
+  		            <spring:message code="label.button.exit"/>
+                </a>
             </td> 
         </tr>
         </table>

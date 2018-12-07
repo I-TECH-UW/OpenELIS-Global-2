@@ -3,6 +3,7 @@ package spring.generated.sample.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class SampleConfirmationEntryController extends BaseController {
       value = "/SampleConfirmationEntry",
       method = RequestMethod.GET
   )
-  public ModelAndView showSampleConfirmationEntry(HttpServletRequest request) {
+  public ModelAndView showSampleConfirmationEntry(HttpServletRequest request,
+      @ModelAttribute("form") SampleConfirmationEntryForm form) {
     String forward = FWD_SUCCESS;
-    SampleConfirmationEntryForm form = new SampleConfirmationEntryForm();
+    if (form == null) {
+    	form = new SampleConfirmationEntryForm();
+    }
     form.setFormName("SampleConfirmationEntryForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

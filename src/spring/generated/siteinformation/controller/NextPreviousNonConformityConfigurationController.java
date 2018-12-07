@@ -3,6 +3,7 @@ package spring.generated.siteinformation.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class NextPreviousNonConformityConfigurationController extends BaseContro
       value = "/NextPreviousNonConformityConfiguration",
       method = RequestMethod.GET
   )
-  public ModelAndView showNextPreviousNonConformityConfiguration(HttpServletRequest request) {
+  public ModelAndView showNextPreviousNonConformityConfiguration(HttpServletRequest request,
+      @ModelAttribute("form") NonConformityConfigurationForm form) {
     String forward = FWD_SUCCESS;
-    NonConformityConfigurationForm form = new NonConformityConfigurationForm();
+    if (form == null) {
+    	form = new NonConformityConfigurationForm();
+    }
     form.setFormName("NonConformityConfigurationForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

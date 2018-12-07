@@ -3,6 +3,7 @@ package spring.generated.samplebatchentry.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class SampleBatchEntrySetupController extends BaseController {
       value = "/SampleBatchEntrySetup",
       method = RequestMethod.GET
   )
-  public ModelAndView showSampleBatchEntrySetup(HttpServletRequest request) {
+  public ModelAndView showSampleBatchEntrySetup(HttpServletRequest request,
+      @ModelAttribute("form") SampleBatchEntryForm form) {
     String forward = FWD_SUCCESS;
-    SampleBatchEntryForm form = new SampleBatchEntryForm();
+    if (form == null) {
+    	form = new SampleBatchEntryForm();
+    }
     form.setFormName("sampleBatchEntryForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

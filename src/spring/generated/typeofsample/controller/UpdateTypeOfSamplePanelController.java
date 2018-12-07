@@ -3,6 +3,7 @@ package spring.generated.typeofsample.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class UpdateTypeOfSamplePanelController extends BaseController {
       value = "/UpdateTypeOfSamplePanel",
       method = RequestMethod.GET
   )
-  public ModelAndView showUpdateTypeOfSamplePanel(HttpServletRequest request) {
+  public ModelAndView showUpdateTypeOfSamplePanel(HttpServletRequest request,
+      @ModelAttribute("form") TypeOfSamplePanelForm form) {
     String forward = FWD_SUCCESS;
-    TypeOfSamplePanelForm form = new TypeOfSamplePanelForm();
+    if (form == null) {
+    	form = new TypeOfSamplePanelForm();
+    }
     form.setFormName("typeOfSamplePanelForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

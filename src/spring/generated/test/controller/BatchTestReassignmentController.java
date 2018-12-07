@@ -3,6 +3,7 @@ package spring.generated.test.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class BatchTestReassignmentController extends BaseController {
       value = "/BatchTestReassignment",
       method = RequestMethod.GET
   )
-  public ModelAndView showBatchTestReassignment(HttpServletRequest request) {
+  public ModelAndView showBatchTestReassignment(HttpServletRequest request,
+      @ModelAttribute("form") BatchTestReassignment form) {
     String forward = FWD_SUCCESS;
-    BatchTestReassignment form = new BatchTestReassignment();
+    if (form == null) {
+    	form = new BatchTestReassignment();
+    }
     form.setFormName("BatchTestReassignment");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

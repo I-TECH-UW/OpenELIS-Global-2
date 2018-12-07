@@ -3,6 +3,7 @@ package spring.generated.testconfiguration.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class SampleTypeTestAssignUpdateController extends BaseController {
       value = "/SampleTypeTestAssignUpdate",
       method = RequestMethod.GET
   )
-  public ModelAndView showSampleTypeTestAssignUpdate(HttpServletRequest request) {
+  public ModelAndView showSampleTypeTestAssignUpdate(HttpServletRequest request,
+      @ModelAttribute("form") SampleTypeTestAssignForm form) {
     String forward = FWD_SUCCESS;
-    SampleTypeTestAssignForm form = new SampleTypeTestAssignForm();
+    if (form == null) {
+    	form = new SampleTypeTestAssignForm();
+    }
     form.setFormName("sampleTypeTestAssignForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

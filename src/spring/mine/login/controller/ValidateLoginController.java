@@ -44,10 +44,9 @@ public class ValidateLoginController extends BaseController {
 	static int WARNING_THRESHOLD = 3;
 
 	@RequestMapping(value = "/ValidateLogin", method = RequestMethod.POST)
-	public ModelAndView validateLogin(@Valid @ModelAttribute("form") LoginForm form, BindingResult result, ModelMap model,
-			HttpServletRequest request) {
+	public ModelAndView validateLogin(@Valid @ModelAttribute("form") LoginForm form, BindingResult result,
+			ModelMap model, HttpServletRequest request) {
 		String forward = FWD_SUCCESS;
-		BaseErrors errors = new BaseErrors();
 
 		Login login = new Login();
 		login.setLoginName(form.getLoginName().trim());
@@ -171,7 +170,8 @@ public class ValidateLoginController extends BaseController {
 
 		}
 		if (result.hasErrors()) {
-			model.addAttribute("errors", result.getAllErrors());
+			//model.addAttribute("errors", result.getAllErrors());
+			saveErrors(result, form);
 			forward = FWD_FAIL;
 		}
 
@@ -180,7 +180,7 @@ public class ValidateLoginController extends BaseController {
 
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("success".equals(forward)) {
-			return new ModelAndView("homePageDefinition", "form", form);
+			return new ModelAndView("redirect:/Dashboard.do", "form", form);
 		} else if ("fail".equals(forward)) {
 			return new ModelAndView("loginPageDefinition", "form", form);
 		} else {
@@ -194,16 +194,6 @@ public class ValidateLoginController extends BaseController {
 
 	protected String getPageSubtitleKey() {
 		return null;
-	}
-
-	/**
-	 * Cleanup all the session variables
-	 * 
-	 * @param request is HttpServletRequest
-	 */
-	private void cleanUpSession(HttpServletRequest request) {
-		if (request.getSession().getAttribute(USER_SESSION_DATA) != null)
-			request.getSession().removeAttribute(USER_SESSION_DATA);
 	}
 
 	/**

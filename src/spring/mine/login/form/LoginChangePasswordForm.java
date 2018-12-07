@@ -1,10 +1,10 @@
-package spring.generated.forms;
+package spring.mine.login.form;
 
 import java.lang.String;
 import java.sql.Timestamp;
 import spring.mine.common.form.BaseForm;
 
-public class LoginValidateForm extends BaseForm {
+public class LoginChangePasswordForm extends BaseForm {
   private String loginName = "";
 
   private String password = "";
@@ -12,6 +12,12 @@ public class LoginValidateForm extends BaseForm {
   private String newPassword = "";
 
   private String confirmPassword = "";
+
+  private Timestamp passwordExpiredDate;
+
+  private String accountLock = "";
+
+  private String accountDisabled = "";
 
   private Timestamp lastupdated;
 
@@ -45,6 +51,30 @@ public class LoginValidateForm extends BaseForm {
 
   public void setConfirmPassword(String confirmPassword) {
     this.confirmPassword = confirmPassword;
+  }
+
+  public Timestamp getPasswordExpiredDate() {
+    return this.passwordExpiredDate;
+  }
+
+  public void setPasswordExpiredDate(Timestamp passwordExpiredDate) {
+    this.passwordExpiredDate = passwordExpiredDate;
+  }
+
+  public String getAccountLock() {
+    return this.accountLock;
+  }
+
+  public void setAccountLock(String accountLock) {
+    this.accountLock = accountLock;
+  }
+
+  public String getAccountDisabled() {
+    return this.accountDisabled;
+  }
+
+  public void setAccountDisabled(String accountDisabled) {
+    this.accountDisabled = accountDisabled;
   }
 
   public Timestamp getLastupdated() {

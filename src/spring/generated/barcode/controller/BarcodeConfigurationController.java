@@ -3,6 +3,7 @@ package spring.generated.barcode.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class BarcodeConfigurationController extends BaseController {
       value = "/BarcodeConfiguration",
       method = RequestMethod.GET
   )
-  public ModelAndView showBarcodeConfiguration(HttpServletRequest request) {
+  public ModelAndView showBarcodeConfiguration(HttpServletRequest request,
+      @ModelAttribute("form") BarcodeConfigurationForm form) {
     String forward = FWD_SUCCESS;
-    BarcodeConfigurationForm form = new BarcodeConfigurationForm();
+    if (form == null) {
+    	form = new BarcodeConfigurationForm();
+    }
     form.setFormName("BarcodeConfigurationForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

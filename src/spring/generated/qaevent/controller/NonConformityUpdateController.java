@@ -3,6 +3,7 @@ package spring.generated.qaevent.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class NonConformityUpdateController extends BaseController {
       value = "/NonConformityUpdate",
       method = RequestMethod.GET
   )
-  public ModelAndView showNonConformityUpdate(HttpServletRequest request) {
+  public ModelAndView showNonConformityUpdate(HttpServletRequest request,
+      @ModelAttribute("form") NonConformityForm form) {
     String forward = FWD_SUCCESS;
-    NonConformityForm form = new NonConformityForm();
+    if (form == null) {
+    	form = new NonConformityForm();
+    }
     form.setFormName("NonConformityForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

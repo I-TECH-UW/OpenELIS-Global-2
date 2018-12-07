@@ -3,6 +3,7 @@ package spring.generated.siteinformation.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class UpdateNextPreviousSampleEntryConfigController extends BaseControlle
       value = "/UpdateNextPreviousSampleEntryConfig",
       method = RequestMethod.GET
   )
-  public ModelAndView showUpdateNextPreviousSampleEntryConfig(HttpServletRequest request) {
+  public ModelAndView showUpdateNextPreviousSampleEntryConfig(HttpServletRequest request,
+      @ModelAttribute("form") SampleEntryConfigForm form) {
     String forward = FWD_SUCCESS;
-    SampleEntryConfigForm form = new SampleEntryConfigForm();
+    if (form == null) {
+    	form = new SampleEntryConfigForm();
+    }
     form.setFormName("sampleEntryConfigForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

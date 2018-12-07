@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,11 +22,13 @@ import us.mn.state.health.lims.common.util.resources.ResourceLocator;
 public class LoginPageController extends BaseController {
 
 	@RequestMapping(value = "/LoginPage", method = RequestMethod.GET)
-	public ModelAndView showLoginPage(HttpServletRequest request) {
+	public ModelAndView showLoginPage(@ModelAttribute("form") LoginForm form, HttpServletRequest request) {
 		String forward = FWD_SUCCESS;
-		LoginForm form = new LoginForm();
+		if (form == null) {
+			form = new LoginForm();
+		}
 		form.setFormName("loginForm");
-		form.setFormAction("ValidateLogin.html");
+		form.setFormAction("ValidateLogin.do");
 		BaseErrors errors = new BaseErrors();
 		cleanUpSession(request);
 
@@ -52,11 +55,11 @@ public class LoginPageController extends BaseController {
 	}
 
 	protected String getPageTitleKey() {
-		return null;
+		return "login.title";
 	}
 
 	protected String getPageSubtitleKey() {
-		return null;
+		return "login.subTitle";
 	}
 
 	/**

@@ -3,6 +3,7 @@ package spring.generated.dataexchange.resultreporting.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class ResultReportingConfigurationController extends BaseController {
       value = "/ResultReportingConfiguration",
       method = RequestMethod.GET
   )
-  public ModelAndView showResultReportingConfiguration(HttpServletRequest request) {
+  public ModelAndView showResultReportingConfiguration(HttpServletRequest request,
+      @ModelAttribute("form") ResultReportingConfigurationForm form) {
     String forward = FWD_SUCCESS;
-    ResultReportingConfigurationForm form = new ResultReportingConfigurationForm();
+    if (form == null) {
+    	form = new ResultReportingConfigurationForm();
+    }
     form.setFormName("ResultReportingConfigurationForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

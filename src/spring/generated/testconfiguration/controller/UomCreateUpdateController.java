@@ -3,6 +3,7 @@ package spring.generated.testconfiguration.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class UomCreateUpdateController extends BaseController {
       value = "/UomCreateUpdate",
       method = RequestMethod.GET
   )
-  public ModelAndView showUomCreateUpdate(HttpServletRequest request) {
+  public ModelAndView showUomCreateUpdate(HttpServletRequest request,
+      @ModelAttribute("form") UomCreateForm form) {
     String forward = FWD_SUCCESS;
-    UomCreateForm form = new UomCreateForm();
+    if (form == null) {
+    	form = new UomCreateForm();
+    }
     form.setFormName("uomCreateForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

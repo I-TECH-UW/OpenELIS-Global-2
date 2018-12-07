@@ -3,6 +3,7 @@ package spring.generated.role.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class UpdateRoleController extends BaseController {
       value = "/UpdateRole",
       method = RequestMethod.GET
   )
-  public ModelAndView showUpdateRole(HttpServletRequest request) {
+  public ModelAndView showUpdateRole(HttpServletRequest request,
+      @ModelAttribute("form") RoleForm form) {
     String forward = FWD_SUCCESS;
-    RoleForm form = new RoleForm();
+    if (form == null) {
+    	form = new RoleForm();
+    }
     form.setFormName("roleForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

@@ -8,6 +8,7 @@ import org.apache.struts.Globals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.form.BaseForm;
@@ -264,7 +265,7 @@ public abstract class BaseController implements IActionConstants {
 
 	protected ModelAndView findForward(String forward, BaseForm form) {
 		if (LOGIN_PAGE.equals(forward)) {
-			return new ModelAndView("redirect:LoginPage.html", "errors", form.getErrors());
+			return new ModelAndView("redirect:LoginPage.do", "errors", form.getErrors());
 		}
 
 		// insert global forwards here
@@ -272,6 +273,9 @@ public abstract class BaseController implements IActionConstants {
 	}
 
 	protected void saveErrors(Errors errors, BaseForm form) {
+		for (ObjectError errorMessage : errors.getAllErrors()) {
+			System.out.println(errorMessage.getDefaultMessage());
+		}
 		form.setErrors(errors.getAllErrors());
 	}
 

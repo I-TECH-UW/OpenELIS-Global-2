@@ -3,6 +3,7 @@ package spring.generated.testconfiguration.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class PanelCreateUpdateController extends BaseController {
       value = "/PanelCreateUpdate",
       method = RequestMethod.GET
   )
-  public ModelAndView showPanelCreateUpdate(HttpServletRequest request) {
+  public ModelAndView showPanelCreateUpdate(HttpServletRequest request,
+      @ModelAttribute("form") PanelCreateForm form) {
     String forward = FWD_SUCCESS;
-    PanelCreateForm form = new PanelCreateForm();
+    if (form == null) {
+    	form = new PanelCreateForm();
+    }
     form.setFormName("panelCreateForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

@@ -3,6 +3,7 @@ package spring.generated.organization.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class CancelOrganizationController extends BaseController {
       value = "/CancelOrganization",
       method = RequestMethod.GET
   )
-  public ModelAndView showCancelOrganization(HttpServletRequest request) {
+  public ModelAndView showCancelOrganization(HttpServletRequest request,
+      @ModelAttribute("form") OrganizationMenuForm form) {
     String forward = FWD_SUCCESS;
-    OrganizationMenuForm form = new OrganizationMenuForm();
+    if (form == null) {
+    	form = new OrganizationMenuForm();
+    }
     form.setFormName("organizationMenuForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

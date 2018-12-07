@@ -3,6 +3,7 @@ package spring.generated.testconfiguration.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class PanelOrderController extends BaseController {
       value = "/PanelOrder",
       method = RequestMethod.GET
   )
-  public ModelAndView showPanelOrder(HttpServletRequest request) {
+  public ModelAndView showPanelOrder(HttpServletRequest request,
+      @ModelAttribute("form") PanelOrderForm form) {
     String forward = FWD_SUCCESS;
-    PanelOrderForm form = new PanelOrderForm();
+    if (form == null) {
+    	form = new PanelOrderForm();
+    }
     form.setFormName("panelOrderForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {

@@ -3,6 +3,7 @@ package spring.generated.audittrail.controller;
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,12 +18,18 @@ public class AuditTrailReportController extends BaseController {
       value = "/AuditTrailReport",
       method = RequestMethod.GET
   )
-  public ModelAndView showAuditTrailReport(HttpServletRequest request) {
+  public ModelAndView showAuditTrailReport(HttpServletRequest request,
+      @ModelAttribute("form") AuditTrailViewForm form) {
     String forward = FWD_SUCCESS;
-    AuditTrailViewForm form = new AuditTrailViewForm();
+    if (form == null) {
+    	form = new AuditTrailViewForm();
+    }
     form.setFormName("AuditTrailViewForm");
     form.setFormAction("");
     BaseErrors errors = new BaseErrors();
+    if (form.getErrors() != null) {
+    	errors = (BaseErrors) form.getErrors();
+    }
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 
     if (errors.hasErrors()) {
