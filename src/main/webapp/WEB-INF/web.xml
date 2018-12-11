@@ -230,19 +230,6 @@
   	<location>/pages/common/defaultNotFoundPage.jsp</location>
   </error-page>
   
-  <!-- Struts Tag Library Descriptors -->
-  <jsp-config>
-    <taglib>
-      <taglib-uri>/tags/labdev-view</taglib-uri>
-      <taglib-location>/WEB-INF/taglib/labdev-view.tld</taglib-location>
-    </taglib>
-    
-    <taglib>
-      <taglib-uri>/tags/sourceforge-ajax</taglib-uri>
-      <taglib-location>/WEB-INF/taglib/ajaxtags.tld</taglib-location>
-    </taglib>
-  </jsp-config>
-  
   <!--bugzilla 1908 added resource-ref for Vietnam tomcat/linux-->
   <resource-ref>
    <description>Database connection</description>

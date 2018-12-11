@@ -147,29 +147,24 @@ public class ResultsReportProvider extends BaseReportsProvider{
 		
 		HttpSession session = request.getSession();
 		ServletContext context = session.getServletContext();
-		File mainReportFile = new File(context
-				.getRealPath("/WEB-INF/reports/rslts_main_report.jasper"));
+
+    	ClassLoader classLoader = getClass().getClassLoader();
+        File mainReportFile = new File(classLoader.getResource("/reports/rslts_main_report.jasper").getFile());
+		//File mainReportFile = new File(contexct
+		//		.getRealPath("/WEB-INF/reports/rslts_main_report.jasper").getFile());
 
 		//  this report has several sub reports (and other dependencies)
 		//  it is recommended to pass these in as JasperReport object parameters
 		//  this works both for oc4j AND tomcat (where problems were occuring before this mod)
-		File providerDetailsReportFile = new File(context
-				.getRealPath("/WEB-INF/reports/rslts_provider_details.jasper"));
-		File projectDetailsReportFile = new File(context
-				.getRealPath("/WEB-INF/reports/rslts_project_details.jasper"));
-		File sourceTypeDetailsReportFile = new File(context
-				.getRealPath("/WEB-INF/reports/rslts_sourcetype_details.jasper"));
-		File patientDetailsReportFile = new File(context
-				.getRealPath("/WEB-INF/reports/rslts_patient_details.jasper"));
-		File testResultsReportFile = new File(context
-				.getRealPath("/WEB-INF/reports/rslts_test_results.jasper"));
-		File resultValueReportFile = new File(context
-				.getRealPath("/WEB-INF/reports/rslts_result_value.jasper"));
-		File logoGifFile = new File(context
-				.getRealPath("/WEB-INF/reports/images/rslts_logo.gif"));
+		File providerDetailsReportFile = new File(classLoader.getResource("/reports/rslts_provider_details.jasper").getFile());
+		File projectDetailsReportFile = new File(classLoader.getResource("/reports/rslts_project_details.jasper").getFile());
+		File sourceTypeDetailsReportFile = new File(classLoader.getResource("/reports/rslts_sourcetype_details.jasper").getFile());
+		File patientDetailsReportFile = new File(classLoader.getResource("/reports/rslts_patient_details.jasper").getFile());
+		File testResultsReportFile = new File(classLoader.getResource("/reports/rslts_test_results.jasper").getFile());
+		File resultValueReportFile = new File(classLoader.getResource("/reports/rslts_result_value.jasper").getFile());
+		File logoGifFile = new File(classLoader.getResource("/reports/images/rslts_logo.gif").getFile());
 		//bugzilla 1900
-		File previewWaterMark = new File(context
-				.getRealPath("/WEB-INF/reports/images/rslts_previewwatermark.gif"));
+		File previewWaterMark = new File(classLoader.getResource("/reports/images/rslts_previewwatermark.gif").getFile());
 
 		Locale locale = SystemConfiguration.getInstance().getDefaultLocale();
 		//bugzilla 2227

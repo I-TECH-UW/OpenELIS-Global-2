@@ -16,6 +16,7 @@
  */
 package us.mn.state.health.lims.reports.action;
 
+import java.io.File;
 import java.util.HashMap;
 
 import javax.servlet.ServletOutputStream;
@@ -111,14 +112,18 @@ public class CommonReportPrintAction extends BaseAction {
 
 	public String getReportPath() {
 		if (reportPath == null) {
-			reportPath = getServlet().getServletContext().getRealPath("") + "/WEB-INF/reports/";
+			//TO DO untested after restructure to maven
+	        File reportDir = new File(getClass().getClassLoader().getResource("/reports").getFile());
+			reportPath = reportDir.getAbsolutePath();
 		}
 		return reportPath;
 	}
 	
 	public String getImagesPath() {
 		if (imagesPath == null) {
-			imagesPath = getServlet().getServletContext().getRealPath("") + "/images/" ;
+			//TO DO untested after restructure to maven
+	        File imageDir = new File(getClass().getClassLoader().getResource("/images").getFile());
+			imagesPath = imageDir.getAbsolutePath();
 		}
 		return imagesPath;
 	}
