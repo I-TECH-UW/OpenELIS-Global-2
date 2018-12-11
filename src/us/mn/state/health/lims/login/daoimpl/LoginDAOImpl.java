@@ -23,7 +23,6 @@ import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
-import phl.util.Crypto;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
@@ -341,7 +340,7 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 	 */
 	public Login getValidateLogin(Login login) throws LIMSRuntimeException {
 
-		Crypto crypto = new Crypto();
+		//Crypto crypto = new Crypto();
 		PasswordUtil passUtil = new PasswordUtil();
 		Login loginData = null;
 
@@ -370,11 +369,11 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 				//error when no salt present, must be old password	
 				} catch (IllegalArgumentException e) {
 					//move passwords from encryption to salted hashing
-					if (loginData.getPassword().equals(crypto.getEncrypt(login.getPassword()))) {
-						updateCryptoPasswordToHash(loginData);
-					} else {
+					//if (loginData.getPassword().equals(crypto.getEncrypt(login.getPassword()))) {
+					//	updateCryptoPasswordToHash(loginData);
+					//} else {
 						loginData = null;
-					}
+					//}
 				}
 			}
 
@@ -482,36 +481,7 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 		return retVal;
 	}
 	
-	/**
-	 * Update the user passsword
-	 * 
-	 * @param login
-	 *            the login object
-	 * @return true if success, false otherwise
-	 */
-	public boolean updateCryptoPasswordToHash(Login login) throws LIMSRuntimeException {
-
-		Crypto crypto = new Crypto();
-		PasswordUtil passUtil = new PasswordUtil();
-
-		try {
-			login.setPassword(crypto.getDecrypt(login.getPassword()));
-			login.setPassword(passUtil.hashPassword(login.getPassword()));
-
-			HibernateUtil.getSession().merge(login);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(login);
-			HibernateUtil.getSession().refresh(login);
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "updateCryptoPasswordToHash()", e.toString());
-			throw new LIMSRuntimeException("Error in Login updateCryptoPasswordToHash()", e);
-		}
-
-		return true;
-	}
+	
 
 	/**
 	 * Update the user passsword

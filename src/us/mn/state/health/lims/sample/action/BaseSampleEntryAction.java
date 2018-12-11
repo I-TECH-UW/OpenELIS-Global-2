@@ -170,11 +170,11 @@ public abstract class BaseSampleEntryAction extends BaseAction {
     protected String handleSave(HttpServletRequest request, Accessioner accessioner) throws Exception {
         String forward = accessioner.save();
         if (null != forward) {
-            ActionMessages errors = accessioner.getMessages();
-            if (errors.size() != 0) {
-                saveErrors(request, errors);
-                request.setAttribute(Globals.ERROR_KEY, errors);
-            }
+           // ActionMessages errors = accessioner.getMessages();
+         //   if (errors.size() != 0) {
+         //       saveErrors(request, errors);
+          //      request.setAttribute(Globals.ERROR_KEY, errors);
+           // }
             return forward;
         }
         return null;

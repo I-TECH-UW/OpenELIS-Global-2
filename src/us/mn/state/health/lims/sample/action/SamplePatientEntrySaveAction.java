@@ -142,7 +142,8 @@ public class SamplePatientEntrySaveAction extends BaseAction {
         updateData.setAccessionNumber( sampleOrder.getLabNo() );
 		updateData.initProvider( sampleOrder );
 		updateData.initSampleData( dynaForm.getString( "sampleXML" ), receivedDateForDisplay, trackPayments, sampleOrder );
-		updateData.validateSample( errors );
+		//TO DO add this back in spring
+		//updateData.validateSample( errors );
 
 		if (errors.size() > 0) {
 			saveErrors(request, errors);
@@ -220,7 +221,8 @@ public class SamplePatientEntrySaveAction extends BaseAction {
 		if (updateData.isSavePatient()) {
            updateData.setPatientErrors( patientUpdate.preparePatientData(mapping, request, patientInfo) );
 		} else {
-            updateData.setPatientErrors(new ActionMessages());
+			//TO DO add this back in spring
+           // updateData.setPatientErrors(new ActionMessages());
 		}
 	}
 

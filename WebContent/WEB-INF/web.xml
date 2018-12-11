@@ -82,13 +82,6 @@
     <servlet-class>us.mn.state.health.lims.common.servlet.reports.ReportsServlet</servlet-class>
     <load-on-startup>8</load-on-startup>
   </servlet>
-
-  <servlet>
-    <display-name>ajaxPopup</display-name> 
-    <servlet-name>ajaxPopup</servlet-name>
-    <servlet-class>us.mn.state.health.lims.common.servlet.popup.AjaxCityStateZipPopupXMLServlet</servlet-class>
-    <load-on-startup>9</load-on-startup>
-  </servlet>
   
    <servlet>
     <display-name>ajaxDataXML</display-name> 
@@ -175,11 +168,6 @@
   <servlet-mapping>
     <servlet-name>ajaxSelectDropDownXML</servlet-name>
     <url-pattern>/ajaxSelectDropDownXML</url-pattern>
-  </servlet-mapping>
-  
-  <servlet-mapping>
-    <servlet-name>ajaxPopup</servlet-name>
-    <url-pattern>/ajaxPopup</url-pattern>
   </servlet-mapping>
     
   <servlet-mapping>
