@@ -2,11 +2,14 @@
 <%@ page import="us.mn.state.health.lims.common.action.IActionConstants,
                  us.mn.state.health.lims.common.util.ConfigurationProperties,
                  us.mn.state.health.lims.common.util.ConfigurationProperties.Property" %>
-<%@ taglib uri="/tags/struts-bean"      prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"      prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" 	prefix="logic" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+ 
 
 <%!
 boolean restrictNewReferringSiteEntries = false;
@@ -83,8 +86,8 @@ $jq(document).ready(function () {
     capitialize = true;
     // Actually executes autocomplete
     dropdown.combobox();
-    invalidLabID = '<bean:message key="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIX - add bad message icon
-    maxRepMsg = '<bean:message key="sample.entry.project.siteMaxMsg"/>';
+    invalidLabID = '<spring:message code="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIX - add bad message icon
+    maxRepMsg = '<spring:message code="sample.entry.project.siteMaxMsg"/>';
 
     resultCallBack = function (textValue) {
         siteListChanged(textValue);
@@ -96,13 +99,13 @@ $jq(document).ready(function () {
 
 </script>
 
-<html:hidden property="sampleOrderItems.newRequesterName" name='<%=formName%>' styleId="newRequesterName"/>
+<form:hidden path="sampleOrderItems.newRequesterName" name='${form.formName}' id="newRequesterName"/>
 
 Barcode Method : 
-<html:select name="<%=formName%>"
+<html:select name="${form.formName}"
 		property="method">
-	<option value="On Demand"><bean:message key="sample.batchentry.barcode.ondemand"/></option>
-	<option value="Pre-Printed"><bean:message key="sample.batchentry.barcode.preprinted"/></option>
+	<option value="On Demand"><spring:message code="sample.batchentry.barcode.ondemand"/></option>
+	<option value="Pre-Printed"><spring:message code="sample.batchentry.barcode.preprinted"/></option>
 </html:select>
 
 <table style="width:100%">
@@ -111,37 +114,37 @@ Barcode Method :
 <table>
 	<tr>
  		<td>
-			<bean:message key="sample.batchentry.barcode.label.options"/>
+			<spring:message code="sample.batchentry.barcode.label.options"/>
 		</td>
 		<td>
 			<input type="checkbox"
 			id="psuedoFacilityID"
 			onchange="toggleFacilityID();">
-			<html:hidden name="<%=formName %>"
+			<html:hidden name="${form.formName}"
 				property="facilityIDCheck"
 				disabled="true"
 				value="true" />
-			<bean:message key="sample.batchentry.barcode.label.facilityid"/>
+			<spring:message code="sample.batchentry.barcode.label.facilityid"/>
 		</td>
 		<td>
-			<bean:message key="sample.batchentry.barcode.label.facilityid"/>:
+			<spring:message code="sample.batchentry.barcode.label.facilityid"/>:
 		</td>
 		<td>
-			<logic:equal value="false" name='<%=formName%>' property="sampleOrderItems.readOnly" >
-		        <html:select styleId="requesterId"
-		                     name="<%=formName%>"
+			<logic:equal value="false" name='${form.formName}' property="sampleOrderItems.readOnly" >
+		        <html:select id="requesterId"
+		                     name="${form.formName}"
 		                     property="facilityID"
 		                     onchange="siteListChanged(this);processFacilityIDChange();"
 		                     onkeyup="capitalizeValue( this.value );"
 		                     
 		                >
 		            <option value=""></option>
-		            <html:optionsCollection name="<%=formName%>" property="sampleOrderItems.referringSiteList" label="value"
+		            <html:optionsCollection name="${form.formName}" property="sampleOrderItems.referringSiteList" label="value"
 		                                    value="id"/>
 		        </html:select>
 			</logic:equal>
-		    <logic:equal value="true" name='<%=formName%>' property="sampleOrderItems.readOnly" >
-		            <html:text styleId="requesterId" property="facilityID" name="<%=formName%>" style="width:300px" />
+		    <logic:equal value="true" name='${form.formName}' property="sampleOrderItems.readOnly" >
+		            <html:text id="requesterId" property="facilityID" name="${form.formName}" style="width:300px" />
 		    </logic:equal>
 		</td>
 	</tr>
@@ -152,11 +155,11 @@ Barcode Method :
 			id="psuedoPatientInfo"
 			onchange="togglePatientInfo()"
 			/>
-			<html:hidden name="<%=formName %>"
+			<html:hidden name="${form.formName}"
 				property="patientInfoCheck"
 				disabled="true"
 				value="true" />
-			<bean:message key="sample.batchentry.barcode.label.patientinfo"/>
+			<spring:message code="sample.batchentry.barcode.label.patientinfo"/>
 		</td>
 	</tr>
 </table>

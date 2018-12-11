@@ -7,11 +7,14 @@
                  us.mn.state.health.lims.common.util.DateUtil,
                  us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO,
                  us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl" %>
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>'/>
+ 
 
 <%!
     String path = "";
@@ -113,8 +116,8 @@ function studyChanged(studyElement) {
 
 
 <!-- This define may not be needed, look at usages (not in any other jsp or js page may be radio buttons for ci LNSP-->
-<!--bean:define id="orderTypeList" name='<%=formName%>' property="sampleOrderItems.orderTypes"  type="java.util.Collection"/> -->
-<bean:define id="sampleOrderItem" name='<%=formName%>' property="sampleOrderItems" type="us.mn.state.health.lims.sample.bean.SampleOrderItem" />
+<!--bean:define id="orderTypeList" name='${form.formName}' property="sampleOrderItems.orderTypes"  type="java.util.Collection"/> -->
+<bean:define id="sampleOrderItem" name='${form.formName}' property="sampleOrderItems" type="us.mn.state.health.lims.sample.bean.SampleOrderItem" />
 
 <div id=orderDisplay >
 <table style="width:100%">
@@ -129,9 +132,9 @@ function studyChanged(studyElement) {
 	        <span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>
    	 	</td>
     	<td>
-	        <html:text name='<%=formName %>'
+	        <html:text name='${form.formName}'
                    property="currentDate"
-                   styleId="currentDate"
+                   id="currentDate"
                    styleClass="required"
                    readonly="true"
                    maxlength="10"/>
@@ -142,10 +145,10 @@ function studyChanged(studyElement) {
 	        <span style="font-size: xx-small; "><%=DateUtil.getTimeUserPrompt()%></span> 
 		</td>
 	   	<td>
-	    	<html:text name="<%=formName %>"
+	    	<html:text name="${form.formName}"
                    onkeyup="filterTimeKeys(this, event);"
                    property="currentTime"
-                   styleId="currentTime"
+                   id="currentTime"
                    maxlength="5"/>
    		</td>
 	</tr>
@@ -157,40 +160,40 @@ function studyChanged(studyElement) {
 	        <span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>
     	</td>
     	<td>
-    		<html:text name="<%=formName%>"
+    		<html:text name="${form.formName}"
                   property="sampleOrderItems.receivedDateForDisplay"
                   onchange="checkValidSubPages();checkValidEntryDate(this, 'past');"
                   onkeyup="addDateSlashes(this, event);"
                   maxlength="10"
                   styleClass="text required"
-                  styleId="receivedDateForDisplay"/>
+                  id="receivedDateForDisplay"/>
      	</td>
      	<td>
-	        <bean:message key="sample.batchentry.order.receptiontime"/>
+	        <spring:message code="sample.batchentry.order.receptiontime"/>
 	        :
 	        <span style="font-size: xx-small; "><%=DateUtil.getTimeUserPrompt()%></span>
 		</td>
 		<td>
-			<html:text name="<%=formName %>"
+			<html:text name="${form.formName}"
                    onkeyup="filterTimeKeys(this, event);"
                    property="sampleOrderItems.receivedTime"
-                   styleId="receivedTime"
+                   id="receivedTime"
                    maxlength="5"
                    onblur="checkValidSubPages(); checkValidTime(this, true);"/>
     	</td>
 	</tr>
 	<tr <%= "false".equals(siteInfo) ? "style='display:none'" : ""  %>>
     	<td>
-    		<bean:message key="sample.entry.project.form"/>: 
+    		<spring:message code="sample.entry.project.form"/>: 
     	</td>
     	<td>
-    		<html:select name="<%=formName %>"
+    		<html:select name="${form.formName}"
     				property="study"
-    				styleId="study" 
+    				id="study" 
     				onchange="studyChanged(this);checkValidSubPages();">
-    			<option value="routine"><bean:message key="dictionary.program.routine" /></option>
-    			<option value="viralLoad"><bean:message key="sample.entry.project.VL.simple.title" /></option>
-    			<option value="EID"><bean:message key="sample.entry.project.EID.title" /></option>
+    			<option value="routine"><spring:message code="dictionary.program.routine" /></option>
+    			<option value="viralLoad"><spring:message code="sample.entry.project.VL.simple.title" /></option>
+    			<option value="EID"><spring:message code="sample.entry.project.EID.title" /></option>
     		</html:select>
     	</td>
 	</tr>

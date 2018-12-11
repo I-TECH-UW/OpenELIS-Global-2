@@ -3,36 +3,39 @@
 				us.mn.state.health.lims.inventory.form.InventoryKitItem" %>
 
 
-<%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"		prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"		prefix="logic" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName"	value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+	
 
 <div id="PatientPage" class="colorFill" style="display:inline" >
-	<logic:present name="<%=formName%>" property="inventoryItems" >
+	<logic:present name="${form.formName}" property="inventoryItems" >
 	<table width="40%" >
 	<tr >
 		<th width="10%">
-			<bean:message key="inventory.testKit.id"/>
+			<spring:message code="inventory.testKit.id"/>
 		</th>
 		<th width="25%">
-			<bean:message key="inventory.testKit.name"/>		
+			<spring:message code="inventory.testKit.name"/>		
 		</th>
 		<th width="15%">
-			<bean:message key="inventory.testKit.receiveDate"/>		
+			<spring:message code="inventory.testKit.receiveDate"/>		
 		</th>
 		<th width="15%">
-			<bean:message key="inventory.testKit.expiration"/>		
+			<spring:message code="inventory.testKit.expiration"/>		
 		</th>
 		<th width="10%">
-			<bean:message key="inventory.testKit.lot"/>		
+			<spring:message code="inventory.testKit.lot"/>		
 		</th>
 		<th width="25%">
-			<bean:message key="inventory.testKit.source"/>		
+			<spring:message code="inventory.testKit.source"/>		
 		</th>
 	</tr>
-	<logic:iterate id="inventoryItems"  name="<%=formName%>" property="inventoryItems" indexId="index" type="InventoryKitItem" >
+	<logic:iterate id="inventoryItems"  name="${form.formName}" property="inventoryItems" indexId="index" type="InventoryKitItem" >
 		<logic:equal name="inventoryItems" property="isActive" value="true">
 			<tr >
 				<td >
@@ -58,8 +61,8 @@
 	</logic:iterate>
 	</table>
 </logic:present>
-<logic:notPresent name="<%=formName%>" property="inventoryItems" >
-	<bean:message key="inventory.testKit.none"/>
+<logic:notPresent name="${form.formName}" property="inventoryItems" >
+	<spring:message code="inventory.testKit.none"/>
 </logic:notPresent>	
 
 	

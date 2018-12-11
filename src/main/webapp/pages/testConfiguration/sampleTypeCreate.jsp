@@ -6,10 +6,12 @@
          		us.mn.state.health.lims.common.util.Versioning,
          		us.mn.state.health.lims.testconfiguration.action.TestSectionCreateAction" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%--
   ~ The contents of this file are subject to the Mozilla Public License
   ~ Version 1.1 (the "License"); you may not use this file except in
@@ -28,11 +30,11 @@
 
 <script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>'/>
-<bean:define id="testList" name='<%=formName%>' property="existingSampleTypeList" type="java.util.List"/>
-<bean:define id="inactiveTestList" name='<%=formName%>' property="inactiveSampleTypeList" type="java.util.List"/>
-<bean:define id="englishSectionNames" name='<%=formName%>' property="existingEnglishNames" type="String"/>
-<bean:define id="frenchSectionNames" name='<%=formName%>' property="existingFrenchNames" type="String"/>
+ 
+<bean:define id="testList" name='${form.formName}' property="existingSampleTypeList" type="java.util.List"/>
+<bean:define id="inactiveTestList" name='${form.formName}' property="inactiveSampleTypeList" type="java.util.List"/>
+<bean:define id="englishSectionNames" name='${form.formName}' property="existingEnglishNames" type="String"/>
+<bean:define id="frenchSectionNames" name='${form.formName}' property="existingFrenchNames" type="String"/>
 
 <%!
     int testCount = 0;
@@ -52,7 +54,7 @@
 
     function makeDirty(){
         function formWarning(){
-            return "<bean:message key="banner.menu.dataLossWarning"/>";
+            return "<spring:message code="banner.menu.dataLossWarning"/>";
         }
         window.onbeforeunload = formWarning;
     }
@@ -119,7 +121,7 @@
 
         if(duplicate){
             $jq(element).addClass("error");
-            alert("<bean:message key="configuration.sampleType.create.duplicate" />" );
+            alert("<spring:message code="configuration.sampleType.create.duplicate" />" );
         }else{
             $jq(element).removeClass("error");
         }
@@ -150,29 +152,29 @@
 <br><br>
 
 <div id="editDiv" >
-    <h1 id="action"><bean:message key="label.button.edit"/></h1>
-    <h2><bean:message key="configuration.sampleType.create"/> </h2>
+    <h1 id="action"><spring:message code="label.button.edit"/></h1>
+    <h2><spring:message code="configuration.sampleType.create"/> </h2>
 
     <table>
         <tr>
-            <th colspan="2" style="text-align: center"><bean:message key="sampleType.new"/></th>
+            <th colspan="2" style="text-align: center"><spring:message code="sampleType.new"/></th>
         </tr>
         <tr>
-            <td style="text-align: center"><bean:message key="label.english"/></td>
-            <td style="text-align: center"><bean:message key="label.french"/></td>
+            <td style="text-align: center"><spring:message code="label.english"/></td>
+            <td style="text-align: center"><spring:message code="label.french"/></td>
         </tr>
         <tr>
-            <td><span class="requiredlabel">*</span><html:text property="sampleTypeEnglishName" name="<%=formName%>" size="40"
+            <td><span class="requiredlabel">*</span><html:text property="sampleTypeEnglishName" name="${form.formName}" size="40"
                                                                styleClass="required"
                                                                onchange="handleInput(this, 'english');checkForDuplicates('english');"/>
             </td>
-            <td><span class="requiredlabel">*</span><html:text property="sampleTypeFrenchName" name="<%=formName%>" size="40"
+            <td><span class="requiredlabel">*</span><html:text property="sampleTypeFrenchName" name="${form.formName}" size="40"
                                                                styleClass="required" onchange="handleInput(this, 'french');"/>
             </td>
         </tr>
     </table>
     <div id="confirmationMessage" style="display:none">
-        <h4><bean:message key="configuration.sampleType.confirmation.explain" /></h4>
+        <h4><spring:message code="configuration.sampleType.confirmation.explain" /></h4>
     </div>
     <div style="text-align: center" id="editButtons">
         <input type="button" value="<%=StringUtil.getMessageForKey("label.button.next")%>"
@@ -188,7 +190,7 @@
     </div>
 </div>
 
-<h3><bean:message key="sampleType.existing" /></h3>
+<h3><spring:message code="sampleType.existing" /></h3>
 <table width="80%">
     <% while(testCount < testList.size()){%>
     <tr>
@@ -209,7 +211,7 @@
     <% } %>
 </table>
     <% if( !inactiveTestList.isEmpty()){ %>
-    <h3><bean:message key="sampleType.existing.inactive" /></h3>
+    <h3><spring:message code="sampleType.existing.inactive" /></h3>
     <table width="80%">
         <%  testCount = 0;
             columnCount = 0;

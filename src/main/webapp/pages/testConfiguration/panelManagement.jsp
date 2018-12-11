@@ -3,8 +3,6 @@
          import="us.mn.state.health.lims.common.util.StringUtil"
         %>
 
-<%-- <%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %> --%>
 
 <%--
   ~ The contents of this file are subject to the Mozilla Public License

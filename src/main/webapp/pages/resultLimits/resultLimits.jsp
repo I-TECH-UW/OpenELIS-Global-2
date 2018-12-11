@@ -1,12 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	import="java.util.Date,us.mn.state.health.lims.common.action.IActionConstants"%>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/labdev-view" prefix="app"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+ 
 
 <%!String allowEdits = "true";%>
 
@@ -16,7 +18,7 @@
 	}
 %>
 
-<script language="JavaScript1.2">
+<script>
 
 var floatRegEx = new RegExp("^\\d{1,}\\.?\\d?$");
 var intRegEx = new RegExp("^\\d*$");
@@ -43,24 +45,24 @@ function /*void*/ updateDay( yearElement, dayId ){
 	<tr>
 		<td width="10%">&nbsp;</td>
 		<td class="label" width="10%">
-			<bean:message key="resultlimits.test" />
+			<spring:message code="resultlimits.test" />
 			:
 			<span class="requiredlabel">*</span>
 		</td>
 		<td width="15%">
-			<html:select name="<%=formName%>" property="limit.testId">
-				<app:optionsCollection name="<%=formName%>" property="tests" label="description" value="id" allowEdits="true" />
+			<html:select name="${form.formName}" property="limit.testId">
+				<app:optionsCollection name="${form.formName}" property="tests" label="description" value="id" allowEdits="true" />
 
 			</html:select>
 		</td>
 		<td class="label" width="10%">
-			<bean:message key="resultlimits.resulttype" />
+			<spring:message code="resultlimits.resulttype" />
 			:
 			<span class="requiredlabel">*</span>
 		</td>
 		<td width="15%">
-			<html:select name="<%=formName%>" property="limit.resultTypeId">
-				<app:optionsCollection name="<%=formName%>" property="resultTypes" label="description" value="id" allowEdits="true" />
+			<html:select name="${form.formName}" property="limit.resultTypeId">
+				<app:optionsCollection name="${form.formName}" property="resultTypes" label="description" value="id" allowEdits="true" />
 			</html:select>
 		</td>
 		<td width="50%" >&nbsp;</td>
@@ -68,57 +70,57 @@ function /*void*/ updateDay( yearElement, dayId ){
 	<tr>
 		<td></td>
 		<td class="label">
-			<bean:message key="resultlimits.gender" />
+			<spring:message code="resultlimits.gender" />
 			:
 		</td>
 		<td>
-			<html:select name="<%=formName%>" property="limit.gender">
-				<app:optionsCollection name="<%=formName%>" property="genders" label="description" value="genderType" allowEdits="true" />
+			<html:select name="${form.formName}" property="limit.gender">
+				<app:optionsCollection name="${form.formName}" property="genders" label="description" value="genderType" allowEdits="true" />
 			</html:select>
 		</td>
 		<td>&nbsp;</td><td>&nbsp;</td>
 		<td>
-			<bean:message key="resultLimits.gender.instrutions"/>
+			<spring:message code="resultLimits.gender.instrutions"/>
 		</td>
 	</tr>
 	<tr>
-		<td><bean:message key="resultlimits.age" /></td>
+		<td><spring:message code="resultlimits.age" /></td>
 		<td class="label">
-			<bean:message key="resultlimits.min" />
+			<spring:message code="resultlimits.min" />
 			:
 		</td>
 		<td>
-			<html:text name="<%=formName%>" 
+			<html:text name="${form.formName}" 
 					   property="limit.minDayAgeDisplay" 
 					   size="4" 
-					   styleId="minDayAge" 
+					   id="minDayAge" 
 					   onchange="updateYear( this, 'minYearAge');" />
 					   &nbsp;/&nbsp; 
-		   <html:text name="<%=formName%>" 
+		   <html:text name="${form.formName}" 
 		   			  property="limit.minAgeDisplay" 
 		   			  size="10" 
-		   			  styleId="minYearAge" 
+		   			  id="minYearAge" 
 		   			  onchange="updateDay(this, 'minDayAge');" />
 		</td>
 		<td class="label">
-			<bean:message key="resultlimits.max" />
+			<spring:message code="resultlimits.max" />
 			:
 		</td>
 		<td>
-			<html:text name="<%=formName%>" 
+			<html:text name="${form.formName}" 
 					   property="limit.maxDayAgeDisplay" 
 					   size="4" 
-					   styleId="maxDayAge"
+					   id="maxDayAge"
 					   onchange="updateYear( this, 'maxYearAge');" />
 					   &nbsp;/&nbsp; 
-			<html:text name="<%=formName%>" 
+			<html:text name="${form.formName}" 
 					   property="limit.maxAgeDisplay" 
 					   size="10" 
-					   styleId="maxYearAge"
+					   id="maxYearAge"
 					   onchange="updateDay(this, 'maxDayAge');" />
 		</td>
 		<td>
-			<bean:message key="resultLimits.age.instrutions"/>
+			<spring:message code="resultLimits.age.instrutions"/>
 		</td>
 		
 	</tr>
@@ -126,44 +128,44 @@ function /*void*/ updateDay( yearElement, dayId ){
 		<td>&nbsp;</td>
 	</tr>
 	<tr>
-		<td><bean:message key="resultlimits.normal" /></td>
+		<td><spring:message code="resultlimits.normal" /></td>
 		<td class="label">
-			<bean:message key="resultlimits.low" />
+			<spring:message code="resultlimits.low" />
 			:
 		</td>
 		<td>
-			<html:text name="<%=formName%>" property="limit.lowNormalDisplay" size="10" />
+			<form:input path="limit.lowNormalDisplay" size="10" />
 		</td>
 		<td class="label">
-			<bean:message key="resultlimits.high" />
+			<spring:message code="resultlimits.high" />
 			:
 		</td>
 		<td>
-			<html:text name="<%=formName%>" property="limit.highNormalDisplay" size="10" />
+			<form:input path="limit.highNormalDisplay" size="10" />
 		</td>
 		<td>
-			<bean:message key="resultLimits.normal.instrutions"/>
+			<spring:message code="resultLimits.normal.instrutions"/>
 		</td>
 		
 	</tr>
 	<tr>
-		<td><bean:message key="resultlimits.valid" /></td>
+		<td><spring:message code="resultlimits.valid" /></td>
 		<td class="label">
-			<bean:message key="resultlimits.low" />
+			<spring:message code="resultlimits.low" />
 			:
 		</td>
 		<td>
-			<html:text name="<%=formName%>" property="limit.lowValidDisplay" size="10" />
+			<form:input path="limit.lowValidDisplay" size="10" />
 		</td>
 		<td class="label">
-			<bean:message key="resultlimits.high" />
+			<spring:message code="resultlimits.high" />
 			:
 		</td>
 		<td>
-			<html:text name="<%=formName%>" property="limit.highValidDisplay" size="10" />
+			<form:input path="limit.highValidDisplay" size="10" />
 		</td>
 		<td>
-			<bean:message key="resultLimits.valid.instrutions"/>
+			<spring:message code="resultLimits.valid.instrutions"/>
 		</td>
 		
 	</tr>

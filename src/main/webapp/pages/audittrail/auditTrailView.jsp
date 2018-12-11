@@ -7,12 +7,12 @@
 	us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator"
 %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
-<%@ taglib uri="/tags/struts-tiles"     prefix="tiles" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%!
 	IAccessionNumberValidator accessionValidator;
@@ -44,7 +44,7 @@ function submit(){
 
 </script>
 
-<h1 class="page-title"><bean:message key="reports.auditTrail" /></h1>
+<h1 class="page-title"><spring:message code="reports.auditTrail" /></h1>
 
 <form class="form-horizontal">
 
@@ -52,7 +52,7 @@ function submit(){
 	    <div class="span12">
 	
 		<%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>: 
-		<html:text name='<%= formName %>'
+		<html:text name='${form.formName}'
 				   styleClass="input-medium" 
 	    	       property="accessionNumberSearch"
 	        	   maxlength="<%= Integer.toString(accessionValidator.getMaxAccessionLength()) %>" />
@@ -63,48 +63,48 @@ function submit(){
 	
 	<hr>
 		
-	<logic:notEmpty name='<%= formName %>' property="accessionNumber" >
+	<logic:notEmpty name='${form.formName}' property="accessionNumber" >
 	
-		<logic:empty name='<%= formName %>' property="log" >
+		<logic:empty name='${form.formName}' property="log" >
 		<div class="row-fluid">
 		    <div class="span6">
-		    	<em><bean:message key="sample.edit.sample.notFound" /></em>
+		    	<em><spring:message code="sample.edit.sample.notFound" /></em>
 		    </div>
 		</div>
 		</logic:empty>
 		
-		<logic:notEmpty name='<%= formName %>' property="log" >
+		<logic:notEmpty name='${form.formName}' property="log" >
 		
 		<div class="row-fluid order-details">
 		    <div class="span12">
-		        <span class="order-number"><bean:write name='<%= formName %>' property="accessionNumber"  /></span> 
-		        <bean:message key="reports.auditTrail.creation" />: <span id="dateCreated"></span>
-		        <bean:message key="reports.auditTrail.days" />: <span id="daysInSystem"></span>
+		        <span class="order-number"><bean:write name='${form.formName}' property="accessionNumber"  /></span> 
+		        <spring:message code="reports.auditTrail.creation" />: <span id="dateCreated"></span>
+		        <spring:message code="reports.auditTrail.days" />: <span id="daysInSystem"></span>
 		    </div>
 		</div>
 	    <div class="current" >
-            <h2><bean:message key="order.information" /></h2>
+            <h2><spring:message code="order.information" /></h2>
             <tiles:insert attribute="orderInfo" />
             <tiles:insert attribute="patientInfo" />
         </div>
 		<div class="row-fluid">
 			<div class="span12">		
-				<div id="loading" class="loading-note"><img src="<%=basePath%>/images/indicator.gif" /><bean:message key="loading" /></div>
+				<div id="loading" class="loading-note"><img src="<%=basePath%>/images/indicator.gif" /><spring:message code="loading" /></div>
 				<table class="table table-small table-hover table-bordered table-striped" id="advancedTable">
 					<thead>
 				    	<tr id="rowHeader">
 						    <th>ID</th>
-							<th><span><bean:message key="reports.auditTrail.time"/></span></th>
-						    <th><span><bean:message key="reports.auditTrail.item"/></span></th>
-							<th><span><bean:message key="reports.auditTrail.action"/></span></th>
-						    <th><span><bean:message key="reports.auditTrail.identifier"/></span></th>
-							<th><span><bean:message key="reports.auditTrail.user"/></span></th>
-							<th><span><bean:message key="reports.auditTrail.old.value"/></span></th>
-							<th><span><bean:message key="reports.auditTrail.new.value"/></span></th>
+							<th><span><spring:message code="reports.auditTrail.time"/></span></th>
+						    <th><span><spring:message code="reports.auditTrail.item"/></span></th>
+							<th><span><spring:message code="reports.auditTrail.action"/></span></th>
+						    <th><span><spring:message code="reports.auditTrail.identifier"/></span></th>
+							<th><span><spring:message code="reports.auditTrail.user"/></span></th>
+							<th><span><spring:message code="reports.auditTrail.old.value"/></span></th>
+							<th><span><spring:message code="reports.auditTrail.new.value"/></span></th>
 						</tr>
 					</thead>
 					<tbody>
-					<logic:iterate id="log" indexId="rowIndex" name='<%= formName %>' property="log" type="us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem">
+					<logic:iterate id="log" indexId="rowIndex" name='${form.formName}' property="log" type="us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem">
 						<tr class="<%=log.getItem()%>">
 							<td><%=rowIndex%></td>
 							<td class="time-stamp"><%= log.getDate() + " " +  log.getTime()%></td>
@@ -121,10 +121,10 @@ function submit(){
 				
 				<div id="showOptions" class="show-table-options">
 					<button class="reset-sort btn btn-mini" disabled="disabled"><i class="icon-refresh"></i> Reset</button>
-					<label> <bean:message key="audit.show" /> :
+					<label> <spring:message code="audit.show" /> :
 				        <select id="filterByType">
 				        <!--  Options for filter are added via filterByType jquery function -->
-				            <option value=""><bean:message key="audit.show.all"/></option>
+				            <option value=""><spring:message code="audit.show.all"/></option>
 				        </select>
 				    </label>
 				</div>
@@ -136,13 +136,13 @@ function submit(){
 				
 	</logic:notEmpty>
 	
-<logic:notEmpty name='<%= formName %>' property="log" >
+<logic:notEmpty name='${form.formName}' property="log" >
     <script type="text/javascript">
-        function getAuditSearchText(){  return '<bean:message key="audit.search.text" />';  }
-        function getAuditFilteredFrom(){  return '<bean:message key="audit.filtered.from" />';  }
-        function getAuditNoPrefix(){  return '<bean:message key="audit.no.prefix" />';  }
-        function getAuditEntriesDisplayed(){  return '<bean:message key="audit.entries.displayed" />';  }
-        function getAuditNoRecords(){  return '<bean:message key="audit.no.records" />';  }
+        function getAuditSearchText(){  return '<spring:message code="audit.search.text" />';  }
+        function getAuditFilteredFrom(){  return '<spring:message code="audit.filtered.from" />';  }
+        function getAuditNoPrefix(){  return '<spring:message code="audit.no.prefix" />';  }
+        function getAuditEntriesDisplayed(){  return '<spring:message code="audit.entries.displayed" />';  }
+        function getAuditNoRecords(){  return '<spring:message code="audit.no.records" />';  }
     </script>
 <script type="text/javascript" src="<%=basePath%>scripts/oe.datatables.functions.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 </logic:notEmpty>

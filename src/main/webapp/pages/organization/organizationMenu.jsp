@@ -5,10 +5,12 @@
 			us.mn.state.health.lims.common.formfields.FormFields,
 			us.mn.state.health.lims.common.util.StringUtil" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%!
 	boolean useOrgLocalAbbrev = true;
@@ -24,58 +26,58 @@
  	useMLS = FormFields.getInstance().useField(FormFields.Field.MLS);
   %>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 
 
 <table width="100%" border=2">
 	<tr>
 	   <th>
-	     <bean:message key="label.form.select"/>
+	     <spring:message code="label.form.select"/>
 	   </th>
 		<% if( useOrgLocalAbbrev) { %>
 	   <th><%--bugzilla 2069 added--%>
-	   	  <bean:message key="organization.localAbbreviation"/>
+	   	  <spring:message code="organization.localAbbreviation"/>
 	   </th>
 	   <% } %>
 	   <th><%--bugzilla 1412 rearrange--%>
-	   	  <bean:message key="organization.organizationName"/>
+	   	  <spring:message code="organization.organizationName"/>
 	   </th>
 	   <th>
-	   	  <bean:message key="organization.parent"/>
+	   	  <spring:message code="organization.parent"/>
 	   </th>
 	   <th>
 	   	  <%= StringUtil.getContextualMessageForKey("organization.short") %>
 	   </th>
 	   <th>
-	      <bean:message key="organization.isActive"/>
+	      <spring:message code="organization.isActive"/>
 	   </th>
 	   <th>
-	   	  <bean:message key="organization.streetAddress"/>
+	   	  <spring:message code="organization.streetAddress"/>
 	   </th>
 	   <th>
-	   	  <bean:message key="organization.city"/>
+	   	  <spring:message code="organization.city"/>
 	   </th>
 	   <% if( useOrgState){ %>
 	   <th>
-	   	  <bean:message key="organization.state"/>
+	   	  <spring:message code="organization.state"/>
 	   </th>
 	   <% } %>
 	   <% if( useZipCode ){ %>
 	    <th>
-	   	  <bean:message key="organization.zipCode"/>
+	   	  <spring:message code="organization.zipCode"/>
 	   </th>
 	   <% } %>
 	   <th>
-	   	  <bean:message key="organization.clia.number"/>
+	   	  <spring:message code="organization.clia.number"/>
 	   </th>
 	   <% if( useMLS ){ %>
 	   <th>
-	   	  <bean:message key="organization.mls.lab"/>
+	   	  <spring:message code="organization.mls.lab"/>
 	   </th>
 	   <% } %>
 
 	</tr>
-	<logic:iterate id="org1" indexId="ctr" name="<%=formName%>" property="menuList" type="us.mn.state.health.lims.organization.valueholder.Organization">
+	<logic:iterate id="org1" indexId="ctr" name="${form.formName}" property="menuList" type="us.mn.state.health.lims.organization.valueholder.Organization">
 	<bean:define id="orgID" name="org1" property="id"/>
 	<logic:notEmpty name="org1" property="organization">
 	 <bean:define id="parentOrgID" name="org1" property="organization.id"/>
@@ -83,7 +85,7 @@
 
 	  <tr>
 	   <td class="textcontent">
-	      <html:multibox name="<%=formName%>" property="selectedIDs" onclick="output()" >
+	      <html:multibox name="${form.formName}" property="selectedIDs" onclick="output()" >
 	         <bean:write name="orgID" />
 	      </html:multibox>
 

@@ -3,27 +3,29 @@
 	import="us.mn.state.health.lims.common.action.IActionConstants,
 			us.mn.state.health.lims.role.valueholder.Role" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 
 <table width="80%" border="2">
 	<tr>
 		<th>&nbsp;</th>
-	   	<th><bean:message key="role.name" /></th>
-	   	<th><bean:message key="role.description"/></th>
-	   	<th><bean:message key="role.isGroupingRole"/></th>
-	   	<th><bean:message key="role.parent.role"/></th>
-	   	<th><bean:message key="role.display.key"/></th>
+	   	<th><spring:message code="role.name" /></th>
+	   	<th><spring:message code="role.description"/></th>
+	   	<th><spring:message code="role.isGroupingRole"/></th>
+	   	<th><spring:message code="role.parent.role"/></th>
+	   	<th><spring:message code="role.display.key"/></th>
 	</tr>
-	<logic:iterate id="limit" name="<%=formName%>" indexId="ctr" property="menuList" type="Role">
+	<logic:iterate id="limit" name="${form.formName}" indexId="ctr" property="menuList" type="Role">
 		<bean:define id="limitId" name="limit" property="id"/>
 	  	<tr>
 	   		<td class="textcontent">
-	      		<html:multibox name="<%=formName%>" property="selectedIDs">
+	      		<html:multibox name="${form.formName}" property="selectedIDs">
 	         		<bean:write name="limitId" />
 	      		</html:multibox>
    	   		</td>

@@ -5,10 +5,12 @@
          		us.mn.state.health.lims.common.util.StringUtil,
          		us.mn.state.health.lims.common.util.Versioning" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%--
   ~ The contents of this file are subject to the Mozilla Public License
   ~ Version 1.1 (the "License"); you may not use this file except in
@@ -29,8 +31,8 @@
 <script type="text/javascript" src="scripts/jquery-ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>'/>
-<bean:define id="testList" name='<%=formName%>' property="testSectionList" type="java.util.List"/>
+ 
+<bean:define id="testList" name='${form.formName}' property="testSectionList" type="java.util.List"/>
 
 
 <%!
@@ -63,7 +65,7 @@
 
     function makeDirty(){
         function formWarning(){
-            return "<bean:message key="banner.menu.dataLossWarning"/>";
+            return "<spring:message code="banner.menu.dataLossWarning"/>";
         }
         window.onbeforeunload = formWarning;
     }
@@ -115,7 +117,7 @@
         form.submit();
     }
 </script>
-    <html:hidden name="<%=formName%>" property="jsonChangeList" styleId="jsonChangeList"/>
+    <form:hidden path="jsonChangeList" id="jsonChangeList"/>
 
     <input type="button" value='<%= StringUtil.getMessageForKey("banner.menu.administration") %>'
            onclick="submitAction('MasterListsPage.do');"
@@ -131,11 +133,11 @@
 <br><br>
 
 <div id="editDiv" >
-    <h1 id="action"><bean:message key="label.button.edit"/></h1>
+    <h1 id="action"><spring:message code="label.button.edit"/></h1>
 
     <div id="editMessage" >
-        <h3><bean:message key="configuration.testUnit.order.explain"/> </h3>
-        <bean:message key="configuration.testUnit.order.explain.limits" /><br/><br/>
+        <h3><spring:message code="configuration.testUnit.order.explain"/> </h3>
+        <spring:message code="configuration.testUnit.order.explain.limits" /><br/><br/>
     </div>
 
     <UL class="sortable" style="width:250px">

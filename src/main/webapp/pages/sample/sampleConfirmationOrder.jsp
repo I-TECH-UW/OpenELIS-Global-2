@@ -10,14 +10,16 @@
                  us.mn.state.health.lims.common.util.StringUtil,
                  us.mn.state.health.lims.common.util.Versioning" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>'/>
-<bean:define id="entryDate" name="<%=formName%>" property="currentDate"/>
-<bean:define id="sampleOrderItem" name='<%=formName%>' property="sampleOrderItems" type="us.mn.state.health.lims.sample.bean.SampleOrderItem" />
+ 
+<bean:define id="entryDate" name="${form.formName}" property="currentDate"/>
+<bean:define id="sampleOrderItem" name='${form.formName}' property="sampleOrderItems" type="us.mn.state.health.lims.sample.bean.SampleOrderItem" />
 
 <%!
     String path = "";
@@ -269,31 +271,31 @@
     }
 </script>
 
-<html:hidden property="sampleOrderItems.modified" name='<%=formName%>' styleId="orderModified"  />
-<html:hidden property="sampleOrderItems.newRequesterName" name='<%=formName%>' styleId="newRequesterName" />
+<form:hidden path="sampleOrderItems.modified" name='${form.formName}' id="orderModified"  />
+<form:hidden path="sampleOrderItems.newRequesterName" name='${form.formName}' id="newRequesterName" />
 
 <table style="width:70%" border="0">
-    <logic:empty name="<%=formName%>" property="sampleOrderItems.labNo">
+    <logic:empty name="${form.formName}" property="sampleOrderItems.labNo">
         <tr>
             <td>
                 <%=StringUtil.getContextualMessageForKey( "quick.entry.accession.number" )%>:
                 <span class="requiredlabel">*</span>
             </td>
             <td style="width:15%">
-                <app:text name="<%=formName%>" property="sampleOrderItems.labNo"
+                <app:text name="${form.formName}" property="sampleOrderItems.labNo"
                           maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>'
                           onchange="checkAccessionNumber(this);makeDirty();setOrderModified();" styleClass="text"
-                          styleId="labNo"/>
+                          id="labNo"/>
             </td>
             <td id="generate">
-                <bean:message key="sample.entry.scanner.instructions"/>
+                <spring:message code="sample.entry.scanner.instructions"/>
                 <input type="button"
                        value='<%=StringUtil.getMessageForKey("sample.entry.scanner.generate")%>'
                        onclick="getNextAccessionNumber(); makeDirty();" class="textButton">
             </td>
         </tr>
     </logic:empty>
-    <logic:notEmpty name="<%=formName%>" property="sampleOrderItems.labNo">
+    <logic:notEmpty name="${form.formName}" property="sampleOrderItems.labNo">
         <tr>
             <td></td>
             <td style="width:15%"></td>
@@ -302,25 +304,25 @@
     </logic:notEmpty>
     <tr>
         <td>
-            <bean:message key="quick.entry.received.date"/>:
+            <spring:message code="quick.entry.received.date"/>:
             <span class="requiredlabel">*</span>
 			<span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%>
 			</span>
         </td>
         <td colspan="2">
-            <app:text name="<%=formName%>" property="sampleOrderItems.receivedDateForDisplay"
+            <app:text name="${form.formName}" property="sampleOrderItems.receivedDateForDisplay"
                       onchange="checkValidDate(this);setOrderModified();"
                       onkeyup="addDateSlashes(this,event);"
                       styleClass="text required"
                       maxlength="10"
-                      styleId="receivedDate"/>
+                      id="receivedDate"/>
 
             <% if( FormFields.getInstance().useField( Field.SampleEntryUseReceptionHour ) ){ %>
-            <bean:message key="sample.receptionTime"/>:
-            <html:text name="<%=formName %>"
+            <spring:message code="sample.receptionTime"/>:
+            <html:text name="${form.formName}"
                        onkeyup="filterTimeKeys(this, event);"
                        property="sampleOrderItems.receivedTime"
-                       styleId="receivedTime"
+                       id="receivedTime"
                        maxlength="5"
                        onblur="makeDirty(); updateFieldValidity(checkValidTimeEntry(this, true), this.id );"/>
 
@@ -331,22 +333,22 @@
 </table>
 <hr/>
 <h3>
-    <bean:message key="sample.entry.requester"/>
+    <spring:message code="sample.entry.requester"/>
 </h3>
 <table>
     <tr>
         <td>
-            <bean:message key="organization.site"/>
+            <spring:message code="organization.site"/>
         </td>
         <td colspan="5">
             <!-- N.B. this is replaced by auto complete -->
-            <html:select styleId="orgRequesterId"
-                         name="<%=formName%>"
+            <html:select id="orgRequesterId"
+                         name="${form.formName}"
                          property="sampleOrderItems.referringSiteId"
                          onchange="getRequestersForOrg();setOrderModified();"
                     >
                 <option value=""></option>
-                <logic:iterate name="<%=formName %>" property="sampleOrderItems.referringSiteList"
+                <logic:iterate name="${form.formName}" property="sampleOrderItems.referringSiteList"
                                id="org" type="us.mn.state.health.lims.common.util.IdValuePair">
                     <option value="<%=org.getId() %>" <%= org.getId().equals( sampleOrderItem.getReferringSiteId()) ? "selected = 'selected'" : "" %> ><%= org.getValue().toUpperCase() %>
                     </option>
@@ -356,57 +358,57 @@
     </tr>
     <tr>
         <td>
-            <bean:message key="sample.entry.contact"/>
+            <spring:message code="sample.entry.contact"/>
         </td>
         <td colspan="5">
-            <html:select name='<%= formName %>'
+            <html:select name='${form.formName}'
                          property="sampleOrderItems.providerId"
-                         styleId="personRequesterId"
+                         id="personRequesterId"
                          onchange="populateRequesterDetail(this); makeDirty();setOrderModified();">
-                <option value="0"><bean:message key="sample.entry.requester.new"/></option>
+                <option value="0"><spring:message code="sample.entry.requester.new"/></option>
             </html:select>
         </td>
     </tr>
     <tr>
         <td>&nbsp;</td>
         <td>
-            <bean:message key="person.firstName"/>
+            <spring:message code="person.firstName"/>
         </td>
         <td>
-            <bean:message key="person.lastName"/>
+            <spring:message code="person.lastName"/>
         </td>
         <td>
-            <bean:message key="person.phone"/>
+            <spring:message code="person.phone"/>
         </td>
         <td>
-            <bean:message key="person.fax"/>
+            <spring:message code="person.fax"/>
         </td>
         <td>
-            <bean:message key="person.email"/>
+            <spring:message code="person.email"/>
         </td>
 
     </tr>
     <tr>
         <td>&nbsp;</td>
         <td>
-            <html:text name='<%=formName%>' property="sampleOrderItems.providerFirstName"
-                       styleId="requesterFirstName" onchange="setOrderModified()"/>
+            <form:input path="sampleOrderItems.providerFirstName"
+                       id="requesterFirstName" onchange="setOrderModified()"/>
         </td>
         <td>
-            <html:text name='<%=formName%>' property="sampleOrderItems.providerLastName"
-                       styleId="requesterLastName" onchange="setOrderModified()"/>
+            <form:input path="sampleOrderItems.providerLastName"
+                       id="requesterLastName" onchange="setOrderModified()"/>
         </td>
         <td>
-            <html:text name='<%=formName%>' property="sampleOrderItems.providerWorkPhone"
-                       styleId="requesterPhone" onchange="sc_validatePhoneNumber(this);"/>
+            <form:input path="sampleOrderItems.providerWorkPhone"
+                       id="requesterPhone" onchange="sc_validatePhoneNumber(this);"/>
         </td>
         <td>
-            <html:text name='<%=formName%>' property="sampleOrderItems.providerFax"
-                       styleId="requesterFax" onchange="sc_validatePhoneNumber(this);"/>
+            <form:input path="sampleOrderItems.providerFax"
+                       id="requesterFax" onchange="sc_validatePhoneNumber(this);"/>
         </td>
         <td>
-            <html:text name='<%=formName%>' property="sampleOrderItems.providerEmail"
-                       styleId="requesterEMail" onchange="setOrderModified()"/>
+            <form:input path="sampleOrderItems.providerEmail"
+                       id="requesterEMail" onchange="setOrderModified()"/>
         </td>
 
     </tr>
@@ -425,8 +427,8 @@
 		<% } %>
         capitialize = true;
         dropdown.combobox();
-        invalidLabID = '<bean:message key="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIXME - add badmessage icon
-        maxRepMsg = '<bean:message key="sample.entry.project.siteMaxMsg"/>';
+        invalidLabID = '<spring:message code="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIXME - add badmessage icon
+        maxRepMsg = '<spring:message code="sample.entry.project.siteMaxMsg"/>';
 
         //resultCallBack defined in customAutocomplete.js
         resultCallBack = function(textValue) {

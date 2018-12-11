@@ -1,9 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"%>
-<%@ page isELIgnored="false" %> 
-
+<%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
 
@@ -38,7 +39,7 @@
 </tr>
 </table>
 
-<script language="JavaScript1.2">
+<script>
 
 function initWarning(){
 	var ua = navigator.userAgent;

@@ -10,15 +10,15 @@
 			us.mn.state.health.lims.common.util.Versioning,
 			us.mn.state.health.lims.common.util.IdValuePair"%>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/labdev-view" prefix="app"%>
-<%@ taglib uri="/tags/struts-tiles"     prefix="tiles" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 
-<bean:define id="formName" 	value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+ 	
 
 
 
@@ -436,7 +436,7 @@ function /*string*/ getNote( sampleIndex ){
 <% if(useInitialSampleCondition){ %>
 <div id="sampleConditionPrototype" style="display: none" >
 			<select id="prototypeID" title='<%= StringUtil.getMessageForKey("result.multiple_select")%>' > 
-			<logic:iterate id="optionValue" name='<%=formName%>' property="initialSampleConditionList" type="IdValuePair" >
+			<logic:iterate id="optionValue" name='${form.formName}' property="initialSampleConditionList" type="IdValuePair" >
 						<option value='<%=optionValue.getId()%>' >
 							<bean:write name="optionValue" property="value"/>
 						</option>
@@ -446,24 +446,24 @@ function /*string*/ getNote( sampleIndex ){
 <% } %>
 
 <input type="hidden" id="maxSampleIndex" value="0" />
-<html:hidden name='<%=formName %>' property="requestAsXML" styleId="xmlWad" />
+<form:hidden path="requestAsXML" id="xmlWad" />
 
 <tiles:insert attribute="sampleConfirmationOrder" />
 
 <hr/>
 
-<h3><bean:message key="sample.entry.confirmation.test.request"/></h3>
+<h3><spring:message code="sample.entry.confirmation.test.request"/></h3>
 <input type="hidden" value="0" id="maxReferralSampleIndex_0" />
 <div id=div_0>
 <table  id="testRequestTable_0">
 	<tr id="requesterSampleRowOne">
-			<td><bean:message key="sample.entry.test.confirmation.requester.id"/></td>
+			<td><spring:message code="sample.entry.test.confirmation.requester.id"/></td>
 			<td>
 				<input type="hidden" value="zero" class="sampleIndex" />
 				<input type="hidden" value="0" id="maxReferralTestIndex_0" />
 				<input type="text" id="requesterSampleId_0" onchange=" makeDirty();">
 			</td>
-			<td><bean:message key="sample.collectionDate"/>&nbsp;<span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>:</td>
+			<td><spring:message code="sample.collectionDate"/>&nbsp;<span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>:</td>
 			<td><input type="text"
 			           id="collectionDate_0"
 			           name="collectionDate_0"
@@ -471,11 +471,11 @@ function /*string*/ getNote( sampleIndex ){
 			           onkeyup="addDateSlashes(this,event);"
 			           onchange="checkValidDate(this)"/>
              <% if( FormFields.getInstance().useField(Field.CollectionTime)){ %>
-                 <bean:message key="sample.collectionTime" />:
-                     <html:text name="<%=formName %>"
+                 <spring:message code="sample.collectionTime" />:
+                     <html:text name="${form.formName}"
                      onkeyup="filterTimeKeys(this, event);" 
                      property="interviewTime" 
-                     styleId="interviewTime_0"
+                     id="interviewTime_0"
                      maxlength="5"
                      onblur="makeDirty(); updateFieldValidity(checkValidTimeEntry(this, true), this.id );"/>
              
@@ -493,11 +493,11 @@ function /*string*/ getNote( sampleIndex ){
 	<tr id="requesterSampleRowTwo">	
 	        <% if(useInitialSampleCondition){ %>
 				<td >
-					<bean:message key="sample.entry.sample.condition"/>
+					<spring:message code="sample.entry.sample.condition"/>
 				</td>
 				<td>
 				<select id="initialCondition_0"  multiple="multiple" title='<%= StringUtil.getMessageForKey("result.multiple_select")%>' >
-					<logic:iterate id="optionValue" name='<%=formName%>' property="initialSampleConditionList" type="IdValuePair" >
+					<logic:iterate id="optionValue" name='${form.formName}' property="initialSampleConditionList" type="IdValuePair" >
 								<option value='<%=optionValue.getId()%>' >
 									<bean:write name="optionValue" property="value"/>
 								</option>
@@ -506,13 +506,13 @@ function /*string*/ getNote( sampleIndex ){
 			</td>
 			<% } %>
 					
-			<td><bean:message key="sample.entry.sample.type"/>&nbsp;<span class="requiredlabel">*</span></td>
+			<td><spring:message code="sample.entry.sample.type"/>&nbsp;<span class="requiredlabel">*</span></td>
 			<td>
 			<select id="sampleType_0"
 				    onchange="makeDirty(); populateRequestForSampleType(this, '0');" >
 				<option value="0"></option>
 				<logic:iterate id="sampleTypes"
-							   name='<%=formName %>'
+							   name='${form.formName}'
 							   property="sampleTypes"
 							   type="IdValuePair">
 					<option value='<%= sampleTypes.getId() %>'>
@@ -523,7 +523,7 @@ function /*string*/ getNote( sampleIndex ){
 			</td>
 		</tr>
 		<tr id="noteRow_0"	style="display: none;">
-			<td style="vertical-align:top" align="right"><bean:message key="note.note"/>:</td>
+			<td style="vertical-align:top" align="right"><spring:message code="note.note"/>:</td>
 			<td colspan="6" align="left" >
 				<textarea id="note_0"
 						   onchange="makeDirty();"
@@ -532,13 +532,13 @@ function /*string*/ getNote( sampleIndex ){
 			</td>
 		</tr>
 		<tr id="referralTestId_0" >
-			<td ><bean:message key="sample.entry.test.confirmation.site.test" /></td>
+			<td ><spring:message code="sample.entry.test.confirmation.site.test" /></td>
             <td><input type="text"
                        id="requestedTests_0_0"
                        class="requestingTests_0"
                     >
             </td>
-			<td><bean:message key="sample.entry.test.confirmation.site.result"/></td>
+			<td><spring:message code="sample.entry.test.confirmation.site.result"/></td>
 			<td>
 				<input type="text" class="referralTestResult_0" name="result"  id="textResult_0_0" />
 			</td>
@@ -553,7 +553,7 @@ function /*string*/ getNote( sampleIndex ){
 			</td>
 		</tr>
 		<tr id="requestedTestRow_0">
-			<td style="vertical-align:top"><bean:message key="sample.entry.confirmation.requested.tests"/> : <span class="requiredlabel">*</span></td>
+			<td style="vertical-align:top"><spring:message code="sample.entry.confirmation.requested.tests"/> : <span class="requiredlabel">*</span></td>
 
 			<td colspan="5">
 			<table style="background-color:#EEEEEE; color: black; border : 1px solid red" id="requestedTests_0" >
@@ -571,21 +571,21 @@ function /*string*/ getNote( sampleIndex ){
 
 <hr/>
 <hr style="width: 100%; height: 5px" />
-<html:hidden name="<%=formName%>" property="patientPK" styleId="patientPK"/>
+<form:hidden path="patientPK" id="patientPK"/>
 <table style="width:100%">
 	<tr>
 		<td style="width:15%;text-align:left;">
             <input type="button" value="+" onclick="showHideSamples(this, 'patientInfo');">
-			<bean:message key="sample.entry.patient" />:
+			<spring:message code="sample.entry.patient" />:
 			<% if ( patientRequired ) { %><span class="requiredlabel">*</span><% } %>
 		</td>
 		<td style="width:15%" id="firstName"><b>&nbsp;</b></td>
 		<td style="width:15%">
-			<% if(useMothersName){ %><bean:message key="patient.mother.name"/>:<% } %>
+			<% if(useMothersName){ %><spring:message code="patient.mother.name"/>:<% } %>
 		</td>
 		<td style="width:15%" id="mother"><b>&nbsp;</b></td>
 		<td style="width:10%">
-			<% if( useSTNumber){ %><bean:message key="patient.ST.number"/>:<% } %>
+			<% if( useSTNumber){ %><spring:message code="patient.ST.number"/>:<% } %>
 		</td>
 		<td style="width:15%" id="st"><b>&nbsp;</b></td>
 		<td style="width:5%">&nbsp;</td>
@@ -594,7 +594,7 @@ function /*string*/ getNote( sampleIndex ){
 		<td>&nbsp;</td>
 		<td id="lastName"><b>&nbsp;</b></td>
 		<td>
-			<bean:message key="patient.birthDate"/>:
+			<spring:message code="patient.birthDate"/>:
 		</td>
 		<td id="dob"><b>&nbsp;</b></td>
 		<td>
@@ -602,7 +602,7 @@ function /*string*/ getNote( sampleIndex ){
 		</td>
 		<td id="national"><b>&nbsp;</b></td>
 		<td>
-			<bean:message key="patient.gender"/>:
+			<spring:message code="patient.gender"/>:
 		</td>
 		<td id="gender"><b>&nbsp;</b></td>
 	</tr>
@@ -631,7 +631,7 @@ function makeDirty(){
 	}
 	// Adds warning when leaving page if content has been entered into makeDirty form fields
 	function formWarning(){ 
-    return "<bean:message key="banner.menu.dataLossWarning"/>";
+    return "<spring:message code="banner.menu.dataLossWarning"/>";
 	}
 	window.onbeforeunload = formWarning;
 }

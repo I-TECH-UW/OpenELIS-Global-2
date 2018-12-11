@@ -9,9 +9,12 @@
                  us.mn.state.health.lims.referral.action.beanitems.ReferredTest" %>
 
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%!
     String basePath = "";
@@ -21,7 +24,7 @@
     basePath = request.getScheme() + "://" + request.getServerName() + ":"
             + request.getServerPort() + path + "/";
 %>
-<bean:define id="formName" value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>'/>
+ 
 
 <script type="text/javascript" src="<%=basePath%>scripts/jquery.ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript"
@@ -212,7 +215,7 @@ function /*void*/ savePage() {
 
     window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
     var form = window.document.forms[0];
-    form.action = '<%=formName%>'.sub('Form', '') + "Update.do";
+    form.action = '${form.formName}'.sub('Form', '') + "Update.do";
     form.submit();
 }
 function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
@@ -221,34 +224,34 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
 }
 </script>
 
-<logic:notEmpty name="<%=formName%>" property="referralItems">
+<logic:notEmpty name="${form.formName}" property="referralItems">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="1" id="mainTable">
 <tr>
-    <th colspan="6" class="headerGroup"><bean:message key="referral.header.group.request"/></th>
-    <th colspan="2" class="leftVertical headerGroup"><bean:message key="referral.header.group.results"/></th>
+    <th colspan="6" class="headerGroup"><spring:message code="referral.header.group.request"/></th>
+    <th colspan="2" class="leftVertical headerGroup"><spring:message code="referral.header.group.results"/></th>
 </tr>
 <tr>
-    <th><bean:message key="referral.reason"/><span class="requiredlabel">*</span></th>
-    <th><bean:message key="referral.referer"/></th>
-    <th><bean:message key="referral.institute"/><span class="requiredlabel">*</span></th>
-    <th><bean:message key="referral.sent.date"/><br/><%=DateUtil.getDateUserPrompt()%></th>
-    <th><bean:message key="test.testName"/><span class="requiredlabel">*</span></th>
-    <th width="5%"><bean:message key="label.button.cancel.referral"/></th>
-    <th width="15%" class="leftVertical"><bean:message key="result.result"/></th>
-    <th><bean:message key="referral.report.date"/><br/><%=DateUtil.getDateUserPrompt()%></th>
+    <th><spring:message code="referral.reason"/><span class="requiredlabel">*</span></th>
+    <th><spring:message code="referral.referer"/></th>
+    <th><spring:message code="referral.institute"/><span class="requiredlabel">*</span></th>
+    <th><spring:message code="referral.sent.date"/><br/><%=DateUtil.getDateUserPrompt()%></th>
+    <th><spring:message code="test.testName"/><span class="requiredlabel">*</span></th>
+    <th width="5%"><spring:message code="label.button.cancel.referral"/></th>
+    <th width="15%" class="leftVertical"><spring:message code="result.result"/></th>
+    <th><spring:message code="referral.report.date"/><br/><%=DateUtil.getDateUserPrompt()%></th>
 </tr>
 
-<logic:iterate id="referralItems" name="<%=formName%>" property="referralItems" indexId="index" type="ReferralItem">
-<html:hidden styleId='<%= "textXML_" + index %>' name="referralItems" property="additionalTestsXMLWad" indexed="true"
+<logic:iterate id="referralItems" name="${form.formName}" property="referralItems" indexId="index" type="ReferralItem">
+<html:hidden id='<%= "textXML_" + index %>' name="referralItems" property="additionalTestsXMLWad" indexed="true"
              styleClass="XMLWad"/>
-<html:hidden styleId='<%= "referralResultId_" + index %>' name="referralItems" property="referralResultId"
+<html:hidden id='<%= "referralResultId_" + index %>' name="referralItems" property="referralResultId"
              indexed="true"/>
-<html:hidden styleId='<%= "referralId_" + index %>' name="referralItems" property="referralId" indexed="true"/>
-<html:hidden styleId='<%= "referredType_" + index %>' name="referralItems" property="referredResultType"
+<html:hidden id='<%= "referralId_" + index %>' name="referralItems" property="referralId" indexed="true"/>
+<html:hidden id='<%= "referredType_" + index %>' name="referralItems" property="referredResultType"
              indexed="true"/>
-<html:hidden styleId='<%= "modified_" + index %>' name="referralItems" property="modified" indexed="true"/>
-<html:hidden styleId='<%= "causalResultId_" + index %>' name="referralItems" property="inLabResultId" indexed="true"/>
+<html:hidden id='<%= "modified_" + index %>' name="referralItems" property="modified" indexed="true"/>
+<html:hidden id='<%= "causalResultId_" + index %>' name="referralItems" property="inLabResultId" indexed="true"/>
 <input type="hidden"
        value='<%= referralItems.getAdditionalTests() == null ? 0 : referralItems.getAdditionalTests().size()  %>'
        id='<%="addedRowCount_" + index%>'/>
@@ -260,20 +263,20 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
         <b><bean:write name="referralItems" property="accessionNumber"/></b>
     </td>
     <td colspan="4" class="HeadSeperator">
-        <bean:message key="referral.request.date"/>: <b><bean:write name="referralItems" property="referralDate"/></b>
+        <spring:message code="referral.request.date"/>: <b><bean:write name="referralItems" property="referralDate"/></b>
     </td>
     <td colspan='2' class="HeadSeperator leftVertical">
 </tr>
 <tr class='<%=rowColor%>Head' id='<%="referralRow_" + index%>'>
     <td colspan="2">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<bean:message key="label.sampleType"/>: <b><bean:write name="referralItems"
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<spring:message code="label.sampleType"/>: <b><bean:write name="referralItems"
                                                                                                     property="sampleType"/></b>
     </td>
     <td colspan="2">
-        <bean:message key="test.testName"/>: <b><bean:write name="referralItems" property="referringTestName"/></b>
+        <spring:message code="test.testName"/>: <b><bean:write name="referralItems" property="referringTestName"/></b>
     </td>
     <td colspan="2">
-        <bean:message key="result.original.result"/>: <b><bean:write name="referralItems"
+        <spring:message code="result.original.result"/>: <b><bean:write name="referralItems"
                                                                      property="referralResults"/></b>
     </td>
     <td colspan="2" class="leftVertical">
@@ -285,7 +288,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
         <select name="<%="referralItems[" + index + "].referralReasonId"%>"
                 id='<%="referralReasonId_" + index%>'
                 onchange='<%="markModified(\"" + index + "\"); " %>'>
-            <logic:iterate id="optionValue" name='<%=formName %>' property="referralReasons" type="IdValuePair">
+            <logic:iterate id="optionValue" name='${form.formName}' property="referralReasons" type="IdValuePair">
                 <option value='<%=optionValue.getId()%>'  <%
                     if( optionValue.getId().equals( referralItems.getReferralReasonId() ) )
                         out.print( "selected" );
@@ -305,7 +308,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
         <select name='<%="referralItems[" + index + "].referredInstituteId"%>'
                 class="required"
                 onchange='<%="markModified(\"" + index + "\");"%>'>
-            <logic:iterate id="optionValue" name='<%=formName %>' property="referralOrganizations" type="IdValuePair">
+            <logic:iterate id="optionValue" name='${form.formName}' property="referralOrganizations" type="IdValuePair">
                 <option value='<%=optionValue.getId()%>' <%
                     if( optionValue.getId().equals( referralItems.getReferredInstituteId() ) )
                         out.print( "selected" );
@@ -322,11 +325,11 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
                    size="8"
                    maxlength="10"
                    onchange='<%="markModified(\'" + index + "\');  validateDateFormat(this);"%>'
-                   styleId='<%="sendDate_" + index %>'/>
+                   id='<%="sendDate_" + index %>'/>
     </td>
     <td>
         <html:hidden name="referralItems" property="referredTestId" indexed="false"
-                     styleId='<%="shadowReferredTest_" + index %>'/>
+                     id='<%="shadowReferredTest_" + index %>'/>
         <select name='<%="referralItems[" + index + "].referredTestId"%>'
                 onchange='<%="markModified(\"" + index + "\"); updateResultField(\"" + index + "\");"%>'
                 id='<%="testSelection_" + index%>' class="required">
@@ -398,14 +401,14 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
                 </logic:notEmpty>
             </select>
             <html:hidden name="referralItems" property="multiSelectResultValues" indexed="true"
-                         styleId='<%="multiresultId_" + index%>' styleClass="multiSelectValues"/>
+                         id='<%="multiresultId_" + index%>' styleClass="multiSelectValues"/>
             <html:hidden name="referralItems" indexed="true" property="referredMultiDictionaryResult"
-                         styleId='<%= "resultMultiSelect_" + index %>'/>
+                         id='<%= "resultMultiSelect_" + index %>'/>
             <% }else if( "C".equals( referredResultType ) ){ %>
             <div id='<%="cascadingMulti_" + index + "_0"%>'
                  class='<%="cascadingMulti_" + index + " referralResult_" + index %>'>
                 <html:hidden name="referralItems" property="multiSelectResultValues" indexed="true"
-                             styleId='<%="multiresultId_" + index%>' styleClass="multiSelectValues"/>
+                             id='<%="multiresultId_" + index%>' styleClass="multiSelectValues"/>
                 <logic:present name="referralItems" property="dictionaryResults">
                     <input type="hidden" id='<%="divCount_" + index %>' value="0">
                     <select name="<%="testResult[" + index + "].multiSelectResultValues" %>"
@@ -448,7 +451,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
                        size="8"
                        maxlength="10"
                        onchange='<%="markModified(\'" + index + "\');  validateDateFormat(this);" %>'
-                       styleId='<%="reportDate_" + index %>'/>
+                       id='<%="reportDate_" + index %>'/>
             <% } %>
         </div>
     </td>
@@ -465,7 +468,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
                        id='<%="referredType_" + index + "_" + testIndex %>'
                        name='<%="referralItems[" + index + "].additionalTests[" + testIndex + "].referredResultType" %>'
                        value='<%=additionalTests.getReferredResultType() %>'/>
-                <label for='<%="remove" + index + "_" + testIndex %>'><bean:message key="label.button.remove"/></label>
+                <label for='<%="remove" + index + "_" + testIndex %>'><spring:message code="label.button.remove"/></label>
                 <input type="checkbox"
                        name='<%="referralItems[" + index + "].additionalTests[" + testIndex + "].remove" %>'
                        id='<%="remove" + index + "_" + testIndex %>'
@@ -618,7 +621,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
 </tr>
 <logic:notEmpty name="referralItems" property="pastNotes">
     <tr class='<%= rowColor %>'>
-        <td valign="top" align="right"><bean:message key="label.prior.note" />:</td>
+        <td valign="top" align="right"><spring:message code="label.prior.note" />:</td>
         <td colspan="5" align="left">
             <%= referralItems.getPastNotes() %>
         </td>
@@ -628,9 +631,9 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
 <tr id='<%="noteRow_" + index %>'
     class='<%= rowColor %>'
     style="display: none;">
-    <td valign="top" align="right"><bean:message key="note.note"/>:</td>
+    <td valign="top" align="right"><spring:message code="note.note"/>:</td>
     <td colspan="6" align="left">
-        <html:textarea styleId='<%="note_" + index %>'
+        <html:textarea id='<%="note_" + index %>'
                        onchange='<%="markModified(" + index + ");"%>'
                        name="referralItems"
                        property="note"
@@ -642,11 +645,11 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
 </logic:iterate>
 </table>
 </logic:notEmpty>
-<logic:empty name="<%=formName%>" property="referralItems">
-    <h2><bean:message key="referral.noReferralItems"/></h2>
+<logic:empty name="${form.formName}" property="referralItems">
+    <h2><spring:message code="referral.noReferralItems"/></h2>
 </logic:empty>
 
-<script type="text/javascript" language="JavaScript1.2">
+<script type="text/javascript">
     var dirty = false;
     //all methods here either overwrite methods in tiles or all called after they are loaded
 
@@ -657,7 +660,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
         }
         // Adds warning when leaving page if content has been entered into makeDirty form fields
         function formWarning() {
-            return "<bean:message key="banner.menu.dataLossWarning"/>";
+            return "<spring:message code="banner.menu.dataLossWarning"/>";
         }
 
         window.onbeforeunload = formWarning;

@@ -2,15 +2,17 @@
          import="us.mn.state.health.lims.common.action.IActionConstants,
                  us.mn.state.health.lims.common.util.StringUtil" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>'/>
-<bean:define id="currentValue" name="<%=formName %>" property="value"/>
-<bean:define id="valueEditable" name="<%=formName %>" property="editable" type="java.lang.Boolean"/>
-<bean:define id="siteInfoName" name="<%=formName%>" property="paramName" />
+ 
+<bean:define id="currentValue" name="${form.formName}" property="value"/>
+<bean:define id="valueEditable" name="${form.formName}" property="editable" type="java.lang.Boolean"/>
+<bean:define id="siteInfoName" name="${form.formName}" property="paramName" />
 
 <%!String allowEdits = "true";%>
 
@@ -45,45 +47,45 @@
 </script>
 
 
-<bean:message key="generic.name"/>:&nbsp;<bean:write name="<%=formName %>" property="paramName"/><br/><br/>
-<bean:write name="<%=formName %>" property="description"/><br/><br/>
-<bean:message key="generic.value"/>:&nbsp;
+<spring:message code="generic.name"/>:&nbsp;<c:out value="${form.paramName}"/><br/><br/>
+<c:out value="${form.description}"/><br/><br/>
+<spring:message code="generic.value"/>:&nbsp;
 
 
-<logic:equal name='<%=formName %>' property="valueType" value="text">
-    <logic:equal name="<%=formName%>" property="encrypted" value="true">
-        <html:password name="<%=formName%>" property="value" size="60" maxlength="120"/>
+<logic:equal name='${form.formName}' property="valueType" value="text">
+    <logic:equal name="${form.formName}" property="encrypted" value="true">
+        <html:password name="${form.formName}" property="value" size="60" maxlength="120"/>
     </logic:equal>
-    <logic:notEqual name="<%=formName%>" property="encrypted" value="true">
-        <logic:equal name='<%=formName %>' property="tag" value="localization" >
-            <label for="english" ><bean:message key="label.english" /></label>
-            <html:text name="<%=formName%>" property="englishValue" size="60" maxlength="120" styleClass="inputWidget" styleId="english"/>
-            &nbsp;&nbsp;&nbsp;&nbsp;<label for="french" ><bean:message key="label.french" /></label>
-            <html:text name="<%=formName%>" property="frenchValue" size="60" maxlength="120" styleClass="inputWidget" styleId="french"/>
+    <logic:notEqual name="${form.formName}" property="encrypted" value="true">
+        <logic:equal name='${form.formName}' property="tag" value="localization" >
+            <label for="english" ><spring:message code="label.english" /></label>
+            <form:input path="englishValue" size="60" maxlength="120" styleClass="inputWidget" id="english"/>
+            &nbsp;&nbsp;&nbsp;&nbsp;<label for="french" ><spring:message code="label.french" /></label>
+            <form:input path="frenchValue" size="60" maxlength="120" styleClass="inputWidget" id="french"/>
         </logic:equal>
-        <logic:notEqual name='<%=formName %>' property="tag" value="localization" >
-            <html:text name="<%=formName%>" property="value" size="60" maxlength="120" styleClass="inputWidget"/>
+        <logic:notEqual name='${form.formName}' property="tag" value="localization" >
+            <form:input path="value" size="60" maxlength="120" styleClass="inputWidget"/>
         </logic:notEqual>
     </logic:notEqual>
 </logic:equal>
-<logic:equal name='<%=formName %>' property="valueType" value="boolean">
-    <html:radio name='<%=formName %>' property="value" value="true" styleClass="inputWidget"><bean:message key="label.true" /></html:radio>
-    <html:radio name='<%=formName %>' property="value" value="false"><bean:message key="label.false" /></html:radio>
+<logic:equal name='${form.formName}' property="valueType" value="boolean">
+    <html:radio name='${form.formName}' property="value" value="true" styleClass="inputWidget"><spring:message code="label.true" /></html:radio>
+    <html:radio name='${form.formName}' property="value" value="false"><spring:message code="label.false" /></html:radio>
 </logic:equal>
-<logic:equal name='<%=formName %>' property="valueType" value="dictionary">
-    <html:select name='<%=formName %>' property="value" styleClass="inputWidget">
-        <logic:iterate id="entry" name="<%=formName %>" property="dictionaryValues">
+<logic:equal name='${form.formName}' property="valueType" value="dictionary">
+    <html:select name='${form.formName}' property="value" styleClass="inputWidget">
+        <logic:iterate id="entry" name="${form.formName}" property="dictionaryValues">
             <option value="<%=entry%>" <%=entry.equals( currentValue ) ? "selected='selected' " : "" %> ><%=entry %>
             </option>
         </logic:iterate>
     </html:select>
 </logic:equal>
-<logic:equal name='<%=formName %>' property="valueType" value="freeText">
-    <html:textarea name="<%=formName%>" property="value" rows="2" style="width:50%"/>
+<logic:equal name='${form.formName}' property="valueType" value="freeText">
+    <html:textarea name="${form.formName}" property="value" rows="2" style="width:50%"/>
 </logic:equal>
-<logic:equal name='<%=formName %>' property="valueType" value="logoUpload">
+<logic:equal name='${form.formName}' property="valueType" value="logoUpload">
     <input type="file" name="aFile" onchange="checklogLogoFile( this )" id="inputWidget"/><br/>
-    <bean:message key="label.remove.image" /><input type="checkbox" id="removeImage" />
+    <spring:message code="label.remove.image" /><input type="checkbox" id="removeImage" />
     <script type="text/javascript">
         $jq("form").attr("enctype", "multipart/form-data");
         $jq(":file").css("width", "600px");

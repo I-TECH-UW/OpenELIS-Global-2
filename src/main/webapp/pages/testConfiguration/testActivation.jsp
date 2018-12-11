@@ -5,10 +5,12 @@
          		us.mn.state.health.lims.common.util.StringUtil,
          		us.mn.state.health.lims.common.util.Versioning" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%--
   ~ The contents of this file are subject to the Mozilla Public License
   ~ Version 1.1 (the "License"); you may not use this file except in
@@ -25,7 +27,7 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>'/>
+ 
 
 <%!
     String basePath = "";
@@ -58,7 +60,7 @@
 
     function makeDirty() {
         function formWarning() {
-            return "<bean:message key="banner.menu.dataLossWarning"/>";
+            return "<spring:message code="banner.menu.dataLossWarning"/>";
         }
 
         window.onbeforeunload = formWarning;
@@ -379,7 +381,7 @@
     }
     function configureForSelect() {
         $jq("#step").text("<%=StringUtil.getMessageForKey("label.testActivate")%>");
-        $jq("#instructions").text("<bean:message key="instructions.test.activation"/>");
+        $jq("#instructions").text("<spring:message code="instructions.test.activation"/>");
         $jq("#activateSection input").prop("disabled", false);
         $jq(".selectHide").hide();
         $jq(".selectShow").show();
@@ -430,7 +432,7 @@
 </script>
 
 <form>
-    <html:hidden name='<%=formName%>' property="jsonChangeList" styleId="jsonChangeList"/>
+    <form:hidden path="jsonChangeList" id="jsonChangeList"/>
 </form>
 <br>
 <input type="button" value='<%= StringUtil.getMessageForKey("banner.menu.administration") %>'
@@ -456,9 +458,9 @@
 <span id="testActivationSelection" class="selectShow sortHide confirmHide"><%=StringUtil.getMessageForKey("label.testActivate")%></span>
 <br><br>
 
-<h1 id="step"><bean:message key="label.testActivate"/></h1><br/>
+<h1 id="step"><spring:message code="label.testActivate"/></h1><br/>
 
-<div class="indent"><span id="instructions"><bean:message key="instructions.test.activation"/></span></div>
+<div class="indent"><span id="instructions"><spring:message code="instructions.test.activation"/></span></div>
 <br>
 
 <div id="testActivate" class="selectHide sortHide" >
@@ -519,7 +521,7 @@
 
 <hr/>
 <div id="activateSection" class="indent">
-    <logic:iterate id="activeBean" name="<%=formName%>" property="activeTestList">
+    <logic:iterate id="activeBean" name="${form.formName}" property="activeTestList">
         <div>
             <span class="activeSampleType"><bean:write name="activeBean" property="sampleType.value"/>
                 <html:hidden name="activeBean" property="sampleType.id"/>
@@ -586,12 +588,12 @@
             </div>
         </div>
     </logic:iterate>
-    <logic:notEmpty name="<%=formName%>" property="inactiveTestList">
+    <logic:notEmpty name="${form.formName}" property="inactiveTestList">
         <br/><br/>
 
-        <div style="text-align: center"><bean:message key="label.testActivate.inactiveSampleTypes"/></div>
+        <div style="text-align: center"><spring:message code="label.testActivate.inactiveSampleTypes"/></div>
         <hr/>
-        <logic:iterate id="activeBean" name="<%=formName%>" property="inactiveTestList">
+        <logic:iterate id="activeBean" name="${form.formName}" property="inactiveTestList">
             <div>
             <span class="inactiveSampleType"><bean:write name="activeBean" property="sampleType.value"/>
                 <html:hidden name="activeBean" property="sampleType.id"/>

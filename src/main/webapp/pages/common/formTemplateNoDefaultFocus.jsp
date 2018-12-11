@@ -13,7 +13,7 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
 
 <html:html>
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 <%!
 String path = "";
 String basePath = "";
@@ -42,14 +42,14 @@ if (form == null) {
 <script type="text/javascript" src="<%=basePath%>scripts/jquery-1.8.0.min.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/jquery.dataTables.min.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/bootstrap.min.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script language="JavaScript1.2" src="<%=basePath%>scripts/utilities.jsp"></script>
+<script src="<%=basePath%>scripts/utilities.jsp"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/prototype-1.5.1.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/scriptaculous.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/overlibmws.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/ajaxtags-1.2.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/Tooltip-0.6.0.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/lightbox.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script language="JavaScript1.2">
+<script>
 
 
 function setAction(form, action, validate, parameters) {
@@ -129,7 +129,7 @@ function setAction(form, action, validate, parameters) {
 <%--action is set in BaseAction--%>
 
 <!-- for optimistic locking-->
-<html:hidden property="lastupdated" name="<%=formName%>" />
+<form:hidden path="lastupdated" name="${form.formName}" />
 	<table cellpadding="0" cellspacing="1" width="100%">
 			<tr>
 				<td>

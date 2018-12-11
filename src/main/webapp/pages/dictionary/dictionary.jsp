@@ -2,16 +2,17 @@
 	contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%--bugzilla 2108 added required asterisks--%>
 
 <div id="sound"></div>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 
 
 
@@ -35,7 +36,7 @@ errorNewLine =
                     
 %>
 
-<script language="JavaScript1.2">
+<script>
 function validateForm(form) {
    var validated = validateDictionaryForm(form);
     //validation for no new line characters
@@ -50,24 +51,24 @@ function validateForm(form) {
 }
 </script>
 <%--bugzilla 2061-2063--%>
-<html:hidden property="dirtyFormFields" name="<%=formName%>" styleId="dirtyFormFields"/>
+<form:hidden path="dirtyFormFields" name="${form.formName}" id="dirtyFormFields"/>
 <table>
 		<tr>
 						<td class="label">
-							<bean:message key="dictionary.id"/>:
+							<spring:message code="dictionary.id"/>:
 						</td>	
 						<td> 
-							<app:text name="<%=formName%>" property="id" allowEdits="false"/>
+							<app:text name="${form.formName}" property="id" allowEdits="false"/>
 						</td>
 		</tr>
 		<tr>
 						<td class="label">
-							<bean:message key="dictionary.dictionarycategory"/>:<span class="requiredlabel">*</span>
+							<spring:message code="dictionary.dictionarycategory"/>:<span class="requiredlabel">*</span>
 						</td>	
 						<td>
-						  <html:select name="<%=formName%>" property="selectedDictionaryCategoryId">
+						  <html:select name="${form.formName}" property="selectedDictionaryCategoryId">
 					   	     <app:optionsCollection 
-										name="<%=formName%>" 
+										name="${form.formName}" 
 							    		property="categories" 
 										label="description" 
 										value="id"  />
@@ -77,28 +78,28 @@ function validateForm(form) {
 						</tr>
         <tr>
 						<td class="label">
-							<bean:message key="dictionary.isActive"/>:<span class="requiredlabel">*</span>
+							<spring:message code="dictionary.isActive"/>:<span class="requiredlabel">*</span>
 						</td>	
 						<td width="1"> 
-							<html:text name="<%=formName%>" property="isActive" size="1" onblur="this.value=this.value.toUpperCase()" />
+							<form:input path="isActive" size="1" onblur="this.value=this.value.toUpperCase()" />
 						</td>
 		</tr>
 		<tr>
 						<td class="label">
-							<bean:message key="dictionary.dictEntry"/>:<span class="requiredlabel">*</span>
+							<spring:message code="dictionary.dictEntry"/>:<span class="requiredlabel">*</span>
 						</td>	
 						<td> 
-							<%--html:text name="<%=formName%>" property="dictEntry" /--%>
-						    <html:textarea name="<%=formName%>" property="dictEntry" styleId="dictEntry" cols="50" rows="4"/>
+							<%--html:text name="${form.formName}" property="dictEntry" /--%>
+						    <html:textarea name="${form.formName}" property="dictEntry" id="dictEntry" cols="50" rows="4"/>
 						</td>
 		</tr>
         <%--bugzilla 1847--%>
 		<tr>
 						<td class="label">
-							<bean:message key="dictionary.localAbbreviation"/>:
+							<spring:message code="dictionary.localAbbreviation"/>:
 						</td>	
 						<td> 
-						    <html:text name="<%=formName%>" property="localAbbreviation" size="10" onblur="this.value=this.value.toUpperCase()" />
+						    <form:input path="localAbbreviation" size="10" onblur="this.value=this.value.toUpperCase()" />
 						</td>
 		</tr>
 	

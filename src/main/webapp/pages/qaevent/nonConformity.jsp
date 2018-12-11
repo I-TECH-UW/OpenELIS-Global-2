@@ -13,15 +13,15 @@
                 us.mn.state.health.lims.common.util.ConfigurationProperties" %>
 
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/labdev-view" prefix="app"%>
-<%@ taglib uri="/tags/struts-tiles" prefix="tiles"%>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName"
-	value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+
+	
 
 
 <%! String basePath = "";
@@ -56,7 +56,7 @@
 
 var dirty = false;
 
-var confirmNewTypeMessage = "<bean:message key='nonConformant.confirm.newType.message'/>";
+var confirmNewTypeMessage = "<spring:message code='nonConformant.confirm.newType.message'/>";
 
 /* $jq(function() {
 	var eventsTable = $('qaEventsTable');
@@ -134,7 +134,7 @@ function tweekSampleTypeOptions() {
 	}
 	var fields = eventsTable.getElementsBySelector(".typeOfSample");
 	fields.each(function(field) {
-				field.options[1].text = "<bean:message key='nonConformant.allSampleTypesText'/>";
+				field.options[1].text = "<spring:message code='nonConformant.allSampleTypesText'/>";
 			});
 }
 
@@ -345,11 +345,11 @@ function  processPhoneSuccess(xhr){
 		onclick="loadForm();" disabled="disabled">
 </div>
 <hr />
-<bean:define id="readOnly" name='<%=formName%>' property="readOnly"	type="java.lang.Boolean" />
-<logic:notEmpty name='<%=formName%>' property="labNo">
-	<html:hidden name='<%=formName%>' property="sampleId" />
-	<html:hidden name='<%=formName%>' property="patientId" />
-	<html:hidden name='<%=formName%>' styleId="sampleItemsTypeOfSampleIds" property="sampleItemsTypeOfSampleIds" />
+<bean:define id="readOnly" name='${form.formName}' property="readOnly"	type="java.lang.Boolean" />
+<logic:notEmpty name='${form.formName}' property="labNo">
+	<form:hidden path="sampleId" />
+	<form:hidden path="patientId" />
+	<form:hidden path="sampleItemsTypeOfSampleIds" />
 	<table >
 		<tr>
 			<td >
@@ -358,16 +358,16 @@ function  processPhoneSuccess(xhr){
 				:
 			</td>
 			<td>
-				<html:text name='<%=formName %>' 
-				           styleId="date1" 
+				<html:text name='${form.formName}' 
+				           id="date1" 
 				           property="date"
 					       maxlength="10" 
 					       onchange="checkValidDate(this);" />
 			<% if( FormFields.getInstance().useField(Field.QATimeWithDate)){ %>
 				<%= StringUtil.getContextualMessageForKey("nonconformity.time") %>
 				:
-				<html:text name='<%=formName %>' 
-				           styleId="time" 
+				<html:text name='${form.formName}' 
+				           id="time" 
 				           property="time"
 					       maxlength="5" 
 					       onchange="checkValidTime(this);" />
@@ -375,25 +375,25 @@ function  processPhoneSuccess(xhr){
 			</td>
 		</tr>
 		<tr>
-			<html:hidden name='<%=formName%>' property="project" />
+			<form:hidden path="project" />
 			<% if ( useProject ) { %>
 			<td >
-				<bean:message key="label.study" />
+				<spring:message code="label.study" />
 				:
 			</td>
-			<logic:equal name='<%=formName%>' property="project" value="">
+			<logic:equal name='${form.formName}' property="project" value="">
 				<td>
-					<html:select name="<%=formName%>" property="projectId"
+					<html:select name="${form.formName}" property="projectId"
 						onchange='makeDirty();'>
 						<option value="0"></option>
-						<html:optionsCollection name="<%=formName%>" property="projects"
+						<html:optionsCollection name="${form.formName}" property="projects"
 							label="localizedName" value="id" />
 					</html:select>
 				</td>
 			</logic:equal>
-			<logic:notEqual name='<%=formName%>' property="project" value="">
+			<logic:notEqual name='${form.formName}' property="project" value="">
 				<td>
-					<bean:write name="<%=formName%>" property="project" />
+					<c:out value="${form.project}" />
 				</td>
 			</logic:notEqual>
 			<% } %>
@@ -401,20 +401,20 @@ function  processPhoneSuccess(xhr){
 		<% if ( useSubjectNo ) { %>
 		<tr>
 			<td >
-				<bean:message key="patient.subject.number" />
+				<spring:message code="patient.subject.number" />
 				:
 			</td>
-			<html:hidden name='<%=formName%>' styleId="subjectNew"
+			<html:hidden name='${form.formName}' id="subjectNew"
 				property="subjectNew" />
-			<logic:equal name='<%=formName%>' property="subjectNo" value="">
+			<logic:equal name='${form.formName}' property="subjectNo" value="">
 				<td>
-					<html:text name='<%=formName %>' property="subjectNo"
+					<form:input path="subjectNo"
 						onchange="makeDirty();$('subjectNew').value = true;" />
 				</td>
 			</logic:equal>
-			<logic:notEqual name='<%=formName%>' property="subjectNo" value="">
+			<logic:notEqual name='${form.formName}' property="subjectNo" value="">
 				<td>
-					<bean:write name="<%=formName%>" property="subjectNo" />
+					<c:out value="${form.subjectNo}" />
 				</td>
 			</logic:notEqual>
 		</tr>
@@ -422,19 +422,19 @@ function  processPhoneSuccess(xhr){
 		<% if ( FormFields.getInstance().useField(Field.StNumber) ) { %>
 		<tr>
 			<td >
-				<bean:message key="patient.ST.number" />
+				<spring:message code="patient.ST.number" />
 				:
 			</td>
-			<html:hidden name='<%=formName%>' property="newSTNumber" styleId="newSTNumber"/>
-			<logic:equal name='<%=formName%>' property="STNumber" value="">
+			<form:hidden path="newSTNumber" id="newSTNumber"/>
+			<logic:equal name='${form.formName}' property="STNumber" value="">
 				<td>
-					<html:text name='<%=formName %>' property="STNumber"
+					<form:input path="STNumber"
 						onchange="makeDirty();$('newSTNumber').value = true;" />
 				</td>
 			</logic:equal>
-			<logic:notEqual name='<%=formName%>' property="STNumber" value="">
+			<logic:notEqual name='${form.formName}' property="STNumber" value="">
 				<td>
-					<bean:write name="<%=formName%>" property="STNumber" />
+					<c:out value="${form.STNumber}" />
 				</td>
 			</logic:notEqual>
 		</tr>
@@ -445,16 +445,16 @@ function  processPhoneSuccess(xhr){
 			    <%=StringUtil.getContextualMessageForKey("patient.NationalID") %>
 				:
 			</td>
-			<html:hidden name='<%=formName%>'	property="nationalIdNew" styleId="nationalIdNew"/>
-			<logic:equal name='<%=formName%>' property="nationalId" value="">
+			<form:hidden path="nationalIdNew" id="nationalIdNew"/>
+			<logic:equal name='${form.formName}' property="nationalId" value="">
 				<td>
-					<html:text name='<%=formName %>' property="nationalId"
+					<form:input path="nationalId"
 						onchange="makeDirty();$('nationalIdNew').value = true;" />
 				</td>
 			</logic:equal>
-			<logic:notEqual name='<%=formName%>' property="nationalId" value="">
+			<logic:notEqual name='${form.formName}' property="nationalId" value="">
 				<td>
-					<bean:write name="<%=formName%>" property="nationalId" />
+					<c:out value="${form.nationalId}" />
 				</td>
 			</logic:notEqual>
 		</tr>
@@ -465,54 +465,54 @@ function  processPhoneSuccess(xhr){
 				:
 			</td>
 			<td>
-				<bean:write name="<%=formName%>" property="labNo" />
+				<c:out value="${form.labNo}" />
 			</td>
 		</tr>
-		<html:hidden name='<%=formName%>' styleId="serviceNew" property="serviceNew" />
-			<html:hidden name='<%=formName%>' styleId="newServiceName" property="newServiceName" />
-			<logic:equal name='<%=formName%>' property="service" value="">
+		<form:hidden path="serviceNew" />
+			<form:hidden path="newServiceName" />
+			<logic:equal name='${form.formName}' property="service" value="">
 				<% if( useSiteList ){ %>
 					<tr>
 						<td><%= StringUtil.getContextualMessageForKey("sample.entry.project.siteName") %>
 						<td>
-							<html:select styleId="site"
-									     name="<%=formName%>"
+							<html:select id="site"
+									     name="${form.formName}"
 									     property="service"
 									     onchange="makeDirty();$('serviceNew').value = true;">
 								<option value=""></option>
-								<html:optionsCollection name="<%=formName%>" property="siteList" label="value" value="id" />
+								<html:optionsCollection name="${form.formName}" property="siteList" label="value" value="id" />
 						   	</html:select>
 						</td>
 					</tr>
 				<% } else { %>
 					<tr>
-						<td ><bean:message key="patient.project.service" />:</td>
-				  		<td><html:text name='<%=formName %>' property="service" onchange="makeDirty();$('serviceNew').value = true;" /></td>
+						<td ><spring:message code="patient.project.service" />:</td>
+				  		<td><form:input path="service" onchange="makeDirty();$('serviceNew').value = true;" /></td>
 					</tr>
 				<% }%>
 			</logic:equal>
-			<logic:notEqual name='<%=formName%>' property="service" value="">
+			<logic:notEqual name='${form.formName}' property="service" value="">
 					<tr>
 						<td ><%= StringUtil.getContextualMessageForKey("sample.entry.project.siteName") %>:</td>
 						<td>
-							<bean:write name='<%=formName%>' property="service" />
+							<bean:write name='${form.formName}' property="service" />
 						</td>
 					</tr>
 			</logic:notEqual>
-		<html:hidden name='<%=formName%>' styleId="doctorNew" property="doctorNew" />
+		<form:hidden path="doctorNew" />
 		<%  if (FormFields.getInstance().useField(Field.QA_FULL_PROVIDER_INFO )) { %>
         <% if(ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.QA_SAMPLE_ID_REQUIRED, "true")) { %>
 					<tr>
-						<td><bean:message key="sample.clientReference" />:</td>
+						<td><spring:message code="sample.clientReference" />:</td>
 						<td >
-						<logic:equal name='<%=formName%>' property="requesterSampleID" value="">
-							<app:text name="<%=formName%>"
+						<logic:equal name='${form.formName}' property="requesterSampleID" value="">
+							<app:text name="${form.formName}"
 									  property="requesterSampleID"
 									  size="30"
 								  	onchange="makeDirty();"/>
 						</logic:equal>		  	
-						<logic:notEqual name='<%=formName%>' property="requesterSampleID" value="">					
-							<bean:write name="<%=formName%>" property="requesterSampleID" />
+						<logic:notEqual name='${form.formName}' property="requesterSampleID" value="">					
+							<c:out value="${form.requesterSampleID}" />
 						</logic:notEqual>
 						</td>
 					<td colspan="2">&nbsp;</td>
@@ -522,40 +522,40 @@ function  processPhoneSuccess(xhr){
 					<td><%= StringUtil.getContextualMessageForKey("nonconformity.provider.label") %></td>
 				</tr>
 				<tr>
-					<logic:equal name='<%=formName%>' property="providerLastName" value="">
-						<td align="right"><bean:message key="person.lastName" />:</td>
+					<logic:equal name='${form.formName}' property="providerLastName" value="">
+						<td align="right"><spring:message code="person.lastName" />:</td>
 						<td >
-						<html:text name="<%=formName%>"
+						<html:text name="${form.formName}"
 								  property="providerLastName"
-							      styleId="providerLastNameID"
+							      id="providerLastNameID"
 							      onchange="makeDirty();$('doctorNew').value = true;"
 							      size="30" />
-						<bean:message key="humansampleone.provider.firstName.short"/>:
-						<html:text name="<%=formName%>"
+						<spring:message code="humansampleone.provider.firstName.short"/>:
+						<html:text name="${form.formName}"
 								  property="providerFirstName"
-							      styleId="providerFirstNameID"
+							      id="providerFirstNameID"
 							      onchange="makeDirty();$('doctorNew').value = true;"
 							      size="30" />
 						</td>		      
 					</logic:equal>
-					<logic:notEqual name='<%=formName%>' property="providerLastName" value="">
-						<td align="right"><bean:message key="person.name" />:</td>
-						<td><bean:write name="<%=formName%>" property="providerLastName" />,&nbsp;<bean:write name="<%=formName%>" property="providerFirstName" /></td>
+					<logic:notEqual name='${form.formName}' property="providerLastName" value="">
+						<td align="right"><spring:message code="person.name" />:</td>
+						<td><c:out value="${form.providerLastName}" />,&nbsp;<c:out value="${form.providerFirstName}" /></td>
 					</logic:notEqual>		      
 				</tr>
 				<tr>
 					<td align="right">
-						<bean:message  key="person.streetAddress.street" />:
+						<spring:message code="person.streetAddress.street" />:
 					</td>
 					<td>
-					<logic:equal name='<%=formName%>' property="providerStreetAddress" value="">
-						<app:text name='<%=formName%>'
+					<logic:equal name='${form.formName}' property="providerStreetAddress" value="">
+						<app:text name='${form.formName}'
 					  			  property="providerStreetAddress"
 					  			  styleClass="text"
 					  			  size="70" />
 					</logic:equal>
-					<logic:notEqual name='<%=formName%>' property="providerStreetAddress" value="">
-						<bean:write name="<%=formName%>" property="providerStreetAddress" />
+					<logic:notEqual name='${form.formName}' property="providerStreetAddress" value="">
+						<c:out value="${form.providerStreetAddress}" />
 					</logic:notEqual>
 					</td>
 				</tr>
@@ -565,14 +565,14 @@ function  processPhoneSuccess(xhr){
 					    <%= StringUtil.getContextualMessageForKey("person.town") %>:
 					</td>
 					<td>
-					<logic:equal name='<%=formName%>' property="providerCity" value="">
-						<app:text name='<%=formName%>'
+					<logic:equal name='${form.formName}' property="providerCity" value="">
+						<app:text name='${form.formName}'
 								  property="providerCity"
 								  styleClass="text"
 								  size="30" />
 					</logic:equal>
-					<logic:notEqual name='<%=formName%>' property="providerCity" value="">
-						<bean:write name="<%=formName%>" property="providerCity" />
+					<logic:notEqual name='${form.formName}' property="providerCity" value="">
+						<c:out value="${form.providerCity}" />
 					</logic:notEqual>			  
 					</td>
 				</tr>
@@ -580,17 +580,17 @@ function  processPhoneSuccess(xhr){
 			<% if( FormFields.getInstance().useField(Field.ADDRESS_COMMUNE)){ %>
 			<tr>
 				<td align="right">
-					<bean:message  key="person.commune" />:
+					<spring:message code="person.commune" />:
 				</td>
 				<td>
-				<logic:equal name='<%=formName%>' property="providerCommune" value="">
-					<app:text name='<%=formName%>'
+				<logic:equal name='${form.formName}' property="providerCommune" value="">
+					<app:text name='${form.formName}'
 							  property="providerCommune"
 							  styleClass="text"
 							  size="30" />
 				</logic:equal>
-				<logic:notEqual name='<%=formName%>' property="providerCommune" value="">
-					<bean:write name="<%=formName%>" property="providerCommune" />
+				<logic:notEqual name='${form.formName}' property="providerCommune" value="">
+					<c:out value="${form.providerCommune}" />
 				</logic:notEqual>
 				</td>
 			</tr>
@@ -598,19 +598,19 @@ function  processPhoneSuccess(xhr){
 			<% if( FormFields.getInstance().useField(Field.ADDRESS_DEPARTMENT )){ %>
 			<tr>
 				<td align="right">
-					<bean:message  key="person.department" />:
+					<spring:message code="person.department" />:
 				</td>
 				<td>
-				<logic:equal name='<%=formName%>' property="providerDepartment" value="">
-					<html:select name='<%=formName%>'
+				<logic:equal name='${form.formName}' property="providerDepartment" value="">
+					<html:select name='${form.formName}'
 								 property="providerDepartment"
-							     styleId="departmentID" >
+							     id="departmentID" >
 					<option value="0" ></option>
-					<html:optionsCollection name="<%=formName %>" property="departments" label="value" value="id" />
+					<html:optionsCollection name="${form.formName}" property="departments" label="value" value="id" />
 					</html:select>
 				</logic:equal>	
-				<logic:notEqual name='<%=formName%>' property="providerDepartment" value="">
-					<bean:write name="<%=formName%>" property="providerDepartment" />
+				<logic:notEqual name='${form.formName}' property="providerDepartment" value="">
+					<c:out value="${form.providerDepartment}" />
 				</logic:notEqual>
 				</td>
 			</tr>
@@ -618,37 +618,37 @@ function  processPhoneSuccess(xhr){
 
 			<tr>
 				<td align="right">
-					<bean:message key="person.phone" />&nbsp;
+					<spring:message code="person.phone" />&nbsp;
 					<%= PhoneNumberService.getPhoneFormat() %>
 				</td>
 				<td>
-				<logic:equal name='<%=formName%>' property="providerWorkPhone" value="">
-					<app:text name="<%=formName%>"
+				<logic:equal name='${form.formName}' property="providerWorkPhone" value="">
+					<app:text name="${form.formName}"
 					          property="providerWorkPhone"
-						      styleId="providerWorkPhoneID"
+						      id="providerWorkPhoneID"
 						      size="30"
 						      maxlength="35"
 						      styleClass="text"
 						      onchange="validatePhoneNumber(this);makeDirty();$('doctorNew').value = true;" />
 				    <div id="providerWorkPhoneMessage" class="blank" ></div>
 				</logic:equal>    
-				<logic:notEqual name='<%=formName%>' property="providerWorkPhone" value="">
-					<bean:write name="<%=formName%>" property="providerWorkPhone" />
+				<logic:notEqual name='${form.formName}' property="providerWorkPhone" value="">
+					<c:out value="${form.providerWorkPhone}" />
 				</logic:notEqual>
 				</td>
 			</tr>
 		<% } else { %>
 			<tr>
-				<td ><bean:message key="sample.entry.project.doctor" />:</td>
-				<logic:equal name='<%=formName%>' property="doctor" value="">
+				<td ><spring:message code="sample.entry.project.doctor" />:</td>
+				<logic:equal name='${form.formName}' property="doctor" value="">
 					<td>
-						<html:text name='<%=formName %>' property="doctor"
+						<form:input path="doctor"
 							onchange="makeDirty();$('doctorNew').value = true;" />
 					</td>
 				</logic:equal>
-				<logic:notEqual name='<%=formName%>' property="doctor" value="">
+				<logic:notEqual name='${form.formName}' property="doctor" value="">
 					<td >
-						<bean:write name="<%=formName%>" property="doctor" />
+						<c:out value="${form.doctor}" />
 					</td>
 				</logic:notEqual>
 			</tr>
@@ -662,14 +662,14 @@ function  processPhoneSuccess(xhr){
 			<th style="display: none"></th>
 			<% if( FormFields.getInstance().useField(Field.QA_DOCUMENT_NUMBER)){ %>
 				<th style="width:100px">
-					<bean:message key="nonConformity.document.number" /><br> <%= NonConformityRecordNumberValidationProvider.getDocumentNumberFormat() %>  :
+					<spring:message code="nonConformity.document.number" /><br> <%= NonConformityRecordNumberValidationProvider.getDocumentNumberFormat() %>  :
 				</th>
 			<% } %>
 			<th style="width:22%">
-				<bean:message key="label.refusal.reason" /><span class="requiredlabel">*</span>
+				<spring:message code="label.refusal.reason" /><span class="requiredlabel">*</span>
 			</th>
 			<th style="width:16%">
-				<bean:message key="label.sampleType" /><span class="requiredlabel">*</span>
+				<spring:message code="label.sampleType" /><span class="requiredlabel">*</span>
 			</th>
 			<th style="width:11%">
 				<%=StringUtil.getContextualMessageForKey("nonconformity.section") %>
@@ -681,18 +681,18 @@ function  processPhoneSuccess(xhr){
 				<%= StringUtil.getContextualMessageForKey("nonconformity.note") %>
 			</th>
 			<th style="width:5%">
-				<bean:message key="label.remove" />
+				<spring:message code="label.remove" />
 			</th>
 		</tr>
 		</thead>
 		<tbody>
-		<logic:iterate id="qaEvents" name="<%=formName%>" property="qaEvents"
+		<logic:iterate id="qaEvents" name="${form.formName}" property="qaEvents"
 			indexId="index" type="QaEventItem">
 			<tr id="qaEvent_<%=index%>" style="display: none" class="qaEventRow">
 			<% if( FormFields.getInstance().useField(Field.QA_DOCUMENT_NUMBER)){ %>
 				<td>
 					<html:text 
-						styleId='<%="record" + index%>'
+						id='<%="record" + index%>'
 						styleClass="readOnly qaEventElement" 
 						name='qaEvents'
 						property = 'recordNumber'
@@ -702,11 +702,11 @@ function  processPhoneSuccess(xhr){
 				</td>
 			<% } %>
 				<td style="display: none">
-					<html:hidden styleId='<%="id" + index%>' styleClass="id" name="qaEvents"
+					<html:hidden id='<%="id" + index%>' styleClass="id" name="qaEvents"
 						property="id" indexed="true" onchange='makeDirty();' />
 				</td>
 				<td>
-					<html:select styleId='<%="qaEvent" + index%>' 
+					<html:select id='<%="qaEvent" + index%>' 
 								 name="qaEvents"
 						         styleClass="readOnly qaEventElement requiredField" 
 						         property="qaEvent"
@@ -715,39 +715,39 @@ function  processPhoneSuccess(xhr){
 						         style="width: 99%" 
 						         onchange='makeDirty();'>
 						<option value="0"></option>
-						<html:optionsCollection name="<%=formName%>"
+						<html:optionsCollection name="${form.formName}"
 							property="qaEventTypes" label="value" value="id" />
 					</html:select>
 				</td>
 				<td>
-                    <html:select styleId='<%="sampleType" + index%>' name="qaEvents"
+                    <html:select id='<%="sampleType" + index%>' name="qaEvents"
 						styleClass="readOnly qaEventElement typeOfSample requiredField" disabled="false"
 						property="sampleType" onchange='makeDirty();' indexed="true"
 						style="width: 99%">
                         <option value="0"></option>
                         <option value="-1"  <%= (qaEvents.getSampleType() != null && qaEvents.getSampleType().equals("-1")) ? "selected='selected'" : ""%> ></option>
-						<html:optionsCollection name="<%=formName%>"
+						<html:optionsCollection name="${form.formName}"
 							property="typeOfSamples" label="value" value="id" />
 					</html:select>
 				</td>
 				<td>
-					<html:select name="qaEvents" styleId='<%="section" + index%>'
+					<html:select name="qaEvents" id='<%="section" + index%>'
 						styleClass="readOnly qaEventElement" disabled="false"
 						property="section" indexed="true" style="width: 99%"
 						onchange='makeDirty();'>
 						<option ></option>
-						<html:optionsCollection name="<%=formName%>" property="sections"
+						<html:optionsCollection name="${form.formName}" property="sections"
 							label="localizedName" value="nameKey" />
 					</html:select>
 				</td>
 				<td>
-					<html:text styleId='<%="author" + index%>' name="qaEvents"
+					<html:text id='<%="author" + index%>' name="qaEvents"
 						styleClass="readOnly qaEventElement" disabled="false"
 						property="authorizer" indexed="true" onchange='makeDirty();'
 						style="width: 99%" />
 				</td>
 				<td>
-					<html:text styleId='<%="note" + index%>'
+					<html:text id='<%="note" + index%>'
 					           name="qaEvents"
 							   styleClass="qaEventElement" 
 							   disabled="false"
@@ -757,7 +757,7 @@ function  processPhoneSuccess(xhr){
 						style="width: 99%" />
 				</td>
 				<td>
-					<html:checkbox styleId='<%="remove" + index%>' name="qaEvents"
+					<html:checkbox id='<%="remove" + index%>' name="qaEvents"
 						styleClass="qaEventEnable" property="remove" indexed="true"
 						onclick='makeDirty(); enableDisableIfChecked(this)' />
 				</td>
@@ -769,11 +769,11 @@ function  processPhoneSuccess(xhr){
 		value='<%=StringUtil.getMessageForKey("label.button.add")%>'
 		onclick="addRow()" />
 	<hr />
-	<html:hidden name='<%=formName%>' styleId="commentNew"
+	<html:hidden name='${form.formName}' id="commentNew"
 		property="commentNew" value="" />
-	<bean:message key="label.comments" />:
+	<spring:message code="label.comments" />:
 	<div style="width: 50%">
-		<html:textarea name="<%=formName %>" property="comment"
+		<html:textarea name="${form.formName}" property="comment"
 			onchange="makeDirty();$('commentNew').value = true;"
 			disabled='<%=readOnly%>' />
 	</div>
@@ -790,7 +790,7 @@ function makeDirty() {
 	}
 	// Adds warning when leaving page if content has been entered into makeDirty form fields
 	function formWarning(){ 
-    return "<bean:message key="banner.menu.dataLossWarning"/>";
+    return "<spring:message code="banner.menu.dataLossWarning"/>";
 	}
 	window.onbeforeunload = formWarning;
 	
@@ -820,8 +820,8 @@ $jq(document).ready( function() {
         clearNonMatching = false;
         capitialize = true;
         dropdown.combobox();
-       // invalidLabID = '<bean:message key="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIX - add badmessage icon
-        maxRepMsg = '<bean:message key="sample.entry.project.siteMaxMsg"/>'; 
+       // invalidLabID = '<spring:message code="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIX - add badmessage icon
+        maxRepMsg = '<spring:message code="sample.entry.project.siteMaxMsg"/>'; 
         
         resultCallBack = function( textValue) {
   				siteListChanged(textValue);

@@ -7,21 +7,15 @@
 			     us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
 			     us.mn.state.health.lims.common.util.StringUtil,
 			     us.mn.state.health.lims.common.util.*" %>
-<%@ page isELIgnored="false"%>
-
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib uri="/tags/labdev-view"		prefix="app" %>	     
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>	     
 
-<%-- <%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"		prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"		prefix="logic" %>
-
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%> 
-<%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>--%>
 <c:set var="formName" value="${form.formName}"/>
 <c:set var="localDBOnly" value='<%=Boolean.toString(ConfigurationProperties.getInstance().getPropertyValueLowerCase(Property.UseExternalPatientInfo).equals("false"))%>'/>
 <c:set var="patientSearch" value="${form.patientSearch}"/>

@@ -7,17 +7,18 @@
 				java.util.List" %>
 
 
-<%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"		prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"		prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view"		prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName"	value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
-<bean:define id="kitSources" name="<%=formName %>" property="sources" type="List<IdValuePair>" />
-<bean:define id="kitTypeList" name="<%=formName %>" property="kitTypes" type="List<String>" />
-<bean:size id="currentKitCount" name="<%=formName %>" property="inventoryItems"/>
-<script type="text/javascript" language="JavaScript1.2">
+	
+<bean:define id="kitSources" name="${form.formName}" property="sources" type="List<IdValuePair>" />
+<bean:define id="kitTypeList" name="${form.formName}" property="kitTypes" type="List<String>" />
+<bean:size id="currentKitCount" name="${form.formName}" property="inventoryItems"/>
+<script type="text/javascript">
 
 var dirty = false;
 var nextKitValue = 	<%= currentKitCount%> + 1;
@@ -45,7 +46,7 @@ var TEST_KIT_PROTOTYPE_SOURCE = '<select name="organizationId" class="organizati
 									}
 								%>'
 								+ '</select>';
-var TEST_KIT_PROTOTYPE_REMOVE = '<input name="removeButton" value="' + '<bean:message key="label.button.remove"/>' + '" onclick="removeTestKit(#);" class="textButton" type="button">';
+var TEST_KIT_PROTOTYPE_REMOVE = '<input name="removeButton" value="' + '<spring:message code="label.button.remove"/>' + '" onclick="removeTestKit(#);" class="textButton" type="button">';
 
 function validateDate( id ) {
 	id.value = id.value.strip();
@@ -217,7 +218,7 @@ function /*void*/ makeDirty(){
 	}
 	// Adds warning when leaving page if content has been entered into makeDirty form fields
 	function formWarning(){ 
-    return "<bean:message key="banner.menu.dataLossWarning"/>";
+    return "<spring:message code="banner.menu.dataLossWarning"/>";
 	}
 	window.onbeforeunload = formWarning;
 }
@@ -225,41 +226,41 @@ function /*void*/ makeDirty(){
 </script>
 
 <div id="PatientPage" class="colorFill" style="display:inline" >
-	<logic:present name="<%=formName%>" property="inventoryItems" >
-	<html:hidden name="<%=formName%>"  property="newKitsXML" styleId="newKits" />
+	<logic:present name="${form.formName}" property="inventoryItems" >
+	<form:hidden path="newKitsXML" id="newKits" />
 	<table id="testKitTable"   style="width:100%" >
 	<tr >
 		<th style="width:5%">
-			<bean:message key="inventory.testKit.id"/>
+			<spring:message code="inventory.testKit.id"/>
 		</th>
 		<th style="width:15%">
-			<bean:message key="inventory.testKit.name"/>
+			<spring:message code="inventory.testKit.name"/>
 			<span class="requiredlabel">*</span>
 		</th>
 		<th style="width:10%">
-  			<bean:message key="inventory.testKit.type"/>
+  			<spring:message code="inventory.testKit.type"/>
 		</th>
 		<th style="width:10%">
-			<bean:message key="inventory.testKit.receiveDate"/><br><span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>
+			<spring:message code="inventory.testKit.receiveDate"/><br><span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>
 		</th>
 		<th style="width:10%">
-			<bean:message key="inventory.testKit.expiration"/><br><span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>
+			<spring:message code="inventory.testKit.expiration"/><br><span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>
 		</th>
 		<th style="width:10%">
-			<bean:message key="inventory.testKit.lot"/>
+			<spring:message code="inventory.testKit.lot"/>
 		</th>
 		<th style="width:20%">
-			<bean:message key="inventory.testKit.source"/>
+			<spring:message code="inventory.testKit.source"/>
 			<span class="requiredlabel">*</span>
 		</th>
 		<th style="width:10%">
 		</th>
 	</tr>
-	<logic:iterate id="inventoryItems"  name="<%=formName%>" property="inventoryItems" indexId="index" type="InventoryKitItem" >
+	<logic:iterate id="inventoryItems"  name="${form.formName}" property="inventoryItems" indexId="index" type="InventoryKitItem" >
 		<tr <% if(!inventoryItems.getIsActive()){out.print("style=\"display:none\"");} %> id='<%="activeRow_" + index %>' >
 			<td >
-				<html:hidden indexed="true" name="inventoryItems" property="isActive" styleId='<%= "isActive_" + index %>'/>
-				<html:hidden indexed="true" name="inventoryItems" property="isModified" styleId='<%= "isModified_" + index %>'/>
+				<html:hidden indexed="true" name="inventoryItems" property="isActive" id='<%= "isActive_" + index %>'/>
+				<html:hidden indexed="true" name="inventoryItems" property="isModified" id='<%= "isModified_" + index %>'/>
 				<html:text  indexed="true" name="inventoryItems" property="inventoryLocationId" disabled="true" size="3" />
 			</td>
 			<td>
@@ -276,7 +277,7 @@ function /*void*/ makeDirty(){
 							 property="type"  value='<%=inventoryItems.getType()%>'
 							 onchange= '<%=" setModifiedFlag(" + index + ");" %>' >
 				    <option value="" ></option>
-					<html:options name="<%=formName%>" property="kitTypes" />
+					<html:options name="${form.formName}" property="kitTypes" />
 				</html:select>
 			</td>
 			<td >
@@ -309,7 +310,7 @@ function /*void*/ makeDirty(){
 				             value='<%=inventoryItems.getOrganizationId()%>'
 				             onchange='<%="setModifiedFlag(" + index + ");" %>'>
 
-					<html:optionsCollection name="<%=formName%>" property="sources" value="id" label="value"/>
+					<html:optionsCollection name="${form.formName}" property="sources" value="id" label="value"/>
 				</html:select>
 			</td>
 			<td >
@@ -326,9 +327,9 @@ function /*void*/ makeDirty(){
 
 	<table style="width:100%" >
 	<tr>
-		<th colspan="8"  align="left"><bean:message key="invnetory.testKit.inactiveKits"/></th>
+		<th colspan="8"  align="left"><spring:message code="invnetory.testKit.inactiveKits"/></th>
 	</tr>
-	<logic:iterate id="item"  name="<%=formName%>" property="inventoryItems" indexId="index" type="InventoryKitItem" >
+	<logic:iterate id="item"  name="${form.formName}" property="inventoryItems" indexId="index" type="InventoryKitItem" >
 		<tr <% if(item.getIsActive()){out.print("style=\"display:none\"");} %> id='<%="inactiveRow_" + index %>' >
 			<td style="width:5%">
 				<html:text name="item" property="inventoryLocationId" disabled="true" size="3" />
@@ -378,8 +379,8 @@ function /*void*/ makeDirty(){
                onclick="addNewTestKit();"
                class="textButton">
 </logic:present>
-<logic:notPresent name="<%=formName%>" property="inventoryItems" >
-	<bean:message key="inventory.testKit.none"/>
+<logic:notPresent name="${form.formName}" property="inventoryItems" >
+	<spring:message code="inventory.testKit.none"/>
 </logic:notPresent>
 
 

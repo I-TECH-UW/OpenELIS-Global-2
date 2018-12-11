@@ -6,24 +6,20 @@
 	            us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl,
 	            java.util.HashSet,
 	            org.owasp.encoder.Encode"%>
-<%@ page isELIgnored="false"%>
-
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%-- <%@ taglib uri="/tags/struts-bean"      prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"      prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"     prefix="logic" %>
-<%@ taglib uri="/tags/struts-tiles"     prefix="tiles" %> --%>
-<%@ taglib uri="/tags/labdev-view"      prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+
 
 <c:set var="formName" value="${form.formName}" />
 <c:set var="requestType" value="${type}" />
 <c:set var="genericDomain" value="" />
-<%-- <bean:define id="formName"      value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+<%--       
 <bean:define id="requestType" value='<%=(String)request.getSession().getAttribute("type")%>' />
 <bean:define id="idSeparator"   value='<%=SystemConfiguration.getInstance().getDefaultIdSeparator()%>' />
 <bean:define id="accessionFormat" value='<%=ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat)%>' />
@@ -50,7 +46,7 @@
 <script type="text/javascript" src="<%=basePath%>scripts/retroCIUtilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 <script type="text/javascript" src="<%=basePath%>scripts/entryByProjectUtils.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 
-<script type="text/javascript" language="JavaScript1.2">
+<script type="text/javascript">
 
 var dirty = false;
 var type = '<%=Encode.forJavaScript(requestType)%>';
@@ -2150,7 +2146,7 @@ function /*void*/ setSaveButton() {
 </div>
 </div>
 </form:form>
-<script type="text/javascript" language="JavaScript1.2">
+<script type="text/javascript">
     // On load using the built in feature of OpenElis pages onLoad
 /**
  * A list of answers that equate to yes in certain lists when comparing (cross check or 2nd entry for a match).

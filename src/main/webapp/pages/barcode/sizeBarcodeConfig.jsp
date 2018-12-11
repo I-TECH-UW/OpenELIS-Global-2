@@ -2,21 +2,25 @@
 
 <%@ page import="us.mn.state.health.lims.common.action.IActionConstants" %>
 
-<%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"		prefix="html" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName"	value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+	
 
 <script>
 function checkFieldFloat(field) {
 	if (isNaN(field.value)) {
 		validator.setFieldValidity(false, field.id);
 		selectFieldErrorDisplay(false, field);
-		alert("<bean:message key='siteInfo.size.nonnumber'/>");
+		alert("<spring:message code='siteInfo.size.nonnumber'/>");
 	} else if (parseFloat(field.value) <= 0) {
 		validator.setFieldValidity(false, field.id);
 		selectFieldErrorDisplay(false, field);
-		alert("<bean:message key='siteInfo.size.invalidnumber'/>");
+		alert("<spring:message code='siteInfo.size.invalidnumber'/>");
 	} else {
 		validator.setFieldValidity(true, field.id);
 		selectFieldErrorDisplay(true, field);
@@ -30,47 +34,47 @@ function checkFieldFloat(field) {
 
 </script>
 
-<h2><bean:message key="siteInfo.section.size"/></h2>
-<p><bean:message key="siteInfo.description.dimensions"/></p>
+<h2><spring:message code="siteInfo.section.size"/></h2>
+<p><spring:message code="siteInfo.description.dimensions"/></p>
 <table width="80%">
 	<tr>
-		<td><bean:message key="barcode.label.type.order"/>:</td>
-		<td><bean:message key="barcode.label.type.specimen"/>:</td>
+		<td><spring:message code="barcode.label.type.order"/>:</td>
+		<td><spring:message code="barcode.label.type.specimen"/>:</td>
 	</tr>
 	<tr>
 		<td>
-			<bean:message key="siteInfo.size.height"/>:
-			<html:text name="<%=formName%>" 
+			<spring:message code="siteInfo.size.height"/>:
+			<html:text name="${form.formName}" 
 				property="heightOrderLabels"
-				styleId="heightOrderLabels"
+				id="heightOrderLabels"
 				onchange="checkFieldFloat(this)"></html:text>
-			<bean:message key="siteInfo.size.units"/>
+			<spring:message code="siteInfo.size.units"/>
 		</td>
 		<td>
-			<bean:message key="siteInfo.size.height"/>:
-			<html:text name="<%=formName%>" 
+			<spring:message code="siteInfo.size.height"/>:
+			<html:text name="${form.formName}" 
 				property="heightSpecimenLabels"
-				styleId="heightSpecimenLabels"
+				id="heightSpecimenLabels"
 				onchange="checkFieldFloat(this)"></html:text>
-			<bean:message key="siteInfo.size.units"/>
+			<spring:message code="siteInfo.size.units"/>
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<bean:message key="siteInfo.size.width"/>:
-			<html:text name="<%=formName%>" 
+			<spring:message code="siteInfo.size.width"/>:
+			<html:text name="${form.formName}" 
 				property="widthOrderLabels"
-				styleId="widthOrderLabels"
+				id="widthOrderLabels"
 				onchange="checkFieldFloat(this)"></html:text>
-			<bean:message key="siteInfo.size.units"/>
+			<spring:message code="siteInfo.size.units"/>
 		</td>
 		<td>
-			<bean:message key="siteInfo.size.width"/>:
-			<html:text name="<%=formName%>" 
+			<spring:message code="siteInfo.size.width"/>:
+			<html:text name="${form.formName}" 
 				property="widthSpecimenLabels"
-				styleId="widthSpecimenLabels"
+				id="widthSpecimenLabels"
 				onchange="checkFieldFloat(this)"></html:text>
-			<bean:message key="siteInfo.size.units"/>
+			<spring:message code="siteInfo.size.units"/>
 		</td>
 	</tr>
 </table>

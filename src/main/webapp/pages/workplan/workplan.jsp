@@ -9,19 +9,20 @@
 			us.mn.state.health.lims.common.util.ConfigurationProperties,
 			us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
 			org.owasp.encoder.Encode" %>
-<%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"		prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"		prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view"		prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName"	value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+	
 <bean:define id="workplanType"	value='<%=(String) request.getParameter("type")%>' />
-<bean:define id="tests" name="<%=formName%>" property="workplanTests" />
+<bean:define id="tests" name="${form.formName}" property="workplanTests" />
 <bean:size id="testCount" name="tests" />
 
 <% if( !workplanType.equals("test") && !workplanType.equals("panel") ){ %>
-<bean:define id="testSectionsByName" name="<%=formName%>" property="testSectionsByName" />
+<bean:define id="testSectionsByName" name="${form.formName}" property="testSectionsByName" />
 	<script type="text/javascript" >
 	var testSectionNameIdHash = [];
 	<%
@@ -83,16 +84,16 @@ function printWorkplan() {
 <div id="searchDiv" class="colorFill"  >
 <div id="PatientPage" class="colorFill" style="display:inline" >
 <input type="hidden" name="testName"	value='<%=Encode.forHtml(workplanType)%>' />
-<h2><bean:message key="sample.entry.search"/></h2>
+<h2><spring:message code="sample.entry.search"/></h2>
 	<table width="30%">
 		<tr>
 			<td width="50%" align="right" >
-				<bean:write name="<%=formName %>" property="searchLabel"/>
+				<c:out value="${form.searchLabel}"/>
 			</td>
 			<td>
-			<html:select name='<%= formName %>' property="testSectionId" 
+			<html:select name='${form.formName}' property="testSectionId" 
 				 onchange="submitTestSectionSelect(this);" >
-				<app:optionsCollection name="<%=formName%>" property="testSections" label="value" value="id" />
+				<app:optionsCollection name="${form.formName}" property="testSections" label="value" value="id" />
 			</html:select>
 	   		</td>
 		</tr>
@@ -107,19 +108,19 @@ function printWorkplan() {
 
 <br/>
 <logic:notEqual name="testCount" value="0">
-<bean:size name='<%= formName %>' property="workplanTests" id="size" />
-<html:button property="print" styleId="print"  onclick="printWorkplan();"  >
-	<bean:message key="workplan.print"/>
+<bean:size name='${form.formName}' property="workplanTests" id="size" />
+<html:button property="print" id="print"  onclick="printWorkplan();"  >
+	<spring:message code="workplan.print"/>
 </html:button>
 <br/><br/>
-<bean:message key="label.total.tests"/> = <bean:write name="size"/>
+<spring:message code="label.total.tests"/> = <bean:write name="size"/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="./images/nonconforming.gif" /> = <bean:message key="result.nonconforming.item"/>
+<img src="./images/nonconforming.gif" /> = <spring:message code="result.nonconforming.item"/>
 <br/><br/>
 <Table width="90%" border="0" cellspacing="0">
 	<tr>
 		<th width="5%" style="text-align: left;">
-			<bean:message key="label.button.remove"/>
+			<spring:message code="label.button.remove"/>
 		</th>
 		<% if( workplanType.equals("test") ){ %>
 			<th width="3%">&nbsp;</th>
@@ -134,25 +135,25 @@ function printWorkplan() {
 		<% } %>
 		<% if(ConfigurationProperties.getInstance().isPropertyValueEqual(Property.NEXT_VISIT_DATE_ON_WORKPLAN, "true")){ %>
 	    <th width="5%" style="text-align: left;">
-	    	<bean:message key="sample.entry.nextVisit.date"/>
+	    	<spring:message code="sample.entry.nextVisit.date"/>
 	    </th>
 	    <% } %>
 		<% if( !workplanType.equals("test") ){ %>
 		<th width="3%">&nbsp;</th>
 		<th width="30%" style="text-align: left;">
 			<% if(ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "Haiti LNSP")){ %>
-                <bean:message key="sample.entry.project.patient.and.testName"/>
+                <spring:message code="sample.entry.project.patient.and.testName"/>
 	        <% } else { %>
-	  		   <bean:message key="sample.entry.project.testName"/>
+	  		   <spring:message code="sample.entry.project.testName"/>
 	  		<% } %>  
 		</th>
 		<% } %>
 		<th width="20%" style="text-align: left;">
-	  		<bean:message key="sample.receivedDate"/>&nbsp;&nbsp;
+	  		<spring:message code="sample.receivedDate"/>&nbsp;&nbsp;
 		</th>
   	</tr>
 
-	<logic:iterate id="workplanTests" name="<%=formName%>"  property="workplanTests" indexId="index" type="TestResultItem">
+	<logic:iterate id="workplanTests" name="${form.formName}"  property="workplanTests" indexId="index" type="TestResultItem">
 			<% showAccessionNumber = !workplanTests.getAccessionNumber().equals(currentAccessionNumber);
 				   if( showAccessionNumber ){
 					currentAccessionNumber = workplanTests.getAccessionNumber();
@@ -162,7 +163,7 @@ function printWorkplan() {
      			<% if (!workplanTests.isServingAsTestGroupIdentifier()) { %>
 					<html:checkbox name="workplanTests"
 						   property="notIncludedInWorkplan"
-						   styleId='<%="includedCheck_" + index %>'
+						   id='<%="includedCheck_" + index %>'
 						   styleClass="includedCheck"
 						   indexed="true"
 						   onclick='<%="disableEnableTest(this," + index + ");" %>' />
@@ -214,8 +215,8 @@ function printWorkplan() {
     </tr>
 	<tr>
 		<td>
-      		<html:button property="print" styleId="print"  onclick="printWorkplan();"  >
-				<bean:message key="workplan.print"/>
+      		<html:button property="print" id="print"  onclick="printWorkplan();"  >
+				<spring:message code="workplan.print"/>
 			</html:button>
 		</td>
 	</tr>
@@ -228,7 +229,7 @@ function printWorkplan() {
 	</logic:equal>
 <% } else { %>
 	<logic:equal name="testCount"  value="0">
-		<logic:notEmpty name="<%=formName %>" property="testSectionId">
+		<logic:notEmpty name="${form.formName}" property="testSectionId">
 		<h2><%= StringUtil.getContextualMessageForKey("result.noTestsFound") %></h2>
 		</logic:notEmpty>
 	</logic:equal>

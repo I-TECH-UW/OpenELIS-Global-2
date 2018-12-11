@@ -5,10 +5,12 @@
          		us.mn.state.health.lims.common.util.StringUtil,
          		us.mn.state.health.lims.common.util.Versioning" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%--
   ~ The contents of this file are subject to the Mozilla Public License
   ~ Version 1.1 (the "License"); you may not use this file except in
@@ -28,7 +30,7 @@
 <script type="text/javascript" src="scripts/jquery-ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>'/>
+ 
 
 <%!
     String basePath = "";
@@ -59,7 +61,7 @@
 
     function makeDirty() {
         function formWarning() {
-            return "<bean:message key="banner.menu.dataLossWarning"/>";
+            return "<spring:message code="banner.menu.dataLossWarning"/>";
         }
 
         window.onbeforeunload = formWarning;
@@ -194,7 +196,7 @@
     }
     function configureForSelect() {
         $jq("#step").text("<%=StringUtil.getMessageForKey("configuration.test.orderable")%>");
-        $jq("#instructions").text("<bean:message key="instructions.test.order"/>");
+        $jq("#instructions").text("<spring:message code="instructions.test.order"/>");
         $jq("#activateSection input").prop("disabled", false);
         $jq(".selectHide").hide();
         $jq(".selectShow").show();
@@ -222,7 +224,7 @@
 </script>
 
 <form>
-    <html:hidden name='<%=formName%>' property="jsonChangeList" styleId="jsonChangeList"/>
+    <form:hidden path="jsonChangeList" id="jsonChangeList"/>
 </form>
 <br>
 <input type="button" value="<%= StringUtil.getMessageForKey("banner.menu.administration") %>"
@@ -239,7 +241,7 @@
 
 
 <span id="testActivationConfirmation" class="selectHide confirmShow" style="display:none" ><%=StringUtil.getMessageForKey("label.confirmation")%></span>
-<span id="testActivationSelection" class="selectShow confirmHide"><bean:message key="configuration.test.orderable"/></span>
+<span id="testActivationSelection" class="selectShow confirmHide"><spring:message code="configuration.test.orderable"/></span>
 <br><br>
 
 <h1 id="step"></h1><br/>
@@ -273,7 +275,7 @@
 
 <hr/>
 <div id="activateSection" class="indent">
-    <logic:iterate id="activeBean" name="<%=formName%>" property="orderableTestList">
+    <logic:iterate id="activeBean" name="${form.formName}" property="orderableTestList">
         <div>
             <span class="activeSampleType"><bean:write name="activeBean" property="sampleType.value"/>
                 <html:hidden name="activeBean" property="sampleType.id"/>

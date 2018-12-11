@@ -5,14 +5,14 @@
 			us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
             us.mn.state.health.lims.common.util.Versioning" %>
 
-<%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"		prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"		prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view"		prefix="app" %>
-<%@ taglib uri="/tags/struts-tiles"     prefix="tiles" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName"		value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+		
 <bean:define id="idSeparator"	value='<%=SystemConfiguration.getInstance().getDefaultIdSeparator()%>' />
 <bean:define id="accessionFormat" value='<%=ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat)%>' />
 <bean:define id="genericDomain" value='' />
@@ -27,7 +27,7 @@
 
 <script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 
-<script type="text/javascript" language="JavaScript1.2">
+<script type="text/javascript">
 function  /*void*/ setMyCancelAction(form, action, validate, parameters)
 {
 	//first turn off any further validation

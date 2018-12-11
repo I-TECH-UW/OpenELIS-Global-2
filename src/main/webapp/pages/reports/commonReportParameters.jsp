@@ -8,11 +8,12 @@
 			us.mn.state.health.lims.common.util.Versioning,
 			org.owasp.encoder.Encode" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%!
 	IAccessionNumberValidator accessionValidator;
@@ -32,10 +33,10 @@
 
 <script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
-<bean:define id="reportType" name='<%=formName %>' property="reportType"/>
-<bean:define id="reportRequest" name='<%=formName %>' property="reportRequest"/>
-<bean:define id="instructions" name='<%=formName %>' property="instructions"/>
+ 
+<bean:define id="reportType" name='${form.formName}' property="reportType"/>
+<bean:define id="reportRequest" name='${form.formName}' property="reportRequest"/>
+<bean:define id="instructions" name='${form.formName}' property="instructions"/>
 
 
 <script type="text/javascript">
@@ -163,99 +164,99 @@ function onPrint(){
 
 </script>
 
-<h2><bean:write name="<%=formName%>" property="reportName"/></h2>
+<h2><c:out value="${form.reportName}"/></h2>
 
 <div class="oe-report">
 
-<html:hidden name='<%=formName%>' property="reportRequest"/>
+<form:hidden path="reportRequest"/>
 
-<logic:equal  name='<%= formName %>' property='noRequestSpecifications' value="false">
+<logic:equal  name='${form.formName}' property='noRequestSpecifications' value="false">
 
-  <logic:equal name='<%=formName%>' property="useAccessionDirect" value="true">
+  <logic:equal name='${form.formName}' property="useAccessionDirect" value="true">
 	  <div><strong><%= StringUtil.getContextualMessageForKey("report.enter.labNumber.headline") %></strong></div>
   </logic:equal>
   
   <div>
 
-	  <logic:equal name='<%=formName%>' property="useAccessionDirect" value="true">
+	  <logic:equal name='${form.formName}' property="useAccessionDirect" value="true">
 		<span style="padding-left: 10px">
-		<logic:equal name='<%=formName%>' property="useHighAccessionDirect" value="true">
+		<logic:equal name='${form.formName}' property="useHighAccessionDirect" value="true">
 			<%= StringUtil.getContextualMessageForKey("report.from") %>
 		</logic:equal>
 		</span>
-		<html:text name='<%=formName%>'
+		<html:text name='${form.formName}'
 				   styleClass="input-medium" 
 				   property="accessionDirect"
 				   maxlength='<%= Integer.toString(accessionValidator.getMaxAccessionLength())%>'
 				   />
 	  </logic:equal>
-	  <logic:equal name='<%=formName%>' property="useHighAccessionDirect" value="true">
+	  <logic:equal name='${form.formName}' property="useHighAccessionDirect" value="true">
 		<span style="padding-left: 10px"><%= StringUtil.getContextualMessageForKey("report.to") %></span>
-			<html:text name='<%=formName%>'
+			<html:text name='${form.formName}'
 			           property="highAccessionDirect"
 			           styleClass="input-medium"
 			           maxlength='<%= Integer.toString(accessionValidator.getMaxAccessionLength())%>'/>
 	  </logic:equal>
-	  <logic:equal name='<%=formName%>' property="useAccessionDirect" value="true">
-	  	<bean:message key="sample.search.scanner.instructions"/>
+	  <logic:equal name='${form.formName}' property="useAccessionDirect" value="true">
+	  	<spring:message code="sample.search.scanner.instructions"/>
 	  </logic:equal>
-	  <logic:notEqual name='<%=formName%>' property="useAccessionDirect" value="true">
-	  	<logic:equal name='<%=formName%>' property="useHighAccessionDirect" value="true">
-	  		<bean:message key="sample.search.scanner.instructions"/>
+	  <logic:notEqual name='${form.formName}' property="useAccessionDirect" value="true">
+	  	<logic:equal name='${form.formName}' property="useHighAccessionDirect" value="true">
+	  		<spring:message code="sample.search.scanner.instructions"/>
 	  	</logic:equal>
 	  </logic:notEqual>
   </div>
-  <logic:equal name='<%=formName%>' property="useHighAccessionDirect" value="true">
+  <logic:equal name='${form.formName}' property="useHighAccessionDirect" value="true">
     <div><span style="padding-left: 10px"><%= StringUtil.getContextualMessageForKey("report.enter.labNumber.detail") %></span></div>
   </logic:equal>
-  <logic:equal name='<%=formName%>' property="usePatientNumberDirect" value="true">
+  <logic:equal name='${form.formName}' property="usePatientNumberDirect" value="true">
 	<div><strong><%= StringUtil.getContextualMessageForKey("report.enter.subjectNumber") %></strong></div>
   </logic:equal>
   <div>
 
-	  <logic:equal name='<%=formName%>' property="usePatientNumberDirect" value="true">
-		<div style="padding: 5px 0 0 10px"><html:text styleClass="input-medium" name='<%=formName%>' property="patientNumberDirect" /></div>
+	  <logic:equal name='${form.formName}' property="usePatientNumberDirect" value="true">
+		<div style="padding: 5px 0 0 10px"><html:text styleClass="input-medium" name='${form.formName}' property="patientNumberDirect" /></div>
 	  </logic:equal>
 
-	  <logic:equal name='<%=formName%>' property="useUpperPatientNumberDirect" value="true">
+	  <logic:equal name='${form.formName}' property="useUpperPatientNumberDirect" value="true">
 	   <span style="padding-left: 10px"><%= StringUtil.getContextualMessageForKey("report.to") %></span>
-		<html:text styleClass="input-medium" name='<%=formName%>' property="patientUpperNumberDirect" />
+		<html:text styleClass="input-medium" name='${form.formName}' property="patientUpperNumberDirect" />
 	  </logic:equal>
   </div>
   
   <div>
-	  <logic:equal name='<%=formName%>' property="useLowerDateRange" value="true">
-	  	<span style="padding-left: 10px"><bean:message key="report.date.start"/>&nbsp;<%=DateUtil.getDateUserPrompt()%></span>
-		<html:text styleClass="input-medium" name='<%=formName%>' property="lowerDateRange" onkeyup="addDateSlashes(this, event);" maxlength="10"/>
+	  <logic:equal name='${form.formName}' property="useLowerDateRange" value="true">
+	  	<span style="padding-left: 10px"><spring:message code="report.date.start"/>&nbsp;<%=DateUtil.getDateUserPrompt()%></span>
+		<html:text styleClass="input-medium" name='${form.formName}' property="lowerDateRange" onkeyup="addDateSlashes(this, event);" maxlength="10"/>
 	  </logic:equal>
-	  <logic:equal name='<%=formName%>' property="useUpperDateRange" value="true">
-	  	<span style="padding-left: 10px"><bean:message key="report.date.end"/>&nbsp;<%=DateUtil.getDateUserPrompt()%></span>
-	  	<html:text styleClass="input-medium" name='<%=formName%>' property="upperDateRange" maxlength="10" onkeyup="addDateSlashes(this, event);"/>
+	  <logic:equal name='${form.formName}' property="useUpperDateRange" value="true">
+	  	<span style="padding-left: 10px"><spring:message code="report.date.end"/>&nbsp;<%=DateUtil.getDateUserPrompt()%></span>
+	  	<html:text styleClass="input-medium" name='${form.formName}' property="upperDateRange" maxlength="10" onkeyup="addDateSlashes(this, event);"/>
 	  </logic:equal>
   </div>
  
-  <logic:equal name='<%=formName%>' property="useLocationCode" value="true">
+  <logic:equal name='${form.formName}' property="useLocationCode" value="true">
   	<div>
-   	  <span style="padding-left: 10px"><bean:message key="report.select.service.location"/></span>
-      <html:select name="<%=formName%>"  property="locationCode" styleClass="text" >
-		<app:optionsCollection name="<%=formName%>" property="locationCodeList" label="organizationName" value="id" />
+   	  <span style="padding-left: 10px"><spring:message code="report.select.service.location"/></span>
+      <html:select name="${form.formName}"  property="locationCode" styleClass="text" >
+		<app:optionsCollection name="${form.formName}" property="locationCodeList" label="organizationName" value="id" />
 	  </html:select>
 	</div>
   </logic:equal>
  
-  <logic:equal name='<%=formName%>' property="useProjectCode" value="true">
+  <logic:equal name='${form.formName}' property="useProjectCode" value="true">
    	<div>
-	  <bean:message key="report.select.project"/>
-	  <html:select name="<%=formName%>"  property="projectCode" styleClass="text" >
-		<app:optionsCollection  name="<%=formName%>" property="projectCodeList" label="localizedName" value="id" />
+	  <spring:message code="report.select.project"/>
+	  <html:select name="${form.formName}"  property="projectCode" styleClass="text" >
+		<app:optionsCollection  name="${form.formName}" property="projectCodeList" label="localizedName" value="id" />
 	  </html:select>
 	</div>
   </logic:equal>
   
-  <logic:equal name='<%=formName%>' property="usePredefinedDateRanges" value="true">
+  <logic:equal name='${form.formName}' property="usePredefinedDateRanges" value="true">
    	<div>
-	   <bean:message key="report.select.date.period"/>
-	     <html:select name="<%=formName%>"  property="datePeriod" styleClass="text" onchange="datePeriodUpdated(this)" styleId="datePeriod">
+	   <spring:message code="report.select.date.period"/>
+	     <html:select name="${form.formName}"  property="datePeriod" styleClass="text" onchange="datePeriodUpdated(this)" id="datePeriod">
 	     	<option value='year'><%= StringUtil.getMessageForKey("report.select.date.period.year") %></option>
 	     	<option value='months3'><%= StringUtil.getMessageForKey("report.select.date.period.months.3") %></option>
 	     	<option value='months6'><%= StringUtil.getMessageForKey("report.select.date.period.months.6") %></option>
@@ -264,50 +265,50 @@ function onPrint(){
 		 </html:select>
 	</div>
 	<div>
-  	    <bean:message key="report.date.start"/>
-			<html:select name="<%= formName %>" 
+  	    <spring:message code="report.date.start"/>
+			<html:select name="${form.formName}" 
 						 property="lowerMonth" 
 						 styleClass="text" 
 						 disabled="true" 
-						 styleId="lowerMonth"
+						 id="lowerMonth"
 						 onchange="clearAllDates();" >
-				<app:optionsCollection  name="<%=formName%>" property="monthList" label="value" value="id" />
+				<app:optionsCollection  name="${form.formName}" property="monthList" label="value" value="id" />
 			</html:select>
-			<html:select name="<%= formName %>" 
+			<html:select name="${form.formName}" 
 						 property="lowerYear" 
 						 styleClass="text"  
 						 disabled="true" 
-						 styleId="lowerYear" 
+						 id="lowerYear" 
 						 onchange="clearAllDates();">
-				<app:optionsCollection  name="<%=formName%>" property="yearList" label="value" value="id" />
+				<app:optionsCollection  name="${form.formName}" property="yearList" label="value" value="id" />
 			</html:select>
-	    <bean:message key="report.date.end"/>
-			<html:select name="<%= formName %>" 
+	    <spring:message code="report.date.end"/>
+			<html:select name="${form.formName}" 
 			             property="upperMonth" 
 			             styleClass="text"   
 			             disabled="true" 
-			             styleId="upperMonth"
+			             id="upperMonth"
 			             onchange="clearAllDates();">
-				<app:optionsCollection  name="<%=formName%>" property="monthList" label="value" value="id" />
+				<app:optionsCollection  name="${form.formName}" property="monthList" label="value" value="id" />
 			</html:select>
-			<html:select name="<%= formName %>" 
+			<html:select name="${form.formName}" 
 			             property="upperYear" 
 			             styleClass="text"   
 			             disabled="true" 
-			             styleId="upperYear"
+			             id="upperYear"
 			             onchange="clearAllDates();">
-				<app:optionsCollection  name="<%=formName%>" property="yearList" label="value" value="id" />
+				<app:optionsCollection  name="${form.formName}" property="yearList" label="value" value="id" />
 			</html:select>
   			<div id="dateWarning" ></div>
 	</div>
   </logic:equal>
-    <logic:notEmpty name='<%=formName%>'  property="selectList" >
+    <logic:notEmpty name='${form.formName}'  property="selectList" >
    	<div>
-       <bean:define id="selectList" name='<%=formName %>' property="selectList" type="us.mn.state.health.lims.reports.action.implementation.ReportSpecificationList"/>
+       <bean:define id="selectList" name='${form.formName}' property="selectList" type="us.mn.state.health.lims.reports.action.implementation.ReportSpecificationList"/>
        <span style="padding-left: 10px"><label for="selectList">
        <%= selectList.getLabel()%></label>
-	   <html:select name="<%=formName%>"  property="selectList.selection" styleClass="text" styleId="selectList">
-		   <app:optionsCollection  name="<%=formName%>" property="selectList.list" label="value" value="id" />
+	   <html:select name="${form.formName}"  property="selectList.selection" styleClass="text" id="selectList">
+		   <app:optionsCollection  name="${form.formName}" property="selectList.list" label="value" value="id" />
        </html:select></span>
 	</div>
     </logic:notEmpty>
@@ -315,7 +316,7 @@ function onPrint(){
 
 <br/>
 <div align="left" style="width:80%" >
-<logic:notEmpty name='<%= formName %>' property="instructions" >
+<logic:notEmpty name='${form.formName}' property="instructions" >
 <%= instructions %>
 </logic:notEmpty>
 </div>

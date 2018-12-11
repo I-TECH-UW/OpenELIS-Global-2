@@ -1,12 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants"%>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/labdev-view" prefix="app"%>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
-<bean:define id="formName"
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+
 	value='<%=(String) request
 									.getAttribute(IActionConstants.FORM_NAME)%>' />
 <%!String allowEdits = "true";%>
@@ -17,7 +18,7 @@
 		.getAttribute(IActionConstants.ALLOW_EDITS_KEY);
 	}
 %>
-<script language="JavaScript1.2">
+<script>
  
 function validateForm(form) {
      return true;
@@ -27,26 +28,26 @@ function validateForm(form) {
 <table>
 	<tr>
 		<td class="label">
-			<bean:message key="patienttype.id" />:
+			<spring:message code="patienttype.id" />:
 		</td>
 		<td>
-		<app:text name="<%=formName%>" property="id" allowEdits="false" />
+		<app:text name="${form.formName}" property="id" allowEdits="false" />
 		</td>
 	</tr>
 	<tr>
 		<td class="label">
-			<bean:message key="patienttype.type" />:<span class="requiredlabel">*</span>
+			<spring:message code="patienttype.type" />:<span class="requiredlabel">*</span>
 		</td>
 		<td>
-			<html:text name="<%=formName%>" property="type" maxlength="1"/>
+			<form:input path="type" maxlength="1"/>
 		</td>
 	</tr>
 	<tr>
 		<td class="label">
-			<bean:message key="patienttype.description" />:
+			<spring:message code="patienttype.description" />:
 		</td>
 		<td>
-			<html:text name="<%=formName%>" property="description" maxlength="50"/>
+			<form:input path="description" maxlength="50"/>
 		</td>
 	</tr>	
 </table>

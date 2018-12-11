@@ -4,13 +4,14 @@
                  us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
                  us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
                  us.mn.state.health.lims.common.util.StringUtil" %>
-<%@ taglib uri="/tags/struts-bean"      prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"      prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"     prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" 		prefix="app" %>
-<%@ taglib uri="/tags/struts-tiles"     prefix="tiles" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName"      value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+      
 
 <%!
 String path = "";
@@ -86,7 +87,7 @@ function checkSampleEnteredSuccess(xhr) {
         $jq("#labNo").trigger('keyup');
     	setSave();
     } else {
-        alert("<bean:message key='error.notentered' />");    	
+        alert("<spring:message code='error.notentered' />");    	
     }
 }
 
@@ -103,26 +104,26 @@ function moveAccessionToRecentArea() {
 	$recentTextArea.val(newRecent);
 }
 </script>
-<h2><bean:message key="sample.batchentry.preprinted.header.entry" /></h2>
+<h2><spring:message code="sample.batchentry.preprinted.header.entry" /></h2>
 
 <table>
 <tr>
 	<td>
-		<bean:message key="sample.batchentry.preprinted.labno" />:
+		<spring:message code="sample.batchentry.preprinted.labno" />:
 	</td>
 </tr>
 <tr>
 	<td>		
-		<app:text name='<%=formName%>' property="labNo"
+		<app:text name='${form.formName}' property="labNo"
 			maxlength='9'
             onkeyup="checkAccessionNumber(this, event);"
             styleClass="text"
-            styleId="labNo"/>
+            id="labNo"/>
 		<html:button onclick="saveLabel();"
 			property="save"
-			styleId="saveButtonId" 
+			id="saveButtonId" 
 			disabled="disabled">
-		<bean:message key="sample.batchentry.preprinted.save" />
+		<spring:message code="sample.batchentry.preprinted.save" />
 		</html:button>
 	</td>
 </tr>
@@ -134,7 +135,7 @@ function moveAccessionToRecentArea() {
 		<table>
 			<tr>
 				<td>
-					<bean:message key="sample.batchentry.preprinted.summary" />:
+					<spring:message code="sample.batchentry.preprinted.summary" />:
 				</td>
 			</tr>
 			<tr>

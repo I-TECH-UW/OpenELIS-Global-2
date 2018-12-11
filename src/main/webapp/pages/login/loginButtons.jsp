@@ -1,12 +1,12 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
 %>
-<%@ page isELIgnored="false" %> 
-
-
+<%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <table width="95%">
 <tr><td colspan="4">&nbsp;</td>
 <tr>

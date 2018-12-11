@@ -5,13 +5,14 @@
 				 us.mn.state.health.lims.common.util.DateUtil,
 				 us.mn.state.health.lims.common.util.StringUtil"  %>
 
-<%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"		prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"		prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view"		prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName"	value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+	
 
 <%!
 	boolean useCollectionDate = true;
@@ -21,7 +22,7 @@
 	useCollectionDate = FormFields.getInstance().useField(Field.CollectionDate);
 	useSampleStatus = FormFields.getInstance().useField(Field.SearchSampleStatus);
  %>
-<script type="text/javascript" language="JavaScript1.2">
+<script type="text/javascript">
 
 var newSearchInfo = false;
 
@@ -51,49 +52,49 @@ function /*void*/ dirtySearchInfo(e){
 
 <div id="PatientPage" class="colorFill" style="display:inline" >
 
-	<h2><bean:message key="sample.entry.search"/></h2>
+	<h2><spring:message code="sample.entry.search"/></h2>
 	<table width="70%">
 	<tr >
 		<td >
 			<% if(useCollectionDate){ %>  <%= StringUtil.getContextualMessageForKey("sample.collectionDate")  %><br><span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span> <% } %>
 		</td>
 		<td >
-			<bean:message key="sample.receivedDate"/><br><span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>
+			<spring:message code="sample.receivedDate"/><br><span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>
 		</td>
 		<td >
-			<bean:message key="test.testName"/>
+			<spring:message code="test.testName"/>
 		</td>
 		<td >
 			<%= StringUtil.getContextualMessageForKey("analysis.status") %>
 		</td>
 		<% if( useSampleStatus ){ %>
 		<td >
-			<bean:message key="sample.status"/>
+			<spring:message code="sample.status"/>
 		</td>
 		<% } %>
 	</tr>
 
 	<tr>
 	<td >
-		<% if(useCollectionDate){ %> <html:text name="<%=formName%>" property="collectionDate" onkeyup="dirtySearchInfo( event )" /> <%} %>
+		<% if(useCollectionDate){ %> <form:input path="collectionDate" onkeyup="dirtySearchInfo( event )" /> <%} %>
 	</td>
 	<td>
-		<html:text name="<%=formName%>" property="recievedDate" onkeyup="dirtySearchInfo( event )"/>
+		<form:input path="recievedDate" onkeyup="dirtySearchInfo( event )"/>
 	</td>
 	<td>
-			<html:select  name="<%=formName%>" property="selectedTest" onchange="dirtySearchInfo( event )">
-				<html:optionsCollection name="<%=formName%>"  property="testSelections" label="value" value="id"/>
+			<html:select  name="${form.formName}" property="selectedTest" onchange="dirtySearchInfo( event )">
+				<html:optionsCollection name="${form.formName}"  property="testSelections" label="value" value="id"/>
 			</html:select>
 	</td>
 	<td>
-			<html:select  name="<%=formName%>" property="selectedAnalysisStatus" onchange="dirtySearchInfo( event )" >
-				<html:optionsCollection name="<%=formName%>" property="analysisStatusSelections" label="description" value="id" />
+			<html:select  name="${form.formName}" property="selectedAnalysisStatus" onchange="dirtySearchInfo( event )" >
+				<html:optionsCollection name="${form.formName}" property="analysisStatusSelections" label="description" value="id" />
 			</html:select>
 	</td>
 	<% if( useSampleStatus ){ %>
 	<td>
-			<html:select  name="<%=formName%>" property="selectedSampleStatus" onchange="dirtySearchInfo( event )">
-				<html:optionsCollection name="<%=formName%>" property="sampleStatusSelections" label="description" value="id" />
+			<html:select  name="${form.formName}" property="selectedSampleStatus" onchange="dirtySearchInfo( event )">
+				<html:optionsCollection name="${form.formName}" property="sampleStatusSelections" label="description" value="id" />
 			</html:select>
 	</td>
 	<% } %>
@@ -101,7 +102,7 @@ function /*void*/ dirtySearchInfo(e){
 
 	</table>
 	<html:button property="searchButton" onclick="doShowTests()"  >
-		<bean:message key="resultsentry.status.search"/>
+		<spring:message code="resultsentry.status.search"/>
 	</html:button>
 
 </div>

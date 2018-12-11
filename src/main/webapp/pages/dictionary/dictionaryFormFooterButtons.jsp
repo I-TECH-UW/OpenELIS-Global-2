@@ -6,10 +6,12 @@
 	        us.mn.state.health.lims.common.util.SystemConfiguration"
 %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <bean:define id="yes" value='<%= IActionConstants.YES %>' />
 <bean:define id="no" value='<%= IActionConstants.NO %>' />
@@ -50,7 +52,7 @@ String recordFrozenDisableEdits = "false";
     
         %>
         
-<script language="JavaScript1.2">
+<script>
 function confirmSaveForwardPopup(direction)
 {
   var myWin = createSmallConfirmPopup( "", null , null );
@@ -189,14 +191,14 @@ function nextAction(form, ignoreFields) {
 							 else {
 							  saveIt(window.document.forms[0]);
 							 }" property="save" disabled="<%=Boolean.valueOf(saveDisabled).booleanValue()%>">
-  			   <bean:message key="label.button.save"/>
+  			   <spring:message code="label.button.save"/>
   			</html:button>
   	    </td>
         
 		<td>&nbsp;</td>
 		<td>
   			<html:button onclick="setAction(window.document.forms[0], 'Cancel', 'no', '');"  property="cancel" >
-  			   <bean:message key="label.button.exit"/>
+  			   <spring:message code="label.button.exit"/>
   			</html:button>
 	    </td>
    		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -207,13 +209,13 @@ function nextAction(form, ignoreFields) {
   		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
  	    <td>
   			<html:button onclick="previousAction(window.document.forms[0], '');" property="previous" disabled="<%=Boolean.valueOf(previousDisabled).booleanValue()%>">
-  			   <bean:message key="label.button.previous"/>
+  			   <spring:message code="label.button.previous"/>
   			</html:button>
 	    </td>
      	<td>&nbsp;</td>
  	    <td>
   			<html:button onclick="nextAction(window.document.forms[0], '');"  property="next" disabled="<%=Boolean.valueOf(nextDisabled).booleanValue()%>">
-  			   <bean:message key="label.button.next"/>
+  			   <spring:message code="label.button.next"/>
   			</html:button>
 	    </td>
 	    </tr>

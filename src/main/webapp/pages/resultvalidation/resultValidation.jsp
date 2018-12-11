@@ -16,18 +16,19 @@
 			us.mn.state.health.lims.common.services.TypeOfTestResultService,
 			org.owasp.encoder.Encode" %>
 
-<%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"		prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"		prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view"		prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName"	value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+	
 <bean:define id="testSection"	value='<%=request.getParameter("type")%>' />
 <bean:define id="testName"	value='<%=request.getParameter("test")%>' />
-<bean:define id="results" name="<%=formName%>" property="resultList" />
-<bean:define id="pagingSearch" name='<%=formName%>' property="paging.searchTermToPage" type="List<IdValuePair>" />
-<bean:define id="testSectionsByName" name='<%=formName%>' property="testSectionsByName" />
+<bean:define id="results" name="${form.formName}" property="resultList" />
+<bean:define id="pagingSearch" name='${form.formName}' property="paging.searchTermToPage" type="List<IdValuePair>" />
+<bean:define id="testSectionsByName" name='${form.formName}' property="testSectionsByName" />
 <bean:size id="resultCount" name="results" />
 
 <%!
@@ -66,8 +67,8 @@
 
 <script type="text/javascript" >
 var dirty = false;
-var pager = new OEPager('<%=formName%>', '<%= testSection == "" ? "" : "&type=" + Encode.forJavaScript(testSection)  %>' + '<%= "&test=" + Encode.forJavaScript(testName)  %>');
-pager.setCurrentPageNumber('<bean:write name="<%=formName%>" property="paging.currentPage"/>');
+var pager = new OEPager('${form.formName}', '<%= testSection == "" ? "" : "&type=" + Encode.forJavaScript(testSection)  %>' + '<%= "&test=" + Encode.forJavaScript(testName)  %>');
+pager.setCurrentPageNumber('<c:out value="${form.paging.currentPage}"/>');
 
 var pageSearch; //assigned in post load function
 
@@ -163,7 +164,7 @@ function /*void*/ makeDirty(){
 	}
 	// Adds warning when leaving page if content has been entered into makeDirty form fields
 	function formWarning(){ 
-    return "<bean:message key="banner.menu.dataLossWarning"/>";
+    return "<spring:message code="banner.menu.dataLossWarning"/>";
 	}
 	window.onbeforeunload = formWarning;
 }
@@ -311,16 +312,16 @@ function /*boolean*/ handleEnterEvent(){
 <% if( !(url.contains("RetroC"))){ %>
 <div id="searchDiv" class="colorFill"  >
 <div id="PatientPage" class="colorFill" style="display:inline" >
-<h2><bean:message key="sample.entry.search"/></h2>
+<h2><spring:message code="sample.entry.search"/></h2>
 	<table width="30%">
 		<tr>
 			<td width="50%" align="right" >
 				<%= StringUtil.getMessageForKey("workplan.unit.types") %>
 			</td>
 			<td>			
-				<html:select name='<%= formName %>' property="testSectionId" 
+				<html:select name='${form.formName}' property="testSectionId" 
 					 onchange="submitTestSectionSelect(this);" >
-					<app:optionsCollection name="<%=formName%>" property="testSections" label="value" value="id" />
+					<app:optionsCollection name="${form.formName}" property="testSections" label="value" value="id" />
 				</html:select>
 		   	</td>
 		</tr>
@@ -335,9 +336,9 @@ function /*boolean*/ handleEnterEvent(){
 
 <logic:notEqual name="resultCount" value="0">
 <div  style="width:80%" >
-	<html:hidden styleId="currentPageID" name="<%=formName%>" property="paging.currentPage"/>
-	<bean:define id="total" name="<%=formName%>" property="paging.totalPages"/>
-	<bean:define id="currentPage" name="<%=formName%>" property="paging.currentPage"/>
+	<html:hidden id="currentPageID" name="${form.formName}" property="paging.currentPage"/>
+	<bean:define id="total" name="${form.formName}" property="paging.totalPages"/>
+	<bean:define id="currentPage" name="${form.formName}" property="paging.currentPage"/>
 
 	<%if( "1".equals(currentPage)) {%>
 		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" disabled="disabled" >
@@ -351,21 +352,21 @@ function /*boolean*/ handleEnterEvent(){
 	<% } %>
 
 	&nbsp;
-	<bean:write name="<%=formName%>" property="paging.currentPage"/> <bean:message key="report.pageNumberOf" />
-	<bean:write name="<%=formName%>" property="paging.totalPages"/>
+	<c:out value="${form.paging.currentPage}"/> <spring:message code="report.pageNumberOf" />
+	<c:out value="${form.paging.totalPages}"/>
 	<span style="float : right" >
 	<span style="visibility: hidden" id="searchNotFound"><em><%= StringUtil.getMessageForKey("search.term.notFound") %></em></span>
 	<%=StringUtil.getContextualMessageForKey("result.sample.id")%> : &nbsp;
 	<input type="text"
 	       id="labnoSearch"
-	       placeholder='<bean:message key="sample.search.scanner.instructions"/>'
+	       placeholder='<spring:message code="sample.search.scanner.instructions"/>'
 	       maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>' />
 	<input type="button" onclick="pageSearch.doLabNoSearch($(labnoSearch))" value='<%= StringUtil.getMessageForKey("label.button.search") %>'>
 	</span>
 </div>
 </logic:notEqual>
-<html:hidden name="<%=formName%>"  property="testSection" value="<%=Encode.forHtml(testSection)%>" />
-<html:hidden name="<%=formName%>"  property="testName" value="<%=Encode.forHtml(testName)%>" />
+<form:hidden path="testSection" value="<%=Encode.forHtml(testSection)%>" />
+<form:hidden path="testName" value="<%=Encode.forHtml(testName)%>" />
 <logic:notEqual name="resultCount" value="0">
 <Table style="width:80%" >
     <tr>
@@ -373,7 +374,7 @@ function /*boolean*/ handleEnterEvent(){
 			<img src="./images/nonconforming.gif" /> = <%= StringUtil.getContextualMessageForKey("result.nonconforming.item")%>
 		</th>
 		<th style="text-align:center;width:3%;" style="background-color: white">&nbsp;
-				<bean:message key="validation.accept.all" />
+				<spring:message code="validation.accept.all" />
 			<input type="checkbox"
 				name="selectAllAccept"
 				value="on"
@@ -383,7 +384,7 @@ function /*boolean*/ handleEnterEvent(){
 				class="accepted acceptAll">
 		</th>
 		<th  style="text-align:center;width:3%;" style="background-color: white">&nbsp;
-		<bean:message key="validation.reject.all" />
+		<spring:message code="validation.reject.all" />
 			<input type="checkbox"
 					name="selectAllReject"
 					value="on"
@@ -403,34 +404,34 @@ function /*boolean*/ handleEnterEvent(){
     </tr>    
 	<tr>
     	<th>
-			<bean:message key="resultsentry.accessionNumber"/>
+			<spring:message code="resultsentry.accessionNumber"/>
 		</th>
 		<th>
-	  		<bean:message key="sample.entry.project.testName"/>
+	  		<spring:message code="sample.entry.project.testName"/>
 		</th>
 		<th>
-			<bean:message key="analyzer.results.result"/>
+			<spring:message code="analyzer.results.result"/>
 		</th>
 		<th style="text-align:center">
-			<bean:message key="validation.accept" />
+			<spring:message code="validation.accept" />
 		</th>
 		<th style="text-align:center">
-			<bean:message key="validation.reject" />
+			<spring:message code="validation.reject" />
 		</th>
 		<th>
-			<bean:message key="result.notes"/>
+			<spring:message code="result.notes"/>
 		</th>
   	</tr>
 
-	<logic:iterate id="resultList" name="<%=formName%>"  property="resultList" indexId="index" type="AnalysisItem">
+	<logic:iterate id="resultList" name="${form.formName}"  property="resultList" indexId="index" type="AnalysisItem">
 			 <% showAccessionNumber = !resultList.getAccessionNumber().equals(currentAccessionNumber);
 				   if( showAccessionNumber ){
 					currentAccessionNumber = resultList.getAccessionNumber();
 					rowColorIndex++;}  %>
 			<html:hidden name="resultList" property="sampleGroupingNumber" indexed="true" />
 			<html:hidden name="resultList" property="noteId" indexed="true" />
-			<html:hidden name="resultList" property="resultId"  indexed="true" styleId='<%="resultIdValue_" + index%>'/>
-            <html:hidden name="resultList" property="hasQualifiedResult" indexed="true" styleId='<%="hasQualifiedResult_" + index %>' />
+			<html:hidden name="resultList" property="resultId"  indexed="true" id='<%="resultIdValue_" + index%>'/>
+            <html:hidden name="resultList" property="hasQualifiedResult" indexed="true" id='<%="hasQualifiedResult_" + index %>' />
 
 			<%if( resultList.isMultipleResultForSample() && showAccessionNumber ){ 
 			     showAccessionNumber = false; %>
@@ -439,7 +440,7 @@ function /*boolean*/ handleEnterEvent(){
 	      			<bean:write name="resultList" property="accessionNumber"/>
 	    		</td>
 	    		<td style="text-align:center">
-					<html:checkbox styleId='<%="sampleAccepted_" + resultList.getSampleGroupingNumber() %>'
+					<html:checkbox id='<%="sampleAccepted_" + resultList.getSampleGroupingNumber() %>'
 								   name="resultList"
 								   property="isAccepted"
 								   styleClass="accepted"
@@ -448,7 +449,7 @@ function /*boolean*/ handleEnterEvent(){
 								   onclick='<%="acceptSample( this, \'" + resultList.getSampleGroupingNumber() + "\');" %>' />
 				</td>
 				<td style="text-align:center">
-					<html:checkbox styleId='<%="sampleRejected_" + resultList.getSampleGroupingNumber() %>'
+					<html:checkbox id='<%="sampleRejected_" + resultList.getSampleGroupingNumber() %>'
 									   name="resultList"
 									   property="isRejected"
 									   styleClass="rejected"
@@ -530,7 +531,7 @@ function /*boolean*/ handleEnterEvent(){
                             </option>
                         </logic:iterate>
                     </select>
-                    <html:hidden name="resultList" property="multiSelectResultValues" indexed="true" styleId='<%="multiresultId_" + index%>' styleClass="multiSelectValues"  />
+                    <html:hidden name="resultList" property="multiSelectResultValues" indexed="true" id='<%="multiresultId_" + index%>' styleClass="multiSelectValues"  />
                     <input type="text"
                            name='<%="resultList[" + index + "].qualifiedResultValue" %>'
                            value='<%= resultList.getQualifiedResultValue() %>'
@@ -560,7 +561,7 @@ function /*boolean*/ handleEnterEvent(){
                     </select>
                         <input class='<%="addMultiSelect" + index%>' type="button" value="+" onclick='<%="addNewMultiSelect(" + index + ", this);showNewNote( " + index + ");"%>'/>
                         <input class='<%="removeMultiSelect" + index%>' type="button" value="-" onclick='<%="removeMultiSelect(\"target\");showNewNote( " + index + ");"%>' style="display: none" />
-                        <html:hidden name="resultList" property="multiSelectResultValues" indexed="true" styleId='<%="multiresultId_" + index%>'  styleClass="multiSelectValues" />
+                        <html:hidden name="resultList" property="multiSelectResultValues" indexed="true" id='<%="multiresultId_" + index%>'  styleClass="multiSelectValues" />
                     <input type="text"
                            name='<%="resultList[" + index + "].qualifiedResultValue" %>'
                            value='<%= resultList.getQualifiedResultValue() %>'
@@ -577,7 +578,7 @@ function /*boolean*/ handleEnterEvent(){
                               property="result"
                               size="16"
                               allowEdits='<%= !resultList.isReadOnly() %>'
-                              styleId='<%="resultId_" + index %>'
+                              id='<%="resultId_" + index %>'
                               onchange='<%="markUpdated(); makeDirty(); updateLogValue(this, " + index + ");" %>'/>
                     <bean:write name="resultList" property="units"/>
 
@@ -587,7 +588,7 @@ function /*boolean*/ handleEnterEvent(){
 								  property="result"
 								  rows="2"
 								  allowEdits='<%= !resultList.isReadOnly() %>'
-								  styleId='<%="resultId_" + index %>'
+								  id='<%="resultId_" + index %>'
 								  onkeyup='value = value.substr(0, 200); markUpdated();'
 								  />
 						<bean:write name="resultList" property="units"/>
@@ -608,7 +609,7 @@ function /*boolean*/ handleEnterEvent(){
 				</td>
 				<% if(resultList.isShowAcceptReject()){ %>
 				<td style="text-align:center">
-					<html:checkbox styleId='<%="accepted_" + index %>'
+					<html:checkbox id='<%="accepted_" + index %>'
 								   name="resultList"
 								   property="isAccepted"
 								   styleClass='<%= "accepted accepted_" + resultList.getSampleGroupingNumber() %>'
@@ -617,7 +618,7 @@ function /*boolean*/ handleEnterEvent(){
 								   onclick='<%="enableDisableCheckboxes(\'rejected_" + index + "\', \'" + resultList.getSampleGroupingNumber() + "\');" %>' />
 				</td>
 				<td style="text-align:center">
-					<html:checkbox styleId='<%="rejected_" + index %>'
+					<html:checkbox id='<%="rejected_" + index %>'
 									   name="resultList"
 									   property="isRejected"
 									   styleClass='<%= "rejected rejected_" + resultList.getSampleGroupingNumber() %>'
@@ -626,7 +627,7 @@ function /*boolean*/ handleEnterEvent(){
 									   onclick='<%="enableDisableCheckboxes(\'accepted_" + index + "\', \'" + resultList.getSampleGroupingNumber() + "\');" %>' />
 				</td>
 				<% }else{ %>
-				<td><bean:message key="label.computed"/></td><td><bean:message key="label.computed"/></td>
+				<td><spring:message code="label.computed"/></td><td><spring:message code="label.computed"/></td>
 				<% } %>
 				<td style="text-align:center">
 					<% if( !resultList.isReadOnly()){ %>
@@ -648,7 +649,7 @@ function /*boolean*/ handleEnterEvent(){
       		</tr>
       		<logic:notEmpty name="resultList" property="pastNotes">
 			<tr  >
-				<td colspan="2" style="text-align:right;vertical-align:top"><bean:message key="label.prior.note" />: </td>
+				<td colspan="2" style="text-align:right;vertical-align:top"><spring:message code="label.prior.note" />: </td>
 				<td colspan="6" style="text-align:left">
 				<%= resultList.getPastNotes() %>
 				</td>
@@ -656,9 +657,9 @@ function /*boolean*/ handleEnterEvent(){
 	</logic:notEmpty>
       		<tr id='<%="noteRow_" + index %>'
 				style="display: none;">
-				<td colspan="2" style="text-align:right;vertical-align:top;"><bean:message key="note.note"/>:</td>
+				<td colspan="2" style="text-align:right;vertical-align:top;"><spring:message code="note.note"/>:</td>
 				<td colspan="6" style="text-align:left" >
-					<html:textarea styleId='<%="note_" + index %>'
+					<html:textarea id='<%="note_" + index %>'
 								   onchange='<%="markUpdated(" + index + ");"%>'
 							   	   name="resultList"
 					           	   property="note"
@@ -676,15 +677,15 @@ function /*boolean*/ handleEnterEvent(){
 
   	</logic:notEqual>
   	
-	<logic:equal  name="<%=formName %>" property="displayTestSections" value="true">
+	<logic:equal  name="${form.formName}" property="displayTestSections" value="true">
 		<logic:equal name="resultCount"  value="0">
-			<logic:notEmpty name="<%=formName %>" property="testSectionId">
+			<logic:notEmpty name="${form.formName}" property="testSectionId">
 			<h2><%= StringUtil.getContextualMessageForKey("result.noTestsFound") %></h2>
 			</logic:notEmpty>
 		</logic:equal>
 	</logic:equal>
 
-	<logic:notEqual  name="<%=formName %>" property="displayTestSections" value="true">
+	<logic:notEqual  name="${form.formName}" property="displayTestSections" value="true">
 		<logic:equal name="resultCount"  value="0">
 		<h2><%= StringUtil.getContextualMessageForKey("result.noTestsFound") %></h2>
 		</logic:equal>
@@ -693,9 +694,9 @@ function /*boolean*/ handleEnterEvent(){
 </Table>
 
    <logic:notEqual name="resultCount" value="0">
-		<html:hidden styleId="currentPageID" name="<%=formName%>" property="paging.currentPage"/>
-		<bean:define id="total" name="<%=formName%>" property="paging.totalPages"/>
-		<bean:define id="currentPage" name="<%=formName%>" property="paging.currentPage"/>
+		<html:hidden id="currentPageID" name="${form.formName}" property="paging.currentPage"/>
+		<bean:define id="total" name="${form.formName}" property="paging.totalPages"/>
+		<bean:define id="currentPage" name="${form.formName}" property="paging.currentPage"/>
 
 	<%if( "1".equals(currentPage)) {%>
 		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" disabled="disabled" >
@@ -710,6 +711,6 @@ function /*boolean*/ handleEnterEvent(){
 	<% } %>
 
 		&nbsp;
-		<bean:write name="<%=formName%>" property="paging.currentPage"/> of
-		<bean:write name="<%=formName%>" property="paging.totalPages"/>
+		<c:out value="${form.paging.currentPage}"/> of
+		<c:out value="${form.paging.totalPages}"/>
 	</logic:notEqual>

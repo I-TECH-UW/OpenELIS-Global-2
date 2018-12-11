@@ -5,12 +5,14 @@
 			us.mn.state.health.lims.common.util.ConfigurationProperties,
 			org.owasp.encoder.Encode,
 			us.mn.state.health.lims.common.util.Versioning"%>
-<%@ page isELIgnored="false"%>
-
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
 <html>
 <%!
@@ -50,7 +52,7 @@ if (form == null) {
 <script type="text/javascript">
 var  $jq = jQuery.noConflict();
 </script>
-<script language="JavaScript1.2"
+<script
 	src="<%=basePath%>scripts/utilities.jsp"></script>
 <script type="text/javascript"
 	src="<%=basePath%>scripts/prototype-1.5.1.js?ver=<%= Versioning.getBuildNumber() %>"></script>
@@ -64,7 +66,7 @@ var  $jq = jQuery.noConflict();
 	src="<%=basePath%>scripts/Tooltip-0.6.0.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript"
 	src="<%=basePath%>scripts/lightbox.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script language="JavaScript1.2">
+<script>
 
 
 function setAction(form, action, validate, parameters) {

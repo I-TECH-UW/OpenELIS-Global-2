@@ -7,11 +7,12 @@
                  us.mn.state.health.lims.common.util.Versioning,
 			     us.mn.state.health.lims.common.util.StringUtil" %>
 
-<%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"		prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"		prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view"		prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%--
   ~ The contents of this file are subject to the Mozilla Public License
@@ -29,7 +30,7 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
-<bean:define id="formName"		value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+		
 <bean:define id="accessionFormat" value='<%=ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat)%>' />
 
 <%!
@@ -46,7 +47,7 @@
 
 <script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 
-<script type="text/javascript" language="JavaScript1.2">
+<script type="text/javascript">
 
 function validateEntrySize( elementValue ){
 	$("retrieveTestsID").disabled = (elementValue.length == 0);
@@ -57,7 +58,7 @@ function doShowTests(){
 
 	var form = document.forms[0];
 
-	form.action = '<%=formName%>'.sub('Form','') + ".do?accessionNumber="  + $("searchAccessionID").value;
+	form.action = '${form.formName}'.sub('Form','') + ".do?accessionNumber="  + $("searchAccessionID").value;
 
 	form.submit();
 }
@@ -76,7 +77,7 @@ function /*void*/ handleEnterEvent(  ){
 
 <div id="PatientPage" class="colorFill" style="display:inline" >
 
-	<h2><bean:message key="sample.entry.search"/></h2>
+	<h2><spring:message code="sample.entry.search"/></h2>
 	<table width="40%">
 	<tr >
 		<td width="50%" align="right" >
@@ -91,13 +92,13 @@ function /*void*/ handleEnterEvent(  ){
 			       onblur="validateEntrySize( this.value );"
 			       class="text"
 			       type="text">
-			<bean:message key="sample.search.scanner.instructions"/>
+			<spring:message code="sample.search.scanner.instructions"/>
 		</td>
 	</tr>
 
 	</table>
 	<br/>
-	<html:button property="retrieveTestsButton" styleId="retrieveTestsID"  onclick="doShowTests();" disabled="true" >
+	<html:button property="retrieveTestsButton" id="retrieveTestsID"  onclick="doShowTests();" disabled="true" >
 		<%= StringUtil.getContextualMessageForKey("resultsentry.accession.search") %>
 	</html:button>
 

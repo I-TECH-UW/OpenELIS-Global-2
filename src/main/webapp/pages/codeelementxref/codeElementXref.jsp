@@ -3,16 +3,17 @@
 	import="us.mn.state.health.lims.common.action.IActionConstants,
 	us.mn.state.health.lims.common.util.SystemConfiguration" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 
 <div id="sound"></div>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 <bean:define id="idSeparator" value='<%= SystemConfiguration.getInstance().getDefaultIdSeparator() %>' />
 
 <%!
@@ -39,7 +40,7 @@ H1.codeElementXrefH1 {
   valign:top;
 }
 </style>
-<script language="JavaScript1.2">
+<script>
 function validateForm(form) {
  return validateCodeElementXrefForm(form);
 }
@@ -124,11 +125,11 @@ function unlink() {
   <tr> 
     <td width="13%">
      <h1 class="codeElementXrefH1">
-      <bean:message key="codeelementxref.label.notlinked"/>:
+      <spring:message code="codeelementxref.label.notlinked"/>:
      </h1>
     </td>
-    <td width="33%"><h2><bean:message key="codeelementxref.receiverCodeElements"/></h2></td>
-    <td width="33%"><h2><bean:message key="codeelementxref.localCodeElements"/></h2></td>
+    <td width="33%"><h2><spring:message code="codeelementxref.receiverCodeElements"/></h2></td>
+    <td width="33%"><h2><spring:message code="codeelementxref.localCodeElements"/></h2></td>
     <td width="5%">&nbsp;</td>
     <td width="16%">&nbsp;</td>
   </tr>
@@ -137,9 +138,9 @@ function unlink() {
       &nbsp;
 	</td>
 	<td width="33%"> 
-		 <html:select name="<%=formName%>" property="selectedReceiverCodeElementId">
+		 <html:select name="${form.formName}" property="selectedReceiverCodeElementId">
 		   	  <app:optionsCollection 
-				name="<%=formName%>"
+				name="${form.formName}"
 	     		property="receiverCodeElements" 
 				label="text" 
 				value="id"
@@ -148,9 +149,9 @@ function unlink() {
           </html:select>
     </td>
 	<td width="33%"> 
-		 <html:select name="<%=formName%>" property="selectedLocalCodeElementId">
+		 <html:select name="${form.formName}" property="selectedLocalCodeElementId">
 		   	  <app:optionsCollection 
-				name="<%=formName%>"
+				name="${form.formName}"
 	     		property="localCodeElements" 
 				label="name" 
 				value="id"  
@@ -165,7 +166,7 @@ function unlink() {
    </td>
    <td width="16%">
         <html:button  onclick="link();" property="save" disabled="<%=Boolean.valueOf(allowEdits).booleanValue()%>">
-	        <bean:message key="codeelementxref.button.link"/>
+	        <spring:message code="codeelementxref.button.link"/>
         </html:button>
 	</td>
   </tr>
@@ -179,13 +180,13 @@ function unlink() {
 <div id="linked">
 <table width="100%">
   <tr valign="middle"> 
-    <td width="13%"><h1 class="codeElementXrefH1"><bean:message key="codeelementxref.label.linked"/>:</h1></td>
-    <td width="33%"><h2><bean:message key="codeelementxref.receiverCodeElement"/></h2></td>
-    <td width="33%"><h2><bean:message key="codeelementxref.localCodeElement"/></h2></td>
+    <td width="13%"><h1 class="codeElementXrefH1"><spring:message code="codeelementxref.label.linked"/>:</h1></td>
+    <td width="33%"><h2><spring:message code="codeelementxref.receiverCodeElement"/></h2></td>
+    <td width="33%"><h2><spring:message code="codeelementxref.localCodeElement"/></h2></td>
     <td width="5%">&nbsp;</td>
     <td width="16%">&nbsp;</td>
   </tr>
-  <logic:iterate id="codeXref" name="<%=formName%>" indexId="codexref_ctr" property="codeElementXrefs" type="us.mn.state.health.lims.codeelementxref.valueholder.CodeElementXref">
+  <logic:iterate id="codeXref" name="${form.formName}" indexId="codexref_ctr" property="codeElementXrefs" type="us.mn.state.health.lims.codeelementxref.valueholder.CodeElementXref">
   <%--for hover over information--%>
   <bean:define id="receiver" name="codeXref" property="receiverCodeElement"/>
   <bean:define id="identifier" name="receiver" property="identifier"/>
@@ -208,14 +209,14 @@ function unlink() {
 	  </a>
 	</td>
 	<td width="5%">
-	  <html:multibox name='<%=formName%>' property="selectedRows" style="float:right; padding-right: 5px;">
+	  <html:multibox name='${form.formName}' property="selectedRows" style="float:right; padding-right: 5px;">
 	      <bean:write name="codeXref" property="id"/>
 	  </html:multibox>
 	</td>
 	<td width="16%">
      <logic:equal name="codexref_ctr" value="0">
         <html:button  onclick="unlink();" property="save" disabled="<%=Boolean.valueOf(allowEdits).booleanValue()%>">
-	        <bean:message key="codeelementxref.button.unlink"/>
+	        <spring:message code="codeelementxref.button.unlink"/>
         </html:button>        
 	  </logic:equal>
 	</td>

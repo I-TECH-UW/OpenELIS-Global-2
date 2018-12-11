@@ -5,11 +5,14 @@
                  us.mn.state.health.lims.common.util.StringUtil,
                  us.mn.state.health.lims.common.util.Versioning,
                  us.mn.state.health.lims.common.util.DateUtil" %>
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>'/>
+ 
 
 <%!
     String path = "";
@@ -80,8 +83,8 @@ function checkValidTime(time, blankAllowed)
 
 
 <!-- This define may not be needed, look at usages (not in any other jsp or js page may be radio buttons for ci LNSP-->
-<!--bean:define id="orderTypeList" name='<%=formName%>' property="sampleOrderItems.orderTypes"  type="java.util.Collection"/> -->
-<bean:define id="sampleOrderItem" name='<%=formName%>' property="sampleOrderItems" type="us.mn.state.health.lims.sample.bean.SampleOrderItem" />
+<!--bean:define id="orderTypeList" name='${form.formName}' property="sampleOrderItems.orderTypes"  type="java.util.Collection"/> -->
+<bean:define id="sampleOrderItem" name='${form.formName}' property="sampleOrderItems" type="us.mn.state.health.lims.sample.bean.SampleOrderItem" />
 
 <div id=orderDisplay <%= acceptExternalOrders && sampleOrderItem.getLabNo() == null ? "style='display:none'" : ""  %> >
 <table style="width:100%">
@@ -96,19 +99,19 @@ function checkValidTime(time, blankAllowed)
 	        <span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>
    	 	</td>
     	<td colspan="2">
-	        <html:text name='<%=formName %>'
+	        <html:text name='${form.formName}'
                    property="currentDate"
-                   styleId="currentDate"
+                   id="currentDate"
                    styleClass="required"
                    readonly="true"
                    maxlength="10"/>
 	     	<%= StringUtil.getContextualMessageForKey("sample.batchentry.order.currenttime") %>
 	     	:
 	        <span style="font-size: xx-small; "><%=DateUtil.getTimeUserPrompt()%></span> 
-	        <html:text name="<%=formName %>"
+	        <html:text name="${form.formName}"
                    onkeyup="filterTimeKeys(this, event);"
                    property="currentTime"
-                   styleId="currentTime"
+                   id="currentTime"
                    maxlength="5"/>
    		</td>
 	</tr>
@@ -119,20 +122,20 @@ function checkValidTime(time, blankAllowed)
 	        <span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>
     	</td>
     	<td colspan="2">
-    		<app:text name="<%=formName%>"
+    		<app:text name="${form.formName}"
                   property="sampleOrderItems.receivedDateForDisplay"
                   onchange="checkValidSubPages();checkValidEntryDate(this, 'past');"
                   onkeyup="addDateSlashes(this, event);"
                   maxlength="10"
                   styleClass="text required"
-                  styleId="receivedDateForDisplay"/>
-	        <bean:message key="sample.batchentry.order.receptiontime"/>
+                  id="receivedDateForDisplay"/>
+	        <spring:message code="sample.batchentry.order.receptiontime"/>
 	        :
 	        <span style="font-size: xx-small; "><%=DateUtil.getTimeUserPrompt()%></span>
-	        <html:text name="<%=formName %>"
+	        <html:text name="${form.formName}"
                    onkeyup="filterTimeKeys(this, event);"
                    property="sampleOrderItems.receivedTime"
-                   styleId="receivedTime"
+                   id="receivedTime"
                    maxlength="5"
                    onblur="checkValidSubPages(); checkValidTime(this, true);"/>
     	</td>

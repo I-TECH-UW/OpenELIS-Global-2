@@ -2,14 +2,15 @@
 	contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 
 <%!
 
@@ -32,7 +33,7 @@ errorMakeSelection =
 
 %>
 
-<script language="JavaScript1.2">
+<script>
 function validateForm(form) {
  return validateCodeElementXrefForm(form);
 }
@@ -64,8 +65,8 @@ function getCodes() {
 <table width="100%">
   <tr> 
     <td width="13%">&nbsp;</td>
-    <td width="33%"><h2><bean:message key="codeelementxref.messageOrganization"/></h2></td>
-    <td width="33%"><h2><bean:message key="codeelementxref.codeElementType"/></h2></td>
+    <td width="33%"><h2><spring:message code="codeelementxref.messageOrganization"/></h2></td>
+    <td width="33%"><h2><spring:message code="codeelementxref.codeElementType"/></h2></td>
     <td width="5%">&nbsp;</td>
     <td width="16%">&nbsp;</td>
   </tr>
@@ -74,9 +75,9 @@ function getCodes() {
       &nbsp;
 	</td>
 	<td width="33%"> 
-	 	<html:select name="<%=formName%>" property="selectedMessageOrganizationId" onchange="clearSearchResults();">
+	 	<html:select name="${form.formName}" property="selectedMessageOrganizationId" onchange="clearSearchResults();">
 		   	  <app:optionsCollection 
-					name="<%=formName%>"
+					name="${form.formName}"
 		    		property="messageOrganizations" 
 					label="organization.organizationName" 
     				value="id"  
@@ -87,9 +88,9 @@ function getCodes() {
          </html:select>
 	</td>
 	<td width="33%"> 
-		<html:select name="<%=formName%>" property="selectedCodeElementTypeId" onchange="clearSearchResults();">
+		<html:select name="${form.formName}" property="selectedCodeElementTypeId" onchange="clearSearchResults();">
 		  	  <app:optionsCollection 
-		    		name="<%=formName%>"
+		    		name="${form.formName}"
 			   		property="codeElementTypes" 
 					label="text" 
 					value="id"  
@@ -102,7 +103,7 @@ function getCodes() {
    </td>
    <td width="16%">
     <html:button  onclick="getCodes();" property="view" disabled="<%=Boolean.valueOf(allowEdits).booleanValue()%>">
-	    <bean:message key="codeelementxref.button.getcodes"/>
+	    <spring:message code="codeelementxref.button.getcodes"/>
     </html:button>    
 	</td>
   </tr>

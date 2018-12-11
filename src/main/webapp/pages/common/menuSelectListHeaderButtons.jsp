@@ -5,12 +5,14 @@
 			java.util.Locale"
 %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 
 
 <%!
@@ -88,7 +90,7 @@
 %>
 
 
-<script language="JavaScript1.2">
+<script>
 
 
 function submitSearchForEnter(e){
@@ -137,7 +139,7 @@ function submitSearchForClick(button){
 						+ " " + msgOf + " " + totalCount;
 			%>
 
-			<td><bean:message key="label.form.selectand" /></td>
+			<td><spring:message code="label.form.selectand" /></td>
 
 
 			<td colspan="4" align="right"><%=paginationMessage%></td>
@@ -164,23 +166,23 @@ function submitSearchForClick(button){
 					onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?ID=');return false;"
 					property="edit"
 					disabled="<%=!disableEdit%>">
-					<bean:message key="label.button.edit" />
+					<spring:message code="label.button.edit" />
 				</html:button> &nbsp; 
 				<html:button
 					onclick="setMenuAction(this, window.document.forms[0], 'Delete', 'yes', '?ID=');return false;"
 					property="deactivate"
 					disabled="true"> 
-					<bean:message key="label.button.deactivate" />
+					<spring:message code="label.button.deactivate" />
   			</html:button>
 				
 				&nbsp;
-				<bean:message key="label.form.or" />&nbsp; 
+				<spring:message code="label.form.or" />&nbsp; 
 				
 				<html:button
 					onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?ID=0');return false;"
 					property="add"
 					disabled="<%=Boolean.valueOf(addDisabled).booleanValue()%>">
-					<bean:message key="label.button.add" />
+					<spring:message code="label.button.add" />
   			</html:button>
 	   </td>
 
@@ -188,17 +190,16 @@ function submitSearchForClick(button){
 				name="<%=IActionConstants.MENU_SEARCH_BY_TABLE_COLUMN%>">
 				<td></td>
 
-				<td align="right"><bean:message key="label.form.searchby" /> <bean:message
-						key="<%=searchColumn%>" /> <html:text name="<%=formName%>"
+				<td align="right"><spring:message code="label.form.searchby" /> <spring:message code="<%=searchColumn%>" /> <html:text name="${form.formName}"
 						property="searchString" onkeypress="submitSearchForEnter(event);"
 						size="20" maxlength="20" value="<%=searchStr%>"
 						disabled="<%=Boolean.valueOf(notAllowSearching).booleanValue()%>" />
 
 
-					<html:button property="search" styleId="searchButton"
+					<html:button property="search" id="searchButton"
 						onclick="submitSearchForClick(this);return false;"
 						disabled="<%=Boolean.valueOf(notAllowSearching).booleanValue()%>">
-  			       <bean:message key="label.button.search"/>
+  			       <spring:message code="label.button.search"/>
   		       </html:button>
           </td>
 
@@ -214,13 +215,13 @@ function submitSearchForClick(button){
 					onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?paging=1');return false;"
 					property="previous"
 					disabled="<%=Boolean.valueOf(previousDisabled).booleanValue()%>">
-					<bean:message key="label.button.previous" />
+					<spring:message code="label.button.previous" />
 				</html:button> &nbsp; 
 				<html:button
 					onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?paging=2');return false;"
 					property="next"
 					disabled="<%=Boolean.valueOf(nextDisabled).booleanValue()%>">
-					<bean:message key="label.button.next" />
+					<spring:message code="label.button.next" />
 				</html:button>
        </td>
  	</tr>
@@ -230,7 +231,7 @@ function submitSearchForClick(button){
    </tbody>
 </table>
 
-<script language="JavaScript1.2">
+<script>
    var textName = document.getElementById ("searchString");
  
    if (textName != null && textName.value != null)

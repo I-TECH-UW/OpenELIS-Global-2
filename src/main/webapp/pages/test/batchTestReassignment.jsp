@@ -7,12 +7,12 @@
          		us.mn.state.health.lims.common.util.Versioning,
          		us.mn.state.health.lims.test.action.BatchTestStatusChangeBean" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/struts-tiles" prefix="tiles" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%--
   ~ The contents of this file are subject to the Mozilla Public License
@@ -30,8 +30,8 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
-<bean:define id='formName' value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>'/>
-<bean:define id="sampleTypeList" name='<%=formName%>' property="sampleList" type="java.util.List"/>
+<bean:define id='formName' 
+<bean:define id="sampleTypeList" name='${form.formName}' property="sampleList" type="java.util.List"/>
 
 <%!
     String basePath = "";
@@ -86,7 +86,7 @@
         }
         // Adds warning when leaving page if content has been entered into makeDirty form fields
         function formWarning() {
-            return "<bean:message key="banner.menu.dataLossWarning"/>";
+            return "<spring:message code="banner.menu.dataLossWarning"/>";
         }
 
         window.onbeforeunload = formWarning;
@@ -337,28 +337,28 @@
     }
 </script>
 
-<html:hidden styleId="jsonWad" name='<%=formName%>' property="jsonWad" />
+<html:hidden id="jsonWad" name='${form.formName}' property="jsonWad" />
 
-<h3><bean:message key="label.selectSampleType"/></h3>
+<h3><spring:message code="label.selectSampleType"/></h3>
 
 <div id="selectDiv" >
-    <logic:notEmpty name="<%=formName%>" property="statusChangedList" >
+    <logic:notEmpty name="${form.formName}" property="statusChangedList" >
     <hr>
-    <bean:message key="label.test.batch.status.change.warning" /><br><br>
+    <spring:message code="label.test.batch.status.change.warning" /><br><br>
     <div style="overflow: hidden">
     <div style="float:left; width:15%;overflow: hidden;">
-        <bean:message key="label.sampleType" />:&nbsp;<bean:write name='<%=formName%>' property="statusChangedSampleType" /><br><br>
-        <bean:message key="label.currentTest" />:&nbsp;<bean:write name='<%=formName%>' property="statusChangedCurrentTest" /><br><br>
-        <bean:write name='<%=formName%>' property="statusChangedNextTest" /><br>
+        <spring:message code="label.sampleType" />:&nbsp;<bean:write name='${form.formName}' property="statusChangedSampleType" /><br><br>
+        <spring:message code="label.currentTest" />:&nbsp;<bean:write name='${form.formName}' property="statusChangedCurrentTest" /><br><br>
+        <bean:write name='${form.formName}' property="statusChangedNextTest" /><br>
     </div>
     <div style="float:left;overflow: hidden;">
         <table>
             <tr>
-            <th width="30%"><bean:message key="result.sample.id" /></th>
-            <th width="30%"><bean:message key="report.from" /></th>
-            <th width="30%"><bean:message key="report.to" /></th>
+            <th width="30%"><spring:message code="result.sample.id" /></th>
+            <th width="30%"><spring:message code="report.from" /></th>
+            <th width="30%"><spring:message code="report.to" /></th>
             </tr>
-            <logic:iterate id="bean" name="<%=formName%>" property="statusChangedList" type="BatchTestStatusChangeBean" >
+            <logic:iterate id="bean" name="${form.formName}" property="statusChangedList" type="BatchTestStatusChangeBean" >
                 <tr>
                     <td><bean:write name="bean" property="labNo" /></td>
                     <td><bean:write name="bean" property="oldStatus" /></td>
@@ -371,7 +371,7 @@
     <br>
     <hr>
     </logic:notEmpty>
-    <bean:message key="label.sampleType" /><br>
+    <spring:message code="label.sampleType" /><br>
 
     <select onchange="sampleTypeChanged(this); makeDirty();" >
     <option value="0"></option>
@@ -383,103 +383,103 @@
     <div id="testSelection" style="overflow: hidden; display:none" >
     <br>
     <div id="currentTest" style="float:left; margin:0; width:33%;">
-    <bean:message key="label.currentTest" /><br><br>
-    <input type="checkbox" id="includeInactive" checked="checked" onchange="showHideInactiveTest(this)"><bean:message key="label.includeInactiveTests" /><br><br>
+    <spring:message code="label.currentTest" /><br><br>
+    <input type="checkbox" id="includeInactive" checked="checked" onchange="showHideInactiveTest(this)"><spring:message code="label.includeInactiveTests" /><br><br>
         <select class="required" id="currentTestSelection" onchange="currentTestChanged(this)" >
         </select>
     </div>
 
         <div id="replacementTest" style="float:left; margin:0;width:66%;">
-    <bean:message key="label.replaceWith" /><br><br>
-    <input type="checkbox" id="cancelOnly" onchange="handleCancelOnly(this)" ><bean:message key="label.cancel.test.no.replace" /><br><br>
+    <spring:message code="label.replaceWith" /><br><br>
+    <input type="checkbox" id="cancelOnly" onchange="handleCancelOnly(this)" ><spring:message code="label.cancel.test.no.replace" /><br><br>
         <span id="replacementTestSelectionSpan"><select multiple="multiple" id="replacementTestSelection" title="multiple" ></select></span>
     </div>
 
     </div>
     <div id="sampleSelectionDiv" style="overflow: hidden; display:none" >
     <br>
-        <bean:message key="label.checkedWillBeModified"/><br><br>
+        <spring:message code="label.checkedWillBeModified"/><br><br>
         <div  style="float:left; margin:0;width:25%;">
-            <bean:message key="label.analysisNotStarted"/><br><br>
-            <input id="notStartedSamplesCheckBox" type="checkbox" checked="checked" onchange='applyAll(this, "notStartedSamplesSpan")'><bean:message key="label.button.checkAll" /><br><br>
+            <spring:message code="label.analysisNotStarted"/><br><br>
+            <input id="notStartedSamplesCheckBox" type="checkbox" checked="checked" onchange='applyAll(this, "notStartedSamplesSpan")'><spring:message code="label.button.checkAll" /><br><br>
             <span id="notStartedSamplesSpan" ></span>
         </div>
         <div  style="float:left; margin:0;width:25%;">
-            <bean:message key="label.rejectedByTechnician"/><br><br>
-            <input type="checkbox" id="technicianRejectedSamplesCheckBox" checked="checked" onchange='applyAll(this, "technicianRejectedSamplesSpan")'><bean:message key="label.button.checkAll" /><br><br>
+            <spring:message code="label.rejectedByTechnician"/><br><br>
+            <input type="checkbox" id="technicianRejectedSamplesCheckBox" checked="checked" onchange='applyAll(this, "technicianRejectedSamplesSpan")'><spring:message code="label.button.checkAll" /><br><br>
             <span id="technicianRejectedSamplesSpan" ></span>
         </div>
         <div style="float:left; margin:0;width:25%;">
-            <bean:message key="label.rejectedByBiologist" /><br><br>
-            <input type="checkbox" id="biologistRejectedSamplesCheckBox" checked="checked" onchange='applyAll(this, "biologistRejectedSamplesSpan")'><bean:message key="label.button.checkAll" /><br><br>
+            <spring:message code="label.rejectedByBiologist" /><br><br>
+            <input type="checkbox" id="biologistRejectedSamplesCheckBox" checked="checked" onchange='applyAll(this, "biologistRejectedSamplesSpan")'><spring:message code="label.button.checkAll" /><br><br>
             <span id="biologistRejectedSamplesSpan" ></span>
         </div>
         <div style="float:left; margin:0;width:25%;">
-            <bean:message key="label.notValidated"/><br><br>
-            <input type="checkbox"  id="notValidatedSamplesCheckBox" onchange='applyAll(this, "notValidatedSamplesSpan")'><bean:message key="label.button.checkAll" /><br><br>
+            <spring:message code="label.notValidated"/><br><br>
+            <input type="checkbox"  id="notValidatedSamplesCheckBox" onchange='applyAll(this, "notValidatedSamplesSpan")'><spring:message code="label.button.checkAll" /><br><br>
             <span id="notValidatedSamplesSpan" ></span>
         </div>
     </div>
     <div align="center">
         <input type="button" id="nextStepButton" onclick="nextStep()" disabled="disabled" value='<%=StringUtil.getMessageForKey("label.button.process")%>'>
-    &nbsp;<button onclick='submitAction("MasterListsPage.do")' ><bean:message key="label.button.cancel"/></button>
+    &nbsp;<button onclick='submitAction("MasterListsPage.do")' ><spring:message code="label.button.cancel"/></button>
     </div>
 </div>
 <div id="verifyDiv" style="display:none">
-    <bean:message key="label.sampleType" />:&nbsp;<span id="verifySampleTypeSpan" ></span><br><br>
+    <spring:message code="label.sampleType" />:&nbsp;<span id="verifySampleTypeSpan" ></span><br><br>
     <div id="verifyReplaceMessage" >
-        <bean:message key="label.test.batch.replace.start" />&nbsp;<span class="testReplaceFrom" ></span>&nbsp;<bean:message key="label.test.batch.replace.finish"/><span id="testReplaceTo" ></span>
+        <spring:message code="label.test.batch.replace.start" />&nbsp;<span class="testReplaceFrom" ></span>&nbsp;<spring:message code="label.test.batch.replace.finish"/><span id="testReplaceTo" ></span>
     </div>
     <div id="verifyCancelMessage" >
-        <bean:message key="label.test.batch.cancel.start" />&nbsp;<span class="testReplaceFrom" ></span>&nbsp;<bean:message key="label.test.batch.cancel.finish"/>
+        <spring:message code="label.test.batch.cancel.start" />&nbsp;<span class="testReplaceFrom" ></span>&nbsp;<spring:message code="label.test.batch.cancel.finish"/>
     </div>
 
     <hr>
     <div id="verifyChangeDiv" style="overflow: hidden;" >
         <br>
         <div  style="float:left; margin:0;width:25%;">
-            <bean:message key="label.analysisNotStarted"/><br><br>
+            <spring:message code="label.analysisNotStarted"/><br><br>
             <span id="verifyChangeNotStartedSamplesSpan" ></span>
         </div>
         <div  style="float:left; margin:0;width:25%;">
-            <bean:message key="label.rejectedByTechnician"/><br><br>
+            <spring:message code="label.rejectedByTechnician"/><br><br>
             <span id="verifyChangeTechnicianRejectedSamplesSpan" ></span>
         </div>
         <div style="float:left; margin:0;width:25%;">
-            <bean:message key="label.rejectedByBiologist" /><br><br>
+            <spring:message code="label.rejectedByBiologist" /><br><br>
             <span id="verifyChangeBiologistRejectedSamplesSpan" ></span>
         </div>
         <div style="float:left; margin:0;width:25%;">
-            <bean:message key="label.notValidated"/><br><br>
+            <spring:message code="label.notValidated"/><br><br>
             <span id="verifyChangeNotValidatedSamplesSpan" ></span>
         </div>
     </div>
 
     <hr>
-    <bean:message key="label.test.batch.replace.start" />&nbsp;<span class="testReplaceFrom" ></span>&nbsp;<bean:message key="label.test.batch.no.change.finish"/><span id="testReplaceTo" ></span><br><br>
+    <spring:message code="label.test.batch.replace.start" />&nbsp;<span class="testReplaceFrom" ></span>&nbsp;<spring:message code="label.test.batch.no.change.finish"/><span id="testReplaceTo" ></span><br><br>
 
     <div id="verifyNoChangeDiv" style="overflow: hidden;" >
         <br>
         <div  style="float:left; margin:0;width:25%;">
-            <bean:message key="label.analysisNotStarted"/><br><br>
+            <spring:message code="label.analysisNotStarted"/><br><br>
             <span id="verifyNoChangeNotStartedSamplesSpan" ></span>
         </div>
         <div  style="float:left; margin:0;width:25%;">
-            <bean:message key="label.rejectedByTechnician"/><br><br>
+            <spring:message code="label.rejectedByTechnician"/><br><br>
             <span id="verifyNoChangeTechnicianRejectedSamplesSpan" ></span>
         </div>
         <div style="float:left; margin:0;width:25%;">
-            <bean:message key="label.rejectedByBiologist" /><br><br>
+            <spring:message code="label.rejectedByBiologist" /><br><br>
             <span id="verifyNoChangeBiologistRejectedSamplesSpan" ></span>
         </div>
         <div style="float:left; margin:0;width:25%;">
-            <bean:message key="label.notValidated"/><br><br>
+            <spring:message code="label.notValidated"/><br><br>
             <span id="verifyNoChangeNotValidatedSamplesSpan" ></span>
         </div>
     </div>
 
     <div align="center">
-        <button onclick='submitAction("BatchTestReassignmentUpdate.do")' ><bean:message key="label.button.accept"/></button>&nbsp;
+        <button onclick='submitAction("BatchTestReassignmentUpdate.do")' ><spring:message code="label.button.accept"/></button>&nbsp;
         <input type="button" onclick="restoreSelect()"  value='<%=StringUtil.getMessageForKey("label.button.reject")%>'>
     </div>
 </div>

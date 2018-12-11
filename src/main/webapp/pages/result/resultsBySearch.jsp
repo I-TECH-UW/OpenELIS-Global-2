@@ -1,14 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" %>
 <%@ page import="us.mn.state.health.lims.common.action.IActionConstants" %>
 
-<%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"		prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"		prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view"		prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
-<%@ taglib uri="/tags/struts-tiles"     prefix="tiles" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName"	value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+	
 
 <script type="text/javascript" >
 
@@ -32,7 +32,7 @@ function doSelectPatientForResults(){
 	<tiles:insert attribute="searchPanel" />
 </div>
 
-<logic:equal  name="<%=formName%>" property="searchFinished" value="true">
+<logic:equal  name="${form.formName}" property="searchFinished" value="true">
 	<div id="resultsDiv" class="colorFill" >
 		<tiles:insert attribute="resultsPanel" />
 	</div>

@@ -8,16 +8,16 @@
 			     us.mn.state.health.lims.common.util.*" %>
 
 
-<%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"		prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"		prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view"		prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
-<%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName"	value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+	
 <bean:define id="localDBOnly" value='<%=Boolean.toString(ConfigurationProperties.getInstance().getPropertyValueLowerCase(Property.UseExternalPatientInfo).equals("false"))%>' />
-<bean:define id="patientSearch" name='<%=formName%>' property='patientSearch' type="us.mn.state.health.lims.patient.action.bean.PatientSearch" />
+<bean:define id="patientSearch" name='${form.formName}' property='patientSearch' type="us.mn.state.health.lims.patient.action.bean.PatientSearch" />
 
 <%!
 	IAccessionNumberValidator accessionNumberValidator;
@@ -293,7 +293,7 @@ function handleSelectedPatient() {
 
     $("searchResultsDiv").style.display = "none";
     var form = document.forms[0];
-    form.action = '<%=formName%>'.sub('Form','') + ".do?accessionNumber=" + accessionNumber + "&patientID=" + patientSelectID;
+    form.action = '${form.formName}'.sub('Form','') + ".do?accessionNumber=" + accessionNumber + "&patientID=" + patientSelectID;
     if (!(typeof requestType === 'undefined')) {
         form.action += "&type=" + requestType;
     }
@@ -340,9 +340,9 @@ function setCaretPosition(ctrl, pos) {
 
 <div id="PatientPage" class="colorFill patientSearch" style="display:inline;" >
 
-	<h3><bean:message key="sample.entry.search"/></h3>
-    <logic:present property="warning" name="<%=formName%>" >
-        <h3 class="important-text"><bean:message key="order.modify.search.warning" /></h3>
+	<h3><spring:message code="sample.entry.search"/></h3>
+    <logic:present property="warning" name="${form.formName}" >
+        <h3 class="important-text"><spring:message code="order.modify.search.warning" /></h3>
     </logic:present>
     <select id="searchCriteria"  style="float:left" onchange="checkIndex(this)" tabindex="1" class="patientSearch">
         <%
@@ -371,10 +371,10 @@ function setCaretPosition(ctrl, pos) {
            onclick="searchPatients()"
            disabled="disabled" >
            
-  	<span id="scanInstruction" style="display: none;"><bean:message key="sample.search.scanner.instructions"/> </span>
+  	<span id="scanInstruction" style="display: none;"><spring:message code="sample.search.scanner.instructions"/> </span>
 
 	<div id="noPatientFound" align="center" style="display: none" >
-		<h1><bean:message key="patient.search.not.found"/></h1>
+		<h1><spring:message code="patient.search.not.found"/></h1>
 	</div>
 	<div id="searchResultsDiv" class="colorFill" style="display: none;" >
 		<% if (localDBOnly.equals("false")) { %>
@@ -382,7 +382,7 @@ function setCaretPosition(ctrl, pos) {
 			<tr>
 				<th width="2%"></th>
 				<th width="10%" >
-					<bean:message key="patient.data.source" />
+					<spring:message code="patient.data.source" />
 				</th>
 		<% } else { %>
 		<table id="searchResultTable" width="70%">
@@ -390,29 +390,29 @@ function setCaretPosition(ctrl, pos) {
 				<th width="2%"></th>
 		<% } %>
 				<th width="18%">
-					<bean:message key="patient.epiLastName"/>
+					<spring:message code="patient.epiLastName"/>
 				</th>
 				<th width="15%">
-					<bean:message key="patient.epiFirstName"/>
+					<spring:message code="patient.epiFirstName"/>
 				</th>
 				<th width="5%">
-					<bean:message key="patient.gender"/>
+					<spring:message code="patient.gender"/>
 				</th>
 				<th width="11%">
-					<bean:message key="patient.birthDate"/>
+					<spring:message code="patient.birthDate"/>
 				</th>
 				<% if (supportMothersName) { %>
 				<th width="20%">
-					<bean:message key="patient.mother.name"/>
+					<spring:message code="patient.mother.name"/>
 				</th>
 				<% } if (supportSTNumber) { %>
 				<th width="12%">
-					<bean:message key="patient.ST.number"/>
+					<spring:message code="patient.ST.number"/>
 				</th>
 				<% } %>
 				<% if (supportSubjectNumber) { %>
 				<th width="12%">
-					<bean:message key="patient.subject.number"/>
+					<spring:message code="patient.subject.number"/>
 				</th>
 				<% } %>
 				<% if (supportNationalID) { %>

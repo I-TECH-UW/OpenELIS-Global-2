@@ -6,13 +6,14 @@
                  us.mn.state.health.lims.common.formfields.FormFields.Field,
                  us.mn.state.health.lims.common.util.Versioning,
                  us.mn.state.health.lims.common.util.StringUtil" %>
-<%@ taglib uri="/tags/struts-bean"      prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"      prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"     prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" 		prefix="app" %>
-<%@ taglib uri="/tags/struts-tiles"     prefix="tiles" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName"      value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+      
 <bean:parameter id="patientInfoCheck" name="patientInfoCheck" value="false" />
 <bean:parameter id="facilityIDCheck" name="facilityIDCheck" value="false" />
 <bean:parameter id="facilityID" name="facilityID" value="" />
@@ -95,8 +96,8 @@ $jq(document).ready(function () {
     capitialize = true;
     // Actually executes autocomplete
     dropdown.combobox();
-    invalidLabID = '<bean:message key="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIX - add bad message icon
-    maxRepMsg = '<bean:message key="sample.entry.project.siteMaxMsg"/>';
+    invalidLabID = '<spring:message code="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIX - add bad message icon
+    maxRepMsg = '<spring:message code="sample.entry.project.siteMaxMsg"/>';
 
     resultCallBack = function (textValue) {
         siteListChanged(textValue);
@@ -106,13 +107,13 @@ $jq(document).ready(function () {
 </script>
 <div class="hidden-fields">
 	<input id="lastPatientId" type="hidden">
-	<html:hidden property="sampleOrderItems.newRequesterName" name='<%=formName%>' styleId="newRequesterName"/>
-	<html:hidden property="observations.projectFormName" name="<%=formName%>" styleId="projectFormName"/>
-	<html:hidden name='<%=formName%>' property="ProjectData.viralLoadTest" styleId="ProjectData.vlTest"/>
-	<html:hidden name='<%=formName%>' property="ProjectData.edtaTubeTaken" styleId="ProjectData.edtaTube"/>
-	<html:hidden name='<%=formName%>' property="ProjectData.dryTubeTaken" styleId="ProjectData.dryTube"/>
-	<html:hidden name='<%=formName%>' property="ProjectData.dbsTaken" styleId="ProjectData.dbsTaken"/>
-	<html:hidden name='<%=formName%>' property="ProjectData.dnaPCR" styleId="ProjectData.dnaPCR"/>
+	<form:hidden path="sampleOrderItems.newRequesterName" name='${form.formName}' id="newRequesterName"/>
+	<form:hidden path="observations.projectFormName" name="${form.formName}" id="projectFormName"/>
+	<form:hidden path="ProjectData.viralLoadTest" id="ProjectData.vlTest"/>
+	<form:hidden path="ProjectData.edtaTubeTaken" id="ProjectData.edtaTube"/>
+	<form:hidden path="ProjectData.dryTubeTaken" id="ProjectData.dryTube"/>
+	<form:hidden path="ProjectData.dbsTaken" id="ProjectData.dbsTaken"/>
+	<form:hidden path="ProjectData.dnaPCR" id="ProjectData.dnaPCR"/>
 </div>
 <table style="width:100%;">
 	<tr>
@@ -120,7 +121,7 @@ $jq(document).ready(function () {
 	<table style="width:100%;">
 		<tr>
 			<td>
-				<h2><bean:message key="sample.batchentry.fields.specific"/></h2>
+				<h2><spring:message code="sample.batchentry.fields.specific"/></h2>
 			</td>
 		</tr>
 <logic:equal name="facilityIDCheck" value="true">
@@ -128,13 +129,13 @@ $jq(document).ready(function () {
 		<logic:equal name="study" value="viralLoad">
 		<tr>
 			<td>
-				<bean:message key="sample.entry.project.ARV.centerName" />
+				<spring:message code="sample.entry.project.ARV.centerName" />
 				:  
-				<html:select name="<%=formName%>" 
+				<html:select name="${form.formName}" 
 				    property="ProjectData.ARVcenterName"
-					styleId="vl.centerName" 
+					id="vl.centerName" 
 					onchange="syncCenterInfo(this)">
-					<app:optionsCollection name="<%=formName%>"
+					<app:optionsCollection name="${form.formName}"
 						property="organizationTypeLists.ARV_ORGS_BY_NAME.list" 
 						label="organizationName"
 						value="id" />
@@ -143,13 +144,13 @@ $jq(document).ready(function () {
 		</tr>
 		<tr>
 			<td>
-				<bean:message key="patient.project.centerCode" />
+				<spring:message code="patient.project.centerCode" />
 				:
-				<html:select name="<%=formName%>" 
+				<html:select name="${form.formName}" 
 					property="ProjectData.ARVcenterCode" 
-					styleId="vl.centerCode"
+					id="vl.centerCode"
 					onchange="syncCenterInfo(this)">
-				<app:optionsCollection name="<%=formName%>" 
+				<app:optionsCollection name="${form.formName}" 
 					property="organizationTypeLists.ARV_ORGS.list" 
 					label="doubleName" 
 					value="id" />
@@ -160,13 +161,13 @@ $jq(document).ready(function () {
 		<logic:equal name="study" value="EID">
 		<tr>
 	        <td>
-	            <bean:message key="sample.entry.project.siteName"/>
+	            <spring:message code="sample.entry.project.siteName"/>
 	            :
-	            <html:select name="<%=formName%>"
+	            <html:select name="${form.formName}"
 	                         property="ProjectData.EIDSiteName"
-	                         styleId="eid.centerName"
+	                         id="eid.centerName"
 							 onchange="syncCenterInfo(this)">
-	                <app:optionsCollection name="<%=formName%>"
+	                <app:optionsCollection name="${form.formName}"
 	                    property="organizationTypeLists.EID_ORGS_BY_NAME.list"
 	                    label="organizationName"
 	                    value="id" />
@@ -175,12 +176,12 @@ $jq(document).ready(function () {
 	    </tr>
 	    <tr>
 	        <td>
-	        	<bean:message key="sample.entry.project.siteCode"/>
+	        	<spring:message code="sample.entry.project.siteCode"/>
 	        	:
-	            <html:select name="<%=formName%>"  property="ProjectData.EIDsiteCode" styleClass="text"
-	                    styleId="eid.centerCode"
+	            <html:select name="${form.formName}"  property="ProjectData.EIDsiteCode" styleClass="text"
+	                    id="eid.centerCode"
 						onchange="syncCenterInfo(this)">
-	                <app:optionsCollection name="<%=formName%>" property="organizationTypeLists.EID_ORGS.list" label="doubleName" value="id" />
+	                <app:optionsCollection name="${form.formName}" property="organizationTypeLists.EID_ORGS.list" label="doubleName" value="id" />
 	            </html:select>
 	        </td>
 	     </tr>
@@ -205,33 +206,33 @@ $jq(document).ready(function () {
 	<table style="width:100%;" id="summary">
 		<tr>
 			<td colspan="2">
-				<h2><bean:message key="sample.batchentry.fields.common"/></h2>
+				<h2><spring:message code="sample.batchentry.fields.common"/></h2>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<bean:message key="sample.batchentry.order.currentdate" />: 
-				<html:text name='<%=formName %>'
+				<spring:message code="sample.batchentry.order.currentdate" />: 
+				<html:text name='${form.formName}'
 					property="currentDate"
 					readonly="true"></html:text>
 			</td>
 			<td>
-				<bean:message key="sample.batchentry.order.currenttime" />: 
-				<html:text name='<%=formName %>'
+				<spring:message code="sample.batchentry.order.currenttime" />: 
+				<html:text name='${form.formName}'
 					property="currentTime"
 					readonly="true"></html:text>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<bean:message key="sample.batchentry.datereceived" />:
-				<html:text name='<%=formName %>'
+				<spring:message code="sample.batchentry.datereceived" />:
+				<html:text name='${form.formName}'
 					property="receivedDateForDisplay"
 					readonly="true"></html:text>
 			</td>
 			<td>
-				<bean:message key="sample.batchentry.timereceived" />:
-				<html:text name='<%=formName %>'
+				<spring:message code="sample.batchentry.timereceived" />:
+				<html:text name='${form.formName}'
 					property="receivedTimeForDisplay"
 					readonly="true"></html:text>
 			</td>
@@ -240,15 +241,15 @@ $jq(document).ready(function () {
 			<td colspan="2">
 				<table style="width:100%">
 					<tr>
-						<th><bean:message key="sample.entry.sample.type"/></th>
-						<th><bean:message key="test.testName"/></th>
+						<th><spring:message code="sample.entry.sample.type"/></th>
+						<th><spring:message code="test.testName"/></th>
 					</tr>
 					<tr>
 						<td><%= request.getAttribute("sampleType") %></td>
 						<td><%= request.getAttribute("testNames") %></td>
 					</tr>
 				</table>
-				<html:hidden name='<%=formName %>'
+				<html:hidden name='${form.formName}'
 					property="sampleXML"/>	
 			</td>
 		</tr>
@@ -256,11 +257,11 @@ $jq(document).ready(function () {
 	<logic:notEqual name="facilityID" value="">
 				<tr>
 					<td>
-						<bean:message key="sample.batchentry.barcode.label.facilityid" /> 
+						<spring:message code="sample.batchentry.barcode.label.facilityid" /> 
 						: <%= request.getAttribute("facilityName") %>
-						<html:hidden name="<%=formName %>"
+						<html:hidden name="${form.formName}"
 							property="sampleOrderItems.referringSiteId"
-							styleId="requesterId"/>
+							id="requesterId"/>
 							
 					</td>
 				</tr>
@@ -269,11 +270,11 @@ $jq(document).ready(function () {
 		<logic:notEqual name="newRequesterName" value="">
 				<tr>
 					<td>
-						<bean:message key="sample.batchentry.barcode.label.facilityid" /> 
+						<spring:message code="sample.batchentry.barcode.label.facilityid" /> 
 						: <%= request.getAttribute("facilityName") %>
-						<html:hidden name="<%=formName %>"
+						<html:hidden name="${form.formName}"
 							property="sampleOrderItems.referringSiteId"
-							styleId="requesterId"/>
+							id="requesterId"/>
 							
 					</td>
 				</tr>

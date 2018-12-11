@@ -2,16 +2,17 @@
 	contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 
 <div id="sound"></div>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 
 
 <%!
@@ -30,7 +31,7 @@ if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
 
 %>
 
-<script language="JavaScript1.2">
+<script>
 function validateForm(form) {
  return validateTestSectionForm(form);
 }
@@ -39,20 +40,20 @@ function validateForm(form) {
 <table>
 		<tr>
 						<td class="label">
-							<bean:message key="testsection.id"/>:
+							<spring:message code="testsection.id"/>:
 						</td>	
 						<td> 
-							<app:text name="<%=formName%>" property="id" allowEdits="false"/>
+							<app:text name="${form.formName}" property="id" allowEdits="false"/>
 						</td>
 		</tr>
 		
 	   <%-- bugzilla 2025 --%>
 		<tr>
 		                <td class="label">
-		                   <bean:message key="testsection.parent"/>
+		                   <spring:message code="testsection.parent"/>
 		                </td>
 		              <td>
-		                    <html:text styleId="parentTestSectionName" size="20" name="<%=formName%>" property="parentTestSectionName" />
+		                    <html:text id="parentTestSectionName" size="20" name="${form.formName}" property="parentTestSectionName" />
 		                    <span id="indicator2" style="display:none;"><img src="<%=basePath%>images/indicator.gif"/></span> 
 		                    <input id="selectedParentTestSectionName" name="selectParentTestSectionName" type="hidden" size="20" />
 		               </td>  
@@ -60,25 +61,25 @@ function validateForm(form) {
 		 
 		<tr>
 						<td class="label">
-							<bean:message key="testsection.testSectionName"/>:<span class="requiredlabel">*</span>
+							<spring:message code="testsection.testSectionName"/>:<span class="requiredlabel">*</span>
 						</td>	
 						<td> 
-							<html:text name="<%=formName%>" property="testSectionName" />
+							<form:input path="testSectionName" />
 						</td>
 		</tr>
 
 		 <tr>
 						<td class="label">
-							<bean:message key="testsection.organization"/>:<span class="requiredlabel">*</span>
+							<spring:message code="testsection.organization"/>:<span class="requiredlabel">*</span>
 						</td>	
 						<td>
 						
-					   	  <html:text styleId="organizationName" size="30" name="<%=formName%>" property="organizationName" /> 
+					   	  <html:text id="organizationName" size="30" name="${form.formName}" property="organizationName" /> 
 					   	  <span id="indicator1" style="display:none;"><img src="<%=basePath%>images/indicator.gif"/></span>
 	   			          <input id="selectedOrganizationId" name="selectedOrganizationId" type="hidden" size="30" />
-						<%--html:select name="<%=formName%>" property="selectedOrganizationId">
+						<%--html:select name="${form.formName}" property="selectedOrganizationId">
 					   	  <app:optionsCollection 
-										name="<%=formName%>" 
+										name="${form.formName}" 
 							    		property="organizations" 
 										label="organizationName" 
 										value="id"  
@@ -90,18 +91,18 @@ function validateForm(form) {
 		</tr>
         <tr>
 						<td class="label">
-							<bean:message key="testsection.isExternal"/>:<span class="requiredlabel">*</span>
+							<spring:message code="testsection.isExternal"/>:<span class="requiredlabel">*</span>
 						</td>	
 						<td> 
-							<html:text name="<%=formName%>" property="isExternal" size="1" onblur="this.value=this.value.toUpperCase()"/>
+							<form:input path="isExternal" size="1" onblur="this.value=this.value.toUpperCase()"/>
 						</td>
 		</tr>
 		<tr>
 						<td class="label">
-							<bean:message key="testsection.description"/>:<span class="requiredlabel">*</span>
+							<spring:message code="testsection.description"/>:<span class="requiredlabel">*</span>
 						</td>	
 						<td> 
-							<html:text name="<%=formName%>" property="description" />
+							<form:input path="description" />
 						</td>
 		</tr>
 	

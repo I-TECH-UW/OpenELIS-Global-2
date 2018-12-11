@@ -3,15 +3,14 @@
 			org.apache.commons.httpclient.NameValuePair,
 			us.mn.state.health.lims.common.util.DateUtil" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/labdev-view" prefix="app"%>
-<%@ taglib uri="/tags/struts-tiles" prefix="tiles"%>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
-<%@ taglib uri="/tags/struts-nested" prefix="nested"%>
-<bean:define id="formName"
-	value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+
+	
 <%
     String path = request.getContextPath();
 			String basePath = request.getScheme() + "://"
@@ -108,7 +107,7 @@ iarv = new ArvInitialProjectChecker();
 </script>
 
 <h2>
-	<bean:message key="sample.entry.project.initialARV.title" />
+	<spring:message code="sample.entry.project.initialARV.title" />
 </h2>
 <table>
 	<tr>
@@ -116,15 +115,15 @@ iarv = new ArvInitialProjectChecker();
 			*
 		</td>
 		<td>
-			<bean:message key="sample.entry.project.receivedDate" />
+			<spring:message code="sample.entry.project.receivedDate" />
 			&nbsp;
 			<%=DateUtil.getDateUserPrompt()%>
 		</td>
 		<td>
-			<app:text name="<%=formName%>" property="receivedDateForDisplay"
+			<app:text name="${form.formName}" property="receivedDateForDisplay"
 				onkeyup="addDateSlashes(this, event);"
 				onchange="iarv.checkReceivedDate(false)" styleClass="text"
-				styleId="receivedDateForDisplay" maxlength="10"/>
+				id="receivedDateForDisplay" maxlength="10"/>
 			<div id="receivedDateForDisplayMessage" class="blank" />
 		</td>
 	</tr>
@@ -132,15 +131,15 @@ iarv = new ArvInitialProjectChecker();
 		<!-- DEM 01 -->
 		<td class="required">*</td>
 		<td>
-			<bean:message key="patient.project.interviewDate" />
+			<spring:message code="patient.project.interviewDate" />
 			&nbsp;
 			<%=DateUtil.getDateUserPrompt()%>
 		</td>
 		<td>
-			<app:text name="<%=formName%>" property="interviewDate"
+			<app:text name="${form.formName}" property="interviewDate"
 				onkeyup="addDateSlashes(this, event);"
 				onchange="iarv.checkInterviewDate(false)" styleClass="text"
-				styleId="interviewDate" maxlength="10"/>
+				id="interviewDate" maxlength="10"/>
 			<div id="interviewDateMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -150,12 +149,12 @@ iarv = new ArvInitialProjectChecker();
 			+
 		</td>
 		<td>
-			<bean:message key="patient.subject.number" />
+			<spring:message code="patient.subject.number" />
 		</td>
 		<td>
-			<app:text name="<%=formName%>" property="subjectNumber"
+			<app:text name="${form.formName}" property="subjectNumber"
 				onchange="iarv.checkSubjectNumber(true)"
-				styleId="subjectNumber" styleClass="text"
+				id="subjectNumber" styleClass="text"
 				maxlength="7" />
 			<div id="subjectNumberMessage" class="blank"></div>
 		</td>
@@ -163,12 +162,12 @@ iarv = new ArvInitialProjectChecker();
 	<tr>
 		<td class="required">+</td>
 		<td>
-			<bean:message key="patient.site.subject.number" />
+			<spring:message code="patient.site.subject.number" />
 		</td>
 		<td>
-			<app:text name="<%=formName%>" property="siteSubjectNumber"
+			<app:text name="${form.formName}" property="siteSubjectNumber"
 				onchange="iarv.checkSiteSubjectNumber(true, false)"
-				styleId="siteSubjectNumber" styleClass="text" />
+				id="siteSubjectNumber" styleClass="text" />
 			<div id="siteSubjectNumberMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -178,19 +177,19 @@ iarv = new ArvInitialProjectChecker();
 			*
 		</td>
 		<td>
-			<bean:message key="patient.project.labNo" />
+			<spring:message code="patient.project.labNo" />
 		</td>
 		<td>
 			<div class="blank">
-				<bean:message key="sample.entry.project.LART" />
+				<spring:message code="sample.entry.project.LART" />
 			</div>
 			<INPUT type="text" name="arv.labNoForDisplay" id="labNoForDisplay"
 				size="5" class="text"
-				onchange="handleLabNoChange( this, '<bean:message key="sample.entry.project.LART"/>', false); makeDirty();"
+				onchange="handleLabNoChange( this, '<spring:message code="sample.entry.project.LART"/>', false); makeDirty();"
 				maxlength="5" />
-			<app:text name="<%=formName%>" property="labNo"
+			<app:text name="${form.formName}" property="labNo"
 				styleClass="text" style="display: none;"
-				styleId="labNo" />
+				id="labNo" />
 			<div id="labNoMessage" class="blank" ></div>
 		</td>
 	</tr>
@@ -198,12 +197,12 @@ iarv = new ArvInitialProjectChecker();
 		<!-- DEM 04 -->
 		<td class="required"></td>
 		<td>
-			<bean:message key="patient.project.centerName" />
+			<spring:message code="patient.project.centerName" />
 		</td>
 		<td>
-			<html:select name="<%=formName%>" property="centerName"
-				styleId="centerName" onchange="iarv.checkCenterName(true)">
-				<app:optionsCollection name="<%=formName%>"
+			<html:select name="${form.formName}" property="centerName"
+				id="centerName" onchange="iarv.checkCenterName(true)">
+				<app:optionsCollection name="${form.formName}"
 					property="organizationTypeLists.ARV_ORGS_BY_NAME.list" label="organizationName"
 					value="id" />
 			</html:select>
@@ -214,12 +213,12 @@ iarv = new ArvInitialProjectChecker();
 		<!-- DEM 05 -->
 		<td class="required">*</td>
 		<td>
-			<bean:message key="patient.project.centerCode" />
+			<spring:message code="patient.project.centerCode" />
 		</td>
 		<td>
-			<html:select name="<%=formName%>" property="centerCode"
-				styleId="centerCode" onchange="iarv.checkCenterCode(true)">
-				<app:optionsCollection name="<%=formName%>"
+			<html:select name="${form.formName}" property="centerCode"
+				id="centerCode" onchange="iarv.checkCenterCode(true)">
+				<app:optionsCollection name="${form.formName}"
 					property="organizationTypeLists.ARV_ORGS.list" label="doubleName"
 					value="id" />
 			</html:select>
@@ -230,11 +229,11 @@ iarv = new ArvInitialProjectChecker();
 		<!-- DEM 06 -->
 		<td></td>
 		<td>
-			<bean:message key="patient.project.patientFamilyName" />
+			<spring:message code="patient.project.patientFamilyName" />
 		</td>
 		<td>
-			<app:text name="<%=formName%>" property="lastName"
-				onchange="iarv.checkFamilyName(true)" styleClass="text" styleId="patientFamilyName"
+			<app:text name="${form.formName}" property="lastName"
+				onchange="iarv.checkFamilyName(true)" styleClass="text" id="patientFamilyName"
 				size="40"/>
 			<div id="patientFamilyNameMessage" class="blank"></div>
 		</td>
@@ -243,11 +242,11 @@ iarv = new ArvInitialProjectChecker();
 		<!-- DEM 07 -->
 		<td></td>
 		<td>
-			<bean:message key="patient.project.patientFirstNames" />
+			<spring:message code="patient.project.patientFirstNames" />
 		</td>
 		<td>
-			<app:text name="<%=formName%>" property="firstName" size="40"
-				onchange="iarv.checkFirstNames(true)" styleClass="text" styleId="patientFirstNames" />
+			<app:text name="${form.formName}" property="firstName" size="40"
+				onchange="iarv.checkFirstNames(true)" styleClass="text" id="patientFirstNames" />
 			<div id="patientFirstNamesMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -257,12 +256,12 @@ iarv = new ArvInitialProjectChecker();
 			*
 		</td>
 		<td>
-			<bean:message key="patient.project.gender" />
+			<spring:message code="patient.project.gender" />
 		</td>
 		<td>
-			<html:select name="<%=formName%>" property="gender"
-				onchange="iarv.checkGender(false)" styleId="gender">
-				<app:optionsCollection name="<%=formName%>"
+			<html:select name="${form.formName}" property="gender"
+				onchange="iarv.checkGender(false)" id="gender">
+				<app:optionsCollection name="${form.formName}"
 					property="formLists.GENDERS" label="localizedName"
 					value="genderType" />
 			</html:select>
@@ -275,25 +274,25 @@ iarv = new ArvInitialProjectChecker();
 			*
 		</td>
 		<td>
-			<bean:message key="patient.project.dateOfBirth" />
+			<spring:message code="patient.project.dateOfBirth" />
 			&nbsp;
 			<%=DateUtil.getDateUserPrompt()%>
 		</td>
 		<td>
-			<app:text name="<%=formName%>" property="birthDateForDisplay"
+			<app:text name="${form.formName}" property="birthDateForDisplay"
 				onkeyup="addDateSlashes(this, event);"
 				onchange="iarv.checkDateOfBirth(false)" styleClass="text"
-				styleId="dateOfBirth" maxlength="10"/>
+				id="dateOfBirth" maxlength="10"/>
 			<div id="dateOfBirthMessage" class="blank"></div>
 		</td>
 	</tr>
 	<tr>
 			<td ></td>
 			<td>
-				<bean:message  key="patient.age" />
+				<spring:message code="patient.age" />
 			</td>
 			<td>
-				<label for="age" ><bean:message  key="label.year" /></label>
+				<label for="age" ><spring:message code="label.year" /></label>
 				<INPUT type="text" name="ageYear" id="age" size="3"
 				   	onchange="iarv.checkAge( this, true, 'year' );"
 				   	maxlength="2" />
@@ -303,14 +302,14 @@ iarv = new ArvInitialProjectChecker();
 	<tr id="hivStatusRow" style="display: none;">
 		<td></td>
 		<td>
-			<bean:message key="patient.project.hivStatus" />
+			<spring:message code="patient.project.hivStatus" />
 		</td>
 		<td>
-			<html:select name="<%=formName%>"
+			<html:select name="${form.formName}"
 					 property="observations.hivStatus"
 					 onchange="iarv.checkHivStatus(true);"
-					 styleId="hivStatus"  >
-				<app:optionsCollection name="<%=formName%>" property="ProjectData.hivStatusList"
+					 id="hivStatus"  >
+				<app:optionsCollection name="${form.formName}" property="ProjectData.hivStatusList"
 					label="localizedName" value="id" />
 			</html:select>
 			<div id="hivStatusMessage" class="blank"></div>
@@ -321,13 +320,13 @@ iarv = new ArvInitialProjectChecker();
 		<!-- DEM 10 -->
 		<td></td>
 		<td>
-			<bean:message key="patient.project.educationLevel" />
+			<spring:message code="patient.project.educationLevel" />
 		</td>
 		<td>
-			<html:select name="<%=formName%>"
+			<html:select name="${form.formName}"
 				property="observations.educationLevel" onchange="makeDirty();compareAllObservationHistoryFields(true)"
-				styleId="educationLevel">
-				<app:optionsCollection name="<%=formName%>"
+				id="educationLevel">
+				<app:optionsCollection name="${form.formName}"
 					property="dictionaryLists.EDUCATION_LEVELS.list"
 					label="localizedName" value="id" />
 			</html:select>
@@ -338,13 +337,13 @@ iarv = new ArvInitialProjectChecker();
 		<!-- DEM 11 -->
 		<td></td>
 		<td>
-			<bean:message key="patient.project.maritalStatus" />
+			<spring:message code="patient.project.maritalStatus" />
 		</td>
 		<td>
-			<html:select name="<%=formName%>"
+			<html:select name="${form.formName}"
 				property="observations.maritalStatus" onchange="makeDirty();compareAllObservationHistoryFields(true)"
-				styleId="maritalStatus">
-				<app:optionsCollection name="<%=formName%>"
+				id="maritalStatus">
+				<app:optionsCollection name="${form.formName}"
 					property="dictionaryLists.MARITAL_STATUSES.list"
 					label="localizedName" value="id" />
 			</html:select>
@@ -355,14 +354,14 @@ iarv = new ArvInitialProjectChecker();
 		<!-- DEM 12 -->
 		<td></td>
 		<td>
-			<bean:message key="patient.project.nationality" />
+			<spring:message code="patient.project.nationality" />
 
 		</td>
 		<td>
-			<html:select name="<%=formName%>" property="observations.nationality"
+			<html:select name="${form.formName}" property="observations.nationality"
 				onchange="iarv.displayNationality();compareAllObservationHistoryFields(true)"
-				styleId="nationality" styleClass="text">
-				<app:optionsCollection name="<%=formName%>"
+				id="nationality" styleClass="text">
+				<app:optionsCollection name="${form.formName}"
 					property="dictionaryLists.SIMPLIFIED_NATIONALITIES.list"
 					label="localizedName" value="id" />
 			</html:select>
@@ -375,13 +374,13 @@ iarv = new ArvInitialProjectChecker();
 			*
 		</td>
 		<td class="observationsSubquestion">
-			<bean:message key="patient.project.nationalityOther" />
+			<spring:message code="patient.project.nationalityOther" />
 		</td>
 		<td>
-			<app:text name="<%=formName%>"
+			<app:text name="${form.formName}"
 				property="observations.nationalityOther"
 				onchange="checkRequiredField(this); makeDirty();compareAllObservationHistoryFields(true)" styleClass="text"
-				styleId="nationalityOther" />
+				id="nationalityOther" />
 			<div id="nationalityOtherMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -390,12 +389,12 @@ iarv = new ArvInitialProjectChecker();
 		<!-- DEM 13 -->
 		<td></td>
 		<td>
-			<bean:message key="patient.project.legalResidence" />
+			<spring:message code="patient.project.legalResidence" />
 		</td>
 		<td>
-			<app:text name="<%=formName%>" property="observations.legalResidence"
+			<app:text name="${form.formName}" property="observations.legalResidence"
 				onchange="makeDirty();compareAllObservationHistoryFields(true)"
-				styleClass="text" styleId="legalResidence" />
+				styleClass="text" id="legalResidence" />
 			<div id="legalResidenceMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -403,12 +402,12 @@ iarv = new ArvInitialProjectChecker();
 		<!-- DEM 14 -->
 		<td></td>
 		<td>
-			<bean:message key="patient.project.nameOfDoctor" />
+			<spring:message code="patient.project.nameOfDoctor" />
 		</td>
 		<td>
-			<app:text name="<%=formName%>" property="observations.nameOfDoctor"
+			<app:text name="${form.formName}" property="observations.nameOfDoctor"
 				onchange="compareAllObservationHistoryFields(true)"
-				styleClass="text" styleId="nameOfDoctor" size="50"/>
+				styleClass="text" id="nameOfDoctor" size="50"/>
 			<div id="nameOfDoctorMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -422,22 +421,22 @@ iarv = new ArvInitialProjectChecker();
 		<td></td>
 		<td>
 			<br />
-			<bean:message key="patient.project.antecedents" />
+			<spring:message code="patient.project.antecedents" />
 			<br />
 		</td>
 		<td>
-			<html:select name="<%=formName%>"
+			<html:select name="${form.formName}"
 				property="observations.anyPriorDiseases"
 				onchange="iarv.displayAnyPriorDiseases();makeDirty();compareAllObservationHistoryFields(true)"
-				styleClass="text" styleId="anyPriorDiseases">
-				<app:optionsCollection name="<%=formName%>"
+				styleClass="text" id="anyPriorDiseases">
+				<app:optionsCollection name="${form.formName}"
 					property="dictionaryLists.YES_NO.list" label="localizedName"
 					value="id" />
 			</html:select>
 			<div id="anyPriorDiseasesMessage" class="blank" />
 		</td>
 	</tr>
-	<logic:iterate  id="disease" indexId="i" name="<%=formName%>" type="NameValuePair"
+	<logic:iterate  id="disease" indexId="i" name="${form.formName}" type="NameValuePair"
 		property="observations.priorDiseasesList">
 		<tr id='<%="priorDiseasesRow" + i%>' style="display: none">
 			<!-- CLI 09.n -->
@@ -446,12 +445,12 @@ iarv = new ArvInitialProjectChecker();
 				<bean:write name="disease" property="value" />
 			</td>
 			<td>
-				<html:select name="<%=formName%>"
+				<html:select name="${form.formName}"
 					property='<%= "observations." + disease.getName() %>'
 					onchange="makeDirty();compareAllObservationHistoryFields(true)"					
-					styleId="<%= disease.getName() %>"
+					id="<%= disease.getName() %>"
 					>
-					<app:optionsCollection name="<%=formName%>"
+					<app:optionsCollection name="${form.formName}"
 						property="dictionaryLists.YES_NO.list" label="localizedName"
 						value="id" />
 				</html:select>
@@ -461,14 +460,14 @@ iarv = new ArvInitialProjectChecker();
 	<tr id="priorDiseasesRow" style="display: none">
 		<td></td>
 		<td class="observationsQuestion observationsSubquestion">
-			<bean:message key="patient.project.other" />
+			<spring:message code="patient.project.other" />
 		</td>
 		<td>
-			<html:select name="<%=formName%>"
+			<html:select name="${form.formName}"
 				property="observations.priorDiseases"
 				onchange="iarv.displayPriorDiseasesOther(this, 1);makeDirty();compareAllObservationHistoryFields(true)"
-				styleId="priorDiseases">
-				<app:optionsCollection name="<%=formName%>"
+				id="priorDiseases">
+				<app:optionsCollection name="${form.formName}"
 					property="dictionaryLists.YES_NO.list" label="localizedName"
 					value="id" />
 			</html:select>
@@ -479,12 +478,12 @@ iarv = new ArvInitialProjectChecker();
 			*
 		</td>
 		<td class="observationsSubquestion">
-			<bean:message key="patient.project.specify" />
+			<spring:message code="patient.project.specify" />
 		</td>
 		<td>
-			<html:text name="<%=formName%>"
+			<html:text name="${form.formName}"
 				property="observations.priorDiseasesValue" onchange="makeDirty();compareAllObservationHistoryFields(true)"
-				styleId="priorDiseasesValue">
+				id="priorDiseasesValue">
 			</html:text>
 			<div id="priorDiseasesMessage" class="blank"></div>
 		</td>
@@ -494,14 +493,14 @@ iarv = new ArvInitialProjectChecker();
 		<td>
 		</td>
 		<td class="observationsQuestion">
-			<bean:message key="patient.project.arvProphylaxisBenefit" />
+			<spring:message code="patient.project.arvProphylaxisBenefit" />
 		</td>
 		<td>
-			<html:select name="<%=formName%>"
+			<html:select name="${form.formName}"
 				property="observations.arvProphylaxisBenefit"
 				onchange="iarv.checkArvProphylaxisBenefit(this)"
-				styleId="arvProphylaxisBenefit">
-				<app:optionsCollection name="<%=formName%>"
+				id="arvProphylaxisBenefit">
+				<app:optionsCollection name="${form.formName}"
 					property="dictionaryLists.YES_NO.list" label="localizedName"
 					value="id" />
 			</html:select>
@@ -514,14 +513,14 @@ iarv = new ArvInitialProjectChecker();
 			*
 		</td>
 		<td class="observationsSubquestion">
-			<bean:message key="patient.project.arvProphylaxis" />
+			<spring:message code="patient.project.arvProphylaxis" />
 		</td>
 		<td>
-			<html:select name="<%=formName%>"
+			<html:select name="${form.formName}"
 				property="observations.arvProphylaxis"
 				onchange="checkRequiredField(this); makeDirty();compareAllObservationHistoryFields(true)"
-				styleId="arvProphylaxis">
-				<app:optionsCollection name="<%=formName%>"
+				id="arvProphylaxis">
+				<app:optionsCollection name="${form.formName}"
 					property="dictionaryLists.ARV_PROPHYLAXIS.list"
 					label="localizedName" value="id" />
 			</html:select>
@@ -532,13 +531,13 @@ iarv = new ArvInitialProjectChecker();
 		<!--CLI 04 -->
 		<td></td>
 		<td class="observationsQuestion">
-			<bean:message key="patient.project.currentARVTreatment" />
+			<spring:message code="patient.project.currentARVTreatment" />
 		</td>
 		<td>
-			<html:select name="<%=formName%>"
+			<html:select name="${form.formName}"
 				property="observations.currentARVTreatment" onchange="makeDirty();compareAllObservationHistoryFields(true)"
-				styleId="currentARVTreatment">
-				<app:optionsCollection name="<%=formName%>"
+				id="currentARVTreatment">
+				<app:optionsCollection name="${form.formName}"
 					property="dictionaryLists.YES_NO.list" label="localizedName"
 					value="id" />
 			</html:select>
@@ -550,14 +549,14 @@ iarv = new ArvInitialProjectChecker();
 		<td>
 		</td>
 		<td class="observationsQuestion">
-			<bean:message key="patient.project.priorARVTreatment" />
+			<spring:message code="patient.project.priorARVTreatment" />
 		</td>
 		<td>
-			<html:select name="<%=formName%>"
+			<html:select name="${form.formName}"
 				property="observations.priorARVTreatment"
 				onchange="iarv.displayPriorARVTreatment(); makeDirty();compareAllObservationHistoryFields(true)"
-				styleId="priorARVTreatment">
-				<app:optionsCollection name="<%=formName%>"
+				id="priorARVTreatment">
+				<app:optionsCollection name="${form.formName}"
 					property="dictionaryLists.YES_NO_NA.list" label="localizedName"
 					value="id" />
 			</html:select>
@@ -568,10 +567,10 @@ iarv = new ArvInitialProjectChecker();
 		<!-- CLI 06 -->
 		<td></td>
 		<td class="observationsSubquestion" colspan="2" id="priorARVInn">
-			<bean:message key="patient.project.priorARVInn" />
+			<spring:message code="patient.project.priorARVInn" />
 		</td>
 	</tr>
-	<logic:iterate id="prevARVTreat" indexId="i" name="<%=formName%>"
+	<logic:iterate id="prevARVTreat" indexId="i" name="${form.formName}"
 		property="observations.priorARVTreatmentINNsList">
 		<tr id='<%="priorARVTreatmentRow" + i%>'
 			class="observationsSubquestion" style="display: none">
@@ -579,10 +578,10 @@ iarv = new ArvInitialProjectChecker();
 			<td class="bulletItem" id='<%="priorARVTreatmentItem" + i%>'><%=i + 1%>)
 			</td>
 			<td>
-				<html:text name="<%=formName%>"
+				<html:text name="${form.formName}"
 					property='<%= "observations.priorARVTreatmentINNs[" + i + "]" %>'
 					styleClass="text" onchange="makeDirty();compareAllObservationHistoryFields(true)"
-					styleId='<%= "priorARVTreatmentINNs" + i %>'>
+					id='<%= "priorARVTreatmentINNs" + i %>'>
 				</html:text>
 				<div id='<%="priorARVTreatmentINNs" + i + "Message"%>'
 					class="blank"></div>
@@ -594,14 +593,14 @@ iarv = new ArvInitialProjectChecker();
 		<!-- CLI 07 -->
 		<td></td>
 		<td>
-			<bean:message key="patient.project.cotrimoxazoleTreatment" />
+			<spring:message code="patient.project.cotrimoxazoleTreatment" />
 		</td>
 		<td>
-			<html:select name="<%=formName%>"
+			<html:select name="${form.formName}"
 				property="observations.cotrimoxazoleTreatment"
 				onchange="makeDirty();compareAllObservationHistoryFields(true)"
-				styleId="cotrimoxazoleTreatment">
-				<app:optionsCollection name="<%=formName%>"
+				id="cotrimoxazoleTreatment">
+				<app:optionsCollection name="${form.formName}"
 					property="dictionaryLists.YES_NO.list" label="localizedName"
 					value="id" />
 			</html:select>
@@ -612,12 +611,12 @@ iarv = new ArvInitialProjectChecker();
 		<!-- CLI 08 -->
 		<td></td>
 		<td>
-			<bean:message key="patient.project.aidsStage" />
+			<spring:message code="patient.project.aidsStage" />
 		</td>
 		<td>
-			<html:select name="<%=formName%>" property="observations.aidsStage"
-				onchange="makeDirty();compareAllObservationHistoryFields(true)" styleId="aidsStage">
-				<app:optionsCollection name="<%=formName%>"
+			<html:select name="${form.formName}" property="observations.aidsStage"
+				onchange="makeDirty();compareAllObservationHistoryFields(true)" id="aidsStage">
+				<app:optionsCollection name="${form.formName}"
 					property="dictionaryLists.AIDS_STAGES.list" label="localizedName"
 					value="id" />
 			</html:select>
@@ -635,22 +634,22 @@ iarv = new ArvInitialProjectChecker();
 		<td></td>
 		<td class="observationsQuestion">
 			<br />
-			<bean:message key="patient.project.anyCurrentDiseases" />
+			<spring:message code="patient.project.anyCurrentDiseases" />
 			<br />
 		</td>
 		<td>
-			<html:select name="<%=formName%>"
+			<html:select name="${form.formName}"
 				property="observations.anyCurrentDiseases"
 				onchange="iarv.checkAnyCurrentDiseases(this)"
-				styleClass="text" styleId="anyCurrentDiseases">
-				<app:optionsCollection name="<%=formName%>"
+				styleClass="text" id="anyCurrentDiseases">
+				<app:optionsCollection name="${form.formName}"
 					property="dictionaryLists.YES_NO.list" label="localizedName"
 					value="id" />
 			</html:select>
 			<div id="anyCurrentDiseasesMessage" class="blank"></div>
 		</td>
 	</tr>
-	<logic:iterate  id="disease" indexId="i" name="<%=formName%>" type="NameValuePair"
+	<logic:iterate  id="disease" indexId="i" name="${form.formName}" type="NameValuePair"
 		property="observations.currentDiseasesList">
 		<tr id='<%="currentDiseasesRow" + i%>' style="display: none">
 			<!-- CLI 09.n -->
@@ -659,12 +658,12 @@ iarv = new ArvInitialProjectChecker();
 				<bean:write name="disease" property="value" />
 			</td>
 			<td>
-				<html:select name="<%=formName%>"
+				<html:select name="${form.formName}"
 					property='<%= "observations." + disease.getName() %>'
 					onchange="makeDirty();compareAllObservationHistoryFields(true)"					
-					styleId="<%= disease.getName() %>"
+					id="<%= disease.getName() %>"
 					>
-					<app:optionsCollection name="<%=formName%>"
+					<app:optionsCollection name="${form.formName}"
 						property="dictionaryLists.YES_NO.list" label="localizedName"
 						value="id" />
 				</html:select>
@@ -674,14 +673,14 @@ iarv = new ArvInitialProjectChecker();
 	<tr id="currentDiseasesRow" style="display: none">
 		<td></td>
 		<td class="observationsQuestion observationsSubquestion">
-			<bean:message key="patient.project.other" />
+			<spring:message code="patient.project.other" />
 		</td>
 		<td>
-			<html:select name="<%=formName%>"
+			<html:select name="${form.formName}"
 				property="observations.currentDiseases"
 				onchange="iarv.displayCurrentDiseasesOther(this, 1);makeDirty();compareAllObservationHistoryFields(true)"
-				styleId="currentDiseases">
-				<app:optionsCollection name="<%=formName%>"
+				id="currentDiseases">
+				<app:optionsCollection name="${form.formName}"
 					property="dictionaryLists.YES_NO.list" label="localizedName"
 					value="id" />
 			</html:select>
@@ -693,12 +692,12 @@ iarv = new ArvInitialProjectChecker();
 			*
 		</td>
 		<td class="observationsSubquestion">
-			<bean:message key="patient.project.specify" />
+			<spring:message code="patient.project.specify" />
 		</td>
 		<td>
-			<html:text name="<%=formName%>"
+			<html:text name="${form.formName}"
 				property="observations.currentDiseasesValue" onchange="makeDirty();compareAllObservationHistoryFields(true)"
-				styleId="currentDiseasesValue">
+				id="currentDiseasesValue">
 			</html:text>
 			<div id="currentDiseasesMessage" class="blank"></div>
 		</td>
@@ -707,13 +706,13 @@ iarv = new ArvInitialProjectChecker();
 		<!-- CLI 10 -->
 		<td></td>
 		<td>
-			<bean:message key="patient.project.currentOITreatment" />
+			<spring:message code="patient.project.currentOITreatment" />
 		</td>
 		<td>
-			<html:select name="<%=formName%>"
+			<html:select name="${form.formName}"
 				property="observations.currentOITreatment" onchange="makeDirty();compareAllObservationHistoryFields(true)"
-				styleId="currentOITreatment">
-				<app:optionsCollection name="<%=formName%>"
+				id="currentOITreatment">
+				<app:optionsCollection name="${form.formName}"
 					property="dictionaryLists.YES_NO_NA.list" label="localizedName"
 					value="id" />
 			</html:select>
@@ -724,11 +723,11 @@ iarv = new ArvInitialProjectChecker();
 		<!-- CLI 11 -->
 		<td></td>
 		<td>
-			<bean:message key="patient.project.patientWeight" />
+			<spring:message code="patient.project.patientWeight" />
 		</td>
 		<td>
-			<app:text name="<%=formName%>" property="observations.patientWeight"
-				onchange="makeDirty();compareAllObservationHistoryFields(true)" styleClass="text" styleId="patientWeight" maxlength="3"/>
+			<app:text name="${form.formName}" property="observations.patientWeight"
+				onchange="makeDirty();compareAllObservationHistoryFields(true)" styleClass="text" id="patientWeight" maxlength="3"/>
 			<div id="patientWeightMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -736,11 +735,11 @@ iarv = new ArvInitialProjectChecker();
 		<!-- CLI 11 -->
 		<td></td>
 		<td>
-			<bean:message key="patient.project.karnofskyScore" />
+			<spring:message code="patient.project.karnofskyScore" />
 		</td>
 		<td>
-			<app:text name="<%=formName%>" property="observations.karnofskyScore"
-				onchange="makeDirty();compareAllObservationHistoryFields(true)" styleClass="text" styleId="karnofskyScore" maxlength="3"/>
+			<app:text name="${form.formName}" property="observations.karnofskyScore"
+				onchange="makeDirty();compareAllObservationHistoryFields(true)" styleClass="text" id="karnofskyScore" maxlength="3"/>
 			<div id="karnofskyScoreMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -753,7 +752,7 @@ iarv = new ArvInitialProjectChecker();
  	<tr id="patientRecordStatusRow"style="display: none;">
 		<td class="required"></td>
 		<td>
-			<bean:message key="patient.project.patientRecordStatus" />
+			<spring:message code="patient.project.patientRecordStatus" />
 		</td>
 		<td>
 		<INPUT type="text" id="PatientRecordStatus" size="20" class="text readOnly" disabled="disabled" readonly="readonly" />
@@ -763,7 +762,7 @@ iarv = new ArvInitialProjectChecker();
  	<tr id="sampleRecordStatusRow" style="display: none;">
 		<td class="required"></td>
 		<td>
-			<bean:message key="patient.project.sampleRecordStatus" />
+			<spring:message code="patient.project.sampleRecordStatus" />
 		</td>
 		<td>
 		<INPUT type="text" id="SampleRecordStatus" size="20" class="text readOnly" disabled="disabled" readonly="readonly" />
@@ -773,13 +772,13 @@ iarv = new ArvInitialProjectChecker();
 	<tr id="underInvestigationRow">
 		<td class="required"></td>
 		<td>
-			<bean:message key="patient.project.underInvestigation" />
+			<spring:message code="patient.project.underInvestigation" />
 		</td>
 		<td>
-			<html:select name="<%=formName%>"
+			<html:select name="${form.formName}"
 			property="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
-			styleId="underInvestigation">
-			<app:optionsCollection name="<%=formName%>"
+			id="underInvestigation">
+			<app:optionsCollection name="${form.formName}"
 				property="dictionaryLists.YES_NO.list" label="localizedName"
 				value="id" />
 			</html:select>
@@ -788,11 +787,11 @@ iarv = new ArvInitialProjectChecker();
  	<tr id="underInvestigationCommentRow">
 		<td class="required"></td>
 		<td>
-			<bean:message key="patient.project.underInvestigationComment" />
+			<spring:message code="patient.project.underInvestigationComment" />
 		</td>
 		<td colspan="3">
-			<app:text name="<%=formName%>" property="ProjectData.underInvestigationNote" maxlength="1000" size="80"
-				onchange="makeDirty();" styleId="underInvestigationComment" />
+			<app:text name="${form.formName}" property="ProjectData.underInvestigationNote" maxlength="1000" size="80"
+				onchange="makeDirty();" id="underInvestigationComment" />
 		</td>
     </tr>
 </table>

@@ -4,10 +4,14 @@
                  us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
                  us.mn.state.health.lims.common.util.Versioning,
                  us.mn.state.health.lims.common.util.StringUtil" %>
-<%@ taglib uri="/tags/struts-bean"      prefix="bean" %>
-<%@ taglib uri="/tags/struts-tiles"     prefix="tiles" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName"      value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+      
 
 <%!
 	String path = "";
@@ -68,9 +72,9 @@ function  /*void*/ processValidateEntryDateSuccess(xhr) {
     setSampleFieldValidity( isValid, formField );
     checkValidSubPages();
     if( message == '<%=IActionConstants.INVALID_TO_LARGE%>' ) {
-        alert( '<bean:message key="error.date.inFuture"/>' );
+        alert( '<spring:message code="error.date.inFuture"/>' );
     } else if( message == '<%=IActionConstants.INVALID_TO_SMALL%>' ) {
-        alert( '<bean:message key="error.date.inPast"/>' );
+        alert( '<spring:message code="error.date.inPast"/>' );
     }
 }
 
@@ -116,7 +120,7 @@ function /*void*/ makeDirty(){
     }
     // Adds warning when leaving page if content has been entered into makeDirty form fields
     function formWarning(){ 
-    return "<bean:message key="banner.menu.dataLossWarning"/>";
+    return "<spring:message code="banner.menu.dataLossWarning"/>";
     }
     window.onbeforeunload = formWarning;
 }

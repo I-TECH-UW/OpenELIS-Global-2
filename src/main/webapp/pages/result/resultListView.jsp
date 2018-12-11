@@ -20,23 +20,23 @@
 		    us.mn.state.health.lims.common.util.DateUtil,
 		    org.owasp.encoder.Encode" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/struts-tiles" prefix="tiles" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id='formName' value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
-<bean:define id="tests" name='<%=formName%>' property="testResult" />
+<bean:define id='formName' 
+<bean:define id="tests" name='${form.formName}' property="testResult" />
 <bean:size id="testCount" name="tests"/>
-<bean:define id="inventory" name="<%=formName%>" property="inventoryItems" />
+<bean:define id="inventory" name="${form.formName}" property="inventoryItems" />
 
-<bean:define id="pagingSearch" name='<%=formName%>' property="paging.searchTermToPage"  />
+<bean:define id="pagingSearch" name='${form.formName}' property="paging.searchTermToPage"  />
 
-<bean:define id="logbookType" name="<%=formName%>" property="logbookType" />
-<logic:equal  name="<%=formName %>" property="displayTestSections" value="true">
-	<bean:define id="testSectionsByName" name="<%=formName%>" property="testSectionsByName" />
+<bean:define id="logbookType" name="${form.formName}" property="logbookType" />
+<logic:equal  name="${form.formName}" property="displayTestSections" value="true">
+	<bean:define id="testSectionsByName" name="${form.formName}" property="testSectionsByName" />
 	<script type="text/javascript" >
 		var testSectionNameIdHash = [];		
 		<% 
@@ -131,8 +131,8 @@
 var compactHozSpace = '<%=compactHozSpace%>';
 var dirty = false;
 
-var pager = new OEPager('<%=formName%>', '<%= logbookType == "" ? "" : "&type=" + Encode.forJavaScript((String) logbookType)  %>');
-pager.setCurrentPageNumber('<bean:write name="<%=formName%>" property="paging.currentPage"/>');
+var pager = new OEPager('${form.formName}', '<%= logbookType == "" ? "" : "&type=" + Encode.forJavaScript((String) logbookType)  %>');
+pager.setCurrentPageNumber('<c:out value="${form.paging.currentPage}"/>');
 
 var pageSearch; //assigned in post load function
 
@@ -181,7 +181,7 @@ function /*void*/ makeDirty(){
 	}
 	// Adds warning when leaving page if content has been entered into makeDirty form fields
 	function formWarning(){
-    return "<bean:message key="banner.menu.dataLossWarning"/>";
+    return "<spring:message code="banner.menu.dataLossWarning"/>";
 	}
 	window.onbeforeunload = formWarning;
 }
@@ -270,7 +270,7 @@ function  /*void*/ savePage()
 	$jq( "#saveButtonId" ).prop("disabled",true);
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = window.document.forms[0];
-	form.action = '<%=formName%>'.sub('Form','') + "Update.do"  + '<%= logbookType == "" ? "" : "?type=" + Encode.forJavaScript((String) logbookType)  %>';
+	form.action = '${form.formName}'.sub('Form','') + "Update.do"  + '<%= logbookType == "" ? "" : "?type=" + Encode.forJavaScript((String) logbookType)  %>';
 	form.submit();
 }
 
@@ -358,9 +358,9 @@ function processDateCallbackEvaluation(xhr) {
 
     if( !isValid ){
         if( message == 'invalid_value_to_large' ){
-            alert( '<bean:message key="error.date.inFuture"/>' );
+            alert( '<spring:message code="error.date.inFuture"/>' );
         }else if( message == 'invalid_value_to_small' ){
-            alert( '<bean:message key="error.date.inPast"/>' );
+            alert( '<spring:message code="error.date.inPast"/>' );
         }else if( message == "invalid"){
             alert( givenDate + " " + "<%=StringUtil.getMessageForKey("errors.date", "" )%>");
         }
@@ -375,19 +375,19 @@ function updateShadowResult(source, index){
 
 </script>
 
-<logic:equal  name="<%=formName %>" property="displayTestSections" value="true">
+<logic:equal  name="${form.formName}" property="displayTestSections" value="true">
 <div id="searchDiv" class="colorFill"  >
 <div id="PatientPage" class="colorFill" style="display:inline" >
-<h2><bean:message key="sample.entry.search"/></h2>
+<h2><spring:message code="sample.entry.search"/></h2>
 	<table width="30%">
 		<tr bgcolor="white">
 			<td width="50%" align="right" >
 				<%= StringUtil.getMessageForKey("workplan.unit.types") %>
 			</td>
 			<td>
-			<html:select name='<%= formName %>' property="testSectionId" 
+			<html:select name='${form.formName}' property="testSectionId" 
 				 onchange="submitTestSectionSelect(this);" >
-				<app:optionsCollection name="<%=formName%>" property="testSections" label="value" value="id" />
+				<app:optionsCollection name="${form.formName}" property="testSections" label="value" value="id" />
 			</html:select>
 	   		</td>
 		</tr>
@@ -418,15 +418,15 @@ function updateShadowResult(source, index){
     </div>
 </div>
 
-<logic:notEmpty name="<%=formName%>" property="logbookType" >
-	<html:hidden name="<%=formName%>" property="logbookType" />
+<logic:notEmpty name="${form.formName}" property="logbookType" >
+	<form:hidden path="logbookType" />
 </logic:notEmpty>
 
 <logic:notEqual name="testCount" value="0">
-<logic:equal name="<%=formName%>" property="displayTestKit" value="true">
+<logic:equal name="${form.formName}" property="displayTestKit" value="true">
 	<hr style="width:100%" />
     <input type="button" onclick="toggleKitDisplay(this)" value="+">
-	<bean:message key="inventory.testKits"/>
+	<spring:message code="inventory.testKits"/>
 	<div id="kitView" style="display: none;" class="colorFill" >
 		<tiles:insert attribute="testKitInfo" />
 		<br/>
@@ -434,26 +434,26 @@ function updateShadowResult(source, index){
 	</div>
 </logic:equal>
 
-<logic:equal  name='<%=formName%>' property="singlePatient" value="true">
+<logic:equal  name='${form.formName}' property="singlePatient" value="true">
 <% if(!depersonalize){ %>        
 <table style="width:100%" >
 	<tr>
 		
 		<th style="width:20%">
-			<bean:message key="person.lastName" />
+			<spring:message code="person.lastName" />
 		</th>
 		<th style="width:20%">
-			<bean:message key="person.firstName" />
+			<spring:message code="person.firstName" />
 		</th>
 		<th style="width:10%">
-			<bean:message key="patient.gender" />
+			<spring:message code="patient.gender" />
 		</th>
 		<th style="width:15%">
-			<bean:message key="patient.birthDate" />
+			<spring:message code="patient.birthDate" />
 		</th>
 		<% if(useSTNumber){ %>
 		<th style="width:15%">
-			<bean:message key="patient.ST.number" />
+			<spring:message code="patient.ST.number" />
 		</th>
 		<% } %>
 		<% if(useNationalID){ %>
@@ -463,36 +463,36 @@ function updateShadowResult(source, index){
 		<% } %>
 		<% if(useSubjectNumber){ %>
 		<th style="width:20%">
-			<bean:message key="patient.subject.number" />
+			<spring:message code="patient.subject.number" />
 		</th>
 		<% } %>
 	</tr>
 	<tr>
 		<td style="text-align:center">
-			<bean:write name="<%=formName%>" property="lastName" />
+			<c:out value="${form.lastName}" />
 		</td>
 		<td style="text-align:center">
-			<bean:write name="<%=formName%>" property="firstName" />
+			<c:out value="${form.firstName}" />
 		</td>
 		<td style="text-align:center">
-			<bean:write name="<%=formName%>" property="gender" />
+			<c:out value="${form.gender}" />
 		</td>
 		<td style="text-align:center">
-			<bean:write name="<%=formName%>" property="dob" />
+			<c:out value="${form.dob}" />
 		</td>
 		<% if(useSTNumber){ %>
 		<td style="text-align:center">
-			<bean:write name="<%=formName%>" property="st" />
+			<c:out value="${form.st}" />
 		</td>
 		<% } %>
 		<% if(useNationalID){ %>
 		<td style="text-align:center">
-			<bean:write name="<%=formName%>" property="nationalId" />
+			<c:out value="${form.nationalId}" />
 		</td>
 		<% } %>
 		<% if(useSubjectNumber){ %>
 		<td style="text-align:center">
-			<bean:write name="<%=formName%>" property="subjectNumber" />
+			<c:out value="${form.subjectNumber}" />
 		</td>
 		<% } %>
 	</tr>
@@ -502,10 +502,10 @@ function updateShadowResult(source, index){
 </logic:equal>
 
 <div  style="width:100%" >
-<logic:notEqual name="<%=formName%>" property="paging.totalPages" value="0">
-	<html:hidden styleId="currentPageID" name="<%=formName%>" property="paging.currentPage"/>
-	<bean:define id="total" name="<%=formName%>" property="paging.totalPages"/>
-	<bean:define id="currentPage" name="<%=formName%>" property="paging.currentPage"/>
+<logic:notEqual name="${form.formName}" property="paging.totalPages" value="0">
+	<html:hidden id="currentPageID" name="${form.formName}" property="paging.currentPage"/>
+	<bean:define id="total" name="${form.formName}" property="paging.totalPages"/>
+	<bean:define id="currentPage" name="${form.formName}" property="paging.currentPage"/>
 
 	<%if( "1".equals(currentPage)) {%>
 		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" disabled="disabled" >
@@ -519,23 +519,23 @@ function updateShadowResult(source, index){
 	<% } %>
 
 	&nbsp;
-	<bean:write name="<%=formName%>" property="paging.currentPage"/> <bean:message key="report.pageNumberOf" />
-	<bean:write name="<%=formName%>" property="paging.totalPages"/>
+	<c:out value="${form.paging.currentPage}"/> <spring:message code="report.pageNumberOf" />
+	<c:out value="${form.paging.totalPages}"/>
 	<div class='textcontent' style="float: right" >
 	<span style="visibility: hidden" id="searchNotFound"><em><%= StringUtil.getMessageForKey("search.term.notFound") %></em></span>
 	<%=StringUtil.getContextualMessageForKey("result.sample.id")%> : &nbsp;
 	<input type="text"
 	       id="labnoSearch"
-	       placeholder='<bean:message key="sample.search.scanner.instructions"/>'
+	       placeholder='<spring:message code="sample.search.scanner.instructions"/>'
 	       maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>' />
 	<input type="button" onclick="pageSearch.doLabNoSearch($(labnoSearch))" value='<%= StringUtil.getMessageForKey("label.button.search") %>'>
 	</div>
 </logic:notEqual>
 
 <div style="float: right" >
-<img src="./images/nonconforming.gif" /> = <bean:message key="result.nonconforming.item"/>&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="./images/nonconforming.gif" /> = <spring:message code="result.nonconforming.item"/>&nbsp;&nbsp;&nbsp;&nbsp;
 <% if(failedValidationMarks){ %> 
-<img src="./images/validation-rejected.gif" /> = <bean:message key="result.validation.failed"/>&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="./images/validation-rejected.gif" /> = <spring:message code="result.validation.failed"/>&nbsp;&nbsp;&nbsp;&nbsp;
 <% } %>
 </div>
 
@@ -548,38 +548,38 @@ function updateShadowResult(source, index){
 		<th style="text-align: left">
 			<%=StringUtil.getContextualMessageForKey("result.sample.id")%>
 		</th>
-		<logic:equal name="<%=formName %>" property="singlePatient" value="false">
+		<logic:equal name="${form.formName}" property="singlePatient" value="false">
 			<th style="text-align: left">
-				<bean:message key="result.sample.patient.summary"/>
+				<spring:message code="result.sample.patient.summary"/>
 			</th>
 		</logic:equal>
 		<% } %>
 
 		<th style="text-align: left">
-			<bean:message key="result.test.date"/><br/>
+			<spring:message code="result.test.date"/><br/>
 			<%=DateUtil.getDateUserPrompt()%>
 		</th>
-		<logic:equal  name="<%=formName%>" property="displayTestMethod" value="true">
+		<logic:equal  name="${form.formName}" property="displayTestMethod" value="true">
 			<th style="width: 72px; padding-right: 10px; text-align: center">
-				<bean:message key="result.method.auto"/>
+				<spring:message code="result.method.auto"/>
 			</th>
 		</logic:equal>
 		<th style="text-align: left">
-			<bean:message key="result.test"/>
+			<spring:message code="result.test"/>
 		</th>
 		<th style="width:16px">&nbsp;</th>
 		<th style="width: 56px; padding-right: 10px; text-align: center"><%= StringUtil.getContextualMessageForKey("result.forceAccept.header") %></th>
 		<th style="width:165px; text-align: left">
-			<bean:message key="result.result"/>
+			<spring:message code="result.result"/>
 		</th>
 		<% if( ableToRefer ){ %>
 		<th style="text-align: left">
-			<bean:message key="referral.referandreason"/>
+			<spring:message code="referral.referandreason"/>
 		</th>
 		<% } %>
 		<% if( useTechnicianName ){ %>
 		<th style="text-align: left">
-			<bean:message key="result.technician"/>
+			<spring:message code="result.technician"/>
 			<span class="requiredlabel">*</span><br/>
 			<% if(autofillTechBox){ %>
 			Autofill:<input type="text" size='10em' onchange="autofill( this )">
@@ -588,22 +588,22 @@ function updateShadowResult(source, index){
 		<% }%>
         <% if( useRejected ){ %>
         <th style="text-align: center">
-            <bean:message key="result.rejected"/>&nbsp;
+            <spring:message code="result.rejected"/>&nbsp;
         </th>
         <% }%>
 		<th style="width:2%;text-align: left">
-			<bean:message key="result.notes"/>
+			<spring:message code="result.notes"/>
 		</th>
 	</tr>
 	<!-- body -->
-	<logic:iterate id="testResult" name="<%=formName%>"  property="testResult" indexId="index" type="TestResultItem">
+	<logic:iterate id="testResult" name="${form.formName}"  property="testResult" indexId="index" type="TestResultItem">
 	<logic:equal name="testResult" property="isGroupSeparator" value="true">
 	<tr>
 		<td colspan="10"><hr/></td>
 	</tr>
 	<tr>
 		<th >
-			<bean:message key="sample.receivedDate"/> <br/>
+			<spring:message code="sample.receivedDate"/> <br/>
 			<bean:write name="testResult" property="receivedDate"/>
 		</th>
 		<th >
@@ -631,16 +631,16 @@ function updateShadowResult(source, index){
 				<b><bean:write name="testResult" property="accessionNumber"/> -
 				<bean:write name="testResult" property="sequenceNumber"/></b>
 				<% if(useInitialCondition){ %>
-					&nbsp;&nbsp;&nbsp;&nbsp;<bean:message key="sample.entry.sample.condition" />:
+					&nbsp;&nbsp;&nbsp;&nbsp;<spring:message code="sample.entry.sample.condition" />:
 					<b><bean:write name="testResult" property="initialSampleCondition" /></b>
 				<% } %>
-				&nbsp;&nbsp;&nbsp;&nbsp;<bean:message  key="sample.entry.sample.type"/>:
+				&nbsp;&nbsp;&nbsp;&nbsp;<spring:message code="sample.entry.sample.type"/>:
 				<b><bean:write  name="testResult" property="sampleType"/></b>
-		<logic:equal  name="<%=formName %>" property="singlePatient" value="false">
+		<logic:equal  name="${form.formName}" property="singlePatient" value="false">
 		    <% if( !depersonalize){ %>
 				<logic:equal  name="testResult" property="showSampleDetails" value="true">
 					<br/>
-					<bean:message key="result.sample.patient.summary"/> : &nbsp;
+					<spring:message code="result.sample.patient.summary"/> : &nbsp;
 					<b><bean:write name="testResult" property="patientName"/> &nbsp;
 					<bean:write name="testResult" property="patientInfo"/></b>
 				</logic:equal>
@@ -651,22 +651,22 @@ function updateShadowResult(source, index){
 	</logic:equal>
     <% } %>
 	<tr class='<%= rowColor %>'  id='<%="row_" + index %>'>
-			<html:hidden name="testResult" property="isModified"  indexed="true" styleId='<%="modified_" + index%>' />
-			<html:hidden name="testResult" property="analysisId"  indexed="true" styleId='<%="analysisId_" + index%>' />
-			<html:hidden name="testResult" property="resultId"  indexed="true" styleId='<%="hiddenResultId_" + index%>'/>
-			<html:hidden name="testResult" property="testId"  indexed="true" styleId='<%="testId_" + index%>'/>
+			<html:hidden name="testResult" property="isModified"  indexed="true" id='<%="modified_" + index%>' />
+			<html:hidden name="testResult" property="analysisId"  indexed="true" id='<%="analysisId_" + index%>' />
+			<html:hidden name="testResult" property="resultId"  indexed="true" id='<%="hiddenResultId_" + index%>'/>
+			<html:hidden name="testResult" property="testId"  indexed="true" id='<%="testId_" + index%>'/>
 			<html:hidden name="testResult" property="technicianSignatureId" indexed="true" />
 			<html:hidden name="testResult" property="testKitId" indexed="true" />
 			<html:hidden name="testResult" property="resultLimitId" indexed="true" />
-			<html:hidden name="testResult" property="resultType" indexed="true" styleId='<%="resultType_" + index%>' />
-			<html:hidden name="testResult" property="valid" indexed="true"  styleId='<%="valid_" + index %>'/>
+			<html:hidden name="testResult" property="resultType" indexed="true" id='<%="resultType_" + index%>' />
+			<html:hidden name="testResult" property="valid" indexed="true"  id='<%="valid_" + index %>'/>
 			<html:hidden name="testResult" property="referralId" indexed="true" />
             <html:hidden name="testResult" property="referralCanceled" indexed="true" />
-            <html:hidden name="testResult" property="considerRejectReason" styleId='<%="considerRejectReason_" + index %>' indexed="true" />
-            <html:hidden name="testResult" property="hasQualifiedResult" indexed="true" styleId='<%="hasQualifiedResult_" + index %>' />
-            <html:hidden name="testResult" property="shadowResultValue" indexed="true" styleId='<%="shadowResult_" + index%>' />
+            <html:hidden name="testResult" property="considerRejectReason" id='<%="considerRejectReason_" + index %>' indexed="true" />
+            <html:hidden name="testResult" property="hasQualifiedResult" indexed="true" id='<%="hasQualifiedResult_" + index %>' />
+            <html:hidden name="testResult" property="shadowResultValue" indexed="true" id='<%="shadowResult_" + index%>' />
             <logic:equal name="testResult" property="userChoiceReflex" value="true">
-                <html:hidden name="testResult" property="reflexJSONResult"  styleId='<%="reflexServerResultId_" + index%>'  styleClass="reflexJSONResult" indexed="true"/>
+                <html:hidden name="testResult" property="reflexJSONResult"  id='<%="reflexServerResultId_" + index%>'  styleClass="reflexJSONResult" indexed="true"/>
             </logic:equal>
 			<logic:notEmpty name="testResult" property="thisReflexKey">
 					<input type="hidden" id='<%= testResult.getThisReflexKey() %>' value='<%= index %>' />
@@ -678,7 +678,7 @@ function updateShadowResult(source, index){
 				<bean:write name="testResult" property="sequenceNumber"/>
 			</logic:equal>
 		</td>
-		<logic:equal  name="<%=formName %>" property="singlePatient" value="false">
+		<logic:equal  name="${form.formName}" property="singlePatient" value="false">
 			<td >
 				<logic:equal  name="testResult" property="showSampleDetails" value="true">
 					<bean:write name="testResult" property="patientName"/><br/>
@@ -697,9 +697,9 @@ function updateShadowResult(source, index){
                        tabindex='-1'
                        onchange='<%="markUpdated(" + index + ");checkValidDate(this, processDateCallbackEvaluation, \'past\', false)" %>'
                        onkeyup="addDateSlashes(this, event);"
-                       styleId='<%="testDate_" + index%>'/>
+                       id='<%="testDate_" + index%>'/>
 		</td>
-		<logic:equal  name="<%=formName%>" property="displayTestMethod" value="true">
+		<logic:equal  name="${form.formName}" property="displayTestMethod" value="true">
 			<td class="ruled" style='text-align: center'>
 				<html:checkbox name="testResult"
 							property="analysisMethod"
@@ -714,7 +714,7 @@ function updateShadowResult(source, index){
 				<html:hidden name="testResult" property="testMethod" indexed="true"/>
 				<bean:write name="testResult" property="testName"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;
-				<bean:message key="inventory.testKit"/>
+				<spring:message code="inventory.testKit"/>
 				<html:select name="testResult"
 							 property="testKitInventoryId"
 							 value='<%=testResult.getTestKitInventoryId()%>'
@@ -738,10 +738,10 @@ function updateShadowResult(source, index){
 				<bean:write name="testResult" property="testName"/>
 				<logic:greaterThan name="testResult" property="reflexStep" value="0">
 				&nbsp;--&nbsp;
-				<bean:message key="reflexTest.step" />&nbsp;<bean:write name="testResult" property="reflexStep"/>
+				<spring:message code="reflexTest.step" />&nbsp;<bean:write name="testResult" property="reflexStep"/>
 				</logic:greaterThan>
 				&nbsp;&nbsp;&nbsp;&nbsp;
-				<bean:message key="inventory.testKit"/>
+				<spring:message code="inventory.testKit"/>
 				<html:select name="testResult"
 							 indexed="true"
 							 tabindex='-1'
@@ -814,7 +814,7 @@ function updateShadowResult(source, index){
 						  disabled='<%= testResult.isReadOnly() %>'
 						  style='<%="background: " + (testResult.isValid() ? testResult.isNormal() ? "#ffffff" : "#ffffa0" : "#ffa0a0") %>'
 						  title='<%= (testResult.isValid() ? testResult.isNormal() ? "" : StringUtil.getMessageForKey("result.value.abnormal") : StringUtil.getMessageForKey("result.value.invalid")) %>' 
-						  styleId='<%="results_" + index %>'
+						  id='<%="results_" + index %>'
 						  onchange='<%="markUpdated(" + index + ");"  +
 						  			   ( testResult.isDisplayResultAsLog() ? " updateLogValue(this, " + index + ");" : "" ) +
 						               ((noteRequired && !"".equals(testResult.getResultValue()) ) ? "showNote( " + index + ");" : "") +
@@ -828,7 +828,7 @@ function updateShadowResult(source, index){
 						  disabled='<%= testResult.isReadOnly() %>'
 						  style='<%="background: " + (testResult.isValid() ? testResult.isNormal() ? "#ffffff" : "#ffffa0" : "#ffa0a0") %>'
 						  title='<%= (testResult.isValid() ? testResult.isNormal() ? "" : StringUtil.getMessageForKey("result.value.abnormal") : StringUtil.getMessageForKey("result.value.invalid")) %>'
-						  styleId='<%="results_" + index %>'
+						  id='<%="results_" + index %>'
 						  onkeyup='<%="value = value.substr(0, 200); markUpdated(" + index + ");"  +
 						               ((noteRequired && !"".equals(testResult.getResultValue()) ) ? "showNote( " + index + ");" : "") +
 						                " updateShadowResult(this, " + index + ");"%>'
@@ -875,7 +875,7 @@ function updateShadowResult(source, index){
 						</option>
 					</logic:iterate>
 				</select>
-				<html:hidden name="testResult" property="multiSelectResultValues" indexed="true" styleId='<%="multiresultId_" + index%>' styleClass="multiSelectValues"  />
+				<html:hidden name="testResult" property="multiSelectResultValues" indexed="true" id='<%="multiresultId_" + index%>' styleClass="multiSelectValues"  />
                 <input type="text"
                    name='<%="testResult[" + index + "].qualifiedResultValue" %>'
                    value='<%= testResult.getQualifiedResultValue() %>'
@@ -906,7 +906,7 @@ function updateShadowResult(source, index){
                 </select>
                 <input class='<%="addMultiSelect" + index%>' type="button" value="+" onclick='<%="addNewMultiSelect(" + index + ", this);" + (noteRequired ? "showNewNote( " + index + ");" : "" ) %>'/>
                 <input class='<%="removeMultiSelect" + index%>' type="button" value="-" onclick='<%="removeMultiSelect(\"target\");" + (noteRequired ? "showNewNote( " + index + ");" : "" )%>' style="display: none" />
-                <html:hidden name="testResult" property="multiSelectResultValues" indexed="true" styleId='<%="multiresultId_" + index%>' styleClass="multiSelectValues"  />
+                <html:hidden name="testResult" property="multiSelectResultValues" indexed="true" id='<%="multiresultId_" + index%>' styleClass="multiSelectValues"  />
                 <input type="text"
                        name='<%="testResult[" + index + "].qualifiedResultValue" %>'
                        value='<%= testResult.getQualifiedResultValue() %>'
@@ -936,12 +936,12 @@ function updateShadowResult(source, index){
 		<% if( ableToRefer ){ %>
 		<td style="white-space: nowrap" class="ruled">
             <html:hidden name="testResult" property="referralId" indexed='true'/>
-            <html:hidden name="testResult" property="shadowReferredOut" indexed="true" styleId='<%="shadowReferred_" + index %>' />
+            <html:hidden name="testResult" property="shadowReferredOut" indexed="true" id='<%="shadowReferred_" + index %>' />
 		<% if(GenericValidator.isBlankOrNull(testResult.getReferralId()) || testResult.isReferralCanceled()){  %>
 			<html:checkbox name="testResult"
 						   property="referredOut"
 						   indexed="true"
-						   styleId='<%="referralId_" + index %>'
+						   id='<%="referralId_" + index %>'
 						   onchange='<%="markUpdated(" + index + "); handleReferralCheckChange( this, " + index + ")" %>'/>
 		<% } else {%>
 			<html:checkbox name="testResult"
@@ -955,10 +955,10 @@ function updateShadowResult(source, index){
 			        <% out.print(testResult.isShadowReferredOut() && "0".equals(testResult.getReferralReasonId()) ? "" : "disabled='true'"); %> >
 					<option value='0' >
 					   <logic:equal name="testResult" property="referralCanceled" value="true"  >
-					   		<bean:message key="referral.canceled" />
+					   		<spring:message code="referral.canceled" />
 					   </logic:equal>
 					</option>
-			<logic:iterate id="optionValue" name='<%=formName %>' property="referralReasons" type="IdValuePair" >
+			<logic:iterate id="optionValue" name='${form.formName}' property="referralReasons" type="IdValuePair" >
 					<option value='<%=optionValue.getId()%>'  <%if(optionValue.getId().equals(testResult.getReferralReasonId())) out.print("selected"); %>  >
 							<bean:write name="optionValue" property="value"/>
 					</option>
@@ -969,7 +969,7 @@ function updateShadowResult(source, index){
 		<% if( useTechnicianName){ %>
 		<td style="text-align: left" class="ruled">
 			<app:text name="testResult"
-					   styleId='<%="technicianSig_" + index %>'
+					   id='<%="technicianSig_" + index %>'
 					   styleClass='<%= GenericValidator.isBlankOrNull(testResult.getTechnicianSignatureId()) ? "techName" : "" %>'
 					   property="technician"
 					   disabled='<%= testResult.isReadOnly() %>'
@@ -981,11 +981,11 @@ function updateShadowResult(source, index){
 		<% } %>
 		<% if( useRejected){ %> 
 			<td class="ruled" style='text-align: center'>
-			<html:hidden name="testResult" property="shadowRejected" indexed="true" styleId='<%="shadowRejected_" + index %>' />
+			<html:hidden name="testResult" property="shadowRejected" indexed="true" id='<%="shadowRejected_" + index %>' />
 			
 			<input type="hidden" id='<%="isRejected_" + index %>' value='<%= testResult.isRejected() %>'/>
 	                <html:checkbox name="testResult"
-	                    styleId='<%="rejected_" + index%>' 
+	                    id='<%="rejected_" + index%>' 
 	                    property="rejected"
 	                    indexed="true"
 	                    tabindex='-1'
@@ -1008,7 +1008,7 @@ function updateShadowResult(source, index){
                <select name="<%="testResult[" + index + "].rejectReasonId"%>"
                     id='<%="rejectReasonId_" + index%>'
                     <%=testResult.isReadOnly()? "disabled=\'true\'" : "" %> >
-                    <logic:iterate id="optionValue" name="<%=formName %>" property="rejectReasons" type="IdValuePair" >
+                    <logic:iterate id="optionValue" name="${form.formName}" property="rejectReasons" type="IdValuePair" >
                         <option value='<%=optionValue.getId()%>'  <%if(optionValue.getId().equals(testResult.getRejectReasonId())) out.print("selected"); %>  >
                             <bean:write name="optionValue" property="value"/>
                         </option>
@@ -1018,7 +1018,7 @@ function updateShadowResult(source, index){
     </tr>   
 	<logic:notEmpty name="testResult" property="pastNotes">
 		<tr class='<%= rowColor %>' >
-			<td colspan="2" style="text-align:right;vertical-align:top"><bean:message key="label.prior.note" />: </td>
+			<td colspan="2" style="text-align:right;vertical-align:top"><spring:message code="label.prior.note" />: </td>
 			<td colspan="8" style="text-align:left">
 				<%= testResult.getPastNotes() %>
 			</td>
@@ -1030,13 +1030,13 @@ function updateShadowResult(source, index){
 		<td colspan="4" style="vertical-align:top;text-align:right"><% if(noteRequired &&
 														 !(GenericValidator.isBlankOrNull(testResult.getMultiSelectResultValues()) && 
 														   GenericValidator.isBlankOrNull(testResult.getResultValue()))){ %>
-													  <bean:message key="note.required.result.change"/>		
+													  <spring:message code="note.required.result.change"/>		
 													<% } else {%>
-													<bean:message key="note.note"/>
+													<spring:message code="note.note"/>
 													<% } %>
 													:</td>
 		<td colspan="6" style="text-align:left" >
-			<html:textarea styleId='<%="note_" + index %>'
+			<html:textarea id='<%="note_" + index %>'
 						   onchange='<%="markUpdated(" + index + ");"%>'
 					   	   name="testResult"
 			           	   property="note"
@@ -1048,10 +1048,10 @@ function updateShadowResult(source, index){
 	</logic:equal>
 	</logic:iterate>
 </Table>
-<logic:notEqual name="<%=formName%>" property="paging.totalPages" value="0">
-	<html:hidden styleId="currentPageID" name="<%=formName%>" property="paging.currentPage"/>
-	<bean:define id="total" name="<%=formName%>" property="paging.totalPages"/>
-	<bean:define id="currentPage" name="<%=formName%>" property="paging.currentPage"/>
+<logic:notEqual name="${form.formName}" property="paging.totalPages" value="0">
+	<html:hidden id="currentPageID" name="${form.formName}" property="paging.currentPage"/>
+	<bean:define id="total" name="${form.formName}" property="paging.totalPages"/>
+	<bean:define id="currentPage" name="${form.formName}" property="paging.currentPage"/>
 
 	<%if( "1".equals(currentPage)) {%>
 		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" disabled="disabled" >
@@ -1065,22 +1065,22 @@ function updateShadowResult(source, index){
 	<% } %>
 
 	&nbsp;
-	<bean:write name="<%=formName%>" property="paging.currentPage"/> of
-	<bean:write name="<%=formName%>" property="paging.totalPages"/>
+	<c:out value="${form.paging.currentPage}"/> of
+	<c:out value="${form.paging.totalPages}"/>
 </logic:notEqual>
 
 </logic:notEqual>
 
 
-<logic:equal  name="<%=formName %>" property="displayTestSections" value="true">
+<logic:equal  name="${form.formName}" property="displayTestSections" value="true">
 	<logic:equal name="testCount"  value="0">
-		<logic:notEmpty name="<%=formName %>" property="testSectionId">
+		<logic:notEmpty name="${form.formName}" property="testSectionId">
 		<h2><%= StringUtil.getContextualMessageForKey("result.noTestsFound") %></h2>
 		</logic:notEmpty>
 	</logic:equal>
 </logic:equal>
 
-<logic:notEqual  name="<%=formName %>" property="displayTestSections" value="true">
+<logic:notEqual  name="${form.formName}" property="displayTestSections" value="true">
 	<logic:equal name="testCount"  value="0">
 	<h2><%= StringUtil.getContextualMessageForKey("result.noTestsFound") %></h2>
 	</logic:equal>

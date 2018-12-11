@@ -1,8 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants"%>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 
 <%
@@ -15,17 +19,17 @@
 				<td align="right">
 					<html:button onclick="nextPage();"
 						property="next"
-						styleId="nextButtonId"
+						id="nextButtonId"
 						disabled="<%=Boolean.valueOf(nextDisabled).booleanValue()%>">
-						<bean:message key="label.button.next" />
+						<spring:message code="label.button.next" />
 					</html:button>
 				</td>
 				<td>
 					<html:button
 						onclick="setMyCancelAction(window.document.forms[0], 'Cancel', 'no', '');"
 						property="cancel"
-						styleId="cancelButtonId">
-						<bean:message key="label.button.cancel" />
+						id="cancelButtonId">
+						<spring:message code="label.button.cancel" />
 					</html:button>
 				</td>
 			</tr>

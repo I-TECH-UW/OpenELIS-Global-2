@@ -6,14 +6,13 @@
 	        java.util.HashSet,
 	        org.owasp.encoder.Encode"%>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/labdev-view" prefix="app"%>
-<%@ taglib uri="/tags/struts-tiles" prefix="tiles"%>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
-<%@ taglib uri="/tags/struts-nested" prefix="nested" %>
-<bean:define id="formName"	value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+	
 <bean:define id="requestType" value='<%=(String)request.getSession().getAttribute("type")%>' />
 
 <%!
@@ -34,18 +33,18 @@
 <script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="<%=basePath%>neon1/retroCIUtilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="<%=basePath%>neon/entryByProjectUtils.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" language="JavaScript1.2">
+<script type="text/javascript">
 
 var dirty = false;
 /* TODO PAHill the code in retroCIUtilities.js uses the var type, while this page uses requestType.  We should have one. */
 var requestType = '<%=Encode.forJavaScript(requestType)%>';
 var type = requestType;
 var pageType = "Patient";
-var formName = '<%=formName%>';
-birthDateUsageMessage = "<bean:message key='error.dob.complete.less.two.years'/>";
-previousNotMatchedMessage = "<bean:message key='error.2ndEntry.previous.not.matched'/>";
-noMatchFoundMessage = "<bean:message key='patient.message.patientNotFound'/>";					
-saveNotUnderInvestigationMessage = "<bean:message key='patient.project.conflicts.saveNotUnderInvestigation'/>";
+var formName = '${form.formName}';
+birthDateUsageMessage = "<spring:message code='error.dob.complete.less.two.years'/>";
+previousNotMatchedMessage = "<spring:message code='error.2ndEntry.previous.not.matched'/>";
+noMatchFoundMessage = "<spring:message code='patient.message.patientNotFound'/>";					
+saveNotUnderInvestigationMessage = "<spring:message code='patient.project.conflicts.saveNotUnderInvestigation'/>";
 var canEditPatientSubjectNos = <%= canEditPatientSubjectNos %>;
 var canEditAccessionNo = <%= canEditAccessionNo %>;
 
@@ -64,7 +63,7 @@ function /*void*/ setSaveButton() {
 function processSearchFailure(xhr)
 {
 	//alert( xhr.responseText );
-	alert("<bean:message key="error.system"/>");
+	alert("<spring:message code="error.system"/>");
 }
 
 function  /*void*/ setMyCancelAction(form, action, validate, parameters)
@@ -278,7 +277,7 @@ function hideAllDivs(){
 
 </script>
 
-<script type="text/javascript" language="JavaScript1.2">
+<script type="text/javascript">
 
 //all methods here either overwrite methods in tiles or all called after they are loaded
 
@@ -289,7 +288,7 @@ function /*void*/ makeDirty(){
 	}
 	// Adds warning when leaving page if content has been entered into makeDirty form fields
 	function formWarning(){ 
-    return "<bean:message key="banner.menu.dataLossWarning"/>";
+    return "<spring:message code="banner.menu.dataLossWarning"/>";
 	}
 	window.onbeforeunload = formWarning;
 }
@@ -310,7 +309,7 @@ function initializeStudySelection() {
 }
 
 </script>
-<b><bean:message key="sample.entry.project.form" />
+<b><spring:message code="sample.entry.project.form" />
 </b>
 <tiles:insert attribute="patientSearch" ignore="true"/>
 <br/>
@@ -318,25 +317,25 @@ function initializeStudySelection() {
 	<option value="0" selected>
 	</option>
 	<option value="InitialARV_Id">
-		<bean:message key="sample.entry.project.initialARV.title" />
+		<spring:message code="sample.entry.project.initialARV.title" />
 	</option>
 	<option value="FollowUpARV_Id">
-		<bean:message key="sample.entry.project.followupARV.title" />
+		<spring:message code="sample.entry.project.followupARV.title" />
 	</option>
 	<option value="RTN_Id">
-		<bean:message key="sample.entry.project.RTN.title" />
+		<spring:message code="sample.entry.project.RTN.title" />
 	</option>
 </select>
 <br />
 <hr>
 
-<html:hidden name="<%=formName%>" property="observations.projectFormName" styleId="projectFormName" />
-<html:hidden name="<%=formName%>" property="patientLastUpdated" styleId="patientLastUpdated" />
-<html:hidden name="<%=formName%>" property="personLastUpdated"  styleId="personLastUpdated"/>
-<html:hidden name="<%=formName%>" property="patientProcessingStatus" styleId="processingStatus" value="add" />
-<html:hidden name="<%=formName%>" property="patientPK" 			styleId="patientPK" />
-<html:hidden name="<%=formName%>" property="samplePK" 			styleId="samplePK" />
-<html:hidden name="<%=formName%>" property="" styleId="subjectOrSiteSubject" value="" />
+<form:hidden path="observations.projectFormName" id="projectFormName" />
+<form:hidden path="patientLastUpdated" id="patientLastUpdated" />
+<form:hidden path="personLastUpdated"  id="personLastUpdated"/>
+<form:hidden path="patientProcessingStatus" id="processingStatus" value="add" />
+<form:hidden path="patientPK" 			id="patientPK" />
+<form:hidden path="samplePK" 			id="samplePK" />
+<form:hidden path="" id="subjectOrSiteSubject" value="" />
 <div id="studies">
 	<div id="InitialARV_Id" style="display: none;">
 		<tiles:insert attribute="arvInitialStudy"/>
@@ -355,7 +354,7 @@ function initializeStudySelection() {
 		<tiles:insert attribute="rtnStudy"/>
 	</div>
 </div>
-<script type="text/javascript" language="JavaScript1.2">
+<script type="text/javascript">
 // All openElis struts pages have a function to override to do some work onLoad
 function onLoad() {
 	// alert("load 1 " + $("projectFormName").value);

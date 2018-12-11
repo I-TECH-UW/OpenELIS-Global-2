@@ -2,21 +2,25 @@
 
 <%@ page import="us.mn.state.health.lims.common.action.IActionConstants" %>
 
-<%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"		prefix="html" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName"	value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+	
 
 <script>
 function checkFieldInt(field) {
 	if (isNaN(field.value) || field.value.indexOf(".") > -1) {
 		validator.setFieldValidity(false, field.id);
 		selectFieldErrorDisplay(false, field);
-		alert("<bean:message key='siteInfo.number.nonnumber'/>");
+		alert("<spring:message code='siteInfo.number.nonnumber'/>");
 	} else if (parseInt(field.value) <= 0) {
 		validator.setFieldValidity(false, field.id);
 		selectFieldErrorDisplay(false, field);
-		alert("<bean:message key='siteInfo.number.invalidnumber'/>");
+		alert("<spring:message code='siteInfo.number.invalidnumber'/>");
 	} else {
 		validator.setFieldValidity(true, field.id);
 		selectFieldErrorDisplay(true, field);
@@ -30,28 +34,28 @@ function checkFieldInt(field) {
 
 </script>
 
-<h2><bean:message key="siteInfo.section.number"/></h2>
-<p><bean:message key="siteInfo.description.max"/></p>
+<h2><spring:message code="siteInfo.section.number"/></h2>
+<p><spring:message code="siteInfo.description.max"/></p>
 <table width="80%">
 	<tr>
 		<td>
-			<bean:message key="barcode.label.type.order"/>
+			<spring:message code="barcode.label.type.order"/>
 		</td>
 		<td>
-			<bean:message key="barcode.label.type.specimen"/>
+			<spring:message code="barcode.label.type.specimen"/>
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<html:text name="<%=formName%>" 
+			<html:text name="${form.formName}" 
 				property="numOrderLabels" 
-				styleId="numOrderLabels"
+				id="numOrderLabels"
 				onchange="checkFieldInt(this)"></html:text>
 		</td>
 		<td>
-			<html:text name="<%=formName%>" 
+			<html:text name="${form.formName}" 
 				property="numSpecimenLabels"
-				styleId="numSpecimenLabels"
+				id="numSpecimenLabels"
 				onchange="checkFieldInt(this)"></html:text>
 		</td>
 	</tr>

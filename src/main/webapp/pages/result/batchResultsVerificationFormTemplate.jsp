@@ -15,7 +15,7 @@
 
 <html:html>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 <%!
 String path = "";
 String basePath = "";
@@ -99,14 +99,14 @@ TD.bre
 
 <link rel="stylesheet" type="text/css" href="<%=basePath%>css/openElisCore.css?ver=<%= Versioning.getBuildNumber() %>" />
 
-<script language="JavaScript1.2" src="<%=basePath%>scripts/utilities.jsp"></script>
+<script src="<%=basePath%>scripts/utilities.jsp"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/prototype-1.5.1.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/scriptaculous.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/overlibmws.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/ajaxtags-1.2.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/Tooltip-0.6.0.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/lightbox.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script language="JavaScript1.2">
+<script>
 //bugzilla 2445
 var image_path = "images/";
 var image_up = "arrow-up.gif";
@@ -578,7 +578,7 @@ Object.extend(Tooltip, customTooltip);
 <body onload="check_width();focusOnFirstInputField();onLoad()" >
 
 <!-- for optimistic locking-->
-<html:hidden property="lastupdated" name="<%=formName%>" />
+<form:hidden path="lastupdated" name="${form.formName}" />
 	<table cellpadding="0" cellspacing="1" width="100%">
 			<tr>
 				<td class="bre">
@@ -615,7 +615,7 @@ Object.extend(Tooltip, customTooltip);
 
 	</table>
 <%--this is for datagrid--%>
-<script language="JavaScript1.2">
+<script>
 
                if (document.getElementById("innerDiv")) {
                   if (document.getElementById("innerDiv").childNodes[0]) {

@@ -3,33 +3,35 @@
 	import="us.mn.state.health.lims.common.action.IActionConstants,
 			us.mn.state.health.lims.typeofsample.formbean.TypeOfSampleLink" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 
 <table width="100%" border=2">
 	<tr>
 	   <th>
-	     <bean:message key="label.form.select"/>
+	     <spring:message code="label.form.select"/>
 	   </th>
 	   <th><%--bugzilla 1412--%>
-	   	  <bean:message key="typeofsample.test.sample"/>
+	   	  <spring:message code="typeofsample.test.sample"/>
 	   </th>
 	   <th>
-	   	  <bean:message key="typeofsample.panel.name"/>
+	   	  <spring:message code="typeofsample.panel.name"/>
 	   </th>
 	   <th>
-	   	  <bean:message key="typeofsample.panel.description"/>
+	   	  <spring:message code="typeofsample.panel.description"/>
 	   </th>
 	</tr>
-	<logic:iterate id="tos" name="<%=formName%>"  indexId="ctr"  property="menuList" type="TypeOfSampleLink">
+	<logic:iterate id="tos" name="${form.formName}"  indexId="ctr"  property="menuList" type="TypeOfSampleLink">
 	<bean:define id="tosID" name="tos" property="id"/>
 	  <tr>
 	   <td class="textcontent">
-	      <html:multibox name="<%=formName%>" property="selectedIDs">
+	      <html:multibox name="${form.formName}" property="selectedIDs">
 	         <bean:write name="tosID" />
 	      </html:multibox>
    	   </td>

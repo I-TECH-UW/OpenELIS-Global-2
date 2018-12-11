@@ -1,12 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants"%>
 
-<%@ page isELIgnored="false"%>
-
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
 
 <c:set var="success" value="${success}" />
@@ -27,9 +29,9 @@
 					   
 					<%-- <html:button onclick="savePage();"
 						property="save"
-						styleId="saveButtonId"
+						id="saveButtonId"
 						disabled="<%=Boolean.valueOf(saveDisabled).booleanValue()%>">
-						<bean:message key="label.button.save" />
+						<spring:message code="label.button.save" />
 					</html:button> --%>
 				
 				</td>
@@ -41,9 +43,9 @@
 					<%-- <html:button
 						onclick="setMyCancelAction(window.document.forms[0], 'Cancel', 'no', '');"
 						property="cancel"
-						styleId="cancelButtonId"
+						id="cancelButtonId"
 						>
-						<bean:message key="label.button.cancel" />
+						<spring:message code="label.button.cancel" />
 					</html:button> --%>
 				</td>
 			</tr>

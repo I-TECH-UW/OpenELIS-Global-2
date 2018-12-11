@@ -5,19 +5,18 @@
                  us.mn.state.health.lims.patient.action.bean.PatientManagementInfo,
                  us.mn.state.health.lims.common.util.*" %>
 
-<%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"		prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"		prefix="logic" %>
-<%@ taglib uri="/tags/struts-tiles"		prefix="tiles" %>
-<%@ taglib uri="/tags/struts-nested"	prefix="nested" %>
-<%@ taglib uri="/tags/labdev-view"		prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 
-<bean:define id="formName"		value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
-<bean:define id="patientProperties" name='<%=formName%>' property='patientProperties' type="PatientManagementInfo" />
+		
+<bean:define id="patientProperties" name='${form.formName}' property='patientProperties' type="PatientManagementInfo" />
 
 
 <%!
@@ -235,7 +234,7 @@ function /*void*/ processValidateDateSuccess(xhr) {
 	if (isValid) {
 		updatePatientAge($("dateOfBirthID"));
 	} else if (message == "<%=IActionConstants.INVALID_TO_LARGE%>") {
-		alert('<bean:message key="error.date.birthInPast" />');
+		alert('<spring:message code="error.date.birthInPast" />');
 	}
 	pt_setSave();
 }
@@ -583,7 +582,7 @@ function /*void*/ makeDirty() {
 	}
 	// Adds warning when leaving page if content has been entered into makeDirty form fields
 	function formWarning() { 
-    return "<bean:message key="banner.menu.dataLossWarning"/>";
+    return "<spring:message code="banner.menu.dataLossWarning"/>";
 	}
 	window.onbeforeunload = formWarning;
 }
@@ -686,18 +685,18 @@ function hasIdentifyingInfo() {
 	}
 }
 </script>
-<nested:hidden name='<%=formName%>' property="patientProperties.currentDate" styleId="currentDate"/>
+<nested:hidden name='${form.formName}' property="patientProperties.currentDate" id="currentDate"/>
 
 <div id="PatientPage" style="width:90%;">
-	<nested:hidden property="patientProperties.patientLastUpdated" name='<%=formName%>' styleId="patientLastUpdated" />
-	<nested:hidden property="patientProperties.personLastUpdated" name='<%=formName%>'  styleId="personLastUpdated"/>
+	<nested:hidden property="patientProperties.patientLastUpdated" name='${form.formName}' id="patientLastUpdated" />
+	<nested:hidden property="patientProperties.personLastUpdated" name='${form.formName}'  id="personLastUpdated"/>
 
 	<tiles:insert attribute="patientSearch" />
 
-	<nested:hidden name='<%=formName%>' property="patientProperties.patientProcessingStatus" styleId="processingStatus" value="add" />
-	<nested:hidden name='<%=formName%>' property="patientProperties.patientPK" styleId="patientPK_ID" />
-	<nested:hidden name='<%=formName%>' property="patientProperties.guid" styleId="patientGUID_ID" />
-    <logic:equal value="false" name="<%=formName%>" property="patientProperties.readOnly" >
+	<nested:hidden name='${form.formName}' property="patientProperties.patientProcessingStatus" id="processingStatus" value="add" />
+	<nested:hidden name='${form.formName}' property="patientProperties.patientPK" id="patientPK_ID" />
+	<nested:hidden name='${form.formName}' property="patientProperties.guid" id="patientGUID_ID" />
+    <logic:equal value="false" name="${form.formName}" property="patientProperties.readOnly" >
 	<br/>
 	<div class="patientSearch">
 		<hr style="width:100%" />
@@ -705,12 +704,12 @@ function hasIdentifyingInfo() {
 	</div>
     </logic:equal>
 	<div id="PatientDetail"   >
-	<h3><bean:message key="patient.information"/></h3>
+	<h3><spring:message code="patient.information"/></h3>
 	<table style="width:80%" border="0">
     <tr>
         <% if (!supportSubjectNumber) { %>
         <td>
-            <bean:message key="patient.externalId"/>
+            <spring:message code="patient.externalId"/>
             <% if (patientIDRequired) { %>
             <span class="requiredlabel">*</span>
             <% } %>
@@ -718,13 +717,13 @@ function hasIdentifyingInfo() {
         <%} %>
         <% if (supportSTNumber) { %>
         <td style="text-align:right;">
-            <bean:message key="patient.ST.number"/>:
+            <spring:message code="patient.ST.number"/>:
         </td>
         <td>
-            <nested:text name='<%=formName%>'
+            <nested:text name='${form.formName}'
                          property="patientProperties.STnumber"
                          onchange="validateSubjectNumber(this, 'STnumber');updatePatientEditStatus();"
-                         styleId="ST_ID"
+                         id="ST_ID"
                          styleClass="text"
                          size="60" />
         </td>
@@ -739,16 +738,16 @@ function hasIdentifyingInfo() {
 
         </td>
         <td style="text-align:right;">
-            <bean:message key="patient.subject.number"/>:
+            <spring:message code="patient.subject.number"/>:
             <% if (subjectNumberRequired) { %>
             <span class="requiredlabel">*</span>
             <% } %>
         </td>
         <td>
-            <nested:text name='<%=formName%>'
+            <nested:text name='${form.formName}'
                          property="patientProperties.subjectNumber"
                          onchange="validateSubjectNumber(this, 'subjectNumber');updatePatientEditStatus();"
-                         styleId="subjectNumberID"
+                         id="subjectNumberID"
                          styleClass="text"
                          size="60" />
         </td>
@@ -764,10 +763,10 @@ function hasIdentifyingInfo() {
 
         </td>
         <td >
-            <nested:text name='<%=formName%>'
+            <nested:text name='${form.formName}'
                          property="patientProperties.nationalId"
                          onchange="validateSubjectNumber(this, 'nationalId');updatePatientEditStatus();"
-                         styleId="nationalID"
+                         id="nationalID"
                          styleClass="text"
                          size="60"/>
         </td>
@@ -782,50 +781,50 @@ function hasIdentifyingInfo() {
     <tr class="spacerRow" ><td colspan="2">&nbsp;</td></tr>
 	<tr>
 		<td style="width: 220px">
-			<bean:message key="patient.name" />
+			<spring:message code="patient.name" />
 		</td>
 		<td style="text-align:right;">
-			<bean:message key="patient.epiLastName" />
+			<spring:message code="patient.epiLastName" />
 			:
 			<% if (patientNamesRequired) { %>
 				<span class="requiredlabel">*</span>
 			<% } %>
 		</td>
 		<td >
-			<nested:text name='<%=formName%>'
+			<nested:text name='${form.formName}'
 					  property="patientProperties.lastName"
 					  styleClass="text"
 				      size="60"
 				      onchange="updatePatientEditStatus();"
-				      styleId="lastNameID"/>
+				      id="lastNameID"/>
 		</td>
 		<td style="text-align:right;">
-			<bean:message key="patient.epiFirstName" />
+			<spring:message code="patient.epiFirstName" />
 			:
 			<% if (patientNamesRequired) { %>
 				<span class="requiredlabel">*</span>
 			<% } %>	
 		</td>
 		<td >
-			<nested:text name='<%=formName%>'
+			<nested:text name='${form.formName}'
 					  property="patientProperties.firstName"
 					  styleClass="text"
 					  size="40"
 					  onchange="updatePatientEditStatus();"
-					  styleId="firstNameID"/>
+					  id="firstNameID"/>
 		</td>
 	</tr>
 	<% if (supportAKA) { %>
 	<tr>
 	<td></td>
 	<td style="text-align:right;">
-		<bean:message key="patient.aka"/>
+		<spring:message code="patient.aka"/>
 	</td>
 	<td>
-		<nested:text name='<%=formName%>'
+		<nested:text name='${form.formName}'
 				  property="patientProperties.aka"
 				  onchange="updatePatientEditStatus();"
-				  styleId="akaID"
+				  id="akaID"
 				  styleClass="text"
 				  size="60" />
 	</td>
@@ -836,53 +835,53 @@ function hasIdentifyingInfo() {
 	<table>
 	<tr>
 		<td style="text-align:right;">
-			<bean:message key="patient.birthDate" />&nbsp;<%=DateUtil.getDateUserPrompt()%>:
+			<spring:message code="patient.birthDate" />&nbsp;<%=DateUtil.getDateUserPrompt()%>:
 			<% if (patientAgeRequired) { %>
 				<span class="requiredlabel">*</span>
 			<% } %>
 		</td>
 		<td>
-			<nested:text name='<%=formName%>'
+			<nested:text name='${form.formName}'
 					  property="patientProperties.birthDateForDisplay"
 					  styleClass="text"
 					  size="20"
                       maxlength="10"
                       onkeyup="addDateSlashes(this,event); normalizeDateFormat(this);"
                       onblur="checkValidAgeDate(this); updatePatientEditStatus();"
-					  styleId="dateOfBirthID" />
+					  id="dateOfBirthID" />
 			<div id="patientProperties.birthDateForDisplayMessage" class="blank" ></div>
 		</td>
 		<td style="text-align:right;">
-			<bean:message  key="patient.age" />:
+			<spring:message code="patient.age" />:
 		</td>
 		<td >
             <html:text property="patientProperties.age"
-                       name="<%=formName%>"
+                       name="${form.formName}"
                        size="3"
                        maxlength="3"
                        onchange="handleAgeChange(this); updatePatientEditStatus();"
                        styleClass="text"
-                    styleId="age"/>
+                    id="age"/>
 			<div id="patientProperties.ageMessage" class="blank" ></div>
 		</td>
 		<td style="text-align:right;">
-			<bean:message  key="patient.gender" />:
+			<spring:message code="patient.gender" />:
 			<% if (patientGenderRequired) { %>
 				<span class="requiredlabel">*</span>
 			<% } %>
 		</td>
 		<td>
-            <logic:equal value="false" name="<%=formName%>" property="patientProperties.readOnly" >
-			<nested:select name='<%=formName%>'
+            <logic:equal value="false" name="${form.formName}" property="patientProperties.readOnly" >
+			<nested:select name='${form.formName}'
 						 property="patientProperties.gender"
 						 onchange="updatePatientEditStatus();"
-						 styleId="genderID">
+						 id="genderID">
 				<option value=" " ></option>
-				<nested:optionsCollection name='<%=formName%>' property="patientProperties.genders"   label="value" value="id" />
+				<nested:optionsCollection name='${form.formName}' property="patientProperties.genders"   label="value" value="id" />
 			</nested:select>
             </logic:equal>
-            <logic:equal value="true" name="<%=formName%>" property="patientProperties.readOnly" >
-                <html:text property="patientProperties.gender" name="<%=formName%>" />
+            <logic:equal value="true" name="${form.formName}" property="patientProperties.readOnly" >
+                <html:text property="patientProperties.gender" name="${form.formName}" />
             </logic:equal>
 		</td>
 	</tr>

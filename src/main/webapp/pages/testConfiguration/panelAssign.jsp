@@ -9,10 +9,12 @@
 		         us.mn.state.health.lims.testconfiguration.action.PanelTests,
 		         us.mn.state.health.lims.test.valueholder.Test" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%--
   ~ The contents of this file are subject to the Mozilla Public License
   ~ Version 1.1 (the "License"); you may not use this file except in
@@ -33,8 +35,8 @@
 <script type="text/javascript" src="scripts/jquery-ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>'/>
-<bean:define id="panelList" name='<%=formName%>' property="panelList" type="java.util.List"/>
+ 
+<bean:define id="panelList" name='${form.formName}' property="panelList" type="java.util.List"/>
 
 
 <%!
@@ -72,7 +74,7 @@
 
     function makeDirty(){
         function formWarning(){
-            return "<bean:message key="banner.menu.dataLossWarning"/>";
+            return "<spring:message code="banner.menu.dataLossWarning"/>";
         }
         window.onbeforeunload = formWarning;
     }
@@ -91,7 +93,7 @@
         });
 
         $jq(".selectedTestName").text(input.value);
-        $jq("#action").text('<bean:message key="label.button.edit"/>');
+        $jq("#action").text('<spring:message code="label.button.edit"/>');
         $jq("#fromPanel").text(currentPanel);
         $jq("#testId").val(id);
         $jq("#deactivatePanelId").val(onlyOneTestInPanel ? panelId : "");
@@ -158,13 +160,13 @@
 </script>
 
 <div id="successMsg" style="text-align:center; color:seagreen;  width : 100%;font-size:170%; visibility : <%=((success != null && success) ? "visible" : "hidden") %>" >
-                <bean:message key="save.success"/>
+                <spring:message code="save.success"/>
 </div>
 
-    <bean:define id="selectedPanel" name='<%=formName%>' property="selectedPanel" type="us.mn.state.health.lims.testconfiguration.action.PanelTests"/>
+    <bean:define id="selectedPanel" name='${form.formName}' property="selectedPanel" type="us.mn.state.health.lims.testconfiguration.action.PanelTests"/>
     
-    <html:hidden name="<%=formName%>" property="panelId" styleId="panelId" value="<%=(selectedPanel.getPanelIdValuePair() != null ? selectedPanel.getPanelIdValuePair().getId() : new String()) %>"/>
-    <html:hidden name="<%=formName%>" property="deactivatePanelId" styleId="deactivatePanelId"/>
+    <form:hidden path="panelId" id="panelId" value="<%=(selectedPanel.getPanelIdValuePair() != null ? selectedPanel.getPanelIdValuePair().getId() : new String()) %>"/>
+    <form:hidden path="deactivatePanelId" id="deactivatePanelId"/>
 
     <input type="button" value='<%= StringUtil.getMessageForKey("banner.menu.administration") %>'
            onclick="submitAction('MasterListsPage.do');"
@@ -179,14 +181,14 @@
 <%=StringUtil.getMessageForKey( "configuration.panel.assign" )%>
 <br><br>
 
-    <h1 id="action" ><bean:message key="label.form.select"/></h1>
+    <h1 id="action" ><spring:message code="label.form.select"/></h1>
     <h1 id="action" class="edit-step" style="display: none"></h1>
-    <h2><bean:message key="configuration.panel.assign"/> </h2>
+    <h2><spring:message code="configuration.panel.assign"/> </h2>
 
     <div class="select-step" >
-    Panel:<html:select name='<%= formName %>' property="panelId" 
+    Panel:<html:select name='${form.formName}' property="panelId" 
          onchange="panelSelected(this);" >
-        <app:optionsCollection name="<%=formName%>" property="panelList" label="value" value="id" />
+        <app:optionsCollection name="${form.formName}" property="panelList" label="value" value="id" />
     </html:select>
 <br>
 
@@ -196,12 +198,12 @@
     <div class="edit-step" style="display:none">
 
         Test: <span class="selectedTestName" ></span><br><br>
-        &nbsp;&nbsp;<bean:message key="configuration.panel.assign.new.type" />:&nbsp;
+        &nbsp;&nbsp;<spring:message code="configuration.panel.assign.new.type" />:&nbsp;
 
     <div class="confirmation-step" style="display:none">
-        <br><span class="selectedTestName" ></span>&nbsp;<bean:message key="configuration.testUnit.confirmation.move.phrase" />&nbsp;<span id="fromPanel" ></span> <bean:message key="word.to" /> <span id="toPanel" ></span>.
+        <br><span class="selectedTestName" ></span>&nbsp;<spring:message code="configuration.testUnit.confirmation.move.phrase" />&nbsp;<span id="fromPanel" ></span> <spring:message code="word.to" /> <span id="toPanel" ></span>.
         <div id="deatcitvateWarning" >
-            <br/><span id="warnDeactivtePanel"></span>&nbsp;<bean:message key="configuration.panel.assign.deactivate" />
+            <br/><span id="warnDeactivtePanel"></span>&nbsp;<spring:message code="configuration.panel.assign.deactivate" />
         </div>
     </div>
 

@@ -1,12 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants"%>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/labdev-view" prefix="app"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+ 
 
 <%!String allowEdits = "true";%>
 
@@ -16,62 +18,62 @@
 	}
 %>
 
-<script language="JavaScript1.2">
+<script>
 
 function validateForm(form) {
     return true;
 }
 </script>
-<bean:define id="isParentRoleProperty" name='<%=formName %>' property="isParentRole"  />
+<bean:define id="isParentRoleProperty" name='${form.formName}' property="isParentRole"  />
 <table width="60%">
 	<tr>
 		<td class="label" width="30%">
-			<bean:message key="role.name" />
+			<spring:message code="role.name" />
 			:
 			<span class="requiredlabel">*</span>
 		</td>
 		<td width="70%">
-			<html:text name="<%=formName%>" property="roleName" size="15"/>
+			<form:input path="roleName" size="15"/>
 		</td>
 	</tr>
 	<tr>
 		<td class="label">
-			<bean:message key="role.description" />
+			<spring:message code="role.description" />
 			:
 		</td>
 		<td>
-			<html:text name="<%=formName%>" property="description" size="40" maxlength="40"/>
+			<form:input path="description" size="40" maxlength="40"/>
 		</td>
 	</tr>
 	<tr>
 		<td class="label" >
-			<bean:message key="role.isGroupingRole"/>:
+			<spring:message code="role.isGroupingRole"/>:
 		</td>
 		<td>
 
-			<html:checkbox name='<%=formName %>'
+			<html:checkbox name='${form.formName}'
 			               property="isParentRole"
 			               value="isChecked" />
 		</td>
 	</tr>
 	<tr>
 		<td class="label" >
-			<bean:message key="role.parent.role"/>:
+			<spring:message code="role.parent.role"/>:
 		</td>
 		<td>
-			<html:select name="<%=formName%>"
+			<html:select name="${form.formName}"
 						 property="parentRole"
-						 styleId="parentRoleID">
-				<app:optionsCollection name="<%=formName%>" property="parentRoles"   label="name" value="id" />
+						 id="parentRoleID">
+				<app:optionsCollection name="${form.formName}" property="parentRoles"   label="name" value="id" />
 			</html:select>
 	    </td>
 	</tr>
 	<tr>
 		<td class="label" >
-			<bean:message key="role.display.key"/>:
+			<spring:message code="role.display.key"/>:
 		</td>
 		<td>
-			<html:text name="<%=formName %>" property="displayKey" size="40" maxlength="60"/>
+			<form:input path="displayKey" size="40" maxlength="60"/>
 		</td>
 	</tr>
 	<tr>

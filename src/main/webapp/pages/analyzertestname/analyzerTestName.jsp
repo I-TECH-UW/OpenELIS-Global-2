@@ -4,16 +4,18 @@
 	us.mn.state.health.lims.analyzer.valueholder.Analyzer,
 	us.mn.state.health.lims.test.valueholder.Test" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/labdev-view" prefix="app"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
-<bean:define id="analyzerList" name="<%=formName%>" property="analyzerList" type="java.util.List<Analyzer>" />
-<bean:define id="analyzerName" name="<%=formName%>" property="analyzerId" />
-<bean:define id="testList" name="<%=formName%>" property="testList" type="java.util.List<Test>" />
-<bean:define id="testName" name="<%=formName%>" property="testId" />
+ 
+<bean:define id="analyzerList" name="${form.formName}" property="analyzerList" type="java.util.List<Analyzer>" />
+<bean:define id="analyzerName" name="${form.formName}" property="analyzerId" />
+<bean:define id="testList" name="${form.formName}" property="testList" type="java.util.List<Test>" />
+<bean:define id="testName" name="${form.formName}" property="testId" />
 
 <%!String allowEdits = "true";%>
 
@@ -24,7 +26,7 @@
 %>
 
 
-<script language="JavaScript1.2">
+<script>
 
 	$jq(document).ready( function() {
 		$jq("#analyzerIdHidden").val($jq("#analyzerId").val());
@@ -52,11 +54,11 @@ function validateForm(form) {
 </script>
 <div style="border: 1px solid;width:40%">
 	<br>
-	<span style="width:40%;float:left;padding-left: 4px;" ><bean:message key="analyzer.label" />
+	<span style="width:40%;float:left;padding-left: 4px;" ><spring:message code="analyzer.label" />
 			:
 			<span class="requiredlabel">*</span>
 	</span>
-	<html:hidden name="<%=formName%>" property="analyzerId" styleId="analyzerIdHidden" />
+	<form:hidden path="analyzerId" id="analyzerIdHidden" />
 	<select id="analyzerId" onchange="copyToHiddenAnalyzer(this);" >
 		<option value="0"></option>
 		<% for( Analyzer analyzer : analyzerList ){%>
@@ -64,18 +66,18 @@ function validateForm(form) {
 		<% } %>
 	</select><br><br>
 	<span style="width:40%;float:left;padding-left: 4px;" >
-		<bean:message key="analyzer.test.name" />:
+		<spring:message code="analyzer.test.name" />:
 		<span class="requiredlabel">*</span>
 	</span>
-	<html:text name='<%=formName%>' property="analyzerTestName" styleId="analyzerTestNameId" /><br>&nbsp;
+	<form:input path="analyzerTestName" id="analyzerTestNameId" /><br>&nbsp;
 </div>
 <br>
 <div style="width:40%">
 	<span style="width:40%;float:left;padding-left: 4px;" >
-		<bean:message key="analyzer.test.actual.name" />:
+		<spring:message code="analyzer.test.actual.name" />:
 			<span class="requiredlabel">*</span>
 	</span>
-<html:select name="<%=formName%>" property="testId" styleId="testId" >
+<html:select name="${form.formName}" property="testId" id="testId" >
 	<html:option value="0">&nbsp;</html:option>
 	<% for( Test test : testList ){%>
 	<option value="<%=test.getId() %>" <%= test.getName().equals(testName) ? "selected='selected'" : "" %> ><%=test.getName()%></option>

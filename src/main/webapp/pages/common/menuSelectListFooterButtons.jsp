@@ -3,10 +3,12 @@
 	import="us.mn.state.health.lims.common.action.IActionConstants"
 %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%--bugzilla 1908 changed some disabled values for Vietnam tomcat/linux--%>
 
 
@@ -27,7 +29,7 @@
         %>
 	   <td >
   			<html:button onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?paging=1');return false;" property="previous" disabled="<%=Boolean.valueOf(previousDisabled).booleanValue()%>">
-  			   <bean:message key="label.button.previous"/>
+  			   <spring:message code="label.button.previous"/>
   			</html:button>
 	   </td>
 	   <td>
@@ -35,7 +37,7 @@
 	   </td>
 	   <td>
   			<html:button onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?paging=2');return false;" property="next"  disabled="<%=Boolean.valueOf(nextDisabled).booleanValue()%>">
-  			   <bean:message key="label.button.next"/>
+  			   <spring:message code="label.button.next"/>
   			</html:button>
 	   </td>
 	   <%--td removed 02/27/2006 not needed>
@@ -43,7 +45,7 @@
 	   </td>
 	  <td>
   			<html:button onclick="setMenuAction(this, window.document.forms[0], 'Cancel', 'no', '');" property="cancel" >
-  			   <bean:message key="label.button.cancel"/>
+  			   <spring:message code="label.button.cancel"/>
   			</html:button>
 	    </td>
 	    </tr--%>

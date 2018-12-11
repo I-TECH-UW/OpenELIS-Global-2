@@ -15,10 +15,12 @@
 <%@ page
 	import="us.mn.state.health.lims.testconfiguration.beans.ResultLimitBean"%>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/labdev-view" prefix="app"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%--
   ~ The contents of this file are subject to the Mozilla Public License
   ~ Version 1.1 (the "License"); you may not use this file except in
@@ -63,29 +65,29 @@
 <script type="text/javascript"
 	src="scripts/ajaxCalls.js?ver=<%=Versioning.getBuildNumber()%>"></script>
 
-<bean:define id="formName"
-	value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
-<bean:define id="testList" name='<%=formName%>' property="testList"
+
+	
+<bean:define id="testList" name='${form.formName}' property="testList"
 	type="java.util.List<IdValuePair>" />
 
-<bean:define id="sampleTypeList" name='<%=formName%>'
+<bean:define id="sampleTypeList" name='${form.formName}'
 	property="sampleTypeList" type="java.util.List<IdValuePair>" />
-<bean:define id="panelList" name='<%=formName%>' property="panelList"
+<bean:define id="panelList" name='${form.formName}' property="panelList"
 	type="java.util.List<IdValuePair>" />
-<bean:define id="uomList" name='<%=formName%>' property="uomList"
+<bean:define id="uomList" name='${form.formName}' property="uomList"
 	type="java.util.List<IdValuePair>" />
-<bean:define id="resultTypeList" name='<%=formName%>'
+<bean:define id="resultTypeList" name='${form.formName}'
 	property="resultTypeList" type="java.util.List<IdValuePair>" />
-<bean:define id="testUnitList" name='<%=formName%>'
+<bean:define id="testUnitList" name='${form.formName}'
 	property="labUnitList" type="java.util.List<IdValuePair>" />
-<bean:define id="ageRangeList" name='<%=formName%>'
+<bean:define id="ageRangeList" name='${form.formName}'
 	property="ageRangeList" type="java.util.List<IdValuePair>" />
-<bean:define id="dictionaryList" name='<%=formName%>'
+<bean:define id="dictionaryList" name='${form.formName}'
 	property="dictionaryList" type="java.util.List<IdValuePair>" />
-<bean:define id="groupedDictionaryList" name='<%=formName%>'
+<bean:define id="groupedDictionaryList" name='${form.formName}'
 	property="groupedDictionaryList"
 	type="java.util.List<java.util.List<IdValuePair>>" />
-<bean:define id="testCatBeanList" name='<%=formName%>'
+<bean:define id="testCatBeanList" name='${form.formName}'
 	property="testCatBeanList" type="List<TestCatalogBean>" />
 
 
@@ -106,7 +108,7 @@
     
     function makeDirty(){
         function formWarning(){
-            return "<bean:message key="banner.menu.dataLossWarning"/>";
+            return "<spring:message code="banner.menu.dataLossWarning"/>";
         }
         window.onbeforeunload = formWarning;
     }
@@ -1149,7 +1151,7 @@
             $jq(".ui-state-default_oe-tag").addClass("ui-state-default_oe");
             $jq(".sortable").sortable("enable");
         }
-        $jq("#sortTitleDiv").text('<bean:message key="label.test.display.order"/>');
+        $jq("#sortTitleDiv").text('<spring:message code="label.test.display.order"/>');
         $jq("#dictionaryVerifyId").hide();
         $jq(".notStep1BreadCrumb").hide();
 
@@ -1169,7 +1171,7 @@
             $jq(".ui-state-default_oe-tag").addClass("ui-state-default_oe");
             $jq(".sortable").sortable("enable");
         }
-        $jq("#sortTitleDiv").text('<bean:message key="label.test.display.order"/>');
+        $jq("#sortTitleDiv").text('<spring:message code="label.test.display.order"/>');
         clearDictionaryLists();
 
         $jq("#sampleTypeSelectionDiv").show();
@@ -1505,7 +1507,7 @@
 
 </script>
 
-	<html:hidden styleId="jsonWad" name='<%=formName%>' property="jsonWad" />
+	<html:hidden id="jsonWad" name='${form.formName}' property="jsonWad" />
 
 	<input type="button"
 		value="<%=StringUtil.getMessageForKey("banner.menu.administration")%>"
@@ -1513,8 +1515,7 @@
 	&rarr; <input type="button"
 		value="<%=StringUtil.getMessageForKey("configuration.test.management")%>"
 		onclick="submitAction('TestManagementConfigMenu.do');"
-		class="textButton" />&rarr; <span class="step1"> <bean:message
-			key="configuration.test.modify" />
+		class="textButton" />&rarr; <span class="step1"> <spring:message code="configuration.test.modify" />
 	</span> <span class="step2 notStep1BreadCrumb" id="step2BreadCrumb"
 		style="display: none"> <input type="button"
 		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
@@ -1526,24 +1527,21 @@
 		onclick="goBackToStep1();" class="textButton" />&rarr; <input
 		type="button"
 		value="<%=StringUtil.getMessageForKey("label.selectSampleType")%>"
-		onclick="goBackToStep2();" class="textButton" />&rarr; <bean:message
-			key="label.confirmation" />
+		onclick="goBackToStep2();" class="textButton" />&rarr; <spring:message code="label.confirmation" />
 	</span> <span class="dictionarySelect notStep1BreadCrumb"
 		style="display: none"> <input type="button"
 		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
 		onclick="goBackToStep1();" class="textButton" />&rarr; <input
 		type="button"
 		value="<%=StringUtil.getMessageForKey("label.selectSampleType")%>"
-		onclick="goBackToStep2();" class="textButton" />&rarr; <bean:message
-			key="label.select.list.values" />
+		onclick="goBackToStep2();" class="textButton" />&rarr; <spring:message code="label.select.list.values" />
 	</span> <span class="resultLimits notStep1BreadCrumb" style="display: none">
 		<input type="button"
 		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
 		onclick="goBackToStep1();" class="textButton" />&rarr; <input
 		type="button"
 		value="<%=StringUtil.getMessageForKey("label.selectSampleType")%>"
-		onclick="goBackToStep2();" class="textButton" />&rarr; <bean:message
-			key="label.set.result.limits" />
+		onclick="goBackToStep2();" class="textButton" />&rarr; <spring:message code="label.set.result.limits" />
 	</span> <span
 		class="selectListConfirm confirmationBreadCrumb notStep1BreadCrumb"
 		style="display: none"> <input type="button"
@@ -1554,8 +1552,7 @@
 		onclick="goBackToStep2();" class="textButton" />&rarr; <input
 		type="button"
 		value="<%=StringUtil.getMessageForKey("label.select.list.values")%>"
-		onclick="goBackToStep3Dictionary();" class="textButton" />&rarr; <bean:message
-			key="label.confirmation" />
+		onclick="goBackToStep3Dictionary();" class="textButton" />&rarr; <spring:message code="label.confirmation" />
 	</span> <span class="resultLimitsConfirm confirmationBreadCrumb"
 		style="display: none"> <input type="button"
 		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
@@ -1565,15 +1562,14 @@
 		onclick="goBackToStep2();" class="textButton" />&rarr; <input
 		type="button"
 		value="<%=StringUtil.getMessageForKey("label.set.result.limits")%>"
-		onclick="goBackToResultLimits();" class="textButton" />&rarr; <bean:message
-			key="label.confirmation" />
+		onclick="goBackToResultLimits();" class="textButton" />&rarr; <spring:message code="label.confirmation" />
 	</span>
 
-	<html:hidden property="testId" name="<%=formName%>" styleId="testId" />
+	<form:hidden path="testId" name="${form.formName}" id="testId" />
 
 	<div id="catDiv" style="display: none">
 		<h1 id="action">
-			<bean:message key="label.button.edit" />
+			<spring:message code="label.button.edit" />
 		</h1>
 
 		<h2><%=StringUtil.getMessageForKey("sample.entry.test")%>:<span
@@ -1600,10 +1596,8 @@
 				class='resultClass'>
 				
 				<tr>
-					<td colspan="2"><span class="catalog-label"><bean:message
-								key="configuration.test.catalog.name" /></span></td>
-					<td colspan="2"><span class="catalog-label"><bean:message
-								key="configuration.test.catalog.report.name" /></span></td>
+					<td colspan="2"><span class="catalog-label"><spring:message code="configuration.test.catalog.name" /></span></td>
+					<td colspan="2"><span class="catalog-label"><spring:message code="configuration.test.catalog.report.name" /></span></td>
 				</tr>
 				<tr>
 					<td width="25%"><span class="catalog-label">En.</span> <b><%=bean.getEnglishName()%></b>
@@ -1620,23 +1614,16 @@
 					<td><b><%=bean.getOrderable()%></b></td>
 				</tr>
 				<tr>
-					<td><span class="catalog-label"><bean:message
-								key="label.test.unit" /></span> <b><%=bean.getTestUnit()%></b></td>
-					<td><span class="catalog-label"><bean:message
-								key="label.sample.types" /></span> <b><%=bean.getSampleType()%></b></td>
-					<td><span class="catalog-label"><bean:message
-								key="label.panel" /></span> <b><%=bean.getPanel()%></b></td>
-					<td><span class="catalog-label"><bean:message
-								key="label.result.type" /></span> <b><%=bean.getResultType()%></b></td>
+					<td><span class="catalog-label"><spring:message code="label.test.unit" /></span> <b><%=bean.getTestUnit()%></b></td>
+					<td><span class="catalog-label"><spring:message code="label.sample.types" /></span> <b><%=bean.getSampleType()%></b></td>
+					<td><span class="catalog-label"><spring:message code="label.panel" /></span> <b><%=bean.getPanel()%></b></td>
+					<td><span class="catalog-label"><spring:message code="label.result.type" /></span> <b><%=bean.getResultType()%></b></td>
 				</tr>
 				<tr>
-					<td><span class="catalog-label"><bean:message
-								key="label.uom" /></span> <b><%=bean.getUom()%></b></td>
-					<td><span class="catalog-label"><bean:message
-								key="label.significant.digits" /></span> <b><%=bean.getSignificantDigits()%></b>
+					<td><span class="catalog-label"><spring:message code="label.uom" /></span> <b><%=bean.getUom()%></b></td>
+					<td><span class="catalog-label"><spring:message code="label.significant.digits" /></span> <b><%=bean.getSignificantDigits()%></b>
 					</td>
-					<td><span class="catalog-label"><bean:message
-								key="label.loinc" /></span> <b><%=bean.getLoinc()%></b></td>
+					<td><span class="catalog-label"><spring:message code="label.loinc" /></span> <b><%=bean.getLoinc()%></b></td>
 				</tr>
 
 				<%
@@ -1648,8 +1635,7 @@
 					<td>
 						<%
 							if (top) {
-						%><span class="catalog-label"><bean:message
-								key="configuration.test.catalog.select.values" /></span> <%
+						%><span class="catalog-label"><spring:message code="configuration.test.catalog.select.values" /></span> <%
  	}
  %>
 					</td>
@@ -1658,8 +1644,7 @@
 						<%
 							if (top) {
 											top = false;
-						%><span class="catalog-label"><bean:message
-								key="configuration.test.catalog.reference.value" /></span> <b><%=bean.getReferenceValue()%></b>
+						%><span class="catalog-label"><spring:message code="configuration.test.catalog.reference.value" /></span> <b><%=bean.getReferenceValue()%></b>
 					</td>
 					<%
 						}
@@ -1673,18 +1658,13 @@
 						 String limitArray = null;
 				%>
 				<tr>
-					<td colspan="5" align="center"><span class="catalog-label"><bean:message
-								key="configuration.test.catalog.result.limits" /></span></td>
+					<td colspan="5" align="center"><span class="catalog-label"><spring:message code="configuration.test.catalog.result.limits" /></span></td>
 				</tr>
 				<tr>
-					<td><span class="catalog-label"><bean:message
-								key="label.sex" /></span></td>
-					<td><span class="catalog-label"><bean:message
-								key="configuration.test.catalog.age.range.months" /></span></td>
-					<td><span class="catalog-label"><bean:message
-								key="configuration.test.catalog.normal.range" /></span></td>
-					<td><span class="catalog-label"><bean:message
-								key="configuration.test.catalog.valid.range" /></span></td>
+					<td><span class="catalog-label"><spring:message code="label.sex" /></span></td>
+					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.age.range.months" /></span></td>
+					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.normal.range" /></span></td>
+					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.valid.range" /></span></td>
 				</tr>
 				<%
 					String fLimitString = "";
@@ -1729,24 +1709,21 @@
 		onclick="goBackToStep1();" class="textButton" />&rarr; <input
 		type="button"
 		value="<%=StringUtil.getMessageForKey("label.selectSampleType")%>"
-		onclick="goBackToStep2();" class="textButton" />&rarr; <bean:message
-			key="label.confirmation" />
+		onclick="goBackToStep2();" class="textButton" />&rarr; <spring:message code="label.confirmation" />
 	</span> <span class="dictionarySelect notStep1BreadCrumb"
 		style="display: none"> <input type="button"
 		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
 		onclick="goBackToStep1();" class="textButton" />&rarr; <input
 		type="button"
 		value="<%=StringUtil.getMessageForKey("label.selectSampleType")%>"
-		onclick="goBackToStep2();" class="textButton" />&rarr; <bean:message
-			key="label.select.list.values" />
+		onclick="goBackToStep2();" class="textButton" />&rarr; <spring:message code="label.select.list.values" />
 	</span> <span class="resultLimits notStep1BreadCrumb" style="display: none">
 		<input type="button"
 		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
 		onclick="goBackToStep1();" class="textButton" />&rarr; <input
 		type="button"
 		value="<%=StringUtil.getMessageForKey("label.selectSampleType")%>"
-		onclick="goBackToStep2();" class="textButton" />&rarr; <bean:message
-			key="label.set.result.limits" />
+		onclick="goBackToStep2();" class="textButton" />&rarr; <spring:message code="label.set.result.limits" />
 	</span> <span
 		class="selectListConfirm confirmationBreadCrumb notStep1BreadCrumb"
 		style="display: none"> <input type="button"
@@ -1757,8 +1734,7 @@
 		onclick="goBackToStep2();" class="textButton" />&rarr; <input
 		type="button"
 		value="<%=StringUtil.getMessageForKey("label.select.list.values")%>"
-		onclick="goBackToStep3Dictionary();" class="textButton" />&rarr; <bean:message
-			key="label.confirmation" />
+		onclick="goBackToStep3Dictionary();" class="textButton" />&rarr; <spring:message code="label.confirmation" />
 	</span> <span class="resultLimitsConfirm confirmationBreadCrumb"
 		style="display: none"> <input type="button"
 		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
@@ -1768,34 +1744,28 @@
 		onclick="goBackToStep2();" class="textButton" />&rarr; <input
 		type="button"
 		value="<%=StringUtil.getMessageForKey("label.set.result.limits")%>"
-		onclick="goBackToResultLimits();" class="textButton" />&rarr; <bean:message
-			key="label.confirmation" />
+		onclick="goBackToResultLimits();" class="textButton" />&rarr; <spring:message code="label.confirmation" />
 	</span>
 
 
 	<h3>
-		<bean:message key="configuration.test.modify" />
+		<spring:message code="configuration.test.modify" />
 	</h3>
 
 	<input type="checkbox" onchange="guideSelection(this)">
-	<bean:message key="label.show.guide" />
+	<spring:message code="label.show.guide" />
 	<br />
 	<br />
 
 	<div id="guide" style="display: none">
 		<span class="requiredlabel">*</span>
-		<bean:message key="label.required.field" />
+		<spring:message code="label.required.field" />
 		<br />
-		<br /> <span class="step1"> <bean:message
-				key="configuration.test.modify.guide.test" />
-		</span> <span class="step2" id="step2Guide" style="display: none"> <bean:message
-				key="configuration.test.modify.guide.sample.type" />
-		</span> <span class="dictionarySelect" style="display: none"> <bean:message
-				key="configuration.test.modify.guide.select.list" />
-		</span> <span class="resultLimits" style="display: none;"> <bean:message
-				key="configuration.test.modify.guide.result.limits" />
-		</span> <span class="confirmShow" style="display: none"> <bean:message
-				key="configuration.test.modify.guide.verify" />
+		<br /> <span class="step1"> <spring:message code="configuration.test.modify.guide.test" />
+		</span> <span class="step2" id="step2Guide" style="display: none"> <spring:message code="configuration.test.modify.guide.sample.type" />
+		</span> <span class="dictionarySelect" style="display: none"> <spring:message code="configuration.test.modify.guide.select.list" />
+		</span> <span class="resultLimits" style="display: none;"> <spring:message code="configuration.test.modify.guide.result.limits" />
+		</span> <span class="confirmShow" style="display: none"> <spring:message code="configuration.test.modify.guide.verify" />
 		</span> <br />
 		<hr />
 	</div>
@@ -1806,18 +1776,16 @@
 				<td width="25%">
 					<table>
 						<tr>
-							<td colspan="2"><bean:message key="test.testName" /><span
+							<td colspan="2"><spring:message code="test.testName" /><span
 								class="requiredlabel">*</span></td>
 						</tr>
 						<tr>
-							<td width="25%" align="right"><bean:message
-									key="label.english" /></td>
+							<td width="25%" align="right"><spring:message code="label.english" /></td>
 							<td width="75%"><input type="text" id="testNameEnglish"
 								class="required" onchange="checkReadyForNextStep()" /></td>
 						</tr>
 						<tr>
-							<td width="25%" align="right"><bean:message
-									key="label.french" /></td>
+							<td width="25%" align="right"><spring:message code="label.french" /></td>
 							<td width="75%"><input type="text" id="testNameFrench"
 								class="required" onchange="checkReadyForNextStep()" /></td>
 						</tr>
@@ -1825,7 +1793,7 @@
 							<td>&nbsp;</td>
 						</tr>
 						<tr>
-							<td colspan="2"><bean:message key="test.testName.reporting" /><span
+							<td colspan="2"><spring:message code="test.testName.reporting" /><span
 								class="requiredlabel">*</span></td>
 						</tr>
 						<tr>
@@ -1835,23 +1803,20 @@
 								value='<%=StringUtil.getMessageForKey("test.add.copy.name")%>'></td>
 						</tr>
 						<tr>
-							<td width="25%" align="right"><bean:message
-									key="label.english" /></td>
+							<td width="25%" align="right"><spring:message code="label.english" /></td>
 							<td width="75%"><input type="text"
 								id="testReportNameEnglish" class="required"
 								onchange="checkReadyForNextStep()" /></td>
 						</tr>
 						<tr>
-							<td width="25%" align="right"><bean:message
-									key="label.french" /></td>
+							<td width="25%" align="right"><spring:message code="label.french" /></td>
 							<td width="75%"><input type="text" id="testReportNameFrench"
 								class="required" onchange="checkReadyForNextStep()" /></td>
 						</tr>
 					</table>
 				</td>
 
-				<td width="25%" style="vertical-align: top; padding: 4px"><bean:message
-						key="test.testSectionName" /><span class="requiredlabel">*</span><br />
+				<td width="25%" style="vertical-align: top; padding: 4px"><spring:message code="test.testSectionName" /><span class="requiredlabel">*</span><br />
 					<select id="testUnitSelection" class="required"
 					onchange="checkReadyForNextStep()">
 						<option value="0"></option>
@@ -1867,13 +1832,12 @@
 				<br />
 				<br />
 				<br />
-				<br /> <bean:message key="label.loinc" /><br />
+				<br /> <spring:message code="label.loinc" /><br />
 					<input type="text" id="loinc"
 					onchange="checkReadyForNextStep()" /></td>
 
 				<td width="25%" style="vertical-align: top; padding: 4px"
-					id="panelSelectionCell"><bean:message
-						key="typeofsample.panel.panel" /><br /> <select
+					id="panelSelectionCell"><spring:message code="typeofsample.panel.panel" /><br /> <select
 					id="panelSelection" name="panelSelection" multiple="multiple" title="Multiple">
 					
 					 <%
@@ -1887,7 +1851,7 @@
 					   
 				</select><br />
 				<br />
-				<br /> <bean:message key="label.unitofmeasure" /><br /> <select
+				<br /> <spring:message code="label.unitofmeasure" /><br /> <select
 					id="uomSelection">
 						<option value='0'></option>
 						<%
@@ -1899,8 +1863,7 @@
 							}
 						%>
 				</select></td>
-				<td width="25%" style="vertical-align: top; padding: 4px"><bean:message
-						key="result.resultType" /><span class="requiredlabel">*</span><br />
+				<td width="25%" style="vertical-align: top; padding: 4px"><spring:message code="result.resultType" /><span class="requiredlabel">*</span><br />
 					<select id="resultTypeSelection" class="required"
 					onchange="checkReadyForNextStep()">
 						<option value="0"></option>
@@ -1916,10 +1879,8 @@
 				<br />
 				<br />
 				<br />
-				<br /> <label for="orderable"><bean:message
-							key="test.isActive" /></label> <input type="checkbox" id="active"
-					checked="checked" /><br /> <label for="orderable"><bean:message
-							key="label.orderable" /></label> <input type="checkbox" id="orderable"
+				<br /> <label for="orderable"><spring:message code="test.isActive" /></label> <input type="checkbox" id="active"
+					checked="checked" /><br /> <label for="orderable"><spring:message code="label.orderable" /></label> <input type="checkbox" id="orderable"
 					checked="checked" /></td>
 			</tr>
 		</table>
@@ -1927,47 +1888,45 @@
 	<div id="sampleTypeContainer" class="step2"
 		style="width: 100%; overflow: hidden; display: none">
 		<div style="float: left; width: 20%;">
-			<bean:message key="test.testName" />
-			<br /> <span class="tab"><bean:message key="label.english" />:
-				<span id="testNameEnglishRO"></span></span><br /> <span class="tab"><bean:message
-					key="label.french" />: <span id="testNameFrenchRO"></span></span><br /> <br />
-			<bean:message key="test.testName.reporting" />
-			<br /> <span class="tab"><bean:message key="label.english" />:
-				<span id="testReportNameEnglishRO"></span></span><br /> <span class="tab"><bean:message
-					key="label.french" />: <span id="testReportNameFrenchRO"></span></span><br />
+			<spring:message code="test.testName" />
+			<br /> <span class="tab"><spring:message code="label.english" />:
+				<span id="testNameEnglishRO"></span></span><br /> <span class="tab"><spring:message code="label.french" />: <span id="testNameFrenchRO"></span></span><br /> <br />
+			<spring:message code="test.testName.reporting" />
+			<br /> <span class="tab"><spring:message code="label.english" />:
+				<span id="testReportNameEnglishRO"></span></span><br /> <span class="tab"><spring:message code="label.french" />: <span id="testReportNameFrenchRO"></span></span><br />
 			<br />
-			<bean:message key="test.testSectionName" />
+			<spring:message code="test.testSectionName" />
 			<div id="testSectionRO" class="tab"></div>
 			<br />
-			<bean:message key="typeofsample.panel.panel" />
+			<spring:message code="typeofsample.panel.panel" />
 			<div class="tab" id="panelRO">
-				<bean:message key="label.none" />
+				<spring:message code="label.none" />
 			</div>
 			<br />
-			<bean:message key="label.unitofmeasure" />
+			<spring:message code="label.unitofmeasure" />
 			<div class="tab" id="uomRO">
-				<bean:message key="label.none" />
+				<spring:message code="label.none" />
 			</div>
 			<br />
-			<bean:message key="label.loinc" />
+			<spring:message code="label.loinc" />
 			<div class="tab" id="loincRO">
-				<bean:message key="label.none" />
+				<spring:message code="label.none" />
 			</div>
 			<br />
-			<bean:message key="result.resultType" />
+			<spring:message code="result.resultType" />
 			<div class="tab" id="resultTypeRO"></div>
 			<br />
-			<bean:message key="test.isActive" />
+			<spring:message code="test.isActive" />
 			<div class="tab" id="activeRO"></div>
 			<br />
-			<bean:message key="label.orderable" />
+			<spring:message code="label.orderable" />
 			<div class="tab" id="orderableRO"></div>
 			<br />
 		</div>
 		<div class="step2" style="float: right; width: 80%; display: none">
 			<div id="sampleTypeSelectionDiv" class="step2"
 				style="float: left; width: 20%;">
-				<bean:message key="label.sampleType" />
+				<spring:message code="label.sampleType" />
 				<span class="requiredlabel">*</span> <select
 					id="sampleTypeSelection" class="required" multiple="multiple"
 					title="Multiple">
@@ -1983,7 +1942,7 @@
 			</div>
 			<div id="testDisplayOrderDiv" style="float: left; width: 80%;">
 				<div id="sortTitleDiv" align="center">
-					<bean:message key="label.test.display.order" />
+					<spring:message code="label.test.display.order" />
 				</div>
 				<div id="endOrderMarker"></div>
 				
@@ -1992,7 +1951,7 @@
 				<div class="dictionarySelect dictionaryMultiSelect"
 					id="dictionarySelectId"
 					style="padding: 10px; float: left; width: 280px; display: none; overflow: hidden">
-					<bean:message key="label.select.list.options" />
+					<spring:message code="label.select.list.options" />
 					<span class="requiredlabel">*</span><br /> <select
 						id="dictionarySelection" class="required" multiple="multiple"
 						title="Multiple">
@@ -2010,18 +1969,17 @@
 				</div>
 				<div id="dictionaryVerifyId"
 					style="padding: 10px; float: left; width: 280px; display: none; overflow: hidden;">
-					<span><span class="half-tab"><bean:message
-								key="label.select.list" /></span><br />
+					<span><span class="half-tab"><spring:message code="label.select.list" /></span><br />
 						<ul id="dictionaryVerifyListId">
 
-						</ul> </span> <span><bean:message key="label.reference.value" /><br>
+						</ul> </span> <span><spring:message code="label.reference.value" /><br>
 					<ul>
 							<li id="referenceValue"></li>
 						</ul></span>
 				</div>
 				<div id="sortDictionaryDiv" align="center" class="dictionarySelect"
 					style="padding: 10px; float: left; width: 33%; display: none;">
-					<bean:message key="label.result.order" />
+					<spring:message code="label.result.order" />
 					<span id="dictionarySortSpan" align="left">
 						<UL id="dictionaryNameSortUI">
 
@@ -2031,7 +1989,7 @@
 				<div class="dictionarySelect"
 					style="padding: 10px; float: left; width: 280px; display: none">
 					<div id="dictionaryReference">
-						<bean:message key="label.reference.value" />
+						<spring:message code="label.reference.value" />
 						<br /> <select id='referenceSelection'>
 							<option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
 						</select>
@@ -2039,7 +1997,7 @@
 					<br>
 
 					<div id="dictionaryQualify" class="dictionaryMultiSelect">
-						<bean:message key="label.qualifiers" />
+						<spring:message code="label.qualifiers" />
 						<br /> <select id='qualifierSelection' multiple='multiple'
 							title='Multiple'></select>
 					</div>
@@ -2058,7 +2016,7 @@
 	<div id="dictionaryExistingGroups" class="dictionarySelect"
 		style="display: none; width: 100%">
 		<div style="width: 100%; text-align: center;">
-			<bean:message key="label.existing.test.sets" />
+			<spring:message code="label.existing.test.sets" />
 		</div>
 		<hr>
 		<table>
@@ -2123,17 +2081,17 @@
 					id="genderCheck_index" type="checkbox"
 					onchange="genderMatersForRange(this.checked, 'index')"></td>
 				<td><span class="sexRange_index" style="display: none">
-						<bean:message key="sex.male" />
+						<spring:message code="sex.male" />
 				</span></td>
 				<td><input class="yearMonthSelect_index" type="radio"
 					name="time_index"
 					value="<%=StringUtil.getMessageForKey("abbreviation.year.single")%>"
 					onchange="upperAgeRangeChanged( 'index' )" checked>
-				<bean:message key="abbreviation.year.single" /> <input
+				<spring:message code="abbreviation.year.single" /> <input
 					class="yearMonthSelect_index" type="radio" name="time_index"
 					value="<%=StringUtil.getMessageForKey("abbreviation.month.single")%>"
 					onchange="upperAgeRangeChanged( 'index' )">
-				<bean:message key="abbreviation.month.single" />&nbsp;</td>
+				<spring:message code="abbreviation.month.single" />&nbsp;</td>
 				<td id="lowerAge_index">0</td>
 				<td><input type="text" id="upperAgeSetter_index"
 					value="Infinity" size="10"
@@ -2167,7 +2125,7 @@
 			</tr>
 			<tr class="sexRange_index row_index createdFromTemplate">
 				<td></td>
-				<td><bean:message key="sex.female" /></td>
+				<td><spring:message code="sex.female" /></td>
 				<td></td>
 				<td></td>
 				<td></td>
@@ -2193,42 +2151,37 @@
 	</div>
 	<div id="normalRangeDiv" style="display: none;">
 		<h3>
-			<bean:message key="configuration.test.catalog.normal.range" />
+			<spring:message code="configuration.test.catalog.normal.range" />
 		</h3>
 		<table style="display: inline-table">
 			<tr>
 				<th></th>
-				<th colspan="8"><bean:message
-						key="configuration.test.catalog.normal.range" /></th>
-				<th colspan="2"><bean:message
-						key="configuration.test.catalog.valid.range" /></th>
+				<th colspan="8"><spring:message code="configuration.test.catalog.normal.range" /></th>
+				<th colspan="2"><spring:message code="configuration.test.catalog.valid.range" /></th>
 				<th></th>
 			</tr>
 			<tr>
-				<td><bean:message key="label.sex.dependent" /></td>
-				<td><span class="sexRange" style="display: none"><bean:message
-							key="label.sex" /> </span></td>
-				<td colspan="4" align="center"><bean:message
-						key="label.age.range" /></td>
-				<td colspan="2" align="center"><bean:message key="label.range" /></td>
-				<td align="center"><bean:message key="label.reporting.range" /></td>
+				<td><spring:message code="label.sex.dependent" /></td>
+				<td><span class="sexRange" style="display: none"><spring:message code="label.sex" /> </span></td>
+				<td colspan="4" align="center"><spring:message code="label.age.range" /></td>
+				<td colspan="2" align="center"><spring:message code="label.range" /></td>
+				<td align="center"><spring:message code="label.reporting.range" /></td>
 				<td colspan="2"></td>
 			</tr>
 			<tr class="row_0">
 				<td><input type="hidden" class="rowKey" value="0" /><input
 					id="genderCheck_0" type="checkbox"
 					onchange="genderMatersForRange(this.checked, '0')"></td>
-				<td><span class="sexRange_0" style="display: none"> <bean:message
-							key="sex.male" />
+				<td><span class="sexRange_0" style="display: none"> <spring:message code="sex.male" />
 				</span></td>
 				<td><input class="yearMonthSelect_0" type="radio" name="time_0"
 					value="<%=StringUtil.getMessageForKey("abbreviation.year.single")%>"
 					onchange="upperAgeRangeChanged('0')" checked>
-				<bean:message key="abbreviation.year.single" /> <input
+				<spring:message code="abbreviation.year.single" /> <input
 					class="yearMonthSelect_0" type="radio" name="time_0"
 					value="<%=StringUtil.getMessageForKey("abbreviation.month.single")%>"
 					onchange="upperAgeRangeChanged('0')">
-				<bean:message key="abbreviation.month.single" />&nbsp;</td>
+				<spring:message code="abbreviation.month.single" />&nbsp;</td>
 				<td id="lowerAge_0">0&nbsp;</td>
 				<td><input type="text" id="upperAgeSetter_0" value="Infinity"
 					size="10" onchange="upperAgeRangeChanged('0')"><span
@@ -2259,7 +2212,7 @@
 			</tr>
 			<tr class="sexRange_0 row_0" style="display: none">
 				<td></td>
-				<td><bean:message key="sex.female" /></td>
+				<td><spring:message code="sex.female" /></td>
 				<td></td>
 				<td></td>
 				<td></td>
@@ -2277,8 +2230,7 @@
 			</tr>
 			<tr id="endRow"></tr>
 		</table>
-		<label for="significantDigits"><bean:message
-				key="label.significant.digits" /></label> <input type="number" min="0"
+		<label for="significantDigits"><spring:message code="label.significant.digits" /></label> <input type="number" min="0"
 			max="10" id="significantDigits">
 	</div>
 

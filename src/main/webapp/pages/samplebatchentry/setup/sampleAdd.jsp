@@ -9,13 +9,15 @@
 	        us.mn.state.health.lims.common.util.DateUtil,
 	        us.mn.state.health.lims.common.util.Versioning" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/labdev-view" prefix="app"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
-<bean:define id="entryDate" name="<%=formName%>" property="currentDate" />
+ 
+<bean:define id="entryDate" name="${form.formName}" property="currentDate" />
 
 
 
@@ -177,7 +179,7 @@ function getCollectorHtml(row){
 
 }
 function getRemoveButtonHtml( row ){
-	return "<input name='remove' value='" + "<bean:message key="sample.entry.remove.sample"/>" + "' class='textButton' onclick='removeRow(" + row + ");checkValidSubPages();' id='removeButton_" + row +"' type='button' >";
+	return "<input name='remove' value='" + "<spring:message code="sample.entry.remove.sample"/>" + "' class='textButton' onclick='removeRow(" + row + ");checkValidSubPages();' id='removeButton_" + row +"' type='button' >";
 }
 
 function getCurrentTime(){
@@ -772,12 +774,12 @@ function sampleTypeQualifierChanged(element){
 <div id="routineSampleAdd" >
 	<% if(useInitialSampleCondition){ %>
 	<div id="sampleConditionPrototype" style="display: none" >
-	<html:select name='<%=formName%>'
+	<html:select name='${form.formName}'
 				 property="initialSampleConditionList"
 				 multiple="true"
 				 title='<%= StringUtil.getMessageForKey("result.multiple_select")%>'
 				 styleId = 'prototypeID'>
-				<logic:iterate id="optionValue" name='<%=formName%>' property="initialSampleConditionList" type="IdValuePair" >
+				<logic:iterate id="optionValue" name='${form.formName}' property="initialSampleConditionList" type="IdValuePair" >
 							<option value='<%=optionValue.getId()%>' >
 								<bean:write name="optionValue" property="value"/>
 							</option>
@@ -789,7 +791,7 @@ function sampleTypeQualifierChanged(element){
 		<span class="requiredlabel" style="visibility:hidden;">*</span>
 		<select id="testSectionPrototypeID" disabled  onchange="sectionSelectionChanged( this );" class="testSectionSelector" >
 					<option value='0'></option>
-				<logic:iterate id="optionValue" name='<%=formName%>' property="testSectionList" type="IdValuePair" >
+				<logic:iterate id="optionValue" name='${form.formName}' property="testSectionList" type="IdValuePair" >
 					<option value='<%=optionValue.getId()%>' >
 						<bean:write name="optionValue" property="value"/>
 					</option>
@@ -814,19 +816,19 @@ function sampleTypeQualifierChanged(element){
 	<div id="crossPanels">
 	</div>
 	
-	<html:hidden name="<%=formName%>" property="sampleXML"  styleId="sampleXML"/>
+	<form:hidden path="sampleXML"  id="sampleXML"/>
 		<Table style="width:100%">
 			<tr>
 				<td>
-	                <bean:message  key="sample.entry.sample.type"/>
+	                <spring:message code="sample.entry.sample.type"/>
 				</td>
 			</tr>
 	
 			<tr>
 				<td>
-					<html:select name="<%=formName%>" property="sampleTypeSelect"  onchange="sampleTypeSelected(this);" styleId="sampleTypeSelect"
+					<html:select name="${form.formName}" property="sampleTypeSelect"  onchange="sampleTypeSelected(this);" id="sampleTypeSelect"
 						value="0">
-						<app:optionsCollection name="<%=formName%>" property="sampleTypes" label="value" value="id" />
+						<app:optionsCollection name="${form.formName}" property="sampleTypes" label="value" value="id" />
 					</html:select>
 	                 
 				</td>
@@ -839,31 +841,31 @@ function sampleTypeQualifierChanged(element){
 				<tr>
 					<th style="width:5%"></th>
 					<th style="width:10%">
-						<bean:message key="sample.entry.id"/>
+						<spring:message code="sample.entry.id"/>
 					</th>
 					<th style="width:10%">
-						<bean:message key="sample.entry.sample.type"/>
+						<spring:message code="sample.entry.sample.type"/>
 					</th>
 					<% if(useInitialSampleCondition){ %>
 					<th style="width:15%">
-						<bean:message key="sample.entry.sample.condition"/>
+						<spring:message code="sample.entry.sample.condition"/>
 					</th>
 					<% } %>
 					<% if( useCollectionDate ){ %>
 					<th >
-						<bean:message key="sample.collectionDate"/>&nbsp;<%=DateUtil.getDateUserPrompt()%>
+						<spring:message code="sample.collectionDate"/>&nbsp;<%=DateUtil.getDateUserPrompt()%>
 					</th>
 					<th >
-						<bean:message key="sample.collectionTime"/>
+						<spring:message code="sample.collectionTime"/>
 					</th>
 					<% } %>
 					<% if( useCollector ){ %>
 					<th>
-						<bean:message key="sample.entry.collector" />
+						<spring:message code="sample.entry.collector" />
 					</th>	
 					<% } %>
 					<th style="width:35%">
-						<span class='requiredlabel'>*</span>&nbsp;<bean:message key="sample.entry.sample.tests"/>
+						<span class='requiredlabel'>*</span>&nbsp;<spring:message code="sample.entry.sample.tests"/>
 					</th>
 					<th style="width:10%"></th>
 				</tr>
@@ -874,14 +876,14 @@ function sampleTypeQualifierChanged(element){
 				<td  style="width:30%;vertical-align:top;">
 					<table style="width:97%" id="addPanelTable" >
 						<caption>
-							<bean:message key="sample.entry.panels"/>
+							<spring:message code="sample.entry.panels"/>
 						</caption>
 						<tr>
 							<th style="width:20%">&nbsp;
 								
 							</th>
 							<th style="width:80%">
-								<bean:message key="sample.entry.panel.name"/>
+								<spring:message code="sample.entry.panel.name"/>
 							</th>
 						</tr>
 	
@@ -890,20 +892,20 @@ function sampleTypeQualifierChanged(element){
 				<td  style="width:70%;vertical-align:top;">
 					<table style="margin-left: 3%;width:97%;" id="addTestTable">
 						<caption>
-							<bean:message key="sample.entry.available.tests"/>
+							<spring:message code="sample.entry.available.tests"/>
 						</caption>
 						<tr>
 							<th style="width:5%">&nbsp;
 								
 							</th>
 							<th style="width:50%">
-								<bean:message key="sample.entry.available.test.names"/>
+								<spring:message code="sample.entry.available.test.names"/>
 							</th>
 							<th style="width:40%;display:none;" id="sectionHead">
 								Section
 							</th>
 	                        <th style="width:25%" style="display:none" id="userSampleTypeHead">
-	                            <bean:message  key="sample.entry.sample.type"/>
+	                            <spring:message code="sample.entry.sample.type"/>
 	                        </th>
 	                        <th style="width:20%">
 	                              &nbsp;
@@ -923,38 +925,38 @@ function sampleTypeQualifierChanged(element){
 		<tr>
 			<td ></td>
 			<td colspan="3" class="sectionTitle">
-				<bean:message  key="sample.entry.project.title.specimen" />
+				<spring:message code="sample.entry.project.title.specimen" />
 			</td>
 		</tr>
 		<tr>
 			<td width="2%"></td>
-			<td width="38%"><bean:message key="sample.entry.project.ARV.dryTubeTaken" /></td>
+			<td width="38%"><spring:message code="sample.entry.project.ARV.dryTubeTaken" /></td>
 			<td width="60%">
 	
-				<html:checkbox name="<%=formName%>" 
+				<html:checkbox name="${form.formName}" 
 						value="true"
 					   property="ProjectDataVL.dryTubeTaken"
-					   styleId="vl.dryTubeTaken"/>
+					   id="vl.dryTubeTaken"/>
 			</td>
 		</tr>
 		<tr>
 			<td></td>
-			<td><bean:message key="sample.entry.project.ARV.edtaTubeTaken" /></td>
+			<td><spring:message code="sample.entry.project.ARV.edtaTubeTaken" /></td>
 			<td>
-				<html:checkbox name="<%=formName%>"
+				<html:checkbox name="${form.formName}"
 						value="true"
 					   property="ProjectDataVL.edtaTubeTaken"
-					   styleId="vl.edtaTubeTaken"/>
+					   id="vl.edtaTubeTaken"/>
 			</td>
 		</tr>
 		
 		<tr>
 			<td></td>
-			<td><bean:message key="sample.entry.project.title.dryBloodSpot" /></td>
+			<td><spring:message code="sample.entry.project.title.dryBloodSpot" /></td>
 			<td>
-				<html:checkbox name="<%=formName%>"
+				<html:checkbox name="${form.formName}"
 					   property="ProjectData.dbsTaken"
-					   styleId="vl.dbsTaken"
+					   id="vl.dbsTaken"
 					   onchange="vl.checkSampleItem($('vl.dbsTaken'));" />
 			</td>
 		</tr>	
@@ -964,17 +966,17 @@ function sampleTypeQualifierChanged(element){
 		<tr>
 			<td></td>
 			<td colspan="3" class="sectionTitle">
-				<bean:message  key="sample.entry.project.title.tests" />
+				<spring:message code="sample.entry.project.title.tests" />
 			</td>
 		</tr>
 		<tr>
 			<td></td>
-			<td><bean:message key="sample.entry.project.ARV.viralLoadTest" /></td>
+			<td><spring:message code="sample.entry.project.ARV.viralLoadTest" /></td>
 			<td>
-				<html:checkbox name="<%=formName%>"
+				<html:checkbox name="${form.formName}"
 						value="true"
 					   property="ProjectDataVL.viralLoadTest"
-					   styleId="vl.viralLoadTest"/>
+					   id="vl.viralLoadTest"/>
 			</td>
 		</tr>
 		
@@ -986,44 +988,44 @@ function sampleTypeQualifierChanged(element){
 		<tr>
 			<td ></td>
 			<td colspan="3" class="sectionTitle">
-				<bean:message  key="sample.entry.project.title.specimen" />
+				<spring:message code="sample.entry.project.title.specimen" />
 			</td>
 		</tr>
 		<tr>
 			<td width="2%"></td>
-			<td width="38%"><bean:message key="sample.entry.project.ARV.dryTubeTaken" /></td>
+			<td width="38%"><spring:message code="sample.entry.project.ARV.dryTubeTaken" /></td>
 			<td width="60%">
 	
-				<html:checkbox name="<%=formName%>"
+				<html:checkbox name="${form.formName}"
 						value="true"
 					   property="ProjectDataEID.dryTubeTaken"
-					   styleId="eid.dryTubeTaken"/>
+					   id="eid.dryTubeTaken"/>
 			</td>
 		</tr>
 		<tr>
 			<td></td>
-			<td><bean:message key="sample.entry.project.title.dryBloodSpot" /></td>
+			<td><spring:message code="sample.entry.project.title.dryBloodSpot" /></td>
 			<td>
-				<html:checkbox name="<%=formName%>"
+				<html:checkbox name="${form.formName}"
 						value="true"
 					   property="ProjectDataEID.dbsTaken"
-					   styleId="eid.dbsTaken"/>
+					   id="eid.dbsTaken"/>
 			</td>
 		</tr>
 		<tr>
 			<td></td>
 			<td colspan="3" class="sectionTitle">
-				<bean:message  key="sample.entry.project.title.tests" />
+				<spring:message code="sample.entry.project.title.tests" />
 			</td>
 		</tr>
 		<tr>
 			<td></td>
-			<td><bean:message key="sample.entry.project.dnaPCR" /></td>
+			<td><spring:message code="sample.entry.project.dnaPCR" /></td>
 			<td>
-				<html:checkbox name="<%=formName%>"
+				<html:checkbox name="${form.formName}"
 						value="true"
 					   property="ProjectDataEID.dnaPCR"
-					   styleId="eid.dnaPCR"/>
+					   id="eid.dnaPCR"/>
 			</td>
 		</tr>
 	</table>

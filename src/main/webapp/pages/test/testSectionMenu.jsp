@@ -3,48 +3,50 @@
 	import="us.mn.state.health.lims.test.valueholder.TestSection,
 			us.mn.state.health.lims.common.action.IActionConstants" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 
 
 <table width="100%" border=2">
 	<tr>
 	   <th>
-	     <bean:message key="label.form.select"/>
+	     <spring:message code="label.form.select"/>
 	   </th>
 	   <%--remove the following 09/12/2006 bugzilla 1399--%>
 	   <%--
 	   <th>
-	      <bean:message key="testsection.id"/>
+	      <spring:message code="testsection.id"/>
 	   </th>
 	   --%>
 	   <th><%--bugzilla 1412--%>
-	   	  <bean:message key="testsection.organization"/>
+	   	  <spring:message code="testsection.organization"/>
 	   </th>
 	   <th>
-	   	  <bean:message key="testsection.testSectionName"/>
+	   	  <spring:message code="testsection.testSectionName"/>
 	   </th> 
 	   <th> <%-- bugzilla 2025 --%>
-	      <bean:message key="testsection.parent"/>
+	      <spring:message code="testsection.parent"/>
 	    </th>
 	    <th>
-	      <bean:message key="testsection.isExternal"/>
+	      <spring:message code="testsection.isExternal"/>
 	   </th>
 	   <th>
-	   	  <bean:message key="testsection.description"/>
+	   	  <spring:message code="testsection.description"/>
 	   </th>
 	   
 	</tr>
-	<logic:iterate id="testSec" indexId="ctr" name="<%=formName%>" property="menuList" type="us.mn.state.health.lims.test.valueholder.TestSection">
+	<logic:iterate id="testSec" indexId="ctr" name="${form.formName}" property="menuList" type="us.mn.state.health.lims.test.valueholder.TestSection">
 	<bean:define id="testSecID" name="testSec" property="id"/>
 	
 	  <tr>	
 	   <td class="textcontent">
-	      <html:multibox name="<%=formName%>" property="selectedIDs">
+	      <html:multibox name="${form.formName}" property="selectedIDs">
 	         <bean:write name="testSecID" />
 	      </html:multibox>
      

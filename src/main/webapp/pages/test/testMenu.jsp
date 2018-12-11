@@ -2,51 +2,53 @@
 	contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 
 <table width="100%" border=2">
 	<tr>
 	   <th>
-	     <bean:message key="label.form.select"/>
+	     <spring:message code="label.form.select"/>
 	   </th>
 	   <%--remove the following 09/12/2006 bugzilla 1399--%>
 	   <%--
 	   <th>
-	      <bean:message key="test.id"/>
+	      <spring:message code="test.id"/>
 	   </th>
 	   --%>
 	   <th><%--bugzilla 1412--%>
-	   	  <bean:message key="test.testSectionName"/>
+	   	  <spring:message code="test.testSectionName"/>
 	   </th>
 	   <th>
-	   	  <bean:message key="test.testName"/>
+	   	  <spring:message code="test.testName"/>
 	   </th>
 	   <%--bugzilla 1399 sorting by testSection so show it/ remove test method--%>
 	   <th>
-	   	  <bean:message key="test.description"/>
+	   	  <spring:message code="test.description"/>
 	   </th>
 	   <th>
-	   	  <bean:message key="test.isActive"/>
+	   	  <spring:message code="test.isActive"/>
 	   </th>
        <%--bugzilla 1784 added isReportable--%>
 	   <th>
-	   	  <bean:message key="test.isReportable"/>
+	   	  <spring:message code="test.isReportable"/>
 	   </th>
 	   <%--bugzilla 1856--%>
 	   <th>
-	   	  <bean:message key="test.sortOrder"/>
+	   	  <spring:message code="test.sortOrder"/>
 	   </th> 
     </tr>
-	<logic:iterate id="tst" indexId="ctr" name="<%=formName%>" property="menuList" type="us.mn.state.health.lims.test.valueholder.Test">
+	<logic:iterate id="tst" indexId="ctr" name="${form.formName}" property="menuList" type="us.mn.state.health.lims.test.valueholder.Test">
 	<bean:define id="tstID" name="tst" property="id"/>
 	  <tr>
 	   <td class="textcontent">
-	      <html:multibox name='<%=formName%>' property="selectedIDs">
+	      <html:multibox name='${form.formName}' property="selectedIDs">
 	         <bean:write name="tstID" />
 	      </html:multibox>
    	   </td>

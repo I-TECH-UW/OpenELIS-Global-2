@@ -1,9 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"%>
-<%@ page isELIgnored="false"%>
-
+<%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 
 <%@ page import="us.mn.state.health.lims.common.action.IActionConstants,
@@ -29,7 +30,7 @@
 %>
 
 
-<script language="JavaScript1.2">
+<script>
 function /*void*/ setLanguage( language ){
 
 	//this weirdness is because we want the language to which we are changing, not the one we are in

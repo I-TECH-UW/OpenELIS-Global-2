@@ -2,13 +2,14 @@
 	contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants,
 			us.mn.state.health.lims.common.util.StringUtil" %>
-<%@ page isELIgnored="false" %> 
-
+<%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<script language="JavaScript1.2">
+<script>
     function validateForm(form) {
         return validateLoginForm(form);
     }

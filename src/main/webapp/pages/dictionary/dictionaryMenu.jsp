@@ -3,37 +3,39 @@
 	import="us.mn.state.health.lims.dictionary.valueholder.Dictionary,
 		us.mn.state.health.lims.common.action.IActionConstants" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 
 <table width="100%" border=2">
 	<tr>
 	   <th>
-	     <bean:message key="label.form.select"/>
+	     <spring:message code="label.form.select"/>
 	   </th>
 	   <th>
-	   	  <bean:message key="dictionary.dictionarycategory"/>
+	   	  <spring:message code="dictionary.dictionarycategory"/>
 	   </th>
 	   <th>
-	      <bean:message key="dictionary.dictEntry"/>
+	      <spring:message code="dictionary.dictEntry"/>
 	   </th>
 	   <th>
-	      <bean:message key="dictionary.localAbbreviation"/>
+	      <spring:message code="dictionary.localAbbreviation"/>
 	   </th>
 	   <th>
-	      <bean:message key="dictionary.isActive"/>
+	      <spring:message code="dictionary.isActive"/>
 	   </th>
    
 	</tr>
-	<logic:iterate id="dict" indexId="ctr" name="<%=formName%>" property="menuList" type="us.mn.state.health.lims.dictionary.valueholder.Dictionary">
+	<logic:iterate id="dict" indexId="ctr" name="${form.formName}" property="menuList" type="us.mn.state.health.lims.dictionary.valueholder.Dictionary">
 	<bean:define id="dictID" name="dict" property="id"/>
 	  <tr>	
 	   <td class="textcontent">
-	      <html:multibox name="<%=formName%>" property="selectedIDs" onclick="output()">
+	      <html:multibox name="${form.formName}" property="selectedIDs" onclick="output()">
 	         <bean:write name="dictID" />
 	      </html:multibox>
      

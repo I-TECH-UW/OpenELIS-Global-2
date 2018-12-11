@@ -6,12 +6,14 @@
 			us.mn.state.health.lims.role.action.bean.DisplayRole,
 			us.mn.state.health.lims.common.util.StringUtil" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 
 <%!
 
@@ -36,7 +38,7 @@ basePath = request.getScheme() + "://" + request.getServerName() + ":"
 <script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 
 
-<script language="JavaScript1.2">
+<script>
 
 $jq(document).ready( function() {
 	var input = $jq( ":input" );
@@ -112,7 +114,7 @@ function /*void*/ makeDirty(){
 
 	// Adds warning when leaving page if content has been entered into makeDirty form fields
 	function formWarning(){ 
-    return "<bean:message key="banner.menu.dataLossWarning"/>";
+    return "<spring:message code="banner.menu.dataLossWarning"/>";
 	}
 	window.onbeforeunload = formWarning;
 }
@@ -122,16 +124,16 @@ function /*void*/ requiredFieldUpdated( field){
 }
 
 </script>
-<html:hidden name="<%=formName %>"  property="systemUserId"/>
-<html:hidden name="<%=formName %>"  property="loginUserId"/>
-<html:hidden name="<%=formName %>"  property="systemUserLastupdated"/>
+<form:hidden path="systemUserId"/>
+<form:hidden path="loginUserId"/>
+<form:hidden path="systemUserLastupdated"/>
 <table >
 		<tr>
 						<td class="label" >
-							<bean:message key="login.login.name"/> <span class="requiredlabel">*</span>
+							<spring:message code="login.login.name"/> <span class="requiredlabel">*</span>
 						</td>
 						<td >
-							<app:text name="<%=formName%>" property="userLoginName" styleClass='required' onchange="requiredFieldUpdated( this); makeDirty(); "/>
+							<app:text name="${form.formName}" property="userLoginName" styleClass='required' onchange="requiredFieldUpdated( this); makeDirty(); "/>
 						</td>
 		</tr>
 		<tr>
@@ -141,24 +143,24 @@ function /*void*/ requiredFieldUpdated( field){
 		</tr>
 		<tr>
 						<td class="label">
-							<bean:message key="login.password"/> <span class="requiredlabel">*</span>
+							<spring:message code="login.password"/> <span class="requiredlabel">*</span>
 						</td>
 						<td>
-							<html:password name="<%=formName%>" 
+							<html:password name="${form.formName}" 
 										   property="userPassword1" 
-										   styleId="password1" 
+										   id="password1" 
 										   styleClass='required'
 										   onchange="handlePassword1(this);  makeDirty();"/>
 						</td>
 		</tr>
 		<tr>
 						<td class="label">
-							<bean:message key="login.repeat.password" /> <span class="requiredlabel">*</span>
+							<spring:message code="login.repeat.password" /> <span class="requiredlabel">*</span>
 						</td>
 						<td>
-							<html:password name="<%=formName%>" 
+							<html:password name="${form.formName}" 
 							               property="userPassword2"  
-							               styleId="password2" 
+							               id="password2" 
 							               styleClass='required'
 							               onchange="handlePassword2(this); makeDirty();" />
 						</td>
@@ -168,10 +170,10 @@ function /*void*/ requiredFieldUpdated( field){
 		</tr>
 		<tr>
 						<td class="label">
-							<bean:message key="person.firstName" /> <span class="requiredlabel">*</span>
+							<spring:message code="person.firstName" /> <span class="requiredlabel">*</span>
 						</td>
 						<td>
-							<app:text name="<%=formName%>" 
+							<app:text name="${form.formName}" 
 							          property="userFirstName" 
 							          styleClass='required' 
 							          onchange="requiredFieldUpdated( this); makeDirty();"/>
@@ -179,30 +181,30 @@ function /*void*/ requiredFieldUpdated( field){
 		</tr>
 		<tr>
 						<td class="label">
-							<bean:message key="person.lastName" /> <span class="requiredlabel">*</span>
+							<spring:message code="person.lastName" /> <span class="requiredlabel">*</span>
 						</td>
 						<td>
-							<app:text name="<%=formName%>" 
+							<app:text name="${form.formName}" 
 							          property="userLastName" 
 							          styleClass='required' onchange="requiredFieldUpdated( this); makeDirty();"/>
 						</td>
 		</tr>
 		<tr>
 						<td class="label">
-							<bean:message key="login.password.expired.date" />
+							<spring:message code="login.password.expired.date" />
 						</td>
 						<td>
-							<app:text name="<%=formName%>" 
+							<app:text name="${form.formName}" 
 							          property="expirationDate" 
 							          onchange="makeDirty();" />
 						</td>
 		</tr>
 		<tr>
 						<td class="label">
-							<bean:message key="login.timeout" />
+							<spring:message code="login.timeout" />
 						</td>
 						<td>
-							<html:text name="<%=formName%>" property="timeout" onchange="makeDirty();" />
+							<form:input path="timeout" onchange="makeDirty();" />
 						</td>
 						<td>&nbsp;</td>
 		</tr>
@@ -211,29 +213,29 @@ function /*void*/ requiredFieldUpdated( field){
 		</tr>
 		<tr>
 						<td class="label">
-							<bean:message key="login.account.locked" />
+							<spring:message code="login.account.locked" />
 						</td>
 						<td>
-							<html:radio name="<%=formName %>" property="accountLocked" value="Y" onchange="makeDirty();">Y</html:radio>
-							<html:radio name="<%=formName %>" property="accountLocked" value="N" onchange="makeDirty();">N</html:radio>
+							<html:radio name="${form.formName}" property="accountLocked" value="Y" onchange="makeDirty();">Y</html:radio>
+							<html:radio name="${form.formName}" property="accountLocked" value="N" onchange="makeDirty();">N</html:radio>
 						</td>
 		</tr>
 		<tr>
 						<td class="label">
-							<bean:message key="login.account.disabled" />
+							<spring:message code="login.account.disabled" />
 						</td>
 						<td>
-							<html:radio name="<%=formName %>" property="accountDisabled" value="Y" onchange="makeDirty();">Y</html:radio>
-							<html:radio name="<%=formName %>" property="accountDisabled" value="N" onchange="makeDirty();">N</html:radio>
+							<html:radio name="${form.formName}" property="accountDisabled" value="Y" onchange="makeDirty();">Y</html:radio>
+							<html:radio name="${form.formName}" property="accountDisabled" value="N" onchange="makeDirty();">N</html:radio>
 						</td>
 		</tr>
 		<tr>
 						<td class="label">
-							<bean:message key="systemuser.isActive" />
+							<spring:message code="systemuser.isActive" />
 						</td>
 						<td>
-							<html:radio name="<%=formName %>" property="accountActive" value="Y" onchange="makeDirty();">Y</html:radio>
-							<html:radio name="<%=formName %>" property="accountActive" value="N" onchange="makeDirty();">N</html:radio>
+							<html:radio name="${form.formName}" property="accountActive" value="Y" onchange="makeDirty();">Y</html:radio>
+							<html:radio name="${form.formName}" property="accountActive" value="N" onchange="makeDirty();">N</html:radio>
 						</td>
 		</tr><tr>
 			<td>&nbsp;</td>
@@ -243,18 +245,18 @@ function /*void*/ requiredFieldUpdated( field){
 <table>
 		<tr>
 		<td class="label" width="50%">
-			<bean:message key="systemuserrole.roles" />
+			<spring:message code="systemuserrole.roles" />
 		</td>
 		</tr>
-	<logic:iterate  name="<%=formName%>" property="roles" id="role" type="DisplayRole" >
+	<logic:iterate  name="${form.formName}" property="roles" id="role" type="DisplayRole" >
 	<tr>
 	<td>
 		<% currentTab = "";
 		   while(role.getNestingLevel() > 0){ currentTab += tab; role.setNestingLevel( role.getNestingLevel() - 1);} %>
        <%=currentTab%>
-		<html:multibox name="<%=formName %>"
+		<html:multibox name="${form.formName}"
 					   property="selectedRoles"
-					   styleId='<%="role_" + role.getRoleId() %>'
+					   id='<%="role_" + role.getRoleId() %>'
 					   onclick='<%="selectChildren(this, " + role.getChildrenID() + ");makeDirty();" %>' >
 			<bean:write name="role" property="roleId" />
 		</html:multibox>

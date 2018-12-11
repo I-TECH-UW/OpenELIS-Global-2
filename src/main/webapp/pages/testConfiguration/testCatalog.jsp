@@ -6,8 +6,12 @@
                  us.mn.state.health.lims.testconfiguration.beans.ResultLimitBean,
                  us.mn.state.health.lims.common.util.StringUtil" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%--
   ~ The contents of this file are subject to the Mozilla Public License
@@ -25,9 +29,9 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>'/>
-<bean:define id="testList" name='<%=formName%>' property="testList" type="List<TestCatalogBean>"/>
-<bean:define id="testSectionList" name='<%=formName%>' property="testSectionList" type="List<String>"/>
+ 
+<bean:define id="testList" name='${form.formName}' property="testList" type="List<TestCatalogBean>"/>
+<bean:define id="testSectionList" name='${form.formName}' property="testSectionList" type="List<String>"/>
 
 
 <%!
@@ -88,16 +92,16 @@
     <input type="button" value="<%= StringUtil.getMessageForKey("configuration.test.management") %>"
            onclick="submitAction('TestManagementConfigMenu.do');"
            class="textButton"/>&rarr;
-    <bean:message key="configuration.test.catalog" />
+    <spring:message code="configuration.test.catalog" />
 </form>
-<h1><bean:message key="configuration.test.catalog" /></h1>
-<input type="checkbox" onchange="guideSelection(this)"><bean:message key="configuration.test.catalog.guide.show" /><br/><br/>
+<h1><spring:message code="configuration.test.catalog" /></h1>
+<input type="checkbox" onchange="guideSelection(this)"><spring:message code="configuration.test.catalog.guide.show" /><br/><br/>
 
-<div id="guide" style="display: none"><bean:message key="configuration.test.catalog.guide" /><hr/>
+<div id="guide" style="display: none"><spring:message code="configuration.test.catalog.guide" /><hr/>
 </div>
 
-<h4><bean:message key="configuration.test.catalog.sections" /></h4>
-<input type="checkbox" onchange="sectionSelectionAll(this)"><bean:message key="label.all" /><br/><br/>
+<h4><spring:message code="configuration.test.catalog.sections" /></h4>
+<input type="checkbox" onchange="sectionSelectionAll(this)"><spring:message code="label.all" /><br/><br/>
 <% for (String testSection : testSectionList) {%>
 <input type="checkbox" class="testSection" value='<%=testSection.replace(" ", "_").replace("/", "_")%>'
        onchange="sectionSelection(this)"><%=testSection%><br/>
@@ -122,8 +126,8 @@ which closes it the last time through--%>
         } %>
     <table width="80%">
         <tr>
-            <td colspan="2"><span class="catalog-label"><bean:message key="configuration.test.catalog.name" /></span></td>
-            <td colspan="2"><span class="catalog-label"><bean:message key="configuration.test.catalog.report.name" /></span></td>
+            <td colspan="2"><span class="catalog-label"><spring:message code="configuration.test.catalog.name" /></span></td>
+            <td colspan="2"><span class="catalog-label"><spring:message code="configuration.test.catalog.report.name" /></span></td>
         </tr>
         <tr>
             <td width="25%"><span class="catalog-label">En.</span> <b><%=bean.getEnglishName()%></b>
@@ -142,19 +146,19 @@ which closes it the last time through--%>
             </td>
         </tr>
         <tr>
-            <td><span class="catalog-label"><bean:message key="label.test.unit" /></span> <b><%=bean.getTestUnit()%></b>
+            <td><span class="catalog-label"><spring:message code="label.test.unit" /></span> <b><%=bean.getTestUnit()%></b>
             </td>
-            <td><span class="catalog-label"><bean:message key="label.sample.types" /></span> <b><%=bean.getSampleType()%></b>
+            <td><span class="catalog-label"><spring:message code="label.sample.types" /></span> <b><%=bean.getSampleType()%></b>
             </td>
-            <td><span class="catalog-label"><bean:message key="label.panel" /></span> <b><%=bean.getPanel()%></b>
+            <td><span class="catalog-label"><spring:message code="label.panel" /></span> <b><%=bean.getPanel()%></b>
             </td>
-            <td><span class="catalog-label"><bean:message key="label.result.type" /></span> <b><%=bean.getResultType()%></b>
+            <td><span class="catalog-label"><spring:message code="label.result.type" /></span> <b><%=bean.getResultType()%></b>
             </td>
         </tr>
         <tr>
-            <td><span class="catalog-label"><bean:message key="label.uom" /></span> <b><%=bean.getUom()%></b>
+            <td><span class="catalog-label"><spring:message code="label.uom" /></span> <b><%=bean.getUom()%></b>
             </td>
-            <td><span class="catalog-label"><bean:message key="label.significant.digits" /></span> <b><%= bean.getSignificantDigits() %></b>
+            <td><span class="catalog-label"><spring:message code="label.significant.digits" /></span> <b><%= bean.getSignificantDigits() %></b>
             </td>
         </tr>
         <% if (bean.isHasDictionaryValues()) {
@@ -162,11 +166,11 @@ which closes it the last time through--%>
             for (String value : bean.getDictionaryValues()) {
         %>
         <tr>
-            <td><% if (top) { %><span class="catalog-label"><bean:message key="configuration.test.catalog.select.values" /></span><% } %></td>
+            <td><% if (top) { %><span class="catalog-label"><spring:message code="configuration.test.catalog.select.values" /></span><% } %></td>
             <td colspan="2"><b><%=value%></b>
             </td>
             <td colspan="2"><% if (top) {
-                top = false;%><span class="catalog-label"><bean:message key="configuration.test.catalog.reference.value" /></span>
+                top = false;%><span class="catalog-label"><spring:message code="configuration.test.catalog.reference.value" /></span>
                 <b><%=bean.getReferenceValue()%></b>
             </td>
             <% } %>
@@ -177,13 +181,13 @@ which closes it the last time through--%>
         %>
         <% if (bean.isHasLimitValues()) { %>
         <tr>
-            <td colspan="5" align="center"><span class="catalog-label"><bean:message key="configuration.test.catalog.result.limits" /></span></td>
+            <td colspan="5" align="center"><span class="catalog-label"><spring:message code="configuration.test.catalog.result.limits" /></span></td>
         </tr>
         <tr>
-            <td><span class="catalog-label"><bean:message key="label.sex" /></span></td>
-            <td><span class="catalog-label"><bean:message key="configuration.test.catalog.age.range.months" /></span></td>
-            <td><span class="catalog-label"><bean:message key="configuration.test.catalog.normal.range" /></span></td>
-            <td><span class="catalog-label"><bean:message key="configuration.test.catalog.valid.range" /></span></td>
+            <td><span class="catalog-label"><spring:message code="label.sex" /></span></td>
+            <td><span class="catalog-label"><spring:message code="configuration.test.catalog.age.range.months" /></span></td>
+            <td><span class="catalog-label"><spring:message code="configuration.test.catalog.normal.range" /></span></td>
+            <td><span class="catalog-label"><spring:message code="configuration.test.catalog.valid.range" /></span></td>
         </tr>
         <% for (ResultLimitBean limitBean : bean.getResultLimits()) {%>
         <tr>

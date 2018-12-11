@@ -2,12 +2,14 @@
 	contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 
 <%!
 
@@ -22,7 +24,7 @@ if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
 
 %>
 
-<script language="JavaScript1.2">
+<script>
 function validateForm(form) {
 	return !$("sampleId").value.blank() && !$("testId").value.blank();
 }
@@ -34,12 +36,12 @@ function validateForm(form) {
 <table>
 		<tr>
 						<td class="label">
-							<bean:message key="typeofsample.test.sample"/>:<span class="requiredlabel">*</span>
+							<spring:message code="typeofsample.test.sample"/>:<span class="requiredlabel">*</span>
 						</td>	
 						<td>
-						<html:select name="<%=formName%>" property="sample" styleId="sampleId">
+						<html:select name="${form.formName}" property="sample" id="sampleId">
 					   	  <app:optionsCollection 
-										name="<%=formName%>" 
+										name="${form.formName}" 
 							    		property="samples" 
 										label="description" 
 										value="id"  
@@ -50,12 +52,12 @@ function validateForm(form) {
 		 </tr>
  		<tr>
 						<td class="label">
-							<bean:message key="typeofsample.test.test"/>:<span class="requiredlabel">*</span>
+							<spring:message code="typeofsample.test.test"/>:<span class="requiredlabel">*</span>
 						</td>	
 						<td> 
-					   	<html:select name="<%=formName%>" property="test" styleId="testId" >
+					   	<html:select name="${form.formName}" property="test" id="testId" >
 					   	  <app:optionsCollection 
-										name="<%=formName%>" 
+										name="${form.formName}" 
 							    		property="tests" 
 										label="testName" 
 										value="id"  

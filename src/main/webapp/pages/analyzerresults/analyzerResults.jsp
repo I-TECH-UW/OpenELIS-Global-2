@@ -11,16 +11,16 @@
 
 
 
-<%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"		prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"		prefix="logic" %>
-<%@ taglib uri="/tags/struts-nested"	prefix="nested" %>
-<%@ taglib uri="/tags/labdev-view"		prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName"	value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
-<bean:define id="analyzerType" name="<%=formName%>" property="analyzerType" />
-<bean:define id="pagingSearch" name='<%=formName%>' property="paging.searchTermToPage"  />
+	
+<bean:define id="analyzerType" name="${form.formName}" property="analyzerType" />
+<bean:define id="pagingSearch" name='${form.formName}' property="paging.searchTermToPage"  />
 
 <%!
 	String basePath = "";
@@ -52,8 +52,8 @@
 
 var dirty = false;
 
-var pager = new OEPager('<%=formName%>', '<%= analyzerType == "" ? "" : "&type=" + Encode.forJavaScript((String) analyzerType)  %>');
-pager.setCurrentPageNumber('<bean:write name="<%=formName%>" property="paging.currentPage"/>');
+var pager = new OEPager('${form.formName}', '<%= analyzerType == "" ? "" : "&type=" + Encode.forJavaScript((String) analyzerType)  %>');
+pager.setCurrentPageNumber('<c:out value="${form.paging.currentPage}"/>');
 
 var pageSearch; //assigned in post load function
 
@@ -89,7 +89,7 @@ function /*void*/ makeDirty(){
 	}
 	// Adds warning when leaving page if content has been entered into makeDirty form fields
 	function formWarning(){ 
-    return "<bean:message key="banner.menu.dataLossWarning"/>";
+    return "<spring:message code="banner.menu.dataLossWarning"/>";
 	}
 	window.onbeforeunload = formWarning;
 }
@@ -172,26 +172,26 @@ function /*void*/ markUpdated(){
 }
 
 </script>
-<html:hidden name="<%=formName%>" property="analyzerType"/>
-<logic:notEmpty name="<%=formName%>" property="notFoundMsg">
-	 <div class="indented-important-message"><bean:write name="<%=formName%>"  property="notFoundMsg"/></div>
+<form:hidden path="analyzerType"/>
+<logic:notEmpty name="${form.formName}" property="notFoundMsg">
+	 <div class="indented-important-message"><c:out value="${form.notFoundMsg}"/></div>
 </logic:notEmpty>
-<logic:equal name="<%=formName%>" property="missingTestMsg" value="true">
-     <h2><bean:message key="error.missing.test.mapping" /></h2><br/><br/>
+<logic:equal name="${form.formName}" property="missingTestMsg" value="true">
+     <h2><spring:message code="error.missing.test.mapping" /></h2><br/><br/>
 </logic:equal>
 
-<logic:empty name="<%=formName%>" property="notFoundMsg">
+<logic:empty name="${form.formName}" property="notFoundMsg">
 	<div class="alert alert-info" style="width: 540px">
-		<div><strong><bean:message key="validation.accept"/></strong>: <bean:message key="validation.accept.explanation"/></div>
-		<div><strong><bean:message key="validation.reject"/></strong>: <bean:message key="validation.reject.explanation"/></div>
-		<div><strong><bean:message key="validation.delete"/></strong>: <bean:message key="validation.delete.explanation"/></div>
+		<div><strong><spring:message code="validation.accept"/></strong>: <spring:message code="validation.accept.explanation"/></div>
+		<div><strong><spring:message code="validation.reject"/></strong>: <spring:message code="validation.reject.explanation"/></div>
+		<div><strong><spring:message code="validation.delete"/></strong>: <spring:message code="validation.delete.explanation"/></div>
 	</div>
 </logic:empty>
 
-<logic:notEqual name="<%=formName%>" property="paging.totalPages" value="0">
-	<html:hidden styleId="currentPageID" name="<%=formName%>" property="paging.currentPage"/>
-	<bean:define id="total" name="<%=formName%>" property="paging.totalPages"/>
-	<bean:define id="currentPage" name="<%=formName%>" property="paging.currentPage"/>
+<logic:notEqual name="${form.formName}" property="paging.totalPages" value="0">
+	<html:hidden id="currentPageID" name="${form.formName}" property="paging.currentPage"/>
+	<bean:define id="total" name="${form.formName}" property="paging.totalPages"/>
+	<bean:define id="currentPage" name="${form.formName}" property="paging.currentPage"/>
 
 	<%if( "1".equals(currentPage)) {%>
 		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" disabled="disabled" >
@@ -205,8 +205,8 @@ function /*void*/ markUpdated(){
 	<% } %>
 
 	&nbsp;
-	<bean:write name="<%=formName%>" property="paging.currentPage"/> of
-	<bean:write name="<%=formName%>" property="paging.totalPages"/>
+	<c:out value="${form.paging.currentPage}"/> of
+	<c:out value="${form.paging.totalPages}"/>
 	<div class='textcontent' style="float: right" >
 	<span style="visibility: hidden" id="searchNotFound"><em><%= StringUtil.getMessageForKey("search.term.notFound") %></em></span>
 	<%=StringUtil.getContextualMessageForKey("result.sample.id")%> : &nbsp;
@@ -216,28 +216,28 @@ function /*void*/ markUpdated(){
 	<input type="button" onclick="pageSearch.doLabNoSearch($(labnoSearch))" value='<%= StringUtil.getMessageForKey("label.button.search") %>'>
 	</div>
 </logic:notEqual>
-<br/><br/><img src="./images/nonconforming.gif" /> = <bean:message key="result.nonconforming.item"/>
+<br/><br/><img src="./images/nonconforming.gif" /> = <spring:message code="result.nonconforming.item"/>
 <table id="importDataTable" width="85%" border="0" cellspacing="0" >
-	<tr><td><b><bean:message key="analyzer.results.results"/></b></td></tr>
+	<tr><td><b><spring:message code="analyzer.results.results"/></b></td></tr>
 	<tr>
-		<th width="4%"><bean:message key="validation.accept"/></th>
-		<th width="4%"><bean:message key="validation.reject"/></th>
-		<th width="4%"><bean:message key="validation.delete"/></th>
+		<th width="4%"><spring:message code="validation.accept"/></th>
+		<th width="4%"><spring:message code="validation.reject"/></th>
+		<th width="4%"><spring:message code="validation.delete"/></th>
 		<th width="12%">
-			<bean:message key="analyzer.results.labno"/>
+			<spring:message code="analyzer.results.labno"/>
 		</th>
 		<th width="15%">
-			<bean:message key="analyzer.results.test"/>
+			<spring:message code="analyzer.results.test"/>
 		</th>
 		<th width="13%">
-			<bean:message key="analyzer.results.result"/>
+			<spring:message code="analyzer.results.result"/>
 		</th>
 		<th width="8%">
-			<bean:message key="result.test.date"/>
+			<spring:message code="result.test.date"/>
 		</th>
-		<th width="5%" ><bean:message key="analyzer.results.notes"/></th>
+		<th width="5%" ><spring:message code="analyzer.results.notes"/></th>
 	</tr>
-	<logic:iterate id="resultList" name="<%=formName%>" property="resultList" indexId="dataIndex" type="AnalyzerResultItem" >
+	<logic:iterate id="resultList" name="${form.formName}" property="resultList" indexId="dataIndex" type="AnalyzerResultItem" >
         <%
            showAccessionNumber = !resultList.getAccessionNumber().equals(currentAccessionNumber);
            itemReadOnly = resultList.isReadOnly();
@@ -247,8 +247,8 @@ function /*void*/ markUpdated(){
 		<html:hidden name="resultList" property="sampleGroupingNumber" indexed="true" />
 		<html:hidden name="resultList" property="readOnly" indexed="true" />
 		<html:hidden name="resultList" property="testResultType" indexed="true"/>
-		<html:hidden name="resultList" property="testId"  styleId='<%="testId_" + dataIndex%>'/>
-		<html:hidden name="resultList" property="accessionNumber"  styleId='<%="accessionNumberId_" + dataIndex%>'/>
+		<html:hidden name="resultList" property="testId"  id='<%="testId_" + dataIndex%>'/>
+		<html:hidden name="resultList" property="accessionNumber"  id='<%="accessionNumberId_" + dataIndex%>'/>
 		<logic:equal name="resultList" property="isHighlighted" value="true">
 			<tr class="yellowHighlight">
 		</logic:equal>
@@ -257,7 +257,7 @@ function /*void*/ markUpdated(){
 		</logic:equal>
 			<td  align="center">
 			 <% if( showAccessionNumber && !groupReadOnly ){ %>
-				<html:checkbox styleId='<%="accepted_" + dataIndex %>'
+				<html:checkbox id='<%="accepted_" + dataIndex %>'
 							   name="resultList"
 							   property="isAccepted"
 							   indexed="true"
@@ -267,7 +267,7 @@ function /*void*/ markUpdated(){
 			</td>
 			<td  align="center">
 			<% if( showAccessionNumber && !groupReadOnly ){ %>
-				<html:checkbox styleId='<%="rejected_" + dataIndex %>'
+				<html:checkbox id='<%="rejected_" + dataIndex %>'
 							   name="resultList"
 							   property="isRejected"
 							   indexed="true"
@@ -277,7 +277,7 @@ function /*void*/ markUpdated(){
 			</td>
 				<td align="center">
 			 <% if( showAccessionNumber  ){ %>
-				<html:checkbox styleId='<%="deleted_" + dataIndex %>'
+				<html:checkbox id='<%="deleted_" + dataIndex %>'
 							   name="resultList"
 							   property="isDeleted"
 							   indexed="true"
@@ -306,7 +306,7 @@ function /*void*/ markUpdated(){
 				<% }else{ %>
 				<logic:equal name="resultList" property="testResultType"  value="D">
 					<html:select name="resultList" 
-								 styleId='<%= "resultId_" + dataIndex %>'
+								 id='<%= "resultId_" + dataIndex %>'
 					             property="result" 
 					             indexed="true"  
 					             onchange='<%= "markUpdated();" + (resultList.isUserChoiceReflex() ? "showUserReflexChoices(" + dataIndex + ", null );" : "") %>' >
@@ -315,7 +315,7 @@ function /*void*/ markUpdated(){
 				</logic:equal>
 				<logic:notEqual name="resultList"  property="testResultType"  value="D">
 					<html:text name="resultList"
-							   styleId='<%= "resultId_" + dataIndex %>' 
+							   id='<%= "resultId_" + dataIndex %>' 
 					           property="result" 
 					           style="text-align:right;"
 					           indexed="true"
@@ -357,15 +357,15 @@ function /*void*/ markUpdated(){
 						 	     id='<%="showHideButton_" + dataIndex %>'
 						    />
 						 </logic:notEmpty>
-				<html:hidden  property="hideShowFlag"  styleId='<%="hideShow_" + dataIndex %>' value="hidden" />
+				<form:hidden path="hideShowFlag"  id='<%="hideShow_" + dataIndex %>' value="hidden" />
             <% } %>
 
 		</td>
 		</tr>
 		<tr id='<%="noteRow_" +  dataIndex %>' style="display: none;">
-			<td colspan="2" valign="top" align="right"><bean:message key="note.note"/>:</td>
+			<td colspan="2" valign="top" align="right"><spring:message code="note.note"/>:</td>
 			<td colspan="6" align="left" >
-			<html:textarea styleId='<%="note_" +  dataIndex %>'
+			<html:textarea id='<%="note_" +  dataIndex %>'
 			               name="resultList"
 			               indexed="true"
 			           	   property="note"
@@ -378,7 +378,7 @@ function /*void*/ markUpdated(){
 		<logic:equal name="resultList" property="isHighlighted" value="false">
 		<tr id='<%="reflexInstruction_" + dataIndex %>' <%= resultList.getSelectionOneText() == "" ? "style='display:none'" : " " %> class="alert alert-info" >
             <td colspan="4" >&nbsp;</td>
-			<td colspan="4" valign="top"  ><bean:message key="testreflex.actionselection.instructions" /></td>
+			<td colspan="4" valign="top"  ><spring:message code="testreflex.actionselection.instructions" /></td>
 		</tr>
 		<tr id='<%="reflexSelection_" + dataIndex %>' <%= resultList.getSelectionOneText() == "" ? "style='display:none'" : " " %> class="alert alert-info" >
 		<td colspan="4" >&nbsp;</td>
@@ -408,10 +408,10 @@ function /*void*/ markUpdated(){
 	</logic:iterate>
 
 </table>
-<logic:notEqual name="<%=formName%>" property="paging.totalPages" value="0">
-	<html:hidden styleId="currentPageID" name="<%=formName%>" property="paging.currentPage"/>
-	<bean:define id="total" name="<%=formName%>" property="paging.totalPages"/>
-	<bean:define id="currentPage" name="<%=formName%>" property="paging.currentPage"/>
+<logic:notEqual name="${form.formName}" property="paging.totalPages" value="0">
+	<html:hidden id="currentPageID" name="${form.formName}" property="paging.currentPage"/>
+	<bean:define id="total" name="${form.formName}" property="paging.totalPages"/>
+	<bean:define id="currentPage" name="${form.formName}" property="paging.currentPage"/>
 
 	<%if( "1".equals(currentPage)) {%>
 		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" disabled="disabled" >
@@ -425,8 +425,8 @@ function /*void*/ markUpdated(){
 	<% } %>
 
 	&nbsp;
-	<bean:write name="<%=formName%>" property="paging.currentPage"/> of
-	<bean:write name="<%=formName%>" property="paging.totalPages"/>
+	<c:out value="${form.paging.currentPage}"/> of
+	<c:out value="${form.paging.totalPages}"/>
 </logic:notEqual>
 
 	<ajax:autocomplete

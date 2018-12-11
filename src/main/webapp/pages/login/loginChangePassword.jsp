@@ -3,12 +3,14 @@
 	import="us.mn.state.health.lims.common.action.IActionConstants,
 			us.mn.state.health.lims.common.provider.validation.PasswordValidationFactory" %>   
 
+<%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<script language="JavaScript1.2">
+<script>
     function validateForm(form) {
     	return true;
       // return validateLoginChangePasswordForm(form);

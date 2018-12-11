@@ -10,10 +10,12 @@
 		us.mn.state.health.lims.common.util.validator.ActionError,
 		us.mn.state.health.lims.common.util.SystemConfiguration,
 		org.owasp.encoder.Encode"%>
-<%@ page isELIgnored="false"%>
-		
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <!DOCTYPE html>
 
 <%-- removed deprecated calls to methods in org.apache.struts.util.RequestUtils--%>
@@ -30,7 +32,7 @@ path = request.getContextPath();
 basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 %>
 
-<script language="JavaScript1.2">
+<script>
 
 function onLoad() {
 

@@ -3,15 +3,16 @@
                  us.mn.state.health.lims.common.util.Versioning,
                  org.owasp.encoder.Encode" %>
 
-<%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"		prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"		prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view"		prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
-<bean:define id="workplanType" name="<%=formName%>" property="workplanType" />
-<bean:define id="responseAction" name='<%= formName %>' property="searchAction"  />
+ 
+<bean:define id="workplanType" name="${form.formName}" property="workplanType" />
+<bean:define id="responseAction" name='${form.formName}' property="searchAction"  />
 
 <%!
 	String basePath = "";
@@ -25,7 +26,7 @@
 %>
 
 <script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" language="JavaScript1.2">
+<script type="text/javascript">
 
 function doShowTests(element){
 	
@@ -51,23 +52,23 @@ function /*boolean*/ handleEnterEvent(){
 </script>
 
 <div id="PatientPage" class="colorFill" style="display:inline" >
-	<h2><bean:message key="sample.entry.search"/></h2>
+	<h2><spring:message code="sample.entry.search"/></h2>
 	<table width="40%">
 		<tr>
 			<td width="50%" align="right" nowrap>
-				<bean:write name="<%=formName %>" property="searchLabel"/>
+				<c:out value="${form.searchLabel}"/>
 			</td>
 			<td>
-				<html:select name="<%=formName%>" property="selectedSearchID" styleId="testName"
+				<html:select name="${form.formName}" property="selectedSearchID" id="testName"
 						 onchange="doShowTests(this);" >
-					<app:optionsCollection name="<%=formName%>" property="searchTypes" label="value" value="id" />
+					<app:optionsCollection name="${form.formName}" property="searchTypes" label="value" value="id" />
 				</html:select>
 	   		</td>
 		</tr>
 	</table>
 	<br/>
 	<h1>
-		<bean:write name="<%=formName%>" property="testName"/>
+		<c:out value="${form.testName}"/>
 	</h1>
 </div>
 

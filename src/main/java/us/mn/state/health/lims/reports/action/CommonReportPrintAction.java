@@ -121,9 +121,7 @@ public class CommonReportPrintAction extends BaseAction {
 	
 	public String getImagesPath() {
 		if (imagesPath == null) {
-			//TO DO untested after restructure to maven
-	        File imageDir = new File(getClass().getClassLoader().getResource("/images").getFile());
-			imagesPath = imageDir.getAbsolutePath();
+			imagesPath = "/images/";
 		}
 		return imagesPath;
 	}

@@ -3,23 +3,25 @@
 	import="us.mn.state.health.lims.common.action.IActionConstants,
 			us.mn.state.health.lims.analyzerimport.action.beans.NamedAnalyzerTestMapping" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 
 <table width="80%" border="2">
 	<tr>
 		<th>&nbsp;</th>
-	   	<th><bean:message key="analyzer.label"/>&nbsp;-&nbsp;<bean:message key="analyzer.test.name"/> </th>
-	   	<th> <bean:message key="analyzer.test.actual.name"/> </th>
+	   	<th><spring:message code="analyzer.label"/>&nbsp;-&nbsp;<spring:message code="analyzer.test.name"/> </th>
+	   	<th> <spring:message code="analyzer.test.actual.name"/> </th>
 	</tr>
-	<logic:iterate id="analyzerTest" name="<%=formName%>" indexId="ctr" property="menuList" type="NamedAnalyzerTestMapping">
+	<logic:iterate id="analyzerTest" name="${form.formName}" indexId="ctr" property="menuList" type="NamedAnalyzerTestMapping">
 	  	<tr>
 	   		<td class="textcontent">
-	      		<html:multibox name="<%=formName%>" property="selectedIDs" onclick="output()">
+	      		<html:multibox name="${form.formName}" property="selectedIDs" onclick="output()">
 	         		<bean:write name="analyzerTest" property="uniqueId" />
 	      		</html:multibox>
 			</td>

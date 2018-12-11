@@ -2,34 +2,38 @@
 
 <%@ page import="us.mn.state.health.lims.common.action.IActionConstants" %>
 
-<%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"		prefix="html" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName"	value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+	
 
 
-<h2><bean:message key="siteInfo.section.elements"/></h2>
-<p><bean:message key="siteInfo.description.elements"/></p>
+<h2><spring:message code="siteInfo.section.elements"/></h2>
+<p><spring:message code="siteInfo.description.elements"/></p>
 <table width="80%">
 	<tr>
-		<td><b><bean:message key="siteInfo.elements.mandatory"/></b></td>
+		<td><b><spring:message code="siteInfo.elements.mandatory"/></b></td>
 	</tr>
 	<tr>
-		<td style="text-align:center"><bean:message key="barcode.label.type.order"/></td>
-		<td style="text-align:center"><bean:message key="barcode.label.type.specimen"/></td>
+		<td style="text-align:center"><spring:message code="barcode.label.type.order"/></td>
+		<td style="text-align:center"><spring:message code="barcode.label.type.specimen"/></td>
 	</tr>
 	<tr>
 		<td style="text-align:center">
 		<table style="margin:auto;border-spacing:15px 2px;">
 			<tr>
 				<td><ul>
-					<li><bean:message key="barcode.label.info.labnumber"/></li>
-					<li><bean:message key="barcode.label.info.patientid"/></li>
+					<li><spring:message code="barcode.label.info.labnumber"/></li>
+					<li><spring:message code="barcode.label.info.patientid"/></li>
 					<li>Site ID</li>
 				</ul></td>
 				<td><ul>
-					<li><bean:message key="barcode.label.info.patientname"/></li>
-					<li><bean:message key="barcode.label.info.patientdobfull"/></li>
+					<li><spring:message code="barcode.label.info.patientname"/></li>
+					<li><spring:message code="barcode.label.info.patientdobfull"/></li>
 				</ul></td>
 			</tr>
 		</table>
@@ -38,29 +42,29 @@
 		<table style="margin:auto;border-spacing:15px 2px;">
 			<tr>
 				<td><ul>
-					<li><bean:message key="barcode.label.info.labnumber"/></li>
-					<li><bean:message key="barcode.label.info.patientid"/></li>
+					<li><spring:message code="barcode.label.info.labnumber"/></li>
+					<li><spring:message code="barcode.label.info.patientid"/></li>
 				</ul></td>
 				<td><ul>
-					<li><bean:message key="barcode.label.info.patientname"/></li>
-					<li><bean:message key="barcode.label.info.patientdobfull"/></li>
+					<li><spring:message code="barcode.label.info.patientname"/></li>
+					<li><spring:message code="barcode.label.info.patientdobfull"/></li>
 				</ul></td>
 			</tr>
 		</table>
 		</td>
 	</tr>
 	<tr>
-		<td><b><bean:message key="siteInfo.elements.optional"/></b></td>
+		<td><b><spring:message code="siteInfo.elements.optional"/></b></td>
 	</tr>
 	<tr>
-		<td style="text-align:center"><bean:message key="barcode.label.type.order"/></td>
-		<td style="text-align:center"><bean:message key="barcode.label.type.specimen"/></td>
+		<td style="text-align:center"><spring:message code="barcode.label.type.order"/></td>
+		<td style="text-align:center"><spring:message code="barcode.label.type.specimen"/></td>
 	</tr>
 	<tr>
 		<td style="text-align:center">
 		<table style="margin:auto;border-spacing:15px 2px;">
 			<tr>
-				<td><bean:message key="barcode.label.info.none"/></td>
+				<td><spring:message code="barcode.label.info.none"/></td>
 			</tr>
 		</table>
 		</td>
@@ -68,26 +72,26 @@
 		<table style="margin:auto;border-spacing:15px 2px;">
 			<tr>
 				<td>
-					<html:checkbox name="<%=formName%>" 
+					<html:checkbox name="${form.formName}" 
 						property="collectionDateCheck"
 						value="true"></html:checkbox>
-					<bean:message key="barcode.label.info.collectiondatetime"/>
+					<spring:message code="barcode.label.info.collectiondatetime"/>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<html:checkbox name="<%=formName%>" 
+					<html:checkbox name="${form.formName}" 
 						property="testsCheck"
 						value="true"></html:checkbox>
-					<bean:message key="barcode.label.info.tests"/>
+					<spring:message code="barcode.label.info.tests"/>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<html:checkbox name="<%=formName%>" 
+					<html:checkbox name="${form.formName}" 
 						property="patientSexCheck"
 						value="true"></html:checkbox>
-					<bean:message key="barcode.label.info.patientsexfull"/>
+					<spring:message code="barcode.label.info.patientsexfull"/>
 				</td>
 			</tr>
 		</table>

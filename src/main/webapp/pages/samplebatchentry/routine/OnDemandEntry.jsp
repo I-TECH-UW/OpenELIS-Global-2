@@ -2,13 +2,14 @@
 <%@ page import="us.mn.state.health.lims.common.action.IActionConstants,
                  us.mn.state.health.lims.common.util.StringUtil,
                  us.mn.state.health.lims.sample.bean.SampleOrderItem" %>
-<%@ taglib uri="/tags/struts-bean"      prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"      prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"     prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view"      prefix="app" %>
-<%@ taglib uri="/tags/struts-tiles"     prefix="tiles" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName"      value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+      
 
 <script>
 var lineSeparator = "";
@@ -136,22 +137,22 @@ function processSearchSuccessPrint(xhr) {
 }
 </script>
 
-<h2><bean:message key="sample.batchentry.ondemand.header.print"/></h2>
+<h2><spring:message code="sample.batchentry.ondemand.header.print"/></h2>
 <table style="width:100%;">
 <tr>
 	<td>
 		<!-- gets next accession, and calls submit and print if success -->
 		<html:button onclick="getNextAccessionNumber();"
 			property="print"
-			styleId="saveButtonId">
-			<bean:message key="sample.batchentry.ondemand.saveprint" />
+			id="saveButtonId">
+			<spring:message code="sample.batchentry.ondemand.saveprint" />
 		</html:button>
 		<!-- sets up for next label to be printed -->
 		<html:button onclick="nextLabel();"
 			property="next"
-			styleId="nextButtonId"
+			id="nextButtonId"
 			disabled="true">
-			<bean:message key="sample.batchentry.ondemand.next" />
+			<spring:message code="sample.batchentry.ondemand.next" />
 		</html:button>
 	</td>
 </tr>
@@ -160,15 +161,15 @@ function processSearchSuccessPrint(xhr) {
 </tr>
 <tr>
 	<td>
-		<bean:message key="sample.batchentry.ondemand.current" />:
+		<spring:message code="sample.batchentry.ondemand.current" />:
 	</td>
 </tr>
 <tr>
 	<td>
-		<app:text name='<%= formName%>' property="sampleOrderItems.labNo"
+		<app:text name='${form.formName}' property="sampleOrderItems.labNo"
            	onchange="checkAccessionNumber(this);"
             styleClass="text"
-            styleId="labNo"
+            id="labNo"
             readonly="true"/>
 	</td>
 </tr>
@@ -177,7 +178,7 @@ function processSearchSuccessPrint(xhr) {
 		<table>
 			<tr>
 				<td>
-					<bean:message key="sample.batchentry.ondemand.previous" />:
+					<spring:message code="sample.batchentry.ondemand.previous" />:
 				</td>
 			</tr>
 			<tr>
@@ -190,7 +191,7 @@ function processSearchSuccessPrint(xhr) {
 			</tr>
 		</table>
 		<div style="display:none;" id="barcodeArea">
-			<h2><bean:message key="barcode.common.section.barcode.header"/></h2>
+			<h2><spring:message code="barcode.common.section.barcode.header"/></h2>
 			<iframe  src="about:blank" id="ifbarcode" width="100%" height="300px"></iframe>
 		</div>
 	</td>

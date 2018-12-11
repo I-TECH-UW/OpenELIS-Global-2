@@ -28,7 +28,7 @@
         String message2 = StringUtil.getMessageForKey("login.error.session.message");
 %>    
 
-<SCRIPT LANGUAGE="JavaScript1.2">
+<script>
     var targetURL="<%=request.getContextPath()%>" + "/LoginPage.do";
     var milliseconds="<%=timeOut%>";
     

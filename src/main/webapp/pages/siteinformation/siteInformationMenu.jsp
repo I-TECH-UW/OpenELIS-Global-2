@@ -6,12 +6,14 @@
 			us.mn.state.health.lims.siteinformation.valueholder.SiteInformation,
 			us.mn.state.health.lims.localization.dao.LocalizationDAO" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 
 <%!
     LocalizationDAO localizationDAO;
@@ -24,15 +26,15 @@
 <table width="80%" border="2">
 	<tr>
 		<th>&nbsp;</th>
-	   	<th><bean:message key="generic.name" /></th>
-	   	<th><bean:message key="generic.description"/></th>
-	   	<th><bean:message key="generic.value"/></th>
+	   	<th><spring:message code="generic.name" /></th>
+	   	<th><spring:message code="generic.description"/></th>
+	   	<th><spring:message code="generic.value"/></th>
 	</tr>
-	<logic:iterate id="site" name="<%=formName%>" indexId="ctr" property="menuList" type="SiteInformation">
+	<logic:iterate id="site" name="${form.formName}" indexId="ctr" property="menuList" type="SiteInformation">
 		<bean:define id="siteId" name="site" property="id"/>
 	  	<tr>
 	   		<td class="textcontent">
-	      		<html:multibox name="<%=formName%>" property="selectedIDs" onclick="output()">
+	      		<html:multibox name="${form.formName}" property="selectedIDs" onclick="output()">
 	         		<bean:write name="siteId" />
 	      		</html:multibox>
    	   		</td>

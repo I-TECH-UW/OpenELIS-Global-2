@@ -3,12 +3,14 @@
 	import="us.mn.state.health.lims.common.action.IActionConstants,
 			us.mn.state.health.lims.resultlimits.form.ResultLimitsLink" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 
 <table width="100%" border=2">
 	<tr>
@@ -16,56 +18,56 @@
 	   <th>&nbsp;</th>
 	   <th>&nbsp;</th>
 	   <th colspan="2" align="center">
-	      <bean:message key="resultlimits.age"/>
+	      <spring:message code="resultlimits.age"/>
 	   </th>
 	   <th>&nbsp;</th>
 	   <th colspan="3" align="center">
-	      <bean:message key="resultlimits.normal"/>
+	      <spring:message code="resultlimits.normal"/>
 	   </th>
 	   <th colspan="2" align="center">
-	      <bean:message key="resultlimits.valid"/>
+	      <spring:message code="resultlimits.valid"/>
 	   </th>
 	</tr>
 	<tr>
 	   <th>
-	     <bean:message key="label.form.select"/>
+	     <spring:message code="label.form.select"/>
 	   </th>
 	   <th>
-	   	  <bean:message key="resultlimits.test"/>
+	   	  <spring:message code="resultlimits.test"/>
 	   </th>
 	   <th>
-	   	  <bean:message key="resultlimits.resulttype"/>
+	   	  <spring:message code="resultlimits.resulttype"/>
 	   </th>
 	   <th>
-	      <bean:message key="resultlimits.min"/>
+	      <spring:message code="resultlimits.min"/>
 	   </th>
 	   <th>
-	      <bean:message key="resultlimits.max"/>
+	      <spring:message code="resultlimits.max"/>
 	   </th>
 	   <th>
-	      <bean:message key="resultlimits.gender"/>
+	      <spring:message code="resultlimits.gender"/>
 	   </th>
 	   <th>
-	      <bean:message key="resultlimits.low"/>
+	      <spring:message code="resultlimits.low"/>
 	   </th>
 	   <th>
-	      <bean:message key="resultlimits.high"/>
+	      <spring:message code="resultlimits.high"/>
 	   </th>
 	   <th>
-	   	  <bean:message key="resultLimits.dictionaryNormal" />
+	   	  <spring:message code="resultLimits.dictionaryNormal" />
 	   </th>
 	   <th>
-	      <bean:message key="resultlimits.low"/>
+	      <spring:message code="resultlimits.low"/>
 	   </th>
 	   <th>
-	      <bean:message key="resultlimits.high"/>
+	      <spring:message code="resultlimits.high"/>
 	   </th>
 	</tr>
-	<logic:iterate id="limit" name="<%=formName%>" indexId="ctr" property="menuList" type="ResultLimitsLink">
+	<logic:iterate id="limit" name="${form.formName}" indexId="ctr" property="menuList" type="ResultLimitsLink">
 	<bean:define id="limitId" name="limit" property="id"/>
 	  <tr>
 	   <td class="textcontent">
-	      <html:multibox name="<%=formName%>" property="selectedIDs">
+	      <html:multibox name="${form.formName}" property="selectedIDs">
 	         <bean:write name="limitId" />
 	      </html:multibox>
    	   </td>

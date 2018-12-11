@@ -3,15 +3,16 @@
 	import="us.mn.state.health.lims.common.action.IActionConstants, 
 			us.mn.state.health.lims.common.util.SystemConfiguration" %>  
 	
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/labdev-view" prefix="app"%>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%--bugzilla 1510 add styleId for compatibility in firefox and for use of firebug debugger--%>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 <bean:define id="idSeparator" value='<%= SystemConfiguration.getInstance().getDefaultIdSeparator() %>' />
 <bean:define id="humanDomain" value='<%= SystemConfiguration.getInstance().getHumanDomain() %>' />
 <%--bugzilla 2227 amend tests--%>
@@ -54,7 +55,7 @@
 			%>
 
 
-<script language="JavaScript1.2">
+<script>
 
 
 function pageOnLoad() {
@@ -162,23 +163,23 @@ function resultsEntryHistoryBySamplePopup () {
 <table>
 	<tr>
 		<td valign="top">
-			<bean:message key="sample.accessionNumber" />
+			<spring:message code="sample.accessionNumber" />
 			: <span class="requiredlabel">*</span>
 		</td>
 		<td valign="top">
-			<app:text name="<%=formName%>" property="accessionNumber" allowEdits="true" maxlength="10" onkeypress="return noenter()" styleId="accessionNumber"/>
+			<app:text name="${form.formName}" property="accessionNumber" allowEdits="true" maxlength="10" onkeypress="return noenter()" id="accessionNumber"/>
 
 		</td>
 		<td valign="top">
 
 			<html:button onclick="validateAccessionNumber();" property="cancel">
-				<bean:message key="label.button.display" />
+				<spring:message code="label.button.display" />
 			</html:button>
 			&nbsp;
             <%--bugzilla 2227 amend tests--%>
-			<logic:equal name="<%=formName%>" property="sampleHasTestRevisions" value="true">
+			<logic:equal name="${form.formName}" property="sampleHasTestRevisions" value="true">
 				<html:button onclick="resultsEntryHistoryBySamplePopup();return false;" property="cancel">
-				  <bean:message key="testmanagement.label.button.history" />
+				  <spring:message code="testmanagement.label.button.history" />
 			    </html:button>
 			</logic:equal>
 		</td>

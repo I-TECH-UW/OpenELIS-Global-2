@@ -1,12 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants"%>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/labdev-view" prefix="app"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+ 
 
 <%!String allowEdits = "true";%>
 
@@ -16,7 +18,7 @@
 	}
 %>
 
-<script language="JavaScript1.2">
+<script>
 
 $jq(document).ready( function() {
 	if( !sendingEnabled() ){
@@ -105,75 +107,75 @@ function clearErrors(){
 }
 </script>
 
-<h2 class="important-text"><bean:message key="testusage.config.requiredfields"/></h2>
+<h2 class="important-text"><spring:message code="testusage.config.requiredfields"/></h2>
 
 <div class="oe-form" style="max-width: 800px;">
-    <h3><bean:message key="testusage.config.transmit"/></h3>
+    <h3><spring:message code="testusage.config.transmit"/></h3>
     
     <ul>
         <li>
-            <div class="top-label"><bean:message key="testusage.config.transmit.instructions"/></div>
-			<html:radio name='<%= formName %>' 
+            <div class="top-label"><spring:message code="testusage.config.transmit.instructions"/></div>
+			<html:radio name='${form.formName}' 
 						property="enableSending" 
 						value="enable" 
-						onclick="enableSendingState(); makeDirty();"><label for="enable"><bean:message key="testusage.config.enable"/></label></html:radio>
-			<html:radio name='<%= formName %>' 
+						onclick="enableSendingState(); makeDirty();"><label for="enable"><spring:message code="testusage.config.enable"/></label></html:radio>
+			<html:radio name='${form.formName}' 
 						property="enableSending" 
 						value="disable" 
-						onclick="disableSendingState(); makeDirty();"><label for="disable"><bean:message key="testusage.config.disable"/></label></html:radio>
-            <span class="inline-more"><bean:message key="testusage.config.time"/></span>&nbsp;
-			<html:select name='<%=formName %>' 
+						onclick="disableSendingState(); makeDirty();"><label for="disable"><spring:message code="testusage.config.disable"/></label></html:radio>
+            <span class="inline-more"><spring:message code="testusage.config.time"/></span>&nbsp;
+			<html:select name='${form.formName}' 
 						 property="sendHour" 
 						 styleClass="sendingDependent" 
 						 onchange=" makeDirty();">
-				<app:optionsCollection name='<%=formName %>' property="hourList" label="value" value="id"/>
+				<app:optionsCollection name='${form.formName}' property="hourList" label="value" value="id"/>
 			</html:select>:
-			<html:select name='<%=formName %>' 
+			<html:select name='${form.formName}' 
 						 property="sendMin" 
 						 styleClass="sendingDependent"
 						 onchange=" makeDirty();">
-				<html:optionsCollection name='<%=formName %>' property="minList" label="value" value="id"/>
+				<html:optionsCollection name='${form.formName}' property="minList" label="value" value="id"/>
 			</html:select>
-            <div class="field-note"><bean:message key="testusage.config.transmit.note"/></div>
+            <div class="field-note"><spring:message code="testusage.config.transmit.note"/></div>
         </li>
         <li>
-            <label class="top-label"><bean:message key="testusage.config.transmit.url"/></label>
-            <html:text name='<%= formName %>'  
+            <label class="top-label"><spring:message code="testusage.config.transmit.url"/></label>
+            <html:text name='${form.formName}'  
     			   property="url" 
     			   styleClass="sendingDependent" 
     			   size="50"
     			   onchange=" makeDirty();"></html:text>
-            <div class="field-note"><bean:message key="testusage.config.transmit.url.note"/></div>
+            <div class="field-note"><spring:message code="testusage.config.transmit.url.note"/></div>
         </li>
         <li>
-            <label class="top-label"><bean:message key="testusage.config.transmit.name"/></label>
-            <html:text name='<%= formName %>'  
+            <label class="top-label"><spring:message code="testusage.config.transmit.name"/></label>
+            <html:text name='${form.formName}'  
     			   property="serviceUserName" 
     			   styleClass="sendingDependent"
     			   onchange=" makeDirty();"></html:text>
         </li>
         <li>
-            <label class="top-label"><bean:message key="testusage.config.transmit.password"/></label>
-            <html:text name='<%= formName %>'  
+            <label class="top-label"><spring:message code="testusage.config.transmit.password"/></label>
+            <html:text name='${form.formName}'  
     				   property="servicePassword" 
     				   styleClass="sendingDependent"
     				   onchange=" makeDirty();"></html:text>
         </li>
     </ul>
 
-<h3><bean:message key="testusage.config.history"/></h3>
+<h3><spring:message code="testusage.config.history"/></h3>
 <table>
 	<tr>	
-		<td ><bean:message key="testusage.config.history.time.report"/>:</td>
-		<td><bean:write name='<%= formName %>' property="lastAttemptToSend"/></td>
+		<td ><spring:message code="testusage.config.history.time.report"/>:</td>
+		<td><bean:write name='${form.formName}' property="lastAttemptToSend"/></td>
 	</tr>
 	<tr>	
-		<td><bean:message key="testusage.config.history.time.sent"/>:</td>
-		<td><bean:write name='<%= formName %>' property="lastSent"/></td>
+		<td><spring:message code="testusage.config.history.time.sent"/>:</td>
+		<td><bean:write name='${form.formName}' property="lastSent"/></td>
 	</tr>
 	<tr>
-		<td><bean:message key="testusage.config.history.time.status"/>:</td>
-		<td><bean:write name='<%=formName %>' property="sendStatus" />
+		<td><spring:message code="testusage.config.history.time.status"/>:</td>
+		<td><bean:write name='${form.formName}' property="sendStatus" />
 	</tr>	
 </table>
 

@@ -6,10 +6,12 @@
          		us.mn.state.health.lims.common.util.Versioning,
          		us.mn.state.health.lims.common.provider.query.EntityNamesProvider" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%--
   ~ The contents of this file are subject to the Mozilla Public License
   ~ Version 1.1 (the "License"); you may not use this file except in
@@ -28,8 +30,8 @@
 
 <script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>'/>
-<bean:define id="testSectionList" name='<%=formName%>' property="testSectionList" type="java.util.List"/>
+ 
+<bean:define id="testSectionList" name='${form.formName}' property="testSectionList" type="java.util.List"/>
 
 <%!
     int testSectionCount = 0;
@@ -49,7 +51,7 @@
 
     function makeDirty(){
         function formWarning(){
-            return "<bean:message key="banner.menu.dataLossWarning"/>";
+            return "<spring:message code="banner.menu.dataLossWarning"/>";
         }
         window.onbeforeunload = formWarning;
     }
@@ -163,7 +165,7 @@
     }
 </script>
 
-<html:hidden property="testSectionId" name="<%=formName%>" styleId="testSectionId"/>
+<form:hidden path="testSectionId" name="${form.formName}" id="testSectionId"/>
 <input type="button" value='<%= StringUtil.getMessageForKey("banner.menu.administration") %>'
        onclick="submitAction('MasterListsPage.do');"
        class="textButton"/> &rarr;
@@ -174,32 +176,32 @@
 <br><br>
 
 <div id="editDiv" style="display: none">
-    <h1 id="action"><bean:message key="label.button.edit"/></h1>
+    <h1 id="action"><spring:message code="label.button.edit"/></h1>
 
     <h2><%=StringUtil.getMessageForKey( "testsection.browse.title" )%>: <span id="testSectionName"></span></h2>
     <br>
     <table>
         <tr>
             <td></td>
-            <th colspan="2" style="text-align: center"><bean:message key="testSection.testSectionName"/></th>
+            <th colspan="2" style="text-align: center"><spring:message code="testSection.testSectionName"/></th>
         </tr>
         <tr>
             <td></td>
-            <td style="text-align: center"><bean:message key="label.english"/></td>
-            <td style="text-align: center"><bean:message key="label.french"/></td>
+            <td style="text-align: center"><spring:message code="label.english"/></td>
+            <td style="text-align: center"><spring:message code="label.french"/></td>
         </tr>
         <tr>
-            <td style="padding-right: 20px"><bean:message key="label.current"/>:</td>
+            <td style="padding-right: 20px"><spring:message code="label.current"/>:</td>
             <td id="nameEnglish" style="padding-left: 10px"></td>
             <td id="nameFrench" style="padding-left: 10px"></td>
         </tr>
         <tr>
-            <td style="padding-right: 20px"><bean:message key="label.new"/>:</td>
-            <td><span class="requiredlabel">*</span><html:text property="nameEnglish" name="<%=formName%>" size="40"
+            <td style="padding-right: 20px"><spring:message code="label.new"/>:</td>
+            <td><span class="requiredlabel">*</span><html:text property="nameEnglish" name="${form.formName}" size="40"
                                                                styleClass="required"
                                                                onchange="handleInput(this);"/>
             </td>
-            <td><span class="requiredlabel">*</span><html:text property="nameFrench" name="<%=formName%>" size="40"
+            <td><span class="requiredlabel">*</span><html:text property="nameFrench" name="${form.formName}" size="40"
                                                                styleClass="required" onchange="handleInput(this);"/>
             </td>
         </tr>

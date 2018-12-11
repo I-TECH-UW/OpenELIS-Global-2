@@ -6,10 +6,12 @@
          		us.mn.state.health.lims.common.util.Versioning,
          		java.util.List" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%--
   ~ The contents of this file are subject to the Mozilla Public License
   ~ Version 1.1 (the "License"); you may not use this file except in
@@ -30,8 +32,8 @@
 <script type="text/javascript" src="scripts/jquery-ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>'/>
-<bean:define id="sampleTypeList" name='<%=formName%>' property="sampleTypeList" type="java.util.List"/>
+ 
+<bean:define id="sampleTypeList" name='${form.formName}' property="sampleTypeList" type="java.util.List"/>
 
 
 <%!
@@ -65,7 +67,7 @@
 
     function makeDirty(){
         function formWarning(){
-            return "<bean:message key="banner.menu.dataLossWarning"/>";
+            return "<spring:message code="banner.menu.dataLossWarning"/>";
         }
         window.onbeforeunload = formWarning;
     }
@@ -84,7 +86,7 @@
         });
 
         $jq(".selectedTestName").text(input.value);
-        $jq("#action").text('<bean:message key="label.button.edit"/>');
+        $jq("#action").text('<spring:message code="label.button.edit"/>');
         $jq("#fromSampleType").text(currentSampleType);
         $jq("#testId").val(id);
         $jq("#deactivateSampleTypeId").val(onlyOneTestInSampleType ? sampleTypeId : "");
@@ -132,9 +134,9 @@
         form.submit();
     }
 </script>
-    <html:hidden name="<%=formName%>" property="testId" styleId="testId"/>
-    <html:hidden name="<%=formName%>" property="sampleTypeId" styleId="sampleTypeId"/>
-    <html:hidden name="<%=formName%>" property="deactivateSampleTypeId" styleId="deactivateSampleTypeId"/>
+    <form:hidden path="testId" id="testId"/>
+    <form:hidden path="sampleTypeId" id="sampleTypeId"/>
+    <form:hidden path="deactivateSampleTypeId" id="deactivateSampleTypeId"/>
 
     <input type="button" value='<%= StringUtil.getMessageForKey("banner.menu.administration") %>'
            onclick="submitAction('MasterListsPage.do');"
@@ -149,17 +151,17 @@
 <%=StringUtil.getMessageForKey( "configuration.sampleType.assign" )%>
 <br><br>
 
-    <h1 id="action" ><bean:message key="label.form.select"/></h1>
+    <h1 id="action" ><spring:message code="label.form.select"/></h1>
     <h1 id="action" class="edit-step" style="display: none"></h1>
-    <h2><bean:message key="configuration.sampleType.assign"/> </h2>
+    <h2><spring:message code="configuration.sampleType.assign"/> </h2>
 
     <div class="select-step" >
-        <bean:message key="configuration.sampleType.assign.explain" />
+        <spring:message code="configuration.sampleType.assign.explain" />
     </div>
     <div class="edit-step" style="display:none">
 
         Test: <span class="selectedTestName" ></span><br><br>
-        &nbsp;&nbsp;<bean:message key="configuration.sampleType.assign.new.type" />:&nbsp;
+        &nbsp;&nbsp;<spring:message code="configuration.sampleType.assign.new.type" />:&nbsp;
     <select id="sampleTypeSelection" onchange="sampleTypeSelected(this);">
 
         <% for(int i = 0; i < sampleTypeList.size(); i++){
@@ -170,9 +172,9 @@
     </select>
 
     <div class="confirmation-step" style="display:none">
-        <br><span class="selectedTestName" ></span>&nbsp;<bean:message key="configuration.sampleType.confirmation.move.phrase" />&nbsp;<span id="fromSampleType" ></span> <bean:message key="word.to" /> <span id="toSampleType" ></span>.
+        <br><span class="selectedTestName" ></span>&nbsp;<spring:message code="configuration.sampleType.confirmation.move.phrase" />&nbsp;<span id="fromSampleType" ></span> <spring:message code="word.to" /> <span id="toSampleType" ></span>.
         <div id="deatcitvateWarning" >
-            <br/><span id="warnDeactivteSampleType"></span>&nbsp;<bean:message key="configuration.sampleType.assign.deactivate" />
+            <br/><span id="warnDeactivteSampleType"></span>&nbsp;<spring:message code="configuration.sampleType.assign.deactivate" />
         </div>
     </div>
 
@@ -189,7 +191,7 @@
                onclick='rejectConfirmation();'/>
     </div>
 </div>
-    <bean:define id="testMap" name='<%=formName%>' property="sampleTypeTestList" type="java.util.LinkedHashMap<IdValuePair, java.util.List<IdValuePair>>"/>
+    <bean:define id="testMap" name='${form.formName}' property="sampleTypeTestList" type="java.util.LinkedHashMap<IdValuePair, java.util.List<IdValuePair>>"/>
 
 <% for( IdValuePair pair : testMap.keySet()){
  List<IdValuePair> testList = testMap.get(pair);

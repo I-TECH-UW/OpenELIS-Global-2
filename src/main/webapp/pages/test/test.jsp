@@ -3,13 +3,14 @@
 	import="java.util.Date,
 			us.mn.state.health.lims.common.action.IActionConstants" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 <%!
 
 
@@ -28,7 +29,7 @@ if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
 
 %>
 
-<script language="JavaScript1.2">
+<script>
  
 function validateForm(form) {
      return validateTestForm(form);
@@ -77,45 +78,45 @@ function getNextSortOrder() {
 <table>
 		<tr>
 						<td class="label">
-							<bean:message key="test.id"/>:
+							<spring:message code="test.id"/>:
 						</td>	
 						<td> 
-							<app:text name="<%=formName%>" property="id" allowEdits="false"/>
+							<app:text name="${form.formName}" property="id" allowEdits="false"/>
 						</td>
 		</tr>
 		<tr>
 						<td class="label">
-							<bean:message key="test.testSectionName"/>:<span class="requiredlabel">*</span>
+							<spring:message code="test.testSectionName"/>:<span class="requiredlabel">*</span>
 						</td>	
 						<td> 
-							<html:text styleId="testSectionName" size="30" name="<%=formName%>" property="testSectionName" /> 
+							<html:text id="testSectionName" size="30" name="${form.formName}" property="testSectionName" /> 
 							<span id="indicator3" style="display:none;"><img src="<%=basePath%>images/indicator.gif"/></span>
 	   			              <input id="selectedTestSectionName" name="selectedTestSectionName" type="hidden" size="30" />
 						</td>
 		 </tr>
          <tr>
 						<td class="label">
-							<bean:message key="test.testName"/>:<span class="requiredlabel">*</span>
+							<spring:message code="test.testName"/>:<span class="requiredlabel">*</span>
 						</td>	
 						<td> 
-							<html:text name="<%=formName%>" property="testName" />
+							<form:input path="testName" />
 						</td>
 		 </tr>
 		<tr>
 						<td class="label">
-							<bean:message key="test.description"/>:<span class="requiredlabel">*</span>
+							<spring:message code="test.description"/>:<span class="requiredlabel">*</span>
 						</td>	
 						<td> 
 						<%--bugzilla 2350--%>
-							<html:textarea name="<%=formName%>" property="description" cols="40" rows="2" onkeyup="this.value=this.value.slice(0,60)"/>
+							<html:textarea name="${form.formName}" property="description" cols="40" rows="2" onkeyup="this.value=this.value.slice(0,60)"/>
 						</td>
 		 </tr>
           <tr>
 						<td class="label">
-							<bean:message key="test.isActive"/>:<span class="requiredlabel">*</span>
+							<spring:message code="test.isActive"/>:<span class="requiredlabel">*</span>
 						</td>	
 						<td width="1">
-							<html:text name="<%=formName%>" property="isActive" size="1" onblur="this.value=this.value.toUpperCase()"/>
+							<form:input path="isActive" size="1" onblur="this.value=this.value.toUpperCase()"/>
 						</td>
           </tr>
           <%--bugzilla 1784 adding isReportable on test and required--%>

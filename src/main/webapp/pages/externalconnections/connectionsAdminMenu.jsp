@@ -4,17 +4,20 @@
 				us.mn.state.health.lims.common.formfields.AdminFormFields,
 				us.mn.state.health.lims.common.formfields.AdminFormFields.Field" %>
 
-<%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"		prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 
 <table width="80%" border="2">
 	<tr>
-	   	<th><bean:message key="externalconnect.menu.title" /></th>
+	   	<th><spring:message code="externalconnect.menu.title" /></th>
 	</tr>
-	<logic:iterate id="urlForDisplay" name="<%=formName%>" property="menuList">
+	<logic:iterate id="urlForDisplay" name="${form.formName}" property="menuList">
 	  	<tr>
    	   		<td class="textcontent">
 	    		<a href="<bean:write name="urlForDisplay" property="urlAddress"/>"><bean:message name="urlForDisplay" property="displayKey"/></a>

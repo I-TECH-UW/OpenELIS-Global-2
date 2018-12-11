@@ -5,12 +5,14 @@
                  us.mn.state.health.lims.patient.action.bean.PatientManagementInfo,
                  us.mn.state.health.lims.common.util.*" %>
 
-<%@ page isELIgnored="false"%>
-
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
 
 <script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
@@ -19,8 +21,8 @@
 <c:set var="formName" value="${form.formName}" />
 <c:set var="patientProperties" value="${form.patientProperties}" />
 
-<%-- <bean:define id="formName"		value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
-<bean:define id="patientProperties" name='<%=formName%>' property='patientProperties' type="PatientManagementInfo" /> --%>
+<%-- 		
+<bean:define id="patientProperties" name='${form.formName}' property='patientProperties' type="PatientManagementInfo" /> --%>
 
 
 <%!
@@ -831,25 +833,25 @@ function  processSubjectNumberSuccess(xhr){
 </script>
 
 <form:form modelAttribute="form" >
-<%-- <nested:hidden name='<%=formName%>' property="patientProperties.currentDate" styleId="currentDate"/> --%>
+<%-- <nested:hidden name='${form.formName}' property="patientProperties.currentDate" id="currentDate"/> --%>
 <form:hidden path="patientProperties.currentDate" id="currentDate"/>
 
 <div id="PatientPage" style="display:inline"  >
-<%-- 	<nested:hidden property="patientProperties.patientLastUpdated" name='<%=formName%>' styleId="patientLastUpdated" />
-	<nested:hidden property="patientProperties.personLastUpdated" name='<%=formName%>'  styleId="personLastUpdated"/> --%>
+<%-- 	<nested:hidden property="patientProperties.patientLastUpdated" name='${form.formName}' id="patientLastUpdated" />
+	<nested:hidden property="patientProperties.personLastUpdated" name='${form.formName}'  id="personLastUpdated"/> --%>
 <form:hidden path="patientProperties.patientLastUpdated" id="patientLastUpdated"/>
 <form:hidden path="patientProperties.personLastUpdated" id="personLastUpdated"/>
 
 	<tiles:insertAttribute name="patientSearch" />
 
-<%-- 	<nested:hidden name='<%=formName%>' property="patientProperties.patientProcessingStatus" styleId="processingStatus" value="add" />
-	<nested:hidden name='<%=formName%>' property="patientProperties.patientPK" styleId="patientPK_ID" />
-	<nested:hidden name='<%=formName%>' property="patientProperties.guid" styleId="patientGUID_ID" /> --%>
+<%-- 	<nested:hidden name='${form.formName}' property="patientProperties.patientProcessingStatus" id="processingStatus" value="add" />
+	<nested:hidden name='${form.formName}' property="patientProperties.patientPK" id="patientPK_ID" />
+	<nested:hidden name='${form.formName}' property="patientProperties.guid" id="patientGUID_ID" /> --%>
 <form:hidden path="patientProperties.patientProcessingStatus" id="processingStatus"/>
 <form:hidden path="patientProperties.patientPK" id="patientPK_ID"/>
 <form:hidden path="patientProperties.guid" id="patientGUID_ID"/>
 	
-   <%--  <logic:equal value="false" name="<%=formName%>" property="patientProperties.readOnly" > --%>
+   <%--  <logic:equal value="false" name="${form.formName}" property="patientProperties.readOnly" > --%>
    <c:if test="${form.patientProperties.readOnly == false }" >
 	<br/>
 	<div class="patientSearch">
@@ -875,10 +877,10 @@ function  processSubjectNumberSuccess(xhr){
             <spring:message code="patient.ST.number"/>:
         </td>
         <td>
-            <%-- <nested:text name='<%=formName%>'
+            <%-- <nested:text name='${form.formName}'
                          property="patientProperties.STnumber"
                          onchange="validateSubjectNumber(this, 'STnumber');updatePatientEditStatus();"
-                         styleId="ST_ID"
+                         id="ST_ID"
                          styleClass="text"
                          size="60" /> --%>
             <form:input path="patientProperties.STnumber" id="ST_ID" onchange="validateSubjectNumber(this, 'STnumber');updatePatientEditStatus();" size="60"/>
@@ -900,10 +902,10 @@ function  processSubjectNumberSuccess(xhr){
             <% } %>
         </td>
         <td>
-            <%-- <nested:text name='<%=formName%>'
+            <%-- <nested:text name='${form.formName}'
                          property="patientProperties.subjectNumber"
                          onchange="validateSubjectNumber(this, 'subjectNumber');updatePatientEditStatus();"
-                         styleId="subjectNumberID"
+                         id="subjectNumberID"
                          styleClass="text"
                          size="60" /> --%>
             <form:input path="patientProperties.subjectNumber" id="subjectNumberID" onchange="validateSubjectNumber(this, 'subjectNumber');updatePatientEditStatus();" size="60"/>
@@ -920,10 +922,10 @@ function  processSubjectNumberSuccess(xhr){
 
         </td>
         <td >
-           <%--  <nested:text name='<%=formName%>'
+           <%--  <nested:text name='${form.formName}'
                          property="patientProperties.nationalId"
                          onchange="validateSubjectNumber(this, 'nationalId');updatePatientEditStatus();"
-                         styleId="nationalID"
+                         id="nationalID"
                          styleClass="text"
                          size="60"/> --%>
             <form:input path="patientProperties.nationalId" id="nationalID" onchange="validateSubjectNumber(this, 'nationalId');updatePatientEditStatus();" size="60"/>
@@ -949,12 +951,12 @@ function  processSubjectNumberSuccess(xhr){
 			<% } %>
 		</td>
 		<td >
-			<%-- <nested:text name='<%=formName%>'
+			<%-- <nested:text name='${form.formName}'
 					  property="patientProperties.lastName"
 					  styleClass="text"
 				      size="60"
 				      onchange="updatePatientEditStatus();"
-				      styleId="lastNameID"/> --%>
+				      id="lastNameID"/> --%>
             <form:input path="patientProperties.lastName" id="lastNameID" onchange="updatePatientEditStatus();"  size="60"/>
 		</td>
 		<td style="text-align:right;">
@@ -965,12 +967,12 @@ function  processSubjectNumberSuccess(xhr){
 			<% } %>	
 		</td>
 		<td >
-			<%-- <nested:text name='<%=formName%>'
+			<%-- <nested:text name='${form.formName}'
 					  property="patientProperties.firstName"
 					  styleClass="text"
 					  size="40"
 					  onchange="updatePatientEditStatus();"
-					  styleId="firstNameID"/> --%>
+					  id="firstNameID"/> --%>
             <form:input path="patientProperties.firstName" id="firstNameID" onchange="updatePatientEditStatus();" size="40"/>
 		</td>
 	</tr>
@@ -981,10 +983,10 @@ function  processSubjectNumberSuccess(xhr){
 		<spring:message code="patient.aka"/>
 	</td>
 	<td>
-		<%-- <nested:text name='<%=formName%>'
+		<%-- <nested:text name='${form.formName}'
 				  property="patientProperties.aka"
 				  onchange="updatePatientEditStatus();"
-				  styleId="akaID"
+				  id="akaID"
 				  styleClass="text"
 				  size="60" /> --%>
             <form:input path="patientProperties.aka" id="akaID" onchange="updatePatientEditStatus();" size="60" />
@@ -998,10 +1000,10 @@ function  processSubjectNumberSuccess(xhr){
 			<spring:message code="patient.mother.name"/>
 		</td>
 		<td>
-			<%-- <nested:text name='<%=formName%>'
+			<%-- <nested:text name='${form.formName}'
 					  property="patientProperties.mothersName"
 					  onchange="updatePatientEditStatus();"
-				  	  styleId="motherID"
+				  	  id="motherID"
 				  	  styleClass="text"
 				      size="60" /> --%>
             <form:input path="patientProperties.mothersName" id="motherID" onchange="updatePatientEditStatus();" size="60"/>
@@ -1014,10 +1016,10 @@ function  processSubjectNumberSuccess(xhr){
 			<spring:message code="patient.mother.initial"/>
 		</td>
 		<td>
-			<%-- <nested:text name='<%=formName%>'
+			<%-- <nested:text name='${form.formName}'
 					  property="patientProperties.mothersInitial"
 					  onchange="updatePatientEditStatus();"
-				  	  styleId="motherInitialID"
+				  	  id="motherInitialID"
 				  	  styleClass="text"
 				      size="1"
 				      maxlength="1" /> --%>
@@ -1034,10 +1036,10 @@ function  processSubjectNumberSuccess(xhr){
 			<spring:message code="person.streetAddress.street" />:
 		</td>
 		<td>
-			<%-- <nested:text name='<%=formName%>'
+			<%-- <nested:text name='${form.formName}'
 					  property="patientProperties.streetAddress"
 					  onchange="updatePatientEditStatus();"
-					  styleId="streetID"
+					  id="streetID"
 					  styleClass="text"
 					  size="70" /> --%>
             <form:input path="patientProperties.streetAddress" id="streetID" cssClass="text" onchange="updatePatientEditStatus();" size="70"/>
@@ -1050,10 +1052,10 @@ function  processSubjectNumberSuccess(xhr){
             <spring:message code="person.commune" />:
         </td>
         <td>
-            <%-- <nested:text name='<%=formName%>'
+            <%-- <nested:text name='${form.formName}'
                          property="patientProperties.commune"
                          onchange="updatePatientEditStatus();"
-                         styleId="communeID"
+                         id="communeID"
                          styleClass="text"
                          size="30" /> --%>
             <form:input path="patientProperties.commune" id="communeID" cssClass="text"  onchange="updatePatientEditStatus();" size="30"/>
@@ -1067,10 +1069,10 @@ function  processSubjectNumberSuccess(xhr){
 		    <%= StringUtil.getContextualMessageForKey("person.town") %>:
 		</td>
 		<td>
-			<%-- <nested:text name='<%=formName%>'
+			<%-- <nested:text name='${form.formName}'
 					  property="patientProperties.city"
 					  onchange="updatePatientEditStatus();"
-					  styleId="cityID"
+					  id="cityID"
 					  styleClass="text"
 					  size="30" /> --%>
             <form:input path="patientProperties.city" id="cityID" cssClass="text" onchange="updatePatientEditStatus();" size="30"/>
@@ -1084,27 +1086,27 @@ function  processSubjectNumberSuccess(xhr){
 			<spring:message code="person.department" />:
 		</td>
 		<td>
-            <%-- <logic:equal value="false" name="<%=formName%>" property="patientProperties.readOnly" > --%>
+            <%-- <logic:equal value="false" name="${form.formName}" property="patientProperties.readOnly" > --%>
             <c:if test="${ patientProperties.readOnly == false}" >
             <form:select path="patientProperties.addressDepartment" id="departmentID" onchange="updatePatientEditStatus();clearDeptMessage();">
-			<%-- <html:select name='<%=formName%>'
+			<%-- <html:select name='${form.formName}'
 						 property="patientProperties.addressDepartment"
 						 onchange="updatePatientEditStatus();clearDeptMessage();"
-					     styleId="departmentID" > --%>
+					     id="departmentID" > --%>
 			<option value="0" ></option>
 			<c:forEach items="${form.patientProperties.addressDepartments}" var="address" >
 			<option value="${address.id}">${address.dictEntry} </option>
 			</c:forEach>
-			<%-- <html:optionsCollection name="<%=formName %>" property="patientProperties.addressDepartments" label="dictEntry" value="id" /> --%>
+			<%-- <html:optionsCollection name="${form.formName}" property="patientProperties.addressDepartments" label="dictEntry" value="id" /> --%>
 			<%-- </html:select> --%><br>
 			</form:select>
 			<span id="deptMessage"></span>
             <%-- </logic:equal> --%>
             </c:if>
             <c:if test="${form.patientProperties.readOnly}" >
-            <%-- <logic:equal value="true" name="<%=formName%>" property="patientProperties.readOnly" > --%>
+            <%-- <logic:equal value="true" name="${form.formName}" property="patientProperties.readOnly" > --%>
             <form:input path="patientProperties.addressDepartment" />
-                <%-- <html:text property="patientProperties.addressDepartment" name="<%=formName%>" /> --%>
+                <%-- <html:text property="patientProperties.addressDepartment" name="${form.formName}" /> --%>
             <%-- </logic:equal> --%>
             </c:if>
 		</td>
@@ -1116,7 +1118,7 @@ function  processSubjectNumberSuccess(xhr){
 			<td style="text-align:right;"><%= StringUtil.getContextualMessageForKey("person.phone") %>:</td>
 			<td>
 				<form:input path="patientProperties.phone" onchange="validatePhoneNumber( this );" maxLength="35"/>
-<%-- 				<html:text styleId="patientPhone" name='<%= formName %>' property="patientProperties.phone" maxlength="35" onchange="validatePhoneNumber( this );" />
+<%-- 				<html:text id="patientPhone" name='${form.formName}' property="patientProperties.phone" maxlength="35" onchange="validatePhoneNumber( this );" />
  --%>			</td>
 		</tr>
 	<% } %>
@@ -1126,13 +1128,13 @@ function  processSubjectNumberSuccess(xhr){
 	<td>&nbsp;</td>
 	<td style="text-align:right;"><spring:message code="person.health.region"/>: </td>
 		<td>
-			<%-- <nested:hidden name='<%=formName%>' property="patientProperties.healthRegion" styleId="shadowHealthRegion" />
-			<html:select name='<%=formName%>'
+			<%-- <nested:hidden name='${form.formName}' property="patientProperties.healthRegion" id="shadowHealthRegion" />
+			<html:select name='${form.formName}'
 						 property="patientProperties.healthRegion"
 						 onchange="updateHealthDistrict( this );"
-					     styleId="healthRegionID" >
+					     id="healthRegionID" >
 			<option value="0" ></option>
-			<html:optionsCollection name="<%=formName %>" property="patientProperties.healthRegions" label="value" value="id" />
+			<html:optionsCollection name="${form.formName}" property="patientProperties.healthRegions" label="value" value="id" />
 			</html:select> --%>
 			
 			<form:hidden path="patientProperties.healthRegion" id="shadowHealthRegion"/>
@@ -1150,9 +1152,9 @@ function  processSubjectNumberSuccess(xhr){
 	<td>&nbsp;</td>
 	<td style="text-align:right;"><spring:message code="person.health.district"/>: </td>
 		<td>
-			<%-- <html:select name='<%=formName%>'
+			<%-- <html:select name='${form.formName}'
 						 property="patientProperties.healthDistrict"
-					     styleId="healthDistrictID"
+					     id="healthDistrictID"
 					     disabled="true" >
 			<option value="0" ></option>
 
@@ -1175,14 +1177,14 @@ function  processSubjectNumberSuccess(xhr){
 			<% } %>
 		</td>
 		<td>
-			<%-- <nested:text name='<%=formName%>'
+			<%-- <nested:text name='${form.formName}'
 					  property="patientProperties.birthDateForDisplay"
 					  styleClass="text"
 					  size="20"
                       maxlength="10"
                       onkeyup="addDateSlashes(this,event); normalizeDateFormat(this);"
                       onblur="checkValidAgeDate( this ); updatePatientEditStatus();"
-					  styleId="dateOfBirthID" /> --%>
+					  id="dateOfBirthID" /> --%>
             <form:input path="patientProperties.birthDateForDisplay" 
                       onkeyup="addDateSlashes(this,event); normalizeDateFormat(this);"
                       onblur="checkValidAgeDate( this ); updatePatientEditStatus();"
@@ -1197,12 +1199,12 @@ function  processSubjectNumberSuccess(xhr){
 		</td>
 		<td >
             <%-- <html:text property="patientProperties.age"
-                       name="<%=formName%>"
+                       name="${form.formName}"
                        size="3"
                        maxlength="3"
                        onchange="handleAgeChange( this ); updatePatientEditStatus();"
                        styleClass="text"
-                    styleId="age"/> --%>
+                    id="age"/> --%>
            <form:input path="patientProperties.age" 
            			  onchange="handleAgeChange( this ); updatePatientEditStatus();"
            			  id="age"
@@ -1220,14 +1222,14 @@ function  processSubjectNumberSuccess(xhr){
 		</td>
 		<td>
 			<c:if test="${patientProperties.readOnly == false}" >
-            <%-- <logic:equal value="false" name="<%=formName%>" property="patientProperties.readOnly" > --%>
+            <%-- <logic:equal value="false" name="${form.formName}" property="patientProperties.readOnly" > --%>
             <form:select path="patientProperties.gender" id="genderID" onchange="updatePatientEditStatus();" >
-			<%-- <nested:select name='<%=formName%>'
+			<%-- <nested:select name='${form.formName}'
 						 property="patientProperties.gender"
 						 onchange="updatePatientEditStatus();"
-						 styleId="genderID">
+						 id="genderID">
 				<option value=" " ></option>
-				<nested:optionsCollection name='<%=formName%>' property="patientProperties.genders"   label="value" value="id" />
+				<nested:optionsCollection name='${form.formName}' property="patientProperties.genders"   label="value" value="id" />
 			</nested:select> --%>
 			<option value=" " ></option>
 			<c:forEach items="${patientProperties.genders}" var="gender" >
@@ -1239,8 +1241,8 @@ function  processSubjectNumberSuccess(xhr){
             <c:if test="${patientProperties.readOnly}" >
             	<form:input path="patientProperties.gender" />
             </c:if>
-            <%-- <logic:equal value="true" name="<%=formName%>" property="patientProperties.readOnly" >
-                <html:text property="patientProperties.gender" name="<%=formName%>" />
+            <%-- <logic:equal value="true" name="${form.formName}" property="patientProperties.readOnly" >
+                <html:text property="patientProperties.gender" name="${form.formName}" />
             </logic:equal> --%>
 		</td>
 	</tr>
@@ -1257,12 +1259,12 @@ function  processSubjectNumberSuccess(xhr){
 				<option value="${patientType.id}" >${patientType.value}</option>
 				</c:forEach>
 				</form:select>
-			<%-- <nested:select name='<%=formName%>'
+			<%-- <nested:select name='${form.formName}'
 						 property="patientProperties.patientType"
 						 onchange="updatePatientEditStatus();"
-						 styleId="patientTypeID"  >
+						 id="patientTypeID"  >
 				<option value="0" ></option>
-				<nested:optionsCollection name='<%=formName%>' property="patientProperties.patientTypes" label="description" value="type" />
+				<nested:optionsCollection name='${form.formName}' property="patientProperties.patientTypes" label="description" value="type" />
 			</nested:select> --%>
 		</td>
 		<% } if( supportInsurance ){ %>
@@ -1273,10 +1275,10 @@ function  processSubjectNumberSuccess(xhr){
 		<form:select path="patientProperties.insuranceNumber" onchange="updatePatientEditStatus();" id="insuranceID">
 		</form:select>
 		
-			<%-- <nested:text name='<%=formName%>'
+			<%-- <nested:text name='${form.formName}'
 					  property="patientProperties.insuranceNumber"
 					  onchange="updatePatientEditStatus();"
-					  styleId="insuranceID"
+					  id="insuranceID"
 					  styleClass="text"
 					  size="20" /> --%>
 		</td>
@@ -1293,10 +1295,10 @@ function  processSubjectNumberSuccess(xhr){
 	<td>
 		<form:select path="patientProperties.occupation" onchange="updatePatientEditStatus();" id="occupationID">
 		</form:select>
-		<%-- <nested:text name='<%=formName%>'
+		<%-- <nested:text name='${form.formName}'
 				  property="patientProperties.occupation"
 				  onchange="updatePatientEditStatus();"
-				  styleId="occupationID"
+				  id="occupationID"
 				  styleClass="text"
 				  size="20" /> --%>
 	</td>
@@ -1312,11 +1314,11 @@ function  processSubjectNumberSuccess(xhr){
 					<option value="${education.value}" >${education.value}</option>
 					</c:forEach>
 					</form:select>
-					<%-- <html:select name='<%=formName%>'
+					<%-- <html:select name='${form.formName}'
 								 property="patientProperties.education"
-							     styleId="educationID" >
+							     id="educationID" >
 					<option value="0" ></option>
-					<html:optionsCollection name="<%=formName %>" property="patientProperties.educationList" label="value" value="value" />
+					<html:optionsCollection name="${form.formName}" property="patientProperties.educationList" label="value" value="value" />
 					</html:select> --%>
 				</td>	
 			</tr>	
@@ -1331,11 +1333,11 @@ function  processSubjectNumberSuccess(xhr){
 					<option value="${maritial.value}" >${maritial.value}</option>
 					</c:forEach>
 					</form:select>
-					<%-- <html:select name='<%=formName%>'
+					<%-- <html:select name='${form.formName}'
 								 property="patientProperties.maritialStatus"
-							     styleId="maritialStatusID" >
+							     id="maritialStatusID" >
 					<option value="0" ></option>
-					<html:optionsCollection name="<%=formName %>" property="patientProperties.maritialList" label="value" value="value" />
+					<html:optionsCollection name="${form.formName}" property="patientProperties.maritialList" label="value" value="value" />
 					</html:select> --%>
 				</td>	
 			</tr>	
@@ -1350,16 +1352,16 @@ function  processSubjectNumberSuccess(xhr){
 					<option value="${nationality.value}" >${nationality.value}</option>
 					</c:forEach>
 					</form:select>
-					<%-- <html:select name='<%=formName%>'
+					<%-- <html:select name='${form.formName}'
 								 property="patientProperties.nationality"
-							     styleId="nationalityID" >
+							     id="nationalityID" >
 					<option value="0" ></option>
-					<html:optionsCollection name="<%=formName %>" property="patientProperties.nationalityList" label="value" value="value" />
+					<html:optionsCollection name="${form.formName}" property="patientProperties.nationalityList" label="value" value="value" />
 					</html:select> --%>
 				</td>
 				<td><spring:message code="specify"/>:</td>
 				<td>
-					<%-- <html:text name='<%=formName %>'  property="patientProperties.otherNationality" styleId="nationalityOtherId" /> --%>
+					<%-- <form:input path="patientProperties.otherNationality" id="nationalityOtherId" /> --%>
 					<form:input path="patientProperties.otherNationality" id="nationalityOtherId" />
 				</td>	
 			</tr>	

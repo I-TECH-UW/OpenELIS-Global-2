@@ -6,20 +6,14 @@
 			     us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
 			     us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
 			     us.mn.state.health.lims.common.util.*" %>
-<%@ page isELIgnored="false"%>
-
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-
-<%-- <%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"		prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"		prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view"		prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
-<%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %> --%>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
 <c:set var="formName" value="${form.formName}"/>
 <c:set var="localDBOnly" value='<%=Boolean.toString(ConfigurationProperties.getInstance().getPropertyValueLowerCase(Property.UseExternalPatientInfo).equals("false"))%>'/>
@@ -47,7 +41,7 @@
  %>
 
 <script type="text/javascript" src="<%=basePath%>scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" language="JavaScript1.2">
+<script type="text/javascript">
 
 var supportSTNumber = <%= supportSTNumber %>;
 var supportMothersName = <%= supportMothersName %>;

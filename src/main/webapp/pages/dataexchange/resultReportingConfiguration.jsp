@@ -4,12 +4,14 @@
 			us.mn.state.health.lims.dataexchange.resultreporting.beans.ReportingConfiguration,
 			us.mn.state.health.lims.common.util.Versioning"%>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/labdev-view" prefix="app"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="formName" value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+ 
 
 <%!String allowEdits = "true";%>
 
@@ -73,7 +75,7 @@ function  /*void*/ processTestSuccess(xhr){
 }
 </script>
 
-<logic:iterate id="reports" name='<%= formName %>' property="reports" type="ReportingConfiguration" >
+<logic:iterate id="reports" name='${form.formName}' property="reports" type="ReportingConfiguration" >
 <h2><bean:write name="reports" property="title"/></h2>
 <table >
 	<tr >
@@ -81,15 +83,15 @@ function  /*void*/ processTestSuccess(xhr){
 			<html:radio name='reports' 
 						property="enabled"
 						indexed="true"  
-						value="enable" ><bean:message key="testusage.config.enable"/></html:radio>
+						value="enable" ><spring:message code="testusage.config.enable"/></html:radio>
 			<html:radio name='reports' 
 						property="enabled" 
 						value="disable"
-						indexed="true" ><bean:message key="testusage.config.disable"/></html:radio>
+						indexed="true" ><spring:message code="testusage.config.disable"/></html:radio>
 	</td>
 	</tr>
 	<tr>
-	<td colspan="2"><bean:message key="resultreporting.config.url"/></td>  	
+	<td colspan="2"><spring:message code="resultreporting.config.url"/></td>  	
   </tr>
   <tr>
   <td>&nbsp;</td>
@@ -103,41 +105,41 @@ function  /*void*/ processTestSuccess(xhr){
     <logic:notEmpty name="reports" property="connectionTestIdentifier">
     <td>
 		<input type="button" value='<%= StringUtil.getMessageForKey("connection.test.button") %>' onclick='<%= "testConnection( \"" +  reports.getConnectionTestIdentifier() + "\");" %>' >
-		<bean:message key="connection.test.button.message"/>
+		<spring:message code="connection.test.button.message"/>
     </td>
     </logic:notEmpty>
   </tr>
   <logic:match name='reports' property="isScheduled"  value="true">
   <tr>
-  	<td colspan="2"><bean:message key="testusage.config.transmit.instructions"/>
+  	<td colspan="2"><spring:message code="testusage.config.transmit.instructions"/>
   	</td>
   </tr>
   <tr>
   	<td>&nbsp;</td>
   	<td>
-  	 <bean:message key="testusage.config.time"/>&nbsp;
+  	 <spring:message code="testusage.config.time"/>&nbsp;
 			<html:select name='reports' 
 						 property="scheduleHours"
 						 indexed="true" 
 						 styleClass="gatherDependent"
-						 styleId="scheduleHours" 
+						 id="scheduleHours" 
 						 onchange=" makeDirty();">
-				<html:optionsCollection name='<%=formName %>' property="hourList" label="value" value="id"/>
+				<html:optionsCollection name='${form.formName}' property="hourList" label="value" value="id"/>
 			</html:select>:
 			<html:select name='reports' 
 			             property="scheduleMin"
 			             indexed="true" 
 			             styleClass="gatherDependent"
-			             styleId="scheduleMin" 
+			             id="scheduleMin" 
 			             onchange=" makeDirty();">
-				<html:optionsCollection name='<%=formName %>' property="minList" label="value" value="id"/>
+				<html:optionsCollection name='${form.formName}' property="minList" label="value" value="id"/>
 		</html:select>
     </td>
   </tr>
   </logic:match>
  <logic:equal name='reports' property="showAuthentication"  value="true">
  <tr>
-    <td><br/><bean:message key="testusage.config.transmit.name"/></td>
+    <td><br/><spring:message code="testusage.config.transmit.name"/></td>
   </tr>
   <tr>
     <td>     
@@ -149,7 +151,7 @@ function  /*void*/ processTestSuccess(xhr){
     </td>
   </tr>
   <tr>
-    <td><br/><bean:message key="testusage.config.transmit.password"/></td>
+    <td><br/><spring:message code="testusage.config.transmit.password"/></td>
   </tr>
   <tr>  
     <td><html:password name='reports'  
@@ -162,8 +164,8 @@ function  /*void*/ processTestSuccess(xhr){
 </logic:equal>     
 </table>
 <logic:equal name='reports' property="showBacklog"  value="true">
-	<bean:message key="result.report.queue.msg"/>
+	<spring:message code="result.report.queue.msg"/>
 	<br/><br/>
-	<bean:message key="result.report.queue.size"/>: <bean:write name="reports" property="backlogSize" />
+	<spring:message code="result.report.queue.size"/>: <bean:write name="reports" property="backlogSize" />
 </logic:equal> 
 </logic:iterate>

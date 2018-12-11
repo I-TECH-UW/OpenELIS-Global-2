@@ -5,16 +5,17 @@
 			us.mn.state.health.lims.common.formfields.FormFields.Field,
 			us.mn.state.health.lims.common.util.StringUtil" %>
 
-<%@ taglib uri="/tags/struts-bean" prefix="bean" %>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
-<%@ taglib uri="/tags/struts-logic" prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view" prefix="app" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 
 <div id="sound"></div>
 
-<bean:define id="formName" value='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' />
+ 
 <%--bugzilla 2069--%>
 
 <%!
@@ -65,7 +66,7 @@ showVillage = FormFields.getInstance().useField(Field.ADDRESS_VILLAGE );
 
 %>
 
-<script language="JavaScript1.2">
+<script>
 var useOrganizationTypes = <%= useInlineOrganizationTypes %>;
 function validateForm(form) {
 	if( useOrganizationTypes ){
@@ -88,26 +89,26 @@ function validateForm(form) {
 		<% if(showId){ %>
 		<tr>
 						<td class="label">
-							<bean:message key="organization.id"/>:
+							<spring:message code="organization.id"/>:
 						</td>
 						<td>
-							<app:text name="<%=formName%>" property="id" allowEdits="false"/>
+							<app:text name="${form.formName}" property="id" allowEdits="false"/>
 						</td>
 		</tr>
 		<% } %>
 		<% if( useParent ){ %>
 		<tr>
 			<td class="label">
-				<bean:message key="organization.parent"/>:
+				<spring:message code="organization.parent"/>:
 			</td>
 			<td>
-	   			<html:text styleId="parentOrgName" size="30" name="<%=formName%>" property="parentOrgName" />
+	   			<html:text id="parentOrgName" size="30" name="${form.formName}" property="parentOrgName" />
 	   			<span id="indicator1" style="display:none;"><img src="<%=basePath%>images/indicator.gif"/></span>
 
 	   			<input id="selectedOrgId" name="selectedOrgId" type="hidden" size="30" />
-						 <%--html:select name="<%=formName%>" property="selectedOrgId">
+						 <%--html:select name="${form.formName}" property="selectedOrgId">
 							   	   <app:optionsCollection
-										name="<%=formName%>"
+										name="${form.formName}"
 							    		property="parentOrgs"
 										label="organizationName"
 										value="id"
@@ -116,7 +117,7 @@ function validateForm(form) {
 							 			allowEdits="true"
 							/>
                          </html:select--%>
-							<%--html:text styleId="organizationName" styleClass="form-autocomplete" size="30" name="<%=formName%>" property="organizationName" /> &nbsp;&nbsp;&nbsp;&nbsp;Org ID: <input id="selectedOrgId" name="selectedOrgId" type="text" size="30" /--%>
+							<%--html:text id="organizationName" styleClass="form-autocomplete" size="30" name="${form.formName}" property="organizationName" /> &nbsp;&nbsp;&nbsp;&nbsp;Org ID: <input id="selectedOrgId" name="selectedOrgId" type="text" size="30" /--%>
 
 			</td>
 		</tr>
@@ -124,19 +125,19 @@ function validateForm(form) {
 		<% if( useOrgLocalAbbrev ){ %>
 		<tr>
 						<td class="label">
-						    <bean:message key="organization.localAbbreviation"/>:<span class="requiredlabel">*</span>
+						    <spring:message code="organization.localAbbreviation"/>:<span class="requiredlabel">*</span>
 						</td>
 						<td>
-						 	<html:text name="<%=formName%>" property="organizationLocalAbbreviation" />
+						 	<form:input path="organizationLocalAbbreviation" />
 						</td>
 		</tr>
 		<% } %>
 		<tr>
 						<td class="label">
-							<bean:message key="organization.organizationName"/>:<span class="requiredlabel">*</span>
+							<spring:message code="organization.organizationName"/>:<span class="requiredlabel">*</span>
 						</td>
 						<td>
-							<html:text name="<%=formName%>" property="organizationName" />
+							<form:input path="organizationName" />
 						</td>
 		</tr>
 		<% if(useShortName){ %>
@@ -145,44 +146,44 @@ function validateForm(form) {
 						    <%= StringUtil.getContextualMessageForKey("organization.short") %>
 						</td>
 						<td>
-						 	<html:text name="<%=formName%>" property="shortName" />
+						 	<form:input path="shortName" />
 						</td>
 		</tr>
 		<% } %>
         <tr>
 						<td class="label">
-							<bean:message key="organization.isActive"/>:<span class="requiredlabel">*</span>
+							<spring:message code="organization.isActive"/>:<span class="requiredlabel">*</span>
 						</td>
 						<td width="1">
-							<html:text name="<%=formName%>" property="isActive" size="1" onblur="this.value=this.value.toUpperCase()"/>
+							<form:input path="isActive" size="1" onblur="this.value=this.value.toUpperCase()"/>
 						</td>
 		</tr>
 		<% if( useAddressInfo){ %>
 		<% if(useMultiUnit){ %>
 		<tr>
 						<td class="label">
-							<bean:message key="organization.multipleUnit"/>:
+							<spring:message code="organization.multipleUnit"/>:
 						</td>
 						<td>
-							<html:text name="<%=formName%>" property="multipleUnit" />
+							<form:input path="multipleUnit" />
 						</td>
 		</tr>
 		<% } %>
 		<tr>
 						<td class="label">
-							<bean:message key="organization.streetAddress"/>:
+							<spring:message code="organization.streetAddress"/>:
 						</td>
 						<td>
-						   	<app:text name="<%=formName%>" property="streetAddress" styleClass="text" size="35"/>
+						   	<app:text name="${form.formName}" property="streetAddress" styleClass="text" size="35"/>
 						</td>
 		</tr>
 		<% if( showCity){ %>
 		<tr>
 						<td class="label">
-							<bean:message key="organization.city"/>:
+							<spring:message code="organization.city"/>:
 						</td>
 						<td>
-							<html:text styleId="city" size="30" name="<%=formName%>" property="city" />
+							<html:text id="city" size="30" name="${form.formName}" property="city" />
 				   			<span id="indicator2" style="display:none;"><img src="<%=basePath%>images/indicator.gif"/></span>
 							<input id="cityID" name="cityID" type="hidden" size="30" />
 						</td>
@@ -191,12 +192,12 @@ function validateForm(form) {
 		<% if( showDepartment ){ %>
 		<tr>
 			<td class="label">
-				<bean:message key="organization.department" />
+				<spring:message code="organization.department" />
 			</td>
 			<td>
-				<html:select name='<%=formName%>' property="department" >
+				<html:select name='${form.formName}' property="department" >
 					<option value="0"></option>
-				<html:optionsCollection name='<%=formName %>' property="departmentList" value="id" label="dictEntry"/>
+				<html:optionsCollection name='${form.formName}' property="departmentList" value="id" label="dictEntry"/>
 				</html:select>
 			</td>
 		</tr>
@@ -204,34 +205,34 @@ function validateForm(form) {
 		<% if( showCommune){ %>
 		<tr>
 			<td class="label">
-				<bean:message key="organization.commune" />
+				<spring:message code="organization.commune" />
 			</td>
 			<td>
-				<html:text name='<%=formName%>' property="commune" />
+				<form:input path="commune" />
 			</td>
 		</tr>
 		<% } %>
 		<% if( showVillage){ %>
 		<tr>
 			<td class="label">
-				<bean:message key="organization.village" />
+				<spring:message code="organization.village" />
 			</td>
 			<td>
-				<html:text name='<%=formName%>' property="village" />
+				<form:input path="village" />
 			</td>
 		</tr>
 		<% } %>
 		<% if( useState ){ %>
 		<tr>
 						<td class="label">
-							<bean:message key="organization.state"/>:<span class="requiredlabel">*</span>
+							<spring:message code="organization.state"/>:<span class="requiredlabel">*</span>
 						</td>
 						<td>
 							<%--html:text property="state" /--%>
 
-						  <html:select name="<%=formName%>" property="state">
+						  <html:select name="${form.formName}" property="state">
 					   	  <app:optionsCollection
-										name="<%=formName%>"
+										name="${form.formName}"
 							    		property="states"
 										label="state"
 										value="state"  />
@@ -243,49 +244,49 @@ function validateForm(form) {
 		<% if( useZip ){ %>
 		<tr>
 						<td class="label">
-							<bean:message key="organization.zipCode"/>:<span class="requiredlabel">*</span>
+							<spring:message code="organization.zipCode"/>:<span class="requiredlabel">*</span>
 						</td>
 						<td>
-							<html:text name="<%=formName%>" property="zipCode" />
+							<form:input path="zipCode" />
 						</td>
 		</tr>
 		<% } %>
 		<% } %>
 		<tr>
 						<td class="label">
-							<bean:message key="organization.internetAddress"/>:
+							<spring:message code="organization.internetAddress"/>:
 						</td>
 						<td>
-							<html:text name="<%=formName%>" property="internetAddress" />
+							<form:input path="internetAddress" />
 						</td>
 		</tr>
 		<% if( useMLS ) { %>
 		<tr>
 						<td class="label">
-							<bean:message key="organization.mls.sentinelLab"/>:<span class="requiredlabel">*</span>
+							<spring:message code="organization.mls.sentinelLab"/>:<span class="requiredlabel">*</span>
 						</td>
 						<td>
-							<html:text name="<%=formName%>" property="mlsSentinelLabFlag" />
+							<form:input path="mlsSentinelLabFlag" />
 						</td>
 		</tr>
 		<% } %>
 		<% if( useCLIA ){ %>
 		<tr>
 						<td class="label">
-							<bean:message key="organization.clia.number"/>:
+							<spring:message code="organization.clia.number"/>:
 						</td>
 						<td>
-							<html:text name="<%=formName%>" property="cliaNum" />
+							<form:input path="cliaNum" />
 						</td>
 		</tr>
 		<% } %>
 		<% if( useMLS ){ %>
 		<tr>
 						<td class="label">
-							<bean:message key="organization.mls.lab"/>:<span class="requiredlabel">*</span>
+							<spring:message code="organization.mls.lab"/>:<span class="requiredlabel">*</span>
 						</td>
 						<td>
-							<html:text name="<%=formName%>" property="mlsLabFlag" onblur="this.value=this.value.toUpperCase()"/>
+							<form:input path="mlsLabFlag" onblur="this.value=this.value.toUpperCase()"/>
 						</td>
 		</tr>
 		<% } %>
@@ -300,12 +301,12 @@ function validateForm(form) {
 <table >
 	<tr>
 		<th >&nbsp;</th>
-		<th ><bean:message key="generic.name"/></th>
+		<th ><spring:message code="generic.name"/></th>
 	</tr>
-<logic:iterate  name="<%=formName%>" property="orgTypes" id="organizationType" type="us.mn.state.health.lims.organization.valueholder.OrganizationType" >
+<logic:iterate  name="${form.formName}" property="orgTypes" id="organizationType" type="us.mn.state.health.lims.organization.valueholder.OrganizationType" >
 	<tr>
 	<td>
-		<html:multibox name="<%=formName %>" property="selectedTypes" styleClass="orgTypeId">
+		<html:multibox name="${form.formName}" property="selectedTypes" styleClass="orgTypeId">
 			<bean:write name="organizationType" property="id" />
 		</html:multibox>
 	</td>

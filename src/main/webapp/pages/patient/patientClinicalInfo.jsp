@@ -5,12 +5,14 @@
                  us.mn.state.health.lims.common.util.Versioning,
                  us.mn.state.health.lims.patient.action.bean.PatientManagementInfo" %>
 
-<%@ page isELIgnored="false"%>
-
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
 
 <c:set var="formName" value="${form.formName}" />
@@ -34,7 +36,7 @@
 
 </script>
 
-<%-- <nested:hidden name='<%=formName%>' property="patientProperties.currentDate" styleId="currentDate"/> --%>
+<%-- <nested:hidden name='${form.formName}' property="patientProperties.currentDate" id="currentDate"/> --%>
 
 <div id="PatientClinicalPage" style="display:inline"  >
 	<% if( FormFields.getInstance().useField(Field.SampleEntryPatientClinical)){ %>
@@ -269,6 +271,6 @@
 	<% } %>
 </div>
  
-<script type="text/javascript" language="JavaScript1.2">
+<script type="text/javascript">
 
 </script>

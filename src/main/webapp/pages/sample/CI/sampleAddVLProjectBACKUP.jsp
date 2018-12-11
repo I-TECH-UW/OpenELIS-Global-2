@@ -16,12 +16,12 @@
 	        	us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl"%>
 
 
-<%@ taglib uri="/tags/struts-bean"      prefix="bean" %>
-<%@ taglib uri="/tags/struts-html"      prefix="html" %>
-<%@ taglib uri="/tags/struts-logic"     prefix="logic" %>
-<%@ taglib uri="/tags/labdev-view"      prefix="app" %>
-<%@ taglib uri="/tags/struts-tiles"     prefix="tiles" %>
-<%@ taglib uri="/tags/sourceforge-ajax" prefix="ajax"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="app" uri="/tags/labdev-view" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%!
 	UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
@@ -40,12 +40,12 @@
 <bean:define id="requestType" value='<%=(String)request.getSession().getAttribute("type")%>' />
 <bean:define id="genericDomain" value='' />
 
-<bean:define id="formName"      value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
+      
 <bean:define id="idSeparator"   value='<%=SystemConfiguration.getInstance().getDefaultIdSeparator()%>' />
 <bean:define id="accessionFormat" value='<%= ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat)%>' />
 <bean:define id="genericDomain" value='' />
-<bean:define id="sampleOrderItems" name='<%=formName%>' property='sampleOrderItems' type="SampleOrderItem" />
-<bean:define id="entryDate" name="<%=formName%>" property="currentDate" />
+<bean:define id="sampleOrderItems" name='${form.formName}' property='sampleOrderItems' type="SampleOrderItem" />
+<bean:define id="entryDate" name="${form.formName}" property="currentDate" />
 
 
 <%!
@@ -79,16 +79,16 @@
 <link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?ver=<%= Versioning.getBuildNumber() %>">
 <link rel="stylesheet" href="css/customAutocomplete.css?ver=<%= Versioning.getBuildNumber() %>">
 
-<script type="text/javascript" language="JavaScript1.2">
+<script type="text/javascript">
 var dirty = false;
 var type = '<%=Encode.forJavaScript(requestType)%>';
 var requestType = '<%=Encode.forJavaScript(requestType)%>';
 var pageType = "Sample";
-birthDateUsageMessage = "<bean:message key='error.dob.complete.less.two.years'/>";
-previousNotMatchedMessage = "<bean:message key='error.2ndEntry.previous.not.matched'/>";
-noMatchFoundMessage = "<bean:message key='patient.message.patientNotFound'/>";
-saveNotUnderInvestigationMessage = "<bean:message key='patient.project.conflicts.saveNotUnderInvestigation'/>";
-testInvalid = "<bean:message key='error.2ndEntry.test.invalid'/>";
+birthDateUsageMessage = "<spring:message code='error.dob.complete.less.two.years'/>";
+previousNotMatchedMessage = "<spring:message code='error.2ndEntry.previous.not.matched'/>";
+noMatchFoundMessage = "<spring:message code='patient.message.patientNotFound'/>";
+saveNotUnderInvestigationMessage = "<spring:message code='patient.project.conflicts.saveNotUnderInvestigation'/>";
+testInvalid = "<spring:message code='error.2ndEntry.test.invalid'/>";
 var canEditPatientSubjectNos = <%= canEditPatientSubjectNos %>;
 var canEditAccessionNo = <%= canEditAccessionNo %>;
 
@@ -135,7 +135,7 @@ function /*void*/ makeDirty(){
 	}
 	// Adds warning when leaving page if content has been entered into makeDirty form fields
 	function formWarning(){ 
-    return "<bean:message key="banner.menu.dataLossWarning"/>";
+    return "<spring:message code="banner.menu.dataLossWarning"/>";
 	}
 	window.onbeforeunload = formWarning;
 }
@@ -574,7 +574,7 @@ function /*void*/ makeDirty(){
     }
     // Adds warning when leaving page if content has been entered into makeDirty form fields
     function formWarning(){ 
-    return "<bean:message key="banner.menu.dataLossWarning"/>";
+    return "<spring:message code="banner.menu.dataLossWarning"/>";
     }
     window.onbeforeunload = formWarning;
 }
@@ -621,27 +621,27 @@ registerSampleChangedForSampleEntry();
 
 </script>
 
-<html:hidden name="<%=formName%>" property="currentDate" styleId="currentDate"/>
-<html:hidden name="<%=formName%>" property="domain" value="<%=genericDomain%>" styleId="domain"/>
-<!--   html:hidden name="<%=formName%>" property="project" styleId="project"/>  -->
-<html:hidden name="<%=formName%>" property="patientLastUpdated" styleId="patientLastUpdated" />
-<html:hidden name="<%=formName%>" property="personLastUpdated" styleId="personLastUpdated"/>
-<html:hidden name="<%=formName%>" property="patientProcessingStatus" styleId="processingStatus" value="add" />
-<html:hidden name="<%=formName%>" property="patientPK" styleId="patientPK" />
-<html:hidden name="<%=formName%>" property="samplePK" styleId="samplePK" />
-<html:hidden name="<%=formName%>" property="observations.projectFormName" styleId="projectFormName"/>
-<html:hidden name="<%=formName%>" property=""  styleId="subjectOrSiteSubject" value="" />
+<form:hidden path="currentDate" id="currentDate"/>
+<form:hidden path="domain" value="<%=genericDomain%>" id="domain"/>
+<!--   html:hidden name="${form.formName}" property="project" id="project"/>  -->
+<form:hidden path="patientLastUpdated" id="patientLastUpdated" />
+<form:hidden path="personLastUpdated" id="personLastUpdated"/>
+<form:hidden path="patientProcessingStatus" id="processingStatus" value="add" />
+<form:hidden path="patientPK" id="patientPK" />
+<form:hidden path="samplePK" id="samplePK" />
+<form:hidden path="observations.projectFormName" id="projectFormName"/>
+<form:hidden path=""  id="subjectOrSiteSubject" value="" />
 
-<b><bean:message key="sample.entry.project.form"/></b>
+<b><spring:message code="sample.entry.project.form"/></b>
 <select name="studyForms" onchange="switchStudyForm(this.value);" id="studyFormsId">
 	<option value="0" selected> </option>
-	<option value="InitialARV_Id" ><bean:message key="sample.entry.project.initialARV.title"/></option>
-	<option value="FollowUpARV_Id" ><bean:message key="sample.entry.project.followupARV.title"/></option>
-	<option value="RTN_Id" ><bean:message key="sample.entry.project.RTN.title"/></option>
-	<option value="EID_Id" ><bean:message key="sample.entry.project.EID.title"/></option>
-	<option value="Indeterminate_Id" ><bean:message key="sample.entry.project.indeterminate.title"/></option>
-	<option value="Special_Request_Id"><bean:message key="sample.entry.project.specialRequest.title"/></option>
-	<option value="VL_Id" ><bean:message key="sample.entry.project.VL.title"/></option>
+	<option value="InitialARV_Id" ><spring:message code="sample.entry.project.initialARV.title"/></option>
+	<option value="FollowUpARV_Id" ><spring:message code="sample.entry.project.followupARV.title"/></option>
+	<option value="RTN_Id" ><spring:message code="sample.entry.project.RTN.title"/></option>
+	<option value="EID_Id" ><spring:message code="sample.entry.project.EID.title"/></option>
+	<option value="Indeterminate_Id" ><spring:message code="sample.entry.project.indeterminate.title"/></option>
+	<option value="Special_Request_Id"><spring:message code="sample.entry.project.specialRequest.title"/></option>
+	<option value="VL_Id" ><spring:message code="sample.entry.project.VL.title"/></option>
 </select>
 <br/>
 <hr/>
@@ -662,7 +662,7 @@ registerSampleChangedForSampleEntry();
     <tiles:insert attribute="addSample"/>
 </div>
 
-<script type="text/javascript" language="JavaScript1.2">
+<script type="text/javascript">
 
 // On load using the built in feature of OpenElis pages onLoad
 function pageOnLoad(){
