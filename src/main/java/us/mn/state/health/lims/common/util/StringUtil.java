@@ -308,34 +308,35 @@ public class StringUtil {
 		return list;
 	}
 
-	//TO DO: Caleb remove these functions and directly call MessageUtils
+	//Call MessageUtil directly
+	@Deprecated
 	public static String getMessageForKey(String messageKey) {
 		if (null == messageKey) {
 			return null;
 		}
 		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
 		return MessageUtil.getMessage(messageKey);
-		//return ResourceLocator.getInstance().getMessageResources().getMessage(new Locale(locale), messageKey);
 	}
 
+	@Deprecated
     public static String getMessageForKeyAndLocale(String messageKey, Locale locale) {
         if (null == messageKey) {
             return null;
         }
 
         return MessageUtil.getMessage(messageKey, locale);
-		//return ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey);
     }
 
+	@Deprecated
     public static String getMessageForKeyAndLocale(String messageKey, String arg0, String arg1, Locale locale) {
         if (null == messageKey) {
             return null;
         }
 
         return MessageUtil.getMessage(messageKey, new String[] {arg0, arg1}, locale);
-        //return ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey, arg0, arg1);
     }
 
+	@Deprecated
 	public static String getMessageForKey(String messageKey, String arg) {
 		if (null == messageKey) {
 			return null;
@@ -344,9 +345,9 @@ public class StringUtil {
 		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
 
 		return MessageUtil.getMessage(messageKey, new String[] {arg});
-		//return ResourceLocator.getInstance().getMessageResources().getMessage(new Locale(locale), messageKey, arg);
 	}
 
+	@Deprecated
 	public static String getMessageForKey(String messageKey, String arg0, String arg1) {
 		if (null == messageKey) {
 			return null;
@@ -355,7 +356,6 @@ public class StringUtil {
 		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
 
 		return MessageUtil.getMessage(messageKey, new String[] {arg0, arg1});
-		//return ResourceLocator.getInstance().getMessageResources().getMessage(new Locale(locale), messageKey, arg0, arg1);
 	}
 	
 	public static String getContextualMessageForKey(String messageKey) {
