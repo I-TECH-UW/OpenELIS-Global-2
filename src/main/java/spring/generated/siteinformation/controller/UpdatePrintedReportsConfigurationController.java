@@ -24,8 +24,7 @@ public class UpdatePrintedReportsConfigurationController extends BaseController 
     if (form == null) {
     	form = new PrintedReportsConfigurationForm();
     }
-    form.setFormName("PrintedReportsConfigurationForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

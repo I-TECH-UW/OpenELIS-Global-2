@@ -24,8 +24,7 @@ public class SampleEditController extends BaseController {
     if (form == null) {
     	form = new SampleEditForm();
     }
-    form.setFormName("SampleEditForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

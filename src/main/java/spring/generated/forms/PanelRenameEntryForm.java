@@ -13,6 +13,10 @@ public class PanelRenameEntryForm extends BaseForm {
 
   private String panelId = "";
 
+  public PanelRenameEntryForm() {
+    setFormName("panelRenameEntryForm");
+  }
+
   public List getPanelList() {
     return this.panelList;
   }

@@ -9,6 +9,10 @@ public class SampleTypeOrderForm extends BaseForm {
 
   private String jsonChangeList = "";
 
+  public SampleTypeOrderForm() {
+    setFormName("sampleTypeOrderForm");
+  }
+
   public List getSampleTypeList() {
     return this.sampleTypeList;
   }

@@ -24,8 +24,7 @@ public class SampleConfirmationEntryController extends BaseController {
     if (form == null) {
     	form = new SampleConfirmationEntryForm();
     }
-    form.setFormName("SampleConfirmationEntryForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

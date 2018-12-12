@@ -40,6 +40,10 @@ public class LogbookResultsForm extends BaseForm {
 
   private Boolean displayTestSections = true;
 
+  public LogbookResultsForm() {
+    setFormName("LogbookResultsForm");
+  }
+
   public PagingBean getPaging() {
     return this.paging;
   }

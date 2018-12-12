@@ -12,6 +12,10 @@ public class ElectronicOrderViewForm extends BaseForm {
 
   private List eOrders;
 
+  public ElectronicOrderViewForm() {
+    setFormName("ElectronicOrderViewForm");
+  }
+
   public Timestamp getLastupdated() {
     return this.lastupdated;
   }

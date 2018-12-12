@@ -9,6 +9,10 @@ public class ResultLimitsMenuForm extends BaseForm {
 
   private String[] selectedIDs;
 
+  public ResultLimitsMenuForm() {
+    setFormName("resultLimitsMenuForm");
+  }
+
   public List getMenuList() {
     return this.menuList;
   }

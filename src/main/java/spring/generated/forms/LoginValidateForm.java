@@ -15,6 +15,10 @@ public class LoginValidateForm extends BaseForm {
 
   private Timestamp lastupdated;
 
+  public LoginValidateForm() {
+    setFormName("loginValidateForm");
+  }
+
   public String getLoginName() {
     return this.loginName;
   }

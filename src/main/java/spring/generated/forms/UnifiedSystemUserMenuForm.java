@@ -9,6 +9,10 @@ public class UnifiedSystemUserMenuForm extends BaseForm {
 
   private String[] selectedIDs;
 
+  public UnifiedSystemUserMenuForm() {
+    setFormName("unifiedSystemUserMenuForm");
+  }
+
   public List getMenuList() {
     return this.menuList;
   }

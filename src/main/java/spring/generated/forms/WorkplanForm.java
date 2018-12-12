@@ -42,6 +42,10 @@ public class WorkplanForm extends BaseForm {
 
   private String testSectionId;
 
+  public WorkplanForm() {
+    setFormName("WorkplanForm");
+  }
+
   public PagingBean getPaging() {
     return this.paging;
   }

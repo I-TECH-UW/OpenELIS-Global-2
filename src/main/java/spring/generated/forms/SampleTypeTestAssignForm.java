@@ -16,6 +16,10 @@ public class SampleTypeTestAssignForm extends BaseForm {
 
   private String deactivateSampleTypeId = "";
 
+  public SampleTypeTestAssignForm() {
+    setFormName("sampleTypeTestAssignForm");
+  }
+
   public List getSampleTypeList() {
     return this.sampleTypeList;
   }

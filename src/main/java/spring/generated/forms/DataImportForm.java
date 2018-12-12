@@ -14,6 +14,10 @@ public class DataImportForm extends BaseForm {
 
   private String updateDate = "";
 
+  public DataImportForm() {
+    setFormName("DataImportForm");
+  }
+
   public Timestamp getLastupdated() {
     return this.lastupdated;
   }

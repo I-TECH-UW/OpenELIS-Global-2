@@ -54,6 +54,10 @@ public class AccessionResultsForm extends BaseForm {
 
   private Boolean displayTestSections = false;
 
+  public AccessionResultsForm() {
+    setFormName("AccessionResultsForm");
+  }
+
   public PagingBean getPaging() {
     return this.paging;
   }

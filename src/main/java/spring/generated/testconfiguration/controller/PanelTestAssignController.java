@@ -24,8 +24,7 @@ public class PanelTestAssignController extends BaseController {
     if (form == null) {
     	form = new PanelTestAssignForm();
     }
-    form.setFormName("panelTestAssignForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

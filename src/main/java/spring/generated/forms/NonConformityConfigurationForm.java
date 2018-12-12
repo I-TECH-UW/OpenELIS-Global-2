@@ -24,6 +24,10 @@ public class NonConformityConfigurationForm extends BaseForm {
 
   private String tag = "";
 
+  public NonConformityConfigurationForm() {
+    setFormName("NonConformityConfigurationForm");
+  }
+
   public String getParamName() {
     return this.paramName;
   }

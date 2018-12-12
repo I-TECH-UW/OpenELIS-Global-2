@@ -24,8 +24,7 @@ public class UpdateNextPreviousResultConfigurationController extends BaseControl
     if (form == null) {
     	form = new ResultConfigurationForm();
     }
-    form.setFormName("resultConfigurationForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

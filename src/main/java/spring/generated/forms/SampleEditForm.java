@@ -55,6 +55,10 @@ public class SampleEditForm extends BaseForm {
 
   private String warning = "";
 
+  public SampleEditForm() {
+    setFormName("SampleEditForm");
+  }
+
   public Boolean getNoSampleFound() {
     return this.noSampleFound;
   }

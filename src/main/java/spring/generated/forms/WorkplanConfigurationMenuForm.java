@@ -11,6 +11,10 @@ public class WorkplanConfigurationMenuForm extends BaseForm {
 
   private String siteInfoDomainName = "WorkplanConfiguration";
 
+  public WorkplanConfigurationMenuForm() {
+    setFormName("WorkplanConfigurationMenuForm");
+  }
+
   public List getMenuList() {
     return this.menuList;
   }

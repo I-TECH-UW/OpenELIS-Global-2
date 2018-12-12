@@ -26,6 +26,10 @@ public class PanelCreateForm extends BaseForm {
 
   private String sampleTypeId;
 
+  public PanelCreateForm() {
+    setFormName("panelCreateForm");
+  }
+
   public List getExistingPanelList() {
     return this.existingPanelList;
   }

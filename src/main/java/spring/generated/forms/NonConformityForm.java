@@ -91,6 +91,10 @@ public class NonConformityForm extends BaseForm {
 
   private Collection departments;
 
+  public NonConformityForm() {
+    setFormName("NonConformityForm");
+  }
+
   public Boolean getReadOnly() {
     return this.readOnly;
   }

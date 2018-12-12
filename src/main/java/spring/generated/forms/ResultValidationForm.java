@@ -28,6 +28,10 @@ public class ResultValidationForm extends BaseForm {
 
   private Boolean displayTestSections = true;
 
+  public ResultValidationForm() {
+    setFormName("ResultValidationForm");
+  }
+
   public PagingBean getPaging() {
     return this.paging;
   }

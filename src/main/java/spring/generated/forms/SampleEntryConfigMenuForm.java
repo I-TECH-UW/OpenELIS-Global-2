@@ -11,6 +11,10 @@ public class SampleEntryConfigMenuForm extends BaseForm {
 
   private String siteInfoDomainName = "sampleEntryConfig";
 
+  public SampleEntryConfigMenuForm() {
+    setFormName("sampleEntryConfigMenuForm");
+  }
+
   public List getMenuList() {
     return this.menuList;
   }

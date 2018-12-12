@@ -18,6 +18,10 @@ public class TypeOfSamplePanelForm extends BaseForm {
 
   private Timestamp lastupdated;
 
+  public TypeOfSamplePanelForm() {
+    setFormName("typeOfSamplePanelForm");
+  }
+
   public String getId() {
     return this.id;
   }

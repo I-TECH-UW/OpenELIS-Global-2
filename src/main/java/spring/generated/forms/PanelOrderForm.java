@@ -15,6 +15,10 @@ public class PanelOrderForm extends BaseForm {
 
   private List existingSampleTypeList;
 
+  public PanelOrderForm() {
+    setFormName("panelOrderForm");
+  }
+
   public List getPanelList() {
     return this.panelList;
   }

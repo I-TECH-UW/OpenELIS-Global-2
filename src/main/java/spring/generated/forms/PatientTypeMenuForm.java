@@ -9,6 +9,10 @@ public class PatientTypeMenuForm extends BaseForm {
 
   private String[] selectedIDs;
 
+  public PatientTypeMenuForm() {
+    setFormName("patientTypeMenuForm");
+  }
+
   public List getMenuList() {
     return this.menuList;
   }

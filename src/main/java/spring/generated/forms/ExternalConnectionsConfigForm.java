@@ -11,6 +11,10 @@ public class ExternalConnectionsConfigForm extends BaseForm {
 
   private String[] selectedIDs;
 
+  public ExternalConnectionsConfigForm() {
+    setFormName("ExternalConnectionsConfigForm");
+  }
+
   public String getLastupdated() {
     return this.lastupdated;
   }

@@ -61,6 +61,10 @@ public class OrganizationForm extends BaseForm {
 
   private Collection departmentList;
 
+  public OrganizationForm() {
+    setFormName("organizationForm");
+  }
+
   public String getId() {
     return this.id;
   }

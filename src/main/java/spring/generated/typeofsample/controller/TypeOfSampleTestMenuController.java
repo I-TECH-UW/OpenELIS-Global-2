@@ -24,8 +24,7 @@ public class TypeOfSampleTestMenuController extends BaseController {
     if (form == null) {
     	form = new TypeOfSampleTestMenuForm();
     }
-    form.setFormName("typeOfSampleTestMenuForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

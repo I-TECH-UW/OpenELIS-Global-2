@@ -25,58 +25,57 @@ import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 
 @Controller
 public class SamplePatientEntryController extends BaseSampleEntryController {
-  @RequestMapping(
-      value = "/SamplePatientEntry",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showSamplePatientEntry(HttpServletRequest request) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    String forward = FWD_SUCCESS;
-    SamplePatientEntryForm form = new SamplePatientEntryForm();
-    form.setFormName("samplePatientEntryForm");
-    form.setFormAction("");
-    BaseErrors errors = new BaseErrors();
-    ModelAndView mv = checkUserAndSetup(form, errors, request);
+	@RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.GET)
+	public ModelAndView showSamplePatientEntry(HttpServletRequest request)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		String forward = FWD_SUCCESS;
+		SamplePatientEntryForm form = new SamplePatientEntryForm();
+		form.setFormAction("");
+		BaseErrors errors = new BaseErrors();
+		ModelAndView mv = checkUserAndSetup(form, errors, request);
 
-    if (errors.hasErrors()) {
-    	return mv;
-    }
-    
-    request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.TRUE);
-	SampleOrderService sampleOrderService = new SampleOrderService();
-	PropertyUtils.setProperty(form, "sampleOrderItems", sampleOrderService.getSampleOrderItem());
-	PropertyUtils.setProperty(form, "patientProperties", new PatientManagementInfo());
-	PropertyUtils.setProperty(form, "patientSearch", new PatientSearch());
-	PropertyUtils.setProperty(form, "sampleTypes", DisplayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
-	PropertyUtils.setProperty(form, "testSectionList", DisplayListService.getList(ListType.TEST_SECTION));
-	PropertyUtils.setProperty(form, "currentDate", DateUtil.getCurrentDateAsText());
-	
-	for (Object program : form.getSampleOrderItems().getProgramList()) {
-	    System.out.println(((IdValuePair) program).getValue());
+		if (errors.hasErrors()) {
+			return mv;
+		}
+
+		request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.TRUE);
+		SampleOrderService sampleOrderService = new SampleOrderService();
+		PropertyUtils.setProperty(form, "sampleOrderItems", sampleOrderService.getSampleOrderItem());
+		PropertyUtils.setProperty(form, "patientProperties", new PatientManagementInfo());
+		PropertyUtils.setProperty(form, "patientSearch", new PatientSearch());
+		PropertyUtils.setProperty(form, "sampleTypes", DisplayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
+		PropertyUtils.setProperty(form, "testSectionList", DisplayListService.getList(ListType.TEST_SECTION));
+		PropertyUtils.setProperty(form, "currentDate", DateUtil.getCurrentDateAsText());
+
+		for (Object program : form.getSampleOrderItems().getProgramList()) {
+			System.out.println(((IdValuePair) program).getValue());
+		}
+
+		addProjectList(form);
+
+		if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
+			PropertyUtils.setProperty(form, "initialSampleConditionList",
+					DisplayListService.getList(ListType.INITIAL_SAMPLE_CONDITION));
+		}
+
+		return findForward(forward, form);
 	}
 
-	addProjectList(form);
-
-	if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
-	    PropertyUtils.setProperty(form, "initialSampleConditionList", DisplayListService.getList(ListType.INITIAL_SAMPLE_CONDITION));
+	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+		if ("success".equals(forward)) {
+			return new ModelAndView("samplePatientEntryDefinition", "form", form);
+		} else if ("fail".equals(forward)) {
+			return new ModelAndView("homePageDefinition", "form", form);
+		} else {
+			return new ModelAndView("PageNotFound");
+		}
 	}
 
-    return findForward(forward, form);}
+	protected String getPageTitleKey() {
+		return null;
+	}
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
-    if ("success".equals(forward)) {
-      return new ModelAndView("samplePatientEntryDefinition", "form", form);
-    } else if ("fail".equals(forward)) {
-      return new ModelAndView("homePageDefinition", "form", form);
-    } else {
-      return new ModelAndView("PageNotFound");
-    }
-  }
-
-  protected String getPageTitleKey() {
-    return null;
-  }
-
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+	protected String getPageSubtitleKey() {
+		return null;
+	}
 }

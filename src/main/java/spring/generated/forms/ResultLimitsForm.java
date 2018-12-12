@@ -18,6 +18,10 @@ public class ResultLimitsForm extends BaseForm {
 
   private Timestamp lastupdated;
 
+  public ResultLimitsForm() {
+    setFormName("resultLimitsForm");
+  }
+
   public ResultLimitsLink getLimit() {
     return this.limit;
   }

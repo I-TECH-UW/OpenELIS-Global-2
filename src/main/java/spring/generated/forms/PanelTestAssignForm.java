@@ -20,6 +20,10 @@ public class PanelTestAssignForm extends BaseForm {
 
   private String[] availableTests;
 
+  public PanelTestAssignForm() {
+    setFormName("panelTestAssignForm");
+  }
+
   public List getPanelList() {
     return this.panelList;
   }

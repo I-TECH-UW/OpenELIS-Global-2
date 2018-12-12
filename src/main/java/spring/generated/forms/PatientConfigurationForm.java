@@ -24,6 +24,10 @@ public class PatientConfigurationForm extends BaseForm {
 
   private String tag = "";
 
+  public PatientConfigurationForm() {
+    setFormName("PatientConfigurationForm");
+  }
+
   public String getParamName() {
     return this.paramName;
   }

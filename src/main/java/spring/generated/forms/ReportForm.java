@@ -80,6 +80,10 @@ public class ReportForm extends BaseForm {
 
   private String instructions = "";
 
+  public ReportForm() {
+    setFormName("ReportForm");
+  }
+
   public Timestamp getLastupdated() {
     return this.lastupdated;
   }

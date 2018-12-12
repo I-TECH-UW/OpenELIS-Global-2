@@ -24,8 +24,7 @@ public class ResultLimitsMenuController extends BaseController {
     if (form == null) {
     	form = new ResultLimitsMenuForm();
     }
-    form.setFormName("resultLimitsMenuForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

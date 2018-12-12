@@ -53,6 +53,10 @@ public class PatientResultsForm extends BaseForm {
 
   private String testSectionId;
 
+  public PatientResultsForm() {
+    setFormName("PatientResultsForm");
+  }
+
   public PagingBean getPaging() {
     return this.paging;
   }

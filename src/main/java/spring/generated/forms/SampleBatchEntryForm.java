@@ -66,6 +66,10 @@ public class SampleBatchEntryForm extends BaseForm {
 
   private String receivedTimeForDisplay;
 
+  public SampleBatchEntryForm() {
+    setFormName("sampleBatchEntryForm");
+  }
+
   public Timestamp getLastupdated() {
     return this.lastupdated;
   }

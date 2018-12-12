@@ -17,6 +17,10 @@ public class UomCreateForm extends BaseForm {
 
   private String uomFrenchName;
 
+  public UomCreateForm() {
+    setFormName("uomCreateForm");
+  }
+
   public List getExistingUomList() {
     return this.existingUomList;
   }

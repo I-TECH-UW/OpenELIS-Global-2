@@ -8,6 +8,10 @@ public class TestCatalogForm extends BaseForm {
 
   private List testSectionList;
 
+  public TestCatalogForm() {
+    setFormName("testCatalogForm");
+  }
+
   public List getTestList() {
     return this.testList;
   }

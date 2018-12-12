@@ -21,8 +21,7 @@ public class TestManagementConfigMenuController extends BaseController {
   public ModelAndView showTestManagementConfigMenu(HttpServletRequest request) {
     String forward = FWD_SUCCESS;
     TestManagementConfigForm form = new TestManagementConfigForm();
-    form.setFormName("testManagementConfigForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 

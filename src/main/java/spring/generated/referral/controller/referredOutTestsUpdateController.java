@@ -24,8 +24,7 @@ public class referredOutTestsUpdateController extends BaseController {
     if (form == null) {
     	form = new ReferredOutTestsForm();
     }
-    form.setFormName("referredOutTestsForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

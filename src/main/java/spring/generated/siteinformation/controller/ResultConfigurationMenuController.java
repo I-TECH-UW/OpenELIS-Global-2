@@ -24,8 +24,7 @@ public class ResultConfigurationMenuController extends BaseController {
     if (form == null) {
     	form = new ResultConfigurationMenuForm();
     }
-    form.setFormName("resultConfigurationMenuForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

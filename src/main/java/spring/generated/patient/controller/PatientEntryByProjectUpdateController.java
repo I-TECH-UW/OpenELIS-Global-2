@@ -24,8 +24,7 @@ public class PatientEntryByProjectUpdateController extends BaseController {
     if (form == null) {
     	form = new PatientEntryByProjectForm();
     }
-    form.setFormName("patientEntryByProjectForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

@@ -11,6 +11,10 @@ public class OrganizationMenuForm extends BaseForm {
 
   private String searchString = "";
 
+  public OrganizationMenuForm() {
+    setFormName("organizationMenuForm");
+  }
+
   public List getMenuList() {
     return this.menuList;
   }

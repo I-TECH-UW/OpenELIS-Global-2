@@ -78,7 +78,7 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 
 @Controller
 public class SamplePatientEntrySaveController extends BaseController {
-	//an attempt was made to get this running, but it is not fully moved over
+	// an attempt was made to get this running, but it is not fully moved over
 
 	private static final String DEFAULT_ANALYSIS_TYPE = "MANUAL";
 	private OrganizationDAO orgDAO = new OrganizationDAOImpl();
@@ -143,9 +143,9 @@ public class SamplePatientEntrySaveController extends BaseController {
 				patientUpdate.persistPatientData(patientInfo);
 			}
 
-			//updateData.setPatientId(patientUpdate.getPatientId(form));
+			// updateData.setPatientId(patientUpdate.getPatientId(form));
 			updateData.setPatientId(form.getPatientPK());
-			
+
 			persistProviderData(updateData);
 			persistSampleData(updateData);
 			persistRequesterData(updateData);
@@ -208,8 +208,9 @@ public class SamplePatientEntrySaveController extends BaseController {
 				patientUpdate.getPatientUpdateStatus() != PatientManagementUpdateAction.PatientUpdateStatus.NO_ACTION);
 
 		if (updateData.isSavePatient()) {
-			//TO-DO uncomment this
-			//updateData.setPatientErrors(patientUpdate.preparePatientData(request, patientInfo));
+			// TO-DO uncomment this
+			// updateData.setPatientErrors(patientUpdate.preparePatientData(request,
+			// patientInfo));
 		} else {
 			updateData.setPatientErrors(new BaseErrors());
 		}

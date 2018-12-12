@@ -38,6 +38,10 @@ public class UnifiedSystemUserForm extends BaseForm {
 
   private Timestamp systemUserLastupdated;
 
+  public UnifiedSystemUserForm() {
+    setFormName("unifiedSystemUserForm");
+  }
+
   public String getLoginUserId() {
     return this.loginUserId;
   }

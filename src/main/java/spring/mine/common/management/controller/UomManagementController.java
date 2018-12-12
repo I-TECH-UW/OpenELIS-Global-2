@@ -18,7 +18,6 @@ public class UomManagementController extends BaseController {
 	public ModelAndView showUomManagement(HttpServletRequest request) {
 		String forward = FWD_SUCCESS;
 		UomManagementForm form = new UomManagementForm();
-		form.setFormName("uomManagementForm");
 		form.setFormAction("");
 		BaseErrors errors = new BaseErrors();
 		ModelAndView mv = checkUserAndSetup(form, errors, request);

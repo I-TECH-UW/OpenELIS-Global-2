@@ -33,6 +33,10 @@ public class SiteInformationForm extends BaseForm {
 
   private String frenchValue = "";
 
+  public SiteInformationForm() {
+    setFormName("siteInformationForm");
+  }
+
   public String getParamName() {
     return this.paramName;
   }

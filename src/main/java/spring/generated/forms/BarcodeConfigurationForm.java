@@ -26,6 +26,10 @@ public class BarcodeConfigurationForm extends BaseForm {
 
   private String patientSexCheck;
 
+  public BarcodeConfigurationForm() {
+    setFormName("BarcodeConfigurationForm");
+  }
+
   public String getLastupdated() {
     return this.lastupdated;
   }

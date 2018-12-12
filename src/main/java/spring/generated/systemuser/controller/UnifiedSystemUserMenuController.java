@@ -24,8 +24,7 @@ public class UnifiedSystemUserMenuController extends BaseController {
     if (form == null) {
     	form = new UnifiedSystemUserMenuForm();
     }
-    form.setFormName("unifiedSystemUserMenuForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

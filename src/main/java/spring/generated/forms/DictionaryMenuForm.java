@@ -11,6 +11,10 @@ public class DictionaryMenuForm extends BaseForm {
 
   private String searchString = "";
 
+  public DictionaryMenuForm() {
+    setFormName("dictionaryMenuForm");
+  }
+
   public List getMenuList() {
     return this.menuList;
   }

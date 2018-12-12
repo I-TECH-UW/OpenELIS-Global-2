@@ -19,7 +19,6 @@ public class TestRenameEntryController extends BaseController {
 		String forward = FWD_SUCCESS;
 
 		TestRenameEntryForm form = new TestRenameEntryForm();
-		form.setFormName("testRenameEntryForm");
 		form.setFormAction("");
 		BaseErrors errors = new BaseErrors();
 		ModelAndView mv = checkUserAndSetup(form, errors, request);

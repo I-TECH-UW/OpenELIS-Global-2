@@ -9,6 +9,10 @@ public class TestSectionOrderForm extends BaseForm {
 
   private String jsonChangeList = "";
 
+  public TestSectionOrderForm() {
+    setFormName("testSectionOrderForm");
+  }
+
   public List getTestSectionList() {
     return this.testSectionList;
   }

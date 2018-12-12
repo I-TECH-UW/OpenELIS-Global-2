@@ -80,6 +80,10 @@ public class SampleEntryByProjectForm extends BaseForm {
 
   private Collection testSectionList;
 
+  public SampleEntryByProjectForm() {
+    setFormName("sampleEntryByProjectForm");
+  }
+
   public String getCurrentDate() {
     return this.currentDate;
   }

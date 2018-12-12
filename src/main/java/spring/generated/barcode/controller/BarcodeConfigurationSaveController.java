@@ -24,8 +24,7 @@ public class BarcodeConfigurationSaveController extends BaseController {
     if (form == null) {
     	form = new BarcodeConfigurationForm();
     }
-    form.setFormName("BarcodeConfigurationForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

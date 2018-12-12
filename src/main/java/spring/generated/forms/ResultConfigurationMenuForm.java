@@ -11,6 +11,10 @@ public class ResultConfigurationMenuForm extends BaseForm {
 
   private String siteInfoDomainName = "ResultConfiguration";
 
+  public ResultConfigurationMenuForm() {
+    setFormName("resultConfigurationMenuForm");
+  }
+
   public List getMenuList() {
     return this.menuList;
   }

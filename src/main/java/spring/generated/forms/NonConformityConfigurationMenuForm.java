@@ -11,6 +11,10 @@ public class NonConformityConfigurationMenuForm extends BaseForm {
 
   private String siteInfoDomainName = "non_conformityConfiguration";
 
+  public NonConformityConfigurationMenuForm() {
+    setFormName("NonConformityConfigurationMenuForm");
+  }
+
   public List getMenuList() {
     return this.menuList;
   }

@@ -17,6 +17,10 @@ public class TestSectionCreateForm extends BaseForm {
 
   private String testUnitFrenchName;
 
+  public TestSectionCreateForm() {
+    setFormName("testSectionCreateForm");
+  }
+
   public List getExistingTestUnitList() {
     return this.existingTestUnitList;
   }

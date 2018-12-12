@@ -20,6 +20,10 @@ public class RoleForm extends BaseForm {
 
   private Timestamp lastupdated;
 
+  public RoleForm() {
+    setFormName("roleForm");
+  }
+
   public String getRoleName() {
     return this.roleName;
   }

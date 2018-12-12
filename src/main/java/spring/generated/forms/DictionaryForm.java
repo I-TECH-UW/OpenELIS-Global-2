@@ -25,6 +25,10 @@ public class DictionaryForm extends BaseForm {
 
   private String dirtyFormFields = "";
 
+  public DictionaryForm() {
+    setFormName("dictionaryForm");
+  }
+
   public String getId() {
     return this.id;
   }

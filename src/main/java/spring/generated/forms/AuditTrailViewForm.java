@@ -20,6 +20,10 @@ public class AuditTrailViewForm extends BaseForm {
 
   private PatientManagementInfo patientProperties;
 
+  public AuditTrailViewForm() {
+    setFormName("AuditTrailViewForm");
+  }
+
   public Timestamp getLastupdated() {
     return this.lastupdated;
   }

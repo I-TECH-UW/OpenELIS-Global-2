@@ -23,6 +23,10 @@ public class TestAddForm extends BaseForm {
 
   private List groupedDictionaryList;
 
+  public TestAddForm() {
+    setFormName("testAddForm");
+  }
+
   public String getJsonWad() {
     return this.jsonWad;
   }

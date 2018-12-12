@@ -13,6 +13,10 @@ public class ReferredOutTestsForm extends BaseForm {
 
   private Collection referralReasons;
 
+  public ReferredOutTestsForm() {
+    setFormName("referredOutTestsForm");
+  }
+
   public Timestamp getLastupdated() {
     return this.lastupdated;
   }

@@ -24,8 +24,7 @@ public class ReportController extends BaseController {
     if (form == null) {
     	form = new ReportForm();
     }
-    form.setFormName("ReportForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

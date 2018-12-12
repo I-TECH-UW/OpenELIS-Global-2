@@ -9,6 +9,10 @@ public class TypeOfSampleTestMenuForm extends BaseForm {
 
   private String[] selectedIDs;
 
+  public TypeOfSampleTestMenuForm() {
+    setFormName("typeOfSampleTestMenuForm");
+  }
+
   public List getMenuList() {
     return this.menuList;
   }

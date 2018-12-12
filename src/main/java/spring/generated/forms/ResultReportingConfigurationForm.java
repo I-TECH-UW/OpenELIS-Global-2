@@ -14,6 +14,10 @@ public class ResultReportingConfigurationForm extends BaseForm {
 
   private Collection minList;
 
+  public ResultReportingConfigurationForm() {
+    setFormName("ResultReportingConfigurationForm");
+  }
+
   public Timestamp getLastupdated() {
     return this.lastupdated;
   }

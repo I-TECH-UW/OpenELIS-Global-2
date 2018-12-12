@@ -18,6 +18,10 @@ public class TypeOfSampleTestForm extends BaseForm {
 
   private Timestamp lastupdated;
 
+  public TypeOfSampleTestForm() {
+    setFormName("typeOfSampleTestForm");
+  }
+
   public String getId() {
     return this.id;
   }

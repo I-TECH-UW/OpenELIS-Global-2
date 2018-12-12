@@ -24,8 +24,7 @@ public class UserRoleMenuController extends BaseController {
     if (form == null) {
     	form = new UserRoleMenuForm();
     }
-    form.setFormName("userRoleMenuForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

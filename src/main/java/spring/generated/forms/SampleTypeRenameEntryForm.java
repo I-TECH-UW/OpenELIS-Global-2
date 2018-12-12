@@ -13,6 +13,10 @@ public class SampleTypeRenameEntryForm extends BaseForm {
 
   private String sampleTypeId = "";
 
+  public SampleTypeRenameEntryForm() {
+    setFormName("sampleTypeRenameEntryForm");
+  }
+
   public List getSampleTypeList() {
     return this.sampleTypeList;
   }

@@ -11,6 +11,10 @@ public class PatientConfigurationMenuForm extends BaseForm {
 
   private String siteInfoDomainName = "PatientConfiguration";
 
+  public PatientConfigurationMenuForm() {
+    setFormName("PatientConfigurationMenuForm");
+  }
+
   public List getMenuList() {
     return this.menuList;
   }
