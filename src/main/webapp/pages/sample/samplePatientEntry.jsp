@@ -585,7 +585,7 @@ function  processPhoneSuccess(xhr){
 </script>
 
 <!-- This define may not be needed, look at usages (not in any other jsp or js page-->
-<form:form modelAttribute="form" action="${form.formAction}.do" method="POST">
+
 <form:hidden path="currentDate"/>
 <form:hidden path="sampleOrderItems.newRequesterName" />
 
@@ -661,7 +661,7 @@ function  processPhoneSuccess(xhr){
     <tiles:insertAttribute name="patientClinicalInfo" />
 </div>
 </div>
-</form:form>
+
 <script type="text/javascript" >
 
 //all methods here either overwrite methods in tiles or all called after they are loaded

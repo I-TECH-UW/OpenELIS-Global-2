@@ -31,7 +31,7 @@ function submitOnClick(button){
 }
 
 </script>
-<form:form name='${form.formName}' action='${form.formAction}' modelAttribute="form" onSubmit="return submitForm(this);" method="POST">
+
 
 <table width="100%">
 <tr>
@@ -74,7 +74,7 @@ function submitOnClick(button){
     </td>
 </tr>
 </table>
-</form:form>
+
 
 
 

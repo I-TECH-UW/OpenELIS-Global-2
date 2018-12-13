@@ -385,7 +385,7 @@ function printBarcode(button) {
         window.location = "Dashboard.do";
     }
 </script>
-<form:form modelAttribute="form" action="PrintBarcode.do" method="POST">
+
 <input type="hidden" id="searchLabNumber">
 <form:hidden path="accessionNumber"/>
 <form:hidden path="patientId"/>
@@ -586,4 +586,4 @@ function printBarcode(button) {
 		<iframe  src="about:blank" id="ifbarcode" width="75%" height="300px"></iframe>
 	</div>
 	
-	</form:form>
+	
