@@ -17,6 +17,10 @@ public class TestRenameEntryForm extends BaseForm {
 
   private String testId = "";
 
+  public TestRenameEntryForm() {
+    setFormName("testRenameEntryForm");
+  }
+
   public List getTestList() {
     return this.testList;
   }

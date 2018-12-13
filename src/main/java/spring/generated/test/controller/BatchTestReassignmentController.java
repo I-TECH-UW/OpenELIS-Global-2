@@ -24,8 +24,7 @@ public class BatchTestReassignmentController extends BaseController {
     if (form == null) {
     	form = new BatchTestReassignment();
     }
-    form.setFormName("BatchTestReassignment");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

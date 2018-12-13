@@ -16,6 +16,10 @@ public class UserRoleForm extends BaseForm {
 
   private Timestamp lastupdated;
 
+  public UserRoleForm() {
+    setFormName("userRoleForm");
+  }
+
   public String getUserNameId() {
     return this.userNameId;
   }

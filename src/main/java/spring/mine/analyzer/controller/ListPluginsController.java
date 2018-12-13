@@ -22,7 +22,6 @@ public class ListPluginsController extends BaseController {
 	public ModelAndView showListPlugins(HttpServletRequest request) {
 		String forward = FWD_SUCCESS;
 		ListPluginForm form = new ListPluginForm();
-		form.setFormName("listPluginForm");
 		form.setFormAction("");
 		BaseErrors errors = new BaseErrors();
 		ModelAndView mv = checkUserAndSetup(form, errors, request);

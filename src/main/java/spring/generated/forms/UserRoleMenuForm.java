@@ -9,6 +9,10 @@ public class UserRoleMenuForm extends BaseForm {
 
   private String[] selectedIDs;
 
+  public UserRoleMenuForm() {
+    setFormName("userRoleMenuForm");
+  }
+
   public List getMenuList() {
     return this.menuList;
   }

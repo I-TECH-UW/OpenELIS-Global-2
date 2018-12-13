@@ -24,8 +24,7 @@ public class webtestInfoController extends BaseController {
     if (form == null) {
     	form = new WebTestInfoForm();
     }
-    form.setFormName("webTestInfoForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

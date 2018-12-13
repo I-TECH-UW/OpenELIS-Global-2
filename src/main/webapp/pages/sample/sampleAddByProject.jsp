@@ -250,7 +250,7 @@ function /*void*/ setSaveButton() {
 }
 
 </script>
-<form:form modelAttribute="form">
+
 <form:hidden path="currentDate" id="currentDate"/>
 <form:hidden path="domain" value="${genericDomain}" id="domain"/>
 <form:hidden path="project" id="project"/>
@@ -2145,7 +2145,7 @@ function /*void*/ setSaveButton() {
     </table>
 </div>
 </div>
-</form:form>
+
 <script type="text/javascript">
     // On load using the built in feature of OpenElis pages onLoad
 /**

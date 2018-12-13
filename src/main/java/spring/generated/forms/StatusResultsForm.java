@@ -54,6 +54,10 @@ public class StatusResultsForm extends BaseForm {
 
   private String testSectionId;
 
+  public StatusResultsForm() {
+    setFormName("StatusResultsForm");
+  }
+
   public PagingBean getPaging() {
     return this.paging;
   }

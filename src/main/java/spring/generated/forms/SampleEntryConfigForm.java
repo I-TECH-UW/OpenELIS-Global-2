@@ -28,6 +28,10 @@ public class SampleEntryConfigForm extends BaseForm {
 
   private String tag = "";
 
+  public SampleEntryConfigForm() {
+    setFormName("sampleEntryConfigForm");
+  }
+
   public String getParamName() {
     return this.paramName;
   }

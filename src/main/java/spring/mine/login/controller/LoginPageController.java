@@ -27,7 +27,7 @@ public class LoginPageController extends BaseController {
 		if (form == null) {
 			form = new LoginForm();
 		}
-		form.setFormName("loginForm");
+		
 		form.setFormAction("ValidateLogin.do");
 		BaseErrors errors = new BaseErrors();
 		cleanUpSession(request);

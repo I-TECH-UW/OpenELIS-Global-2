@@ -21,8 +21,7 @@ public class PanelManagementController extends BaseController {
   public ModelAndView showPanelManagement(HttpServletRequest request) {
     String forward = FWD_SUCCESS;
     PanelManagementForm form = new PanelManagementForm();
-    form.setFormName("panelManagementForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 

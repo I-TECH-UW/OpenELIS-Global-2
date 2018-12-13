@@ -77,8 +77,7 @@ public class PrintBarcodeController extends BaseController {
 		String forward = FWD_SUCCESS;
 
 		PrintBarcodeForm form = new PrintBarcodeForm();
-		form.setFormName("printBarcodeForm");
-		form.setFormAction("PrintBarcode");
+				form.setFormAction("PrintBarcode");
 		BaseErrors errors = new BaseErrors();
 		ModelAndView mv = checkUserAndSetup(form, errors, request);
 
@@ -113,8 +112,7 @@ public class PrintBarcodeController extends BaseController {
 			ModelMap model, HttpServletRequest request) throws Exception {
 		String forward = FWD_SUCCESS;
 
-		form.setFormName("printBarcodeForm");
-		form.setFormAction("PrintBarcode");
+				form.setFormAction("PrintBarcode");
 		ModelAndView mv = checkUserAndSetup(form, result, request);
 
 		if (result.hasErrors()) {

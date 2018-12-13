@@ -18,8 +18,7 @@ public class ChangePasswordLoginController extends BaseController {
 	public ModelAndView showChangePasswordLogin(HttpServletRequest request) {
 		String forward = FWD_SUCCESS;
 		LoginChangePasswordForm form = new LoginChangePasswordForm();
-		form.setFormName("loginChangePasswordForm");
-		form.setFormAction("UpdateLoginChangePassword.do");
+				form.setFormAction("UpdateLoginChangePassword.do");
 		BaseErrors errors = new BaseErrors();
 		
 		form.setPassword("");

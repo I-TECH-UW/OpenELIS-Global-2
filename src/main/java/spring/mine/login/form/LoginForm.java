@@ -15,6 +15,10 @@ public class LoginForm extends BaseForm {
 
   private Timestamp lastupdated;
 
+  public LoginForm() {
+    setFormName("loginForm");
+  }
+
   public String getLoginName() {
     return this.loginName;
   }

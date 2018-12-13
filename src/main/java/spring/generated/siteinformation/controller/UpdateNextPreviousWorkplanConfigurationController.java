@@ -24,8 +24,7 @@ public class UpdateNextPreviousWorkplanConfigurationController extends BaseContr
     if (form == null) {
     	form = new WorkplanConfigurationForm();
     }
-    form.setFormName("WorkplanConfigurationForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

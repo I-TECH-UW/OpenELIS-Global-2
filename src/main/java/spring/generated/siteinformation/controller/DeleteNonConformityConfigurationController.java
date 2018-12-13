@@ -24,8 +24,7 @@ public class DeleteNonConformityConfigurationController extends BaseController {
     if (form == null) {
     	form = new NonConformityConfigurationMenuForm();
     }
-    form.setFormName("NonConformityConfigurationMenuForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

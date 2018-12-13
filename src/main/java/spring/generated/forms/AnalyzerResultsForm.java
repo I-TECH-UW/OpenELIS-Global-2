@@ -20,6 +20,10 @@ public class AnalyzerResultsForm extends BaseForm {
 
   private Boolean missingTestMsg;
 
+  public AnalyzerResultsForm() {
+    setFormName("AnalyzerResultsForm");
+  }
+
   public PagingBean getPaging() {
     return this.paging;
   }

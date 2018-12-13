@@ -13,6 +13,10 @@ public class UnitOfMeasureRenameEntryForm extends BaseForm {
 
   private String uomId = "";
 
+  public UnitOfMeasureRenameEntryForm() {
+    setFormName("unitOfMeasureRenameEntryForm");
+  }
+
   public List getUomList() {
     return this.uomList;
   }

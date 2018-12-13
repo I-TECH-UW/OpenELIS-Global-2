@@ -24,6 +24,10 @@ public class WorkplanConfigurationForm extends BaseForm {
 
   private String tag = "";
 
+  public WorkplanConfigurationForm() {
+    setFormName("WorkplanConfigurationForm");
+  }
+
   public String getParamName() {
     return this.paramName;
   }

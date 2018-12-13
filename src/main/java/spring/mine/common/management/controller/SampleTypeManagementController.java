@@ -21,8 +21,7 @@ public class SampleTypeManagementController extends BaseController {
   public ModelAndView showSampleTypeManagement(HttpServletRequest request) {
     String forward = FWD_SUCCESS;
     SampleTypeManagementForm form = new SampleTypeManagementForm();
-    form.setFormName("sampleTypeManagementForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 

@@ -23,8 +23,7 @@ public class PatientManagementController extends BaseController {
   public ModelAndView showPatientManagement(HttpServletRequest request) {
     String forward = FWD_SUCCESS;
     SamplePatientEntryForm form = new SamplePatientEntryForm();
-    form.setFormName("samplePatientEntryForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 

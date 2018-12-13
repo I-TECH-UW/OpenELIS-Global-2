@@ -16,6 +16,10 @@ public class TestSectionTestAssignForm extends BaseForm {
 
   private String deactivateTestSectionId = "";
 
+  public TestSectionTestAssignForm() {
+    setFormName("testSectionTestAssignForm");
+  }
+
   public List getTestSectionList() {
     return this.testSectionList;
   }

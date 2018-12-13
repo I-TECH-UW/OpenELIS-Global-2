@@ -24,8 +24,7 @@ public class TestModifyEntryController extends BaseController {
     if (form == null) {
     	form = new TestModifyEntryForm();
     }
-    form.setFormName("testModifyEntryForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

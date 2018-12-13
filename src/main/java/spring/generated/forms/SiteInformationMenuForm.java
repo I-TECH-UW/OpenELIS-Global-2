@@ -11,6 +11,10 @@ public class SiteInformationMenuForm extends BaseForm {
 
   private String siteInfoDomainName = "SiteInformation";
 
+  public SiteInformationMenuForm() {
+    setFormName("siteInformationMenuForm");
+  }
+
   public List getMenuList() {
     return this.menuList;
   }

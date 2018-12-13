@@ -9,6 +9,10 @@ public class ListPluginForm extends BaseForm {
 
   private List pluginList;
 
+  public ListPluginForm() {
+    setFormName("listPluginForm");
+  }
+
   public Timestamp getLastupdated() {
     return this.lastupdated;
   }

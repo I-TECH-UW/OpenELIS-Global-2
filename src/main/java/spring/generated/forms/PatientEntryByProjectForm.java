@@ -59,6 +59,10 @@ public class PatientEntryByProjectForm extends BaseForm {
 
   private ProjectData ProjectData;
 
+  public PatientEntryByProjectForm() {
+    setFormName("patientEntryByProjectForm");
+  }
+
   public Map getFormLists() {
     return this.formLists;
   }

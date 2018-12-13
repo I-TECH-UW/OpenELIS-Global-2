@@ -18,6 +18,10 @@ public class AnalyzerTestNameForm extends BaseForm {
 
   private Timestamp lastupdated;
 
+  public AnalyzerTestNameForm() {
+    setFormName("analyzerTestNameForm");
+  }
+
   public List getAnalyzerList() {
     return this.analyzerList;
   }

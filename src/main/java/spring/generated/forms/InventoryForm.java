@@ -18,6 +18,10 @@ public class InventoryForm extends BaseForm {
 
   private String newKitsXML = "";
 
+  public InventoryForm() {
+    setFormName("InventoryForm");
+  }
+
   public String getCurrentDate() {
     return this.currentDate;
   }

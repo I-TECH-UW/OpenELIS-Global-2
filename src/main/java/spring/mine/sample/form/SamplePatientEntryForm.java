@@ -39,6 +39,10 @@ public class SamplePatientEntryForm extends BaseForm {
 
   private Collection testSectionList;
 
+  public SamplePatientEntryForm() {
+    setFormName("samplePatientEntryForm");
+  }
+
   public Timestamp getLastupdated() {
     return this.lastupdated;
   }

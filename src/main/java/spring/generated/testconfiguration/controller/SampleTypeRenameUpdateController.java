@@ -24,8 +24,7 @@ public class SampleTypeRenameUpdateController extends BaseController {
     if (form == null) {
     	form = new SampleTypeRenameEntryForm();
     }
-    form.setFormName("sampleTypeRenameEntryForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

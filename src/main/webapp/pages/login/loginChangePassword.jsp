@@ -17,7 +17,7 @@
     }
 
 </script>
-<form:form name='${form.formName}' action='${form.formAction}' modelAttribute="form" onSubmit="return submitForm(this);" method="POST">
+
 
 <table width="100%">
 <tr>
@@ -66,7 +66,7 @@
     </td>
 </tr>
 </table>       
-</form:form>
+
 
 <%-- <app:javascript formName="loginChangePasswordForm"/> --%>
 

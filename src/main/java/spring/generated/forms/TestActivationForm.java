@@ -11,6 +11,10 @@ public class TestActivationForm extends BaseForm {
 
   private String jsonChangeList = "";
 
+  public TestActivationForm() {
+    setFormName("testActivationForm");
+  }
+
   public List getActiveTestList() {
     return this.activeTestList;
   }

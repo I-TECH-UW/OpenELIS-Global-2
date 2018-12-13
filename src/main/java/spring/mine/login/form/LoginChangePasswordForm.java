@@ -21,6 +21,10 @@ public class LoginChangePasswordForm extends BaseForm {
 
   private Timestamp lastupdated;
 
+  public LoginChangePasswordForm() {
+    setFormName("loginChangePasswordForm");
+  }
+
   public String getLoginName() {
     return this.loginName;
   }

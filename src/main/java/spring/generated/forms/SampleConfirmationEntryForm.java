@@ -39,6 +39,10 @@ public class SampleConfirmationEntryForm extends BaseForm {
 
   private SampleOrderItem sampleOrderItems;
 
+  public SampleConfirmationEntryForm() {
+    setFormName("SampleConfirmationEntryForm");
+  }
+
   public Timestamp getLastupdated() {
     return this.lastupdated;
   }

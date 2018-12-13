@@ -20,6 +20,10 @@ public class DataSubmissionForm extends BaseForm {
 
   private String siteId;
 
+  public DataSubmissionForm() {
+    setFormName("DataSubmissionForm");
+  }
+
   public Timestamp getLastupdated() {
     return this.lastupdated;
   }

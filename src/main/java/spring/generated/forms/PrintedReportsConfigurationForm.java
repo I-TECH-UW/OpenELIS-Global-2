@@ -24,6 +24,10 @@ public class PrintedReportsConfigurationForm extends BaseForm {
 
   private String tag = "";
 
+  public PrintedReportsConfigurationForm() {
+    setFormName("PrintedReportsConfigurationForm");
+  }
+
   public String getParamName() {
     return this.paramName;
   }

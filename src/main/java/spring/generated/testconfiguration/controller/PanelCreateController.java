@@ -24,8 +24,7 @@ public class PanelCreateController extends BaseController {
     if (form == null) {
     	form = new PanelCreateForm();
     }
-    form.setFormName("panelCreateForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

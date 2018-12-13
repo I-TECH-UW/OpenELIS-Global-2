@@ -24,8 +24,7 @@ public class UomCreateController extends BaseController {
     if (form == null) {
     	form = new UomCreateForm();
     }
-    form.setFormName("uomCreateForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

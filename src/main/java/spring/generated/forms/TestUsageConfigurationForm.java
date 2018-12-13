@@ -30,6 +30,10 @@ public class TestUsageConfigurationForm extends BaseForm {
 
   private String sendStatus = "";
 
+  public TestUsageConfigurationForm() {
+    setFormName("TestUsageConfigurationForm");
+  }
+
   public Timestamp getLastupdated() {
     return this.lastupdated;
   }

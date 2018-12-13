@@ -28,6 +28,10 @@ public class PrintBarcodeForm extends BaseForm {
 
   private PatientSearch patientSearch;
 
+  public PrintBarcodeForm() {
+    setFormName("PrintBarcodeForm");
+  }
+
   public String getLastupdated() {
     return this.lastupdated;
   }

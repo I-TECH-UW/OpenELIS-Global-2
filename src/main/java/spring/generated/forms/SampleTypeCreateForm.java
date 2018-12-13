@@ -17,6 +17,10 @@ public class SampleTypeCreateForm extends BaseForm {
 
   private String sampleTypeFrenchName;
 
+  public SampleTypeCreateForm() {
+    setFormName("sampleTypeCreateForm");
+  }
+
   public List getExistingSampleTypeList() {
     return this.existingSampleTypeList;
   }

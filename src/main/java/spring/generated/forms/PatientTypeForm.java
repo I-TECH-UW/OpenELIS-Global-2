@@ -13,6 +13,10 @@ public class PatientTypeForm extends BaseForm {
 
   private Timestamp lastupdated;
 
+  public PatientTypeForm() {
+    setFormName("patientTypeForm");
+  }
+
   public String getId() {
     return this.id;
   }

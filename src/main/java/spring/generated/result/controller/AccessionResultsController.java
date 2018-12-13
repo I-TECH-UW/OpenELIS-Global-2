@@ -24,8 +24,7 @@ public class AccessionResultsController extends BaseController {
     if (form == null) {
     	form = new AccessionResultsForm();
     }
-    form.setFormName("AccessionResultsForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

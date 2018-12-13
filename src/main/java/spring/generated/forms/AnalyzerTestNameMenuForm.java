@@ -9,6 +9,10 @@ public class AnalyzerTestNameMenuForm extends BaseForm {
 
   private String[] selectedIDs;
 
+  public AnalyzerTestNameMenuForm() {
+    setFormName("analyzerTestNameMenuForm");
+  }
+
   public List getMenuList() {
     return this.menuList;
   }

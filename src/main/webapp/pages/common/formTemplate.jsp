@@ -166,6 +166,7 @@ if (document.layers) {
 		<tr>
 			<td><tiles:insertAttribute name="error" /></td>
 		</tr>
+		<form:form name="${form.formName}" action="${form.formAction}" modelAttribute="form" onSubmit="return submitForm(this);" method="POST">
 		<tr>
 			<td><tiles:insertAttribute name="header" /></td>
 		</tr>
@@ -178,6 +179,7 @@ if (document.layers) {
 		<tr>
 			<td><tiles:insertAttribute name="footer" /></td>
 		</tr>
+		</form:form>
 	</table>
 
 </body>

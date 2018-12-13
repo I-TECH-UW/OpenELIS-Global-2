@@ -21,8 +21,7 @@ public class TestSectionManagementController extends BaseController {
   public ModelAndView showTestSectionManagement(HttpServletRequest request) {
     String forward = FWD_SUCCESS;
     TestSectionManagementForm form = new TestSectionManagementForm();
-    form.setFormName("testSectionManagementForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     ModelAndView mv = checkUserAndSetup(form, errors, request);
 

@@ -24,8 +24,7 @@ public class PanelOrderUpdateController extends BaseController {
     if (form == null) {
     	form = new PanelOrderForm();
     }
-    form.setFormName("panelOrderForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

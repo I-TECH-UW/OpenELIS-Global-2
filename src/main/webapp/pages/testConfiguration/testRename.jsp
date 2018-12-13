@@ -167,7 +167,7 @@
         form.submit();
     }
 </script>
-<form:form modelAttribute="form" >
+
 <form:hidden path="testId" />
 <input type="button" value='<%= StringUtil.getMessageForKey("banner.menu.administration") %>'
        onclick="submitAction('MasterListsPage.do');"
@@ -264,4 +264,3 @@
 <br>
 <input type="button" value='<%= StringUtil.getMessageForKey("label.button.finished") %>'
        onclick="submitAction('TestManagementConfigMenu.do');"/>
-</form:form>

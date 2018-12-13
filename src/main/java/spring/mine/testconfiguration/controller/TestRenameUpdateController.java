@@ -52,7 +52,6 @@ public class TestRenameUpdateController extends BaseController {
 		updateTestNames(testId, nameEnglish, nameFrench, reportNameEnglish, reportNameFrench, userId);
 
 		form = new TestRenameEntryForm();
-		form.setFormName("testRenameEntryForm");
 		form.setFormAction("");
 
 		form.setTestList(DisplayListService.getList(DisplayListService.ListType.ALL_TESTS));

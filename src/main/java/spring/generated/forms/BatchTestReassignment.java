@@ -20,6 +20,10 @@ public class BatchTestReassignment extends BaseForm {
 
   private Timestamp lastupdated;
 
+  public BatchTestReassignment() {
+    setFormName("BatchTestReassignment");
+  }
+
   public List getSampleList() {
     return this.sampleList;
   }

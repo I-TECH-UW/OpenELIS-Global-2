@@ -24,8 +24,7 @@ public class MasterListsPageController extends BaseController {
     if (form == null) {
     	form = new MainForm();
     }
-    form.setFormName("mainForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

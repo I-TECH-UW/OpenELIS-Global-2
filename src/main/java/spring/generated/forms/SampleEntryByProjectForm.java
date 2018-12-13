@@ -82,15 +82,19 @@ public class SampleEntryByProjectForm extends BaseForm {
   
   private String domain = "";
 
+  public SampleEntryByProjectForm() {
+    setFormName("sampleEntryByProjectForm");
+  }
+  
   public String getDomain() {
-	return domain;
-}
+	   return domain;
+  }
 
-public void setDomain(String domain) {
-	this.domain = domain;
-}
+  public void setDomain(String domain) {
+	  this.domain = domain;
+  }
 
-public String getCurrentDate() {
+  public String getCurrentDate() {
     return this.currentDate;
   }
 

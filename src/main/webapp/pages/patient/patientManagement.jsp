@@ -832,7 +832,7 @@ function  processSubjectNumberSuccess(xhr){
 }
 </script>
 
-<form:form modelAttribute="form" >
+
 <%-- <nested:hidden name='${form.formName}' property="patientProperties.currentDate" id="currentDate"/> --%>
 <form:hidden path="patientProperties.currentDate" id="currentDate"/>
 
@@ -1370,7 +1370,7 @@ function  processSubjectNumberSuccess(xhr){
 	</div>
 </div>
 
-</form:form>
+
 
 <script type="text/javascript" >
 

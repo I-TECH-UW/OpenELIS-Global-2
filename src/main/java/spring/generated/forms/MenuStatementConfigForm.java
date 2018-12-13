@@ -24,6 +24,10 @@ public class MenuStatementConfigForm extends BaseForm {
 
   private String tag = "";
 
+  public MenuStatementConfigForm() {
+    setFormName("MenuStatementConfigForm");
+  }
+
   public String getParamName() {
     return this.paramName;
   }

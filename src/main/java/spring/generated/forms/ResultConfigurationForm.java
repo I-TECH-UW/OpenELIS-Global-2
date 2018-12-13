@@ -24,6 +24,10 @@ public class ResultConfigurationForm extends BaseForm {
 
   private String tag = "";
 
+  public ResultConfigurationForm() {
+    setFormName("resultConfigurationForm");
+  }
+
   public String getParamName() {
     return this.paramName;
   }

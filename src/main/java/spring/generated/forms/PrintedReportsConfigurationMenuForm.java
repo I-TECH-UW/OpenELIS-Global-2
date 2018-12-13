@@ -11,6 +11,10 @@ public class PrintedReportsConfigurationMenuForm extends BaseForm {
 
   private String siteInfoDomainName = "PrintedReportsConfiguration";
 
+  public PrintedReportsConfigurationMenuForm() {
+    setFormName("PrintedReportsConfigurationMenuForm");
+  }
+
   public List getMenuList() {
     return this.menuList;
   }

@@ -24,8 +24,7 @@ public class DeletePatientConfigurationController extends BaseController {
     if (form == null) {
     	form = new PatientConfigurationMenuForm();
     }
-    form.setFormName("PatientConfigurationMenuForm");
-    form.setFormAction("");
+        form.setFormAction("");
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();
