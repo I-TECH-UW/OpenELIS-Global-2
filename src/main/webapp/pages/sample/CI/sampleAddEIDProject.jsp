@@ -16,11 +16,15 @@
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-		
-<bean:define id="idSeparator"	value='<%=SystemConfiguration.getInstance().getDefaultIdSeparator()%>' />
-<bean:define id="accessionFormat" value='<%=ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat)%>' />
+<c:set var="formName" value="${form.formName}" />
+<c:set var="type" value="${type}" />
+<c:set var="requestType" value="${type}" />
+<c:set var="genericDomain" value="" />
+<%--       
 <bean:define id="requestType" value='<%=(String)request.getSession().getAttribute("type")%>' />
-<bean:define id="genericDomain" value='' />
+<bean:define id="idSeparator"   value='<%=SystemConfiguration.getInstance().getDefaultIdSeparator()%>' />
+<bean:define id="accessionFormat" value='<%=ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat)%>' />
+<bean:define id="genericDomain" value='' /> --%>
 
 <%!
 	String basePath = "";
@@ -42,8 +46,7 @@
 
 <script type="text/javascript">
 var dirty = false;
-var type = '<%=Encode.forJavaScript(requestType)%>';
-var requestType = '<%=Encode.forJavaScript(requestType)%>';
+
 var pageType = "Sample";
 birthDateUsageMessage = "<spring:message code='error.dob.complete.less.two.years'/>";
 previousNotMatchedMessage = "<spring:message code='error.2ndEntry.previous.not.matched'/>";
@@ -199,9 +202,9 @@ function /*void*/ setSaveButton() {
 }
 
 </script>
-
+<form:form modelAttribute="form">
 <form:hidden path="currentDate" id="currentDate"/>
-<form:hidden path="domain" value="<%=genericDomain%>" id="domain"/>
+<form:hidden path="domain" value="" id="domain"/>
 <!--   html:hidden name="${form.formName}" property="project" id="project"/>  -->
 <form:hidden path="patientLastUpdated" id="patientLastUpdated" />
 <form:hidden path="personLastUpdated" id="personLastUpdated"/>
@@ -284,3 +287,4 @@ function pageOnLoad(){
 	projectChecker == null || projectChecker.refresh();	
 }
 </script>
+</form:form>
