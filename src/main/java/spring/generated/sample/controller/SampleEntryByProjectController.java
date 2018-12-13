@@ -36,6 +36,32 @@ public class SampleEntryByProjectController extends BaseController {
     }
 
     return findForward(forward, form);}
+  
+  @RequestMapping(
+	      value = "/SampleEntryByProject",
+	      method = RequestMethod.POST
+	  )
+	  public ModelAndView postSampleEntryByProject(HttpServletRequest request,
+	      @ModelAttribute("form") SampleEntryByProjectForm form) {
+	    
+	    String forward = "eid_entry";
+	    
+	    if (form == null) {
+	    	form = new SampleEntryByProjectForm();
+	    }
+	    form.setFormName("sampleEntryByProjectForm");
+	    form.setFormAction("");
+	    BaseErrors errors = new BaseErrors();
+	    if (form.getErrors() != null) {
+	    	errors = (BaseErrors) form.getErrors();
+	    }
+	    ModelAndView mv = checkUserAndSetup(form, errors, request);
+
+	    if (errors.hasErrors()) {
+	    	return mv;
+	    }
+
+	    return findForward(forward, form);}
 
   protected ModelAndView findLocalForward(String forward, BaseForm form) {
     if ("success".equals(forward)) {
