@@ -10,8 +10,6 @@
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-      
-
 <script>
 var lineSeparator = "";
 var programCode = "<c:out value="${form.programCode}"/>";
@@ -164,18 +162,13 @@ function moveAccessionToRecentArea() {
 <tr>
 	<td>
 		<!-- gets next accession, and calls submit and print if success -->
-		<html:button onclick="getNextAccessionNumber();"
-			property="print"
-			id="saveButtonId">
+		<button type="button" onclick="getNextAccessionNumber();" id="saveButtonId">
 			<spring:message code="sample.batchentry.ondemand.saveprint" />
-		</html:button>
+		</button>
 		<!-- sets up for next label to be printed -->
-		<html:button onclick="nextLabel();"
-			property="next"
-			id="nextButtonId"
-			disabled="true">
+		<button type="button" onclick="nextLabel();" id="nextButtonId" disabled="disabled">
 			<spring:message code="sample.batchentry.ondemand.next" />
-		</html:button>
+		</button>
 	</td>
 </tr>
 <tr>
@@ -188,11 +181,7 @@ function moveAccessionToRecentArea() {
 </tr>
 <tr>
 	<td>
-		<app:text name='${form.formName}' property="labNo"
-           	onchange="checkAccessionNumber(this);"
-            styleClass="text"
-            id="labNo"
-            readonly="true"/>
+		<form:input path="labNo" onchange="checkAccessionNumber(this);" cssClass="text" id="labNo" readonly="true"/>
 	</td>
 </tr>
 <tr>

@@ -1,4 +1,4 @@
-package spring.generated.forms;
+package spring.mine.datasubmission.form;
 
 import java.lang.Integer;
 import java.lang.String;

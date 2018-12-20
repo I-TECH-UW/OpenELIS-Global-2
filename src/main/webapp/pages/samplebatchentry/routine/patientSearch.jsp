@@ -7,17 +7,12 @@
 			     us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
 			     us.mn.state.health.lims.common.util.*" %>
 
-
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-
-	
-<bean:define id="localDBOnly" value='<%=Boolean.toString(ConfigurationProperties.getInstance().getPropertyValueLowerCase(Property.UseExternalPatientInfo).equals("false"))%>' />
-<bean:define id="patientSearch" name='${form.formName}' property='patientSearch' type="us.mn.state.health.lims.patient.action.bean.PatientSearch" />
 
 <%!
 	IAccessionNumberValidator accessionNumberValidator;
@@ -51,7 +46,7 @@ var supportLabNumber = <%= supportLabNumber %>;
 var patientSelectID;
 var patientInfoHash = [];
 var patientChangeListeners = [];
-var localDB = '<%=localDBOnly%>' == "true";
+var localDB = '${form.localDBOnly}' == "true";
 var newSearchInfo = false;
 
 function searchPatients() {
@@ -105,7 +100,7 @@ function processSearchSuccess(xhr) {
 			addPatientToSearch(table, resultNodes.item(i));
 		}
 		
-		if (resultNodes.length == 1 && <%= String.valueOf(patientSearch.isLoadFromServerWithPatient()) %>) {
+		if (resultNodes.length == 1 && ${form.patientSearch.loadFromServerWithPatient}) {
 			handleSelectedPatient();
 		}
 	} else {
@@ -341,15 +336,13 @@ function setCaretPosition(ctrl, pos) {
 <div id="PatientPage" class="colorFill patientSearch" style="display:inline;" >
 
 	<h3><spring:message code="sample.entry.search"/></h3>
-    <logic:present property="warning" name="${form.formName}" >
+	<c:if test="${not empty form.warning}" >
         <h3 class="important-text"><spring:message code="order.modify.search.warning" /></h3>
-    </logic:present>
+    </c:if>
     <select id="searchCriteria"  style="float:left" onchange="checkIndex(this)" tabindex="1" class="patientSearch">
-        <%
-            for(IdValuePair pair : patientSearch.getSearchCriteria()) {
-                out.print("<option value=\"" + pair.getId() +"\">" + pair.getValue() + "</option>");
-            }
-        %>
+        <c:forEach items="${form.patientSearch.searchCriteria}" var="criteria">
+        	<option value="<c:out value="${criteria.id}" />"><c:out value="${criteria.value}"/></option>
+        </c:forEach>
     </select>
 
     <input size="35"
@@ -377,18 +370,19 @@ function setCaretPosition(ctrl, pos) {
 		<h1><spring:message code="patient.search.not.found"/></h1>
 	</div>
 	<div id="searchResultsDiv" class="colorFill" style="display: none;" >
-		<% if (localDBOnly.equals("false")) { %>
+		<c:if test="${not form.localDBOnly}">
 		<table id="searchResultTable" style="width:90%">
 			<tr>
 				<th width="2%"></th>
 				<th width="10%" >
 					<spring:message code="patient.data.source" />
 				</th>
-		<% } else { %>
+		</c:if>
+		<c:if test="${form.localDBOnly}">
 		<table id="searchResultTable" width="70%">
 			<tr>
 				<th width="2%"></th>
-		<% } %>
+		</c:if>
 				<th width="18%">
 					<spring:message code="patient.epiLastName"/>
 				</th>
@@ -423,12 +417,12 @@ function setCaretPosition(ctrl, pos) {
 			</tr>
 		</table>
 		<br/>
-        <% if (patientSearch.getSelectedPatientActionButtonText() != null) { %>
+		<c:if test="${not empty form.patientSearch.selectedPatientActionButtonText}">
             <input type="button"
-                   value="<%= patientSearch.getSelectedPatientActionButtonText()%>"
+                   value="${form.patientSearch.selectedPatientActionButtonText}"
                    id="selectPatientButtonID"
                    onclick="handleSelectedPatient()">
-        <% }%>
+        </c:if>
 		</div>
 	</div>
 

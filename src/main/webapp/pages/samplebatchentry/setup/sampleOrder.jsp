@@ -4,9 +4,7 @@
                  us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
                  us.mn.state.health.lims.common.util.StringUtil,
                  us.mn.state.health.lims.common.util.Versioning,
-                 us.mn.state.health.lims.common.util.DateUtil,
-                 us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO,
-                 us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl" %>
+                 us.mn.state.health.lims.common.util.DateUtil" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -20,13 +18,11 @@
     String path = "";
     String basePath = "";
     boolean acceptExternalOrders = false;
-    SiteInformationDAO siteInfoDAO = new SiteInformationDAOImpl();
 %>
 <%
     path = request.getContextPath();
     basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
     acceptExternalOrders = ConfigurationProperties.getInstance().isPropertyValueEqual( Property.ACCEPT_EXTERNAL_ORDERS, "true" );
-    String siteInfo = siteInfoDAO.getSiteInformationByName("Study Management tab").getValue();
 %>
 
 <link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?ver=<%= Versioning.getBuildNumber() %>"/>
@@ -114,14 +110,8 @@ function studyChanged(studyElement) {
 }
 </script>
 
-
-<!-- This define may not be needed, look at usages (not in any other jsp or js page may be radio buttons for ci LNSP-->
-<!--bean:define id="orderTypeList" name='${form.formName}' property="sampleOrderItems.orderTypes"  type="java.util.Collection"/> -->
-<bean:define id="sampleOrderItem" name='${form.formName}' property="sampleOrderItems" type="us.mn.state.health.lims.sample.bean.SampleOrderItem" />
-
-<div id=orderDisplay >
+<div id="orderDisplay">
 <table style="width:100%">
-
 <tr>
 <td>
 <table>
@@ -131,70 +121,43 @@ function studyChanged(studyElement) {
 	        <span class="requiredlabel">*</span>
 	        <span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>
    	 	</td>
-    	<td>
-	        <html:text name='${form.formName}'
-                   property="currentDate"
-                   id="currentDate"
-                   styleClass="required"
-                   readonly="true"
-                   maxlength="10"/>
-     	</td>
-     	<td>
+    	<td colspan="2">
+	        <form:input path="currentDate" id="currentDate" cssClass="required" readonly="true" maxlength="10"/>
 	     	<%= StringUtil.getContextualMessageForKey("sample.batchentry.order.currenttime") %>
 	     	:
 	        <span style="font-size: xx-small; "><%=DateUtil.getTimeUserPrompt()%></span> 
-		</td>
-	   	<td>
-	    	<html:text name="${form.formName}"
-                   onkeyup="filterTimeKeys(this, event);"
-                   property="currentTime"
-                   id="currentTime"
-                   maxlength="5"/>
+	        <form:input path="currentTime" onkeyup="filterTimeKeys(this, event);" id="currentTime" maxlength="5"/>
    		</td>
 	</tr>
 	<tr>
-    	<td>
-    		<%= StringUtil.getContextualMessageForKey( "quick.entry.received.date" ) %>
+    	<td><%= StringUtil.getContextualMessageForKey( "quick.entry.received.date" ) %>
         	:
 	        <span class="requiredlabel">*</span>
 	        <span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>
     	</td>
-    	<td>
-    		<html:text name="${form.formName}"
-                  property="sampleOrderItems.receivedDateForDisplay"
+    	<td colspan="2">
+    		<form:input path="sampleOrderItem.receivedDateForDisplay"
                   onchange="checkValidSubPages();checkValidEntryDate(this, 'past');"
                   onkeyup="addDateSlashes(this, event);"
                   maxlength="10"
-                  styleClass="text required"
+                  cssClass="text required"
                   id="receivedDateForDisplay"/>
-     	</td>
-     	<td>
 	        <spring:message code="sample.batchentry.order.receptiontime"/>
 	        :
 	        <span style="font-size: xx-small; "><%=DateUtil.getTimeUserPrompt()%></span>
-		</td>
-		<td>
-			<html:text name="${form.formName}"
-                   onkeyup="filterTimeKeys(this, event);"
-                   property="sampleOrderItems.receivedTime"
-                   id="receivedTime"
-                   maxlength="5"
-                   onblur="checkValidSubPages(); checkValidTime(this, true);"/>
+	        <form:input path="sampleOrderItem.receivedTime" onkeyup="filterTimeKeys(this, event);" id="receivedTime" maxlength="5"  onblur="checkValidSubPages(); checkValidTime(this, true);"/>
     	</td>
 	</tr>
-	<tr <%= "false".equals(siteInfo) ? "style='display:none'" : ""  %>>
+	<tr <c:if test="${siteInfo == 'false'}">style='display:none'</c:if>>
     	<td>
     		<spring:message code="sample.entry.project.form"/>: 
     	</td>
     	<td>
-    		<html:select name="${form.formName}"
-    				property="study"
-    				id="study" 
-    				onchange="studyChanged(this);checkValidSubPages();">
+    		<form:select path="study" id="study" onchange="studyChanged(this);checkValidSubPages();">
     			<option value="routine"><spring:message code="dictionary.program.routine" /></option>
     			<option value="viralLoad"><spring:message code="sample.entry.project.VL.simple.title" /></option>
     			<option value="EID"><spring:message code="sample.entry.project.EID.title" /></option>
-    		</html:select>
+    		</form:select>
     	</td>
 	</tr>
 	<tr class="spacerRow">

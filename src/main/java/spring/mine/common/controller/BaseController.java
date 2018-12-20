@@ -1,6 +1,7 @@
 package spring.mine.common.controller;
 
 import java.util.HashSet;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,6 +13,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -276,7 +278,10 @@ public abstract class BaseController implements IActionConstants {
 		for (ObjectError errorMessage : errors.getAllErrors()) {
 			System.out.println(errorMessage.getDefaultMessage());
 		}
-		form.setErrors(errors.getAllErrors());
+		if (form.getErrors() == null) {
+			form.setErrors((List<ObjectError>) new BaseErrors());
+		}
+		form.getErrors().addAll(errors.getAllErrors());
 	}
 
 	protected boolean isUserAuthenticated(UserModuleDAO userModuleDAO, Errors errors, HttpServletRequest request) {

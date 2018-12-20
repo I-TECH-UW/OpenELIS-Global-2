@@ -96,17 +96,16 @@ function processAccessionSuccess(xhr) {
 </tr>
 <tr>
 	<td>
-		<app:text name='${form.formName}' property="sampleOrderItems.labNo"
+		<form:input path="sampleOrderItem.labNo"
 			maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>'
             onkeyup="checkAccessionNumber(this, event);"
             styleClass="text"
             id="labNo"/>
-		<html:button onclick="saveLabel();"
-			property="save"
+		<button type="button" onclick="saveLabel();"
 			id="saveButtonId" 
 			disabled="disabled">
 		<spring:message code="sample.batchentry.preprinted.save" />
-		</html:button>
+		</button>
 	</td>
 </tr>
 <tr>

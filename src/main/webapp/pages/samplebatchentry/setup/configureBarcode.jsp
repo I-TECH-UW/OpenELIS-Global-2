@@ -98,15 +98,13 @@ $jq(document).ready(function () {
 });
 
 </script>
-
-<form:hidden path="sampleOrderItems.newRequesterName" name='${form.formName}' id="newRequesterName"/>
+<form:hidden path="sampleOrderItem.newRequesterName" id="newRequesterName"/>
 
 Barcode Method : 
-<html:select name="${form.formName}"
-		property="method">
-	<option value="On Demand"><spring:message code="sample.batchentry.barcode.ondemand"/></option>
-	<option value="Pre-Printed"><spring:message code="sample.batchentry.barcode.preprinted"/></option>
-</html:select>
+<form:select name="method" id="methodId" path="method">
+	<form:option value="On Demand"><spring:message code="sample.batchentry.barcode.ondemand"/></form:option>
+	<form:option value="Pre-Printed"><spring:message code="sample.batchentry.barcode.preprinted"/></form:option>
+</form:select>
 
 <table style="width:100%">
 <tr>
@@ -120,30 +118,24 @@ Barcode Method :
 			<input type="checkbox"
 			id="psuedoFacilityID"
 			onchange="toggleFacilityID();">
-			<html:hidden name="${form.formName}"
-				property="facilityIDCheck"
-				disabled="true"
-				value="true" />
+			<form:hidden path="facilityIDCheck" name="facilityIDCheck" disabled="true" value="true"/>
 			<spring:message code="sample.batchentry.barcode.label.facilityid"/>
 		</td>
-		<td><div id="facility-combobox">
-			<logic:equal value="false" name='${form.formName}' property="sampleOrderItems.readOnly" >
-		        <html:select id="requesterId"
-		                     name="${form.formName}"
-		                     property="facilityID"
-		                     onchange="siteListChanged(this);processFacilityIDChange();"
-		                     onkeyup="capitalizeValue( this.value );"
-		                     
-		                >
+		<td>
+			<spring:message code="sample.batchentry.barcode.label.facilityid"/>:
+		</td>
+		<td>
+			<c:if test="${not form.sampleOrderItem.readOnly}">
+		    	<form:select path="facilityID" id="requesterId" onchange="siteListChanged(this);processFacilityIDChange();" onkeyup="capitalizeValue( this.value );">
+		    	
 		            <option value=""></option>
-		            <html:optionsCollection name="${form.formName}" property="sampleOrderItems.referringSiteList" label="value"
-		                                    value="id"/>
-		        </html:select>
-			</logic:equal>
-		    <logic:equal value="true" name='${form.formName}' property="sampleOrderItems.readOnly" >
-		            <html:text id="requesterId" property="facilityID" name="${form.formName}" style="width:300px" />
-		    </logic:equal>
-		</div></td>
+		            <form:options items="${form.sampleOrderItem.referringSiteList}" itemValue="id" itemLabel="value"/>
+		    	</form:select>
+			</c:if>
+		    <c:if test="${form.sampleOrderItem.readOnly}">
+		    	<form:input path="facilityID" id="requesterId"/>
+		    </c:if>
+		</td>
 	</tr>
 	<tr>
 		<td></td>
@@ -152,10 +144,7 @@ Barcode Method :
 			id="psuedoPatientInfo"
 			onchange="togglePatientInfo()"
 			/>
-			<html:hidden name="${form.formName}"
-				property="patientInfoCheck"
-				disabled="true"
-				value="true" />
+			<form:hidden path="patientInfoCheck" name="patientInfoCheck" disabled="true" value="true"/>
 			<spring:message code="sample.batchentry.barcode.label.patientinfo"/>
 		</td>
 	</tr>

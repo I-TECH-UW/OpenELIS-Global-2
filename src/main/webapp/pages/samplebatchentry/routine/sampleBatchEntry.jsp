@@ -9,12 +9,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 
-      
-<bean:parameter id="patientInfoCheck" name="patientInfoCheck" value="false" />
-<bean:parameter id="facilityIDCheck" name="facilityIDCheck" value="false" />
-<bean:parameter id="facilityID" name="facilityID" value="" />
-<bean:parameter id="newRequesterName" name="sampleOrderItems.newRequesterName" value="" />
 
 <%!
 String path = "";
@@ -55,16 +51,16 @@ function setSave() {
 //if optional fields are being used, check them for validity
 function checkOptionalFields() {
 	var fieldsValid = true;
-	<logic:equal name="patientInfoCheck" value="true">
+	<c:if test="${patientInfoCheck}">
 		if (!patientFormValid()) {
 			return false;
 		}
-	</logic:equal>
-	<logic:equal name="facilityIDCheck" value="true">
+	</c:if>
+	<c:if test="${facilityIDCheck}">
 		if (!$jq("#requesterId").val() && !$jq("#newRequesterName").val()) {
 			return false;
 		}
-	</logic:equal>
+	</c:if>
 	return fieldsValid;
 }
 
@@ -122,7 +118,7 @@ $jq(document).ready(function () {
 </script>
 <div class="hidden-fields">
 	<input id="lastPatientId" type="hidden">
-	<form:hidden path="sampleOrderItems.newRequesterName" name='${form.formName}' id="newRequesterName"/>
+	<form:hidden path="sampleOrderItem.newRequesterName" name='${form.formName}' id="newRequesterName"/>
 </div>
 <table style="width:100%;">
 <tr>
@@ -133,43 +129,37 @@ $jq(document).ready(function () {
 			<h2><spring:message code="sample.batchentry.fields.specific"/></h2>
 		</td>
 	</tr>
-	<logic:equal name="facilityIDCheck" value="true">
-		<logic:equal name="facilityID" value="">
-			<logic:equal name="newRequesterName" value="">
+	<c:if test="${form.facilityIDCheck}">
+		<c:if test='${empty form.facilityID}'>
+			<c:if test='${empty form.sampleOrderItem.newRequesterName}'>
 			<tr>
 				<td>
 					<spring:message code="sample.batchentry.barcode.label.facilityid" />
 					:  
-					<logic:equal value="false" name='${form.formName}' property="sampleOrderItems.readOnly" >
-				        <html:select id="requesterId"
-				                     name="${form.formName}"
-				                     property="sampleOrderItems.referringSiteId"
-				                     onkeyup="capitalizeValue( this.value );"
-				                     onchange="siteListChanged(this);setSave();"
-				                >
+					<c:if test="${not form.sampleOrderItem.readOnly}">
+				        <form:select id="requesterId" path="sampleOrderItem.referringSiteId" onkeyup="capitalizeValue( this.value );" onchange="siteListChanged(this);setSave();">
 				            <option value=""></option>
-				            <html:optionsCollection name="${form.formName}" property="sampleOrderItems.referringSiteList" label="value"
-				                                    value="id"/>
-				        </html:select>
-					</logic:equal>
-				    <logic:equal value="true" name='${form.formName}' property="sampleOrderItems.readOnly" >
-				            <html:text property="sampleOrderItems.referringSiteName" name="${form.formName}" style="width:300px" />
-				    </logic:equal>
+				            <form:options items="${form.sampleOrderItem.referringSiteList}" itemLabel="value" itemValue="id"/>
+				        </form:select>
+					</c:if>
+					<c:if test="${form.sampleOrderItem.readOnly}">
+				            <form:input path="form.sampleOrderItem.referringSiteName" cssStyle="width:300px" />
+				    </c:if>
 				</td>
 			</tr>
-			</logic:equal>
-		</logic:equal>
-	</logic:equal>
-	<logic:equal name="patientInfoCheck" value="true">
+			</c:if>
+		</c:if>
+	</c:if>
+	<c:if test="${form.patientInfoCheck}">
 		<tr>
 			<td>
-				<tiles:insert attribute="patientInfo" />
+				<tiles:insertAttribute name="patientInfo" />
 			</td>
 		</tr>
-	</logic:equal>
+	</c:if>
 	<tr>
 		<td>
-			<tiles:insert attribute="entryMethod" />
+			<tiles:insertAttribute name="entryMethod" />
 		</td>
 	</tr>
 </table>
@@ -184,29 +174,21 @@ $jq(document).ready(function () {
 	<tr>
 		<td>
 			<spring:message code="sample.batchentry.order.currentdate" />: 
-			<html:text name='${form.formName}'
-				property="currentDate"
-				readonly="true"></html:text>
+			<form:input path="currentDate" readonly="true"/>
 		</td>
 		<td>
-			<spring:message code="sample.batchentry.order.currenttime" />: 
-			<html:text name='${form.formName}'
-				property="currentTime"
-				readonly="true"></html:text>
+			<spring:message code="sample.batchentry.order.currenttime" />:
+			<form:input path="currentTime" readonly="true"/>
 		</td>
 	</tr>
 	<tr>
 		<td>
 			<spring:message code="sample.batchentry.datereceived" />:
-			<html:text name='${form.formName}'
-				property="sampleOrderItems.receivedDateForDisplay"
-				readonly="true"></html:text>
+			<form:input path="sampleOrderItem.receivedDateForDisplay" readonly="true"/>
 		</td>
 		<td>
 			<spring:message code="sample.batchentry.timereceived" />:
-			<html:text name='${form.formName}'
-				property="sampleOrderItems.receivedTime"
-				readonly="true"></html:text>
+			<form:input path="sampleOrderItem.receivedTime" readonly="true"/>
 		</td>
 	</tr>
 	<tr>
@@ -221,37 +203,31 @@ $jq(document).ready(function () {
 					<td><%= request.getAttribute("testNames") %></td>
 				</tr>
 			</table>
-			<html:hidden name='${form.formName}'
-				property="sampleXML"/>	
+			<form:hidden path="sampleXML"/>	
 		</td>
 	</tr>
 	<tr>
-		<logic:notEqual name="facilityID" value="">
+		<c:if test='${not empty form.facilityID}'>
 			<tr>
 				<td>
 					<spring:message code="sample.batchentry.barcode.label.facilityid" /> 
 					: <%= request.getAttribute("facilityName") %>
-					<html:hidden name="${form.formName}"
-						property="sampleOrderItems.referringSiteId"
-						id="requesterId"/>
+					<form:hidden path="sampleOrderItem.referringSiteId" id="requesterId"/>
 						
 				</td>
 			</tr>
-		</logic:notEqual>
-		<logic:equal name="facilityID" value="">
-			<logic:notEqual name="newRequesterName" value="">
+		</c:if>
+		<c:if test='${empty form.facilityID}'>
+			<c:if test='${not empty form.sampleOrderItem.newRequesterName}'>
 			<tr>
 				<td>
 					<spring:message code="sample.batchentry.barcode.label.facilityid" /> 
 					: <%= request.getAttribute("facilityName") %>
-					<html:hidden name="${form.formName}"
-						property="sampleOrderItems.referringSiteId"
-						id="requesterId"/>
-						
+					<form:hidden path="sampleOrderItem.referringSiteId" id="requesterId"/>
 				</td>
 			</tr>
-			</logic:notEqual>
-		</logic:equal>
+			</c:if>
+		</c:if>
 	</tr>
 </table>
 </td>

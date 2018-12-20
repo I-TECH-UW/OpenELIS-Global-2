@@ -1,16 +1,17 @@
-package spring.generated.forms;
+package spring.mine.dataexchange.order.form;
 
 import java.lang.String;
 import java.sql.Timestamp;
 import java.util.List;
 import spring.mine.common.form.BaseForm;
+import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
 
 public class ElectronicOrderViewForm extends BaseForm {
   private Timestamp lastupdated;
 
   private String sortBy;
 
-  private List eOrders;
+  private List<ElectronicOrder> eOrders;
 
   public ElectronicOrderViewForm() {
     setFormName("ElectronicOrderViewForm");
@@ -32,11 +33,11 @@ public class ElectronicOrderViewForm extends BaseForm {
     this.sortBy = sortBy;
   }
 
-  public List getEOrders() {
+  public List<ElectronicOrder> getEOrders() {
     return this.eOrders;
   }
 
-  public void setEOrders(List eOrders) {
+  public void setEOrders(List<ElectronicOrder> eOrders) {
     this.eOrders = eOrders;
   }
 }
