@@ -81,7 +81,9 @@ function Studies() {
     this.validators["RTN_Id"] = new FieldValidator();
     this.validators["RTN_Id"].setRequiredFields( new Array("rtn.labNo", "rtn.receivedDateForDisplay", "rtn.interviewDate", "rtn.gender", "rtn.dateOfBirth") );
 
-    // this.validators["EID_Id"] = new FieldValidator();
+    this.validators["EID_Id"] = new FieldValidator();
+    this.validators["EID_Id"].setRequiredFields( new Array("eid.receivedDateForDisplay", "eid.interviewDate", "eid.gender", "eid.dateOfBirth") );
+    
     this.validators["Indeterminate_Id"] = new FieldValidator();
     this.validators["Indeterminate_Id"].setRequiredFields( new Array("ind.labNo", "ind.receivedDateForDisplay", "ind.interviewDate", "subjectOrSiteSubject", "ind.centerName", "ind.dateOfBirth", "ind.gender") );
 
@@ -99,7 +101,7 @@ function Studies() {
         this.projectChecker["InitialARV_Id"] = iarv;
         this.projectChecker["FollowUpARV_Id"] = farv;
         this.projectChecker["RTN_Id"] = rtn;
-        //this.projectChecker["EID_Id"] = eid;
+        this.projectChecker["EID_Id"] = eid;
         this.projectChecker["Indeterminate_Id"] = ind;
         this.projectChecker["Special_Request_Id"] = spe;
     }
@@ -150,9 +152,11 @@ function setDefaultTests( div )
              //  "farv.transaminaseTest", "farv.edtaTubeTaken", "farv.dryTubeTaken") ;
        tests = new Array("farv.creatinineTest", "farv.dryTubeTaken") ;
     }
-    //if (div=="EID_Id") {
-    //  tests = new Array ("eid.dnaPCR", "eid.dbsTaken");
-    //}
+    
+    if (div=="EID_Id") {
+      tests = new Array ("eid.dnaPCR", "eid.dbsTaken");
+    }
+    
     if (div=="RTN_Id" ) {
         tests = new Array ("rtn.serologyHIVTest", "rtn.dryTubeTaken");
     }
@@ -178,21 +182,25 @@ function selectStudy( divId ) {
 }
 
 function switchStudyForm( divId ){
+	
+	
+	
     hideAllDivs();
     if (divId != "" && divId != "0") {
         $("projectFormName").value = divId;
         switch (divId) {
         case "EID_Id":
             //location.replace("SampleEntryByProject.do?type=initial");
-            savePage__("SampleEntryByProject.do?type=" + type);
-            return;
+            //savePage__("SampleEntryByProject.do?type=" + type);
+            //return;
+            break;
         case "VL_Id":
             //location.replace("SampleEntryByProject.do?type=initial");
             savePage__("SampleEntryByProject.do?type=" + type);
             return;
         }
         toggleDisabledDiv(document.getElementById(divId), true);
-        //document.forms[0].project.value = divId;
+        document.forms[0].project.value = divId;
         document.getElementById(divId).style.display = "block";
         fieldValidator = studies.getValidator(divId); // reset the page fieldValidator for all fields to use.
         projectChecker = studies.getProjectChecker(divId);
@@ -215,14 +223,14 @@ function hideAllDivs(){
     toggleDisabledDiv(document.getElementById("InitialARV_Id"), false);
     toggleDisabledDiv(document.getElementById("FollowUpARV_Id"), false);
     toggleDisabledDiv(document.getElementById("RTN_Id"), false);
-    //toggleDisabledDiv(document.getElementById("EID_Id"), false);
+    toggleDisabledDiv(document.getElementById("EID_Id"), false);
     toggleDisabledDiv(document.getElementById("Indeterminate_Id"), false);
     toggleDisabledDiv(document.getElementById("Special_Request_Id"), false);
 
     document.getElementById('InitialARV_Id').style.display = "none";
     document.getElementById('FollowUpARV_Id').style.display = "none";
     document.getElementById('RTN_Id').style.display = "none";
-    //document.getElementById('EID_Id').style.display = "none";
+    document.getElementById('EID_Id').style.display = "none";
     document.getElementById('Indeterminate_Id').style.display = "none";
     document.getElementById('Special_Request_Id').style.display = "none";
 }
@@ -1256,6 +1264,121 @@ function /*void*/ setSaveButton() {
 
 <div id="EID_Id" style="display:none;">
     <h2><spring:message code="sample.entry.project.EID.title"/></h2>
+    <table width="100%">
+    <tr>
+         <td class="required">*</td>
+            <td>
+                <spring:message code="sample.entry.project.receivedDate"/>&nbsp;<%=DateUtil.getDateUserPrompt()%>
+            </td>
+            <td>
+            <form:input path="receivedDateForDisplay"
+            			cssClass="text"
+	                    onkeyup="addDateSlashes(this, event);"
+	                    onchange="iarv.checkReceivedDate(false);"
+	                    id="eid.receivedDateForDisplay" maxlength="10"/>
+            <%-- <form:input
+                    path="receivedDateForDisplay"
+                    onkeyup="addDateSlashes(this, event);"
+                    onchange="eid.checkReceivedDate(false);"
+                    cssClass="text"
+                    id="eid.receivedDateForDisplay" maxlength="10"/> --%>
+                    <div id="eid.receivedDateForDisplayMessage" class="blank"/> 
+            </td>
+    </tr>
+     <tr>
+       <td></td>
+            <td>
+                 <spring:message code="sample.entry.project.receivedTime" />&nbsp;<spring:message code="sample.military.time.format"/>
+            </td>
+            <td>
+            <form:input path="receivedTimeForDisplay"
+                onkeyup="filterTimeKeys(this, event);"                 
+                onblur="eid.checkReceivedTime(true);"
+                cssClass="text"
+                id="eid.receivedTimeForDisplay" maxlength="5"/>
+            </td>
+    </tr>
+    <tr>
+        <td class="required">*</td>
+            <td>
+                <spring:message code="sample.entry.project.dateTaken"/>&nbsp;<%=DateUtil.getDateUserPrompt()%>
+            </td>
+            <td>
+            <form:input path="interviewDate"
+                    onkeyup="addDateSlashes(this, event);"
+                    onchange="eid.checkInterviewDate(false)"
+                    cssClass="text"
+                    id="eid.interviewDate" maxlength="10"/>
+            </td>
+    </tr>
+    <tr>
+        <td></td>
+            <td>
+                <spring:message code="sample.entry.project.timeTaken"/>&nbsp;<spring:message code="sample.military.time.format"/>
+            </td>
+            <td>
+            <form:input path="interviewTime"
+                    onkeyup="filterTimeKeys(this, event);"              
+                    onblur="eid.checkInterviewTime(true);"
+                    cssClass="text"
+                    id="eid.interviewTime" maxlength="5"/>
+            </td>
+    </tr>       
+    <tr>
+        <td class="required">*</td>
+        <td>
+            <spring:message code="sample.entry.project.siteName"/>
+        </td>
+        <td>
+            <form:select 
+                 path="ProjectData.EIDSiteName"
+                 id="eid.centerName"
+                 onchange="eid.checkCenterName(true)" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items="${form.organizationTypeLists['EID_ORGS_BY_NAME']}" itemLabel="organizationName" /> 
+	    	</form:select>
+        </td>
+    </tr>
+    
+    <tr>
+        <td class="required">*</td>
+        <td>
+            <spring:message code="sample.entry.project.siteCode"/>
+        </td>
+        <td>
+            <form:select 
+                 path="projectData.EIDsiteCode"
+                 id="eid.centerCode"
+                 onchange="eid.checkCenterCode(true)">
+                 <form:option value="">&nbsp;</form:option>
+             	 <form:options items="${form.organizationTypeLists['EID_ORGS']}" itemLabel="doubleName" /> 
+	    	</form:select>
+        </td>
+    </tr>
+    
+    <tr>
+        <td class="required">+</td>
+        <td><spring:message code="sample.entry.project.EID.infantNumber"/></td>
+        <td>
+            <div class="blank">DBS</div>
+            <INPUT type="text" name="eid.codeSiteId" id="eid.codeSiteID" size="4" class="text"
+                onchange="handleDBSSubjectId(); makeDirty();"
+                maxlength="4" />
+            <INPUT type="text" name="eid.infantID" id="eid.infantID" size="4" class="text"
+                onchange="handleDBSSubjectId(); makeDirty();"
+                maxlength="4" />
+            <form:input path="subjectNumber"
+            		style="display:none;"
+                    onchange="checkRequiredField(this); makeDirty();" />
+	    	<div id="eid.subjectNumberMessage" class="blank" ></div>
+        </td>
+    </tr>
+ 
+
+
+    
+   
+</table>
 </div>
 
 <div id="VL_Id" style="display:none;">
@@ -2144,6 +2267,7 @@ function /*void*/ setSaveButton() {
             </tr>
     </table>
 </div>
+
 </div>
 
 <script type="text/javascript">
@@ -2223,6 +2347,13 @@ function RtnProjectChecker() {
 
 RtnProjectChecker.prototype = new BaseProjectChecker();
 rtn = new RtnProjectChecker();
+
+function EidProjectChecker() {
+    this.idPre = "rtn.";
+}
+
+EidProjectChecker.prototype = new BaseProjectChecker();
+eid = new EidProjectChecker();
 
 function IndProjectChecker() {
     this.idPre = "ind.";

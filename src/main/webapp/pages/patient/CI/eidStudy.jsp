@@ -63,19 +63,24 @@ eid = new EidProjectChecker();
 <h2><spring:message code="sample.entry.project.EID.title"/></h2>   
 <table width="100%">
     <tr>
-        <td class="required" width="2%">*</td>
-        <td width="28%">
-            <spring:message code="sample.entry.project.receivedDate"/>&nbsp;<%=DateUtil.getDateUserPrompt()%>
-        </td>
-        <td width="70%">
-        <app:text name="${form.formName}"
-                property="receivedDateForDisplay"
-                onkeyup="addDateSlashes(this, event);"
-                onchange="eid.checkReceivedDate(false)"
-                styleClass="text"
-                id="eid.receivedDateForDisplay" maxlength="10"/>
-                <div id="eid.receivedDateForDisplayMessage" class="blank" />
-        </td>
+         <td class="required">*</td>
+            <td>
+                <spring:message code="sample.entry.project.receivedDate"/>&nbsp;<%=DateUtil.getDateUserPrompt()%>
+            </td>
+            <td>
+            <form:input path="receivedDateForDisplay"
+            			cssClass="text"
+	                    onkeyup="addDateSlashes(this, event);"
+	                    onchange="iarv.checkReceivedDate(false);"
+	                    id="eid.receivedDateForDisplay" maxlength="10"/>
+            <%-- <form:input
+                    path="receivedDateForDisplay"
+                    onkeyup="addDateSlashes(this, event);"
+                    onchange="eid.checkReceivedDate(false);"
+                    cssClass="text"
+                    id="eid.receivedDateForDisplay" maxlength="10"/> --%>
+                    <div id="eid.receivedDateForDisplayMessage" class="blank" />
+            </td>
     </tr>
     <tr>
         <td></td>
@@ -88,7 +93,7 @@ eid = new EidProjectChecker();
             onkeyup="filterTimeKeys(this, event);"              
             onblur="eid.checkReceivedTime(true);"
             styleClass="text"
-            id="eid.receivedTimeForDisplay" maxlength="5"/>
+            />
             <div id="eid.receivedTimeForDisplayMessage" class="blank" />
         </td>
     </tr>
@@ -103,7 +108,7 @@ eid = new EidProjectChecker();
                 onkeyup="addDateSlashes(this, event);"
                 onchange="eid.checkInterviewDate(true);"
                 styleClass="text"
-                id="eid.interviewDate" maxlength="10"/>
+                />
                 <div id="eid.interviewDateMessage" class="blank" />
         </td>
     </tr>
@@ -118,7 +123,7 @@ eid = new EidProjectChecker();
                 onkeyup="filterTimeKeys(this, event);"                
                 onblur="eid.checkInterviewTime(true);"
                 styleClass="text"
-                id="eid.interviewTime" maxlength="5"/>
+                />
                 <div id="eid.interviewTimeMessage" class="blank" />
         </td>
     </tr>       
@@ -166,7 +171,6 @@ eid = new EidProjectChecker();
                 maxlength="4" />
             <app:text name="${form.formName}" property="subjectNumber"
                     styleClass="text" style="display:none;"
-                    id="eid.subjectNumber"
                     onchange="checkRequiredField(this); makeDirty();" />
             <div id="eid.subjectNumberMessage" class="blank" ></div>
         </td>
@@ -177,7 +181,6 @@ eid = new EidProjectChecker();
         <td>
             <app:text name="${form.formName}"
                 property="siteSubjectNumber"
-                id="eid.siteSubjectNumber"
                 styleClass="text"
                 onchange="eid.checkSiteSubjectNumber(true)"/>
             <div id="eid.siteSubjectNumberMessage" class="blank"></div>
@@ -195,7 +198,7 @@ eid = new EidProjectChecker();
                 maxlength="5" />
             <app:text name="${form.formName}" property="labNo"
                     styleClass="text" style="display:none;"
-                    id="eid.labNo" />
+                    />
             <div id="eid.labNoMessage" class="blank" />
         </td>
     </tr>
@@ -234,7 +237,7 @@ eid = new EidProjectChecker();
                       property="observations.nameOfRequestor"
                       onchange="makeDirty();compareAllObservationHistoryFields(true)"
                       styleClass="text"
-                      id="eid.nameOfRequestor" size="50"/>
+                      />
             <div id="eid.nameOfRequestorMessage" class="blank"></div>
         </td>
     </tr>
@@ -248,7 +251,7 @@ eid = new EidProjectChecker();
                       property="observations.nameOfSampler"
                       onchange="makeDirty();compareAllObservationHistoryFields(true)"
                       styleClass="text"
-                      id="eid.nameOfSampler" size="50"/>
+                      />
             <div id="eid.nameOfSamplerMessage" class="blank"></div>
         </td>
     </tr>
@@ -270,7 +273,6 @@ eid = new EidProjectChecker();
                       styleClass="text"
                       size="20"
                       maxlength="10"
-                      id="eid.dateOfBirth"
                       onkeyup="addDateSlashes(this, event);"
                       onchange="eid.checkDateOfBirth(false);"
                       />
@@ -477,7 +479,8 @@ eid = new EidProjectChecker();
         </td>
         <td colspan="3">
             <app:text name="${form.formName}" property="ProjectData.underInvestigationNote" maxlength="1000" size="80"
-                onchange="makeDirty();" id="eid.underInvestigationComment" />
+                onchange="makeDirty();" 
+                />
         </td>
     </tr>
 </table>

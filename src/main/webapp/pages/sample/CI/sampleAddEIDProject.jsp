@@ -16,6 +16,9 @@
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+
+
 <c:set var="formName" value="${form.formName}" />
 <c:set var="type" value="${type}" />
 <c:set var="requestType" value="${type}" />
@@ -132,7 +135,7 @@ function selectStudy( divId ) {
 }
 
 function switchStudyForm( divId ){
-	//hideAllDivs();
+	hideAllDivs();
 	if (divId != "" && divId != "0") {
 		$("projectFormName").value = divId;
 		switch (divId) {
@@ -143,8 +146,8 @@ function switchStudyForm( divId ){
 			savePage__("SampleEntryByProject.do?type=" + type);
 			return;
 		}
-		//toggleDisabledDiv(document.getElementById(divId), true);
-		//document.forms[0].project.value = divId;
+		toggleDisabledDiv(document.getElementById(divId), true);
+		document.forms[0].project.value = divId;
 		document.getElementById(divId).style.display = "block";
 		fieldValidator = studies.getValidator(divId); // reset the page fieldValidator for all fields to use.
 		projectChecker = studies.getProjectChecker(divId);
@@ -171,7 +174,7 @@ function hideAllDivs(){
 	toggleDisabledDiv(document.getElementById("VL_Id"), false);
 	toggleDisabledDiv(document.getElementById("Indeterminate_Id"), false);
 	toggleDisabledDiv(document.getElementById("Special_Request_Id"), false);
-
+	
 	document.getElementById('InitialARV_Id').style.display = "none";
 	document.getElementById('FollowUpARV_Id').style.display = "none";
 	document.getElementById('RTN_Id').style.display = "none";
@@ -179,6 +182,7 @@ function hideAllDivs(){
 	document.getElementById('VL_Id').style.display = "none";
 	document.getElementById('Indeterminate_Id').style.display = "none";
 	document.getElementById('Special_Request_Id').style.display = "none";
+	
 }
 
 function /*boolean*/ allSamplesHaveTests(){
@@ -202,7 +206,6 @@ function /*void*/ setSaveButton() {
 }
 
 </script>
-<form:form modelAttribute="form">
 <form:hidden path="currentDate" id="currentDate"/>
 <form:hidden path="domain" value="" id="domain"/>
 <!--   html:hidden name="${form.formName}" property="project" id="project"/>  -->
@@ -229,7 +232,7 @@ function /*void*/ setSaveButton() {
 <hr/>
 <div id="studies">
 <div id="EID_Id" style="display:none;">
-	<tiles:insert attribute="eidStudy"/>
+	<tiles:insertAttribute name="eidStudy" />
 <table width="100%">
 	<tr>
 		<td ></td>
@@ -287,4 +290,3 @@ function pageOnLoad(){
 	projectChecker == null || projectChecker.refresh();	
 }
 </script>
-</form:form>

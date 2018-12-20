@@ -192,5 +192,4 @@
     <put-attribute name="body" value="/pages/organization/organization.jsp" />
   </definition>
 
-
 </tiles-definitions>

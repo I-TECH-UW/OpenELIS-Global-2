@@ -1,6 +1,11 @@
 package spring.generated.sample.controller;
 
 import java.lang.String;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -11,6 +16,8 @@ import spring.generated.forms.SampleEntryByProjectForm;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
+import us.mn.state.health.lims.organization.util.OrganizationTypeList;
+import us.mn.state.health.lims.organization.valueholder.Organization;
 
 @Controller
 public class SampleEntryByProjectController extends BaseController {
@@ -24,7 +31,17 @@ public class SampleEntryByProjectController extends BaseController {
     if (form == null) {
     	form = new SampleEntryByProjectForm();
     }
-        form.setFormAction("");
+    form.setFormAction("");
+        
+	//Get EID Sites
+	Map<String, List<Organization>> organizationTypeMapOfLists = new HashMap<String, List<Organization>>();
+	organizationTypeMapOfLists.put("EID_ORGS_BY_NAME", OrganizationTypeList.EID_ORGS_BY_NAME.getList());
+	organizationTypeMapOfLists.put("EID_ORGS", OrganizationTypeList.EID_ORGS.getList());
+	form.setOrganizationTypeLists(organizationTypeMapOfLists);
+	    
+	//form.set "ProjectData.EIDSites", OrganizationTypeList.EID_ORGS.getList());
+	//PropertyUtils.setProperty(dynaForm, "ProjectData.EIDSitesByName", OrganizationTypeList.EID_ORGS_BY_NAME.getList());
+	        
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();
@@ -44,13 +61,16 @@ public class SampleEntryByProjectController extends BaseController {
 	  public ModelAndView postSampleEntryByProject(HttpServletRequest request,
 	      @ModelAttribute("form") SampleEntryByProjectForm form) {
 	    
-	    String forward = "eid_entry";
+	    //String forward = "eid_entry";
+	    String forward = FWD_SUCCESS;
 	    
 	    if (form == null) {
 	    	form = new SampleEntryByProjectForm();
 	    }
 	    form.setFormName("sampleEntryByProjectForm");
 	    form.setFormAction("");
+	    
+
 	    BaseErrors errors = new BaseErrors();
 	    if (form.getErrors() != null) {
 	    	errors = (BaseErrors) form.getErrors();
