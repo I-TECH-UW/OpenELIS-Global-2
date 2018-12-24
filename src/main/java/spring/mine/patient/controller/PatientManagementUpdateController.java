@@ -55,7 +55,7 @@ import us.mn.state.health.lims.sample.dao.SearchResultsDAO;
 import us.mn.state.health.lims.sample.daoimpl.SearchResultsDAOImp;
 
 @Controller
-public class PatientManagementUpdateController extends BaseController {
+public class PatientManagementUpdateController extends PatientManagementBaseController {
 
 	protected Patient patient;
 	protected Person person;
@@ -114,51 +114,35 @@ public class PatientManagementUpdateController extends BaseController {
 			preparePatientData(result, request, patientInfo);
 
 			if (result.hasErrors()) {
-
-				// saveErrors(request, errors); request.setAttribute(Globals.ERROR_KEY, errors);
-				// return mapping.findForward(FWD_FAIL);
-
-				model.addAttribute("errors", result.getAllErrors());
-				model.addAttribute("form", form);
-				return new ModelAndView("patientManagementDefinition", model);
+				saveErrors(errors);
+				return findForward(FWD_FAIL, form);
 			}
 
 			Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 			try {
-
 				persistPatientData(patientInfo);
-
 				tx.commit();
-
 			} catch (LIMSRuntimeException lre) {
 				tx.rollback();
 
 				if (lre.getException() instanceof StaleObjectStateException) {
 					result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
-
-					// );errors.add(ActionMessages.GLOBAL_MESSAGE, new
-					// ActionError("errors.OptimisticLockException", null, null));
-
 				} else {
 					lre.printStackTrace();
 					result.reject("errors.UpdateException", "errors.UpdateException");
-
-					// errors.add(ActionMessages.GLOBAL_MESSAGE, new
-					// ActionError("errors.UpdateException", null, null));
-
 				}
-
+				
 				// saveErrors(request, errors); request.setAttribute(Globals.ERROR_KEY, errors);
 
-				model.addAttribute("errors", result.getAllErrors());
+				saveErrors(result);
 				request.setAttribute(ALLOW_EDITS_KEY, "false");
 				if (result.hasErrors()) {
 
 					// saveErrors(request, errors); request.setAttribute(Globals.ERROR_KEY, errors);
 					// return mapping.findForward(FWD_FAIL);
 
-					model.addAttribute("errors", result.getAllErrors());
+					saveErrors(result);
 					model.addAttribute("form", form);
 					return new ModelAndView("patientManagementDefinition", model);
 				}

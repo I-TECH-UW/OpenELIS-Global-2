@@ -13,7 +13,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import spring.generated.forms.LoginValidateForm;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
@@ -45,7 +48,7 @@ public class ValidateLoginController extends BaseController {
 
 	@RequestMapping(value = "/ValidateLogin", method = RequestMethod.POST)
 	public ModelAndView validateLogin(@Valid @ModelAttribute("form") LoginForm form, BindingResult result,
-			ModelMap model, HttpServletRequest request) {
+			HttpServletRequest request) {
 		String forward = FWD_SUCCESS;
 
 		Login login = new Login();
@@ -170,8 +173,8 @@ public class ValidateLoginController extends BaseController {
 
 		}
 		if (result.hasErrors()) {
-			//model.addAttribute("errors", result.getAllErrors());
-			saveErrors(result, form);
+			// model.addAttribute("errors", result.getAllErrors());
+			saveErrors(result);
 			forward = FWD_FAIL;
 		}
 

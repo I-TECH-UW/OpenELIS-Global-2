@@ -31,7 +31,7 @@ public class TestRenameUpdateController extends BaseController {
 		String forward = FWD_SUCCESS;
 
 		if (result.hasErrors()) {
-			model.addAttribute("errors", result.getAllErrors());
+			saveErrors(result);
 			forward = FWD_FAIL;
 			return new ModelAndView("loginPageDefinition");
 		}

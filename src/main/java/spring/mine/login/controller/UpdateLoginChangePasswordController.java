@@ -32,7 +32,8 @@ public class UpdateLoginChangePasswordController extends BaseController {
 
 	@RequestMapping(value = "/UpdateLoginChangePassword", method = RequestMethod.POST)
 	public ModelAndView showUpdateLoginChangePassword(@Valid @ModelAttribute("form") LoginChangePasswordForm form,
-			BindingResult result, ModelMap model, HttpServletRequest request) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			BindingResult result, ModelMap model, HttpServletRequest request)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
 
 		String newPassword = form.getNewPassword();
@@ -45,7 +46,7 @@ public class UpdateLoginChangePasswordController extends BaseController {
 		}
 
 		if (result.hasErrors()) {
-			saveErrors(result, form);
+			saveErrors(result);
 			return findForward(FWD_FAIL, form);
 		}
 
@@ -60,46 +61,48 @@ public class UpdateLoginChangePasswordController extends BaseController {
 			Login loginInfo = loginDAO.getValidateLogin(login);
 			if (loginInfo == null) {
 				tx.rollback();
-				//errors = new ActionMessages();
-				//ActionError error = new ActionError("login.error.message", null, null);
-				//errors.add(ActionMessages.GLOBAL_MESSAGE, error);
+				// errors = new ActionMessages();
+				// ActionError error = new ActionError("login.error.message", null, null);
+				// errors.add(ActionMessages.GLOBAL_MESSAGE, error);
 				result.reject("login.error.message");
-				saveErrors(result, form);
+				saveErrors(result);
 				return findForward(FWD_FAIL, form);
 			} else {
 
 				// validate account disabled
 				if (loginInfo.getAccountDisabled().equals(YES)) {
-					//errors = new ActionMessages();
-					//ActionError error = new ActionError("login.error.account.disable", null, null);
-					//errors.add(ActionMessages.GLOBAL_MESSAGE, error);
-					//saveErrors(request, errors);
-					//return mapping.findForward(IActionConstants.FWD_FAIL);
+					// errors = new ActionMessages();
+					// ActionError error = new ActionError("login.error.account.disable", null,
+					// null);
+					// errors.add(ActionMessages.GLOBAL_MESSAGE, error);
+					// saveErrors(request, errors);
+					// return mapping.findForward(IActionConstants.FWD_FAIL);
 					result.reject("login.error.account.disable");
-					saveErrors(result, form);
+					saveErrors(result);
 					return findForward(FWD_FAIL, form);
 				}
 				// validate account locked
 				if (loginInfo.getAccountLocked().equals(YES)) {
-					//errors = new ActionMessages();
-					//ActionError error = new ActionError("login.error.account.lock", null, null);
-					//errors.add(ActionMessages.GLOBAL_MESSAGE, error);
-					//saveErrors(request, errors);
-					//return mapping.findForward(FWD_FAIL);
+					// errors = new ActionMessages();
+					// ActionError error = new ActionError("login.error.account.lock", null, null);
+					// errors.add(ActionMessages.GLOBAL_MESSAGE, error);
+					// saveErrors(request, errors);
+					// return mapping.findForward(FWD_FAIL);
 					result.reject("login.error.account.disable");
-					saveErrors(result, form);
+					saveErrors(result);
 					return findForward(FWD_FAIL, form);
 				}
 				// validate password expired day
 				// bugzilla 2286
 				if (loginInfo.getPasswordExpiredDayNo() <= 0) {
-					//errors = new ActionMessages();
-					//ActionError error = new ActionError("login.error.password.expired", null, null);
-					//errors.add(ActionMessages.GLOBAL_MESSAGE, error);
-					//saveErrors(request, errors);
-					//return mapping.findForward(FWD_FAIL);
+					// errors = new ActionMessages();
+					// ActionError error = new ActionError("login.error.password.expired", null,
+					// null);
+					// errors.add(ActionMessages.GLOBAL_MESSAGE, error);
+					// saveErrors(request, errors);
+					// return mapping.findForward(FWD_FAIL);
 					result.reject("login.error.password.expired");
-					saveErrors(result, form);
+					saveErrors(result);
 					return findForward(FWD_FAIL, form);
 				}
 				/*
@@ -114,13 +117,14 @@ public class UpdateLoginChangePasswordController extends BaseController {
 				 */
 				// validate user id exists in system_user table
 				if (loginInfo.getSystemUserId() == 0) {
-					//errors = new ActionMessages();
-					//ActionError error = new ActionError("login.error.system.user.id", loginInfo.getLoginName(), null);
-					//errors.add(ActionMessages.GLOBAL_MESSAGE, error);
-					//saveErrors(request, errors);
-					//return mapping.findForward(FWD_FAIL);
+					// errors = new ActionMessages();
+					// ActionError error = new ActionError("login.error.system.user.id",
+					// loginInfo.getLoginName(), null);
+					// errors.add(ActionMessages.GLOBAL_MESSAGE, error);
+					// saveErrors(request, errors);
+					// return mapping.findForward(FWD_FAIL);
 					result.reject("login.error.system.user.id", loginInfo.getLoginName());
-					saveErrors(result, form);
+					saveErrors(result);
 					return findForward(FWD_FAIL, form);
 				}
 
@@ -139,21 +143,23 @@ public class UpdateLoginChangePasswordController extends BaseController {
 					tx.commit();
 					// successfully changed password
 					// force user to relogin with the new password
-					//errors = new ActionMessages();
-					//ActionError error = new ActionError("login.success.changePass.message", null, null);
-					//errors.add(ActionMessages.GLOBAL_MESSAGE, error);
-					//saveErrors(request, errors);
+					// errors = new ActionMessages();
+					// ActionError error = new ActionError("login.success.changePass.message", null,
+					// null);
+					// errors.add(ActionMessages.GLOBAL_MESSAGE, error);
+					// saveErrors(request, errors);
 					result.reject("login.success.changePass.message");
-					saveErrors(result, form);
+					saveErrors(result);
 				} else {
 					tx.rollback();
-					//errors = new ActionMessages();
-					//ActionError error = new ActionError("login.error.password.requirement", null, null);
-					//errors.add(ActionMessages.GLOBAL_MESSAGE, error);
-					//saveErrors(request, errors);
-					//forward = FWD_FAIL;
+					// errors = new ActionMessages();
+					// ActionError error = new ActionError("login.error.password.requirement", null,
+					// null);
+					// errors.add(ActionMessages.GLOBAL_MESSAGE, error);
+					// saveErrors(request, errors);
+					// forward = FWD_FAIL;
 					result.reject("login.error.password.requirement");
-					saveErrors(result, form);
+					saveErrors(result);
 					forward = FWD_FAIL;
 				}
 			}
@@ -162,13 +168,13 @@ public class UpdateLoginChangePasswordController extends BaseController {
 			// bugzilla 2154
 			LogEvent.logError("LoginChangePasswordUpdateAction", "performAction()", lre.toString());
 			tx.rollback();
-			//errors = new ActionMessages();
-			//ActionError error = new ActionError("login.error.message", null, null);
-			//errors.add(ActionMessages.GLOBAL_MESSAGE, error);
-			//saveErrors(request, errors);
-			//return mapping.findForward(FWD_FAIL);
+			// errors = new ActionMessages();
+			// ActionError error = new ActionError("login.error.message", null, null);
+			// errors.add(ActionMessages.GLOBAL_MESSAGE, error);
+			// saveErrors(request, errors);
+			// return mapping.findForward(FWD_FAIL);
 			result.reject("login.error.message");
-			saveErrors(result, form);
+			saveErrors(result);
 			return findForward(FWD_FAIL, form);
 		} finally {
 			HibernateUtil.closeSession();
@@ -179,7 +185,7 @@ public class UpdateLoginChangePasswordController extends BaseController {
 
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("success".equals(forward)) {
-			return new ModelAndView("forward:/LoginPage.do", "form", form);
+			return new ModelAndView("loginPageDefinition", "form", form);
 		} else if ("fail".equals(forward)) {
 			return new ModelAndView("loginChangePasswordDefinition", "form", form);
 		} else {

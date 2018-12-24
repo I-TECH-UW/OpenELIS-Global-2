@@ -15,7 +15,7 @@ import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 
 @Controller
-public class PatientManagementController extends BaseController {
+public class PatientManagementController extends PatientManagementBaseController {
   @RequestMapping(
       value = "/PatientManagement",
       method = RequestMethod.GET
@@ -31,11 +31,7 @@ public class PatientManagementController extends BaseController {
     	return mv;
     }
 
-    request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.TRUE);
-	form.setPatientProperties(new PatientManagementInfo());
-	form.setPatientSearch(new PatientSearch());
-	form.getPatientProperties().setPatientProcessingStatus("add");
-
+    cleanAndSetupRequestForm(form, request);
 	
     return findForward(forward, form);}
 

@@ -8,9 +8,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.struts.Globals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.AbstractBindingResult;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
@@ -32,6 +36,9 @@ public abstract class BaseController implements IActionConstants {
 	
 	@Autowired
 	MessageUtil messageUtil;
+	@Autowired
+	private HttpServletRequest request;
+	
 	private static final boolean USE_PARAMETERS = true;
 
 	protected String currentUserId;
@@ -273,15 +280,17 @@ public abstract class BaseController implements IActionConstants {
 		// insert global forwards here
 		return findLocalForward(forward, form);
 	}
-
-	protected void saveErrors(Errors errors, BaseForm form) {
-		for (ObjectError errorMessage : errors.getAllErrors()) {
-			System.out.println(errorMessage.getDefaultMessage());
+	
+	protected void saveErrors(Errors errors) {
+		if (request.getAttribute(REQUEST_ERRORS) == null) {
+			request.setAttribute(REQUEST_ERRORS, errors);
+		} else {
+			((Errors) request.getAttribute(REQUEST_ERRORS)).addAllErrors(errors);
 		}
-		if (form.getErrors() == null) {
-			form.setErrors((List<ObjectError>) new BaseErrors());
-		}
-		form.getErrors().addAll(errors.getAllErrors());
+	}
+	
+	protected Errors getErrors() {
+		return (Errors) this.request.getAttribute(REQUEST_ERRORS);
 	}
 
 	protected boolean isUserAuthenticated(UserModuleDAO userModuleDAO, Errors errors, HttpServletRequest request) {

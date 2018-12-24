@@ -168,7 +168,7 @@ public abstract class BaseSampleEntryController extends BaseController {
 	if (null != forward) {
 	    Errors errors = accessioner.getMessages();
 	    if (errors.hasErrors()) {
-		saveErrors(errors, form);
+		saveErrors(errors);
 		request.setAttribute(Globals.ERROR_KEY, errors);
 	    }
 	    return forward;

@@ -156,7 +156,7 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 		if (method == null) {
 			Errors errors = new BaseErrors();
 			errors.reject("", "null method of entry");
-			saveErrors(errors, form);
+			saveErrors(errors);
 			return FWD_FAIL;
 		} else if (method.contains("On") && method.contains("Demand")) {
 			return ON_DEMAND;
@@ -165,7 +165,7 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 		} else {
 			Errors errors = new BaseErrors();
 			errors.reject("", "method of entry must be On Demand or Pre-Printed");
-			saveErrors(errors, form);
+			saveErrors(errors);
 			return FWD_FAIL;
 		}
 	}

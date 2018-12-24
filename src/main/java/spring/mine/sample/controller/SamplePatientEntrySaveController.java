@@ -129,7 +129,7 @@ public class SamplePatientEntrySaveController extends BaseController {
 		updateData.validateSample(result);
 
 		if (result.hasErrors()) {
-			saveErrors(result, form);
+			saveErrors(errors);
 			request.setAttribute(Globals.ERROR_KEY, result);
 			return findForward(FWD_FAIL, form);
 		}
@@ -175,7 +175,7 @@ public class SamplePatientEntrySaveController extends BaseController {
 			System.out.println(result);
 
 			// errors.add(ActionMessages.GLOBAL_MESSAGE, error);
-			saveErrors(result, form);
+			saveErrors(result);
 			request.setAttribute(Globals.ERROR_KEY, result);
 			request.setAttribute(ALLOW_EDITS_KEY, "false");
 			return findForward(FWD_FAIL, form);
