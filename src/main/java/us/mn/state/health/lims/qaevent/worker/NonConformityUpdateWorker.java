@@ -26,7 +26,9 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.hibernate.StaleObjectStateException;
 import org.hibernate.Transaction;
+import org.springframework.validation.Errors;
 
+import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.address.dao.PersonAddressDAO;
 import us.mn.state.health.lims.address.daoimpl.PersonAddressDAOImpl;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
@@ -151,7 +153,7 @@ public class NonConformityUpdateWorker {
 	private Provider provider;
 	private Person providerPerson;
 	private boolean insertProvider = false;
-	private ActionMessages errors = null;
+	private Errors errors = new BaseErrors();
 	private Organization newOrganization= null;
 	private boolean insertNewOrganizaiton = false;
 	private SampleRequester sampleRequester = null;
@@ -302,14 +304,11 @@ public class NonConformityUpdateWorker {
 
 			ActionMessage error;
 			if (lre.getException() instanceof StaleObjectStateException) {
-				error = new ActionMessage("errors.OptimisticLockException", null, null);
+				errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
 			} else {
 				lre.printStackTrace();
-				error = new ActionMessage("errors.UpdateException", null, null);
+				errors.reject("errors.UpdateException", "errors.UpdateException");
 			}
-
-			errors = new ActionMessages();
-			errors.add(ActionMessages.GLOBAL_MESSAGE, error);
 
 			return IActionConstants.FWD_FAIL;
 
@@ -320,7 +319,7 @@ public class NonConformityUpdateWorker {
 		return IActionConstants.FWD_SUCCESS;
 	}
 
-	public ActionMessages getErrors() {
+	public Errors getErrors() {
 		return errors;
 	}
 

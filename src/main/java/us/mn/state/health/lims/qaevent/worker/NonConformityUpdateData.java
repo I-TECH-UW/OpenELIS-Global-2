@@ -1,6 +1,6 @@
 /**
  * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
+ * Version 1.1 (the "License(); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/ 
  * 
@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.qaevent.form.NonConformityForm;
 import us.mn.state.health.lims.qaevent.valueholder.retroCI.QaEventItem;
 
 public class NonConformityUpdateData {
@@ -54,46 +54,45 @@ public class NonConformityUpdateData {
 	private List<QaEventItem> qaEvents;
 	private Boolean newNoteText;
 	private String noteText;
-	
-	@SuppressWarnings("unchecked")
-	public NonConformityUpdateData(BaseActionForm dynaForm, String currentUserId) {
+
+	public NonConformityUpdateData(NonConformityForm form, String currentUserId) {
 
 		currentSysUserId = currentUserId;
-		sampleId = dynaForm.getString("sampleId");
-		labNo = dynaForm.getString("labNo");
-		patientId = dynaForm.getString("patientId");
-		newSubject = (Boolean) dynaForm.get("subjectNew");
-		subjectNo = dynaForm.getString("subjectNo");
-		newSTNumber = (Boolean)dynaForm.get("newSTNumber");
-		STNumber = dynaForm.getString("STNumber");
-		newNationalId = (Boolean) dynaForm.get("nationalIdNew");
-		nationalId = dynaForm.getString("nationalId");
-		newDoctor = (Boolean) dynaForm.get("doctorNew");
-		doctor = dynaForm.getString("doctor");
-		requesterSpecimanID = dynaForm.getString("requesterSampleID");
-		requesterFirstName = dynaForm.getString("providerFirstName");
-		requesterLastName = dynaForm.getString("providerLastName");
-		requesterPhoneNumber = dynaForm.getString("providerWorkPhone");
-		requesterStreetAddress = dynaForm.getString("providerStreetAddress");
-		requesterCommune = dynaForm.getString("providerCommune");
-		requesterVillage = dynaForm.getString("providerCity");
-		requesterDepartment = dynaForm.getString("providerDepartment");
-		newService = (Boolean)dynaForm.get("serviceNew");
-		service = dynaForm.getString("service");
-		newServiceName = dynaForm.getString("newServiceName");
-		receivedDate = dynaForm.getString("date");
-		receivedTime = dynaForm.getString("time");
-		projectId = dynaForm.getString("projectId");
-		qaEvents = (List<QaEventItem>) dynaForm.get("qaEvents");
-		newNoteText = (Boolean)dynaForm.get("commentNew");
-		noteText = dynaForm.getString( "comment");
+		sampleId = form.getSampleId();
+		labNo = form.getLabNo();
+		patientId = form.getPatientId();
+		newSubject = form.getSubjectNew();
+		subjectNo = form.getSubjectNo();
+		newSTNumber = form.getNewSTNumber();
+		STNumber = form.getSTNumber();
+		newNationalId = form.getNationalIdNew();
+		nationalId = form.getNationalId();
+		newDoctor = form.getDoctorNew();
+		doctor = form.getDoctor();
+		requesterSpecimanID = form.getRequesterSampleID();
+		requesterFirstName = form.getProviderFirstName();
+		requesterLastName = form.getProviderLastName();
+		requesterPhoneNumber = form.getProviderWorkPhone();
+		requesterStreetAddress = form.getProviderStreetAddress();
+		requesterCommune = form.getProviderCommune();
+		requesterVillage = form.getProviderCity();
+		requesterDepartment = form.getProviderDepartment();
+		newService = form.getServiceNew();
+		service = form.getService();
+		newServiceName = form.getNewServiceName();
+		receivedDate = form.getDate();
+		receivedTime = form.getTime();
+		projectId = form.getProjectId();
+		qaEvents = form.getQaEvents();
+		newNoteText = form.getCommentNew();
+		noteText = form.getComment();
 	}
 
-	public Boolean getNewNationalId(){
+	public Boolean getNewNationalId() {
 		return newNationalId;
 	}
 
-	public String getNationalId(){
+	public String getNationalId() {
 		return nationalId;
 	}
 
@@ -142,8 +141,10 @@ public class NonConformityUpdateData {
 	}
 
 	public boolean noRequesterInformation() {
-		return (GenericValidator.isBlankOrNull(requesterFirstName) && GenericValidator.isBlankOrNull(requesterPhoneNumber)
-				&& GenericValidator.isBlankOrNull(requesterLastName) && GenericValidator.isBlankOrNull(requesterSpecimanID));
+		return (GenericValidator.isBlankOrNull(requesterFirstName)
+				&& GenericValidator.isBlankOrNull(requesterPhoneNumber)
+				&& GenericValidator.isBlankOrNull(requesterLastName)
+				&& GenericValidator.isBlankOrNull(requesterSpecimanID));
 	}
 
 	public Boolean getNewService() {
@@ -181,32 +182,32 @@ public class NonConformityUpdateData {
 	public String getReceivedTime() {
 		return receivedTime;
 	}
-	
+
 	public String getNewServiceName() {
 		return newServiceName;
 	}
-	
-	public String getRequesterStreetAddress(){
+
+	public String getRequesterStreetAddress() {
 		return requesterStreetAddress;
 	}
 
-	public String getRequesterVillage(){
+	public String getRequesterVillage() {
 		return requesterVillage;
 	}
 
-	public String getRequesterCommune(){
+	public String getRequesterCommune() {
 		return requesterCommune;
 	}
 
-	public String getRequesterDepartment(){
+	public String getRequesterDepartment() {
 		return requesterDepartment;
 	}
 
-	public Boolean getNewSTNumber(){
+	public Boolean getNewSTNumber() {
 		return newSTNumber;
 	}
 
-	public String getSTNumber(){
+	public String getSTNumber() {
 		return STNumber;
 	}
 
