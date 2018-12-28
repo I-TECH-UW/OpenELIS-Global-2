@@ -1,16 +1,16 @@
 package spring.mine.samplebatchentry.form;
 
-import java.lang.Boolean;
-import java.lang.String;
 import java.sql.Timestamp;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.IdValuePair;
+import us.mn.state.health.lims.organization.util.OrganizationTypeList;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 import us.mn.state.health.lims.patient.valueholder.ObservationData;
+import us.mn.state.health.lims.project.valueholder.Project;
 import us.mn.state.health.lims.sample.bean.SampleOrderItem;
 import us.mn.state.health.lims.sample.form.ProjectData;
 
@@ -23,7 +23,7 @@ public class SampleBatchEntryForm extends BaseForm {
 
 	private String project = "";
 
-	private Collection projects;
+	private List<Project> projects;
 
 	private List<IdValuePair> sampleTypes;
 
@@ -33,7 +33,7 @@ public class SampleBatchEntryForm extends BaseForm {
 
 	private List<IdValuePair> initialSampleConditionList;
 
-	private Collection testSectionList;
+	private List<IdValuePair> testSectionList;
 
 	private boolean patientInfoCheck = false;
 
@@ -61,16 +61,16 @@ public class SampleBatchEntryForm extends BaseForm {
 
 	private ObservationData observations;
 
-	private Map organizationTypeLists;
+	private Map<String, OrganizationTypeList> organizationTypeLists;
 
 	private String receivedDateForDisplay;
 
 	private String receivedTimeForDisplay;
 
 	private String sampleTypeSelect;
-	
+
 	private boolean localDBOnly;
-	
+
 	private String warning;
 
 	public SampleBatchEntryForm() {
@@ -78,7 +78,7 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public Timestamp getLastupdated() {
-		return this.lastupdated;
+		return lastupdated;
 	}
 
 	public void setLastupdated(Timestamp lastupdated) {
@@ -86,7 +86,7 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public String getCurrentDate() {
-		return this.currentDate;
+		return currentDate;
 	}
 
 	public void setCurrentDate(String currentDate) {
@@ -94,7 +94,7 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public String getCurrentTime() {
-		return this.currentTime;
+		return currentTime;
 	}
 
 	public void setCurrentTime(String currentTime) {
@@ -102,23 +102,23 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public String getProject() {
-		return this.project;
+		return project;
 	}
 
 	public void setProject(String project) {
 		this.project = project;
 	}
 
-	public Collection getProjects() {
-		return this.projects;
+	public List<Project> getProjects() {
+		return projects;
 	}
 
-	public void setProjects(Collection projects) {
+	public void setProjects(List<Project> projects) {
 		this.projects = projects;
 	}
 
 	public List<IdValuePair> getSampleTypes() {
-		return this.sampleTypes;
+		return sampleTypes;
 	}
 
 	public void setSampleTypes(List<IdValuePair> sampleTypes) {
@@ -126,7 +126,7 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public String getSampleXML() {
-		return this.sampleXML;
+		return sampleXML;
 	}
 
 	public void setSampleXML(String sampleXML) {
@@ -134,7 +134,7 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public SampleOrderItem getSampleOrderItem() {
-		return this.sampleOrderItem;
+		return sampleOrderItem;
 	}
 
 	public void setSampleOrderItem(SampleOrderItem sampleOrderItem) {
@@ -142,23 +142,23 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public List<IdValuePair> getInitialSampleConditionList() {
-		return this.initialSampleConditionList;
+		return initialSampleConditionList;
 	}
 
 	public void setInitialSampleConditionList(List<IdValuePair> initialSampleConditionList) {
 		this.initialSampleConditionList = initialSampleConditionList;
 	}
 
-	public Collection getTestSectionList() {
-		return this.testSectionList;
+	public List<IdValuePair> getTestSectionList() {
+		return testSectionList;
 	}
 
-	public void setTestSectionList(Collection testSectionList) {
+	public void setTestSectionList(List<IdValuePair> testSectionList) {
 		this.testSectionList = testSectionList;
 	}
 
 	public Boolean getPatientInfoCheck() {
-		return this.patientInfoCheck;
+		return patientInfoCheck;
 	}
 
 	public void setPatientInfoCheck(Boolean patientInfoCheck) {
@@ -166,7 +166,7 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public Boolean getFacilityIDCheck() {
-		return this.facilityIDCheck;
+		return facilityIDCheck;
 	}
 
 	public void setFacilityIDCheck(Boolean facilityIDCheck) {
@@ -174,7 +174,7 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public String getFacilityID() {
-		return this.facilityID;
+		return facilityID;
 	}
 
 	public void setFacilityID(String facilityID) {
@@ -182,7 +182,7 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public String getMethod() {
-		return this.method;
+		return method;
 	}
 
 	public void setMethod(String method) {
@@ -190,7 +190,7 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public String getStudy() {
-		return this.study;
+		return study;
 	}
 
 	public void setStudy(String study) {
@@ -198,7 +198,7 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public String getLabNo() {
-		return this.labNo;
+		return labNo;
 	}
 
 	public void setLabNo(String labNo) {
@@ -206,7 +206,7 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public PatientManagementInfo getPatientProperties() {
-		return this.patientProperties;
+		return patientProperties;
 	}
 
 	public void setPatientProperties(PatientManagementInfo patientProperties) {
@@ -214,7 +214,7 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public PatientSearch getPatientSearch() {
-		return this.patientSearch;
+		return patientSearch;
 	}
 
 	public void setPatientSearch(PatientSearch patientSearch) {
@@ -222,7 +222,7 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public String getProgramCode() {
-		return this.programCode;
+		return programCode;
 	}
 
 	public void setProgramCode(String programCode) {
@@ -230,7 +230,7 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public ProjectData getProjectDataVL() {
-		return this.projectDataVL;
+		return projectDataVL;
 	}
 
 	public void setProjectDataVL(ProjectData projectDataVL) {
@@ -238,7 +238,7 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public ProjectData getProjectDataEID() {
-		return this.projectDataEID;
+		return projectDataEID;
 	}
 
 	public void setProjectDataEID(ProjectData projectDataEID) {
@@ -246,7 +246,7 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public ProjectData getProjectData() {
-		return this.projectData;
+		return projectData;
 	}
 
 	public void setProjectData(ProjectData projectData) {
@@ -254,23 +254,23 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public ObservationData getObservations() {
-		return this.observations;
+		return observations;
 	}
 
 	public void setObservations(ObservationData observations) {
 		this.observations = observations;
 	}
 
-	public Map getOrganizationTypeLists() {
-		return this.organizationTypeLists;
+	public Map<String, OrganizationTypeList> getOrganizationTypeLists() {
+		return organizationTypeLists;
 	}
 
-	public void setOrganizationTypeLists(Map organizationTypeLists) {
+	public void setOrganizationTypeLists(Map<String, OrganizationTypeList> organizationTypeLists) {
 		this.organizationTypeLists = organizationTypeLists;
 	}
 
 	public String getReceivedDateForDisplay() {
-		return this.receivedDateForDisplay;
+		return receivedDateForDisplay;
 	}
 
 	public void setReceivedDateForDisplay(String receivedDateForDisplay) {
@@ -278,7 +278,7 @@ public class SampleBatchEntryForm extends BaseForm {
 	}
 
 	public String getReceivedTimeForDisplay() {
-		return this.receivedTimeForDisplay;
+		return receivedTimeForDisplay;
 	}
 
 	public void setReceivedTimeForDisplay(String receivedTimeForDisplay) {

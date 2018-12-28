@@ -2,7 +2,6 @@ package spring.mine.common.form;
 
 import java.util.List;
 
-import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 
 //a bean object to hold all objects to be passed between the server and the client and vice versa

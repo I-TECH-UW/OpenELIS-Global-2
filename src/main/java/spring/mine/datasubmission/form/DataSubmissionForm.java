@@ -1,74 +1,74 @@
 package spring.mine.datasubmission.form;
 
-import java.lang.Integer;
-import java.lang.String;
 import java.sql.Timestamp;
 import java.util.List;
+
 import spring.mine.common.form.BaseForm;
+import us.mn.state.health.lims.datasubmission.valueholder.DataIndicator;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 public class DataSubmissionForm extends BaseForm {
-  private Timestamp lastupdated;
+	private Timestamp lastupdated;
 
-  private SiteInformation dataSubUrl;
+	private SiteInformation dataSubUrl;
 
-  private List indicators;
+	private List<DataIndicator> indicators;
 
-  private Integer month;
+	private Integer month;
 
-  private Integer year;
+	private Integer year;
 
-  private String siteId;
+	private String siteId;
 
-  public DataSubmissionForm() {
-    setFormName("DataSubmissionForm");
-  }
+	public DataSubmissionForm() {
+		setFormName("DataSubmissionForm");
+	}
 
-  public Timestamp getLastupdated() {
-    return this.lastupdated;
-  }
+	public Timestamp getLastupdated() {
+		return lastupdated;
+	}
 
-  public void setLastupdated(Timestamp lastupdated) {
-    this.lastupdated = lastupdated;
-  }
+	public void setLastupdated(Timestamp lastupdated) {
+		this.lastupdated = lastupdated;
+	}
 
-  public SiteInformation getDataSubUrl() {
-    return this.dataSubUrl;
-  }
+	public SiteInformation getDataSubUrl() {
+		return dataSubUrl;
+	}
 
-  public void setDataSubUrl(SiteInformation dataSubUrl) {
-    this.dataSubUrl = dataSubUrl;
-  }
+	public void setDataSubUrl(SiteInformation dataSubUrl) {
+		this.dataSubUrl = dataSubUrl;
+	}
 
-  public List getIndicators() {
-    return this.indicators;
-  }
+	public List<DataIndicator> getIndicators() {
+		return indicators;
+	}
 
-  public void setIndicators(List indicators) {
-    this.indicators = indicators;
-  }
+	public void setIndicators(List<DataIndicator> indicators) {
+		this.indicators = indicators;
+	}
 
-  public Integer getMonth() {
-    return this.month;
-  }
+	public Integer getMonth() {
+		return month;
+	}
 
-  public void setMonth(Integer month) {
-    this.month = month;
-  }
+	public void setMonth(Integer month) {
+		this.month = month;
+	}
 
-  public Integer getYear() {
-    return this.year;
-  }
+	public Integer getYear() {
+		return year;
+	}
 
-  public void setYear(Integer year) {
-    this.year = year;
-  }
+	public void setYear(Integer year) {
+		this.year = year;
+	}
 
-  public String getSiteId() {
-    return this.siteId;
-  }
+	public String getSiteId() {
+		return siteId;
+	}
 
-  public void setSiteId(String siteId) {
-    this.siteId = siteId;
-  }
+	public void setSiteId(String siteId) {
+		this.siteId = siteId;
+	}
 }
