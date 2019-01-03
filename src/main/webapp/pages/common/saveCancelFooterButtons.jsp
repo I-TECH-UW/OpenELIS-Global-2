@@ -26,27 +26,12 @@
 					   onclick="savePage();"
 					   disabled="<%=Boolean.valueOf(saveDisabled).booleanValue()%>"
 					   value="<spring:message code="label.button.save" />">
-					   
-					<%-- <html:button onclick="savePage();"
-						property="save"
-						id="saveButtonId"
-						disabled="<%=Boolean.valueOf(saveDisabled).booleanValue()%>">
-						<spring:message code="label.button.save" />
-					</html:button> --%>
-				
 				</td>
 				<td>
 				<input type="button"
 					   id="cancelButtonId"
-					   onclick="setMyCancelAction(window.document.forms[0], 'Cancel', 'no', '');"
+					   onclick="cancelAction();"
 					   value="<spring:message code="label.button.cancel" />">
-					<%-- <html:button
-						onclick="setMyCancelAction(window.document.forms[0], 'Cancel', 'no', '');"
-						property="cancel"
-						id="cancelButtonId"
-						>
-						<spring:message code="label.button.cancel" />
-					</html:button> --%>
 				</td>
 			</tr>
 		</tbody>

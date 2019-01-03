@@ -66,10 +66,36 @@ var  $jq = jQuery.noConflict();
 	src="<%=basePath%>scripts/Tooltip-0.6.0.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript"
 	src="<%=basePath%>scripts/lightbox.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+	
 <script>
 
+// works with values set in BaseForm.java
+function cancelAction() {
+	// if page has its own cancel function, call it instead 
+	// TO DO: (setMyCancelAction should be renamed to myCancelAction if it contains functionality not represented below,
+	//		or it should be deleted if it does not)
+	if (typeof myCancelAction === "function") {
+		myCancelAction();
+	}
+	redirect = "${form.cancelAction}";
+	method =  "${form.cancelMethod}";
+	if (redirect == "null" || redirect == "") {
+		redirect = "Home.do";
+	}
+	if (${form.submitOnCancel}) {
+		$jq('#mainForm').attr('action', redirect);
+		$jq('#mainForm').attr('method', method);		
+		$jq('#mainForm').submit();
+	} else {
+		window.location = redirect;
+	}
+}
 
-function setAction(form, action, validate, parameters) {
+function setMainFormMethod(method) {
+	$jq('#mainForm').attr('method', method);
+}
+
+function setAction(form, action, validate, parameters, method) {
     //alert("Iam in setAction " + form.name + " " + form.action);
    //for (var i = 0; i < form.elements.length; i++) {
 
@@ -105,6 +131,9 @@ function setAction(form, action, validate, parameters) {
 
 
 	form.action = context + '/' + action + parsedFormName + ".do"  + sessionid + parameters ;
+	if (method != null && method != "") {
+		form.method = method;
+	}
 	form.validateDocument = new Object();
 	form.validateDocument.value = validate;
 	//alert("Going to validatedAnDsubmitForm this is action " + form.action);
@@ -159,14 +188,17 @@ if (document.layers) {
 <%-- check_width()--%>
 <body onLoad="focusOnFirstInputField();check_width();onLoad()">
 
-	<%--action is set in BaseAction--%>
-
 	<!-- for optimistic locking-->
 	<table cellpadding="0" cellspacing="1" width="100%">
 		<tr>
 			<td><tiles:insertAttribute name="error" /></td>
 		</tr>
-		<form:form name="${form.formName}" action="${form.formAction}" modelAttribute="form" onSubmit="return submitForm(this);" method="POST">
+		<form:form name="${form.formName}" 
+				   action="${form.formAction}" 
+				   modelAttribute="form" 
+				   onSubmit="return submitForm(this);" 
+				   method="${form.formMethod}"
+				   id="mainForm">
 		<tr>
 			<td><tiles:insertAttribute name="header" /></td>
 		</tr>

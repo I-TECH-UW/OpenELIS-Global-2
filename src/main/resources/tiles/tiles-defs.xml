@@ -3,38 +3,12 @@
  <!DOCTYPE tiles-definitions PUBLIC  
         "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"  
         "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
-<!--
-     This is a blank Tiles definition file with a commented example.
--->
 
 <tiles-definitions>
-
-    <!-- sample tiles definitions
-    <definition name=".mainLayout" template="/common/layouts/classicLayout.jsp">
-        <put-attribute name="title"  value="Sample Page Title" />
-        <put-attribute name="header" value="/common/header.jsp" />
-        <put-attribute name="menu"   value=".mainMenu" />
-        <put-attribute name="footer" value="/common/footer.jsp" />
-        <put-attribute name="body"   value=".portal.body" />
-    </definition>
-
-    <definition name=".mainMenu" template="/common/layouts/vboxLayout.jsp" >
-        <putList name="list" >
-            <add value=".menu.links" />
-            <add value=".menu.taglib.references" />
-            <add value=".menu.printer.friendly" />
-            <add value=".menu.old.documents" />
-      </putList>
-    </definition>
-
-    <definition name="aPage" extends=".mainLayout">
-        <put-attribute name="title"  value="Another Title" />
-        <put-attribute name="body"   value=".aPage.body" />
-    </definition>
-
-    end samples -->
     
-    <definition name="404ErrorPage" template="/pages/common/defaultNotFoundPage.jsp">
+    <definition name="404ErrorPage" template="/pages/common/erro/defaultNotFoundPage.jsp">
+    </definition>
+    <definition name="PageNotFound" template="/pages/common/erro/defaultNotFoundPage.jsp">
     </definition>
     
     <definition name="endpointdoc" template="/pages/dev/endpointdoc.jsp">
@@ -48,49 +22,6 @@
     <put-attribute name="header" value="/pages/common/formHeaderButtons.jsp" />
     <put-attribute name="body" value="/pages/common/emptyPlaceHolder.jsp" />
     <put-attribute name="footer" value="/pages/common/formFooterButtons.jsp" />
-  </definition>
-
-  <definition name="baseDefinitionNoDefaultFocus" template="/pages/common/formTemplateNoDefaultFocus.jsp">
-    <put-attribute name="banner" value="/pages/common/banner.jsp" />
-    <put-attribute name="login" value="/pages/common/loginHeader.jsp" />
-    <put-attribute name="error" value="/pages/common/actionError.jsp" />
-    <put-attribute name="preSelectionHeader" value="/pages/common/emptyPlaceHolder.jsp" />
-    <put-attribute name="header" value="/pages/common/formHeaderButtons.jsp" />
-    <put-attribute name="body" value="/pages/common/emptyPlaceHolder.jsp" />
-    <put-attribute name="footer" value="/pages/common/formFooterButtons.jsp" />
-  </definition>
-
-  <definition name="batchResultsEntryBaseDefinition" template="/pages/result/batchResultsEntryFormTemplate.jsp">
-    <put-attribute name="banner" value="/pages/common/banner.jsp" />
-    <put-attribute name="login" value="/pages/common/loginHeader.jsp" />
-    <put-attribute name="error" value="/pages/common/actionError.jsp" />
-    <put-attribute name="preSelectionHeader" value="/pages/common/emptyPlaceHolder.jsp" />
-    <put-attribute name="header" value="/pages/common/formHeaderButtons.jsp" />
-    <put-attribute name="body" value="/pages/common/emptyPlaceHolder.jsp" />
-    <put-attribute name="footer" value="/pages/common/formFooterButtons.jsp" />
-  </definition>
-
-  <definition name="batchResultsVerificationBaseDefinition" template="/pages/result/batchResultsVerificationFormTemplate.jsp">
-    <put-attribute name="banner" value="/pages/common/banner.jsp" />
-    <put-attribute name="login" value="/pages/common/loginHeader.jsp" />
-    <put-attribute name="error" value="/pages/common/actionError.jsp" />
-    <put-attribute name="preSelectionHeader" value="/pages/common/emptyPlaceHolder.jsp" />
-    <put-attribute name="header" value="/pages/common/formHeaderButtons.jsp" />
-    <put-attribute name="body" value="/pages/common/emptyPlaceHolder.jsp" />
-    <put-attribute name="footer" value="/pages/common/formFooterButtons.jsp" />
-  </definition>
-     
-     <!--bugzilla 2501-->
-  <definition name="qaEventsEntryBaseDefinition" template="/pages/qaevent/qaEventsEntryFormTemplate.jsp">
-    <put-attribute name="banner" value="/pages/common/banner.jsp" />
-    <put-attribute name="login" value="/pages/common/loginHeader.jsp" />
-    <put-attribute name="error" value="/pages/common/actionError.jsp" />
-    <put-attribute name="preSelectionHeader" value="/pages/common/emptyPlaceHolder.jsp" />
-    <put-attribute name="header" value="/pages/common/formHeaderButtons.jsp" />
-    <put-attribute name="samplebody" value="/pages/common/emptyPlaceHolder.jsp" />
-    <put-attribute name="samplefooter" value="/pages/common/formFooterButtons.jsp" />
-    <put-attribute name="testbody" value="/pages/common/emptyPlaceHolder.jsp" />
-    <put-attribute name="testfooter" value="/pages/common/formFooterButtons.jsp" />
   </definition>
 
   <definition name="baseMenuSelectListDefinition" template="/pages/common/menuSelectListTemplate.jsp">
@@ -108,8 +39,6 @@
     <put-attribute name="body" value="/pages/common/emptyPlaceHolder.jsp" />
     <put-attribute name="footer" value="/pages/menu/common/homePageFooter.jsp" />
   </definition>
-
-
 
   <definition name="homePageDefinition" extends="baseMenuDefinition">
     <put-attribute name="body" value="homePageBodyDefinition" />
