@@ -1,6 +1,5 @@
 package spring.mine.qaevent.controller;
 
-import java.lang.String;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,22 +23,22 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
-import spring.mine.qaevent.form.NonConformityForm;
 import spring.mine.common.validator.BaseErrors;
+import spring.mine.qaevent.form.NonConformityForm;
 import us.mn.state.health.lims.common.exception.LIMSInvalidConfigurationException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.common.services.DisplayListService;
+import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.services.NoteService;
 import us.mn.state.health.lims.common.services.PatientService;
 import us.mn.state.health.lims.common.services.PersonService;
 import us.mn.state.health.lims.common.services.QAService;
-import us.mn.state.health.lims.common.services.TableIdService;
-import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
+import us.mn.state.health.lims.common.services.TableIdService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
+import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.note.valueholder.Note;
 import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
 import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
@@ -86,10 +85,6 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 @Controller
 public class NonConformityController extends BaseController {
 
-	private PatientService patientService;
-	private List<ObservationHistory> observationHistoryList;
-	private List<SampleQaEvent> sampleQAEventList;
-
 	private static final String QA_NOTE_SUBJECT = "QaEvent Note";
 
 	private static SampleDAO sampleDAO = new SampleDAOImpl();
@@ -100,14 +95,10 @@ public class NonConformityController extends BaseController {
 	private static ProviderDAO providerDAO = new ProviderDAOImpl();
 	private static OrganizationDAO orgDAO = new OrganizationDAOImpl();
 
-	private Boolean readOnly = Boolean.FALSE;
-	private boolean sampleFound;
-	private Sample sample;
-	private boolean useSiteList;
-
 	@RequestMapping(value = "/NonConformity", method = RequestMethod.GET)
 	public ModelAndView showNonConformity(HttpServletRequest request, @ModelAttribute("form") NonConformityForm form)
-			throws LIMSInvalidConfigurationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			throws LIMSInvalidConfigurationException, IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException {
 		String forward = FWD_SUCCESS;
 		if (form == null) {
 			form = new NonConformityForm();
@@ -119,16 +110,14 @@ public class NonConformityController extends BaseController {
 		}
 		ModelAndView mv = checkUserAndSetup(form, errors, request);
 
-		useSiteList = FormFields.getInstance().useField(Field.NON_CONFORMITY_SITE_LIST);
-		readOnly = Boolean.FALSE;
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
 		String labNumber = request.getParameter("labNo");
 		if (!GenericValidator.isBlankOrNull(labNumber)) {
 
-			sample = getSampleForLabNumber(labNumber);
+			Sample sample = getSampleForLabNumber(labNumber);
 
-			sampleFound = !(sample == null || GenericValidator.isBlankOrNull(sample.getId()));
+			boolean sampleFound = !(sample == null || GenericValidator.isBlankOrNull(sample.getId()));
 
 			PropertyUtils.setProperty(form, "labNo", labNumber);
 			Date today = Calendar.getInstance().getTime();
@@ -138,23 +127,22 @@ public class NonConformityController extends BaseController {
 			}
 
 			if (sampleFound) {
-				createForExistingSample(form);
+				createForExistingSample(form, sample);
 			}
 
 			setProjectList(form);
 
-			PropertyUtils.setProperty(form, "sampleItemsTypeOfSampleIds", getSampleTypeOfSamplesString());
+			PropertyUtils.setProperty(form, "sampleItemsTypeOfSampleIds", getSampleTypeOfSamplesString(sample));
 			PropertyUtils.setProperty(form, "sections", createSectionList());
 			PropertyUtils.setProperty(form, "qaEventTypes", DisplayListService.getList(ListType.QA_EVENTS));
 			PropertyUtils.setProperty(form, "qaEvents", getSampleQaEventItems(sample));
 
-			PropertyUtils.setProperty(form, "typeOfSamples",
-					DisplayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
+			PropertyUtils.setProperty(form, "typeOfSamples", DisplayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
 
-			PropertyUtils.setProperty(form, "readOnly", readOnly);
+			PropertyUtils.setProperty(form, "readOnly", false);
 			PropertyUtils.setProperty(form, "siteList",
 					DisplayListService.getFreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
-			Provider provider = getProvider();
+			Provider provider = getProvider(sample);
 			if (provider != null) {
 				PropertyUtils.setProperty(form, "providerNew", Boolean.FALSE.toString());
 				Person providerPerson = getProviderPerson(provider);
@@ -188,11 +176,10 @@ public class NonConformityController extends BaseController {
 		return findForward(forward, form);
 	}
 
-	private void createForExistingSample(NonConformityForm form)
+	private void createForExistingSample(NonConformityForm form, Sample sample)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		getPatient(sample);
-		getObservationHistory(sample);
-		getSampleQaEvents(sample);
+		PatientService patientService = getPatientService(sample);
+		List<ObservationHistory> observationHistoryList = getObservationHistory(sample, patientService);
 		PropertyUtils.setProperty(form, "sampleId", sample.getId());
 		PropertyUtils.setProperty(form, "patientId", patientService.getPatientId());
 
@@ -220,17 +207,17 @@ public class NonConformityController extends BaseController {
 			PropertyUtils.setProperty(form, "nationalId", nationalId);
 		}
 
-		ObservationHistory doctorObservation = getRefererObservation(sample);
+		ObservationHistory doctorObservation = getRefererObservation(observationHistoryList);
 		if (doctorObservation != null) {
 			PropertyUtils.setProperty(form, "doctorNew", Boolean.FALSE);
 			PropertyUtils.setProperty(form, "doctor", doctorObservation.getValue());
 		}
 
-		if (useSiteList) {
+		if (FormFields.getInstance().useField(Field.NON_CONFORMITY_SITE_LIST)) {
 			PropertyUtils.setProperty(form, "serviceNew", Boolean.FALSE);
-			PropertyUtils.setProperty(form, "service", getSampleRequesterOrganizationName());
+			PropertyUtils.setProperty(form, "service", getSampleRequesterOrganizationName(sample));
 		} else {
-			ObservationHistory serviceObservation = getServiceObservation(sample);
+			ObservationHistory serviceObservation = getServiceObservation(observationHistoryList);
 			if (serviceObservation != null) {
 				PropertyUtils.setProperty(form, "serviceNew", Boolean.FALSE);
 				PropertyUtils.setProperty(form, "service", serviceObservation.getValue());
@@ -245,10 +232,10 @@ public class NonConformityController extends BaseController {
 	/**
 	 * @return
 	 */
-	private String getSampleRequesterOrganizationName() {
+	private String getSampleRequesterOrganizationName(Sample sample) {
 		SampleRequesterDAO sampleRequesterDAO = new SampleRequesterDAOImpl();
 		List<SampleRequester> sampleRequestors = sampleRequesterDAO.getRequestersForSampleId(sample.getId());
-		if (sampleRequestors.size() == 0) {
+		if (sampleRequestors.isEmpty()) {
 			return null;
 		}
 		long typeID = TableIdService.ORGANIZATION_REQUESTER_TYPE_ID;
@@ -280,11 +267,11 @@ public class NonConformityController extends BaseController {
 		return providerPerson;
 	}
 
-	private Provider getProvider() {
+	private Provider getProvider(Sample sample) {
 		if (sample == null) {
 			return null;
 		}
-		SampleHuman sampleHuman = getSampleHuman();
+		SampleHuman sampleHuman = getSampleHuman(sample);
 		Provider provider = new Provider();
 		String id = sampleHuman.getProviderId();
 		if (id == null) {
@@ -299,7 +286,7 @@ public class NonConformityController extends BaseController {
 	/**
 	 * @return
 	 */
-	private SampleHuman getSampleHuman() {
+	private SampleHuman getSampleHuman(Sample sample) {
 		SampleHuman sampleHuman = new SampleHuman();
 		sampleHuman.setSampleId(sample.getId());
 		sampleHumanDAO.getDataBySample(sampleHuman);
@@ -311,9 +298,9 @@ public class NonConformityController extends BaseController {
 	 * @return
 	 */
 	private List<QaEventItem> getSampleQaEventItems(Sample sample) {
-		List<QaEventItem> qaEventItems = new ArrayList<QaEventItem>();
+		List<QaEventItem> qaEventItems = new ArrayList<>();
 		if (sample != null) {
-			getSampleQaEvents(sample);
+			List<SampleQaEvent> sampleQAEventList = getSampleQaEvents(sample);
 			for (SampleQaEvent event : sampleQAEventList) {
 				QAService qa = new QAService(event);
 				QaEventItem item = new QaEventItem();
@@ -339,8 +326,8 @@ public class NonConformityController extends BaseController {
 		return qaEventItems;
 	}
 
-	private Set<TypeOfSample> getSampleTypeOfSamples() {
-		Set<TypeOfSample> typeOfSamples = new HashSet<TypeOfSample>();
+	private Set<TypeOfSample> getSampleTypeOfSamples(Sample sample) {
+		Set<TypeOfSample> typeOfSamples = new HashSet<>();
 		List<SampleItem> sampleItems = sampleItemDAO.getSampleItemsBySampleId(sample.getId());
 		for (SampleItem sampleItem : sampleItems) {
 			TypeOfSample typeOfSample = typeOfSampleDAO.getTypeOfSampleById(sampleItem.getTypeOfSampleId());
@@ -351,11 +338,11 @@ public class NonConformityController extends BaseController {
 		return typeOfSamples;
 	}
 
-	private String getSampleTypeOfSamplesString() {
+	private String getSampleTypeOfSamplesString(Sample sample) {
 		if (sample == null) {
 			return "";
 		}
-		Set<TypeOfSample> sampleTypeOfSamples = getSampleTypeOfSamples();
+		Set<TypeOfSample> sampleTypeOfSamples = getSampleTypeOfSamples(sample);
 		StringBuilder str = new StringBuilder(",");
 		for (TypeOfSample typeOfSample : sampleTypeOfSamples) {
 			str.append(typeOfSample.getId()).append(",");
@@ -377,9 +364,9 @@ public class NonConformityController extends BaseController {
 		}
 	}
 
-	private void getSampleQaEvents(Sample sample) {
+	private List<SampleQaEvent> getSampleQaEvents(Sample sample) {
 		SampleQaEventDAO sampleQaEventDAO = new SampleQaEventDAOImpl();
-		sampleQAEventList = sampleQaEventDAO.getSampleQaEventsBySample(sample);
+		return sampleQaEventDAO.getSampleQaEventsBySample(sample);
 	}
 
 	private void setProjectList(NonConformityForm form)
@@ -393,15 +380,14 @@ public class NonConformityController extends BaseController {
 		return sampleDAO.getSampleByAccessionNumber(labNumber);
 	}
 
-	private void getPatient(Sample sample) {
-		SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
+	private PatientService getPatientService(Sample sample) {
 		Patient patient = sampleHumanDAO.getPatientForSample(sample);
-		patientService = new PatientService(patient);
+		return new PatientService(patient);
 	}
 
-	private void getObservationHistory(Sample sample) {
+	private List<ObservationHistory> getObservationHistory(Sample sample, PatientService patientService) {
 		ObservationHistoryDAO observationDAO = new ObservationHistoryDAOImpl();
-		observationHistoryList = observationDAO.getAll(patientService.getPatient(), sample);
+		return observationDAO.getAll(patientService.getPatient(), sample);
 	}
 
 	private Project getProjectForSample(Sample sample) {
@@ -411,7 +397,7 @@ public class NonConformityController extends BaseController {
 		return sampleProject == null ? null : sampleProject.getProject();
 	}
 
-	private ObservationHistory getRefererObservation(Sample sample) {
+	private ObservationHistory getRefererObservation(List<ObservationHistory> observationHistoryList) {
 		for (ObservationHistory observation : observationHistoryList) {
 			if (observation.getObservationHistoryTypeId().equals(TableIdService.DOCTOR_OBSERVATION_TYPE_ID)) {
 				return observation;
@@ -421,7 +407,7 @@ public class NonConformityController extends BaseController {
 		return null;
 	}
 
-	private ObservationHistory getServiceObservation(Sample sample) {
+	private ObservationHistory getServiceObservation(List<ObservationHistory> observationHistoryList) {
 		for (ObservationHistory observation : observationHistoryList) {
 			if (observation.getObservationHistoryTypeId().equals(TableIdService.SERVICE_OBSERVATION_TYPE_ID)) {
 				return observation;
@@ -475,6 +461,7 @@ public class NonConformityController extends BaseController {
 		return "qaevent.add.title";
 	}
 
+	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("success".equals(forward)) {
 			return new ModelAndView("nonConformityDefiniton", "form", form);
