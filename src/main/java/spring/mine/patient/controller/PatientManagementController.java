@@ -1,55 +1,54 @@
 package spring.mine.patient.controller;
 
-import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import spring.mine.common.controller.BaseController;
+
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.sample.form.SamplePatientEntryForm;
-import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
-import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 
 @Controller
 public class PatientManagementController extends PatientManagementBaseController {
-  @RequestMapping(
-      value = "/PatientManagement",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showPatientManagement(HttpServletRequest request) {
-    String forward = FWD_SUCCESS;
-    SamplePatientEntryForm form = new SamplePatientEntryForm();
-        form.setFormAction("");
-    BaseErrors errors = new BaseErrors();
-    ModelAndView mv = checkUserAndSetup(form, errors, request);
 
-    if (errors.hasErrors()) {
-    	return mv;
-    }
+	@RequestMapping(value = "/PatientManagement", method = RequestMethod.GET)
+	public ModelAndView showPatientManagement(HttpServletRequest request) {
+		String forward = FWD_SUCCESS;
+		SamplePatientEntryForm form = new SamplePatientEntryForm();
+		form.setFormAction("");
+		BaseErrors errors = new BaseErrors();
+		ModelAndView mv = checkUserAndSetup(form, errors, request);
 
-    cleanAndSetupRequestForm(form, request);
-	
-    return findForward(forward, form);}
+		if (errors.hasErrors()) {
+			return mv;
+		}
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
-    if ("success".equals(forward)) {
-      return new ModelAndView("patientManagementDefinition", "form", form);
-    } else if ("fail".equals(forward)) {
-      return new ModelAndView("homePageDefinition", "form", form);
-    } else {
-      return new ModelAndView("PageNotFound");
-    }
-  }
+		cleanAndSetupRequestForm(form, request);
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+		return findForward(forward, form);
+	}
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+	@Override
+	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+		if ("success".equals(forward)) {
+			return new ModelAndView("patientManagementDefinition", "form", form);
+		} else if ("fail".equals(forward)) {
+			return new ModelAndView("homePageDefinition", "form", form);
+		} else {
+			return new ModelAndView("PageNotFound");
+		}
+	}
+
+	@Override
+	protected String getPageTitleKey() {
+		return "patient.management.title";
+	}
+
+	@Override
+	protected String getPageSubtitleKey() {
+		return "patient.management.title";
+	}
 }
