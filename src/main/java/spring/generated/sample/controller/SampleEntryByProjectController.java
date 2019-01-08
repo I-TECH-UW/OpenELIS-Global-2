@@ -2,11 +2,15 @@ package spring.generated.sample.controller;
 
 import java.lang.String;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
+
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +20,13 @@ import spring.generated.forms.SampleEntryByProjectForm;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
+
+import us.mn.state.health.lims.common.util.DateUtil;
+import us.mn.state.health.lims.dictionary.ObservationHistoryList;
+import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.organization.util.OrganizationTypeList;
 import us.mn.state.health.lims.organization.valueholder.Organization;
+
 
 @Controller
 public class SampleEntryByProjectController extends BaseController {
@@ -32,7 +41,18 @@ public class SampleEntryByProjectController extends BaseController {
     	form = new SampleEntryByProjectForm();
     }
     form.setFormAction("");
-        
+    
+    Date today = Calendar.getInstance().getTime();
+    String dateAsText = DateUtil.formatDateAsText(today);
+    form.setReceivedDateForDisplay(dateAsText);
+    form.setInterviewDate(dateAsText);
+    
+    //Get EID Lists
+    Map<String, List<Dictionary>> observationHistoryMapOfLists = new HashMap<String, List<Dictionary>>();
+    observationHistoryMapOfLists.put("EID_WHICH_PCR", ObservationHistoryList.EID_WHICH_PCR.getList());
+    observationHistoryMapOfLists.put("EID_SECOND_PCR_REASON", ObservationHistoryList.EID_SECOND_PCR_REASON.getList());
+	form.setDictionaryLists(observationHistoryMapOfLists);
+	
 	//Get EID Sites
 	Map<String, List<Organization>> organizationTypeMapOfLists = new HashMap<String, List<Organization>>();
 	organizationTypeMapOfLists.put("EID_ORGS_BY_NAME", OrganizationTypeList.EID_ORGS_BY_NAME.getList());

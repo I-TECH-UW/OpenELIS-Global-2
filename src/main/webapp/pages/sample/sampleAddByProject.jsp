@@ -46,6 +46,8 @@
 <script type="text/javascript" src="<%=basePath%>scripts/retroCIUtilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 <script type="text/javascript" src="<%=basePath%>scripts/entryByProjectUtils.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 
+
+
 <script type="text/javascript">
 
 var dirty = false;
@@ -406,8 +408,8 @@ function /*void*/ setSaveButton() {
                     onkeyup="addDateSlashes(this, event);"
                     onchange="iarv.checkInterviewDate(false)"
                     cssClass="text"
-                    id="iarv.interviewDate" maxlength="10"/>
-                    <div id="iarv.interviewDateMessage" class="blank" /> --%>
+                    id="iarv.interviewDate" maxlength="10"/> --%>
+                    <div id="iarv.interviewDateMessage" class="blank" /> 
             </td>
         </tr>
         <tr>
@@ -1274,15 +1276,9 @@ function /*void*/ setSaveButton() {
             <form:input path="receivedDateForDisplay"
             			cssClass="text"
 	                    onkeyup="addDateSlashes(this, event);"
-	                    onchange="iarv.checkReceivedDate(false);"
+	                    onchange="eid.checkReceivedDate(false);"
 	                    id="eid.receivedDateForDisplay" maxlength="10"/>
-            <%-- <form:input
-                    path="receivedDateForDisplay"
-                    onkeyup="addDateSlashes(this, event);"
-                    onchange="eid.checkReceivedDate(false);"
-                    cssClass="text"
-                    id="eid.receivedDateForDisplay" maxlength="10"/> --%>
-                    <div id="eid.receivedDateForDisplayMessage" class="blank"/> 
+                        <div id="eid.receivedDateForDisplayMessage" class="blank" /> 
             </td>
     </tr>
      <tr>
@@ -1308,7 +1304,8 @@ function /*void*/ setSaveButton() {
                     onkeyup="addDateSlashes(this, event);"
                     onchange="eid.checkInterviewDate(false)"
                     cssClass="text"
-                    id="eid.interviewDate" maxlength="10"/>
+                    id="eid.interviewDate" maxlength="10" />
+                    <div id="eid.interviewDateMessage" class="blank" />
             </td>
     </tr>
     <tr>
@@ -1373,9 +1370,123 @@ function /*void*/ setSaveButton() {
 	    	<div id="eid.subjectNumberMessage" class="blank" ></div>
         </td>
     </tr>
- 
+	<tr>
+        <td class="required">+</td>
+        <td><spring:message code="sample.entry.project.EID.siteInfantNumber"/></td>
+        <td>
+            <form:input 
+                path="siteSubjectNumber"
+                onchange="eid.checkSiteSubjectNumber(true)" />
+            <div id="eid.siteSubjectNumberMessage" class="blank" ></div>
+        </td>
+    </tr>
+    
+    <tr>
+        <td class="required">*</td>
+        <td>
+            <%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
+        </td>
+        <td>
+            <div class="blank"><spring:message code="sample.entry.project.LDBS"/></div>
+            <INPUT type="text" name="eid.labNoForDisplay" id="eid.labNoForDisplay" size="5" class="text"
+                onchange="handleLabNoChange( this, '<spring:message code="sample.entry.project.LDBS"/>', false );makeDirty();"
+                maxlength="5" />
+            <form:input 
+				path="labNo"
+                styleClass="text" style="display:none;" />
+            <div id="eid.labNoMessage" class="blank" > </div>
+        </td>
+    </tr>
+    
+   
+     <tr>
+        <td></td>
+        <td>
+            <spring:message code="patient.project.eidWhichPCR"/>
+        </td>
+        <td>
+            <form:select 
+                 path="observations.whichPCR"
+                 id="eid.whichPCR"
+                 onchange="eid.checkEIDWhichPCR(true)" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['EID_WHICH_PCR']}" itemLabel="localizedName" /> 
+	    	</form:select>
+        </td>
+    </tr>
 
+    <tr>
+        <td></td>
+        <td>
+            <spring:message code="sample.entry.project.EID.reasonForPCRTest"/>
+        </td>
+        <td>
+            <form:select 
+                 path="observations.reasonForSecondPCRTest"
+                 id="eid.reasonForSecondPCRTest"
+                 onchange="makeDirty();compareAllObservationHistoryFields(true)" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['EID_SECOND_PCR_REASON']}" itemLabel="localizedName" /> 
+	    	</form:select>
+        </td>
+    </tr>
+    
+    <tr>
+        <td></td>
+        <td> <spring:message code="patient.project.nameOfRequestor" /> </td>
+        <td>
+		<form:input
+                      path="observations.nameOfRequestor"
+                      onchange="makeDirty();compareAllObservationHistoryFields(true)" />
+            <div id="eid.nameOfRequestorMessage" class="blank"></div>
+        </td>
+    </tr>
+    
+    <tr>
+        <td></td>
+        <td>
+            <spring:message code="patient.project.nameOfSampler" />
+        </td>
+        <td>
+		<form:input
+                      path="observations.nameOfSampler"
+                      onchange="makeDirty();compareAllObservationHistoryFields(true)" />
+            <div id="eid.nameOfSamplerMessage" class="blank"></div>
+        </td>
+    </tr>
 
+    <tr>
+        <td></td>
+        <td colspan="3" class="sectionTitle">
+            <spring:message code="sample.entry.project.title.infantInformation" />
+        </td>
+    </tr>
+    
+    <tr>
+            <td class="required">*</td>
+            <td>
+                <spring:message code="patient.birthDate" />&nbsp;<%=DateUtil.getDateUserPrompt()%>
+            </td>
+            <td>
+		<form:input path="birthDateForDisplay"
+					cssClass="text"
+                    onkeyup="addDateSlashes(this, event);"
+                    onchange="eid.checkDateOfBirth(false);" 
+	     			id="eid.dateOfBirth" maxlength="10" />
+	     			<div id="eid.dateOfBirthMessage" class="blank" />
+	     			
+            </td>
+        </tr>
+
+   
+    
+    
+    
+    
+    
+    
+          
+    
     
    
 </table>
@@ -2349,7 +2460,7 @@ RtnProjectChecker.prototype = new BaseProjectChecker();
 rtn = new RtnProjectChecker();
 
 function EidProjectChecker() {
-    this.idPre = "rtn.";
+    this.idPre = "eid.";
 }
 
 EidProjectChecker.prototype = new BaseProjectChecker();
