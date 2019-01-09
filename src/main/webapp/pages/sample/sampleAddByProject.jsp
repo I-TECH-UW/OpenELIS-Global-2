@@ -1376,7 +1376,8 @@ function /*void*/ setSaveButton() {
         <td>
             <form:input 
                 path="siteSubjectNumber"
-                onchange="eid.checkSiteSubjectNumber(true)" />
+                onchange="eid.checkSiteSubjectNumber(true)" 
+                cssClass="text" />
             <div id="eid.siteSubjectNumberMessage" class="blank" ></div>
         </td>
     </tr>
@@ -1433,11 +1434,14 @@ function /*void*/ setSaveButton() {
     
     <tr>
         <td></td>
-        <td> <spring:message code="patient.project.nameOfRequestor" /> </td>
+        <td> 
+        	<spring:message code="patient.project.nameOfRequestor"/> 
+        </td>
         <td>
-		<form:input
+			<form:input
                       path="observations.nameOfRequestor"
-                      onchange="makeDirty();compareAllObservationHistoryFields(true)" />
+                      onchange="makeDirty();compareAllObservationHistoryFields(true)" 
+                      cssClass="text" />
             <div id="eid.nameOfRequestorMessage" class="blank"></div>
         </td>
     </tr>
@@ -1445,12 +1449,13 @@ function /*void*/ setSaveButton() {
     <tr>
         <td></td>
         <td>
-            <spring:message code="patient.project.nameOfSampler" />
+            <spring:message code="patient.project.nameOfSampler"/>
         </td>
         <td>
-		<form:input
+			<form:input
                       path="observations.nameOfSampler"
-                      onchange="makeDirty();compareAllObservationHistoryFields(true)" />
+                      onchange="makeDirty();compareAllObservationHistoryFields(true)" 
+                      cssClass="text" />
             <div id="eid.nameOfSamplerMessage" class="blank"></div>
         </td>
     </tr>
@@ -1465,7 +1470,7 @@ function /*void*/ setSaveButton() {
     <tr>
             <td class="required">*</td>
             <td>
-                <spring:message code="patient.birthDate" />&nbsp;<%=DateUtil.getDateUserPrompt()%>
+                <spring:message code="patient.birthDate"/>&nbsp;<%=DateUtil.getDateUserPrompt()%>
             </td>
             <td>
 		<form:input path="birthDateForDisplay"
@@ -1476,11 +1481,90 @@ function /*void*/ setSaveButton() {
 	     			<div id="eid.dateOfBirthMessage" class="blank" />
 	     			
             </td>
-        </tr>
-
+    </tr>
+        
+	 <tr>
+        <td></td>
+        <td>
+             <spring:message code="patient.age" />
+        </td>
+        <td>
+            <div class="blank"><spring:message code="label.month"/></div>
+            <INPUT type="text" name="age" id="eid.month" size="3" class="text"
+                onchange="eid.checkAge( this, true, 'month' ); clearField('eid.ageWeek');"
+                maxlength="2" />
+            <div class="blank"><spring:message code="label.week"/></div>
+            <INPUT type="text" name="ageWeek" id="eid.ageWeek" size="3" class="text"
+                onchange="eid.checkAge( this, true, 'week' ); clearField('eid.month');"
+                maxlength="2" />
+            <div id="eid.ageMessage" class="blank" > </div>
+        </td>
+    </tr>
    
+     <tr>
+        <td></td>
+        <td>
+            <spring:message code="patient.project.gender"/>
+        </td>
+        <td>
+            <form:select 
+                 path="gender"
+                 id="eid.gender"
+                 onchange="eid.checkGender(true)" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.formLists['GENDERS']}" itemLabel="localizedName" /> 
+	    	</form:select>
+	    	<div id="eid.genderMessage" class="blank" > </div>
+        </td>
+    </tr>
+    
+    <tr>
+        <td></td>
+        <td>
+            <spring:message code="patient.project.eidBenefitPTME"/>
+        </td>
+        <td>
+            <form:select 
+                 path="observations.eidInfantPTME"
+                 id="eid.eidInfantPTME"
+                 onchange="makeDirty();compareAllObservationHistoryFields(true)" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" /> 
+	    	</form:select>
+	    	<div id="eid.eidInfantPTMEMessage" class="blank" > </div>
+        </td>
+    </tr>
+    
+    <tr>
+        <td></td>
+        <td>
+            <spring:message code="patient.project.eidTypeOfClinic"/>
+        </td>
+        <td>
+            <form:select 
+                 path="observations.eidTypeOfClinic"
+                 id="eid.eidTypeOfClinic"
+                 onchange="makeDirty();compareAllObservationHistoryFields(true)" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['EID_TYPE_OF_CLINIC']}" itemLabel="localizedName" /> 
+	    	</form:select>
+	    	<div id="eid.eidTypeOfClinicMessage" class="blank" > </div>
+        </td>
+    </tr>
+  
     
     
+    
+    
+    
+    
+    
+    <tr>
+        <td></td>
+        <td colspan="3" class="sectionTitle">
+            <spring:message code="sample.entry.project.title.mothersInformation" />
+        </td>
+    </tr>
     
     
     

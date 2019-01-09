@@ -20,8 +20,10 @@ import spring.generated.forms.SampleEntryByProjectForm;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
-
+import us.mn.state.health.lims.common.services.DisplayListService;
+import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.util.DateUtil;
+import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.dictionary.ObservationHistoryList;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.organization.util.OrganizationTypeList;
@@ -46,11 +48,29 @@ public class SampleEntryByProjectController extends BaseController {
     String dateAsText = DateUtil.formatDateAsText(today);
     form.setReceivedDateForDisplay(dateAsText);
     form.setInterviewDate(dateAsText);
+
+    Map<String, List<Dictionary>> formListsMapOfLists = new HashMap<String, List<Dictionary>>();
+    Dictionary dictionary = null;
+    List<Dictionary> listOfDictionary = new ArrayList<Dictionary>();
+    List<IdValuePair> genders;
+    genders = DisplayListService.getList(ListType.GENDERS);
+    
+    for (IdValuePair i : genders)  {
+    	dictionary = new Dictionary();
+    	dictionary.setId(i.getId());
+    	dictionary.setDictEntry(i.getValue());
+    	listOfDictionary.add( dictionary);
+    }
+    
+    formListsMapOfLists.put("GENDERS", listOfDictionary);
+    form.setFormLists(formListsMapOfLists);
     
     //Get EID Lists
     Map<String, List<Dictionary>> observationHistoryMapOfLists = new HashMap<String, List<Dictionary>>();
     observationHistoryMapOfLists.put("EID_WHICH_PCR", ObservationHistoryList.EID_WHICH_PCR.getList());
     observationHistoryMapOfLists.put("EID_SECOND_PCR_REASON", ObservationHistoryList.EID_SECOND_PCR_REASON.getList());
+    observationHistoryMapOfLists.put("YES_NO", ObservationHistoryList.YES_NO.getList());
+    observationHistoryMapOfLists.put("EID_TYPE_OF_CLINIC", ObservationHistoryList.EID_TYPE_OF_CLINIC.getList());
 	form.setDictionaryLists(observationHistoryMapOfLists);
 	
 	//Get EID Sites
