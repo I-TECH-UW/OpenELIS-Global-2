@@ -101,7 +101,7 @@ $jq(document).ready(function () {
 </script>
 <div class="hidden-fields">
 	<input id="lastPatientId" type="hidden">
-	<form:hidden path="sampleOrderItem.newRequesterName" name='${form.formName}' id="newRequesterName"/>
+	<form:hidden path="sampleOrderItems.newRequesterName" name='${form.formName}' id="newRequesterName"/>
 	<form:hidden path="observations.projectFormName" name="${form.formName}" id="projectFormName"/>
 	<form:hidden path="ProjectData.viralLoadTest" id="ProjectData.vlTest"/>
 	<form:hidden path="ProjectData.edtaTubeTaken" id="ProjectData.edtaTube"/>
@@ -224,18 +224,18 @@ $jq(document).ready(function () {
 				<td>
 					<spring:message code="sample.batchentry.barcode.label.facilityid" /> 
 					: <%= request.getAttribute("facilityName") %>
-					<form:hidden path="sampleOrderItem.referringSiteId" id="requesterId"/>
+					<form:hidden path="sampleOrderItems.referringSiteId" id="requesterId"/>
 						
 				</td>
 			</tr>
 		</c:if>
 		<c:if test='${empty form.facilityID}'>
-			<c:if test='${not empty form.sampleOrderItem.newRequesterName}'>
+			<c:if test='${not empty form.sampleOrderItems.newRequesterName}'>
 			<tr>
 				<td>
 					<spring:message code="sample.batchentry.barcode.label.facilityid" /> 
 					: <%= request.getAttribute("facilityName") %>
-					<form:hidden path="sampleOrderItem.referringSiteId" id="requesterId"/>
+					<form:hidden path="sampleOrderItems.referringSiteId" id="requesterId"/>
 				</td>
 			</tr>
 			</c:if>

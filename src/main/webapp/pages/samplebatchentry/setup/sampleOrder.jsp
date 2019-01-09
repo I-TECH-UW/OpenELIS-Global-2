@@ -136,7 +136,7 @@ function studyChanged(studyElement) {
 	        <span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>
     	</td>
     	<td colspan="2">
-    		<form:input path="sampleOrderItem.receivedDateForDisplay"
+    		<form:input path="sampleOrderItems.receivedDateForDisplay"
                   onchange="checkValidSubPages();checkValidEntryDate(this, 'past');"
                   onkeyup="addDateSlashes(this, event);"
                   maxlength="10"
@@ -145,7 +145,7 @@ function studyChanged(studyElement) {
 	        <spring:message code="sample.batchentry.order.receptiontime"/>
 	        :
 	        <span style="font-size: xx-small; "><%=DateUtil.getTimeUserPrompt()%></span>
-	        <form:input path="sampleOrderItem.receivedTime" onkeyup="filterTimeKeys(this, event);" id="receivedTime" maxlength="5"  onblur="checkValidSubPages(); checkValidTime(this, true);"/>
+	        <form:input path="sampleOrderItems.receivedTime" onkeyup="filterTimeKeys(this, event);" id="receivedTime" maxlength="5"  onblur="checkValidSubPages(); checkValidTime(this, true);"/>
     	</td>
 	</tr>
 	<tr <c:if test="${siteInfo == 'false'}">style='display:none'</c:if>>

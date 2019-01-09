@@ -11,7 +11,6 @@
 
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
-<c:set var="success" value="${success}" />
 <script type="text/javascript">
 
 function /*void*/ showSuccessMessage( show ){
@@ -27,7 +26,7 @@ function printBarcode(success, failure) {
 
 
 
-<div id="successMsg" style="text-align:center; color:seagreen;  width : 100%;font-size:170%; visibility : hidden" onload="showSuccessMessage(${success});">
+<div id="successMsg" style="text-align:center; color:seagreen;  width : 100%;font-size:170%; <c:if test="${not success}">visibility : hidden</c:if>">
 	<spring:message code="save.success"/>
 	<div>
 		<input type="button"

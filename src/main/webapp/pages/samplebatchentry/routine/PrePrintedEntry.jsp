@@ -96,7 +96,7 @@ function processAccessionSuccess(xhr) {
 </tr>
 <tr>
 	<td>
-		<form:input path="sampleOrderItem.labNo"
+		<form:input path="sampleOrderItems.labNo"
 			maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>'
             onkeyup="checkAccessionNumber(this, event);"
             styleClass="text"

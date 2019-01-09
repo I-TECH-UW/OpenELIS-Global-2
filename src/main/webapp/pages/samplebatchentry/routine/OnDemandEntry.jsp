@@ -164,7 +164,7 @@ function processSearchSuccessPrint(xhr) {
 </tr>
 <tr>
 	<td>
-		<form:input path="sampleOrderItem.labNo"
+		<form:input path="sampleOrderItems.labNo"
            	onchange="checkAccessionNumber(this);"
             cssClass="text"
             id="labNo"

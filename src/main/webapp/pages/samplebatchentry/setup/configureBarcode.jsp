@@ -98,7 +98,7 @@ $jq(document).ready(function () {
 });
 
 </script>
-<form:hidden path="sampleOrderItem.newRequesterName" id="newRequesterName"/>
+<form:hidden path="sampleOrderItems.newRequesterName" id="newRequesterName"/>
 
 Barcode Method : 
 <form:select name="method" id="methodId" path="method">
@@ -125,14 +125,14 @@ Barcode Method :
 			<spring:message code="sample.batchentry.barcode.label.facilityid"/>:
 		</td>
 		<td>
-			<c:if test="${not form.sampleOrderItem.readOnly}">
+			<c:if test="${not form.sampleOrderItems.readOnly}">
 		    	<form:select path="facilityID" id="requesterId" onchange="siteListChanged(this);processFacilityIDChange();" onkeyup="capitalizeValue( this.value );">
 		    	
 		            <option value=""></option>
-		            <form:options items="${form.sampleOrderItem.referringSiteList}" itemValue="id" itemLabel="value"/>
+		            <form:options items="${form.sampleOrderItems.referringSiteList}" itemValue="id" itemLabel="value"/>
 		    	</form:select>
 			</c:if>
-		    <c:if test="${form.sampleOrderItem.readOnly}">
+		    <c:if test="${form.sampleOrderItems.readOnly}">
 		    	<form:input path="facilityID" id="requesterId"/>
 		    </c:if>
 		</td>

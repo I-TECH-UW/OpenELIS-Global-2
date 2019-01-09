@@ -118,7 +118,7 @@ $jq(document).ready(function () {
 </script>
 <div class="hidden-fields">
 	<input id="lastPatientId" type="hidden">
-	<form:hidden path="sampleOrderItem.newRequesterName" name='${form.formName}' id="newRequesterName"/>
+	<form:hidden path="sampleOrderItems.newRequesterName" name='${form.formName}' id="newRequesterName"/>
 </div>
 <table style="width:100%;">
 <tr>
@@ -131,19 +131,19 @@ $jq(document).ready(function () {
 	</tr>
 	<c:if test="${form.facilityIDCheck}">
 		<c:if test='${empty form.facilityID}'>
-			<c:if test='${empty form.sampleOrderItem.newRequesterName}'>
+			<c:if test='${empty form.sampleOrderItems.newRequesterName}'>
 			<tr>
 				<td>
 					<spring:message code="sample.batchentry.barcode.label.facilityid" />
 					:  
-					<c:if test="${not form.sampleOrderItem.readOnly}">
-				        <form:select id="requesterId" path="sampleOrderItem.referringSiteId" onkeyup="capitalizeValue( this.value );" onchange="siteListChanged(this);setSave();">
+					<c:if test="${not form.sampleOrderItems.readOnly}">
+				        <form:select id="requesterId" path="sampleOrderItems.referringSiteId" onkeyup="capitalizeValue( this.value );" onchange="siteListChanged(this);setSave();">
 				            <option value=""></option>
-				            <form:options items="${form.sampleOrderItem.referringSiteList}" itemLabel="value" itemValue="id"/>
+				            <form:options items="${form.sampleOrderItems.referringSiteList}" itemLabel="value" itemValue="id"/>
 				        </form:select>
 					</c:if>
-					<c:if test="${form.sampleOrderItem.readOnly}">
-				            <form:input path="form.sampleOrderItem.referringSiteName" cssStyle="width:300px" />
+					<c:if test="${form.sampleOrderItems.readOnly}">
+				            <form:input path="form.sampleOrderItems.referringSiteName" cssStyle="width:300px" />
 				    </c:if>
 				</td>
 			</tr>
@@ -156,6 +156,13 @@ $jq(document).ready(function () {
 				<tiles:insertAttribute name="patientInfo" />
 			</td>
 		</tr>
+	</c:if>
+	<c:if test="${not form.patientInfoCheck}">
+	<tr>
+			<td>
+				<form:hidden path="patientProperties.patientProcessingStatus" value=""/>
+			</td>
+	</tr>
 	</c:if>
 	<tr>
 		<td>
@@ -184,11 +191,11 @@ $jq(document).ready(function () {
 	<tr>
 		<td>
 			<spring:message code="sample.batchentry.datereceived" />:
-			<form:input path="sampleOrderItem.receivedDateForDisplay" readonly="true"/>
+			<form:input path="sampleOrderItems.receivedDateForDisplay" readonly="true"/>
 		</td>
 		<td>
 			<spring:message code="sample.batchentry.timereceived" />:
-			<form:input path="sampleOrderItem.receivedTime" readonly="true"/>
+			<form:input path="sampleOrderItems.receivedTime" readonly="true"/>
 		</td>
 	</tr>
 	<tr>
@@ -212,18 +219,18 @@ $jq(document).ready(function () {
 				<td>
 					<spring:message code="sample.batchentry.barcode.label.facilityid" /> 
 					: <%= request.getAttribute("facilityName") %>
-					<form:hidden path="sampleOrderItem.referringSiteId" id="requesterId"/>
+					<form:hidden path="sampleOrderItems.referringSiteId" id="requesterId"/>
 						
 				</td>
 			</tr>
 		</c:if>
 		<c:if test='${empty form.facilityID}'>
-			<c:if test='${not empty form.sampleOrderItem.newRequesterName}'>
+			<c:if test='${not empty form.sampleOrderItems.newRequesterName}'>
 			<tr>
 				<td>
 					<spring:message code="sample.batchentry.barcode.label.facilityid" /> 
 					: <%= request.getAttribute("facilityName") %>
-					<form:hidden path="sampleOrderItem.referringSiteId" id="requesterId"/>
+					<form:hidden path="sampleOrderItems.referringSiteId" id="requesterId"/>
 				</td>
 			</tr>
 			</c:if>

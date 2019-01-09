@@ -22,8 +22,6 @@ public class SamplePatientEntryForm extends BaseForm {
 
 	private String patientProcessingStatus = "Add";
 
-	private String patientPK = "";
-
 	private List<IdValuePair> sampleTypes;
 
 	private String sampleXML = "";
@@ -82,14 +80,6 @@ public class SamplePatientEntryForm extends BaseForm {
 
 	public void setPatientProcessingStatus(String patientProcessingStatus) {
 		this.patientProcessingStatus = patientProcessingStatus;
-	}
-
-	public String getPatientPK() {
-		return patientPK;
-	}
-
-	public void setPatientPK(String patientPK) {
-		this.patientPK = patientPK;
 	}
 
 	public List<IdValuePair> getSampleTypes() {

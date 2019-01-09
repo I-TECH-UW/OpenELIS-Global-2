@@ -401,7 +401,7 @@
                    onchange="setOrderModified();setCorrectSave();"
                    size="30"/>
         <spring:message code="humansampleone.provider.firstName.short"/>:
-        <form:input path="form.sampleOrderItems.providerFirstName" onchange="setOrderModified();"
+        <form:input path="sampleOrderItems.providerFirstName" onchange="setOrderModified();"
                    size="30"/>
 
     </td>

@@ -29,7 +29,7 @@ public class SampleBatchEntryForm extends BaseForm {
 
 	private String sampleXML = "";
 
-	private SampleOrderItem sampleOrderItem;
+	private SampleOrderItem sampleOrderItems;
 
 	private List<IdValuePair> initialSampleConditionList;
 
@@ -133,12 +133,12 @@ public class SampleBatchEntryForm extends BaseForm {
 		this.sampleXML = sampleXML;
 	}
 
-	public SampleOrderItem getSampleOrderItem() {
-		return sampleOrderItem;
+	public SampleOrderItem getSampleOrderItems() {
+		return sampleOrderItems;
 	}
 
-	public void setSampleOrderItem(SampleOrderItem sampleOrderItem) {
-		this.sampleOrderItem = sampleOrderItem;
+	public void setSampleOrderItems(SampleOrderItem sampleOrderItems) {
+		this.sampleOrderItems = sampleOrderItems;
 	}
 
 	public List<IdValuePair> getInitialSampleConditionList() {

@@ -4,7 +4,6 @@ import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
@@ -52,13 +52,14 @@ public class SampleBatchEntryController extends BaseController {
 		SampleOrderItem soi = sampleOrderService.getSampleOrderItem();
 		// preserve fields that are already in form in refreshed object
 		// (SPRING doesn't preserve objects between controllers)
-		soi.setReceivedTime(form.getSampleOrderItem().getReceivedTime());
-		soi.setReceivedDateForDisplay(form.getSampleOrderItem().getReceivedDateForDisplay());
-		soi.setNewRequesterName(form.getSampleOrderItem().getNewRequesterName());
+		soi.setReceivedTime(form.getSampleOrderItems().getReceivedTime());
+		soi.setReceivedDateForDisplay(form.getSampleOrderItems().getReceivedDateForDisplay());
+		soi.setNewRequesterName(form.getSampleOrderItems().getNewRequesterName());
 		soi.setReferringSiteId(form.getFacilityID());
-		form.setSampleOrderItem(soi);
-		
-		form.setLocalDBOnly(ConfigurationProperties.getInstance().getPropertyValueLowerCase(Property.UseExternalPatientInfo).equals("false"));
+		form.setSampleOrderItems(soi);
+
+		form.setLocalDBOnly(ConfigurationProperties.getInstance()
+				.getPropertyValueLowerCase(Property.UseExternalPatientInfo).equals("false"));
 		/*
 		 * errors = validate(request); if (errors.hasErrors()) { saveErrors(errors,
 		 * form); request.setAttribute(IActionConstants.FWD_SUCCESS, false); forward =
@@ -93,8 +94,8 @@ public class SampleBatchEntryController extends BaseController {
 			organization.setId(form.getFacilityID());
 			organizationDAO.getData(organization);
 			facilityName = organization.getOrganizationName();
-		} else if (!StringUtil.isNullorNill(form.getSampleOrderItem().getNewRequesterName())) {
-			facilityName = form.getSampleOrderItem().getNewRequesterName();
+		} else if (!StringUtil.isNullorNill(form.getSampleOrderItems().getNewRequesterName())) {
+			facilityName = form.getSampleOrderItems().getNewRequesterName();
 		}
 		request.setAttribute("facilityName", facilityName);
 		form.setPatientSearch(new PatientSearch());
@@ -114,7 +115,7 @@ public class SampleBatchEntryController extends BaseController {
 	 * dateValidationProvider.validateDate(
 	 * dateValidationProvider.getDate(request.getParameter(
 	 * "sampleOrderItems.receivedDateForDisplay")), "past");
-	 * 
+	 *
 	 * // validate date and times if
 	 * (!(curDateValid.equals(IActionConstants.VALID))) { ActionError error = new
 	 * ActionError("batchentry.error.curdate.invalid");
@@ -129,7 +130,7 @@ public class SampleBatchEntryController extends BaseController {
 	 * "sampleOrderItems.receivedTime"))) { ActionError error = new
 	 * ActionError("batchentry.error.rectime.invalid");
 	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); }
-	 * 
+	 *
 	 * // validate check boxes if
 	 * (!GenericValidator.isBool(request.getParameter("facilityIDCheck")) &&
 	 * !StringUtil.isNullorNill(request.getParameter("facilityIDCheck"))) {
@@ -140,18 +141,18 @@ public class SampleBatchEntryController extends BaseController {
 	 * !StringUtil.isNullorNill(request.getParameter("patientInfoCheck"))) {
 	 * ActionError error = new ActionError("batchentry.error.patientcheck.invalid");
 	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); }
-	 * 
+	 *
 	 * // validate ID if
 	 * (!GenericValidator.isInt(request.getParameter("facilityID")) &&
 	 * !StringUtil.isNullorNill(request.getParameter("facilityID"))) { ActionError
 	 * error = new ActionError("batchentry.error.facilityid.invalid");
 	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); }
-	 * 
+	 *
 	 * // TO DO: (Caleb) validate sampleOrderItems.newRequesterName
-	 * 
+	 *
 	 * // validate sampleXML validateSampleXML(errors,
 	 * request.getParameter("sampleXML"));
-	 * 
+	 *
 	 * return errors; }
 	 */
 
@@ -162,7 +163,7 @@ public class SampleBatchEntryController extends BaseController {
 	 * DocumentHelper.parseText(sampleXML); for (Iterator i =
 	 * sampleDom.getRootElement().elementIterator("sample"); i.hasNext();) { Element
 	 * sampleItem = (Element) i.next();
-	 * 
+	 *
 	 * // validate test ids String[] testIDs =
 	 * sampleItem.attributeValue("tests").split(","); for (int j = 0; j <
 	 * testIDs.length; ++j) { if (!GenericValidator.isInt(testIDs[j]) &&
@@ -196,6 +197,7 @@ public class SampleBatchEntryController extends BaseController {
 	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); } }
 	 */
 
+	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("On Demand".equals(forward)) {
 			return new ModelAndView("sampleBatchEntryOnDemandDefinition", "form", form);
