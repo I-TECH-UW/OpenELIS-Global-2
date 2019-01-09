@@ -1551,13 +1551,86 @@ function /*void*/ setSaveButton() {
 	    	<div id="eid.eidTypeOfClinicMessage" class="blank" > </div>
         </td>
     </tr>
+    
+    <tr>
+        <td></td>
+        <td>
+            <spring:message code="patient.project.eidHowChildFed"/>
+        </td>
+        <td>
+            <form:select 
+                 path="observations.eidHowChildFed"
+                 id="eid.eidHowChildFed"
+                 onchange="makeDirty();compareAllObservationHistoryFields(true)" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['EID_HOW_CHILD_FED']}" itemLabel="localizedName" /> 
+	    	</form:select>
+        </td>
+    </tr>
+    
+    <tr>
+        <td></td>
+        <td>
+            <spring:message code="patient.project.eidStoppedBreastfeeding"/>
+        </td>
+        <td>
+            <form:select 
+                 path="observations.eidStoppedBreastfeeding"
+                 id="eid.eidStoppedBreastfeedingidHowChildFed"
+                 onchange="makeDirty();compareAllObservationHistoryFields(true)" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['EID_STOPPED_BREASTFEEDING']}" itemLabel="localizedName" /> 
+	    	</form:select>
+        </td>
+    </tr>
+    
+    <tr>
+        <td></td>
+        <td>
+            <spring:message code="patient.project.eidInfantSymptomatic"/>
+        </td>
+        <td>
+            <form:select 
+                 path="observations.eidInfantSymptomatic"
+                 id="eid.eidInfantSymptomatic"
+                 onchange="makeDirty();compareAllObservationHistoryFields(true)" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" /> 
+	    	</form:select>
+        </td>
+    </tr>
+    
+    <tr>
+        <td></td>
+        <td>
+            <spring:message code="patient.project.eidInfantProphy"/>
+        </td>
+        <td>
+            <form:select 
+                 path="observations.eidInfantsARV"
+                 id="eid.eidInfantsARV"
+                 onchange="makeDirty();compareAllObservationHistoryFields(true)" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['EID_INFANT_PROPHYLAXIS_ARV']}" itemLabel="localizedName" /> 
+	    	</form:select>
+        </td>
+    </tr>
   
-    
-    
-    
-    
-    
-    
+    <tr>
+        <td></td>
+        <td>
+            <spring:message code="patient.project.eidInfantCotrimoxazole"/>
+        </td>
+        <td>
+            <form:select 
+                 path="observations.eidInfantCotrimoxazole"
+                 id="eid.eidInfantCotrimoxazole"
+                 onchange="makeDirty();compareAllObservationHistoryFields(true)" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['YES_NO_UNKNOWN']}" itemLabel="localizedName" /> 
+	    	</form:select>
+        </td>
+    </tr>
     
     <tr>
         <td></td>
@@ -1565,6 +1638,99 @@ function /*void*/ setSaveButton() {
             <spring:message code="sample.entry.project.title.mothersInformation" />
         </td>
     </tr>
+    
+    <tr>
+        <td></td>
+        <td>
+            <spring:message code="patient.project.eidMothersStatus"/>
+        </td>
+        <td>
+            <form:select 
+                 path="observations.eidMothersHIVStatus"
+                 id="eid.eidMothersHIVStatus"
+                 onchange="makeDirty();compareAllObservationHistoryFields(true)" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['EID_MOTHERS_HIV_STATUS']}" itemLabel="localizedName" /> 
+	    	</form:select>
+        </td>
+    </tr>
+    
+    <tr>
+        <td></td>
+        <td>
+            <spring:message code="patient.project.eidMothersARV"/>
+        </td>
+        <td>
+            <form:select 
+                 path="observations.eidMothersARV"
+                 id="eid.eidMothersARV"
+                 onchange="makeDirty();compareAllObservationHistoryFields(true)" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['EID_MOTHERS_ARV_TREATMENT']}" itemLabel="localizedName" /> 
+	    	</form:select>
+        </td>
+    </tr>
+    
+     <tr>
+        <td>&nbsp;</td>
+    </tr>
+
+    <tr><td colspan="5"><hr/></td></tr>
+    
+    <tr id="eid.patientRecordStatusRow"style="display: none;">
+        <td class="required"></td>
+        <td>
+            <spring:message code="patient.project.patientRecordStatus" />
+        </td>
+        <td>
+        <INPUT type="text" id="eid.PatientRecordStatus" size="20" class="readOnly text" disabled="disabled" readonly="readonly" />
+        <div id="eid.PatientRecordStatusMessage" class="blank"></div>
+        </td>
+    </tr>
+    
+    <tr id="eid.sampleRecordStatusRow" style="display: none;">
+        <td class="required"></td>
+        <td>
+            <spring:message code="patient.project.sampleRecordStatus" />
+        </td>
+        <td>
+        <INPUT type="text" id="eid.SampleRecordStatus" size="20" class="readOnly text" disabled="disabled" readonly="readonly" />
+        <div id="eid.SampleRecordStatusMessage" class="blank"></div>
+        </td>
+    </tr>
+    
+     <tr><td colspan="6"><hr/></td></tr>
+     
+     <tr>
+        <td></td>
+        <td>
+            <spring:message code="patient.project.underInvestigation"/>
+        </td>
+        <td>
+            <form:select 
+                 path="observations.underInvestigation"
+                 id="eid.underInvestigation"
+                 onchange="makeDirty();compareAllObservationHistoryFields(true)" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" /> 
+	    	</form:select>
+        </td>
+    </tr>
+    
+    <tr>
+        <td class="required"></td>
+        <td>
+            <spring:message code="patient.project.underInvestigationComment"/>
+        </td>
+        <td>
+	    <form:input
+                      path="ProjectData.underInvestigationNote" maxlength="1000" size="80"
+                      onchange="makeDirty();" 
+                      cssClass="text" />
+            <div id="eid.underInvestigationCommentRow" class="blank"></div>
+        </td>
+    </tr>
+    
     
     
     

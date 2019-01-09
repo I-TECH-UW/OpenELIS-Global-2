@@ -50,13 +50,11 @@ public class SampleEntryByProjectController extends BaseController {
     form.setInterviewDate(dateAsText);
 
     Map<String, List<Dictionary>> formListsMapOfLists = new HashMap<String, List<Dictionary>>();
-    Dictionary dictionary = null;
     List<Dictionary> listOfDictionary = new ArrayList<Dictionary>();
-    List<IdValuePair> genders;
-    genders = DisplayListService.getList(ListType.GENDERS);
+    List<IdValuePair> genders = DisplayListService.getList(ListType.GENDERS);
     
     for (IdValuePair i : genders)  {
-    	dictionary = new Dictionary();
+    	Dictionary dictionary = new Dictionary();
     	dictionary.setId(i.getId());
     	dictionary.setDictEntry(i.getValue());
     	listOfDictionary.add( dictionary);
@@ -71,6 +69,13 @@ public class SampleEntryByProjectController extends BaseController {
     observationHistoryMapOfLists.put("EID_SECOND_PCR_REASON", ObservationHistoryList.EID_SECOND_PCR_REASON.getList());
     observationHistoryMapOfLists.put("YES_NO", ObservationHistoryList.YES_NO.getList());
     observationHistoryMapOfLists.put("EID_TYPE_OF_CLINIC", ObservationHistoryList.EID_TYPE_OF_CLINIC.getList());
+    observationHistoryMapOfLists.put("EID_HOW_CHILD_FED", ObservationHistoryList.EID_HOW_CHILD_FED.getList());
+    observationHistoryMapOfLists.put("EID_STOPPED_BREASTFEEDING", ObservationHistoryList.EID_STOPPED_BREASTFEEDING.getList());
+    observationHistoryMapOfLists.put("YES_NO", ObservationHistoryList.YES_NO.getList());
+    observationHistoryMapOfLists.put("EID_INFANT_PROPHYLAXIS_ARV", ObservationHistoryList.EID_INFANT_PROPHYLAXIS_ARV.getList());
+    observationHistoryMapOfLists.put("YES_NO_UNKNOWN", ObservationHistoryList.YES_NO_UNKNOWN.getList());
+    observationHistoryMapOfLists.put("EID_MOTHERS_HIV_STATUS", ObservationHistoryList.EID_MOTHERS_HIV_STATUS.getList());
+    observationHistoryMapOfLists.put("EID_MOTHERS_ARV_TREATMENT", ObservationHistoryList.EID_MOTHERS_ARV_TREATMENT.getList());
 	form.setDictionaryLists(observationHistoryMapOfLists);
 	
 	//Get EID Sites
