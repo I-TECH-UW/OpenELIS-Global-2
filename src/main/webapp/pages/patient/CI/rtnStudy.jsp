@@ -69,12 +69,12 @@ rtn = new RtnProjectChecker();
 			<%=DateUtil.getDateUserPrompt()%>
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="receivedDateForDisplay"
+			<form:input path="receivedDateForDisplay"
 				onkeyup="addDateSlashes(this, event);"
 				onchange="rtn.checkReceivedDate(false); makeDirty();"
-				styleClass="text"
+				cssClass="text"
 				id="rtn.receivedDateForDisplay" maxlength="10" />
-			<div id="rtn.receivedDateForDisplayMessage" class="blank" />
+			<div id="rtn.receivedDateForDisplayMessage" class="blank" ></div>
 		</td>
 	</tr>
 	<tr>
@@ -88,9 +88,9 @@ rtn = new RtnProjectChecker();
 			<%=DateUtil.getDateUserPrompt()%>
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="interviewDate"
+			<form:input path="interviewDate"
 				onkeyup="addDateSlashes(this, event);"
-				onchange="rtn.checkInterviewDate(false)" styleClass="text"
+				onchange="rtn.checkInterviewDate(false)" cssClass="text"
 				maxlength="10" id="rtn.interviewDate" />
 			<div id="rtn.interviewDateMessage" class="blank"></div>
 		</td>
@@ -104,8 +104,8 @@ rtn = new RtnProjectChecker();
 			<spring:message code="patient.project.nameOfDoctor" />
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="observations.nameOfDoctor"
-				styleClass="text" id="rtn.nameOfDoctor" size="50"
+			<form:input path="observations.nameOfDoctor"
+				cssClass="text" id="rtn.nameOfDoctor" size="50"
 				onchange="rtn.checkNameOfDoctor(true);" />
 			<div id="nameOfDoctorMessage" class="blank"></div>
 		</td>
@@ -119,13 +119,11 @@ rtn = new RtnProjectChecker();
 			<spring:message code="patient.project.hospitals" />
 		</td>
 		<td>
-			<html:select name="${form.formName}" property="centerCode"
-				id="rtn.centerCode" styleClass="text"
+			<form:select path="centerCode"
+				id="rtn.centerCode" cssClass="text"
 				onchange="rtn.checkCenterCode(false)">
-				<app:optionsCollection name="${form.formName}"
-					property="organizationTypeLists.RTN_HOSPITALS.list"
-					label="doubleName" value="id" />
-			</html:select>
+				<form:options items="${organizationTypeLists.RTN_HOSPITALS.list}" itemLabel="doubleName" itemValue="id" />
+			</form:select>
 		</td>
 	</tr>
 	<tr>
@@ -137,13 +135,11 @@ rtn = new RtnProjectChecker();
 			<spring:message code="patient.project.service" />
 		</td>
 		<td>
-			<html:select name="${form.formName}" property="observations.service"
-				id="rtn.service" styleClass="text"
+			<form:select path="observations.service"
+				id="rtn.service" cssClass="text"
 				onchange="compareAllObservationHistoryFields(true);">
-				<app:optionsCollection name="${form.formName}"
-					property="organizationTypeLists.RTN_SERVICES.list"
-					label="doubleName" value="id" />
-			</html:select>
+				<form:options path="${organizationTypeLists.RTN_SERVICES.list}" itemLabel="doubleName" itemValue="id" />
+			</form:select>
 		</td>
 	</tr>
 	<tr>
@@ -153,15 +149,12 @@ rtn = new RtnProjectChecker();
 			<spring:message code="patient.project.hospitalPatient" />
 		</td>
 		<td>
-			<html:select name="${form.formName}"
-				property="observations.hospitalPatient" styleClass="text"
+			<form:select path="observations.hospitalPatient" cssClass="text"
 				id="rtn.hospitalPatient"
 				onchange="compareAllObservationHistoryFields(true);">
-				<app:optionsCollection name="${form.formName}"
-					property="dictionaryLists.YES_NO.list" label="localizedName"
-					value="id" />
-			</html:select>
-			<div id="rtn.hospitalPatientMessage" class="blank" />
+				<form:options path="${dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
+			</form:select>
+			<div id="rtn.hospitalPatientMessage" class="blank" ></div>
 		</td>
 	</tr>
 	<tr>
@@ -171,7 +164,7 @@ rtn = new RtnProjectChecker();
 			<spring:message code="patient.project.patientFamilyName" />
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="lastName" styleClass="text"
+			<form:input path="lastName" cssClass="text"
 				id="rtn.patientFamilyName" onchange="rtn.checkFamilyName(true)"
 				size="40" />
 			<div id="rtn.patientFamilyNameMessage" class="blank"></div>
@@ -184,7 +177,7 @@ rtn = new RtnProjectChecker();
 			<spring:message code="patient.project.patientFirstNames" />
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="firstName" styleClass="text"
+			<form:input path="firstName" cssClass="text"
 				id="rtn.patientFirstNames" onchange="rtn.checkFirstNames(true)"
 				size="40" />
 			<div id="rtn.patientFirstNamesMessage" class="blank"></div>
@@ -201,8 +194,8 @@ rtn = new RtnProjectChecker();
 			<%=DateUtil.getDateUserPrompt()%>
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="birthDateForDisplay"
-				styleClass="text" id="rtn.dateOfBirth" maxlength="10"
+			<form:input path="birthDateForDisplay"
+				cssClass="text" id="rtn.dateOfBirth" maxlength="10"
 				onkeyup="addDateSlashes(this, event);"
 				onchange="rtn.checkDateOfBirth(true)" />
 			<div id="rtn.dateOfBirthMessage" class="blank"></div>
@@ -238,13 +231,12 @@ rtn = new RtnProjectChecker();
 			<spring:message code="patient.project.gender" />
 		</td>
 		<td>
-			<html:select name="${form.formName}" property="gender"
-				id="rtn.gender" styleClass="text"
+			<form:select path="gender"
+				id="rtn.gender" cssClass="text"
 				onchange="rtn.checkGender(true)">
-				<app:optionsCollection name="${form.formName}"
-					property="formLists.GENDERS" label="localizedName"
+				<form:options path="${formLists.GENDERS}" itemLabel="localizedName"
 					value="genderType" />
-			</html:select>
+			</form:select>
 			<div id="genderMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -256,13 +248,11 @@ rtn = new RtnProjectChecker();
 
 		</td>
 		<td>
-			<html:select name="${form.formName}" property="observations.nationality"
-				id="rtn.nationality" styleClass="text"
+			<form:select path="observations.nationality"
+				id="rtn.nationality" cssClass="text"
 				onchange="rtn.displayNationality();compareAllObservationHistoryFields(true)">
-				<app:optionsCollection name="${form.formName}"
-					property="dictionaryLists.NATIONALITIES.list" label="localizedName"
-					value="id" />
-			</html:select>
+				<form:options path="${dictionaryLists.NATIONALITIES.list}" itemLabel="localizedName" itemValue="id" />
+			</form:select>
 			<div id="rtn.nationalityMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -275,10 +265,9 @@ rtn = new RtnProjectChecker();
 			<spring:message code="patient.project.nationalityOther" />
 		</td>
 		<td>
-			<app:text name="${form.formName}"
-				property="observations.nationalityOther"
+			<form:input path="observations.nationalityOther"
 				onchange="checkRequiredField(this);compareAllObservationHistoryFields(true)"
-				styleClass="text" id="rtn.nationalityOther" />
+				cssClass="text" id="rtn.nationalityOther" />
 			<div id="rtn.nationalityOtherMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -289,8 +278,8 @@ rtn = new RtnProjectChecker();
 			<spring:message code="patient.project.serologyReason" />
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="observations.reason"
-				styleClass="text" id="rtn.reason"
+			<form:input path="observations.reason"
+				cssClass="text" id="rtn.reason"
 				onchange="compareAllObservationHistoryFields(true)" />
 			<div id="rtn.reason" class="blank"></div>
 		</td>
@@ -311,9 +300,9 @@ rtn = new RtnProjectChecker();
 				size="5" class="text"
 				onchange="handleLabNoChange( this, 'LRTN', false ); makeDirty();"
 				maxlength="5" />
-			<app:text name="${form.formName}" property="labNo" styleClass="text"
+			<form:input path="labNo" cssClass="text"
 				style="display:none;" id="rtn.labNo" />
-			<div id="rtn.labNoMessage" class="blank" />
+			<div id="rtn.labNoMessage" class="blank" ></div>
 		</td>
 	</tr>
 	<tr>
@@ -326,71 +315,63 @@ rtn = new RtnProjectChecker();
 			<spring:message code="patient.project.medicalHistory" />
 		</td>
 	</tr>		
-	<logic:iterate id="disease" indexId="i" name="${form.formName}"
-		type="NameValuePair" property="observations.rtnPriorDiseasesList">
-		<tr id='<%="priorDiseasesRow" + i%>' >
+	<c:forEach var="disease" varStatus="iter" items="${form.observations.rtnPriorDiseasesList}">
+		<tr id='priorDiseasesRow${iter.index}' >
 			<td></td>
 			<td class="observationsQuestion observationsSubquestion">
-				<bean:write name="disease" property="value" />
+				<c:out value="${disease.value}" />
 			</td>
 			<td>
-				<html:select name="${form.formName}"
-					property='<%= "observations." + disease.getName() %>'
+				<form:select path='observations.${disease.name}'
 					onchange="makeDirty();compareAllObservationHistoryFields(true)"
-					id='<%= "rtn." + disease.getName() %>'>
-					<app:optionsCollection name="${form.formName}"
-						property="dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list"
-						label="localizedName" value="id" />
-				</html:select>
+					id='rtn.${disease.name}'>
+					<form:options path="${dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list}" itemLabel="localizedName" itemValue="id" />
+				</form:select>
 			</td>
 		</tr>
-	</logic:iterate>
+	</c:forEach>
 	<tr><td colspan="2" style="text-align:center"><spring:message code="patient.project.physicalExam" /></td>
 	<!-- current -->
-	<logic:iterate id="disease" indexId="i" name="${form.formName}"
-		type="NameValuePair" property="observations.rtnCurrentDiseasesList">
-		<tr id='<%="currentDiseasesRow" + i%>' >
+	<c:forEach var="disease" varStatus="iter" items="${form.observations.rtnCurrentDiseasesList}">
+		<tr id='currentDiseasesRow${iter.index}' >
 			<td></td>
 			<td class="observationsQuestion observationsSubquestion">
-				<bean:write name="disease" property="value" />
+				<c:out value="${disease.value}" />
 			</td>
 			<td>
-				<html:select name="${form.formName}"
-					property='<%= "observations." + disease.getName() %>'
+				<form:select path='observations.${disease.name}'
 					onchange="makeDirty();compareAllObservationHistoryFields(true)"
-					id='<%= "rtn." + disease.getName() %>'>
-					<app:optionsCollection name="${form.formName}"
-						property="dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list"
-						label="localizedName" value="id" />
-				</html:select>
+					id='rtn.${disease.name}'>
+					<form:options path="${dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list}" itemLabel="localizedName" itemValue="id" />
+				</form:select>
 			</td>
 		</tr>
-	</logic:iterate>
+	</c:forEach>
 		<%--
-	<logic:iterate id="disease" indexId="i" name="${form.formName}" property="dictionaryLists.RTN_DISEASES.list" >
-		<tr id='<%= "rtn.priorDiseasesRow" + i %>' > <!-- CLI 09.<%= i %> -->
+	<c:forEach var="disease" indexId="i" name="${form.formName}" property="dictionaryLists.RTN_DISEASES.list" >
+		<tr id='rtn.priorDiseasesRow" + i %>' > <!-- CLI 09.<%= i %> -->
 			<td></td>
 			<td class="observationQuestion"><bean:write name="disease" property="localizedName"/></td>
 			<td>
-				<html:select name="${form.formName}" property='<%= "observations.priorDiseases[" + i + "]" %>'
-				    id='<%= "rtn.priorDiseases" + i %>' onchange="compareAllObservationHistoryFields(true)">
-					<app:optionsCollection name="${form.formName}" property="dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list" label="localizedName" value="id" />
-				</html:select>
+				<form:select path='observations.priorDiseases[" + i + "]" %>'
+				    id='rtn.priorDiseases" + i %>' onchange="compareAllObservationHistoryFields(true)">
+					<form:options path="${dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list}" itemLabel="localizedName" itemValue="id" />
+				</form:select>
 			</td>
 		</tr>
-	</logic:iterate>
-	<logic:iterate id="disease" indexId="i" name="${form.formName}" property="dictionaryLists.RTN_EXAM_DISEASES.list" >
-		<tr id='<%= "rtn.currDiseasesRow" + i %>' > <!-- CLI 09.n -->
+	</c:forEach>
+	<c:forEach var="disease" indexId="i" name="${form.formName}" property="dictionaryLists.RTN_EXAM_DISEASES.list" >
+		<tr id='rtn.currDiseasesRow" + i %>' > <!-- CLI 09.n -->
 			<td></td>
 			<td class="observationQuestion"><bean:write name="disease" property="localizedName"/></td>
 			<td>
-				<html:select name="${form.formName}" property='<%= "observations.currentDiseases[" + i + "]" %>'
-				    id='<%= "rtn.currentDiseases" + i %>' onchange="compareAllObservationHistoryFields(true)">
-					<app:optionsCollection name="${form.formName}" property="dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list" label="localizedName" value="id" />
-				</html:select>
+				<form:select path='observations.currentDiseases[" + i + "]" %>'
+				    id='rtn.currentDiseases" + i %>' onchange="compareAllObservationHistoryFields(true)">
+					<form:options path="${dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list}" itemLabel="localizedName" itemValue="id" />
+				</form:select>
 			</td>
 		</tr>
-	</logic:iterate>
+	</c:forEach>
 	 --%>
 	<tr>
 		<td colspan="5">
@@ -429,14 +410,11 @@ rtn = new RtnProjectChecker();
 			<spring:message code="patient.project.underInvestigation" />
 		</td>
 		<td>
-			<html:select name="${form.formName}"
-				property="observations.underInvestigation"
+			<form:select path="observations.underInvestigation"
 				onchange="makeDirty();compareAllObservationHistoryFields(true)"
 				id="rtn.underInvestigation">
-				<app:optionsCollection name="${form.formName}"
-					property="dictionaryLists.YES_NO.list" label="localizedName"
-					value="id" />
-			</html:select>
+				<form:options path="${dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
+			</form:select>
 		</td>
 	</tr>
 	<tr id="rtn.underInvestigationCommentRow">
@@ -445,8 +423,7 @@ rtn = new RtnProjectChecker();
 			<spring:message code="patient.project.underInvestigationComment" />
 		</td>
 		<td colspan="3">
-			<app:text name="${form.formName}"
-				property="ProjectData.underInvestigationNote" maxlength="1000"
+			<form:input path="ProjectData.underInvestigationNote" maxlength="1000"
 				size="80" onchange="makeDirty();"
 				id="rtn.underInvestigationComment" />
 		</td>
