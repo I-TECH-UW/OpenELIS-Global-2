@@ -1,6 +1,5 @@
 package spring.mine.login.controller;
 
-import java.lang.String;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.login.form.LoginChangePasswordForm;
@@ -180,9 +180,11 @@ public class UpdateLoginChangePasswordController extends BaseController {
 			HibernateUtil.closeSession();
 		}
 
+		form.setFormAction("ValidateLogin.do");
 		return findForward(forward, form);
 	}
 
+	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("success".equals(forward)) {
 			return new ModelAndView("loginPageDefinition", "form", form);
@@ -193,10 +195,12 @@ public class UpdateLoginChangePasswordController extends BaseController {
 		}
 	}
 
+	@Override
 	protected String getPageTitleKey() {
 		return null;
 	}
 
+	@Override
 	protected String getPageSubtitleKey() {
 		return null;
 	}
