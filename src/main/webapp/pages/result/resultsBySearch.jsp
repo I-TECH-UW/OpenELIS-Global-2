@@ -7,6 +7,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>	 
 
 	
 
@@ -29,15 +30,13 @@ function doSelectPatientForResults(){
 </script>
 
 <div id="searchDiv" class="colorFill"  >
-	<tiles:insert attribute="searchPanel" />
+	<tiles:insertAttribute name="searchPanel" />
 </div>
-
-<logic:equal  name="${form.formName}" property="searchFinished" value="true">
+<c:if test="${form.searchFinished}">
 	<div id="resultsDiv" class="colorFill" >
-		<tiles:insert attribute="resultsPanel" />
+		<tiles:insertAttribute name="resultsPanel" />
 	</div>
-</logic:equal>
-
+</c:if>
 
 
 

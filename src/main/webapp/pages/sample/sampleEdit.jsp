@@ -12,29 +12,19 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>	 
 
-		
-<bean:define id="idSeparator"	value='<%=SystemConfiguration.getInstance().getDefaultIdSeparator()%>' />
-<bean:define id="accessionFormat" value='<%=ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat)%>' />
-<bean:define id="genericDomain" value='' />
-<bean:define id="accessionNumber" name="${form.formName}" property="accessionNumber"/>
-<bean:define id="newAccessionNumber" name="${form.formName}" property="newAccessionNumber"/>
-<bean:define id="cancelableResults"   name="${form.formName}" property="ableToCancelResults" type="java.lang.Boolean" />
-<bean:define id="isEditable" name="${form.formName}" property="isEditable" type="java.lang.Boolean" />
+<c:set var="cancelableResults" value="${form.ableToCancelResults}"/>
 
 <%!
 	String basePath = "";
-	int editableAccession = 0;
-	int nonEditableAccession = 0;
-	int maxAccessionLength = 0;
+	String accessionNumber = "";
     boolean useCollectionDate = true;
 %>
 <%
 	String path = request.getContextPath();
 	basePath = request.getScheme() + "://" + request.getServerName() + ":"	+ request.getServerPort() + path + "/";
-	editableAccession = AccessionNumberUtil.getChangeableLength();
-	nonEditableAccession = AccessionNumberUtil.getInvarientLength();
-	maxAccessionLength = editableAccession + nonEditableAccession;
     useCollectionDate = FormFields.getInstance().useField( FormFields.Field.CollectionDate);
 %>
 
@@ -61,7 +51,7 @@ var orderChanged = false;
 function samplesHaveBeenAdded(){ return false;}
 
 $jq(document).ready( function() {
-    if( !<%=isEditable%>) {
+    if( !${form.isEditable}) {
         $jq(":input").prop("readOnly", true);
         $jq(".patientSearch").prop("readOnly", false);
     }
@@ -94,7 +84,7 @@ function /*void*/ addRemoveRequest( checkbox ){
 // Adds warning when leaving page if tests are checked
 function formWarning(){
 	var newAccession = $("newAccessionNumber").value;
-	var accessionChanged = newAccession.length > 1 && newAccession != "<%=accessionNumber%>"; 
+	var accessionChanged = newAccession.length > 1 && newAccession != "${form.accessionNumber}"; 
 
   	if ( checkedCount > 0 || accessionChanged || samplesHaveBeenAdded()) {
     	return "<spring:message code="banner.menu.dataLossWarning"/>";
@@ -128,21 +118,21 @@ function checkEditedAccessionNumber(changeElement){
 	$("newAccessionNumber").value = "";
 	
 	if( changeElement.value.length == 0){
-		updateSampleItemNumbers( "<%=accessionNumber%>" );
+		updateSampleItemNumbers( "${form.accessionNumber}" );
 		setSaveButton();
 		return;
 	}
 	
-	if( changeElement.value.length != <%= editableAccession%>){
+	if( changeElement.value.length != ${form.editableAccession}){
 		setFieldErrorDisplay( changeElement );
 		setSaveButton();
 		alert("<%=StringUtil.getMessageForKey("sample.entry.invalid.accession.number.length")%>");
 		return;
 	}
 	
-	accessionNumber = "<%=((String)accessionNumber).substring(0, nonEditableAccession)%>" + changeElement.value;
+	accessionNumber = "<c:out value='${fn:substring(form.accessionNumber, 0, form.nonEditableAccession)}'/>" + changeElement.value;
 	
-	if( accessionNumber == "<%=accessionNumber%>"){
+	if( accessionNumber == "${form.accessionNumber}"){
 		updateSampleItemNumbers( accessionNumber );
 		setSaveButton();
 		return;
@@ -166,7 +156,7 @@ function processEditAccessionSuccess(xhr)
 	}
 	
 	if( message == "SAMPLE_NOT_FOUND"){
-		accessionNumberUpdate = "<%=((String)accessionNumber).substring(0, nonEditableAccession)%>" + $(formField).value;
+		accessionNumberUpdate = "<c:out value="${fn:substring(form.accessionNumber, 0, form.nonEditableAccession)}"/>" + $(formField).value;
 		updateSampleItemNumbers( accessionNumberUpdate );
 		$("newAccessionNumber").value = accessionNumberUpdate;
 		setSaveButton();
@@ -281,7 +271,7 @@ function makeDirty(){
 
 <hr/>
 
-<logic:equal name="${form.formName}" property="noSampleFound" value="false">
+<c:if test="${not form.noSampleFound}">
 <DIV  id="patientInfo" class='textcontent'>
 <spring:message code="sample.entry.patient"/>:&nbsp;
 <c:out value="${form.patientName}"/>&nbsp;
@@ -295,36 +285,45 @@ function makeDirty(){
 <form:hidden path="newAccessionNumber" id="newAccessionNumber"/>
 <form:hidden path="isEditable"/>
 <form:hidden path="maxAccessionNumber" id="maxAccessionNumber"/>
-<logic:equal name='${form.formName}' property="isEditable" value="true" >
+<c:if test="${form.isEditable}">
 	<h1><%=StringUtil.getContextualMessageForKey("sample.edit.accessionNumber") %></h1>  
 	<div id="accessionEditDiv" class="TableMatch">
 		<b><%=StringUtil.getContextualMessageForKey("sample.edit.change.from") %>:</b> <c:out value="${form.accessionNumber}"/>  
-		<b><%=StringUtil.getContextualMessageForKey("sample.edit.change.to") %>:</b> <%= ((String)accessionNumber).substring(0, nonEditableAccession) %>
+		<b><%=StringUtil.getContextualMessageForKey("sample.edit.change.to") %>:</b> <c:out value="${fn:substring(form.accessionNumber, 0, form.nonEditableAccession)}"/>
 		<input type="text"
-		       value='<%= ((String)newAccessionNumber).length() == maxAccessionLength ? ((String)newAccessionNumber).substring(nonEditableAccession, maxAccessionLength) : "" %>'
-		       maxlength="<%= editableAccession%>"
-		       size="<%= editableAccession%>"
+				<c:if test="${fn:length(form.newAccessionNumber) == form.maxAccessionLength}">
+		       		value='<c:out value="${fn:substring(newAccessionNumber, nonEditableAccession, maxAccessionLength) }"/>' 
+		       	</c:if>
+		       maxlength="${form.editableAccession}"
+		       size="${form.editableAccession}"
 		       onchange="checkEditedAccessionNumber(this);"
 		       id="accessionEdit">
 		       
 	<br/><br/><hr/>
 	</div>
-</logic:equal>
-    <bean:define id="confirmationSample" name='${form.formName}' property="isConfirmationSample" type="java.lang.Boolean" />
+</c:if>
     <div id="sampleOrder" class="colorFill" >
-        <% if( confirmationSample ){ %>
-        <tiles:insert attribute="sampleConfirmationOrder" />
-        <% }else{ %>
-        <tiles:insert attribute="sampleOrder" />
-        <% } %>
+    	<c:if test="${form.isConfirmationSample}">
+        	<tiles:insertAttribute name="sampleConfirmationOrder" />
+        </c:if>
+    	<c:if test="${not form.isConfirmationSample}">
+        	<tiles:insertAttribute name="sampleOrder" />
+        </c:if>
     </div>
 
-<logic:equal name='${form.formName}' property="isEditable" value="true" >
+<c:if test="${form.isEditable}">
 	<h1><%=StringUtil.getContextualMessageForKey("sample.edit.tests") %></h1>
-</logic:equal>
+</c:if>
 <table style="width:60%">
-<caption><div><spring:message code="sample.edit.existing.tests"/></div>
-    <span style="color: red"><small><small><%= cancelableResults ? StringUtil.getMessageForKey( "test.modify.static.warning" ) : "" %></small></small></span></caption>
+<caption>
+	<spring:message code="sample.edit.existing.tests"/>
+    <span style="color: red"><small><small>
+    <c:if test="${cancelableResults}">
+    	<spring:message code="test.modify.static.warning" />
+    </c:if>
+    </small></small>
+    </span>
+</caption>
 <tr>
 <th><%= StringUtil.getContextualMessageForKey("quick.entry.accession.number") %></th>
 <th><spring:message code="sample.entry.sample.type"/></th>
@@ -336,93 +335,97 @@ function makeDirty(){
     <spring:message code="sample.collectionTime"/>
 </th>
 <% } %>
-<logic:equal name='${form.formName}' property="isEditable" value="true" >
+<c:if test="${form.isEditable}">
 	<th style="width:16px"><spring:message code="sample.edit.remove.sample" /></th>
-</logic:equal>
+</c:if>
 <th><spring:message code="test.testName"/></th>
 <th><spring:message code="test.has.result"/></th>
-<logic:equal name='${form.formName}' property="isEditable" value="true" >
+<c:if test="${form.isEditable}">
 	<th style="width:16px"><spring:message code="sample.edit.remove.tests" /></th>
-</logic:equal>
-<logic:equal name='${form.formName}' property="isEditable" value="false" >
+</c:if>
+<c:if test="${form.isEditable}">
 	<th><spring:message code="analysis.status" /></th>
-</logic:equal>
+</c:if>
 
 </tr>
-	<logic:iterate id="existingTests" name="${form.formName}"  property="existingTests" indexId="index" type="us.mn.state.health.lims.sample.bean.SampleEditItem">
-        <form:hidden path="sampleItemChanged" name="existingTests" id='<%= "sampleItemChanged_" + index %>' styleClass="sampleItemChanged" indexed="true"/>
+	<c:forEach items="${form.existingTests}" var="existingTests" varStatus="iter">
+        <form:hidden path="existingTests[${iter.index}].sampleItemChanged" id='sampleItemChanged_${iter.index}' cssClass="sampleItemChanged" indexed="true"/>
 	<tr>
 		<td>
-			<html:hidden name="existingTests" property="analysisId" indexed="true"/>
-			<span class="itemNumber" ><bean:write name="existingTests" property="accessionNumber"/></span>
+			<form:hidden path="existingTests[${iter.index}].analysisId"/>
+			<span class="itemNumber" ><c:out value="${existingTests.accessionNumber}"/></span>
 		</td>
 		<td>
-			<bean:write name="existingTests" property="sampleType"/>
+			<c:out value="${existingTests.sampleType}"/>
 		</td>
         <% if( useCollectionDate ){ %>
         <td >
-			<% if( existingTests.getCollectionDate() != null ){%>
-			<html:text name='existingTests'
-					   property='collectionDate'
+			<c:if test="${existingTests.collectionDate}">
+			<form:input path='existingTests[${iter.index}].collectionDate}'
 					   maxlength='10'
 					   size ='12'
 					   onchange="checkValidEntryDate(this, 'past', true);"
-					   id='<%= "collectionDate_" + index %>'
-					   styleClass='<%= "text" + (isEditable? "" : " readOnly") %>'
+					   id='collectionDate_${iter.index}'
+					   cssClass='text<c:if test="${not form.isEditable}"> readOnly</c:if>'
 					   indexed="true" />
-			<% } %>
+			</c:if>
         </td>
         <td >
-            <% if( existingTests.getCollectionDate() != null ){%>
-            <html:text name='existingTests'
-                       property='collectionTime'
+        	<c:if test="${existingTests.collectionDate}">
+            <form:input path='existingTests[${iter.index}].collectionTime}'
                        maxlength='10'
                        size ='12'
                        onkeyup='filterTimeKeys(this, event);'
                        onblur='checkValidTime(this, true);'
-                       id='<%= "collectionTime_" + index %>'
-                       styleClass='text'
+					   id='collectionDate_${iter.index}'
+                       cssClass='text'
                        indexed="true"/>
-            <% } %>
+            </c:if>
         </td>
         <% } %>
-		<logic:equal name='${form.formName}' property="isEditable" value="true" >
+		<c:if test="${form.isEditable}">
             <td>
-                <% if( existingTests.getAccessionNumber() != null ){
-                    if( existingTests.isCanRemoveSample() ){ %>
-                <html:checkbox name='existingTests' property='removeSample' indexed='true' onchange="addRemoveRequest(this);"/>
-                <% }else{ %>
-                <html:checkbox name='existingTests' property='removeSample' indexed='true' disabled="true"/>
-                <% }
-                } %>
+            	<c:if test="${existingTests.accessionNumber}">
+            		<c:if test="${existingTests.canRemoveSample}">
+                		<form:checkbox path="existingTests[${iter.index}].removeSample" onchange="addRemoveRequest(this);"/>
+                	</c:if>
+                	<c:if test="${not existingTests.canRemoveSample}">
+                		<form:checkbox path='existingTests[${iter.index}].removeSample' disabled="true"/>
+               	 	</c:if>
+                </c:if>
             </td>
-		</logic:equal>
+		</c:if>
 		<td>
-			<bean:write name="existingTests" property="testName"/>
+			<c:out value="${existingTests.testName}"/>
 		</td>
             <td style="text-align: center">
-                <%= existingTests.isHasResults() ? "X" : ""%>
+            	<c:if test="${existingTests.hasResults}"> X </c:if>
             </td>
-		<logic:equal name='${form.formName}' property="isEditable" value="true" >
+		<c:if test="${form.isEditable}">
 			<td>
-				<% if( existingTests.isCanCancel()){ %>
-                <input type="checkbox" name='<%="existingTests[" + index +"].canceled"%>' value="on" onchange="addRemoveRequest(this);" <%=existingTests.isHasResults() ? "class='testWithResult'" : ""%>>
-				<% }else{ %>
-				<html:checkbox name='existingTests' property='canceled' indexed='true' disabled="true" />
-				<% } %>
+            	<c:if test="${existingTests.canCancel}">
+                	<input type="checkbox" 
+                		   name='existingTests[${iter.index}].canceled' 
+                		   value="on" 
+                		   onchange="addRemoveRequest(this);" <c:if test="${existingTests.hasResults}">class='testWithResult'</c:if>
+                		   />
+				</c:if>
+            	<c:if test="${not existingTests.hasResults}">
+					<form:checkbox path='existingTests[${iter.index}].canceled' disabled="true" />
+				</c:if>
 			</td>
-		</logic:equal>
-		<logic:equal name='${form.formName}' property="isEditable" value="false" >
+		</c:if>
+		<c:if test="${form.isEditable}">
 			<td>
-				<bean:write name='existingTests' property="status" />
+				<c:out value="${existingTests.status}"/>
 			</td>
-		</logic:equal>
+		</c:if>
 	</tr>
-	</logic:iterate>
+	</c:forEach>
 </table>
 <hr/>
 <br/>
-<logic:equal name='${form.formName}' property="isEditable" value="true" >
+<c:if test="${form.isEditable}">
 <table id="availableTestTable" style="width:80%">
 <caption><spring:message code="sample.edit.available.tests"/></caption>
 <tr>
@@ -431,43 +434,43 @@ function makeDirty(){
 <th><spring:message code="sample.entry.assignTests"/></th>
 <th><spring:message code="test.testName"/></th>
 </tr>
-	<logic:iterate id="possibleTests" name="${form.formName}"  property="possibleTests" indexId="index" type="SampleEditItem">
+	<c:forEach var="possibleTests" varStatus="iter" items="${form.possibleTests}">
 	<tr>
 		<td>
-		    <html:hidden name="possibleTests" property="testId" indexed="true"/>
-		    <html:hidden name="possibleTests" property="sampleItemId" indexed="true"/>
-			<span class="itemNumber" ><bean:write name="possibleTests" property="accessionNumber"/></span>
+		    <form:hidden path="possibleTests[${iter.index}].testId"/>
+		    <form:hidden path="possibleTests[${iter.index}].sampleItemId"/>
+			<span class="itemNumber" ><c:out value="${possibleTests.accessionNumber}"/></span>
 		</td>
 		<td>
-			<bean:write name="possibleTests" property="sampleType"/>
+			<c:out value="${possibleTests.sampleType}"/>
 		</td>
 		<td>
-			<html:checkbox name="possibleTests" property="add" indexed="true" onchange="addRemoveRequest(this);" />
+			<form:checkbox path="possibleTests[${iter.index}].add" onchange="addRemoveRequest(this);" />
 		</td>
 		<td>&nbsp;
-			<bean:write name="possibleTests" property="testName"/>
+			<c:out value="${possibleTests.testName}"/>
 		</td>
 	</tr>
-	</logic:iterate>
+	</c:forEach>
 </table>
 
 <hr>
 <h1><spring:message code="sample.entry.addSample" /></h1>
 
 <div id="samplesDisplay" class="colorFill" >
-	<tiles:insert attribute="addSample"/>
+	<tiles:insertAttribute name="addSample"/>
 </div>
-</logic:equal>
-</logic:equal>
-<logic:equal name="${form.formName}" property="noSampleFound" value="true">
+</c:if>
+</c:if>
+<c:if test="${form.noSampleFound}">
 	<spring:message code="sample.edit.sample.notFound"/>
-</logic:equal>
+</c:if>
 
 <script type="text/javascript" >
 
     function setSaveButton(){
         var newAccession = $("newAccessionNumber").value;
-        var accessionChanged = newAccession.length > 1 && newAccession != "<%=accessionNumber%>";
+        var accessionChanged = newAccession.length > 1 && newAccession != "${form.accessionNumber}";
         var sampleItemChanged = $jq(".sampleItemChanged[value='true']").length > 0;
         var sampleAddIsValid = typeof(sampleAddValid) != 'undefined' ?  sampleAddValid(false) : true;
         var sampleConfirmationIsValid = typeof(sampleConfirmationValid) != 'undefined' ?  sampleConfirmationValid() : true;

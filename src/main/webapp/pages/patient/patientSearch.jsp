@@ -310,13 +310,18 @@ function handleSelectedPatient(){
     }
 
     $("searchResultsDiv").style.display = "none";
-    var form = document.forms[0];
-    form.action = '${form.formAction}'.sub('Form','') + ".do?accessionNumber=" + accessionNumber + "&patientID=" + patientSelectID;
+   /*  var form = document.forms[0];
+    form.method = "get";
+    form.action = '${form.formAction}'.sub('Form','') + "?accessionNumber=" + accessionNumber + "&patientID=" + patientSelectID;
     if( !(typeof requestType === 'undefined') ){
         form.action += "&type=" + requestType;
     }
-    
-    form.submit();
+    form.submit(); */
+    var searchUrl = '${form.formAction}'.sub('Form','') + "?accessionNumber=" + accessionNumber + "&patientID=" + patientSelectID;
+    if( !(typeof requestType === 'undefined') ){
+    	searchUrl += "&type=" + requestType;
+    }
+    window.location = searchUrl;
 }
 
 function firstClick(){
