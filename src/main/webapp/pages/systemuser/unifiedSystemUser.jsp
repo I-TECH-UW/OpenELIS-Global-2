@@ -19,7 +19,6 @@
 
 String allowEdits = "true";
 String basePath = "";
-String tab = "&nbsp;&nbsp;&nbsp;&nbsp";
 String currentTab = "";
 %>
 
@@ -126,14 +125,14 @@ function /*void*/ requiredFieldUpdated( field){
 </script>
 <form:hidden path="systemUserId"/>
 <form:hidden path="loginUserId"/>
-<form:hidden path="systemUserLastupdated"/>
+<%-- <form:hidden path="systemUserLastupdated"/> --%>
 <table >
 		<tr>
 						<td class="label" >
 							<spring:message code="login.login.name"/> <span class="requiredlabel">*</span>
 						</td>
 						<td >
-							<app:text name="${form.formName}" property="userLoginName" styleClass='required' onchange="requiredFieldUpdated( this); makeDirty(); "/>
+							<form:input path="userLoginName" cssClass='required' onchange="requiredFieldUpdated( this); makeDirty(); "/>
 						</td>
 		</tr>
 		<tr>
@@ -146,10 +145,10 @@ function /*void*/ requiredFieldUpdated( field){
 							<spring:message code="login.password"/> <span class="requiredlabel">*</span>
 						</td>
 						<td>
-							<html:password name="${form.formName}" 
-										   property="userPassword1" 
+							<form:password path="userPassword1" 
 										   id="password1" 
-										   styleClass='required'
+										   cssClass='required'
+										   showPassword="true"
 										   onchange="handlePassword1(this);  makeDirty();"/>
 						</td>
 		</tr>
@@ -158,10 +157,10 @@ function /*void*/ requiredFieldUpdated( field){
 							<spring:message code="login.repeat.password" /> <span class="requiredlabel">*</span>
 						</td>
 						<td>
-							<html:password name="${form.formName}" 
-							               property="userPassword2"  
+							<form:password path="userPassword2"  
 							               id="password2" 
-							               styleClass='required'
+							               cssClass='required'
+							               showPassword="true"
 							               onchange="handlePassword2(this); makeDirty();" />
 						</td>
 		</tr>
@@ -173,9 +172,8 @@ function /*void*/ requiredFieldUpdated( field){
 							<spring:message code="person.firstName" /> <span class="requiredlabel">*</span>
 						</td>
 						<td>
-							<app:text name="${form.formName}" 
-							          property="userFirstName" 
-							          styleClass='required' 
+							<form:input path="userFirstName" 
+							          cssClass='required' 
 							          onchange="requiredFieldUpdated( this); makeDirty();"/>
 						</td>
 		</tr>
@@ -184,9 +182,8 @@ function /*void*/ requiredFieldUpdated( field){
 							<spring:message code="person.lastName" /> <span class="requiredlabel">*</span>
 						</td>
 						<td>
-							<app:text name="${form.formName}" 
-							          property="userLastName" 
-							          styleClass='required' onchange="requiredFieldUpdated( this); makeDirty();"/>
+							<form:input path="userLastName" 
+							          cssClass='required' onchange="requiredFieldUpdated( this); makeDirty();"/>
 						</td>
 		</tr>
 		<tr>
@@ -194,8 +191,7 @@ function /*void*/ requiredFieldUpdated( field){
 							<spring:message code="login.password.expired.date" />
 						</td>
 						<td>
-							<app:text name="${form.formName}" 
-							          property="expirationDate" 
+							<form:input path="expirationDate" 
 							          onchange="makeDirty();" />
 						</td>
 		</tr>
@@ -216,8 +212,8 @@ function /*void*/ requiredFieldUpdated( field){
 							<spring:message code="login.account.locked" />
 						</td>
 						<td>
-							<html:radio name="${form.formName}" property="accountLocked" value="Y" onchange="makeDirty();">Y</html:radio>
-							<html:radio name="${form.formName}" property="accountLocked" value="N" onchange="makeDirty();">N</html:radio>
+							<form:radiobutton path="accountLocked" value="Y" onchange="makeDirty();" label="Y" />
+							<form:radiobutton path="accountLocked" value="N" onchange="makeDirty();" label="N" />
 						</td>
 		</tr>
 		<tr>
@@ -225,8 +221,8 @@ function /*void*/ requiredFieldUpdated( field){
 							<spring:message code="login.account.disabled" />
 						</td>
 						<td>
-							<html:radio name="${form.formName}" property="accountDisabled" value="Y" onchange="makeDirty();">Y</html:radio>
-							<html:radio name="${form.formName}" property="accountDisabled" value="N" onchange="makeDirty();">N</html:radio>
+							<form:radiobutton path="accountDisabled" value="Y" onchange="makeDirty();" label="Y" />
+							<form:radiobutton path="accountDisabled" value="N" onchange="makeDirty();" label="N" />
 						</td>
 		</tr>
 		<tr>
@@ -234,8 +230,8 @@ function /*void*/ requiredFieldUpdated( field){
 							<spring:message code="systemuser.isActive" />
 						</td>
 						<td>
-							<html:radio name="${form.formName}" property="accountActive" value="Y" onchange="makeDirty();">Y</html:radio>
-							<html:radio name="${form.formName}" property="accountActive" value="N" onchange="makeDirty();">N</html:radio>
+							<form:radiobutton path="accountActive" value="Y" onchange="makeDirty();" label="Y" />
+							<form:radiobutton path="accountActive" value="N" onchange="makeDirty();" label="N" />
 						</td>
 		</tr><tr>
 			<td>&nbsp;</td>
@@ -248,22 +244,21 @@ function /*void*/ requiredFieldUpdated( field){
 			<spring:message code="systemuserrole.roles" />
 		</td>
 		</tr>
-	<logic:iterate  name="${form.formName}" property="roles" id="role" type="DisplayRole" >
+	<c:forEach items="${form.roles}" var="role">
 	<tr>
 	<td>
-		<% currentTab = "";
-		   while(role.getNestingLevel() > 0){ currentTab += tab; role.setNestingLevel( role.getNestingLevel() - 1);} %>
-       <%=currentTab%>
-		<html:multibox name="${form.formName}"
-					   property="selectedRoles"
-					   id='<%="role_" + role.getRoleId() %>'
-					   onclick='<%="selectChildren(this, " + role.getChildrenID() + ");makeDirty();" %>' >
-			<bean:write name="role" property="roleId" />
-		</html:multibox>
-		<bean:write name="role" property="roleName" />
+       <c:forEach begin="0" end="${role.nestingLevel}">
+      	&nbsp;&nbsp;&nbsp;&nbsp;
+       </c:forEach>
+       <form:checkbox path="selectedRoles" 
+       				  id="role_${role.roleId}" 
+       				  onclick="selectChildren(this, ${role.childrenID});makeDirty();"
+       				  value="${role.roleId}"
+       				  />
+		<c:out value="${role.roleName}" />
 	</td>
 	</tr>
-	</logic:iterate>
+	</c:forEach>
 	<tr>
 		<td>&nbsp;
 			

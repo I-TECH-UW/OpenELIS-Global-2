@@ -1,7 +1,4 @@
-<%-- <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %> --%>
+
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -21,8 +18,7 @@ if (request.getAttribute("menuDefinition'}") != null) {
 }
 //System.out.println("menuDef " + menuDef);
 %>
-<%-- <bean:define id="menuDef== '<%=menuDef%>" /> --%>
-<c:set var="menuDef" value="<%=menuDef%>" />
+<c:set var="menuDef" value="${menuDefinition}" />
 <center>
 <table cellpadding="0" cellspacing="0" width="100%" height="100%" border="0">
 <tr>

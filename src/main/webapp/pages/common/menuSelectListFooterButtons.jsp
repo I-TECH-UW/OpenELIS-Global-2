@@ -28,17 +28,17 @@
  
         %>
 	   <td >
-  			<html:button onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?paging=1');return false;" property="previous" disabled="<%=Boolean.valueOf(previousDisabled).booleanValue()%>">
+  			<button type="button" onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?paging=1');return false;" name="previous" disabled="<%=Boolean.valueOf(previousDisabled).booleanValue()%>">
   			   <spring:message code="label.button.previous"/>
-  			</html:button>
+  			</button>
 	   </td>
 	   <td>
 	   &nbsp;
 	   </td>
 	   <td>
-  			<html:button onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?paging=2');return false;" property="next"  disabled="<%=Boolean.valueOf(nextDisabled).booleanValue()%>">
+  			<button type="button" onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?paging=2');return false;" name="next"  disabled="<%=Boolean.valueOf(nextDisabled).booleanValue()%>">
   			   <spring:message code="label.button.next"/>
-  			</html:button>
+  			</button>
 	   </td>
 	   <%--td removed 02/27/2006 not needed>
 	   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

@@ -3,16 +3,16 @@
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
- * 
+ *
  * Contributor(s): CIRG, University of Washington, Seattle WA.
  */
 package us.mn.state.health.lims.login.daoimpl;
@@ -42,6 +42,7 @@ import us.mn.state.health.lims.security.PasswordUtil;
  */
 public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 
+	@Override
 	public void deleteData(List logins) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
@@ -79,6 +80,7 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 		}
 	}
 
+	@Override
 	public boolean insertData(Login login) throws LIMSRuntimeException {
 
 		try {
@@ -86,11 +88,11 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 				throw new LIMSDuplicateRecordException("Duplicate record exists for " + login.getLoginName());
 			}
 
-			//Crypto crypto = new Crypto();
+			// Crypto crypto = new Crypto();
 			PasswordUtil passUtil = new PasswordUtil();
 			String id = (String) HibernateUtil.getSession().save(login);
 			login.setId(id);
-			//login.setPassword(crypto.getEncrypt(login.getPassword()));
+			// login.setPassword(crypto.getEncrypt(login.getPassword()));
 			login.setPassword(passUtil.hashPassword(login.getPassword()));
 
 			// add to audit trail
@@ -110,7 +112,8 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 		return true;
 	}
 
-	//Update login data, keep old password unless flag set
+	// Update login data, keep old password unless flag set
+	@Override
 	public void updateData(Login login, boolean passwordUpdated) throws LIMSRuntimeException {
 		try {
 			if (duplicateLoginNameExists(login)) {
@@ -123,10 +126,10 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 		}
 
 		Login oldData = readLoginUser(login.getId());
-		//Crypto crypto = new Crypto();
-		
+		// Crypto crypto = new Crypto();
+
 		Login newData = login;
-		//newData.setPassword(crypto.getEncrypt(login.getPassword()));
+		// newData.setPassword(crypto.getEncrypt(login.getPassword()));
 		if (passwordUpdated) {
 			PasswordUtil passUtil = new PasswordUtil();
 			newData.setPassword(passUtil.hashPassword(login.getPassword()));
@@ -158,14 +161,15 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 		}
 	}
 
+	@Override
 	public void getData(Login login) throws LIMSRuntimeException {
 		try {
 			Login l = (Login) HibernateUtil.getSession().get(Login.class, login.getId());
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			if (l != null) {
-				//Crypto crypto = new Crypto();
-				//l.setPassword(crypto.getDecrypt(l.getPassword()));
+				// Crypto crypto = new Crypto();
+				// l.setPassword(crypto.getDecrypt(l.getPassword()));
 				PropertyUtils.copyProperties(login, l);
 			} else {
 				login.setId(null);
@@ -177,6 +181,7 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 		}
 	}
 
+	@Override
 	public List getAllLoginUsers() throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -194,6 +199,7 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 		return list;
 	}
 
+	@Override
 	public List getPageOfLoginUsers(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -221,8 +227,8 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 		Login l = null;
 		try {
 			l = (Login) HibernateUtil.getSession().get(Login.class, idString);
-			//Crypto crypto = new Crypto();
-			//l.setPassword(crypto.getDecrypt(l.getPassword()));
+			// Crypto crypto = new Crypto();
+			// l.setPassword(crypto.getDecrypt(l.getPassword()));
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
@@ -234,16 +240,19 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 		return l;
 	}
 
+	@Override
 	public List getNextLoginUserRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "Login", Login.class);
 	}
 
+	@Override
 	public List getPreviousLoginUserRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "Login", Login.class);
 	}
 
+	@Override
 	public Integer getTotalLoginUserCount() throws LIMSRuntimeException {
 		return getTotalCount("Login", Login.class);
 	}
@@ -333,14 +342,14 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 
 	/**
 	 * Validate the user name, password
-	 * 
-	 * @param login
-	 *            the login object
+	 *
+	 * @param login the login object
 	 * @return login object value
 	 */
+	@Override
 	public Login getValidateLogin(Login login) throws LIMSRuntimeException {
 
-		//Crypto crypto = new Crypto();
+		// Crypto crypto = new Crypto();
 		PasswordUtil passUtil = new PasswordUtil();
 		Login loginData = null;
 
@@ -349,7 +358,7 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 			String sql = "from Login l where l.loginName = :param1";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("param1", login.getLoginName());
-			//query.setParameter("param2", crypto.getEncrypt(login.getPassword()));
+			// query.setParameter("param2", crypto.getEncrypt(login.getPassword()));
 
 			list = query.list();
 			HibernateUtil.getSession().flush();
@@ -362,18 +371,21 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 				loginData.setPasswordExpiredDayNo(passwordExpiredDayNo);
 				loginData.setSystemUserId(systemUserId);
 				try {
-					//null login if incorrect password is entered
-					if ( !passUtil.checkPassword(login.getPassword(), loginData.getPassword()) ) {
+					// null login if incorrect password is entered
+					if (!passUtil.checkPassword(login.getPassword(), loginData.getPassword())) {
 						loginData = null;
 					}
-				//error when no salt present, must be old password	
+					// error when no salt present, must be old password
 				} catch (IllegalArgumentException e) {
-					//move passwords from encryption to salted hashing
-					//if (loginData.getPassword().equals(crypto.getEncrypt(login.getPassword()))) {
-					//	updateCryptoPasswordToHash(loginData);
-					//} else {
-						loginData = null;
-					//}
+					// move passwords from encryption to salted hashing
+
+					// if (loginData.getPassword().equals(crypto.getEncrypt(login.getPassword()))) {
+					// updateCryptoPasswordToHash(loginData);
+					// } else {
+					loginData = null;
+					// PasswordUtil pUtil = new PasswordUtil();
+					// loginData.setPassword(pUtil.hashPassword(login.getPassword()));
+					// }
 				}
 			}
 
@@ -388,11 +400,11 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 
 	/**
 	 * Get the user login information base on login name
-	 * 
-	 * @param loginName
-	 *            the user login name
+	 *
+	 * @param loginName the user login name
 	 * @return login object
 	 */
+	@Override
 	public Login getUserProfile(String loginName) throws LIMSRuntimeException {
 
 		Login login = null;
@@ -424,11 +436,11 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 
 	/**
 	 * Get the password expiration day
-	 * 
-	 * @param login
-	 *            the login object
+	 *
+	 * @param login the login object
 	 * @return type integer the password expiration day
 	 */
+	@Override
 	public int getPasswordExpiredDayNo(Login login) throws LIMSRuntimeException {
 		int retVal = 0;
 		try {
@@ -454,16 +466,16 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 
 	/**
 	 * Get the system user id
-	 * 
-	 * @param login
-	 *            the login object
+	 *
+	 * @param login the login object
 	 * @return type integer the system user id
 	 */
+	@Override
 	public int getSystemUserId(Login login) throws LIMSRuntimeException {
 		int retVal = 0;
 		try {
-			Object obj = HibernateUtil.getSession().getNamedQuery("login.getSystemUserId").setString("loginName",
-					login.getLoginName()).uniqueResult();
+			Object obj = HibernateUtil.getSession().getNamedQuery("login.getSystemUserId")
+					.setString("loginName", login.getLoginName()).uniqueResult();
 
 			if (obj != null) {
 				retVal = Integer.parseInt(obj.toString());
@@ -480,29 +492,28 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 
 		return retVal;
 	}
-	
-	
 
 	/**
 	 * Update the user passsword
-	 * 
-	 * @param login
-	 *            the login object
+	 *
+	 * @param login the login object
 	 * @return true if success, false otherwise
 	 */
+	@Override
 	public boolean updatePassword(Login login) throws LIMSRuntimeException {
 
-		//Crypto crypto = new Crypto();
+		// Crypto crypto = new Crypto();
 		PasswordUtil passUtil = new PasswordUtil();
 
 		try {
 			String password = login.getPassword();
-			//login.setPassword(crypto.getEncrypt(login.getPassword()));
+			// login.setPassword(crypto.getEncrypt(login.getPassword()));
 			login.setPassword(passUtil.hashPassword(login.getPassword()));
-			
+
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			auditDAO.saveHistory(login, readLoginUser(login.getId()), login.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE, "LOGIN_USER");
-			
+			auditDAO.saveHistory(login, readLoginUser(login.getId()), login.getSysUserId(),
+					IActionConstants.AUDIT_TRAIL_UPDATE, "LOGIN_USER");
+
 			HibernateUtil.getSession().merge(login);
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
@@ -520,11 +531,11 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 
 	/**
 	 * bugzilla 2286 Lock the user account after number of failed attempt
-	 * 
-	 * @param login
-	 *            the login object
+	 *
+	 * @param login the login object
 	 * @return true if success, false otherwise
 	 */
+	@Override
 	public boolean lockAccount(Login login) throws LIMSRuntimeException {
 		boolean isSuccess = false;
 		try {
@@ -544,11 +555,11 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 
 	/**
 	 * bugzilla 2286 unlock the user account after number of minutes
-	 * 
-	 * @param login
-	 *            the login object
+	 *
+	 * @param login the login object
 	 * @return true if success, false otherwise
 	 */
+	@Override
 	public boolean unlockAccount(Login login) throws LIMSRuntimeException {
 		boolean isSuccess = false;
 		try {
