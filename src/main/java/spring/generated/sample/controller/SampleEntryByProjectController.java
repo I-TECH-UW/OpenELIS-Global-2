@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Date;
 
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
@@ -67,7 +66,6 @@ public class SampleEntryByProjectController extends BaseController {
     Map<String, List<Dictionary>> observationHistoryMapOfLists = new HashMap<String, List<Dictionary>>();
     observationHistoryMapOfLists.put("EID_WHICH_PCR", ObservationHistoryList.EID_WHICH_PCR.getList());
     observationHistoryMapOfLists.put("EID_SECOND_PCR_REASON", ObservationHistoryList.EID_SECOND_PCR_REASON.getList());
-    observationHistoryMapOfLists.put("YES_NO", ObservationHistoryList.YES_NO.getList());
     observationHistoryMapOfLists.put("EID_TYPE_OF_CLINIC", ObservationHistoryList.EID_TYPE_OF_CLINIC.getList());
     observationHistoryMapOfLists.put("EID_HOW_CHILD_FED", ObservationHistoryList.EID_HOW_CHILD_FED.getList());
     observationHistoryMapOfLists.put("EID_STOPPED_BREASTFEEDING", ObservationHistoryList.EID_STOPPED_BREASTFEEDING.getList());
@@ -76,17 +74,20 @@ public class SampleEntryByProjectController extends BaseController {
     observationHistoryMapOfLists.put("YES_NO_UNKNOWN", ObservationHistoryList.YES_NO_UNKNOWN.getList());
     observationHistoryMapOfLists.put("EID_MOTHERS_HIV_STATUS", ObservationHistoryList.EID_MOTHERS_HIV_STATUS.getList());
     observationHistoryMapOfLists.put("EID_MOTHERS_ARV_TREATMENT", ObservationHistoryList.EID_MOTHERS_ARV_TREATMENT.getList());
+    observationHistoryMapOfLists.put("HIV_STATUSES", ObservationHistoryList.HIV_STATUSES.getList());
+    observationHistoryMapOfLists.put("SPECIAL_REQUEST_REASONS", ObservationHistoryList.SPECIAL_REQUEST_REASONS.getList());
+    observationHistoryMapOfLists.put("ARV_REGIME", ObservationHistoryList.ARV_REGIME.getList());
+    
 	form.setDictionaryLists(observationHistoryMapOfLists);
 	
 	//Get EID Sites
 	Map<String, List<Organization>> organizationTypeMapOfLists = new HashMap<String, List<Organization>>();
+	organizationTypeMapOfLists.put("ARV_ORGS", OrganizationTypeList.ARV_ORGS.getList());
+	organizationTypeMapOfLists.put("ARV_ORGS_BY_NAME", OrganizationTypeList.ARV_ORGS_BY_NAME.getList());
 	organizationTypeMapOfLists.put("EID_ORGS_BY_NAME", OrganizationTypeList.EID_ORGS_BY_NAME.getList());
 	organizationTypeMapOfLists.put("EID_ORGS", OrganizationTypeList.EID_ORGS.getList());
 	form.setOrganizationTypeLists(organizationTypeMapOfLists);
 	    
-	//form.set "ProjectData.EIDSites", OrganizationTypeList.EID_ORGS.getList());
-	//PropertyUtils.setProperty(dynaForm, "ProjectData.EIDSitesByName", OrganizationTypeList.EID_ORGS_BY_NAME.getList());
-	        
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();

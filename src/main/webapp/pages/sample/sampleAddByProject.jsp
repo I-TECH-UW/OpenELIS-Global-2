@@ -50,6 +50,40 @@
 
 <script type="text/javascript">
 
+function clearFormElement(field) 
+{
+    if (field == null) return;
+	var type = field.type.toLowerCase();
+	switch(type) {
+	case "text":
+	case "password":
+	case "textarea":
+	case "hidden":
+		field.value = "";
+		break;
+	case "radio":
+	case "checkbox":
+		if (field.checked) {
+			field.checked = false;
+		}
+		break;
+	case "select-one":
+	case "select-multi":
+		field.selectedIndex = -1;
+		break;
+	default:
+		break;
+	}
+}
+
+function clearFormElements(fieldIds)
+{
+	var fields = fieldIds.split(',');
+	for (var i=0; i< fields.length; i++) {
+		clearFormElement($(fields[i].trim()));
+	}
+}
+
 var dirty = false;
 var type = '<%=Encode.forJavaScript(requestType)%>';
 var requestType = '<%=Encode.forJavaScript(requestType)%>';
@@ -92,7 +126,9 @@ function Studies() {
     this.validators["Special_Request_Id"] = new FieldValidator();
     this.validators["Special_Request_Id"].setRequiredFields( new Array("spe.labNo", "spe.receivedDateForDisplay", "spe.interviewDate", "subjectOrSiteSubject", "spe.gender") );
 
-
+    this.validators["VL_Id"] = new FieldValidator();
+    this.validators["VL_Id"].setRequiredFields( new Array("vl.receivedDateForDisplay", "vl.interviewDate", "vl.gender", "vl.dateOfBirth") );
+    
     this.getValidator = function /*FieldValidator*/ (divId) {
         return this.validators[divId];
     }
@@ -106,6 +142,7 @@ function Studies() {
         this.projectChecker["EID_Id"] = eid;
         this.projectChecker["Indeterminate_Id"] = ind;
         this.projectChecker["Special_Request_Id"] = spe;
+        this.projectChecker["VL_Id"] = vl;
     }
 
     this.getProjectChecker = function (divId) {
@@ -198,8 +235,9 @@ function switchStudyForm( divId ){
             break;
         case "VL_Id":
             //location.replace("SampleEntryByProject.do?type=initial");
-            savePage__("SampleEntryByProject.do?type=" + type);
-            return;
+            //savePage__("SampleEntryByProject.do?type=" + type);
+            //return;
+        	break;
         }
         toggleDisabledDiv(document.getElementById(divId), true);
         document.forms[0].project.value = divId;
@@ -228,6 +266,7 @@ function hideAllDivs(){
     toggleDisabledDiv(document.getElementById("EID_Id"), false);
     toggleDisabledDiv(document.getElementById("Indeterminate_Id"), false);
     toggleDisabledDiv(document.getElementById("Special_Request_Id"), false);
+    toggleDisabledDiv(document.getElementById("VL_Id"), false);
 
     document.getElementById('InitialARV_Id').style.display = "none";
     document.getElementById('FollowUpARV_Id').style.display = "none";
@@ -235,6 +274,7 @@ function hideAllDivs(){
     document.getElementById('EID_Id').style.display = "none";
     document.getElementById('Indeterminate_Id').style.display = "none";
     document.getElementById('Special_Request_Id').style.display = "none";
+    document.getElementById('VL_Id').style.display = "none";
 }
 
 function /*boolean*/ allSamplesHaveTests(){
@@ -258,6 +298,8 @@ function /*void*/ setSaveButton() {
     $("saveButtonId").disabled = !validToSave;
     
 }
+
+
 
 </script>
 
@@ -299,18 +341,9 @@ function /*void*/ setSaveButton() {
             	<form:select path="ProjectData.ARVcenterName"
             				 id="iarv.centerName"
                              onchange="iarv.checkCenterName(true)">
-                             <form:options items="${organizationTypeLists.ARV_ORGS_BY_NAME.list}" itemValue="id" itemLabel="organizationName"/>
+                             <form:option value="">&nbsp;</form:option>
+            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS_BY_NAME']}" itemLabel="organizationName" /> 
                 </form:select>
-                             
-                <%-- <form:select
-                             path="ProjectData.ARVcenterName"
-                             id="iarv.centerName"
-                             onchange="iarv.checkCenterName(true)">
-                    <form:options
-                        path="organizationTypeLists.ARV_ORGS_BY_NAME.list"
-                        itemLabel="organizationName"
-                        itemalue="id" />
-                </form:select> --%>
             </td>
         </tr>
         <tr>
@@ -322,16 +355,9 @@ function /*void*/ setSaveButton() {
             	<form:select path="ProjectData.ARVcenterCode"
             				 id="iarv.centerCode"
                              onchange="iarv.checkCenterCode(true)">
-                             <form:options items="${organizationTypeLists.ARV_ORGS.list}" itemValue="id" itemLabel="doubleName"/>
+                             <form:option value="">&nbsp;</form:option>
+            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS']}" itemLabel="doubleName" />
                 </form:select>
-               <%--  <form:select
-                             path="ProjectData.ARVcenterCode"
-                             id="iarv.centerCode"
-                             onchange="iarv.checkCenterCode(true)">
-                    <form:options
-                        path="organizationTypeLists.ARV_ORGS.list" itemLabel="doubleName"
-                        itemalue="id" />
-                </form:select> --%>
             </td>
         </tr>
         <tr>
@@ -345,10 +371,6 @@ function /*void*/ setSaveButton() {
             			id="iarv.nameOfDoctor"
             			size="50"
             			onchange="compareAllObservationHistoryFields(true)"/>
-            <%-- <form:input path="observations.nameOfDoctor"
-                        cssClass="text"
-                        id="iarv.nameOfDoctor" size="50"
-                        onchange="compareAllObservationHistoryFields(true)"/> --%>
             </td>
             <div id="iarv.nameOfDoctorMessage" class="blank"></div>
         </tr>
@@ -363,12 +385,6 @@ function /*void*/ setSaveButton() {
 	                    onkeyup="addDateSlashes(this, event);"
 	                    onchange="iarv.checkReceivedDate(false);"
 	                    id="iarv.receivedDateForDisplay" maxlength="10"/>
-            <%-- <form:input
-                    path="receivedDateForDisplay"
-                    onkeyup="addDateSlashes(this, event);"
-                    onchange="iarv.checkReceivedDate(false);"
-                    cssClass="text"
-                    id="iarv.receivedDateForDisplay" maxlength="10"/> --%>
                     <div id="iarv.receivedDateForDisplayMessage" class="blank" />
             </td>
         </tr>
@@ -383,12 +399,6 @@ function /*void*/ setSaveButton() {
                 onblur="iarv.checkReceivedTime(true);"
                 cssClass="text"
                 id="iarv.receivedTimeForDisplay" maxlength="5"/>
-            <%-- <form:input
-                path="receivedTimeForDisplay"   
-                onkeyup="filterTimeKeys(this, event);"                 
-                onblur="iarv.checkReceivedTime(true);"
-                cssClass="text"
-                id="iarv.receivedTimeForDisplay" maxlength="5"/> --%>
                 <div id="iarv.receivedTimeForDisplayMessage" class="blank" />
             </td>
         </tr>
@@ -403,12 +413,6 @@ function /*void*/ setSaveButton() {
                     onchange="iarv.checkInterviewDate(false)"
                     cssClass="text"
                     id="iarv.interviewDate" maxlength="10"/>
-            <%-- <form:input
-                    path="interviewDate"
-                    onkeyup="addDateSlashes(this, event);"
-                    onchange="iarv.checkInterviewDate(false)"
-                    cssClass="text"
-                    id="iarv.interviewDate" maxlength="10"/> --%>
                     <div id="iarv.interviewDateMessage" class="blank" /> 
             </td>
         </tr>
@@ -423,12 +427,6 @@ function /*void*/ setSaveButton() {
                     onblur="iarv.checkInterviewTime(true);"
                     cssClass="text"
                     id="iarv.interviewTime" maxlength="5"/>
-            <%-- <form:input
-                    path="interviewTime"
-                    onkeyup="filterTimeKeys(this, event);"              
-                    onblur="iarv.checkInterviewTime(true);"
-                    cssClass="text"
-                    id="iarv.interviewTime" maxlength="5"/> --%>
                     <div id="iarv.interviewTimeMessage" class="blank" />
             </td>
         </tr>       
@@ -441,13 +439,7 @@ function /*void*/ setSaveButton() {
                         cssClass="text"
                         maxlength="7"
                         onchange="iarv.checkSubjectNumber(true)"/>
-                <%-- <form:input
-                        path="subjectNumber"
-                        id="iarv.subjectNumber"
-                        cssClass="text"
-                        maxlength="7"
-                        onchange="iarv.checkSubjectNumber(true)"/>
-                <div id="iarv.subjectNumberMessage" class="blank" /> --%>
+                <div id="iarv.subjectNumberMessage" class="blank" />
             </td>
         </tr>
         <tr>
@@ -458,11 +450,6 @@ function /*void*/ setSaveButton() {
                         id="iarv.siteSubjectNumber"
                         cssClass="text"
                         onchange="iarv.checkSiteSubjectNumber(true);"/>
-                <%-- <form:input
-                        path="siteSubjectNumber"
-                        id="iarv.siteSubjectNumber"
-                        cssClass="text"
-                        onchange="iarv.checkSiteSubjectNumber(true);"/> --%>
             </td>
         </tr>
         <tr>
@@ -479,10 +466,6 @@ function /*void*/ setSaveButton() {
                         cssClass="text"
                         style="display:none;"
                         id="iarv.labNo" />
-                <%-- <form:input path="labNo"
-                        cssClass="text"
-                        style="display:none;"
-                        id="iarv.labNo" /> --%>
                 <div id="iarv.labNoMessage" class="blank"  ></div>
             </td>
         </tr>
@@ -495,15 +478,9 @@ function /*void*/ setSaveButton() {
             <form:select path="gender"
                          id="iarv.gender"
                          onchange="iarv.checkGender(true)">
-            <form:options items="${genders}" itemLabel="localizedName" itemValue="genderType"/>
+                        <form:option value="">&nbsp;</form:option>
+            			<form:options items="${form.formLists['GENDERS']}" itemLabel="localizedName" />
             </form:select>
-               <%--  <form:select
-                         path="gender"
-                         id="iarv.gender"
-                         onchange="iarv.checkGender(true)">
-                <form:options path="genders"
-                    itemLabel="localizedName" value="genderType" />
-                </form:select> --%>
                 <div id="iarv.genderMessage" class="blank" />
             </td>
         </tr>
@@ -664,22 +641,24 @@ function /*void*/ setSaveButton() {
                            onchange="iarv.checkSampleItem($('iarv.edtaTubeTaken'), this)" />
                 </td>
             </tr>
-            <tr><td colspan="6"><hr/></td></tr>
-            <tr id="iarv.underInvestigationRow">
-                <td class="required"></td>
-                <td>
-                    <spring:message code="patient.project.underInvestigation" />
-                </td>
-                <td>
-                    <form:select
-                    path="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
-                    id="iarv.underInvestigation">
-                    <form:options
-                        path="dictionaryLists.YES_NO.list" itemLabel="localizedName"
-                        itemalue="id" />
-                    </form:select>
-                </td>
-            </tr>
+            
+            
+             <tr>
+        		<td></td>
+        		<td>
+            		<spring:message code="patient.project.underInvestigation"/>
+        		</td>
+        		<td>
+            		<form:select 
+                 		path="observations.underInvestigation"
+                 		id="iarv.underInvestigation"
+                 		onchange="makeDirty();compareAllObservationHistoryFields(true)" >
+                 		<form:option value="">&nbsp;</form:option>
+            	 		<form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" /> 
+	    			</form:select>
+        		</td>
+    		</tr>
+            
             <tr id="iarv.underInvestigationCommentRow">
                 <td class="required"></td>
                 <td>
@@ -693,6 +672,7 @@ function /*void*/ setSaveButton() {
     </table>
 
 </div>
+
 <div id="FollowUpARV_Id" style="display:none;">
     <h2><spring:message code="sample.entry.project.followupARV.title"/></h2>
     <table width="100%">
@@ -706,10 +686,8 @@ function /*void*/ setSaveButton() {
                              path="ProjectData.ARVcenterName"
                              id="farv.centerName"
                              onchange="farv.checkCenterName(true)">
-                    <form:options
-                        path="organizationTypeLists.ARV_ORGS_BY_NAME.list"
-                        itemLabel="organizationName"
-                        itemalue="id" />
+                    		 <form:option value="">&nbsp;</form:option>
+            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS_BY_NAME']}" itemLabel="organizationName" /> 
                 </form:select>
             </td>
         </tr>
@@ -723,9 +701,8 @@ function /*void*/ setSaveButton() {
                              path="ProjectData.ARVcenterCode"
                              id="farv.centerCode"
                              onchange="farv.checkCenterCode(true)">
-                    <form:options
-                        path="organizationTypeLists.ARV_ORGS.list" itemLabel="doubleName"
-                        itemalue="id" />
+                    		 <form:option value="">&nbsp;</form:option>
+            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS']}" itemLabel="doubleName" />
                 </form:select>
             </td>
         </tr>
@@ -855,8 +832,8 @@ function /*void*/ setSaveButton() {
                          path="gender"
                          id="farv.gender"
                          onchange="farv.checkGender(false)" >
-                    <form:options path="genders"
-                        itemLabel="localizedName" value="genderType" />
+                    	<form:option value="">&nbsp;</form:option>
+            			<form:options items="${form.formLists['GENDERS']}" itemLabel="localizedName" />
                 </form:select>
                 <div id="farv.genderIDMessage" class="blank" />
             </td>
@@ -902,8 +879,8 @@ function /*void*/ setSaveButton() {
                          path="observations.hivStatus"
                          onchange="farv.checkHivStatus(true);"
                          id="farv.hivStatus"  >
-                    <form:options path="ProjectData.hivStatusList"
-                        itemLabel="localizedName" itemalue="id" />
+                    	<form:option value="">&nbsp;</form:option>
+            	 		<form:options items= "${form.dictionaryLists['HIV_STATUSES']}" itemLabel="localizedName" /> 
                 </form:select>
                 <div id="farv.hivStatusMessage" class="blank"></div>
             </td>
@@ -1055,9 +1032,8 @@ function /*void*/ setSaveButton() {
                     <form:select
                     path="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
                     id="farv.underInvestigation">
-                    <form:options
-                        path="dictionaryLists.YES_NO.list" itemLabel="localizedName"
-                        itemalue="id" />
+                    <form:option value="">&nbsp;</form:option>
+            	 	<form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />
                     </form:select>
                 </td>
             </tr>
@@ -1180,8 +1156,8 @@ function /*void*/ setSaveButton() {
                          path="gender"
                          id="rtn.gender"
                          onchange="rtn.checkGender(true)" >
-                <form:options path="genders"
-                    itemLabel="localizedName" value="genderType" />
+                		<form:option value="">&nbsp;</form:option>
+            			<form:options items="${form.formLists['GENDERS']}" itemLabel="localizedName" />
                 </form:select>
                 <div id="rtn.genderMessage" class="blank" ></div>
             </td>
@@ -1243,11 +1219,10 @@ function /*void*/ setSaveButton() {
             </td>
             <td>
                 <form:select
-                path="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
-                id="rtn.underInvestigation">
-                <form:options
-                    path="dictionaryLists.YES_NO.list" itemLabel="localizedName"
-                    itemalue="id" />
+                	path="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
+                	id="rtn.underInvestigation">
+                	<form:option value="">&nbsp;</form:option>
+            	 	<form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" /> 
                 </form:select>
             </td>
         </tr>       
@@ -1483,7 +1458,7 @@ function /*void*/ setSaveButton() {
             </td>
     </tr>
         
-	 <tr>
+	<tr>
         <td></td>
         <td>
              <spring:message code="patient.age" />
@@ -1504,7 +1479,7 @@ function /*void*/ setSaveButton() {
      <tr>
         <td></td>
         <td>
-            <spring:message code="patient.project.gender"/>
+            <spring:message code="patient.gender"/>
         </td>
         <td>
             <form:select 
@@ -1731,20 +1706,60 @@ function /*void*/ setSaveButton() {
         </td>
     </tr>
     
+    <tr>
+		<td ></td>
+		<td colspan="3" class="sectionTitle">
+			<spring:message code="sample.entry.project.title.specimen" />
+		</td>
+	</tr>
     
+    <tr>
+       <td width="2%"></td>
+	   <td width="38%"><spring:message code="sample.entry.project.ARV.dryTubeTaken" /></td>
+	   <td width="60%">
+
+                <form:checkbox
+                       path="ProjectData.dryTubeTaken"
+                       id="eid.dryTubeTaken"
+                       onchange="eid.checkSampleItem($('eid.dryTubeTaken'));"/>
+            </td>
+    </tr>
     
+    <tr>
+       <td></td>
+	   <td><spring:message code="sample.entry.project.title.dryBloodSpot" /></td>
+	   <td>
+
+                <form:checkbox
+                       path="ProjectData.dbsTaken"
+                       id="eid.dbsTaken"
+                       onchange="eid.checkSampleItem($('eid.dbsTaken'));"/>
+            </td>
+    </tr>
     
-    
-          
-    
-    
+    <tr>
+		<td></td>
+		<td colspan="3" class="sectionTitle">
+			<spring:message code="sample.entry.project.title.tests" />
+		</td>
+	</tr>
+	
+    <tr>
+       <td></td>
+	   <td><spring:message code="sample.entry.project.dnaPCR" /></td>
+	   <td>
+
+                <form:checkbox
+                       path="ProjectData.dnaPCR"
+                       id="eid.dnaPCR"
+                       onchange="eid.checkSampleItem($('eid.dbsTaken'), $('eid.dnaPCR'));" />
+            </td>
+    </tr>
    
 </table>
 </div>
 
-<div id="VL_Id" style="display:none;">
-    <h2><spring:message code="sample.entry.project.VL.title"/></h2>
-</div>
+
 
 <div id="Indeterminate_Id" style="display:none;">
     <h2><spring:message code="sample.entry.project.indeterminate.title"/></h2>
@@ -1815,7 +1830,8 @@ function /*void*/ setSaveButton() {
             <td style="width: 40%;">
                 <form:select  path="ProjectData.INDsiteName" cssClass="text" id="ind.centerCode"
                         onchange="ind.checkCenterCode(true)" >
-                    <form:options path="ProjectData.EIDSites" itemLabel="doubleName" itemalue="id" />
+                    <form:option value="">&nbsp;</form:option>
+            	    <form:options items= "${form.organizationTypeLists['EID_ORGS']}" itemLabel="doubleName" />
                 </form:select>
                 <div id="ind.centerCodeMessage" class="blank"/>
             </td>
@@ -1918,8 +1934,8 @@ function /*void*/ setSaveButton() {
                          path="gender"
                          id="ind.gender"
                          onchange="ind.checkGender(false);" >
-                <form:options path="genders"
-                    itemLabel="localizedName" value="genderType" />
+                		<form:option value="">&nbsp;</form:option>
+            	 		<form:options items= "${form.formLists['GENDERS']}" itemLabel="localizedName" />
                 </form:select>
                 <div id="ind.genderMessage" class="blank" ></div>
             </td>
@@ -2085,9 +2101,8 @@ function /*void*/ setSaveButton() {
                 <form:select
                 path="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
                 id="ind.underInvestigation">
-                <form:options
-                    path="dictionaryLists.YES_NO.list" itemLabel="localizedName"
-                    itemalue="id" />
+                <form:option value="">&nbsp;</form:option>
+            	<form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />
                 </form:select>
             </td>
         </tr>       
@@ -2229,8 +2244,8 @@ function /*void*/ setSaveButton() {
                          path="gender"
                          id="spe.gender"
                          onchange="spe.checkGender(false);" >
-                    <form:options path="genders"
-                        itemLabel="localizedName" value="genderType" />
+                    	<form:option value="">&nbsp;</form:option>
+            	 		<form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />
                 </form:select>
                 <div id="spe.genderMessage" class="blank" ></div>
             </td>
@@ -2259,10 +2274,8 @@ function /*void*/ setSaveButton() {
                              path="observations.reasonForRequest"
                              id="spe.reasonForRequest"
                              onchange="compareAllObservationHistoryFields(true)">
-                    <form:options
-                        path="ProjectData.requestReasons"
-                        itemLabel="localizedName"
-                        itemalue="id" />
+                    		<form:option value="">&nbsp;</form:option>
+            	 			<form:options items= "${form.dictionaryLists['SPECIAL_REQUEST_REASONS']}" itemLabel="localizedName" /> 
                 </form:select>
             </td>
         </tr>
@@ -2608,11 +2621,10 @@ function /*void*/ setSaveButton() {
                 </td>
                 <td>
                     <form:select
-                    path="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
-                    id="spe.underInvestigation">
-                    <form:options
-                        path="dictionaryLists.YES_NO.list" itemLabel="localizedName"
-                        itemalue="id" />
+                    	path="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
+                    	id="spe.underInvestigation">
+                    	<form:option value="">&nbsp;</form:option>
+            	 		<form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />
                     </form:select>
                 </td>
             </tr>
@@ -2628,6 +2640,335 @@ function /*void*/ setSaveButton() {
             </tr>
     </table>
 </div>
+
+<div id="VL_Id" style="display:none;">
+  <h2><spring:message code="sample.entry.project.VL.title"/></h2>
+    <table width="100%">
+    
+     <tr >
+            <td class="required" width="2%">*</td>
+            <td width="28%">
+                <spring:message code="sample.entry.project.ARV.centerName" />
+            </td>
+            <td width="70%">
+            	<form:select path="ProjectData.ARVcenterName"
+            				 id="vl.centerName"
+                             onchange="vl.checkCenterName(true)">
+                             <form:option value="">&nbsp;</form:option>
+            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS_BY_NAME']}" itemLabel="organizationName" /> 
+                </form:select>
+            </td>
+        </tr>
+        <tr>
+            <td class="required">*</td>
+            <td>
+                <spring:message code="patient.project.centerCode" />
+            </td>
+            <td>
+            	<form:select path="ProjectData.ARVcenterCode"
+            				 id="vl.centerCode"
+                             onchange="vl.checkCenterCode(true)">
+                             <form:option value="">&nbsp;</form:option>
+            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS']}" itemLabel="doubleName" />
+                </form:select>
+            </td>
+        </tr>
+        
+        <tr>
+            <td></td>
+            <td>
+                <spring:message code="patient.project.nameOfClinician"/>
+            </td>
+            <td>
+            <form:input path="observations.nameOfDoctor"
+                        cssClass="text"
+                        id="vl.nameOfDoctor" size="50"
+                        onchange="makeDirty();compareAllObservationHistoryFields(true)" />
+                        <div id="vl.nameOfDoctorMessage" class="blank"></div>
+            </td>
+        </tr>
+        
+         <tr>
+            <td></td>
+            <td>
+                <spring:message code="patient.project.nameOfSampler"/>
+            </td>
+            <td>
+            <form:input path="observations.nameOfSampler"
+                        cssClass="text"
+                        id="vl.nameOfSampler" size="50"
+                        onchange="makeDirty();compareAllObservationHistoryFields(true)" />
+                        <div id="vl.nameOfSampler" class="blank"></div>
+            </td>
+        </tr>
+        
+        <tr>
+         <td class="required">*</td>
+            <td>
+                <spring:message code="sample.entry.project.receivedDate"/>&nbsp;<%=DateUtil.getDateUserPrompt()%>
+            </td>
+            <td>
+            <form:input path="receivedDateForDisplay"
+            			cssClass="text"
+	                    onkeyup="addDateSlashes(this, event);"
+	                    onchange="vl.checkReceivedDate(false);"
+	                    id="vl.receivedDateForDisplay" maxlength="10"/>
+                        <div id="vl.receivedDateForDisplayMessage" class="blank" /> 
+            </td>
+    </tr>
+     <tr>
+       <td></td>
+            <td>
+                 <spring:message code="sample.entry.project.receivedTime" />&nbsp;<spring:message code="sample.military.time.format"/>
+            </td>
+            <td>
+            <form:input path="receivedTimeForDisplay"
+                onkeyup="filterTimeKeys(this, event);"                 
+                onblur="vl.checkReceivedTime(true);"
+                cssClass="text"
+                id="vl.receivedTimeForDisplay" maxlength="5"/>
+            </td>
+    </tr>
+    <tr>
+        <td class="required">*</td>
+            <td>
+                <spring:message code="sample.entry.project.dateTaken"/>&nbsp;<%=DateUtil.getDateUserPrompt()%>
+            </td>
+            <td>
+            <form:input path="interviewDate"
+                    onkeyup="addDateSlashes(this, event);"
+                    onchange="vl.checkInterviewDate(false)"
+                    cssClass="text"
+                    id="vl.interviewDate" maxlength="10" />
+                    <div id="vl.interviewDateMessage" class="blank" />
+            </td>
+    </tr>
+    <tr>
+        <td></td>
+            <td>
+                <spring:message code="sample.entry.project.timeTaken"/>&nbsp;<spring:message code="sample.military.time.format"/>
+            </td>
+            <td>
+            <form:input path="interviewTime"
+                    onkeyup="filterTimeKeys(this, event);"              
+                    onblur="vl.checkInterviewTime(true);"
+                    cssClass="text"
+                    id="vl.interviewTime" maxlength="5"/>
+            </td>
+    </tr>   
+    
+    <tr>
+            <td class="required">+</td>
+            <td><spring:message code="sample.entry.project.subjectNumber"/></td>
+            <td>
+                <form:input
+                        path="subjectNumber"
+                        cssClass="text"
+                        id="vl.subjectNumber"
+                        maxlength="7"
+                        onchange="vl.checkSubjectNumber(true)" />
+                <div id="vl.subjectIDMessage" class="blank" ></div>
+            </td>
+    </tr>
+    
+    <tr>
+            <td class="required">+</td>
+            <td><spring:message code="patient.site.subject.number"/></td>
+            <td>
+                <form:input
+                        path="siteSubjectNumber"
+                        id="vl.siteSubjectNumber"
+                        cssClass="text"
+                        onchange="vl.checkSiteSubjectNumber(true)" />
+            </td>
+        </tr>
+        <tr>
+            <td class="required">*</td>
+            <td>
+                <%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
+            </td>
+            <td>
+                <div class="blank"><spring:message code="sample.entry.project.LVL"/></div>
+                <INPUT type="text" name="vl.labNoForDisplay" id="ind.labNoForDisplay" size="5" class="text"
+                    onchange="handleLabNoChange( this, '<spring:message code="sample.entry.project.LVL"/>', false );makeDirty();"
+                    maxlength="5" />
+                <form:input path="labNo" style="display:none;"
+                        cssClass="text"
+                        id="vl.labNo" />
+                <div id="vl.labNoMessage"  class="blank" ></div>
+            </td>
+    </tr>
+    
+    <tr>
+            <td class="required">*</td>
+            <td>
+                <spring:message code="patient.birthDate"/>&nbsp;<%=DateUtil.getDateUserPrompt()%>
+            </td>
+            <td>
+		<form:input path="birthDateForDisplay"
+					cssClass="text"
+                    onkeyup="addDateSlashes(this, event);"
+                    onchange="vl.checkDateOfBirth(false);" 
+	     			id="vl.dateOfBirth" maxlength="10" />
+	     			<div id="vl.dateOfBirthMessage" class="blank" />
+	     			
+            </td>
+    </tr>
+        
+	<tr>
+        <td></td>
+        <td>
+             <spring:message code="patient.age" />
+        </td>
+        <td>
+            <div class="blank"><spring:message code="label.month"/></div>
+            <INPUT type="text" name="age" id="vl.month" size="3" class="text"
+                onchange="vl.checkAge( this, true, 'month' ); clearField('vl.ageWeek');"
+                maxlength="2" />
+            <div class="blank"><spring:message code="label.week"/></div>
+            <INPUT type="text" name="ageWeek" id="vl.ageWeek" size="3" class="text"
+                onchange="vl.checkAge( this, true, 'week' ); clearField('vl.month');"
+                maxlength="2" />
+            <div id="vl.ageMessage" class="blank" > </div>
+        </td>
+    </tr>
+    
+        <tr>
+        <td class="required">*</td>
+        <td>
+            <spring:message code="patient.project.gender"/>
+        </td>
+        <td>
+            <form:select 
+                 path="gender"
+                 id="vl.gender"
+                 onchange="vl.checkGender(true)" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.formLists['GENDERS']}" itemLabel="localizedName" /> 
+	    	</form:select>
+	    	<div id="vl.genderMessage" class="blank" > </div>
+        </td>
+    </tr>
+    
+    <tr>
+        <td></td>
+        <td>
+            <spring:message code="sample.project.vlPregnancy"/>
+        </td>
+        <td>
+            <form:select 
+                 path="observations.vlPregnancy"
+                 id="vl.vlPregnancy"
+                 onchange="makeDirty();compareAllObservationHistoryFields(true)" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />
+	    	</form:select>
+        </td>
+    </tr>
+    
+    <tr>
+        <td></td>
+        <td>
+            <spring:message code="sample.project.vlSuckle"/>
+        </td>
+        <td>
+            <form:select 
+                 path="observations.vlSuckle"
+                 id="vl.vlSuckle"
+                 onchange="makeDirty();compareAllObservationHistoryFields(true)" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />  
+	    	</form:select>
+        </td>
+    </tr>
+    
+    <tr>
+        <td></td>
+        <td>
+            <spring:message code="patient.project.hivType"/>
+        </td>
+        <td>
+            <form:select 
+                 path="observations.hivStatus"
+                 id="vl.hivStatus"
+                 onchange="vl.checkHivStatus(true);" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['HIV_STATUSES']}" itemLabel="localizedName" />  
+	    	</form:select>
+	    	<div id="vl.hivStatusMessage" class="blank" > </div>
+        </td>
+    </tr>
+    	<tr><td colspan="5"><hr/></td></tr><!-- _________________________________________________ -->
+    	
+    <tr>
+        <td></td>
+        	<td class="observationsQuestion">
+			<spring:message code="sample.entry.project.arv.treatment"/>
+		    </td>
+        <td>
+            <form:select 
+                 path="observations.currentARVTreatment"
+                 id="vl.currentARVTreatment"
+                 onchange="vl.checkInterruptedARVTreatment();compareAllObservationHistoryFields(true);" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />  
+	    	</form:select>
+        </td>
+    </tr>
+    
+     <tr id="vl.arvTreatmentInitDateRow" style="display:none" >
+        <td></td>
+        	<td class="observationsSubquestion">
+			<spring:message code="sample.entry.project.arv.treatment.initDate"/>
+		    </td>
+        <td>
+            <form:input path="observations.arvTreatmentInitDate"
+					cssClass="text"
+                    onkeyup="addDateSlashes(this, event);"
+                    onchange="vl.checkDate(false);" 
+	     			id="vl.arvTreatmentInitDate" maxlength="10" />
+	     			<div id="arvTreatmentInitDateMessage" class="blank" />
+        </td>
+    </tr>
+    
+    <tr id="vl.arvTreatmentTherapRow" style="display:none" >
+        <td></td>
+        	<td class="observationsSubquestion">
+			<spring:message code="sample.entry.project.arv.treatment.therap.line"/>
+		    </td>
+        <td>
+            <form:select 
+                 path="observations.arvTreatmentRegime"
+                 id="vl.arvTreatmentRegime"
+                 onchange="makeDirty();compareAllObservationHistoryFields(true);"  >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['ARV_REGIME']}" itemLabel="localizedName" />  
+	    	</form:select>
+        </td>
+    </tr>
+    
+     
+    
+    
+    
+    
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    </table>   
+</div>
+
+
 
 </div>
 
@@ -2762,9 +3103,73 @@ function SpeProjectChecker() {
 SpeProjectChecker.prototype = new BaseProjectChecker();
 spe = new SpeProjectChecker();
 
+function VLProjectChecker() {
+
+    this.idPre = "vl.";
+    var specialKeys = new Array();
+    specialKeys.push(8); //Backspace
+	
+    this.checkDate = function (field,blanksAllowed) {
+    	makeDirty();
+		if (field == null) return; // just so we don't have to have this field on all forms, but is listed in checkAllSampleFields
+		checkValidDate(field);
+		checkRequiredField(field, blanksAllowed);
+		compareSampleField( field.id, false, blanksAllowed);
+	};
+   
+	this.checkVLRequestReason = function () {
+		clearFormElements("vl.vlOtherReasonForRequest");
+		this.displayedByReasonOther();
+	};
+	this.displayedByReasonOther = function () {
+	    var field = $("vl.vlReasonForRequest");
+		showElements( (field.selectedIndex == 5), "vl.reasonOtherRow" );
+	};
+
+	this.checkInterruptedARVTreatment = function () {
+		clearFormElements("vl.arvTreatmentInitDate,vl.arvTreatmentRegime,vl.currentARVTreatmentINNs0,vl.currentARVTreatmentINNs1,vl.currentARVTreatmentINNs2,vl.currentARVTreatmentINNs3");
+		this.displayedByInterruptedARVTreatment();
+	};	
+	
+	this.displayedByInterruptedARVTreatment = function () {
+	    var field = $("vl.currentARVTreatment");
+		showElements( (field.selectedIndex == 1), "vl.arvTreatmentInitDateRow,vl.arvTreatmentTherapRow,vl.onGoingARVTreatmentINNsRow,vl.currentARVTreatmentINNRow0,vl.currentARVTreatmentINNRow1,vl.currentARVTreatmentINNRow2,vl.currentARVTreatmentINNRow3" );
+	};
+	
+	this.checkVLBenefit = function () {
+		clearFormElements("vl.priorVLLab,vl.priorVLValue,vl.priorVLDate");
+		this.displayedByVLBenefit();
+	};
+	this.displayedByVLBenefit = function () {
+	    var field = $("vl.vlBenefit");
+		showElements( (field.selectedIndex == 1), "vl.priorVLLabRow,vl.priorVLValueRow,vl.priorVLDateRow" );
+	};
+	
+	function IsNumeric(field,e) {
+        var keyCode = e.which ? e.which : e.keyCode
+        var ret = ((keyCode >= 48 && keyCode <= 57) || specialKeys.indexOf(keyCode) != -1);
+        document.getElementById("error").style.display = ret ? "none" : "inline";
+        return ret;
+    };
+    
+    this.refresh = function () {
+		this.refreshBase();		
+		this.displayedByVLBenefit();
+		this.displayedByReasonOther();
+		this.displayedByInterruptedARVTreatment();
+	};
+	
+
+
+}
+
+VLProjectChecker.prototype = new BaseProjectChecker();
+vl = new VLProjectChecker();
+
 function pageOnLoad(){
     initializeStudySelection();
     studies.initializeProjectChecker();
     projectChecker == null || projectChecker.refresh(); 
 }
+
 </script>
