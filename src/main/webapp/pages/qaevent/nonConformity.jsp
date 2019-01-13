@@ -483,7 +483,7 @@ function  processPhoneSuccess(xhr){
 					</tr>
 				<% }%>
 			</c:if>
-			<c:if test="${not empty service}">
+			<c:if test="${not empty form.service}">
 					<tr>
 						<td ><%= StringUtil.getContextualMessageForKey("sample.entry.project.siteName") %>:</td>
 						<td>
@@ -511,7 +511,7 @@ function  processPhoneSuccess(xhr){
 					<td><%= StringUtil.getContextualMessageForKey("nonconformity.provider.label") %></td>
 				</tr>
 				<tr>
-					<c:if test="${empty providerLastName}">
+					<c:if test="${empty form.providerLastName}">
 						<td align="right"><spring:message code="person.lastName" />:</td>
 						<td >
 						<form:input path="providerLastName"
@@ -525,7 +525,7 @@ function  processPhoneSuccess(xhr){
 							      size="30" />
 						</td>		      
 					</c:if>
-					<c:if test="${not empty providerLastName}">
+					<c:if test="${not empty form.providerLastName }">
 						<td align="right"><spring:message code="person.name" />:</td>
 						<td><c:out value="${form.providerLastName}" />,&nbsp;<c:out value="${form.providerFirstName}" /></td>
 					</c:if>		      
@@ -714,8 +714,7 @@ function  processPhoneSuccess(xhr){
 						indexed="true" style="width: 99%"
 						onchange='makeDirty();'>
 						<option ></option>
-						<form:options items="${form.sections}"
-							itemLabel="localizedName" itemValue="nameKey" />
+						<form:options items="${form.sections}" itemLabel="localizedName" itemValue="nameKey" />
 					</form:select>
 				</td>
 				<td>

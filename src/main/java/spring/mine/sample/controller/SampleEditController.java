@@ -158,6 +158,7 @@ public class SampleEditController extends BaseController {
 		patientSearch.setLoadFromServerWithPatient(true);
 		patientSearch.setSelectedPatientActionButtonText(StringUtil.getMessageForKey("label.patient.search.select"));
 		PropertyUtils.setProperty(form, "patientSearch", patientSearch);
+		PropertyUtils.setProperty(form, "warning", "show");
 
 		return findForward(forward, form);
 	}

@@ -382,9 +382,9 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 					// if (loginData.getPassword().equals(crypto.getEncrypt(login.getPassword()))) {
 					// updateCryptoPasswordToHash(loginData);
 					// } else {
-					loginData = null;
-					// PasswordUtil pUtil = new PasswordUtil();
-					// loginData.setPassword(pUtil.hashPassword(login.getPassword()));
+					// loginData = null;
+					PasswordUtil pUtil = new PasswordUtil();
+					loginData.setPassword(pUtil.hashPassword(login.getPassword()));
 					// }
 				}
 			}

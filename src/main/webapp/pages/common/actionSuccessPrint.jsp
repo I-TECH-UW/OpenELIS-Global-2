@@ -24,9 +24,9 @@ function printBarcode(success, failure) {
 }
 </script>
 
+<c:set var="pageSuccess" value="${success || param.forward == 'success'}"/>
 
-
-<div id="successMsg" style="text-align:center; color:seagreen;  width : 100%;font-size:170%; <c:if test="${not success}">visibility : hidden</c:if>">
+<div id="successMsg" style="text-align:center; color:seagreen;  width : 100%;font-size:170%; <c:if test="${not pageSuccess}">visibility : hidden</c:if>">
 	<spring:message code="save.success"/>
 	<div>
 		<input type="button"

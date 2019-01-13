@@ -296,7 +296,7 @@ public class SampleEditUpdateController extends BaseController {
 		}
 
 		String sampleEditWritable = (String) request.getSession().getAttribute(IActionConstants.SAMPLE_EDIT_WRITABLE);
-
+		request.setAttribute(IActionConstants.FWD_SUCCESS, true);
 		if (GenericValidator.isBlankOrNull(sampleEditWritable)) {
 			return findForward(FWD_SUCCESS, form);
 		} else {

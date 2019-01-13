@@ -316,7 +316,7 @@ function makeDirty(){
 </c:if>
 <table style="width:60%">
 <caption>
-	<spring:message code="sample.edit.existing.tests"/>
+	<spring:message code="sample.edit.existing.tests"/><br>
     <span style="color: red"><small><small>
     <c:if test="${cancelableResults}">
     	<spring:message code="test.modify.static.warning" />
@@ -343,7 +343,7 @@ function makeDirty(){
 <c:if test="${form.isEditable}">
 	<th style="width:16px"><spring:message code="sample.edit.remove.tests" /></th>
 </c:if>
-<c:if test="${form.isEditable}">
+<c:if test="${not form.isEditable}">
 	<th><spring:message code="analysis.status" /></th>
 </c:if>
 
@@ -360,32 +360,36 @@ function makeDirty(){
 		</td>
         <% if( useCollectionDate ){ %>
         <td >
-			<c:if test="${existingTests.collectionDate}">
-			<form:input path='existingTests[${iter.index}].collectionDate}'
-					   maxlength='10'
-					   size ='12'
-					   onchange="checkValidEntryDate(this, 'past', true);"
-					   id='collectionDate_${iter.index}'
-					   cssClass='text<c:if test="${not form.isEditable}"> readOnly</c:if>'
-					   indexed="true" />
-			</c:if>
-        </td>
+        	<c:if test="${existingTests.collectionDate != null}">
+	        	<c:set var="readOnly" value=""/>
+	        	<c:if test="${not form.isEditable}"> 
+	        		<c:set var="readOnly" value="readonly"/>
+	        	</c:if>
+				<form:input path='existingTests[${iter.index}].collectionDate'
+						   maxlength='10'
+						   size ='12'
+						   onchange="checkValidEntryDate(this, 'past', true);"
+						   id='collectionDate_${iter.index}'
+						   cssClass='text ${readOnly}'
+						   indexed="true" />
+	        </c:if>
+	        </td>
         <td >
-        	<c:if test="${existingTests.collectionDate}">
-            <form:input path='existingTests[${iter.index}].collectionTime}'
-                       maxlength='10'
-                       size ='12'
-                       onkeyup='filterTimeKeys(this, event);'
-                       onblur='checkValidTime(this, true);'
-					   id='collectionDate_${iter.index}'
-                       cssClass='text'
-                       indexed="true"/>
-            </c:if>
+        	<c:if test="${existingTests.collectionTime != null}">
+	            <form:input path='existingTests[${iter.index}].collectionTime'
+	                       maxlength='10'
+	                       size ='12'
+	                       onkeyup='filterTimeKeys(this, event);'
+	                       onblur='checkValidTime(this, true);'
+						   id='collectionDate_${iter.index}'
+	                       cssClass='text'
+	                       indexed="true"/>
+	        </c:if>
         </td>
         <% } %>
 		<c:if test="${form.isEditable}">
             <td>
-            	<c:if test="${existingTests.accessionNumber}">
+            	<c:if test="${existingTests.accessionNumber != null}">
             		<c:if test="${existingTests.canRemoveSample}">
                 		<form:checkbox path="existingTests[${iter.index}].removeSample" onchange="addRemoveRequest(this);"/>
                 	</c:if>
@@ -410,12 +414,12 @@ function makeDirty(){
                 		   onchange="addRemoveRequest(this);" <c:if test="${existingTests.hasResults}">class='testWithResult'</c:if>
                 		   />
 				</c:if>
-            	<c:if test="${not existingTests.hasResults}">
+            	<c:if test="${not existingTests.canCancel}">
 					<form:checkbox path='existingTests[${iter.index}].canceled' disabled="true" />
 				</c:if>
 			</td>
 		</c:if>
-		<c:if test="${form.isEditable}">
+		<c:if test="${not form.isEditable}">
 			<td>
 				<c:out value="${existingTests.status}"/>
 			</td>

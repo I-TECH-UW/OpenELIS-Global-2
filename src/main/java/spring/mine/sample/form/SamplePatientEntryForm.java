@@ -38,6 +38,8 @@ public class SamplePatientEntryForm extends BaseForm {
 
 	private List<IdValuePair> testSectionList;
 
+	private String warning;
+
 	public SamplePatientEntryForm() {
 		setFormName("samplePatientEntryForm");
 	}
@@ -144,5 +146,13 @@ public class SamplePatientEntryForm extends BaseForm {
 
 	public void setTestSectionList(List<IdValuePair> testSectionList) {
 		this.testSectionList = testSectionList;
+	}
+
+	public String getWarning() {
+		return warning;
+	}
+
+	public void setWarning(String warning) {
+		this.warning = warning;
 	}
 }
