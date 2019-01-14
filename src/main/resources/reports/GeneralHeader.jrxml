@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RetroCIHeader" pageWidth="572" pageHeight="136" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="MessageResources">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RetroCIHeader" pageWidth="572" pageHeight="94" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="MessageResources">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<property name="ireport.callouts" value="##Fri Dec 05 10:30:04 PST 2014"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["c:/tomcat 5.5/webapps/openElisGlobal/WEB-INF/reports/"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["c:/tomcat 8/webapps/CDI_RegLabopenElis/WEB-INF/reports/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="directorName" class="java.lang.String"/>
 	<parameter name="labName1" class="java.lang.String"/>
@@ -21,18 +22,13 @@
 	<parameter name="orderFinishDate" class="java.lang.String">
 		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
 	</parameter>
-	<parameter name="leftHeaderImage" class="java.io.InputStream" isForPrompting="false">
-		<defaultValueExpression><![CDATA[$P{leftHeaderImage}]]></defaultValueExpression>
-	</parameter>
-	<parameter name="localization" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="leftHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="rightHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="localization" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="imagesPath" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<variable name="hasLogo" class="java.lang.Boolean">
-		<variableExpression><![CDATA[$P{rightHeaderImage} != null]]></variableExpression>
-		<initialValueExpression><![CDATA[false]]></initialValueExpression>
-	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -46,92 +42,55 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="136" splitType="Stretch">
+		<band height="94" splitType="Stretch">
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-1" x="0" y="116" width="570" height="20">
+				<reportElement key="textField-1" x="2" y="80" width="568" height="13">
 					<printWhenExpression><![CDATA[$P{directorName} != null]]></printWhenExpression>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.labManager} + ": " + $P{directorName}]]></textFieldExpression>
 			</textField>
-			<textField evaluationTime="Report" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement key="textField" x="0" y="95" width="570" height="20">
-					<printWhenExpression><![CDATA[$P{orderFinishDate} != null]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[($P{localization} == null ?  "Date d'achèvement" : $P{localization}.get("collectionDate") ) + ": " + $P{orderFinishDate}]]></textFieldExpression>
-			</textField>
-			<image isUsingCache="true">
-				<reportElement x="0" y="20" width="118" height="100"/>
+			<image isUsingCache="true" onErrorType="Blank">
+				<reportElement x="2" y="2" width="100" height="88"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{leftHeaderImage}]]></imageExpression>
 			</image>
-			<image isUsingCache="true">
-				<reportElement x="468" y="18" width="102" height="102">
-					<printWhenExpression><![CDATA[$P{rightHeaderImage} != null]]></printWhenExpression>
-				</reportElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2" y="2" width="568" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{labName1}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="126" y="42" width="310" height="16"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{reportTitle}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="2" y="21" width="568" height="13" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{labName2}]]></textFieldExpression>
+			</textField>
+			<image hAlign="Right" isUsingCache="true" onErrorType="Blank">
+				<reportElement x="470" y="3" width="100" height="88"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{rightHeaderImage}]]></imageExpression>
 			</image>
-			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="5" width="570" height="20">
-					<printWhenExpression><![CDATA[$V{hasLogo}]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{labName1}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" x="0" y="46" width="570" height="24">
-					<printWhenExpression><![CDATA[$V{hasLogo}]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center">
-					<font size="16" isBold="true"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{reportTitle}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="0" y="26" width="572" height="20" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$V{hasLogo}]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
-					<font size="12" isBold="true"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{labName2}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="5" width="570" height="20">
-					<printWhenExpression><![CDATA[!$V{hasLogo}]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{labName1}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="0" y="25" width="570" height="20" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[!$V{hasLogo}]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
-					<font size="12" isBold="true"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{labName2}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" x="0" y="46" width="570" height="24">
-					<printWhenExpression><![CDATA[!$V{hasLogo}]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center">
-					<font size="16" isBold="true"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{reportTitle}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="229" y="75" width="118" height="20"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{completeFlag}]]></textFieldExpression>
-			</textField>
+			<elementGroup>
+				<image hAlign="Right" isUsingCache="false">
+					<reportElement x="468" y="1" width="100" height="88"/>
+					<imageExpression class="java.lang.String"><![CDATA[$P{imagesPath}+ "rightLabLogo.jpg"]]></imageExpression>
+				</image>
+				<image isUsingCache="false">
+					<reportElement x="1" y="1" width="100" height="88"/>
+					<imageExpression class="java.lang.String"><![CDATA[$P{imagesPath}+ "leftLabLogo.jpg"]]></imageExpression>
+				</image>
+			</elementGroup>
 		</band>
 	</detail>
 	<columnFooter>

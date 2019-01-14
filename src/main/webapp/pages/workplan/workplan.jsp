@@ -15,36 +15,30 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-	
-<bean:define id="workplanType"	value='<%=(String) request.getParameter("type")%>' />
-<bean:define id="tests" name="${form.formName}" property="workplanTests" />
-<bean:size id="testCount" name="tests" />
+<c:set var="workplanType" value="${param.type}"/>
+<c:set var="tests" value="${form.workplanTests}"/>
+<c:set var="testCount" value="${fn:length(tests)}"/>
+<c:set var="currentAccessionNumber" value=""/>
+<c:set var="rowColorIndex" value="2"/>
 
-<% if( !workplanType.equals("test") && !workplanType.equals("panel") ){ %>
-<bean:define id="testSectionsByName" name="${form.formName}" property="testSectionsByName" />
+<c:if test="${not (workplanType == 'test') && not (workplanType == 'panel')}">
+<c:set var="testSectionsByName" value="${form.testSectionsByName}"/>
 	<script type="text/javascript" >
 	var testSectionNameIdHash = [];
-	<%
-		for( IdValuePair pair : (List<IdValuePair>) testSectionsByName){
-			out.print( "testSectionNameIdHash[\"" + pair.getId()+ "\"] = \"" + pair.getValue() +"\";\n");
-		}
-	%>
+	<c:forEach items="${testSectionsByName}" var="testSection">
+		testSectionNameIdHash["${testSection.id}"] = "${testSection.value}";
+	</c:forEach>
 	</script>
-<% } %>
+</c:if>
 
-<%!
-	boolean showAccessionNumber = false;
-	String currentAccessionNumber = "";
-	int rowColorIndex = 2;
-%>
 <%
 
 	String basePath = "";
 	String path = request.getContextPath();
 	basePath = request.getScheme() + "://" + request.getServerName() + ":"
 	+ request.getServerPort() + path + "/";
-	currentAccessionNumber = "";
 
 %>
 
@@ -80,10 +74,12 @@ function printWorkplan() {
 }
 
 </script>
-<% if( !workplanType.equals("test") && !workplanType.equals("panel") ){ %>
+<form:hidden path="workplanType"/>
+<form:hidden path="testTypeID"/>
+<c:if test="${not (workplanType == 'test') && not (workplanType == 'panel')}">
 <div id="searchDiv" class="colorFill"  >
 <div id="PatientPage" class="colorFill" style="display:inline" >
-<input type="hidden" name="testName"	value='<%=Encode.forHtml(workplanType)%>' />
+<input type="hidden" name="testName" value='<c:out value="${workplanType}"/>' />
 <h2><spring:message code="sample.entry.search"/></h2>
 	<table width="30%">
 		<tr>
@@ -91,10 +87,11 @@ function printWorkplan() {
 				<c:out value="${form.searchLabel}"/>
 			</td>
 			<td>
-			<html:select name='${form.formName}' property="testSectionId" 
+			<form:select path="testSectionId" 
 				 onchange="submitTestSectionSelect(this);" >
-				<app:optionsCollection name="${form.formName}" property="testSections" label="value" value="id" />
-			</html:select>
+				<option value=""></option>
+				<form:options items="${form.testSections}" itemLabel="value" itemValue="id" />
+			</form:select>
 	   		</td>
 		</tr>
 	</table>
@@ -104,16 +101,16 @@ function printWorkplan() {
 	</h1>
 </div>
 </div>
-<% }%>
+</c:if>
 
 <br/>
-<logic:notEqual name="testCount" value="0">
-<bean:size name='${form.formName}' property="workplanTests" id="size" />
-<html:button property="print" id="print"  onclick="printWorkplan();"  >
+<c:if test="${not (testCount == 0)}">
+<c:set value="${fn:length(form.workplanTests)}" var="size" />
+<button type="button" name="print" id="print"  onclick="printWorkplan();"  >
 	<spring:message code="workplan.print"/>
-</html:button>
+</button>
 <br/><br/>
-<spring:message code="label.total.tests"/> = <bean:write name="size"/>
+<spring:message code="label.total.tests"/> = <c:out value="${size}"/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <img src="./images/nonconforming.gif" /> = <spring:message code="result.nonconforming.item"/>
 <br/><br/>
@@ -122,9 +119,9 @@ function printWorkplan() {
 		<th width="5%" style="text-align: left;">
 			<spring:message code="label.button.remove"/>
 		</th>
-		<% if( workplanType.equals("test") ){ %>
+		<c:if test="${workplanType == 'test'}">
 			<th width="3%">&nbsp;</th>
-		<% } %>
+		</c:if>
     	<th width="10%" style="text-align: left;">
     		<%= StringUtil.getContextualMessageForKey("quick.entry.accession.number") %>
 		</th>
@@ -138,7 +135,7 @@ function printWorkplan() {
 	    	<spring:message code="sample.entry.nextVisit.date"/>
 	    </th>
 	    <% } %>
-		<% if( !workplanType.equals("test") ){ %>
+		<c:if test="${not (workplanType == 'test')}">
 		<th width="3%">&nbsp;</th>
 		<th width="30%" style="text-align: left;">
 			<% if(ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "Haiti LNSP")){ %>
@@ -147,92 +144,95 @@ function printWorkplan() {
 	  		   <spring:message code="sample.entry.project.testName"/>
 	  		<% } %>  
 		</th>
-		<% } %>
+		</c:if>
 		<th width="20%" style="text-align: left;">
 	  		<spring:message code="sample.receivedDate"/>&nbsp;&nbsp;
 		</th>
   	</tr>
 
-	<logic:iterate id="workplanTests" name="${form.formName}"  property="workplanTests" indexId="index" type="TestResultItem">
-			<% showAccessionNumber = !workplanTests.getAccessionNumber().equals(currentAccessionNumber);
-				   if( showAccessionNumber ){
-					currentAccessionNumber = workplanTests.getAccessionNumber();
-					rowColorIndex++; } %>
-     		<tr id='<%="row_" + index %>' class='<%=(rowColorIndex % 2 == 0) ? "evenRow" : "oddRow" %>'  >
-     			<td id='<%="cell_" + index %>'>
-     			<% if (!workplanTests.isServingAsTestGroupIdentifier()) { %>
-					<html:checkbox name="workplanTests"
-						   property="notIncludedInWorkplan"
-						   id='<%="includedCheck_" + index %>'
-						   styleClass="includedCheck"
-						   indexed="true"
-						   onclick='<%="disableEnableTest(this," + index + ");" %>' />
-			    <% } %>
+	<c:forEach items="${form.workplanTests}" var="workplanTests" varStatus="iter">
+		<c:if test="${not (workplanTests.accessionNumber == currentAccessionNumber)}" var="showAccessionNumber">
+			<c:set var="currentAccessionNumber" value="${workplanTests.accessionNumber}"/>
+			<c:set var="rowColorIndex" value="${rowColorIndex + 1}"/>
+		</c:if>
+     		<tr id='row_${iter.index}' 
+     		<c:choose>
+     			<c:when test="${rowColorIndex % 2 == 0}"> class="evenRow"</c:when>
+     			<c:otherwise> class="oddRow"</c:otherwise>
+     		</c:choose>
+     		>
+     			<td id='cell_${iter.index}'>
+     			<c:if test="${not workplanTests.servingAsTestGroupIdentifier}">
+					<form:checkbox path="workplanTests[${iter.index}].notIncludedInWorkplan"
+						   id='includedCheck_${iter.index}'
+						   cssClass="includedCheck"
+						   onclick='disableEnableTest(this,${iter.index});' />
+			    </c:if>
 				</td>
-				<% if( workplanType.equals("test") ){ %>
+				<c:if test="${workplanType == 'test'}">
 				<td>
-					<logic:equal name="workplanTests" property="nonconforming" value="true">
+					<c:if test="${workplanTests.nonconforming}">
 						<img src="./images/nonconforming.gif" />
-					</logic:equal>
+					</c:if>
 				</td>	
-				<% } %>
+				</c:if>
 	    		<td>
-	      		<% if( showAccessionNumber ){%>
-	      			<bean:write name="workplanTests" property="accessionNumber"/>
-				<% } %>
+	      		<c:if test="${showAccessionNumber}">
+	      			<c:out value="${workplanTests.accessionNumber}"/>
+				</c:if>
 	    		</td>
 	    		<% if( ConfigurationProperties.getInstance().isPropertyValueEqual(Property.SUBJECT_ON_WORKPLAN, "true")){ %>
-	    		<td>
-	    			<% if(showAccessionNumber ){ %>
-	    			<bean:write name="workplanTests" property="patientInfo"/>
-	    			<% } %>
-	    		</td>
+		    		<td>
+		      		<c:if test="${showAccessionNumber}">
+		    			<c:out value="${workplanTests.patientInfo}"/>
+		    		</c:if>
+		    		</td>
 	    		<% } %>
-	    			<% if(ConfigurationProperties.getInstance().isPropertyValueEqual(Property.NEXT_VISIT_DATE_ON_WORKPLAN, "true")){ %>
+	    		<% if(ConfigurationProperties.getInstance().isPropertyValueEqual(Property.NEXT_VISIT_DATE_ON_WORKPLAN, "true")){ %>
 	    			<td>
-	    			<% if(showAccessionNumber ){ %>
-		    			<bean:write name="workplanTests" property="nextVisitDate"/>
-		    		<% } %>	
+	      			<c:if test="${showAccessionNumber}">
+		    			<c:out value="${workplanTests.nextVisitDate}"/>
+		    		</c:if>
 	    			</td>
 	    		<% } %>
-	    		<% if( !workplanType.equals("test") ){ %>
-	    		<td>
-		    		<logic:equal name="workplanTests" property="nonconforming" value="true">
-						<img src="./images/nonconforming.gif" />
-					</logic:equal>
+					<c:if test="${not (workplanType == 'test')}">
+					<td>
+						<c:if test="${workplanTests.nonconforming}">
+							<img src="./images/nonconforming.gif" />
+						</c:if>
 				</td>
 				<td>
-					<%=workplanTests.getTestName() %> 
+					${workplanTests.testName} 
 				</td>
-				<% } %>
+				</c:if>
 	    		<td>
-	      			<bean:write name="workplanTests" property="receivedDate"/>
+	      			<c:out value="${workplanTests.receivedDate}"/>
 	    		</td>
       		</tr>
-  	</logic:iterate>
+  	</c:forEach>
 	<tr>
 	    <td colspan="8"><hr/></td>
     </tr>
 	<tr>
 		<td>
-      		<html:button property="print" id="print"  onclick="printWorkplan();"  >
+      		<button type="button" name="print" id="print"  onclick="printWorkplan();"  >
 				<spring:message code="workplan.print"/>
-			</html:button>
+			</button>
 		</td>
 	</tr>
 </Table>
-</logic:notEqual>
-
-<% if( workplanType.equals("test") || workplanType.equals("panel") ){ %>
-	<logic:equal name="testCount"  value="0">
+</c:if>
+<c:if test="${workplanType == 'test' || workplanType == 'panel' }">
+	<c:if test="${testCount == 0}">
 		<h2><%= StringUtil.getContextualMessageForKey("result.noTestsFound") %></h2>
-	</logic:equal>
-<% } else { %>
-	<logic:equal name="testCount"  value="0">
-		<logic:notEmpty name="${form.formName}" property="testSectionId">
-		<h2><%= StringUtil.getContextualMessageForKey("result.noTestsFound") %></h2>
-		</logic:notEmpty>
-	</logic:equal>
-<% } %>
+	</c:if>
+</c:if>
+<c:if test="${not (workplanType == 'test') && not (workplanType == 'panel') }">
+	<c:if test="${testCount == 0}">
+		<c:if test="${not empty form.testSectionId}">
+		<h2><%=StringUtil.getContextualMessageForKey("result.noTestsFound") %></h2>
+		</c:if>
+	</c:if>
+</c:if>
 
 

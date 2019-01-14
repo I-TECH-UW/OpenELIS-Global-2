@@ -1,7 +1,9 @@
 package spring.mine.common.form;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -72,6 +74,28 @@ public class BaseForm {
 
 	public void setErrors(List<ObjectError> list) {
 		errors = list;
+	}
+
+	public Object get(String propertyName) {
+		Object obj = null;
+		try {
+			obj = PropertyUtils.getProperty(this, propertyName);
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return obj;
+	}
+
+	public String getString(String propertyName) {
+		String obj = null;
+		try {
+			obj = (String) PropertyUtils.getProperty(this, propertyName);
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return obj;
 	}
 
 }
