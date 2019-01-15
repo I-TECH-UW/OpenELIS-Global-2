@@ -26,30 +26,29 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>
 
-<bean:define id='formName' 
-<bean:define id="tests" name='${form.formName}' property="testResult" />
-<bean:size id="testCount" name="tests"/>
-<bean:define id="inventory" name="${form.formName}" property="inventoryItems" />
+<c:set var="tests" value="${form.testResult}"/>
+<c:set var="testCount" value="${fn:length(tests)}" />
+<c:set var="inventory" value="${form.inventoryItems}"/>
+<c:set var="hivKits" value="${form.hivKits}"/>
+<c:set var="syphilisKits" value="${form.syphilisKits}"/>
 
-<bean:define id="pagingSearch" name='${form.formName}' property="paging.searchTermToPage"  />
+<c:set var="pagingSearch" value="${form.paging.searchTermToPage}"  />
 
-<bean:define id="logbookType" name="${form.formName}" property="logbookType" />
-<logic:equal  name="${form.formName}" property="displayTestSections" value="true">
-	<bean:define id="testSectionsByName" name="${form.formName}" property="testSectionsByName" />
+<c:set var="logbookType" value="${form.logbookType}" />
+<c:if test="${form.displayTestSections}">
+	<c:set var="testSectionsByName" value="${form.testSectionsByName}" />
 	<script type="text/javascript" >
 		var testSectionNameIdHash = [];		
-		<% 
-			for( IdValuePair pair : (List<IdValuePair>) testSectionsByName){
-				out.print( "testSectionNameIdHash[\"" + pair.getId()+ "\"] = \"" + pair.getValue() +"\";\n");
-			}
-		%>
+		<c:forEach items="${testSectionsByName}" var="testSection">
+			testSectionsNameIdHash["${testSection.id}"] = "${testSection.value}";
+		</c:forEach>
 	</script>
-</logic:equal>
+</c:if>
 	
 <%!
-	List<String> hivKits;
-	List<String> syphilisKits;
 	String basePath = "";
 	String searchTerm = null;
 	IAccessionNumberValidator accessionNumberValidator;
@@ -67,16 +66,6 @@
     boolean useRejected = false;
  %>
 <%
-	hivKits = new ArrayList<String>();
-	syphilisKits = new ArrayList<String>();
-
-	for( InventoryKitItem item : (List<InventoryKitItem>)inventory ){
-		if( item.getType().equals("HIV") ){
-	hivKits.add(item.getInventoryLocationId());
-		}else{
-	syphilisKits.add( item.getInventoryLocationId());
-		}
-	}
 
 	String path = request.getContextPath();
 	basePath = request.getScheme() + "://" + request.getServerName() + ":"
@@ -131,18 +120,15 @@
 var compactHozSpace = '<%=compactHozSpace%>';
 var dirty = false;
 
-var pager = new OEPager('${form.formName}', '<%= logbookType == "" ? "" : "&type=" + Encode.forJavaScript((String) logbookType)  %>');
+var pager = new OEPager('${form.formName}', '&type=<c:out value="logbookType"/>');
 pager.setCurrentPageNumber('<c:out value="${form.paging.currentPage}"/>');
 
 var pageSearch; //assigned in post load function
 
 var pagingSearch = {};
-
-<%
-	for( IdValuePair pair : (List<IdValuePair>)pagingSearch){
-		out.print( "pagingSearch[\'" + pair.getId()+ "\'] = \'" + pair.getValue() +"\';\n");
-	}
-%>
+<c:forEach items="${pagingSearch}" var="paging">
+pagingSearch['${paging.id}'] = '${paging.value}';
+</c:forEach>
 
 $jq(document).ready( function() {
 			var searchTerm = '<%=Encode.forJavaScript(searchTerm)%>';
@@ -270,7 +256,7 @@ function  /*void*/ savePage()
 	$jq( "#saveButtonId" ).prop("disabled",true);
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = window.document.forms[0];
-	form.action = '${form.formName}'.sub('Form','') + "Update.do"  + '<%= logbookType == "" ? "" : "?type=" + Encode.forJavaScript((String) logbookType)  %>';
+	form.action = '${form.formName}'.sub('Form','') + "Update.do"  + '?type=<c:out value="logbookType"/>';
 	form.submit();
 }
 
@@ -362,7 +348,7 @@ function processDateCallbackEvaluation(xhr) {
         }else if( message == 'invalid_value_to_small' ){
             alert( '<spring:message code="error.date.inPast"/>' );
         }else if( message == "invalid"){
-            alert( givenDate + " " + "<%=StringUtil.getMessageForKey("errors.date", "" )%>");
+            alert( givenDate + " <spring:message code="errors.date"/>");
         }
     }
 
@@ -375,7 +361,7 @@ function updateShadowResult(source, index){
 
 </script>
 
-<logic:equal  name="${form.formName}" property="displayTestSections" value="true">
+<c:if test="${form.displayTestSections}">
 <div id="searchDiv" class="colorFill"  >
 <div id="PatientPage" class="colorFill" style="display:inline" >
 <h2><spring:message code="sample.entry.search"/></h2>
@@ -385,10 +371,11 @@ function updateShadowResult(source, index){
 				<%= StringUtil.getMessageForKey("workplan.unit.types") %>
 			</td>
 			<td>
-			<html:select name='${form.formName}' property="testSectionId" 
+			<form:select path="testSectionId" 
 				 onchange="submitTestSectionSelect(this);" >
-				<app:optionsCollection name="${form.formName}" property="testSections" label="value" value="id" />
-			</html:select>
+				<option value=""></option>
+				<form:options items="${form.testSections}" itemLabel="value" itemValue="id" />
+			</form:select>
 	   		</td>
 		</tr>
 	</table>
@@ -398,7 +385,7 @@ function updateShadowResult(source, index){
 	</h1>
 </div>
 </div>
-</logic:equal>
+</c:if>
 
 <!-- Modal popup-->
 <div id="reflexSelect" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -410,7 +397,7 @@ function updateShadowResult(source, index){
         <input type="hidden" id="testRow" />
         <input type="hidden" id="targetIds" />
         <input type="hidden" id="serverResponse" />
-        <p ><input style='vertical-align:text-bottom' id='selectAll' type='checkbox' onchange='modalSelectAll(this);' >&nbsp;&nbsp;&nbsp;<b><%=StringUtil.getMessageForKey("label.button.checkAll")%></b></p><hr>
+        <p ><input style='vertical-align:text-bottom' id='selectAll' type='checkbox' onchange='modalSelectAll(this);' >&nbsp;&nbsp;&nbsp;<b><spring:message code="label.button.checkAll"/></b></p><hr>
     </div>
     <div class="modal-footer">
         <button id="modal_ok" class="btn btn-primary" disabled="disabled">OK</button>
@@ -418,23 +405,23 @@ function updateShadowResult(source, index){
     </div>
 </div>
 
-<logic:notEmpty name="${form.formName}" property="logbookType" >
+<c:if test="${not empty form.logbookType}" >
 	<form:hidden path="logbookType" />
-</logic:notEmpty>
+</c:if>
 
-<logic:notEqual name="testCount" value="0">
-<logic:equal name="${form.formName}" property="displayTestKit" value="true">
+<c:if test="${testCount != 0}">
+<c:if test="${form.displayTestKit}">
 	<hr style="width:100%" />
     <input type="button" onclick="toggleKitDisplay(this)" value="+">
 	<spring:message code="inventory.testKits"/>
 	<div id="kitView" style="display: none;" class="colorFill" >
-		<tiles:insert attribute="testKitInfo" />
+		<tiles:insertAttribute name="testKitInfo" /> 
 		<br/>
 		<hr style="width:100%" />
 	</div>
-</logic:equal>
+</c:if>
 
-<logic:equal  name='${form.formName}' property="singlePatient" value="true">
+<c:if test="${form.singlePatient}">
 <% if(!depersonalize){ %>        
 <table style="width:100%" >
 	<tr>
@@ -499,25 +486,19 @@ function updateShadowResult(source, index){
 </table>
 <% } %>
 <br/>
-</logic:equal>
+</c:if>
 
 <div  style="width:100%" >
-<logic:notEqual name="${form.formName}" property="paging.totalPages" value="0">
-	<html:hidden id="currentPageID" name="${form.formName}" property="paging.currentPage"/>
-	<bean:define id="total" name="${form.formName}" property="paging.totalPages"/>
-	<bean:define id="currentPage" name="${form.formName}" property="paging.currentPage"/>
-
-	<%if( "1".equals(currentPage)) {%>
-		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" disabled="disabled" >
-	<% } else { %>
-		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" onclick="pager.pageBack();" />
-	<% } %>
-	<%if( total.equals(currentPage)) {%>
-		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.next") %>' style="width:100px;" disabled="disabled" />
-	<% }else{ %>
-		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.next") %>' style="width:100px;" onclick="pager.pageFoward();"   />
-	<% } %>
-
+<c:if test="${not (form.paging.totalPages == 0)}">
+	<form:hidden id="currentPageID" path="paging.currentPage"/>
+	<c:set var="total" value="${form.paging.totalPages}"/>
+	<c:set var="currentPage" value="${form.paging.currentPage}"/>
+	<button type="button" style="width:100px;" onclick="pager.pageBack();" disabled="${currentPage == '1'}">
+		<spring:message code="label.button.previous"/>
+	</button>
+	<button type="button" style="width:100px;" onclick="pager.pageFoward();" disabled="${currentPage == 'total'}">
+		<spring:message code="label.button.next"/>
+	</button>
 	&nbsp;
 	<c:out value="${form.paging.currentPage}"/> <spring:message code="report.pageNumberOf" />
 	<c:out value="${form.paging.totalPages}"/>
@@ -530,7 +511,7 @@ function updateShadowResult(source, index){
 	       maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>' />
 	<input type="button" onclick="pageSearch.doLabNoSearch($(labnoSearch))" value='<%= StringUtil.getMessageForKey("label.button.search") %>'>
 	</div>
-</logic:notEqual>
+</c:if>
 
 <div style="float: right" >
 <img src="./images/nonconforming.gif" /> = <spring:message code="result.nonconforming.item"/>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -548,22 +529,22 @@ function updateShadowResult(source, index){
 		<th style="text-align: left">
 			<%=StringUtil.getContextualMessageForKey("result.sample.id")%>
 		</th>
-		<logic:equal name="${form.formName}" property="singlePatient" value="false">
+		<c:if test="${not form.singlePatient}">
 			<th style="text-align: left">
 				<spring:message code="result.sample.patient.summary"/>
 			</th>
-		</logic:equal>
+		</c:if>
 		<% } %>
 
 		<th style="text-align: left">
 			<spring:message code="result.test.date"/><br/>
 			<%=DateUtil.getDateUserPrompt()%>
 		</th>
-		<logic:equal  name="${form.formName}" property="displayTestMethod" value="true">
+		<c:if test="${form.displayTestMethod}">
 			<th style="width: 72px; padding-right: 10px; text-align: center">
 				<spring:message code="result.method.auto"/>
 			</th>
-		</logic:equal>
+		</c:if>
 		<th style="text-align: left">
 			<spring:message code="result.test"/>
 		</th>
@@ -596,492 +577,433 @@ function updateShadowResult(source, index){
 		</th>
 	</tr>
 	<!-- body -->
-	<logic:iterate id="testResult" name="${form.formName}"  property="testResult" indexId="index" type="TestResultItem">
-	<logic:equal name="testResult" property="isGroupSeparator" value="true">
+	<c:forEach items="${form.testResult}" var="testResult" varStatus="iter">
+	<c:if test="${testResult.isGroupSeparator}">
 	<tr>
 		<td colspan="10"><hr/></td>
 	</tr>
 	<tr>
 		<th >
 			<spring:message code="sample.receivedDate"/> <br/>
-			<bean:write name="testResult" property="receivedDate"/>
+			<c:out value="${testResult.receivedDate}"/>
 		</th>
 		<th >
 			<%=StringUtil.getContextualMessageForKey("resultsentry.accessionNumber")%><br/>
-			<bean:write name="testResult" property="accessionNumber"/>
+			<c:out value="${testResult.accessionNumber}"/>
 		</th>
 		<th colspan="8" ></th>
 	</tr>
-	</logic:equal>
-	<logic:equal name="testResult" property="isGroupSeparator" value="false">
-		<bean:define id="lowerBound" name="testResult" property="lowerNormalRange" />
-		<bean:define id="upperBound" name="testResult" property="upperNormalRange" />
-		<bean:define id="lowerAbnormalBound" name="testResult" property="lowerAbnormalRange" />
-		<bean:define id="upperAbnormalBound" name="testResult" property="upperAbnormalRange" />
-        <bean:define id="significantDigits" name="testResult" property="significantDigits" />
-		<bean:define id="rowColor" value='<%=(testResult.getSampleGroupingNumber() % 2 == 0) ? "evenRow" : "oddRow" %>' />
-		<bean:define id="readOnly" value='<%=testResult.isReadOnly() ? "disabled=\'true\'" : "" %>' />
-		<bean:define id="accessionNumber" name="testResult" property="accessionNumber"/>
+	</c:if>
+	<c:if test="${not testResult.isGroupSeparator}">
+		<c:set var="lowerBound" value="${testResult.lowerNormalRange}" />
+		<c:set var="upperBound" value="${testResult.upperNormalRange}" />
+		<c:set var="lowerAbnormalBound" value="${testResult.lowerAbnormalRange}" />
+		<c:set var="upperAbnormalBound" value="${testResult.upperAbnormalRange}" />
+        <c:set var="significantDigits" value="${testResult.significantDigits}" />
+		<c:set var="accessionNumber" value="${testResult.accessionNumber}"/>
+        <c:set var="rowEven" value="${testResult.sampleGroupingNumber %2 == 0}" />
+	    <c:if test="${rowEven}"> <c:set var="rowColor" value='evenRow' /> </c:if>
+	    <c:if test="${not rowEven}"> <c:set var="rowColor" value='oddRow' /> </c:if>
 
    <% if( compactHozSpace ){ %>
-   <logic:equal  name="testResult" property="showSampleDetails" value="true">
-		<tr class='<%= rowColor %>Head <%= accessionNumber%>' >
+   <c:if test="${testResult.showSampleDetails}">
+		<tr class='${rowColor}Head ${accessionNumber}' >
 			<td colspan="10" class='InterstitialHead' >
 			    <%=StringUtil.getContextualMessageForKey("result.sample.id")%> : &nbsp;
-				<b><bean:write name="testResult" property="accessionNumber"/> -
-				<bean:write name="testResult" property="sequenceNumber"/></b>
+				<b><c:out value="${testResult.accessionNumber}"/> -
+				<c:out value="${testResult.sequenceNumber}"/></b>
 				<% if(useInitialCondition){ %>
 					&nbsp;&nbsp;&nbsp;&nbsp;<spring:message code="sample.entry.sample.condition" />:
-					<b><bean:write name="testResult" property="initialSampleCondition" /></b>
+					<b><c:out value="${testResult.initialSampleCondition}" /></b>
 				<% } %>
 				&nbsp;&nbsp;&nbsp;&nbsp;<spring:message code="sample.entry.sample.type"/>:
-				<b><bean:write  name="testResult" property="sampleType"/></b>
-		<logic:equal  name="${form.formName}" property="singlePatient" value="false">
+				<b><c:out value="${testResult.sampleType}" /></b>
+		<c:if test="${not form.singlePatient}">
 		    <% if( !depersonalize){ %>
-				<logic:equal  name="testResult" property="showSampleDetails" value="true">
+				<c:if test="${testResult.showSampleDetails}">
 					<br/>
 					<spring:message code="result.sample.patient.summary"/> : &nbsp;
-					<b><bean:write name="testResult" property="patientName"/> &nbsp;
-					<bean:write name="testResult" property="patientInfo"/></b>
-				</logic:equal>
+					<b><c:out value="${testResult.patientName}"/> &nbsp;
+					<c:out value="${testResult.patientInfo}"/></b>
+				</c:if>
 			<% } %>	
-		</logic:equal>
+		</c:if>
 		</td>
 		</tr>
-	</logic:equal>
+	</c:if>
     <% } %>
-	<tr class='<%= rowColor %>'  id='<%="row_" + index %>'>
-			<html:hidden name="testResult" property="isModified"  indexed="true" id='<%="modified_" + index%>' />
-			<html:hidden name="testResult" property="analysisId"  indexed="true" id='<%="analysisId_" + index%>' />
-			<html:hidden name="testResult" property="resultId"  indexed="true" id='<%="hiddenResultId_" + index%>'/>
-			<html:hidden name="testResult" property="testId"  indexed="true" id='<%="testId_" + index%>'/>
-			<html:hidden name="testResult" property="technicianSignatureId" indexed="true" />
-			<html:hidden name="testResult" property="testKitId" indexed="true" />
-			<html:hidden name="testResult" property="resultLimitId" indexed="true" />
-			<html:hidden name="testResult" property="resultType" indexed="true" id='<%="resultType_" + index%>' />
-			<html:hidden name="testResult" property="valid" indexed="true"  id='<%="valid_" + index %>'/>
-			<html:hidden name="testResult" property="referralId" indexed="true" />
-            <html:hidden name="testResult" property="referralCanceled" indexed="true" />
-            <html:hidden name="testResult" property="considerRejectReason" id='<%="considerRejectReason_" + index %>' indexed="true" />
-            <html:hidden name="testResult" property="hasQualifiedResult" indexed="true" id='<%="hasQualifiedResult_" + index %>' />
-            <html:hidden name="testResult" property="shadowResultValue" indexed="true" id='<%="shadowResult_" + index%>' />
-            <logic:equal name="testResult" property="userChoiceReflex" value="true">
-                <html:hidden name="testResult" property="reflexJSONResult"  id='<%="reflexServerResultId_" + index%>'  styleClass="reflexJSONResult" indexed="true"/>
-            </logic:equal>
-			<logic:notEmpty name="testResult" property="thisReflexKey">
-					<input type="hidden" id='<%= testResult.getThisReflexKey() %>' value='<%= index %>' />
-			</logic:notEmpty>
+	<tr class='${rowColor}'  id="row_${iter.index}">
+			<form:hidden path="testResult[${iter.index}].isModified"  id="modified_${iter.index}" />
+			<form:hidden path="testResult[${iter.index}].analysisId"  id="analysisId_${iter.index}" />
+			<form:hidden path="testResult[${iter.index}].resultId"  id="hiddenResultId_${iter.index}"/>
+			<form:hidden path="testResult[${iter.index}].testId"  id="testId_${iter.index}"/>
+			<form:hidden path="testResult[${iter.index}].technicianSignatureId" indexed="true" />
+			<form:hidden path="testResult[${iter.index}].testKitId" indexed="true" />
+			<form:hidden path="testResult[${iter.index}].resultLimitId" indexed="true" />
+			<form:hidden path="testResult[${iter.index}].resultType" id="resultType_${iter.index}" />
+			<form:hidden path="testResult[${iter.index}].valid" id="valid_${iter.index}"/>
+			<form:hidden path="testResult[${iter.index}].referralId" />
+            <form:hidden path="testResult[${iter.index}].referralCanceled" />
+            <form:hidden path="testResult[${iter.index}].considerRejectReason" id="considerRejectReason_${iter.index}" />
+            <form:hidden path="testResult[${iter.index}].hasQualifiedResult" id="hasQualifiedResult_${iter.index}" />
+            <form:hidden path="testResult[${iter.index}].shadowResultValue" id="shadowResult_${iter.index}" />
+            <c:if test="${testResult.userChoiceReflex}">
+                <form:hidden path="testResult[${iter.index}].reflexJSONResult"  id="reflexServerResultId_${iter.index}"  cssClass="reflexJSONResult"/>
+            </c:if>
+			<c:if test="${not empty testResult.thisReflexKey}">
+					<input type="hidden" id='${testResult.thisReflexKey}' value='${iter.index}' />
+			</c:if>
 		 <% if( !compactHozSpace ){ %>
-	     <td class='<%= accessionNumber%>'>
-			<logic:equal  name="testResult" property="showSampleDetails" value="true">
-				<bean:write name="testResult" property="accessionNumber"/> -
-				<bean:write name="testResult" property="sequenceNumber"/>
-			</logic:equal>
+	     <td class='${accessionNumber}'>
+			<c:if test="${testResult.showSampleDetails}">
+				<c:out value="${testResult.accessionNumber}"/> -
+				<c:out value="${testResult.sequenceNumber}"/>
+			</c:if>
 		</td>
-		<logic:equal  name="${form.formName}" property="singlePatient" value="false">
+		<c:if test="${not form.singlePatient}">
 			<td >
-				<logic:equal  name="testResult" property="showSampleDetails" value="true">
-					<bean:write name="testResult" property="patientName"/><br/>
-					<bean:write name="testResult" property="patientInfo"/>
-				</logic:equal>
+				<c:if test="${testResult.showSampleDetails}">
+					<c:out value="${testResult.patientName}"/><br/>
+					<c:out value="${testResult.patientInfo}"/>
+				</c:if>
 			</td>
-		</logic:equal>
+		</c:if>
 		<% } %>
 		<!-- date cell -->
 		<td class="ruled">
-			<html:text name="testResult"
-                       property="testDate"
-                       indexed="true"
+			<form:input path="testResult[${iter.index}].testDate"
                        size="10"
                        maxlength="10"
                        tabindex='-1'
-                       onchange='<%="markUpdated(" + index + ");checkValidDate(this, processDateCallbackEvaluation, \'past\', false)" %>'
+                       onchange="markUpdated(${iter.index});checkValidDate(this, processDateCallbackEvaluation, 'past', false)"
                        onkeyup="addDateSlashes(this, event);"
-                       id='<%="testDate_" + index%>'/>
+                       id="testDate_${iter.index}"/>
 		</td>
-		<logic:equal  name="${form.formName}" property="displayTestMethod" value="true">
+		<c:if test="${form.displayTestMethod}">
 			<td class="ruled" style='text-align: center'>
-				<html:checkbox name="testResult"
-							property="analysisMethod"
-							indexed="true"
+				<form:checkbox path="testResult[${iter.index}].analysisMethod"
+							value="on"
 							tabindex='-1'
-							onchange='<%="markUpdated(" + index + ");"%>' />
+							onchange='markUpdated(${iter.index});' />
 			</td>
-		</logic:equal>
+		</c:if>
 		<!-- results -->
-		<logic:equal name="testResult" property="resultDisplayType" value="HIV">
+		<c:if test="${testResult.resultDisplayType == 'HIV'}">
 			<td style="vertical-align:top" class="ruled">
-				<html:hidden name="testResult" property="testMethod" indexed="true"/>
-				<bean:write name="testResult" property="testName"/>
+				<form:hidden path="testResult[${iter.index}].testMethod" />
+				<c:out value="${testResult.testName}"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;
 				<spring:message code="inventory.testKit"/>
-				<html:select name="testResult"
-							 property="testKitInventoryId"
-							 value='<%=testResult.getTestKitInventoryId()%>'
-							 indexed="true"
+				<form:select path="testResult[${iter.index}].testKitInventoryId"
 							 tabindex='-1'
-							 onchange='<%="markUpdated(" + index + ");"%>' >
-					<logic:iterate id="id" indexId="index" collection="<%=hivKits%>">
-						<option value='<%=id%>'  <%if(id.equals(testResult.getTestKitInventoryId())) out.print("selected");%>  >
-								<%=id%>
-							</option>
-					</logic:iterate>
-					<logic:equal name="testResult" property="testKitInactive" value="true">
-						<option value='<%=testResult.getTestKitInventoryId()%>' selected ><%=testResult.getTestKitInventoryId()%></option>
-					</logic:equal>
-				</html:select>
+							 onchange='markUpdated(iter.index);' >
+				    <form:options items="${hivKits}"/>
+					<c:if test="${testResult.testKitInactive}">
+						<option value='${testResult.testKitInventoryId}' selected >${testResult.testKitInventoryId}</option>
+					</c:if>
+				</form:select>
 			</td>
-		</logic:equal>
-		<logic:equal name="testResult" property="resultDisplayType" value="SYPHILIS">
+		</c:if>
+		<c:if test="${testResult.resultDisplayType == 'SYPHILIS'}">
 			<td style="vertical-align:middle; text-align: center" class="ruled">
-				<html:hidden name="testResult" property="testMethod" indexed="true"/>
-				<bean:write name="testResult" property="testName"/>
-				<logic:greaterThan name="testResult" property="reflexStep" value="0">
+				<form:hidden path="testResult[${iter.index}].testMethod"/>
+				<c:out value="${testResult.testName}"/>
+				<c:if test="${testResult.reflexStep > 0}">
 				&nbsp;--&nbsp;
-				<spring:message code="reflexTest.step" />&nbsp;<bean:write name="testResult" property="reflexStep"/>
-				</logic:greaterThan>
+				<spring:message code="reflexTest.step" />&nbsp;<c:out value="${testResult.reflexStep}"/>
+				</c:if>
 				&nbsp;&nbsp;&nbsp;&nbsp;
 				<spring:message code="inventory.testKit"/>
-				<html:select name="testResult"
-							 indexed="true"
+				<form:select path="testResult[${iter.index}].testKitInventoryId"
 							 tabindex='-1'
-							 property="testKitInventoryId"
-							 value='<%=testResult.getTestKitInventoryId()%>'
-							 onchange='<%="markUpdated(" + index + ");"%>' >
-					<logic:iterate id="id" indexId="index" collection="<%=syphilisKits%>">
-							<option value='<%=id%>'  <%if(id.equals(testResult.getTestKitInventoryId())) out.print("selected");%>  >
-								<%=id%>
-							</option>
-					</logic:iterate>
-					<logic:equal name="testResult" property="testKitInactive" value="true">
-						<option value='<%=testResult.getTestKitInventoryId()%>' selected ><%=testResult.getTestKitInventoryId()%></option>
-					</logic:equal>
-				</html:select>
+							 onchange='markUpdated(${iter.index});' >
+				    <form:options items="${syphilisKits}" />
+					<c:if test="${testResult.testKitInactive}">
+						<option value='${testResult.testKitInventoryId}' selected >${testResult.testKitInventoryId}</option>
+					</c:if>
+				</form:select>
 			</td>
-		</logic:equal>
-		<logic:notEqual name="testResult" property="resultDisplayType" value="HIV"><logic:notEqual name="testResult" property="resultDisplayType" value="SYPHILIS">
+		</c:if>
+		<c:if test="${not (testResult.resultDisplayType == 'HIV') and not (testResult.resultDisplayType == 'SYPHILIS')}">
 			<td style="vertical-align:middle" class="ruled">
-                <%= testResult.getTestName() %>
-				<logic:notEmpty  name="testResult"  property="normalRange" >
-					<br/><bean:write name="testResult" property="normalRange"/>&nbsp;
-					<bean:write name="testResult" property="unitsOfMeasure"/>
-				</logic:notEmpty>
+                ${testResult.testName}
+				<c:if test="${not empty testResult.normalRange}">
+					<br/><c:out value="${testResult.normalRange}"/>&nbsp;
+					<c:out value="${testResult.unitsOfMeasure}"/>
+				</c:if>
 			</td>
-		</logic:notEqual></logic:notEqual>
+		</c:if>
 
 		<td class="ruled" style='vertical-align: middle'>
 		<% if( failedValidationMarks){ %>
-		<logic:equal name="testResult" property="failedValidation" value="true">
+		<c:if test="${testResult.failedValidation}">
 			<img src="./images/validation-rejected.gif" />
-		</logic:equal>
+		</c:if>
 		<% } %>
-		<logic:equal name="testResult" property="nonconforming" value="true">
+		<c:if test="${testResult.nonconforming}">
 			<img src="./images/nonconforming.gif" />
-		</logic:equal>
+		</c:if>
 		</td>
 		<!-- force acceptance -->
 		<td class="ruled" style='text-align: center'>
-			<html:checkbox name="testResult"
-							property="forceTechApproval"
-							indexed="true"
+			<form:checkbox path="testResult[${iter.index}].forceTechApproval"
+							value="on"
 							tabindex='-1'
-							onchange='<%="markUpdated(" + index + "); forceTechApproval(this, " + index + ");" %>' 
+							onchange='markUpdated(${iter.index}); forceTechApproval(this, ${iter.index});' 
 							/>
 		</td>
 		<!-- result cell -->
-		<td id='<%="cell_" + index %>' class="ruled" >
-			<logic:equal name="testResult" property="resultType" value="N">
-			    <input type="text" 
-			           name='<%="testResult[" + index + "].resultValue" %>' 
+		<td id="cell_${iter.index}" class="ruled" >
+			<c:if test="${testResult.resultType == 'N'}">
+			    <form:input path='testResult[${iter.index}].resultValue' 
 			           size="6" 
-			           value='<%= testResult.getResultValue() %>' 
-			           id='<%= "results_" + index %>'
-			           style='<%="background: " + (testResult.isValid() ? testResult.isNormal() ? "#ffffff" : "#ffffa0" : "#ffa0a0") %>'
-			           title='<%= (testResult.isValid() ? testResult.isNormal() ? "" : StringUtil.getMessageForKey("result.value.abnormal") : StringUtil.getMessageForKey("result.value.invalid")) %>' 
-					   <%= testResult.isReadOnly() ? "disabled='disabled'" : ""%>
-					   class='<%= (testResult.isReflexGroup() ? "reflexGroup_" + testResult.getReflexParentGroup()  : "")  +  (testResult.isChildReflex() ? " childReflex_" + testResult.getReflexParentGroup() : "") %> ' 
-					   onchange='<%="validateResults( this," + index + "," + lowerBound + "," + upperBound + "," + lowerAbnormalBound + "," + upperAbnormalBound + "," + significantDigits +", \"XXXX\" );" +
-						               "markUpdated(" + index + "); " +
-						                (testResult.isReflexGroup() && !testResult.isChildReflex() ? "updateReflexChild(" + testResult.getReflexParentGroup()  +  " ); " : "") +
-						                ( noteRequired && !"".equals(testResult.getResultValue())  ? "showNote( " + index + ");" : ""  ) + 
-						                ( testResult.isDisplayResultAsLog() ? " updateLogValue(this, " + index + ");" : "" ) +
-						                  " updateShadowResult(this, " + index + ");"%>'/>
-			</logic:equal><logic:equal name="testResult" property="resultType" value="A">
-				<app:text name="testResult"
-						  indexed="true"
-						  property="resultValue"
+			           id="results_${iter.index}"
+			           style="background: ${testResult.valid ? testResult.normal ? '#ffffff' : '#ffffa0' : '#ffa0a0' }"
+					   disabled='${testResult.readOnly}' 
+					   onchange="validateResults( this, ${iter.index}, ${lowerBound}, ${upperBound}, ${lowerAbnormalBound}, ${upperAbnormalBound}, ${significantDigits}, 'XXXX' );
+					   			 markUpdated(${iter.index});
+					   			 ${(testResult.reflexGroup && not testResult.childReflex) ? 'updateReflexChild(' += testResult.reflexParentGroup += ');' : ''}
+					   			 ${(noteRequired && not empty testResult.resultValue) ? 'showNote(' += iter.index += ');' : ''}
+					   			 ${(testResult.displayResultAsLog) ? 'updateLogValue(this, ' += iter.index += ');' : ''}
+					   			 updateShadowResult(this, ${iter.index});"
+					   />
+			</c:if><c:if test="${testResult.resultType == 'A'}">
+				<form:input path="testResult[${iter.index}].resultValue"
 						  size="20"
-						  disabled='<%= testResult.isReadOnly() %>'
-						  style='<%="background: " + (testResult.isValid() ? testResult.isNormal() ? "#ffffff" : "#ffffa0" : "#ffa0a0") %>'
-						  title='<%= (testResult.isValid() ? testResult.isNormal() ? "" : StringUtil.getMessageForKey("result.value.abnormal") : StringUtil.getMessageForKey("result.value.invalid")) %>' 
-						  id='<%="results_" + index %>'
-						  onchange='<%="markUpdated(" + index + ");"  +
-						  			   ( testResult.isDisplayResultAsLog() ? " updateLogValue(this, " + index + ");" : "" ) +
-						               ((noteRequired && !"".equals(testResult.getResultValue()) ) ? "showNote( " + index + ");" : "") +
-						                " updateShadowResult(this, " + index + ");"%>'/>
-			</logic:equal><logic:equal name="testResult" property="resultType" value="R">
+						  disabled='${testResult.readOnly}'
+						  id="results_${iter.index}"
+			              style="background: ${testResult.valid ? testResult.normal ? '#ffffff' : '#ffffa0' : '#ffa0a0' }"
+						  onchange="markUpdated(${iter.index});
+					   			    ${(testResult.displayResultAsLog) ? 'updateLogValue(this, ' += iter.index += ');' : ''}
+					   				${(noteRequired && not empty testResult.resultValue) ? 'showNote(' += iter.index += ');' : ''}
+					   			 	updateShadowResult(this, ${iter.index});"
+						/>
+			</c:if><c:if test="${testResult.resultType == 'R'}">
 				<!-- text results -->
-				<app:textarea name="testResult"
-						  indexed="true"
-						  property="resultValue"
+				<form:textarea path="testResult[${iter.index}].resultValue"
 						  rows="2"
-						  disabled='<%= testResult.isReadOnly() %>'
-						  style='<%="background: " + (testResult.isValid() ? testResult.isNormal() ? "#ffffff" : "#ffffa0" : "#ffa0a0") %>'
-						  title='<%= (testResult.isValid() ? testResult.isNormal() ? "" : StringUtil.getMessageForKey("result.value.abnormal") : StringUtil.getMessageForKey("result.value.invalid")) %>'
-						  id='<%="results_" + index %>'
-						  onkeyup='<%="value = value.substr(0, 200); markUpdated(" + index + ");"  +
-						               ((noteRequired && !"".equals(testResult.getResultValue()) ) ? "showNote( " + index + ");" : "") +
-						                " updateShadowResult(this, " + index + ");"%>'
+						  disabled='${testResult.readOnly}'
+						  id="results_${iter.index}"
+			              style="background: ${testResult.valid ? testResult.normal ? '#ffffff' : '#ffffa0' : '#ffa0a0' }"
+						  onkeyup="value = value.substr(0,200);
+						           markUpdated(${iter.index});
+					   			   ${(noteRequired && not (empty testResult.resultValue)) ? 'showNote(' += iter.index += ');' : ''}
+					   			   updateShadowResult(this, ${iter.index}); "
 						  />
-			</logic:equal>
-			<% if( "D".equals(testResult.getResultType())  ){ %>
+			</c:if><c:if test="${testResult.resultType == 'D'}">
 			<!-- dictionary results -->
-			<select name="<%="testResult[" + index + "].resultValue" %>"
-			        onchange="<%="markUpdated(" + index + ", " + testResult.isUserChoiceReflex() +  ", \'" + testResult.getSiblingReflexKey() + "\');"   +
-						               ((noteRequired && !"".equals(testResult.getResultValue()) )? "showNote( " + index + ");" : "") +
-						               (testResult.getQualifiedDictionaryId() != null ? "showQuanitiy( this, "+ index + ", " + testResult.getQualifiedDictionaryId() + ", 'D');" :"") +
-						                 " updateShadowResult(this, " + index + ");"%>"
-			        id='<%="resultId_" + index%>'
-			        <%=testResult.isReadOnly()? "disabled=\'true\'" : "" %> >
+			<form:select path="testResult[${iter.index}].resultValue"
+			        id="resultId_${iter.index}"
+			        onchange="markUpdated(${iter.index}, ${testResult.userChoiceReflex}, '${testResult.siblingReflexKey}');
+					   		  ${(noteRequired && not (empty testResult.resultValue)) ? 'showNote(' += iter.index += ');' : ''}
+					   		  ${(not (empty testResult.qualifiedDictionaryId)) ? 'showQuantity(this, ' += iter.index += ', ' += testResult.qualifiedDictionaryId += ', \\'D\\');' : ''}
+					   		  updateShadowResult(this, ${iter.index}); "
+			        disabled='${testResult.readOnly}'
+			        >
 					<option value="0"></option>
-					<logic:iterate id="optionValue" name="testResult" property="dictionaryResults" type="IdValuePair" >
-						<option value='<%=optionValue.getId()%>'  <%if(optionValue.getId().equals(testResult.getResultValue())) out.print("selected"); %>  >
-							<bean:write name="optionValue" property="value"/>
-						</option>
-					</logic:iterate>
-			</select><br/>
-			<input type="text" 
-			           name='<%="testResult[" + index + "].qualifiedResultValue" %>' 
-			           value='<%= testResult.getQualifiedResultValue() %>' 
-			           id='<%= "qualifiedDict_" + index %>'
-			           style = '<%= "display:" + (testResult.isHasQualifiedResult() ? "inline" : "none") %>'
-					   <%= testResult.isReadOnly() ? "disabled='disabled'" : ""%>
-					   onchange='<%="markUpdated(" + index + ");" %>'
+					<form:options items="${testResult.dictionaryResults}" itemValue="id" itemLabel="value"/>
+			</form:select><br/>
+			<form:input path='testResult[${iter.index}].qualifiedResultValue'
+			           id="qualifiedDict_${iter.index}"
+			           disabled='${testResult.readOnly}'
+			           style="${(not testResult.hasQualifiedResult) ? 'display:none' : ''}"
+					   onchange='markUpdated(${iter.index});'
 					    />
-			<% } %><logic:equal name="testResult" property="resultType" value="M">
+			</c:if><c:if test="${testResult.resultType == 'M'}">
 			<!-- multiple results -->
-			<select name="<%="testResult[" + index + "].multiSelectResultValues" %>"
-					id='<%="resultId_" + index + "_0"%>'
-                    class="<%=testResult.isUserChoiceReflex() ? "userSelection" : "" %>"
-					multiple="multiple"
-					<%=testResult.isReadOnly()? "disabled=\'disabled\'" : "" %> 
-						 title='<%= StringUtil.getMessageForKey("result.multiple_select")%>'
-						 onchange='<%="markUpdated(" + index + "); "  +
-						               ((noteRequired && testResult.getMultiSelectResultValues() != null && testResult.getMultiSelectResultValues().length() > 2 ) ? "showNewNote( " + index + ");" : "") +
-						               (testResult.getQualifiedDictionaryId() != null ? "showQuanitiy( this, "+ index + ", " + testResult.getQualifiedDictionaryId() + ", \"M\" );" :"")%>' >
-						<logic:iterate id="optionValue" name="testResult" property="dictionaryResults" type="IdValuePair" >
-						<option value='<%=optionValue.getId()%>' >
-							<bean:write name="optionValue" property="value"/>
-						</option>
-					</logic:iterate>
-				</select>
-				<html:hidden name="testResult" property="multiSelectResultValues" indexed="true" id='<%="multiresultId_" + index%>' styleClass="multiSelectValues"  />
-                <input type="text"
-                   name='<%="testResult[" + index + "].qualifiedResultValue" %>'
-                   value='<%= testResult.getQualifiedResultValue() %>'
-                   id='<%= "qualifiedDict_" + index %>'
-                   style = '<%= "display:" + ( testResult.isHasQualifiedResult() ? "inline" : "none") %>'
-                    <%= testResult.isReadOnly() ? "disabled='disabled'" : ""%>
-                   onchange='<%="markUpdated(" + index + ");" %>'
+			<form:select path="testResult[${iter.index}].multiSelectResultValues"
+					id="resultId_${iter.index}_0"
+                    multiple="multiple"
+			        disabled='${testResult.readOnly}'
+			        onchange="markUpdated(${iter.index});
+			        		  ${(noteRequired && not (empty testResult.multiSelectResultValues) && fn:length(testResult.multiSelectResultValues) > 2) ? 'showNewNote(' += iter.index += ');' : ''}
+			        		  ${(not (empty testResult.qualifiedDictionaryId)) ? 'showQuantity(this, ' += iter.index += ', ' += testResult.qualifiedDictionaryId += ', \\'M\\'); ' : ''}
+			        ">
+						<form:options items="${testResult.dictionaryResults}" itemValue="id" itemLabel="value"/>
+				</form:select>
+				<form:hidden path="testResult[${iter.index}].multiSelectResultValues" id="multiresultId_${iter.index}" cssClass="multiSelectValues"  />
+                <form:input path='testResult[${iter.index}].qualifiedResultValue'
+                   id="qualifiedDict_${iter.index}"
+			       disabled='${testResult.readOnly}'
+			       style="${(not testResult.hasQualifiedResult) ? 'display:none' : ''}"
+                   onchange='markUpdated(${iter.index});'
                 />
-			</logic:equal>
-            <logic:equal name="testResult" property="resultType" value="C">
+			</c:if><c:if test="${testResult.resultType == 'C'}">
                 <!-- cascading multiple results -->
-                <div id='<%="cascadingMulti_" + index + "_0"%>' class='<%="cascadingMulti_" + index %>' >
-                <input type="hidden" id='<%="divCount_" + index %>' value="0" >
-                <select name="<%="testResult[" + index + "].multiSelectResultValues" %>"
-                        id='<%="resultId_" + index + "_0"%>'
-                        class="<%=testResult.isUserChoiceReflex() ? "userSelection" : "" %>"
-                        multiple="multiple"
-                        <%=testResult.isReadOnly()? "disabled=\'disabled\'" : "" %>
-                        title='<%= StringUtil.getMessageForKey("result.multiple_select")%>'
-                        onchange='<%="markUpdated(" + index + "); "  +
-						               ((noteRequired && testResult.getMultiSelectResultValues() != null && testResult.getMultiSelectResultValues().length() > 2 ) ? "showNewNote( " + index + ");" : "") +
-						               (testResult.getQualifiedDictionaryId() != null ? "showQuanitiy( this, "+ index + ", " + testResult.getQualifiedDictionaryId() + ", \"M\" );" :"")%>' >
-                    <logic:iterate id="optionValue" name="testResult" property="dictionaryResults" type="IdValuePair" >
-                        <option value='<%=optionValue.getId()%>' >
-                            <bean:write name="optionValue" property="value"/>
-                        </option>
-                    </logic:iterate>
-                </select>
-                <input class='<%="addMultiSelect" + index%>' type="button" value="+" onclick='<%="addNewMultiSelect(" + index + ", this);" + (noteRequired ? "showNewNote( " + index + ");" : "" ) %>'/>
-                <input class='<%="removeMultiSelect" + index%>' type="button" value="-" onclick='<%="removeMultiSelect(\"target\");" + (noteRequired ? "showNewNote( " + index + ");" : "" )%>' style="display: none" />
-                <html:hidden name="testResult" property="multiSelectResultValues" indexed="true" id='<%="multiresultId_" + index%>' styleClass="multiSelectValues"  />
-                <input type="text"
-                       name='<%="testResult[" + index + "].qualifiedResultValue" %>'
-                       value='<%= testResult.getQualifiedResultValue() %>'
-                       id='<%= "qualifiedDict_" + index %>'
-                       style = '<%= "display:" + ( testResult.isHasQualifiedResult() ? "inline" : "none") %>'
-                        <%= testResult.isReadOnly() ? "disabled='disabled'" : ""%>
-                       onchange='<%="markUpdated(" + index + ");" %>'
+                <div id="cascadingMulti_${iter.index}_0" class="cascadingMulti_${iter.index}" >
+                <input type="hidden" id="divCount_${iter.index}" value="0" >
+                <form:select path="testResult[${iter.index}].multiSelectResultValues"
+                        id="resultId_${iter.index}_0"
+                        cssClass="${testResult.userChoiceReflex}" 
+                       multiple="multiple"
+                       disabled='${testResult.readOnly}'
+			           onchange="markUpdated(${iter.index});
+			           			 ${(noteRequired && not (empty testResult.multiSelectResultValues) && fn:length(testResult.multiSelectResultValues) > 2) ? 'showNewNote(' += iter.index += '});' : ''}
+			        		     ${(not (empty testResult.qualifiedDictionaryId)) ? 'showQuantity(this, ' += iter.index += ', ' += testResult.qualifiedDictionaryId += ', ' += '\\'M\\');' : '' }
+			           " >
+                       <form:options items="${testResult.dictionaryResults}" itemValue="id" itemLabel="value" />
+                </form:select>
+                <input class='addMultiSelect${iter.index}' type="button" value="+" 
+                	onclick="addNewMultiSelect(${iter.index}, this);
+                	 		 ${(noteRequired) ? 'showNewNote(' += iter.index += ');' : ''}
+                	 		 "/>
+                <input class='removeMultiSelect${iter.index}' type="button" value="-" 
+                	onclick='removeMultiSelect("target");
+                	 		 ${(noteRequired) ? 'showNewNote(' += iter.index += ');' : ''}
+                			 ' 
+                	style="display: none" />
+                <form:hidden path="testResult[${iter.index}].multiSelectResultValues" id="multiresultId_${iter.index}" cssClass="multiSelectValues"  />
+                <form:input path="testResult[${iter.index}].qualifiedResultValue"
+                            id="qualifiedDict_${iter.index}"
+			           		disabled='${testResult.readOnly}'
+			       			style="${(not testResult.hasQualifiedResult) ? 'display:none' : ''}"
+                       		onchange='markUpdated(${iter.index});'
                         />
 
                 </div>
-            </logic:equal>
-			<% if( testResult.isDisplayResultAsLog()){ %>
+            </c:if>
+            <c:if test="${testResult.displayResultAsLog}">
 						<br/><input type='text'
-								    id='<%= "log_" + index %>'
+								    id="log_${iter.index}"
 									disabled='disabled'
 									style="color:black"
-									value='<% try{
-												Double value = Math.log10(Double.parseDouble(testResult.getResultValue()));
-												DecimalFormat twoDForm = new DecimalFormat("##.##");
-												out.print(Double.valueOf(twoDForm.format(value)));
-												}catch(Exception e){
-													out.print("--");} %>'
+									value="${testResult.resultValue}"
 									size='6' /> log
-					<% } %>
-            <bean:write name="testResult" property="unitsOfMeasure"/>
+					</c:if>
+            <c:out value="${testResult.unitsOfMeasure}"/>
 		</td>
 		<% if( ableToRefer ){ %>
 		<td style="white-space: nowrap" class="ruled">
-            <html:hidden name="testResult" property="referralId" indexed='true'/>
-            <html:hidden name="testResult" property="shadowReferredOut" indexed="true" id='<%="shadowReferred_" + index %>' />
-		<% if(GenericValidator.isBlankOrNull(testResult.getReferralId()) || testResult.isReferralCanceled()){  %>
-			<html:checkbox name="testResult"
-						   property="referredOut"
-						   indexed="true"
-						   id='<%="referralId_" + index %>'
-						   onchange='<%="markUpdated(" + index + "); handleReferralCheckChange( this, " + index + ")" %>'/>
-		<% } else {%>
-			<html:checkbox name="testResult"
-						   property="referredOut"
-						   indexed="true"
+            <form:hidden path="testResult[${iter.index}].referralId"/>
+            <form:hidden path="testResult[${iter.index}].shadowReferredOut" id="shadowReferred_${iter.index}" />
+		<c:choose >
+		<c:when test="${empty testResult.referralId || testResult.referralCanceled}">
+			<form:checkbox path="testResult[${iter.index}].referredOut"
+						   id="referralId_${iter.index}"
+						   onchange='markUpdated(${iter.index}); handleReferralCheckChange( this, ${iter.index})'/>
+	
+		</c:when><c:otherwise>
+			<form:checkbox path="testResult[${iter.index}].referredOut"
 						   disabled="true" />
-		<% } %>
-			<select name="<%="testResult[" + index + "].referralReasonId" %>"
-			        id='<%="referralReasonId_" + index%>'
-					onchange='<%="markUpdated(" + index + "); handleReferralReasonChange( this, " + index + ")" %>'
-			        <% out.print(testResult.isShadowReferredOut() && "0".equals(testResult.getReferralReasonId()) ? "" : "disabled='true'"); %> >
-					<option value='0' >
-					   <logic:equal name="testResult" property="referralCanceled" value="true"  >
+		</c:otherwise>
+		</c:choose>
+			<form:select path="testResult[${iter.index}].referralReasonId"
+			        id="referralReasonId_${iter.index}"
+					onchange='markUpdated(${iter.index}); handleReferralReasonChange( this, ${iter.index})"'
+					disabled="${(testResult.shadowReferredOut && (testResult.referralReasonId == '0')) ? 'false' : 'true'}"
+			        >
+			        <option value='0' >
+					   <c:if test="${testResult.referralCanceled}">
 					   		<spring:message code="referral.canceled" />
-					   </logic:equal>
+					   </c:if>
 					</option>
-			<logic:iterate id="optionValue" name='${form.formName}' property="referralReasons" type="IdValuePair" >
-					<option value='<%=optionValue.getId()%>'  <%if(optionValue.getId().equals(testResult.getReferralReasonId())) out.print("selected"); %>  >
-							<bean:write name="optionValue" property="value"/>
-					</option>
-			</logic:iterate>
-			</select>
+			<form:options items="${form.referralReasons}" itemValue="id" itemLabel="value" />
+			</form:select>
 		</td>
 		<% } %>
 		<% if( useTechnicianName){ %>
 		<td style="text-align: left" class="ruled">
-			<app:text name="testResult"
-					   id='<%="technicianSig_" + index %>'
-					   styleClass='<%= GenericValidator.isBlankOrNull(testResult.getTechnicianSignatureId()) ? "techName" : "" %>'
-					   property="technician"
-					   disabled='<%= testResult.isReadOnly() %>'
-					   indexed="true" style="margin: 1px"
+			<form:input path="testResult[${iter.index}].technician"
+					   id="technicianSig_${iter.index}"
+					   disabled='${testResult.readOnly}'
+					   style="margin: 1px"
 					   size="10em"
                        maxlength="18"
-					   onchange='<%="markUpdated(" + index + ");"%>'/>
+					   onchange='markUpdated(${iter.index});'/>
 		</td>
 		<% } %>
 		<% if( useRejected){ %> 
 			<td class="ruled" style='text-align: center'>
-			<html:hidden name="testResult" property="shadowRejected" indexed="true" id='<%="shadowRejected_" + index %>' />
+			<form:hidden path="testResult[${iter.index}].shadowRejected" id="shadowRejected_${iter.index}" />
 			
-			<input type="hidden" id='<%="isRejected_" + index %>' value='<%= testResult.isRejected() %>'/>
-	                <html:checkbox name="testResult"
-	                    id='<%="rejected_" + index%>' 
-	                    property="rejected"
-	                    indexed="true"
+			<input type="hidden" id="isRejected_${iter.index}" value="${testResult.rejected}"/>
+			<spring:message code="result.delete.confirm" var="deleteMsg"/>
+	                <form:checkbox path="testResult[${iter.index}].rejected"
+	                    id="rejected_${iter.index}" 
 	                    tabindex='-1'
-	                    onchange='<%="markUpdated(" + index + "); showHideRejectionReasons(" + index + ", \'" + StringUtil.getContextualMessageForKey( "result.delete.confirm" ) + "\' );" %>' />
+	                    onchange="markUpdated(${iter.index}); showHideRejectionReasons(${iter.index}, '${deleteMsg}' );" />
 	   		</td>
 		<% } %>
 		<td style="text-align:left" class="ruled">
 						 	<img src="./images/note-add.gif"
-						 	     onclick='<%= "showHideNotes( " + index + ");" %>'
-						 	     id='<%="showHideButton_" + index %>'
+						 	     onclick='showHideNotes(${iter.index});'
+						 	     id="showHideButton_${iter.index}"
 						    />
-            <input type="hidden" name="hideShowFlag" value="hidden" id='<%="hideShow_" + index %>' >
+            <input type="hidden" name="hideShowFlag" value="hidden" id="hideShow_${iter.index}" >
 		</td>
 	</tr>
-	<tr id='<%="rejectReasonRow_" + index %>'
-        class='<%= rowColor %>'
-        style='<%= ("true".equals(testResult.getConsiderRejectReason()) ? "" : "display: none;") %>'>
+	<tr id="rejectReasonRow_${iter.index}"
+        class='${rowColor}'
+        style="${(testResult.considerRejectReason != 'true') ? 'display: none;' : ''}"
+		>
         <td colspan="4"></td>
         <td colspan="6" style="text-align:right" >
-               <select name="<%="testResult[" + index + "].rejectReasonId"%>"
-                    id='<%="rejectReasonId_" + index%>'
-                    <%=testResult.isReadOnly()? "disabled=\'true\'" : "" %> >
-                    <logic:iterate id="optionValue" name="${form.formName}" property="rejectReasons" type="IdValuePair" >
-                        <option value='<%=optionValue.getId()%>'  <%if(optionValue.getId().equals(testResult.getRejectReasonId())) out.print("selected"); %>  >
-                            <bean:write name="optionValue" property="value"/>
-                        </option>
-                    </logic:iterate>
-            </select><br/>
+               <form:select path="testResult[${iter.index}].rejectReasonId"
+                    id="rejectReasonId_${iter.index}"
+                    disabled='${testResult.readOnly}'>
+                    <form:options items="${form.rejectReasons}" itemValue="value" itemLabel="id"/>
+            </form:select><br/>
        </td>
     </tr>   
-	<logic:notEmpty name="testResult" property="pastNotes">
-		<tr class='<%= rowColor %>' >
+	<c:if test="${not empty testResult.pastNotes}">
+		<tr class='${rowColor}' >
 			<td colspan="2" style="text-align:right;vertical-align:top"><spring:message code="label.prior.note" />: </td>
 			<td colspan="8" style="text-align:left">
-				<%= testResult.getPastNotes() %>
+				${testResult.pastNotes}
 			</td>
 		</tr>
-	</logic:notEmpty>
-	<tr id='<%="noteRow_" + index %>'
-		class='<%= rowColor %>'
+	</c:if>
+	<tr id="noteRow_${iter.index}"
+		class='${rowColor}'
 		style="display: none;">
-		<td colspan="4" style="vertical-align:top;text-align:right"><% if(noteRequired &&
-														 !(GenericValidator.isBlankOrNull(testResult.getMultiSelectResultValues()) && 
-														   GenericValidator.isBlankOrNull(testResult.getResultValue()))){ %>
-													  <spring:message code="note.required.result.change"/>		
-													<% } else {%>
-													<spring:message code="note.note"/>
-													<% } %>
+		<td colspan="4" style="vertical-align:top;text-align:right">
+			<c:choose><c:when test="${noteRequired && not (empty testResult.multiSelectResultValues && empty testResult.resultValue)}">
+							<spring:message code="note.required.result.change"/>					
+					  </c:when>
+					  <c:otherwise>
+					  		<spring:message code="note.note"/>
+					  </c:otherwise>
+			</c:choose>
 													:</td>
 		<td colspan="6" style="text-align:left" >
-			<html:textarea id='<%="note_" + index %>'
-						   onchange='<%="markUpdated(" + index + ");"%>'
-					   	   name="testResult"
-			           	   property="note"
-			           	   indexed="true"
+			<form:textarea id="note_${iter.index}"
+						   onchange='markUpdated(${iter.index});'
+					   	   path="testResult[${iter.index}].note"
 			           	   cols="100"
 			           	   rows="3" />
 		</td>
 	</tr>
-	</logic:equal>
-	</logic:iterate>
+	</c:if>
+	</c:forEach>
 </Table>
-<logic:notEqual name="${form.formName}" property="paging.totalPages" value="0">
-	<html:hidden id="currentPageID" name="${form.formName}" property="paging.currentPage"/>
-	<bean:define id="total" name="${form.formName}" property="paging.totalPages"/>
-	<bean:define id="currentPage" name="${form.formName}" property="paging.currentPage"/>
-
-	<%if( "1".equals(currentPage)) {%>
-		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" disabled="disabled" >
-	<% } else { %>
-		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" onclick="pager.pageBack();" />
-	<% } %>
-	<%if( total.equals(currentPage)) {%>
-		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.next") %>' style="width:100px;" disabled="disabled" />
-	<% }else{ %>
-		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.next") %>' style="width:100px;" onclick="pager.pageFoward();"   />
-	<% } %>
-
+<c:if test="${not (form.paging.totalPages == 0)}">
+	<form:hidden id="currentPageID" path="paging.currentPage"/>
+	<c:set var="total" value="${form.paging.totalPages}"/>
+	<c:set var="currentPage" value="${form.paging.currentPage}"/>
+	<button type="button" style="width:100px;" onclick="pager.pageBack();" disabled="${currentPage == '1'}">
+		<spring:message code="label.button.previous"/>
+	</button>
+	<button type="button" style="width:100px;" onclick="pager.pageFoward();" disabled="${currentPage == 'total'}">
+		<spring:message code="label.button.next"/>
+	</button>
 	&nbsp;
 	<c:out value="${form.paging.currentPage}"/> of
 	<c:out value="${form.paging.totalPages}"/>
-</logic:notEqual>
+</c:if>
 
-</logic:notEqual>
+</c:if>
 
 
-<logic:equal  name="${form.formName}" property="displayTestSections" value="true">
-	<logic:equal name="testCount"  value="0">
-		<logic:notEmpty name="${form.formName}" property="testSectionId">
+<c:if test="${form.displayTestSections}">
+	<c:if test="${testCount == 0}">
+		<c:if test="${not empty form.testSectionId}">
 		<h2><%= StringUtil.getContextualMessageForKey("result.noTestsFound") %></h2>
-		</logic:notEmpty>
-	</logic:equal>
-</logic:equal>
+		</c:if>
+	</c:if>
+</c:if>
 
-<logic:notEqual  name="${form.formName}" property="displayTestSections" value="true">
-	<logic:equal name="testCount"  value="0">
+<c:if test="${not form.displayTestSections}">
+	<c:if test="${testCount == 0}">
 	<h2><%= StringUtil.getContextualMessageForKey("result.noTestsFound") %></h2>
-	</logic:equal>
-</logic:notEqual>
+	</c:if>
+</c:if>
