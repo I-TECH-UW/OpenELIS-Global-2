@@ -76,7 +76,8 @@ function printWorkplan() {
 </script>
 <form:hidden path="workplanType"/>
 <form:hidden path="testTypeID"/>
-<c:if test="${not (workplanType == 'test') && not (workplanType == 'panel')}">
+<c:choose>
+<c:when test="${not (workplanType == 'test') && not (workplanType == 'panel')}">
 <div id="searchDiv" class="colorFill"  >
 <div id="PatientPage" class="colorFill" style="display:inline" >
 <input type="hidden" name="testName" value='<c:out value="${workplanType}"/>' />
@@ -101,7 +102,11 @@ function printWorkplan() {
 	</h1>
 </div>
 </div>
-</c:if>
+</c:when>
+<c:otherwise>
+	<form:hidden path="testName"/>
+</c:otherwise>
+</c:choose>
 
 <br/>
 <c:if test="${not (testCount == 0)}">
@@ -151,6 +156,10 @@ function printWorkplan() {
   	</tr>
 
 	<c:forEach items="${form.workplanTests}" var="workplanTests" varStatus="iter">
+		<form:hidden path="workplanTests[${iter.index}].accessionNumber"/>
+		<form:hidden path="workplanTests[${iter.index}].patientInfo"/>
+		<form:hidden path="workplanTests[${iter.index}].receivedDate"/>
+		<form:hidden path="workplanTests[${iter.index}].testName"/>
 		<c:if test="${not (workplanTests.accessionNumber == currentAccessionNumber)}" var="showAccessionNumber">
 			<c:set var="currentAccessionNumber" value="${workplanTests.accessionNumber}"/>
 			<c:set var="rowColorIndex" value="${rowColorIndex + 1}"/>
