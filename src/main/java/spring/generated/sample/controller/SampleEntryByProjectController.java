@@ -1,7 +1,15 @@
 package spring.generated.sample.controller;
 
 import java.lang.String;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +19,15 @@ import spring.generated.forms.SampleEntryByProjectForm;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
+import us.mn.state.health.lims.common.services.DisplayListService;
+import us.mn.state.health.lims.common.services.DisplayListService.ListType;
+import us.mn.state.health.lims.common.util.DateUtil;
+import us.mn.state.health.lims.common.util.IdValuePair;
+import us.mn.state.health.lims.dictionary.ObservationHistoryList;
+import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
+import us.mn.state.health.lims.organization.util.OrganizationTypeList;
+import us.mn.state.health.lims.organization.valueholder.Organization;
+
 
 @Controller
 public class SampleEntryByProjectController extends BaseController {
@@ -24,7 +41,54 @@ public class SampleEntryByProjectController extends BaseController {
     if (form == null) {
     	form = new SampleEntryByProjectForm();
     }
-        form.setFormAction("");
+    form.setFormAction("");
+    
+    Date today = Calendar.getInstance().getTime();
+    String dateAsText = DateUtil.formatDateAsText(today);
+    form.setReceivedDateForDisplay(dateAsText);
+    form.setInterviewDate(dateAsText);
+
+    Map<String, List<Dictionary>> formListsMapOfLists = new HashMap<String, List<Dictionary>>();
+    List<Dictionary> listOfDictionary = new ArrayList<Dictionary>();
+    List<IdValuePair> genders = DisplayListService.getList(ListType.GENDERS);
+    
+    for (IdValuePair i : genders)  {
+    	Dictionary dictionary = new Dictionary();
+    	dictionary.setId(i.getId());
+    	dictionary.setDictEntry(i.getValue());
+    	listOfDictionary.add( dictionary);
+    }
+    
+    formListsMapOfLists.put("GENDERS", listOfDictionary);
+    form.setFormLists(formListsMapOfLists);
+    
+    //Get EID Lists
+    Map<String, List<Dictionary>> observationHistoryMapOfLists = new HashMap<String, List<Dictionary>>();
+    observationHistoryMapOfLists.put("EID_WHICH_PCR", ObservationHistoryList.EID_WHICH_PCR.getList());
+    observationHistoryMapOfLists.put("EID_SECOND_PCR_REASON", ObservationHistoryList.EID_SECOND_PCR_REASON.getList());
+    observationHistoryMapOfLists.put("EID_TYPE_OF_CLINIC", ObservationHistoryList.EID_TYPE_OF_CLINIC.getList());
+    observationHistoryMapOfLists.put("EID_HOW_CHILD_FED", ObservationHistoryList.EID_HOW_CHILD_FED.getList());
+    observationHistoryMapOfLists.put("EID_STOPPED_BREASTFEEDING", ObservationHistoryList.EID_STOPPED_BREASTFEEDING.getList());
+    observationHistoryMapOfLists.put("YES_NO", ObservationHistoryList.YES_NO.getList());
+    observationHistoryMapOfLists.put("EID_INFANT_PROPHYLAXIS_ARV", ObservationHistoryList.EID_INFANT_PROPHYLAXIS_ARV.getList());
+    observationHistoryMapOfLists.put("YES_NO_UNKNOWN", ObservationHistoryList.YES_NO_UNKNOWN.getList());
+    observationHistoryMapOfLists.put("EID_MOTHERS_HIV_STATUS", ObservationHistoryList.EID_MOTHERS_HIV_STATUS.getList());
+    observationHistoryMapOfLists.put("EID_MOTHERS_ARV_TREATMENT", ObservationHistoryList.EID_MOTHERS_ARV_TREATMENT.getList());
+    observationHistoryMapOfLists.put("HIV_STATUSES", ObservationHistoryList.HIV_STATUSES.getList());
+    observationHistoryMapOfLists.put("SPECIAL_REQUEST_REASONS", ObservationHistoryList.SPECIAL_REQUEST_REASONS.getList());
+    observationHistoryMapOfLists.put("ARV_REGIME", ObservationHistoryList.ARV_REGIME.getList());
+    observationHistoryMapOfLists.put("ARV_REASON_FOR_VL_DEMAND", ObservationHistoryList.ARV_REASON_FOR_VL_DEMAND.getList());
+    
+	form.setDictionaryLists(observationHistoryMapOfLists);
+	
+	//Get EID Sites
+	Map<String, List<Organization>> organizationTypeMapOfLists = new HashMap<String, List<Organization>>();
+	organizationTypeMapOfLists.put("ARV_ORGS", OrganizationTypeList.ARV_ORGS.getList());
+	organizationTypeMapOfLists.put("ARV_ORGS_BY_NAME", OrganizationTypeList.ARV_ORGS_BY_NAME.getList());
+	organizationTypeMapOfLists.put("EID_ORGS_BY_NAME", OrganizationTypeList.EID_ORGS_BY_NAME.getList());
+	organizationTypeMapOfLists.put("EID_ORGS", OrganizationTypeList.EID_ORGS.getList());
+	form.setOrganizationTypeLists(organizationTypeMapOfLists);
+	    
     BaseErrors errors = new BaseErrors();
     if (form.getErrors() != null) {
     	errors = (BaseErrors) form.getErrors();
@@ -44,13 +108,16 @@ public class SampleEntryByProjectController extends BaseController {
 	  public ModelAndView postSampleEntryByProject(HttpServletRequest request,
 	      @ModelAttribute("form") SampleEntryByProjectForm form) {
 	    
-	    String forward = "eid_entry";
+	    //String forward = "eid_entry";
+	    String forward = FWD_SUCCESS;
 	    
 	    if (form == null) {
 	    	form = new SampleEntryByProjectForm();
 	    }
 	    form.setFormName("sampleEntryByProjectForm");
 	    form.setFormAction("");
+	    
+
 	    BaseErrors errors = new BaseErrors();
 	    if (form.getErrors() != null) {
 	    	errors = (BaseErrors) form.getErrors();
