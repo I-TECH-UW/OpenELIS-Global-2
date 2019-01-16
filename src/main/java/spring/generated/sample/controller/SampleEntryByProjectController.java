@@ -77,6 +77,7 @@ public class SampleEntryByProjectController extends BaseController {
     observationHistoryMapOfLists.put("HIV_STATUSES", ObservationHistoryList.HIV_STATUSES.getList());
     observationHistoryMapOfLists.put("SPECIAL_REQUEST_REASONS", ObservationHistoryList.SPECIAL_REQUEST_REASONS.getList());
     observationHistoryMapOfLists.put("ARV_REGIME", ObservationHistoryList.ARV_REGIME.getList());
+    observationHistoryMapOfLists.put("ARV_REASON_FOR_VL_DEMAND", ObservationHistoryList.ARV_REASON_FOR_VL_DEMAND.getList());
     
 	form.setDictionaryLists(observationHistoryMapOfLists);
 	

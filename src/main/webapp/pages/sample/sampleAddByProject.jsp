@@ -1646,10 +1646,6 @@ function /*void*/ setSaveButton() {
         </td>
     </tr>
     
-     <tr>
-        <td>&nbsp;</td>
-    </tr>
-
     <tr><td colspan="5"><hr/></td></tr>
     
     <tr id="eid.patientRecordStatusRow"style="display: none;">
@@ -1692,18 +1688,15 @@ function /*void*/ setSaveButton() {
         </td>
     </tr>
     
-    <tr>
-        <td class="required"></td>
-        <td>
-            <spring:message code="patient.project.underInvestigationComment"/>
-        </td>
-        <td>
-	    <form:input
-                      path="ProjectData.underInvestigationNote" maxlength="1000" size="80"
-                      onchange="makeDirty();" 
-                      cssClass="text" />
-            <div id="eid.underInvestigationCommentRow" class="blank"></div>
-        </td>
+    <tr id="eid.underInvestigationCommentRow">
+            <td class="required"></td>
+            <td>
+                <spring:message code="patient.project.underInvestigationComment" />
+            </td>
+            <td colspan="3">
+                <form:input path="ProjectData.underInvestigationNote" maxlength="1000" size="80"
+                    onchange="makeDirty();" id="eid.underInvestigationComment" />
+            </td>
     </tr>
     
     <tr>
@@ -2946,23 +2939,282 @@ function /*void*/ setSaveButton() {
 	    	</form:select>
         </td>
     </tr>
-    
-     
-    
-    
-    
-    
-    
+
+    <tr id="vl.onGoingARVTreatmentINNsRow" style="display:none"> 
+		<td></td>
+		<td class="observationsSubquestion">
+			<spring:message code="sample.entry.project.arv.treatment.regimen" />
+		</td>
+	
+    <c:forEach items="${form.observations.currentARVTreatmentINNsList}"  var="ongoingARVTreatment" varStatus="iter" >
+        
+            <tr id="vl.currentARVTreatmentINNRow${iter.index}" style="display:none" >
+        	<td></td>
+        	<td class="bulletItem">  ${iter.index})</td>
+        	
+        	<td>
+				<form:input path="observations.currentARVTreatmentINNsList[${iter.index}]"
+					cssClass="text"
+                    onchange="makeDirty();compareAllObservationHistoryFields(true);" 
+	     			id="vl.currentARVTreatmentINNs${iter.index}" maxlength="10" />
+	     			<div id="vl.currentARVTreatmentINNs${iter.index}Message" class="blank"></div>
+            </td>
+    </tr>
+    </c:forEach>
    
+    <tr><td colspan="5"><hr/></td></tr><!-- _________________________________________________ -->
+    
+    <tr>
+        <td></td>
+        <td>
+            <spring:message code="sample.entry.project.vl.reason"/>
+        </td>
+        <td>
+            <form:select 
+                 path="observations.vlReasonForRequest"
+                 id="vl.vlReasonForRequest"
+                 onchange="vl.checkVLRequestReason();compareAllObservationHistoryFields(true);" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['ARV_REASON_FOR_VL_DEMAND']}" itemLabel="localizedName" />  
+	    	</form:select>
+	    	<div id="vlReasonForRequestMessage" class="blank" > </div>
+        </td>
+    </tr>
+    
+     <tr id="vl.reasonOtherRow" style="display:none" >
+        <td></td>
+        	<td class="Subquestion">
+			<spring:message code="sample.entry.project.vl.specify"/>
+		    </td>
+        <td>
+            <form:input path="observations.vlOtherReasonForRequest"
+					cssClass="text"
+                    onchange="compareAllObservationHistoryFields(true);"
+	     			id="vl.vlOtherReasonForRequest" maxlength="50" />
+	     			<div id="vlOtherReasonForRequestMessage" class="blank" />
+        </td>
+    </tr>    
+    
+    <tr><td colspan="5"><hr/></td></tr><!-- _________________________________________________ -->
+    
+    <tr> 
+		<td></td>
+		<td colspan="3" class="sectionTitle">
+			<spring:message code="sample.project.cd4init" />
+		</td>
+	</tr>
+     
+     <tr>
+        <td></td>
+        	<td><spring:message code="sample.project.cd4Count"/>
+		    </td>
+        <td>
+            <form:input path="observations.initcd4Count"
+					cssClass="text"
+                    onchange="makeDirty();compareAllObservationHistoryFields(true);"
+	     			id="vl.initcd4Count" maxlength="4" />
+	     			<div id="initcd4CountMessage" class="blank" />
+        </td>
+    </tr> 
+    
+    <tr>
+        <td></td>
+        	<td><spring:message code="sample.project.cd4Percent"/>
+		    </td>
+        <td>
+            <form:input path="observations.initcd4Percent"
+					cssClass="text"
+                    onchange="makeDirty();compareAllObservationHistoryFields(true);"
+	     			id="vl.initcd4Percent" maxlength="10" />
+	     			<div id="initcd4PercentMessage" class="blank" />
+        </td>
+    </tr> 
+    
+    <tr>
+        <td></td>
+        	<td><spring:message code="sample.project.Cd4Date"/>
+		    </td>
+        <td>
+            <form:input path="observations.initcd4Date"
+					cssClass="text"
+                    onkeyup="addDateSlashes(this, event);"
+                    onchange="vl.checkDate(this,false);"
+	     			id="vl.initcd4Date" maxlength="10" />
+	     			<div id="initcd4DateMessage" class="blank" />
+        </td>
+    </tr>
+    
+    <tr><td colspan="5"><hr/></td></tr><!-- _________________________________________________ -->
+    
+    <tr> 
+		<td></td>
+		<td colspan="3" class="sectionTitle">
+			<spring:message code="sample.project.cd4demand" />
+		</td>
+	</tr>
+	
+	<tr>
+        <td></td>
+        	<td><spring:message code="sample.project.cd4Count"/>
+		    </td>
+        <td>
+            <form:input path="observations.demandcd4Count"
+					cssClass="text"
+                    onchange="makeDirty();compareAllObservationHistoryFields(true);"
+	     			id="vl.demandcd4Count" maxlength="4" />
+	     			<div id="demandcd4CountMessage" class="blank" />
+        </td>
+    </tr> 
+    
+    <tr>
+        <td></td>
+        	<td><spring:message code="sample.project.cd4Percent"/>
+		    </td>
+        <td>
+            <form:input path="observations.demandcd4Percent"
+					cssClass="text"
+                    onchange="makeDirty();compareAllObservationHistoryFields(true);"
+	     			id="vl.demandcd4Percent" maxlength="10" />
+	     			<div id="demandcd4PercentMessage" class="blank" />
+        </td>
+    </tr>
+    
+    <tr>
+        <td></td>
+        	<td><spring:message code="sample.project.Cd4Date"/>
+		    </td>
+        <td>
+            <form:input path="observations.demandcd4Date"
+					cssClass="text"
+                    onkeyup="addDateSlashes(this, event);"
+                    onchange="vl.checkDate(this,false);"
+	     			id="vl.demandcd4Date" maxlength="10" />
+	     			<div id="demandcd4DateMessage" class="blank" />
+        </td>
+    </tr>
+    
+    <tr><td colspan="5"><hr/></td></tr><!-- _________________________________________________ -->
+    
+    <tr>
+        <td></td>
+        	<td class="observationsQuestion">
+			<spring:message code="sample.project.priorVLRequest"/>
+		    </td>
+        <td>
+            <form:select 
+                 path="observations.vlBenefit"
+                 id="vl.vlBenefit"
+                 onchange="vl.checkVLBenefit();compareAllObservationHistoryFields(true);" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />  
+	    	</form:select>
+        </td>
+    </tr>
+    
+    <tr id="vl.priorVLLabRow" style="display:none">
+        <td></td>
+        	<td><spring:message code="sample.project.priorVLLab"/>
+		    </td>
+        <td>
+            <form:input path="observations.demandcd4Percent"
+					cssClass="text"
+                    onchange="makeDirty();compareAllObservationHistoryFields(true);"
+	     			id="vl.demandcd4Percent" maxlength="10" />
+	     			<div id="demandcd4PercentMessage" class="blank" />
+        </td>
+    </tr>
+    
+    <tr id="vl.priorVLValueRow" style="display:none" >
+        <td></td>
+        	<td><spring:message code="sample.project.VLValue"/>
+		    </td>
+        <td>
+            <form:input path="observations.priorVLValue"
+					cssClass="text"
+					onkeypress="vl.IsNumeric(this,event);"
+	     			id="vl.priorVLValue" maxlength="10" />
+	     			<div id="priorVLValueMessage" class="blank" />
+        </td>
+    </tr> 
+    
+    <tr id="vl.priorVLDateRow" style="display:none" >
+        <td></td>
+        	<td><spring:message code="sample.project.VLDate"/>
+		    </td>
+        <td>
+            <form:input path="observations.priorVLDate"
+					cssClass="text"
+                    onkeyup="addDateSlashes(this, event);"
+                    onchange="vl.checkDate(this,false);"
+	     			id="vl.priorVLDate" maxlength="10" />
+	     			<div id="priorVLDateMessage" class="blank" />
+        </td>
+    </tr>
+    
+    <tr><td colspan="5"><hr/></td></tr>
+    
+    <tr id="vl.patientRecordStatusRow"style="display: none;">
+        <td class="required"></td>
+        <td>
+            <spring:message code="patient.project.patientRecordStatus" />
+        </td>
+        <td>
+        <INPUT type="text" id="vl.PatientRecordStatus" size="20" class="readOnly text" disabled="disabled" readonly="readonly" />
+        <div id="vl.PatientRecordStatusMessage" class="blank"></div>
+        </td>
+    </tr>
+    
+    <tr id="vl.sampleRecordStatusRow" style="display: none;">
+        <td class="required"></td>
+        <td>
+            <spring:message code="patient.project.sampleRecordStatus" />
+        </td>
+        <td>
+        <INPUT type="text" id="vl.SampleRecordStatus" size="20" class="readOnly text" disabled="disabled" readonly="readonly" />
+        <div id="vl.SampleRecordStatusMessage" class="blank"></div>
+        </td>
+    </tr>
+    
+    <tr><td colspan="6"><hr/></td></tr>
+    
+         <tr>
+        <td></td>
+        <td>
+            <spring:message code="patient.project.underInvestigation"/>
+        </td>
+        <td>
+            <form:select 
+                 path="observations.underInvestigation"
+                 id="vl.underInvestigation"
+                 onchange="makeDirty();compareAllObservationHistoryFields(true)" >
+                 <form:option value="">&nbsp;</form:option>
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" /> 
+	    	</form:select>
+        </td>
+    </tr>
+    
+    <tr id="vl.underInvestigationCommentRow">
+            <td class="required"></td>
+            <td>
+                <spring:message code="patient.project.underInvestigationComment" />
+            </td>
+            <td colspan="3">
+                <form:input path="ProjectData.underInvestigationNote" maxlength="1000" size="80"
+                    onchange="makeDirty();" id="vl.underInvestigationComment" />
+            </td>
+    </tr>
+    
+ 
+    
+
     
     
     
-    
-    
-    
-    
-    
-    
+
+
+
+
+   
     
     
     </table>   
