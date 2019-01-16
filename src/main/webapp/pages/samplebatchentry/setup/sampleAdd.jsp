@@ -16,11 +16,6 @@
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
- 
-<bean:define id="entryDate" name="${form.formName}" property="currentDate" />
-
-
-
 <%!String path = "";
 	String basePath = "";
 	boolean useCollectionDate = true;
@@ -83,7 +78,7 @@ function addNewSamples(){
 	var sampleTypeValue = typeElement.options[typeIndex].value;
 	var currentTime = getCurrentTime();
 	
-	addTypeToTable(addTable, sampleDescription, sampleTypeValue, currentTime, '<%= entryDate %>' );
+	addTypeToTable(addTable, sampleDescription, sampleTypeValue, currentTime, '${form.currentDate}' );
     SampleTypes[0] = new SampleType(sampleTypeValue, sampleDescription);
 	
 	notifyChangeListeners();
@@ -692,12 +687,21 @@ function /*boolean*/ sampleAddValid( sampleRequired ) {
 
 //TO DO place logic for validating whether next page should be allowed
 function viralSampleValid(sampleRequired) {
-	return true;
+	var valid = $jq("#vl_dryTubeTaken").is(':checked');
+	valid = valid || $jq("#vl_edtaTubeTaken").is(':checked');
+	valid = valid || $jq("#vl_dbsTaken").is(':checked');
+	valid = valid || $jq("#vl_dryTubeTaken").is(':checked');
+	valid = valid && $jq("#vl_viralLoadTest").is(':checked');
+	return valid;
 }
 
 //TO DO place logic for validating whether next page should be allowed
 function eidSampleValid(sampleRequired) {
-	return true;
+	var valid = $jq("#vl.dryTubeTaken").is(':checked');
+	valid = valid || $jq("#eid_dbsTaken").is(':checked');
+	valid = valid || $jq("#eid_dryTubeTaken").is(':checked');
+	valid = valid && $jq("#eid_dnaPCR").is(':checked');
+	return valid;
 }
 
 //validates page under normal operating rules
@@ -771,38 +775,18 @@ function sampleTypeQualifierChanged(element){
     checkValidSubPages();
 }
 </script>
-<div id="routineSampleAdd" >
+<div id="routineSampleAdd">
 	<% if(useInitialSampleCondition){ %>
 	<div id="sampleConditionPrototype" style="display: none" >
-	<html:select name='${form.formName}'
-				 property="initialSampleConditionList"
-				 multiple="true"
-				 title='<%= StringUtil.getMessageForKey("result.multiple_select")%>'
-				 styleId = 'prototypeID'>
-				<logic:iterate id="optionValue" name='${form.formName}' property="initialSampleConditionList" type="IdValuePair" >
-							<option value='<%=optionValue.getId()%>' >
-								<bean:write name="optionValue" property="value"/>
-							</option>
-						</logic:iterate>
-					</html:select>
+	<form:select path="" id="prototypeID" multiple="true">
+		<form:options items="${form.initialSampleConditionList}" itemValue="id" itemLabel="value"/>
+	</form:select>
 	</div>
 	<% } %>
-	<div id="sectionPrototype" style="display:none;" >
-		<span class="requiredlabel" style="visibility:hidden;">*</span>
-		<select id="testSectionPrototypeID" disabled  onchange="sectionSelectionChanged( this );" class="testSectionSelector" >
-					<option value='0'></option>
-				<logic:iterate id="optionValue" name='${form.formName}' property="testSectionList" type="IdValuePair" >
-					<option value='<%=optionValue.getId()%>' >
-						<bean:write name="optionValue" property="value"/>
-					</option>
-				</logic:iterate>
-		</select>
-	</div>
 	<div id="userSampleTypePrototype" style="display:none;" >
 	    <span class="requiredlabel" style="visibility:hidden;">*</span>
 	    <select id="userSampleTypePrototypeID" disabled="disabled"  >
 	        <option value='0'></option>
-	
 	    </select>
 	</div>
 	<div id="userSampleTypeQualifierPrototype" style="display:none;" >
@@ -826,11 +810,10 @@ function sampleTypeQualifierChanged(element){
 	
 			<tr>
 				<td>
-					<html:select name="${form.formName}" property="sampleTypeSelect"  onchange="sampleTypeSelected(this);" id="sampleTypeSelect"
-						value="0">
-						<app:optionsCollection name="${form.formName}" property="sampleTypes" label="value" value="id" />
-					</html:select>
-	                 
+					<form:select path="sampleTypeSelect" onchange="sampleTypeSelected(this);" id="sampleTypeSelect" value="0">
+						<form:option value="" selected="true" label="---" disabled="true"/>
+						<form:options items="${form.sampleTypes}" itemValue="id" itemLabel="value" />
+					</form:select>
 				</td>
 			</tr>
 		</Table>
@@ -919,7 +902,6 @@ function sampleTypeQualifierChanged(element){
 		</div>
 	<br/>
 </div>
-
 <div id="viralLoadSampleAdd" style='display:none'>
 	<table width="100%">
 		<tr>
@@ -930,39 +912,31 @@ function sampleTypeQualifierChanged(element){
 		</tr>
 		<tr>
 			<td width="2%"></td>
-			<td width="38%"><spring:message code="sample.entry.project.ARV.dryTubeTaken" /></td>
+			<td width="38%">
+				<spring:message code="sample.entry.project.ARV.dryTubeTaken" />
+			</td>
 			<td width="60%">
-	
-				<html:checkbox name="${form.formName}" 
-						value="true"
-					   property="ProjectDataVL.dryTubeTaken"
-					   id="vl.dryTubeTaken"/>
+				<form:checkbox path="ProjectDataVL.dryTubeTaken" value="true" id="vl_dryTubeTaken" onchange="checkValidSubPages();"/>
 			</td>
 		</tr>
 		<tr>
 			<td></td>
-			<td><spring:message code="sample.entry.project.ARV.edtaTubeTaken" /></td>
 			<td>
-				<html:checkbox name="${form.formName}"
-						value="true"
-					   property="ProjectDataVL.edtaTubeTaken"
-					   id="vl.edtaTubeTaken"/>
+				<spring:message code="sample.entry.project.ARV.edtaTubeTaken" />
+			</td>
+			<td>
+				<form:checkbox path="ProjectDataVL.edtaTubeTaken" value="true" id="vl_edtaTubeTaken" onchange="checkValidSubPages();"/>
 			</td>
 		</tr>
-		
 		<tr>
 			<td></td>
-			<td><spring:message code="sample.entry.project.title.dryBloodSpot" /></td>
 			<td>
-				<html:checkbox name="${form.formName}"
-					   property="ProjectData.dbsTaken"
-					   id="vl.dbsTaken"
-					   onchange="vl.checkSampleItem($('vl.dbsTaken'));" />
+				<spring:message code="sample.entry.project.title.dryBloodSpot" />
+			</td>
+			<td>
+				<form:checkbox path="ProjectData.dbsTaken" id="vl_dbsTaken" onchange="vl.checkSampleItem($('vl.dbsTaken'));checkValidSubPages();" />
 			</td>
 		</tr>	
-		
-		
-		
 		<tr>
 			<td></td>
 			<td colspan="3" class="sectionTitle">
@@ -971,12 +945,11 @@ function sampleTypeQualifierChanged(element){
 		</tr>
 		<tr>
 			<td></td>
-			<td><spring:message code="sample.entry.project.ARV.viralLoadTest" /></td>
 			<td>
-				<html:checkbox name="${form.formName}"
-						value="true"
-					   property="ProjectDataVL.viralLoadTest"
-					   id="vl.viralLoadTest"/>
+				<spring:message code="sample.entry.project.ARV.viralLoadTest" />
+			</td>
+			<td>
+				<form:checkbox path="ProjectDataVL.viralLoadTest" value="true" id="vl_viralLoadTest" onchange="checkValidSubPages();"/>
 			</td>
 		</tr>
 		
@@ -993,23 +966,20 @@ function sampleTypeQualifierChanged(element){
 		</tr>
 		<tr>
 			<td width="2%"></td>
-			<td width="38%"><spring:message code="sample.entry.project.ARV.dryTubeTaken" /></td>
+			<td width="38%">
+				<spring:message code="sample.entry.project.ARV.dryTubeTaken" />
+			</td>
 			<td width="60%">
-	
-				<html:checkbox name="${form.formName}"
-						value="true"
-					   property="ProjectDataEID.dryTubeTaken"
-					   id="eid.dryTubeTaken"/>
+				<form:checkbox path="ProjectDataEID.dryTubeTaken" value="true" id="eid_dryTubeTaken" onchange="checkValidSubPages();"/>
 			</td>
 		</tr>
 		<tr>
 			<td></td>
-			<td><spring:message code="sample.entry.project.title.dryBloodSpot" /></td>
 			<td>
-				<html:checkbox name="${form.formName}"
-						value="true"
-					   property="ProjectDataEID.dbsTaken"
-					   id="eid.dbsTaken"/>
+				<spring:message code="sample.entry.project.title.dryBloodSpot" />
+			</td>
+			<td>
+				<form:checkbox path="ProjectDataEID.dbsTaken" value="true" id="eid_dbsTaken" onchange="checkValidSubPages();"/>
 			</td>
 		</tr>
 		<tr>
@@ -1020,12 +990,11 @@ function sampleTypeQualifierChanged(element){
 		</tr>
 		<tr>
 			<td></td>
-			<td><spring:message code="sample.entry.project.dnaPCR" /></td>
 			<td>
-				<html:checkbox name="${form.formName}"
-						value="true"
-					   property="ProjectDataEID.dnaPCR"
-					   id="eid.dnaPCR"/>
+				<spring:message code="sample.entry.project.dnaPCR" />
+			</td>
+			<td>
+				<form:checkbox path="ProjectDataEID.dnaPCR" value="true" id="eid_dnaPCR" onchange="checkValidSubPages();"/>
 			</td>
 		</tr>
 	</table>

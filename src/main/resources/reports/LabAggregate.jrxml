@@ -24,6 +24,7 @@
 	<parameter name="rightHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="localization" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="leftHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="imagesPath" class="java.lang.String"/>
 	<field name="testName" class="java.lang.String"/>
 	<field name="sectionName" class="java.lang.String"/>
 	<field name="notStarted" class="java.lang.Integer"/>
@@ -144,7 +145,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.globalLabReport}]]></textFieldExpression>
 			</textField>
 			<subreport isUsingCache="true">
-				<reportElement x="0" y="0" width="243" height="136"/>
+				<reportElement x="0" y="0" width="573" height="136"/>
 				<subreportParameter name="labName2">
 					<subreportParameterExpression><![CDATA[$P{labName2}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -192,37 +193,6 @@
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + $P{headerName}]]></subreportExpression>
-			</subreport>
-			<subreport>
-				<reportElement x="314" y="0" width="260" height="100"/>
-				<subreportParameter name="leftHeaderImage">
-					<subreportParameterExpression><![CDATA[$P{leftHeaderImage}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="labName2">
-					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="SUBREPORT_DIR">
-					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="orderFinishDate"/>
-				<subreportParameter name="labName1">
-					<subreportParameterExpression><![CDATA[$P{siteName}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="localization">
-					<subreportParameterExpression><![CDATA[$P{localization}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="reportTitle">
-					<subreportParameterExpression><![CDATA[$P{reportTitle}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="rightHeaderImage">
-					<subreportParameterExpression><![CDATA[$P{rightHeaderImage}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="directorName">
-					<subreportParameterExpression><![CDATA[$P{directorName}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="completeFlag"/>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
-				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "GeneralHeader.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 	</title>

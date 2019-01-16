@@ -113,18 +113,11 @@ function moveAccessionToRecentArea() {
 	</td>
 </tr>
 <tr>
-	<td>		
-		<app:text name='${form.formName}' property="labNo"
-			maxlength='9'
-            onkeyup="checkAccessionNumber(this, event);"
-            styleClass="text"
-            id="labNo"/>
-		<html:button onclick="saveLabel();"
-			property="save"
-			id="saveButtonId" 
-			disabled="disabled">
-		<spring:message code="sample.batchentry.preprinted.save" />
-		</html:button>
+	<td>
+		<form:input path="labNo" maxlength='9' onkeyup="checkAccessionNumber(this, event);" cssClass="text" id="labNo"/>
+		<button type="button" onclick="saveLabel();" id="saveButtonId" disabled="disabled">
+			<spring:message code="sample.batchentry.preprinted.save" />
+		</button>
 	</td>
 </tr>
 <tr>

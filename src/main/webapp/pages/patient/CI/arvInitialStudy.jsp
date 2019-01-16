@@ -120,9 +120,9 @@ iarv = new ArvInitialProjectChecker();
 			<%=DateUtil.getDateUserPrompt()%>
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="receivedDateForDisplay"
+			<form:input path="receivedDateForDisplay"
 				onkeyup="addDateSlashes(this, event);"
-				onchange="iarv.checkReceivedDate(false)" styleClass="text"
+				onchange="iarv.checkReceivedDate(false)" cssClass="text"
 				id="receivedDateForDisplay" maxlength="10"/>
 			<div id="receivedDateForDisplayMessage" class="blank" />
 		</td>
@@ -136,9 +136,9 @@ iarv = new ArvInitialProjectChecker();
 			<%=DateUtil.getDateUserPrompt()%>
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="interviewDate"
+			<form:input path="interviewDate"
 				onkeyup="addDateSlashes(this, event);"
-				onchange="iarv.checkInterviewDate(false)" styleClass="text"
+				onchange="iarv.checkInterviewDate(false)" cssClass="text"
 				id="interviewDate" maxlength="10"/>
 			<div id="interviewDateMessage" class="blank"></div>
 		</td>
@@ -152,9 +152,9 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.subject.number" />
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="subjectNumber"
+			<form:input path="subjectNumber"
 				onchange="iarv.checkSubjectNumber(true)"
-				id="subjectNumber" styleClass="text"
+				id="subjectNumber" cssClass="text"
 				maxlength="7" />
 			<div id="subjectNumberMessage" class="blank"></div>
 		</td>
@@ -165,9 +165,9 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.site.subject.number" />
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="siteSubjectNumber"
+			<form:input path="siteSubjectNumber"
 				onchange="iarv.checkSiteSubjectNumber(true, false)"
-				id="siteSubjectNumber" styleClass="text" />
+				id="siteSubjectNumber" cssClass="text" />
 			<div id="siteSubjectNumberMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -183,12 +183,12 @@ iarv = new ArvInitialProjectChecker();
 			<div class="blank">
 				<spring:message code="sample.entry.project.LART" />
 			</div>
-			<INPUT type="text" name="arv.labNoForDisplay" id="labNoForDisplay"
+			<input type="text" name="arv.labNoForDisplay" id="labNoForDisplay"
 				size="5" class="text"
-				onchange="handleLabNoChange( this, '<spring:message code="sample.entry.project.LART"/>', false); makeDirty();"
+				onchange="handleLabNoChange(this, '<spring:message code="sample.entry.project.LART"/>', false); makeDirty();"
 				maxlength="5" />
-			<app:text name="${form.formName}" property="labNo"
-				styleClass="text" style="display: none;"
+			<form:input path="labNo"
+				cssClass="text" style="display: none;"
 				id="labNo" />
 			<div id="labNoMessage" class="blank" ></div>
 		</td>
@@ -200,12 +200,11 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.centerName" />
 		</td>
 		<td>
-			<html:select name="${form.formName}" property="centerName"
+			<form:select path="centerName"
 				id="centerName" onchange="iarv.checkCenterName(true)">
-				<app:optionsCollection name="${form.formName}"
-					property="organizationTypeLists.ARV_ORGS_BY_NAME.list" label="organizationName"
-					value="id" />
-			</html:select>
+				<form:options items="${form.organizationTypeLists.ARV_ORGS_BY_NAME.list}" itemLabel="organizationName"
+					itemValue="id" />
+			</form:select>
 		</td>
 	</tr>
 
@@ -216,12 +215,11 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.centerCode" />
 		</td>
 		<td>
-			<html:select name="${form.formName}" property="centerCode"
+			<form:select path="centerCode"
 				id="centerCode" onchange="iarv.checkCenterCode(true)">
-				<app:optionsCollection name="${form.formName}"
-					property="organizationTypeLists.ARV_ORGS.list" label="doubleName"
-					value="id" />
-			</html:select>
+				<form:options items="${form.organizationTypeLists.ARV_ORGS.list}" itemLabel="doubleName"
+					itemValue="id" />
+			</form:select>
 			<div id="centerCodeMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -232,8 +230,8 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.patientFamilyName" />
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="lastName"
-				onchange="iarv.checkFamilyName(true)" styleClass="text" id="patientFamilyName"
+			<form:input path="lastName"
+				onchange="iarv.checkFamilyName(true)" cssClass="text" id="patientFamilyName"
 				size="40"/>
 			<div id="patientFamilyNameMessage" class="blank"></div>
 		</td>
@@ -245,8 +243,8 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.patientFirstNames" />
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="firstName" size="40"
-				onchange="iarv.checkFirstNames(true)" styleClass="text" id="patientFirstNames" />
+			<form:input path="firstName" size="40"
+				onchange="iarv.checkFirstNames(true)" cssClass="text" id="patientFirstNames" />
 			<div id="patientFirstNamesMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -259,12 +257,11 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.gender" />
 		</td>
 		<td>
-			<html:select name="${form.formName}" property="gender"
+			<form:select path="gender"
 				onchange="iarv.checkGender(false)" id="gender">
-				<app:optionsCollection name="${form.formName}"
-					property="formLists.GENDERS" label="localizedName"
-					value="genderType" />
-			</html:select>
+				<form:options items="${form.formLists.GENDERS}" itemLabel="localizedName"
+					itemValue="genderType" />
+			</form:select>
 			<div id="genderMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -279,9 +276,9 @@ iarv = new ArvInitialProjectChecker();
 			<%=DateUtil.getDateUserPrompt()%>
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="birthDateForDisplay"
+			<form:input path="birthDateForDisplay"
 				onkeyup="addDateSlashes(this, event);"
-				onchange="iarv.checkDateOfBirth(false)" styleClass="text"
+				onchange="iarv.checkDateOfBirth(false)" cssClass="text"
 				id="dateOfBirth" maxlength="10"/>
 			<div id="dateOfBirthMessage" class="blank"></div>
 		</td>
@@ -293,7 +290,7 @@ iarv = new ArvInitialProjectChecker();
 			</td>
 			<td>
 				<label for="age" ><spring:message code="label.year" /></label>
-				<INPUT type="text" name="ageYear" id="age" size="3"
+				<input type="text" name="ageYear" id="age" size="3"
 				   	onchange="iarv.checkAge( this, true, 'year' );"
 				   	maxlength="2" />
 				<div id="ageMessage" class="blank" ></div>
@@ -305,13 +302,12 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.hivStatus" />
 		</td>
 		<td>
-			<html:select name="${form.formName}"
-					 property="observations.hivStatus"
+			<form:select path="observations.hivStatus"
 					 onchange="iarv.checkHivStatus(true);"
 					 id="hivStatus"  >
-				<app:optionsCollection name="${form.formName}" property="ProjectData.hivStatusList"
-					label="localizedName" value="id" />
-			</html:select>
+				<form:options items="${form.projectData.hivStatusList}"
+					itemLabel="localizedName" itemValue="id" />
+			</form:select>
 			<div id="hivStatusMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -323,13 +319,11 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.educationLevel" />
 		</td>
 		<td>
-			<html:select name="${form.formName}"
-				property="observations.educationLevel" onchange="makeDirty();compareAllObservationHistoryFields(true)"
+			<form:select path="observations.educationLevel" onchange="makeDirty();compareAllObservationHistoryFields(true)"
 				id="educationLevel">
-				<app:optionsCollection name="${form.formName}"
-					property="dictionaryLists.EDUCATION_LEVELS.list"
-					label="localizedName" value="id" />
-			</html:select>
+				<form:options items="${form.dictionaryLists.EDUCATION_LEVELS.list}"
+					itemLabel="localizedName" itemValue="id" />
+			</form:select>
 			<div id="educationLevelMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -340,13 +334,11 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.maritalStatus" />
 		</td>
 		<td>
-			<html:select name="${form.formName}"
-				property="observations.maritalStatus" onchange="makeDirty();compareAllObservationHistoryFields(true)"
+			<form:select path="observations.maritalStatus" onchange="makeDirty();compareAllObservationHistoryFields(true)"
 				id="maritalStatus">
-				<app:optionsCollection name="${form.formName}"
-					property="dictionaryLists.MARITAL_STATUSES.list"
-					label="localizedName" value="id" />
-			</html:select>
+				<form:options items="${form.dictionaryLists.MARITAL_STATUSES.list}"
+					itemLabel="localizedName" itemValue="id" />
+			</form:select>
 			<div id="maritalStatusMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -358,13 +350,12 @@ iarv = new ArvInitialProjectChecker();
 
 		</td>
 		<td>
-			<html:select name="${form.formName}" property="observations.nationality"
+			<form:select path="observations.nationality"
 				onchange="iarv.displayNationality();compareAllObservationHistoryFields(true)"
-				id="nationality" styleClass="text">
-				<app:optionsCollection name="${form.formName}"
-					property="dictionaryLists.SIMPLIFIED_NATIONALITIES.list"
-					label="localizedName" value="id" />
-			</html:select>
+				id="nationality" cssClass="text">
+				<form:options items="${form.dictionaryLists.SIMPLIFIED_NATIONALITIES.list}"
+					itemLabel="localizedName" itemValue="id" />
+			</form:select>
 			<div id="nationalityMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -377,9 +368,8 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.nationalityOther" />
 		</td>
 		<td>
-			<app:text name="${form.formName}"
-				property="observations.nationalityOther"
-				onchange="checkRequiredField(this); makeDirty();compareAllObservationHistoryFields(true)" styleClass="text"
+			<form:input path="observations.nationalityOther"
+				onchange="checkRequiredField(this); makeDirty();compareAllObservationHistoryFields(true)" cssClass="text"
 				id="nationalityOther" />
 			<div id="nationalityOtherMessage" class="blank"></div>
 		</td>
@@ -392,9 +382,9 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.legalResidence" />
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="observations.legalResidence"
+			<form:input path="observations.legalResidence"
 				onchange="makeDirty();compareAllObservationHistoryFields(true)"
-				styleClass="text" id="legalResidence" />
+				cssClass="text" id="legalResidence" />
 			<div id="legalResidenceMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -405,9 +395,9 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.nameOfDoctor" />
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="observations.nameOfDoctor"
+			<form:input path="observations.nameOfDoctor"
 				onchange="compareAllObservationHistoryFields(true)"
-				styleClass="text" id="nameOfDoctor" size="50"/>
+				cssClass="text" id="nameOfDoctor" size="50"/>
 			<div id="nameOfDoctorMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -425,52 +415,45 @@ iarv = new ArvInitialProjectChecker();
 			<br />
 		</td>
 		<td>
-			<html:select name="${form.formName}"
-				property="observations.anyPriorDiseases"
+			<form:select path="observations.anyPriorDiseases"
 				onchange="iarv.displayAnyPriorDiseases();makeDirty();compareAllObservationHistoryFields(true)"
-				styleClass="text" id="anyPriorDiseases">
-				<app:optionsCollection name="${form.formName}"
-					property="dictionaryLists.YES_NO.list" label="localizedName"
-					value="id" />
-			</html:select>
-			<div id="anyPriorDiseasesMessage" class="blank" />
+				cssClass="text" id="anyPriorDiseases">
+				<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName"
+					itemValue="id" />
+			</form:select>
+			<div id="anyPriorDiseasesMessage" class="blank" ></div>
 		</td>
 	</tr>
-	<logic:iterate  id="disease" indexId="i" name="${form.formName}" type="NameValuePair"
-		property="observations.priorDiseasesList">
-		<tr id='<%="priorDiseasesRow" + i%>' style="display: none">
+	<c:forEach items="${form.observations.priorDiseasesList}" var="disease" varStatus="iter">
+		<tr id='priorDiseasesRow${iter.index}' style="display: none">
 			<!-- CLI 09.n -->
 			<td></td>
 			<td class="observationsQuestion observationsSubquestion">
-				<bean:write name="disease" property="value" />
+				<c:out value="${disease.value}" />
 			</td>
 			<td>
-				<html:select name="${form.formName}"
-					property='<%= "observations." + disease.getName() %>'
+				<form:select path='observations.${disease.name}'
 					onchange="makeDirty();compareAllObservationHistoryFields(true)"					
-					id="<%= disease.getName() %>"
+					id="${disease.name}"
 					>
-					<app:optionsCollection name="${form.formName}"
-						property="dictionaryLists.YES_NO.list" label="localizedName"
-						value="id" />
-				</html:select>
+					<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName"
+						itemValue="id" />
+				</form:select>
 			</td>
 		</tr>
-	</logic:iterate>
+	</c:forEach>
 	<tr id="priorDiseasesRow" style="display: none">
 		<td></td>
 		<td class="observationsQuestion observationsSubquestion">
 			<spring:message code="patient.project.other" />
 		</td>
 		<td>
-			<html:select name="${form.formName}"
-				property="observations.priorDiseases"
+			<form:select path="observations.priorDiseases"
 				onchange="iarv.displayPriorDiseasesOther(this, 1);makeDirty();compareAllObservationHistoryFields(true)"
 				id="priorDiseases">
-				<app:optionsCollection name="${form.formName}"
-					property="dictionaryLists.YES_NO.list" label="localizedName"
-					value="id" />
-			</html:select>
+				<form:options items="${dictionaryLists.YES_NO.list}" itemLabel="localizedName"
+					itemValue="id" />
+			</form:select>
 		</td>
 	</tr>
 	<tr id="priorDiseasesValueRow" style="display: none">
@@ -481,10 +464,8 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.specify" />
 		</td>
 		<td>
-			<html:text name="${form.formName}"
-				property="observations.priorDiseasesValue" onchange="makeDirty();compareAllObservationHistoryFields(true)"
-				id="priorDiseasesValue">
-			</html:text>
+			<form:input path="observations.priorDiseasesValue" onchange="makeDirty();compareAllObservationHistoryFields(true)"
+				id="priorDiseasesValue"/>
 			<div id="priorDiseasesMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -496,14 +477,12 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.arvProphylaxisBenefit" />
 		</td>
 		<td>
-			<html:select name="${form.formName}"
-				property="observations.arvProphylaxisBenefit"
+			<form:select path="observations.arvProphylaxisBenefit"
 				onchange="iarv.checkArvProphylaxisBenefit(this)"
 				id="arvProphylaxisBenefit">
-				<app:optionsCollection name="${form.formName}"
-					property="dictionaryLists.YES_NO.list" label="localizedName"
-					value="id" />
-			</html:select>
+				<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName"
+					itemValue="id" />
+			</form:select>
 			<div id="arvProphylaxisBenefitMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -516,14 +495,12 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.arvProphylaxis" />
 		</td>
 		<td>
-			<html:select name="${form.formName}"
-				property="observations.arvProphylaxis"
+			<form:select path="observations.arvProphylaxis"
 				onchange="checkRequiredField(this); makeDirty();compareAllObservationHistoryFields(true)"
 				id="arvProphylaxis">
-				<app:optionsCollection name="${form.formName}"
-					property="dictionaryLists.ARV_PROPHYLAXIS.list"
-					label="localizedName" value="id" />
-			</html:select>
+				<form:options items="${dictionaryLists.ARV_PROPHYLAXIS.list}"
+					itemLabel="localizedName" itemValue="id" />
+			</form:select>
 			<div id="arvProphylaxisMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -534,13 +511,11 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.currentARVTreatment" />
 		</td>
 		<td>
-			<html:select name="${form.formName}"
-				property="observations.currentARVTreatment" onchange="makeDirty();compareAllObservationHistoryFields(true)"
+			<form:select path="observations.currentARVTreatment" onchange="makeDirty();compareAllObservationHistoryFields(true)"
 				id="currentARVTreatment">
-				<app:optionsCollection name="${form.formName}"
-					property="dictionaryLists.YES_NO.list" label="localizedName"
-					value="id" />
-			</html:select>
+				<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName"
+					itemValue="id" />
+			</form:select>
 			<div id="currentARVTreatmentMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -552,14 +527,12 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.priorARVTreatment" />
 		</td>
 		<td>
-			<html:select name="${form.formName}"
-				property="observations.priorARVTreatment"
+			<form:select path="observations.priorARVTreatment"
 				onchange="iarv.displayPriorARVTreatment(); makeDirty();compareAllObservationHistoryFields(true)"
 				id="priorARVTreatment">
-				<app:optionsCollection name="${form.formName}"
-					property="dictionaryLists.YES_NO_NA.list" label="localizedName"
-					value="id" />
-			</html:select>
+				<form:options items="${form.dictionaryLists.YES_NO_NA.list}" itemLabel="localizedName"
+					itemValue="id" />
+			</form:select>
 			<div id="priorARVTreatmentINNMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -570,24 +543,21 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.priorARVInn" />
 		</td>
 	</tr>
-	<logic:iterate id="prevARVTreat" indexId="i" name="${form.formName}"
-		property="observations.priorARVTreatmentINNsList">
-		<tr id='<%="priorARVTreatmentRow" + i%>'
+	<c:forEach var="prevARVTreat" items="${form.observations.priorARVTreatmentINNsList}" varStatus="iter">
+		<tr id='priorARVTreatmentRow${iter.index}'
 			class="observationsSubquestion" style="display: none">
 			<td></td>
-			<td class="bulletItem" id='<%="priorARVTreatmentItem" + i%>'><%=i + 1%>)
+			<td class="bulletItem" id='priorARVTreatmentItem${iter.index}'>${iter.index + 1})
 			</td>
 			<td>
-				<html:text name="${form.formName}"
-					property='<%= "observations.priorARVTreatmentINNs[" + i + "]" %>'
-					styleClass="text" onchange="makeDirty();compareAllObservationHistoryFields(true)"
-					id='<%= "priorARVTreatmentINNs" + i %>'>
-				</html:text>
-				<div id='<%="priorARVTreatmentINNs" + i + "Message"%>'
+				<form:input path='observations.priorARVTreatmentINNsList[${iter.index}]'
+					cssClass="text" onchange="makeDirty();compareAllObservationHistoryFields(true)"
+					id='priorARVTreatmentINNs${iter.index}'/>
+				<div id='priorARVTreatmentINNs${iter.index}Message'
 					class="blank"></div>
 			</td>
 		</tr>
-	</logic:iterate>
+	</c:forEach>
 
 	<tr>
 		<!-- CLI 07 -->
@@ -596,14 +566,12 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.cotrimoxazoleTreatment" />
 		</td>
 		<td>
-			<html:select name="${form.formName}"
-				property="observations.cotrimoxazoleTreatment"
+			<form:select path="observations.cotrimoxazoleTreatment"
 				onchange="makeDirty();compareAllObservationHistoryFields(true)"
 				id="cotrimoxazoleTreatment">
-				<app:optionsCollection name="${form.formName}"
-					property="dictionaryLists.YES_NO.list" label="localizedName"
-					value="id" />
-			</html:select>
+				<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName"
+					itemValue="id" />
+			</form:select>
 			<div id="cotrimoxazoleTreatmentMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -614,12 +582,11 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.aidsStage" />
 		</td>
 		<td>
-			<html:select name="${form.formName}" property="observations.aidsStage"
+			<form:select path="observations.aidsStage"
 				onchange="makeDirty();compareAllObservationHistoryFields(true)" id="aidsStage">
-				<app:optionsCollection name="${form.formName}"
-					property="dictionaryLists.AIDS_STAGES.list" label="localizedName"
-					value="id" />
-			</html:select>
+				<form:options items="${form.dictionaryLists.AIDS_STAGES.list}" itemLabel="localizedName"
+					itemValue="id" />
+			</form:select>
 			<div id="aidsStageMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -638,52 +605,45 @@ iarv = new ArvInitialProjectChecker();
 			<br />
 		</td>
 		<td>
-			<html:select name="${form.formName}"
-				property="observations.anyCurrentDiseases"
+			<form:select path="observations.anyCurrentDiseases"
 				onchange="iarv.checkAnyCurrentDiseases(this)"
-				styleClass="text" id="anyCurrentDiseases">
-				<app:optionsCollection name="${form.formName}"
-					property="dictionaryLists.YES_NO.list" label="localizedName"
-					value="id" />
-			</html:select>
+				cssClass="text" id="anyCurrentDiseases">
+				<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName"
+					itemValue="id" />
+			</form:select>
 			<div id="anyCurrentDiseasesMessage" class="blank"></div>
 		</td>
 	</tr>
-	<logic:iterate  id="disease" indexId="i" name="${form.formName}" type="NameValuePair"
-		property="observations.currentDiseasesList">
-		<tr id='<%="currentDiseasesRow" + i%>' style="display: none">
+	<c:forEach var="disease" items="${form.observations.currentDiseasesList}" varStatus="iter">
+		<tr id='currentDiseasesRow${iter.index}' style="display: none">
 			<!-- CLI 09.n -->
 			<td></td>
 			<td class="observationsQuestion observationsSubquestion">
-				<bean:write name="disease" property="value" />
+				<c:out value="${disease.value}" />
 			</td>
 			<td>
-				<html:select name="${form.formName}"
-					property='<%= "observations." + disease.getName() %>'
+				<form:select path='observations.${disease.name}'
 					onchange="makeDirty();compareAllObservationHistoryFields(true)"					
-					id="<%= disease.getName() %>"
+					id="${disease.name}"
 					>
-					<app:optionsCollection name="${form.formName}"
-						property="dictionaryLists.YES_NO.list" label="localizedName"
-						value="id" />
-				</html:select>
+					<form:options items="${dictionaryLists.YES_NO.list}" itemLabel="localizedName"
+						itemValue="id" />
+				</form:select>
 			</td>
 		</tr>
-	</logic:iterate>
+	</c:forEach>
 	<tr id="currentDiseasesRow" style="display: none">
 		<td></td>
 		<td class="observationsQuestion observationsSubquestion">
 			<spring:message code="patient.project.other" />
 		</td>
 		<td>
-			<html:select name="${form.formName}"
-				property="observations.currentDiseases"
+			<form:select path="observations.currentDiseases"
 				onchange="iarv.displayCurrentDiseasesOther(this, 1);makeDirty();compareAllObservationHistoryFields(true)"
 				id="currentDiseases">
-				<app:optionsCollection name="${form.formName}"
-					property="dictionaryLists.YES_NO.list" label="localizedName"
-					value="id" />
-			</html:select>
+				<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName"
+					itemValue="id" />
+			</form:select>
 		</td>
 	</tr>
 
@@ -695,10 +655,8 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.specify" />
 		</td>
 		<td>
-			<html:text name="${form.formName}"
-				property="observations.currentDiseasesValue" onchange="makeDirty();compareAllObservationHistoryFields(true)"
-				id="currentDiseasesValue">
-			</html:text>
+			<form:input path="observations.currentDiseasesValue" onchange="makeDirty();compareAllObservationHistoryFields(true)"
+				id="currentDiseasesValue" />
 			<div id="currentDiseasesMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -709,13 +667,11 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.currentOITreatment" />
 		</td>
 		<td>
-			<html:select name="${form.formName}"
-				property="observations.currentOITreatment" onchange="makeDirty();compareAllObservationHistoryFields(true)"
+			<form:select path="observations.currentOITreatment" onchange="makeDirty();compareAllObservationHistoryFields(true)"
 				id="currentOITreatment">
-				<app:optionsCollection name="${form.formName}"
-					property="dictionaryLists.YES_NO_NA.list" label="localizedName"
-					value="id" />
-			</html:select>
+				<form:options items="${form.dictionaryLists.YES_NO_NA.list}" itemLabel="localizedName"
+					itemValue="id" />
+			</form:select>
 			<div id="currentOITreatment" class="blank"></div>
 		</td>
 	</tr>
@@ -726,8 +682,8 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.patientWeight" />
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="observations.patientWeight"
-				onchange="makeDirty();compareAllObservationHistoryFields(true)" styleClass="text" id="patientWeight" maxlength="3"/>
+			<form:input path="observations.patientWeight"
+				onchange="makeDirty();compareAllObservationHistoryFields(true)" cssClass="text" id="patientWeight" maxlength="3"/>
 			<div id="patientWeightMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -738,8 +694,8 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.karnofskyScore" />
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="observations.karnofskyScore"
-				onchange="makeDirty();compareAllObservationHistoryFields(true)" styleClass="text" id="karnofskyScore" maxlength="3"/>
+			<form:input path="observations.karnofskyScore"
+				onchange="makeDirty();compareAllObservationHistoryFields(true)" cssClass="text" id="karnofskyScore" maxlength="3"/>
 			<div id="karnofskyScoreMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -775,13 +731,11 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.underInvestigation" />
 		</td>
 		<td>
-			<html:select name="${form.formName}"
-			property="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
+			<form:select path="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
 			id="underInvestigation">
-			<app:optionsCollection name="${form.formName}"
-				property="dictionaryLists.YES_NO.list" label="localizedName"
-				value="id" />
-			</html:select>
+			<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName"
+				itemValue="id" />
+			</form:select>
 		</td>
     </tr>    
  	<tr id="underInvestigationCommentRow">
@@ -790,7 +744,7 @@ iarv = new ArvInitialProjectChecker();
 			<spring:message code="patient.project.underInvestigationComment" />
 		</td>
 		<td colspan="3">
-			<app:text name="${form.formName}" property="ProjectData.underInvestigationNote" maxlength="1000" size="80"
+			<form:input path="projectData.underInvestigationNote" maxlength="1000" size="80"
 				onchange="makeDirty();" id="underInvestigationComment" />
 		</td>
     </tr>

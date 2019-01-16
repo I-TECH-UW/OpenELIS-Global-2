@@ -10,9 +10,8 @@
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
- 
-<bean:define id="workplanType" name="${form.formName}" property="workplanType" />
-<bean:define id="responseAction" name='${form.formName}' property="searchAction"  />
+<c:set var="workplanType" value="${form.workplanType}"/>
+<c:set var="responseAction" value="${form.searchAction}"/>
 
 <%!
 	String basePath = "";
@@ -29,8 +28,7 @@
 <script type="text/javascript">
 
 function doShowTests(element){
-	
-	window.location.href = '<%=responseAction%>' + "?type=" + '<%=Encode.forJavaScript((String) workplanType) %>' + "&selectedSearchID=" + element.value;
+	window.location.href = '${responseAction}?type=<c:out value="${workplanType}"/>&selectedSearchID=' + element.value;
 	
 }
 
@@ -59,10 +57,11 @@ function /*boolean*/ handleEnterEvent(){
 				<c:out value="${form.searchLabel}"/>
 			</td>
 			<td>
-				<html:select name="${form.formName}" property="selectedSearchID" id="testName"
+				<form:select path="selectedSearchID" id="testName"
 						 onchange="doShowTests(this);" >
-					<app:optionsCollection name="${form.formName}" property="searchTypes" label="value" value="id" />
-				</html:select>
+					<option value=""></option>
+					<form:options items="${form.searchTypes}" itemLabel="value" itemValue="id" />
+				</form:select>
 	   		</td>
 		</tr>
 	</table>

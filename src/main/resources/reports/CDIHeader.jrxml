@@ -78,17 +78,13 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{labName2}]]></textFieldExpression>
 			</textField>
 			<elementGroup>
-				<image hAlign="Right" isUsingCache="true" onErrorType="Blank">
-					<reportElement x="470" y="3" width="100" height="88"/>
-					<imageExpression class="java.io.InputStream"><![CDATA[$P{rightHeaderImage}]]></imageExpression>
-				</image>
 				<image hAlign="Right" isUsingCache="false">
 					<reportElement x="468" y="1" width="100" height="88"/>
 					<imageExpression class="java.lang.String"><![CDATA[$P{imagesPath}+ "rightLabLogo.jpg"]]></imageExpression>
 				</image>
 			</elementGroup>
 			<image isUsingCache="false">
-				<reportElement x="0" y="0" width="100" height="88"/>
+				<reportElement x="1" y="1" width="100" height="88"/>
 				<imageExpression class="java.lang.String"><![CDATA[$P{imagesPath}+ "leftLabLogo.jpg"]]></imageExpression>
 			</image>
 		</band>

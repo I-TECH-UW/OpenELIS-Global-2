@@ -13,8 +13,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>	     
+<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>	     
 
 <c:set var="formName" value="${form.formName}"/>
 <c:set var="localDBOnly" value='<%=Boolean.toString(ConfigurationProperties.getInstance().getPropertyValueLowerCase(Property.UseExternalPatientInfo).equals("false"))%>'/>

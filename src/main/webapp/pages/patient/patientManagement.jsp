@@ -141,6 +141,10 @@ if( patientIDRequired){
 	}
 }
 
+if (supportSubjectNumber && subjectNumberRequired){
+	pt_requiredFields.push("subjectNumberID");
+}
+
 var updateStatus = "add";
 var patientInfoChangeListeners = [];
 var dirty = false;
@@ -908,7 +912,7 @@ function  processSubjectNumberSuccess(xhr){
                          id="subjectNumberID"
                          styleClass="text"
                          size="60" /> --%>
-            <form:input path="patientProperties.subjectNumber" id="subjectNumberID" onchange="validateSubjectNumber(this, 'subjectNumber');updatePatientEditStatus();" size="60"/>
+            <form:input path="patientProperties.subjectNumber" id="subjectNumberID" onchange="validateSubjectNumber(this, 'subjectNumber');updatePatientEditStatus();" cssClass="text" size="60"/>
         </td>
     </tr>
     <tr>

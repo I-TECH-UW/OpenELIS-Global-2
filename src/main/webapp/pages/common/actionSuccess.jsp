@@ -19,8 +19,10 @@ function /*void*/ showSuccessMessage( show ){
 </script>
 
 
+<c:set var="pageSuccess" value="${success || param.forward == 'success'}"/>
 
-<div id="successMsg" style="text-align:center; color:seagreen;  width : 100%;font-size:170%; visibility : hidden"  onload="showSuccessMessage(${success})">
+<div id="successMsg" 
+     style="text-align:center; color:seagreen;  width : 100%;font-size:170%; <c:if test="${not pageSuccess}">visibility : hidden</c:if>">
 				<spring:message code="save.success"/>
 </div>
 

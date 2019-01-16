@@ -618,7 +618,6 @@ function  processPhoneSuccess(xhr){
 
 <br />
 <hr style="width:100%;height:5px" />
-<form:hidden path="patientPK" />
 
 <table style="width:100%">
     <tr>

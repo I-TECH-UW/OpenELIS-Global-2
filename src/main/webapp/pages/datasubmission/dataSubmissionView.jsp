@@ -18,11 +18,6 @@
     basePath = request.getScheme() + "://" + request.getServerName() + ":"  + request.getServerPort() + path + "/";
 %>
 
- 
-<bean:define id="month" name="${form.formName}" property="month"/>
-<bean:define id="year" name="${form.formName}" property="year" />
-
-
 <script type="text/javascript">
 function saveAndSubmit() {
 	if (checkURL()) {
@@ -67,7 +62,7 @@ function showsubmitting() {
 
 function confirmSentWarning() {
 	var sentIndicators = [];
-	var message = "<spring:message code="datasubmission.warning.sent" arg0="<%=DateUtil.getMonthFromInt((int) month, false)%>" arg1="<%=Integer.toString((int) year)%>"/>";
+	var message = "<spring:message code="datasubmission.warning.sent" arguments="month, year"/>";
 	$jq("span.<%=DataIndicator.SENT%>").each(function() {
 		sentIndicators.push(this.id);
 	});
@@ -88,12 +83,13 @@ function confirmSentWarning() {
 	}
 <% } %>
 </script>
+
 <div id="sending" style="text-align:center;color:DarkOrange;width:100%;font-size:170%;display:none;">
 				<spring:message code="datasubmission.warning.sending"/>
 </div>
 <spring:message code="datasubmission.label.url" />: 
-<form:input path="dataSubUrl.value" id="url" disabled="true"></html:text>
-<html:button property="" onclick="editUrl();"><spring:message code="datasubmission.button.edit" /></html:button>
+<form:input path="dataSubUrl.value" id="url" disabled="true"/>
+<button type="button" onclick="editUrl();"><spring:message code="datasubmission.button.edit" /></button>
 
 <h3><spring:message code="datasubmission.siteid"/> - <c:out value="${form.siteId}"/></h3>
 
@@ -103,100 +99,101 @@ function confirmSentWarning() {
 <tr>
 	<td><spring:message code="datasubmission.label.month" /></td>
 	<td>
-		<html:select name="${form.formName}" property="month" id="month">
-			<html:option value="1"><spring:message code="month.january.abbrev" /></html:option>
-			<html:option value="2"><spring:message code="month.february.abbrev" /></html:option>
-			<html:option value="3"><spring:message code="month.march.abbrev" /></html:option>
-			<html:option value="4"><spring:message code="month.april.abbrev" /></html:option>
-			<html:option value="5"><spring:message code="month.may.abbrev" /></html:option>
-			<html:option value="6"><spring:message code="month.june.abbrev" /></html:option>
-			<html:option value="7"><spring:message code="month.july.abbrev" /></html:option>
-			<html:option value="8"><spring:message code="month.august.abbrev" /></html:option>
-			<html:option value="9"><spring:message code="month.september.abbrev" /></html:option>
-			<html:option value="10"><spring:message code="month.october.abbrev" /></html:option>
-			<html:option value="11"><spring:message code="month.november.abbrev" /></html:option>
-			<html:option value="12"><spring:message code="month.december.abbrev" /></html:option>
-		</html:select>
+		<form:select path="month" id="month">
+			<form:option value="1"><spring:message code="month.january.abbrev" /></form:option>
+			<form:option value="2"><spring:message code="month.february.abbrev" /></form:option>
+			<form:option value="3"><spring:message code="month.march.abbrev" /></form:option>
+			<form:option value="4"><spring:message code="month.april.abbrev" /></form:option>
+			<form:option value="5"><spring:message code="month.may.abbrev" /></form:option>
+			<form:option value="6"><spring:message code="month.june.abbrev" /></form:option>
+			<form:option value="7"><spring:message code="month.july.abbrev" /></form:option>
+			<form:option value="8"><spring:message code="month.august.abbrev" /></form:option>
+			<form:option value="9"><spring:message code="month.september.abbrev" /></form:option>
+			<form:option value="10"><spring:message code="month.october.abbrev" /></form:option>
+			<form:option value="11"><spring:message code="month.november.abbrev" /></form:option>
+			<form:option value="12"><spring:message code="month.december.abbrev" /></form:option>
+		</form:select>
 	</td>
 	<td><spring:message code="datasubmission.label.year" /></td>
 	<td>
-		<html:select name="${form.formName}" property="year" id="year">
-			<html:option value="2017">2017</html:option>
-			<html:option value="2018">2018</html:option>
-			<html:option value="2019">2019</html:option>
-			<html:option value="2020">2020</html:option>
-		</html:select>
+		<form:select path="year" id="year">
+			<form:option value="2017">2017</form:option>
+			<form:option value="2018">2018</form:option>
+			<form:option value="2019">2019</form:option>
+			<form:option value="2020">2020</form:option>
+		</form:select>
 	</td>
-	<td><html:button property="" value="Fetch Date" onclick="dateChange();"/></td>
+	<td><button type="button" onClick="dateChange();">Fetch Date</button></td>
 </tr>
 <tr>
 	<td><b><spring:message code="datasubmission.checkbox.sendindicator"/></b></td>
 	<td colspan="3"><b></b></td>
 	<td><b></b></td>
 </tr>
-<logic:iterate property="indicators" name="${form.formName}" id="indicators" indexId="indicatorIndex">
-	<bean:define name="indicators" property="typeOfIndicator.nameKey" id="nameKey" />
-	<bean:define name="indicators" property="typeOfIndicator.descriptionKey" id="descriptionKey" />
+<c:forEach var="indicator" items="${form.indicators}">
+	<c:set var="nameKey" value="${indicator.typeOfIndicator.nameKey}"/>
+	<c:set var="descriptionKey" value="${indicator.typeOfIndicator.descriptionKey}"/>
 <tr class="border_top">
 	<td>
 		<!--  checkbox-hidden combo trick to make struts send true when checked, false when unchecked as opposed to default checkbox (true when checked, false when unchecked)-->
-		<html:checkbox name="${form.formName}" property='<%="indicators["+indicatorIndex+"].sendIndicator"%>' value="true"/>
-		<form:hidden path='<%="indicators["+indicatorIndex+"].sendIndicator"%>' value="false" />
+		<form:checkbox path="indicator.sendIndicator" value="true" />
+		<form:hidden path="indicator.sendIndicator" value="false" />
 	</td>
 	<td colspan="3">
-		<span id="<spring:message code="<%=(String) nameKey%>" />" class="<bean:write name="indicators" property="status" />">
-			<b><spring:message code="<%=(String) nameKey%>" /></b>
+		<span id="<spring:message code="${nameKey} }>" />" class="<c:out value="${indicator.status}" />">
+			<b><spring:message code="${nameKey}" /></b>
 		</span>
 	</td>
 	<td >
-		<b><spring:message code="<%=(String) nameKey%>" /></b>
+		<b><spring:message code="${nameKey}" /></b>
 	</td>
 </tr>
-	<logic:notEmpty name="indicators" property="dataValue"><logic:equal name="indicators" property="dataValue.visible" value="true">
+	<c:if test="${empty indicator.dataValue}" ><c:if test="${indicator.dataValue.visible}">
 <tr>
 	<td></td>
-	<td  colspan="3"><bean:write name="indicators" property="dataValue.value" /></td>
-	<td >	<form:input path='<%="indicators["+indicatorIndex+"].dataValue.value"%>'/> </td>
+	<td  colspan="3"><c:out value="${indicator.dataValue.value}" /></td>
+	<td >	<form:input path="indicator.dataValue.value"/> </td>
 </tr>
-	</logic:equal></logic:notEmpty>
+
+	</c:if></c:if>
 <tr>
 	<td></td>
 	<td  colspan="3">
-		<spring:message code="<%=(String) descriptionKey%>" />
+		<spring:message code="${descriptionKey}" />
 	</td>
 </tr>
-	<logic:iterate property="resources" name="indicators" id="resource" indexId="resourceIndex">
-		<logic:notEmpty property="headerKey" name="resource">
-			<bean:define name="resource" property="headerKey" id="headerKey" />
+	<c:forEach var="resource" items="${form.indicators.resources}">
+		<c:if test="${not empty resource.headerKey}">
 <tr>
 	<td></td>
 	<td  colspan="3"></td>
 	<td >
-		<spring:message code="<%=(String) headerKey%>" />
+		<spring:message code="${resource.headerKey }" />
 	</td>
 </tr>
-		</logic:notEmpty>
-		<logic:iterate property="columnValues" name="resource" id="columnValue" indexId="columnIndex">
-			<logic:equal name="columnValue" property="visible" value="true">
+		</c:if>
+		<c:forEach var="columnValue" items="${resource.columnValue}" varStatus="loop">
+			<c:if test="${columnValue}">
 <tr>
 	<td></td>
 	<td  colspan="3">
 		
 	</td>
 	<td >
-		<form:input path='<%="indicators["+indicatorIndex+"].resources["+resourceIndex+"].value["+columnIndex+"]"%>' />
-				<logic:notEmpty name="columnValue" property="displayKey">
-					<bean:define name="columnValue" property="displayKey" id="displayKey" />
-		<spring:message code="<%=(String)displayKey%>" />
-				</logic:notEmpty>
+		<form:input path='indicator.resource.value[${loop.index}]"' />
+			<c:if test="${not empty columnValue.displayKey}">
+		<spring:message code="${columnValue.displayKey}>" />
+			</c:if>
 	</td>
 </tr>
-			</logic:equal>
-		</logic:iterate>
-	</logic:iterate>
+
+		</c:if>
+	</c:forEach>
+	</c:forEach>
 <tr class="spacerRow"><td>&nbsp;</td></tr>
-</logic:iterate>
+</c:forEach>
 </table>
 
-<html:button property="" onclick="saveAndSubmit();"><spring:message code="datasubmission.button.savesubmit" /> </html:button>
-<html:button property="" onclick="saveAndExit();"><spring:message code="datasubmission.button.saveexit" /> </html:button>
+<button type="button" onclick="saveAndSubmit();"><spring:message code="datasubmission.button.savesubmit" /> </button>
+<button type="button" onclick="saveAndExit();"><spring:message code="datasubmission.button.saveexit" /> </button>
+

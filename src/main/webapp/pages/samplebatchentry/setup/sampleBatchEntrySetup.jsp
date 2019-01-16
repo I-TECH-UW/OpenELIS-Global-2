@@ -10,6 +10,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 
       
 
@@ -151,21 +152,22 @@ function /*void*/ setNext(valid) {
 
 </script>
 
-        
+
 <!-- Order -->    
 <div id=orderEntryPage >
 	<h2><%= StringUtil.getContextualMessageForKey("sample.entry.order.label") %></h2>	
-	<tiles:insert attribute="sampleOrder" />
+	<tiles:insertAttribute name="sampleOrder"/>
 </div>
 
 <!-- Sample -->  
 <div id=sampleEntryPage >
 	<h2><%= StringUtil.getContextualMessageForKey("sample.entry.sampleList.label") %></h2>
-	<tiles:insert attribute="addSample"/>
+	<tiles:insertAttribute name="addSample"/>
 </div>
 
 <!-- Barcode Configuration -->
 <div id=configureBarcodePage >
 	<h2><%= StringUtil.getContextualMessageForKey("sample.batchentry.configureBarcode") %></h2>
-	<tiles:insert attribute="configureLabels" />
+	<tiles:insertAttribute name="configureLabels" />
 </div>
+

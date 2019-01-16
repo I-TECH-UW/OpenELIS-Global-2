@@ -2,7 +2,8 @@
 	contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants,
 			us.mn.state.health.lims.common.util.resources.ResourceLocator,
-			java.util.Locale"
+			java.util.Locale,
+			spring.mine.internationalization.MessageUtil"
 %>
 
 <%@ page isELIgnored="false" %>
@@ -11,9 +12,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-
- 
-
 
 <%!
   String paginationMessage = "";
@@ -76,10 +74,9 @@
 	<tr>
 		<td class="pageTitle" align="center">
 			<b> &nbsp;&nbsp;&nbsp;&nbsp;
-				<logic:notEmpty
-					name="<%=IActionConstants.PAGE_SUBTITLE_KEY%>">
-					<bean:write name="<%=IActionConstants.PAGE_SUBTITLE_KEY%>" />
-				</logic:notEmpty>
+				<c:if test="${not empty subtitle}">
+					<c:out value="${subtitle}" />
+				</c:if>
 		 	&nbsp;&nbsp;
 		 	</b>
 		</td>
@@ -128,12 +125,8 @@ function submitSearchForClick(button){
 							.getAttribute(IActionConstants.MENU_TO_RECORD);
 				}
 
-				java.util.Locale locale = (Locale) request.getSession()
-						.getAttribute(org.apache.struts.Globals.LOCALE_KEY);
-				String msgResults = ResourceLocator.getInstance()
-						.getMessageResources().getMessage(locale, "list.showing");
-				String msgOf = ResourceLocator.getInstance().getMessageResources()
-						.getMessage(locale, "list.of");
+				String msgResults = MessageUtil.getMessage("list.showing");
+				String msgOf = MessageUtil.getMessage("list.of");
 
 				paginationMessage = msgResults + " " + fromCount + " - " + toCount
 						+ " " + msgOf + " " + totalCount;
@@ -162,67 +155,66 @@ function submitSearchForClick(button){
 		</tr>
 		<tr>
 		<!-- we put "!" before disableEdit then the "Editer" button will be  always disabled at the  initialization of this page   -->
-			<td><html:button
+			<td><form:button 
 					onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?ID=');return false;"
-					property="edit"
+					name="edit"
 					disabled="<%=!disableEdit%>">
 					<spring:message code="label.button.edit" />
-				</html:button> &nbsp; 
-				<html:button
+				</form:button> &nbsp; 
+				<form:button 
 					onclick="setMenuAction(this, window.document.forms[0], 'Delete', 'yes', '?ID=');return false;"
-					property="deactivate"
-					disabled="true"> 
+					name="deactivate"
+					disabled="disabled"> 
 					<spring:message code="label.button.deactivate" />
-  			</html:button>
+  			</form:button>
 				
 				&nbsp;
 				<spring:message code="label.form.or" />&nbsp; 
 				
-				<html:button
+				<form:button 
 					onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?ID=0');return false;"
-					property="add"
+					name="add"
 					disabled="<%=Boolean.valueOf(addDisabled).booleanValue()%>">
 					<spring:message code="label.button.add" />
-  			</html:button>
+  			</form:button>
 	   </td>
 
-			<logic:notEmpty
-				name="<%=IActionConstants.MENU_SEARCH_BY_TABLE_COLUMN%>">
+			<c:if test="${not empty menuSearchByTableColumn}">
 				<td></td>
 
-				<td align="right"><spring:message code="label.form.searchby" /> <spring:message code="<%=searchColumn%>" /> <html:text name="${form.formName}"
-						property="searchString" onkeypress="submitSearchForEnter(event);"
+				<td align="right"><spring:message code="label.form.searchby" /> <spring:message code="<%=searchColumn%>" /> 
+				<form:input path="searchString" onkeypress="submitSearchForEnter(event);"
 						size="20" maxlength="20" value="<%=searchStr%>"
 						disabled="<%=Boolean.valueOf(notAllowSearching).booleanValue()%>" />
 
 
-					<html:button property="search" id="searchButton"
+					<form:button  name="search" id="searchButton"
 						onclick="submitSearchForClick(this);return false;"
 						disabled="<%=Boolean.valueOf(notAllowSearching).booleanValue()%>">
   			       <spring:message code="label.button.search"/>
-  		       </html:button>
+  		       </form:button>
           </td>
 
 
-       </logic:notEmpty>
+       </c:if>
 
 			<td></td>
 
 
       
 			<td align="right">
-			   <html:button
+			   <form:button 
 					onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?paging=1');return false;"
-					property="previous"
+					name="previous"
 					disabled="<%=Boolean.valueOf(previousDisabled).booleanValue()%>">
 					<spring:message code="label.button.previous" />
-				</html:button> &nbsp; 
-				<html:button
+				</form:button> &nbsp; 
+				<form:button 
 					onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?paging=2');return false;"
-					property="next"
+					name="next"
 					disabled="<%=Boolean.valueOf(nextDisabled).booleanValue()%>">
 					<spring:message code="label.button.next" />
-				</html:button>
+				</form:button>
        </td>
  	</tr>
 		<tr>
@@ -241,27 +233,27 @@ function submitSearchForClick(button){
 
 function output() {
  var total = 0;
-   for ( var i = 0; i < window.document.<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>.length; i++ ) {
-      if ( window.document.<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>.elements[ i ].type == 'checkbox' ) {
-         if (window.document.<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>.elements[ i ].checked == true ) {
+   for ( var i = 0; i < window.document.${form.formName}.length; i++ ) {
+      if ( window.document.${form.formName}.elements[ i ].type == 'checkbox' ) {
+         if (window.document.${form.formName}.elements[ i ].checked == true ) {
             total++;
          }
       }
    }
      if(total == 0){
-    	 window.document.<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>.edit.disabled=true;
+    	 window.document.${form.formName}.edit.disabled=true;
     	 <% if( allowDeactivate){ %>
-    	 	window.document.<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>.deactivate.disabled=true;
+    	 	window.document.${form.formName}.deactivate.disabled=true;
     	 <% } %>	
      } else if(total == 1){
-    	 window.document.<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>.edit.disabled=false;
+    	 window.document.${form.formName}.edit.disabled=false;
     	 <% if( allowDeactivate){ %>
-    	 	window.document.<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>.deactivate.disabled=false;
+    	 	window.document.${form.formName}.deactivate.disabled=false;
     	 <% } %>		
      } else {
-    	 window.document.<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>.edit.disabled=true;
+    	 window.document.${form.formName}.edit.disabled=true;
     	 <% if( allowDeactivate){ %>
-    	 	window.document.<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>.deactivate.disabled=false;
+    	 	window.document.${form.formName}.deactivate.disabled=false;
     	 <% } %>		
      }
 }

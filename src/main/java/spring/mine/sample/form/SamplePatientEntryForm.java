@@ -1,157 +1,158 @@
 package spring.mine.sample.form;
 
-import java.lang.String;
 import java.sql.Timestamp;
-import java.util.Collection;
 import java.util.List;
+
 import spring.mine.common.form.BaseForm;
+import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.patient.action.bean.PatientClinicalInfo;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
+import us.mn.state.health.lims.project.valueholder.Project;
 import us.mn.state.health.lims.sample.bean.SampleOrderItem;
 
 public class SamplePatientEntryForm extends BaseForm {
-  private Timestamp lastupdated;
+	private Timestamp lastupdated;
 
-  private String currentDate = "";
+	private String currentDate = "";
 
-  private String project = "";
+	private String project = "";
 
-  private Collection projects;
+	private List<Project> projects;
 
-  private String patientProcessingStatus = "Add";
+	private String patientProcessingStatus = "Add";
 
-  private String patientPK = "";
+	private List<IdValuePair> sampleTypes;
 
-  private List sampleTypes;
+	private String sampleXML = "";
 
-  private String sampleXML = "";
+	private PatientManagementInfo patientProperties;
 
-  private PatientManagementInfo patientProperties;
+	private PatientSearch patientSearch;
 
-  private PatientSearch patientSearch;
+	private PatientClinicalInfo patientClinicalProperties;
 
-  private PatientClinicalInfo patientClinicalProperties;
+	private SampleOrderItem sampleOrderItems;
 
-  private SampleOrderItem sampleOrderItems;
+	private List<IdValuePair> initialSampleConditionList;
 
-  private Collection initialSampleConditionList;
+	private List<IdValuePair> testSectionList;
 
-  private Collection testSectionList;
+	private String warning;
 
-  public SamplePatientEntryForm() {
-    setFormName("samplePatientEntryForm");
-  }
+	public SamplePatientEntryForm() {
+		setFormName("samplePatientEntryForm");
+	}
 
-  public Timestamp getLastupdated() {
-    return this.lastupdated;
-  }
+	public Timestamp getLastupdated() {
+		return lastupdated;
+	}
 
-  public void setLastupdated(Timestamp lastupdated) {
-    this.lastupdated = lastupdated;
-  }
+	public void setLastupdated(Timestamp lastupdated) {
+		this.lastupdated = lastupdated;
+	}
 
-  public String getCurrentDate() {
-    return this.currentDate;
-  }
+	public String getCurrentDate() {
+		return currentDate;
+	}
 
-  public void setCurrentDate(String currentDate) {
-    this.currentDate = currentDate;
-  }
+	public void setCurrentDate(String currentDate) {
+		this.currentDate = currentDate;
+	}
 
-  public String getProject() {
-    return this.project;
-  }
+	public String getProject() {
+		return project;
+	}
 
-  public void setProject(String project) {
-    this.project = project;
-  }
+	public void setProject(String project) {
+		this.project = project;
+	}
 
-  public Collection getProjects() {
-    return this.projects;
-  }
+	public List<Project> getProjects() {
+		return projects;
+	}
 
-  public void setProjects(Collection projects) {
-    this.projects = projects;
-  }
+	public void setProjects(List<Project> projects) {
+		this.projects = projects;
+	}
 
-  public String getPatientProcessingStatus() {
-    return this.patientProcessingStatus;
-  }
+	public String getPatientProcessingStatus() {
+		return patientProcessingStatus;
+	}
 
-  public void setPatientProcessingStatus(String patientProcessingStatus) {
-    this.patientProcessingStatus = patientProcessingStatus;
-  }
+	public void setPatientProcessingStatus(String patientProcessingStatus) {
+		this.patientProcessingStatus = patientProcessingStatus;
+	}
 
-  public String getPatientPK() {
-    return this.patientPK;
-  }
+	public List<IdValuePair> getSampleTypes() {
+		return sampleTypes;
+	}
 
-  public void setPatientPK(String patientPK) {
-    this.patientPK = patientPK;
-  }
+	public void setSampleTypes(List<IdValuePair> sampleTypes) {
+		this.sampleTypes = sampleTypes;
+	}
 
-  public List getSampleTypes() {
-    return this.sampleTypes;
-  }
+	public String getSampleXML() {
+		return sampleXML;
+	}
 
-  public void setSampleTypes(List sampleTypes) {
-    this.sampleTypes = sampleTypes;
-  }
+	public void setSampleXML(String sampleXML) {
+		this.sampleXML = sampleXML;
+	}
 
-  public String getSampleXML() {
-    return this.sampleXML;
-  }
+	public PatientManagementInfo getPatientProperties() {
+		return patientProperties;
+	}
 
-  public void setSampleXML(String sampleXML) {
-    this.sampleXML = sampleXML;
-  }
+	public void setPatientProperties(PatientManagementInfo patientProperties) {
+		this.patientProperties = patientProperties;
+	}
 
-  public PatientManagementInfo getPatientProperties() {
-    return this.patientProperties;
-  }
+	public PatientSearch getPatientSearch() {
+		return patientSearch;
+	}
 
-  public void setPatientProperties(PatientManagementInfo patientProperties) {
-    this.patientProperties = patientProperties;
-  }
+	public void setPatientSearch(PatientSearch patientSearch) {
+		this.patientSearch = patientSearch;
+	}
 
-  public PatientSearch getPatientSearch() {
-    return this.patientSearch;
-  }
+	public PatientClinicalInfo getPatientClinicalProperties() {
+		return patientClinicalProperties;
+	}
 
-  public void setPatientSearch(PatientSearch patientSearch) {
-    this.patientSearch = patientSearch;
-  }
+	public void setPatientClinicalProperties(PatientClinicalInfo patientClinicalProperties) {
+		this.patientClinicalProperties = patientClinicalProperties;
+	}
 
-  public PatientClinicalInfo getPatientClinicalProperties() {
-    return this.patientClinicalProperties;
-  }
+	public SampleOrderItem getSampleOrderItems() {
+		return sampleOrderItems;
+	}
 
-  public void setPatientClinicalProperties(PatientClinicalInfo patientClinicalProperties) {
-    this.patientClinicalProperties = patientClinicalProperties;
-  }
+	public void setSampleOrderItems(SampleOrderItem sampleOrderItems) {
+		this.sampleOrderItems = sampleOrderItems;
+	}
 
-  public SampleOrderItem getSampleOrderItems() {
-    return this.sampleOrderItems;
-  }
+	public List<IdValuePair> getInitialSampleConditionList() {
+		return initialSampleConditionList;
+	}
 
-  public void setSampleOrderItems(SampleOrderItem sampleOrderItems) {
-    this.sampleOrderItems = sampleOrderItems;
-  }
+	public void setInitialSampleConditionList(List<IdValuePair> initialSampleConditionList) {
+		this.initialSampleConditionList = initialSampleConditionList;
+	}
 
-  public Collection getInitialSampleConditionList() {
-    return this.initialSampleConditionList;
-  }
+	public List<IdValuePair> getTestSectionList() {
+		return testSectionList;
+	}
 
-  public void setInitialSampleConditionList(Collection initialSampleConditionList) {
-    this.initialSampleConditionList = initialSampleConditionList;
-  }
+	public void setTestSectionList(List<IdValuePair> testSectionList) {
+		this.testSectionList = testSectionList;
+	}
 
-  public Collection getTestSectionList() {
-    return this.testSectionList;
-  }
+	public String getWarning() {
+		return warning;
+	}
 
-  public void setTestSectionList(Collection testSectionList) {
-    this.testSectionList = testSectionList;
-  }
+	public void setWarning(String warning) {
+		this.warning = warning;
+	}
 }

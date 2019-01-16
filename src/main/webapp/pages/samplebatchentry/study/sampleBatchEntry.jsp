@@ -12,13 +12,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-
-      
-<bean:parameter id="patientInfoCheck" name="patientInfoCheck" value="false" />
-<bean:parameter id="facilityIDCheck" name="facilityIDCheck" value="false" />
-<bean:parameter id="facilityID" name="facilityID" value="" />
-<bean:parameter id="study" name="study" value="" />
-<bean:parameter id="newRequesterName" name="sampleOrderItems.newRequesterName" value="" />
+<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 
 <%!
 String path = "";
@@ -124,83 +118,63 @@ $jq(document).ready(function () {
 				<h2><spring:message code="sample.batchentry.fields.specific"/></h2>
 			</td>
 		</tr>
-<logic:equal name="facilityIDCheck" value="true">
-	<logic:equal name="facilityID" value="">
-		<logic:equal name="study" value="viralLoad">
-		<tr>
+<c:if test="${form.facilityIDCheck}">
+		<c:if test='${empty form.facilityID}'>
+			<c:if test='${study == "viralLoad" }'>
+			<tr>
 			<td>
 				<spring:message code="sample.entry.project.ARV.centerName" />
 				:  
-				<html:select name="${form.formName}" 
-				    property="ProjectData.ARVcenterName"
-					id="vl.centerName" 
-					onchange="syncCenterInfo(this)">
-					<app:optionsCollection name="${form.formName}"
-						property="organizationTypeLists.ARV_ORGS_BY_NAME.list" 
-						label="organizationName"
-						value="id" />
-				</html:select>
+				<form:select path="ProjectData.ARVcenterName" id="vl.centerName"  onchange="syncCenterInfo(this)">
+					<form:options path="${form.organizationTypeLists.ARV_ORGS_BY_NAME.list}" itemLabel="organizationName" itemValue="id" />
+				</form:select>
 			</td>
 		</tr>
 		<tr>
 			<td>
 				<spring:message code="patient.project.centerCode" />
 				:
-				<html:select name="${form.formName}" 
-					property="ProjectData.ARVcenterCode" 
-					id="vl.centerCode"
-					onchange="syncCenterInfo(this)">
-				<app:optionsCollection name="${form.formName}" 
-					property="organizationTypeLists.ARV_ORGS.list" 
-					label="doubleName" 
-					value="id" />
-				</html:select>
+				<form:select path="ProjectData.ARVcenterCode" id="vl.centerCode" onchange="syncCenterInfo(this)">
+					<form:options path="${form.organizationTypeLists.ARV_ORGS.list}"	itemLabel="doubleName"  itemValue="id" />
+				</form:select>
 			</td>
 		</tr>
-		</logic:equal>
-		<logic:equal name="study" value="EID">
-		<tr>
+			</c:if>
+			<c:if test='${study == "EID" }'>
+			<tr>
 	        <td>
 	            <spring:message code="sample.entry.project.siteName"/>
 	            :
-	            <html:select name="${form.formName}"
-	                         property="ProjectData.EIDSiteName"
-	                         id="eid.centerName"
-							 onchange="syncCenterInfo(this)">
-	                <app:optionsCollection name="${form.formName}"
-	                    property="organizationTypeLists.EID_ORGS_BY_NAME.list"
-	                    label="organizationName"
-	                    value="id" />
-	            </html:select>
+	            <form:select path="ProjectData.EIDSiteName" id="eid.centerName" onchange="syncCenterInfo(this)">
+	                <form:options items="${form.organizationTypeLists.EID_ORGS_BY_NAME.list}" itemLabel="organizationName" itemValue="id" />
+	            </form:select>
 	        </td>
 	    </tr>
 	    <tr>
 	        <td>
 	        	<spring:message code="sample.entry.project.siteCode"/>
 	        	:
-	            <html:select name="${form.formName}"  property="ProjectData.EIDsiteCode" styleClass="text"
-	                    id="eid.centerCode"
-						onchange="syncCenterInfo(this)">
-	                <app:optionsCollection name="${form.formName}" property="organizationTypeLists.EID_ORGS.list" label="doubleName" value="id" />
-	            </html:select>
+	            <form:select path="ProjectData.EIDsiteCode" cssClass="text" id="eid.centerCode" onchange="syncCenterInfo(this)">
+	                <form:options items="${form.organizationTypeLists.EID_ORGS.list}" itemLabel="doubleName" itemValue="id" />
+	            </form:select>
 	        </td>
 	     </tr>
-	     </logic:equal>
-	</logic:equal>
-</logic:equal>
-<logic:equal name="patientInfoCheck" value="true">
+			</c:if>
+		</c:if>
+	</c:if>
+	<c:if test="${form.patientInfoCheck}">
 		<tr>
 			<td>
-				<tiles:insert attribute="patientInfo" />
+				<tiles:insertAttribute name="patientInfo" />
 			</td>
 		</tr>
-</logic:equal>
-		<tr>
-			<td>
-				<tiles:insert attribute="entryMethod" />
-			</td>
-		</tr>
-	</table>
+	</c:if>
+	<tr>
+		<td>
+			<tiles:insertAttribute name="entryMethod" />
+		</td>
+	</tr>
+</table>
 	</td>
 	<td width="40%" style="vertical-align:top">
 	<table style="width:100%;" id="summary">
@@ -212,29 +186,21 @@ $jq(document).ready(function () {
 		<tr>
 			<td>
 				<spring:message code="sample.batchentry.order.currentdate" />: 
-				<html:text name='${form.formName}'
-					property="currentDate"
-					readonly="true"></html:text>
+				<form:input path="currentDate" readonly="true"/>
 			</td>
 			<td>
 				<spring:message code="sample.batchentry.order.currenttime" />: 
-				<html:text name='${form.formName}'
-					property="currentTime"
-					readonly="true"></html:text>
+				<form:input path="currentTime" readonly="true"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
 				<spring:message code="sample.batchentry.datereceived" />:
-				<html:text name='${form.formName}'
-					property="receivedDateForDisplay"
-					readonly="true"></html:text>
+				<form:input path="receivedDateForDisplay" readonly="true"/>
 			</td>
 			<td>
 				<spring:message code="sample.batchentry.timereceived" />:
-				<html:text name='${form.formName}'
-					property="receivedTimeForDisplay"
-					readonly="true"></html:text>
+				<form:input path="receivedTimeForDisplay" readonly="true"/>
 			</td>
 		</tr>
 		<tr>
@@ -249,37 +215,31 @@ $jq(document).ready(function () {
 						<td><%= request.getAttribute("testNames") %></td>
 					</tr>
 				</table>
-				<html:hidden name='${form.formName}'
-					property="sampleXML"/>	
+				<form:hidden path="sampleXML"/>	
 			</td>
 		</tr>
 		<tr>
-	<logic:notEqual name="facilityID" value="">
-				<tr>
-					<td>
-						<spring:message code="sample.batchentry.barcode.label.facilityid" /> 
-						: <%= request.getAttribute("facilityName") %>
-						<html:hidden name="${form.formName}"
-							property="sampleOrderItems.referringSiteId"
-							id="requesterId"/>
-							
-					</td>
-				</tr>
-	</logic:notEqual>
-	<logic:equal name="facilityID" value="">
-		<logic:notEqual name="newRequesterName" value="">
-				<tr>
-					<td>
-						<spring:message code="sample.batchentry.barcode.label.facilityid" /> 
-						: <%= request.getAttribute("facilityName") %>
-						<html:hidden name="${form.formName}"
-							property="sampleOrderItems.referringSiteId"
-							id="requesterId"/>
-							
-					</td>
-				</tr>
-		</logic:notEqual>
-	</logic:equal>
+		<c:if test='${not empty form.facilityID}'>
+			<tr>
+				<td>
+					<spring:message code="sample.batchentry.barcode.label.facilityid" /> 
+					: <%= request.getAttribute("facilityName") %>
+					<form:hidden path="sampleOrderItems.referringSiteId" id="requesterId"/>
+						
+				</td>
+			</tr>
+		</c:if>
+		<c:if test='${empty form.facilityID}'>
+			<c:if test='${not empty form.sampleOrderItems.newRequesterName}'>
+			<tr>
+				<td>
+					<spring:message code="sample.batchentry.barcode.label.facilityid" /> 
+					: <%= request.getAttribute("facilityName") %>
+					<form:hidden path="sampleOrderItems.referringSiteId" id="requesterId"/>
+				</td>
+			</tr>
+			</c:if>
+		</c:if>
 		</tr>
 	</table>
 	</td>

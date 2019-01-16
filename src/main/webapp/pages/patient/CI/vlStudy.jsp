@@ -92,15 +92,11 @@ vl = new VLProjectChecker();
 			<spring:message code="sample.entry.project.ARV.centerName" />
 		</td>
 		<td>
-			<html:select name="${form.formName}" 
-			    property="ProjectData.ARVcenterName"
+			<form:select path="projectData.ARVcenterName"
 				id="vl.centerName" 
 				onchange="vl.checkCenterName(true)">
-				<app:optionsCollection name="${form.formName}"
-					property="organizationTypeLists.ARV_ORGS_BY_NAME.list" 
-					label="organizationName"
-					value="id" />
-			</html:select>
+				<form:options items="${form.organizationTypeLists.ARV_ORGS_BY_NAME.list}" itemLabel="organizationName" itemValue="id" />
+			</form:select>
 			<div id="vl.centerNameMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -110,15 +106,11 @@ vl = new VLProjectChecker();
 			<spring:message code="patient.project.centerCode" />
 		</td>
 		<td>
-			<html:select name="${form.formName}" 
-			property="ProjectData.ARVcenterCode" 
+			<form:select path="projectData.ARVcenterCode" 
 			id="vl.centerCode"
 			onchange="vl.checkCenterCode(true)" >
-			<app:optionsCollection name="${form.formName}" 
-			property="organizationTypeLists.ARV_ORGS.list" 
-			label="doubleName" 
-			value="id" />
-			</html:select>
+			<form:options items="${form.organizationTypeLists.ARV_ORGS.list}" itemLabel="doubleName" itemValue="id" />
+			</form:select>
 			<div id="vl.centerCodeMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -128,10 +120,9 @@ vl = new VLProjectChecker();
 			<spring:message code="patient.project.nameOfClinician" />
 		</td>
 		<td>
-			<app:text name="${form.formName}" 
-			property="observations.nameOfDoctor"
+			<form:input path="observations.nameOfDoctor"
 				onchange="makeDirty();compareAllObservationHistoryFields(true);" 
-				styleClass="text" 
+				cssClass="text" 
 				id="vl.nameOfDoctor" size="50"/>
 			<div id="vl.nameOfDoctorMessage" class="blank"></div>
 		</td>
@@ -142,10 +133,9 @@ vl = new VLProjectChecker();
             <spring:message code="patient.project.nameOfSampler" />
         </td>
         <td>
-            <html:text name="${form.formName}"
-                      property="observations.nameOfSampler"
+            <form:input path="observations.nameOfSampler"
                       onchange="makeDirty();compareAllObservationHistoryFields(true)"
-                      styleClass="text"
+                      cssClass="text"
                       id="vl.nameOfSampler" size="50"/>
             <div id="vl.nameOfSamplerMessage" class="blank"></div>
         </td>
@@ -156,11 +146,10 @@ vl = new VLProjectChecker();
             <spring:message code="sample.entry.project.receivedDate"/>&nbsp;<%=DateUtil.getDateUserPrompt()%>
         </td>
         <td width="70%">
-        <app:text name="${form.formName}"
-                property="receivedDateForDisplay"
+        <form:input path="receivedDateForDisplay"
                 onkeyup="addDateSlashes(this, event);"
                 onchange="vl.checkReceivedDate(false)"
-                styleClass="text"
+                cssClass="text"
                 id="vl.receivedDateForDisplay" maxlength="10"/>
                 <div id="vl.receivedDateForDisplayMessage" class="blank"></div>
         </td>
@@ -171,11 +160,10 @@ vl = new VLProjectChecker();
              <spring:message code="sample.entry.project.receivedTime" />&nbsp;<spring:message code="sample.military.time.format"/>
         </td>
         <td>
-        <app:text name="${form.formName}"
-            property="receivedTimeForDisplay"
+        <form:input path="receivedTimeForDisplay"
             onkeyup="filterTimeKeys(this, event);"              
             onblur="vl.checkReceivedTime(true);"
-            styleClass="text"
+            cssClass="text"
             id="vl.receivedTimeForDisplay" maxlength="5"/>
             <div id="vl.receivedTimeForDisplayMessage" class="blank"></div>
         </td>
@@ -186,11 +174,10 @@ vl = new VLProjectChecker();
             <spring:message code="sample.entry.project.dateTaken"/>&nbsp;<%=DateUtil.getDateUserPrompt()%>
         </td>
         <td>
-        <app:text name="${form.formName}"
-                property="interviewDate"
+        <form:input path="interviewDate"
                 onkeyup="addDateSlashes(this, event);"
                 onchange="vl.checkInterviewDate(true);"
-                styleClass="text"
+                cssClass="text"
                 id="vl.interviewDate" maxlength="10"/>
                 <div id="vl.interviewDateMessage" class="blank"></div>
         </td>
@@ -201,11 +188,10 @@ vl = new VLProjectChecker();
             <spring:message code="sample.entry.project.timeTaken"/>&nbsp;<spring:message code="sample.military.time.format"/>
         </td>
         <td>
-        <app:text name="${form.formName}"
-                property="interviewTime"
+        <form:input path="interviewTime"
                 onkeyup="filterTimeKeys(this, event);"                
                 onblur="vl.checkInterviewTime(true);"
-                styleClass="text"
+                cssClass="text"
                 id="vl.interviewTime" maxlength="5"/>
                 <div id="vl.interviewTimeMessage" class="blank"></div>
         </td>
@@ -217,10 +203,10 @@ vl = new VLProjectChecker();
 			<spring:message code="patient.subject.number"/>
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="subjectNumber"
+			<form:input path="subjectNumber"
 					  onchange="vl.checkSubjectNumber(true);"
 					  id="vl.subjectNumber"
-					  styleClass="text"
+					  cssClass="text"
 					  maxlength="7"/>
 			<div id="vl.subjectNumberMessage" class="blank"></div>
 		</td>
@@ -229,8 +215,8 @@ vl = new VLProjectChecker();
 		<td class="required">+</td>
 		<td><spring:message code="patient.site.subject.number"/></td>
 		<td>
-			<app:text name="${form.formName}" property="siteSubjectNumber"
-				id="vl.siteSubjectNumber" styleClass="text"
+			<form:input path="siteSubjectNumber"
+				id="vl.siteSubjectNumber" cssClass="text"
 				onchange="vl.checkSiteSubjectNumber(true, false); makeDirty();"
 			/>
 			<div id="vl.siteSubjectNumberMessage" class="blank"></div>
@@ -243,11 +229,11 @@ vl = new VLProjectChecker();
 		</td>
 		<td>
 			<div class="blank"><spring:message code="sample.entry.project.LVL"/></div>
-			<INPUT type="text" name="vl.labNoForDisplay" id="vl.labNoForDisplay" size="5" class="text"
+			<input type="text" name="vl.labNoForDisplay" id="vl.labNoForDisplay" size="5" class="text"
 			   	onchange="handleLabNoChange( this, '<spring:message code="sample.entry.project.LVL"/>', false ); makeDirty();"
 			   	maxlength="5" />
-		  	<app:text name="${form.formName}" property="labNo"
-				styleClass="text" style="display: none;"
+		  	<form:input path="labNo"
+				cssClass="text" style="display: none;"
 				id="vl.labNo" />
 			<div id="vl.labNoMessage" class="blank"></div>
 		</td>
@@ -260,9 +246,9 @@ vl = new VLProjectChecker();
 			<spring:message code="patient.project.dateOfBirth" />&nbsp;<%=DateUtil.getDateUserPrompt()%>
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="birthDateForDisplay"
+			<form:input path="birthDateForDisplay"
 				onkeyup="addDateSlashes(this, event);"
-				onchange="vl.checkDateOfBirth(false)"	styleClass="text" id="vl.dateOfBirth" maxlength="10"/>
+				onchange="vl.checkDateOfBirth(false)"	cssClass="text" id="vl.dateOfBirth" maxlength="10"/>
 			<div id="vl.dateOfBirthMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -285,16 +271,11 @@ vl = new VLProjectChecker();
 			<spring:message code="patient.project.gender" />
 		</td>
 		<td>
-			<html:select name="${form.formName}" 
-			property="gender"
+			<form:select path="gender"
 			onchange="vl.checkGender(false)" 
 			id="vl.gender"  >
-			<app:optionsCollection 
-				name="${form.formName}" 
-				property="formLists.GENDERS"
-				label="localizedName" 
-				value="genderType" />
-			</html:select>
+			<form:options path="${form.formLists.GENDERS}" itemLabel="localizedName" itemValue="genderType" />
+			</form:select>
 			<div id="vl.genderMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -305,13 +286,10 @@ vl = new VLProjectChecker();
             <spring:message code="sample.project.vlPregnancy" />
         </td>
         <td>
-            <html:select name="${form.formName}"
-            property="observations.vlPregnancy" onchange="makeDirty();compareAllObservationHistoryFields(true)"
+            <form:select path="observations.vlPregnancy" onchange="makeDirty();compareAllObservationHistoryFields(true)"
             id="vl.vlPregnancy">
-            <app:optionsCollection name="${form.formName}"
-                property="dictionaryLists.YES_NO.list" label="localizedName"
-                value="id" />
-            </html:select>
+            <form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
+            </form:select>
         </td>
     </tr>  
     
@@ -321,13 +299,10 @@ vl = new VLProjectChecker();
             <spring:message code="sample.project.vlSuckle" />
         </td>
         <td>
-            <html:select name="${form.formName}"
-            property="observations.vlSuckle" onchange="makeDirty();compareAllObservationHistoryFields(true)"
+            <form:select path="observations.vlSuckle" onchange="makeDirty();compareAllObservationHistoryFields(true)"
             id="vl.vlSuckle">
-            <app:optionsCollection name="${form.formName}"
-                property="dictionaryLists.YES_NO.list" label="localizedName"
-                value="id" />
-            </html:select>
+            <form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
+            </form:select>
         </td>
     </tr>   
      
@@ -338,16 +313,11 @@ vl = new VLProjectChecker();
 			<spring:message code="patient.project.hivType" />
 		</td>
 		<td>
-			<html:select name="${form.formName}"
-					 property="observations.hivStatus"
+			<form:select path="observations.hivStatus"
 					 onchange="vl.checkHivStatus(true);"
 					 id="vl.hivStatus"  >
-				<app:optionsCollection 
-				    name="${form.formName}" 
-				    property="ProjectData.hivStatusList"
-					label="localizedName" 
-					value="id" />
-			</html:select>
+				<form:options path="${form.projectData.hivStatusList}" itemLabel="localizedName" itemValue="id" />
+			</form:select>
 			<div id="vl.hivStatusMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -362,14 +332,11 @@ vl = new VLProjectChecker();
 			<spring:message code="sample.entry.project.arv.treatment"/>
 		</td>
 		<td>
-			<html:select name="${form.formName}" 
-			    property="observations.currentARVTreatment"
+			<form:select path="observations.currentARVTreatment"
 				onchange="vl.checkInterruptedARVTreatment();compareAllObservationHistoryFields(true);"	
 				id="vl.currentARVTreatment"  >
-				<app:optionsCollection name="${form.formName}" 
-				    property="dictionaryLists.YES_NO.list"
-					label="localizedName" value="id" />
-			</html:select>
+				<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
+			</form:select>
 		</td>
 	</tr>
 	<tr id="vl.arvTreatmentInitDateRow" style="display:none"> 
@@ -378,11 +345,10 @@ vl = new VLProjectChecker();
 			<spring:message code="sample.entry.project.arv.treatment.initDate"/>
 		</td>
 		<td>
-		<app:text name="${form.formName}"
-				property="observations.arvTreatmentInitDate"
+		<form:input path="observations.arvTreatmentInitDate"
 				onkeyup="addDateSlashes(this, event);"
 				onchange="vl.checkDate(this,false);"
-				styleClass="text"
+				cssClass="text"
 				id="vl.arvTreatmentInitDate" maxlength="10"/>
 				<div id="vl.arvTreatmentInitDateMessage" class="blank"></div>
 		</td>
@@ -394,16 +360,12 @@ vl = new VLProjectChecker();
 			<spring:message code="sample.entry.project.arv.treatment.therap.line"/>
 		</td>
 		<td>
-			<html:select name="${form.formName}" 
-			    property="observations.arvTreatmentRegime"
+			<form:select path="observations.arvTreatmentRegime"
 				onchange="makeDirty();compareAllObservationHistoryFields(true);" 
 				id="vl.arvTreatmentRegime" 
-				styleClass="text" >
-				<app:optionsCollection 
-				name="${form.formName}" 
-				property="dictionaryLists.ARV_REGIME.list" 
-				label="localizedName" value="id" />
-			</html:select>
+				cssClass="text" >
+				<form:options path="${form.dictionaryLists.ARV_REGIME.list}" itemLabel="localizedName" itemValue="id" />
+			</form:select>
 			<div id="vl.arvTreatmentRegimeMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -414,20 +376,18 @@ vl = new VLProjectChecker();
 			<spring:message code="sample.entry.project.arv.treatment.regimen" />
 		</td>
 	</tr>
-	<logic:iterate id="ongoingARVTreatment" indexId="i" name="${form.formName}" property="observations.currentARVTreatmentINNsList" >
-		<tr style="display:none" id='<%= "vl.currentARVTreatmentINNRow" + i %>'>
+	<c:forEach var="ongoingARVTreatment" varStatus="iter" items="${form.observations.currentARVTreatmentINNsList}" >
+		<tr style="display:none" id='vl.currentARVTreatmentINNRow${iter.index}'>
 			<td></td>
-			<td class="bulletItem"><%= i+1 %>)</td>
+			<td class="bulletItem">${iter.index + 1})</td>
 			<td>
-				<html:text name="${form.formName}"
-					property='<%= "observations.currentARVTreatmentINNs[" + i + "]" %>'
+				<form:input path='observations.currentARVTreatmentINNsList[${iter.index}]'
 					onchange="makeDirty();compareAllObservationHistoryFields(true);" 
-					styleClass="text" id='<%= "vl.currentARVTreatmentINNs" + i %>' >
-				</html:text>
-				<div id='<%= "vl.currentARVTreatmentINNs" + i %>Message' class="blank"></div>
+					cssClass="text" id='vl.currentARVTreatmentINNs${iter.index}' />
+				<div id='vl.currentARVTreatmentINNs${iter.index}>Message' class="blank"></div>
 			</td>
 		</tr>
-	</logic:iterate>
+	</c:forEach>
 	
 	<tr><td colspan="5"><hr/></td></tr><!-- __________________________________________________________________________________________________ -->
 	
@@ -437,16 +397,11 @@ vl = new VLProjectChecker();
 			<spring:message code="sample.entry.project.vl.reason" />
 		</td>
 		<td>
-			<html:select name="${form.formName}"
-					 property="observations.vlReasonForRequest"
+			<form:select path="observations.vlReasonForRequest"
 				     onchange="vl.checkVLRequestReason();compareAllObservationHistoryFields(true);"	
 					 id="vl.vlReasonForRequest"  >
-				<app:optionsCollection 
-				    name="${form.formName}" 
-				    property="dictionaryLists.ARV_REASON_FOR_VL_DEMAND.list"
-					label="localizedName" 
-					value="id" />
-			</html:select>
+				<form:options path="${form.dictionaryLists.ARV_REASON_FOR_VL_DEMAND.list}" itemLabel="localizedName" itemValue="id" />
+			</form:select>
 			<div id="vl.vlReasonForRequestMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -457,10 +412,9 @@ vl = new VLProjectChecker();
 			<spring:message code="sample.entry.project.vl.specify"/>
 		</td>
 		<td>
-		<app:text name="${form.formName}"
-				property="observations.vlOtherReasonForRequest"
+		<form:input path="observations.vlOtherReasonForRequest"
 				onchange="compareAllObservationHistoryFields(true);" 
-				styleClass="text"
+				cssClass="text"
 				id="vl.vlOtherReasonForRequest" maxlength="50"/>
 				<div id="vl.vlOtherReasonForRequestMessage" class="blank"></div>
 		</td>
@@ -480,10 +434,10 @@ vl = new VLProjectChecker();
 			<spring:message code="sample.project.cd4Count" />
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="observations.initcd4Count"
+			<form:input path="observations.initcd4Count"
 				onchange="makeDirty();compareAllObservationHistoryFields(true);" 
 				maxlength="4"
-				styleClass="text" 
+				cssClass="text" 
 				id="vl.initcd4Count" />
 			<div id="vl.initcd4CountMessage" class="blank"></div>
 		</td>
@@ -494,9 +448,9 @@ vl = new VLProjectChecker();
 			<spring:message code="sample.project.cd4Percent" />
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="observations.initcd4Percent"
+			<form:input path="observations.initcd4Percent"
 				onchange="makeDirty();compareAllObservationHistoryFields(true);" 
-				styleClass="text" 
+				cssClass="text" 
 				id="vl.initcd4Percent" />
 			<div id="vl.initcd4PercentMessage" class="blank"></div>
 		</td>
@@ -507,11 +461,10 @@ vl = new VLProjectChecker();
 			<spring:message code="sample.project.Cd4Date" />
 		</td>
 		<td>
-			<app:text name="${form.formName}"
-				property="observations.initcd4Date"
+			<form:input path="observations.initcd4Date"
 				onkeyup="addDateSlashes(this, event);"
 				onchange="vl.checkDate(this,false);"
-				styleClass="text"
+				cssClass="text"
 				id="vl.initcd4Date" maxlength="10"/>
 				<div id="vl.initcd4DateMessage" class="blank"></div>
 		</td>
@@ -530,10 +483,10 @@ vl = new VLProjectChecker();
 			<spring:message code="sample.project.cd4Count" />
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="observations.demandcd4Count"
+			<form:input path="observations.demandcd4Count"
 				onchange="makeDirty();compareAllObservationHistoryFields(true);" 
 				maxlength="4"
-				styleClass="text" 
+				cssClass="text" 
 				id="vl.demandcd4Count" />
 			<div id="vl.demandcd4CountMessage" class="blank"></div>
 		</td>
@@ -544,9 +497,9 @@ vl = new VLProjectChecker();
 			<spring:message code="sample.project.cd4Percent" />
 		</td>
 		<td>
-			<app:text name="${form.formName}" property="observations.demandcd4Percent"
+			<form:input path="observations.demandcd4Percent"
 				onchange="makeDirty();compareAllObservationHistoryFields(true);" 
-				styleClass="text" 
+				cssClass="text" 
 				id="vl.demandcd4Percent" />
 			<div id="vl.demandcd4PercentMessage" class="blank"></div>
 		</td>
@@ -557,11 +510,10 @@ vl = new VLProjectChecker();
 			<spring:message code="sample.project.Cd4Date" />
 		</td>
 		<td>
-			<app:text name="${form.formName}"
-				property="observations.demandcd4Date"
+			<form:input path="observations.demandcd4Date"
 				onkeyup="addDateSlashes(this, event);"
 				onchange="vl.checkDate(this,false);"
-				styleClass="text"
+				cssClass="text"
 				id="vl.demandcd4Date" maxlength="10"/>
 				<div id="vl.demandcd4DateMessage" class="blank"></div>
 		</td>
@@ -573,14 +525,11 @@ vl = new VLProjectChecker();
 			<spring:message code="sample.project.priorVLRequest"/>
 		</td>
 		<td>
-			<html:select name="${form.formName}" 
-			    property="observations.vlBenefit"	
+			<form:select path="observations.vlBenefit"	
 			    onchange="vl.checkVLBenefit();compareAllObservationHistoryFields(true);" 
 				id="vl.vlBenefit"  >
-				<app:optionsCollection name="${form.formName}" 
-				    property="dictionaryLists.YES_NO.list"
-					label="localizedName" value="id" />
-			</html:select>
+				<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
+			</form:select>
 			<div id="vl.vlBenefitMessage" class="blank"></div>
 		</td>
 	</tr>
@@ -591,9 +540,8 @@ vl = new VLProjectChecker();
 			<spring:message code="sample.project.priorVLLab"/>
 		</td>
 		<td>
-		<app:text name="${form.formName}"
-				property="observations.priorVLLab"
-				styleClass="text"
+		<form:input path="observations.priorVLLab"
+				cssClass="text"
 				id="vl.priorVLLab" maxlength="50"/>
 				<div id="vl.priorVLLabMessage" class="blank"></div>
 		</td>
@@ -605,9 +553,8 @@ vl = new VLProjectChecker();
 			<spring:message code="sample.project.VLValue"/>
 		</td>
 		<td>
-		<app:text name="${form.formName}"
-				property="observations.priorVLValue"
-				styleClass="text"
+		<form:input path="observations.priorVLValue"
+				cssClass="text"
 				onkeypress="vl.IsNumeric(this,event);"
 				id="vl.priorVLValue" maxlength="10"/>
 				<div id="vl.priorVLValueMessage" class="blank"></div>
@@ -621,11 +568,10 @@ vl = new VLProjectChecker();
 			<spring:message code="sample.project.VLDate"/>
 		</td>
 		<td>
-		<app:text name="${form.formName}"
-				property="observations.priorVLDate"
+		<form:input path="observations.priorVLDate"
 				onkeyup="addDateSlashes(this, event);"
 				onchange="vl.checkDate(this,false);"
-				styleClass="text"
+				cssClass="text"
 				id="vl.priorVLDate" maxlength="10"/>
 				<div id="vl.priorVLDateMessage" class="blank"></div>
 		</td>
@@ -662,13 +608,10 @@ vl = new VLProjectChecker();
             <spring:message code="patient.project.underInvestigation" />
         </td>
         <td>
-            <html:select name="${form.formName}"
-            property="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
+            <form:select path="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
             id="vl.underInvestigation">
-            <app:optionsCollection name="${form.formName}"
-                property="dictionaryLists.YES_NO.list" label="localizedName"
-                value="id" />
-            </html:select>
+            <form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
+            </form:select>
         </td>
     </tr>    
     <tr id="vl.underInvestigationCommentRow" >
@@ -677,7 +620,7 @@ vl = new VLProjectChecker();
             <spring:message code="patient.project.underInvestigationComment" />
         </td>
         <td colspan="3">
-            <app:text name="${form.formName}" property="ProjectData.underInvestigationNote" maxlength="1000" size="80"
+            <form:input path="projectData.underInvestigationNote" maxlength="1000" size="80"
                 onchange="makeDirty();" id="vl.underInvestigationComment" />
         </td>
     </tr>

@@ -1,6 +1,5 @@
 package spring.mine.sample.controller;
 
-import java.lang.String;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
@@ -129,8 +129,9 @@ public class SamplePatientEntrySaveController extends BaseController {
 		updateData.validateSample(result);
 
 		if (result.hasErrors()) {
-			saveErrors(result, form);
+			saveErrors(errors);
 			request.setAttribute(Globals.ERROR_KEY, result);
+			setSuccessFlag(request, forward);
 			return findForward(FWD_FAIL, form);
 		}
 
@@ -143,8 +144,7 @@ public class SamplePatientEntrySaveController extends BaseController {
 				patientUpdate.persistPatientData(patientInfo);
 			}
 
-			// updateData.setPatientId(patientUpdate.getPatientId(form));
-			updateData.setPatientId(form.getPatientPK());
+			updateData.setPatientId(patientUpdate.getPatientId(form));
 
 			persistProviderData(updateData);
 			persistSampleData(updateData);
@@ -175,9 +175,10 @@ public class SamplePatientEntrySaveController extends BaseController {
 			System.out.println(result);
 
 			// errors.add(ActionMessages.GLOBAL_MESSAGE, error);
-			saveErrors(result, form);
+			saveErrors(result);
 			request.setAttribute(Globals.ERROR_KEY, result);
 			request.setAttribute(ALLOW_EDITS_KEY, "false");
+			setSuccessFlag(request, forward);
 			return findForward(FWD_FAIL, form);
 
 		} finally {
@@ -208,9 +209,7 @@ public class SamplePatientEntrySaveController extends BaseController {
 				patientUpdate.getPatientUpdateStatus() != PatientManagementUpdateAction.PatientUpdateStatus.NO_ACTION);
 
 		if (updateData.isSavePatient()) {
-			// TO-DO uncomment this
-			// updateData.setPatientErrors(patientUpdate.preparePatientData(request,
-			// patientInfo));
+			updateData.setPatientErrors(patientUpdate.preparePatientData(request, patientInfo));
 		} else {
 			updateData.setPatientErrors(new BaseErrors());
 		}
@@ -292,7 +291,7 @@ public class SamplePatientEntrySaveController extends BaseController {
 	 * SampleProjectDAO sampleProjectDAO = new SampleProjectDAOImpl(); ProjectDAO
 	 * projectDAO = new ProjectDAOImpl(); Project project = new Project(); //
 	 * project.setId(projectId); projectDAO.getData(project);
-	 * 
+	 *
 	 * SampleProject sampleProject = new SampleProject();
 	 * sampleProject.setProject(project); sampleProject.setSample(sample);
 	 * sampleProject.setSysUserId(currentUserId);
@@ -365,9 +364,10 @@ public class SamplePatientEntrySaveController extends BaseController {
 		return analysis;
 	}
 
+	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("success".equals(forward)) {
-			return new ModelAndView("/SamplePatientEntry.do", "form", form);
+			return new ModelAndView("samplePatientEntryDefinition", "form", form);
 		} else if ("fail".equals(forward)) {
 			return new ModelAndView("samplePatientEntryDefinition", "form", form);
 		} else {
@@ -375,10 +375,12 @@ public class SamplePatientEntrySaveController extends BaseController {
 		}
 	}
 
+	@Override
 	protected String getPageTitleKey() {
 		return null;
 	}
 
+	@Override
 	protected String getPageSubtitleKey() {
 		return null;
 	}

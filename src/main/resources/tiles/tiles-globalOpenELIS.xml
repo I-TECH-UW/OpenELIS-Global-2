@@ -39,30 +39,50 @@
          <put-attribute name="footer" value="/pages/common/finishFooterButton.jsp"/>
     </definition> 
     
+    <definition name="sampleStudyBatchEntryOnDemandDefinition" extends="baseDefinition">
+         <put-attribute name="preSelectionHeader" value="/pages/common/actionSuccess.jsp" />
+         <put-attribute name="body" value="sampleStudyBatchEntryOnDemandCore"/>
+         <put-attribute name="footer" value="/pages/common/finishFooterButton.jsp"/>
+    </definition> 
+    
     <definition name="sampleBatchEntryPrePrintedDefinition" extends="baseDefinition">
          <put-attribute name="preSelectionHeader" value="/pages/common/actionSuccess.jsp" />
          <put-attribute name="body" value="sampleBatchEntryPrePrintedCore"/>
          <put-attribute name="footer" value="/pages/common/finishFooterButton.jsp"/>
     </definition> 
+    
+    <definition name="sampleStudyBatchEntryPrePrintedDefinition" extends="baseDefinition">
+         <put-attribute name="preSelectionHeader" value="/pages/common/actionSuccess.jsp" />
+         <put-attribute name="body" value="sampleStudyBatchEntryPrePrintedCore"/>
+         <put-attribute name="footer" value="/pages/common/finishFooterButton.jsp"/>
+    </definition> 
 
-    <definition name="sampleBatchEntrySetupCore" template="/pages/samplebatchentry/sampleBatchEntrySetup.jsp">
-        <put-attribute name="sampleOrder" value="/pages/samplebatchentry/sampleOrder.jsp" />
-		<put-attribute name="addSample" value="/pages/samplebatchentry/sampleAdd.jsp"/>
-		<put-attribute name="configureLabels" value="/pages/samplebatchentry/configureBarcode.jsp"/>
+    <definition name="sampleBatchEntrySetupCore" template="/pages/samplebatchentry/setup/sampleBatchEntrySetup.jsp">
+        <put-attribute name="sampleOrder" value="/pages/samplebatchentry/setup/sampleOrder.jsp" />
+		<put-attribute name="addSample" value="/pages/samplebatchentry/setup/sampleAdd.jsp"/>
+		<put-attribute name="configureLabels" value="/pages/samplebatchentry/setup/configureBarcode.jsp"/>
 	</definition>
 
-    <definition name="sampleBatchEntryOnDemandCore" template="/pages/samplebatchentry/sampleBatchEntry.jsp">
+    <definition name="sampleBatchEntryOnDemandCore" template="/pages/samplebatchentry/routine/sampleBatchEntry.jsp">
 		<put-attribute name="patientInfo"  value="batchEntryPatientManagementCore" />
-		<put-attribute name="entryMethod" value="OnDemandEntry.jsp" />
+		<put-attribute name="entryMethod" value="/pages/samplebatchentry/routine/OnDemandEntry.jsp" />
 	</definition>
 
-    <definition name="sampleBatchEntryPrePrintedCore" template="/pages/samplebatchentry/sampleBatchEntry.jsp">
+    <definition name="sampleBatchEntryPrePrintedCore" template="/pages/samplebatchentry/routine/sampleBatchEntry.jsp">
 		<put-attribute name="patientInfo"  value="batchEntryPatientManagementCore" />
-		<put-attribute name="entryMethod" value="PrePrintedEntry.jsp" />
+		<put-attribute name="entryMethod" value="/pages/samplebatchentry/routine/PrePrintedEntry.jsp" />
 	</definition>
 
-	<definition name="batchEntryPatientManagementCore" template="/pages/samplebatchentry/patientManagement.jsp">
-		<put-attribute name="patientSearch"  value="/pages/samplebatchentry/patientSearch.jsp" />
+    <definition name="sampleStudyBatchEntryOnDemandCore" template="/pages/samplebatchentry/study/sampleBatchEntry.jsp">
+    	<put-attribute name="entryMethod" value="/pages/samplebatchentry/study/OnDemandEntry.jsp" />
+  	</definition>
+
+  	<definition name="sampleStudyBatchEntryPrePrintedCore" template="/pages/samplebatchentry/study/sampleBatchEntry.jsp">
+     	<put-attribute name="entryMethod" value="/pages/samplebatchentry/study/PrePrintedEntry.jsp" />
+  	</definition>
+
+	<definition name="batchEntryPatientManagementCore" template="/pages/samplebatchentry/routine/patientManagement.jsp">
+		<put-attribute name="patientSearch"  value="/pages/samplebatchentry/routine/patientSearch.jsp" />
 	</definition>
   
 

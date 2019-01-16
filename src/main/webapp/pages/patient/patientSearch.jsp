@@ -310,13 +310,18 @@ function handleSelectedPatient(){
     }
 
     $("searchResultsDiv").style.display = "none";
-    var form = document.forms[0];
-    form.action = '${form.formAction}'.sub('Form','') + ".do?accessionNumber=" + accessionNumber + "&patientID=" + patientSelectID;
+   /*  var form = document.forms[0];
+    form.method = "get";
+    form.action = '${form.formAction}'.sub('Form','') + "?accessionNumber=" + accessionNumber + "&patientID=" + patientSelectID;
     if( !(typeof requestType === 'undefined') ){
         form.action += "&type=" + requestType;
     }
-    
-    form.submit();
+    form.submit(); */
+    var searchUrl = '${form.formAction}'.sub('Form','') + "?accessionNumber=" + accessionNumber + "&patientID=" + patientSelectID;
+    if( !(typeof requestType === 'undefined') ){
+    	searchUrl += "&type=" + requestType;
+    }
+    window.location = searchUrl;
 }
 
 function firstClick(){
@@ -360,7 +365,7 @@ function setCaretPosition(ctrl, pos){
 <div id="PatientPage" class="colorFill patientSearch" style="display:inline;" >
 
 	<h2><spring:message code="sample.entry.search"/></h2>
-    <c:if test="${!empty warning}">
+    <c:if test="${form.warning == 'show'}">
         <h3 class="important-text"><spring:message code="order.modify.search.warning" /></h3>
     </c:if>
     <select id="searchCriteria"  style="float:left" onchange="checkIndex(this)" tabindex="1" class="patientSearch">

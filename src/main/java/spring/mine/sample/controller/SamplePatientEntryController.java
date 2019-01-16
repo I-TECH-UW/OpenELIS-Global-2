@@ -1,6 +1,5 @@
 package spring.mine.sample.controller;
 
-import java.lang.String;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.sample.form.SamplePatientEntryForm;
@@ -25,6 +25,7 @@ import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 
 @Controller
 public class SamplePatientEntryController extends BaseSampleEntryController {
+
 	@RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.GET)
 	public ModelAndView showSamplePatientEntry(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -61,6 +62,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 		return findForward(forward, form);
 	}
 
+	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("success".equals(forward)) {
 			return new ModelAndView("samplePatientEntryDefinition", "form", form);
@@ -69,13 +71,5 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 		} else {
 			return new ModelAndView("PageNotFound");
 		}
-	}
-
-	protected String getPageTitleKey() {
-		return null;
-	}
-
-	protected String getPageSubtitleKey() {
-		return null;
 	}
 }

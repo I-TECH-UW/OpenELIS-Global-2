@@ -63,24 +63,18 @@ eid = new EidProjectChecker();
 <h2><spring:message code="sample.entry.project.EID.title"/></h2>   
 <table width="100%">
     <tr>
-         <td class="required">*</td>
-            <td>
-                <spring:message code="sample.entry.project.receivedDate"/>&nbsp;<%=DateUtil.getDateUserPrompt()%>
-            </td>
-            <td>
-            <form:input path="receivedDateForDisplay"
-            			cssClass="text"
-	                    onkeyup="addDateSlashes(this, event);"
-	                    onchange="iarv.checkReceivedDate(false);"
-	                    id="eid.receivedDateForDisplay" maxlength="10"/>
-            <%-- <form:input
-                    path="receivedDateForDisplay"
-                    onkeyup="addDateSlashes(this, event);"
-                    onchange="eid.checkReceivedDate(false);"
-                    cssClass="text"
-                    id="eid.receivedDateForDisplay" maxlength="10"/> --%>
-                    <div id="eid.receivedDateForDisplayMessage" class="blank" />
-            </td>
+        <td class="required" width="2%">*</td>
+        <td width="28%">
+            <spring:message code="sample.entry.project.receivedDate"/>&nbsp;<%=DateUtil.getDateUserPrompt()%>
+        </td>
+        <td width="70%">
+        <form:input path="receivedDateForDisplay"
+                onkeyup="addDateSlashes(this, event);"
+                onchange="eid.checkReceivedDate(false)"
+                cssClass="text"
+                id="eid.receivedDateForDisplay" maxlength="10"/>
+                <div id="eid.receivedDateForDisplayMessage" class="blank" ></div>
+        </td>
     </tr>
     <tr>
         <td></td>
@@ -88,13 +82,13 @@ eid = new EidProjectChecker();
              <spring:message code="sample.entry.project.receivedTime" />&nbsp;<spring:message code="sample.military.time.format"/>
         </td>
         <td>
-        <app:text name="${form.formName}"
-            property="receivedTimeForDisplay"
+        <form:input path="receivedTimeForDisplay"
             onkeyup="filterTimeKeys(this, event);"              
             onblur="eid.checkReceivedTime(true);"
-            styleClass="text"
-            />
-            <div id="eid.receivedTimeForDisplayMessage" class="blank" />
+
+            cssClass="text"
+            id="eid.receivedTimeForDisplay" maxlength="5"/>
+            <div id="eid.receivedTimeForDisplayMessage" class="blank" ></div>
         </td>
     </tr>
     <tr>
@@ -103,13 +97,12 @@ eid = new EidProjectChecker();
             <spring:message code="sample.entry.project.dateTaken"/>&nbsp;<%=DateUtil.getDateUserPrompt()%>
         </td>
         <td>
-        <app:text name="${form.formName}"
-                property="interviewDate"
+        <form:input path="interviewDate"
                 onkeyup="addDateSlashes(this, event);"
                 onchange="eid.checkInterviewDate(true);"
-                styleClass="text"
-                />
-                <div id="eid.interviewDateMessage" class="blank" />
+                cssClass="text"
+                id="eid.interviewDate" maxlength="10"/>
+                <div id="eid.interviewDateMessage" class="blank" ></div>
         </td>
     </tr>
     <tr>
@@ -118,13 +111,12 @@ eid = new EidProjectChecker();
             <spring:message code="sample.entry.project.timeTaken"/>&nbsp;<spring:message code="sample.military.time.format"/>
         </td>
         <td>
-        <app:text name="${form.formName}"
-                property="interviewTime"
+        <form:input path="interviewTime"
                 onkeyup="filterTimeKeys(this, event);"                
                 onblur="eid.checkInterviewTime(true);"
-                styleClass="text"
-                />
-                <div id="eid.interviewTimeMessage" class="blank" />
+                cssClass="text"
+                id="eid.interviewTime" maxlength="5"/>
+                <div id="eid.interviewTimeMessage" class="blank" ></div>
         </td>
     </tr>       
     <tr>
@@ -134,27 +126,25 @@ eid = new EidProjectChecker();
         </td>
 
         <td>
-            <html:select name="${form.formName}"
-                         property="ProjectData.EIDSiteName"
+            <form:select path="ProjectData.EIDSiteName"
                          id="eid.centerName"
                          onchange="eid.checkCenterName(true)">
-                <app:optionsCollection name="${form.formName}"
-                    property="organizationTypeLists.EID_ORGS_BY_NAME.list"
-                    label="organizationName"
-                    value="id" />
-            </html:select>
+                <form:options items="${organizationTypeLists.EID_ORGS_BY_NAME.list}"
+                    itemLabel="organizationName"
+                    itemValue="id" />
+            </form:select>
         </td>
     </tr>
     <tr>
         <td class="required">*</td>
         <td><spring:message code="sample.entry.project.siteCode"/></td>
         <td style="width: 40%;">
-            <html:select name="${form.formName}"  property="ProjectData.EIDsiteCode" styleClass="text"
+            <form:select path="ProjectData.EIDsiteCode" cssClass="text"
                     id="eid.centerCode"
                     onchange="eid.checkCenterCode(true);" >
-                <app:optionsCollection name="${form.formName}" property="organizationTypeLists.EID_ORGS.list" label="doubleName" value="id" />
-            </html:select>
-            <div id="eid.centerCodeMessage" class="blank"/>
+                <form:options items="${organizationTypeLists.EID_ORGS.list}" itemLabel="doubleName" itemValue="id" />
+            </form:select>
+            <div id="eid.centerCodeMessage" class="blank"></div>
         </td>
 
     </tr>
@@ -169,8 +159,9 @@ eid = new EidProjectChecker();
             <INPUT type="text" name="eid.infantID" id="eid.infantID" size="4" class="text"
                 onchange="handleDBSSubjectId(); makeDirty();"
                 maxlength="4" />
-            <app:text name="${form.formName}" property="subjectNumber"
-                    styleClass="text" style="display:none;"
+            <form:input path="subjectNumber"
+                    cssClass="text" style="display:none;"
+                    id="eid.subjectNumber"
                     onchange="checkRequiredField(this); makeDirty();" />
             <div id="eid.subjectNumberMessage" class="blank" ></div>
         </td>
@@ -179,9 +170,9 @@ eid = new EidProjectChecker();
         <td class="required">+</td>
         <td><spring:message code="sample.entry.project.EID.siteInfantNumber"/></td>
         <td>
-            <app:text name="${form.formName}"
-                property="siteSubjectNumber"
-                styleClass="text"
+            <form:input path="siteSubjectNumber"
+                id="eid.siteSubjectNumber"
+                cssClass="text"
                 onchange="eid.checkSiteSubjectNumber(true)"/>
             <div id="eid.siteSubjectNumberMessage" class="blank"></div>
         </td>
@@ -196,22 +187,22 @@ eid = new EidProjectChecker();
             <INPUT type="text" name="eid.labNoForDisplay" id="eid.labNoForDisplay" size="5" class="text"
                 onchange="handleLabNoChange( this, '<spring:message code="sample.entry.project.LDBS"/>', false );makeDirty();"
                 maxlength="5" />
-            <app:text name="${form.formName}" property="labNo"
-                    styleClass="text" style="display:none;"
-                    />
-            <div id="eid.labNoMessage" class="blank" />
+            <form:input path="labNo"
+                    cssClass="text" style="display:none;"
+                    id="eid.labNo" />
+            <div id="eid.labNoMessage" class="blank"></div>
         </td>
     </tr>
     <tr>
         <td></td>
         <td class="observationsQuestion"><spring:message code="patient.project.eidWhichPCR" /></td>
         <td>
-            <html:select name="${form.formName}" property="observations.whichPCR"
-                    styleClass="text" id="eid.whichPCR"
+            <form:select path="observations.whichPCR"
+                    cssClass="text" id="eid.whichPCR"
                     onchange="eid.checkEIDWhichPCR(this)" >
-                <app:optionsCollection name="${form.formName}" property="dictionaryLists.EID_WHICH_PCR.list" label="localizedName" value="id" />
-            </html:select>
-            <div id="eid.whichPCRMessage" class="blank"/>
+                <form:options items="${dictionaryLists.EID_WHICH_PCR.list}" itemLabel="localizedName" itemValue="id" />
+            </form:select>
+            <div id="eid.whichPCRMessage" class="blank"></div>
         </td>
     </tr>
 
@@ -219,11 +210,11 @@ eid = new EidProjectChecker();
         <td></td>
         <td class="observationsQuestion"><spring:message code="sample.entry.project.EID.reasonForPCRTest" /></td>
         <td>
-            <html:select name="${form.formName}" property="observations.reasonForSecondPCRTest" styleClass="text" id="eid.reasonForSecondPCRTest"
+            <form:select path="observations.reasonForSecondPCRTest" cssClass="text" id="eid.reasonForSecondPCRTest"
                     onchange="makeDirty();compareAllObservationHistoryFields(true)" >
-                <app:optionsCollection name="${form.formName}" property="dictionaryLists.EID_SECOND_PCR_REASON.list" label="localizedName" value="id" />
-            </html:select>
-            <div id="eid.reasonForSecondPCRTestMessage" class="blank"/>
+                <form:options items="${dictionaryLists.EID_SECOND_PCR_REASON.list}" itemLabel="localizedName" itemValue="id" />
+            </form:select>
+            <div id="eid.reasonForSecondPCRTestMessage" class="blank"></div>
         </td>
     </tr>
 
@@ -233,11 +224,10 @@ eid = new EidProjectChecker();
             <spring:message code="patient.project.nameOfRequestor" />
         </td>
         <td>
-            <app:text name="${form.formName}"
-                      property="observations.nameOfRequestor"
+            <form:input path="observations.nameOfRequestor"
                       onchange="makeDirty();compareAllObservationHistoryFields(true)"
-                      styleClass="text"
-                      />
+                      cssClass="text"
+                      id="eid.nameOfRequestor" size="50"/>
             <div id="eid.nameOfRequestorMessage" class="blank"></div>
         </td>
     </tr>
@@ -247,11 +237,10 @@ eid = new EidProjectChecker();
             <spring:message code="patient.project.nameOfSampler" />
         </td>
         <td>
-            <html:text name="${form.formName}"
-                      property="observations.nameOfSampler"
+            <form:input path="observations.nameOfSampler"
                       onchange="makeDirty();compareAllObservationHistoryFields(true)"
-                      styleClass="text"
-                      />
+                      cssClass="text"
+                      id="eid.nameOfSampler" size="50"/>
             <div id="eid.nameOfSamplerMessage" class="blank"></div>
         </td>
     </tr>
@@ -268,9 +257,8 @@ eid = new EidProjectChecker();
                 <spring:message code="patient.birthDate" />&nbsp;<%=DateUtil.getDateUserPrompt()%>
             </td>
             <td>
-                <app:text name="${form.formName}"
-                      property="birthDateForDisplay"
-                      styleClass="text"
+                <form:input path="birthDateForDisplay"
+                      cssClass="text"
                       size="20"
                       maxlength="10"
                       onkeyup="addDateSlashes(this, event);"
@@ -303,36 +291,35 @@ eid = new EidProjectChecker();
                 <spring:message code="patient.gender" />
             </td>
             <td>
-                <html:select name="${form.formName}"
-                         property="gender"
+                <form:select path="gender"
                          id="eid.gender"
                          onchange="eid.checkGender(true)" >
-                <app:optionsCollection name="${form.formName}" property="formLists.GENDERS"
-                    label="localizedName" value="genderType" />
-                </html:select>
-                <div id="eid.genderMessage" class="blank" />
+                <form:options items="${formLists.GENDERS}"
+                    itemLabel="localizedName" itemValue="genderType" />
+                </form:select>
+                <div id="eid.genderMessage" class="blank" ></div>
             </td>
         </tr>
     <tr>
         <td></td>
         <td class="observationsQuestion"><spring:message code="patient.project.eidBenefitPTME" /></td>
         <td>
-            <html:select name="${form.formName}" property="observations.eidInfantPTME" styleClass="text" id="eid.eidInfantPTME"
+            <form:select path="observations.eidInfantPTME" cssClass="text" id="eid.eidInfantPTME"
                     onchange="makeDirty();compareAllObservationHistoryFields(true)" >
-                <app:optionsCollection name="${form.formName}" property="dictionaryLists.YES_NO.list" label="localizedName" value="id" />
-            </html:select>
-            <div id="eid.InfantPTMEMessage" class="blank"/>
+                <form:options items="${dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
+            </form:select>
+            <div id="eid.InfantPTMEMessage" class="blank"></div>
         </td>
     </tr>
     <tr>
         <td></td>
         <td class="observationsQuestion"><spring:message code="patient.project.eidTypeOfClinic" /></td>
         <td>
-            <html:select name="${form.formName}" property="observations.eidTypeOfClinic" styleClass="text" id="eid.eidTypeOfClinic"
+            <form:select path="observations.eidTypeOfClinic" cssClass="text" id="eid.eidTypeOfClinic"
                     onchange="makeDirty();projectChecker.displayTypeOfClinicOther();compareAllObservationHistoryFields(true)" >
-                <app:optionsCollection name="${form.formName}" property="dictionaryLists.EID_TYPE_OF_CLINIC.list" label="localizedName" value="id" />
-            </html:select>
-            <div id="eid.eidTypeOfClinicMessage" class="blank"/>
+                <form:options items="${dictionaryLists.EID_TYPE_OF_CLINIC.list}" itemLabel="localizedName" itemValue="id" />
+            </form:select>
+            <div id="eid.eidTypeOfClinicMessage" class="blank"></div>
         </td>
     </tr>
     <tr id="eid.eidTypeOfClinicOtherRow" style="display: none">
@@ -340,10 +327,9 @@ eid = new EidProjectChecker();
         </td>
         <td class="observationsSubquestion"><em><spring:message code="patient.project.specify" /></em></td>
         <td>
-            <html:text name="${form.formName}"
-                      property="observations.eidTypeOfClinicOther"
+            <form:input path="observations.eidTypeOfClinicOther"
                       onchange="makeDirty();compareAllObservationHistoryFields(true)"
-                      styleClass="text"
+                      cssClass="text"
                       id="eid.eidTypeOfClinicOther" />
             <div id="eid.eidTypeOfClinicOtherMessage" class="blank"></div>
         </td>
@@ -352,22 +338,22 @@ eid = new EidProjectChecker();
         <td></td>
         <td class="observationsQuestion"><spring:message code="patient.project.eidHowChildFed" /></td>
         <td>
-            <html:select name="${form.formName}" property="observations.eidHowChildFed" styleClass="text" id="eid.eidHowChildFed"
+            <form:select path="observations.eidHowChildFed" cssClass="text" id="eid.eidHowChildFed"
                     onchange="makeDirty();compareAllObservationHistoryFields(true)" >
-                <app:optionsCollection name="${form.formName}" property="dictionaryLists.EID_HOW_CHILD_FED.list" label="localizedName" value="id" />
-            </html:select>
-            <div id="eid.eidHowChildFedMessage" class="blank"/>
+                <form:options items="${dictionaryLists.EID_HOW_CHILD_FED.list}" itemLabel="localizedName" itemValue="id" />
+            </form:select>
+            <div id="eid.eidHowChildFedMessage" class="blank"></div>
         </td>
     </tr>
     <tr>
         <td></td>
         <td class="observationsQuestion"><spring:message code="patient.project.eidStoppedBreastfeeding"/></td>
         <td>
-            <html:select name="${form.formName}" property="observations.eidStoppedBreastfeeding" styleClass="text" id="eid.eidStoppedBreastfeeding"
+            <form:select path="observations.eidStoppedBreastfeeding" cssClass="text" id="eid.eidStoppedBreastfeeding"
                     onchange="makeDirty();compareAllObservationHistoryFields(true)" >
-                <app:optionsCollection name="${form.formName}" property="dictionaryLists.EID_STOPPED_BREASTFEEDING.list" label="localizedName" value="id" />
-            </html:select>
-            <div id="eid.eidStoppedBreastfeedingMessage" class="blank"/>
+                <form:options items="${dictionaryLists.EID_STOPPED_BREASTFEEDING.list}" itemLabel="localizedName" itemValue="id" />
+            </form:select>
+            <div id="eid.eidStoppedBreastfeedingMessage" class="blank"></div>
         </td>
     </tr>
 
@@ -375,32 +361,32 @@ eid = new EidProjectChecker();
         <td></td>
         <td class="observationsQuestion"><spring:message code="patient.project.eidInfantSymptomatic" /></td>
         <td>
-            <html:select name="${form.formName}" property="observations.eidInfantSymptomatic" styleClass="text" id="eid.eidInfantSymptomatic"
+            <form:select path="observations.eidInfantSymptomatic" cssClass="text" id="eid.eidInfantSymptomatic"
                     onchange="makeDirty();compareAllObservationHistoryFields(true)" >
-                <app:optionsCollection name="${form.formName}" property="dictionaryLists.YES_NO.list" label="localizedName" value="id" />
-            </html:select>
-            <div id="eid.eidInfantSymptomaticMessage" class="blank"/>
+                <form:options items="${dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
+            </form:select>
+            <div id="eid.eidInfantSymptomaticMessage" class="blank"></div>
         </td>
     </tr>
         <td></td>
             <td class="observationsQuestion"><spring:message code="patient.project.eidInfantProphy" /></td>
         <td>
-            <html:select name="${form.formName}" property="observations.eidInfantsARV" styleClass="text" id="eid.eidInfantsARV"
+            <form:select path="observations.eidInfantsARV" cssClass="text" id="eid.eidInfantsARV"
                     onchange="makeDirty();compareAllObservationHistoryFields(true)" >
-                <app:optionsCollection name="${form.formName}" property="dictionaryLists.EID_INFANT_PROPHYLAXIS_ARV.list" label="localizedName" value="id" />
-            </html:select>
-            <div id="eid.eidInfantsARVMessage" class="blank"/>
+                <form:options items="${dictionaryLists.EID_INFANT_PROPHYLAXIS_ARV.list}" itemLabel="localizedName" itemValue="id" />
+            </form:select>
+            <div id="eid.eidInfantsARVMessage" class="blank"></div>
         </td>
     </tr>
     <tr>
         <td></td>
             <td class="observationsQuestion"><spring:message code="patient.project.eidInfantCotrimoxazole" /></td>
         <td>
-            <html:select name="${form.formName}" property="observations.eidInfantCotrimoxazole" styleClass="text" id="eid.eidInfantCotrimoxazole"
+            <form:select path="observations.eidInfantCotrimoxazole" cssClass="text" id="eid.eidInfantCotrimoxazole"
                     onchange="makeDirty();compareAllObservationHistoryFields(true)" >
-                <app:optionsCollection name="${form.formName}" property="dictionaryLists.YES_NO_UNKNOWN.list" label="localizedName" value="id" />
-            </html:select>
-            <div id="eid.eidInfantCotrimoxazoleMessage" class="blank"/>
+                <form:options items="${dictionaryLists.YES_NO_UNKNOWN.list}" itemLabel="localizedName" itemValue="id" />
+            </form:select>
+            <div id="eid.eidInfantCotrimoxazoleMessage" class="blank"></div>
         </td>
     </tr>
     <tr>
@@ -413,22 +399,22 @@ eid = new EidProjectChecker();
         <td></td>
         <td class="observationsQuestion"><spring:message code="patient.project.eidMothersStatus" /></td>
         <td>
-            <html:select name="${form.formName}" property="observations.eidMothersHIVStatus" styleClass="text" id="eid.eidMothersHIVStatus"
+            <form:select path="observations.eidMothersHIVStatus" cssClass="text" id="eid.eidMothersHIVStatus"
                     onchange="makeDirty();compareAllObservationHistoryFields(true)" >
-                <app:optionsCollection name="${form.formName}" property="dictionaryLists.EID_MOTHERS_HIV_STATUS.list" label="localizedName" value="id" />
-            </html:select>
-            <div id="eid.eidMothersHIVStatusMessage" class="blank"/>
+                <form:options items="${dictionaryLists.EID_MOTHERS_HIV_STATUS.list}" itemLabel="localizedName" itemValue="id" />
+            </form:select>
+            <div id="eid.eidMothersHIVStatusMessage" class="blank"></div>
         </td>
     </tr>
     <tr>
         <td></td>
         <td class="observationsQuestion"><spring:message code="patient.project.eidMothersARV" /></td>
         <td>
-            <html:select name="${form.formName}" property="observations.eidMothersARV" styleClass="text" id="eid.eidMothersARV"
+            <form:select path="observations.eidMothersARV" cssClass="text" id="eid.eidMothersARV"
                     onchange="makeDirty();compareAllObservationHistoryFields(true)" >
-                <app:optionsCollection name="${form.formName}" property="dictionaryLists.EID_MOTHERS_ARV_TREATMENT.list" label="localizedName" value="id" />
-            </html:select>
-            <div id="eid.eidMothersARVMessage" class="blank"/>
+                <form:options items="${dictionaryLists.EID_MOTHERS_ARV_TREATMENT.list}" itemLabel="localizedName" itemValue="id" />
+            </form:select>
+            <div id="eid.eidMothersARVMessage" class="blank"></div>
         </td>
     </tr>
     <tr>
@@ -463,13 +449,11 @@ eid = new EidProjectChecker();
             <spring:message code="patient.project.underInvestigation" />
         </td>
         <td>
-            <html:select name="${form.formName}"
-            property="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
+            <form:select path="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
             id="eid.underInvestigation">
-            <app:optionsCollection name="${form.formName}"
-                property="dictionaryLists.YES_NO.list" label="localizedName"
-                value="id" />
-            </html:select>
+            <form:options items="${dictionaryLists.YES_NO.list}" itemLabel="localizedName"
+                itemValue="id" />
+            </form:select>
         </td>
     </tr>    
     <tr id="eid.underInvestigationCommentRow" >
@@ -478,9 +462,8 @@ eid = new EidProjectChecker();
             <spring:message code="patient.project.underInvestigationComment" />
         </td>
         <td colspan="3">
-            <app:text name="${form.formName}" property="ProjectData.underInvestigationNote" maxlength="1000" size="80"
-                onchange="makeDirty();" 
-                />
+            <form:input path="ProjectData.underInvestigationNote" maxlength="1000" size="80"
+                onchange="makeDirty();" id="eid.underInvestigationComment" />
         </td>
     </tr>
 </table>

@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RetroCIHeader" pageWidth="550" pageHeight="134" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="550" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -42,9 +42,9 @@
 	<detail>
 		<band height="120" splitType="Prevent">
 			<staticText>
-				<reportElement x="92" y="19" width="386" height="20"/>
+				<reportElement x="102" y="19" width="347" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="11" isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[LABORATOIRE DE BIOLOGIE MOLECULAIRE]]></text>
 			</staticText>
@@ -58,37 +58,37 @@
 				<text><![CDATA[Duplicata]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2" y="58" width="546" height="20"/>
+				<reportElement x="102" y="58" width="347" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="false"/>
+					<font size="9" isBold="false"/>
 				</textElement>
-				<text><![CDATA[TEL: 35 91 30 92 / Cel. 71 69 69 70 - 49 35 03 61]]></text>
+				<text><![CDATA[TEL: 21 24 09 24 / email: cirba@aviso.ci]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-2" x="441" y="81" width="109" height="30"/>
+				<reportElement key="textField-2" x="441" y="81" width="109" height="17"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{studyName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="92" y="37" width="386" height="20"/>
+				<reportElement x="102" y="37" width="347" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="11" isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[CENTRE HOSPITALIER REGIONAL D'ABENGOUROU]]></text>
+				<text><![CDATA[CENTRE INTEGRE DE RECHERCHES BIOCLINIQUES D'ABIDJAN (CIRBA)]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="109" y="0" width="331" height="20"/>
+				<reportElement x="102" y="0" width="347" height="20"/>
 				<textElement textAlignment="Center">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="80" width="548" height="20"/>
+				<reportElement x="0" y="78" width="548" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="false"/>
+					<font size="9" isBold="false"/>
 				</textElement>
-				<text><![CDATA[Responsable: Dr DREKA T. Boris]]></text>
+				<text><![CDATA[Responsable: Dr TONI]]></text>
 			</staticText>
 			<image isUsingCache="false">
 				<reportElement x="2" y="0" width="100" height="80"/>
@@ -98,13 +98,6 @@
 				<reportElement x="449" y="1" width="100" height="80"/>
 				<imageExpression class="java.lang.String"><![CDATA[$P{imagesPath}+ "rightLabLogo.jpg"]]></imageExpression>
 			</image>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement mode="Transparent" x="0" y="107" width="550" height="13" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
-					<font size="10" isBold="true"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{labName2}]]></textFieldExpression>
-			</textField>
 		</band>
 	</detail>
 	<columnFooter>

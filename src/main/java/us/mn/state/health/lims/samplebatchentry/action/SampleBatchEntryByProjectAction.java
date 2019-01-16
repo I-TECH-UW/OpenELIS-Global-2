@@ -22,32 +22,32 @@ import us.mn.state.health.lims.sample.form.ProjectData;
 
 public class SampleBatchEntryByProjectAction extends BaseSampleEntryAction {
 
-	  
 	@Override
-	protected ActionForward performAction(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
-	    
+	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+
 		String forward = "success";
 		BaseActionForm dynaForm = (BaseActionForm) form;
-	    String study = request.getParameter("study");
-	    try {
-		    if ("viralLoad".equals(study)) {
-		    	forward = setupViralLoad(dynaForm, request);
-		    } else if ("EID".equals(study)) {
-		    	forward = setupEID(dynaForm, request);
-		    }
-		    setupCommonFields(dynaForm, request);	
-	    } catch (Exception e) {
-	    	Log.error(e.toString());
-	    	forward = "fail";
-	    }
+		String study = request.getParameter("study");
+		try {
+			if ("viralLoad".equals(study)) {
+				forward = setupViralLoad(dynaForm, request);
+			} else if ("EID".equals(study)) {
+				forward = setupEID(dynaForm, request);
+			}
+			setupCommonFields(dynaForm, request);
+		} catch (Exception e) {
+			Log.error(e.toString());
+			forward = "fail";
+		}
 
-	    return mapping.findForward(forward);
+		return mapping.findForward(forward);
 	}
 
-	private String setupEID(BaseActionForm dynaForm, HttpServletRequest request) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	private String setupEID(BaseActionForm dynaForm, HttpServletRequest request)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		ProjectData projectData = (ProjectData) dynaForm.get("ProjectDataEID");
-	    PropertyUtils.setProperty(dynaForm, "programCode", StringUtil.getMessageForKey("sample.entry.project.LDBS"));
+		PropertyUtils.setProperty(dynaForm, "programCode", StringUtil.getMessageForKey("sample.entry.project.LDBS"));
 		String sampleTypes = "";
 		String tests = "";
 		if (projectData.getDryTubeTaken()) {
@@ -56,23 +56,24 @@ public class SampleBatchEntryByProjectAction extends BaseSampleEntryAction {
 		if (projectData.getDbsTaken()) {
 			sampleTypes = sampleTypes + " " + StringUtil.getMessageForKey("sample.entry.project.title.dryBloodSpot");
 		}
-		
+
 		if (projectData.getDnaPCR()) {
 			tests = tests + StringUtil.getMessageForKey("sample.entry.project.dnaPCR");
 		}
 		request.setAttribute("sampleType", sampleTypes);
 		request.setAttribute("testNames", tests);
-	    PropertyUtils.setProperty(dynaForm, "ProjectData", projectData);
+		PropertyUtils.setProperty(dynaForm, "ProjectData", projectData);
 		ObservationData observations = new ObservationData();
-	    observations.setProjectFormName("EID_Id");
-	    PropertyUtils.setProperty(dynaForm, "observations", observations);
-	    
+		observations.setProjectFormName("EID_Id");
+		PropertyUtils.setProperty(dynaForm, "observations", observations);
+
 		return findForward(request);
 	}
 
-	private String setupViralLoad(BaseActionForm dynaForm, HttpServletRequest request) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	private String setupViralLoad(BaseActionForm dynaForm, HttpServletRequest request)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		ProjectData projectData = (ProjectData) dynaForm.get("ProjectDataVL");
-	    PropertyUtils.setProperty(dynaForm, "programCode", StringUtil.getMessageForKey("sample.entry.project.LART"));
+		PropertyUtils.setProperty(dynaForm, "programCode", StringUtil.getMessageForKey("sample.entry.project.LART"));
 		String sampleTypes = "";
 		String tests = "";
 		if (projectData.getDryTubeTaken()) {
@@ -81,49 +82,57 @@ public class SampleBatchEntryByProjectAction extends BaseSampleEntryAction {
 		if (projectData.getEdtaTubeTaken()) {
 			sampleTypes = sampleTypes + " " + StringUtil.getMessageForKey("sample.entry.project.ARV.edtaTubeTaken");
 		}
-		
+
 		if (projectData.getViralLoadTest()) {
 			tests = tests + StringUtil.getMessageForKey("sample.entry.project.ARV.viralLoadTest");
 		}
 		request.setAttribute("sampleType", sampleTypes);
 		request.setAttribute("testNames", tests);
-	    PropertyUtils.setProperty(dynaForm, "ProjectData", projectData);
+		PropertyUtils.setProperty(dynaForm, "ProjectData", projectData);
 		ObservationData observations = new ObservationData();
 		observations.setProjectFormName("VL_Id");
-	    PropertyUtils.setProperty(dynaForm, "observations", observations);
+		PropertyUtils.setProperty(dynaForm, "observations", observations);
 
 		return findForward(request);
 	}
-	  
-	private void setupCommonFields(BaseActionForm dynaForm, HttpServletRequest request) throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		PropertyUtils.setProperty(dynaForm, "currentDate", request.getParameter("currentDate"));
-	    PropertyUtils.setProperty(dynaForm, "currentTime", request.getParameter("currentTime"));
-	    PropertyUtils.setProperty(dynaForm, "receivedDateForDisplay", request.getParameter("sampleOrderItems.receivedDateForDisplay"));
-	    PropertyUtils.setProperty(dynaForm, "receivedTimeForDisplay", request.getParameter("sampleOrderItems.receivedTime"));
-	    addOrganizationLists(dynaForm);
-	}
-	
-	protected void addOrganizationLists(BaseActionForm dynaForm) throws LIMSRuntimeException, IllegalAccessException,
-	InvocationTargetException, NoSuchMethodException {
 
-		//Get ARV Centers
+	private void setupCommonFields(BaseActionForm dynaForm, HttpServletRequest request)
+			throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		PropertyUtils.setProperty(dynaForm, "currentDate", request.getParameter("currentDate"));
+		PropertyUtils.setProperty(dynaForm, "currentTime", request.getParameter("currentTime"));
+		PropertyUtils.setProperty(dynaForm, "receivedDateForDisplay",
+				request.getParameter("sampleOrderItems.receivedDateForDisplay"));
+		PropertyUtils.setProperty(dynaForm, "receivedTimeForDisplay",
+				request.getParameter("sampleOrderItems.receivedTime"));
+		addOrganizationLists(dynaForm);
+	}
+
+	protected void addOrganizationLists(BaseActionForm dynaForm)
+			throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+		// Get ARV Centers
 		PropertyUtils.setProperty(dynaForm, "ProjectData.ARVCenters", OrganizationTypeList.ARV_ORGS.getList());
 		PropertyUtils.setProperty(dynaForm, "organizationTypeLists", OrganizationTypeList.MAP);
-		
-		//Get EID Sites
+
+		// Get EID Sites
 		PropertyUtils.setProperty(dynaForm, "ProjectData.EIDSites", OrganizationTypeList.EID_ORGS.getList());
-		PropertyUtils.setProperty(dynaForm, "ProjectData.EIDSitesByName", OrganizationTypeList.EID_ORGS_BY_NAME.getList());
-		
-		//Get EID whichPCR List
-		//PropertyUtils.setProperty(dynaForm, "ProjectData.eidWhichPCRList", ObservationHistoryList.EID_WHICH_PCR.getList());
-		
-		//Get EID secondTestReason List
-		PropertyUtils.setProperty(dynaForm, "ProjectData.eidSecondPCRReasonList", ObservationHistoryList.EID_SECOND_PCR_REASON.getList());
-		
-		//Get SPE Request Reasons
-		PropertyUtils.setProperty(dynaForm, "ProjectData.requestReasons", ObservationHistoryList.SPECIAL_REQUEST_REASONS.getList());
-		
-		PropertyUtils.setProperty(dynaForm, "ProjectData.isUnderInvestigationList", ObservationHistoryList.YES_NO.getList());
+		PropertyUtils.setProperty(dynaForm, "ProjectData.EIDSitesByName",
+				OrganizationTypeList.EID_ORGS_BY_NAME.getList());
+
+		// Get EID whichPCR List
+		// PropertyUtils.setProperty(dynaForm, "ProjectData.eidWhichPCRList",
+		// ObservationHistoryList.EID_WHICH_PCR.getList());
+
+		// Get EID secondTestReason List
+		PropertyUtils.setProperty(dynaForm, "ProjectData.eidSecondPCRReasonList",
+				ObservationHistoryList.EID_SECOND_PCR_REASON.getList());
+
+		// Get SPE Request Reasons
+		PropertyUtils.setProperty(dynaForm, "ProjectData.requestReasons",
+				ObservationHistoryList.SPECIAL_REQUEST_REASONS.getList());
+
+		PropertyUtils.setProperty(dynaForm, "ProjectData.isUnderInvestigationList",
+				ObservationHistoryList.YES_NO.getList());
 	}
 
 	private String findForward(HttpServletRequest request) {
@@ -135,15 +144,14 @@ public class SampleBatchEntryByProjectAction extends BaseSampleEntryAction {
 		}
 		return "fail";
 	}
-	
+
 	@Override
 	protected String getPageTitleKey() {
-	    return "sample.batchentry.title";
+		return "sample.batchentry.title";
 	}
 
-	  
 	@Override
 	protected String getPageSubtitleKey() {
-	    return "sample.batchentry.title";
+		return "sample.batchentry.title";
 	}
 }

@@ -45,8 +45,8 @@
         <property name="defaultLocale" value="en_US" />
     </bean>
 
-	<!-- intercepts any lang= in url to switch languages-->
 	<mvc:interceptors>
+		<!-- intercepts any lang= in url to switch languages-->
 	    <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
 	        <property name="paramName" value="lang" />
 	    </bean>

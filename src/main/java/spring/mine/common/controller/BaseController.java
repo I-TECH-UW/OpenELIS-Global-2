@@ -1,6 +1,7 @@
 package spring.mine.common.controller;
 
 import java.util.HashSet;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -8,7 +9,6 @@ import org.apache.struts.Globals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.form.BaseForm;
@@ -17,19 +17,21 @@ import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.security.PageIdentityUtil;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
+import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.resources.ResourceLocator;
 import us.mn.state.health.lims.login.dao.UserModuleDAO;
 import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
 
 @Component
 public abstract class BaseController implements IActionConstants {
-	
+
 	@Autowired
 	MessageUtil messageUtil;
+	@Autowired
+	protected HttpServletRequest request;
+
 	private static final boolean USE_PARAMETERS = true;
 
 	protected String currentUserId;
@@ -40,7 +42,7 @@ public abstract class BaseController implements IActionConstants {
 	 * Must be implemented by subclasses to set the title for the requested page.
 	 * The value returned should be a key String from the
 	 * ApplicationResources.properties file.
-	 * 
+	 *
 	 * @return the title key for this page.
 	 */
 	protected abstract String getPageTitleKey();
@@ -49,7 +51,7 @@ public abstract class BaseController implements IActionConstants {
 	 * Must be implemented by subclasses to set the subtitle for the requested page.
 	 * The value returned should be a key String from the
 	 * ApplicationResources.properties file.
-	 * 
+	 *
 	 * @return the subtitle key this page.
 	 */
 	protected abstract String getPageSubtitleKey();
@@ -57,7 +59,7 @@ public abstract class BaseController implements IActionConstants {
 	/**
 	 * This getPageTitleKey method accepts a request and form parameter so that a
 	 * subclass can override the method and conditionally return different titles.
-	 * 
+	 *
 	 * @param request the request
 	 * @param form    the form associated with this request.
 	 * @return the title key for this page.
@@ -74,7 +76,7 @@ public abstract class BaseController implements IActionConstants {
 	 * This getSubtitleKey method accepts a request and form parameter so that a
 	 * subclass can override the method and conditionally return different
 	 * subtitles.
-	 * 
+	 *
 	 * @param request the request
 	 * @param form    the form associated with this request.
 	 * @return the subtitle key this page.
@@ -90,7 +92,7 @@ public abstract class BaseController implements IActionConstants {
 	/**
 	 * Template method to allow subclasses to handle special cases. The default is
 	 * to return the message
-	 * 
+	 *
 	 * @param message The message
 	 * @return The message
 	 */
@@ -101,7 +103,7 @@ public abstract class BaseController implements IActionConstants {
 	/**
 	 * Utility method to simplify the lookup of MessageResource Strings in the
 	 * ApplicationResources.properties file for this application.
-	 * 
+	 *
 	 * @param messageKey the message key to look up
 	 */
 	protected String getMessageForKey(String messageKey) throws Exception {
@@ -112,28 +114,32 @@ public abstract class BaseController implements IActionConstants {
 	/**
 	 * Utility method to simplify the lookup of MessageResource Strings in the
 	 * ApplicationResources.properties file for this application.
-	 * 
+	 *
 	 * @param request    the HttpServletRequest
 	 * @param messageKey the message key to look up
 	 */
 	protected String getMessageForKey(HttpServletRequest request, String messageKey) throws Exception {
-		if (null == messageKey)
+		if (null == messageKey) {
 			return null;
+		}
 		java.util.Locale locale = (java.util.Locale) request.getSession()
 				.getAttribute("org.apache.struts.action.LOCALE");
 		// Return the message for the user's locale.
 		return MessageUtil.getMessage(messageKey);
-		//return ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey);
+		// return ResourceLocator.getInstance().getMessageResources().getMessage(locale,
+		// messageKey);
 	}
 
 	protected String getMessageForKey(HttpServletRequest request, String messageKey, String arg0) throws Exception {
-		if (null == messageKey)
+		if (null == messageKey) {
 			return null;
+		}
 		java.util.Locale locale = (java.util.Locale) request.getSession()
 				.getAttribute("org.apache.struts.action.LOCALE");
 		// Return the message for the user's locale.
 		return MessageUtil.getMessage(messageKey);
-		//return ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey, arg0);
+		// return ResourceLocator.getInstance().getMessageResources().getMessage(locale,
+		// messageKey, arg0);
 	}
 
 	protected void setFormAttributes(BaseForm form, HttpServletRequest request) {
@@ -188,10 +194,12 @@ public abstract class BaseController implements IActionConstants {
 			LogEvent.logError("BaseController", "setPageTitles", "could not get message for key: " + pageSubtitleKey);
 		}
 
-		if (null != pageTitle)
+		if (null != pageTitle) {
 			request.setAttribute(PAGE_TITLE_KEY, pageTitle);
-		if (null != pageSubtitle)
+		}
+		if (null != pageSubtitle) {
 			request.setAttribute(PAGE_SUBTITLE_KEY, pageSubtitle);
+		}
 
 	}
 
@@ -272,11 +280,37 @@ public abstract class BaseController implements IActionConstants {
 		return findLocalForward(forward, form);
 	}
 
-	protected void saveErrors(Errors errors, BaseForm form) {
-		for (ObjectError errorMessage : errors.getAllErrors()) {
-			System.out.println(errorMessage.getDefaultMessage());
+	protected ModelAndView getForward(ModelAndView mv, String id, String startingRecNo, String direction) {
+		LogEvent.logInfo("BaseAction", "getForward()", "This is forward " + mv.getViewName());
+
+		if (id != null) {
+			mv.addObject(ID, id);
 		}
-		form.setErrors(errors.getAllErrors());
+		if (startingRecNo != null) {
+			mv.addObject("startingRecNo", startingRecNo);
+		}
+		if (direction != null) {
+			mv.addObject("direction", direction);
+		}
+
+		return mv;
+	}
+
+	protected ModelAndView getForwardWithParameters(ModelAndView mv, Map<String, String> params) {
+		mv.addAllObjects(params);
+		return mv;
+	}
+
+	protected void saveErrors(Errors errors) {
+		if (request.getAttribute(REQUEST_ERRORS) == null) {
+			request.setAttribute(REQUEST_ERRORS, errors);
+		} else {
+			((Errors) request.getAttribute(REQUEST_ERRORS)).addAllErrors(errors);
+		}
+	}
+
+	protected Errors getErrors() {
+		return (Errors) request.getAttribute(REQUEST_ERRORS);
 	}
 
 	protected boolean isUserAuthenticated(UserModuleDAO userModuleDAO, Errors errors, HttpServletRequest request) {

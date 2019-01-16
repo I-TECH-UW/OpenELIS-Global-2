@@ -11,13 +11,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 
 <script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-
-		
-<bean:define id="patientProperties" name='${form.formName}' property='patientProperties' type="PatientManagementInfo" />
-
 
 <%!
 	String basePath = "";
@@ -685,24 +682,23 @@ function hasIdentifyingInfo() {
 	}
 }
 </script>
-<nested:hidden name='${form.formName}' property="patientProperties.currentDate" id="currentDate"/>
-
+<form:hidden path="patientProperties.currentDate" id="currentDate" />
 <div id="PatientPage" style="width:90%;">
-	<nested:hidden property="patientProperties.patientLastUpdated" name='${form.formName}' id="patientLastUpdated" />
-	<nested:hidden property="patientProperties.personLastUpdated" name='${form.formName}'  id="personLastUpdated"/>
+	<form:hidden path="patientProperties.patientLastUpdated" id="patientLastUpdated" />
+	<form:hidden path="patientProperties.personLastUpdated" id="personLastUpdated"/>
 
-	<tiles:insert attribute="patientSearch" />
+	<tiles:insertAttribute name="patientSearch" />
 
-	<nested:hidden name='${form.formName}' property="patientProperties.patientProcessingStatus" id="processingStatus" value="add" />
-	<nested:hidden name='${form.formName}' property="patientProperties.patientPK" id="patientPK_ID" />
-	<nested:hidden name='${form.formName}' property="patientProperties.guid" id="patientGUID_ID" />
-    <logic:equal value="false" name="${form.formName}" property="patientProperties.readOnly" >
+	<form:hidden path="patientProperties.patientProcessingStatus" id="processingStatus" value="add" />
+	<form:hidden path="patientProperties.patientPK" id="patientPK_ID" />
+	<form:hidden path="patientProperties.guid" id="patientGUID_ID" />
+	<c:if test="${not form.patientProperties.readOnly}" >
 	<br/>
 	<div class="patientSearch">
 		<hr style="width:100%" />
         <input type="button" value='<%= StringUtil.getMessageForKey("patient.new")%>' onclick="addPatient();">
 	</div>
-    </logic:equal>
+    </c:if>
 	<div id="PatientDetail"   >
 	<h3><spring:message code="patient.information"/></h3>
 	<table style="width:80%" border="0">
@@ -720,11 +716,10 @@ function hasIdentifyingInfo() {
             <spring:message code="patient.ST.number"/>:
         </td>
         <td>
-            <nested:text name='${form.formName}'
-                         property="patientProperties.STnumber"
+            <form:input path="patientProperties.STnumber"
                          onchange="validateSubjectNumber(this, 'STnumber');updatePatientEditStatus();"
                          id="ST_ID"
-                         styleClass="text"
+                         cssClass="text"
                          size="60" />
         </td>
     </tr>
@@ -744,11 +739,10 @@ function hasIdentifyingInfo() {
             <% } %>
         </td>
         <td>
-            <nested:text name='${form.formName}'
-                         property="patientProperties.subjectNumber"
+            <form:input path="patientProperties.subjectNumber"
                          onchange="validateSubjectNumber(this, 'subjectNumber');updatePatientEditStatus();"
                          id="subjectNumberID"
-                         styleClass="text"
+                         cssClass="text"
                          size="60" />
         </td>
     </tr>
@@ -763,11 +757,10 @@ function hasIdentifyingInfo() {
 
         </td>
         <td >
-            <nested:text name='${form.formName}'
-                         property="patientProperties.nationalId"
+            <form:input path="patientProperties.nationalId"
                          onchange="validateSubjectNumber(this, 'nationalId');updatePatientEditStatus();"
                          id="nationalID"
-                         styleClass="text"
+                         cssClass="text"
                          size="60"/>
         </td>
         <td >&nbsp;
@@ -791,9 +784,8 @@ function hasIdentifyingInfo() {
 			<% } %>
 		</td>
 		<td >
-			<nested:text name='${form.formName}'
-					  property="patientProperties.lastName"
-					  styleClass="text"
+			<form:input path="patientProperties.lastName"
+					  cssClass="text"
 				      size="60"
 				      onchange="updatePatientEditStatus();"
 				      id="lastNameID"/>
@@ -806,9 +798,8 @@ function hasIdentifyingInfo() {
 			<% } %>	
 		</td>
 		<td >
-			<nested:text name='${form.formName}'
-					  property="patientProperties.firstName"
-					  styleClass="text"
+			<form:input path="patientProperties.firstName"
+					  cssClass="text"
 					  size="40"
 					  onchange="updatePatientEditStatus();"
 					  id="firstNameID"/>
@@ -821,11 +812,10 @@ function hasIdentifyingInfo() {
 		<spring:message code="patient.aka"/>
 	</td>
 	<td>
-		<nested:text name='${form.formName}'
-				  property="patientProperties.aka"
+		<form:input path="patientProperties.aka"
 				  onchange="updatePatientEditStatus();"
 				  id="akaID"
-				  styleClass="text"
+				  cssClass="text"
 				  size="60" />
 	</td>
 	</tr>
@@ -841,9 +831,8 @@ function hasIdentifyingInfo() {
 			<% } %>
 		</td>
 		<td>
-			<nested:text name='${form.formName}'
-					  property="patientProperties.birthDateForDisplay"
-					  styleClass="text"
+			<form:input path="patientProperties.birthDateForDisplay"
+					  cssClass="text"
 					  size="20"
                       maxlength="10"
                       onkeyup="addDateSlashes(this,event); normalizeDateFormat(this);"
@@ -855,12 +844,11 @@ function hasIdentifyingInfo() {
 			<spring:message code="patient.age" />:
 		</td>
 		<td >
-            <html:text property="patientProperties.age"
-                       name="${form.formName}"
+            <form:input path="patientProperties.age"
                        size="3"
                        maxlength="3"
                        onchange="handleAgeChange(this); updatePatientEditStatus();"
-                       styleClass="text"
+                       cssClass="text"
                     id="age"/>
 			<div id="patientProperties.ageMessage" class="blank" ></div>
 		</td>
@@ -871,18 +859,15 @@ function hasIdentifyingInfo() {
 			<% } %>
 		</td>
 		<td>
-            <logic:equal value="false" name="${form.formName}" property="patientProperties.readOnly" >
-			<nested:select name='${form.formName}'
-						 property="patientProperties.gender"
-						 onchange="updatePatientEditStatus();"
-						 id="genderID">
+			<c:if test="${not form.patientProperties.readOnly}" >
+			<form:select path="patientProperties.gender" onchange="updatePatientEditStatus();" id="genderID">
 				<option value=" " ></option>
-				<nested:optionsCollection name='${form.formName}' property="patientProperties.genders"   label="value" value="id" />
-			</nested:select>
-            </logic:equal>
-            <logic:equal value="true" name="${form.formName}" property="patientProperties.readOnly" >
-                <html:text property="patientProperties.gender" name="${form.formName}" />
-            </logic:equal>
+				<form:options items="${form.patientProperties.genders}" itemLabel="value" itemValue="id" />
+			</form:select>
+            </c:if>
+            <c:if test="${form.patientProperties.readOnly}" >
+                <form:input path="patientProperties.gender" />
+            </c:if>
 		</td>
 	</tr>
 	</table>

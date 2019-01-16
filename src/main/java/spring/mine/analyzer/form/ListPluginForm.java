@@ -7,7 +7,7 @@ import spring.mine.common.form.BaseForm;
 public class ListPluginForm extends BaseForm {
   private Timestamp lastupdated;
 
-  private List pluginList;
+  private List<String> pluginList;
 
   public ListPluginForm() {
     setFormName("listPluginForm");
@@ -21,11 +21,11 @@ public class ListPluginForm extends BaseForm {
     this.lastupdated = lastupdated;
   }
 
-  public List getPluginList() {
+  public List<String> getPluginList() {
     return this.pluginList;
   }
 
-  public void setPluginList(List pluginList) {
+  public void setPluginList(List<String> pluginList) {
     this.pluginList = pluginList;
   }
 }

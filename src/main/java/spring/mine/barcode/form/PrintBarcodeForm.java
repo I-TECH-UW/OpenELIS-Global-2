@@ -1,9 +1,10 @@
 package spring.mine.barcode.form;
 
-import java.lang.String;
-import java.util.Collection;
+import java.util.List;
+
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
+import us.mn.state.health.lims.sample.bean.SampleEditItem;
 
 public class PrintBarcodeForm extends BaseForm {
   private String lastupdated;
@@ -24,7 +25,7 @@ public class PrintBarcodeForm extends BaseForm {
 
   private String searchCriteria;
 
-  private Collection existingTests;
+  private List<SampleEditItem> existingTests;
 
   private PatientSearch patientSearch;
 
@@ -104,11 +105,11 @@ public class PrintBarcodeForm extends BaseForm {
     this.searchCriteria = searchCriteria;
   }
 
-  public Collection getExistingTests() {
+  public List<SampleEditItem> getExistingTests() {
     return this.existingTests;
   }
 
-  public void setExistingTests(Collection existingTests) {
+  public void setExistingTests(List<SampleEditItem> existingTests) {
     this.existingTests = existingTests;
   }
 

@@ -17,20 +17,17 @@
 		<tbody valign="middle">
 			<tr>
 				<td align="right">
-					<html:button onclick="nextPage();"
-						property="next"
-						id="nextButtonId"
-						disabled="<%=Boolean.valueOf(nextDisabled).booleanValue()%>">
+					<button type="button" 
+							onclick="nextPage();" 
+							id="nextButtonId" 
+							disabled="<%=Boolean.valueOf(nextDisabled).booleanValue()%>">
 						<spring:message code="label.button.next" />
-					</html:button>
+					</button>
 				</td>
 				<td>
-					<html:button
-						onclick="setMyCancelAction(window.document.forms[0], 'Cancel', 'no', '');"
-						property="cancel"
-						id="cancelButtonId">
+					<button type="button" onclick="cancelAction();" id="cancelButtonId">
 						<spring:message code="label.button.cancel" />
-					</html:button>
+					</button>
 				</td>
 			</tr>
 		</tbody>

@@ -222,12 +222,12 @@
 
   <error-page>
     <error-code>500</error-code>
-  	<location>/pages/common/defaultErrorPage.jsp</location>
+  	<location>/pages/common/error/defaultErrorPage.jsp</location>
   </error-page>
   
   <error-page>
     <error-code>404</error-code>
-  	<location>/pages/common/defaultNotFoundPage.jsp</location>
+  	<location>/pages/common/error/defaultNotFoundPage.jsp</location>
   </error-page>
   
   <jsp-config>

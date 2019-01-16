@@ -12,8 +12,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-	
-<bean:define id="requestType" value='<%=(String)request.getSession().getAttribute("type")%>' />
+<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>
 
 <%!
 	String basePath = "";
@@ -22,7 +21,7 @@
 <%
 	String path = request.getContextPath();
 	basePath = request.getScheme() + "://" + request.getServerName() + ":"	+ request.getServerPort() + path + "/";
-	
+	String requestType = (String)request.getSession().getAttribute("type");
 	HashSet accessMap = (HashSet)request.getSession().getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
 	boolean isAdmin = userModuleDAO.isUserAdmin(request);
 	// no one should edit patient numbers at this time.  PAH 11/05/2010
@@ -31,8 +30,8 @@
 %>
 
 <script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>neon1/retroCIUtilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>neon/entryByProjectUtils.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="<%=basePath%>scripts/neon2/retroCIUtilities.js"></script>
+<script type="text/javascript" src="<%=basePath%>scripts/neon/entryByProjectUtils.js"></script>
 <script type="text/javascript">
 
 var dirty = false;
@@ -309,9 +308,8 @@ function initializeStudySelection() {
 }
 
 </script>
-<b><spring:message code="sample.entry.project.form" />
-</b>
-<tiles:insert attribute="patientSearch" ignore="true"/>
+<b><spring:message code="sample.entry.project.form" /> </b>
+<tiles:insertAttribute name="patientSearch" ignore="true"/>
 <br/>
 <select name="studyForms" onchange="selectStudy(this.value);" id="studyFormsID">
 	<option value="0" selected>
@@ -338,20 +336,20 @@ function initializeStudySelection() {
 <form:hidden path="" id="subjectOrSiteSubject" value="" />
 <div id="studies">
 	<div id="InitialARV_Id" style="display: none;">
-		<tiles:insert attribute="arvInitialStudy"/>
+		<tiles:insertAttribute name="arvInitialStudy"/>
 	</div>
 	
 	<div id="FollowUpARV_Id" style="display: none;">
-		<tiles:insert attribute="arvFollowupStudy"/>
+		<tiles:insertAttribute name="arvFollowupStudy"/>
 	</div>
 	<div id="EID_Id" style="display: none;">
-		<tiles:insert attribute="ediStudy"/>
+		<tiles:insertAttribute name="ediStudy"/>
 	</div>
 	<div id="VL_Id" style="display: none;">
-		<tiles:insert attribute="lvStudy"/>
+		<tiles:insertAttribute name="lvStudy"/>
 	</div>
 	<div id="RTN_Id" style="display: none;">
-		<tiles:insert attribute="rtnStudy"/>
+		<tiles:insertAttribute name="rtnStudy"/>
 	</div>
 </div>
 <script type="text/javascript">

@@ -23,8 +23,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.struts.action.DynaActionForm;
 
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.paging.IPageDivider;
 import us.mn.state.health.lims.common.paging.IPageFlattener;
@@ -35,29 +35,29 @@ import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
 public class ResultsPaging {
-	private PagingUtility<List<TestResultItem>> paging = new PagingUtility<List<TestResultItem>>();
-	
+	private PagingUtility<List<TestResultItem>> paging = new PagingUtility<>();
+
 	private static TestItemPageHelper pagingHelper = new TestItemPageHelper();
 
-	public void setDatabaseResults(HttpServletRequest request, DynaActionForm dynaForm, List<TestResultItem> tests)
+	public void setDatabaseResults(HttpServletRequest request, BaseForm form, List<TestResultItem> tests)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		paging.setDatabaseResults(request.getSession(), tests, pagingHelper);
-		
+
 		List<TestResultItem> resultPage = paging.getPage(1, request.getSession());
 		if (resultPage != null) {
-			PropertyUtils.setProperty(dynaForm, "testResult", resultPage);
-			PropertyUtils.setProperty(dynaForm, "paging", paging.getPagingBeanWithSearchMapping(1, request.getSession()));
+			PropertyUtils.setProperty(form, "testResult", resultPage);
+			PropertyUtils.setProperty(form, "paging", paging.getPagingBeanWithSearchMapping(1, request.getSession()));
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public void page(HttpServletRequest request, DynaActionForm dynaForm, String newPage) throws IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException {
+	public void page(HttpServletRequest request, BaseForm form, String newPage)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.FALSE);
-		List<TestResultItem> clientTests = (List<TestResultItem>) dynaForm.get("testResult");
-		PagingBean bean = (PagingBean) dynaForm.get("paging");
+		List<TestResultItem> clientTests = (List<TestResultItem>) form.get("testResult");
+		PagingBean bean = (PagingBean) form.get("paging");
 		String testSectionId = (request.getParameter("testSectionId"));
 		paging.updatePagedResults(request.getSession(), clientTests, bean, pagingHelper);
 
@@ -65,17 +65,18 @@ public class ResultsPaging {
 
 		List<TestResultItem> resultPage = paging.getPage(page, request.getSession());
 		if (resultPage != null) {
-			PropertyUtils.setProperty(dynaForm, "testResult", resultPage);
-			PropertyUtils.setProperty(dynaForm, "testSectionId", "0");
-			PropertyUtils.setProperty(dynaForm, "paging", paging.getPagingBeanWithSearchMapping(page, request.getSession()));
+			PropertyUtils.setProperty(form, "testResult", resultPage);
+			PropertyUtils.setProperty(form, "testSectionId", "0");
+			PropertyUtils.setProperty(form, "paging",
+					paging.getPagingBeanWithSearchMapping(page, request.getSession()));
 		}
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
-	public void updatePagedResults(HttpServletRequest request, DynaActionForm dynaForm) {
-		List<TestResultItem> clientTests = (List<TestResultItem>) dynaForm.get("testResult");
-		PagingBean bean = (PagingBean) dynaForm.get("paging");
+	public void updatePagedResults(HttpServletRequest request, BaseForm form) {
+		List<TestResultItem> clientTests = (List<TestResultItem>) form.get("testResult");
+		PagingBean bean = (PagingBean) form.get("paging");
 
 		paging.updatePagedResults(request.getSession(), clientTests, bean, pagingHelper);
 	}
@@ -84,21 +85,23 @@ public class ResultsPaging {
 		return paging.getAllResults(request.getSession(), pagingHelper);
 	}
 
-	private static class TestItemPageHelper implements IPageDivider<List<TestResultItem>>, IPageUpdater<List<TestResultItem>>,
-			IPageFlattener<List<TestResultItem>> {
+	private static class TestItemPageHelper implements IPageDivider<List<TestResultItem>>,
+			IPageUpdater<List<TestResultItem>>, IPageFlattener<List<TestResultItem>> {
 
+		@Override
 		public void createPages(List<TestResultItem> tests, List<List<TestResultItem>> pagedResults) {
-			List<TestResultItem> page = new ArrayList<TestResultItem>();
+			List<TestResultItem> page = new ArrayList<>();
 
 			String accessionSequenceNumber = null;
 			int resultCount = 0;
 
 			for (TestResultItem item : tests) {
-				if (accessionSequenceNumber != null && !accessionSequenceNumber.equals(item.getSequenceAccessionNumber())) {
+				if (accessionSequenceNumber != null
+						&& !accessionSequenceNumber.equals(item.getSequenceAccessionNumber())) {
 					resultCount = 0;
 					accessionSequenceNumber = null;
 					pagedResults.add(page);
-					page = new ArrayList<TestResultItem>();
+					page = new ArrayList<>();
 				}
 				if (resultCount >= IActionConstants.PAGING_SIZE) {
 					accessionSequenceNumber = item.getSequenceAccessionNumber();
@@ -113,6 +116,7 @@ public class ResultsPaging {
 			}
 		}
 
+		@Override
 		public void updateCache(List<TestResultItem> cacheItems, List<TestResultItem> clientItems) {
 			for (int i = 0; i < clientItems.size(); i++) {
 				if (clientItems.get(i).getIsModified()) {
@@ -122,9 +126,10 @@ public class ResultsPaging {
 
 		}
 
+		@Override
 		public List<TestResultItem> flattenPages(List<List<TestResultItem>> pages) {
 
-			List<TestResultItem> allResults = new ArrayList<TestResultItem>();
+			List<TestResultItem> allResults = new ArrayList<>();
 
 			for (List<TestResultItem> page : pages) {
 				for (TestResultItem item : page) {
@@ -136,25 +141,26 @@ public class ResultsPaging {
 
 		}
 
+		@Override
 		public List<IdValuePair> createSearchToPageMapping(List<List<TestResultItem>> allPages) {
-			List<IdValuePair> mappingList = new ArrayList<IdValuePair>();
-			
+			List<IdValuePair> mappingList = new ArrayList<>();
+
 			int page = 0;
-			for( List<TestResultItem> resultList : allPages){
+			for (List<TestResultItem> resultList : allPages) {
 				page++;
 				String pageString = String.valueOf(page);
-				
+
 				String currentAccession = null;
-				
-				for( TestResultItem resultItem : resultList){
-					if( !resultItem.getAccessionNumber().equals(currentAccession)){
+
+				for (TestResultItem resultItem : resultList) {
+					if (!resultItem.getAccessionNumber().equals(currentAccession)) {
 						currentAccession = resultItem.getAccessionNumber();
-						mappingList.add( new IdValuePair(currentAccession, pageString));
+						mappingList.add(new IdValuePair(currentAccession, pageString));
 					}
 				}
-				
+
 			}
-			
+
 			return mappingList;
 		}
 	}

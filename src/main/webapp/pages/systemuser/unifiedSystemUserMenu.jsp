@@ -20,7 +20,7 @@
 	   	  <spring:message code="systemuser.lastName"/>
 	   </th>
 	   <th>
-	      <spring:message code="systemuser.firstName"/>
+	      <spring:message code="systemuser.firstName"/>s
 	   </th>
 	   <th>
 	   	  <spring:message code="systemuser.loginName"/>
@@ -41,40 +41,38 @@
 	   	  <spring:message code="login.timeout"/>
 	   </th>
 	</tr>
-	<logic:iterate id="systemUser" indexId="ctr" name="${form.formName}" property="menuList" type="us.mn.state.health.lims.systemuser.valueholder.UnifiedSystemUser">
+	<c:forEach items="${form.menuList}" var="systemUser" varStatus="iter">
 	  <tr>
 	   <td class="textcontent">
-	      <html:multibox name="${form.formName}" property="selectedIDs"  onclick="output()" >
-              <bean:write name="systemUser" property="combinedUserID"/>
-	      </html:multibox>
-     
+	   <form:checkbox path="selectedIDs" value="${systemUser.combinedUserID}" onclick="output()"/>
+       
    	   </td>
    	   
 	   <td class="textcontent">
-	   	  <bean:write name="systemUser" property="lastName"/>
+	   	  <c:out value="${systemUser.lastName}"/>
 	   </td>
 	   <td class="textcontent">
-	   	  <bean:write name="systemUser" property="firstName"/>
+	   	  <c:out value="${systemUser.firstName}"/>
 	   </td>
 	   <td class="textcontent">
-	   	  <bean:write name="systemUser" property="loginName"/>
+	   	  <c:out value="${systemUser.loginName}"/>
 	   </td>
 	   <td class="textcontent">
-	   	  <bean:write name="systemUser" property="expDate"/>
+	   	  <c:out value="${systemUser.expDate}"/>
 	   </td>
 	   <td class="textcontent">
-	   	  <bean:write name="systemUser" property="locked"/>
+	   	  <c:out value="${systemUser.locked}"/>
 	   </td>
 	   <td class="textcontent">
-	   	  <bean:write name="systemUser" property="disabled"/>
+	   	  <c:out value="${systemUser.disabled}"/>
 	   </td>
 	   <td class="textcontent">
-	   	  <bean:write name="systemUser" property="active"/>
+	   	  <c:out value="${systemUser.active}"/>
 	   </td>
 	   <td class="textcontent">
-	   	  <bean:write name="systemUser" property="timeout"/>
+	   	  <c:out value="${systemUser.timeout}"/>
 	   </td>
 	   
        </tr>
-	</logic:iterate>
+	</c:forEach>
 </table>

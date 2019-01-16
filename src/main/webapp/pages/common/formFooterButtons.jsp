@@ -146,6 +146,18 @@ function nextAction(form, ignoreFields) {
   }
 }
 
+function saveOnClickAction() {
+	if (typeof mySaveAction === "function") {
+		return mySaveAction();
+	}
+	if(checkClicked()) {
+ 		return false;
+ 	} else {
+		window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed. Used in unifiedSystemUser.jsp
+  		setAction(window.document.forms[0], 'Update', 'yes', '?ID=');
+ 	}
+ }
+
 <%if( request.getAttribute(IActionConstants.FWD_SUCCESS) != null &&
       ((Boolean)request.getAttribute(IActionConstants.FWD_SUCCESS)) ) { %>
 if( typeof(showSuccessMessage) != 'undefined' ){
@@ -158,25 +170,17 @@ if( typeof(showSuccessMessage) != 'undefined' ){
 	<tbody valign="middle">
 		<tr>
 	      	<td>
-  			<form:button onclick="if(checkClicked())
-							 {
-							 	return false;
-							 }
-							 else {
-                window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed. Used in unifiedSystemUser.jsp
-							  setAction(window.document.forms[0], 'Update', 'yes', '?ID=');
-
-							 }" property="save" disabled="<%=Boolean.valueOf(saveDisabled).booleanValue()%>">
+  			<form:button onclick="saveOnClickAction();" property="save" name="save"  disabled="<%=Boolean.valueOf(saveDisabled).booleanValue()%>">
   			   <spring:message code="label.button.save" />
   			</form:button>
   	    </td>
 
 		<td>&nbsp;</td>
 		<td>
-  			<form:button onclick="setAction(window.document.forms[0], 'Cancel', 'no', '');"  property="cancel" >
+  			<button type="button" onclick="cancelAction();"  name="cancel" property="cancel" >
   			   <%--AIS - bugzilla 1860--%>
   			   <spring:message code="label.button.exit"/>
-  			</form:button>
+  			</button>
 	    </td>
    		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
    		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -185,15 +189,15 @@ if( typeof(showSuccessMessage) != 'undefined' ){
    		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
   		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	    <td>
-  			<form:button onclick="previousAction(window.document.forms[0], '');" property="previous" disabled="<%=Boolean.valueOf(previousDisabled).booleanValue()%>">
-  			   label.button.previous
-  			</form:button>
+  			<button type="button" onclick="previousAction(window.document.forms[0], '');" name="previous" property="previous" disabled="<%=Boolean.valueOf(previousDisabled).booleanValue()%>">
+  			   <spring:message code="label.button.previous"/>
+  			</button>
 	    </td>
      	<td>&nbsp;</td>
 	    <td>
-  			<form:button onclick="nextAction(window.document.forms[0], '');"  property="next" disabled="<%=Boolean.valueOf(nextDisabled).booleanValue()%>">
+  			<button type="button" onclick="nextAction(window.document.forms[0], '');"  name="next" property="next" disabled="<%=Boolean.valueOf(nextDisabled).booleanValue()%>">
   			   <spring:message code="label.button.next"/>
-  			</form:button>
+  			</button>
 	    </td>
 	    </tr>
 	 </tbody>

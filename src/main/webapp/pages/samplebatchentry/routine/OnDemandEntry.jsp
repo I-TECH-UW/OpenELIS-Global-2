@@ -142,18 +142,16 @@ function processSearchSuccessPrint(xhr) {
 <tr>
 	<td>
 		<!-- gets next accession, and calls submit and print if success -->
-		<html:button onclick="getNextAccessionNumber();"
-			property="print"
+		<button type="button" onclick="getNextAccessionNumber();"
 			id="saveButtonId">
 			<spring:message code="sample.batchentry.ondemand.saveprint" />
-		</html:button>
+		</button>
 		<!-- sets up for next label to be printed -->
-		<html:button onclick="nextLabel();"
-			property="next"
+		<button type="button" onclick="nextLabel();"
 			id="nextButtonId"
-			disabled="true">
+			disabled="disabled">
 			<spring:message code="sample.batchentry.ondemand.next" />
-		</html:button>
+		</button>
 	</td>
 </tr>
 <tr>
@@ -166,9 +164,9 @@ function processSearchSuccessPrint(xhr) {
 </tr>
 <tr>
 	<td>
-		<app:text name='${form.formName}' property="sampleOrderItems.labNo"
+		<form:input path="sampleOrderItems.labNo"
            	onchange="checkAccessionNumber(this);"
-            styleClass="text"
+            cssClass="text"
             id="labNo"
             readonly="true"/>
 	</td>

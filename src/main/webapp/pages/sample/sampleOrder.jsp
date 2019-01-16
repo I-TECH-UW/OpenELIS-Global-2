@@ -192,7 +192,7 @@
 <tr>
 <td>
 <table>
-<c:if test="${empty sampleOrderItems.labNo}" >
+<c:if test="${empty form.sampleOrderItems.labNo}" >
     <tr>
         <td style="width:35%">
             <%=StringUtil.getContextualMessageForKey( "quick.entry.accession.number" )%>
@@ -324,9 +324,7 @@
                      onchange="setOrderModified();siteListChanged(this);setCorrectSave();"
                      onkeyup="capitalizeValue( this.value );" >
             <option value=""></option>
-            <c:forEach items="${form.sampleOrderItems.referringSiteList}" var="referringSite" >
-           		<option value="${referringSite.id}">${referringSite.value}</option>
-            </c:forEach>
+            <form:options items="${form.sampleOrderItems.referringSiteList}" itemValue="id" itemLabel="value"/>
             </form:select>
     	</c:if>
     	<c:if test="${form.sampleOrderItems.readOnly}" >
@@ -401,7 +399,7 @@
                    onchange="setOrderModified();setCorrectSave();"
                    size="30"/>
         <spring:message code="humansampleone.provider.firstName.short"/>:
-        <form:input path="${form.sampleOrderItems.providerFirstName}" onchange="setOrderModified();"
+        <form:input path="sampleOrderItems.providerFirstName" onchange="setOrderModified();"
                    size="30"/>
 
     </td>

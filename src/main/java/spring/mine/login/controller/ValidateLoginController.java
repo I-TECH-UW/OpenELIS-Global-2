@@ -1,6 +1,5 @@
 package spring.mine.login.controller;
 
-import java.lang.String;
 import java.util.HashSet;
 import java.util.List;
 
@@ -8,16 +7,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import spring.generated.forms.LoginValidateForm;
+
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.login.form.LoginForm;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -45,7 +42,7 @@ public class ValidateLoginController extends BaseController {
 
 	@RequestMapping(value = "/ValidateLogin", method = RequestMethod.POST)
 	public ModelAndView validateLogin(@Valid @ModelAttribute("form") LoginForm form, BindingResult result,
-			ModelMap model, HttpServletRequest request) {
+			HttpServletRequest request) {
 		String forward = FWD_SUCCESS;
 
 		Login login = new Login();
@@ -121,7 +118,7 @@ public class ValidateLoginController extends BaseController {
 					result.reject("login.error.system.user.id", "login.error.system.user.id");
 				} else {
 					// request a new session (session fixation protection)
-					request.getSession(false).invalidate();
+					request.getSession(true).invalidate();
 					request.getSession();
 
 					SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
@@ -130,7 +127,7 @@ public class ValidateLoginController extends BaseController {
 					systemUserDAO.getData(su);
 
 					// setup the user timeout in seconds
-					int timeOut = Integer.parseInt((String) loginInfo.getUserTimeOut());
+					int timeOut = Integer.parseInt(loginInfo.getUserTimeOut());
 					request.getSession().setMaxInactiveInterval(timeOut * 60);
 
 					UserSessionData usd = new UserSessionData();
@@ -149,15 +146,17 @@ public class ValidateLoginController extends BaseController {
 					}
 
 				}
-				if (request.getSession().getAttribute(LOGIN_FAILED_CNT) != null)
+				if (request.getSession().getAttribute(LOGIN_FAILED_CNT) != null) {
 					request.getSession().removeAttribute(LOGIN_FAILED_CNT);
-				if (request.getSession().getAttribute(ACCOUNT_LOCK_TIME) != null)
+				}
+				if (request.getSession().getAttribute(ACCOUNT_LOCK_TIME) != null) {
 					request.getSession().removeAttribute(ACCOUNT_LOCK_TIME);
+				}
 
-				if (loginInfo.getIsAdmin().equalsIgnoreCase(YES))
+				if (loginInfo.getIsAdmin().equalsIgnoreCase(YES)) {
 					// bugzilla 2154
 					LogEvent.logInfo("LoginValidateAction", "performAction()", "======> USER TYPE: ADMIN");
-				else {
+				} else {
 					// bugzilla 2154
 					LogEvent.logInfo("LoginValidateAction", "performAction()", "======> USER TYPE: NON-ADMIN");
 					// bugzilla 2160
@@ -170,14 +169,15 @@ public class ValidateLoginController extends BaseController {
 
 		}
 		if (result.hasErrors()) {
-			//model.addAttribute("errors", result.getAllErrors());
-			saveErrors(result, form);
+			// model.addAttribute("errors", result.getAllErrors());
+			saveErrors(result);
 			forward = FWD_FAIL;
 		}
 
 		return findForward(forward, form);
 	}
 
+	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("success".equals(forward)) {
 			return new ModelAndView("redirect:/Dashboard.do", "form", form);
@@ -188,17 +188,19 @@ public class ValidateLoginController extends BaseController {
 		}
 	}
 
+	@Override
 	protected String getPageTitleKey() {
 		return null;
 	}
 
+	@Override
 	protected String getPageSubtitleKey() {
 		return null;
 	}
 
 	/**
 	 * Account is locked/unlock after the user entered wrong password (3 times)
-	 * 
+	 *
 	 * @param errors  the ActionMessages
 	 * @param request the HttpServletRequest
 	 * @param login   the user login object
@@ -218,9 +220,9 @@ public class ValidateLoginController extends BaseController {
 		int diff = Integer.parseInt(String.valueOf((loginTime.getTimeInMillis() - now.getTimeInMillis()) / 1000));
 
 		if (diff > 0) {
-			int seconds = (int) (diff % 60);
-			int minutes = (int) ((diff / 60) % 60);
-			int hours = (int) ((diff / 3600) % 24);
+			int seconds = diff % 60;
+			int minutes = (diff / 60) % 60;
+			int hours = (diff / 3600) % 24;
 			String secondsStr = (seconds < 10 ? "0" : "") + seconds;
 			String minutesStr = (minutes < 10 ? "0" : "") + minutes;
 			String hoursStr = (hours < 10 ? "0" : "") + hours;
@@ -245,7 +247,7 @@ public class ValidateLoginController extends BaseController {
 
 	@SuppressWarnings("unchecked")
 	private HashSet<String> getPermittedForms(int systemUserId) {
-		HashSet<String> permittedPages = new HashSet<String>();
+		HashSet<String> permittedPages = new HashSet<>();
 
 		UserRoleDAO userRoleDAO = new UserRoleDAOImpl();
 

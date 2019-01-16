@@ -254,4 +254,8 @@ public interface IActionConstants {
     String MODULE_ACCESS_PATIENT_SUBJECTNOS_EDIT = "Access.patient.subjectNos.edit";
     String MODULE_ACCESS_SAMPLE_ACCESSIONNO_EDIT = "Access.sample.accessionNo.edit";
 
+    String REQUEST_ERRORS = "RequestErrors";
+    String REQUEST_WARNINGS = "RequestWarnings";
+    String REQUEST_MESSAGES = "RequestMessages";
+
 }

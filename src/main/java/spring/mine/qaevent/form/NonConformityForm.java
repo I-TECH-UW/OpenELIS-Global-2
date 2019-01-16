@@ -1,0 +1,436 @@
+package spring.mine.qaevent.form;
+
+import java.sql.Timestamp;
+import java.util.List;
+
+import spring.mine.common.form.BaseForm;
+import us.mn.state.health.lims.common.util.IdValuePair;
+import us.mn.state.health.lims.project.valueholder.Project;
+import us.mn.state.health.lims.qaevent.valueholder.retroCI.QaEventItem;
+import us.mn.state.health.lims.test.valueholder.TestSection;
+
+public class NonConformityForm extends BaseForm {
+	private Boolean readOnly = Boolean.TRUE;
+
+	private Timestamp lastupdated;
+
+	private String sampleId = "";
+
+	private String patientId = "";
+
+	private String sampleItemsTypeOfSampleIds = "";
+
+	private String date = "";
+
+	private String time = "";
+
+	private String projectId = "";
+
+	private String project = "";
+
+	private List<Project> projects;
+
+	private Boolean subjectNew = Boolean.TRUE;
+
+	private String subjectNo = "";
+
+	private Boolean newSTNumber = Boolean.TRUE;
+
+	private String STNumber = "";
+
+	private Boolean nationalIdNew = Boolean.TRUE;
+
+	private String nationalId = "";
+
+	private String labNo = "";
+
+	private Boolean doctorNew = Boolean.TRUE;
+
+	private String doctor = "";
+
+	private Boolean serviceNew = Boolean.TRUE;
+
+	private String service = "";
+
+	private String newServiceName = "";
+
+	private List<QaEventItem> qaEvents;
+
+	private String section = "";
+
+	private List<TestSection> sections;
+
+	private List<IdValuePair> qaEventTypes;
+
+	private List<IdValuePair> typeOfSamples;
+
+	private String commentId = "";
+
+	private Boolean commentNew;
+
+	private String comment = "";
+
+	private String biologest = "";
+
+	private List<IdValuePair> siteList;
+
+	private String requesterSampleID = "";
+
+	private String providerNew = "";
+
+	private String providerLastName = "";
+
+	private String providerFirstName = "";
+
+	private String providerWorkPhone = "";
+
+	private String providerStreetAddress = "";
+
+	private String providerCity = "";
+
+	private String providerCommune = "";
+
+	private String providerDepartment = "";
+
+	private List<IdValuePair> departments;
+
+	public NonConformityForm() {
+		setFormName("NonConformityForm");
+	}
+
+	public Boolean getReadOnly() {
+		return readOnly;
+	}
+
+	public void setReadOnly(Boolean readOnly) {
+		this.readOnly = readOnly;
+	}
+
+	public Timestamp getLastupdated() {
+		return lastupdated;
+	}
+
+	public void setLastupdated(Timestamp lastupdated) {
+		this.lastupdated = lastupdated;
+	}
+
+	public String getSampleId() {
+		return sampleId;
+	}
+
+	public void setSampleId(String sampleId) {
+		this.sampleId = sampleId;
+	}
+
+	public String getPatientId() {
+		return patientId;
+	}
+
+	public void setPatientId(String patientId) {
+		this.patientId = patientId;
+	}
+
+	public String getSampleItemsTypeOfSampleIds() {
+		return sampleItemsTypeOfSampleIds;
+	}
+
+	public void setSampleItemsTypeOfSampleIds(String sampleItemsTypeOfSampleIds) {
+		this.sampleItemsTypeOfSampleIds = sampleItemsTypeOfSampleIds;
+	}
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public String getTime() {
+		return time;
+	}
+
+	public void setTime(String time) {
+		this.time = time;
+	}
+
+	public String getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
+
+	public String getProject() {
+		return project;
+	}
+
+	public void setProject(String project) {
+		this.project = project;
+	}
+
+	public List<Project> getProjects() {
+		return projects;
+	}
+
+	public void setProjects(List<Project> projects) {
+		this.projects = projects;
+	}
+
+	public Boolean getSubjectNew() {
+		return subjectNew;
+	}
+
+	public void setSubjectNew(Boolean subjectNew) {
+		this.subjectNew = subjectNew;
+	}
+
+	public String getSubjectNo() {
+		return subjectNo;
+	}
+
+	public void setSubjectNo(String subjectNo) {
+		this.subjectNo = subjectNo;
+	}
+
+	public Boolean getNewSTNumber() {
+		return newSTNumber;
+	}
+
+	public void setNewSTNumber(Boolean newSTNumber) {
+		this.newSTNumber = newSTNumber;
+	}
+
+	public String getSTNumber() {
+		return STNumber;
+	}
+
+	public void setSTNumber(String STNumber) {
+		this.STNumber = STNumber;
+	}
+
+	public Boolean getNationalIdNew() {
+		return nationalIdNew;
+	}
+
+	public void setNationalIdNew(Boolean nationalIdNew) {
+		this.nationalIdNew = nationalIdNew;
+	}
+
+	public String getNationalId() {
+		return nationalId;
+	}
+
+	public void setNationalId(String nationalId) {
+		this.nationalId = nationalId;
+	}
+
+	public String getLabNo() {
+		return labNo;
+	}
+
+	public void setLabNo(String labNo) {
+		this.labNo = labNo;
+	}
+
+	public Boolean getDoctorNew() {
+		return doctorNew;
+	}
+
+	public void setDoctorNew(Boolean doctorNew) {
+		this.doctorNew = doctorNew;
+	}
+
+	public String getDoctor() {
+		return doctor;
+	}
+
+	public void setDoctor(String doctor) {
+		this.doctor = doctor;
+	}
+
+	public Boolean getServiceNew() {
+		return serviceNew;
+	}
+
+	public void setServiceNew(Boolean serviceNew) {
+		this.serviceNew = serviceNew;
+	}
+
+	public String getService() {
+		return service;
+	}
+
+	public void setService(String service) {
+		this.service = service;
+	}
+
+	public String getNewServiceName() {
+		return newServiceName;
+	}
+
+	public void setNewServiceName(String newServiceName) {
+		this.newServiceName = newServiceName;
+	}
+
+	public List<QaEventItem> getQaEvents() {
+		return qaEvents;
+	}
+
+	public void setQaEvents(List<QaEventItem> qaEvents) {
+		this.qaEvents = qaEvents;
+	}
+
+	public String getSection() {
+		return section;
+	}
+
+	public void setSection(String section) {
+		this.section = section;
+	}
+
+	public List<TestSection> getSections() {
+		return sections;
+	}
+
+	public void setSections(List<TestSection> sections) {
+		this.sections = sections;
+	}
+
+	public List<IdValuePair> getQaEventTypes() {
+		return qaEventTypes;
+	}
+
+	public void setQaEventTypes(List<IdValuePair> qaEventTypes) {
+		this.qaEventTypes = qaEventTypes;
+	}
+
+	public List<IdValuePair> getTypeOfSamples() {
+		return typeOfSamples;
+	}
+
+	public void setTypeOfSamples(List<IdValuePair> typeOfSamples) {
+		this.typeOfSamples = typeOfSamples;
+	}
+
+	public String getCommentId() {
+		return commentId;
+	}
+
+	public void setCommentId(String commentId) {
+		this.commentId = commentId;
+	}
+
+	public Boolean getCommentNew() {
+		return commentNew;
+	}
+
+	public void setCommentNew(Boolean commentNew) {
+		this.commentNew = commentNew;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	public String getBiologest() {
+		return biologest;
+	}
+
+	public void setBiologest(String biologest) {
+		this.biologest = biologest;
+	}
+
+	public List<IdValuePair> getSiteList() {
+		return siteList;
+	}
+
+	public void setSiteList(List<IdValuePair> siteList) {
+		this.siteList = siteList;
+	}
+
+	public String getRequesterSampleID() {
+		return requesterSampleID;
+	}
+
+	public void setRequesterSampleID(String requesterSampleID) {
+		this.requesterSampleID = requesterSampleID;
+	}
+
+	public String getProviderNew() {
+		return providerNew;
+	}
+
+	public void setProviderNew(String providerNew) {
+		this.providerNew = providerNew;
+	}
+
+	public String getProviderLastName() {
+		return providerLastName;
+	}
+
+	public void setProviderLastName(String providerLastName) {
+		this.providerLastName = providerLastName;
+	}
+
+	public String getProviderFirstName() {
+		return providerFirstName;
+	}
+
+	public void setProviderFirstName(String providerFirstName) {
+		this.providerFirstName = providerFirstName;
+	}
+
+	public String getProviderWorkPhone() {
+		return providerWorkPhone;
+	}
+
+	public void setProviderWorkPhone(String providerWorkPhone) {
+		this.providerWorkPhone = providerWorkPhone;
+	}
+
+	public String getProviderStreetAddress() {
+		return providerStreetAddress;
+	}
+
+	public void setProviderStreetAddress(String providerStreetAddress) {
+		this.providerStreetAddress = providerStreetAddress;
+	}
+
+	public String getProviderCity() {
+		return providerCity;
+	}
+
+	public void setProviderCity(String providerCity) {
+		this.providerCity = providerCity;
+	}
+
+	public String getProviderCommune() {
+		return providerCommune;
+	}
+
+	public void setProviderCommune(String providerCommune) {
+		this.providerCommune = providerCommune;
+	}
+
+	public String getProviderDepartment() {
+		return providerDepartment;
+	}
+
+	public void setProviderDepartment(String providerDepartment) {
+		this.providerDepartment = providerDepartment;
+	}
+
+	public List<IdValuePair> getDepartments() {
+		return departments;
+	}
+
+	public void setDepartments(List<IdValuePair> departments) {
+		this.departments = departments;
+	}
+}

@@ -20,9 +20,9 @@
                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
             <td colspan="2" align="left">
-                <button type="submit" form='form' value="submit" >
+                <form:button type="submit" value="submit" >
   		            <spring:message code="label.button.submit"/>
-                </button>
+                </form:button>
                 <a href="LoginPage.do">
   		            <spring:message code="label.button.exit"/>
                 </a>
