@@ -196,11 +196,11 @@ $jq(document).ready(function () {
 		<tr>
 			<td>
 				<spring:message code="sample.batchentry.datereceived" />:
-				<form:input path="receivedDateForDisplay" readonly="true"/>
+				<form:input path="sampleOrderItems.receivedDateForDisplay" readonly="true"/>
 			</td>
 			<td>
 				<spring:message code="sample.batchentry.timereceived" />:
-				<form:input path="receivedTimeForDisplay" readonly="true"/>
+				<form:input path="sampleOrderItems.receivedTime" readonly="true"/>
 			</td>
 		</tr>
 		<tr>
