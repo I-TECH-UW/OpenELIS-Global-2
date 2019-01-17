@@ -100,8 +100,6 @@ public class PatientManagementUpdateController extends PatientManagementBaseCont
 		form.setPatientSearch(new PatientSearch());
 		PatientManagementInfo patientInfo = form.getPatientProperties();
 
-		// moved global non-static variables into this object
-		// this class should be refactored so this isn't needed
 		Patient patient = new Patient();
 		setPatientUpdateStatus(patientInfo);
 

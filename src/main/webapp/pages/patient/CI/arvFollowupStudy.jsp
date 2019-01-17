@@ -215,6 +215,7 @@ farv = new ArvFollowupProjectChecker();
 		<td>
 			<form:select path="centerName"
 				id="farv.centerName" onchange="farv.checkCenterName(false)">
+				<option value=""></option>
 				<form:options items="${form.organizationTypeLists.ARV_ORGS_BY_NAME.list}" itemLabel="organizationName"
 					itemValue="id" />
 			</form:select>
@@ -229,7 +230,8 @@ farv = new ArvFollowupProjectChecker();
 		<td>
 			<form:select path="centerCode" id="farv.centerCode"
 					 onchange="farv.checkCenterCode(false)" >
-				<form:options items="${organizationTypeLists.ARV_ORGS.list}" itemLabel="doubleName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.organizationTypeLists.ARV_ORGS.list}" itemLabel="doubleName" itemValue="id" />
 			</form:select>
 		</td>
 	</tr>
@@ -263,8 +265,9 @@ farv = new ArvFollowupProjectChecker();
 		<td>
 			<form:select path="gender"
 					 onchange="farv.checkGender(false)" id="farv.gender"  >
-				<form:options items="${formLists.GENDERS}"
-					label="localizedName" value="genderType" />
+				<option value=""></option>
+				<form:options items="${form.formLists.GENDERS}"
+					itemLabel="localizedName" itemValue="genderType" />
 			</form:select>
 			<div id="farv.genderMessage" class="blank"></div>
 		</td>
@@ -325,8 +328,9 @@ farv = new ArvFollowupProjectChecker();
 			<form:select path="observations.hivStatus"
 					 onchange="farv.checkHivStatus(true);"
 					 id="farv.hivStatus"  >
-				<form:options items="${dictionaryLists.HIV_STATUSES.list}"
-					label="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.HIV_STATUSES.list}"
+					itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="farv.hivStatusMessage" class="blank"></div>
 		</td>
@@ -388,8 +392,9 @@ farv = new ArvFollowupProjectChecker();
 		<td>
 			<form:select path="observations.anyCurrentDiseases"
 				onchange="farv.displayAnyCurrentDiseases();compareAllObservationHistoryFields(true);" id="farv.anyCurrentDiseases"  >
-				<form:options items="${dictionaryLists.YES_NO.list}"
-					label="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.YES_NO.list}"
+					itemLabel="localizedName" itemValue="id" />
 			</form:select>
 		</td>
 	</tr>
@@ -406,6 +411,7 @@ farv = new ArvFollowupProjectChecker();
 					onchange="makeDirty();compareAllObservationHistoryFields(true)"					
 					id='farv.${disease.name}'
 					>
+					<option value=""></option>
 					<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName"
 						itemValue="id" />
 				</form:select>
@@ -421,8 +427,9 @@ farv = new ArvFollowupProjectChecker();
 			<form:select path="observations.currentDiseases"
 				onchange="farv.displayCurrentDiseasesOther(this, 1);compareAllObservationHistoryFields(true);"
 				id="farv.currentDiseases"  >
-				<form:options items="${dictionaryLists.YES_NO.list}"
-					label="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.YES_NO.list}"
+					itemLabel="localizedName" itemValue="id" />
 			</form:select>
 		</td>
 	</tr>
@@ -447,8 +454,9 @@ farv = new ArvFollowupProjectChecker();
 		<td>
 			<form:select path="observations.antiTbTreatment"
 				onchange="compareAllObservationHistoryFields(true);"	id="farv.antiTbTreatment"  >
-				<form:options items="${dictionaryLists.YES_NO.list}"
-					label="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.YES_NO.list}"
+					itemLabel="localizedName" itemValue="id" />
 			</form:select>
 		</td>
 	</tr>
@@ -460,8 +468,9 @@ farv = new ArvFollowupProjectChecker();
 		<td>
 			<form:select path="observations.interruptedARVTreatment"
 				onchange="farv.checkInterruptedARVTreatment();compareAllObservationHistoryFields(true);"	id="farv.interruptedARVTreatment"  >
-				<form:options items="${dictionaryLists.YES_NO.list}"
-					label="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.YES_NO.list}"
+					itemLabel="localizedName" itemValue="id" />
 			</form:select>
 		</td>
 	</tr>
@@ -473,7 +482,8 @@ farv = new ArvFollowupProjectChecker();
 		<td>
 			<form:select path="observations.priorARVTreatment"
 				onchange="farv.checkPriorARVTreatment();compareAllObservationHistoryFields(true);compareAllObservationHistoryFields(true);"	id="farv.priorARVTreatment"  >
-				<form:options items="${dictionaryLists.YES_NO_NA.list}"
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.YES_NO_NA.list}"
 					itemLabel="localizedName" itemValue="id" />
 			</form:select>
 		</td>
@@ -505,8 +515,9 @@ farv = new ArvFollowupProjectChecker();
 		<td>
 			<form:select path="observations.arvTreatmentAnyAdverseEffects"
 				onchange="farv.checkArvTreatmentAnyAdverseEffects();compareAllObservationHistoryFields(true);"	id="farv.arvTreatmentAnyAdverseEffects" >
-				<form:options items="${dictionaryLists.YES_NO_NA.list}"
-					label="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.YES_NO_NA.list}"
+					itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="farv.arvTreatmentAnyAdverseEffectsMessage" class="blank"></div>
 		</td>
@@ -538,8 +549,9 @@ farv = new ArvFollowupProjectChecker();
 		<td>
 			<form:select path="observations.arvTreatmentChange"
 				onchange="compareAllObservationHistoryFields(true);" cssClass="text" id="farv.arvTreatmentChange"  >
-				<form:options items="${dictionaryLists.YES_NO_NA.list}"
-					label="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.YES_NO_NA.list}"
+					itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="farv.arvTreatmentChangeMessage" class="blank"></div>
 		</td>
@@ -553,7 +565,8 @@ farv = new ArvFollowupProjectChecker();
 		<td>
 			<form:select path="observations.arvTreatmentNew"
 				onchange="farv.displayARVTreatmentNew();compareAllObservationHistoryFields(true);" id="farv.arvTreatmentNew" cssClass="text" >
-				<form:options items="${dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="ARVTreatmentNewMessage" class="blank"></div>
 		</td>
@@ -566,7 +579,8 @@ farv = new ArvFollowupProjectChecker();
 		<td>
 			<form:select path="observations.arvTreatmentRegime"
 				onchange="compareAllObservationHistoryFields(true);" id="farv.arvTreatmentRegime" cssClass="text" >
-				<form:options items="${dictionaryLists.ARV_REGIME.list}" itemLabel="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.ARV_REGIME.list}" itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="farv.arvTreatmentRegimeMessage" class="blank"></div>
 		</td>
@@ -597,8 +611,9 @@ farv = new ArvFollowupProjectChecker();
 		<td>
 			<form:select path="observations.cotrimoxazoleTreatment"
 				onchange="farv.displayCotriTreatment(); compareAllObservationHistoryFields(true);"	id="farv.cotrimoxazoleTreatment"  >
-				<form:options items="${dictionaryLists.YES_NO.list}"
-					label="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.YES_NO.list}"
+					itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="farv.cotrimoxazoleTreatmentMessage" class="blank"></div>
 		</td>
@@ -611,7 +626,8 @@ farv = new ArvFollowupProjectChecker();
 		<td>
 			<form:select path="observations.cotrimoxazoleTreatmentAnyAdverseEffects"
 				onchange="farv.displayCotriAdverseEffects();compareAllObservationHistoryFields(true);"	id="farv.cotrimoxazoleTreatAnyAdvEff"  >
-				<form:options items="${dictionaryLists.YES_NO_NA.list}" itemLabel="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.YES_NO_NA.list}" itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="farv.cotrimoxazoleTreatmentAnyAdverseEffects" class="blank"></div>
 		</td>
@@ -639,8 +655,9 @@ farv = new ArvFollowupProjectChecker();
 		<td>
 			<form:select path="observations.anySecondaryTreatment"
 				onchange="farv.displayAny2ndTreatment();compareAllObservationHistoryFields(true);"	id="farv.anySecondaryTreatment"  >
-				<form:options items="${dictionaryLists.YES_NO_NA.list}"
-					label="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.YES_NO_NA.list}"
+					itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="farv.anySecondaryTreatmentMessage" class="blank"></div>
 		</td>
@@ -653,7 +670,8 @@ farv = new ArvFollowupProjectChecker();
 		<td>
 			<form:select path="observations.secondaryTreatment"
 				onchange="compareAllObservationHistoryFields(true);" id="farv.secondaryTreatment" cssClass="text"  >
-				<form:options items="${dictionaryLists.ARV_PROPHYLAXIS_2.list}" itemLabel="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.ARV_PROPHYLAXIS_2.list}" itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="farv.secondaryTreatmentMessage" class="blank"></div>
 		</td>
@@ -697,6 +715,7 @@ farv = new ArvFollowupProjectChecker();
 		<td>
 			<form:select path="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
 			id="farv.underInvestigation">
+			<option value=""></option>
 			<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName"
 				itemValue="id" />
 			</form:select>

@@ -126,7 +126,7 @@ $jq(document).ready(function () {
 				<spring:message code="sample.entry.project.ARV.centerName" />
 				:  
 				<form:select path="ProjectData.ARVcenterName" id="vl.centerName"  onchange="syncCenterInfo(this)">
-					<form:options path="${form.organizationTypeLists.ARV_ORGS_BY_NAME.list}" itemLabel="organizationName" itemValue="id" />
+					<form:options items="${form.organizationTypeLists.ARV_ORGS_BY_NAME.list}" itemLabel="organizationName" itemValue="id" />
 				</form:select>
 			</td>
 		</tr>
@@ -135,7 +135,7 @@ $jq(document).ready(function () {
 				<spring:message code="patient.project.centerCode" />
 				:
 				<form:select path="ProjectData.ARVcenterCode" id="vl.centerCode" onchange="syncCenterInfo(this)">
-					<form:options path="${form.organizationTypeLists.ARV_ORGS.list}"	itemLabel="doubleName"  itemValue="id" />
+					<form:options items="${form.organizationTypeLists.ARV_ORGS.list}"	itemLabel="doubleName"  itemValue="id" />
 				</form:select>
 			</td>
 		</tr>

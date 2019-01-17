@@ -95,6 +95,7 @@ vl = new VLProjectChecker();
 			<form:select path="projectData.ARVcenterName"
 				id="vl.centerName" 
 				onchange="vl.checkCenterName(true)">
+				<option value=""></option>
 				<form:options items="${form.organizationTypeLists.ARV_ORGS_BY_NAME.list}" itemLabel="organizationName" itemValue="id" />
 			</form:select>
 			<div id="vl.centerNameMessage" class="blank"></div>
@@ -109,6 +110,7 @@ vl = new VLProjectChecker();
 			<form:select path="projectData.ARVcenterCode" 
 			id="vl.centerCode"
 			onchange="vl.checkCenterCode(true)" >
+			<option value=""></option>
 			<form:options items="${form.organizationTypeLists.ARV_ORGS.list}" itemLabel="doubleName" itemValue="id" />
 			</form:select>
 			<div id="vl.centerCodeMessage" class="blank"></div>
@@ -274,7 +276,8 @@ vl = new VLProjectChecker();
 			<form:select path="gender"
 			onchange="vl.checkGender(false)" 
 			id="vl.gender"  >
-			<form:options path="${form.formLists.GENDERS}" itemLabel="localizedName" itemValue="genderType" />
+			<option value=""></option>
+			<form:options items="${form.formLists.GENDERS}" itemLabel="localizedName" itemValue="genderType" />
 			</form:select>
 			<div id="vl.genderMessage" class="blank"></div>
 		</td>
@@ -288,6 +291,7 @@ vl = new VLProjectChecker();
         <td>
             <form:select path="observations.vlPregnancy" onchange="makeDirty();compareAllObservationHistoryFields(true)"
             id="vl.vlPregnancy">
+			<option value=""></option>
             <form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
             </form:select>
         </td>
@@ -301,6 +305,7 @@ vl = new VLProjectChecker();
         <td>
             <form:select path="observations.vlSuckle" onchange="makeDirty();compareAllObservationHistoryFields(true)"
             id="vl.vlSuckle">
+            <option value=""></option>
             <form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
             </form:select>
         </td>
@@ -316,7 +321,8 @@ vl = new VLProjectChecker();
 			<form:select path="observations.hivStatus"
 					 onchange="vl.checkHivStatus(true);"
 					 id="vl.hivStatus"  >
-				<form:options path="${form.projectData.hivStatusList}" itemLabel="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.projectData.hivStatusList}" itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="vl.hivStatusMessage" class="blank"></div>
 		</td>
@@ -335,6 +341,7 @@ vl = new VLProjectChecker();
 			<form:select path="observations.currentARVTreatment"
 				onchange="vl.checkInterruptedARVTreatment();compareAllObservationHistoryFields(true);"	
 				id="vl.currentARVTreatment"  >
+				<option value=""></option>
 				<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
 			</form:select>
 		</td>
@@ -364,7 +371,8 @@ vl = new VLProjectChecker();
 				onchange="makeDirty();compareAllObservationHistoryFields(true);" 
 				id="vl.arvTreatmentRegime" 
 				cssClass="text" >
-				<form:options path="${form.dictionaryLists.ARV_REGIME.list}" itemLabel="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.ARV_REGIME.list}" itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="vl.arvTreatmentRegimeMessage" class="blank"></div>
 		</td>
@@ -400,7 +408,8 @@ vl = new VLProjectChecker();
 			<form:select path="observations.vlReasonForRequest"
 				     onchange="vl.checkVLRequestReason();compareAllObservationHistoryFields(true);"	
 					 id="vl.vlReasonForRequest"  >
-				<form:options path="${form.dictionaryLists.ARV_REASON_FOR_VL_DEMAND.list}" itemLabel="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.ARV_REASON_FOR_VL_DEMAND.list}" itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="vl.vlReasonForRequestMessage" class="blank"></div>
 		</td>
@@ -528,6 +537,7 @@ vl = new VLProjectChecker();
 			<form:select path="observations.vlBenefit"	
 			    onchange="vl.checkVLBenefit();compareAllObservationHistoryFields(true);" 
 				id="vl.vlBenefit"  >
+				<option value=""></option>
 				<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="vl.vlBenefitMessage" class="blank"></div>
@@ -610,6 +620,7 @@ vl = new VLProjectChecker();
         <td>
             <form:select path="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
             id="vl.underInvestigation">
+            <option value=""></option>
             <form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
             </form:select>
         </td>

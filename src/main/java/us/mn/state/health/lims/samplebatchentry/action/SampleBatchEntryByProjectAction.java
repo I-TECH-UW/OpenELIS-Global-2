@@ -62,7 +62,7 @@ public class SampleBatchEntryByProjectAction extends BaseSampleEntryAction {
 		}
 		request.setAttribute("sampleType", sampleTypes);
 		request.setAttribute("testNames", tests);
-		PropertyUtils.setProperty(dynaForm, "ProjectData", projectData);
+		PropertyUtils.setProperty(dynaForm, "projectData", projectData);
 		ObservationData observations = new ObservationData();
 		observations.setProjectFormName("EID_Id");
 		PropertyUtils.setProperty(dynaForm, "observations", observations);
@@ -88,7 +88,7 @@ public class SampleBatchEntryByProjectAction extends BaseSampleEntryAction {
 		}
 		request.setAttribute("sampleType", sampleTypes);
 		request.setAttribute("testNames", tests);
-		PropertyUtils.setProperty(dynaForm, "ProjectData", projectData);
+		PropertyUtils.setProperty(dynaForm, "projectData", projectData);
 		ObservationData observations = new ObservationData();
 		observations.setProjectFormName("VL_Id");
 		PropertyUtils.setProperty(dynaForm, "observations", observations);
