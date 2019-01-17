@@ -24,7 +24,6 @@ import spring.mine.common.validator.BaseErrors;
 import spring.mine.workplan.form.WorkplanForm;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.workplan.reports.ElisaWorkplanReport;
 import us.mn.state.health.lims.workplan.reports.IWorkplanReport;
 import us.mn.state.health.lims.workplan.reports.TestSectionWorkplanReport;
@@ -108,17 +107,6 @@ public class PrintWorkplanReportController extends BaseController {
 		if (errors.hasErrors()) {
 			saveErrors(errors);
 		}
-
-		// findForward(forward, form);
-	}
-
-	private String getName(String workplanType) {
-		String name = StringUtil.getContextualMessageForKey("test.section." + workplanType);
-
-		if (name == null) {
-			name = workplanType;
-		}
-		return name;
 	}
 
 	private JRDataSource createReportDataSource(List<?> includedTests) {

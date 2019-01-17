@@ -122,7 +122,8 @@ rtn = new RtnProjectChecker();
 			<form:select path="centerCode"
 				id="rtn.centerCode" cssClass="text"
 				onchange="rtn.checkCenterCode(false)">
-				<form:options items="${organizationTypeLists.RTN_HOSPITALS.list}" itemLabel="doubleName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.organizationTypeLists.RTN_HOSPITALS.list}" itemLabel="doubleName" itemValue="id" />
 			</form:select>
 		</td>
 	</tr>
@@ -138,7 +139,8 @@ rtn = new RtnProjectChecker();
 			<form:select path="observations.service"
 				id="rtn.service" cssClass="text"
 				onchange="compareAllObservationHistoryFields(true);">
-				<form:options path="${organizationTypeLists.RTN_SERVICES.list}" itemLabel="doubleName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.organizationTypeLists.RTN_SERVICES.list}" itemLabel="doubleName" itemValue="id" />
 			</form:select>
 		</td>
 	</tr>
@@ -152,7 +154,8 @@ rtn = new RtnProjectChecker();
 			<form:select path="observations.hospitalPatient" cssClass="text"
 				id="rtn.hospitalPatient"
 				onchange="compareAllObservationHistoryFields(true);">
-				<form:options path="${dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="rtn.hospitalPatientMessage" class="blank" ></div>
 		</td>
@@ -234,8 +237,9 @@ rtn = new RtnProjectChecker();
 			<form:select path="gender"
 				id="rtn.gender" cssClass="text"
 				onchange="rtn.checkGender(true)">
-				<form:options path="${formLists.GENDERS}" itemLabel="localizedName"
-					value="genderType" />
+				<option value=""></option>
+				<form:options items="${form.formLists.GENDERS}" itemLabel="localizedName"
+					itemValue="genderType" />
 			</form:select>
 			<div id="genderMessage" class="blank"></div>
 		</td>
@@ -251,7 +255,8 @@ rtn = new RtnProjectChecker();
 			<form:select path="observations.nationality"
 				id="rtn.nationality" cssClass="text"
 				onchange="rtn.displayNationality();compareAllObservationHistoryFields(true)">
-				<form:options path="${dictionaryLists.NATIONALITIES.list}" itemLabel="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.NATIONALITIES.list}" itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="rtn.nationalityMessage" class="blank"></div>
 		</td>
@@ -325,7 +330,8 @@ rtn = new RtnProjectChecker();
 				<form:select path='observations.${disease.name}'
 					onchange="makeDirty();compareAllObservationHistoryFields(true)"
 					id='rtn.${disease.name}'>
-					<form:options path="${dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list}" itemLabel="localizedName" itemValue="id" />
+					<option value=""></option>
+					<form:options items="${form.dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list}" itemLabel="localizedName" itemValue="id" />
 				</form:select>
 			</td>
 		</tr>
@@ -342,7 +348,8 @@ rtn = new RtnProjectChecker();
 				<form:select path='observations.${disease.name}'
 					onchange="makeDirty();compareAllObservationHistoryFields(true)"
 					id='rtn.${disease.name}'>
-					<form:options path="${dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list}" itemLabel="localizedName" itemValue="id" />
+					<option value=""></option>
+					<form:options items="${form.dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list}" itemLabel="localizedName" itemValue="id" />
 				</form:select>
 			</td>
 		</tr>
@@ -355,7 +362,7 @@ rtn = new RtnProjectChecker();
 			<td>
 				<form:select path='observations.priorDiseases[" + i + "]" %>'
 				    id='rtn.priorDiseases" + i %>' onchange="compareAllObservationHistoryFields(true)">
-					<form:options path="${dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list}" itemLabel="localizedName" itemValue="id" />
+					<form:options items="${dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list}" itemLabel="localizedName" itemValue="id" />
 				</form:select>
 			</td>
 		</tr>
@@ -367,7 +374,7 @@ rtn = new RtnProjectChecker();
 			<td>
 				<form:select path='observations.currentDiseases[" + i + "]" %>'
 				    id='rtn.currentDiseases" + i %>' onchange="compareAllObservationHistoryFields(true)">
-					<form:options path="${dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list}" itemLabel="localizedName" itemValue="id" />
+					<form:options items="${dictionaryLists.YES_NO_UNKNOWN_NA_NOTSPEC.list}" itemLabel="localizedName" itemValue="id" />
 				</form:select>
 			</td>
 		</tr>
@@ -413,7 +420,8 @@ rtn = new RtnProjectChecker();
 			<form:select path="observations.underInvestigation"
 				onchange="makeDirty();compareAllObservationHistoryFields(true)"
 				id="rtn.underInvestigation">
-				<form:options path="${dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
+				<option value=""></option>
+				<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName" itemValue="id" />
 			</form:select>
 		</td>
 	</tr>

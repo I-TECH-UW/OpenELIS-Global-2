@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.test.valueholder.Test;
 
@@ -31,15 +31,15 @@ public class INDFormMapper extends BaseProjectFormMapper implements IProjectForm
 	private String projectCode = StringUtil.getMessageForKey("sample.entry.project.LIND");
 	private final String projectName = "Indeterminate Results";
 
-	public INDFormMapper(String projectFormId, BaseActionForm dynaForm) {
-		super(projectFormId, dynaForm);
+	public INDFormMapper(String projectFormId, BaseForm form) {
+		super(projectFormId, form);
 	}
 
-	private List<Test> getTests(BaseActionForm dynaForm){
-		List<Test> testList = new ArrayList<Test>();
+	private List<Test> getTests(BaseForm form) {
+		List<Test> testList = new ArrayList<>();
 
-		if (projectData.getSerologyHIVTest()){
-            CollectionUtils.addIgnoreNull(testList, createTest("Vironostika", true ));
+		if (projectData.getSerologyHIVTest()) {
+			CollectionUtils.addIgnoreNull(testList, createTest("Vironostika", true));
 			CollectionUtils.addIgnoreNull(testList, createTest("Murex", true));
 			CollectionUtils.addIgnoreNull(testList, createTest("Integral", true));
 		}
@@ -48,37 +48,40 @@ public class INDFormMapper extends BaseProjectFormMapper implements IProjectForm
 	}
 
 	public String getProjectName() {
-		return this.projectName;
+		return projectName;
 	}
 
+	@Override
 	public String getProjectCode() {
-		return this.projectCode;
+		return projectCode;
 	}
 
+	@Override
 	public String getOrganizationId() {
-		return projectData.getINDsiteName();	
+		return projectData.getINDsiteName();
 	}
 
+	@Override
 	public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
-		ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<TypeOfSampleTests>();
-		List<Test> testList = new ArrayList<Test>();
+		ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
+		List<Test> testList = new ArrayList<>();
 
-
-		//Check for Dry Tube Tests
-		if (projectData.getSerologyHIVTest() ) {
-		    if ( projectData.getDryTubeTaken() ) {     
-    			testList = getTests(dynaForm);
-    			sItemTests.add( new TypeOfSampleTests(getTypeOfSample("Dry Tube"), testList));
-		    }
+		// Check for Dry Tube Tests
+		if (projectData.getSerologyHIVTest()) {
+			if (projectData.getDryTubeTaken()) {
+				testList = getTests(form);
+				sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), testList));
+			}
 		}
 
 		return sItemTests;
 	}
-    /**
-     * @see us.mn.state.health.lims.sample.util.CI.BaseProjectFormMapper#getSampleCenterCode()
-     */
-    @Override
-    public String getSampleCenterCode() {
-        return projectData.getINDsiteCode();
-    }
+
+	/**
+	 * @see us.mn.state.health.lims.sample.util.CI.BaseProjectFormMapper#getSampleCenterCode()
+	 */
+	@Override
+	public String getSampleCenterCode() {
+		return projectData.getINDsiteCode();
+	}
 }

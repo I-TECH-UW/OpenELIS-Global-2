@@ -22,24 +22,23 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.test.valueholder.Test;
-
 
 public class EIDFormMapper extends BaseProjectFormMapper implements IProjectFormMapper {
 
 	private String projectCode = StringUtil.getMessageForKey("sample.entry.project.LDBS");
 	private final String projectName = "Early Infant Diagnosis for HIV Study";
 
-	public EIDFormMapper(String projectFormId, BaseActionForm dynaForm)  {
-		super(projectFormId, dynaForm);
+	public EIDFormMapper(String projectFormId, BaseForm form) {
+		super(projectFormId, form);
 	}
 
-	public List<Test> getTests(){
-		List<Test> testList = new ArrayList<Test>();
+	public List<Test> getTests() {
+		List<Test> testList = new ArrayList<>();
 
-		if (projectData.getDnaPCR()){
+		if (projectData.getDnaPCR()) {
 			CollectionUtils.addIgnoreNull(testList, createTest("DNA PCR", true));
 		}
 
@@ -47,46 +46,48 @@ public class EIDFormMapper extends BaseProjectFormMapper implements IProjectForm
 	}
 
 	public String getProjectName() {
-		return this.projectName;
+		return projectName;
 	}
 
-
+	@Override
 	public String getProjectCode() {
-		return this.projectCode;
-	}	
-	
-	public String getOrganizationId() {
-		return projectData.getEIDsiteCode();	
+		return projectCode;
 	}
-		
+
+	@Override
+	public String getOrganizationId() {
+		return projectData.getEIDsiteCode();
+	}
+
+	@Override
 	public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
-		ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<TypeOfSampleTests>();
+		ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
 		List<Test> testList;
 
-
-		//Check for DBS Tests
+		// Check for DBS Tests
 		if (projectData.getDnaPCR()) {
-		    if (projectData.getDbsTaken()) {
+			if (projectData.getDbsTaken()) {
 				testList = getTests();
-				sItemTests.add( new TypeOfSampleTests(getTypeOfSample("DBS"), testList));
+				sItemTests.add(new TypeOfSampleTests(getTypeOfSample("DBS"), testList));
 			}
 		}
 
-		//Check for Dry Tube Tests
+		// Check for Dry Tube Tests
 		if (projectData.getDnaPCR()) {
-		    if (projectData.getDryTubeTaken() ) {
+			if (projectData.getDryTubeTaken()) {
 				testList = getTests();
-				sItemTests.add( new TypeOfSampleTests(getTypeOfSample("Dry Tube"), testList));
+				sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), testList));
 			}
 		}
 
 		return sItemTests;
 	}
-    /**
-     * @see us.mn.state.health.lims.sample.util.CI.BaseProjectFormMapper#getSampleCenterCode()
-     */
-    @Override
-    public String getSampleCenterCode() {
-        return projectData.getEIDsiteCode();
-    }	
+
+	/**
+	 * @see us.mn.state.health.lims.sample.util.CI.BaseProjectFormMapper#getSampleCenterCode()
+	 */
+	@Override
+	public String getSampleCenterCode() {
+		return projectData.getEIDsiteCode();
+	}
 }

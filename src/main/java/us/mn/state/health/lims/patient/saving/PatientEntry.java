@@ -28,53 +28,53 @@ import java.sql.Timestamp;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.DynaBean;
-
+import spring.mine.patient.form.PatientEntryByProjectForm;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.StatusService.RecordStatus;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
 
-
 public class PatientEntry extends Accessioner {
 
-    protected HttpServletRequest request;
+	protected HttpServletRequest request;
 
-    public PatientEntry(DynaBean dynaBean, String sysUserId, HttpServletRequest request) throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        super((String)dynaBean.get("labNo"), (String)dynaBean.get("subjectNumber"), (String)dynaBean.get("siteSubjectNumber"), sysUserId);
-        
-        this.projectFormMapper = getProjectFormMapper(dynaBean);
-        this.projectFormMapper.setPatientForm(true);
-        this.projectForm = projectFormMapper.getProjectForm();
-        findStatusSet();
-        
-        this.request = request;
-        
-        this.newPatientStatus = RecordStatus.InitialRegistration;
-        this.newSampleStatus  = RecordStatus.NotRegistered;
-    }
+	public PatientEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
+			throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		super((String) form.get("labNo"), (String) form.get("subjectNumber"), (String) form.get("siteSubjectNumber"),
+				sysUserId);
 
-    @Override
-    public boolean canAccession() {
-        return (statusSet.getPatientRecordStatus() == null && statusSet.getSampleRecordStatus() == null);
-    }
+		projectFormMapper = getProjectFormMapper(form);
+		projectFormMapper.setPatientForm(true);
+		projectForm = projectFormMapper.getProjectForm();
+		findStatusSet();
 
+		this.request = request;
 
+		newPatientStatus = RecordStatus.InitialRegistration;
+		newSampleStatus = RecordStatus.NotRegistered;
+	}
 
-    @Override
-    protected void populateSampleData() throws Exception {
-    	Timestamp receivedDate = DateUtil.convertStringDatePreserveStringTimeToTimestamp(sample.getReceivedDateForDisplay(), sample.getReceived24HourTimeForDisplay( ),
-    																					 projectFormMapper.getReceivedDate(), projectFormMapper.getReceivedTime());
-    	Timestamp collectionDate = DateUtil.convertStringDatePreserveStringTimeToTimestamp(sample.getCollectionDateForDisplay(), sample.getCollectionTimeForDisplay(),
-    																					   projectFormMapper.getCollectionDate(), projectFormMapper.getCollectionTime());
-        
-        populateSample(receivedDate, collectionDate);
-        populateSampleProject();
-        populateSampleOrganization(projectFormMapper.getOrganizationId());
-    }
+	@Override
+	public boolean canAccession() {
+		return (statusSet.getPatientRecordStatus() == null && statusSet.getSampleRecordStatus() == null);
+	}
+
+	@Override
+	protected void populateSampleData() throws Exception {
+		Timestamp receivedDate = DateUtil.convertStringDatePreserveStringTimeToTimestamp(
+				sample.getReceivedDateForDisplay(), sample.getReceived24HourTimeForDisplay(),
+				projectFormMapper.getReceivedDate(), projectFormMapper.getReceivedTime());
+		Timestamp collectionDate = DateUtil.convertStringDatePreserveStringTimeToTimestamp(
+				sample.getCollectionDateForDisplay(), sample.getCollectionTimeForDisplay(),
+				projectFormMapper.getCollectionDate(), projectFormMapper.getCollectionTime());
+
+		populateSample(receivedDate, collectionDate);
+		populateSampleProject();
+		populateSampleOrganization(projectFormMapper.getOrganizationId());
+	}
 
 	@Override
 	protected String getActionLabel() {
 		return StringUtil.getMessageForKey("banner.menu.createPatient.Initial");
-	}   
+	}
 }

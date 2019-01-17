@@ -24,25 +24,24 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.patient.valueholder.ObservationData;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 public class RTNFormMapper extends BaseProjectFormMapper implements IProjectFormMapper {
 
-	
 	private String projectCode = "LRTN";
 
-	public RTNFormMapper(String projectFormId, BaseActionForm dynaForm) {
-		super(projectFormId, dynaForm);
+	public RTNFormMapper(String projectFormId, BaseForm form) {
+		super(projectFormId, form);
 	}
 
-	private List<Test> getTests(BaseActionForm dynaForm){
-		List<Test> testList = new ArrayList<Test>();
+	private List<Test> getTests(BaseForm form) {
+		List<Test> testList = new ArrayList<>();
 
-		if (projectData.getSerologyHIVTest()){
-            CollectionUtils.addIgnoreNull(testList, createTest("Vironostika", true ));
+		if (projectData.getSerologyHIVTest()) {
+			CollectionUtils.addIgnoreNull(testList, createTest("Vironostika", true));
 			CollectionUtils.addIgnoreNull(testList, createTest("Murex", true));
 			CollectionUtils.addIgnoreNull(testList, createTest("Integral", true));
 		}
@@ -50,40 +49,43 @@ public class RTNFormMapper extends BaseProjectFormMapper implements IProjectForm
 		return testList;
 	}
 
+	@Override
 	public String getProjectCode() {
-		return this.projectCode;
+		return projectCode;
 	}
-	
-	public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
-		ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<TypeOfSampleTests>();
-		List<Test> testList = new ArrayList<Test>();
 
-		//Check for Dry Tube Tests
-		if (projectData.getSerologyHIVTest() ) {
-		    if ( projectData.getDryTubeTaken() ) { 
-        		testList = getTests(dynaForm);
-        		sItemTests.add( new TypeOfSampleTests(getTypeOfSample("Dry Tube"), testList));
-		    }
+	@Override
+	public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
+		ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
+		List<Test> testList = new ArrayList<>();
+
+		// Check for Dry Tube Tests
+		if (projectData.getSerologyHIVTest()) {
+			if (projectData.getDryTubeTaken()) {
+				testList = getTests(form);
+				sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), testList));
+			}
 		}
 		return sItemTests;
 	}
-	
+
 	/**
 	 * No lists of repeating answers in RTN
+	 *
 	 * @see us.mn.state.health.lims.sample.util.CI.BaseProjectFormMapper#readObservationHistoryLists(us.mn.state.health.lims.patient.valueholder.ObservationData)
 	 */
 	@Override
 	public Map<String, List<ObservationHistory>> readObservationHistoryLists(ObservationData od) {
-	    Map<String, List<ObservationHistory>> historyLists = new HashMap<String, List<ObservationHistory>>();
-	    // do nothing
-	    return historyLists;
+		Map<String, List<ObservationHistory>> historyLists = new HashMap<>();
+		// do nothing
+		return historyLists;
 	}
-	
-    /**
-     * @see us.mn.state.health.lims.sample.util.CI.BaseProjectFormMapper#getSampleCenterCode()
-     */
-    @Override
-    public String getSampleCenterCode() {
-        return ORGANIZATION_ID_NONE;
-    }	
+
+	/**
+	 * @see us.mn.state.health.lims.sample.util.CI.BaseProjectFormMapper#getSampleCenterCode()
+	 */
+	@Override
+	public String getSampleCenterCode() {
+		return ORGANIZATION_ID_NONE;
+	}
 }

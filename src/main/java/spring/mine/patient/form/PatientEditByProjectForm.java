@@ -1,19 +1,21 @@
-package spring.generated.forms;
+package spring.mine.patient.form;
 
 import java.sql.Timestamp;
 import java.util.Map;
 
 import spring.mine.common.form.BaseForm;
+import us.mn.state.health.lims.dictionary.ObservationHistoryList;
+import us.mn.state.health.lims.organization.util.OrganizationTypeList;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 import us.mn.state.health.lims.patient.valueholder.ObservationData;
 import us.mn.state.health.lims.sample.form.ProjectData;
 
 public class PatientEditByProjectForm extends BaseForm {
-	private Map formLists;
+	private Map<String, Object> formLists;
 
-	private Map dictionaryLists;
+	private Map<String, ObservationHistoryList> dictionaryLists;
 
-	private Map organizationTypeLists;
+	private Map<String, OrganizationTypeList> organizationTypeLists;
 
 	private String patientPK = "";
 
@@ -57,7 +59,7 @@ public class PatientEditByProjectForm extends BaseForm {
 
 	private ObservationData observations;
 
-	private ProjectData ProjectData;
+	private ProjectData projectData;
 
 	private PatientSearch patientSearch;
 
@@ -67,27 +69,27 @@ public class PatientEditByProjectForm extends BaseForm {
 		setFormName("PatientEditByProjectForm");
 	}
 
-	public Map getFormLists() {
+	public Map<String, Object> getFormLists() {
 		return formLists;
 	}
 
-	public void setFormLists(Map formLists) {
+	public void setFormLists(Map<String, Object> formLists) {
 		this.formLists = formLists;
 	}
 
-	public Map getDictionaryLists() {
+	public Map<String, ObservationHistoryList> getDictionaryLists() {
 		return dictionaryLists;
 	}
 
-	public void setDictionaryLists(Map dictionaryLists) {
+	public void setDictionaryLists(Map<String, ObservationHistoryList> dictionaryLists) {
 		this.dictionaryLists = dictionaryLists;
 	}
 
-	public Map getOrganizationTypeLists() {
+	public Map<String, OrganizationTypeList> getOrganizationTypeLists() {
 		return organizationTypeLists;
 	}
 
-	public void setOrganizationTypeLists(Map organizationTypeLists) {
+	public void setOrganizationTypeLists(Map<String, OrganizationTypeList> organizationTypeLists) {
 		this.organizationTypeLists = organizationTypeLists;
 	}
 
@@ -260,11 +262,11 @@ public class PatientEditByProjectForm extends BaseForm {
 	}
 
 	public ProjectData getProjectData() {
-		return ProjectData;
+		return projectData;
 	}
 
-	public void setProjectData(ProjectData ProjectData) {
-		this.ProjectData = ProjectData;
+	public void setProjectData(ProjectData projectData) {
+		this.projectData = projectData;
 	}
 
 	public PatientSearch getPatientSearch() {

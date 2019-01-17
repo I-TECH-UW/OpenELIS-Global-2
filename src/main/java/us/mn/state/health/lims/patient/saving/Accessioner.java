@@ -38,10 +38,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.beanutils.DynaBean;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.apache.struts.action.ActionErrors;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -49,11 +47,11 @@ import org.dom4j.Element;
 import org.hibernate.Transaction;
 import org.springframework.validation.Errors;
 
+import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.action.BaseActionForm;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSInvalidConfigurationException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -70,7 +68,6 @@ import us.mn.state.health.lims.common.services.StatusSet;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.common.util.validator.ActionError;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.note.dao.NoteDAO;
 import us.mn.state.health.lims.note.daoimpl.NoteDAOImpl;
@@ -152,14 +149,14 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
  * mapping.findForward(FWD_FAIL); } else { return
  * mapping.findForward(FWD_SUCCESS); } } else (myAccession2.canAccession() { ...
  * }
- * 
+ *
  * PAH 07/2010 This object is still a work in progress. For example, we have a
  * member for projectFormMapper, but all its use in the subclasses at this time
  * . Maybe the projectFormMapper should just be injected after creation? It is
  * also the case that there are form field property names listed in these
  * various acccesioning classes when the formFieldMapper class is really the
  * class that should know the right place to find values on the submitted form.
- * 
+ *
  * @author pahill
  */
 
@@ -168,16 +165,16 @@ public abstract class Accessioner {
 	/**
 	 * a set of possible analysis status that means an analysis is done
 	 */
-	private Set<String> analysisDone = new HashSet<String>();
+	private Set<String> analysisDone = new HashSet<>();
 	{
 		analysisDone.add(StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Finalized));
-		analysisDone.add(StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.NonConforming_depricated));
+		analysisDone
+				.add(StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.NonConforming_depricated));
 		analysisDone.add(StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Canceled));
 	}
 
 	/**
-	 * Sample or Patient Entry always mark the type of an analysis as a MANUAL
-	 * type.
+	 * Sample or Patient Entry always mark the type of an analysis as a MANUAL type.
 	 */
 	private static final String DEFAULT_ANALYSIS_TYPE = IActionConstants.ANALYSIS_TYPE_MANUAL;
 	// private static String OBSERVATION_HISTORY_YES_ID = null;
@@ -189,18 +186,24 @@ public abstract class Accessioner {
 	}
 
 	/**
-	 * Find the projectFormName where ever we normally store it. This is for
-	 * that could which needs this information before creating a
-	 * projectFormMapper
-	 * 
+	 * Find the projectFormName where ever we normally store it. This is for that
+	 * could which needs this information before creating a projectFormMapper
+	 *
 	 * @param form
 	 * @return the current projectFormName
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 * @throws NoSuchMethodException
 	 */
-	public static String findProjectFormName(DynaBean form) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		return ((ObservationData) (PropertyUtils.getProperty(form, "observations"))).getProjectFormName();
+	public static String findProjectFormName(BaseForm form)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		ObservationData observations = ((ObservationData) (PropertyUtils.getProperty(form, "observations")));
+		if (observations == null) {
+			return null;
+		} else {
+			return observations.getProjectFormName();
+		}
+
 	}
 
 	/**
@@ -211,17 +214,17 @@ public abstract class Accessioner {
 	 * @throws IllegalAccessException
 	 * @throws LIMSRuntimeException
 	 */
-	public static IProjectFormMapper getProjectFormMapper(DynaBean dynaBean) throws LIMSRuntimeException, IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException {
-		return new ProjectFormMapperFactory().getProjectInitializer(findProjectFormName(dynaBean), (BaseActionForm) dynaBean);
+	public static IProjectFormMapper getProjectFormMapper(BaseForm form)
+			throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		return new ProjectFormMapperFactory().getProjectInitializer(findProjectFormName(form), form);
 	}
 
 	/**
 	 * @param dynaBean
 	 * @return
 	 */
-	public static IProjectFormMapper getProjectFormMapper(String projectFormName, DynaBean dynaBean) {
-		return new ProjectFormMapperFactory().getProjectInitializer(projectFormName, (BaseActionForm) dynaBean);
+	public static IProjectFormMapper getProjectFormMapper(String projectFormName, BaseForm form) {
+		return new ProjectFormMapperFactory().getProjectInitializer(projectFormName, form);
 	}
 
 	protected String accessionNumber;
@@ -236,14 +239,14 @@ public abstract class Accessioner {
 	protected ProjectForm projectForm;
 
 	protected Patient patientInDB;
-	private List<PatientIdentity> patientIdentities = new ArrayList<PatientIdentity>();
-	protected List<ObservationHistory> observationHistories = new ArrayList<ObservationHistory>();
+	private List<PatientIdentity> patientIdentities = new ArrayList<>();
+	protected List<ObservationHistory> observationHistories = new ArrayList<>();
 
 	Map<String, List<ObservationHistory>> observationHistoryLists = null;
 
 	protected Sample sample;
-	protected List<SampleItemAnalysisCollection> sampleItemsAnalysis = new ArrayList<SampleItemAnalysisCollection>();
-	protected List<SampleOrganization> sampleOrganizations = new ArrayList<SampleOrganization>();
+	protected List<SampleItemAnalysisCollection> sampleItemsAnalysis = new ArrayList<>();
+	protected List<SampleOrganization> sampleOrganizations = new ArrayList<>();
 
 	protected SampleHuman sampleHuman;
 	protected SampleProject sampleProject;
@@ -271,17 +274,17 @@ public abstract class Accessioner {
 	protected IProjectFormMapper projectFormMapper;
 
 	protected Patient patientToDelete;
-	protected List<Analysis> analysisToUpdate = new ArrayList<Analysis>();
-	protected List<Analysis> analysisToDelete = new ArrayList<Analysis>();
-	protected List<SampleItem> sampleItemsToDelete = new ArrayList<SampleItem>();
+	protected List<Analysis> analysisToUpdate = new ArrayList<>();
+	protected List<Analysis> analysisToDelete = new ArrayList<>();
+	protected List<SampleItem> sampleItemsToDelete = new ArrayList<>();
 	private boolean aDifferentPatientRecord = false;
 	private ProjectData projectData;
 
 	protected Accessioner(String sampleIdentifier, String patientIdentifier, String siteSubjectNo, String sysUserId) {
 		this();
-		this.accessionNumber = sampleIdentifier;
+		accessionNumber = sampleIdentifier;
 		this.patientIdentifier = patientIdentifier;
-		this.patientSiteSubjectNo = siteSubjectNo;
+		patientSiteSubjectNo = siteSubjectNo;
 		this.sysUserId = sysUserId;
 	}
 
@@ -293,7 +296,7 @@ public abstract class Accessioner {
 	/**
 	 * Primary entry point for processing a patient/sample combination Check the
 	 * messages, on true there may have been errors
-	 * 
+	 *
 	 * @return TRUE => errors FALSE => did not do it, had a problem doing it.
 	 * @throws Exception
 	 * @throws Exception
@@ -332,8 +335,9 @@ public abstract class Accessioner {
 			persistSampleHuman();
 
 			persistObservationHistory();
-	
-		//	persistObservationHistoryLists();// no more running name has been changed to persistObservationHistoryLists2
+
+			// persistObservationHistoryLists();// no more running name has been changed to
+			// persistObservationHistoryLists2
 			persistObservationHistoryLists2();
 			persistRecordStatus();
 			deleteOldPatient();
@@ -358,7 +362,8 @@ public abstract class Accessioner {
 		// deleting the old ones. Any references to the old observation history
 		// under investigation row are being lost. Until we fix that the notes
 		// will be attached to the sample with note type of "UnderInvestigation"
-		if (//OBSERVATION_HISTORY_YES_ID.equals(observationData.getUnderInvestigation()) && <-- not sure of the business rules around this
+		if (// OBSERVATION_HISTORY_YES_ID.equals(observationData.getUnderInvestigation()) &&
+			// <-- not sure of the business rules around this
 		!GenericValidator.isBlankOrNull(projectData.getUnderInvestigationNote())) {
 
 			Note note = new Note();
@@ -370,14 +375,15 @@ public abstract class Accessioner {
 
 			if (noteList != null && !noteList.isEmpty()) {
 				note = noteList.get(0);
-				note.setText(note.getText() + "<br/>" + getActionLabel() + ": " + projectData.getUnderInvestigationNote());
+				note.setText(
+						note.getText() + "<br/>" + getActionLabel() + ": " + projectData.getUnderInvestigationNote());
 			} else {
 				note.setText(getActionLabel() + ": " + projectData.getUnderInvestigationNote());
 				note.setSubject("UnderInvestigation");
 			}
 
 			note.setSysUserId(sysUserId);
-			note.setSystemUser( NoteService.createSystemUser( sysUserId ));
+			note.setSystemUser(NoteService.createSystemUser(sysUserId));
 
 			if (note.getId() == null) {
 				noteDAO.insertData(note);
@@ -402,32 +408,30 @@ public abstract class Accessioner {
 	private void persisteSampleItemsChanged() {
 		analysisDAO.deleteData(analysisToDelete);
 		sampleItemDAO.deleteData(sampleItemsToDelete);
-		for (Analysis analysis : this.analysisToUpdate) {
+		for (Analysis analysis : analysisToUpdate) {
 			analysisDAO.updateData(analysis);
 		}
 	}
 
 	/**
-	 * This method is called when this object contains a patient from the
-	 * database found by ID. Sometimes we need to validate some of the fields
-	 * with the values from the input. Place an error in the messages list to
-	 * return an error.
-	 * 
-	 * @return TRUE => all is well with the patient we have found in the
-	 *         database vs. the data coming from the input.
+	 * This method is called when this object contains a patient from the database
+	 * found by ID. Sometimes we need to validate some of the fields with the values
+	 * from the input. Place an error in the messages list to return an error.
+	 *
+	 * @return TRUE => all is well with the patient we have found in the database
+	 *         vs. the data coming from the input.
 	 */
 	protected boolean validateFoundPatient() {
 		return true;
 	}
 
 	/**
-	 * This method is called when this object contains a sample from the
-	 * database found by ID. Sometimes we need to validate some of the fields
-	 * with the values from the input. Place an error in the messages list to
-	 * return an error.
-	 * 
-	 * @return TRUE => all is well with the SAMPLE we have found in the database
-	 *         vs. the data coming from the input.
+	 * This method is called when this object contains a sample from the database
+	 * found by ID. Sometimes we need to validate some of the fields with the values
+	 * from the input. Place an error in the messages list to return an error.
+	 *
+	 * @return TRUE => all is well with the SAMPLE we have found in the database vs.
+	 *         the data coming from the input.
 	 */
 	protected boolean validateFoundSample() {
 		return true;
@@ -436,7 +440,7 @@ public abstract class Accessioner {
 	/**
 	 * This method is called when there is something to check to make sure the
 	 * patient and sample go together correctly.
-	 * 
+	 *
 	 * @return TRUE => all looks good.
 	 */
 	protected boolean matchPatientAndSample() {
@@ -445,13 +449,13 @@ public abstract class Accessioner {
 
 	/**
 	 * Use appropriate means to come up with a patient and its person record.
-	 * 
+	 *
 	 * @return TRUE => patient was found in the database, FALSE => patient not
 	 *         found, simply created.
 	 */
 	protected boolean findPatient() {
-		String patientId = this.statusSet.getPatientId();
-		String sampleId = this.statusSet.getSampleId();
+		String patientId = statusSet.getPatientId();
+		String sampleId = statusSet.getSampleId();
 		String unknownPatient = PatientUtil.getUnknownPatient().getId();
 		if (sampleId == null) {
 			// no sample => nothing to leverage so build up from what we have
@@ -493,13 +497,14 @@ public abstract class Accessioner {
 
 		String existingSubjectNo = StringUtil.replaceNullWithEmptyString(patientInDB.getNationalId()).trim();
 
-		if (!GenericValidator.isBlankOrNull(this.patientIdentifier) && this.patientIdentifier.equals(existingSubjectNo)) {
+		if (!GenericValidator.isBlankOrNull(patientIdentifier) && patientIdentifier.equals(existingSubjectNo)) {
 			return false;
 		}
 
 		String existingSiteSubjectNo = StringUtil.replaceNullWithEmptyString(patientInDB.getExternalId()).trim();
 
-		return !(!GenericValidator.isBlankOrNull(this.patientSiteSubjectNo) && this.patientSiteSubjectNo.equals(existingSiteSubjectNo));
+		return !(!GenericValidator.isBlankOrNull(patientSiteSubjectNo)
+				&& patientSiteSubjectNo.equals(existingSiteSubjectNo));
 	}
 
 	/**
@@ -512,10 +517,10 @@ public abstract class Accessioner {
 
 	private Patient findPatientByIndentifiers() {
 		Patient aPatient;
-		if (this.patientIdentifier != "") {
-			aPatient = patientDAO.getPatientByNationalId(this.patientIdentifier);
+		if (patientIdentifier != "") {
+			aPatient = patientDAO.getPatientByNationalId(patientIdentifier);
 		} else {
-			String externalId = this.projectFormMapper.getSiteSubjectNumber();
+			String externalId = projectFormMapper.getSiteSubjectNumber();
 			aPatient = patientDAO.getPatientByExternalId(externalId);
 		}
 		return aPatient;
@@ -531,14 +536,14 @@ public abstract class Accessioner {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true = existing sample
 	 * @throws LIMSRuntimeException
 	 * @throws LIMSInvalidConfigurationException
 	 */
 	protected boolean findSample() throws LIMSRuntimeException, LIMSInvalidConfigurationException {
 		sample = sampleDAO.getSampleByAccessionNumber(accessionNumber);
-		String sampleId = this.statusSet.getSampleId();
+		String sampleId = statusSet.getSampleId();
 		// if there is sample for the given acc. number is an existing sample it
 		// had better be same one we found when we loading the sampleSet
 		if (sample != null && !isNewSample()) {
@@ -566,35 +571,37 @@ public abstract class Accessioner {
 
 	private Sample knownSampleTemplate() {
 		Sample sample = new Sample();
-		sample.setId(this.statusSet.getSampleId());
+		sample.setId(statusSet.getSampleId());
 		return sample;
 	}
 
 	/**
-	 * @return if the sample we are working with is NOT in the database this
-	 *         object is about to create it.
+	 * @return if the sample we are working with is NOT in the database this object
+	 *         is about to create it.
 	 */
 	protected boolean isNewSample() {
 		return sample.getId() == null;
 	}
 
 	/**
-	 * @return TRUE if the patient is not the known patient already associated
-	 *         with the known sample.
+	 * @return TRUE if the patient is not the known patient already associated with
+	 *         the known sample.
 	 */
 	protected boolean isADifferentPatient() {
-		return this.aDifferentPatientRecord;
+		return aDifferentPatientRecord;
 	}
 
 	/**
-	 * Call this to record that when we started, the patient record associated
-	 * with the original sample record is NOT the record we are now working
-	 * with. We record this because, once we updating records to write, we can
-	 * longer compare IDs to come up with the answer.
+	 * Call this to record that when we started, the patient record associated with
+	 * the original sample record is NOT the record we are now working with. We
+	 * record this because, once we updating records to write, we can longer compare
+	 * IDs to come up with the answer.
 	 */
 	protected void setADifferentPatient(boolean force) {
-		//TODO 'force' was added as a safety because aDifferentPatientRecourd was not being set to true when it should
-		// have.  The original test for aDifferentPatientRecord may still be needed, in the two places force is set
+		// TODO 'force' was added as a safety because aDifferentPatientRecourd was not
+		// being set to true when it should
+		// have. The original test for aDifferentPatientRecord may still be needed, in
+		// the two places force is set
 		// to true
 		aDifferentPatientRecord = (force || patientInDB == null || statusSet.getPatientId() != patientInDB.getId());
 	}
@@ -602,22 +609,26 @@ public abstract class Accessioner {
 	/**
 	 * Test this object to see if we should even begin. This is intended for
 	 * checking existing patient/sample record status.
-	 * 
-	 * @return TRUE => all is well; FALSE (Default) => this particular version
-	 *         of the accession process is not appropriate for the status
-	 *         combination.
+	 *
+	 * @return TRUE => all is well; FALSE (Default) => this particular version of
+	 *         the accession process is not appropriate for the status combination.
 	 */
 	abstract public boolean canAccession();
 
 	/**
-	 * load up this object with any new observation history records, including
-	 * lists
+	 * load up this object with any new observation history records, including lists
+	 *
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	protected void populateObservationHistory() {
-		projectFormMapper.getDynaBean();
-		ObservationData observationData = (ObservationData) (projectFormMapper.getDynaBean().get("observations"));
-		this.observationHistories = projectFormMapper.readObservationHistories(observationData);
-		this.observationHistoryLists = projectFormMapper.readObservationHistoryLists(observationData);
+	protected void populateObservationHistory()
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		projectFormMapper.getBaseForm();
+		ObservationData observationData = (ObservationData) (PropertyUtils.getProperty(projectFormMapper.getBaseForm(),
+				"observations"));
+		observationHistories = projectFormMapper.readObservationHistories(observationData);
+		observationHistoryLists = projectFormMapper.readObservationHistoryLists(observationData);
 	}
 
 	public StatusSet findStatusSet() {
@@ -634,17 +645,16 @@ public abstract class Accessioner {
 
 	/**
 	 * Move data from the form to the sample and sample related objects, include
-	 * SampleOrganization but not to any of the entities which tie a patient to
-	 * a sample; don't include ObservationHistory and SampleHuman
-	 * 
-	 * @throws Exception
-	 *             if things go wrong.
+	 * SampleOrganization but not to any of the entities which tie a patient to a
+	 * sample; don't include ObservationHistory and SampleHuman
+	 *
+	 * @throws Exception if things go wrong.
 	 */
 	abstract protected void populateSampleData() throws Exception;
 
 	/**
 	 * Create any appropriate sample human entity
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	protected void populateSampleHuman() throws Exception {
@@ -674,9 +684,9 @@ public abstract class Accessioner {
 	}
 
 	/**
-	 * Build an example Patient record with the ID only for the current patient
-	 * of the sample
-	 * 
+	 * Build an example Patient record with the ID only for the current patient of
+	 * the sample
+	 *
 	 * @return
 	 */
 	private Patient knownPatientTemplate() {
@@ -685,9 +695,10 @@ public abstract class Accessioner {
 		return patient;
 	}
 
-	protected void populateSample(Timestamp receivedDateForDisplay, Timestamp collectionDateForDisplay) throws Exception {
-		sample.setAccessionNumber(accessionNumber);		
-		sample.setReceivedTimestamp(receivedDateForDisplay);		
+	protected void populateSample(Timestamp receivedDateForDisplay, Timestamp collectionDateForDisplay)
+			throws Exception {
+		sample.setAccessionNumber(accessionNumber);
+		sample.setReceivedTimestamp(receivedDateForDisplay);
 		sample.setCollectionDate(collectionDateForDisplay);
 
 		// and all the administration fields.
@@ -713,23 +724,23 @@ public abstract class Accessioner {
 		if (isNewSample()) {
 			return false;
 		}
-		SampleProject oldSampleProject = sampleProjectDAO.getSampleProjectBySampleId(this.sample.getId());
+		SampleProject oldSampleProject = sampleProjectDAO.getSampleProjectBySampleId(sample.getId());
 		return oldSampleProject != null;
 	}
 
 	/**
 	 * create a sampleOrganization record, finding any old one to delete. While
-	 * there can be more than one organization per sample, this code only
-	 * supports one.
-	 * 
-	 * @param organizationId
-	 *            if none null, use it; otherwise do nothing
+	 * there can be more than one organization per sample, this code only supports
+	 * one.
+	 *
+	 * @param organizationId if none null, use it; otherwise do nothing
 	 */
 	protected void populateSampleOrganization(String organizationId) {
-		if (GenericValidator.isBlankOrNull(organizationId) || organizationId.equals(BaseProjectFormMapper.ORGANIZATION_ID_NONE)) {
+		if (GenericValidator.isBlankOrNull(organizationId)
+				|| organizationId.equals(BaseProjectFormMapper.ORGANIZATION_ID_NONE)) {
 			return;
 		}
-	
+
 		Organization org = new Organization();
 		org.setId(organizationId);
 		organizationDAO.getData(org);
@@ -768,11 +779,10 @@ public abstract class Accessioner {
 
 	/**
 	 * Add to the list of patient identities which will be saved.
-	 * 
+	 *
 	 * @param patientIdentityTypeName
-	 * @param paramValue
-	 *            a value for a particular patient identity; if null, do
-	 *            nothing.
+	 * @param paramValue              a value for a particular patient identity; if
+	 *                                null, do nothing.
 	 */
 	protected void addPatientIdentity(String patientIdentityTypeName, String paramValue) {
 		if (paramValue == null) {
@@ -788,23 +798,25 @@ public abstract class Accessioner {
 
 	/**
 	 * Assume all the fields on the dynaForm have the right names (see code) and
+	 *
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 * @throws NoSuchMethodException
 	 */
-	protected void populatePatientData() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		DynaBean dynaForm = projectFormMapper.getDynaBean();
+	protected void populatePatientData()
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		BaseForm form = projectFormMapper.getBaseForm();
 		Timestamp lastupdated1 = patientInDB.getLastupdated();
-		PropertyUtils.copyProperties(patientInDB, dynaForm);
+		PropertyUtils.copyProperties(patientInDB, form);
 		patientInDB.setLastupdated(lastupdated1);
 		Person person = patientInDB.getPerson();
-		PropertyUtils.copyProperties(person, dynaForm);
+		PropertyUtils.copyProperties(person, form);
 
-		patientInDB.setNationalId(convertEmptyToNull((String) dynaForm.get("subjectNumber")));
-		patientInDB.setExternalId(convertEmptyToNull((String) dynaForm.get("siteSubjectNumber")));
-		populatePatientBirthDate((String) dynaForm.get("birthDateForDisplay"));
+		patientInDB.setNationalId(convertEmptyToNull((String) PropertyUtils.getProperty(form, "subjectNumber")));
+		patientInDB.setExternalId(convertEmptyToNull((String) PropertyUtils.getProperty(form, "siteSubjectNumber")));
+		populatePatientBirthDate((String) PropertyUtils.getProperty(form, "birthDateForDisplay"));
 
-		projectData = (ProjectData) dynaForm.get("ProjectData");
+		projectData = (ProjectData) PropertyUtils.getProperty(form, "projectData");
 		if (projectData != null) {
 			person.setHomePhone(convertEmptyToNull(projectData.getPhoneNumber()));
 			person.setFax(convertEmptyToNull(projectData.getFaxNumber()));
@@ -814,8 +826,7 @@ public abstract class Accessioner {
 	}
 
 	/**
-	 * @param value
-	 *            - string to test
+	 * @param value - string to test
 	 * @return if the string is null or empty "", then return null
 	 */
 	private String convertEmptyToNull(String value) {
@@ -823,19 +834,20 @@ public abstract class Accessioner {
 	}
 
 	/**
-	 * Given a possibly ambiguous birthday date string, get the right values
-	 * into both (1) the patient birthdate and (2) make sure we create a
-	 * patient_identity for any ambiguous value.
+	 * Given a possibly ambiguous birthday date string, get the right values into
+	 * both (1) the patient birthdate and (2) make sure we create a patient_identity
+	 * for any ambiguous value.
 	 */
 	protected void populatePatientBirthDate(String birthDateForDisplay) {
 		patientInDB.setBirthDateForDisplay(birthDateForDisplay);
 	}
 
-	protected void populateSampleItems(List<TypeOfSampleTests> typeofSampleTestList, Timestamp collectionDate) throws Exception {
-		sampleItemsAnalysis = new ArrayList<SampleItemAnalysisCollection>();
+	protected void populateSampleItems(List<TypeOfSampleTests> typeofSampleTestList, Timestamp collectionDate)
+			throws Exception {
+		sampleItemsAnalysis = new ArrayList<>();
 
 		if (typeofSampleTestList.size() == 0) {
-	    	messages.reject("errors.no.tests");
+			messages.reject("errors.no.tests");
 			throw new Exception("No tests selected.");
 		}
 
@@ -869,7 +881,8 @@ public abstract class Accessioner {
 			// messages.add(ActionErrors.GLOBAL_MESSAGE, new
 			// ActionError("errors.samples.with.no.tests"));
 			// throw new
-			// Exception("A least one sample was defined without any corresponding test selected.");
+			// Exception("A least one sample was defined without any corresponding test
+			// selected.");
 			// }
 			this.item = item;
 			this.tests = tests;
@@ -883,9 +896,9 @@ public abstract class Accessioner {
 		for (SampleOrganization so : sampleOrganizations) {
 			sampleDAO.getData(sample);
 			so.setSample(sample);
-			if( so.getId() == null){
+			if (so.getId() == null) {
 				sampleOrganizationDAO.insertData(so);
-			}else{
+			} else {
 				sampleOrganizationDAO.updateData(so);
 			}
 		}
@@ -953,15 +966,14 @@ public abstract class Accessioner {
 	}
 
 	/**
-	 * Find all tests of the item which have had analysis already ordered
-	 * (defined).
-	 * 
+	 * Find all tests of the item which have had analysis already ordered (defined).
+	 *
 	 * @param item
 	 * @return a list of test IDs
 	 */
 	private List<String> findDefinedTestsForItem(SampleItem item) {
 		List<Analysis> analysesForItem = analysisDAO.getAnalysesBySampleItem(item);
-		List<String> testIds = new ArrayList<String>();
+		List<String> testIds = new ArrayList<>();
 		for (Analysis analysis : analysesForItem) {
 			Test test = analysis.getTest();
 			testIds.add(test.getId());
@@ -971,7 +983,7 @@ public abstract class Accessioner {
 
 	private Map<String, SampleItem> findExistingSampleTypeItems() {
 		List<SampleItem> itemsForSample = sampleItemDAO.getSampleItemsBySampleId(sample.getId());
-		Map<String, SampleItem> itemsByType = new HashMap<String, SampleItem>();
+		Map<String, SampleItem> itemsByType = new HashMap<>();
 		for (SampleItem sampleItem : itemsForSample) {
 			String id = sampleItem.getTypeOfSampleId();
 			itemsByType.put(id, sampleItem);
@@ -980,14 +992,15 @@ public abstract class Accessioner {
 	}
 
 	/**
-	 * If during entry we find (1) all the analysis are finished, and (2) the
-	 * sample is not already been declared bad, then we're ready to mark the
-	 * sample as done.
-	 * 
+	 * If during entry we find (1) all the analysis are finished, and (2) the sample
+	 * is not already been declared bad, then we're ready to mark the sample as
+	 * done.
+	 *
 	 * @throws Exception
 	 */
 	public void completeSample() throws Exception {
-		if (isAllAnalysisDone() && !StatusService.getInstance().getStatusID(OrderStatus.NonConforming_depricated).equals(sample.getStatus())) {
+		if (isAllAnalysisDone() && !StatusService.getInstance().getStatusID(OrderStatus.NonConforming_depricated)
+				.equals(sample.getStatus())) {
 			sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Finished));
 			sample.setSysUserId(sysUserId);
 			sampleDAO.updateData(sample);
@@ -995,8 +1008,8 @@ public abstract class Accessioner {
 	}
 
 	/**
-	 * The question is whether we are ready to update the sample status. TODO
-	 * Pahill maybe we could move this to StatusService.getInstance()?
+	 * The question is whether we are ready to update the sample status. TODO Pahill
+	 * maybe we could move this to StatusService.getInstance()?
 	 */
 	private boolean isAllAnalysisDone() {
 		List<Analysis> analyses = analysisDAO.getAnalysesBySampleId(sample.getId());
@@ -1008,7 +1021,8 @@ public abstract class Accessioner {
 		return true;
 	}
 
-	private Analysis buildAnalysis(String analysisRevision, SampleItemAnalysisCollection sampleTestCollection, Test test) {
+	private Analysis buildAnalysis(String analysisRevision, SampleItemAnalysisCollection sampleTestCollection,
+			Test test) {
 		java.sql.Date collectionDateTime = DateUtil.convertStringDateToSqlDate(sampleTestCollection.collectionDate);
 
 		Analysis analysis = new Analysis();
@@ -1046,7 +1060,7 @@ public abstract class Accessioner {
 
 	/**
 	 * Save whatever patient identities have been created.
-	 * 
+	 *
 	 * @throws LIMSRuntimeException
 	 */
 	public void persistIdentityTypes() throws LIMSRuntimeException {
@@ -1103,7 +1117,8 @@ public abstract class Accessioner {
 	 */
 	protected void persistObservationHistory() {
 		if (isADifferentPatient()) {
-			List<ObservationHistory> oldOHes = observationHistoryDAO.getAll(knownPatientTemplate(), knownSampleTemplate());
+			List<ObservationHistory> oldOHes = observationHistoryDAO.getAll(knownPatientTemplate(),
+					knownSampleTemplate());
 			for (ObservationHistory oldOh : oldOHes) {
 				oldOh.setSampleId(sample.getId());
 				oldOh.setPatientId(patientInDB.getId());
@@ -1113,8 +1128,9 @@ public abstract class Accessioner {
 		}
 
 		for (ObservationHistory newOh : observationHistories) {
-			List<ObservationHistory> existingTypeOHes = observationHistoryDAO.getAll(patientInDB, sample, newOh.getObservationHistoryTypeId());
-			List<ObservationHistory> deleteTypeOHes = new ArrayList<ObservationHistory>();
+			List<ObservationHistory> existingTypeOHes = observationHistoryDAO.getAll(patientInDB, sample,
+					newOh.getObservationHistoryTypeId());
+			List<ObservationHistory> deleteTypeOHes = new ArrayList<>();
 			// delete any matching old ones, but only when there are both same
 			// Ob. History type AND the same value type. Why because the
 			// database allows more than one of the same type,
@@ -1139,67 +1155,53 @@ public abstract class Accessioner {
 		}
 	}
 
-	//Note -- this version does not do the delete insert model of updates but we are putting off
+	// Note -- this version does not do the delete insert model of updates but we
+	// are putting off
 	// rolling it out because of the cost of testing
-/*	protected void persistObservationHistory() {
-		if (isADifferentPatient()) {
-			List<ObservationHistory> oldOHes = observationHistoryDAO.getAll(knownPatientTemplate(), knownSampleTemplate());
-			for (ObservationHistory oldOh : oldOHes) {
-				oldOh.setSampleId(sample.getId());
-				oldOh.setPatientId(patientInDB.getId());
-				oldOh.setSysUserId(sysUserId);
-				observationHistoryDAO.updateData(oldOh);
-			}
-		}
-
-		for (ObservationHistory newOh : observationHistories) {
-			boolean machedInDB = false;
-			List<ObservationHistory> existingTypeOHes = observationHistoryDAO.getAll(patientInDB, sample,
-					newOh.getObservationHistoryTypeId());
-			List<ObservationHistory> deleteTypeOHes = new ArrayList<ObservationHistory>();
-			// update any matching old ones, but only when there are both same
-			// Ob. History type AND the same value type. Why because the
-			// database allows more than one of the same type,
-			// and we store e.g. nationality twice as two types, D=dictionary
-			// for dropdown value, L=value used when there the menu value is
-			// other, and there is a literal with text for other.
-			String newValueType = newOh.getValueType();
-			for (ObservationHistory oh : existingTypeOHes) {
-				if (oh.getValueType().equals(newValueType)) {
-					machedInDB = true;
-					if (oh.getValue() != null && !oh.getValue().equals(newOh.getValue())) {
-						oh.setSysUserId(sysUserId);
-						oh.setValue(newOh.getValue());
-						observationHistoryDAO.updateData(oh);
-
-					}
-				}
-			}
-			// if (deleteTypeOHes.size() > 0) {
-			// observationHistoryDAO.delete(deleteTypeOHes);
-			// }
-
-			if (!machedInDB) {
-				newOh.setSampleId(sample.getId());
-				newOh.setPatientId(patientInDB.getId());
-				newOh.setSysUserId(sysUserId);
-				observationHistoryDAO.insertData(newOh);
-			}
-		}
-	}
-*/
+	/*
+	 * protected void persistObservationHistory() { if (isADifferentPatient()) {
+	 * List<ObservationHistory> oldOHes =
+	 * observationHistoryDAO.getAll(knownPatientTemplate(), knownSampleTemplate());
+	 * for (ObservationHistory oldOh : oldOHes) { oldOh.setSampleId(sample.getId());
+	 * oldOh.setPatientId(patientInDB.getId()); oldOh.setSysUserId(sysUserId);
+	 * observationHistoryDAO.updateData(oldOh); } }
+	 *
+	 * for (ObservationHistory newOh : observationHistories) { boolean machedInDB =
+	 * false; List<ObservationHistory> existingTypeOHes =
+	 * observationHistoryDAO.getAll(patientInDB, sample,
+	 * newOh.getObservationHistoryTypeId()); List<ObservationHistory> deleteTypeOHes
+	 * = new ArrayList<ObservationHistory>(); // update any matching old ones, but
+	 * only when there are both same // Ob. History type AND the same value type.
+	 * Why because the // database allows more than one of the same type, // and we
+	 * store e.g. nationality twice as two types, D=dictionary // for dropdown
+	 * value, L=value used when there the menu value is // other, and there is a
+	 * literal with text for other. String newValueType = newOh.getValueType(); for
+	 * (ObservationHistory oh : existingTypeOHes) { if
+	 * (oh.getValueType().equals(newValueType)) { machedInDB = true; if
+	 * (oh.getValue() != null && !oh.getValue().equals(newOh.getValue())) {
+	 * oh.setSysUserId(sysUserId); oh.setValue(newOh.getValue());
+	 * observationHistoryDAO.updateData(oh);
+	 *
+	 * } } } // if (deleteTypeOHes.size() > 0) { //
+	 * observationHistoryDAO.delete(deleteTypeOHes); // }
+	 *
+	 * if (!machedInDB) { newOh.setSampleId(sample.getId());
+	 * newOh.setPatientId(patientInDB.getId()); newOh.setSysUserId(sysUserId);
+	 * observationHistoryDAO.insertData(newOh); } } }
+	 */
 	/**
-     *
-     */
+	 *
+	 */
 	protected void persistObservationHistoryLists() {
 		System.out.println("FUNCTION NAME PROHIBITED !");
 	}
+
 	protected void persistObservationHistoryLists2() {
 		if (observationHistoryLists == null) {
 			return;
 		}
-		
-		for (String listType : this.observationHistoryLists.keySet()) {
+
+		for (String listType : observationHistoryLists.keySet()) {
 			// throw away the old list
 			Map<String, ObservationHistory> oldOHes = findExistingObservationHistories(listType);
 			// System.out.println();
@@ -1208,7 +1210,7 @@ public abstract class Accessioner {
 			for (ObservationHistory oh : oldOHes.values()) {
 				oh.setSysUserId(sysUserId);
 			}
-			observationHistoryDAO.delete(new ArrayList<ObservationHistory>(oldOHes.values()));
+			observationHistoryDAO.delete(new ArrayList<>(oldOHes.values()));
 
 			// insert the new
 			List<ObservationHistory> newOHes = observationHistoryLists.get(listType);
@@ -1218,14 +1220,14 @@ public abstract class Accessioner {
 				newOH.setSysUserId(sysUserId);
 				newOH.setPatientId(patientInDB.getId());
 				newOH.setSampleId(sample.getId());
-	               
+
 				observationHistoryDAO.insertData(newOH);
 			}
 		}
 	}
 
 	private Map<String, ObservationHistory> findExistingObservationHistories(String nameKey) {
-		Map<String, ObservationHistory> existing = new HashMap<String, ObservationHistory>();
+		Map<String, ObservationHistory> existing = new HashMap<>();
 
 		String ohTypeId = ObservationHistoryTypeMap.getInstance().getIDForType(nameKey);
 		List<ObservationHistory> existingOHes = observationHistoryDAO.getAll(patientInDB, sample, ohTypeId);
@@ -1234,13 +1236,15 @@ public abstract class Accessioner {
 		}
 		return existing;
 	}
+
 	protected void persistRecordStatus() {
 		// Special Request and EID don't have a patient entry form, so we move
 		// the patient record status when we move the sample record status.
 		if (projectForm == SPECIAL_REQUEST || projectForm == EID) {
 			newPatientStatus = newSampleStatus;
 		}
-		StatusService.getInstance().persistRecordStatusForSample(sample, newSampleStatus, patientInDB, newPatientStatus, sysUserId);
+		StatusService.getInstance().persistRecordStatusForSample(sample, newSampleStatus, patientInDB, newPatientStatus,
+				sysUserId);
 	}
 
 	protected void deleteOldPatient() {
@@ -1275,13 +1279,10 @@ public abstract class Accessioner {
 
 	/****
 	 * Record a thrown exception
-	 * 
-	 * @param methodName
-	 *            where it happened.
-	 * @param messageKey
-	 *            default message if there is not already a error recorded.
-	 * @param e
-	 *            the thrown exception of which to print the stack trace.
+	 *
+	 * @param methodName where it happened.
+	 * @param messageKey default message if there is not already a error recorded.
+	 * @param e          the thrown exception of which to print the stack trace.
 	 */
 	public void logAndAddMessage(String methodName, String messageKey, Exception e) {
 		e.printStackTrace();
@@ -1293,43 +1294,46 @@ public abstract class Accessioner {
 
 	protected abstract String getActionLabel();
 
-	protected void persistInitialSampleConditions(){
-	if(!FormFields.getInstance().useField(Field.InitialSampleCondition)) return;
-		
-	try {
-		String xml=(String)projectFormMapper.getDynaBean().get( "sampleXML" );
-		//System.out.println("AMANI:"+xml);
-		Document sampleDom = DocumentHelper.parseText(xml);
-		for (Iterator i = sampleDom.getRootElement().elementIterator("sample"); i.hasNext();) {
-		Element sampleItem = (Element) i.next();
-		String initialSampleConditionIdString = sampleItem.attributeValue("initialConditionIds");
-		String sampleItemId = sampleItem.attributeValue("sampleID");
-		
-		ObservationHistoryDAO ohDAO = new ObservationHistoryDAOImpl();
-		ObservationHistory observation=new ObservationHistory();			
-		
-		if (!GenericValidator.isBlankOrNull(initialSampleConditionIdString)) {
-				String[] initialSampleConditionIds = initialSampleConditionIdString.split(",");
-				for(int j=0;j<initialSampleConditionIds.length;j++){
-					 observation=new ObservationHistory();
-					 observation.setValue(initialSampleConditionIds[j]);
-					 observation.setValueType(ObservationHistory.ValueType.DICTIONARY);
-					 observation.setObservationHistoryTypeId(getObservationHistoryTypeId(new ObservationHistoryTypeDAOImpl(), "initialSampleCondition"));
-				     observation.setSampleId(sample.getId());
-					 observation.setSampleItemId(sampleItemId);
-					 observation.setPatientId(patientInDB.getId());
-					 observation.setSysUserId(sysUserId);
-					 ohDAO.insertData(observation);
+	protected void persistInitialSampleConditions()
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		if (!FormFields.getInstance().useField(Field.InitialSampleCondition)) {
+			return;
+		}
+
+		try {
+			String xml = (String) PropertyUtils.getProperty(projectFormMapper.getBaseForm(), "sampleXML");
+			// System.out.println("AMANI:"+xml);
+			Document sampleDom = DocumentHelper.parseText(xml);
+			for (Iterator i = sampleDom.getRootElement().elementIterator("sample"); i.hasNext();) {
+				Element sampleItem = (Element) i.next();
+				String initialSampleConditionIdString = sampleItem.attributeValue("initialConditionIds");
+				String sampleItemId = sampleItem.attributeValue("sampleID");
+
+				ObservationHistoryDAO ohDAO = new ObservationHistoryDAOImpl();
+				ObservationHistory observation = new ObservationHistory();
+
+				if (!GenericValidator.isBlankOrNull(initialSampleConditionIdString)) {
+					String[] initialSampleConditionIds = initialSampleConditionIdString.split(",");
+					for (int j = 0; j < initialSampleConditionIds.length; j++) {
+						observation = new ObservationHistory();
+						observation.setValue(initialSampleConditionIds[j]);
+						observation.setValueType(ObservationHistory.ValueType.DICTIONARY);
+						observation.setObservationHistoryTypeId(getObservationHistoryTypeId(
+								new ObservationHistoryTypeDAOImpl(), "initialSampleCondition"));
+						observation.setSampleId(sample.getId());
+						observation.setSampleItemId(sampleItemId);
+						observation.setPatientId(patientInDB.getId());
+						observation.setSysUserId(sysUserId);
+						ohDAO.insertData(observation);
+					}
 				}
 			}
+
+		} catch (DocumentException e) {
+			e.printStackTrace();
 		}
-		
-	  } catch (DocumentException e) {
-		e.printStackTrace();
-	  }
-	//  dynaForm.set("orbservations", observations);
-	
-		
+		// dynaForm.set("orbservations", observations);
+
 	}
 
 	private static String getObservationHistoryTypeId(ObservationHistoryTypeDAO ohtDAO, String name) {
@@ -1338,7 +1342,7 @@ public abstract class Accessioner {
 		if (oht != null) {
 			return oht.getId();
 		}
-	
+
 		return null;
 	}
 }
