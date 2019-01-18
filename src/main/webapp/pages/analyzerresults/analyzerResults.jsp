@@ -3,8 +3,6 @@
                 us.mn.state.health.lims.common.action.IActionConstants,
 				us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
 			    us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
-				us.mn.state.health.lims.analyzerresults.action.beanitems.AnalyzerResultItem,
-				us.mn.state.health.lims.common.util.IdValuePair,
                 us.mn.state.health.lims.common.util.Versioning,
 				us.mn.state.health.lims.common.util.StringUtil,
 				org.owasp.encoder.Encode" %>
@@ -18,17 +16,13 @@
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-	
-<bean:define id="analyzerType" name="${form.formName}" property="analyzerType" />
-<bean:define id="pagingSearch" name='${form.formName}' property="paging.searchTermToPage"  />
+
+<c:set var="analyzerType" value="${form.analyzerType}" />
+<c:set var="pagingSearch" value="${form.paging.searchTermToPage}" />
 
 <%!
 	String basePath = "";
 	IAccessionNumberValidator accessionNumberValidator;
-	String currentAccessionNumber = "";
-	boolean showAccessionNumber = false;
-	boolean groupReadOnly = false;
-	boolean itemReadOnly = false;
 	String searchTerm = null;
 %>
 <%
@@ -38,11 +32,8 @@
 
 	accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
 	searchTerm = request.getParameter("searchTerm");
-    currentAccessionNumber = "";
-    showAccessionNumber = false;
-    groupReadOnly = false;
-    itemReadOnly = false;
 %>
+
 <!-- N.B. testReflex.js is dependent on utilities.js so order is important  -->
 <script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 <script type="text/javascript" src="<%=basePath%>scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
@@ -52,18 +43,15 @@
 
 var dirty = false;
 
-var pager = new OEPager('${form.formName}', '<%= analyzerType == "" ? "" : "&type=" + Encode.forJavaScript((String) analyzerType)  %>');
+var pager = new OEPager('${form.formName}', '<spring:escapeBody javaScriptEscape="true">${(analyzerType == "") ? "" : "&type=" +=  analyzerType}</spring:escapeBody>');
 pager.setCurrentPageNumber('<c:out value="${form.paging.currentPage}"/>');
 
 var pageSearch; //assigned in post load function
 
 var pagingSearch = new Object();
-
-<%
-	for( IdValuePair pair : ((List<IdValuePair>)pagingSearch)){
-		out.print( "pagingSearch[\'" + pair.getId()+ "\'] = \'" + pair.getValue() +"\';\n");
-	}
-%>
+<c:forEach items="${pagingSearch}" var="paging">
+pagingSearch['${paging.id}'] = '${paging.value}';
+</c:forEach>
 
 
 $jq(document).ready( function() {
@@ -104,7 +92,7 @@ function  /*void*/ savePage()
 {
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = window.document.forms[0];
-	form.action = "AnalyzerResultsSave.do"  + '<%= analyzerType == "" ? "" : "?type=" + Encode.forJavaScript((String) analyzerType)  %>';
+	form.action = "AnalyzerResultsSave.do"  + ' ${(analyzerType == "") ? '': '?type=<spring:escapeBody javaScriptEscape="true">analyzerType</spring:escapeBody>'}';
 	form.submit();
 
 }
@@ -173,36 +161,30 @@ function /*void*/ markUpdated(){
 
 </script>
 <form:hidden path="analyzerType"/>
-<logic:notEmpty name="${form.formName}" property="notFoundMsg">
+<c:if test="${not empty form.notFoundMsg}">
 	 <div class="indented-important-message"><c:out value="${form.notFoundMsg}"/></div>
-</logic:notEmpty>
-<logic:equal name="${form.formName}" property="missingTestMsg" value="true">
+</c:if>
+<c:if test="${form.missingTestMsg}">
      <h2><spring:message code="error.missing.test.mapping" /></h2><br/><br/>
-</logic:equal>
+</c:if>
 
-<logic:empty name="${form.formName}" property="notFoundMsg">
+<c:if test="${empty form.notFoundMsg}">
 	<div class="alert alert-info" style="width: 540px">
 		<div><strong><spring:message code="validation.accept"/></strong>: <spring:message code="validation.accept.explanation"/></div>
 		<div><strong><spring:message code="validation.reject"/></strong>: <spring:message code="validation.reject.explanation"/></div>
 		<div><strong><spring:message code="validation.delete"/></strong>: <spring:message code="validation.delete.explanation"/></div>
 	</div>
-</logic:empty>
+</c:if>
 
-<logic:notEqual name="${form.formName}" property="paging.totalPages" value="0">
-	<html:hidden id="currentPageID" name="${form.formName}" property="paging.currentPage"/>
-	<bean:define id="total" name="${form.formName}" property="paging.totalPages"/>
-	<bean:define id="currentPage" name="${form.formName}" property="paging.currentPage"/>
+<c:if test="${form.paging.totalPages != 0}">
+	<form:hidden path="paging.currentPage" id="currentPageID" />
+	<c:set var="total" value="${form.paging.totalPages}"/>
+	<c:set var="currentPage" value="${form.paging.currentPage}"/>
 
-	<%if( "1".equals(currentPage)) {%>
-		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" disabled="disabled" >
-	<% } else { %>
-		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" onclick="pager.pageBack();" />
-	<% } %>
-	<%if( total.equals(currentPage)) {%>
-		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.next") %>' style="width:100px;" disabled="disabled" />
-	<% }else{ %>
-		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.next") %>' style="width:100px;" onclick="pager.pageFoward();"   />
-	<% } %>
+	<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" onclick="pager.pageBack();" 
+		<c:if test="${currentPage == '1'}">disabled="disabled"</c:if> />
+	<input type="button" value='<%=StringUtil.getMessageForKey("label.button.next") %>' style="width:100px;" onclick="pager.pageFoward();" 
+		<c:if test="${total == currentPage}">disabled="disabled"</c:if> />
 
 	&nbsp;
 	<c:out value="${form.paging.currentPage}"/> of
@@ -215,7 +197,7 @@ function /*void*/ markUpdated(){
 	       maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>' />
 	<input type="button" onclick="pageSearch.doLabNoSearch($(labnoSearch))" value='<%= StringUtil.getMessageForKey("label.button.search") %>'>
 	</div>
-</logic:notEqual>
+</c:if>
 <br/><br/><img src="./images/nonconforming.gif" /> = <spring:message code="result.nonconforming.item"/>
 <table id="importDataTable" width="85%" border="0" cellspacing="0" >
 	<tr><td><b><spring:message code="analyzer.results.results"/></b></td></tr>
@@ -237,206 +219,173 @@ function /*void*/ markUpdated(){
 		</th>
 		<th width="5%" ><spring:message code="analyzer.results.notes"/></th>
 	</tr>
-	<logic:iterate id="resultList" name="${form.formName}" property="resultList" indexId="dataIndex" type="AnalyzerResultItem" >
-        <%
-           showAccessionNumber = !resultList.getAccessionNumber().equals(currentAccessionNumber);
-           itemReadOnly = resultList.isReadOnly();
-		   if( showAccessionNumber ){
-					currentAccessionNumber = resultList.getAccessionNumber();
-					groupReadOnly = resultList.isGroupIsReadOnly();} %>
-		<html:hidden name="resultList" property="sampleGroupingNumber" indexed="true" />
-		<html:hidden name="resultList" property="readOnly" indexed="true" />
-		<html:hidden name="resultList" property="testResultType" indexed="true"/>
-		<html:hidden name="resultList" property="testId"  id='<%="testId_" + dataIndex%>'/>
-		<html:hidden name="resultList" property="accessionNumber"  id='<%="accessionNumberId_" + dataIndex%>'/>
-		<logic:equal name="resultList" property="isHighlighted" value="true">
-			<tr class="yellowHighlight">
-		</logic:equal>
-		<logic:equal name="resultList" property="isHighlighted" value="false">
-			<tr>
-		</logic:equal>
+	<c:forEach items="${form.resultList}" var="resultList" varStatus="iter">
+		<c:set var="showAccessionNumber" value="${resultList.accessionNumber != currentAccessionNumber}"/>
+		<c:set var="itemReadOnly" value="${resultList.readOnly}"/>
+		<c:if test="${showAccessionNumber}">
+			<c:set var="currentAccessionNumber" value="${resultList.accessionNumber}"/>
+			<c:set var="groupReadOnly" value="${resultList.groupReadOnly}"/>
+		</c:if>
+		<form:hidden path="resultList[${iter.index}].sampleGroupingNumber" />
+		<form:hidden path="resultList[${iter.index}].readOnly" />
+		<form:hidden path="resultList[${iter.index}].testResultType"/>
+		<form:hidden path="resultList[${iter.index}].testId"  id='"testId_${iter.index}'/>
+		<form:hidden path="resultList[${iter.index}].accessionNumber"  id='accessionNumberId_${iter.index}'/>
+		<tr <c:if test="${resultList.isHighlighted}"> class="yellowHighlight"> </c:if> >
 			<td  align="center">
-			 <% if( showAccessionNumber && !groupReadOnly ){ %>
-				<html:checkbox id='<%="accepted_" + dataIndex %>'
-							   name="resultList"
-							   property="isAccepted"
-							   indexed="true"
+			<c:if test="${showAccessionNumber && not groupReadOnly}">
+				<form:checkbox path="resultList${iter.index}.isAccepted"
+							   id='accepted_${iter.index}'
 							   onchange="markUpdated();"
-							   onclick='<%="enableDisableCheckboxes(this, " + dataIndex + " );" %>' />
-			 <% } %>
+							   onclick='enableDisableCheckboxes(this, ${iter.index} );' />
+			 </c:if>
 			</td>
 			<td  align="center">
-			<% if( showAccessionNumber && !groupReadOnly ){ %>
-				<html:checkbox id='<%="rejected_" + dataIndex %>'
-							   name="resultList"
-							   property="isRejected"
-							   indexed="true"
+			<c:if test="${showAccessionNumber && not groupReadOnly}">
+				<form:checkbox path="resultList${iter.index}.isRejected"
+							   id='rejected_"${iter.index}'
 							   onchange="markUpdated();"
-							   onclick='<%="enableDisableCheckboxes(this, " + dataIndex + " );" %>' />
-			<% } %>
+							   onclick='enableDisableCheckboxes(this, ${iter.index} );' />
+			</c:if>
 			</td>
 				<td align="center">
-			 <% if( showAccessionNumber  ){ %>
-				<html:checkbox id='<%="deleted_" + dataIndex %>'
-							   name="resultList"
-							   property="isDeleted"
-							   indexed="true"
+			 <c:if test="${showAccessionNumber}">
+				<form:checkbox path="resultList${iter.index}.isDeleted"
+							   id='deleted_${iter.index}'
 							   onchange="markUpdated();"
-							   onclick='<%="enableDisableCheckboxes(this, " + dataIndex + " );" %>' />
-			 <% } %>
+							   onclick='enableDisableCheckboxes(this, ${iter.index} );' />
+			 </c:if>
 			</td>
-			<td class='<%= resultList.getAccessionNumber()%>'>
-				<% if( showAccessionNumber ){ %>
-						<html:text name="resultList" property="accessionNumber" readonly="true" indexed="true" style="border-style:hidden" />
-						<% if(resultList.isNonconforming()){ %>
+			<td class='${resultList.accessionNumber}'>
+				<c:if test="${showAccessionNumber}">
+						<form:input path="resultList${iter.index}.accessionNumber" readonly="true" style="border-style:hidden" />
+						<c:if test="${resultList.nonconforming}">
 							<img src="./images/nonconforming.gif" />
-						<% } %>
-				<% }  %>
+						</c:if>
+				</c:if>
 			</td>
 			<td>
-				<span style="color: #000000"><%=resultList.getTestName()%></span>
+				<span style="color: #000000"><c:out value="${resultList.testName}"/></span>
 			</td>
 			<td>
-			    <% if(groupReadOnly || itemReadOnly){ %>
-				<html:text name="resultList"
-						   property="result"
+			    <c:if test="${groupReadOnly || itemReadOnly}">
+				<form:input path="resultList${iter.index}.result"
 						   readonly="true"
 						   size="20"
 						   style="text-align:right;border-style:hidden;background-color:transparent" />
-				<% }else{ %>
-				<logic:equal name="resultList" property="testResultType"  value="D">
-					<html:select name="resultList" 
-								 id='<%= "resultId_" + dataIndex %>'
-					             property="result" 
-					             indexed="true"  
-					             onchange='<%= "markUpdated();" + (resultList.isUserChoiceReflex() ? "showUserReflexChoices(" + dataIndex + ", null );" : "") %>' >
-						<html:optionsCollection name="resultList" property="dictionaryResultList" label="dictEntry" value="id" />
-					</html:select>
-				</logic:equal>
-				<logic:notEqual name="resultList"  property="testResultType"  value="D">
-					<html:text name="resultList"
-							   id='<%= "resultId_" + dataIndex %>' 
-					           property="result" 
+				</c:if><c:if test="${not (groupReadOnly || itemReadOnly)}">
+				<c:if test="${resultList.testResultType == 'D'}">
+					<form:select path="resultList[${iter.index}].result" 
+								 id='resultId_${iter.index}'
+					             onchange="markUpdated(); ${(resultList.userChoiceReflex) ? 'showUserReflexChoices(' += iter.index += ', null );' : ''} " >
+					    <form:options items="${resultList.dictionaryResultList}" itemValue="id" itemLabel="dictEntry" />
+					</form:select>
+				</c:if>
+				<c:if test="${resultList.testResultType != 'D'}">
+					<form:input path="resultList[${iter.index}].result"
+							   id='resultId_${iter.index}' 
 					           style="text-align:right;"
-					           indexed="true"
 					           onchange="markUpdated();"/>
-				</logic:notEqual>
-				<% if(resultList.isUserChoiceReflex()){ %>
+				</c:if>
+				<c:if test="${resultList.userChoiceReflex}">
 				
-				<% } %>
-				<% } %>
-				<%= resultList.getUnits() %>
+				</c:if>
+				</c:if>
+				<c:out value="${resultList.units}"/>
 			</td>
 			<td >
-			    <% if(groupReadOnly || itemReadOnly){ %>
-				<html:text name="resultList"
-						   property="completeDate"
+			    <c:if test="${groupReadOnly || itemReadOnly}">
+				<form:input path="resultList${iter.index}.completeDate"
 						   readonly="true"
 						   size="10"
 						   style="border-style:hidden;text-align:right;background-color:transparent" />
-				<% }else{ %>
-				<html:text name="resultList"
-						   property="completeDate"
+				</c:if><c:if test="${not (groupReadOnly || itemReadOnly)}">
+				<form:input path="resultList${iter.index}.completeDate"
 						   onchange="markUpdated();"
-						   indexed="true"
 						   size="10"
 						   style="text-align:right" />
-				<% } %>
+				</c:if>
 			</td>
 			<td align="center">
-			<% if( !(groupReadOnly || itemReadOnly)){ %>
-						<logic:empty name="resultList" property="note">
+			<c:if test="${not (groupReadOnly || itemReadOnly)}">
+						<c:if test="${empty resultList.note}">
 						 	<img src="./images/note-add.gif"
-						 	     onclick='<%= "showHideNotes(" + dataIndex + ");" %>'
-						 	     id='<%="showHideButton_" + dataIndex %>'
+						 	     onclick='showHideNotes(${iter.index});'
+						 	     id='showHideButton_${iter.index}'
 						    />
-						 </logic:empty>
-						 <logic:notEmpty name="resultList" property="note">
+						 </c:if>
+						 <c:if test="${not empty resultList.note}">
 						 	<img src="./images/note-edit.gif"
-						 	     onclick='<%= "showHideNotes( " + dataIndex + ");" %>'
-						 	     id='<%="showHideButton_" + dataIndex %>'
+						 	     onclick='showHideNotes( ${iter.index});'
+						 	     id='showHideButton_${iter.index}'
 						    />
-						 </logic:notEmpty>
-				<form:hidden path="hideShowFlag"  id='<%="hideShow_" + dataIndex %>' value="hidden" />
-            <% } %>
+						 </c:if>
+				<form:hidden path="hideShowFlag"  id='hideShow_${iter.index}' value="hidden" />
+            </c:if>
 
 		</td>
 		</tr>
-		<tr id='<%="noteRow_" +  dataIndex %>' style="display: none;">
+		<tr id='noteRow_${iter.index}' style="display: none;">
 			<td colspan="2" valign="top" align="right"><spring:message code="note.note"/>:</td>
 			<td colspan="6" align="left" >
-			<html:textarea id='<%="note_" +  dataIndex %>'
-			               name="resultList"
-			               indexed="true"
-			           	   property="note"
+			<form:textarea path="resultList[${iter.index}].note" 
+						   id='note_${iter.index}' 
 			           	   cols="100"
 			           	   rows="3"
 			           	   onchange="markUpdated();"/>
 			</td>
 		</tr>
-		<logic:equal name="resultList" property="userChoiceReflex"  value="true">
-		<logic:equal name="resultList" property="isHighlighted" value="false">
-		<tr id='<%="reflexInstruction_" + dataIndex %>' <%= resultList.getSelectionOneText() == "" ? "style='display:none'" : " " %> class="alert alert-info" >
+		<c:if test="${resultList.userChoiceReflex}">
+		<c:if test="${not resultList.isHighlighted}">
+		<tr id='reflexInstruction_${iter.index}' ${resultList.selectionOneText == "" ? "style='display:none'" : " " } class="alert alert-info" >
             <td colspan="4" >&nbsp;</td>
 			<td colspan="4" valign="top"  ><spring:message code="testreflex.actionselection.instructions" /></td>
 		</tr>
-		<tr id='<%="reflexSelection_" + dataIndex %>' <%= resultList.getSelectionOneText() == "" ? "style='display:none'" : " " %> class="alert alert-info" >
+		<tr id='reflexSelection_${iter.index}' ${resultList.selectionOneText == "" ? "style='display:none'" : " " } class="alert alert-info" >
 		<td colspan="4" >&nbsp;</td>
 		<td colspan="4" >
-				<html:radio name="resultList"
-						    styleId = '<%="selectionOne_" + dataIndex %>'
-							property="reflexSelectionId"
-							indexed="true"
-							value='<%=resultList.getSelectionOneValue() %>'
-							onchange='<%="reflexChoosen(" + dataIndex + ", null, \'" + resultList.getSiblingReflexKey() +  "\');"%>' />
-							<label id='<%="selectionOneLabel_" + dataIndex %>'  for='<%="selectionOne_" + dataIndex %>' ><%= resultList.getSelectionOneText() %></label>
+				<form:radiobutton path="resultList[${iter.index}].reflexSelectionId"
+						    styleId='selectionOne_${iter.index}'
+							value='${resultList.selectionOneValue}'
+							onchange="reflexChoosen(${iter.index}, null, '${resultList.siblingReflexKey}');" />
+							<label id='selectionOneLabel_${iter.index}'  for='selectionOne_${iter.index}' >${resultList.selectionOneText}</label>
 				<br/>
-				<html:radio name="resultList"
-							styleId = '<%="selectionTwo_" + dataIndex %>'
-							property="reflexSelectionId"
-							indexed="true"
-							value='<%=resultList.getSelectionTwoValue() %>'
-							onchange='<%="reflexChoosen(" + dataIndex + ", null , \'" + resultList.getSiblingReflexKey() +  "\');"%>' />
-							<label id='<%="selectionTwoLabel_" + dataIndex %>'  for='<%="selectionTwo_" + dataIndex %>' ><%=resultList.getSelectionTwoText() %></label>
+				<form:radiobutton path="resultList[${iter.index}].reflexSelectionId"
+							styleId='selectionTwo_${iter.index}'
+							value='${resultList.selectionTwoValue}'
+							onchange="reflexChoosen(${iter.index}, null , '${resutList.siblingReflexKey}');" />
+							<label id='selectionTwoLabel_${iter.index}'  for='selectionTwo_${iter.index}' >${resultList.selectionTwoText}</label>
 			</td>
 		</tr>
-	</logic:equal>
-	</logic:equal>
+	</c:if>
+	</c:if>
 
 
 
-	</logic:iterate>
+	</c:forEach>
 
 </table>
-<logic:notEqual name="${form.formName}" property="paging.totalPages" value="0">
-	<html:hidden id="currentPageID" name="${form.formName}" property="paging.currentPage"/>
-	<bean:define id="total" name="${form.formName}" property="paging.totalPages"/>
-	<bean:define id="currentPage" name="${form.formName}" property="paging.currentPage"/>
+<c:if test="${form.paging.totalPages != 0}">
+	<form:hidden path="paging.currentPage" id="currentPageID"/>
+	<c:set var="total" value="${form.paging.totalPages}"/>
+	<c:set var="currentPage" value="${form.paging.currentPage}"/>
 
-	<%if( "1".equals(currentPage)) {%>
-		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" disabled="disabled" >
-	<% } else { %>
-		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" onclick="pager.pageBack();" />
-	<% } %>
-	<%if( total.equals(currentPage)) {%>
-		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.next") %>' style="width:100px;" disabled="disabled" />
-	<% }else{ %>
-		<input type="button" value='<%=StringUtil.getMessageForKey("label.button.next") %>' style="width:100px;" onclick="pager.pageFoward();"   />
-	<% } %>
+	<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == '1'}">disabled="disabled"</c:if> />
+	<input type="button" value='<%=StringUtil.getMessageForKey("label.button.next") %>' style="width:100px;" onclick="pager.pageFoward();" <c:if test="${total == currentPage}">disabled="disabled"</c:if> />
 
 	&nbsp;
 	<c:out value="${form.paging.currentPage}"/> of
 	<c:out value="${form.paging.totalPages}"/>
-</logic:notEqual>
+</c:if>
 
 	<ajax:autocomplete
-  var="autocomplete"
-  source="testName"
-  target="selectedTestID"
-  baseUrl="ajaxAutocompleteXML"
-  className="autocomplete"
-  parameters="testName={testName},provider=TestAutocompleteProvider,fieldName=testName,idName=id"
-  indicator="indicator"
-  minimumCharacters="1"
-  parser="new ResponseXmlToHtmlListParser()"
-  />
+		  var="autocomplete"
+		  source="testName"
+		  target="selectedTestID"
+		  baseUrl="ajaxAutocompleteXML"
+		  className="autocomplete"
+		  parameters="testName={testName},provider=TestAutocompleteProvider,fieldName=testName,idName=id"
+		  indicator="indicator"
+		  minimumCharacters="1"
+		  parser="new ResponseXmlToHtmlListParser()"
+ 	/>

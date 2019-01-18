@@ -9,18 +9,30 @@ import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.inventory.form.InventoryKitItem;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
-public class LogbookResultsForm extends BaseForm {
+public class AccessionResultsForm extends BaseForm {
 	private PagingBean paging;
 
-	private Boolean singlePatient = false;
-
-	private String currentDate = "";
+	private Boolean singlePatient = true;
 
 	private Timestamp lastupdated;
 
+	private String firstName = "";
+
+	private String lastName = "";
+
+	private String dob = "";
+
+	private String gender = "";
+
+	private String st = "";
+
+	private String subjectNumber = "";
+
+	private String nationalId = "";
+
 	private Boolean displayTestMethod = true;
 
-	private Boolean displayTestKit = true;
+	private Boolean displayTestKit = false;
 
 	private List<TestResultItem> testResult;
 
@@ -29,6 +41,8 @@ public class LogbookResultsForm extends BaseForm {
 	private List<String> hivKits;
 
 	private List<String> syphilisKits;
+
+	private Boolean searchFinished = false;
 
 	private String logbookType = "";
 
@@ -42,10 +56,10 @@ public class LogbookResultsForm extends BaseForm {
 
 	private String testSectionId;
 
-	private Boolean displayTestSections = true;
+	private Boolean displayTestSections = false;
 
-	public LogbookResultsForm() {
-		setFormName("LogbookResultsForm");
+	public AccessionResultsForm() {
+		setFormName("AccessionResultsForm");
 	}
 
 	public PagingBean getPaging() {
@@ -64,20 +78,68 @@ public class LogbookResultsForm extends BaseForm {
 		this.singlePatient = singlePatient;
 	}
 
-	public String getCurrentDate() {
-		return currentDate;
-	}
-
-	public void setCurrentDate(String currentDate) {
-		this.currentDate = currentDate;
-	}
-
 	public Timestamp getLastupdated() {
 		return lastupdated;
 	}
 
 	public void setLastupdated(Timestamp lastupdated) {
 		this.lastupdated = lastupdated;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getDob() {
+		return dob;
+	}
+
+	public void setDob(String dob) {
+		this.dob = dob;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getSt() {
+		return st;
+	}
+
+	public void setSt(String st) {
+		this.st = st;
+	}
+
+	public String getSubjectNumber() {
+		return subjectNumber;
+	}
+
+	public void setSubjectNumber(String subjectNumber) {
+		this.subjectNumber = subjectNumber;
+	}
+
+	public String getNationalId() {
+		return nationalId;
+	}
+
+	public void setNationalId(String nationalId) {
+		this.nationalId = nationalId;
 	}
 
 	public Boolean getDisplayTestMethod() {
@@ -126,6 +188,14 @@ public class LogbookResultsForm extends BaseForm {
 
 	public void setSyphilisKits(List<String> syphilisKits) {
 		this.syphilisKits = syphilisKits;
+	}
+
+	public Boolean getSearchFinished() {
+		return searchFinished;
+	}
+
+	public void setSearchFinished(Boolean searchFinished) {
+		this.searchFinished = searchFinished;
 	}
 
 	public String getLogbookType() {

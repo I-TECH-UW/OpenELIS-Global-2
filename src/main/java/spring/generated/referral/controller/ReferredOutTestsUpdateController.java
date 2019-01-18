@@ -1,4 +1,4 @@
-package spring.generated.result.controller;
+package spring.generated.referral.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -11,16 +11,16 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
-import spring.mine.result.form.AccessionResultsForm;
+import spring.mine.referral.form.ReferredOutTestsForm;
 
 @Controller
-public class AccessionResultsUpdateController extends BaseController {
-	@RequestMapping(value = "/AccessionResultsUpdate", method = RequestMethod.GET)
-	public ModelAndView showAccessionResultsUpdate(HttpServletRequest request,
-			@ModelAttribute("form") AccessionResultsForm form) {
+public class ReferredOutTestsUpdateController extends BaseController {
+	@RequestMapping(value = "/referredOutTestsUpdate", method = RequestMethod.GET)
+	public ModelAndView showreferredOutTestsUpdate(HttpServletRequest request,
+			@ModelAttribute("form") ReferredOutTestsForm form) {
 		String forward = FWD_SUCCESS;
 		if (form == null) {
-			form = new AccessionResultsForm();
+			form = new ReferredOutTestsForm();
 		}
 		form.setFormAction("");
 		BaseErrors errors = new BaseErrors();
@@ -39,9 +39,9 @@ public class AccessionResultsUpdateController extends BaseController {
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("success".equals(forward)) {
-			return new ModelAndView("/AccessionResults.do", "form", form);
+			return new ModelAndView("/ReferredOutTests.do?forward=success", "form", form);
 		} else if ("error".equals(forward)) {
-			return new ModelAndView("accessionResultDefinition", "form", form);
+			return new ModelAndView("referredOutDefinition", "form", form);
 		} else if ("fail".equals(forward)) {
 			return new ModelAndView("homePageDefinition", "form", form);
 		} else {

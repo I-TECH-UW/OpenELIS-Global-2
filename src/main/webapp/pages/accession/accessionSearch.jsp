@@ -30,8 +30,7 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
-		
-<bean:define id="accessionFormat" value='<%=ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat)%>' />
+	
 
 <%!
 	String basePath = "";
@@ -43,6 +42,7 @@
 			+ request.getServerPort() + path + "/";
 
 	accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
+	String accessionFormat = ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat);
 %>
 
 <script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
@@ -59,7 +59,7 @@ function doShowTests(){
 	var form = document.forms[0];
 
 	form.action = '${form.formName}'.sub('Form','') + ".do?accessionNumber="  + $("searchAccessionID").value;
-
+	form.method = "get";
 	form.submit();
 }
 
@@ -84,7 +84,7 @@ function /*void*/ handleEnterEvent(  ){
 			<%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
 		</td>
 		<td width="50%">
-			<input name="searchAccession"
+			<input name="accessionNumber"
 			       size="20"
 			       id="searchAccessionID"
 			       maxlength="<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength()) %>"
@@ -98,9 +98,9 @@ function /*void*/ handleEnterEvent(  ){
 
 	</table>
 	<br/>
-	<html:button property="retrieveTestsButton" id="retrieveTestsID"  onclick="doShowTests();" disabled="true" >
+	<button type="button" name="retrieveTestsButton" id="retrieveTestsID"  onclick="doShowTests();" disabled="disabled" >
 		<%= StringUtil.getContextualMessageForKey("resultsentry.accession.search") %>
-	</html:button>
+	</button>
 
 </div>
 

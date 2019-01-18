@@ -43,7 +43,7 @@
 	<script type="text/javascript" >
 		var testSectionNameIdHash = [];		
 		<c:forEach items="${testSectionsByName}" var="testSection">
-			testSectionsNameIdHash["${testSection.id}"] = "${testSection.value}";
+			testSectionNameIdHash["${testSection.id}"] = "${testSection.value}";
 		</c:forEach>
 	</script>
 </c:if>
@@ -578,6 +578,7 @@ function updateShadowResult(source, index){
 	</tr>
 	<!-- body -->
 	<c:forEach items="${form.testResult}" var="testResult" varStatus="iter">
+	<form:hidden path="testResult[${iter.index}].accessionNumber"/>
 	<c:if test="${testResult.isGroupSeparator}">
 	<tr>
 		<td colspan="10"><hr/></td>
@@ -977,7 +978,6 @@ function updateShadowResult(source, index){
 	</c:forEach>
 </Table>
 <c:if test="${not (form.paging.totalPages == 0)}">
-	<form:hidden id="currentPageID" path="paging.currentPage"/>
 	<c:set var="total" value="${form.paging.totalPages}"/>
 	<c:set var="currentPage" value="${form.paging.currentPage}"/>
 	<button type="button" style="width:100px;" onclick="pager.pageBack();" disabled="${currentPage == '1'}">

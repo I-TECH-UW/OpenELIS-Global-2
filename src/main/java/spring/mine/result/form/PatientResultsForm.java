@@ -7,20 +7,33 @@ import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.paging.PagingBean;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.inventory.form.InventoryKitItem;
+import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
-public class LogbookResultsForm extends BaseForm {
+public class PatientResultsForm extends BaseForm {
 	private PagingBean paging;
 
-	private Boolean singlePatient = false;
-
-	private String currentDate = "";
+	private Boolean singlePatient = true;
 
 	private Timestamp lastupdated;
 
+	private String firstName = "";
+
+	private String lastName = "";
+
+	private String dob = "";
+
+	private String gender = "";
+
+	private String st = "";
+
+	private String subjectNumber = "";
+
+	private String nationalId = "";
+
 	private Boolean displayTestMethod = true;
 
-	private Boolean displayTestKit = true;
+	private Boolean displayTestKit = false;
 
 	private List<TestResultItem> testResult;
 
@@ -30,22 +43,24 @@ public class LogbookResultsForm extends BaseForm {
 
 	private List<String> syphilisKits;
 
+	private Boolean searchFinished = false;
+
 	private String logbookType = "";
 
 	private List<IdValuePair> referralReasons;
 
+	private PatientSearch patientSearch;
+
 	private List<IdValuePair> rejectReasons;
 
-	private List<IdValuePair> testSections;
-
-	private List<IdValuePair> testSectionsByName;
+	private Boolean displayTestSections = false;
 
 	private String testSectionId;
 
-	private Boolean displayTestSections = true;
+	private String warning;
 
-	public LogbookResultsForm() {
-		setFormName("LogbookResultsForm");
+	public PatientResultsForm() {
+		setFormName("PatientResultsForm");
 	}
 
 	public PagingBean getPaging() {
@@ -64,20 +79,68 @@ public class LogbookResultsForm extends BaseForm {
 		this.singlePatient = singlePatient;
 	}
 
-	public String getCurrentDate() {
-		return currentDate;
-	}
-
-	public void setCurrentDate(String currentDate) {
-		this.currentDate = currentDate;
-	}
-
 	public Timestamp getLastupdated() {
 		return lastupdated;
 	}
 
 	public void setLastupdated(Timestamp lastupdated) {
 		this.lastupdated = lastupdated;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getDob() {
+		return dob;
+	}
+
+	public void setDob(String dob) {
+		this.dob = dob;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getSt() {
+		return st;
+	}
+
+	public void setSt(String st) {
+		this.st = st;
+	}
+
+	public String getSubjectNumber() {
+		return subjectNumber;
+	}
+
+	public void setSubjectNumber(String subjectNumber) {
+		this.subjectNumber = subjectNumber;
+	}
+
+	public String getNationalId() {
+		return nationalId;
+	}
+
+	public void setNationalId(String nationalId) {
+		this.nationalId = nationalId;
 	}
 
 	public Boolean getDisplayTestMethod() {
@@ -128,6 +191,14 @@ public class LogbookResultsForm extends BaseForm {
 		this.syphilisKits = syphilisKits;
 	}
 
+	public Boolean getSearchFinished() {
+		return searchFinished;
+	}
+
+	public void setSearchFinished(Boolean searchFinished) {
+		this.searchFinished = searchFinished;
+	}
+
 	public String getLogbookType() {
 		return logbookType;
 	}
@@ -144,6 +215,14 @@ public class LogbookResultsForm extends BaseForm {
 		this.referralReasons = referralReasons;
 	}
 
+	public PatientSearch getPatientSearch() {
+		return patientSearch;
+	}
+
+	public void setPatientSearch(PatientSearch patientSearch) {
+		this.patientSearch = patientSearch;
+	}
+
 	public List<IdValuePair> getRejectReasons() {
 		return rejectReasons;
 	}
@@ -152,20 +231,12 @@ public class LogbookResultsForm extends BaseForm {
 		this.rejectReasons = rejectReasons;
 	}
 
-	public List<IdValuePair> getTestSections() {
-		return testSections;
+	public Boolean getDisplayTestSections() {
+		return displayTestSections;
 	}
 
-	public void setTestSections(List<IdValuePair> testSections) {
-		this.testSections = testSections;
-	}
-
-	public List<IdValuePair> getTestSectionsByName() {
-		return testSectionsByName;
-	}
-
-	public void setTestSectionsByName(List<IdValuePair> testSectionsByName) {
-		this.testSectionsByName = testSectionsByName;
+	public void setDisplayTestSections(Boolean displayTestSections) {
+		this.displayTestSections = displayTestSections;
 	}
 
 	public String getTestSectionId() {
@@ -176,11 +247,11 @@ public class LogbookResultsForm extends BaseForm {
 		this.testSectionId = testSectionId;
 	}
 
-	public Boolean getDisplayTestSections() {
-		return displayTestSections;
+	public String getWarning() {
+		return warning;
 	}
 
-	public void setDisplayTestSections(Boolean displayTestSections) {
-		this.displayTestSections = displayTestSections;
+	public void setWarning(String warning) {
+		this.warning = warning;
 	}
 }
