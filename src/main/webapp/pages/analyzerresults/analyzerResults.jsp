@@ -366,7 +366,6 @@ function /*void*/ markUpdated(){
 
 </table>
 <c:if test="${form.paging.totalPages != 0}">
-	<form:hidden path="paging.currentPage" id="currentPageID"/>
 	<c:set var="total" value="${form.paging.totalPages}"/>
 	<c:set var="currentPage" value="${form.paging.currentPage}"/>
 

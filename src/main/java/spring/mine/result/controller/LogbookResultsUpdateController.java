@@ -1,4 +1,4 @@
-package spring.generated.result.controller;
+package spring.mine.result.controller;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -128,7 +128,8 @@ public class LogbookResultsUpdateController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/LogbookResultsUpdate", method = RequestMethod.GET)
+	@RequestMapping(value = { "/LogbookResultsUpdate", "/PatientResultsUpdate", "/AccessionResultsUpdate",
+			"/StatusResultsUpdate" }, method = RequestMethod.POST)
 	public ModelAndView showLogbookResultsUpdate(HttpServletRequest request,
 			@ModelAttribute("form") LogbookResultsForm form) {
 		String forward = FWD_SUCCESS;
@@ -628,12 +629,46 @@ public class LogbookResultsUpdateController extends BaseController {
 
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
-			return new ModelAndView("redirect:/LogbookResults.do?forward=success", "form", form);
-		} else if ("error".equals(forward)) {
-			return new ModelAndView("resultsLogbookDefinition", "form", form);
-		} else if ("fail".equals(forward)) {
-			return new ModelAndView("homePageDefinition", "form", form);
+		if (request.getRequestURL().indexOf("LogbookResultsUpdate") >= 0) {
+			if ("success".equals(forward)) {
+				return new ModelAndView("redirect:/LogbookResults.do?forward=success", "form", form);
+			} else if ("error".equals(forward)) {
+				return new ModelAndView("resultsLogbookDefinition", "form", form);
+			} else if ("fail".equals(forward)) {
+				return new ModelAndView("homePageDefinition", "form", form);
+			} else {
+				return new ModelAndView("PageNotFound");
+			}
+		} else if (request.getRequestURL().indexOf("AccessionResultsUpdate") >= 0) {
+			if ("success".equals(forward)) {
+				return new ModelAndView("redirect:/AccessionResults.do?forward=success", "form", form);
+			} else if ("error".equals(forward)) {
+				return new ModelAndView("accessionResultDefinition", "form", form);
+			} else if ("fail".equals(forward)) {
+				return new ModelAndView("homePageDefinition", "form", form);
+			} else {
+				return new ModelAndView("PageNotFound");
+			}
+		} else if (request.getRequestURL().indexOf("PatientResultsUpdate") >= 0) {
+			if ("success".equals(forward)) {
+				return new ModelAndView("redirect:/PatientResults.do?forward=success", "form", form);
+			} else if ("error".equals(forward)) {
+				return new ModelAndView("patientResultDefinition", "form", form);
+			} else if ("fail".equals(forward)) {
+				return new ModelAndView("homePageDefinition", "form", form);
+			} else {
+				return new ModelAndView("PageNotFound");
+			}
+		} else if (request.getRequestURL().indexOf("StatusResultsUpdate") >= 0) {
+			if ("success".equals(forward)) {
+				return new ModelAndView("redirect:/StatusResults.do?forward=success&blank=true", "form", form);
+			} else if ("error".equals(forward)) {
+				return new ModelAndView("statusResultDefinition", "form", form);
+			} else if ("fail".equals(forward)) {
+				return new ModelAndView("homePageDefinition", "form", form);
+			} else {
+				return new ModelAndView("PageNotFound");
+			}
 		} else {
 			return new ModelAndView("PageNotFound");
 		}

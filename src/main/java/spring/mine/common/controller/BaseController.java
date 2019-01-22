@@ -29,6 +29,10 @@ public abstract class BaseController implements IActionConstants {
 
 	@Autowired
 	MessageUtil messageUtil;
+	// Request being autowired appears to be threadsafe because of how Spring
+	// handles autowiring, despite all controllers being singletons
+	// However this is still not best practice and it would be better to rely on
+	// Spring's dependency injection for accessing the request
 	@Autowired
 	protected HttpServletRequest request;
 

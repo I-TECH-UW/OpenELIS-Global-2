@@ -359,6 +359,10 @@ function updateShadowResult(source, index){
   $jq("#shadowResult_" + index).val(source.value);
 }
 
+function setField(id, value) {
+	$jq("#" + id).val(value);
+}
+
 </script>
 
 <c:if test="${form.displayTestSections}">
@@ -648,6 +652,7 @@ function updateShadowResult(source, index){
             <form:hidden path="testResult[${iter.index}].considerRejectReason" id="considerRejectReason_${iter.index}" />
             <form:hidden path="testResult[${iter.index}].hasQualifiedResult" id="hasQualifiedResult_${iter.index}" />
             <form:hidden path="testResult[${iter.index}].shadowResultValue" id="shadowResult_${iter.index}" />
+			<form:hidden path="testResult[${iter.index}].analysisMethod" id="analysisMethod_${iter.index}"/>
             <c:if test="${testResult.userChoiceReflex}">
                 <form:hidden path="testResult[${iter.index}].reflexJSONResult"  id="reflexServerResultId_${iter.index}"  cssClass="reflexJSONResult"/>
             </c:if>
@@ -682,10 +687,8 @@ function updateShadowResult(source, index){
 		</td>
 		<c:if test="${form.displayTestMethod}">
 			<td class="ruled" style='text-align: center'>
-				<form:checkbox path="testResult[${iter.index}].analysisMethod"
-							value="on"
-							tabindex='-1'
-							onchange='markUpdated(${iter.index});' />
+				<input type="checkbox" tabindex='-1'
+							onchange='markUpdated(${iter.index});setField(analysisMethod_${iter.index}, "on");' />
 			</td>
 		</c:if>
 		<!-- results -->
@@ -768,6 +771,7 @@ function updateShadowResult(source, index){
 					   			 ${(testResult.displayResultAsLog) ? 'updateLogValue(this, ' += iter.index += ');' : ''}
 					   			 updateShadowResult(this, ${iter.index});"
 					   />
+					   <form:hidden path="testResult[${iter.index}].significantDigits"/>
 			</c:if><c:if test="${testResult.resultType == 'A'}">
 				<form:input path="testResult[${iter.index}].resultValue"
 						  size="20"
