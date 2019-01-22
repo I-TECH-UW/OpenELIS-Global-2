@@ -1,4 +1,4 @@
-package spring.generated.resultvalidation.controller;
+package spring.mine.resultvalidation.controller;
 
 import static org.apache.commons.validator.GenericValidator.isBlankOrNull;
 
@@ -23,10 +23,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.generated.forms.ResultValidationForm;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
-import spring.mine.resultvalidation.controller.BaseResultValidationController;
+import spring.mine.internationalization.MessageUtil;
+import spring.mine.resultvalidation.form.ResultValidationForm;
+import spring.mine.resultvalidation.util.ResultValidationSaveService;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -44,7 +45,6 @@ import us.mn.state.health.lims.common.services.beanAdapters.ResultSaveBeanAdapte
 import us.mn.state.health.lims.common.services.registration.ValidationUpdateRegister;
 import us.mn.state.health.lims.common.services.registration.interfaces.IResultUpdate;
 import us.mn.state.health.lims.common.services.serviceBeans.ResultSaveBean;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dataexchange.orderresult.OrderResponseWorker.Event;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.note.dao.NoteDAO;
@@ -75,7 +75,7 @@ import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
 @Controller
-public class ResultValidationSaveController extends BaseResultValidationController implements IResultSaveService {
+public class ResultValidationSaveController extends BaseResultValidationController {
 
 	// DAOs
 	private static final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
@@ -86,18 +86,6 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 	private static final SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
 	private static final DocumentTrackDAO documentTrackDAO = new DocumentTrackDAOImpl();
 
-	// Update Lists
-	private List<Analysis> analysisUpdateList;
-	private ArrayList<Sample> sampleUpdateList;
-	private ArrayList<Note> noteUpdateList;
-	private ArrayList<Result> resultUpdateList;
-	private List<Result> deletableList;
-
-	private SystemUser systemUser;
-	private ArrayList<Integer> sampleFinishedStatus = new ArrayList<>();
-	private List<ResultSet> modifiedResultSet;
-	private List<ResultSet> newResultSet;
-
 	private static final String RESULT_SUBJECT = "Result Note";
 	private static final String RESULT_TABLE_ID;
 	private static final String RESULT_REPORT_ID;
@@ -107,7 +95,7 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 		RESULT_REPORT_ID = new DocumentTypeDAOImpl().getDocumentTypeByName("resultExport").getId();
 	}
 
-	@RequestMapping(value = "/ResultValidationSave", method = RequestMethod.GET)
+	@RequestMapping(value = "/ResultValidationSave", method = RequestMethod.POST)
 	public ModelAndView showResultValidationSave(HttpServletRequest request,
 			@ModelAttribute("form") ResultValidationForm form) {
 		String forward = FWD_SUCCESS;
@@ -149,19 +137,22 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 		}
 
 		createSystemUser();
-		setSampleFinishedStatuses();
 
-		noteUpdateList = new ArrayList<>();
-		resultUpdateList = new ArrayList<>();
-		analysisUpdateList = new ArrayList<>();
-		modifiedResultSet = new ArrayList<>();
-		newResultSet = new ArrayList<>();
-		deletableList = new ArrayList<>();
+		// Update Lists
+		List<Analysis> analysisUpdateList = new ArrayList<>();
+		ArrayList<Sample> sampleUpdateList = new ArrayList<>();
+		ArrayList<Note> noteUpdateList = new ArrayList<>();
+		ArrayList<Result> resultUpdateList = new ArrayList<>();
+		List<Result> deletableList = new ArrayList<>();
+
+		// wrapper object for holding modifedResultSet and newResultSet
+		IResultSaveService resultSaveService = new ResultValidationSaveService();
 
 		if (testSectionName.equals("serology")) {
-			createUpdateElisaList(resultItemList);
+			createUpdateElisaList(resultItemList, analysisUpdateList);
 		} else {
-			createUpdateList(resultItemList, areListeners);
+			createUpdateList(resultItemList, analysisUpdateList, deletableList, noteUpdateList, deletableList,
+					resultSaveService, areListeners);
 		}
 
 		Transaction tx = HibernateUtil.getSession().beginTransaction();
@@ -182,7 +173,7 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 				}
 			}
 
-			checkIfSamplesFinished(resultItemList);
+			checkIfSamplesFinished(resultItemList, sampleUpdateList);
 
 			// update finished samples
 			for (Sample sample : sampleUpdateList) {
@@ -201,7 +192,7 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 			}
 
 			for (IResultUpdate updater : updaters) {
-				updater.transactionalUpdate(this);
+				updater.transactionalUpdate(resultSaveService);
 			}
 
 			tx.commit();
@@ -211,7 +202,8 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 		}
 
 		for (IResultUpdate updater : updaters) {
-			updater.postTransactionalCommitUpdate(this);
+
+			updater.postTransactionalCommitUpdate(resultSaveService);
 		}
 
 		// route save back to RetroC specific ResultValidationRetroCAction
@@ -278,7 +270,9 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 
 	}
 
-	private void createUpdateList(List<AnalysisItem> analysisItems, boolean areListeners) {
+	private void createUpdateList(List<AnalysisItem> analysisItems, List<Analysis> analysisUpdateList,
+			List<Result> resultUpdateList, List<Note> noteUpdateList, List<Result> deletableList,
+			IResultSaveService resultValidationSave, boolean areListeners) {
 
 		List<String> analysisIdList = new ArrayList<>();
 
@@ -307,15 +301,16 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 					}
 				}
 
-				createNeededNotes(analysisItem, noteService);
+				createNeededNotes(analysisItem, noteService, noteUpdateList);
 
 				if (areResults(analysisItem)) {
-					List<Result> results = createResultFromAnalysisItem(analysisItem, analysisService, noteService);
+					List<Result> results = createResultFromAnalysisItem(analysisItem, analysisService, noteService,
+							noteUpdateList, deletableList);
 					for (Result result : results) {
 						resultUpdateList.add(result);
 
 						if (areListeners) {
-							addResultSets(analysis, result);
+							addResultSets(analysis, result, resultValidationSave);
 						}
 					}
 				}
@@ -323,10 +318,10 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 		}
 	}
 
-	private void createNeededNotes(AnalysisItem analysisItem, NoteService noteService) {
+	private void createNeededNotes(AnalysisItem analysisItem, NoteService noteService, List<Note> noteUpdateList) {
 		if (analysisItem.getIsRejected()) {
 			Note note = noteService.createSavableNote(NoteType.INTERNAL,
-					StringUtil.getMessageForKey("validation.note.retest"), RESULT_SUBJECT, currentUserId);
+					MessageUtil.getMessage("validation.note.retest"), RESULT_SUBJECT, currentUserId);
 			noteUpdateList.add(note);
 		}
 
@@ -337,15 +332,16 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 		}
 	}
 
-	private void addResultSets(Analysis analysis, Result result) {
+	private void addResultSets(Analysis analysis, Result result, IResultSaveService resultValidationSave) {
 		Sample sample = analysis.getSampleItem().getSample();
 		Patient patient = sampleHumanDAO.getPatientForSample(sample);
 		if (finalResultAlreadySent(result)) {
 			result.setResultEvent(Event.CORRECTION);
-			modifiedResultSet.add(new ResultSet(result, null, null, patient, sample, null, false));
+			resultValidationSave.getModifiedResults()
+					.add(new ResultSet(result, null, null, patient, sample, null, false));
 		} else {
 			result.setResultEvent(Event.FINAL_RESULT);
-			newResultSet.add(new ResultSet(result, null, null, patient, sample, null, false));
+			resultValidationSave.getNewResults().add(new ResultSet(result, null, null, patient, sample, null, false));
 		}
 	}
 
@@ -361,7 +357,7 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 		return analysisItem.getIsAccepted() || analysisItem.getIsRejected();
 	}
 
-	private void createUpdateElisaList(List<AnalysisItem> resultItems) {
+	private void createUpdateElisaList(List<AnalysisItem> resultItems, List<Analysis> analysisUpdateList) {
 
 		for (AnalysisItem resultItem : resultItems) {
 
@@ -443,11 +439,10 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 		return analysisList;
 	}
 
-	private void checkIfSamplesFinished(List<AnalysisItem> resultItemList) {
-		sampleUpdateList = new ArrayList<>();
-
+	private void checkIfSamplesFinished(List<AnalysisItem> resultItemList, List<Sample> sampleUpdateList) {
 		String currentSampleId = "";
 		boolean sampleFinished = true;
+		List<Integer> sampleFinishedStatus = getSampleFinishedStatuses();
 
 		for (AnalysisItem analysisItem : resultItemList) {
 
@@ -490,7 +485,7 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 	}
 
 	private List<Result> createResultFromAnalysisItem(AnalysisItem analysisItem, AnalysisService analysisService,
-			NoteService noteService) {
+			NoteService noteService, List<Note> noteUpdateList, List<Result> deletableList) {
 
 		ResultSaveBean bean = ResultSaveBeanAdapter.fromAnalysisItem(analysisItem);
 		ResultSaveService resultSaveService = new ResultSaveService(analysisService.getAnalysis(), currentUserId);
@@ -498,7 +493,7 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 		if (analysisService.patientReportHasBeenDone() && resultSaveService.isUpdatedResult()) {
 			analysisService.getAnalysis().setCorrectedSincePatientReport(true);
 			noteUpdateList.add(noteService.createSavableNote(NoteType.EXTERNAL,
-					StringUtil.getMessageForKey("note.corrected.result"), RESULT_SUBJECT, currentUserId));
+					MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, currentUserId));
 		}
 		return results;
 	}
@@ -527,42 +522,29 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 						&& !isBlankOrNull(item.getMultiSelectResultValues()));
 	}
 
-	private void createSystemUser() {
-		systemUser = new SystemUser();
+	private SystemUser createSystemUser() {
+		SystemUser systemUser = new SystemUser();
 		systemUser.setId(currentUserId);
 		SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
 		systemUserDAO.getData(systemUser);
+		return systemUser;
 	}
 
-	private void setSampleFinishedStatuses() {
-		sampleFinishedStatus = new ArrayList<>();
+	private List<Integer> getSampleFinishedStatuses() {
+		ArrayList<Integer> sampleFinishedStatus = new ArrayList<>();
 		sampleFinishedStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Finalized)));
 		sampleFinishedStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled)));
 		sampleFinishedStatus.add(
 				Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.NonConforming_depricated)));
-	}
-
-	@Override
-	public String getCurrentUserId() {
-		return currentUserId;
-	}
-
-	@Override
-	public List<ResultSet> getNewResults() {
-		return newResultSet;
-	}
-
-	@Override
-	public List<ResultSet> getModifiedResults() {
-		return modifiedResultSet;
+		return sampleFinishedStatus;
 	}
 
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("success".equals(forward)) {
-			return new ModelAndView("/ResultValidation.do", "form", form);
+			return new ModelAndView("redirect:/ResultValidation.do?forward=success", "form", form);
 		} else if ("successRetroC".equals(forward)) {
-			return new ModelAndView("/ResultValidationRetroC.do", "form", form);
+			return new ModelAndView("redirect:/ResultValidationRetroC.do?forward=success", "form", form);
 		} else if ("fail".equals(forward)) {
 			return new ModelAndView("homePageDefinition", "form", form);
 		} else if ("error".equals(forward)) {

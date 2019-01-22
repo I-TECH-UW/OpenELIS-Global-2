@@ -423,6 +423,11 @@ function /*boolean*/ handleEnterEvent(){
 			<c:set var="currentAccessionNumber" value="${resultList.accessionNumber}"/>
 			<c:set var="rowColorIndex" value="${rowColorIndex + 1}"/>
 		</c:if>
+			<form:hidden path="resultList[${iter.index}].accessionNumber"/>
+			<form:hidden path="resultList[${iter.index}].analysisId"/>
+			<form:hidden path="resultList[${iter.index}].testId"/>
+			<form:hidden path="resultList[${iter.index}].sampleId"/>
+			
 			<form:hidden path="resultList[${iter.index}].sampleGroupingNumber"/>
 			<form:hidden path="resultList[${iter.index}].noteId"/>
 			<form:hidden path="resultList[${iter.index}].resultId" id='resultIdValue_${iter.index}'/>
@@ -435,14 +440,14 @@ function /*boolean*/ handleEnterEvent(){
 	      			<c:out value="${resultList.accessionNumber}"/>
 	    		</td>
 	    		<td style="text-align:center">
-					<form:checkbox path="resultList[${iter.index}].isAccepted"
+					<form:checkbox path="resultList[${iter.index}].sampleIsAccepted"
 								   id='sampleAccepted_${resultList.sampleGroupingNumber}'
 								   cssClass="accepted"
 								   onchange="markUpdated(); makeDirty();" 
 								   onclick='acceptSample( this, "${resultList.sampleGroupingNumber}");' />
 				</td>
 				<td style="text-align:center">
-					<form:checkbox path="resultList[${iter.index}].isRejected"
+					<form:checkbox path="resultList[${iter.index}].sampleIsRejected"
 								   id='sampleRejected_${resultList.sampleGroupingNumber}'
 								   cssClass="rejected"
 								   onchange="markUpdated(); makeDirty();"
