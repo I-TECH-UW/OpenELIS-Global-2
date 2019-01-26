@@ -10,8 +10,8 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.handler.MappedInterceptor;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -45,6 +45,7 @@ public class AppConfig implements WebMvcConfigurer {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 		messageSource.setBasename("classpath:/languages/message");
 		messageSource.setDefaultEncoding("UTF-8");
+		messageSource.setUseCodeAsDefaultMessage(true);
 		return messageSource;
 	}
 
@@ -56,10 +57,10 @@ public class AppConfig implements WebMvcConfigurer {
 	}
 
 	@Bean
-	public LocaleChangeInterceptor localeChangeInterceptor() {
+	public MappedInterceptor localeChangeInterceptor() {
 		LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
 		localeChangeInterceptor.setParamName("lang");
-		return localeChangeInterceptor;
+		return new MappedInterceptor(null, localeChangeInterceptor);
 	}
 
 	@Bean
@@ -67,10 +68,4 @@ public class AppConfig implements WebMvcConfigurer {
 		RequestMappingHandlerMapping handlerMap = new RequestMappingHandlerMapping();
 		return handlerMap;
 	}
-
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(localeChangeInterceptor());
-	}
-
 }

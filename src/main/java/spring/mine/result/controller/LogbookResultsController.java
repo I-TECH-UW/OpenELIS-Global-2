@@ -39,7 +39,7 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 @Controller
 public class LogbookResultsController extends LogbookResultsBaseController {
 
-	@RequestMapping(value = "/LogbookResults", method = RequestMethod.GET)
+	@RequestMapping(value = "/LogbookResults", method = { RequestMethod.GET, RequestMethod.POST })
 	public ModelAndView showLogbookResults(HttpServletRequest request, @ModelAttribute("form") LogbookResultsForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
@@ -116,6 +116,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 		} else {
 			paging.page(request, form, requestedPage);
 		}
+		PropertyUtils.setProperty(form, "displayTestKit", false);
 		if (ts != null) {
 			// this does not look right what happens after a new page!!!
 			boolean isHaitiClinical = ConfigurationProperties.getInstance()
@@ -125,8 +126,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 				inventoryList = inventoryUtility.getExistingActiveInventory();
 
 				PropertyUtils.setProperty(form, "displayTestKit", true);
-			} else {
-				PropertyUtils.setProperty(form, "displayTestKit", false);
 			}
 		}
 		List<String> hivKits = new ArrayList<>();

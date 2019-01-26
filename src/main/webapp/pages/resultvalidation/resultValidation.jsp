@@ -339,12 +339,13 @@ function /*boolean*/ handleEnterEvent(){
 	<form:hidden path="paging.currentPage" id="currentPageID" />
 	<c:set var="total" value="${form.paging.totalPages}"/>
 	<c:set var="currentPage" value="${form.paging.currentPage}"/>
-
-	<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" onclick="pager.pageBack();" 
-		<c:if test="${currentPage == '1'}">disabled="disabled"</c:if> />
-	<input type="button" value='<%=StringUtil.getMessageForKey("label.button.next") %>' style="width:100px;" onclick="pager.pageFoward();" 
-		<c:if test="${total == currentPage}">disabled="disabled"</c:if> />
-
+	
+	<button type="button" style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == 1}">disabled="disabled"</c:if>>
+		<spring:message code="label.button.previous"/>
+	</button>
+	<button type="button" style="width:100px;" onclick="pager.pageFoward();" <c:if test="${currentPage == total}">disabled="disabled"</c:if>>
+		<spring:message code="label.button.next"/>
+	</button>
 	&nbsp;
 	<c:out value="${form.paging.currentPage}"/> <spring:message code="report.pageNumberOf" />
 	<c:out value="${form.paging.totalPages}"/>
@@ -427,7 +428,7 @@ function /*boolean*/ handleEnterEvent(){
 			<form:hidden path="resultList[${iter.index}].analysisId"/>
 			<form:hidden path="resultList[${iter.index}].testId"/>
 			<form:hidden path="resultList[${iter.index}].sampleId"/>
-			
+			<form:hidden path="resultList[${iter.index}].resultType"/>
 			<form:hidden path="resultList[${iter.index}].sampleGroupingNumber"/>
 			<form:hidden path="resultList[${iter.index}].noteId"/>
 			<form:hidden path="resultList[${iter.index}].resultId" id='resultIdValue_${iter.index}'/>
@@ -617,7 +618,7 @@ function /*boolean*/ handleEnterEvent(){
 			<tr  >
 				<td colspan="2" style="text-align:right;vertical-align:top"><spring:message code="label.prior.note" />: </td>
 				<td colspan="6" style="text-align:left">
-				<c:out value="${resultList.pastNotes}"/>
+				${resultList.pastNotes}
 				</td>
 			</tr>
 			</c:if>
@@ -656,12 +657,16 @@ function /*boolean*/ handleEnterEvent(){
 	  	
 </Table>
 
-<c:if test="${form.paging.totalPages != 0}">
+<c:if test="${resultCount != 0}">
 	<c:set var="total" value="${form.paging.totalPages}"/>
 	<c:set var="currentPage" value="${form.paging.currentPage}"/>
 
-	<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == '1'}">disabled="disabled"</c:if> />
-	<input type="button" value='<%=StringUtil.getMessageForKey("label.button.next") %>' style="width:100px;" onclick="pager.pageFoward();" <c:if test="${total == currentPage}">disabled="disabled"</c:if> />
+	<button type="button" style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == 1}">disabled="disabled"</c:if>>
+		<spring:message code="label.button.previous"/>
+	</button>
+	<button type="button" style="width:100px;" onclick="pager.pageFoward();" <c:if test="${currentPage == total}">disabled="disabled"</c:if>>
+		<spring:message code="label.button.next"/>
+	</button>
 
 	&nbsp;
 	<c:out value="${form.paging.currentPage}"/> of

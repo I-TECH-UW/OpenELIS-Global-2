@@ -120,7 +120,7 @@
 var compactHozSpace = '<%=compactHozSpace%>';
 var dirty = false;
 
-var pager = new OEPager('${form.formName}', '&type=<c:out value="logbookType"/>');
+var pager = new OEPager('${form.formName}', '&type=<c:out value="${logbookType}"/>');
 pager.setCurrentPageNumber('<c:out value="${form.paging.currentPage}"/>');
 
 var pageSearch; //assigned in post load function
@@ -497,10 +497,10 @@ function setField(id, value) {
 	<form:hidden id="currentPageID" path="paging.currentPage"/>
 	<c:set var="total" value="${form.paging.totalPages}"/>
 	<c:set var="currentPage" value="${form.paging.currentPage}"/>
-	<button type="button" style="width:100px;" onclick="pager.pageBack();" disabled="${currentPage == '1'}">
+	<button type="button" style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == 1}">disabled="disabled"</c:if>>
 		<spring:message code="label.button.previous"/>
 	</button>
-	<button type="button" style="width:100px;" onclick="pager.pageFoward();" disabled="${currentPage == 'total'}">
+	<button type="button" style="width:100px;" onclick="pager.pageFoward();" <c:if test="${currentPage == total}">disabled="disabled"</c:if>>
 		<spring:message code="label.button.next"/>
 	</button>
 	&nbsp;
@@ -652,7 +652,6 @@ function setField(id, value) {
             <form:hidden path="testResult[${iter.index}].considerRejectReason" id="considerRejectReason_${iter.index}" />
             <form:hidden path="testResult[${iter.index}].hasQualifiedResult" id="hasQualifiedResult_${iter.index}" />
             <form:hidden path="testResult[${iter.index}].shadowResultValue" id="shadowResult_${iter.index}" />
-			<form:hidden path="testResult[${iter.index}].analysisMethod" id="analysisMethod_${iter.index}"/>
             <c:if test="${testResult.userChoiceReflex}">
                 <form:hidden path="testResult[${iter.index}].reflexJSONResult"  id="reflexServerResultId_${iter.index}"  cssClass="reflexJSONResult"/>
             </c:if>
@@ -687,8 +686,10 @@ function setField(id, value) {
 		</td>
 		<c:if test="${form.displayTestMethod}">
 			<td class="ruled" style='text-align: center'>
-				<input type="checkbox" tabindex='-1'
-							onchange='markUpdated(${iter.index});setField(analysisMethod_${iter.index}, "on");' />
+				<form:checkbox path="testResult[${iter.index}].analysisMethod"
+					 tabindex='-1'
+					 value='on'
+					 onchange='markUpdated(${iter.index});' />
 			</td>
 		</c:if>
 		<!-- results -->
@@ -879,7 +880,6 @@ function setField(id, value) {
 		</td>
 		<% if( ableToRefer ){ %>
 		<td style="white-space: nowrap" class="ruled">
-            <form:hidden path="testResult[${iter.index}].referralId"/>
             <form:hidden path="testResult[${iter.index}].shadowReferredOut" id="shadowReferred_${iter.index}" />
 		<c:choose >
 		<c:when test="${empty testResult.referralId || testResult.referralCanceled}">
@@ -894,7 +894,7 @@ function setField(id, value) {
 		</c:choose>
 			<form:select path="testResult[${iter.index}].referralReasonId"
 			        id="referralReasonId_${iter.index}"
-					onchange='markUpdated(${iter.index}); handleReferralReasonChange( this, ${iter.index})"'
+					onchange='markUpdated(${iter.index}); handleReferralReasonChange( this, ${iter.index})'
 					disabled="${(testResult.shadowReferredOut && (testResult.referralReasonId == '0')) ? 'false' : 'true'}"
 			        >
 			        <option value='0' >
@@ -984,10 +984,10 @@ function setField(id, value) {
 <c:if test="${not (form.paging.totalPages == 0)}">
 	<c:set var="total" value="${form.paging.totalPages}"/>
 	<c:set var="currentPage" value="${form.paging.currentPage}"/>
-	<button type="button" style="width:100px;" onclick="pager.pageBack();" disabled="${currentPage == '1'}">
+	<button type="button" style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == 1}">disabled="disabled"</c:if>>
 		<spring:message code="label.button.previous"/>
 	</button>
-	<button type="button" style="width:100px;" onclick="pager.pageFoward();" disabled="${currentPage == 'total'}">
+	<button type="button" style="width:100px;" onclick="pager.pageFoward();" <c:if test="${currentPage == total}">disabled="disabled"</c:if>>
 		<spring:message code="label.button.next"/>
 	</button>
 	&nbsp;

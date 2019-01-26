@@ -292,7 +292,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
                    onchange='markModified("${iter.index}");'/>
     </td>
     <td>
-        <form:select path='referralItems[${iter.index}].referredInstituteId>'
+        <form:select path='referralItems[${iter.index}].referredInstituteId'
                 class="required"
                 onchange='markModified("${iter.index}");'>
                 <form:options items="${form.referralOrganizations}" itemValue="id" itemLabel="value"/>
@@ -302,36 +302,35 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
         <form:input path="referralItems[${iter.index}].referredSendDate"
                    size="8"
                    maxlength="10"
-                   onchange="markModified('${iter.index}'); validateDateFormat(this);"
+                   onchange='markModified("${iter.index}"); validateDateFormat(this);'
                    id='sendDate_${iter.index}'/>
     </td>
     <td>
-        <form:hidden path="referralItems[${iter.index}].referredTestId"
+        <input type="hidden" name="_referralItems[${iter.index}].referredTestId"
                      id='shadowReferredTest_${iter.index}'/>
         <form:select path='referralItems[${iter.index}].referredTestId'
                 onchange='markModified("${iter.index}");updateResultField("${iter.index}");'
                 id='testSelection_${iter.index}' 
                 class="required">
             <option value='0'></option>
-			<form:options items="${referralItems.testSelectionsList}" itemValue="id" itemLabel="value"/>
+			<form:options items="${referralItems.testSelectionList}" itemValue="id" itemLabel="value"/>
         </form:select>
     </td>
     <td>
         <form:checkbox path="referralItems[${iter.index}].canceled"
-                       onchange="markModified('${iter.index}'); value=true"/>
+                       onchange='markModified("${iter.index}");'/>
     </td>
     <td class="leftVertical" id='resultCell_${iter.index}'>
     	<c:set var="referredResultType" value="${referralItems.referredResultType}"/>
         <c:if test="${not empty referralItems.referredTestId}"> 
         <div class='resultCell_${iter.index}'>
-        	<c:choose>
-        	<c:when test="${'N' == referredResultType || 'A' == referredResultType || 'R' == referredResultType}">
-	            <form:input path="referralItems[${iter.index}}].referredResult"
+        	<c:if test="${'N' == referredResultType || 'A' == referredResultType || 'R' == referredResultType}">
+	            <form:input path="referralItems[${iter.index}].referredResult"
 	                   class='referralResult_${iter.index}'
 	                   onchange='markModified("${iter.index}");'
 	                   id='numericResult_${iter.index}'
 	                    />
-	        </c:when> <c:when test="${'D' == referredResultType}" > 
+	        </c:if> <c:if test="${'D' == referredResultType}" > 
             <form:select path='referralItems[${iter.index}].referredDictionaryResult'
                     class='referralResult_${iter.index}'
                     id='dictionaryResult_${iter.index}'
@@ -340,7 +339,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
                 <option value="0"></option>
                 <form:options items="${referralItems.dictionaryResults}" itemValue="id" itemLabel="value"/>
             </form:select>
-            </c:when><c:when test="${'M' == referredResultType}"> 
+            </c:if><c:if test="${'M' == referredResultType}"> 
             <form:select path='referralItems[${iter.index}].referredDictionaryResult'
                     id='MultiSelect_${iter.index}'
                     class='referralResult_${iter.index}'
@@ -353,7 +352,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
                          id='multiresultId_${iter.index}' cssClass="multiSelectValues"/>
             <form:hidden path="referralItems[${iter.index}].referredMultiDictionaryResult"
                          id='resultMultiSelect_${iter.index}'/>
-            </c:when><c:when test="${'C' == referredResultType}"> 
+            </c:if><c:if test="${'C' == referredResultType}"> 
             <div id='cascadingMulti_${iter.index}_0'
                  class='cascadingMulti_${iter.index} referralResult_${iter.index}'>
                 <form:hidden path="referralItems[${iter.index}].multiSelectResultValues"
@@ -378,15 +377,14 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
                             />
                 </c:if>
             </div>
-            </c:when>
-            </c:choose>
+            </c:if>
         </div>
         </c:if>
     </td>
     <td>
         <div class='resultCell_${iter.index}'>
             <c:if test="${referralItems.referredTestId != null}">
-	            <form:input path='referralItems${iter.index}.referredReportDate'
+	            <form:input path='referralItems[${iter.index}].referredReportDate'
 	                       cssClass='referralResult_${iter.index}'
 	                       size="8"
 	                       maxlength="10"
@@ -497,14 +495,13 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
     <td colspan="3"></td>
     <td colspan='1'>
     	<spring:message code="referral.addTest" var="addTest"/>
-        <form:input path="addRequest"
-               value="${addTest}>"
+        <button type="button"
                class="textButton"
-               onclick='insertNewTestRequest(this,${iter.index});'/>
+               onclick='insertNewTestRequest(this,${iter.index});'>${addTest}</button>
     </td>
     <td colspan='2' align="right" style="padding:5px">
         <img src="./images/note-add.gif"
-             onclick='showHideNotes(${iter.index});" %>'
+             onclick='showHideNotes(${iter.index});'
              id='showHideButton_${iter.index}'
                 />
         <input type="hidden" id='hideShow_${iter.index}' value="hidden"/>
@@ -527,7 +524,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
     <td colspan="6" align="left">
         <form:textarea path="referralItems[${iter.index}].note"
         			   id='note_${iter.index}'
-                       onchange='markModified(${iter.index});'
+                       onchange='markModified("${iter.index}");'
                        cols="80"
                        rows="3"/>
     </td>

@@ -15,6 +15,7 @@ import spring.mine.patient.form.PatientEditByProjectForm;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
+import us.mn.state.health.lims.patient.saving.RequestType;
 
 @Controller
 public class PatientEditByProjectController extends BasePatientEntryByProject {
@@ -72,8 +73,8 @@ public class PatientEditByProjectController extends BasePatientEntryByProject {
 
 	@Override
 	protected String getPageSubtitleKey() {
+		RequestType requestType = getRequestType(request);
 		String key = null;
-
 		switch (requestType) {
 		case READWRITE: {
 			key = "banner.menu.editPatient.ReadWrite";

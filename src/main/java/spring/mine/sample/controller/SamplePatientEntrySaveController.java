@@ -78,7 +78,6 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 
 @Controller
 public class SamplePatientEntrySaveController extends BaseController {
-	// an attempt was made to get this running, but it is not fully moved over
 
 	private static final String DEFAULT_ANALYSIS_TYPE = "MANUAL";
 	private OrganizationDAO orgDAO = new OrganizationDAOImpl();
@@ -367,7 +366,7 @@ public class SamplePatientEntrySaveController extends BaseController {
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("success".equals(forward)) {
-			return new ModelAndView("samplePatientEntryDefinition", "form", form);
+			return new ModelAndView("redirect:/SamplePatientEntry.do?forward=success", "form", form);
 		} else if ("fail".equals(forward)) {
 			return new ModelAndView("samplePatientEntryDefinition", "form", form);
 		} else {

@@ -86,7 +86,8 @@ public class PatientEntryByProjectUpdateController extends BasePatientEntryByPro
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("success".equals(forward)) {
-			return new ModelAndView("redirect:/PatientEntryByProject.do?forward=success", "form", form);
+			String redirectURL = "/PatientEntryByProject.do?forward=success&type=" + request.getParameter("type");
+			return new ModelAndView("redirect:" + redirectURL, "form", form);
 		} else if ("fail".equals(forward)) {
 			return new ModelAndView("patientEntryByProjectDefinition", "form", form);
 		} else {

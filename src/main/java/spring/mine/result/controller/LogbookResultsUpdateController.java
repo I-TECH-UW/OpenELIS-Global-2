@@ -348,7 +348,9 @@ public class LogbookResultsUpdateController extends BaseController {
 			analysisService.getAnalysis().setSysUserId(currentUserId);
 			analysisService.getAnalysis()
 					.setCompletedDate(DateUtil.convertStringDateToSqlDate(testResultItem.getTestDate()));
-			analysisService.getAnalysis().setAnalysisType(testResultItem.getAnalysisMethod());
+			if (testResultItem.getAnalysisMethod() != null) {
+				analysisService.getAnalysis().setAnalysisType(testResultItem.getAnalysisMethod());
+			}
 			actionDataSet.getModifiedAnalysis().add(analysisService.getAnalysis());
 		}
 	}
@@ -563,7 +565,9 @@ public class LogbookResultsUpdateController extends BaseController {
 	}
 
 	private void updateAnalysis(TestResultItem testResultItem, String testDate, Analysis analysis) {
-		analysis.setAnalysisType(testResultItem.getAnalysisMethod());
+		if (testResultItem.getAnalysisMethod() != null) {
+			analysis.setAnalysisType(testResultItem.getAnalysisMethod());
+		}
 		analysis.setStartedDateForDisplay(testDate);
 
 		// This needs to be refactored -- part of the logic is in

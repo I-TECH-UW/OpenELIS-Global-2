@@ -25,6 +25,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
 import org.apache.commons.validator.GenericValidator;
+import org.owasp.encoder.Encode;
 
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -48,6 +49,10 @@ public class StringUtil {
 	private static final String QUOTE = "\"";
 	private static String STRING_KEY_SUFFIX = null;
 	private static Pattern INTEGER_REG_EX = Pattern.compile("^-?\\d+$");
+
+	public enum EncodeContext {
+		JAVASCRIPT, HTML
+	}
 
 	// private static SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
 
@@ -367,7 +372,7 @@ public class StringUtil {
 
 		String suffixedValue = getMessageForKey(suffixedKey);
 
-		if (!GenericValidator.isBlankOrNull(suffixedValue) && suffixedKey != suffixedValue) {
+		if (!GenericValidator.isBlankOrNull(suffixedValue) && !suffixedKey.equals(suffixedValue)) {
 			return suffixedValue;
 		} else {
 			return getMessageForKey(messageKey);
@@ -398,7 +403,10 @@ public class StringUtil {
 
 		String suffixedValue = getMessageForKey(suffixedKey);
 
-		return GenericValidator.isBlankOrNull(suffixedValue) ? key : suffixedKey;
+		if (GenericValidator.isBlankOrNull(suffixedValue) || suffixedKey.equals(suffixedValue)) {
+			return key;
+		}
+		return suffixedKey;
 	}
 
 	/*
@@ -694,6 +702,19 @@ public class StringUtil {
 		} catch (NumberFormatException e) {
 			LogEvent.logError("StringUtil", "doubleWithInfinity(" + significantDigits + ")", e.toString());
 			return null;
+		}
+	}
+
+	public static String encodeForContext(String message, EncodeContext context) {
+		switch (context) {
+		case HTML:
+			return Encode.forHtml(message);
+		case JAVASCRIPT:
+			return Encode.forJavaScript(message);
+		default:
+			LogEvent.logWarn("StringUtil", "encodeForContext",
+					"Could not escape'" + message + "' for context: " + context.toString());
+			return message;
 		}
 	}
 }

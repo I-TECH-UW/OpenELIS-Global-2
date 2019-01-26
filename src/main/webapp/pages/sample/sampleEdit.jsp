@@ -350,6 +350,7 @@ function makeDirty(){
 </tr>
 	<c:forEach items="${form.existingTests}" var="existingTests" varStatus="iter">
         <form:hidden path="existingTests[${iter.index}].sampleItemChanged" id='sampleItemChanged_${iter.index}' cssClass="sampleItemChanged" indexed="true"/>
+		<form:hidden path="existingTests[${iter.index}].sampleItemId"/>
 	<tr>
 		<td>
 			<form:hidden path="existingTests[${iter.index}].analysisId"/>
@@ -375,7 +376,7 @@ function makeDirty(){
 	        </c:if>
 	        </td>
         <td >
-        	<c:if test="${existingTests.collectionTime != null}">
+        	<c:if test="${existingTests.collectionDate != null}">
 	            <form:input path='existingTests[${iter.index}].collectionTime'
 	                       maxlength='10'
 	                       size ='12'

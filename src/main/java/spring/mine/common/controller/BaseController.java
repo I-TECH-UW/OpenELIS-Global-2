@@ -253,9 +253,6 @@ public abstract class BaseController implements IActionConstants {
 
 		currentUserId = getSysUserId(request);
 
-		// Set page titles in request attribute
-		setPageTitles(request, form);
-
 		// Set the form attributes
 		setFormAttributes(form, request);
 
@@ -276,6 +273,8 @@ public abstract class BaseController implements IActionConstants {
 	}
 
 	protected ModelAndView findForward(String forward, BaseForm form) {
+		// TO DO move the set page titles into an interceptor
+		setPageTitles(request, form);
 		if (LOGIN_PAGE.equals(forward)) {
 			return new ModelAndView("redirect:LoginPage.do", "errors", form.getErrors());
 		}

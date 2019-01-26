@@ -93,7 +93,7 @@ public class ReferredOutTestsUpdateController extends BaseController {
 	private TestDAO testDAO = new TestDAOImpl();
 	private SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
 
-	@RequestMapping(value = "/referredOutTestsUpdate", method = RequestMethod.GET)
+	@RequestMapping(value = "/referredOutTestsUpdate", method = RequestMethod.POST)
 	public ModelAndView showreferredOutTestsUpdate(HttpServletRequest request,
 			@ModelAttribute("form") ReferredOutTestsForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
