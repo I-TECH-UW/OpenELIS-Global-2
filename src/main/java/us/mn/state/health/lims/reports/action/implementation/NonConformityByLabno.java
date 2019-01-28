@@ -25,7 +25,7 @@ import org.apache.commons.validator.GenericValidator;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.services.TableIdService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
@@ -93,10 +93,10 @@ public abstract class NonConformityByLabno extends Report implements IReportCrea
 	}
 	
 	@Override
-	public void initializeReport(BaseActionForm dynaForm) {
+	public void initializeReport(BaseForm form) {
         super.initializeReport();
-        lowerNumber = dynaForm.getString( "accessionDirect" );
-        upperNumber = dynaForm.getString( "highAccessionDirect" );
+        lowerNumber = form.getString( "accessionDirect" );
+        upperNumber = form.getString( "highAccessionDirect" );
         dateRange = new DateRange(lowDateStr, highDateStr);
         createReportParameters();
         errorFound = !validateAccessionNumbers();

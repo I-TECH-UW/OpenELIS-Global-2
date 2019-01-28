@@ -28,7 +28,7 @@ import org.apache.commons.validator.GenericValidator;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -65,12 +65,12 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 	}
 
 	@Override
-	public void setRequestParameters(BaseActionForm dynaForm) {
+	public void setRequestParameters(BaseForm form) {
 		try {
-			PropertyUtils.setProperty(dynaForm, "reportName", StringUtil.getMessageForKey("reports.nonConformity.notification.report"));
-            PropertyUtils.setProperty(dynaForm, "selectList", new ReportSpecificationList( getSiteList(), StringUtil.getMessageForKey( "report.select.site" )));
-			PropertyUtils.setProperty(dynaForm, "useAccessionDirect", Boolean.TRUE);
-			PropertyUtils.setProperty(dynaForm, "instructions",
+			PropertyUtils.setProperty(form, "reportName", StringUtil.getMessageForKey("reports.nonConformity.notification.report"));
+            PropertyUtils.setProperty(form, "selectList", new ReportSpecificationList( getSiteList(), StringUtil.getMessageForKey( "report.select.site" )));
+			PropertyUtils.setProperty(form, "useAccessionDirect", Boolean.TRUE);
+			PropertyUtils.setProperty(form, "instructions",
 					StringUtil.getMessageForKey("reports.nonConformity.notification.report.instructions"));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -123,13 +123,13 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 	}
 
 	@Override
-	public void initializeReport(BaseActionForm dynaForm) {
+	public void initializeReport(BaseForm form) {
 		super.initializeReport();
 		sampleQaEventIds = new ArrayList<String>();
 		checkIdsForPriorPrintRecord = new HashSet<String>();
 		errorFound = false;
-		requestedAccessionNumber = dynaForm.getString("accessionDirect");
-        ReportSpecificationList specificationList = (ReportSpecificationList)dynaForm.get("selectList");
+		requestedAccessionNumber = form.getString("accessionDirect");
+        ReportSpecificationList specificationList = (ReportSpecificationList)form.get("selectList");
 
 		createReportParameters();
 

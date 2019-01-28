@@ -27,7 +27,7 @@ import org.jfree.util.Log;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.services.NoteService;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
@@ -86,11 +86,11 @@ public class RetroCIFollowupRequiredByLocation extends RetroCIReport implements 
 	 * @see us.mn.state.health.lims.reports.action.implementation.IReportParameterSetter#setRequestParameters(us.mn.state.health.lims.common.action.BaseActionForm)
 	 */
 	@Override
-	public void setRequestParameters(BaseActionForm dynaForm) {
+	public void setRequestParameters(BaseForm form) {
 		try {
-			PropertyUtils.setProperty(dynaForm, "reportName", getReportNameForParameterPage());
-			PropertyUtils.setProperty(dynaForm, "useLowerDateRange", Boolean.TRUE);
-			PropertyUtils.setProperty(dynaForm, "useUpperDateRange", Boolean.TRUE);
+			PropertyUtils.setProperty(form, "reportName", getReportNameForParameterPage());
+			PropertyUtils.setProperty(form, "useLowerDateRange", Boolean.TRUE);
+			PropertyUtils.setProperty(form, "useUpperDateRange", Boolean.TRUE);
 		} catch (Exception e) {
 			Log.error("Error in FollowupRequired_ByLocation.setRequestParemeters: ", e);
 			// throw e;
@@ -108,12 +108,12 @@ public class RetroCIFollowupRequiredByLocation extends RetroCIReport implements 
 	 * @see us.mn.state.health.lims.reports.action.implementation.RetroCIReport#initializeReport(us.mn.state.health.lims.common.action.BaseActionForm)
 	 */
 	@Override
-	public void initializeReport(BaseActionForm dynaForm) {
+	public void initializeReport(BaseForm form) {
 		super.initializeReport();
 		errorFound = false;
 
-		lowDateStr = dynaForm.getString("lowerDateRange");
-		highDateStr = dynaForm.getString("upperDateRange");
+		lowDateStr = form.getString("lowerDateRange");
+		highDateStr = form.getString("upperDateRange");
 		dateRange = new DateRange(lowDateStr, highDateStr);
 		
 		createReportParameters();

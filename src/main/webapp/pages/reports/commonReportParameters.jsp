@@ -33,12 +33,6 @@
 
 <script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 
- 
-<bean:define id="reportType" name='${form.formName}' property="reportType"/>
-<bean:define id="reportRequest" name='${form.formName}' property="reportRequest"/>
-<bean:define id="instructions" name='${form.formName}' property="instructions"/>
-
-
 <script type="text/javascript">
 
 
@@ -153,8 +147,9 @@ function onCancel(){
 function onPrint(){
 	if( formCorrect()){
 		var form = window.document.forms[0];
-		form.action = "ReportPrint.do?type=" + '<%= Encode.forJavaScript((String) reportType) %>' + "&report=" + '<%=Encode.forJavaScript((String) reportRequest)%>' + "&cacheBreaker=" + Math.random();
+		form.action = "ReportPrint.do";
 		form.target = "_blank";
+		form.method = 'get';
 		form.submit();
 		return false;
 	}
@@ -168,157 +163,154 @@ function onPrint(){
 
 <div class="oe-report">
 
-<form:hidden path="reportRequest"/>
+<form:hidden path="report" id="reportRequest"/>
+<form:hidden path="type" id="reportType"/>
 
-<logic:equal  name='${form.formName}' property='noRequestSpecifications' value="false">
+<c:if test="${not form.noRequestSpecifications}">
 
-  <logic:equal name='${form.formName}' property="useAccessionDirect" value="true">
+  <c:if test="${form.useAccessionDirect}">
 	  <div><strong><%= StringUtil.getContextualMessageForKey("report.enter.labNumber.headline") %></strong></div>
-  </logic:equal>
+  </c:if>
   
   <div>
 
-	  <logic:equal name='${form.formName}' property="useAccessionDirect" value="true">
+	  <c:if test="${form.useAccessionDirect}">
 		<span style="padding-left: 10px">
-		<logic:equal name='${form.formName}' property="useHighAccessionDirect" value="true">
+		<c:if test="${form.useAccessionDirect}">
 			<%= StringUtil.getContextualMessageForKey("report.from") %>
-		</logic:equal>
+		</c:if>
 		</span>
-		<html:text name='${form.formName}'
-				   styleClass="input-medium" 
-				   property="accessionDirect"
+		<form:input path="accessionDirect"
+				   cssClass="input-medium" 
 				   maxlength='<%= Integer.toString(accessionValidator.getMaxAccessionLength())%>'
 				   />
-	  </logic:equal>
-	  <logic:equal name='${form.formName}' property="useHighAccessionDirect" value="true">
+	  </c:if>
+	  <c:if test="${form.useHighAccessionDirect}">
 		<span style="padding-left: 10px"><%= StringUtil.getContextualMessageForKey("report.to") %></span>
-			<html:text name='${form.formName}'
-			           property="highAccessionDirect"
-			           styleClass="input-medium"
+			<form:input path="highAccessionDirect"
+			           cssClass="input-medium"
 			           maxlength='<%= Integer.toString(accessionValidator.getMaxAccessionLength())%>'/>
-	  </logic:equal>
-	  <logic:equal name='${form.formName}' property="useAccessionDirect" value="true">
+	  </c:if>
+	  <c:if test="${form.useAccessionDirect}">
+	  
 	  	<spring:message code="sample.search.scanner.instructions"/>
-	  </logic:equal>
-	  <logic:notEqual name='${form.formName}' property="useAccessionDirect" value="true">
-	  	<logic:equal name='${form.formName}' property="useHighAccessionDirect" value="true">
+	  </c:if>
+	  <c:if test="${not form.useAccessionDirect}">
+	  	<c:if test="${form.useAccessionDirect}">
 	  		<spring:message code="sample.search.scanner.instructions"/>
-	  	</logic:equal>
-	  </logic:notEqual>
+	  	</c:if>
+	  </c:if>
   </div>
-  <logic:equal name='${form.formName}' property="useHighAccessionDirect" value="true">
+  <c:if test="${form.useHighAccessionDirect}">
     <div><span style="padding-left: 10px"><%= StringUtil.getContextualMessageForKey("report.enter.labNumber.detail") %></span></div>
-  </logic:equal>
-  <logic:equal name='${form.formName}' property="usePatientNumberDirect" value="true">
+  </c:if>
+  <c:if test="${form.usePatientNumberDirect}">
+  
 	<div><strong><%= StringUtil.getContextualMessageForKey("report.enter.subjectNumber") %></strong></div>
-  </logic:equal>
+  </c:if>
   <div>
 
-	  <logic:equal name='${form.formName}' property="usePatientNumberDirect" value="true">
-		<div style="padding: 5px 0 0 10px"><html:text styleClass="input-medium" name='${form.formName}' property="patientNumberDirect" /></div>
-	  </logic:equal>
+	  <c:if test="${form.usePatientNumberDirect}">
+		<div style="padding: 5px 0 0 10px"><form:input path="patientNumberDirect" cssClass="input-medium"/></div>
+	  </c:if>
 
-	  <logic:equal name='${form.formName}' property="useUpperPatientNumberDirect" value="true">
+	  <c:if test="${form.useUpperPatientNumberDirect}">
 	   <span style="padding-left: 10px"><%= StringUtil.getContextualMessageForKey("report.to") %></span>
-		<html:text styleClass="input-medium" name='${form.formName}' property="patientUpperNumberDirect" />
-	  </logic:equal>
+		<form:input path="patientUpperNumberDirect" cssClass="input-medium"/>
+	  </c:if>
   </div>
   
   <div>
-	  <logic:equal name='${form.formName}' property="useLowerDateRange" value="true">
+	  <c:if test="${form.useLowerDateRange}">
 	  	<span style="padding-left: 10px"><spring:message code="report.date.start"/>&nbsp;<%=DateUtil.getDateUserPrompt()%></span>
-		<html:text styleClass="input-medium" name='${form.formName}' property="lowerDateRange" onkeyup="addDateSlashes(this, event);" maxlength="10"/>
-	  </logic:equal>
-	  <logic:equal name='${form.formName}' property="useUpperDateRange" value="true">
+		<form:input path="lowerDateRange" cssClass="input-medium" onkeyup="addDateSlashes(this, event);" maxlength="10"/>
+	  </c:if>
+	  <c:if test="${form.useUpperDateRange}">
 	  	<span style="padding-left: 10px"><spring:message code="report.date.end"/>&nbsp;<%=DateUtil.getDateUserPrompt()%></span>
-	  	<html:text styleClass="input-medium" name='${form.formName}' property="upperDateRange" maxlength="10" onkeyup="addDateSlashes(this, event);"/>
-	  </logic:equal>
+	  	<form:input path="upperDateRange" cssClass="input-medium" maxlength="10" onkeyup="addDateSlashes(this, event);"/>
+	  </c:if>
   </div>
  
-  <logic:equal name='${form.formName}' property="useLocationCode" value="true">
+  <c:if test="${form.useLocationCode}">
   	<div>
    	  <span style="padding-left: 10px"><spring:message code="report.select.service.location"/></span>
-      <html:select name="${form.formName}"  property="locationCode" styleClass="text" >
-		<app:optionsCollection name="${form.formName}" property="locationCodeList" label="organizationName" value="id" />
-	  </html:select>
+      <form:select path="locationCode" cssClass="text" >
+		<option value=""></option><form:options items="${form.locationCodeList}" itemLabel="organizationName" itemValue="id" />
+	  </form:select>
 	</div>
-  </logic:equal>
+  </c:if>
  
-  <logic:equal name='${form.formName}' property="useProjectCode" value="true">
+  <c:if test="${form.useProjectCode}">
    	<div>
 	  <spring:message code="report.select.project"/>
-	  <html:select name="${form.formName}"  property="projectCode" styleClass="text" >
-		<app:optionsCollection  name="${form.formName}" property="projectCodeList" label="localizedName" value="id" />
-	  </html:select>
+	  <form:select path="projectCode" cssClass="text" >
+		<option value=""></option><form:options  items="${form.projectCodeList}" itemLabel="localizedName" itemValue="id" />
+	  </form:select>
 	</div>
-  </logic:equal>
+  </c:if>
   
-  <logic:equal name='${form.formName}' property="usePredefinedDateRanges" value="true">
+  <c:if test="${form.usePredefinedDateRanges}">
    	<div>
 	   <spring:message code="report.select.date.period"/>
-	     <html:select name="${form.formName}"  property="datePeriod" styleClass="text" onchange="datePeriodUpdated(this)" id="datePeriod">
+	     <form:select path="datePeriod" cssClass="text" onchange="datePeriodUpdated(this)" id="datePeriod">
 	     	<option value='year'><%= StringUtil.getMessageForKey("report.select.date.period.year") %></option>
 	     	<option value='months3'><%= StringUtil.getMessageForKey("report.select.date.period.months.3") %></option>
 	     	<option value='months6'><%= StringUtil.getMessageForKey("report.select.date.period.months.6") %></option>
 	     	<option value='months12'><%= StringUtil.getMessageForKey("report.select.date.period.months.12") %></option>
 	     	<option value='custom'><%= StringUtil.getMessageForKey("report.selecte.date.period.custom") %></option>
-		 </html:select>
+		 </form:select>
 	</div>
 	<div>
   	    <spring:message code="report.date.start"/>
-			<html:select name="${form.formName}" 
-						 property="lowerMonth" 
-						 styleClass="text" 
+			<form:select path="lowerMonth" 
+						 cssClass="text" 
 						 disabled="true" 
 						 id="lowerMonth"
 						 onchange="clearAllDates();" >
-				<app:optionsCollection  name="${form.formName}" property="monthList" label="value" value="id" />
-			</html:select>
-			<html:select name="${form.formName}" 
-						 property="lowerYear" 
-						 styleClass="text"  
+				<option value=""></option><form:options items="${form.monthList}" itemLabel="value" itemValue="id" />
+			</form:select>
+			<form:select path="lowerYear" 
+						 cssClass="text"  
 						 disabled="true" 
 						 id="lowerYear" 
 						 onchange="clearAllDates();">
-				<app:optionsCollection  name="${form.formName}" property="yearList" label="value" value="id" />
-			</html:select>
+				<option value=""></option><form:options items="${form.yearList}" itemLabel="value" itemValue="id" />
+			</form:select>
 	    <spring:message code="report.date.end"/>
-			<html:select name="${form.formName}" 
-			             property="upperMonth" 
-			             styleClass="text"   
+			<form:select path="upperMonth" 
+			             cssClass="text"   
 			             disabled="true" 
 			             id="upperMonth"
 			             onchange="clearAllDates();">
-				<app:optionsCollection  name="${form.formName}" property="monthList" label="value" value="id" />
-			</html:select>
-			<html:select name="${form.formName}" 
-			             property="upperYear" 
-			             styleClass="text"   
+				<option value=""></option><form:options items="${form.monthList}" itemLabel="value" itemValue="id" />
+			</form:select>
+			<form:select path="upperYear" 
+			             cssClass="text"   
 			             disabled="true" 
 			             id="upperYear"
 			             onchange="clearAllDates();">
-				<app:optionsCollection  name="${form.formName}" property="yearList" label="value" value="id" />
-			</html:select>
+				<option value=""></option><form:options items="${form.yearList}" itemLabel="value" itemValue="id" />
+			</form:select>
   			<div id="dateWarning" ></div>
 	</div>
-  </logic:equal>
-    <logic:notEmpty name='${form.formName}'  property="selectList" >
+  </c:if>
+    <c:if test="${not empty form.selectList}">
    	<div>
-       <bean:define id="selectList" name='${form.formName}' property="selectList" type="us.mn.state.health.lims.reports.action.implementation.ReportSpecificationList"/>
+       <c:set var="selectList" value="${form.selectList}" />
        <span style="padding-left: 10px"><label for="selectList">
-       <%= selectList.getLabel()%></label>
-	   <html:select name="${form.formName}"  property="selectList.selection" styleClass="text" id="selectList">
-		   <app:optionsCollection  name="${form.formName}" property="selectList.list" label="value" value="id" />
-       </html:select></span>
+       <c:out value="${form.selectList.label}"/></label>
+	   <form:select path="selectList.selection" cssClass="text" id="selectList">
+		   <option value=""></option><form:options items="${form.selectList.list}" itemLabel="value" itemValue="id" />
+       </form:select></span>
 	</div>
-    </logic:notEmpty>
-</logic:equal>
+    </c:if>
+</c:if>
 
 <br/>
 <div align="left" style="width:80%" >
-<logic:notEmpty name='${form.formName}' property="instructions" >
-<%= instructions %>
-</logic:notEmpty>
+<c:if test="${not empty form.instructions}">
+<c:out value="${form.instructions}"/>
+</c:if>
 </div>
 <div style="margin-left: 50px">
 	<input type="button" class="btn" name="printNew" onclick="onPrint();" value="<%=StringUtil.getMessageForKey("label.button.print.new.window") %>">

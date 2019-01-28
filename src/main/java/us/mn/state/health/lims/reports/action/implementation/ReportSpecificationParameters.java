@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 
 public class ReportSpecificationParameters implements IReportParameterSetter {
     public enum Parameter{
@@ -56,27 +56,27 @@ public class ReportSpecificationParameters implements IReportParameterSetter {
 
     }
 	@Override
-	public void setRequestParameters(BaseActionForm dynaForm) {
+	public void setRequestParameters(BaseForm form) {
 	        try {
-                PropertyUtils.setProperty(dynaForm, "reportName", reportTitle);
+                PropertyUtils.setProperty(form, "reportName", reportTitle);
                 if( !GenericValidator.isBlankOrNull( instructions )){
-                    PropertyUtils.setProperty( dynaForm, "instructions", instructions );
+                    PropertyUtils.setProperty( form, "instructions", instructions );
                 }
-                PropertyUtils.setProperty(dynaForm, "reportName", reportTitle);
+                PropertyUtils.setProperty(form, "reportName", reportTitle);
                 for( Parameter parameter : parameters){
                     switch( parameter ){
                         case DATE_RANGE:{
-                            PropertyUtils.setProperty( dynaForm, "useLowerDateRange", true );
-                            PropertyUtils.setProperty( dynaForm, "useUpperDateRange", true );
+                            PropertyUtils.setProperty( form, "useLowerDateRange", true );
+                            PropertyUtils.setProperty( form, "useUpperDateRange", true );
                             break;
                         }
                         case ACCESSION_RANGE:{
-                            PropertyUtils.setProperty( dynaForm, "useAccessionDirect", true );
-                            PropertyUtils.setProperty( dynaForm, "useHighAccessionDirect", true );
+                            PropertyUtils.setProperty( form, "useAccessionDirect", true );
+                            PropertyUtils.setProperty( form, "useHighAccessionDirect", true );
                             break;
                         }
                         case NO_SPECIFICATION:{
-                            PropertyUtils.setProperty( dynaForm, "noRequestSpecifications", true );
+                            PropertyUtils.setProperty( form, "noRequestSpecifications", true );
                             break;
                         }
                     }

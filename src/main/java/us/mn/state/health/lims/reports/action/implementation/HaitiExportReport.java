@@ -20,7 +20,7 @@ package us.mn.state.health.lims.reports.action.implementation;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.jfree.util.Log;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.HaitiColumnBuilder;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ResourceTranslator;
@@ -36,11 +36,11 @@ public class HaitiExportReport extends CSVSampleExportReport implements IReportP
 		return "HaitiExportReport";
 	}
 
-    public void setRequestParameters(BaseActionForm dynaForm) {
+    public void setRequestParameters(BaseForm form) {
         try {
-            PropertyUtils.setProperty(dynaForm, "reportName", getReportNameForParameterPage());
-            PropertyUtils.setProperty(dynaForm, "useLowerDateRange", Boolean.TRUE);
-            PropertyUtils.setProperty(dynaForm, "useUpperDateRange", Boolean.TRUE);
+            PropertyUtils.setProperty(form, "reportName", getReportNameForParameterPage());
+            PropertyUtils.setProperty(form, "useLowerDateRange", Boolean.TRUE);
+            PropertyUtils.setProperty(form, "useUpperDateRange", Boolean.TRUE);
         } catch ( Exception e ) {
             Log.error("Error in " + this.getClass().getSimpleName() + ".setRequestParemeters: ", e);
         }
@@ -54,12 +54,12 @@ public class HaitiExportReport extends CSVSampleExportReport implements IReportP
      * @see us.mn.state.health.lims.reports.action.implementation.IReportCreator#initializeReport(us.mn.state.health.lims.common.action.BaseActionForm)
      */
     @Override
-    public void initializeReport(BaseActionForm dynaForm) {
+    public void initializeReport(BaseForm form) {
     	super.initializeReport();
         errorFound = false;
 
-        lowDateStr = dynaForm.getString("lowerDateRange");
-        highDateStr = dynaForm.getString("upperDateRange");
+        lowDateStr = form.getString("lowerDateRange");
+        highDateStr = form.getString("upperDateRange");
         dateRange = new DateRange(lowDateStr, highDateStr);
 
         createReportParameters();

@@ -32,7 +32,7 @@ import com.lowagie.text.pdf.PdfReader;
 
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -53,7 +53,7 @@ public abstract class CollectionReport implements IReportCreator {
 	}
 
 	protected String reportPath;
-	protected BaseActionForm dynaForm;
+	protected BaseForm form;
 	protected Set<String> handledOrders;
 
 	@Override
@@ -67,9 +67,9 @@ public abstract class CollectionReport implements IReportCreator {
 	}
 
 	@Override
-	public void initializeReport(BaseActionForm dynaForm) {
+	public void initializeReport(BaseForm form) {
 		handledOrders = new HashSet<String>();
-		this.dynaForm = dynaForm;
+		this.form = form;
 	}
 
 	@Override
@@ -152,7 +152,7 @@ public abstract class CollectionReport implements IReportCreator {
 
 		if (reportCreator != null) {
 			reportCreator.setRequestedReport(requestedReport);
-			reportCreator.initializeReport(dynaForm);
+			reportCreator.initializeReport(form);
 			reportCreator.setReportPath(reportPath);
 
 			@SuppressWarnings("unchecked")
@@ -170,7 +170,7 @@ public abstract class CollectionReport implements IReportCreator {
 	}
 
 	protected Patient getPatient() {
-		String patientId = dynaForm.getString("patientNumberDirect");
+		String patientId = form.getString("patientNumberDirect");
 		return PatientUtil.getPatientByIdentificationNumber(patientId);
 	}
 

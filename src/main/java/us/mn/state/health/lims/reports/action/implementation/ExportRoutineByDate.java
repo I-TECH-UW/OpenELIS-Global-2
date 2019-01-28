@@ -24,7 +24,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.project.dao.ProjectDAO;
 import us.mn.state.health.lims.project.daoimpl.ProjectDAOImpl;
@@ -44,13 +44,13 @@ public class ExportRoutineByDate extends CSVRoutineSampleExportReport implements
 		return "ExportRoutineByDate";
 	}
 
-	public void setRequestParameters(BaseActionForm dynaForm) {
+	public void setRequestParameters(BaseForm form) {
 		try {
-			PropertyUtils.setProperty(dynaForm, "reportName", getReportNameForParameterPage());
-			PropertyUtils.setProperty(dynaForm, "useLowerDateRange", Boolean.TRUE);
-			PropertyUtils.setProperty(dynaForm, "useUpperDateRange", Boolean.TRUE);
-			//PropertyUtils.setProperty(dynaForm, "useProjectCode", Boolean.TRUE);
-			//PropertyUtils.setProperty(dynaForm, "projectCodeList", getProjectList());
+			PropertyUtils.setProperty(form, "reportName", getReportNameForParameterPage());
+			PropertyUtils.setProperty(form, "useLowerDateRange", Boolean.TRUE);
+			PropertyUtils.setProperty(form, "useUpperDateRange", Boolean.TRUE);
+			//PropertyUtils.setProperty(form, "useProjectCode", Boolean.TRUE);
+			//PropertyUtils.setProperty(form, "projectCodeList", getProjectList());
 		} catch (Exception e) {
 			Log.error("Error in ExportRoutineByDate.setRequestParemeters: ", e);
 		}
@@ -66,13 +66,13 @@ public class ExportRoutineByDate extends CSVRoutineSampleExportReport implements
 		reportParameters.put("studyName", (project == null) ? null : project.getLocalizedName());
 	} */
 
-	public void initializeReport(BaseActionForm dynaForm) {
+	public void initializeReport(BaseForm form) {
 		super.initializeReport();
 		errorFound = false;
 
-		lowDateStr = dynaForm.getString("lowerDateRange");
-		highDateStr = dynaForm.getString("upperDateRange");
-		//projectStr = dynaForm.getString("projectCode");
+		lowDateStr = form.getString("lowerDateRange");
+		highDateStr = form.getString("upperDateRange");
+		//projectStr = form.getString("projectCode");
 		dateRange = new DateRange(lowDateStr, highDateStr);
 		
 		createReportParameters();

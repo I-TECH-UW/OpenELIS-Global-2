@@ -23,7 +23,7 @@ import java.util.List;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.services.TableIdService;
@@ -81,10 +81,10 @@ public abstract class NonConformityByDate extends Report implements IReportCreat
 	}
 	
 	@Override
-	public void initializeReport(BaseActionForm dynaForm) {
+	public void initializeReport(BaseForm form) {
         super.initializeReport();
-        lowDateStr = dynaForm.getString("lowerDateRange");
-        highDateStr = dynaForm.getString("upperDateRange");
+        lowDateStr = form.getString("lowerDateRange");
+        highDateStr = form.getString("upperDateRange");
         dateRange = new DateRange(lowDateStr, highDateStr);
         
         createReportParameters();
