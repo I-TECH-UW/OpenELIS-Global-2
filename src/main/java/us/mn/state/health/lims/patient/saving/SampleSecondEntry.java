@@ -22,7 +22,7 @@ import static us.mn.state.health.lims.common.services.StatusService.RecordStatus
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.DynaBean;
+import spring.mine.common.form.BaseForm;
 
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -37,8 +37,8 @@ public class SampleSecondEntry extends SampleEntry implements IActionConstants {
      * @param dynaBean
      * @param sysUserId
      */
-    public SampleSecondEntry(DynaBean dynaBean, String sysUserId, HttpServletRequest request) throws Exception {
-        super(dynaBean, sysUserId, request);
+    public SampleSecondEntry(BaseForm form, String sysUserId, HttpServletRequest request) throws Exception {
+        super(form, sysUserId, request);
         this.newPatientStatus = null;   // no change
         this.newSampleStatus = ValidationRegistration;
     }

@@ -4,15 +4,15 @@ import static us.mn.state.health.lims.common.services.StatusService.RecordStatus
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.DynaBean;
+import spring.mine.common.form.BaseForm;
 
 import us.mn.state.health.lims.common.services.StatusService.RecordStatus;
 import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
 
 public class SampleEntryAfterPatientEntry extends SampleEntry {
 
-    public SampleEntryAfterPatientEntry(DynaBean dynaBean, String sysUserId, HttpServletRequest request) throws Exception {
-        super(dynaBean, sysUserId, request);        
+    public SampleEntryAfterPatientEntry(BaseForm form, String sysUserId, HttpServletRequest request) throws Exception {
+        super(form, sysUserId, request);        
         this.newPatientStatus = null;  // leave it be
         this.newSampleStatus  = RecordStatus.InitialRegistration;
     }

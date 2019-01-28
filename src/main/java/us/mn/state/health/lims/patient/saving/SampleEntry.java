@@ -23,9 +23,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.DynaBean;
+import spring.mine.common.form.BaseForm;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.struts.action.ActionErrors;
+
 
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.provider.query.SampleItemTestProvider;
@@ -44,18 +45,18 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 public class SampleEntry extends Accessioner {
     
-    protected DynaBean dynaBean;
+    protected BaseForm form;
     protected HttpServletRequest request;
     
-    public SampleEntry(DynaBean dynaBean, String sysUserId, HttpServletRequest request) throws Exception {
-        super((String)dynaBean.get("labNo"), (String)dynaBean.get("subjectNumber"), (String)dynaBean.get("siteSubjectNumber"), sysUserId);
+    public SampleEntry(BaseForm form, String sysUserId, HttpServletRequest request) throws Exception {
+        super((String)form.get("labNo"), (String)form.get("subjectNumber"), (String)form.get("siteSubjectNumber"), sysUserId);
         
-        this.projectFormMapper = getProjectFormMapper(dynaBean);
+        this.projectFormMapper = getProjectFormMapper(form);
         this.projectFormMapper.setPatientForm(false);
         this.projectForm = projectFormMapper.getProjectForm();
         findStatusSet();
 
-        this.dynaBean = dynaBean;
+        this.form = form;
         this.request = request;
         
         this.newPatientStatus = RecordStatus.NotRegistered;

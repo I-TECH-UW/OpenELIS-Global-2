@@ -220,10 +220,7 @@ function selectStudy( divId ) {
     switchStudyForm( divId );
 }
 
-function switchStudyForm( divId ){
-	
-	
-	
+function switchStudyForm( divId ){	
     hideAllDivs();
     if (divId != "" && divId != "0") {
         $("projectFormName").value = divId;
@@ -298,8 +295,6 @@ function /*void*/ setSaveButton() {
     $("saveButtonId").disabled = !validToSave;
     
 }
-
-
 
 </script>
 
@@ -3202,20 +3197,7 @@ function /*void*/ setSaveButton() {
                 <form:input path="ProjectData.underInvestigationNote" maxlength="1000" size="80"
                     onchange="makeDirty();" id="vl.underInvestigationComment" />
             </td>
-    </tr>
-    
- 
-    
-
-    
-    
-    
-
-
-
-
-   
-    
+    </tr> 
     
     </table>   
 </div>
