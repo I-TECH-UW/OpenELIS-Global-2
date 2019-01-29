@@ -118,13 +118,13 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 	  public ModelAndView postSampleEntryByProject(HttpServletRequest request,
 	      @ModelAttribute("form") SampleEntryByProjectForm form) throws Exception {
 	    
+	  // bean to form conversion side effect 
 	  if(form.getGender().indexOf("id=M") != -1)
 		  	form.setGender("M");
 	  else if (form.getGender().indexOf("id=F") != -1)
 	  		form.setGender("F");
-	  else form.setGender(null);
 	  
-	  System.out.println("Gender:" + form.getGender());
+	  //System.out.println("Gender:" + form.getGender());
 	  
 	    String forward = FWD_SUCCESS;
 
@@ -152,9 +152,6 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 	    }
 	    logAndAddMessage(request, "performAction", "errors.UpdateException");
 	    
-	    if (form == null) {
-	    	form = new SampleEntryByProjectForm();
-	    }
 	    form.setFormName("sampleEntryByProjectForm");
 	    form.setFormAction("");
 	    
@@ -200,10 +197,6 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 
 		return item;
 	}
-
-	    
-	    
-	    
 
   protected ModelAndView findLocalForward(String forward, BaseForm form) {
     if ("success".equals(forward)) {

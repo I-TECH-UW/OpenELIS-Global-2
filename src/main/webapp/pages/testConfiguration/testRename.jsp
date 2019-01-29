@@ -13,7 +13,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-
+<%--
   ~ The contents of this file are subject to the Mozilla Public License
   ~ Version 1.1 (the "License"); you may not use this file except in
   ~ compliance with the License. You may obtain a copy of the License at
@@ -168,21 +168,28 @@
     }
 </script>
 
-<form:hidden path="testId" />
-<input type="button" value='<%= StringUtil.getMessageForKey("banner.menu.administration") %>'
-       onclick="submitAction('MasterListsPage.do');"
-       class="textButton"/> &rarr;
-<input type="button" value='<%= StringUtil.getMessageForKey("configuration.test.management") %>'
-       onclick="submitAction('TestManagementConfigMenu.do');"
-       class="textButton"/>&rarr;
-<%=StringUtil.getMessageForKey( "label.testName" )%>
+
+<input 	type="button"
+		class="textButton" 
+		value="<%= StringUtil.getMessageForKey("banner.menu.administration")%>"
+		onclick="submitAction('MasterListsPage.do');" >&rarr;
+
+<input  type="button" 
+		class="textButton"
+		value="<%= StringUtil.getMessageForKey("configuration.test.management") %>"
+       	onclick="submitAction('TestManagementConfigMenu.do');" >&rarr;
+        
+
+<%=StringUtil.getMessageForKey( "label.testName" ) %>
 <br><br>
+
 
 <div id="editDiv" style="display: none">
     <h1 id="action"><spring:message code="label.button.edit"/></h1>
 
     <h2><%=StringUtil.getMessageForKey( "sample.entry.test" )%>:<span id="testName"></span></h2>
     <br>
+    
     <table>
         <tr>
             <td></td>
@@ -196,38 +203,63 @@
             <td style="text-align: center"><spring:message code="label.english"/></td>
             <td style="text-align: center"><spring:message code="label.french"/></td>
         </tr>
-        <tr>
+    
+     	<tr>
             <td style="padding-right: 20px"><spring:message code="label.current"/>:</td>
             <td id="nameEnglish" style="padding-left: 10px"></td>
             <td id="nameFrench" style="padding-left: 10px"></td>
             <td id="reportNameEnglish" style="padding-left: 10px"></td>
             <td id="reportNameFrench" style="padding-left: 10px"></td>
         </tr>
-        <tr>
+        
+         <tr>
             <td style="padding-right: 20px"><spring:message code="label.new"/>:</td>
-            <td><span class="requiredlabel">*</span><form:input path="nameEnglish"  size="40"
-                                                               styleClass="required"
-                                                               onchange="handleInput(this);"/>
+            <td class="required">*</td>
+            <td>
+            	<form:input
+            			path="form.nameEnglish"
+            			id="form:nameEnglish" 
+                        cssClass="text"
+                        maxlength="40"
+                        onchange="handleInput(this);"/>
             </td>
-            <td><span class="requiredlabel">*</span><form:input path="nameFrench"  size="40"
-                                                               styleClass="required" onchange="handleInput(this);"/>
+            <td class="required">*</td>
+            <td>
+            	<form:input
+            			path="form.nameFrench"
+            			id="form:nameFrench" 
+                        cssClass="text"
+                        maxlength="40"
+                        onchange="handleInput(this);"/>
             </td>
-            <td><span class="requiredlabel">*</span><form:input path="reportNameEnglish"
-                                                               size="40" styleClass="required"
-                                                               onchange="handleInput(this);"/>
+            <td class="required">*</td>
+            <td>
+            	<form:input 
+            			path="form.reportNameEnglish"
+            			id="form:reportNameEnglish" 
+                        cssClass="text"
+                        maxlength="40"
+                        onchange="handleInput(this);"/>
             </td>
-            <td><span class="requiredlabel">*</span><form:input path="reportNameFrench"
-                                                               size="40" styleClass="required"
-                                                               onchange="handleInput(this);"/>
+            <td class="required">*</td>
+            <td>
+            	<form:input 
+            			path="form.reportNameFrench"
+            			id="form:reportNameFrench" 
+                        cssClass="text"
+                        maxlength="40"
+                        onchange="handleInput(this);"/>
             </td>
         </tr>
-    </table>
-    <div style="text-align: center" id="editButtons">
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.next")%>'
+     </table>
+
+     <div style="text-align: center" id="editButtons">
+        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.save")%>'
                onclick="confirmValues();"/>
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous")%>'
+        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.cancel")%>'
                onclick='cancel()'/>
     </div>
+
     <div style="text-align: center; display: none;" id="confirmationButtons">
         <input type="button" value='<%=StringUtil.getMessageForKey("label.button.accept")%>'
                onclick="savePage();"/>
@@ -235,6 +267,7 @@
                onclick='rejectConfirmation();'/>
     </div>
     <br><br>
+   
 </div>
 
 <table>
