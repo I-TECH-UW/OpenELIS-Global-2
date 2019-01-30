@@ -155,28 +155,28 @@ function submitSearchForClick(button){
 		</tr>
 		<tr>
 		<!-- we put "!" before disableEdit then the "Editer" button will be  always disabled at the  initialization of this page   -->
-			<td><form:button 
+			<td><button type="button" id="edit"
 					onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?ID=');return false;"
 					name="edit"
 					disabled="<%=!disableEdit%>">
 					<spring:message code="label.button.edit" />
-				</form:button> &nbsp; 
-				<form:button 
+				</button> &nbsp; 
+				<button type="button" id="deactivate"
 					onclick="setMenuAction(this, window.document.forms[0], 'Delete', 'yes', '?ID=');return false;"
 					name="deactivate"
 					disabled="disabled"> 
 					<spring:message code="label.button.deactivate" />
-  			</form:button>
+  			</button>
 				
 				&nbsp;
 				<spring:message code="label.form.or" />&nbsp; 
 				
-				<form:button 
+				<button type="button" id="add"
 					onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?ID=0');return false;"
 					name="add"
 					disabled="<%=Boolean.valueOf(addDisabled).booleanValue()%>">
 					<spring:message code="label.button.add" />
-  			</form:button>
+  			</button>
 	   </td>
 
 			<c:if test="${not empty menuSearchByTableColumn}">
@@ -188,11 +188,11 @@ function submitSearchForClick(button){
 						disabled="<%=Boolean.valueOf(notAllowSearching).booleanValue()%>" />
 
 
-					<form:button  name="search" id="searchButton"
+					<button type="button" name="search" id="searchButton"
 						onclick="submitSearchForClick(this);return false;"
 						disabled="<%=Boolean.valueOf(notAllowSearching).booleanValue()%>">
   			       <spring:message code="label.button.search"/>
-  		       </form:button>
+  		       </button>
           </td>
 
 
@@ -203,18 +203,18 @@ function submitSearchForClick(button){
 
       
 			<td align="right">
-			   <form:button 
+			   <button type="button" id="previous"
 					onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?paging=1');return false;"
 					name="previous"
 					disabled="<%=Boolean.valueOf(previousDisabled).booleanValue()%>">
 					<spring:message code="label.button.previous" />
-				</form:button> &nbsp; 
-				<form:button 
+				</button> &nbsp; 
+				<button type="button" id="next"
 					onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?paging=2');return false;"
 					name="next"
 					disabled="<%=Boolean.valueOf(nextDisabled).booleanValue()%>">
 					<spring:message code="label.button.next" />
-				</form:button>
+				</button>
        </td>
  	</tr>
 		<tr>
@@ -241,19 +241,19 @@ function output() {
       }
    }
      if(total == 0){
-    	 window.document.${form.formName}.edit.disabled=true;
+    	 document.getElementById("edit").disabled=true;
     	 <% if( allowDeactivate){ %>
-    	 	window.document.${form.formName}.deactivate.disabled=true;
+    	 	document.getElementById("deactivate").disabled=true;
     	 <% } %>	
      } else if(total == 1){
-    	 window.document.${form.formName}.edit.disabled=false;
+    	 document.getElementById("edit").disabled=false;
     	 <% if( allowDeactivate){ %>
-    	 	window.document.${form.formName}.deactivate.disabled=false;
+    	 	document.getElementById("deactivate").disabled=false;
     	 <% } %>		
      } else {
-    	 window.document.${form.formName}.edit.disabled=true;
+    	 document.getElementById("edit").disabled=true;
     	 <% if( allowDeactivate){ %>
-    	 	window.document.${form.formName}.deactivate.disabled=false;
+    	 	document.getElementById("deactivate").disabled=false;
     	 <% } %>		
      }
 }

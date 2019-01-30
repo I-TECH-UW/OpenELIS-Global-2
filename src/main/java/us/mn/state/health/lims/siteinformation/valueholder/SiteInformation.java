@@ -21,7 +21,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
 
-public class SiteInformation extends BaseObject{
+public class SiteInformation extends BaseObject {
 
 	private static final long serialVersionUID = 1L;
 
@@ -35,6 +35,7 @@ public class SiteInformation extends BaseObject{
 	private ValueHolder domain = new ValueHolder();
 	private int group;
 	private String tag;
+	private String localization;
 	private ValueHolder schedule = new ValueHolder();
 	private String dictionaryCategoryId;
 	private String descriptionKey;
@@ -42,31 +43,39 @@ public class SiteInformation extends BaseObject{
 	public int getGroup() {
 		return group;
 	}
+
 	public void setGroup(int group) {
 		this.group = group;
 	}
 
 	public CronScheduler getSchedule() {
-		return (CronScheduler)schedule.getValue();
+		return (CronScheduler) schedule.getValue();
 	}
+
 	public void setSchedule(CronScheduler schedule) {
 		this.schedule.setValue(schedule);
 	}
+
 	public String getId() {
 		return id;
 	}
+
 	public void setId(String id) {
 		this.id = id;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -74,6 +83,7 @@ public class SiteInformation extends BaseObject{
 	public void setValue(String value) {
 		this.value = value;
 	}
+
 	public String getValue() {
 		return value;
 	}
@@ -81,46 +91,69 @@ public class SiteInformation extends BaseObject{
 	public void setEncrypted(boolean encrypted) {
 		this.encrypted = encrypted;
 	}
+
 	public boolean isEncrypted() {
 		return encrypted;
 	}
+
 	public void setDomain(SiteInformationDomain domain) {
 		this.domain.setValue(domain);
 	}
+
 	public SiteInformationDomain getDomain() {
-		return (SiteInformationDomain)domain.getValue();
+		return (SiteInformationDomain) domain.getValue();
 	}
+
 	public String getValueType() {
 		return valueType;
 	}
+
 	public void setValueType(String valueType) {
 		this.valueType = valueType;
 	}
+
 	public String getInstructionKey() {
 		return instructionKey;
 	}
+
 	public void setInstructionKey(String instructionKey) {
 		this.instructionKey = instructionKey;
 	}
+
 	public String getTag() {
 		return tag;
 	}
+
 	public void setTag(String tag) {
 		this.tag = tag;
 	}
+
 	public String getDictionaryCategoryId() {
 		return dictionaryCategoryId;
 	}
+
+	public String getLocalization() {
+		return localization;
+	}
+
+	public void setLocalization(String localization) {
+		this.localization = localization;
+	}
+
 	public void setDictionaryCategoryId(String dictionaryCategoryId) {
 		this.dictionaryCategoryId = dictionaryCategoryId;
 	}
+
 	public String getDescriptionKey() {
 		return descriptionKey;
 	}
+
 	public void setDescriptionKey(String descriptionKey) {
 		this.descriptionKey = descriptionKey;
 	}
-	protected String getDefaultLocalizedName(){
+
+	@Override
+	protected String getDefaultLocalizedName() {
 		return getName();
 	}
 }
