@@ -33,7 +33,8 @@
 	<form:form name="${form.formName}" 
 		   action="${form.formAction}" 
 		   modelAttribute="form" 
-		   method="${form.formMethod}">
+		   method="${form.formMethod}"
+		   id="menuForm">
 	<c:forEach items="${form.menuList}" var="site" varStatus="iter">
 		<c:set var="siteId" value="${site.id}"/>
 	  	<tr>

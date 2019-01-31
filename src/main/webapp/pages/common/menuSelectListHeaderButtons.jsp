@@ -100,7 +100,8 @@ function submitSearchForEnter(e){
 }
 
 function submitSearchForClick(button){
-     setMenuAction( button, window.document.forms[0], 'Search', 'yes', '?search=Y');
+	
+     setMenuAction( button, document.getElementById("searchForm"), 'Search', 'yes', '?search=Y');
 }
 </script>
 
@@ -156,13 +157,15 @@ function submitSearchForClick(button){
 		<tr>
 		<!-- we put "!" before disableEdit then the "Editer" button will be  always disabled at the  initialization of this page   -->
 			<td><button type="button" id="edit"
-					onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?ID=');return false;"
+					onclick="setMenuAction(this, document.getElementById('menuForm'), '', 'yes', '?ID=');return false;"
 					name="edit"
-					disabled="<%=!disableEdit%>">
+					<%if ( !disableEdit ) {%>
+					disabled="disabled"
+					<%} %>>
 					<spring:message code="label.button.edit" />
 				</button> &nbsp; 
 				<button type="button" id="deactivate"
-					onclick="setMenuAction(this, window.document.forms[0], 'Delete', 'yes', '?ID=');return false;"
+					onclick="setMenuAction(this, document.getElementById('menuForm'), 'Delete', 'yes', '?ID=');return false;"
 					name="deactivate"
 					disabled="disabled"> 
 					<spring:message code="label.button.deactivate" />
@@ -172,14 +175,23 @@ function submitSearchForClick(button){
 				<spring:message code="label.form.or" />&nbsp; 
 				
 				<button type="button" id="add"
-					onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?ID=0');return false;"
+					onclick="setMenuAction(this, document.getElementById('menuForm'), '', 'yes', '?ID=0');return false;"
 					name="add"
-					disabled="<%=Boolean.valueOf(addDisabled).booleanValue()%>">
+					<%if ( Boolean.valueOf(addDisabled).booleanValue() ) {%>
+					disabled="disabled"
+					<%} %>
+					>
 					<spring:message code="label.button.add" />
   			</button>
 	   </td>
 
 			<c:if test="${not empty menuSearchByTableColumn}">
+			<form:form name="${form.formName}" 
+				   action="${form.formAction}" 
+				   modelAttribute="form" 
+				   onSubmit="return submitForm(this);" 
+				   method="${form.formMethod}"
+				   id="searchForm">
 				<td></td>
 
 				<td align="right"><spring:message code="label.form.searchby" /> <spring:message code="<%=searchColumn%>" /> 
@@ -190,10 +202,14 @@ function submitSearchForClick(button){
 
 					<button type="button" name="search" id="searchButton"
 						onclick="submitSearchForClick(this);return false;"
-						disabled="<%=Boolean.valueOf(notAllowSearching).booleanValue()%>">
+						<%if ( Boolean.valueOf(notAllowSearching).booleanValue() ) {%>
+						disabled="disabled"
+						<%} %>
+						>
   			       <spring:message code="label.button.search"/>
   		       </button>
           </td>
+          </form:form>
 
 
        </c:if>
@@ -204,15 +220,21 @@ function submitSearchForClick(button){
       
 			<td align="right">
 			   <button type="button" id="previous"
-					onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?paging=1');return false;"
+					onclick="setMenuAction(this, document.getElementById('menuForm'), '', 'yes', '?paging=1');return false;"
 					name="previous"
-					disabled="<%=Boolean.valueOf(previousDisabled).booleanValue()%>">
+					<%if ( Boolean.valueOf(previousDisabled).booleanValue() ) {%>
+					disabled="disabled"
+					<%} %>
+					>
 					<spring:message code="label.button.previous" />
 				</button> &nbsp; 
 				<button type="button" id="next"
-					onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?paging=2');return false;"
+					onclick="setMenuAction(this, document.getElementById('menuForm'), '', 'yes', '?paging=2');return false;"
 					name="next"
-					disabled="<%=Boolean.valueOf(nextDisabled).booleanValue()%>">
+					<%if ( Boolean.valueOf(nextDisabled).booleanValue() ) {%>
+					disabled="disabled"
+					<%} %>
+					>
 					<spring:message code="label.button.next" />
 				</button>
        </td>
@@ -233,9 +255,9 @@ function submitSearchForClick(button){
 
 function output() {
  var total = 0;
-   for ( var i = 0; i < window.document.${form.formName}.length; i++ ) {
-      if ( window.document.${form.formName}.elements[ i ].type == 'checkbox' ) {
-         if (window.document.${form.formName}.elements[ i ].checked == true ) {
+   for ( var i = 0; i < document.getElementById("menuForm").length; i++ ) {
+      if ( document.getElementById("menuForm").elements[ i ].type == 'checkbox' ) {
+         if (document.getElementById("menuForm").elements[ i ].checked == true ) {
             total++;
          }
       }

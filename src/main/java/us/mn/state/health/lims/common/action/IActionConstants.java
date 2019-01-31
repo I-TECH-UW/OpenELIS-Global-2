@@ -62,7 +62,9 @@ public interface IActionConstants {
 	String FWD_VALIDATION_ERROR = "error";
 	String FWD_SUCCESS = "success";
 	String FWD_SUCCESS_INSERT = "insertSuccess";
+	String FWD_SUCCESS_DELETE = "deleteSuccess";
 	String FWD_FAIL_INSERT = "insertFail";
+	String FWD_FAIL_DELETE = "deleteFail";
 
 	String FWD_NEXT = "next";
 	String FWD_PREVIOUS = "previous";

@@ -276,11 +276,17 @@ public abstract class BaseController implements IActionConstants {
 		// TO DO move the set page titles into an interceptor
 		setPageTitles(request, form);
 		if (LOGIN_PAGE.equals(forward)) {
-			return new ModelAndView("redirect:LoginPage.do", "errors", form.getErrors());
+			return new ModelAndView("redirect:LoginPage.do", "errors", getErrors());
 		}
 
 		// insert global forwards here
 		return findLocalForward(forward, form);
+	}
+
+	protected ModelAndView findForward(String forward, Map<String, Object> requestObjects, BaseForm form) {
+		ModelAndView mv = findForward(forward, form);
+		mv.addAllObjects(requestObjects);
+		return mv;
 	}
 
 	protected ModelAndView getForward(ModelAndView mv, String id, String startingRecNo, String direction) {

@@ -68,7 +68,7 @@ if (document.addEventListener) {
 
 function setMenuAction(button, form, action, validate, parameters) {
   
-  var fieldObj = window.document.forms[0].elements['selectedIDs'];
+  var fieldObj = document.getElementById("menuForm").elements['selectedIDs'];
   var ID = '';
   var searchString = '';
   var doSearch = '<%=request.getAttribute(IActionConstants.IN_MENU_SELECT_LIST_HEADER_SEARCH)%>';
@@ -132,9 +132,10 @@ function setMenuAction(button, form, action, validate, parameters) {
   
     parameters += "&startingRecNo=1";
      
-    var fieldObj = window.document.forms[0].elements['searchString'];
-    if (fieldObj != null) {
-     searchString = fieldObj.value;
+    var searchForm = document.getElementById("searchForm");
+    if (searchForm != null) {
+        var fieldObj = searchForm.elements['searchString'];
+        searchString = fieldObj.value;
     }
   }
    
