@@ -16,7 +16,7 @@ import spring.mine.common.validator.BaseErrors;
 public class MasterListsPageController extends BaseController {
   @RequestMapping(
       value = "/MasterListsPage",
-      method = RequestMethod.GET
+      method = { RequestMethod.GET, RequestMethod.POST }
   )
   public ModelAndView showMasterListsPage(HttpServletRequest request,
       @ModelAttribute("form") MainForm form) {

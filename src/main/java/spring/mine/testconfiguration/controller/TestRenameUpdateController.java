@@ -61,7 +61,7 @@ public class TestRenameUpdateController extends BaseController {
 
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("success".equals(forward)) {
-			return new ModelAndView("/TestRenameEntry.do", "form", form);
+			return new ModelAndView("testRenameDefinition", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");
 		}
