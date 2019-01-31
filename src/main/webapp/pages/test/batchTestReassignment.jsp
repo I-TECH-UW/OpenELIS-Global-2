@@ -30,9 +30,6 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
-<bean:define id='formName' 
-<bean:define id="sampleTypeList" name='${form.formName}' property="sampleList" type="java.util.List"/>
-
 <%!
     String basePath = "";
 %>
@@ -238,7 +235,7 @@
 
     function handleCancelOnly(checkboxElement){
         if( checkboxElement.checked){
-            alert("<bean:message key="warning.test.batch.reassignment.cancel" />");
+            alert("<spring:message code="warning.test.batch.reassignment.cancel" />");
             $jq("#replacementTestSelectionSpan").hide();
         }else{
             $jq("#replacementTestSelectionSpan").show();
@@ -337,19 +334,19 @@
     }
 </script>
 
-<html:hidden id="jsonWad" name='${form.formName}' property="jsonWad" />
+<form:hidden path="jsonWad" id="jsonWad" />
 
 <h3><spring:message code="label.selectSampleType"/></h3>
 
 <div id="selectDiv" >
-    <logic:notEmpty name="${form.formName}" property="statusChangedList" >
+    <c:if test="${not empty form.statusChangedList}" >
     <hr>
     <spring:message code="label.test.batch.status.change.warning" /><br><br>
     <div style="overflow: hidden">
     <div style="float:left; width:15%;overflow: hidden;">
-        <spring:message code="label.sampleType" />:&nbsp;<bean:write name='${form.formName}' property="statusChangedSampleType" /><br><br>
-        <spring:message code="label.currentTest" />:&nbsp;<bean:write name='${form.formName}' property="statusChangedCurrentTest" /><br><br>
-        <bean:write name='${form.formName}' property="statusChangedNextTest" /><br>
+        <spring:message code="label.sampleType" />:&nbsp;<c:out value="${form.statusChangedSampleType}" /><br><br>
+        <spring:message code="label.currentTest" />:&nbsp;<c:out value="${form.statusChangedCurrentTest}" /><br><br>
+        <c:out value="${form.statusChangedNextTest}" /><br>
     </div>
     <div style="float:left;overflow: hidden;">
         <table>
@@ -358,26 +355,26 @@
             <th width="30%"><spring:message code="report.from" /></th>
             <th width="30%"><spring:message code="report.to" /></th>
             </tr>
-            <logic:iterate id="bean" name="${form.formName}" property="statusChangedList" type="BatchTestStatusChangeBean" >
+            <c:forEach items="${form.statusChangedList}" var="bean">
                 <tr>
-                    <td><bean:write name="bean" property="labNo" /></td>
-                    <td><bean:write name="bean" property="oldStatus" /></td>
-                    <td><bean:write name="bean" property="newStatus" /></td>
+                    <td><c:out value="${bean.labNo}" /></td>
+                    <td><c:set value="${bean.oldStatus}" /></td>
+                    <td><c:set value="${bean.newStatus}" /></td>
                 </tr>
-            </logic:iterate>
+            </c:forEach>
         </table><br>
     </div>
     </div>
     <br>
     <hr>
-    </logic:notEmpty>
+    </c:if>
     <spring:message code="label.sampleType" /><br>
 
     <select onchange="sampleTypeChanged(this); makeDirty();" >
     <option value="0"></option>
-    <% for (IdValuePair pair : (List<IdValuePair>) sampleTypeList) {%>
-    <option value="<%=pair.getId()%>" ><%=pair.getValue()%></option>
-    <% } %>
+    <c:forEach items="${form.sampleList}" var="sampleType">
+    <option value="${sampleType.id}">${sampleType.value}</option>
+    </c:forEach>
     </select>
 
     <div id="testSelection" style="overflow: hidden; display:none" >
