@@ -372,6 +372,10 @@
         <put-attribute name="body" value="/pages/testConfiguration/testRename.jsp"/>
     </definition>
 
+    <definition name="testModityDefinition" extends="baseMenuDefinition">
+        <put-attribute name="body" value="/pages/testConfiguration/testModify.jsp"/>
+    </definition>
+
     <definition name="panelRenameDefinition" extends="baseMenuDefinition">
         <put-attribute name="body" value="/pages/testConfiguration/panelRename.jsp"/>
     </definition>
