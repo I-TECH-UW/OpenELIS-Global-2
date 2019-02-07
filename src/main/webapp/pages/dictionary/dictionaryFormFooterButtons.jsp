@@ -187,16 +187,14 @@ function nextAction(form, ignoreFields) {
   			disabled="disabled"
   			<%} %>
   			>
-  			
   			   <spring:message code="label.button.save"/>
   			</button>
   	    </td>
         
 		<td>&nbsp;</td>
 		<td>
-  			<button type="button" 
-  			        onclick="setAction(window.document.forms[0], 'Cancel', 'no', '');"  
-  			        id="cancel" >
+  			<button type="button" onclick="cancelAction();"  name="cancel" id="cancel" >
+  			   <%--AIS - bugzilla 1860--%>
   			   <spring:message code="label.button.exit"/>
   			</button>
 	    </td>

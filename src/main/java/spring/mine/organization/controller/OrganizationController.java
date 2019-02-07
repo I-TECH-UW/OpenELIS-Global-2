@@ -116,7 +116,8 @@ public class OrganizationController extends BaseController {
 
 	}
 
-	@RequestMapping(value = "/Organization", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value = { "/Organization", "/NextPreviousOrganization" }, method = { RequestMethod.POST,
+			RequestMethod.GET })
 	public ModelAndView showOrganization(HttpServletRequest request, @ModelAttribute("form") OrganizationForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
@@ -124,6 +125,7 @@ public class OrganizationController extends BaseController {
 			form = new OrganizationForm();
 		}
 		form.setFormAction("");
+		form.setCancelAction("CancelOrganization.do");
 		BaseErrors errors = new BaseErrors();
 		if (form.getErrors() != null) {
 			errors = (BaseErrors) form.getErrors();
@@ -139,6 +141,8 @@ public class OrganizationController extends BaseController {
 		// If there is a parameter present, we should bring up an existing
 		// Organization to edit.
 		String id = request.getParameter(ID);
+		String start = request.getParameter("startingRecNo");
+		String direction = request.getParameter("direction");
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "true");
@@ -148,6 +152,24 @@ public class OrganizationController extends BaseController {
 		PropertyUtils.setProperty(form, "departmentList", departmentList);
 
 		Organization organization = new Organization();
+		organization.setId(id);
+
+		// redirect to get organization for next or previous entry
+		if (FWD_NEXT.equals(direction) || FWD_PREVIOUS.equals(direction)) {
+			List organizations;
+			organizationDAO.getData(organization);
+			if (FWD_NEXT.equals(direction)) {
+				organizations = organizationDAO.getNextOrganizationRecord(organization.getId());
+			} else {
+				organizations = organizationDAO.getPreviousOrganizationRecord(organization.getId());
+			}
+			if (organizations != null && organizations.size() > 0) {
+				organization = (Organization) organizations.get(0);
+			}
+			String newId = organization.getId();
+			String url = "redirect:/Organization.do?ID=" + newId + "&startingRecNo=" + start;
+			return new ModelAndView(url, "form", form);
+		}
 
 		boolean isNew = (id == null) || "0".equals(id);
 		if (isNew) {
@@ -156,13 +178,8 @@ public class OrganizationController extends BaseController {
 			request.setAttribute("key", "organization.edit.title");
 		}
 
-		OrganizationDAO organizationDAO = new OrganizationDAOImpl();
-
 		if (!isNew) {
-			organization.setId(id);
-
 			organizationDAO.getData(organization);
-
 			if (organization.getOrganization() != null) {
 				organization.setSelectedOrgId(organization.getOrganization().getId());
 			}
@@ -540,16 +557,25 @@ public class OrganizationController extends BaseController {
 		return states;
 	}
 
+	@RequestMapping(value = "/CancelOrganization", method = RequestMethod.GET)
+	public ModelAndView cancelOrganization(HttpServletRequest request, @ModelAttribute("form") OrganizationForm form,
+			SessionStatus status) {
+		status.setComplete();
+		return findForward(FWD_CANCEL, form);
+	}
+
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("success".equals(forward)) {
 			return new ModelAndView("organizationDefinition", "form", form);
-		} else if ("insertSuccess".equals(forward)) {
-			return new ModelAndView("redirect:/Organization.do", "form", form);
-		} else if ("insertFail".equals(forward)) {
-			return new ModelAndView("organizationDefinition", "form", form);
 		} else if ("fail".equals(forward)) {
 			return new ModelAndView("masterListsPageDefinition", "form", form);
+		} else if ("insertSuccess".equals(forward)) {
+			return new ModelAndView("redirect:/OrganizationMenu.do", "form", form);
+		} else if ("insertFail".equals(forward)) {
+			return new ModelAndView("organizationDefinition", "form", form);
+		} else if (FWD_CANCEL.equals(forward)) {
+			return new ModelAndView("redirect:/OrganizationMenu.do", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");
 		}

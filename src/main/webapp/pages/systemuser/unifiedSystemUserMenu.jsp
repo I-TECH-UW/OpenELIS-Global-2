@@ -41,6 +41,12 @@
 	   	  <spring:message code="login.timeout"/>
 	   </th>
 	</tr>
+	
+	<form:form name="${form.formName}" 
+		   action="${form.formAction}" 
+		   modelAttribute="form" 
+		   method="${form.formMethod}"
+		   id="menuForm">
 	<c:forEach items="${form.menuList}" var="systemUser" varStatus="iter">
 	  <tr>
 	   <td class="textcontent">
@@ -75,4 +81,5 @@
 	   
        </tr>
 	</c:forEach>
+	</form:form>
 </table>

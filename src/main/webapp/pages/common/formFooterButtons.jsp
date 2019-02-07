@@ -170,9 +170,15 @@ if( typeof(showSuccessMessage) != 'undefined' ){
 	<tbody valign="middle">
 		<tr>
 	      	<td>
-  			<form:button onclick="saveOnClickAction();" property="save" name="save"  disabled="<%=Boolean.valueOf(saveDisabled).booleanValue()%>">
+  			<button type="button" 
+  					onclick="saveOnClickAction();" 
+  					name="save"  
+  					<% if (Boolean.valueOf(saveDisabled).booleanValue()) {%>
+  					disabled="disabled"
+  					<% } %>
+  					>
   			   <spring:message code="label.button.save" />
-  			</form:button>
+  			</button>
   	    </td>
 
 		<td>&nbsp;</td>
@@ -189,13 +195,27 @@ if( typeof(showSuccessMessage) != 'undefined' ){
    		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
   		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	    <td>
-  			<button type="button" onclick="previousAction(window.document.forms[0], '');" name="previous" property="previous" disabled="<%=Boolean.valueOf(previousDisabled).booleanValue()%>">
+  			<button type="button" 
+  					onclick="previousAction(window.document.forms[0], '');" 
+  					name="previous" 
+  					property="previous" 
+  					<% if (Boolean.valueOf(previousDisabled).booleanValue()) {%>
+  					disabled="disabled"
+  					<% } %>
+					>
   			   <spring:message code="label.button.previous"/>
   			</button>
 	    </td>
      	<td>&nbsp;</td>
 	    <td>
-  			<button type="button" onclick="nextAction(window.document.forms[0], '');"  name="next" property="next" disabled="<%=Boolean.valueOf(nextDisabled).booleanValue()%>">
+  			<button type="button" 
+  					onclick="nextAction(window.document.forms[0], '');"  
+  					name="next" 
+  					property="next" 
+  					<% if (Boolean.valueOf(nextDisabled).booleanValue()) {%>
+  					disabled="disabled"
+  					<% } %>
+  					>
   			   <spring:message code="label.button.next"/>
   			</button>
 	    </td>

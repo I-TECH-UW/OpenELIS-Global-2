@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.analyzerimport.form.AnalyzerTestNameForm;
@@ -52,6 +53,7 @@ public class AnalyzerTestNameController extends BaseController {
 			form = new AnalyzerTestNameForm();
 		}
 		form.setFormAction("");
+		form.setCancelAction("CancelAnalyzerTestName.do");
 		BaseErrors errors = new BaseErrors();
 		if (form.getErrors() != null) {
 			errors = (BaseErrors) form.getErrors();
@@ -95,8 +97,8 @@ public class AnalyzerTestNameController extends BaseController {
 
 	@RequestMapping(value = "/UpdateAnalyzerTestName", method = RequestMethod.POST)
 	public ModelAndView showUpdateAnalyzerTestName(HttpServletRequest request,
-			@ModelAttribute("form") AnalyzerTestNameForm form) {
-		String forward = FWD_SUCCESS;
+			@ModelAttribute("form") AnalyzerTestNameForm form, SessionStatus status) {
+		String forward = FWD_SUCCESS_INSERT;
 		if (form == null) {
 			form = new AnalyzerTestNameForm();
 		}
@@ -116,6 +118,9 @@ public class AnalyzerTestNameController extends BaseController {
 		request.setAttribute(NEXT_DISABLED, "false");
 
 		forward = validateAndUpdateAnalyzerTestName(request, form);
+		if (FWD_SUCCESS_INSERT.equals(forward)) {
+			status.setComplete();
+		}
 		return findForward(forward, form);
 	}
 
@@ -224,6 +229,13 @@ public class AnalyzerTestNameController extends BaseController {
 		request.setAttribute(NEXT_DISABLED, TRUE);
 	}
 
+	@RequestMapping(value = "/CancelAnalyzerTestName", method = RequestMethod.GET)
+	public ModelAndView cancelAnalyzerTestName(HttpServletRequest request,
+			@ModelAttribute("form") AnalyzerTestNameForm form, SessionStatus status) {
+		status.setComplete();
+		return findForward(FWD_CANCEL, form);
+	}
+
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("success".equals(forward)) {
@@ -234,6 +246,8 @@ public class AnalyzerTestNameController extends BaseController {
 			return new ModelAndView("redirect:/AnalyzerTestNameMenu.do", "form", form);
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
 			return new ModelAndView("redirect:/AnalyzerTestName.do", "form", form);
+		} else if (FWD_CANCEL.equals(forward)) {
+			return new ModelAndView("redirect:/AnalyzerTestNameMenu.do", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");
 		}

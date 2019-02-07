@@ -75,6 +75,7 @@ public class SiteInformationController extends BaseController {
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
 		BaseErrors errors = new BaseErrors();
+		form.setCancelAction("Cancel" + form.getFormAction() + ".do");
 		if (form.getErrors() != null) {
 			errors = (BaseErrors) form.getErrors();
 		}
@@ -485,18 +486,31 @@ public class SiteInformationController extends BaseController {
 
 	}
 
+	@RequestMapping(value = { "/CancelNonConformityConfiguration", "/CancelWorkplanConfiguration",
+			"/CancelPrintedReportsConfiguration", "/CancelSampleEntryConfig", "/CancelResultConfiguration",
+			"/CancelMenuStatementConfig", "/CancelPatientConfiguration",
+			"/CancelSiteInformation" }, method = RequestMethod.GET)
+	public ModelAndView cancelSiteInformation(HttpServletRequest request, @ModelAttribute("form") BaseForm form,
+			SessionStatus status) {
+		status.setComplete();
+		return findForward(FWD_CANCEL, form);
+	}
+
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("success".equals(forward)) {
 			return new ModelAndView("siteInformationDefinition", "form", form);
+		} else if ("fail".equals(forward)) {
+			return new ModelAndView("masterListsPageDefinition", "form", form);
 		} else if ("insertSuccess".equals(forward)) {
 			String url = form.getFormAction() + "Menu.do";
 			return new ModelAndView("redirect:/" + url, "form", form);
 		} else if ("insertFailure".equals(forward)) {
 			String url = form.getFormAction() + ".do";
 			return new ModelAndView("redirect:/" + url, "form", form);
-		} else if ("fail".equals(forward)) {
-			return new ModelAndView("masterListsPageDefinition", "form", form);
+		} else if (FWD_CANCEL.equals(forward)) {
+			String url = form.getFormAction() + "Menu.do";
+			return new ModelAndView("redirect:/" + url, "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");
 		}

@@ -31,8 +31,8 @@ import us.mn.state.health.lims.login.valueholder.UserSessionData;
 @Controller
 public class DictionaryMenuController extends BaseMenuController {
 
-	@RequestMapping(value = { "/DictionaryMenu", "/CancelDictionary", "/SearchDictionaryMenu" }, method = {
-			RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = { "/DictionaryMenu", "/SearchDictionaryMenu" }, method = { RequestMethod.GET,
+			RequestMethod.POST })
 	public ModelAndView showDictionaryMenu(HttpServletRequest request, @ModelAttribute("form") DictionaryMenuForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;

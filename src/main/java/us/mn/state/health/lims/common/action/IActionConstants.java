@@ -65,6 +65,7 @@ public interface IActionConstants {
 	String FWD_SUCCESS_DELETE = "deleteSuccess";
 	String FWD_FAIL_INSERT = "insertFail";
 	String FWD_FAIL_DELETE = "deleteFail";
+	String FWD_CANCEL = "cancel";
 
 	String FWD_NEXT = "next";
 	String FWD_PREVIOUS = "previous";
