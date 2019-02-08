@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
+f<%@ page language="java" contentType="text/html; charset=utf-8"
          import="us.mn.state.health.lims.common.action.IActionConstants,
 	            us.mn.state.health.lims.common.util.*,
 	            us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
@@ -336,7 +336,7 @@ function /*void*/ setSaveButton() {
             	<form:select path="ProjectData.ARVcenterName"
             				 id="iarv.centerName"
                              onchange="iarv.checkCenterName(true)">
-                             <form:option value="">&nbsp;</form:option>
+                             <option value="">&nbsp;</option>
             	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS_BY_NAME']}" itemLabel="organizationName" /> 
                 </form:select>
             </td>
@@ -434,7 +434,7 @@ function /*void*/ setSaveButton() {
                         cssClass="text"
                         maxlength="7"
                         onchange="iarv.checkSubjectNumber(true)"/>
-                <div id="iarv.subjectNumberMessage" class="blank" />
+                <div id="iarv.subjectNumberMessage" class="blank" ></div>
             </td>
         </tr>
         <tr>

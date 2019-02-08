@@ -79,7 +79,7 @@
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=StringUtil.getMessageForKey("configuration.test.modify.explain")%></li>
         <li><input type="button" value="<%= StringUtil.getMessageForKey("configuration.test.activate") %>"
-                   onclick="submitAction('TestActivate.do');"
+                   onclick="submitAction('TestActivation.do');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=StringUtil.getMessageForKey("configuration.test.activate.explain")%></li>
         <li><input type="button" value="<%= StringUtil.getMessageForKey("configuration.test.orderable") %>"

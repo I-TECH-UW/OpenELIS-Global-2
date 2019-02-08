@@ -1,8 +1,11 @@
 <%@ page language="java"
          contentType="text/html; charset=utf-8"
-         import="us.mn.state.health.lims.common.action.IActionConstants,
+         import="java.util.List,
+         		us.mn.state.health.lims.common.action.IActionConstants,
          		us.mn.state.health.lims.common.util.IdValuePair,
          		us.mn.state.health.lims.common.util.StringUtil,
+         		spring.generated.forms.TestActivationForm,
+         		us.mn.state.health.lims.test.beanItems.TestActivationBean,
          		us.mn.state.health.lims.common.util.Versioning" %>
 
 <%@ page isELIgnored="false" %>
@@ -27,7 +30,9 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
- 
+ <c:set var="jsonChangeList" value="${form.jsonChangeList}" />
+ <c:set var="activeTestList" value="${form.activeTestList}" />
+ <c:set var="inactiveTestList" value="${form.inactiveTestList}" />
 
 <%!
     String basePath = "";
@@ -380,7 +385,7 @@
        }
     }
     function configureForSelect() {
-        $jq("#step").text("<%=StringUtil.getMessageForKey("label.testActivate")%>");
+        $jq("#step").text("<%=StringUtil.getContextualMessageForKey("label.testActivate")%>");
         $jq("#instructions").text("<spring:message code="instructions.test.activation"/>");
         $jq("#activateSection input").prop("disabled", false);
         $jq(".selectHide").hide();
@@ -391,7 +396,7 @@
 
     function configureForSort() {
         $jq("#step").text("Sort");
-        $jq("#instructions").text("<%=StringUtil.getMessageForKey("instructions.test.activation.sort")%>");
+        $jq("#instructions").text("<%=StringUtil.getContextualMessageForKey("instructions.test.activation.sort")%>");
         $jq(".sortHide").hide();
         $jq(".sortShow").show();
 
@@ -404,8 +409,8 @@
     }
 
     function configureForConfirmation() {
-        $jq("#step").text("<%=StringUtil.getMessageForKey("label.testActivate.confirm")%>");
-        $jq("#instructions").text("<%=StringUtil.getMessageForKey("instructions.test.activation.confirm")%>");
+        $jq("#step").text("<%=StringUtil.getContextualMessageForKey("label.testActivate.confirm")%>");
+        $jq("#instructions").text("<%=StringUtil.getContextualMessageForKey("instructions.test.activation.confirm")%>");
         $jq(".confirmHide").hide();
         $jq(".confirmShow").show();
 
@@ -432,31 +437,28 @@
 </script>
 
 <form>
-    <form:hidden path="jsonChangeList" id="jsonChangeList"/>
-</form>
-<br>
-<input type="button" value='<%= StringUtil.getMessageForKey("banner.menu.administration") %>'
+<input type="button" value='<%= StringUtil.getContextualMessageForKey("banner.menu.administration") %>'
        onclick="submitAction('MasterListsPage.do');"
        class="textButton"/> &rarr;
-<input type="button" value='<%= StringUtil.getMessageForKey("configuration.test.management") %>'
+<input type="button" value='<%= StringUtil.getContextualMessageForKey("configuration.test.management") %>'
        onclick="submitAction('TestManagementConfigMenu.do');"
        class="textButton"/>&rarr;
 <span id="testActivationSelectionButton" class="selectHide sortShow confirmShow" style="display:none" >
-<input type="button" value='<%=StringUtil.getMessageForKey("label.testActivate")%>'
+<input type="button" value='<%=StringUtil.getContextualMessageForKey("label.testActivate")%>'
        onclick="configureForSelect();"
        class="textButton"/>&rarr;
 </span>
 
 <span id="testActivationSortButton" class="selectHide sortHide" style="display:none" >
-<input type="button" value='<%= StringUtil.getMessageForKey("label.button.sort") %>'
+<input type="button" value='<%= StringUtil.getContextualMessageForKey("label.button.sort") %>'
        onclick="configureForSort();"
        class="textButton"/>&rarr;
 </span>
 
-<span id="testActivationSort" class="selectHide sortShow" style="display:none" ><%= StringUtil.getMessageForKey("label.button.sort") %></span>
-<span id="testActivationConfirmation" class="selectHide sortHide confirmShow" style="display:none" ><%=StringUtil.getMessageForKey("label.confirmation")%></span>
-<span id="testActivationSelection" class="selectShow sortHide confirmHide"><%=StringUtil.getMessageForKey("label.testActivate")%></span>
-<br><br>
+<span id="testActivationSort" class="selectHide sortShow" style="display:none" ><%= StringUtil.getContextualMessageForKey("label.button.sort") %></span>
+<span id="testActivationConfirmation" class="selectHide sortHide confirmShow" style="display:none" ><%=StringUtil.getContextualMessageForKey("label.confirmation")%></span>
+<span id="testActivationSelection" class="selectShow sortHide confirmHide"><%=StringUtil.getContextualMessageForKey("label.testActivate")%></span>
+</form>
 
 <h1 id="step"><spring:message code="label.testActivate"/></h1><br/>
 
@@ -464,24 +466,24 @@
 <br>
 
 <div id="testActivate" class="selectHide sortHide" >
-    <h4><%=StringUtil.getMessageForKey("label.test.activate")%></h4>
+    <h4><%=StringUtil.getContextualMessageForKey("label.test.activate")%></h4>
 
     <div id="testActivateList" class="selectClear"></div>
     <br>
 </div>
 <div id="sampleTypeActivate" class="selectHide  sortHide" >
-    <h4><%=StringUtil.getMessageForKey("label.sample.types.activate")%></h4>
+    <h4><%=StringUtil.getContextualMessageForKey("label.sample.types.activate")%></h4>
     <div id="sampleTypeActivateList" class="selectClear"></div>
     <br>
 </div>
 <div id="testDeactivate" class="selectHide sortHide">
-    <h4><%=StringUtil.getMessageForKey("label.test.deactivate")%></h4>
+    <h4><%=StringUtil.getContextualMessageForKey("label.test.deactivate")%></h4>
 
     <div id="testDeactivateList" class="selectClear"></div>
     <br>
 </div>
 <div id="sampleTypeDeactivate" class="selectHide sortHide" >
-    <h4><%=StringUtil.getMessageForKey("label.sample.types.deactivate")%></h4>
+    <h4><%=StringUtil.getContextualMessageForKey("label.sample.types.deactivate")%></h4>
 
     <div id="sampleTypeDeactivateList" class="selectClear"></div>
     <br>
@@ -489,14 +491,14 @@
 
 
 <div id="sortOrder" class="selectHide sortShow" style="display:none">
-    <h4><%=StringUtil.getMessageForKey("label.test.display.order")%></h4>
+    <h4><%=StringUtil.getContextualMessageForKey("label.test.display.order")%></h4>
     <div id="sortOrderList" class="selectClear" ></div>
 </div>
 <div id="sampleTypeSortOrder" class="selectHide" style="display: none">
     <hr/>
-    <h4><%=StringUtil.getMessageForKey("label.sample.type.display.order")%></h4>
-    <table width='<%=columnSize + "%"%>' >
-        <tr><th><%=StringUtil.getMessageForKey("label.sample.types")%></th></tr>
+    <h4><%=StringUtil.getContextualMessageForKey("label.sample.type.display.order")%></h4>
+    <table style="width:'<%=columnSize + "%"%>" >
+        <tr><th><%=StringUtil.getContextualMessageForKey("label.sample.types")%></th></tr>
         <tr><td>
             <ul class="sortable ui-sortable selectClear" id="sampleTypeSortList"></ul>
         </td></tr>
@@ -506,36 +508,36 @@
 <div class="selectHide sortShow confirmShow" style="margin-left:auto; margin-right:auto;width: 40%;">
     <input type="button"
            class="sortShow confirmHide"
-           value='<%= StringUtil.getMessageForKey("label.button.next")%>'
+           value='<%= StringUtil.getContextualMessageForKey("label.button.next")%>'
            onclick="nextStepToConfirmation();"
            id="nextButtonSort"/>
     <input type="button"
            class="sortHide confirmShow"
-           value='<%=StringUtil.getMessageForKey("label.button.accept")%>'
+           value='<%=StringUtil.getContextualMessageForKey("label.button.accept")%>'
            onclick="savePage();"
            id="acceptButton"
            style="display: none"/>
 
-    <input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous")%>' onclick="navigateBack()" />
+    <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.previous")%>' onclick="navigateBack()" />
 </div>
 
 <hr/>
-<div id="activateSection" class="indent">
-    <logic:iterate id="activeBean" name="${form.formName}" property="activeTestList">
-        <div>
-            <span class="activeSampleType"><bean:write name="activeBean" property="sampleType.value"/>
-                <html:hidden name="activeBean" property="sampleType.id"/>
-            </span>
 
+    <c:forEach var="activeBean" varStatus="iter" items="${form.activeTestList}">
+        <div>
+            <span class="activeSampleType"><%-- <c:out value="${activeBean.sampleType.value}"/> --%>
+                <%-- <form:hidden path="${activeBean[iter]}"/> --%>
+            </span>
             <div class="indent">
-                <bean:define id="testList" name='activeBean' property="activeTests" type="java.util.List<IdValuePair>"/>
-                <% testCount = 0;%>
-                <table width="100%">
+                <% 
+                	TestActivationBean bean = (TestActivationBean) pageContext.getAttribute("activeBean");
+                	List<IdValuePair> testList = bean.getActiveTests();
+                	testCount = 0; 
+                %>
+                <table style="width:'<%=columnSize + "%"%>" >
                     <% while (testCount < testList.size()) {%>
                     <tr>
-                        <%
-                            columnCount = 0;
-                        %>
+                        <% columnCount = 0; %>
                         <% while (testCount < testList.size() && (columnCount < columns)) {%>
                         <td width='<%=columnSize + "%"%>'>
                             <input type="checkbox"
@@ -556,11 +558,11 @@
                     </tr>
                     <% } %>
                 </table>
-
-                <bean:define id="testList" name='activeBean' property="inactiveTests"
-                             type="java.util.List<IdValuePair>"/>
-                <% testCount = 0; %>
-                <table width="100%">
+                <% 
+            		testList = bean.getInactiveTests();
+                	testCount = 0; 
+                %>
+                <table style="width:100%;">
                     <% while (testCount < testList.size()) {%>
                     <tr>
                         <%
@@ -587,57 +589,21 @@
                 </table>
             </div>
         </div>
-    </logic:iterate>
-    <logic:notEmpty name="${form.formName}" property="inactiveTestList">
-        <br/><br/>
+    </c:forEach>
 
-        <div style="text-align: center"><spring:message code="label.testActivate.inactiveSampleTypes"/></div>
-        <hr/>
-        <logic:iterate id="activeBean" name="${form.formName}" property="inactiveTestList">
-            <div>
-            <span class="inactiveSampleType"><bean:write name="activeBean" property="sampleType.value"/>
-                <html:hidden name="activeBean" property="sampleType.id"/>
-            </span>
-            <div class="indent">
-                <bean:define id="testList" name='activeBean' property="inactiveTests"
-                             type="java.util.List<IdValuePair>"/>
-                <% testCount = 0; %>
-                <table width="100%">
-                    <% while (testCount < testList.size()) {%>
-                    <tr>
-                        <%
-                            columnCount = 0;
-                        %>
-                        <% while (testCount < testList.size() && (columnCount < columns)) {%>
-                        <td width='<%=columnSize + "%"%>'>
-                            <input type="checkbox"
-                                   class="inactive"
-                                   value='<%=testList.get(testCount).getId()%>'
-                                   onchange="checkedChanged(false,this);">
-                            <span><%= testList.get(testCount).getValue()%></span>
-                            <%
-                                testCount++;
-                                columnCount++;
-                            %></td>
-                        <% } %>
 
-                    </tr>
-                    <% } %>
-                </table>
-            </div>
-            </div>
-        </logic:iterate>
-    </logic:notEmpty>
-</div>
+
+
+
 
 <div class="selectShow sortHide confirmHide" style="margin-left:auto; margin-right:auto;width: 40%;">
     <input type="button"
-           value='<%= StringUtil.getMessageForKey("label.button.next") %>'
+           value='<%= StringUtil.getContextualMessageForKey("label.button.next") %>'
            disabled="disabled"
            onclick="nextStepFromSelect();"
            id="nextButtonSelect"/>
 
-    <input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous")%>' onclick="navigateBack()" />
+    <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.previous")%>' onclick="navigateBack()" />
 
 
 </div>
