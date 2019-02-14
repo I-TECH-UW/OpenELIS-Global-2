@@ -7,15 +7,10 @@ import us.mn.state.health.lims.common.util.IdValuePair;
 
 public class TestRenameEntryForm extends BaseForm {
 	private List<IdValuePair> testList;
-
 	private String nameEnglish = "";
-
 	private String nameFrench = "";
-
 	private String reportNameEnglish = "";
-
 	private String reportNameFrench = "";
-
 	private String testId = "";
 
 	public TestRenameEntryForm() {

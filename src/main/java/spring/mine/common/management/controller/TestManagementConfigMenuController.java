@@ -16,7 +16,7 @@ import spring.mine.common.validator.BaseErrors;
 public class TestManagementConfigMenuController extends BaseController {
   @RequestMapping(
       value = "/TestManagementConfigMenu",
-      method = RequestMethod.GET
+      method = { RequestMethod.GET, RequestMethod.POST }
   )
   public ModelAndView showTestManagementConfigMenu(HttpServletRequest request) {
     String forward = FWD_SUCCESS;

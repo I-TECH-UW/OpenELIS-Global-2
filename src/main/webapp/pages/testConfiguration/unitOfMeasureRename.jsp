@@ -2,10 +2,12 @@
          contentType="text/html; charset=utf-8"
          import="us.mn.state.health.lims.common.action.IActionConstants,
          		us.mn.state.health.lims.common.util.IdValuePair,
-         		us.mn.state.health.lims.common.util.StringUtil,
+         		us.mn.state.health.lims.common.util.*,
          		us.mn.state.health.lims.common.util.Versioning,
-         		us.mn.state.health.lims.common.provider.query.EntityNamesProvider" %>
-
+         		java.util.List,
+         		java.util.ArrayList,
+         		us.mn.state.health.lims.common.provider.query.EntityNamesProvider,
+         		spring.generated.forms.UomRenameEntryForm" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -29,21 +31,10 @@
   --%>
 
 <script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<c:set var="formName" value="${form.formName}" />
+<c:set var="UomList" value="${form.uomList}" />
 
- 
-<bean:define id="uomList" name='${form.formName}' property="uomList" type="java.util.List"/>
 
-<%!
-    int uomCount = 0;
-    int columnCount = 0;
-    int columns = 3;
-%>
-
-<%
-    columnCount = 0;
-    uomCount = 0;
-%>
-<form>
 <script type="text/javascript">
     if (!$jq) {
         var $jq = jQuery.noConflict();
@@ -64,23 +55,22 @@
 
     function setForEditing(uomId, name) {
         $jq("#editDiv").show();
-        $jq("#uomName").text(name);
+        $jq("#UomName").text(name);
         $jq(".error").each(function (index, value) {
             value.value = "";
             $jq(value).removeClass("error");
             $jq(value).removeClass("confirmation");
         });
         $jq("#uomId").val(uomId);
-        $jq(".uom").each(function () {
+        $jq(".Uom").each(function () {
             var element = $jq(this);
             element.prop("disabled", "disabled");
             element.addClass("disabled-text-button");
         });
-
-        getEntityNames(uomId, "<%=EntityNamesProvider.UNIT_OF_MEASURE%>", uomNameSuccess );
+        getEntityNames(uomId, "<%=EntityNamesProvider.UNIT_OF_MEASURE%>", UomNameSuccess );
     }
 
-    function uomNameSuccess(xhr) {
+    function UomNameSuccess(xhr) {
         //alert(xhr.responseText);
         var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
         var message = xhr.responseXML.getElementsByTagName("message").item(0);
@@ -110,7 +100,7 @@
         });
 
         if (hasError) {
-            alert('<%=StringUtil.getMessageForKey("error.all.required")%>');
+            alert('<%=StringUtil.getContextualMessageForKey("error.all.required")%>');
         } else {
             $jq(".required").each(function () {
                 var element = $jq(this);
@@ -122,7 +112,7 @@
             });
             $jq("#editButtons").hide();
             $jq("#confirmationButtons").show();
-            $jq("#action").text('<%=StringUtil.getMessageForKey("label.confirmation")%>');
+            $jq("#action").text('<%=StringUtil.getContextualMessageForKey("label.confirmation")%>');
         }
     }
 
@@ -138,13 +128,13 @@
 
         $jq("#editButtons").show();
         $jq("#confirmationButtons").hide();
-        $jq("#action").text('<%=StringUtil.getMessageForKey("label.button.edit")%>');
+        $jq("#action").text('<%=StringUtil.getContextualMessageForKey("label.button.edit")%>');
     }
 
     function cancel() {
         $jq("#editDiv").hide();
         $jq("#uomId").val("");
-        $jq(".uom").each(function () {
+        $jq(".Uom").each(function () {
             var element = $jq(this);
             element.removeProp("disabled");
             element.removeClass("disabled-text-button");
@@ -160,25 +150,54 @@
     function savePage() {
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         var form = window.document.forms[0];
-        form.action = "UomRenameUpdate.do";
+        form.action = "UomRenameEntry.do";
         form.submit();
     }
 </script>
 
-<form:hidden path="uomId" name="${form.formName}" id="uomId"/>
-<input type="button" value='<%= StringUtil.getMessageForKey("banner.menu.administration") %>'
-       onclick="submitAction('MasterListsPage.do');"
-       class="textButton"/> &rarr;
-<input type="button" value='<%= StringUtil.getMessageForKey("configuration.test.management") %>'
-       onclick="submitAction('TestManagementConfigMenu.do');"
-       class="textButton"/>&rarr;
-<%=StringUtil.getMessageForKey( "configuration.uom.rename" )%>
+
+<%!
+    int itemCount = 0;
+    int columnCount = 0;
+    int columns = 3;
+%>
+
+<%
+    columnCount = 0;
+	itemCount = 0;
+    List UomList;
+    UomList =  ((UomRenameEntryForm) request.getAttribute("form")).getUomList();
+%>
+
+
+	<form:form name="${form.formName}" 
+				   action="${form.formAction}" 
+				   modelAttribute="form" 
+				   onSubmit="return submitForm(this);" 
+				   method="${form.formMethod}"
+				   id="mainForm">
+
+<form:hidden path="uomId" id="uomId"/>
+
+
+<input 	type="button"
+		class="textButton" 
+		value="<%= StringUtil.getContextualMessageForKey("banner.menu.administration")%>"
+		onclick="submitAction('MasterListsPage.do');" >&rarr;
+
+<input  type="button" 
+		class="textButton"
+		value="<%= StringUtil.getContextualMessageForKey("configuration.test.management") %>"
+       	onclick="submitAction('TestManagementConfigMenu.do');" >&rarr;
+        
+
+<%=StringUtil.getContextualMessageForKey( "configuration.uom.rename" ) %>
 <br><br>
 
-<div id="editDiv" style="display: none">
-    <h1 id="action"><spring:message code="label.button.edit"/></h1>
 
-    <h2><%=StringUtil.getMessageForKey( "uom.browse.title" )%>: <span id="uomName"></span></h2>
+<div id="editDiv" style="display:none;">
+    <h1 id="action"><spring:message code="label.button.edit"/></h1>
+    <h2><%=StringUtil.getContextualMessageForKey( "uom.browse.title" )%>:<span id="uomName"></span></h2>
     <br>
     <table>
         <tr>
@@ -188,53 +207,59 @@
         <tr>
             <td></td>
             <td style="text-align: center"><spring:message code="label.english"/></td>
-            
         </tr>
-        <tr>
+    
+     	<tr>
             <td style="padding-right: 20px"><spring:message code="label.current"/>:</td>
             <td id="nameEnglish" style="padding-left: 10px"></td>
-            
         </tr>
-        <tr>
+        
+         <tr>
             <td style="padding-right: 20px"><spring:message code="label.new"/>:</td>
-            <td><span class="requiredlabel">*</span><html:text property="nameEnglish" name="${form.formName}" size="40"
-                                                               styleClass="required"
-                                                               onchange="handleInput(this);"/>
+            <td><span class="requiredlabel">*</span>
+            	<form:input
+            			path="nameEnglish"
+                        cssClass="required"
+                        size="35"
+                        onchange="handleInput(this);"/>
             </td>
-           
         </tr>
-    </table>
-    <div style="text-align: center" id="editButtons">
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.next")%>'
+     </table>
+
+     <div style="text-align: center" id="editButtons">
+        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.save")%>'
                onclick="confirmValues();"/>
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous")%>'
+        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.cancel")%>'
                onclick='cancel()'/>
     </div>
+
     <div style="text-align: center; display: none;" id="confirmationButtons">
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.accept")%>'
+        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.accept")%>'
                onclick="savePage();"/>
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.reject")%>'
+        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.reject")%>'
                onclick='rejectConfirmation();'/>
     </div>
     <br><br>
-</div>
+   
+     </div>
+   </form:form>
 
 <table>
-    <% while(uomCount < uomList.size()){%>
+    <% while(itemCount < UomList.size()){%>
     <tr>
-        <td><input type="button" value="<%= ((IdValuePair)uomList.get(uomCount)).getValue() %>"
-                   onclick="setForEditing( '<%= ((IdValuePair)uomList.get(uomCount)).getId() + "', '" + ((IdValuePair)uomList.get(uomCount)).getValue() %>');"
-                   class="textButton uom"/>
+        <td><input type="button" value='<%= ((IdValuePair)UomList.get(itemCount)).getValue() %>'
+                   onclick="setForEditing( '<%= ((IdValuePair)UomList.get(itemCount)).getId() + "', '" + ((IdValuePair)UomList.get(itemCount)).getValue() %>');"
+                   class="textButton Uom"/>
             <%
-                uomCount++;
+            	itemCount++;
                 columnCount = 1;
             %></td>
-        <% while(uomCount < uomList.size() && ( columnCount < columns )){%>
-        <td><input type="button" value="<%= ((IdValuePair)uomList.get(uomCount)).getValue() %>"
-                   onclick="setForEditing( '<%= ((IdValuePair)uomList.get(uomCount)).getId() + "', '" + ((IdValuePair)uomList.get(uomCount)).getValue() %>' );"
-                   class="textButton uom"/>
+        <% while(itemCount < UomList.size() && ( columnCount < columns )){%>
+        <td><input type="button" value='<%= ((IdValuePair)UomList.get(itemCount)).getValue() %>'
+                   onclick="setForEditing( '<%= ((IdValuePair)UomList.get(itemCount)).getId() + "', '" + ((IdValuePair)UomList.get(itemCount)).getValue() %>' );"
+                   class="textButton Uom"/>
             <%
-                uomCount++;
+            	itemCount++;
                 columnCount++;
             %></td>
         <% } %>
@@ -244,6 +269,5 @@
 </table>
 
 <br>
-<input type="button" value='<%= StringUtil.getMessageForKey("label.button.finished") %>'
+<input type="button" value='<%= StringUtil.getContextualMessageForKey("label.button.finished") %>'
        onclick="submitAction('TestManagementConfigMenu.do');"/>
-</form>

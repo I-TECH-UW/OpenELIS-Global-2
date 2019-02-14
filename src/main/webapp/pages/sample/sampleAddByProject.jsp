@@ -220,10 +220,7 @@ function selectStudy( divId ) {
     switchStudyForm( divId );
 }
 
-function switchStudyForm( divId ){
-	
-	
-	
+function switchStudyForm( divId ){	
     hideAllDivs();
     if (divId != "" && divId != "0") {
         $("projectFormName").value = divId;
@@ -299,8 +296,6 @@ function /*void*/ setSaveButton() {
     
 }
 
-
-
 </script>
 
 <form:hidden path="currentDate" id="currentDate"/>
@@ -341,7 +336,7 @@ function /*void*/ setSaveButton() {
             	<form:select path="ProjectData.ARVcenterName"
             				 id="iarv.centerName"
                              onchange="iarv.checkCenterName(true)">
-                             <form:option value="">&nbsp;</form:option>
+                             <option value="">&nbsp;</option>
             	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS_BY_NAME']}" itemLabel="organizationName" /> 
                 </form:select>
             </td>
@@ -439,7 +434,7 @@ function /*void*/ setSaveButton() {
                         cssClass="text"
                         maxlength="7"
                         onchange="iarv.checkSubjectNumber(true)"/>
-                <div id="iarv.subjectNumberMessage" class="blank" />
+                <div id="iarv.subjectNumberMessage" class="blank" ></div>
             </td>
         </tr>
         <tr>
@@ -3202,20 +3197,7 @@ function /*void*/ setSaveButton() {
                 <form:input path="ProjectData.underInvestigationNote" maxlength="1000" size="80"
                     onchange="makeDirty();" id="vl.underInvestigationComment" />
             </td>
-    </tr>
-    
- 
-    
-
-    
-    
-    
-
-
-
-
-   
-    
+    </tr> 
     
     </table>   
 </div>
