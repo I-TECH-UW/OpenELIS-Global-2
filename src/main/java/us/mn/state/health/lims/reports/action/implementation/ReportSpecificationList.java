@@ -18,64 +18,70 @@ package us.mn.state.health.lims.reports.action.implementation;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.IdValuePair;
 
 /**
  * Represents a list for report specification
  */
-public class ReportSpecificationList implements Serializable{
+public class ReportSpecificationList implements Serializable {
 
+	private final String label;
+	private final List<IdValuePair> list;
+	private String selection;
 
-    private final String label;
-    private final List<IdValuePair> list;
-    private String selection;
+	public ReportSpecificationList() {
+		label = "";
+		list = new ArrayList<>();
+	}
 
-    public ReportSpecificationList( List<IdValuePair> list, String label){
-        this.label = label;
-        this.list = list;
-    }
+	public ReportSpecificationList(List<IdValuePair> list, String label) {
+		this.label = label;
+		this.list = list;
+	}
 
-    public void setRequestParameters( BaseActionForm dynaForm ){
-        try{
-            PropertyUtils.setProperty( dynaForm, "selectList", this );
-        }catch( IllegalAccessException e ){
-            e.printStackTrace();
-        }catch( InvocationTargetException e ){
-            e.printStackTrace();
-        }catch( NoSuchMethodException e ){
-            e.printStackTrace();
-        }
-    }
-    public String getLabel(){
-        return label;
-    }
+	public void setRequestParameters(BaseForm form) {
+		try {
+			PropertyUtils.setProperty(form, "selectList", this);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+	}
 
-    public List<IdValuePair> getList(){
-        return list;
-    }
+	public String getLabel() {
+		return label;
+	}
 
-    public String getSelection(){
-        return selection;
-    }
+	public List<IdValuePair> getList() {
+		return list;
+	}
 
-    public void setSelection( String selection ){
-        this.selection = selection;
-    }
+	public String getSelection() {
+		return selection;
+	}
 
-    public String getSelectionAsName(){
-        String selection = getSelection();
+	public void setSelection(String selection) {
+		this.selection = selection;
+	}
 
-        for( IdValuePair pair : getList()){
-            if( selection.equals( pair.getId() )){
-                return pair.getValue();
-            }
-        }
+	public String getSelectionAsName() {
+		String selection = getSelection();
 
-        return "";
-    }
+		for (IdValuePair pair : getList()) {
+			if (selection.equals(pair.getId())) {
+				return pair.getValue();
+			}
+		}
+
+		return "";
+	}
 }

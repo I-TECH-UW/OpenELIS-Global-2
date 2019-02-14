@@ -27,7 +27,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.exception.LIMSInvalidConfigurationException;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -94,7 +94,7 @@ public class IndicatorSectionPerformanceReport extends RetroCIReport implements 
 		return new HashMap<String, String>();
 	}
 
-	public void initializeReport(BaseActionForm dynaForm){
+	public void initializeReport(BaseForm form){
 		super.initializeReport();
 
 		try{

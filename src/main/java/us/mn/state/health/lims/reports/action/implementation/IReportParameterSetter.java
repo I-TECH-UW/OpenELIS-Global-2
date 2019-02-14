@@ -16,8 +16,8 @@
 */
 package us.mn.state.health.lims.reports.action.implementation;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 
 public interface IReportParameterSetter {
-	public void setRequestParameters(BaseActionForm dynaForm);
+	public void setRequestParameters(BaseForm form);
 }

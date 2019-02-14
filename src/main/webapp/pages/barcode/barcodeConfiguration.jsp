@@ -9,6 +9,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 
 <%!
 	String basePath = "";
@@ -43,6 +44,6 @@ function enableSave() {
 }
 </script>
 
-<tiles:insert attribute="numberBarCodes"/>
-<tiles:insert attribute="elementsBarCodes"/>
-<tiles:insert attribute="sizeBarCodes"/>
+<tiles:insertAttribute name="numberBarCodes"/>
+<tiles:insertAttribute name="elementsBarCodes"/>
+<tiles:insertAttribute name="sizeBarCodes"/>

@@ -13,6 +13,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 
 <%!
 	IAccessionNumberValidator accessionValidator;
@@ -46,46 +47,49 @@ function submit(){
 
 <h1 class="page-title"><spring:message code="reports.auditTrail" /></h1>
 
-<form class="form-horizontal">
+<form:form name="${form.formName}" 
+		   action="${form.formAction}" 
+		   modelAttribute="form" 
+		   method="${form.formMethod}"
+		   class="form-horizontal" >
 
 	<div class="row-fluid">
 	    <div class="span12">
 	
 		<%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>: 
-		<html:text name='${form.formName}'
-				   styleClass="input-medium" 
-	    	       property="accessionNumberSearch"
+		<form:input path="accessionNumberSearch"
+				   cssClass="input-medium" 
 	        	   maxlength="<%= Integer.toString(accessionValidator.getMaxAccessionLength()) %>" />
 		<input class="btn" type="button" onclick="submit();" value='<%=StringUtil.getMessageForKey("label.button.view") %>'>
 		</div>
 	</div>
-</form>
+
 	
 	<hr>
 		
-	<logic:notEmpty name='${form.formName}' property="accessionNumber" >
+	<c:if test="${not empty form.accessionNumber}">
 	
-		<logic:empty name='${form.formName}' property="log" >
+		<c:if test="${empty form.log}">
 		<div class="row-fluid">
 		    <div class="span6">
 		    	<em><spring:message code="sample.edit.sample.notFound" /></em>
 		    </div>
 		</div>
-		</logic:empty>
+		</c:if>
 		
-		<logic:notEmpty name='${form.formName}' property="log" >
+		<c:if test="${not empty form.log}" >
 		
 		<div class="row-fluid order-details">
 		    <div class="span12">
-		        <span class="order-number"><bean:write name='${form.formName}' property="accessionNumber"  /></span> 
+		        <span class="order-number"><c:out value="${form.accessionNumber}"  /></span> 
 		        <spring:message code="reports.auditTrail.creation" />: <span id="dateCreated"></span>
 		        <spring:message code="reports.auditTrail.days" />: <span id="daysInSystem"></span>
 		    </div>
 		</div>
 	    <div class="current" >
             <h2><spring:message code="order.information" /></h2>
-            <tiles:insert attribute="orderInfo" />
-            <tiles:insert attribute="patientInfo" />
+            <tiles:insertAttribute name="orderInfo" />
+            <tiles:insertAttribute name="patientInfo" />
         </div>
 		<div class="row-fluid">
 			<div class="span12">		
@@ -104,18 +108,18 @@ function submit(){
 						</tr>
 					</thead>
 					<tbody>
-					<logic:iterate id="log" indexId="rowIndex" name='${form.formName}' property="log" type="us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem">
-						<tr class="<%=log.getItem()%>">
-							<td><%=rowIndex%></td>
-							<td class="time-stamp"><%= log.getDate() + " " +  log.getTime()%></td>
-							<td class="item-cell"><%=log.getItem()%></td>
-							<td><%=log.getAttribute()%></td>
-							<td class="id-number"><%= log.getIdentifier() %></td>
-							<td><%= log.getUser() %></td>
-							<td><%=log.getOldValue()%></td>
-							<td><%=log.getNewValue()%></td>
+					<c:forEach items="${form.log}" var="log" varStatus="iter">
+						<tr class="${log.item}">
+							<td>${iter.index}</td>
+							<td class="time-stamp">${log.date} ${log.time}</td>
+							<td class="item-cell">${log.item}</td>
+							<td>${log.attribute}</td>
+							<td class="id-number">${log.identifier}</td>
+							<td>${log.user}</td>
+							<td>${log.oldValue}</td>
+							<td>${log.newValue}</td>
 						</tr>
-					</logic:iterate>
+					</c:forEach>
 					</tbody>
 				</table>
 				
@@ -132,11 +136,11 @@ function submit(){
 			</div>
 		</div>
 	
-		</logic:notEmpty>
+		</c:if>
 				
-	</logic:notEmpty>
-	
-<logic:notEmpty name='${form.formName}' property="log" >
+	</c:if>
+</form:form>	
+<c:if test="${not empty form.log}" >
     <script type="text/javascript">
         function getAuditSearchText(){  return '<spring:message code="audit.search.text" />';  }
         function getAuditFilteredFrom(){  return '<spring:message code="audit.filtered.from" />';  }
@@ -145,7 +149,7 @@ function submit(){
         function getAuditNoRecords(){  return '<spring:message code="audit.no.records" />';  }
     </script>
 <script type="text/javascript" src="<%=basePath%>scripts/oe.datatables.functions.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-</logic:notEmpty>
+</c:if>
 
 <script type="text/javascript">
 

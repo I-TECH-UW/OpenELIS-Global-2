@@ -19,7 +19,7 @@ package us.mn.state.health.lims.reports.action.implementation;
 import java.util.ArrayList;
 import java.util.List;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.ResultService;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -37,12 +37,12 @@ public class ActivityReportByTest extends ActivityReport implements IReportCreat
     }
 
     @Override
-    public void setRequestParameters( BaseActionForm dynaForm ){
+    public void setRequestParameters( BaseForm form ){
         new ReportSpecificationParameters( ReportSpecificationParameters.Parameter.DATE_RANGE,
                 StringUtil.getMessageForKey( "report.activity.report.base" ) + " " + StringUtil.getMessageForKey( "report.by.test" ),
-                StringUtil.getMessageForKey( "report.instruction.all.fields" ) ).setRequestParameters( dynaForm );
+                StringUtil.getMessageForKey( "report.instruction.all.fields" ) ).setRequestParameters( form );
         new ReportSpecificationList( DisplayListService.getList( DisplayListService.ListType.ALL_TESTS ),
-                                     StringUtil.getMessageForKey( "workplan.test.types" ) ).setRequestParameters( dynaForm );
+                                     StringUtil.getMessageForKey( "workplan.test.types" ) ).setRequestParameters( form );
     }
 
     @Override

@@ -77,74 +77,78 @@
 	   <% } %>
 
 	</tr>
-	<logic:iterate id="org1" indexId="ctr" name="${form.formName}" property="menuList" type="us.mn.state.health.lims.organization.valueholder.Organization">
-	<bean:define id="orgID" name="org1" property="id"/>
-	<logic:notEmpty name="org1" property="organization">
-	 <bean:define id="parentOrgID" name="org1" property="organization.id"/>
-	</logic:notEmpty>
+	<form:form name="${form.formName}" 
+				   action="${form.formAction}" 
+				   modelAttribute="form" 
+				   onSubmit="return submitForm(this);" 
+				   method="${form.formMethod}"
+				   id="menuForm">
+	<c:forEach items="${form.menuList}" var="org1" varStatus="iter">
+	<c:set var="orgID" value="${org1.id}"/>
+	<c:if test="${not empty org1.organization}">
+	 <c:set var="parentOrgID" value="${org1.organization.id}"/>
+	</c:if>
 
 	  <tr>
 	   <td class="textcontent">
-	      <html:multibox name="${form.formName}" property="selectedIDs" onclick="output()" >
-	         <bean:write name="orgID" />
-	      </html:multibox>
-
+	      <form:checkbox path="selectedIDs" onclick="output()" value="${orgID}"/>
    	   </td>
 		<% if( useOrgLocalAbbrev ){ %>
 	   <td class="textcontent">
-	   	  <bean:write name="org1" property="organizationLocalAbbreviation"/>
+	   	  <c:out value="${org1.organizationLocalAbbreviation}"/>
 	   </td>
 	   <% } %>
 	   <td class="textcontent">
-	   	  <bean:write name="org1" property="organizationName"/>
+	   	  <c:out value="${org1.organizationName}"/>
 	   </td>
 	   <td class="textcontent">
-	    <logic:notEmpty name="org1" property="organization">
-	        <bean:write name="org1" property="organization.organizationName"/>
-	    </logic:notEmpty>
+	    <c:if test="${not empty org1.organization}">
+	        <c:out value="${org1.organization.organizationName}"/>
+	    </c:if>
 	      &nbsp;
 	   </td>
 	   <td class="textcontent">
-	      <logic:notEmpty name="org1" property="shortName">
-	   	  <bean:write name="org1" property="shortName"/>
-	   	  </logic:notEmpty>
-	   	  <logic:empty name="org1" property="shortName">
+	      <c:if test="${not empty org1.shortName}">
+	   	  <c:out value="${org1.shortName}"/>
+	   	  </c:if>
+	   	  <c:if test="${empty org1.shortName}">
 	   	   &nbsp;
-	   	  </logic:empty>
+	   	  </c:if>
 	   </td>
 	   <td class="textcontent">
-	   	  <bean:write name="org1" property="isActive"/>
+	   	  <c:out value="${org1.isActive}"/>
 	   </td>
 	   <td class="textcontent">
-	   	  <bean:write name="org1" property="streetAddress"/>
+	   	  <c:out value="${org1.streetAddress}"/>
 	   	  &nbsp;
 	   </td>
 	   <td class="textcontent">
-	   	  <bean:write name="org1" property="city"/>
+	   	  <c:out value="${org1.city}"/>
 	   	  &nbsp;
 	   </td>
 	   <% if( useOrgState ){ %>
 	  <td class="textcontent">
-	   	  <bean:write name="org1" property="state"/>
+	   	  <c:out value="${org1.state}"/>
 	   	  &nbsp;
 	   </td>
 	   <% } %>
 	   <% if( useZipCode ){ %>
 	   <td class="textcontent">
-	   	  <bean:write name="org1" property="zipCode"/>
+	   	  <c:out value="${org1.zipCode}"/>
 	   	  &nbsp;
 	   </td>
 	   <% } %>
 	   <td class="textcontent">
-	   	  <bean:write name="org1" property="cliaNum"/>
+	   	  <c:out value="${org1.cliaNum}"/>
 	   	  &nbsp;
 	   </td>
 	   <% if( useMLS ){ %>
 	   <td class="textcontent">
-	     <bean:write name="org1" property="mlsLabFlag"/>
+	     <c:out value="${org1.mlsLabFlag}"/>
 	   	  &nbsp;
 	    </td>
 	   <% } %>
      </tr>
-	</logic:iterate>
+	</c:forEach>
+	</form:form>
 </table>

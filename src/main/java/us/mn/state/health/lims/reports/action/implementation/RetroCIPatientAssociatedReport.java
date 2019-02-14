@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
@@ -39,10 +39,10 @@ public class RetroCIPatientAssociatedReport extends CollectionReport implements 
 	private ObservationHistoryDAO ohDAO = new ObservationHistoryDAOImpl();
 
 	@Override
-	public void setRequestParameters(BaseActionForm dynaForm) {
+	public void setRequestParameters(BaseForm form) {
 		try {
-			PropertyUtils.setProperty(dynaForm, "reportName", StringUtil.getMessageForKey("patient.report.associated.name"));
-			PropertyUtils.setProperty(dynaForm, "usePatientNumberDirect", Boolean.TRUE);
+			PropertyUtils.setProperty(form, "reportName", StringUtil.getMessageForKey("patient.report.associated.name"));
+			PropertyUtils.setProperty(form, "usePatientNumberDirect", Boolean.TRUE);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
@@ -104,7 +104,7 @@ public class RetroCIPatientAssociatedReport extends CollectionReport implements 
 
 	private void setProperty(String key, String value) {
 		try {
-			PropertyUtils.setProperty(dynaForm, key, value);
+			PropertyUtils.setProperty(form, key, value);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {

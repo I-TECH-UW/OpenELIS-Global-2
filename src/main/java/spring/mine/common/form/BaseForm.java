@@ -98,4 +98,16 @@ public class BaseForm {
 		return obj;
 	}
 
+	public String[] getStrings(String propertyName) {
+		String[] obj = null;
+		try {
+			obj = (String[]) PropertyUtils.getProperty(this, propertyName);
+
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return obj;
+	}
+
 }

@@ -75,19 +75,17 @@ function  /*void*/ processTestSuccess(xhr){
 }
 </script>
 
-<logic:iterate id="reports" name='${form.formName}' property="reports" type="ReportingConfiguration" >
-<h2><bean:write name="reports" property="title"/></h2>
+<c:forEach items="${form.reports}" var="reports" varStatus="iter">
+<h2><c:out value="${reports.title}"/></h2>
 <table >
 	<tr >
 		<td width="180px">
-			<html:radio name='reports' 
-						property="enabled"
-						indexed="true"  
-						value="enable" ><spring:message code="testusage.config.enable"/></html:radio>
-			<html:radio name='reports' 
-						property="enabled" 
-						value="disable"
-						indexed="true" ><spring:message code="testusage.config.disable"/></html:radio>
+			<spring:message code="testusage.config.enable" var="enableMsg"/>
+			<spring:message code="testusage.config.disable" var="disableMsg"/>
+			<form:radiobutton path="reports[${iter.index}].enabled" 
+						value="enable" label="${enableMsg}"/>
+			<form:radiobutton path="reports[${iter.index}].enabled" 
+						value="disable" label="${disableMsg}"/>
 	</td>
 	</tr>
 	<tr>
@@ -96,20 +94,18 @@ function  /*void*/ processTestSuccess(xhr){
   <tr>
   <td>&nbsp;</td>
   <td>
-    	<html:text name='reports'  
-    			   property="url"
-    			   styleId = '<%= reports.getConnectionTestIdentifier() %>'
-    			   indexed="true" 
+    	<form:input path="reports[${iter.index}].url"
+    			   id = "${reports.connectionTestIdentifier}"
     			   size="80" />
     </td>
-    <logic:notEmpty name="reports" property="connectionTestIdentifier">
+    <c:if test="${not empty reports.connectionTestIdentifier}">
     <td>
-		<input type="button" value='<%= StringUtil.getMessageForKey("connection.test.button") %>' onclick='<%= "testConnection( \"" +  reports.getConnectionTestIdentifier() + "\");" %>' >
-		<spring:message code="connection.test.button.message"/>
+		<input type="button" value='<spring:message code="connection.test.button"/>' onclick='testConnection( "${reports.connectionTestIdentifier}");' >
+		<spring:message code="connection.test.button.message"/> 
     </td>
-    </logic:notEmpty>
+    </c:if>
   </tr>
-  <logic:match name='reports' property="isScheduled"  value="true">
+  <c:if test="${resports.isScheduled}">
   <tr>
   	<td colspan="2"><spring:message code="testusage.config.transmit.instructions"/>
   	</td>
@@ -118,54 +114,46 @@ function  /*void*/ processTestSuccess(xhr){
   	<td>&nbsp;</td>
   	<td>
   	 <spring:message code="testusage.config.time"/>&nbsp;
-			<html:select name='reports' 
-						 property="scheduleHours"
-						 indexed="true" 
-						 styleClass="gatherDependent"
+			<form:select path="reports[${iter.index}].scheduleHours"
+						 cssClass="gatherDependent"
 						 id="scheduleHours" 
 						 onchange=" makeDirty();">
-				<html:optionsCollection name='${form.formName}' property="hourList" label="value" value="id"/>
-			</html:select>:
-			<html:select name='reports' 
-			             property="scheduleMin"
-			             indexed="true" 
-			             styleClass="gatherDependent"
+				<form:options items="${form.hourList}" itemLabel="value" itemValue="id"/>
+			</form:select>:
+			<form:select path="reports[${iter.index}].scheduleMin"
+			             cssClass="gatherDependent"
 			             id="scheduleMin" 
 			             onchange=" makeDirty();">
-				<html:optionsCollection name='${form.formName}' property="minList" label="value" value="id"/>
-		</html:select>
+				<form:options items="${form.minList}" itemLabel="value" itemValue="id"/>
+		</form:select>
     </td>
   </tr>
-  </logic:match>
- <logic:equal name='reports' property="showAuthentication"  value="true">
+  </c:if>
+ <c:if test="${reports.showAuthentication}">
  <tr>
     <td><br/><spring:message code="testusage.config.transmit.name"/></td>
   </tr>
   <tr>
     <td>     
-    	<html:text name='reports'  
-    			   property="userName" 
-    			   indexed="true" 
-    			   styleClass="gatherDependent sendingDependent"
-    			   onchange=" makeDirty();"></html:text>
+    	<form:input path="reports[${iter.index}].userName" 
+    			   cssClass="gatherDependent sendingDependent"
+    			   onchange=" makeDirty();"/>
     </td>
   </tr>
   <tr>
     <td><br/><spring:message code="testusage.config.transmit.password"/></td>
   </tr>
   <tr>  
-    <td><html:password name='reports'  
-    				   property="password"
-    				   indexed="true"  
-    				   styleClass="gatherDependent sendingDependent"
-    				   onchange=" makeDirty();"></html:password>
+    <td><form:password path="reports[${iter.index}].password"
+    				   cssClass="gatherDependent sendingDependent"
+    				   onchange=" makeDirty();"/>
     </td>
   </tr>
-</logic:equal>     
+</c:if>     
 </table>
-<logic:equal name='reports' property="showBacklog"  value="true">
+<c:if test="${reports.showBacklog}">
 	<spring:message code="result.report.queue.msg"/>
 	<br/><br/>
-	<spring:message code="result.report.queue.size"/>: <bean:write name="reports" property="backlogSize" />
-</logic:equal> 
-</logic:iterate>
+	<spring:message code="result.report.queue.size"/>: <c:out value="${reports.backlogSize}" />
+</c:if> 
+</c:forEach>

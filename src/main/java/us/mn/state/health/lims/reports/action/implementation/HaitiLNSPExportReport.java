@@ -24,7 +24,7 @@ import java.util.List;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.services.AnalysisService;
 import us.mn.state.health.lims.common.services.NoteService;
 import us.mn.state.health.lims.common.services.PatientService;
@@ -76,13 +76,13 @@ public class HaitiLNSPExportReport extends CSVExportReport{
 	}
 
 	@Override
-	public void initializeReport(BaseActionForm dynaForm){
+	public void initializeReport(BaseForm form){
 		super.initializeReport();
 
 		errorFound = false;
 
-		lowDateStr = dynaForm.getString("lowerDateRange");
-		highDateStr = dynaForm.getString("upperDateRange");
+		lowDateStr = form.getString("lowerDateRange");
+		highDateStr = form.getString("upperDateRange");
 		dateRange = new DateRange(lowDateStr, highDateStr);
 
 		createReportParameters();

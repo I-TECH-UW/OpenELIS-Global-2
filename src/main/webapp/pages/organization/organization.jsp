@@ -92,7 +92,7 @@ function validateForm(form) {
 							<spring:message code="organization.id"/>:
 						</td>
 						<td>
-							<app:text name="${form.formName}" property="id" allowEdits="false"/>
+							<form:input path="id" allowEdits="false"/>
 						</td>
 		</tr>
 		<% } %>
@@ -102,7 +102,7 @@ function validateForm(form) {
 				<spring:message code="organization.parent"/>:
 			</td>
 			<td>
-	   			<html:text id="parentOrgName" size="30" name="${form.formName}" property="parentOrgName" />
+	   			<form:input path="parentOrgName" id="parentOrgName" size="30" />
 	   			<span id="indicator1" style="display:none;"><img src="<%=basePath%>images/indicator.gif"/></span>
 
 	   			<input id="selectedOrgId" name="selectedOrgId" type="hidden" size="30" />
@@ -117,7 +117,7 @@ function validateForm(form) {
 							 			allowEdits="true"
 							/>
                          </html:select--%>
-							<%--html:text id="organizationName" styleClass="form-autocomplete" size="30" name="${form.formName}" property="organizationName" /> &nbsp;&nbsp;&nbsp;&nbsp;Org ID: <input id="selectedOrgId" name="selectedOrgId" type="text" size="30" /--%>
+							<%--html:text id="organizationName" cssClass="form-autocomplete" size="30" name="${form.formName}" property="organizationName" /> &nbsp;&nbsp;&nbsp;&nbsp;Org ID: <input id="selectedOrgId" name="selectedOrgId" type="text" size="30" /--%>
 
 			</td>
 		</tr>
@@ -174,7 +174,7 @@ function validateForm(form) {
 							<spring:message code="organization.streetAddress"/>:
 						</td>
 						<td>
-						   	<app:text name="${form.formName}" property="streetAddress" styleClass="text" size="35"/>
+						   	<form:input path="streetAddress" cssClass="text" size="35"/>
 						</td>
 		</tr>
 		<% if( showCity){ %>
@@ -183,7 +183,7 @@ function validateForm(form) {
 							<spring:message code="organization.city"/>:
 						</td>
 						<td>
-							<html:text id="city" size="30" name="${form.formName}" property="city" />
+							<form:input path="city" id="city" size="30" />
 				   			<span id="indicator2" style="display:none;"><img src="<%=basePath%>images/indicator.gif"/></span>
 							<input id="cityID" name="cityID" type="hidden" size="30" />
 						</td>
@@ -195,10 +195,10 @@ function validateForm(form) {
 				<spring:message code="organization.department" />
 			</td>
 			<td>
-				<html:select name='${form.formName}' property="department" >
+				<form:select path="department" >
 					<option value="0"></option>
-				<html:optionsCollection name='${form.formName}' property="departmentList" value="id" label="dictEntry"/>
-				</html:select>
+				<form:options items="${form.departmentList}" itemValue="id" itemLabel="dictEntry"/>
+				</form:select>
 			</td>
 		</tr>
 		<% } %>
@@ -230,14 +230,13 @@ function validateForm(form) {
 						<td>
 							<%--html:text property="state" /--%>
 
-						  <html:select name="${form.formName}" property="state">
-					   	  <app:optionsCollection
-										name="${form.formName}"
-							    		property="states"
-										label="state"
-										value="state"  />
+						  <form:select path="state">
+						  <option></option>
+					   	  <form:options items="${form.states}"
+										itemLabel="state"
+										itemValue="state"  />
 
-                       	   </html:select>
+                       	   </form:select>
 						</td>
 		</tr>
 		<% } %>
@@ -303,18 +302,16 @@ function validateForm(form) {
 		<th >&nbsp;</th>
 		<th ><spring:message code="generic.name"/></th>
 	</tr>
-<logic:iterate  name="${form.formName}" property="orgTypes" id="organizationType" type="us.mn.state.health.lims.organization.valueholder.OrganizationType" >
+<c:forEach items="${form.orgTypes}" var="organizationType" >
 	<tr>
 	<td>
-		<html:multibox name="${form.formName}" property="selectedTypes" styleClass="orgTypeId">
-			<bean:write name="organizationType" property="id" />
-		</html:multibox>
+		<form:checkbox path="selectedTypes" cssClass="orgTypeId" value="${organizationType.id}"/>
 	</td>
 	<td>
-		<bean:write name="organizationType" property="localizedName"  />&nbsp;
+		<c:out value="${organizationType.localizedName}"  />&nbsp;
 	</td>
 	</tr>
-	</logic:iterate>
+	</c:forEach>
 </table>
 
 
@@ -342,7 +339,5 @@ function validateForm(form) {
   minimumCharacters="1" />
 <% } %>
 
-
-<html:javascript formName="organizationForm"/>
 
 

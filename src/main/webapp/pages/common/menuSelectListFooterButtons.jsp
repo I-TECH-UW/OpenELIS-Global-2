@@ -28,7 +28,13 @@
  
         %>
 	   <td >
-  			<button type="button" onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?paging=1');return false;" name="previous" disabled="<%=Boolean.valueOf(previousDisabled).booleanValue()%>">
+  			<button type="button" 
+  					onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?paging=1');return false;" 
+  					name="previous" 
+					<%if ( Boolean.valueOf(previousDisabled).booleanValue() ) {%>
+					disabled="disabled"
+					<%} %>
+					>
   			   <spring:message code="label.button.previous"/>
   			</button>
 	   </td>
@@ -36,7 +42,13 @@
 	   &nbsp;
 	   </td>
 	   <td>
-  			<button type="button" onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?paging=2');return false;" name="next"  disabled="<%=Boolean.valueOf(nextDisabled).booleanValue()%>">
+  			<button type="button" 
+  					onclick="setMenuAction(this, window.document.forms[0], '', 'yes', '?paging=2');return false;" 
+  					name="next"  
+					<%if ( Boolean.valueOf(nextDisabled).booleanValue() ) {%>
+					disabled="disabled"
+					<%} %>
+					>
   			   <spring:message code="label.button.next"/>
   			</button>
 	   </td>

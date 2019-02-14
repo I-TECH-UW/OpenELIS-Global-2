@@ -29,6 +29,7 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
+import us.mn.state.health.lims.common.util.StringUtil.EncodeContext;
 import us.mn.state.health.lims.note.dao.NoteDAO;
 import us.mn.state.health.lims.note.daoimpl.NoteDAOImpl;
 import us.mn.state.health.lims.note.valueholder.Note;
@@ -43,291 +44,311 @@ import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
 import us.mn.state.health.lims.systemuser.daoimpl.SystemUserDAOImpl;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 
-public class NoteService{
-    private static NoteDAO noteDAO = new NoteDAOImpl();
-    private static SampleQaEventDAO sampleQADAO = new SampleQaEventDAOImpl();
-    private static boolean SUPPORT_INTERNAL_EXTERNAL = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.NOTE_EXTERNAL_ONLY_FOR_VALIDATION,"true");
+public class NoteService {
+	private static NoteDAO noteDAO = new NoteDAOImpl();
+	private static SampleQaEventDAO sampleQADAO = new SampleQaEventDAOImpl();
+	private static boolean SUPPORT_INTERNAL_EXTERNAL = ConfigurationProperties.getInstance()
+			.isPropertyValueEqual(Property.NOTE_EXTERNAL_ONLY_FOR_VALIDATION, "true");
 
-    public enum NoteType{
-        EXTERNAL(Note.EXTERNAL),
-        INTERNAL(Note.INTERNAL),
-        REJECTION_REASON( Note.REJECT_REASON),
-        NON_CONFORMITY(Note.NON_CONFORMITY);
+	public enum NoteType {
+		EXTERNAL(Note.EXTERNAL), INTERNAL(Note.INTERNAL), REJECTION_REASON(Note.REJECT_REASON),
+		NON_CONFORMITY(Note.NON_CONFORMITY);
 
-        String DBCode;
+		String DBCode;
 
-        NoteType(String dbCode){
-            DBCode = dbCode;
-        }
+		NoteType(String dbCode) {
+			DBCode = dbCode;
+		}
 
-        public String getDBCode(){
-            return DBCode;
-        }
-    }
+		public String getDBCode() {
+			return DBCode;
+		}
+	}
 
-    public enum BoundTo{
-        ANALYSIS, QA_EVENT, SAMPLE, SAMPLE_ITEM
-    }
+	public enum BoundTo {
+		ANALYSIS, QA_EVENT, SAMPLE, SAMPLE_ITEM
+	}
 
-    private BoundTo binding;
-    private final String tableId;
-    private final String objectId;
-    private final Object object;
+	private BoundTo binding;
+	private final String tableId;
+	private final String objectId;
+	private final Object object;
 
-    private static final String SAMPLE_ITEM_TABLE_REFERENCE_ID;
-    public static final String TABLE_REFERENCE_ID;
+	private static final String SAMPLE_ITEM_TABLE_REFERENCE_ID;
+	public static final String TABLE_REFERENCE_ID;
 
-    static{
-        ReferenceTablesDAO refTableDAO = new ReferenceTablesDAOImpl();
+	static {
+		ReferenceTablesDAO refTableDAO = new ReferenceTablesDAOImpl();
 
-        TABLE_REFERENCE_ID = refTableDAO.getReferenceTableByName("NOTE").getId();
-        SAMPLE_ITEM_TABLE_REFERENCE_ID = refTableDAO.getReferenceTableByName( "SAMPLE_ITEM" ).getId();
-    }
+		TABLE_REFERENCE_ID = refTableDAO.getReferenceTableByName("NOTE").getId();
+		SAMPLE_ITEM_TABLE_REFERENCE_ID = refTableDAO.getReferenceTableByName("SAMPLE_ITEM").getId();
+	}
 
-    public NoteService(Analysis analysis){
-        tableId = AnalysisService.TABLE_REFERENCE_ID;
-        objectId = analysis.getId();
-        binding = BoundTo.ANALYSIS;
-        object = analysis;
-    }
+	public NoteService(Analysis analysis) {
+		tableId = AnalysisService.TABLE_REFERENCE_ID;
+		objectId = analysis.getId();
+		binding = BoundTo.ANALYSIS;
+		object = analysis;
+	}
 
-    public NoteService(Sample sample){
-        tableId = SampleService.TABLE_REFERENCE_ID;
-        objectId = sample.getId();
-        binding = BoundTo.SAMPLE;
-        object = sample;
-    }
+	public NoteService(Sample sample) {
+		tableId = SampleService.TABLE_REFERENCE_ID;
+		objectId = sample.getId();
+		binding = BoundTo.SAMPLE;
+		object = sample;
+	}
 
-    public NoteService(SampleQaEvent sampleQaEvent){
-        tableId = QAService.TABLE_REFERENCE_ID;
-        objectId = sampleQaEvent.getId();
-        binding = BoundTo.QA_EVENT;
-        object = sampleQaEvent;
-    }
+	public NoteService(SampleQaEvent sampleQaEvent) {
+		tableId = QAService.TABLE_REFERENCE_ID;
+		objectId = sampleQaEvent.getId();
+		binding = BoundTo.QA_EVENT;
+		object = sampleQaEvent;
+	}
 
-    public NoteService( SampleItem sampleItem){
-        tableId = SAMPLE_ITEM_TABLE_REFERENCE_ID;
-        objectId = sampleItem.getId();
-        binding = BoundTo.SAMPLE_ITEM;
-        object = sampleItem;
-    }
+	public NoteService(SampleItem sampleItem) {
+		tableId = SAMPLE_ITEM_TABLE_REFERENCE_ID;
+		objectId = sampleItem.getId();
+		binding = BoundTo.SAMPLE_ITEM;
+		object = sampleItem;
+	}
 
-    public String getNotesAsString( boolean prefixType, boolean prefixTimestamp, String noteSeparator, NoteType[] filter, boolean excludeExternPrefix  ){
-        boolean includeNoneConformity = false;
-        List<String> dbFilter = new ArrayList<String>( filter.length );
-        for( NoteType type : filter){
-            if( type == NoteType.NON_CONFORMITY){
-                includeNoneConformity = true;
-            }
+	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, NoteType[] filter,
+			boolean excludeExternPrefix) {
+		return getNotesAsString(prefixType, prefixTimestamp, noteSeparator, filter, excludeExternPrefix,
+				EncodeContext.HTML);
+	}
 
-            dbFilter.add( type.getDBCode() );
+	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, NoteType[] filter,
+			boolean excludeExternPrefix, EncodeContext context) {
+		boolean includeNoneConformity = false;
+		List<String> dbFilter = new ArrayList<>(filter.length);
+		for (NoteType type : filter) {
+			if (type == NoteType.NON_CONFORMITY) {
+				includeNoneConformity = true;
+			}
 
-        }
+			dbFilter.add(type.getDBCode());
 
-        List<Note> noteList = noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType( objectId, tableId, dbFilter );
+		}
 
-        if( includeNoneConformity){
-            List<Note> nonConformityNoteList = getNonConformityReasons();
-            if( !nonConformityNoteList.isEmpty()){
-                noteList.addAll( nonConformityNoteList );
-                Collections.sort( noteList, new Comparator<Note>(){
-                    @Override
-                    public int compare( Note o1, Note o2 ){
-                        return o1.getLastupdated().compareTo( o2.getLastupdated() );
-                    }
-                } );
-            }
-        }
+		List<Note> noteList = noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(objectId, tableId, dbFilter);
 
-        return notesToString( prefixType, prefixTimestamp, noteSeparator, noteList, excludeExternPrefix );
-    }
+		if (includeNoneConformity) {
+			List<Note> nonConformityNoteList = getNonConformityReasons();
+			if (!nonConformityNoteList.isEmpty()) {
+				noteList.addAll(nonConformityNoteList);
+				Collections.sort(noteList, new Comparator<Note>() {
+					@Override
+					public int compare(Note o1, Note o2) {
+						return o1.getLastupdated().compareTo(o2.getLastupdated());
+					}
+				});
+			}
+		}
 
-    private List<Note> getNonConformityReasons(){
-        ArrayList<Note> notes = new ArrayList<Note>(  );
+		return notesToString(prefixType, prefixTimestamp, noteSeparator, noteList, excludeExternPrefix, context);
+	}
 
-        if( binding == BoundTo.QA_EVENT){
-            return notes;
-        }
+	private List<Note> getNonConformityReasons() {
+		ArrayList<Note> notes = new ArrayList<>();
 
-        ArrayList<String> filter = new ArrayList<String>( 1 );
-        filter.add( NoteType.NON_CONFORMITY.getDBCode() );
-        Sample sample = null;
-        SampleItem sampleItem = null;
+		if (binding == BoundTo.QA_EVENT) {
+			return notes;
+		}
 
-        //get parent objects and the qa notes
-        if( binding == BoundTo.ANALYSIS){
-            sampleItem = ((Analysis)object).getSampleItem();
-            notes.addAll( noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType( sampleItem.getId(), SAMPLE_ITEM_TABLE_REFERENCE_ID, filter) );
+		ArrayList<String> filter = new ArrayList<>(1);
+		filter.add(NoteType.NON_CONFORMITY.getDBCode());
+		Sample sample = null;
+		SampleItem sampleItem = null;
 
-            sample = sampleItem.getSample();
-            notes.addAll( noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType( sample.getId(), SampleService.TABLE_REFERENCE_ID, filter ) );
-        }else if( binding == BoundTo.SAMPLE_ITEM ){
-            sampleItem = (SampleItem)object;
-            sample = sampleItem.getSample();
-            notes.addAll( noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType( sample.getId(), SampleService.TABLE_REFERENCE_ID, filter ) );
-        }
+		// get parent objects and the qa notes
+		if (binding == BoundTo.ANALYSIS) {
+			sampleItem = ((Analysis) object).getSampleItem();
+			notes.addAll(noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sampleItem.getId(),
+					SAMPLE_ITEM_TABLE_REFERENCE_ID, filter));
 
+			sample = sampleItem.getSample();
+			notes.addAll(noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sample.getId(),
+					SampleService.TABLE_REFERENCE_ID, filter));
+		} else if (binding == BoundTo.SAMPLE_ITEM) {
+			sampleItem = (SampleItem) object;
+			sample = sampleItem.getSample();
+			notes.addAll(noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sample.getId(),
+					SampleService.TABLE_REFERENCE_ID, filter));
+		}
 
-        if( sample != null){
-            List<SampleQaEvent> sampleQAList = sampleQADAO.getSampleQaEventsBySample(sample);
-            for( SampleQaEvent event : sampleQAList){
-                if( sampleItem == null || event.getSampleItem() == null || ( sampleItem.getId().equals( event.getSampleItem().getId() ) ) ){
-                    notes.addAll( noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType( event.getId(), QAService.TABLE_REFERENCE_ID, filter ) );
-                    Note proxyNote = new Note();
-                    proxyNote.setNoteType( Note.NON_CONFORMITY );
-                    proxyNote.setText( event.getQaEvent().getLocalizedName() );
-                    proxyNote.setLastupdated( event.getLastupdated() );
-                    notes.add( proxyNote );
-                }
-            }
-        }
+		if (sample != null) {
+			List<SampleQaEvent> sampleQAList = sampleQADAO.getSampleQaEventsBySample(sample);
+			for (SampleQaEvent event : sampleQAList) {
+				if (sampleItem == null || event.getSampleItem() == null
+						|| (sampleItem.getId().equals(event.getSampleItem().getId()))) {
+					notes.addAll(noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(event.getId(),
+							QAService.TABLE_REFERENCE_ID, filter));
+					Note proxyNote = new Note();
+					proxyNote.setNoteType(Note.NON_CONFORMITY);
+					proxyNote.setText(event.getQaEvent().getLocalizedName());
+					proxyNote.setLastupdated(event.getLastupdated());
+					notes.add(proxyNote);
+				}
+			}
+		}
 
-        return notes;
-    }
+		return notes;
+	}
 
-    public String getNotesAsString( boolean prefixType, boolean prefixTimestamp, String noteSeparator, boolean excludeExternPrefix  ){
-            List<Note> noteList = noteDAO.getNotesChronologicallyByRefIdAndRefTable( objectId, tableId );
+	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator,
+			boolean excludeExternPrefix) {
+		return getNotesAsString(prefixType, prefixTimestamp, noteSeparator, excludeExternPrefix, EncodeContext.HTML);
+	}
 
-            return notesToString( prefixType, prefixTimestamp, noteSeparator, noteList, excludeExternPrefix );
-        }
+	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator,
+			boolean excludeExternPrefix, EncodeContext context) {
+		List<Note> noteList = noteDAO.getNotesChronologicallyByRefIdAndRefTable(objectId, tableId);
 
-    private String notesToString( boolean prefixType, boolean prefixTimestamp, String noteSeparator, List<Note> noteList, boolean excludeExternPrefix ){
-        if(noteList.isEmpty()){
-            return null;
-        }
+		return notesToString(prefixType, prefixTimestamp, noteSeparator, noteList, excludeExternPrefix, context);
+	}
 
-        StringBuilder builder = new StringBuilder();
+	private String notesToString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, List<Note> noteList,
+			boolean excludeExternPrefix, EncodeContext context) {
+		if (noteList.isEmpty()) {
+			return null;
+		}
 
-        for( Note note : noteList ){
-            if( prefixType ){
-                builder.append( getNotePrefix( note, excludeExternPrefix ) );
-                builder.append( " " );
-            }
+		StringBuilder builder = new StringBuilder();
 
-            if( prefixTimestamp ){
-                builder.append( getNoteTimestamp( note ) );
-                builder.append( " " );
-            }
+		for (Note note : noteList) {
+			if (prefixType) {
+				builder.append(StringUtil.encodeForContext(getNotePrefix(note, excludeExternPrefix), context));
+				builder.append(" ");
+			}
 
-            if( prefixType || prefixTimestamp){
-                builder.append( ": " );
-            }
-            builder.append( note.getText() );
+			if (prefixTimestamp) {
+				builder.append(StringUtil.encodeForContext(getNoteTimestamp(note), context));
+				builder.append(" ");
+			}
 
-            builder.append( StringUtil.blankIfNull( noteSeparator ) );
-        }
+			if (prefixType || prefixTimestamp) {
+				builder.append(": ");
+			}
+			builder.append(StringUtil.encodeForContext(note.getText(), context));
 
-        if(!GenericValidator.isBlankOrNull( noteSeparator )){
-            builder.setLength(builder.lastIndexOf( noteSeparator ));
-        }
+			builder.append(StringUtil.blankIfNull(noteSeparator));
+		}
 
-        return builder.toString();
-    }
+		if (!GenericValidator.isBlankOrNull(noteSeparator)) {
+			builder.setLength(builder.lastIndexOf(noteSeparator));
+		}
 
-    public String getNotesAsString( String prefix, String noteSeparator ){
-        List<Note> noteList = noteDAO.getNotesChronologicallyByRefIdAndRefTable( objectId, tableId );
+		return builder.toString();
+	}
 
-        if(noteList.isEmpty()){
-            return null;
-        }
+	public String getNotesAsString(String prefix, String noteSeparator) {
+		List<Note> noteList = noteDAO.getNotesChronologicallyByRefIdAndRefTable(objectId, tableId);
 
-        StringBuilder builder = new StringBuilder();
+		if (noteList.isEmpty()) {
+			return null;
+		}
 
-        for( Note note : noteList ){
-            builder.append( StringUtil.blankIfNull( prefix ) );
-            builder.append( note.getText() );
-            builder.append( StringUtil.blankIfNull( noteSeparator ) );
-        }
+		StringBuilder builder = new StringBuilder();
 
-        if( !GenericValidator.isBlankOrNull( noteSeparator )){
-            builder.setLength(builder.lastIndexOf( noteSeparator ));
-        }
+		for (Note note : noteList) {
+			builder.append(StringUtil.blankIfNull(prefix));
+			builder.append(note.getText());
+			builder.append(StringUtil.blankIfNull(noteSeparator));
+		}
 
-        return builder.toString();
-    }
+		if (!GenericValidator.isBlankOrNull(noteSeparator)) {
+			builder.setLength(builder.lastIndexOf(noteSeparator));
+		}
 
+		return builder.toString();
+	}
 
-    public Note getMostRecentNoteFilteredBySubject(String filter){
-        List<Note> noteList;
-        if( GenericValidator.isBlankOrNull( filter )){
-            noteList = noteDAO.getNotesChronologicallyByRefIdAndRefTable( objectId, tableId );
-            if(!noteList.isEmpty()){
-                return noteList.get(noteList.size() - 1);
-            }
-        }else{
-            noteList = noteDAO.getNoteByRefIAndRefTableAndSubject(objectId, tableId, filter );
-            if(!noteList.isEmpty()){
-                return noteList.get(0);
-            }
-        }
+	public Note getMostRecentNoteFilteredBySubject(String filter) {
+		List<Note> noteList;
+		if (GenericValidator.isBlankOrNull(filter)) {
+			noteList = noteDAO.getNotesChronologicallyByRefIdAndRefTable(objectId, tableId);
+			if (!noteList.isEmpty()) {
+				return noteList.get(noteList.size() - 1);
+			}
+		} else {
+			noteList = noteDAO.getNoteByRefIAndRefTableAndSubject(objectId, tableId, filter);
+			if (!noteList.isEmpty()) {
+				return noteList.get(0);
+			}
+		}
 
-        return null;
-    }
-    private String getNoteTimestamp( Note note ){
-        return DateUtil.convertTimestampToStringDateAndTime( note.getLastupdated() );
-    }
+		return null;
+	}
 
-    public Note createSavableNote( NoteType type, String text, String subject, String currentUserId){
-        if( GenericValidator.isBlankOrNull( text )){
-            return null;
-        }
+	private String getNoteTimestamp(Note note) {
+		return DateUtil.convertTimestampToStringDateAndTime(note.getLastupdated());
+	}
 
-        Note note = new Note();
-        note.setReferenceId( objectId );
-        note.setReferenceTableId( tableId );
-        note.setNoteType( type.getDBCode() );
-        note.setSubject( subject );
-        note.setText( text );
-        note.setSysUserId( currentUserId );
-        note.setSystemUser( createSystemUser(currentUserId) );
+	public Note createSavableNote(NoteType type, String text, String subject, String currentUserId) {
+		if (GenericValidator.isBlankOrNull(text)) {
+			return null;
+		}
 
-        return note;
-    }
+		Note note = new Note();
+		note.setReferenceId(objectId);
+		note.setReferenceTableId(tableId);
+		note.setNoteType(type.getDBCode());
+		note.setSubject(subject);
+		note.setText(text);
+		note.setSysUserId(currentUserId);
+		note.setSystemUser(createSystemUser(currentUserId));
 
-    public static SystemUser createSystemUser(String currentUserId) {
-        SystemUser systemUser = new SystemUser();
-        systemUser.setId(currentUserId);
-        SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
-        systemUserDAO.getData(systemUser);
-        return systemUser;
-    }
+		return note;
+	}
 
-    public static String getReferenceTableIdForNoteBinding( BoundTo binding){
-        switch( binding ){
-            case ANALYSIS:{
-                return AnalysisService.TABLE_REFERENCE_ID;
-            }
-            case QA_EVENT:{
-                return QAService.TABLE_REFERENCE_ID;
-            }
-            case SAMPLE:{
-                return SampleService.TABLE_REFERENCE_ID;
-            }
-            case SAMPLE_ITEM:{
-                return SAMPLE_ITEM_TABLE_REFERENCE_ID;
-            }
-            default:{
-                return null;
-            }
-        }
-    }
+	public static SystemUser createSystemUser(String currentUserId) {
+		SystemUser systemUser = new SystemUser();
+		systemUser.setId(currentUserId);
+		SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
+		systemUserDAO.getData(systemUser);
+		return systemUser;
+	}
 
-    public static List<Note> getTestNotesInDateRangeByType( Date lowDate, Date highDate, NoteType noteType ){
-        return noteDAO.getNotesInDateRangeAndType( lowDate, DateUtil.addDaysToSQLDate(highDate, 1), noteType.DBCode, AnalysisService.TABLE_REFERENCE_ID);
-    }
-    private String getNotePrefix( Note note, boolean excludeExternPrefix ) {
-        if(SUPPORT_INTERNAL_EXTERNAL){
-            if( Note.INTERNAL.equals(note.getNoteType())){
-                return StringUtil.getMessageForKey("note.type.internal");
-            }else if( Note.EXTERNAL.equals(note.getNoteType())){
-                return excludeExternPrefix ? "" : StringUtil.getMessageForKey("note.type.external");
-            }else if( Note.REJECT_REASON.equals( note.getNoteType() )){
-                return StringUtil.getMessageForKey( "note.type.rejectReason" );
-            }else if(Note.NON_CONFORMITY.equals( note.getNoteType() )){
-                return StringUtil.getMessageForKey( "note.type.nonConformity" );
-            }
-        }
+	public static String getReferenceTableIdForNoteBinding(BoundTo binding) {
+		switch (binding) {
+		case ANALYSIS: {
+			return AnalysisService.TABLE_REFERENCE_ID;
+		}
+		case QA_EVENT: {
+			return QAService.TABLE_REFERENCE_ID;
+		}
+		case SAMPLE: {
+			return SampleService.TABLE_REFERENCE_ID;
+		}
+		case SAMPLE_ITEM: {
+			return SAMPLE_ITEM_TABLE_REFERENCE_ID;
+		}
+		default: {
+			return null;
+		}
+		}
+	}
 
-        return "";
-    }
+	public static List<Note> getTestNotesInDateRangeByType(Date lowDate, Date highDate, NoteType noteType) {
+		return noteDAO.getNotesInDateRangeAndType(lowDate, DateUtil.addDaysToSQLDate(highDate, 1), noteType.DBCode,
+				AnalysisService.TABLE_REFERENCE_ID);
+	}
+
+	private String getNotePrefix(Note note, boolean excludeExternPrefix) {
+		if (SUPPORT_INTERNAL_EXTERNAL) {
+			if (Note.INTERNAL.equals(note.getNoteType())) {
+				return StringUtil.getMessageForKey("note.type.internal");
+			} else if (Note.EXTERNAL.equals(note.getNoteType())) {
+				return excludeExternPrefix ? "" : StringUtil.getMessageForKey("note.type.external");
+			} else if (Note.REJECT_REASON.equals(note.getNoteType())) {
+				return StringUtil.getMessageForKey("note.type.rejectReason");
+			} else if (Note.NON_CONFORMITY.equals(note.getNoteType())) {
+				return StringUtil.getMessageForKey("note.type.nonConformity");
+			}
+		}
+
+		return "";
+	}
+
 }

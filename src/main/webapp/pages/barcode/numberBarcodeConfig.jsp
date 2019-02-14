@@ -47,16 +47,14 @@ function checkFieldInt(field) {
 	</tr>
 	<tr>
 		<td>
-			<html:text name="${form.formName}" 
-				property="numOrderLabels" 
+			<form:input path="numOrderLabels" 
 				id="numOrderLabels"
-				onchange="checkFieldInt(this)"></html:text>
+				onchange="checkFieldInt(this)"/>
 		</td>
 		<td>
-			<html:text name="${form.formName}" 
-				property="numSpecimenLabels"
+			<form:input path="numSpecimenLabels"
 				id="numSpecimenLabels"
-				onchange="checkFieldInt(this)"></html:text>
+				onchange="checkFieldInt(this)"/>
 		</td>
 	</tr>
 </table>

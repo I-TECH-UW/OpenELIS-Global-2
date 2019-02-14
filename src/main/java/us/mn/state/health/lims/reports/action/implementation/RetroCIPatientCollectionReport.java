@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
 import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
@@ -21,10 +21,10 @@ public class RetroCIPatientCollectionReport extends CollectionReport implements 
 	private ObservationHistoryDAO ohDAO = new ObservationHistoryDAOImpl();
 	
 	@Override
-	public void setRequestParameters(BaseActionForm dynaForm) {
+	public void setRequestParameters(BaseForm form) {
         try {
-			PropertyUtils.setProperty(dynaForm, "reportName", StringUtil.getMessageForKey("patient.report.collection.name"));
-	        PropertyUtils.setProperty(dynaForm, "usePatientNumberDirect", Boolean.TRUE);
+			PropertyUtils.setProperty(form, "reportName", StringUtil.getMessageForKey("patient.report.collection.name"));
+	        PropertyUtils.setProperty(form, "usePatientNumberDirect", Boolean.TRUE);
         } catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
@@ -50,7 +50,7 @@ public class RetroCIPatientCollectionReport extends CollectionReport implements 
 				
 				if( !projects.isEmpty()){
 					try {
-						PropertyUtils.setProperty(dynaForm, "accessionDirect", sample.getAccessionNumber());
+						PropertyUtils.setProperty(form, "accessionDirect", sample.getAccessionNumber());
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();
 					} catch (InvocationTargetException e) {

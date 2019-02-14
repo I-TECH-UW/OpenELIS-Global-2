@@ -19,7 +19,7 @@ package us.mn.state.health.lims.result.action.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.struts.action.ActionMessages;
+import org.springframework.validation.Errors;
 
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.IResultSaveService;
@@ -30,107 +30,104 @@ import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
 /**
  */
-public class ResultsUpdateDataSet implements IResultSaveService{
-    private List<TestResultItem> modifiedItems = new ArrayList<TestResultItem>(  );
-    private List<ResultSet> modifiedResults = new ArrayList<ResultSet>(  );
-    private List<TestResultItem> analysisOnlyChangeResults = new ArrayList<TestResultItem>(  );
-    private List<ResultSet> newResults = new ArrayList<ResultSet>(  );
-    private List<Analysis> modifiedAnalysis = new ArrayList<Analysis>(  );
-    private List<Result> deletableResults = new ArrayList<Result>(  );
-    private List<Referral> savableReferrals = new ArrayList<Referral>(  );
-    private List<String> referredAnalysisIds = new ArrayList<String>(  );
-    private Analysis previousAnalysis = new Analysis();
-    private ResultsValidation resultValidation = new ResultsValidation();
-    private List<Note> noteList = new ArrayList<Note>(  );
+public class ResultsUpdateDataSet implements IResultSaveService {
+	private List<TestResultItem> modifiedItems = new ArrayList<>();
+	private List<ResultSet> modifiedResults = new ArrayList<>();
+	private List<TestResultItem> analysisOnlyChangeResults = new ArrayList<>();
+	private List<ResultSet> newResults = new ArrayList<>();
+	private List<Analysis> modifiedAnalysis = new ArrayList<>();
+	private List<Result> deletableResults = new ArrayList<>();
+	private List<Referral> savableReferrals = new ArrayList<>();
+	private List<String> referredAnalysisIds = new ArrayList<>();
+	private Analysis previousAnalysis = new Analysis();
+	private ResultsValidation resultValidation = new ResultsValidation();
+	private List<Note> noteList = new ArrayList<>();
 
-    private final String currentUserId;
+	private final String currentUserId;
 
-    public ResultsUpdateDataSet( String currentUserId){
-        this.currentUserId  = currentUserId;
-    }
+	public ResultsUpdateDataSet(String currentUserId) {
+		this.currentUserId = currentUserId;
+	}
 
-    public List<TestResultItem> getModifiedItems(){
-        return modifiedItems;
-    }
+	public List<TestResultItem> getModifiedItems() {
+		return modifiedItems;
+	}
 
-    @Override
-    public List<ResultSet> getModifiedResults(){
-        return modifiedResults;
-    }
-    
-    public void setModifiedResults(List<ResultSet> modifiedResults) {
-    	this.modifiedResults = modifiedResults;
-    }
+	@Override
+	public List<ResultSet> getModifiedResults() {
+		return modifiedResults;
+	}
 
-    @Override
-    public String getCurrentUserId(){
-        return currentUserId;
-    }
+	public void setModifiedResults(List<ResultSet> modifiedResults) {
+		this.modifiedResults = modifiedResults;
+	}
 
+	@Override
+	public String getCurrentUserId() {
+		return currentUserId;
+	}
 
-    @Override
-    public List<ResultSet> getNewResults(){
-        return newResults;
-    }
+	@Override
+	public List<ResultSet> getNewResults() {
+		return newResults;
+	}
 
-    public List<TestResultItem> getAnalysisOnlyChangeResults(){
-        return analysisOnlyChangeResults;
-    }
+	public List<TestResultItem> getAnalysisOnlyChangeResults() {
+		return analysisOnlyChangeResults;
+	}
 
-    public List<Analysis> getModifiedAnalysis(){
-        return modifiedAnalysis;
-    }
+	public List<Analysis> getModifiedAnalysis() {
+		return modifiedAnalysis;
+	}
 
-    public List<Result> getDeletableResults(){
-        return deletableResults;
-    }
+	public List<Result> getDeletableResults() {
+		return deletableResults;
+	}
 
-    public List<Referral> getSavableReferrals(){
-        return savableReferrals;
-    }
+	public List<Referral> getSavableReferrals() {
+		return savableReferrals;
+	}
 
-    public List<String> getReferredAnalysisIds(){
-        return referredAnalysisIds;
-    }
+	public List<String> getReferredAnalysisIds() {
+		return referredAnalysisIds;
+	}
 
-    public Analysis getPreviousAnalysis(){
-        return previousAnalysis;
-    }
+	public Analysis getPreviousAnalysis() {
+		return previousAnalysis;
+	}
 
-    public List<Note> getNoteList(){
-        return noteList;
-    }
+	public List<Note> getNoteList() {
+		return noteList;
+	}
 
-    public void addToNoteList( Note note){
-        if( note != null){
-            noteList.add( note );
-        }
-    }
-    public void filterModifiedItems( List<TestResultItem> allItems ){
-        for(TestResultItem item : allItems){
-            if( isUpdated( item )){
-                modifiedItems.add(item);
-            }else if( item.getIsModified()){
-                //this covers cases such as test date change or test method change w/o data update
-               analysisOnlyChangeResults.add( item );
-            }
-        }
-    }
+	public void addToNoteList(Note note) {
+		if (note != null) {
+			noteList.add(note);
+		}
+	}
 
-    public ActionMessages validateModifiedItems(){
-        return resultValidation.validateModifiedItems(getModifiedItems());
-    }
+	public void filterModifiedItems(List<TestResultItem> allItems) {
+		for (TestResultItem item : allItems) {
+			if (isUpdated(item)) {
+				modifiedItems.add(item);
+			} else if (item.getIsModified()) {
+				// this covers cases such as test date change or test method change w/o data
+				// update
+				analysisOnlyChangeResults.add(item);
+			}
+		}
+	}
 
+	public Errors validateModifiedItems() {
+		return resultValidation.validateModifiedItems(getModifiedItems());
+	}
 
+	private boolean isUpdated(TestResultItem item) {
+		return item.getIsModified() && (ResultUtil.areResults(item) || ResultUtil.areNotes(item)
+				|| ResultUtil.isReferred(item) || ResultUtil.isForcedToAcceptance(item) || ResultUtil.isRejected(item));
+	}
 
-
-    private boolean isUpdated( TestResultItem item ){
-        return item.getIsModified()
-                && (ResultUtil.areResults(item) || ResultUtil.areNotes(item) || ResultUtil.isReferred(item) || ResultUtil.isForcedToAcceptance(item) || ResultUtil.isRejected(item));
-    }
-
-
-    public void setPreviousAnalysis( Analysis previousAnalysis ){
-        this.previousAnalysis = previousAnalysis;
-    }
+	public void setPreviousAnalysis(Analysis previousAnalysis) {
+		this.previousAnalysis = previousAnalysis;
+	}
 }

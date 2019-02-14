@@ -44,36 +44,32 @@ function checkFieldFloat(field) {
 	<tr>
 		<td>
 			<spring:message code="siteInfo.size.height"/>:
-			<html:text name="${form.formName}" 
-				property="heightOrderLabels"
+			<form:input path="heightOrderLabels"
 				id="heightOrderLabels"
-				onchange="checkFieldFloat(this)"></html:text>
+				onchange="checkFieldFloat(this)"/>
 			<spring:message code="siteInfo.size.units"/>
 		</td>
 		<td>
 			<spring:message code="siteInfo.size.height"/>:
-			<html:text name="${form.formName}" 
-				property="heightSpecimenLabels"
+			<form:input path="heightSpecimenLabels"
 				id="heightSpecimenLabels"
-				onchange="checkFieldFloat(this)"></html:text>
+				onchange="checkFieldFloat(this)"/>
 			<spring:message code="siteInfo.size.units"/>
 		</td>
 	</tr>
 	<tr>
 		<td>
 			<spring:message code="siteInfo.size.width"/>:
-			<html:text name="${form.formName}" 
-				property="widthOrderLabels"
+			<form:input path="widthOrderLabels"
 				id="widthOrderLabels"
-				onchange="checkFieldFloat(this)"></html:text>
+				onchange="checkFieldFloat(this)"/>
 			<spring:message code="siteInfo.size.units"/>
 		</td>
 		<td>
 			<spring:message code="siteInfo.size.width"/>:
-			<html:text name="${form.formName}" 
-				property="widthSpecimenLabels"
+			<form:input path="widthSpecimenLabels"
 				id="widthSpecimenLabels"
-				onchange="checkFieldFloat(this)"></html:text>
+				onchange="checkFieldFloat(this)"/>
 			<spring:message code="siteInfo.size.units"/>
 		</td>
 	</tr>

@@ -440,13 +440,13 @@ function  processPhoneSuccess(xhr){
 				:
 			</td>
 			<form:hidden path="nationalIdNew" id="nationalIdNew"/>
-			<c:if test="${empty nationalId}">
+			<c:if test="${empty form.nationalId}">
 				<td>
 					<form:input path="nationalId"
 						onchange="makeDirty();$('nationalIdNew').value = true;" />
 				</td>
 			</c:if>
-			<c:if test="${not empty nationalId}">
+			<c:if test="${not empty form.nationalId}">
 				<td>
 					<c:out value="${form.nationalId}" />
 				</td>
@@ -701,17 +701,17 @@ function  processPhoneSuccess(xhr){
 				<td>
                     <form:select path="qaEvents[${iter.index}].sampleType" id='sampleType${iter.index}' name="qaEvents"
 						cssClass="readOnly qaEventElement typeOfSample requiredField" disabled="false"
-						onchange='makeDirty();' indexed="true"
+						onchange='makeDirty();'
 						cssStyle="width: 99%">
                         <option value="0"></option>
-                        <option value="-1" <c:if test="${not empty qaEvent.sampleType and qaEvent.sampleType == -1}"> selected='selected' </c:if>></option>
+                        <option value="-1" <c:if test="${qaEvents.sampleType != null and qaEvent.sampleType == '-1'}"> selected='selected' </c:if>></option>
 						<form:options items="${form.typeOfSamples}" itemLabel="value" itemValue="id" />
 					</form:select>
 				</td>
 				<td>
 					<form:select path="qaEvents[${iter.index}].section" name="qaEvents" id='section${iter.index}'
 						cssClass="readOnly qaEventElement" disabled="false"
-						indexed="true" style="width: 99%"
+						style="width: 99%"
 						onchange='makeDirty();'>
 						<option ></option>
 						<form:options items="${form.sections}" itemLabel="localizedName" itemValue="nameKey" />
@@ -720,7 +720,7 @@ function  processPhoneSuccess(xhr){
 				<td>
 					<form:input path="qaEvents[${iter.index}].authorizer" id='author${iter.index}' name="qaEvents"
 						cssClass="readOnly qaEventElement" disabled="false"
-						indexed="true" onchange='makeDirty();'
+						onchange='makeDirty();'
 						cssStyle="width: 99%" />
 				</td>
 				<td>
@@ -728,13 +728,12 @@ function  processPhoneSuccess(xhr){
 					           name="qaEvents"
 							   cssClass="qaEventElement" 
 							   disabled="false"
-							   indexed="true" 
 							   onchange='makeDirty();'
 							   cssStyle="width: 99%" />
 				</td>
 				<td>
 					<form:checkbox path="qaEvents[${iter.index}].remove" id='remove${iter.index}' name="qaEvents"
-						cssClass="qaEventEnable" indexed="true"
+						cssClass="qaEventEnable"
 						onclick='makeDirty(); enableDisableIfChecked(this)' />
 				</td>
 			</tr>

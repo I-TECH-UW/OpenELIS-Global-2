@@ -26,7 +26,7 @@ import java.util.Map;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.services.AnalysisService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -75,9 +75,9 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 		return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(reportItems);
 	}
 
-	public void initializeReport(BaseActionForm dynaForm) {
+	public void initializeReport(BaseForm form) {
 		super.initializeReport();
-		setDateRange(dynaForm);
+		setDateRange(form);
 
 		createReportParameters();
 

@@ -19,7 +19,7 @@ package us.mn.state.health.lims.reports.action.implementation;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.project.dao.ProjectDAO;
 import us.mn.state.health.lims.project.daoimpl.ProjectDAOImpl;
@@ -54,14 +54,14 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
 		return "ForCIDashboard";
 	}
 
-	public void setRequestParameters(BaseActionForm dynaForm) {
+	public void setRequestParameters(BaseForm form) {
 		try {
-			PropertyUtils.setProperty(dynaForm, "reportName", getReportNameForParameterPage());
-			PropertyUtils.setProperty(dynaForm, "useLowerDateRange", Boolean.TRUE);
-			PropertyUtils.setProperty(dynaForm, "useUpperDateRange", Boolean.TRUE);
-			//PropertyUtils.setProperty(dynaForm, "useProjectCode", Boolean.TRUE);
-			PropertyUtils.setProperty(dynaForm, "useDashboard", Boolean.TRUE);
-			PropertyUtils.setProperty(dynaForm, "projectCodeList", getProjectList());
+			PropertyUtils.setProperty(form, "reportName", getReportNameForParameterPage());
+			PropertyUtils.setProperty(form, "useLowerDateRange", Boolean.TRUE);
+			PropertyUtils.setProperty(form, "useUpperDateRange", Boolean.TRUE);
+			//PropertyUtils.setProperty(form, "useProjectCode", Boolean.TRUE);
+			PropertyUtils.setProperty(form, "useDashboard", Boolean.TRUE);
+			PropertyUtils.setProperty(form, "projectCodeList", getProjectList());
 		} catch (Exception e) {
 			Log.error("Error in CIDashboard.setRequestParemeters: ", e);
 		}
@@ -77,17 +77,17 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
 		reportParameters.put("studyName", (project == null) ? null : project.getLocalizedName());
 	}
 
-	public void initializeReport(BaseActionForm dynaForm) {
+	public void initializeReport(BaseForm form) {
 		super.initializeReport();
 		errorFound = false;
 		
-		indicStr = dynaForm.getString("projectCode");
+		indicStr = form.getString("projectCode");
 
-		lowDateStr = dynaForm.getString("lowerDateRange");
-		highDateStr = dynaForm.getString("upperDateRange");
-		projectStr = dynaForm.getString("projectCode");
+		lowDateStr = form.getString("lowerDateRange");
+		highDateStr = form.getString("upperDateRange");
+		projectStr = form.getString("projectCode");
 		dateRange = new DateRange(lowDateStr, highDateStr);
-		String[] splitline = dynaForm.getString("projectCode").split(":");
+		String[] splitline = form.getString("projectCode").split(":");
 		
 		projectStr = splitline[0];
 		//indicLabel = splitline[1];

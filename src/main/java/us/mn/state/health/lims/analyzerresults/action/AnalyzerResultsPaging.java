@@ -23,8 +23,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.struts.action.DynaActionForm;
 
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.analyzerresults.action.beanitems.AnalyzerResultItem;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.paging.IPageDivider;
@@ -36,28 +36,28 @@ import us.mn.state.health.lims.common.util.IdValuePair;
 
 public class AnalyzerResultsPaging {
 
-	private PagingUtility<List<AnalyzerResultItem>> paging = new PagingUtility<List<AnalyzerResultItem>>();
+	private PagingUtility<List<AnalyzerResultItem>> paging = new PagingUtility<>();
 	private static TestItemPageHelper pagingHelper = new TestItemPageHelper();
 
-	public void setDatabaseResults(HttpServletRequest request, DynaActionForm dynaForm, List<AnalyzerResultItem> tests)
+	public void setDatabaseResults(HttpServletRequest request, BaseForm form, List<AnalyzerResultItem> tests)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		paging.setDatabaseResults(request.getSession(), tests, pagingHelper);
 
 		List<AnalyzerResultItem> resultPage = paging.getPage(1, request.getSession());
 		if (resultPage != null) {
-			PropertyUtils.setProperty(dynaForm, "resultList", resultPage);
-			PropertyUtils.setProperty(dynaForm, "paging", paging.getPagingBeanWithSearchMapping(1, request.getSession()));
+			PropertyUtils.setProperty(form, "resultList", resultPage);
+			PropertyUtils.setProperty(form, "paging", paging.getPagingBeanWithSearchMapping(1, request.getSession()));
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public void page(HttpServletRequest request, DynaActionForm dynaForm, String newPage) throws IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException {
+	public void page(HttpServletRequest request, BaseForm form, String newPage)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.FALSE);
-		List<AnalyzerResultItem> clientTests = (List<AnalyzerResultItem>) dynaForm.get("resultList");
-		PagingBean bean = (PagingBean) dynaForm.get("paging");
+		List<AnalyzerResultItem> clientTests = (List<AnalyzerResultItem>) form.get("resultList");
+		PagingBean bean = (PagingBean) form.get("paging");
 
 		paging.updatePagedResults(request.getSession(), clientTests, bean, pagingHelper);
 
@@ -65,15 +65,16 @@ public class AnalyzerResultsPaging {
 
 		List<AnalyzerResultItem> resultPage = paging.getPage(page, request.getSession());
 		if (resultPage != null) {
-			PropertyUtils.setProperty(dynaForm, "resultList", resultPage);
-			PropertyUtils.setProperty(dynaForm, "paging", paging.getPagingBeanWithSearchMapping(page, request.getSession()));
+			PropertyUtils.setProperty(form, "resultList", resultPage);
+			PropertyUtils.setProperty(form, "paging",
+					paging.getPagingBeanWithSearchMapping(page, request.getSession()));
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public void updatePagedResults(HttpServletRequest request, DynaActionForm dynaForm) {
-		List<AnalyzerResultItem> clientTests = (List<AnalyzerResultItem>) dynaForm.get("resultList");
-		PagingBean bean = (PagingBean) dynaForm.get("paging");
+	public void updatePagedResults(HttpServletRequest request, BaseForm form) {
+		List<AnalyzerResultItem> clientTests = (List<AnalyzerResultItem>) form.get("resultList");
+		PagingBean bean = (PagingBean) form.get("paging");
 
 		paging.updatePagedResults(request.getSession(), clientTests, bean, pagingHelper);
 	}
@@ -82,15 +83,17 @@ public class AnalyzerResultsPaging {
 		return paging.getAllResults(request.getSession(), pagingHelper);
 	}
 
-	public void setEmptyPageBean(HttpServletRequest request, DynaActionForm dynaForm) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		PropertyUtils.setProperty(dynaForm, "paging", paging.getPagingBeanWithSearchMapping(0, request.getSession()));
+	public void setEmptyPageBean(HttpServletRequest request, BaseForm form)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		PropertyUtils.setProperty(form, "paging", paging.getPagingBeanWithSearchMapping(0, request.getSession()));
 	}
 
-	private static class TestItemPageHelper implements IPageDivider<List<AnalyzerResultItem>>, IPageUpdater<List<AnalyzerResultItem>>,
-			IPageFlattener<List<AnalyzerResultItem>> {
+	private static class TestItemPageHelper implements IPageDivider<List<AnalyzerResultItem>>,
+			IPageUpdater<List<AnalyzerResultItem>>, IPageFlattener<List<AnalyzerResultItem>> {
 
+		@Override
 		public void createPages(List<AnalyzerResultItem> tests, List<List<AnalyzerResultItem>> pagedResults) {
-			List<AnalyzerResultItem> page = new ArrayList<AnalyzerResultItem>();
+			List<AnalyzerResultItem> page = new ArrayList<>();
 
 			int sampleGroupingNumber = -1;
 			int resultCount = 0;
@@ -100,7 +103,7 @@ public class AnalyzerResultsPaging {
 					resultCount = 0;
 					sampleGroupingNumber = -1;
 					pagedResults.add(page);
-					page = new ArrayList<AnalyzerResultItem>();
+					page = new ArrayList<>();
 				}
 				if (resultCount >= IActionConstants.PAGING_SIZE) {
 					sampleGroupingNumber = item.getSampleGroupingNumber();
@@ -115,6 +118,7 @@ public class AnalyzerResultsPaging {
 			}
 		}
 
+		@Override
 		public void updateCache(List<AnalyzerResultItem> cacheItems, List<AnalyzerResultItem> clientItems) {
 			for (int i = 0; i < clientItems.size(); i++) {
 				cacheItems.set(i, clientItems.get(i));
@@ -122,9 +126,10 @@ public class AnalyzerResultsPaging {
 
 		}
 
+		@Override
 		public List<AnalyzerResultItem> flattenPages(List<List<AnalyzerResultItem>> pages) {
 
-			List<AnalyzerResultItem> allResults = new ArrayList<AnalyzerResultItem>();
+			List<AnalyzerResultItem> allResults = new ArrayList<>();
 
 			for (List<AnalyzerResultItem> page : pages) {
 				for (AnalyzerResultItem item : page) {
@@ -136,7 +141,7 @@ public class AnalyzerResultsPaging {
 
 		@Override
 		public List<IdValuePair> createSearchToPageMapping(List<List<AnalyzerResultItem>> allPages) {
-			List<IdValuePair> mappingList = new ArrayList<IdValuePair>();
+			List<IdValuePair> mappingList = new ArrayList<>();
 
 			int page = 0;
 			for (List<AnalyzerResultItem> resultList : allPages) {

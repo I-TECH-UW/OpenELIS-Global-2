@@ -27,7 +27,7 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.services.AnalysisService;
 import us.mn.state.health.lims.common.services.PatientService;
 import us.mn.state.health.lims.common.services.ResultService;
@@ -75,11 +75,11 @@ public abstract class RejectionReport extends Report implements IReportCreator{
     protected abstract void buildReportContent( ReportSpecificationList testSelection );
 
     @Override
-    public void initializeReport( BaseActionForm dynaForm ){
+    public void initializeReport( BaseForm form ){
         initialized = true;
-        ReportSpecificationList selection = ( ReportSpecificationList ) dynaForm.get( "selectList" );
-        String lowDateStr = dynaForm.getString( "lowerDateRange" );
-        String highDateStr = dynaForm.getString( "upperDateRange" );
+        ReportSpecificationList selection = ( ReportSpecificationList ) form.get( "selectList" );
+        String lowDateStr = form.getString( "lowerDateRange" );
+        String highDateStr = form.getString( "upperDateRange" );
         dateRange = new DateRange( lowDateStr, highDateStr );
 
         errorFound = !validateSubmitParameters(selection);

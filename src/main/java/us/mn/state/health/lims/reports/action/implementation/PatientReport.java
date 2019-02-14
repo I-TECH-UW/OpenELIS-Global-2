@@ -41,7 +41,7 @@ import us.mn.state.health.lims.address.valueholder.PersonAddress;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -188,13 +188,13 @@ public abstract class PatientReport extends Report {
 		return true;
 	}
 
-	public void setRequestParameters(BaseActionForm dynaForm) {
+	public void setRequestParameters(BaseForm form) {
 		try {
-			PropertyUtils.setProperty(dynaForm, "reportName", getReportNameForParameterPage());
+			PropertyUtils.setProperty(form, "reportName", getReportNameForParameterPage());
 
-			PropertyUtils.setProperty(dynaForm, "useAccessionDirect", Boolean.TRUE);
-			PropertyUtils.setProperty(dynaForm, "useHighAccessionDirect", Boolean.TRUE);
-			PropertyUtils.setProperty(dynaForm, "usePatientNumberDirect", Boolean.TRUE);
+			PropertyUtils.setProperty(form, "useAccessionDirect", Boolean.TRUE);
+			PropertyUtils.setProperty(form, "useHighAccessionDirect", Boolean.TRUE);
+			PropertyUtils.setProperty(form, "usePatientNumberDirect", Boolean.TRUE);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
@@ -204,12 +204,12 @@ public abstract class PatientReport extends Report {
 		}
 	}
 
-	public void initializeReport(BaseActionForm dynaForm) {
+	public void initializeReport(BaseForm form) {
 		super.initializeReport();
 		errorFound = false;
-		lowerNumber = dynaForm.getString("accessionDirect");
-		upperNumber = dynaForm.getString("highAccessionDirect");
-		String patientNumber = dynaForm.getString("patientNumberDirect");
+		lowerNumber = form.getString("accessionDirect");
+		upperNumber = form.getString("highAccessionDirect");
+		String patientNumber = form.getString("patientNumberDirect");
 
 		handledOrders = new ArrayList<String>();
 

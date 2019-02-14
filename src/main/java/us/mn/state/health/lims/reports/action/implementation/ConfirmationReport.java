@@ -28,7 +28,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.services.NoteService;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.TypeOfSampleService;
@@ -94,9 +94,9 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 		return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(reportItems);
 	}
 
-	public void initializeReport(BaseActionForm dynaForm) {
+	public void initializeReport(BaseForm form) {
 		super.initializeReport();
-		setDateRange(dynaForm);
+		setDateRange(form);
 
 		createReportParameters();
 
