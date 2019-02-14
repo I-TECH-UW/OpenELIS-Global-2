@@ -299,6 +299,7 @@ public class TestActivationController extends BaseController {
       
       return list;
   }
+  
   protected ModelAndView findLocalForward(String forward, BaseForm form) {
     if ("success".equals(forward)) {
       return new ModelAndView("testActivationDefinition", "form", form);
