@@ -1,4 +1,4 @@
-f<%@ page language="java" contentType="text/html; charset=utf-8"
+<%@ page language="java" contentType="text/html; charset=utf-8"
          import="us.mn.state.health.lims.common.action.IActionConstants,
 	            us.mn.state.health.lims.common.util.*,
 	            us.mn.state.health.lims.common.util.ConfigurationProperties.Property,

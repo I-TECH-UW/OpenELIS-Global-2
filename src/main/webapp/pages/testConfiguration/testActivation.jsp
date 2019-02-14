@@ -4,7 +4,6 @@
          		us.mn.state.health.lims.common.action.IActionConstants,
          		us.mn.state.health.lims.common.util.IdValuePair,
          		us.mn.state.health.lims.common.util.StringUtil,
-         		spring.generated.forms.TestActivationForm,
          		us.mn.state.health.lims.test.beanItems.TestActivationBean,
          		us.mn.state.health.lims.common.util.Versioning" %>
 
@@ -28,25 +27,11 @@
   ~ The Original Code is OpenELIS code.
   ~
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
-  --%>
-
+ --%>
+ 
  <c:set var="jsonChangeList" value="${form.jsonChangeList}" />
  <c:set var="activeTestList" value="${form.activeTestList}" />
  <c:set var="inactiveTestList" value="${form.inactiveTestList}" />
-
-<%!
-    String basePath = "";
-    int testCount = 0;
-    int columnCount = 0;
-    int columns = 4;
-    int columnSize = (int) (100 / columns);
-%>
-
-<%
-    basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
-    columnCount = 0;
-    testCount = 0;
-%>
 
 <script type="text/javascript" src="scripts/jquery-ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <link rel="stylesheet" media="screen" type="text/css"
@@ -251,7 +236,6 @@
         var sampleType, activatedTests;
         var headerCell, bodyCell;
 
-
         table.append(headerRow);
         table.append(bodyRow);
         table.attr("width", "100%");
@@ -273,7 +257,7 @@
 
 
                 headerCell = $jq(document.createElement("th"));
-                headerCell.attr("width", '<%=columnSize + "%"%>');
+                headerCell.attr("width", '25%');
                 headerCell.text(sampleType.text());
                 headerRow.append(headerCell);
 
@@ -283,7 +267,6 @@
                 sortColumnCount++;
             }
         });
-
 
         if (sortColumnCount < <%=columns %>) {
             while (sortColumnCount < <%=columns %>) {
@@ -310,7 +293,6 @@
         });
 
     }
-
 
     function insertSortableTestList(cell, sampleType, activatedTests) {
         var UL = $jq(document.createElement("ul"));
@@ -428,15 +410,30 @@
     }
     function savePage() {
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-
-        var form = window.document.forms[0];
+        var form = document.getElementById("mainForm");
         form.method = "POST";
-        form.action = "TestActivationUpdate.do";
+        form.action = "TestActivation.do";
         form.submit();
     }
 </script>
+ 
+<style>
+table{
+  width: 100%;
+}
+td {
+  width: 25%;
+}
 
-<form>
+</style>
+
+<form:form name="${form.formName}" 
+				   action="${form.formAction}" 
+				   modelAttribute="form" 
+				   onSubmit="return submitForm(this);" 
+				   method="${form.formMethod}"
+				   id="mainForm">
+				   
 <input type="button" value='<%= StringUtil.getContextualMessageForKey("banner.menu.administration") %>'
        onclick="submitAction('MasterListsPage.do');"
        class="textButton"/> &rarr;
@@ -458,7 +455,6 @@
 <span id="testActivationSort" class="selectHide sortShow" style="display:none" ><%= StringUtil.getContextualMessageForKey("label.button.sort") %></span>
 <span id="testActivationConfirmation" class="selectHide sortHide confirmShow" style="display:none" ><%=StringUtil.getContextualMessageForKey("label.confirmation")%></span>
 <span id="testActivationSelection" class="selectShow sortHide confirmHide"><%=StringUtil.getContextualMessageForKey("label.testActivate")%></span>
-</form>
 
 <h1 id="step"><spring:message code="label.testActivate"/></h1><br/>
 
@@ -497,7 +493,7 @@
 <div id="sampleTypeSortOrder" class="selectHide" style="display: none">
     <hr/>
     <h4><%=StringUtil.getContextualMessageForKey("label.sample.type.display.order")%></h4>
-    <table style="width:'<%=columnSize + "%"%>" >
+    <table>
         <tr><th><%=StringUtil.getContextualMessageForKey("label.sample.types")%></th></tr>
         <tr><td>
             <ul class="sortable ui-sortable selectClear" id="sampleTypeSortList"></ul>
@@ -523,10 +519,26 @@
 
 <hr/>
 
+<%!
+    String basePath = "";
+    int testCount = 0;
+    int columnCount = 0;
+    int columns = 4;
+%>
+
+<%
+    basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
+    columnCount = 0;
+    testCount = 0;
+%>
+
+<form:hidden path="jsonChangeList" id="jsonChangeList"/>
+
+<div id="activateSection" class="indent">
+
     <c:forEach var="activeBean" varStatus="iter" items="${form.activeTestList}">
         <div>
-            <span class="activeSampleType"><%-- <c:out value="${activeBean.sampleType.value}"/> --%>
-                <%-- <form:hidden path="${activeBean[iter]}"/> --%>
+            <span class="activeSampleType"><c:out value="${activeBean.sampleType.value}"/>
             </span>
             <div class="indent">
                 <% 
@@ -534,12 +546,12 @@
                 	List<IdValuePair> testList = bean.getActiveTests();
                 	testCount = 0; 
                 %>
-                <table style="width:'<%=columnSize + "%"%>" >
-                    <% while (testCount < testList.size()) {%>
+                <table>
+                    <% while (testCount < testList.size()) { %>
                     <tr>
                         <% columnCount = 0; %>
-                        <% while (testCount < testList.size() && (columnCount < columns)) {%>
-                        <td width='<%=columnSize + "%"%>'>
+                        <% while (testCount < testList.size() && (columnCount < columns)) { %>
+                        <td>
                             <input type="checkbox"
                                    class="active sortable-test"
                                    value='<%=testList.get(testCount).getId()%>'
@@ -553,23 +565,21 @@
                         <% } %>
                         <% while (columnCount < columns) {
                             columnCount++; %>
-                        <td width='<%=columnSize + "%"%>'></td>
+                        <td></td>
                         <% } %>
                     </tr>
-                    <% } %>
+                <% } %>    
                 </table>
                 <% 
             		testList = bean.getInactiveTests();
                 	testCount = 0; 
                 %>
-                <table style="width:100%;">
+                <table>
                     <% while (testCount < testList.size()) {%>
                     <tr>
-                        <%
-                            columnCount = 0;
-                        %>
-                        <% while (testCount < testList.size() && (columnCount < columns)) {%>
-                        <td width='<%=columnSize + "%"%>'>
+                        <% columnCount = 0;
+                           while (testCount < testList.size() && (columnCount < columns)) {%>
+                        <td>
                             <input type="checkbox"
                                    class="inactive"
                                    value='<%=testList.get(testCount).getId()%>'
@@ -582,7 +592,7 @@
                         <% } %>
                         <% while (columnCount < columns) {
                             columnCount++; %>
-                        <td width='<%=columnSize + "%"%>'></td>
+                        <td></td>
                         <% } %>
                     </tr>
                     <% } %>
@@ -590,20 +600,58 @@
             </div>
         </div>
     </c:forEach>
-
-
-
-
-
+    
+    <c:if test="${!empty form.inactiveTestList}">
+        <br/><br/>
+        <div style="text-align: center"><%= StringUtil.getContextualMessageForKey("label.testActivate.inactiveSampleTypes") %></div>
+        <hr/>
+        
+        <c:forEach var="inactiveBean" varStatus="iter" items="${form.inactiveTestList}">
+            <div>
+            <span class="inactiveSampleType"><c:out value="${inactiveBean.sampleType.value}"/>
+            </span>
+            <div class="indent">
+                <% 
+                	TestActivationBean bean = (TestActivationBean) pageContext.getAttribute("inactiveBean");
+                	List<IdValuePair> testList = bean.getInactiveTests();
+                	testCount = 0; 
+                %>
+                <table>
+                    <% while (testCount < testList.size()) {%>
+                    <tr>
+                        <%
+                            columnCount = 0;
+                            while (testCount < testList.size() && (columnCount < columns)) {%>
+                        <td>
+                            <input type="checkbox"
+                                   class="inactive"
+                                   value='<%=testList.get(testCount).getId()%>'
+                                   onchange="checkedChanged(false,this);">
+                            <span><%= testList.get(testCount).getValue()%></span>
+                            <%
+                                testCount++;
+                                columnCount++;
+                            %></td>
+                        <% } %>
+                    </tr>
+                    <% } %>
+                </table>
+            </div>
+     	  </div>
+ 		</c:forEach>   
+  	</c:if>
+  	
+</div>
 
 <div class="selectShow sortHide confirmHide" style="margin-left:auto; margin-right:auto;width: 40%;">
     <input type="button"
-           value='<%= StringUtil.getContextualMessageForKey("label.button.next") %>'
+           value='<%= StringUtil.getContextualMessageForKey("label.button.save") %>'
            disabled="disabled"
            onclick="nextStepFromSelect();"
            id="nextButtonSelect"/>
 
-    <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.previous")%>' onclick="navigateBack()" />
+    <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.cancel")%>' onclick="navigateBack()" />
 
 
 </div>
+</form:form>
