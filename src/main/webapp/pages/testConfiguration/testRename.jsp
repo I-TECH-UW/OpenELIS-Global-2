@@ -2,7 +2,7 @@
          contentType="text/html; charset=utf-8"
          import="us.mn.state.health.lims.common.action.IActionConstants,
          		us.mn.state.health.lims.common.util.IdValuePair,
-         		us.mn.state.health.lims.common.util.StringUtil,
+         		us.mn.state.health.lims.common.util.*,
          		us.mn.state.health.lims.common.util.Versioning,
          		java.util.List,
          		java.util.ArrayList,
@@ -13,7 +13,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-
+<%--
   ~ The contents of this file are subject to the Mozilla Public License
   ~ Version 1.1 (the "License"); you may not use this file except in
   ~ compliance with the License. You may obtain a copy of the License at
@@ -30,22 +30,10 @@
   --%>
 
 <script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-
 <c:set var="formName" value="${form.formName}" />
 <c:set var="testList" value="${form.testList}" />
 
-<%!
-    int testCount = 0;
-    int columnCount = 0;
-    int columns = 3;
-    List testList;
-%>
 
-<%
-    columnCount = 0;
-    testCount = 0;
-    testList =  ((TestRenameEntryForm) request.getAttribute("form")).getTestList(); 
-%>
 <script type="text/javascript">
     if (!$jq) {
         var $jq = jQuery.noConflict();
@@ -113,7 +101,7 @@
         });
 
         if (hasError) {
-            alert('<%=StringUtil.getMessageForKey("error.all.required")%>');
+            alert('<%=StringUtil.getContextualMessageForKey("error.all.required")%>');
         } else {
             $jq(".required").each(function () {
                 var element = $jq(this);
@@ -125,7 +113,7 @@
             });
             $jq("#editButtons").hide();
             $jq("#confirmationButtons").show();
-            $jq("#action").text('<%=StringUtil.getMessageForKey("label.confirmation")%>');
+            $jq("#action").text('<%=StringUtil.getContextualMessageForKey("label.confirmation")%>');
         }
     }
 
@@ -141,7 +129,7 @@
 
         $jq("#editButtons").show();
         $jq("#confirmationButtons").hide();
-        $jq("#action").text('<%=StringUtil.getMessageForKey("label.button.edit")%>');
+        $jq("#action").text('<%=StringUtil.getContextualMessageForKey("label.button.edit")%>');
     }
 
     function cancel() {
@@ -163,25 +151,54 @@
     function savePage() {
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         var form = window.document.forms[0];
-        form.action = "TestRenameUpdate.do";
+        form.action = "TestRenameEntry.do";
         form.submit();
     }
 </script>
 
-<form:hidden path="testId" />
-<input type="button" value='<%= StringUtil.getMessageForKey("banner.menu.administration") %>'
-       onclick="submitAction('MasterListsPage.do');"
-       class="textButton"/> &rarr;
-<input type="button" value='<%= StringUtil.getMessageForKey("configuration.test.management") %>'
-       onclick="submitAction('TestManagementConfigMenu.do');"
-       class="textButton"/>&rarr;
-<%=StringUtil.getMessageForKey( "label.testName" )%>
+
+<%!
+    int testCount = 0;
+    int columnCount = 0;
+    int columns = 3;
+%>
+
+<%
+    columnCount = 0;
+    testCount = 0;
+    List testList;
+    testList =  ((TestRenameEntryForm) request.getAttribute("form")).getTestList();
+%>
+
+
+	<form:form name="${form.formName}" 
+				   action="${form.formAction}" 
+				   modelAttribute="form" 
+				   onSubmit="return submitForm(this);" 
+				   method="${form.formMethod}"
+				   id="mainForm">
+
+<form:hidden path="testId" id="testId"/>
+
+
+<input 	type="button"
+		class="textButton" 
+		value="<%= StringUtil.getContextualMessageForKey("banner.menu.administration")%>"
+		onclick="submitAction('MasterListsPage.do');" >&rarr;
+
+<input  type="button" 
+		class="textButton"
+		value="<%= StringUtil.getContextualMessageForKey("configuration.test.management") %>"
+       	onclick="submitAction('TestManagementConfigMenu.do');" >&rarr;
+        
+
+<%=StringUtil.getContextualMessageForKey( "label.testName" ) %>
 <br><br>
 
-<div id="editDiv" style="display: none">
-    <h1 id="action"><spring:message code="label.button.edit"/></h1>
 
-    <h2><%=StringUtil.getMessageForKey( "sample.entry.test" )%>:<span id="testName"></span></h2>
+<div id="editDiv" style="display:none;">
+    <h1 id="action"><spring:message code="label.button.edit"/></h1>
+    <h2><%=StringUtil.getContextualMessageForKey( "sample.entry.test" )%>:<span id="testName"></span></h2>
     <br>
     <table>
         <tr>
@@ -196,46 +213,65 @@
             <td style="text-align: center"><spring:message code="label.english"/></td>
             <td style="text-align: center"><spring:message code="label.french"/></td>
         </tr>
-        <tr>
+    
+     	<tr>
             <td style="padding-right: 20px"><spring:message code="label.current"/>:</td>
             <td id="nameEnglish" style="padding-left: 10px"></td>
             <td id="nameFrench" style="padding-left: 10px"></td>
             <td id="reportNameEnglish" style="padding-left: 10px"></td>
             <td id="reportNameFrench" style="padding-left: 10px"></td>
         </tr>
-        <tr>
+        
+         <tr>
             <td style="padding-right: 20px"><spring:message code="label.new"/>:</td>
-            <td><span class="requiredlabel">*</span><form:input path="nameEnglish"  size="40"
-                                                               styleClass="required"
-                                                               onchange="handleInput(this);"/>
+            <td><span class="requiredlabel">*</span>
+            	<form:input
+            			path="nameEnglish"
+                        cssClass="required"
+                        size="35"
+                        onchange="handleInput(this);"/>
             </td>
-            <td><span class="requiredlabel">*</span><form:input path="nameFrench"  size="40"
-                                                               styleClass="required" onchange="handleInput(this);"/>
+            <td><span class="requiredlabel">*</span><form:input
+            			path="nameFrench"
+            			cssClass="required"
+                        size="35"
+                        onchange="handleInput(this);"/>
             </td>
-            <td><span class="requiredlabel">*</span><form:input path="reportNameEnglish"
-                                                               size="40" styleClass="required"
-                                                               onchange="handleInput(this);"/>
+            <td><span class="requiredlabel">*</span><form:input 
+            			path="reportNameEnglish"
+            			cssClass="required"
+                        size="35"
+                        onchange="handleInput(this);"/>
             </td>
-            <td><span class="requiredlabel">*</span><form:input path="reportNameFrench"
-                                                               size="40" styleClass="required"
-                                                               onchange="handleInput(this);"/>
+            <td><span class="requiredlabel">*</span><form:input 
+            			path="reportNameFrench"
+            			cssClass="required"
+                        size="35"
+                        onchange="handleInput(this);"/>
             </td>
         </tr>
-    </table>
-    <div style="text-align: center" id="editButtons">
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.next")%>'
+     </table>
+     
+
+  
+
+     <div style="text-align: center" id="editButtons">
+        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.save")%>'
                onclick="confirmValues();"/>
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous")%>'
+        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.cancel")%>'
                onclick='cancel()'/>
     </div>
+
     <div style="text-align: center; display: none;" id="confirmationButtons">
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.accept")%>'
+        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.accept")%>'
                onclick="savePage();"/>
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.reject")%>'
+        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.reject")%>'
                onclick='rejectConfirmation();'/>
     </div>
     <br><br>
-</div>
+   
+     </div>
+   </form:form>
 
 <table>
     <% while(testCount < testList.size()){%>
@@ -262,5 +298,6 @@
 </table>
 
 <br>
-<input type="button" value='<%= StringUtil.getMessageForKey("label.button.finished") %>'
+<input type="button" value='<%= StringUtil.getContextualMessageForKey("label.button.finished") %>'
        onclick="submitAction('TestManagementConfigMenu.do');"/>
+

@@ -74,6 +74,10 @@
                    onclick="submitAction('TestAdd.do');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=StringUtil.getMessageForKey("configuration.test.add.explain")%></li>
+        <li><input type="button" value="<%= StringUtil.getMessageForKey("configuration.test.modify") %>"
+                   onclick="submitAction('TestModifyEntry.do');"
+                   class="textButton"/><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<%=StringUtil.getMessageForKey("configuration.test.modify.explain")%></li>
         <li><input type="button" value="<%= StringUtil.getMessageForKey("configuration.test.activate") %>"
                    onclick="submitAction('TestActivation.do');"
                    class="textButton"/><br>

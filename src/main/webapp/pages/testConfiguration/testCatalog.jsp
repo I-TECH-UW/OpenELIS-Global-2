@@ -1,9 +1,13 @@
 <%@ page language="java"
          contentType="text/html; charset=utf-8"
          import="java.util.List,
-                 us.mn.state.health.lims.testconfiguration.beans.TestCatalogBean,
-                 us.mn.state.health.lims.common.action.IActionConstants,
+                 spring.generated.forms.TestCatalogForm,
+                 us.mn.state.health.lims.test.valueholder.TestSection,
+                 us.mn.state.health.lims.test.valueholder.TestCatalog,
                  us.mn.state.health.lims.testconfiguration.beans.ResultLimitBean,
+                 spring.generated.forms.ResultLimitsForm,
+                 us.mn.state.health.lims.common.util.IdValuePair,
+                 us.mn.state.health.lims.common.action.IActionConstants,
                  us.mn.state.health.lims.common.util.StringUtil" %>
 
 <%@ page isELIgnored="false" %>
@@ -29,10 +33,8 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
- 
-<bean:define id="testList" name='${form.formName}' property="testList" type="List<TestCatalogBean>"/>
-<bean:define id="testSectionList" name='${form.formName}' property="testSectionList" type="List<String>"/>
-
+<c:set var="testSectionList" value="${form.testSectionList}" />
+<c:set var="testCatalogList" value="${form.testCatalogList}" />
 
 <%!
     String currentTestUnitName;
@@ -85,11 +87,19 @@
         form.submit();
     }
 </script>
+
+<%
+    List<String> testSectionList;
+    testSectionList =  ((TestCatalogForm) request.getAttribute("form")).getTestSectionList();
+    List<TestCatalog> testCatalogList;
+    testCatalogList =  ((TestCatalogForm) request.getAttribute("form")).getTestCatalogList();
+%>
+
 <form>
-    <input type="button" value="<%= StringUtil.getMessageForKey("banner.menu.administration") %>"
+    <input type="button" value="<%= StringUtil.getContextualMessageForKey("banner.menu.administration") %>"
            onclick="submitAction('MasterListsPage.do');"
            class="textButton"/> &rarr;
-    <input type="button" value="<%= StringUtil.getMessageForKey("configuration.test.management") %>"
+    <input type="button" value="<%= StringUtil.getContextualMessageForKey("configuration.test.management") %>"
            onclick="submitAction('TestManagementConfigMenu.do');"
            class="textButton"/>&rarr;
     <spring:message code="configuration.test.catalog" />
@@ -102,22 +112,22 @@
 
 <h4><spring:message code="configuration.test.catalog.sections" /></h4>
 <input type="checkbox" onchange="sectionSelectionAll(this)"><spring:message code="label.all" /><br/><br/>
+
 <% for (String testSection : testSectionList) {%>
 <input type="checkbox" class="testSection" value='<%=testSection.replace(" ", "_").replace("/", "_")%>'
        onchange="sectionSelection(this)"><%=testSection%><br/>
 <% } %>
 <br/>
+
 <%-- This div has to do with the divs in the loop.  The closing div is before the opening div because each change of test unit
 needs to be in a div.  This div matches the first time through and there is a closing div at the end of the html
 which closes it the last time through--%>
 <div>
-<% for (TestCatalogBean bean : testList) { %>
+<% for (TestCatalog bean : testCatalogList) { %>
 <hr/>
     <% if (!currentTestUnitName.equals(bean.getTestUnit())) { %>
 </div>
 <div id='<%=bean.getTestUnit().replace(" ", "_").replace("/", "_")%>' style="display: none">
-
-
     <h2><%=bean.getTestUnit()%>
     </h2>
     <hr/>
@@ -159,6 +169,8 @@ which closes it the last time through--%>
             <td><span class="catalog-label"><spring:message code="label.uom" /></span> <b><%=bean.getUom()%></b>
             </td>
             <td><span class="catalog-label"><spring:message code="label.significant.digits" /></span> <b><%= bean.getSignificantDigits() %></b>
+            </td>
+            <td><span class="catalog-label"><spring:message code="label.loinc" /></span> <b><%= bean.getLoinc() %></b>
             </td>
         </tr>
         <% if (bean.isHasDictionaryValues()) {
@@ -205,4 +217,5 @@ which closes it the last time through--%>
     </table>
 <%} %>
     </div>
+
 

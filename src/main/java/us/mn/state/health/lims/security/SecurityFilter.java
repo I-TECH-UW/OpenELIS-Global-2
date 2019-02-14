@@ -64,12 +64,13 @@ public class SecurityFilter implements Filter {
 			@SuppressWarnings("unchecked")
 			Enumeration<String> parameterNames = httpRequest.getParameterNames();
 			 while (parameterNames.hasMoreElements()) {
-				 String param = httpRequest.getParameter(parameterNames.nextElement());
-				 String paramValue = java.net.URLDecoder.decode(param, "UTF-8");
+				 String paramValue = httpRequest.getParameter(parameterNames.nextElement());
+				 //String paramValue = java.net.URLDecoder.decode(param, "UTF-8");
+				 
 				 paramValue = paramValue.replaceAll("\\s", "");
 				 if (paramValue.contains("<script>") || paramValue.contains("</script>")) {
 					 suspectedAttack = true;
-					 attackList.add("XSS- " + param);
+					 attackList.add("XSS- " + paramValue);
 				 }
 			 }
 		}
