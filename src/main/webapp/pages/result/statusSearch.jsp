@@ -31,7 +31,7 @@ function doShowTests(){
 	var form = document.forms[0];
 
 	form.action = "StatusResults.do"; 
-
+	form.method ="get";
 	form.submit();
 }
 
@@ -82,28 +82,28 @@ function /*void*/ dirtySearchInfo(e){
 		<form:input path="recievedDate" onkeyup="dirtySearchInfo( event )"/>
 	</td>
 	<td>
-			<html:select  name="${form.formName}" property="selectedTest" onchange="dirtySearchInfo( event )">
-				<html:optionsCollection name="${form.formName}"  property="testSelections" label="value" value="id"/>
-			</html:select>
+			<form:select  path="selectedTest" onchange="dirtySearchInfo( event )">
+				<form:options items="${form.testSelections}" itemLabel="value" itemValue="id"/>
+			</form:select>
 	</td>
 	<td>
-			<html:select  name="${form.formName}" property="selectedAnalysisStatus" onchange="dirtySearchInfo( event )" >
-				<html:optionsCollection name="${form.formName}" property="analysisStatusSelections" label="description" value="id" />
-			</html:select>
+			<form:select  path="selectedAnalysisStatus" onchange="dirtySearchInfo( event )" >
+				<form:options items="${form.analysisStatusSelections}" itemLabel="description" itemValue="id" />
+			</form:select>
 	</td>
 	<% if( useSampleStatus ){ %>
 	<td>
-			<html:select  name="${form.formName}" property="selectedSampleStatus" onchange="dirtySearchInfo( event )">
-				<html:optionsCollection name="${form.formName}" property="sampleStatusSelections" label="description" value="id" />
-			</html:select>
+			<form:select  path="selectedSampleStatus" onchange="dirtySearchInfo( event )">
+				<form:options items="${form.sampleStatusSelections}" itemLabel="description" itemValue="id" />
+			</form:select>
 	</td>
 	<% } %>
 	</tr>
 
 	</table>
-	<html:button property="searchButton" onclick="doShowTests()"  >
+	<button type="button" name="searchButton" onclick="doShowTests()"  >
 		<spring:message code="resultsentry.status.search"/>
-	</html:button>
+	</button>
 
 </div>
 

@@ -26,6 +26,10 @@ public class LogbookResultsForm extends BaseForm {
 
 	private List<InventoryKitItem> inventoryItems;
 
+	private List<String> hivKits;
+
+	private List<String> syphilisKits;
+
 	private String logbookType = "";
 
 	private List<IdValuePair> referralReasons;
@@ -39,10 +43,6 @@ public class LogbookResultsForm extends BaseForm {
 	private String testSectionId;
 
 	private Boolean displayTestSections = true;
-
-	private List<String> hivKits;
-
-	private List<String> syphilisKits;
 
 	public LogbookResultsForm() {
 		setFormName("LogbookResultsForm");
@@ -112,6 +112,22 @@ public class LogbookResultsForm extends BaseForm {
 		this.inventoryItems = inventoryItems;
 	}
 
+	public List<String> getHivKits() {
+		return hivKits;
+	}
+
+	public void setHivKits(List<String> hivKits) {
+		this.hivKits = hivKits;
+	}
+
+	public List<String> getSyphilisKits() {
+		return syphilisKits;
+	}
+
+	public void setSyphilisKits(List<String> syphilisKits) {
+		this.syphilisKits = syphilisKits;
+	}
+
 	public String getLogbookType() {
 		return logbookType;
 	}
@@ -166,21 +182,5 @@ public class LogbookResultsForm extends BaseForm {
 
 	public void setDisplayTestSections(Boolean displayTestSections) {
 		this.displayTestSections = displayTestSections;
-	}
-
-	public List<String> getHivKits() {
-		return hivKits;
-	}
-
-	public void setHivKits(List<String> hivKits) {
-		this.hivKits = hivKits;
-	}
-
-	public List<String> getSyphilisKits() {
-		return syphilisKits;
-	}
-
-	public void setSyphilisKits(List<String> syphilisKits) {
-		this.syphilisKits = syphilisKits;
 	}
 }

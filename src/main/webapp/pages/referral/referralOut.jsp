@@ -15,6 +15,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <%!
     String basePath = "";
@@ -224,7 +225,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
 }
 </script>
 
-<logic:notEmpty name="${form.formName}" property="referralItems">
+<c:if test="${not empty form.referralItems}">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="1" id="mainTable">
 <tr>
@@ -242,412 +243,298 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
     <th><spring:message code="referral.report.date"/><br/><%=DateUtil.getDateUserPrompt()%></th>
 </tr>
 
-<logic:iterate id="referralItems" name="${form.formName}" property="referralItems" indexId="index" type="ReferralItem">
-<html:hidden id='<%= "textXML_" + index %>' name="referralItems" property="additionalTestsXMLWad" indexed="true"
-             styleClass="XMLWad"/>
-<html:hidden id='<%= "referralResultId_" + index %>' name="referralItems" property="referralResultId"
-             indexed="true"/>
-<html:hidden id='<%= "referralId_" + index %>' name="referralItems" property="referralId" indexed="true"/>
-<html:hidden id='<%= "referredType_" + index %>' name="referralItems" property="referredResultType"
-             indexed="true"/>
-<html:hidden id='<%= "modified_" + index %>' name="referralItems" property="modified" indexed="true"/>
-<html:hidden id='<%= "causalResultId_" + index %>' name="referralItems" property="inLabResultId" indexed="true"/>
+<c:forEach items="${form.referralItems}" var="referralItems" varStatus="iter">
+<form:hidden id='textXML_${iter.index}' path="referralItems[${iter.index}].additionalTestsXMLWad" cssClass="XMLWad" />
+<form:hidden id='referralResultId_${iter.index}' path="referralItems[${iter.index}].referralResultId" />
+<form:hidden id='referralId_${iter.index}' path="referralItems[${iter.index}].referralId" indexed="true" />
+<form:hidden id='referredType_${iter.index}' path="referralItems[${iter.index}].referredResultType" />
+<form:hidden id='modified_${iter.index}' path="referralItems[${iter.index}].modified" />
+<form:hidden id='causalResultId_${iter.index}' path="referralItems[${iter.index}].inLabResultId" />
 <input type="hidden"
-       value='<%= referralItems.getAdditionalTests() == null ? 0 : referralItems.getAdditionalTests().size()  %>'
-       id='<%="addedRowCount_" + index%>'/>
-<bean:define id="rowColor" value='<%=(index % 2 == 0) ? "oddRow" : "evenRow" %>'/>
+       value="${(referralItems.additionalTests == null) ? '0' : fn:length(referralItems.additionalTests)}"
+       id='addedRowCount_${iter.index}'/>
+<c:set var="rowColor" value="${(iter.index % 2 == 0) ? 'oddRow' :'evenRow'}"/>
 
-<tr class='<%=rowColor%>Head' id='<%="referralRow_" + index%>'>
+<tr class='${rowColour}>Head' id='referralRow_${iter.index}'>
     <td colspan="2" class="HeadSeperator">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= StringUtil.getContextualMessageForKey( "resultsentry.accessionNumber" ) %>:
-        <b><bean:write name="referralItems" property="accessionNumber"/></b>
+        <b><c:out value="${referralItems.accessionNumber}"/></b>
     </td>
     <td colspan="4" class="HeadSeperator">
-        <spring:message code="referral.request.date"/>: <b><bean:write name="referralItems" property="referralDate"/></b>
+        <spring:message code="referral.request.date"/>: <b><c:out value="${referralItems.referralDate}"/></b>
     </td>
     <td colspan='2' class="HeadSeperator leftVertical">
 </tr>
-<tr class='<%=rowColor%>Head' id='<%="referralRow_" + index%>'>
+<tr class='${rowColour}>Head' id='referralRow_${iter.index}'>
     <td colspan="2">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<spring:message code="label.sampleType"/>: <b><bean:write name="referralItems"
-                                                                                                    property="sampleType"/></b>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<spring:message code="label.sampleType"/>: <b><c:out value="${referralItems.sampleType}"/></b>
     </td>
     <td colspan="2">
-        <spring:message code="test.testName"/>: <b><bean:write name="referralItems" property="referringTestName"/></b>
+        <spring:message code="test.testName"/>: <b><c:out value="${referralItems.referringTestName}"/></b>
     </td>
     <td colspan="2">
-        <spring:message code="result.original.result"/>: <b><bean:write name="referralItems"
-                                                                     property="referralResults"/></b>
+        <spring:message code="result.original.result"/>: <b><c:out value="${referralItems.referralResults}"/></b>
     </td>
     <td colspan="2" class="leftVertical">
         &nbsp;
     </td>
 </tr>
-<tr class='<%=rowColor + " requiredRow"%>' id='<%="referralRow_" + index%>'>
+<tr class='${rowColor} requiredRow' id='referralRow_${iter.index}'>
     <td>
-        <select name="<%="referralItems[" + index + "].referralReasonId"%>"
-                id='<%="referralReasonId_" + index%>'
-                onchange='<%="markModified(\"" + index + "\"); " %>'>
-            <logic:iterate id="optionValue" name='${form.formName}' property="referralReasons" type="IdValuePair">
-                <option value='<%=optionValue.getId()%>'  <%
-                    if( optionValue.getId().equals( referralItems.getReferralReasonId() ) )
-                        out.print( "selected" );
-                %>  >
-                    <bean:write name="optionValue" property="value"/>
-                </option>
-            </logic:iterate>
-        </select>
+        <form:select path="referralItems[${iter.index}].referralReasonId"
+                id='referralReasonId_${iter.index}'
+                onchange='markModified("${iter.index}");'>
+            <form:options items="${form.referralReasons}" itemValue="id" itemLabel="value"/>
+        </form:select>
     </td>
     <td>
-        <html:text name="referralItems"
-                   property="referrer"
-                   onchange='<%="markModified(\'" + index + "\'); " %>'
-                   indexed="true"/>
+        <form:input path="referralItems[${iter.index}].referrer"
+                   onchange='markModified("${iter.index}");'/>
     </td>
     <td>
-        <select name='<%="referralItems[" + index + "].referredInstituteId"%>'
+        <form:select path='referralItems[${iter.index}].referredInstituteId'
                 class="required"
-                onchange='<%="markModified(\"" + index + "\");"%>'>
-            <logic:iterate id="optionValue" name='${form.formName}' property="referralOrganizations" type="IdValuePair">
-                <option value='<%=optionValue.getId()%>' <%
-                    if( optionValue.getId().equals( referralItems.getReferredInstituteId() ) )
-                        out.print( "selected" );
-                %>   >
-                    <bean:write name="optionValue" property="value"/>
-                </option>
-            </logic:iterate>
-        </select>
+                onchange='markModified("${iter.index}");'>
+                <form:options items="${form.referralOrganizations}" itemValue="id" itemLabel="value"/>
+        </form:select>
     </td>
     <td>
-        <html:text name='referralItems'
-                   property="referredSendDate"
-                   indexed="true"
+        <form:input path="referralItems[${iter.index}].referredSendDate"
                    size="8"
                    maxlength="10"
-                   onchange='<%="markModified(\'" + index + "\');  validateDateFormat(this);"%>'
-                   id='<%="sendDate_" + index %>'/>
+                   onchange='markModified("${iter.index}"); validateDateFormat(this);'
+                   id='sendDate_${iter.index}'/>
     </td>
     <td>
-        <html:hidden name="referralItems" property="referredTestId" indexed="false"
-                     id='<%="shadowReferredTest_" + index %>'/>
-        <select name='<%="referralItems[" + index + "].referredTestId"%>'
-                onchange='<%="markModified(\"" + index + "\"); updateResultField(\"" + index + "\");"%>'
-                id='<%="testSelection_" + index%>' class="required">
+        <input type="hidden" name="_referralItems[${iter.index}].referredTestId"
+                     id='shadowReferredTest_${iter.index}'/>
+        <form:select path='referralItems[${iter.index}].referredTestId'
+                onchange='markModified("${iter.index}");updateResultField("${iter.index}");'
+                id='testSelection_${iter.index}' 
+                class="required">
             <option value='0'></option>
-
-            <logic:iterate id="optionValue" name='referralItems' property="testSelectionList" type="IdValuePair">
-                <option value='<%=optionValue.getId()%>' <%
-                    if( optionValue.getId().equals( referralItems.getReferredTestId() ) ) out.print( "selected" );%>   >
-                    <bean:write name="optionValue" property="value"/>
-                </option>
-            </logic:iterate>
-        </select>
+			<form:options items="${referralItems.testSelectionList}" itemValue="id" itemLabel="value"/>
+        </form:select>
     </td>
     <td>
-        <html:checkbox name="referralItems" property="canceled"
-                       onchange='<%="markModified(\'" + index + "\'); value=true" %>' indexed="true"/>
+        <form:checkbox path="referralItems[${iter.index}].canceled"
+                       onchange='markModified("${iter.index}");'/>
     </td>
-    <td class="leftVertical"
-        id='<%="resultCell_" + index %>'><% String referredResultType = referralItems.getReferredResultType(); %>
-        <% if( referralItems.getReferredTestId() != null ){ %>
-        <div class='<%="resultCell_" + index%>'>
-            <% if( "N".equals( referredResultType ) || "A".equals( referredResultType ) || "R".equals( referredResultType ) ){ %>
-            <input type="text"
-                   class='<%="referralResult_" + index %>'
-                   name='<%= "referralItems[" + index + "].referredResult" %>'
-                   value='<%= referralItems.getReferredResult() %>'
-                   onchange='<%= "markModified(\"" + index + "\");" %>'
-                   id='<%= "numericResult_" + index %>'
-                    />
-            <% }else if( "D".equals( referredResultType ) ){ %>
-            <select name='<%= "referralItems[" + index + "].referredDictionaryResult" %>'
-                    class='<%="referralResult_" + index %>'
-                    id='<%= "dictionaryResult_" + index %>'
-                    onchange='<%="markModified(\"" + index + "\"); " %>'
+    <td class="leftVertical" id='resultCell_${iter.index}'>
+    	<c:set var="referredResultType" value="${referralItems.referredResultType}"/>
+        <c:if test="${not empty referralItems.referredTestId}"> 
+        <div class='resultCell_${iter.index}'>
+        	<c:if test="${'N' == referredResultType || 'A' == referredResultType || 'R' == referredResultType}">
+	            <form:input path="referralItems[${iter.index}].referredResult"
+	                   class='referralResult_${iter.index}'
+	                   onchange='markModified("${iter.index}");'
+	                   id='numericResult_${iter.index}'
+	                    />
+	        </c:if> <c:if test="${'D' == referredResultType}" > 
+            <form:select path='referralItems[${iter.index}].referredDictionaryResult'
+                    class='referralResult_${iter.index}'
+                    id='dictionaryResult_${iter.index}'
+                    onchange='markModified("${iter.index}");'
                     >
                 <option value="0"></option>
-                <logic:notEmpty name="referralItems" property="dictionaryResults">
-                    <logic:iterate id="optionValue" name="referralItems" property="dictionaryResults"
-                                   type="IdValuePair">
-                        <option value='<%=optionValue.getId()%>'  <%
-                            if( optionValue.getId().equals( referralItems.getReferredDictionaryResult() ) )
-                                out.print( "selected" );
-                        %>  >
-                            <bean:write name="optionValue" property="value"/>
-                        </option>
-                    </logic:iterate>
-                </logic:notEmpty>
-            </select>
-            <% }else if( "M".equals( referredResultType ) ){ %>
-            <select name='<%= "referralItems[" + index + "].referredDictionaryResult" %>'
-                    id='<%= "MultiSelect_" + index %>'
-                    class='<%="referralResult_" + index %>'
-                    onchange='<%="markModified(\"" + index + "\"); " %>'
+                <form:options items="${referralItems.dictionaryResults}" itemValue="id" itemLabel="value"/>
+            </form:select>
+            </c:if><c:if test="${'M' == referredResultType}"> 
+            <form:select path='referralItems[${iter.index}].referredDictionaryResult'
+                    id='MultiSelect_${iter.index}'
+                    class='referralResult_${iter.index}'
+                    onchange='markModified("${iter.index}");'
                     multiple="multiple"
-                    title='<%= StringUtil.getMessageForKey("result.multiple_select")%>'
                     >
-                <logic:notEmpty name="referralItems" property="dictionaryResults">
-                    <logic:iterate id="optionValue" name="referralItems" property="dictionaryResults"
-                                   type="IdValuePair">
-                        <option value='<%=optionValue.getId()%>'
-                                <%
-                                    if( StringUtil.textInCommaSeperatedValues( optionValue.getId(), referralItems.getReferredMultiDictionaryResult() ) )
-                                        out.print( "selected" );
-                                %>
-                                >
-                            <bean:write name="optionValue" property="value"/>
-                        </option>
-                    </logic:iterate>
-                </logic:notEmpty>
-            </select>
-            <html:hidden name="referralItems" property="multiSelectResultValues" indexed="true"
-                         id='<%="multiresultId_" + index%>' styleClass="multiSelectValues"/>
-            <html:hidden name="referralItems" indexed="true" property="referredMultiDictionaryResult"
-                         id='<%= "resultMultiSelect_" + index %>'/>
-            <% }else if( "C".equals( referredResultType ) ){ %>
-            <div id='<%="cascadingMulti_" + index + "_0"%>'
-                 class='<%="cascadingMulti_" + index + " referralResult_" + index %>'>
-                <html:hidden name="referralItems" property="multiSelectResultValues" indexed="true"
-                             id='<%="multiresultId_" + index%>' styleClass="multiSelectValues"/>
-                <logic:present name="referralItems" property="dictionaryResults">
-                    <input type="hidden" id='<%="divCount_" + index %>' value="0">
-                    <select name="<%="testResult[" + index + "].multiSelectResultValues" %>"
-                    id='<%="resultId_" + index + "_0"%>'
-                    multiple="multiple"
-                    title='<%= StringUtil.getMessageForKey( "result.multiple_select" )%>'
-                    onchange='<%="markModified(\"" + index + "\"); " %>
+                   	<form:options items="${referralItems.dictionaryResults}" itemValue="id" itemLabel="value"/>
+            </form:select>
+            <form:hidden path="referralItems[${iter.index}].multiSelectResultValues"
+                         id='multiresultId_${iter.index}' cssClass="multiSelectValues"/>
+            <form:hidden path="referralItems[${iter.index}].referredMultiDictionaryResult"
+                         id='resultMultiSelect_${iter.index}'/>
+            </c:if><c:if test="${'C' == referredResultType}"> 
+            <div id='cascadingMulti_${iter.index}_0'
+                 class='cascadingMulti_${iter.index} referralResult_${iter.index}'>
+                <form:hidden path="referralItems[${iter.index}].multiSelectResultValues"
+                             id='multiresultId_${iter.index}' cssClass="multiSelectValues"/>
+                <c:if test="${referralItems.dictionaryResults}">
+                    <input type="hidden" id='divCount_${iter.index}' value="0">
+                    <form:select path="testResult[${iter.index}].multiSelectResultValues"
+                     id='resultId_${iter.index}_0'
+                     multiple="multiple"
+                     onchange='markModified("${iter.index}");'
                     >
-                    <logic:iterate id="optionValue" name="referralItems" property="dictionaryResults"
-                                   type="IdValuePair">
-                        <option value='<%=optionValue.getId()%>' >
-                        <bean:write name="optionValue" property="value"/>
-                        </option>
-                    </logic:iterate>
-                    </select>
-                    <input class='<%="addMultiSelect" + index%>' type="button" value="+"
-                           onclick='<%="addNewMultiSelect(" + index + ", this);"%>'/>
-                    <input class='<%="removeMultiSelect" + index%>' type="button" value="-"
+                    	<form:options items="${referralItems.dictionaryResults}" itemValue="id" itemLabel="value" />
+                    </form:select>
+                    <input class='addMultiSelect${iter.index}' type="button" value="+"
+                           onclick='addNewMultiSelect(${iter.index}, this);'/>
+                    <input class='removeMultiSelect${iter.index}' type="button" value="-"
                            onclick="removeMultiSelect('target');" style="visibility: hidden"/>
-                    <input type="text"
-                           name='<%="testResult[" + index + "].qualifiedResultValue" %>'
-                           value='<%= "testResult.getQualifiedResultValue()" %>'
-                           id='<%= "qualifiedDict_" + index %>'
-                           style='<%= "display:" + ( false ? "inline" : "none") %>'
-                           onchange='<%="markModified(\"" + index + "\");" %>'
+                    <form:input path='testResult[${iter.index}].qualifiedResultValue'
+                           id='qualifiedDict_${iter.index}'
+                           style='display:none'
+                           onchange='markModified("${iter.index}");'
                             />
-                </logic:present>
+                </c:if>
             </div>
-            <% } %>
+            </c:if>
         </div>
-        <%} %>
+        </c:if>
     </td>
     <td>
-        <div class='<%="resultCell_" + index%>'>
-            <% if( referralItems.getReferredTestId() != null ){ %>
-            <html:text name='referralItems'
-                       property="referredReportDate"
-                       styleClass='<%="referralResult_" + index %>'
-                       indexed="true"
-                       size="8"
-                       maxlength="10"
-                       onchange='<%="markModified(\'" + index + "\');  validateDateFormat(this);" %>'
-                       id='<%="reportDate_" + index %>'/>
-            <% } %>
+        <div class='resultCell_${iter.index}'>
+            <c:if test="${referralItems.referredTestId != null}">
+	            <form:input path='referralItems[${iter.index}].referredReportDate'
+	                       cssClass='referralResult_${iter.index}'
+	                       size="8"
+	                       maxlength="10"
+	                       onchange='markModified("${iter.index}");  validateDateFormat(this);'
+	                       id='reportDate_${iter.index}'/>
+            </c:if>
         </div>
     </td>
 </tr>
-<logic:notEmpty name="referralItems" property="additionalTests">
-    <logic:iterate id="additionalTests" name="referralItems" property="additionalTests" indexId="testIndex"
-                   type="ReferredTest">
-        <tr class='<%= rowColor %>'><% referredResultType = additionalTests.getReferredResultType(); %>
+
+<c:forEach items="${referralItems.additionalTests}" var="additionalTests" varStatus="test_iter" >
+        <tr class='${rowColor}'>
+        	<c:set var="referredResultType" value="${additionalTests.referredResultType}"/>
             <td colspan="4" style='text-align: right'>
-                <input type="hidden"
-                       name='<%="referralItems[" + index + "].additionalTests[" + testIndex + "].referralResultId" %>'
-                       value='<%=additionalTests.getReferralResultId() %>'/>
-                <input type="hidden"
-                       id='<%="referredType_" + index + "_" + testIndex %>'
-                       name='<%="referralItems[" + index + "].additionalTests[" + testIndex + "].referredResultType" %>'
-                       value='<%=additionalTests.getReferredResultType() %>'/>
-                <label for='<%="remove" + index + "_" + testIndex %>'><spring:message code="label.button.remove"/></label>
-                <input type="checkbox"
-                       name='<%="referralItems[" + index + "].additionalTests[" + testIndex + "].remove" %>'
-                       id='<%="remove" + index + "_" + testIndex %>'
-                       onchange='<%="markModified(\"" + index + "\");" %>'>
+                <form:hidden path='referralItems[${iter.index}].additionalTests[${test_iter.index}].referralResultId'/>
+                <form:hidden path="referralItems[${iter.index}].additionalTests[${test_iter.index}].referredResultType" 
+                	id='referredType_${iter.index}_${test_iter.index}' />
+                <label for='remove${iter.index}_${test_iter.index}'><spring:message code="label.button.remove"/></label>
+                <form:checkbox path='referralItems[${iter.index}].additionalTests[${test_iter.index}].remove'
+                       id='remove${iter.index}_${test_iter.index}'
+                       onchange='markModified("${iter.index}");'/>
             </td>
             <td>
-                <input type="hidden" value='<%= additionalTests.getReferredTestId() %>'
-                       id='<%="shadowReferredTest_" + index + "_" + testIndex%>'/>
-                <select name='<%="referralItems[" + index + "].additionalTests[" + testIndex + "].referredTestId" %>'
-                        onchange='<%="markModified(\"" + index + "\"); updateResultField(\"" + index + "_" + testIndex + "\");" %>'
-                        id='<%="testSelection_" + index + "_" + testIndex %>' class="required">
+                <input type="hidden" value='${additionalTests.referredTestId}'
+                       id='shadowReferredTest_${iter.index}_${test_iter.index}'/>
+                <form:select path='referralItems[${iter.index}].additionalTests[${test_iter.index}].referredTestId'
+                        onchange='markModified("${iter.index}"); updateResultField("${iter.index}_${test_iter.index}");'
+                        id='testSelection_${iter.index}_${test_iter.index}' class="required">
                     <option value='0'></option>
-                    <logic:iterate id="optionValue" name='referralItems' property="testSelectionList"
-                                   type="IdValuePair">
-                        <option value='<%=optionValue.getId()%>' <%
-                            if( optionValue.getId().equals( additionalTests.getReferredTestId() ) )
-                                out.print( "selected" );
-                        %>  >
-                            <bean:write name="optionValue" property="value"/>
-                        </option>
-                    </logic:iterate>
-                </select>
+                    <form:options items="${referralItems.testSelectionList}" itemValue="id" itemLabel="value"/>
+                </form:select>
             </td>
             <td>&nbsp;</td>
             <td class="leftVertical">
-                <div class='<%="resultCell_" + index + "_" + testIndex%>'>
-                    <% if( "N".equals( referredResultType ) || "A".equals( referredResultType ) || "R".equals( referredResultType ) ){ %>
-                    <input type="text"
-                           name='<%="referralItems[" + index + "].additionalTests[" + testIndex + "].referredResult" %>'
-                           value='<%= additionalTests.getReferredResult() %>'
-                           onchange='<%="markModified(\"" + index + "\");" %>'
-                           class='<%="referralResult_" + index + "_" + testIndex%>'
-                           id='<%="numericResult_" + index + "_" + testIndex %>'
+                <div class='resultCell_${iter.index}_${test_iter.index}'>
+                	<c:choose>
+                    <c:when test="${'N' == referredResultType || 'A' == referredResultType || 'R' == referredResultType}">
+                    <form:input path='referralItems[${iter.index}].additionalTests[${test_iter.index}].referredResult'
+                           onchange='markModified("${iter.index}");'
+                           class='referralResult_${iter.index}_${test_iter.index}>'
+                           id='numericResult_${iter.index}_${test_iter.index}'
                             />
-                    <% }else if( "D".equals( additionalTests.getReferredResultType() ) ){%>
-                    <select name='<%= "referralItems[" + index + "].additionalTests[" + testIndex + "].referredDictionaryResult" %>'
-                            id='<%= "dictionaryResult_" + index + "_" + testIndex  %>'
-                            onchange='<%="markModified(" + index + ");" %>'
-                            class='<%="referralResult_" + index + "_" + testIndex%>' >
-                    <option value="0"></option>
-                    <logic:notEmpty name="additionalTests" property="dictionaryResults">
-                        <logic:iterate id="optionValue" name="additionalTests" property="dictionaryResults"
-                                       type="IdValuePair">
-                            <option value='<%=optionValue.getId()%>'  <%
-                                if( optionValue.getId().equals( additionalTests.getReferredDictionaryResult() ) )
-                                    out.print( "selected" );
-                            %>  >
-                                <bean:write name="optionValue" property="value"/>
-                            </option>
-                        </logic:iterate>
-                    </logic:notEmpty>
-                    </select>
-                    <% }else if( "M".equals( referredResultType ) ){ %>
-                    <input type="hidden"
-                           name="<%="referralItems["+ index + "].additionalTests[" + testIndex + "].multiSelectResultValues"%>"
+                    </c:when><c:when test="${'D' == additionalTests.referredResultType}"> 
+                    <form:select path='referralItems[${iter.index}].additionalTests[${test_iter.index}].referredDictionaryResult'
+                            id='dictionaryResult_${iter.index}_${test_iter.index}'
+                            onchange='markModified(${iter.index});'
+                            class='referralResult_${iter.index}_${test_iter.index}' >
+                    	<option value="0"></option>
+                    	<form:options items="${additionalTests.dictionaryResults}" itemValue="id" itemLabel="value"/>
+                    </form:select>
+                    </c:when><c:when test="${'M' == additionalTests.referredResultType}">
+                    <form:hidden path="referralItems[${iter.index}].additionalTests[${test_iter.index}].multiSelectResultValues"
                            class="multiSelectValues"
-                           id="<%="multiresultId_" + index + "-" + testIndex %>"
-                           value=''<%=additionalTests.getMultiSelectResultValues()%>'>
-                    <select name='<%= "referralItems[" + index + "].additionalTests[" + testIndex + "].referredDictionaryResult" %>'
-                            id='<%= "MultiSelect_" + index + "_" + testIndex %>'
-                            onchange='<%="markModified(\"" + index + "\"); " %>'
-                            class='<%="referralResult_" + index + "_" + testIndex%>'
+                           id="multiresultId_${iter.index}-${test_iter.index}"
+                           />
+                    <form:select path='referralItems[${iter.index}].additionalTests[${test_iter.index}].referredDictionaryResult'
+                            id='MultiSelect_${iter.index}_${test_iter.index}'
+                            onchange='markModified("${iter.index}");'
+                            class='referralResult_${iter.index}_${test_iter.index}'
                             multiple="multiple"
-                            title='<%= StringUtil.getMessageForKey("result.multiple_select")%>'
                             >
-                        <logic:notEmpty name="additionalTests" property="dictionaryResults">
-                            <logic:iterate id="optionValue" name="additionalTests" property="dictionaryResults"
-                                           type="IdValuePair">
-                                <option value='<%=optionValue.getId()%>'
-                                        <%
-                                            if( StringUtil.textInCommaSeperatedValues( optionValue.getId(), additionalTests.getReferredMultiDictionaryResult() ) )
-                                                out.print( "selected" );
-                                        %> >
-                                    <bean:write name="optionValue" property="value"/>
-                                </option>
-                            </logic:iterate>
-                        </logic:notEmpty>
-                    </select>
-                    <input type="hidden" style="display: none"
-                           id='<%="resultMultiSelect_" + index + "_" + testIndex %>'
-                           name='<%= "referralItems[" + index + "].additionalTests[" + testIndex + "].referredMultiDictionaryResult" %>'/>
-                    <% }else if( "C".equals( referredResultType ) ){ %>
-                    <div id='<%="cascadingMulti_" + index + "-" + testIndex + "_0" %>'
-                         class='<%="cascadingMulti_" + index  + "-" + testIndex + " referralResult_" + index + "-" + testIndex %>'>
-                        <input type="hidden"
-                               name="<%="referralItems["+ index + "].additionalTests[" + testIndex + "].multiSelectResultValues"%>"
+                            	<form:options items="${additionalTests.dictionaryResults}" itemValue="id" itemLabel="value"/>
+                    </form:select>
+                    <form:hidden path="referralItems[${iter.index}].additionalTests[${test_iter.index}].referredMultiDictionaryResult"
+                            id='resultMultiSelect_${iter.index}_${test_iter.index}'
+               				/>
+                    </c:when><c:when test="${'C'== referredResultType}">
+                    <div id='cascadingMulti_${iter.index}-${test_iter.index}_0'
+                         class='cascadingMulti_${iter.index}-${test_iter.index} referralResult_${iter.index}-${test_iter.index}'>
+                        <form:hidden path="referralItems[${iter.index}].additionalTests[${test_iter.index}].multiSelectResultValues"
                                class="multiSelectValues"
-                               id="<%="multiresultId_" + index + "-" + testIndex %>"
-                               value='<%=additionalTests.getMultiSelectResultValues()%>'>
-                        <input type="hidden" id='<%="divCount_" + index + "-" + testIndex %>' value="0">
-                        <select name="<%="testResult[" + index + "].multiSelectResultValues" %>"
-                                id='<%="resultId_" + index + "-" + testIndex + "_" + 0%>'
+                               id="multiresultId_${iter.index}-${test_iter.index}" />
+                        <input type="hidden" id='"divCount_${iter.index}-${test_iter.index}' value="0">
+                        <form:select path="testResult[${iter.index}].multiSelectResultValues"
+                                id='resultId_${iter.index}-${test_iter.index}_0'
                                 multiple="multiple"
-                                title='<%= StringUtil.getMessageForKey("result.multiple_select")%>'
-                                onchange='<%="markModified(\"" + index + "\"); " %>
+                                onchange='markModified("${iter.index}");'
                                         >
-                                <logic:iterate id="optionValue" name="additionalTests" property="dictionaryResults"  type="IdValuePair" >
-                                        <option value='<%=optionValue.getId()%>' >
-                        <bean:write name="optionValue" property="value"/>
-                        </option>
-                        </logic:iterate>
-                        </select>
-                        <input class='<%="addMultiSelect" + index + "-" + testIndex%>' type="button" value="+"
-                               onclick="<%="addNewMultiSelect('" + index + "-" + testIndex + "', this);"%>"/>
-                        <input class='<%="removeMultiSelect" + index + "-" + testIndex%>' type="button" value="-"
+                                <form:options items="${additionalTests.dictionaryResults}" itemValue="id" itemLabel="value" />
+                        </form:select>
+                        <input class='addMultiSelect${iter.index}-${test_iter.index}' type="button" value="+"
+                               onclick="addNewMultiSelect('${iter.index}-${test_iter.index}', this);"/>
+                        <input class='removeMultiSelect${iter.index}-${test_iter.index}' type="button" value="-"
                                onclick="removeMultiSelect('target');" style="visibility: hidden"/>
 
-                        <input type="text"
-                               name='<%="testResult[" + index + "].qualifiedResultValue" %>'
-                               value='<%= "testResult.getQualifiedResultValue()" %>'
-                               id='<%= "qualifiedDict_" + index %>'
-                               style='<%= "display:" + ( false ? "inline" : "none") %>'
-                               onchange='<%="markModified(\"" + index + "\");" %>'
+                        <form:input path='testResult[${iter.index}].qualifiedResultValue'
+                               id='qualifiedDict_${iter.index}'
+                               style='display:none'
+                               onchange='markModified("${iter.index}");'
                                 />
                     </div>
-                    <% } %>
+                    </c:when>
+                    </c:choose>
                 </div>
             </td>
             <td>
-                <div class='<%="resultCell_" + index + "_" + testIndex%>'>
-                    <input type="text"
-                           class='<%="referralResult_" + index + "_" + testIndex%>'
-                           name='<%="referralItems[" + index + "].additionalTests[" + testIndex + "].referredReportDate" %>'
-                           value='<%= additionalTests.getReferredReportDate() %>'
-                           onchange='<%="markModified(\"" + index + "\");  validateDateFormat(this);" %>'
+                <div class='resultCell_${iter.index}_${test_iter.index}'>
+                    <form:input path='referralItems[${iter.index}].additionalTests[${test_iter.index}].referredReportDate'
+                           class='referralResult_${iter.index}_${test_iter.index}'
+                           onchange='markModified("${iter.index}");  validateDateFormat(this);'
                            size="8"
                            maxlength="10"/>
                 </div>
             </td>
         </tr>
-    </logic:iterate>
-</logic:notEmpty>
-<tr class='<%= rowColor %>'>
+</c:forEach>
+<tr class='${rowColor}'>
     <td colspan="3"></td>
     <td colspan='1'>
-        <input type="button"
-               name="addRequest"
-               value="<%= StringUtil.getMessageForKey("referral.addTest")%>"
+    	<spring:message code="referral.addTest" var="addTest"/>
+        <button type="button"
                class="textButton"
-               onclick='<%="insertNewTestRequest(this," + index + ");"  %>'>
+               onclick='insertNewTestRequest(this,${iter.index});'>${addTest}</button>
     </td>
     <td colspan='2' align="right" style="padding:5px">
         <img src="./images/note-add.gif"
-             onclick='<%= "showHideNotes(" + index + ");" %>'
-             id='<%="showHideButton_" + index %>'
+             onclick='showHideNotes(${iter.index});'
+             id='showHideButton_${iter.index}'
                 />
-        <input type="hidden" id='<%="hideShow_" + index %>' value="hidden"/>
+        <input type="hidden" id='hideShow_${iter.index}' value="hidden"/>
     </td>
     <td colspan='2' class="leftVertical">&nbsp</td>
 </tr>
-<logic:notEmpty name="referralItems" property="pastNotes">
-    <tr class='<%= rowColor %>'>
+<c:if test="${not empty referralItems.pastNotes}">
+    <tr class='${rowColor}'>
         <td valign="top" align="right"><spring:message code="label.prior.note" />:</td>
         <td colspan="5" align="left">
-            <%= referralItems.getPastNotes() %>
+            <c:out value="${referralItems.pastNotes}"/>
         </td>
         <td colspan='2' class="leftVertical">
     </tr>
-</logic:notEmpty>
-<tr id='<%="noteRow_" + index %>'
-    class='<%= rowColor %>'
+</c:if>
+<tr id='noteRow_${iter.index}'
+    class='${rowColor}'
     style="display: none;">
     <td valign="top" align="right"><spring:message code="note.note"/>:</td>
     <td colspan="6" align="left">
-        <html:textarea id='<%="note_" + index %>'
-                       onchange='<%="markModified(" + index + ");"%>'
-                       name="referralItems"
-                       property="note"
-                       indexed="true"
+        <form:textarea path="referralItems[${iter.index}].note"
+        			   id='note_${iter.index}'
+                       onchange='markModified("${iter.index}");'
                        cols="80"
                        rows="3"/>
     </td>
 </tr>
-</logic:iterate>
+</c:forEach>
 </table>
-</logic:notEmpty>
-<logic:empty name="${form.formName}" property="referralItems">
+</c:if>
+<c:if test="${empty form.referralItems}">
     <h2><spring:message code="referral.noReferralItems"/></h2>
-</logic:empty>
+</c:if>
 
 <script type="text/javascript">
     var dirty = false;

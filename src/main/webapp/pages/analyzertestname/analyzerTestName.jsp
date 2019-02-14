@@ -12,10 +12,10 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
  
-<bean:define id="analyzerList" name="${form.formName}" property="analyzerList" type="java.util.List<Analyzer>" />
-<bean:define id="analyzerName" name="${form.formName}" property="analyzerId" />
-<bean:define id="testList" name="${form.formName}" property="testList" type="java.util.List<Test>" />
-<bean:define id="testName" name="${form.formName}" property="testId" />
+<c:set var="analyzerList" value="${form.analyzerList}" />
+<c:set var="analyzerName" value="${form.analyzerId}" />
+<c:set var="testList" value="${form.testList}" />
+<c:set var="testName" value="${form.testId}" />
 
 <%!String allowEdits = "true";%>
 
@@ -61,9 +61,11 @@ function validateForm(form) {
 	<form:hidden path="analyzerId" id="analyzerIdHidden" />
 	<select id="analyzerId" onchange="copyToHiddenAnalyzer(this);" >
 		<option value="0"></option>
-		<% for( Analyzer analyzer : analyzerList ){%>
-		<option value="<%=analyzer.getId() %>" <%= analyzer.getName().equals(analyzerName) ? "selected='selected'" : "" %> ><%=analyzer.getName()%></option>
-		<% } %>
+		<c:forEach items="${analyzerList}" var="analyzer">
+		<option value="${analyzer.id}" ${(analyzer.name == analyzerName) ? "selected='selected'" : ""}>
+			${analyzer.name}
+		</option>
+		</c:forEach>
 	</select><br><br>
 	<span style="width:40%;float:left;padding-left: 4px;" >
 		<spring:message code="analyzer.test.name" />:
@@ -77,11 +79,13 @@ function validateForm(form) {
 		<spring:message code="analyzer.test.actual.name" />:
 			<span class="requiredlabel">*</span>
 	</span>
-<html:select name="${form.formName}" property="testId" id="testId" >
-	<html:option value="0">&nbsp;</html:option>
-	<% for( Test test : testList ){%>
-	<option value="<%=test.getId() %>" <%= test.getName().equals(testName) ? "selected='selected'" : "" %> ><%=test.getName()%></option>
-	<% } %>
-</html:select>
+<form:select path="testId" id="testId" >
+	<form:option value="0">&nbsp;</form:option>
+	<c:forEach items="${testList}" var="test">
+		<option value="${test.id}" ${test.name == testName  ? "selected='selected'" : ""}>
+			${test.name}
+		</option>
+	</c:forEach>
+</form:select>
 </div><br><br>
 

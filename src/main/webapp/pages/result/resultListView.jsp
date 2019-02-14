@@ -43,7 +43,7 @@
 	<script type="text/javascript" >
 		var testSectionNameIdHash = [];		
 		<c:forEach items="${testSectionsByName}" var="testSection">
-			testSectionsNameIdHash["${testSection.id}"] = "${testSection.value}";
+			testSectionNameIdHash["${testSection.id}"] = "${testSection.value}";
 		</c:forEach>
 	</script>
 </c:if>
@@ -120,7 +120,7 @@
 var compactHozSpace = '<%=compactHozSpace%>';
 var dirty = false;
 
-var pager = new OEPager('${form.formName}', '&type=<c:out value="logbookType"/>');
+var pager = new OEPager('${form.formName}', '&type=<c:out value="${logbookType}"/>');
 pager.setCurrentPageNumber('<c:out value="${form.paging.currentPage}"/>');
 
 var pageSearch; //assigned in post load function
@@ -359,6 +359,10 @@ function updateShadowResult(source, index){
   $jq("#shadowResult_" + index).val(source.value);
 }
 
+function setField(id, value) {
+	$jq("#" + id).val(value);
+}
+
 </script>
 
 <c:if test="${form.displayTestSections}">
@@ -493,10 +497,10 @@ function updateShadowResult(source, index){
 	<form:hidden id="currentPageID" path="paging.currentPage"/>
 	<c:set var="total" value="${form.paging.totalPages}"/>
 	<c:set var="currentPage" value="${form.paging.currentPage}"/>
-	<button type="button" style="width:100px;" onclick="pager.pageBack();" disabled="${currentPage == '1'}">
+	<button type="button" style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == 1}">disabled="disabled"</c:if>>
 		<spring:message code="label.button.previous"/>
 	</button>
-	<button type="button" style="width:100px;" onclick="pager.pageFoward();" disabled="${currentPage == 'total'}">
+	<button type="button" style="width:100px;" onclick="pager.pageFoward();" <c:if test="${currentPage == total}">disabled="disabled"</c:if>>
 		<spring:message code="label.button.next"/>
 	</button>
 	&nbsp;
@@ -578,6 +582,7 @@ function updateShadowResult(source, index){
 	</tr>
 	<!-- body -->
 	<c:forEach items="${form.testResult}" var="testResult" varStatus="iter">
+	<form:hidden path="testResult[${iter.index}].accessionNumber"/>
 	<c:if test="${testResult.isGroupSeparator}">
 	<tr>
 		<td colspan="10"><hr/></td>
@@ -682,9 +687,9 @@ function updateShadowResult(source, index){
 		<c:if test="${form.displayTestMethod}">
 			<td class="ruled" style='text-align: center'>
 				<form:checkbox path="testResult[${iter.index}].analysisMethod"
-							value="on"
-							tabindex='-1'
-							onchange='markUpdated(${iter.index});' />
+					 tabindex='-1'
+					 value='on'
+					 onchange='markUpdated(${iter.index});' />
 			</td>
 		</c:if>
 		<!-- results -->
@@ -767,6 +772,7 @@ function updateShadowResult(source, index){
 					   			 ${(testResult.displayResultAsLog) ? 'updateLogValue(this, ' += iter.index += ');' : ''}
 					   			 updateShadowResult(this, ${iter.index});"
 					   />
+					   <form:hidden path="testResult[${iter.index}].significantDigits"/>
 			</c:if><c:if test="${testResult.resultType == 'A'}">
 				<form:input path="testResult[${iter.index}].resultValue"
 						  size="20"
@@ -874,7 +880,6 @@ function updateShadowResult(source, index){
 		</td>
 		<% if( ableToRefer ){ %>
 		<td style="white-space: nowrap" class="ruled">
-            <form:hidden path="testResult[${iter.index}].referralId"/>
             <form:hidden path="testResult[${iter.index}].shadowReferredOut" id="shadowReferred_${iter.index}" />
 		<c:choose >
 		<c:when test="${empty testResult.referralId || testResult.referralCanceled}">
@@ -889,7 +894,7 @@ function updateShadowResult(source, index){
 		</c:choose>
 			<form:select path="testResult[${iter.index}].referralReasonId"
 			        id="referralReasonId_${iter.index}"
-					onchange='markUpdated(${iter.index}); handleReferralReasonChange( this, ${iter.index})"'
+					onchange='markUpdated(${iter.index}); handleReferralReasonChange( this, ${iter.index})'
 					disabled="${(testResult.shadowReferredOut && (testResult.referralReasonId == '0')) ? 'false' : 'true'}"
 			        >
 			        <option value='0' >
@@ -977,13 +982,12 @@ function updateShadowResult(source, index){
 	</c:forEach>
 </Table>
 <c:if test="${not (form.paging.totalPages == 0)}">
-	<form:hidden id="currentPageID" path="paging.currentPage"/>
 	<c:set var="total" value="${form.paging.totalPages}"/>
 	<c:set var="currentPage" value="${form.paging.currentPage}"/>
-	<button type="button" style="width:100px;" onclick="pager.pageBack();" disabled="${currentPage == '1'}">
+	<button type="button" style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == 1}">disabled="disabled"</c:if>>
 		<spring:message code="label.button.previous"/>
 	</button>
-	<button type="button" style="width:100px;" onclick="pager.pageFoward();" disabled="${currentPage == 'total'}">
+	<button type="button" style="width:100px;" onclick="pager.pageFoward();" <c:if test="${currentPage == total}">disabled="disabled"</c:if>>
 		<spring:message code="label.button.next"/>
 	</button>
 	&nbsp;

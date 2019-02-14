@@ -72,25 +72,25 @@
 		<table style="margin:auto;border-spacing:15px 2px;">
 			<tr>
 				<td>
-					<html:checkbox name="${form.formName}" 
-						property="collectionDateCheck"
-						value="true"></html:checkbox>
+					<form:checkbox path="collectionDateCheck"
+						value="true"
+						onchange="enableSave();"/>
 					<spring:message code="barcode.label.info.collectiondatetime"/>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<html:checkbox name="${form.formName}" 
-						property="testsCheck"
-						value="true"></html:checkbox>
+					<form:checkbox path="testsCheck"
+						value="true"
+						onchange="enableSave();"/>
 					<spring:message code="barcode.label.info.tests"/>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<html:checkbox name="${form.formName}" 
-						property="patientSexCheck"
-						value="true"></html:checkbox>
+					<form:checkbox path="patientSexCheck"
+						value="true"
+						onchange="enableSave();"/>
 					<spring:message code="barcode.label.info.patientsexfull"/>
 				</td>
 			</tr>

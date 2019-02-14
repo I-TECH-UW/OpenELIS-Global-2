@@ -13,14 +13,11 @@
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<bean:define id="yes" value='<%= IActionConstants.YES %>' />
-<bean:define id="no" value='<%= IActionConstants.NO %>' />
-<bean:define id="idSeparator" value='<%= SystemConfiguration.getInstance().getDefaultIdSeparator() %>' />
-
 <%!
 String path = "";
 String basePath = "";
 String recordFrozenDisableEdits = "false";
+String idSeparator = SystemConfiguration.getInstance().getDefaultIdSeparator();
 %>
 <%--bugzilla 2061-2063--%>
 <%
@@ -184,22 +181,22 @@ function nextAction(form, ignoreFields) {
 	<tbody valign="middle">
 		<tr>
 	      	<td>
-  			<html:button onclick="if(checkClicked()) 
-							 {
-							 	return false;
-							 }
-							 else {
-							  saveIt(window.document.forms[0]);
-							 }" property="save" disabled="<%=Boolean.valueOf(saveDisabled).booleanValue()%>">
+  			<button type="button" onclick="if(checkClicked()) {	return false; } else { saveIt(window.document.forms[0]);}" 
+  			id="save" 
+  			<%if (Boolean.valueOf(saveDisabled).booleanValue()) {%>
+  			disabled="disabled"
+  			<%} %>
+  			>
   			   <spring:message code="label.button.save"/>
-  			</html:button>
+  			</button>
   	    </td>
         
 		<td>&nbsp;</td>
 		<td>
-  			<html:button onclick="setAction(window.document.forms[0], 'Cancel', 'no', '');"  property="cancel" >
+  			<button type="button" onclick="cancelAction();"  name="cancel" id="cancel" >
+  			   <%--AIS - bugzilla 1860--%>
   			   <spring:message code="label.button.exit"/>
-  			</html:button>
+  			</button>
 	    </td>
    		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
    		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -208,15 +205,26 @@ function nextAction(form, ignoreFields) {
    		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
   		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
  	    <td>
-  			<html:button onclick="previousAction(window.document.forms[0], '');" property="previous" disabled="<%=Boolean.valueOf(previousDisabled).booleanValue()%>">
+  			<button type="button"
+  					onclick="previousAction(window.document.forms[0], '');" 
+  				    id="previous" 
+  				    <%if (Boolean.valueOf(previousDisabled).booleanValue()) { %>
+  				    disabled="disabled"
+  				    <% } %>
+  				    >
   			   <spring:message code="label.button.previous"/>
-  			</html:button>
+  			</button>
 	    </td>
      	<td>&nbsp;</td>
  	    <td>
-  			<html:button onclick="nextAction(window.document.forms[0], '');"  property="next" disabled="<%=Boolean.valueOf(nextDisabled).booleanValue()%>">
+  			<button onclick="nextAction(window.document.forms[0], '');"  
+					id="next" 
+					<% if (Boolean.valueOf(nextDisabled).booleanValue()) { %>
+					disabled="disabled"
+					<% } %>
+					>
   			   <spring:message code="label.button.next"/>
-  			</html:button>
+  			</button>
 	    </td>
 	    </tr>
 	 </tbody>

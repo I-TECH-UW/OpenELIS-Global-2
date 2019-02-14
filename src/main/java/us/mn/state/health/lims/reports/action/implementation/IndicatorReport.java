@@ -20,7 +20,7 @@ import java.sql.Date;
 
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
@@ -35,8 +35,8 @@ public abstract class IndicatorReport extends Report {
 	protected Date lowDate;
 	protected Date highDate;
 	
-	public void setRequestParameters(BaseActionForm dynaForm) {
-        new ReportSpecificationParameters( ReportSpecificationParameters.Parameter.DATE_RANGE, getNameForReportRequest(), null ).setRequestParameters( dynaForm );
+	public void setRequestParameters(BaseForm form) {
+        new ReportSpecificationParameters( ReportSpecificationParameters.Parameter.DATE_RANGE, getNameForReportRequest(), null ).setRequestParameters( form );
 	}
 
 	protected void createReportParameters(){
@@ -56,10 +56,10 @@ public abstract class IndicatorReport extends Report {
         }
 	}
 	
-	protected void setDateRange(BaseActionForm dynaForm) {
+	protected void setDateRange(BaseForm form) {
 		errorFound = false;
-		lowerDateRange = dynaForm.getString("lowerDateRange");
-		upperDateRange = dynaForm.getString("upperDateRange");
+		lowerDateRange = form.getString("lowerDateRange");
+		upperDateRange = form.getString("upperDateRange");
 
 		if (GenericValidator.isBlankOrNull(lowerDateRange)) {
 			errorFound = true;

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" xmlns:java="http://www.oracle.com/XSL/Transform/java">
   <xsl:output method="html" indent="yes"/>
-  <xsl:variable name="resources" select="java:util.ResourceBundle.getBundle('MessageResources')"/>
+  <xsl:variable name="resources" select="java:util.ResourceBundle.getBundle('languages/message')"/>
   
   <xsl:template match="/">
     <xsl:apply-templates/>

@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import net.sf.jasperreports.engine.JRDataSource;
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.organization.util.OrganizationTypeList;
 import us.mn.state.health.lims.organization.valueholder.Organization;
@@ -45,27 +45,27 @@ public class PatientIndeterminateByLocationReport extends PatientIndeterminateRe
         return "Patient_Indeterminate_ByLocation";
     }
 
-	public void setRequestParameters(BaseActionForm dynaForm) {
+	public void setRequestParameters(BaseForm form) {
         try {
-            PropertyUtils.setProperty(dynaForm, "reportName", StringUtil.getMessageForKey("reports.label.patient.indeterminate"));
+            PropertyUtils.setProperty(form, "reportName", StringUtil.getMessageForKey("reports.label.patient.indeterminate"));
 
-            PropertyUtils.setProperty(dynaForm, "useLowerDateRange", Boolean.TRUE);
-            PropertyUtils.setProperty(dynaForm, "useUpperDateRange", Boolean.TRUE);
+            PropertyUtils.setProperty(form, "useLowerDateRange", Boolean.TRUE);
+            PropertyUtils.setProperty(form, "useUpperDateRange", Boolean.TRUE);
 
-            PropertyUtils.setProperty(dynaForm, "useLocationCode", Boolean.TRUE);
+            PropertyUtils.setProperty(form, "useLocationCode", Boolean.TRUE);
             List<Organization> list = OrganizationTypeList.EID_ORGS_BY_NAME.getList();
-            PropertyUtils.setProperty(dynaForm, "locationCodeList", list);
+            PropertyUtils.setProperty(form, "locationCodeList", list);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-	public void initializeReport(BaseActionForm dynaForm) {
+	public void initializeReport(BaseForm form) {
         super.initializeReport();
         errorFound = false;
 
-        lowDateStr = dynaForm.getString("lowerDateRange");
-        highDateStr = dynaForm.getString("upperDateRange");
-        locationStr = dynaForm.getString("locationCode");
+        lowDateStr = form.getString("lowerDateRange");
+        highDateStr = form.getString("upperDateRange");
+        locationStr = form.getString("locationCode");
         dateRange = new DateRange(lowDateStr, highDateStr);
         
         createReportParameters();

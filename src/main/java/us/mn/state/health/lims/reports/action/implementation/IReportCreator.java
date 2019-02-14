@@ -19,22 +19,30 @@ package us.mn.state.health.lims.reports.action.implementation;
 import java.util.HashMap;
 import java.util.List;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.action.IActionConstants;
 
 public interface IReportCreator {
-    String INCOMPLETE_PARAMS = "Incompleate parameters";
+	String INCOMPLETE_PARAMS = "Incompleate parameters";
 	String INVALID_PARAMS = "Invalid parameters";
 	String SUCCESS = IActionConstants.FWD_SUCCESS;
 
-	void initializeReport(BaseActionForm dynaForm);
+	void initializeReport(BaseForm form);
+
 	String getResponseHeaderName();
+
 	String getContentType();
+
 	String getResponseHeaderContent();
+
 	HashMap<String, ?> getReportParameters() throws IllegalStateException;
-	byte[] runReport( ) throws Exception;
-	void setReportPath( String path);
+
+	byte[] runReport() throws Exception;
+
+	void setReportPath(String path);
+
 	void setRequestedReport(String report);
+
 	List<String> getReportedOrders();
 
 }

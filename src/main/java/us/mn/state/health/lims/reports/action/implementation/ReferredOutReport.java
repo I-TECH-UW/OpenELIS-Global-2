@@ -26,7 +26,7 @@ import org.apache.commons.validator.GenericValidator;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.services.AnalysisService;
 import us.mn.state.health.lims.common.services.SampleService;
 import us.mn.state.health.lims.common.services.TestService;
@@ -67,15 +67,15 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
      * @see us.mn.state.health.lims.reports.action.implementation.IReportParameterSetter#setRequestParameters(us.mn.state.health.lims.common.action.BaseActionForm)
      */
     @Override
-    public void setRequestParameters(BaseActionForm dynaForm) {
+    public void setRequestParameters(BaseForm form) {
         try {
             List<Organization> list = organizationDAO.getOrganizationsByTypeName("organizationName", "referralLab");
-            PropertyUtils.setProperty(dynaForm, "reportName", getReportNameForParameterPage());
-            PropertyUtils.setProperty(dynaForm, "useLocationCode", true);
-            PropertyUtils.setProperty(dynaForm, "locationCodeList", list);
-            PropertyUtils.setProperty(dynaForm, "useLowerDateRange", true);
-            PropertyUtils.setProperty(dynaForm, "useUpperDateRange", true);
-            PropertyUtils.setProperty(dynaForm, "instructions", StringUtil.getMessageForKey("instructions.report.referral"));
+            PropertyUtils.setProperty(form, "reportName", getReportNameForParameterPage());
+            PropertyUtils.setProperty(form, "useLocationCode", true);
+            PropertyUtils.setProperty(form, "locationCodeList", list);
+            PropertyUtils.setProperty(form, "useLowerDateRange", true);
+            PropertyUtils.setProperty(form, "useUpperDateRange", true);
+            PropertyUtils.setProperty(form, "instructions", StringUtil.getMessageForKey("instructions.report.referral"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -85,11 +85,11 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
      * @see us.mn.state.health.lims.reports.action.implementation.IReportCreator#initializeReport(us.mn.state.health.lims.common.action.BaseActionForm)
      */
     @Override
-    public void initializeReport(BaseActionForm dynaForm) {
+    public void initializeReport(BaseForm form) {
         super.initializeReport();
-        lowDateStr = dynaForm.getString("lowerDateRange");
-        highDateStr = dynaForm.getString("upperDateRange");
-        locationId = dynaForm.getString("locationCode");
+        lowDateStr = form.getString("lowerDateRange");
+        highDateStr = form.getString("upperDateRange");
+        locationId = form.getString("locationCode");
         dateRange = new DateRange(lowDateStr, highDateStr);
         reportLocation = getValidOrganization(locationId);
         

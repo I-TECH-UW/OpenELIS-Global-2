@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
@@ -62,12 +62,12 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
 
 
 	@Override
-	public void initializeReport(BaseActionForm dynaForm) {
+	public void initializeReport(BaseForm form) {
 		super.initializeReport();
 		errorFound = false;
 
-		lowerNumber = dynaForm.getString("accessionDirect");
-		upperNumber = dynaForm.getString("highAccessionDirect");
+		lowerNumber = form.getString("accessionDirect");
+		upperNumber = form.getString("highAccessionDirect");
 
 		handledOrders = new ArrayList<String>();
 		

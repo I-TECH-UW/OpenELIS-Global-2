@@ -18,6 +18,7 @@ import spring.mine.patient.form.PatientEntryByProjectForm;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.patient.saving.Accessioner;
+import us.mn.state.health.lims.patient.saving.RequestType;
 
 @Controller
 public class PatientEntryByProjectController extends BasePatientEntryByProject {
@@ -80,8 +81,8 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
 
 	@Override
 	protected String getPageSubtitleKey() {
+		RequestType requestType = getRequestType(request);
 		String key = null;
-
 		switch (requestType) {
 		case INITIAL: {
 			key = "banner.menu.createPatient.Initial";

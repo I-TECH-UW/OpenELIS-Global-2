@@ -10,9 +10,7 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
  
-<bean:define id="currentValue" name="${form.formName}" property="value"/>
-<bean:define id="valueEditable" name="${form.formName}" property="editable" type="java.lang.Boolean"/>
-<bean:define id="siteInfoName" name="${form.formName}" property="paramName" />
+<c:set var="valueEditable" value="${form.editable}"/>
 
 <%!String allowEdits = "true";%>
 
@@ -24,9 +22,9 @@
 
 <script type="text/javascript">
     $jq(document).ready(function () {
-	if( <%=valueEditable %> != true){
+    	<c:if test='${not form.editable}'>
             $jq(".inputWidget").prop('disabled', true);
-        }
+       </c:if>
     });
 
 
@@ -51,46 +49,46 @@
 <c:out value="${form.description}"/><br/><br/>
 <spring:message code="generic.value"/>:&nbsp;
 
-
-<logic:equal name='${form.formName}' property="valueType" value="text">
-    <logic:equal name="${form.formName}" property="encrypted" value="true">
-        <html:password name="${form.formName}" property="value" size="60" maxlength="120"/>
-    </logic:equal>
-    <logic:notEqual name="${form.formName}" property="encrypted" value="true">
-        <logic:equal name='${form.formName}' property="tag" value="localization" >
+<form:hidden path="paramName" id="siteInfoName"/>
+<c:if test="${form.valueType == 'text'}">
+    <c:if test="${form.encrypted}">
+        <form:password path="${form.value}" size="60" maxlength="120"/>
+    </c:if>
+    <c:if test="${not form.encrypted}">
+        <c:if test="${form.tag == 'localization'}" >
             <label for="english" ><spring:message code="label.english" /></label>
-            <form:input path="englishValue" size="60" maxlength="120" styleClass="inputWidget" id="english"/>
+            <form:input path="englishValue" size="60" maxlength="120" cssClass="inputWidget" id="english"/>
             &nbsp;&nbsp;&nbsp;&nbsp;<label for="french" ><spring:message code="label.french" /></label>
-            <form:input path="frenchValue" size="60" maxlength="120" styleClass="inputWidget" id="french"/>
-        </logic:equal>
-        <logic:notEqual name='${form.formName}' property="tag" value="localization" >
-            <form:input path="value" size="60" maxlength="120" styleClass="inputWidget"/>
-        </logic:notEqual>
-    </logic:notEqual>
-</logic:equal>
-<logic:equal name='${form.formName}' property="valueType" value="boolean">
-    <html:radio name='${form.formName}' property="value" value="true" styleClass="inputWidget"><spring:message code="label.true" /></html:radio>
-    <html:radio name='${form.formName}' property="value" value="false"><spring:message code="label.false" /></html:radio>
-</logic:equal>
-<logic:equal name='${form.formName}' property="valueType" value="dictionary">
-    <html:select name='${form.formName}' property="value" styleClass="inputWidget">
-        <logic:iterate id="entry" name="${form.formName}" property="dictionaryValues">
-            <option value="<%=entry%>" <%=entry.equals( currentValue ) ? "selected='selected' " : "" %> ><%=entry %>
-            </option>
-        </logic:iterate>
-    </html:select>
-</logic:equal>
-<logic:equal name='${form.formName}' property="valueType" value="freeText">
-    <html:textarea name="${form.formName}" property="value" rows="2" style="width:50%"/>
-</logic:equal>
-<logic:equal name='${form.formName}' property="valueType" value="logoUpload">
+            <form:input path="frenchValue" size="60" maxlength="120" cssClass="inputWidget" id="french"/>
+        </c:if>
+        <c:if test="${form.tag != 'localization'}">
+            <form:input path="value" size="60" maxlength="120" cssClass="inputWidget"/>
+        </c:if>
+    </c:if>
+</c:if>
+<c:if test="${form.valueType == 'boolean'}">
+	<spring:message code="label.true" var="trueMsg"/>
+	<spring:message code="label.false" var="falseMsg"/>
+    <form:radiobutton path="value" value="true" cssClass="inputWidget" label="${trueMsg}"/>
+    <form:radiobutton path="value" value="false" label="${falseMsg}"/>
+</c:if>
+<c:if test="${form.valueType == 'dictionary'}">
+    <form:select path="value" cssClass="inputWidget">
+    	<form:options items="${form.dictionaryValues}" />
+    </form:select>
+</c:if>
+<c:if test="${form.valueType == 'freeText'}">
+    <form:textarea path="value" rows="2" style="width:50%"/>
+</c:if>
+<c:if test="${form.valueType == 'logoUpload'}">
     <input type="file" name="aFile" onchange="checklogLogoFile( this )" id="inputWidget"/><br/>
     <spring:message code="label.remove.image" /><input type="checkbox" id="removeImage" />
     <script type="text/javascript">
         $jq("form").attr("enctype", "multipart/form-data");
         $jq(":file").css("width", "600px");
         function setAction(form, action, validate, parameters) {
-            form.action = '<%= request.getContextPath() %>' + "/logoUpload?logo=" + '<%=siteInfoName%>' + "&removeImage=" + $jq("#removeImage").is(":checked");
+        	var siteInfoName = $jq("#siteInfoName").val()
+            form.action = '<%= request.getContextPath() %>' + "/logoUpload?logo=" + siteInfoName + "&removeImage=" + $jq("#removeImage").is(":checked");
             form.validateDocument = new Object();
             form.validateDocument.value = validate;
 
@@ -98,7 +96,7 @@
         }
     </script>
 
-</logic:equal>
+</c:if>
 
 
 		

@@ -30,39 +30,51 @@
 	   	<th><spring:message code="generic.description"/></th>
 	   	<th><spring:message code="generic.value"/></th>
 	</tr>
-	<logic:iterate id="site" name="${form.formName}" indexId="ctr" property="menuList" type="SiteInformation">
-		<bean:define id="siteId" name="site" property="id"/>
+	<form:form name="${form.formName}" 
+		   action="${form.formAction}" 
+		   modelAttribute="form" 
+		   method="${form.formMethod}"
+		   id="menuForm">
+	<c:forEach items="${form.menuList}" var="site" varStatus="iter">
+		<c:set var="siteId" value="${site.id}"/>
 	  	<tr>
 	   		<td class="textcontent">
-	      		<html:multibox name="${form.formName}" property="selectedIDs" onclick="output()">
-	         		<bean:write name="siteId" />
-	      		</html:multibox>
+	      		<form:checkbox path="selectedIDs" value="${siteId}" onclick="output()"/>
    	   		</td>
    	   		<td class="textcontent">
-	    		<bean:write name="site" property="name"/>
+	    		<c:out value="${site.name}"/>
 	   		</td>
    	  	 	<td class="textcontent">
-	   	  	 <bean:message name="site" property="descriptionKey"/>
+	   	  	 <spring:message code="${site.descriptionKey}"/>
 	   	    </td>
-	   		<% if( site.getValueType().equals("logoUpload")){ %>
+	   	    <c:choose>
+	   	    <c:when test="${site.valueType == 'logoUpload'}">
 	   		<td class="textcontent">
-                <% if( site.getName().equals("headerLeftImage")){ %>
+	   			<c:choose>
+	   			<c:when test="${site.name == 'headerLeftImage'}">
                 <img src="./images/leftLabLogo.jpg?ver=<%= Math.random() %>"  
-                <%}else{%>
-                <img src="./images/rightLabLogo.jpg?ver=<%= Math.random() %>"  
-                <%}%>
-	   		         height="42" 
+                	 height="42" 
 	   		         width="42"  />
+                </c:when><c:otherwise>
+                <img src="./images/rightLabLogo.jpg?ver=<%= Math.random() %>"  
+                	 height="42" 
+	   		         width="42"  />
+                </c:otherwise>
+                </c:choose>
+	   		         
 	   		</td>
-	   		<% }else if("localization".equals(site.getTag())){
-                Localization localization = localizationDAO.getLocalizationById( site.getValue() );
-
-                out.write("<td class='textcontent'>" + localization.getEnglish() + "/" + localization.getFrench() + "</td>");
-            } else { %>
+	   		</c:when><c:when test="${site.tag == 'localization'}">
+	   		<% 
+	   		SiteInformation site = (SiteInformation) pageContext.getAttribute("site");
+	   		Localization localization = localizationDAO.getLocalizationById( site.getValue() ); %>
+	   			<td class='textcontent'> <%=localization.getEnglish()%>/<%=localization.getFrench()%> </td>
+            </c:when><c:otherwise>
 	   		<td class="textcontent">
-	   	  		<bean:write name="site" property="value"/>
+	   	  		<c:out value="${site.value}"/>
 	   		</td>
-	   		<% } %>
+	   		</c:otherwise>
+	   		</c:choose>
      	</tr>
-	</logic:iterate>
+	</c:forEach>
+	</form:form>
 </table>

@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.validator.GenericValidator;
 import org.apache.struts.Globals;
 import org.springframework.validation.Errors;
 
@@ -15,6 +14,7 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.log.LogEvent;
+import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.dictionary.ObservationHistoryList;
 import us.mn.state.health.lims.organization.util.OrganizationTypeList;
 import us.mn.state.health.lims.patient.saving.Accessioner;
@@ -24,32 +24,27 @@ import us.mn.state.health.lims.patient.valueholder.ObservationData;
 
 public abstract class BasePatientEntryByProject extends BaseController {
 
-	protected RequestType requestType = RequestType.UNKNOWN;
-
 	public BasePatientEntryByProject() {
 		super();
 	}
 
-	/**
-	 * @param requestTypeStr
-	 */
-	protected void setRequestType(String requestTypeStr) {
-		if (!GenericValidator.isBlankOrNull(requestTypeStr)) {
-			requestType = RequestType.valueOf(requestTypeStr.toUpperCase());
-		}
+	protected void updateRequestType(HttpServletRequest httpRequest) {
+		httpRequest.getSession().setAttribute("type", getRequestType(httpRequest).toString().toLowerCase());
 	}
 
-	/**
-	 * If the URL parameter says we want to do a particular type of request, figure
-	 * out which type and pass that on to any other controller page in the flow via
-	 * an attribute of the session TODO PAHill is putting it in the session just
-	 * clutter? Should this be in the request instead?
-	 */
-	protected void updateRequestType(HttpServletRequest httpRequest) {
-		setRequestType(httpRequest.getParameter("type"));
-		if (requestType != null) {
-			httpRequest.getSession().setAttribute("type", requestType.toString().toLowerCase());
+	protected RequestType getRequestType(HttpServletRequest httpRequest) {
+		String requestTypeStr = httpRequest.getParameter("type");
+		if (!GenericValidator.isBlankOrNull(requestTypeStr)) {
+			try {
+				return RequestType.valueOf(requestTypeStr.toUpperCase());
+			} catch (IllegalArgumentException e) {
+				LogEvent.logWarn("BasePatientEntryByProject", "getRequestType",
+						"request type '" + requestTypeStr + "' invalid");
+				e.printStackTrace();
+				return RequestType.UNKNOWN;
+			}
 		}
+		return RequestType.UNKNOWN;
 	}
 
 	/**

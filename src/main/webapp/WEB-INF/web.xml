@@ -37,7 +37,17 @@
     <servlet-name>dispatcher</servlet-name>
     <servlet-class>
             org.springframework.web.servlet.DispatcherServlet
-        </servlet-class>
+	</servlet-class>
+    <init-param>	
+    	<param-name>contextClass</param-name>
+    	<param-value>
+    		org.springframework.web.context.support.AnnotationConfigWebApplicationContext
+    	</param-value>
+    </init-param>
+    <init-param>
+    	<param-name>contextConfigLocation</param-name>
+    	<param-value>spring.mine.config.AppConfig</param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
   
@@ -262,5 +272,10 @@
     </web-resource-collection>
     <auth-constraint />
   </security-constraint>
+  
+  <context-param>
+    <param-name>defaultHtmlEscape</param-name>
+    <param-value>true</param-value>
+  </context-param>
 
 </web-app>

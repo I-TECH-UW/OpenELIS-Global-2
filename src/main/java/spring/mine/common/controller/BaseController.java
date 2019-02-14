@@ -29,6 +29,10 @@ public abstract class BaseController implements IActionConstants {
 
 	@Autowired
 	MessageUtil messageUtil;
+	// Request being autowired appears to be threadsafe because of how Spring
+	// handles autowiring, despite all controllers being singletons
+	// However this is still not best practice and it would be better to rely on
+	// Spring's dependency injection for accessing the request
 	@Autowired
 	protected HttpServletRequest request;
 
@@ -249,9 +253,6 @@ public abstract class BaseController implements IActionConstants {
 
 		currentUserId = getSysUserId(request);
 
-		// Set page titles in request attribute
-		setPageTitles(request, form);
-
 		// Set the form attributes
 		setFormAttributes(form, request);
 
@@ -272,12 +273,20 @@ public abstract class BaseController implements IActionConstants {
 	}
 
 	protected ModelAndView findForward(String forward, BaseForm form) {
+		// TO DO move the set page titles into an interceptor
+		setPageTitles(request, form);
 		if (LOGIN_PAGE.equals(forward)) {
-			return new ModelAndView("redirect:LoginPage.do", "errors", form.getErrors());
+			return new ModelAndView("redirect:LoginPage.do", "errors", getErrors());
 		}
 
 		// insert global forwards here
 		return findLocalForward(forward, form);
+	}
+
+	protected ModelAndView findForward(String forward, Map<String, Object> requestObjects, BaseForm form) {
+		ModelAndView mv = findForward(forward, form);
+		mv.addAllObjects(requestObjects);
+		return mv;
 	}
 
 	protected ModelAndView getForward(ModelAndView mv, String id, String startingRecNo, String direction) {

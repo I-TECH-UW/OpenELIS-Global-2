@@ -31,7 +31,7 @@ import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -81,13 +81,13 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport implement
 	}
 	
 	@Override
-	public void setRequestParameters(BaseActionForm dynaForm) {
+	public void setRequestParameters(BaseForm form) {
 		try {
-			PropertyUtils.setProperty(dynaForm, "usePredefinedDateRanges", Boolean.TRUE);
-            new ReportSpecificationList( getSiteList(), StringUtil.getMessageForKey( "report.select.site" )).setRequestParameters( dynaForm );
-			PropertyUtils.setProperty(dynaForm, "instructions", StringUtil.getMessageForKey("report.instruction.inventory.test.count"));
-			PropertyUtils.setProperty(dynaForm, "monthList", MONTH_LIST);
-			PropertyUtils.setProperty(dynaForm, "yearList", getYearList());
+			PropertyUtils.setProperty(form, "usePredefinedDateRanges", Boolean.TRUE);
+            new ReportSpecificationList( getSiteList(), StringUtil.getMessageForKey( "report.select.site" )).setRequestParameters( form );
+			PropertyUtils.setProperty(form, "instructions", StringUtil.getMessageForKey("report.instruction.inventory.test.count"));
+			PropertyUtils.setProperty(form, "monthList", MONTH_LIST);
+			PropertyUtils.setProperty(form, "yearList", getYearList());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -119,18 +119,18 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport implement
 	}
 
 	@Override
-	public void initializeReport(BaseActionForm dynaForm) {
+	public void initializeReport(BaseForm form) {
 		super.initializeReport();
 		createReportParameters();
 
-		String period = dynaForm.getString("datePeriod");
-		ReportSpecificationList specificationList = (ReportSpecificationList)dynaForm.get("selectList");
+		String period = form.getString("datePeriod");
+		ReportSpecificationList specificationList = (ReportSpecificationList)form.get("selectList");
 
-		createResults(specificationList.getSelection(), period, dynaForm);
+		createResults(specificationList.getSelection(), period, form);
 	}
 
 	@SuppressWarnings("unchecked")
-	private void createResults(String site, String period, BaseActionForm dynaForm) {
+	private void createResults(String site, String period, BaseForm form) {
 
 		Timestamp beginning = null;
 		Timestamp end = DateUtil.getTimestampForBeginningOfMonthAgo( -1 );
@@ -144,10 +144,10 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport implement
 		} else if ("months12".equals(period)) {
 			beginning = DateUtil.getTimestampForBeginningOfMonthAgo( 11 );
 		} else if ("custom".equals(period)) {
-			int lowYear = Integer.parseInt(dynaForm.getString("lowerYear"));
-			int lowMonth = Integer.parseInt(dynaForm.getString("lowerMonth"));
-			int highYear = Integer.parseInt(dynaForm.getString("upperYear"));
-			int highMonth = Integer.parseInt(dynaForm.getString("upperMonth"));
+			int lowYear = Integer.parseInt(form.getString("lowerYear"));
+			int lowMonth = Integer.parseInt(form.getString("lowerMonth"));
+			int highYear = Integer.parseInt(form.getString("upperYear"));
+			int highMonth = Integer.parseInt(form.getString("upperMonth"));
 
 			int currentYear = DateUtil.getCurrentYear();
 			int currentMonth = DateUtil.getCurrentMonth();

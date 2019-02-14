@@ -20,7 +20,7 @@ import java.util.List;
 
 import us.mn.state.health.lims.common.util.IdValuePair;
 
-public class AnalysisItem  {
+public class AnalysisItem {
 
 	private String id;
 	private String units;
@@ -30,6 +30,8 @@ public class AnalysisItem  {
 	private String receivedDate;
 	private boolean isAccepted = false;
 	private boolean isRejected = false;
+	private boolean sampleIsAccepted = false;
+	private boolean sampleIsRejected = false;
 	private boolean isManual = false;
 	private String errorMessage;
 	private String note;
@@ -70,12 +72,15 @@ public class AnalysisItem  {
 	private String innoliaAnalysisId;
 	private String finalResult;
 	private String nextTest;
-	/* this is very specific to showing calculated results, generalize if there are more than just log calculations */
+	/*
+	 * this is very specific to showing calculated results, generalize if there are
+	 * more than just log calculations
+	 */
 	private boolean displayResultAsLog = false;
 	private boolean showAcceptReject = true;
 	private List<IdValuePair> dictionaryResults;
 	private boolean isMultipleResultForSample = false;
-    private String multiSelectResultValues = "{}";
+	private String multiSelectResultValues = "{}";
 	private boolean readOnly = false;
 	private boolean isReflexGroup = false;
 	private boolean isChildReflex = false;
@@ -83,18 +88,19 @@ public class AnalysisItem  {
 	private String pastNotes;
 	private String qualifiedDictionaryId;
 	private String qualifiedResultValue = "";
-    private String qualifiedResultId;
-    private boolean hasQualifiedResult = false;
-    private int significantDigits = 0;
-    private String rejectReasonId;
-    private boolean valid = true;
+	private String qualifiedResultId;
+	private boolean hasQualifiedResult = false;
+	private int significantDigits = 0;
+	private String rejectReasonId;
+	private boolean valid = true;
 
 	public String getRejectReasonId() {
-        return rejectReasonId;
-    }
-    public void setRejectReasonId(String rejectReasonId) {
-        this.rejectReasonId = rejectReasonId;
-    }
+		return rejectReasonId;
+	}
+
+	public void setRejectReasonId(String rejectReasonId) {
+		this.rejectReasonId = rejectReasonId;
+	}
 
 	public AnalysisItem() {
 
@@ -109,7 +115,7 @@ public class AnalysisItem  {
 	}
 
 	public String getTestName() {
-		return this.testName;
+		return testName;
 	}
 
 	public void setTestName(String testName) {
@@ -164,6 +170,22 @@ public class AnalysisItem  {
 		return isRejected;
 	}
 
+	public boolean isSampleIsAccepted() {
+		return sampleIsAccepted;
+	}
+
+	public void setSampleIsAccepted(boolean sampleIsAccepted) {
+		this.sampleIsAccepted = sampleIsAccepted;
+	}
+
+	public boolean isSampleIsRejected() {
+		return sampleIsRejected;
+	}
+
+	public void setSampleIsRejected(boolean sampleIsRejected) {
+		this.sampleIsRejected = sampleIsRejected;
+	}
+
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
@@ -201,7 +223,7 @@ public class AnalysisItem  {
 	}
 
 	public String getTestId() {
-		return this.testId;
+		return testId;
 	}
 
 	public void setCompleteDate(String completeDate) {
@@ -209,7 +231,7 @@ public class AnalysisItem  {
 	}
 
 	public String getCompleteDate() {
-		return this.completeDate;
+		return completeDate;
 	}
 
 	public void setPositive(boolean isPositive) {
@@ -229,12 +251,12 @@ public class AnalysisItem  {
 	}
 
 	public void setLastUpdated(Timestamp lastupdated) {
-		this.lastUpdated = lastupdated;
+		lastUpdated = lastupdated;
 
 	}
 
 	public Timestamp getLastUpdated() {
-		return this.lastUpdated;
+		return lastUpdated;
 	}
 
 	public void setSampleGroupingNumber(int sampleGroupingNumber) {
@@ -326,7 +348,7 @@ public class AnalysisItem  {
 	}
 
 	public String getGenieII100Result() {
-		return this.genieII100Result;
+		return genieII100Result;
 	}
 
 	public void setGenieII100Result(String genieII100Result) {
@@ -485,15 +507,15 @@ public class AnalysisItem  {
 		return isMultipleResultForSample;
 	}
 
-    public String getMultiSelectResultValues() {
-        return multiSelectResultValues;
-    }
+	public String getMultiSelectResultValues() {
+		return multiSelectResultValues;
+	}
 
-    public void setMultiSelectResultValues(String multiSelectResultValues) {
-        this.multiSelectResultValues = multiSelectResultValues;
-    }
+	public void setMultiSelectResultValues(String multiSelectResultValues) {
+		this.multiSelectResultValues = multiSelectResultValues;
+	}
 
-    public void setReadOnly(boolean readOnly) {
+	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
 	}
 
@@ -530,7 +552,7 @@ public class AnalysisItem  {
 	}
 
 	public void setBiolineAnalysisId(String biolineAnalysisID) {
-		this.biolineAnalysisId = biolineAnalysisID;
+		biolineAnalysisId = biolineAnalysisID;
 	}
 
 	public boolean isNonconforming() {
@@ -557,59 +579,59 @@ public class AnalysisItem  {
 		this.innoliaAnalysisId = innoliaAnalysisId;
 	}
 
-	public String getPastNotes(){
+	public String getPastNotes() {
 		return pastNotes;
 	}
 
-	public void setPastNotes(String pastNotes){
+	public void setPastNotes(String pastNotes) {
 		this.pastNotes = pastNotes;
 	}
 
-	public String getQualifiedDictionaryId(){
+	public String getQualifiedDictionaryId() {
 		return qualifiedDictionaryId;
 	}
 
-	public void setQualifiedDictionaryId(String qualifiedDictionaryId){
+	public void setQualifiedDictionaryId(String qualifiedDictionaryId) {
 		this.qualifiedDictionaryId = qualifiedDictionaryId;
 	}
 
-	public String getQualifiedResultValue(){
+	public String getQualifiedResultValue() {
 		return qualifiedResultValue;
 	}
 
-	public void setQualifiedResultValue(String qualifiedResultValue){
+	public void setQualifiedResultValue(String qualifiedResultValue) {
 		this.qualifiedResultValue = qualifiedResultValue;
 	}
 
-    public boolean isHasQualifiedResult(){
-        return hasQualifiedResult;
-    }
+	public boolean isHasQualifiedResult() {
+		return hasQualifiedResult;
+	}
 
-    public void setHasQualifiedResult( boolean hasQualifiedResult ){
-        this.hasQualifiedResult = hasQualifiedResult;
-    }
+	public void setHasQualifiedResult(boolean hasQualifiedResult) {
+		this.hasQualifiedResult = hasQualifiedResult;
+	}
 
-    public String getQualifiedResultId() {
-        return qualifiedResultId;
-    }
+	public String getQualifiedResultId() {
+		return qualifiedResultId;
+	}
 
-    public void setQualifiedResultId(String qualifiedResultId) {
-        this.qualifiedResultId = qualifiedResultId;
-    }
+	public void setQualifiedResultId(String qualifiedResultId) {
+		this.qualifiedResultId = qualifiedResultId;
+	}
 
-    public int getSignificantDigits(){
-        return significantDigits;
-    }
+	public int getSignificantDigits() {
+		return significantDigits;
+	}
 
-    public void setSignificantDigits( int significantDigits ){
-        this.significantDigits = significantDigits;
-    }
+	public void setSignificantDigits(int significantDigits) {
+		this.significantDigits = significantDigits;
+	}
 
-    public boolean isValid(){
-        return valid;
-    }
+	public boolean isValid() {
+		return valid;
+	}
 
-    public void setValid( boolean valid ){
-        this.valid = valid;
-    }
+	public void setValid(boolean valid) {
+		this.valid = valid;
+	}
 }

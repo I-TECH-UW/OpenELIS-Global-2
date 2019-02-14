@@ -38,7 +38,8 @@ errorNewLine =
 
 <script>
 function validateForm(form) {
-   var validated = validateDictionaryForm(form);
+	//TO DO reintroduce validation
+   var validated = true;//validateDictionaryForm(form);
     //validation for no new line characters
     if (validated) {
       var dictEntry = document.getElementById("dictEntry").value;
@@ -51,14 +52,14 @@ function validateForm(form) {
 }
 </script>
 <%--bugzilla 2061-2063--%>
-<form:hidden path="dirtyFormFields" name="${form.formName}" id="dirtyFormFields"/>
+<form:hidden path="dirtyFormFields" id="dirtyFormFields"/>
 <table>
 		<tr>
 						<td class="label">
 							<spring:message code="dictionary.id"/>:
 						</td>	
 						<td> 
-							<app:text name="${form.formName}" property="id" allowEdits="false"/>
+							<form:input path="id" allowEdits="false"/>
 						</td>
 		</tr>
 		<tr>
@@ -66,14 +67,13 @@ function validateForm(form) {
 							<spring:message code="dictionary.dictionarycategory"/>:<span class="requiredlabel">*</span>
 						</td>	
 						<td>
-						  <html:select name="${form.formName}" property="selectedDictionaryCategoryId">
-					   	     <app:optionsCollection 
-										name="${form.formName}" 
-							    		property="categories" 
-										label="description" 
-										value="id"  />
+						  <form:select path="selectedDictionaryCategoryId">
+						  <option></option>
+					   	     <form:options items="${form.categories}" 
+										itemLabel="description" 
+										itemValue="id"  />
 					        
-                       	  </html:select>
+                       	  </form:select>
                        	</td>
 						</tr>
         <tr>
@@ -90,7 +90,7 @@ function validateForm(form) {
 						</td>	
 						<td> 
 							<%--html:text name="${form.formName}" property="dictEntry" /--%>
-						    <html:textarea name="${form.formName}" property="dictEntry" id="dictEntry" cols="50" rows="4"/>
+						    <form:textarea path="dictEntry" id="dictEntry" cols="50" rows="4"/>
 						</td>
 		</tr>
         <%--bugzilla 1847--%>
@@ -109,6 +109,6 @@ function validateForm(form) {
 </table>
 
  
-<html:javascript formName="dictionaryForm"/>
+<!-- <html:javascript formName="dictionaryForm"/> -->
 
 

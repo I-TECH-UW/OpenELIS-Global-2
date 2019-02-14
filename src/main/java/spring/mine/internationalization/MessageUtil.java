@@ -15,14 +15,14 @@ import us.mn.state.health.lims.common.log.LogEvent;
 @Component
 public class MessageUtil {
 
-	public static MessageUtil instance;
+	private static MessageUtil instance;
 
 	@Autowired
 	MessageSource messageSource;
 
 	@PostConstruct
 	public void registerInstance() {
-		//Makes this a singelton when spring automatically creates this object
+		// Makes this a singelton when spring automatically creates this object
 		instance = this;
 	}
 
@@ -35,7 +35,7 @@ public class MessageUtil {
 	}
 
 	/**
-	 * @param key - message key
+	 * @param key    - message key
 	 * @param locale - specific locale to check
 	 * @return - message for key in locale
 	 */
@@ -44,7 +44,7 @@ public class MessageUtil {
 	}
 
 	/**
-	 * @param key - message key
+	 * @param key  - message key
 	 * @param args - args to pass into message
 	 * @return - message for key in current locale
 	 */
@@ -61,9 +61,9 @@ public class MessageUtil {
 		return getMessage(key, new String[] { arg }, LocaleContextHolder.getLocale());
 	}
 
-	/** 
-	 * @param key - message key
-	 * @param args - args to pass into message
+	/**
+	 * @param key    - message key
+	 * @param args   - args to pass into message
 	 * @param locale - specific locale to check
 	 * @return - message for key in locale
 	 */
@@ -72,10 +72,10 @@ public class MessageUtil {
 		try {
 			msg = instance.messageSource.getMessage(key, args, locale);
 		} catch (NullPointerException e) {
-			msg = null;
+			msg = key;
 			LogEvent.logError("MessageUtil", "getMessage()", e.toString());
 		} catch (NoSuchMessageException e) {
-			msg = null;
+			msg = key;
 			LogEvent.logWarn("MessageUtil", "getMessage()", e.toString());
 		}
 		return msg;

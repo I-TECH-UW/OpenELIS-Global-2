@@ -38,7 +38,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -85,12 +85,12 @@ public class  IPCIRealisationReport  extends Report {
 
 	
 	@Override
-	public void initializeReport(BaseActionForm dynaForm) {
+	public void initializeReport(BaseForm form) {
 		super.initializeReport();
 		errorFound = false;	
 		
-		lowerDateRange = dynaForm.getString("lowerDateRange");		   
-		upperDateRange = dynaForm.getString("upperDateRange");
+		lowerDateRange = form.getString("lowerDateRange");		   
+		upperDateRange = form.getString("upperDateRange");
 		  
 
 		if (GenericValidator.isBlankOrNull(lowerDateRange)) {

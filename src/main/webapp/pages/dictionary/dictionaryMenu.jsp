@@ -9,6 +9,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
  
 
@@ -31,30 +32,35 @@
 	   </th>
    
 	</tr>
-	<logic:iterate id="dict" indexId="ctr" name="${form.formName}" property="menuList" type="us.mn.state.health.lims.dictionary.valueholder.Dictionary">
-	<bean:define id="dictID" name="dict" property="id"/>
+	<form:form name="${form.formName}" 
+				   action="${form.formAction}" 
+				   modelAttribute="form" 
+				   onSubmit="return submitForm(this);" 
+				   method="${form.formMethod}"
+				   id="menuForm">
+	<c:forEach items="${form.menuList}" var="dict" varStatus="iter">
 	  <tr>	
 	   <td class="textcontent">
-	      <html:multibox name="${form.formName}" property="selectedIDs" onclick="output()">
-	         <bean:write name="dictID" />
-	      </html:multibox>
+	   
+	      <form:checkbox path="selectedIDs" onclick="output()" value="${dict.id}"/>
      
    	   </td>	 
 	   <td class="textcontent">
-	        <bean:write name="dict" property="dictionaryCategory.categoryName"/>
+	        <c:out value="${dict.dictionaryCategory.categoryName}"/>
 	      &nbsp;
        </td>
 	   <td class="textcontent">
-   	      <app:write name="dict" property="dictEntry" />
+   	      <c:out value="${dict.dictEntry}" />
 	      &nbsp;
        </td>
 	   <td class="textcontent">
-   	      <app:write name="dict" property="localAbbreviation" maxLength="10" />
+   	      <c:out value="${fn:substring(dict.localAbbreviation, 0, 10)}"/>
 	      &nbsp;
        </td>
 	   <td class="textcontent">
-	   	  <bean:write name="dict" property="isActive"/>
+	   	  <c:out value="${dict.isActive}"/>
 	   </td>
      </tr>
-	</logic:iterate>
+	</c:forEach>
+	</form:form>
 </table>

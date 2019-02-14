@@ -25,7 +25,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ValidationBacklogData;
@@ -72,7 +72,7 @@ public class ValidationBacklogReport extends Report {
 		return  new JRBeanCollectionDataSource(reportItems);
 	}
 
-	public void initializeReport(BaseActionForm dynaForm){
+	public void initializeReport(BaseForm form){
 		super.initializeReport();
 
 		createReportParameters();

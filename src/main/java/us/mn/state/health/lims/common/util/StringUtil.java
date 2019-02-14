@@ -25,25 +25,22 @@ import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.owasp.encoder.Encode;
 
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.resources.ResourceLocator;
 
 /**
  * @author diane benz
- * 
+ *
  *         To change this generated comment edit the template variable
  *         "typecomment": Window>Preferences>Java>Templates. To enable and
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
 public class StringUtil {
-
 
 	private static final String COMMA = ",";
 	private static final Character CHAR_COMA = ',';
@@ -52,6 +49,10 @@ public class StringUtil {
 	private static final String QUOTE = "\"";
 	private static String STRING_KEY_SUFFIX = null;
 	private static Pattern INTEGER_REG_EX = Pattern.compile("^-?\\d+$");
+
+	public enum EncodeContext {
+		JAVASCRIPT, HTML
+	}
 
 	// private static SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
 
@@ -63,17 +64,18 @@ public class StringUtil {
 		return string == null || string.equals("") || string.equals("null");
 	}
 
-	public static String replaceCharAtIndex( String string, char character, int index){
-		if( index < 0 || string == null || index >= string.length()){
+	public static String replaceCharAtIndex(String string, char character, int index) {
+		if (index < 0 || string == null || index >= string.length()) {
 			return string;
-		}else{
+		} else {
 			return string.substring(0, index) + character + string.substring(index + 1);
 		}
 	}
+
 	/**
-	 * Search for tags in a String with oldValue tags and replace the tag with
-	 * the newValue text.
-	 * 
+	 * Search for tags in a String with oldValue tags and replace the tag with the
+	 * newValue text.
+	 *
 	 * @param input
 	 * @param oldValue
 	 * @param newValue
@@ -263,9 +265,9 @@ public class StringUtil {
 		}
 	}
 
-	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static List loadListFromStringOfElements(String str, String textSeparator, boolean validate) throws Exception {
+	public static List loadListFromStringOfElements(String str, String textSeparator, boolean validate)
+			throws Exception {
 		List list = new ArrayList();
 		String arr[] = str.split(textSeparator);
 
@@ -279,7 +281,6 @@ public class StringUtil {
 		}
 		return list;
 	}
-
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static List createChunksOfText(String text, int maxWidth, boolean observeSpaces) throws Exception {
@@ -308,7 +309,7 @@ public class StringUtil {
 		return list;
 	}
 
-	//Call MessageUtil directly
+	// Call MessageUtil directly
 	@Deprecated
 	public static String getMessageForKey(String messageKey) {
 		if (null == messageKey) {
@@ -319,22 +320,22 @@ public class StringUtil {
 	}
 
 	@Deprecated
-    public static String getMessageForKeyAndLocale(String messageKey, Locale locale) {
-        if (null == messageKey) {
-            return null;
-        }
+	public static String getMessageForKeyAndLocale(String messageKey, Locale locale) {
+		if (null == messageKey) {
+			return null;
+		}
 
-        return MessageUtil.getMessage(messageKey, locale);
-    }
+		return MessageUtil.getMessage(messageKey, locale);
+	}
 
 	@Deprecated
-    public static String getMessageForKeyAndLocale(String messageKey, String arg0, String arg1, Locale locale) {
-        if (null == messageKey) {
-            return null;
-        }
+	public static String getMessageForKeyAndLocale(String messageKey, String arg0, String arg1, Locale locale) {
+		if (null == messageKey) {
+			return null;
+		}
 
-        return MessageUtil.getMessage(messageKey, new String[] {arg0, arg1}, locale);
-    }
+		return MessageUtil.getMessage(messageKey, new String[] { arg0, arg1 }, locale);
+	}
 
 	@Deprecated
 	public static String getMessageForKey(String messageKey, String arg) {
@@ -344,7 +345,7 @@ public class StringUtil {
 
 		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
 
-		return MessageUtil.getMessage(messageKey, new String[] {arg});
+		return MessageUtil.getMessage(messageKey, new String[] { arg });
 	}
 
 	@Deprecated
@@ -355,9 +356,9 @@ public class StringUtil {
 
 		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
 
-		return MessageUtil.getMessage(messageKey, new String[] {arg0, arg1});
+		return MessageUtil.getMessage(messageKey, new String[] { arg0, arg1 });
 	}
-	
+
 	public static String getContextualMessageForKey(String messageKey) {
 		if (null == messageKey) {
 			return null;
@@ -371,7 +372,7 @@ public class StringUtil {
 
 		String suffixedValue = getMessageForKey(suffixedKey);
 
-		if (!GenericValidator.isBlankOrNull(suffixedValue)) {
+		if (!GenericValidator.isBlankOrNull(suffixedValue) && !suffixedKey.equals(suffixedValue)) {
 			return suffixedValue;
 		} else {
 			return getMessageForKey(messageKey);
@@ -402,7 +403,10 @@ public class StringUtil {
 
 		String suffixedValue = getMessageForKey(suffixedKey);
 
-		return GenericValidator.isBlankOrNull(suffixedValue) ? key : suffixedKey;
+		if (GenericValidator.isBlankOrNull(suffixedValue) || suffixedKey.equals(suffixedValue)) {
+			return key;
+		}
+		return suffixedKey;
 	}
 
 	/*
@@ -426,13 +430,11 @@ public class StringUtil {
 	}
 
 	/**
-	 * Limit the chars in a string to the simple Java identifiers, A-Z, a-z, $,
-	 * _ etc. code taken from
-	 * http://www.exampledepot.com/egs/java.lang/IsJavaId.html
-	 * 
+	 * Limit the chars in a string to the simple Java identifiers, A-Z, a-z, $, _
+	 * etc. code taken from http://www.exampledepot.com/egs/java.lang/IsJavaId.html
+	 *
 	 * @see Character#isJavaIdentifierPart(char) etc. for details.
-	 * @param s
-	 *            - some string to test
+	 * @param s - some string to test
 	 * @return True => all is well
 	 */
 	public static boolean isJavaIdentifier(String s) {
@@ -449,9 +451,8 @@ public class StringUtil {
 
 	/**
 	 * A realy dumb CSV column value escaper. It deals with imbedded commas and
-	 * double quotes, that is all. Commas means the string needs quotes around
-	 * it. Including a quote means we need to double up that character for
-	 * Excell.
+	 * double quotes, that is all. Commas means the string needs quotes around it.
+	 * Including a quote means we need to double up that character for Excell.
 	 */
 	public static String escapeCSVValue(String original) {
 		// quotes
@@ -470,64 +471,64 @@ public class StringUtil {
 		out.append(QUOTE);
 		return out.toString();
 	}
-	
+
 	/**
-	 * Solves the problem of how to deal with commas within quoted strings for csv.  I couldn't figure out a regex that would cover
-	 * it so we're doing it the hard way.  It will stumble if '~' is embedded in the string.  This will fail on mixed fields such as
-	 * 1,2,"something, else", 4,5
+	 * Solves the problem of how to deal with commas within quoted strings for csv.
+	 * I couldn't figure out a regex that would cover it so we're doing it the hard
+	 * way. It will stumble if '~' is embedded in the string. This will fail on
+	 * mixed fields such as 1,2,"something, else", 4,5
 	 *
 	 */
-	public static String[] separateCSVWithEmbededQuotes(String line){
-		
+	public static String[] separateCSVWithEmbededQuotes(String line) {
+
 		String[] breakOnQuotes = line.split(QUOTE);
-		
+
 		StringBuffer substitutedString = new StringBuffer();
-		for( String subString : breakOnQuotes){
-			if(subString.startsWith(COMMA)){
-				substitutedString.append( subString.replace(CHAR_COMA, CHAR_TIDDLE));
-			}else{
+		for (String subString : breakOnQuotes) {
+			if (subString.startsWith(COMMA)) {
+				substitutedString.append(subString.replace(CHAR_COMA, CHAR_TIDDLE));
+			} else {
 				substitutedString.append(QUOTE);
 				substitutedString.append(subString);
 				substitutedString.append(QUOTE);
 			}
 		}
-		
-		return substitutedString.toString().split(TIDDLE);
-	}
-	
-	/**
-	 * Similar to separateCSVWithEmbededQuotes(String line) but deals with mixed fields 
-	 * i.e. 1,2,"something, else", 4,5 , "more of that thing", 8
-	 * 
-	 *  
-	 */
-	public static String[] separateCSVWithMixedEmbededQuotes(String line){
-		
-		String[] breakOnQuotes = line.split(QUOTE);
-		
-		StringBuffer substitutedString = new StringBuffer();
-		for( String subString : breakOnQuotes){
-			if(subString.startsWith(COMMA) || subString.endsWith(COMMA)){
-				substitutedString.append( subString.replace(CHAR_COMA, CHAR_TIDDLE));
-			}else{
-				substitutedString.append(QUOTE);
-				substitutedString.append(subString);
-				substitutedString.append(QUOTE);
-			}
-		}
-		
+
 		return substitutedString.toString().split(TIDDLE);
 	}
 
 	/**
-	 * Compare two strings returning the appropriate -1,0,1; but deal with
-	 * possible null strings which will compare the same as "", aka before any
-	 * other string.
+	 * Similar to separateCSVWithEmbededQuotes(String line) but deals with mixed
+	 * fields i.e. 1,2,"something, else", 4,5 , "more of that thing", 8
 	 *
-	 * @param left left String
+	 *
+	 */
+	public static String[] separateCSVWithMixedEmbededQuotes(String line) {
+
+		String[] breakOnQuotes = line.split(QUOTE);
+
+		StringBuffer substitutedString = new StringBuffer();
+		for (String subString : breakOnQuotes) {
+			if (subString.startsWith(COMMA) || subString.endsWith(COMMA)) {
+				substitutedString.append(subString.replace(CHAR_COMA, CHAR_TIDDLE));
+			} else {
+				substitutedString.append(QUOTE);
+				substitutedString.append(subString);
+				substitutedString.append(QUOTE);
+			}
+		}
+
+		return substitutedString.toString().split(TIDDLE);
+	}
+
+	/**
+	 * Compare two strings returning the appropriate -1,0,1; but deal with possible
+	 * null strings which will compare the same as "", aka before any other string.
+	 *
+	 * @param left  left String
 	 * @param right right string
-	 * @return -1 if left is lexically less then right; 0 if they are equal; 1
-	 *         if left is lexically greater than right.
+	 * @return -1 if left is lexically less then right; 0 if they are equal; 1 if
+	 *         left is lexically greater than right.
 	 */
 	public static int compareWithNulls(String left, String right) {
 		if (left == null) {
@@ -539,26 +540,27 @@ public class StringUtil {
 		return left.compareTo(right);
 	}
 
-    /**
-     * Tests for equals without worrying about null.  If they are both null they are equal
-     *
-     * @param left left String
-     * @param right right String
-     * @return true if they are both null or are equal
-     */
-    public static boolean safeEquals(String left, String right) {
-        if( left == right){
-            return true;
-        }
+	/**
+	 * Tests for equals without worrying about null. If they are both null they are
+	 * equal
+	 *
+	 * @param left  left String
+	 * @param right right String
+	 * @return true if they are both null or are equal
+	 */
+	public static boolean safeEquals(String left, String right) {
+		if (left == right) {
+			return true;
+		}
 
-        if (left == null) {
-            left = "";
-        }
-        if (right == null) {
-            right = "";
-        }
-        return left.equals(right);
-    }
+		if (left == null) {
+			left = "";
+		}
+		if (right == null) {
+			right = "";
+		}
+		return left.equals(right);
+	}
 
 	public static String replaceAllChars(String text, char replacement) {
 		if (text == null) {
@@ -587,20 +589,20 @@ public class StringUtil {
 
 		return true;
 	}
-	
-	public static String strip(String string, String toBeRemoved){
 
-		if( string.contains(toBeRemoved)){
+	public static String strip(String string, String toBeRemoved) {
+
+		if (string.contains(toBeRemoved)) {
 			String[] subStrings = string.trim().split(toBeRemoved);
-			
+
 			StringBuffer reconstituted = new StringBuffer();
-			
-			for( String subString : subStrings){
-				reconstituted.append( subString );
+
+			for (String subString : subStrings) {
+				reconstituted.append(subString);
 			}
-			
+
 			return reconstituted.toString();
-		}else{
+		} else {
 			return string;
 		}
 	}
@@ -608,21 +610,21 @@ public class StringUtil {
 	public static String blankIfNull(String string) {
 		return string == null ? "" : string;
 	}
-	
-	public static String ellipsisString( String text, int ellipsisAt){
-		if( text.length() > ellipsisAt){
+
+	public static String ellipsisString(String text, int ellipsisAt) {
+		if (text.length() > ellipsisAt) {
 			return text.substring(0, ellipsisAt) + "...";
-		}else{
+		} else {
 			return text;
 		}
 	}
-	
-	public static String join(Collection<String> collection, String separator){
+
+	public static String join(Collection<String> collection, String separator) {
 		String constructed = "";
-		if( collection.isEmpty()){
+		if (collection.isEmpty()) {
 			return constructed;
 		}
-		
+
 		for (String item : collection) {
 			constructed += item + separator;
 		}
@@ -630,73 +632,89 @@ public class StringUtil {
 		return constructed.substring(0, constructed.length() - separator.length());
 	}
 
-	public static String replaceTail(String value, String tail){
-		return value.substring(0, value.length() - tail.length() ) + tail;
+	public static String replaceTail(String value, String tail) {
+		return value.substring(0, value.length() - tail.length()) + tail;
 	}
 
-    public static String doubleWithSignificantDigits( double value, String significantDigits ){
-        if( GenericValidator.isBlankOrNull(significantDigits) || significantDigits.equals( "-1" )){
-            return String.valueOf( value );
-        }
+	public static String doubleWithSignificantDigits(double value, String significantDigits) {
+		if (GenericValidator.isBlankOrNull(significantDigits) || significantDigits.equals("-1")) {
+			return String.valueOf(value);
+		}
 
-        String format = "%1$." + significantDigits + "f";
-        return String.format(format, value);
-    }
+		String format = "%1$." + significantDigits + "f";
+		return String.format(format, value);
+	}
 
-    public static String doubleWithSignificantDigits( double value, int significantDigits ){
-        String format = "%1$." + significantDigits + "f";
-        return String.format(format, value);
-    }
-    
-    /**
-     * Builds a delimited String from a list of values
-     *
-     * @param values A list of Strings to be concatenated
-     * @param delimiter What separates the strings
-     * @param dropBlanksAndNulls If true then keep blank and null Strings out of the list 
-     * @return String
-     */
-    public static String buildDelimitedStringFromList(List<String> values, String delimiter, boolean dropBlanksAndNulls) {
-        String delimitedString = "";
-        
-        if (values == null || values.isEmpty())
-            return "";
-        
-        int cnt = 0;
-        for (String s : values) {
-            if (GenericValidator.isBlankOrNull(s) && dropBlanksAndNulls) {
-                continue;
-            } else if (GenericValidator.isBlankOrNull(s) && !dropBlanksAndNulls) {
-                s = "";
-            }
-            if (cnt == 0) {
-                delimitedString = s;
-                cnt++;
-            } else { 
-                delimitedString = delimitedString + delimiter + s;
-                cnt++;
-            }
-        }
-        
-        return delimitedString;
-    }
+	public static String doubleWithSignificantDigits(double value, int significantDigits) {
+		String format = "%1$." + significantDigits + "f";
+		return String.format(format, value);
+	}
+
+	/**
+	 * Builds a delimited String from a list of values
+	 *
+	 * @param values             A list of Strings to be concatenated
+	 * @param delimiter          What separates the strings
+	 * @param dropBlanksAndNulls If true then keep blank and null Strings out of the
+	 *                           list
+	 * @return String
+	 */
+	public static String buildDelimitedStringFromList(List<String> values, String delimiter,
+			boolean dropBlanksAndNulls) {
+		String delimitedString = "";
+
+		if (values == null || values.isEmpty()) {
+			return "";
+		}
+
+		int cnt = 0;
+		for (String s : values) {
+			if (GenericValidator.isBlankOrNull(s) && dropBlanksAndNulls) {
+				continue;
+			} else if (GenericValidator.isBlankOrNull(s) && !dropBlanksAndNulls) {
+				s = "";
+			}
+			if (cnt == 0) {
+				delimitedString = s;
+				cnt++;
+			} else {
+				delimitedString = delimitedString + delimiter + s;
+				cnt++;
+			}
+		}
+
+		return delimitedString;
+	}
 
 	public static Double doubleWithInfinity(String significantDigits) {
-		if( GenericValidator.isBlankOrNull(significantDigits)){
+		if (GenericValidator.isBlankOrNull(significantDigits)) {
 			return null;
 		}
-		if( "Infinity".equals(significantDigits)){
+		if ("Infinity".equals(significantDigits)) {
 			return Double.POSITIVE_INFINITY;
 		}
-		if( "-Infinity".equals(significantDigits)){
+		if ("-Infinity".equals(significantDigits)) {
 			return Double.NEGATIVE_INFINITY;
 		}
 
-		try{
+		try {
 			return new Double(significantDigits);
-		}catch(NumberFormatException e){
+		} catch (NumberFormatException e) {
 			LogEvent.logError("StringUtil", "doubleWithInfinity(" + significantDigits + ")", e.toString());
 			return null;
+		}
+	}
+
+	public static String encodeForContext(String message, EncodeContext context) {
+		switch (context) {
+		case HTML:
+			return Encode.forHtml(message);
+		case JAVASCRIPT:
+			return Encode.forJavaScript(message);
+		default:
+			LogEvent.logWarn("StringUtil", "encodeForContext",
+					"Could not escape'" + message + "' for context: " + context.toString());
+			return message;
 		}
 	}
 }

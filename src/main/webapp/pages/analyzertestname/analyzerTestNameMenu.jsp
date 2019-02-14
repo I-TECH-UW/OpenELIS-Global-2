@@ -18,20 +18,25 @@
 	   	<th><spring:message code="analyzer.label"/>&nbsp;-&nbsp;<spring:message code="analyzer.test.name"/> </th>
 	   	<th> <spring:message code="analyzer.test.actual.name"/> </th>
 	</tr>
-	<logic:iterate id="analyzerTest" name="${form.formName}" indexId="ctr" property="menuList" type="NamedAnalyzerTestMapping">
+	<form:form name="${form.formName}" 
+				   action="${form.formAction}" 
+				   modelAttribute="form" 
+				   onSubmit="return submitForm(this);" 
+				   method="${form.formMethod}"
+				   id="menuForm">
+	<c:forEach items="${form.menuList}" var="analyzerTest">
 	  	<tr>
 	   		<td class="textcontent">
-	      		<html:multibox name="${form.formName}" property="selectedIDs" onclick="output()">
-	         		<bean:write name="analyzerTest" property="uniqueId" />
-	      		</html:multibox>
+	      		<form:checkbox path="selectedIDs" value="${analyzerTest.uniqueId}" onclick="output()"/>
 			</td>
    	   		<td class="textcontent">
-	    		<bean:write name="analyzerTest" property="analyzerName"/>&nbsp;-&nbsp;
-	   	  		<bean:write name="analyzerTest" property="analyzerTestName"/>
+	    		<c:out value="${analyzerTest.analyzerName}"/>&nbsp;-&nbsp;
+	   	  		<c:out value="${analyzerTest.analyzerTestName}"/>
 	   		</td>
    	  	 	<td class="textcontent">
-	   	  		<bean:write name="analyzerTest" property="actualTestName"/>
+	   	  		<c:out value="${analyzerTest.actualTestName}"/>
 	   		</td>
      	</tr>
-	</logic:iterate>
+	</c:forEach>
+	</form:form>
 </table>

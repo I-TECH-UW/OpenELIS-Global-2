@@ -237,7 +237,7 @@
 				<spring:message code="configuration.test.management" />
 			</a></li>
 
-		<li><a href=<c:url value="/BatchTestReassignment"/> >
+		<li><a href=<c:url value="/BatchTestReassignment.do"/> >
 				<spring:message code="configuration.batch.test.reassignment" />
 			</a></li>
 

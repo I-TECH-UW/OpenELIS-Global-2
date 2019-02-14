@@ -206,7 +206,7 @@
                       cssClass="text"
                       id="labNo"/>
 
-            <spring:message code="sample.entry.scanner.instructions"/>
+            <spring:message code="sample.entry.scanner.instructions" htmlEscape="false"/>
             <input type="button" value='<%=StringUtil.getMessageForKey("sample.entry.scanner.generate")%>'
                    onclick="setOrderModified();getNextAccessionNumber(); " class="textButton">
         </td>
