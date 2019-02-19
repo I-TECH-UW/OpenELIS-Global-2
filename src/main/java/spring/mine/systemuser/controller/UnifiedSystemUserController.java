@@ -58,7 +58,7 @@ public class UnifiedSystemUserController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/UnifiedSystemUser", method = RequestMethod.POST)
+	@RequestMapping(value = "/UnifiedSystemUser", method = { RequestMethod.POST, RequestMethod.GET })
 	public ModelAndView showUnifiedSystemUser(HttpServletRequest request,
 			@ModelAttribute("form") UnifiedSystemUserForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {

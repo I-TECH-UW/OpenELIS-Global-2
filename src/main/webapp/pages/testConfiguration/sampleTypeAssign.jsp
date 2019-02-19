@@ -53,7 +53,7 @@
 <link rel="stylesheet" media="screen" type="text/css"
       href="<%=basePath%>css/jquery_ui/jquery.ui.theme.css?ver=<%= Versioning.getBuildNumber() %>"/>
 
-<form>
+<form id="mainForm">
 <script type="text/javascript">
     if (!$jq) {
         var $jq = jQuery.noConflict();
@@ -73,7 +73,7 @@
     }
 
     function submitAction(target) {
-        var form = window.document.forms[0];
+        var form = document.getElementById("mainForm");
         form.action = target;
         form.submit();
     }
@@ -129,7 +129,7 @@
 
     function savePage() {
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-        var form = window.document.forms[0];
+        var form = document.getElementById("mainForm");
         form.action = "SampleTypeTestAssignUpdate.do";
         form.submit();
     }

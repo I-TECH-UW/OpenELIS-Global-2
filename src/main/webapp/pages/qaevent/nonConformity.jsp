@@ -78,7 +78,7 @@ function siteListChanged(textValue){
 
 function /*void*/loadForm() {
 	if (!$("searchId").value.empty()) {
-		var form = document.forms[0];
+		var form = document.getElementById("mainForm");
 
 		form.action = "NonConformity.do?labNo=" + $("searchId").value;
 		form.method = "GET";
@@ -88,7 +88,7 @@ function /*void*/loadForm() {
 }
 
 function setMyCancelAction() {
-	setAction(window.document.forms[0], 'Cancel', 'no', '');
+	setAction(document.getElementById("mainForm"), 'Cancel', 'no', '');
 }
 function doNothing(){
 	
@@ -777,7 +777,7 @@ function savePage() {
 		return false;
 	}
 	
-	var form = window.document.forms[0];
+	var form = document.getElementById("mainForm");
   
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	form.action = "NonConformityUpdate.do";

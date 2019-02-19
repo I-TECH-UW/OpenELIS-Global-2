@@ -23,7 +23,7 @@ function saveAndSubmit() {
 	if (checkURL()) {
 		if (confirmSentWarning()) {
 			showsubmitting();
-			var form = document.forms[0];
+			var form = document.getElementById("mainForm");
 			form.action = "DataSubmissionSave.do?submit=true";
 			form.submit();
 		}
@@ -33,7 +33,7 @@ function saveAndSubmit() {
 }
 
 function saveAndExit() {
-	var form = document.forms[0];
+	var form = document.getElementById("mainForm");
 	form.action = "DataSubmissionSave.do";
 	form.submit();
 }

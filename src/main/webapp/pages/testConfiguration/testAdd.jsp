@@ -899,7 +899,7 @@
         });
     }
     function submitAction(target) {
-        var form = window.document.forms[0];
+        var form = document.getElementById("mainForm");
         form.action = target;
         form.submit();
     }
@@ -908,7 +908,7 @@
 </script>
 <br>
 
-<form>
+<form id="mainForm">
     <html:hidden id="jsonWad" name='${form.formName}' property="jsonWad"/>
 
     <input type="button" value="<%= StringUtil.getMessageForKey("banner.menu.administration") %>"

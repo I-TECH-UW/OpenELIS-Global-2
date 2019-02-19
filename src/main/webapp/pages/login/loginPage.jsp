@@ -27,12 +27,22 @@ function submitOnEnter(e){
 
 
 function submitOnClick(button){
-	window.document.forms[0].submit();
+	document.getElementById("mainForm").submit();
 }
 
 </script>
-
-
+<c:if test="${!empty login_errors}">
+	<center><h1>
+	<c:forEach items="${login_errors}" var="error">
+		<spring:message code="${error.code}" text="${error.defaultMessage}" /><br>
+	</c:forEach>
+	</h1></center>
+</c:if>
+<c:if test="${param.logout == 'true'}">
+<center><h1>
+	<spring:message code="logout.msg.success" text="logout.msg.success" />
+</h1></center>
+</c:if>
 <table width="100%">
 <tr>
     <td width="50%" valign="top">

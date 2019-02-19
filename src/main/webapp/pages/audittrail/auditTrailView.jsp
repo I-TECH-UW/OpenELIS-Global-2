@@ -37,7 +37,7 @@
 
 function submit(){
 
-	var form = window.document.forms[0];
+	var form = document.getElementById("mainForm");
 	form.action = "AuditTrailReport.do";
 	form.submit();
 	return false;

@@ -72,7 +72,7 @@ $jq(document).ready( function() {
 function  /*void*/ setMyCancelAction(form, action, validate, parameters)
 {
 	//first turn off any further validation
-	setAction(window.document.forms[0], 'Cancel', 'no', '');
+	setAction(document.getElementById("mainForm"), 'Cancel', 'no', '');
 }
 
 function /*void*/ enableDisableCheckboxes( matchedElement ){
@@ -105,7 +105,7 @@ function /*void*/ makeDirty(){
 
 function printWorkplan() {
 
-	var form = window.document.forms[0];
+	var form = document.getElementById("mainForm");
 	form.action = "PrintWorkplanReport.do";
 	form.target = "_blank";
 	form.submit();
@@ -114,7 +114,7 @@ function printWorkplan() {
 function savePage() {
 
   window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-	var form = window.document.forms[0];
+	var form = document.getElementById("mainForm");
 	form.action = "ResultValidationSave.do";
 	form.submit();
 }

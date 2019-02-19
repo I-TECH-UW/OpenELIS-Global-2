@@ -56,7 +56,7 @@ function validateEntrySize( elementValue ){
 
 function doShowTests(){
 
-	var form = document.forms[0];
+	var form = document.getElementById("mainForm");
 
 	form.action = '${form.formName}'.sub('Form','') + ".do?accessionNumber="  + $("searchAccessionID").value;
 	form.method = "get";

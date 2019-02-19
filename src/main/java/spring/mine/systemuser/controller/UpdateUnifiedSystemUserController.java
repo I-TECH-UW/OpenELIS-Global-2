@@ -330,7 +330,7 @@ public class UpdateUnifiedSystemUserController extends BaseController {
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("insertSuccess".equals(forward)) {
-			return new ModelAndView("forward:UnifiedSystemUser.do", "form", form);
+			return new ModelAndView("redirect:UnifiedSystemUser.do", "form", form);
 		} else if ("fail".equals(forward)) {
 			return new ModelAndView("unifiedSystemUserDefinition", "form", form);
 		} else {

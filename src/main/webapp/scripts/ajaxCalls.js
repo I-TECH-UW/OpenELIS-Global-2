@@ -311,7 +311,7 @@ function postBatchSample(success, failure){
 		'SamplePatientEntrySave.do',  //url
 		{//options
 			method: 'POST', //http method
-			parameters: jQuery(window.document.forms[0]).serialize().replace(/\+/g,'%20'),
+			parameters: jQuery(document.getElementById("mainForm")).serialize().replace(/\+/g,'%20'),
 		    onSuccess: success,
 		    onFailure: failure
 		}
@@ -325,7 +325,7 @@ function postBatchSampleByProject(projectUrl, success, failure) {
     		projectUrl,  //url
     		{//options
     			method: 'POST', //http method
-    			parameters: jQuery(window.document.forms[0]).serialize().replace(/\+/g,'%20'),
+    			parameters: jQuery(document.getElementById("mainForm")).serialize().replace(/\+/g,'%20'),
     		    onSuccess: success,
     		    onFailure: failure
     		}

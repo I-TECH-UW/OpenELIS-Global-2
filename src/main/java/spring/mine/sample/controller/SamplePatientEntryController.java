@@ -19,7 +19,6 @@ import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.services.SampleOrderService;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 
@@ -49,7 +48,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 		PropertyUtils.setProperty(form, "currentDate", DateUtil.getCurrentDateAsText());
 
 		for (Object program : form.getSampleOrderItems().getProgramList()) {
-			System.out.println(((IdValuePair) program).getValue());
+			// System.out.println(((IdValuePair) program).getValue());
 		}
 
 		addProjectList(form);

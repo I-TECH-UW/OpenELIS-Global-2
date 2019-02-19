@@ -89,17 +89,17 @@ function confirmSaveForwardPopup(direction)
 
     strHTML += '  function goToNextActionSave(){ ';
     strHTML += ' var reqParms = "?direction=next&ID="; ';
-    strHTML += ' window.opener.setAction(window.opener.document.forms[0], "UpdateNextPrevious", "yes", reqParms);self.close();} ';
+    strHTML += ' window.opener.setAction(window.opener.document.getElementById("mainForm"), "UpdateNextPrevious", "yes", reqParms);self.close();} ';
     strHTML += '  function goToPreviousActionSave(){ ';
     strHTML += ' var reqParms = "?direction=previous&ID="; ';
-    strHTML += ' window.opener.setAction(window.opener.document.forms[0], "UpdateNextPrevious", "yes", reqParms);self.close();} ';
+    strHTML += ' window.opener.setAction(window.opener.document.getElementById("mainForm"), "UpdateNextPrevious", "yes", reqParms);self.close();} ';
 
     strHTML += '  function goToNextActionNoSave(){ ';
     strHTML += ' var reqParms = "?direction=next&ID="; ';
-    strHTML += ' window.opener.setAction(window.opener.document.forms[0], "NextPrevious", "no", reqParms);self.close();} ';
+    strHTML += ' window.opener.setAction(window.opener.document.getElementById("mainForm"), "NextPrevious", "no", reqParms);self.close();} ';
     strHTML += '  function goToPreviousActionNoSave(){ ';
     strHTML += ' var reqParms = "?direction=previous&ID="; ';
-    strHTML += ' window.opener.setAction(window.opener.document.forms[0], "NextPrevious", "no", reqParms);self.close();} ';
+    strHTML += ' window.opener.setAction(window.opener.document.getElementById("mainForm"), "NextPrevious", "no", reqParms);self.close();} ';
 
     strHTML += ' setTimeout("impor()",359999);</SCRIPT';
     strHTML += '><title>' + "<%=title%>" + '</title></head>';
@@ -132,7 +132,7 @@ function previousAction(form, ignoreFields) {
   if (isDirty(form, ignoreFields)) {
      confirmSaveForwardPopup('previous');
   } else {
-     setAction(window.document.forms[0], 'NextPrevious', 'no', '?direction=previous&ID=');
+     setAction(document.getElementById("mainForm"), 'NextPrevious', 'no', '?direction=previous&ID=');
   }
 }
 
@@ -142,7 +142,7 @@ function nextAction(form, ignoreFields) {
       //popup to give user option to save, don't save AND go to next, cancel
       confirmSaveForwardPopup('next');
   } else {
-      setAction(window.document.forms[0], 'NextPrevious', 'no', '?direction=next&ID=');
+      setAction(document.getElementById("mainForm"), 'NextPrevious', 'no', '?direction=next&ID=');
   }
 }
 
@@ -154,7 +154,7 @@ function saveOnClickAction() {
  		return false;
  	} else {
 		window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed. Used in unifiedSystemUser.jsp
-  		setAction(window.document.forms[0], 'Update', 'yes', '?ID=');
+  		setAction(document.getElementById("mainForm"), 'Update', 'yes', '?ID=');
  	}
  }
 
@@ -196,7 +196,7 @@ if( typeof(showSuccessMessage) != 'undefined' ){
   		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	    <td>
   			<button type="button" 
-  					onclick="previousAction(window.document.forms[0], '');" 
+  					onclick="previousAction(document.getElementById("mainForm"), '');" 
   					name="previous" 
   					property="previous" 
   					<% if (Boolean.valueOf(previousDisabled).booleanValue()) {%>
@@ -209,7 +209,7 @@ if( typeof(showSuccessMessage) != 'undefined' ){
      	<td>&nbsp;</td>
 	    <td>
   			<button type="button" 
-  					onclick="nextAction(window.document.forms[0], '');"  
+  					onclick="nextAction(document.getElementById("mainForm"), '');"  
   					name="next" 
   					property="next" 
   					<% if (Boolean.valueOf(nextDisabled).booleanValue()) {%>

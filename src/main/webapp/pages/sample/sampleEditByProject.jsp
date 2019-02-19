@@ -31,7 +31,7 @@
 function  /*void*/ setMyCancelAction(form, action, validate, parameters)
 {
 	//first turn off any further validation
-	setAction(window.document.forms[0], 'Cancel', 'no', '');
+	setAction(document.getElementById("mainForm"), 'Cancel', 'no', '');
 }
 
 </script>

@@ -101,7 +101,7 @@ var canEditAccessionNo = <%= canEditAccessionNo %>;
 function  /*void*/ setMyCancelAction(form, action, validate, parameters)
 {
     //first turn off any further validation
-    setAction(window.document.forms[0], 'Cancel', 'no', '');
+    setAction(document.getElementById("mainForm"), 'Cancel', 'no', '');
 }
 
 function Studies() {
@@ -216,7 +216,7 @@ function initializeStudySelection() {
 
 function selectStudy( divId ) {
     var i = getSelectIndexFor("studyFormsId", divId);
-    document.forms[0].studyForms.selectedIndex = i;
+    document.getElementById("mainForm").studyForms.selectedIndex = i;
     switchStudyForm( divId );
 }
 
@@ -237,7 +237,7 @@ function switchStudyForm( divId ){
         	break;
         }
         toggleDisabledDiv(document.getElementById(divId), true);
-        document.forms[0].project.value = divId;
+        document.getElementById("mainForm").project.value = divId;
         document.getElementById(divId).style.display = "block";
         fieldValidator = studies.getValidator(divId); // reset the page fieldValidator for all fields to use.
         projectChecker = studies.getProjectChecker(divId);
@@ -281,7 +281,7 @@ function /*boolean*/ allSamplesHaveTests(){
 
 function  /*void*/ savePage__(action) {
     window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-    var form = window.document.forms[0];
+    var form = document.getElementById("mainForm");
     if (action == null) {
         action = "SampleEntryByProjectSave.do?type=" + type
     }

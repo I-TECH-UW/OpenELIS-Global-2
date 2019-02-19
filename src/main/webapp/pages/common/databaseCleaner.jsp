@@ -10,17 +10,17 @@
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<form>
+<form id="mainForm">
 <script type="text/javascript">
 
 function /*void*/ cancel(){
-	var form = window.document.forms[0];
+	var form = document.getElementById("mainForm");
 	form.action = "Cancel.do";
 	form.submit();
 }
 
 function /*void*/ deleteData(){
-	var form = window.document.forms[0];
+	var form = document.getElementById("mainForm");
 	form.action = "DatabaseCleaningRequest.do";
 	form.submit();
 }

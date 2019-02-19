@@ -252,8 +252,12 @@ public interface IActionConstants {
 	String MODULE_ACCESS_PATIENT_SUBJECTNOS_EDIT = "Access.patient.subjectNos.edit";
 	String MODULE_ACCESS_SAMPLE_ACCESSIONNO_EDIT = "Access.sample.accessionNo.edit";
 
+	// for storage in request
 	String REQUEST_ERRORS = "RequestErrors";
 	String REQUEST_WARNINGS = "RequestWarnings";
 	String REQUEST_MESSAGES = "RequestMessages";
+	// for storage in session for redirect. Removed from session upon redirect in
+	// RedirectErrorsInterceptor.java
+	String REDIRECT_ERRORS = "RedirectErrors";
 
 }

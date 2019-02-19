@@ -47,7 +47,7 @@
 function  /*void*/ setMyCancelAction(form, action, validate, parameters)
 {
 	//first turn off any further validation
-	setAction(window.document.forms[0], 'Cancel', 'no', '');
+	setAction(document.getElementById("mainForm"), 'Cancel', 'no', '');
 }
 
 function disableEnableTest(checkbox, index){
@@ -67,7 +67,7 @@ function submitTestSectionSelect( element ) {
 
 function printWorkplan() {
 
-	var form = window.document.forms[0];
+	var form = document.getElementById("mainForm");
 	form.action = "PrintWorkplanReport.do";
 	form.target = "_blank";
 	form.submit();

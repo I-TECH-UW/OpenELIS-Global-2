@@ -218,6 +218,9 @@ public abstract class BaseController implements IActionConstants {
 
 	protected String getSysUserId(HttpServletRequest request) {
 		UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
+		if (usd == null) {
+			return null;
+		}
 		return String.valueOf(usd.getSystemUserId());
 	}
 
@@ -241,33 +244,21 @@ public abstract class BaseController implements IActionConstants {
 		return true;
 	}
 
+	// this method should be moved into interceptors
 	protected ModelAndView checkUserAndSetup(BaseForm form, Errors errors, HttpServletRequest request) {
 
 		UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-		if (!isUserAuthenticated(userModuleDAO, errors, request)) {
-			return findForward(LOGIN_PAGE, form);
-		}
-
-		// Set language to be used
 		setLanguage(request);
-
 		currentUserId = getSysUserId(request);
-
-		// Set the form attributes
 		setFormAttributes(form, request);
+		/*
+		 * System.out.println( request.getServletPath() + (request.getQueryString() ==
+		 * null ? "" : "?" + request.getQueryString()) + "\n" +
+		 * PageIdentityUtil.getActionName(request, USE_PARAMETERS));
+		 */
 
-		if (!isAccountUsable(userModuleDAO, errors, request)) {
-			return findForward(LOGIN_PAGE, form);
-		}
-
-		if (!hasPermission(userModuleDAO, errors, request)) {
-			errors.reject("login.error.module.not.allow", "login.error.module.not.allow");
-			LogEvent.logInfo("BaseController", "execute()", "======> NOT ALLOWED ACCESS TO THIS MODULE");
-			return userModuleDAO.isSessionExpired(request) ? findForward(LOGIN_PAGE, form)
-					: findForward(HOME_PAGE, form);
-		}
-
-		userModuleDAO.setupUserSessionTimeOut(request);
+		// shouldn't need to happen here anymore
+		// userModuleDAO.setupUserSessionTimeOut(request);
 
 		return new ModelAndView();
 	}
@@ -277,6 +268,9 @@ public abstract class BaseController implements IActionConstants {
 		setPageTitles(request, form);
 		if (LOGIN_PAGE.equals(forward)) {
 			return new ModelAndView("redirect:LoginPage.do", "errors", getErrors());
+		}
+		if (HOME_PAGE.equals(forward)) {
+			return new ModelAndView("redirect:Home.do", "errors", getErrors());
 		}
 
 		// insert global forwards here
@@ -320,53 +314,6 @@ public abstract class BaseController implements IActionConstants {
 
 	protected Errors getErrors() {
 		return (Errors) request.getAttribute(REQUEST_ERRORS);
-	}
-
-	protected boolean isUserAuthenticated(UserModuleDAO userModuleDAO, Errors errors, HttpServletRequest request) {
-		// return to login page if user session is not found
-		if (userModuleDAO.isSessionExpired(request)) {
-			/*
-			 * ActionMessages errors = new ActionMessages(); ActionError error = new
-			 * ActionError("login.error.session.message", null, null);
-			 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); saveErrors(request,
-			 * errors); return mapping.findForward(LOGIN_PAGE);
-			 */
-			errors.reject("login.error.session.message", "login.error.session.message");
-			return false;
-		}
-		return true;
-	}
-
-	protected boolean isAccountUsable(UserModuleDAO userModuleDAO, Errors errors, HttpServletRequest request) {
-		if (userModuleDAO.isAccountDisabled(request)) {
-			// ActionMessages errors = new ActionMessages();
-			// ActionError error = new ActionError("login.error.account.disable", null,
-			// null);
-			// errors.add(ActionMessages.GLOBAL_MESSAGE, error);
-			// saveErrors(request, errors);
-			errors.reject("login.error.account.disable", "login.error.account.disable");
-			return false;
-		}
-
-		if (userModuleDAO.isAccountLocked(request)) {
-			// ActionMessages errors = new ActionMessages();
-			// ActionError error = new ActionError("login.error.account.lock", null, null);
-			// errors.add(ActionMessages.GLOBAL_MESSAGE, error);
-			// saveErrors(request, errors);
-			errors.reject("login.error.account.lock", "login.error.account.lock");
-			return false;
-		}
-
-		if (userModuleDAO.isPasswordExpired(request)) {
-			// ActionMessages errors = new ActionMessages();
-			// ActionError error = new ActionError("login.error.password.expired", null,
-			// null);
-			// errors.add(ActionMessages.GLOBAL_MESSAGE, error);
-			errors.reject("login.error.password.expired", "login.error.password.expired");
-			// saveErrors(request, errors);
-			return false;
-		}
-		return true;
 	}
 
 	protected boolean hasPermission(UserModuleDAO userModuleDAO, Errors errors, HttpServletRequest request) {

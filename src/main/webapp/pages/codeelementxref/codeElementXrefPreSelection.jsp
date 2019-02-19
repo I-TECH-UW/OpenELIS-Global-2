@@ -55,7 +55,7 @@ function getCodes() {
    var moId = document.getElementById("selectedMessageOrganizationId");
    var cetId = document.getElementById("selectedCodeElementTypeId");
         if (moId.value != '' && cetId.value != '') {
-            setAction(window.document.forms[0], 'View', 'no', '');
+            setAction(document.getElementById("mainForm"), 'View', 'no', '');
         } else {
             alert('<%=errorMakeSelection%>');
         }

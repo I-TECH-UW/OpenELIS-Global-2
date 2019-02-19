@@ -72,7 +72,7 @@
     }
 
     function submitAction(target) {
-        var form = window.document.forms[0];
+        var form = document.getElementById("mainForm");
         form.action = target;
         form.submit();
     }
@@ -216,14 +216,14 @@
     function savePage() {
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 
-        var form = window.document.forms[0];
+        var form = document.getElementById("mainForm");
         form.method = "POST";
         form.action = "TestOrderabilityUpdate.do";
         form.submit();
     }
 </script>
 
-<form>
+<form id="mainForm">
     <form:hidden path="jsonChangeList" id="jsonChangeList"/>
 </form>
 <br>

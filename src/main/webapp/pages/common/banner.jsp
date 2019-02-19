@@ -41,7 +41,7 @@ function /*void*/ setLanguage( language ){
 	}
 	
 	if( update ){
-		window.location.href = "LoginPage.html?lang=" + language;
+		window.location.href = "LoginPage.do?lang=" + language;
 	}
 }
 
@@ -93,7 +93,12 @@ function displayHelp(){
 				if (request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA) != null) {
 					usd = (UserSessionData) request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA);
 			%>
-			<div id="user-info"><div><%=usd.getElisUserName()%> - <spring:url value="/LoginPage.html" var="loginurl"/><a href="${loginurl}" ><spring:message code="homePage.menu.logOut.toolTip" /></a></div></div>
+			<spring:url value="/Logout.do" var="loginurl"/>
+			<form id="logout-form" method="post" action="${loginurl}">
+			<div id="user-info"><div><%=usd.getElisUserName()%> - 
+			<input type="submit" value="<spring:message code="homePage.menu.logOut.toolTip"/>" class="btn-link"/>
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/> 
+			</div></div></form>
 			<%
 				}
 			%>

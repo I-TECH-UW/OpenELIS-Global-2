@@ -813,9 +813,9 @@ function BaseProjectChecker() {
 		var siteSubjectNumber = $(this.idPre + "siteSubjectNumber");
 		siteSubjectNumber = (siteSubjectNumber == null)?"":siteSubjectNumber.value;
 		if ( siteSubjectNumber == "" && subjectNumber == "" ) {
-			document.forms[0].subjectOrSiteSubject.value = "";
+			document.getElementById("mainForm").subjectOrSiteSubject.value = "";
 		} else {
-			document.forms[0].subjectOrSiteSubject.value = "1 OR The other IS set";
+			document.getElementById("mainForm").subjectOrSiteSubject.value = "1 OR The other IS set";
 		}
 	};
 	

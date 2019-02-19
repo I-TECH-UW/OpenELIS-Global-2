@@ -76,7 +76,7 @@ function setAccessionNumberValidationMessage(message, field) {
         //bugzilla 2041 based on results of accession validation we might need to disable buttons
         setButtons(false); 
         //bugzilla 1774 after selecting accn# we go to a View Action     
-        setAction(window.document.forms[0], 'ViewSampleDemographicsAnd', 'yes', '');
+        setAction(document.getElementById("mainForm"), 'ViewSampleDemographicsAnd', 'yes', '');
       }
 
 }
@@ -99,7 +99,7 @@ function validateAccessionNumber() {
        'ajaxXML',  //url
        {//options
         method: 'get', //http method
-        parameters: 'provider=AccessionNumberValidationProvider&form=' + document.forms[0].name + '&field=accessionNumber&id=' + escape($F("accessionNumber")),      //request parameters
+        parameters: 'provider=AccessionNumberValidationProvider&form=' + document.getElementById("mainForm").name + '&field=accessionNumber&id=' + escape($F("accessionNumber")),      //request parameters
         //indicator: 'throbbing'
         onSuccess:  processAccessionNumberValidationSuccess,
         onFailure:  processFailure
@@ -115,7 +115,7 @@ function validateForm(form) {
 //bugzilla 2227
 function resultsEntryHistoryBySamplePopup () {
 
-  var form = document.forms[0];
+  var form = document.getElementById("mainForm");
   var accessionNumber = $F("accessionNumber");
   //if there is an error on the page we cannot go to add test
    //clear button clicked flag to allow add test again

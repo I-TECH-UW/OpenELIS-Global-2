@@ -57,7 +57,7 @@ function showHideSections() {
  var rcvCode = document.getElementById("selectedReceiverCodeElementId");
  var locCode = document.getElementById("selectedLocalCodeElementId");
  
- var selectedRows = window.document.forms[0].elements['selectedRows'];
+ var selectedRows = document.getElementById("mainForm").elements['selectedRows'];
   
  if (rcvCode && rcvCode.options.length > 1 && locCode && locCode.options.length > 1) {
          //alert("unhiding notLinkedSection");
@@ -89,14 +89,14 @@ function link() {
     if (selectedLocalElementId.value != null && selectedLocalElementId.value != '' 
         && selectedReceiverElementId.value != null && selectedReceiverElementId.value != '') {
             var href = '?selectedLocalElementId=' + selectedLocalElementId + '&selectedReceiverElementId=' + selectedReceiverElementId;
-            setAction(window.document.forms[0], 'Link', 'yes', href);
+            setAction(document.getElementById("mainForm"), 'Link', 'yes', href);
     } 
 }
 
 
 function unlink() {
 
-  var fieldObj = window.document.forms[0].elements['selectedRows'];
+  var fieldObj = document.getElementById("mainForm").elements['selectedRows'];
   var listOfSelectedIds = '';
   
   if (fieldObj != null) {
@@ -116,7 +116,7 @@ function unlink() {
   }
 
   if (listOfSelectedIds != '') {
-          setAction(window.document.forms[0], 'UnLink', 'yes', '');
+          setAction(document.getElementById("mainForm"), 'UnLink', 'yes', '');
    }
 }
 </script>
