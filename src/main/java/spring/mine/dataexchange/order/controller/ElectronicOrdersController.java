@@ -3,11 +3,14 @@ package spring.mine.dataexchange.order.controller;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
@@ -31,14 +34,8 @@ public class ElectronicOrdersController extends BaseController {
 			form = new ElectronicOrderViewForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		String sortOrder = request.getParameter("sortOrder");
 		String pageNumber = request.getParameter("page");

@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.Globals;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,16 +29,13 @@ public class NonConformityUpdateController extends BaseController {
 			form = new NonConformityForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
+		Errors errors = new BaseErrors();
 		if (getErrors() != null) {
 			errors = (BaseErrors) getErrors();
 		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		
 
-		NonConformityUpdateData data = new NonConformityUpdateData(form, currentUserId);
+		NonConformityUpdateData data = new NonConformityUpdateData(form, getSysUserId(request));
 		NonConformityUpdateWorker worker = new NonConformityUpdateWorker(data);
 		String result = worker.update();
 

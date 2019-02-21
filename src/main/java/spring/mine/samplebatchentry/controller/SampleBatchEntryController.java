@@ -9,6 +9,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,11 +42,7 @@ public class SampleBatchEntryController extends BaseController {
 			@ModelAttribute("form") SampleBatchEntryForm form) throws DocumentException {
 		String forward = FWD_SUCCESS;
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
+		Errors errors = new BaseErrors();
 
 		String sampleXML = form.getSampleXML();
 		SampleOrderService sampleOrderService = new SampleOrderService();
@@ -99,9 +96,7 @@ public class SampleBatchEntryController extends BaseController {
 		}
 		request.setAttribute("facilityName", facilityName);
 		form.setPatientSearch(new PatientSearch());
-		if (errors.hasErrors()) {
-			return mv;
-		}
+
 		forward = form.getMethod();
 		return findForward(forward, form);
 	}

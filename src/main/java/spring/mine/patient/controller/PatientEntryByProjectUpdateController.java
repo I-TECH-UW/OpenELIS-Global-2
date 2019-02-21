@@ -3,6 +3,7 @@ package spring.mine.patient.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,15 +31,8 @@ public class PatientEntryByProjectUpdateController extends BasePatientEntryByPro
 			form = new PatientEntryByProjectForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
 		String sysUserId = String.valueOf(usd.getSystemUserId());

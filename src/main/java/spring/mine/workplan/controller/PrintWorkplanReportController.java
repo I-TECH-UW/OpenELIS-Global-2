@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,15 +43,7 @@ public class PrintWorkplanReportController extends BaseController {
 			form = new WorkplanForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return;
-		}
+		Errors errors = new BaseErrors();
 
 		request.getSession().setAttribute(SAVE_DISABLED, "true");
 

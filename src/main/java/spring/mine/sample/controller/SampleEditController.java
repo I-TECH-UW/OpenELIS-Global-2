@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -93,21 +94,14 @@ public class SampleEditController extends BaseController {
 			form = new SampleEditForm();
 		}
 		form.setFormAction("SampleEdit.do");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
 		String accessionNumber = request.getParameter("accessionNumber");
 		boolean allowedToCancelResults = userModuleDAO.isUserAdmin(request)
-				|| new UserRoleDAOImpl().userInRole(currentUserId, ABLE_TO_CANCEL_ROLE_NAMES);
+				|| new UserRoleDAOImpl().userInRole(getSysUserId(request), ABLE_TO_CANCEL_ROLE_NAMES);
 
 		if (GenericValidator.isBlankOrNull(accessionNumber)) {
 			accessionNumber = getMostRecentAccessionNumberForPaitient(request.getParameter("patientID"));

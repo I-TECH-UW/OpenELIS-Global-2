@@ -1,7 +1,7 @@
 package spring.mine.login.form;
 
-import java.lang.String;
 import java.sql.Timestamp;
+
 import spring.mine.common.form.BaseForm;
 
 public class LoginChangePasswordForm extends BaseForm {

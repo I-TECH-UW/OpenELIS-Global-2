@@ -24,15 +24,6 @@ public class LoginPageController extends BaseController {
 
 		form.setFormAction("ValidateLogin.do");
 
-		// Set language to be used
-		setLanguage(request);
-
-		// Set page titles in request attribute
-		setPageTitles(request, form);
-
-		// Set the form attributes
-		setFormAttributes(form, request);
-
 		return findForward(forward, form);
 	}
 

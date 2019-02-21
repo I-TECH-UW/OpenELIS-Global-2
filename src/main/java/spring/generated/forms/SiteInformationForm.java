@@ -1,9 +1,8 @@
 package spring.generated.forms;
 
-import java.lang.Boolean;
-import java.lang.String;
 import java.sql.Timestamp;
 import java.util.Collection;
+
 import spring.mine.common.form.BaseForm;
 
 public class SiteInformationForm extends BaseForm {

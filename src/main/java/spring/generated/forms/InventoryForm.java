@@ -1,8 +1,8 @@
 package spring.generated.forms;
 
-import java.lang.String;
 import java.sql.Timestamp;
 import java.util.List;
+
 import spring.mine.common.form.BaseForm;
 
 public class InventoryForm extends BaseForm {

@@ -1,10 +1,9 @@
 package spring.generated.testconfiguration.controller;
 
-import java.lang.String;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,6 +15,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,13 +30,13 @@ import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.TypeOfSampleService;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
+import us.mn.state.health.lims.test.beanItems.TestActivationBean;
+import us.mn.state.health.lims.test.dao.TestDAO;
+import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
 import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
-import us.mn.state.health.lims.test.beanItems.TestActivationBean;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 
 @Controller
 public class TestActivationController extends BaseController {
@@ -51,15 +51,8 @@ public class TestActivationController extends BaseController {
     	form = new TestActivationForm();
     }
         form.setFormAction("");
-    BaseErrors errors = new BaseErrors();
-    if (form.getErrors() != null) {
-    	errors = (BaseErrors) form.getErrors();
-    }
-    ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-    if (errors.hasErrors()) {
-    	return mv;
-    }
+    Errors errors = new BaseErrors();
+    
     
     List<TestActivationBean> activeTestList = createTestList(true, false);
     List<TestActivationBean> inactiveTestList = createTestList(false, false);
@@ -139,15 +132,8 @@ public class TestActivationController extends BaseController {
 	  
 	    String forward = FWD_SUCCESS;
 
-	    BaseErrors errors = new BaseErrors();
-	    if (form.getErrors() != null) {
-	    	errors = (BaseErrors) form.getErrors();
-	    }
-	    ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-	    if (errors.hasErrors()) {
-	    	return mv;
-	    }
+	    Errors errors = new BaseErrors();
+	    
 
 	    String changeList = form.getJsonChangeList();
         
@@ -212,7 +198,7 @@ public class TestActivationController extends BaseController {
       for( String testId : testIds){
           Test test = new TestService(testId).getTest();
           test.setIsActive( "N");
-          test.setSysUserId(currentUserId);
+          test.setSysUserId(getSysUserId(request));
           tests.add(test);
       }
 
@@ -226,7 +212,7 @@ public class TestActivationController extends BaseController {
           Test test = new TestService(set.id).getTest();
           test.setIsActive( "Y");
           test.setSortOrder( String.valueOf(set.sortOrder * 10));
-          test.setSysUserId(currentUserId);
+          test.setSysUserId(getSysUserId(request));
           tests.add(test);
       }
 
@@ -239,7 +225,7 @@ public class TestActivationController extends BaseController {
       for( String id : sampleTypeIds){
           TypeOfSample typeOfSample = TypeOfSampleService.getTransientTypeOfSampleById(id);
           typeOfSample.setActive( false );
-          typeOfSample.setSysUserId(currentUserId);
+          typeOfSample.setSysUserId(getSysUserId(request));
           sampleTypes.add(typeOfSample);
       }
 
@@ -253,7 +239,7 @@ public class TestActivationController extends BaseController {
           TypeOfSample typeOfSample = TypeOfSampleService.getTransientTypeOfSampleById(set.id);
           typeOfSample.setActive( true );
           typeOfSample.setSortOrder(set.sortOrder * 10);
-          typeOfSample.setSysUserId(currentUserId);
+          typeOfSample.setSysUserId(getSysUserId(request));
           sampleTypes.add(typeOfSample);
       }
 

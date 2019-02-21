@@ -10,9 +10,10 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %> 
 			
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+
+<c:set var="formName" value="${form.formName}"/>
 <%
-	if(null != request.getAttribute(IActionConstants.FORM_NAME))
-	{
+	if(null != pageContext.getAttribute("formName")) {
 %>
 <h1>
 	<c:choose>

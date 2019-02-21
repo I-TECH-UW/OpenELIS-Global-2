@@ -21,6 +21,7 @@ import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesView;
 
 import spring.mine.interceptor.ModuleAuthenticationInterceptor;
+import spring.mine.interceptor.PageAttributesInterceptor;
 import spring.mine.interceptor.RedirectErrorsInterceptor;
 import spring.mine.security.SecurityConfig;
 
@@ -33,6 +34,8 @@ public class AppConfig implements WebMvcConfigurer {
 	ModuleAuthenticationInterceptor moduleAuthenticationInterceptor;
 	@Autowired
 	RedirectErrorsInterceptor redirectErrorsInterceptor;
+	@Autowired
+	PageAttributesInterceptor pageAttributesInterceptor;
 	@Autowired
 	RequestMappingHandlerMapping requestMappingHandlerMapping;
 
@@ -81,6 +84,7 @@ public class AppConfig implements WebMvcConfigurer {
 		registry.addInterceptor(moduleAuthenticationInterceptor).addPathPatterns("/**")
 				.excludePathPatterns(SecurityConfig.OPEN_PAGES).excludePathPatterns(SecurityConfig.RESOURCE_PAGES);
 		registry.addInterceptor(redirectErrorsInterceptor).addPathPatterns("/**");
+		registry.addInterceptor(pageAttributesInterceptor).addPathPatterns("/**");
 	}
 
 }

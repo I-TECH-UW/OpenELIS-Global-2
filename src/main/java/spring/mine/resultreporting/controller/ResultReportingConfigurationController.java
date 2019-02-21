@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,15 +32,8 @@ public class ResultReportingConfigurationController extends BaseController {
 			form = new ResultReportingConfigurationForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "true");

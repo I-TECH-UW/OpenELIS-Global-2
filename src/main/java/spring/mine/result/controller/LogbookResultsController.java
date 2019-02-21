@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,15 +48,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 			form = new LogbookResultsForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		String requestedPage = request.getParameter("page");
 
@@ -91,7 +85,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
 		ResultsPaging paging = new ResultsPaging();
 		List<InventoryKitItem> inventoryList = new ArrayList<>();
-		ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility(currentUserId);
+		ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility(getSysUserId(request));
 
 		if (GenericValidator.isBlankOrNull(requestedPage)) {
 

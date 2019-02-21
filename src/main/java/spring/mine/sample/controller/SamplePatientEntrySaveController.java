@@ -11,6 +11,7 @@ import org.hibernate.StaleObjectStateException;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -91,12 +92,8 @@ public class SamplePatientEntrySaveController extends BaseController {
 			BindingResult result, HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
-		BaseErrors errors = new BaseErrors();
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		SamplePatientUpdateData updateData = new SamplePatientUpdateData(getSysUserId(request));
 
@@ -293,7 +290,7 @@ public class SamplePatientEntrySaveController extends BaseController {
 	 *
 	 * SampleProject sampleProject = new SampleProject();
 	 * sampleProject.setProject(project); sampleProject.setSample(sample);
-	 * sampleProject.setSysUserId(currentUserId);
+	 * sampleProject.setSysUserId(getSysUserId(request));
 	 * sampleProjectDAO.insertData(sampleProject); }
 	 */
 

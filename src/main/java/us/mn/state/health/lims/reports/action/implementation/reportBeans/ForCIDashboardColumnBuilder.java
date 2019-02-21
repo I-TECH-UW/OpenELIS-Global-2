@@ -16,9 +16,9 @@
 */
 package us.mn.state.health.lims.reports.action.implementation.reportBeans;
 
-import static us.mn.state.health.lims.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.*;
-
-
+import static us.mn.state.health.lims.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.DATE_TIME;
+import static us.mn.state.health.lims.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.LOG;
+import static us.mn.state.health.lims.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.NONE;
 
 //import org.apache.commons.validator.GenericValidator;
 

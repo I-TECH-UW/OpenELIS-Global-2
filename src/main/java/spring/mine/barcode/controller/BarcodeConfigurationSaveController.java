@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.struts.action.ActionMessages;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,15 +34,8 @@ public class BarcodeConfigurationSaveController extends BaseController {
 			form = new BarcodeConfigurationForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
 		Transaction tx = HibernateUtil.getSession().beginTransaction();
@@ -145,11 +139,11 @@ public class BarcodeConfigurationSaveController extends BaseController {
 			siteInformation.setName(name);
 			siteInformation.setValue(value);
 			siteInformation.setValueType(valueType);
-			siteInformation.setSysUserId(currentUserId);
+			siteInformation.setSysUserId(getSysUserId(request));
 			siteInformationDAO.insertData(siteInformation);
 		} else {
 			siteInformation.setValue(value);
-			siteInformation.setSysUserId(currentUserId);
+			siteInformation.setSysUserId(getSysUserId(request));
 			siteInformationDAO.updateData(siteInformation);
 		}
 

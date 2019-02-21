@@ -16,6 +16,13 @@
 
 package us.mn.state.health.lims.testconfiguration.action;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.validator.GenericValidator;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -27,11 +34,16 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
 import us.mn.state.health.lims.common.action.BaseAction;
-import us.mn.state.health.lims.common.services.*;
+import us.mn.state.health.lims.common.services.DisplayListService;
+import us.mn.state.health.lims.common.services.LocalizationService;
+import us.mn.state.health.lims.common.services.TestSectionService;
+import us.mn.state.health.lims.common.services.TestService;
+import us.mn.state.health.lims.common.services.TypeOfSampleService;
+import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.localization.dao.LocalizationDAO;
 import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
 import us.mn.state.health.lims.localization.valueholder.Localization;
 import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
@@ -54,16 +66,8 @@ import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
 import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleTestDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
-import us.mn.state.health.lims.typeoftestresult.valueholder.TypeOfTestResult;
 import us.mn.state.health.lims.unitofmeasure.daoimpl.UnitOfMeasureDAOImpl;
 import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 public class TestModifyUpdate extends BaseAction {
     private TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();

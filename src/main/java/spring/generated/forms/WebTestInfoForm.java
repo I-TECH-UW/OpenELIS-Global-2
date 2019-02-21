@@ -1,6 +1,5 @@
 package spring.generated.forms;
 
-import java.lang.String;
 import spring.mine.common.form.BaseForm;
 
 public class WebTestInfoForm extends BaseForm {

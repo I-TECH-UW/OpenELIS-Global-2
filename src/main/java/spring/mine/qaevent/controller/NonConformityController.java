@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -104,11 +105,10 @@ public class NonConformityController extends BaseController {
 			form = new NonConformityForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
+		Errors errors = new BaseErrors();
 		if (getErrors() != null) {
-			errors = (BaseErrors) getErrors();
+			errors = getErrors();
 		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
 
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
@@ -168,11 +168,6 @@ public class NonConformityController extends BaseController {
 
 			PropertyUtils.setProperty(form, "departments", DisplayListService.getList(ListType.HAITI_DEPARTMENTS));
 		}
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
-
 		return findForward(forward, form);
 	}
 

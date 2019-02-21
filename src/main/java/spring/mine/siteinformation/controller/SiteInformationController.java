@@ -74,16 +74,12 @@ public class SiteInformationController extends BaseController {
 	public ModelAndView showSiteInformation(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
-		BaseErrors errors = new BaseErrors();
+		Errors errors = new BaseErrors();
 		form.setCancelAction("Cancel" + form.getFormAction() + ".do");
 		if (form.getErrors() != null) {
 			errors = (BaseErrors) form.getErrors();
 		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		
 
 		String id = request.getParameter(ID);
 
@@ -215,15 +211,8 @@ public class SiteInformationController extends BaseController {
 	public ModelAndView showUpdateSiteInformation(HttpServletRequest request, @ModelAttribute("form") BaseForm form,
 			SessionStatus status) {
 		String forward = FWD_SUCCESS;
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "false");
@@ -258,7 +247,7 @@ public class SiteInformationController extends BaseController {
 	private String validateAndUpdateLocalization(HttpServletRequest request, String localizationId, String english,
 			String french) {
 		LocalizationService localizationService = new LocalizationService(localizationId);
-		localizationService.setCurrentUserId(currentUserId);
+		localizationService.setCurrentUserId(getSysUserId(request));
 
 		String forward = FWD_SUCCESS_INSERT;
 		if (localizationService.updateLocalizationIfNeeded(english, french)) {
@@ -313,7 +302,7 @@ public class SiteInformationController extends BaseController {
 		}
 
 		siteInformation.setValue(value);
-		siteInformation.setSysUserId(currentUserId);
+		siteInformation.setSysUserId(getSysUserId(request));
 
 		String domainName = form.getString("siteInfoDomainName");
 
@@ -393,15 +382,8 @@ public class SiteInformationController extends BaseController {
 	public ModelAndView showNextPreviousSiteInformation(HttpServletRequest request,
 			@ModelAttribute("form") BaseForm form) {
 		String forward = FWD_SUCCESS;
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		request.setAttribute(ALLOW_EDITS_KEY, TRUE);
 		request.setAttribute(PREVIOUS_DISABLED, FALSE);

@@ -1,10 +1,10 @@
 package spring.generated.forms;
 
-import java.lang.String;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.patient.action.bean.PatientClinicalInfo;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;

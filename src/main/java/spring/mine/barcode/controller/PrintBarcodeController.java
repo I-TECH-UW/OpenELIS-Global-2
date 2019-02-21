@@ -1,6 +1,5 @@
 package spring.mine.barcode.controller;
 
-import java.lang.String;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -57,11 +57,11 @@ public class PrintBarcodeController extends BaseController {
 	private static final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
 	private static final SampleEditItemComparator testComparator = new SampleEditItemComparator();
 	private static final Set<Integer> excludedAnalysisStatusList;
-	private static final Set<Integer> ENTERED_STATUS_SAMPLE_LIST = new HashSet<Integer>();
-	private static final Collection<String> ABLE_TO_CANCEL_ROLE_NAMES = new ArrayList<String>();
+	private static final Set<Integer> ENTERED_STATUS_SAMPLE_LIST = new HashSet<>();
+	private static final Collection<String> ABLE_TO_CANCEL_ROLE_NAMES = new ArrayList<>();
 
 	static {
-		excludedAnalysisStatusList = new HashSet<Integer>();
+		excludedAnalysisStatusList = new HashSet<>();
 		excludedAnalysisStatusList
 				.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled)));
 
@@ -77,47 +77,8 @@ public class PrintBarcodeController extends BaseController {
 		String forward = FWD_SUCCESS;
 
 		PrintBarcodeForm form = new PrintBarcodeForm();
-				form.setFormAction("PrintBarcode");
-		BaseErrors errors = new BaseErrors();
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-		    return mv;
-		}
-
-		String accessionNumber = form.getAccessionNumber();
-
-		// if accession provided, data collected for display
-		if (!GenericValidator.isBlankOrNull(accessionNumber)) {
-		    Sample sample = getSample(accessionNumber);
-		    if (sample != null && !GenericValidator.isBlankOrNull(sample.getId())) {
-			List<SampleItem> sampleItemList = getSampleItems(sample);
-			setPatientInfo(form, sample);
-			List<SampleEditItem> currentTestList = getCurrentTestInfo(sampleItemList, accessionNumber, false);
-			form.setExistingTests(currentTestList);
-		    }
-		}
-
-		// search by accession number
-		PatientSearch patientSearch = new PatientSearch();
-		patientSearch.setLoadFromServerWithPatient(true);
-		patientSearch.setSelectedPatientActionButtonText(StringUtil.getMessageForKey("label.patient.search.select"));
-		form.setPatientSearch(patientSearch);
-
-		return findForward(forward, form);
-	}
-
-	@RequestMapping(value = "/PrintBarcode", method = RequestMethod.POST)
-	public ModelAndView showPrintBarcodeResultPage(@ModelAttribute("form") PrintBarcodeForm form, BindingResult result,
-			ModelMap model, HttpServletRequest request) throws Exception {
-		String forward = FWD_SUCCESS;
-
-				form.setFormAction("PrintBarcode");
-		ModelAndView mv = checkUserAndSetup(form, result, request);
-
-		if (result.hasErrors()) {
-			return mv;
-		}
+		form.setFormAction("PrintBarcode");
+		Errors errors = new BaseErrors();
 
 		String accessionNumber = form.getAccessionNumber();
 
@@ -141,6 +102,35 @@ public class PrintBarcodeController extends BaseController {
 		return findForward(forward, form);
 	}
 
+	@RequestMapping(value = "/PrintBarcode", method = RequestMethod.POST)
+	public ModelAndView showPrintBarcodeResultPage(@ModelAttribute("form") PrintBarcodeForm form, BindingResult result,
+			ModelMap model, HttpServletRequest request) throws Exception {
+		String forward = FWD_SUCCESS;
+
+		form.setFormAction("PrintBarcode");
+		String accessionNumber = form.getAccessionNumber();
+
+		// if accession provided, data collected for display
+		if (!GenericValidator.isBlankOrNull(accessionNumber)) {
+			Sample sample = getSample(accessionNumber);
+			if (sample != null && !GenericValidator.isBlankOrNull(sample.getId())) {
+				List<SampleItem> sampleItemList = getSampleItems(sample);
+				setPatientInfo(form, sample);
+				List<SampleEditItem> currentTestList = getCurrentTestInfo(sampleItemList, accessionNumber, false);
+				form.setExistingTests(currentTestList);
+			}
+		}
+
+		// search by accession number
+		PatientSearch patientSearch = new PatientSearch();
+		patientSearch.setLoadFromServerWithPatient(true);
+		patientSearch.setSelectedPatientActionButtonText(StringUtil.getMessageForKey("label.patient.search.select"));
+		form.setPatientSearch(patientSearch);
+
+		return findForward(forward, form);
+	}
+
+	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("success".equals(forward)) {
 			return new ModelAndView("PrintBarcodeDefinition", "form", form);
@@ -151,17 +141,19 @@ public class PrintBarcodeController extends BaseController {
 		}
 	}
 
+	@Override
 	protected String getPageTitleKey() {
 		return "barcode.print.title";
 	}
 
+	@Override
 	protected String getPageSubtitleKey() {
 		return "barcode.print.title";
 	}
 
 	/**
 	 * Get sample by accession number
-	 * 
+	 *
 	 * @param accessionNumber That corresponds to the sample
 	 * @return The sample belonging to accession number
 	 */
@@ -172,7 +164,7 @@ public class PrintBarcodeController extends BaseController {
 
 	/**
 	 * Get list of SampleItems belonging to a sample
-	 * 
+	 *
 	 * @param sample Containing all the individual sample items
 	 * @return The list of sample items belonging to sample
 	 */
@@ -184,7 +176,7 @@ public class PrintBarcodeController extends BaseController {
 
 	/**
 	 * Get list of tests corresponding to sample items
-	 * 
+	 *
 	 * @param sampleItemList     The list of sample items to fetch corresponding
 	 *                           tests
 	 * @param accessionNumber    The accession number corresponding to the sample
@@ -198,7 +190,7 @@ public class PrintBarcodeController extends BaseController {
 			boolean allowedToCancelAll)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-		List<SampleEditItem> currentTestList = new ArrayList<SampleEditItem>();
+		List<SampleEditItem> currentTestList = new ArrayList<>();
 		for (SampleItem sampleItem : sampleItemList) {
 			addCurrentTestsToList(sampleItem, currentTestList, accessionNumber, allowedToCancelAll);
 		}
@@ -214,7 +206,7 @@ public class PrintBarcodeController extends BaseController {
 		typeOfSampleDAO.getData(typeOfSample);
 		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleItemsExcludingByStatusIds(sampleItem,
 				excludedAnalysisStatusList);
-		List<SampleEditItem> analysisSampleItemList = new ArrayList<SampleEditItem>();
+		List<SampleEditItem> analysisSampleItemList = new ArrayList<>();
 
 		String collectionDate = DateUtil.convertTimestampToStringDate(sampleItem.getCollectionDate());
 		String collectionTime = DateUtil.convertTimestampToStringTime(sampleItem.getCollectionDate());
@@ -268,6 +260,7 @@ public class PrintBarcodeController extends BaseController {
 
 	private static class SampleEditItemComparator implements Comparator<SampleEditItem> {
 
+		@Override
 		public int compare(SampleEditItem o1, SampleEditItem o2) {
 			if (GenericValidator.isBlankOrNull(o1.getSortOrder())
 					|| GenericValidator.isBlankOrNull(o2.getSortOrder())) {

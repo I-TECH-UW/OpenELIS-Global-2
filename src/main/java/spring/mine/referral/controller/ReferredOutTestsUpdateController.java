@@ -106,11 +106,7 @@ public class ReferredOutTestsUpdateController extends BaseController {
 		if (form.getErrors() != null) {
 			errors = (BaseErrors) form.getErrors();
 		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		
 
 		List<ReferralSet> referralSetList = new ArrayList<>();
 		List<ReferralResult> removableReferralResults = new ArrayList<>();
@@ -153,7 +149,7 @@ public class ReferredOutTestsUpdateController extends BaseController {
 						if (result.getId() == null) {
 							resultDAO.insertData(result);
 						} else {
-							result.setSysUserId(currentUserId);
+							result.setSysUserId(getSysUserId(request));
 							resultDAO.updateData(result);
 						}
 					}
@@ -176,11 +172,11 @@ public class ReferredOutTestsUpdateController extends BaseController {
 
 			for (ReferralResult referralResult : removableReferralResults) {
 
-				referralResult.setSysUserId(currentUserId);
+				referralResult.setSysUserId(getSysUserId(request));
 				referralResultDAO.deleteData(referralResult);
 
 				if (referralResult.getResult() != null && referralResult.getResult().getId() != null) {
-					referralResult.getResult().setSysUserId(currentUserId);
+					referralResult.getResult().setSysUserId(getSysUserId(request));
 					resultDAO.deleteData(referralResult.getResult());
 				}
 			}
@@ -291,7 +287,7 @@ public class ReferredOutTestsUpdateController extends BaseController {
 		Referral referral = referralDAO.getReferralById(item.getReferralId());
 
 		referralSet.referral = referral;
-		referral.setSysUserId(currentUserId);
+		referral.setSysUserId(getSysUserId(request));
 		referral.setCanceled(true);
 
 		setStatusForCanceledReferrals(referral, parentSamples);
@@ -318,7 +314,7 @@ public class ReferredOutTestsUpdateController extends BaseController {
 
 		Referral referral = referralDAO.getReferralById(referralItem.getReferralId());
 		referral.setCanceled(false);
-		referral.setSysUserId(currentUserId);
+		referral.setSysUserId(getSysUserId(request));
 		referral.setOrganization(organizationDAO.getOrganizationById(referralItem.getReferredInstituteId()));
 		referral.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));
 		referral.setRequesterName(referralItem.getReferrer());
@@ -326,7 +322,7 @@ public class ReferredOutTestsUpdateController extends BaseController {
 		referralSet.referral = referral;
 
 		referralSet.note = new NoteService(referral.getAnalysis()).createSavableNote(NoteService.NoteType.INTERNAL,
-				referralItem.getNote(), RESULT_SUBJECT, currentUserId);
+				referralItem.getNote(), RESULT_SUBJECT, getSysUserId(request));
 
 		createReferralResults(referralItem, referralSet);
 
@@ -362,7 +358,7 @@ public class ReferredOutTestsUpdateController extends BaseController {
 		if (referralItem.getReferredTestIdShadow() != null
 				&& !referralItem.getReferredTestId().equals(referralItem.getReferredTestIdShadow())) {
 			referralSet.updateTest(referralItem.getReferredTestIdShadow(), referralItem.getReferredTestId(),
-					currentUserId);
+					getSysUserId(request));
 		} else {
 			String referredResultType = getReferredResultType(referralItem, null);
 			if (TypeOfTestResultService.ResultType.isMultiSelectVariant(referredResultType)) {
@@ -397,7 +393,7 @@ public class ReferredOutTestsUpdateController extends BaseController {
 
 	private void fillReferralResultResult(IReferralResultTest referralItem, ReferralResult referralResult,
 			int grouping) {
-		referralResult.setSysUserId(currentUserId);
+		referralResult.setSysUserId(getSysUserId(request));
 
 		setReferredResultReportDate(referralItem, referralResult);
 		setReferredResultTestId(referralItem, referralResult);
@@ -422,7 +418,7 @@ public class ReferredOutTestsUpdateController extends BaseController {
 	 *
 	 */
 	private void setResultValuesForReferralResult(IReferralResultTest referredTest, Result result, int grouping) {
-		result.setSysUserId(currentUserId);
+		result.setSysUserId(getSysUserId(request));
 		result.setSortOrder("0");
 
 		Test test = testDAO.getTestById(referredTest.getReferredTestId());
@@ -564,7 +560,7 @@ public class ReferredOutTestsUpdateController extends BaseController {
 
 			if (allAnalysisFinished) {
 				sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Finished));
-				sample.setSysUserId(currentUserId);
+				sample.setSysUserId(getSysUserId(request));
 				modifiedSamples.add(sample);
 			}
 		}

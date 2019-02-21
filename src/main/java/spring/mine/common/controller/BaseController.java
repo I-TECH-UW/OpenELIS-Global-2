@@ -15,9 +15,6 @@ import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.security.PageIdentityUtil;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.login.dao.UserModuleDAO;
@@ -35,10 +32,6 @@ public abstract class BaseController implements IActionConstants {
 	// Spring's dependency injection for accessing the request
 	@Autowired
 	protected HttpServletRequest request;
-
-	private static final boolean USE_PARAMETERS = true;
-
-	protected String currentUserId;
 
 	protected abstract ModelAndView findLocalForward(String forward, BaseForm form);
 
@@ -146,23 +139,6 @@ public abstract class BaseController implements IActionConstants {
 		// messageKey, arg0);
 	}
 
-	protected void setFormAttributes(BaseForm form, HttpServletRequest request) {
-		if (null != form) {
-			String name = form.getFormName();
-			request.setAttribute(IActionConstants.FORM_NAME, name);
-			request.setAttribute("formType", form.getClass().toString());
-
-			String actionName = name.substring(1, name.length() - 4);
-			actionName = name.substring(0, 1).toUpperCase() + actionName;
-			request.setAttribute(IActionConstants.ACTION_KEY, actionName);
-			// System.out.println("LoginBaseAction formName = " + name + " actionName " +
-			// actionName);
-			// bugzilla 2154
-			LogEvent.logInfo("BaseController", "setFormAttributes()",
-					"BaseController formName = " + name + " actionName " + actionName);
-		}
-	}
-
 	protected void setPageTitles(HttpServletRequest request, BaseForm form) {
 
 		String pageSubtitle = null;
@@ -207,15 +183,6 @@ public abstract class BaseController implements IActionConstants {
 
 	}
 
-	protected void setLanguage(HttpServletRequest request) {
-		if ("true".equals(ConfigurationProperties.getInstance().getPropertyValue(Property.languageSwitch))) {
-			String language = request.getParameter("lang");
-			if (language != null) {
-				SystemConfiguration.getInstance().setDefaultLocale(language);
-			}
-		}
-	}
-
 	protected String getSysUserId(HttpServletRequest request) {
 		UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
 		if (usd == null) {
@@ -244,28 +211,10 @@ public abstract class BaseController implements IActionConstants {
 		return true;
 	}
 
-	// this method should be moved into interceptors
-	protected ModelAndView checkUserAndSetup(BaseForm form, Errors errors, HttpServletRequest request) {
-
-		UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-		setLanguage(request);
-		currentUserId = getSysUserId(request);
-		setFormAttributes(form, request);
-		/*
-		 * System.out.println( request.getServletPath() + (request.getQueryString() ==
-		 * null ? "" : "?" + request.getQueryString()) + "\n" +
-		 * PageIdentityUtil.getActionName(request, USE_PARAMETERS));
-		 */
-
-		// shouldn't need to happen here anymore
-		// userModuleDAO.setupUserSessionTimeOut(request);
-
-		return new ModelAndView();
-	}
-
 	protected ModelAndView findForward(String forward, BaseForm form) {
-		// TO DO move the set page titles into an interceptor
+		// TO DO move the set page titles into an interceptor if possible
 		setPageTitles(request, form);
+
 		if (LOGIN_PAGE.equals(forward)) {
 			return new ModelAndView("redirect:LoginPage.do", "errors", getErrors());
 		}
@@ -314,29 +263,6 @@ public abstract class BaseController implements IActionConstants {
 
 	protected Errors getErrors() {
 		return (Errors) request.getAttribute(REQUEST_ERRORS);
-	}
-
-	protected boolean hasPermission(UserModuleDAO userModuleDAO, Errors errors, HttpServletRequest request) {
-		// check for user type (admin or non-admin)
-		if (!userModuleDAO.isUserAdmin(request)) {
-			if (SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
-				if (!PageIdentityUtil.isMainPage(request)) {
-
-					@SuppressWarnings("rawtypes")
-					HashSet accessMap = (HashSet) request.getSession()
-							.getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
-
-					if (!accessMap.contains(PageIdentityUtil.getActionName(request, USE_PARAMETERS))) {
-						return false;
-					}
-				}
-			} else {
-				if (!userModuleDAO.isVerifyUserModule(request)) {
-					return false;
-				}
-			}
-		}
-		return true;
 	}
 
 }

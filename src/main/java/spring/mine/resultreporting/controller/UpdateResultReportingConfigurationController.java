@@ -9,6 +9,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,15 +47,8 @@ public class UpdateResultReportingConfigurationController extends BaseController
 			form = new ResultReportingConfigurationForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 		List<SiteInformation> informationList = new ArrayList<>();
 		List<CronScheduler> scheduleList = new ArrayList<>();
 		@SuppressWarnings("unchecked")
@@ -102,7 +96,7 @@ public class UpdateResultReportingConfigurationController extends BaseController
 			String cronStatement = createCronStatement(config.getScheduleHours(), config.getScheduleMin(), false);
 			scheduler.setActive("enable".equals(config.getEnabled()));
 			scheduler.setCronStatement(cronStatement);
-			scheduler.setSysUserId(currentUserId);
+			scheduler.setSysUserId(getSysUserId(request));
 		}
 		return scheduler;
 	}
@@ -140,7 +134,7 @@ public class UpdateResultReportingConfigurationController extends BaseController
 				siteInformation.setValue(value);
 			}
 
-			siteInformation.setSysUserId(currentUserId);
+			siteInformation.setSysUserId(getSysUserId(request));
 		}
 		return siteInformation;
 	}

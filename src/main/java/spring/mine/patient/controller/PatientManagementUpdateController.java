@@ -90,12 +90,8 @@ public class PatientManagementUpdateController extends PatientManagementBaseCont
 			BindingResult result, ModelMap model, HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
-		BaseErrors errors = new BaseErrors();
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		form.setPatientSearch(new PatientSearch());
 		PatientManagementInfo patientInfo = form.getPatientProperties();
@@ -146,10 +142,6 @@ public class PatientManagementUpdateController extends PatientManagementBaseCont
 
 	public void preparePatientData(Errors errors, HttpServletRequest request, PatientManagementInfo patientInfo,
 			Patient patient) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-		if (currentUserId == null) {
-			currentUserId = getSysUserId(request);
-		}
 
 		validatePatientInfo(errors, patientInfo);
 		if (errors.hasErrors()) {
@@ -321,12 +313,12 @@ public class PatientManagementUpdateController extends PatientManagementBaseCont
 			if (address.getAddressPartId().equals(ADDRESS_PART_COMMUNE_ID)) {
 				commune = address;
 				commune.setValue(patientInfo.getCommune());
-				commune.setSysUserId(currentUserId);
+				commune.setSysUserId(getSysUserId(request));
 				personAddressDAO.update(commune);
 			} else if (address.getAddressPartId().equals(ADDRESS_PART_VILLAGE_ID)) {
 				village = address;
 				village.setValue(patientInfo.getCity());
-				village.setSysUserId(currentUserId);
+				village.setSysUserId(getSysUserId(request));
 				personAddressDAO.update(village);
 			} else if (address.getAddressPartId().equals(ADDRESS_PART_DEPT_ID)) {
 				dept = address;
@@ -334,7 +326,7 @@ public class PatientManagementUpdateController extends PatientManagementBaseCont
 						&& !patientInfo.getAddressDepartment().equals("0")) {
 					dept.setValue(patientInfo.getAddressDepartment());
 					dept.setType("D");
-					dept.setSysUserId(currentUserId);
+					dept.setSysUserId(getSysUserId(request));
 					personAddressDAO.update(dept);
 				}
 			}
@@ -356,11 +348,11 @@ public class PatientManagementUpdateController extends PatientManagementBaseCont
 	}
 
 	private void setSystemUserID(PatientManagementInfo patientInfo, Patient patient) {
-		patient.setSysUserId(currentUserId);
-		patient.getPerson().setSysUserId(currentUserId);
+		patient.setSysUserId(getSysUserId(request));
+		patient.getPerson().setSysUserId(getSysUserId(request));
 
 		for (PatientIdentity identity : patientInfo.getPatientIdentities()) {
-			identity.setSysUserId(currentUserId);
+			identity.setSysUserId(getSysUserId(request));
 		}
 	}
 
@@ -371,7 +363,7 @@ public class PatientManagementUpdateController extends PatientManagementBaseCont
 		address.setAddressPartId(partId);
 		address.setType(type);
 		address.setValue(value);
-		address.setSysUserId(currentUserId);
+		address.setSysUserId(getSysUserId(request));
 		personAddressDAO.insert(address);
 	}
 
@@ -405,7 +397,7 @@ public class PatientManagementUpdateController extends PatientManagementBaseCont
 			PatientIdentity identity = new PatientIdentity();
 			identity.setPatientId(patient.getId());
 			identity.setIdentityTypeId(typeID);
-			identity.setSysUserId(currentUserId);
+			identity.setSysUserId(getSysUserId(request));
 			identity.setIdentityData(paramValue);
 			identity.setLastupdatedFields();
 			identityDAO.insertData(identity);
@@ -431,12 +423,12 @@ public class PatientManagementUpdateController extends PatientManagementBaseCont
 
 			if (patientPatientType == null) {
 				patientPatientType = new PatientPatientType();
-				patientPatientType.setSysUserId(currentUserId);
+				patientPatientType.setSysUserId(getSysUserId(request));
 				patientPatientType.setPatientId(patient.getId());
 				patientPatientType.setPatientTypeId(typeID);
 				patientPatientTypeDAO.insertData(patientPatientType);
 			} else {
-				patientPatientType.setSysUserId(currentUserId);
+				patientPatientType.setSysUserId(getSysUserId(request));
 				patientPatientType.setPatientTypeId(typeID);
 				patientPatientTypeDAO.updateData(patientPatientType);
 			}

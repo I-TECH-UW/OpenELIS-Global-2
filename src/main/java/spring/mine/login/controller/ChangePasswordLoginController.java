@@ -1,11 +1,13 @@
 package spring.mine.login.controller;
 
-import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
@@ -19,7 +21,7 @@ public class ChangePasswordLoginController extends BaseController {
 		String forward = FWD_SUCCESS;
 		LoginChangePasswordForm form = new LoginChangePasswordForm();
 				form.setFormAction("UpdateLoginChangePassword.do");
-		BaseErrors errors = new BaseErrors();
+		Errors errors = new BaseErrors();
 		
 		form.setPassword("");
 		form.setNewPassword("");

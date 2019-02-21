@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
-import spring.mine.resultvalidation.controller.BaseResultValidationRetroCIController;
 import spring.mine.resultvalidation.form.ResultValidationForm;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -38,15 +38,8 @@ public class ResultValidationRetroCController extends BaseResultValidationRetroC
 			form = new ResultValidationForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 		request.getSession().setAttribute(SAVE_DISABLED, "true");
 		String testSectionName = (request.getParameter("type"));
 		String testName = (request.getParameter("test"));

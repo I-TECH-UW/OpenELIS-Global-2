@@ -21,8 +21,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import spring.mine.common.form.BaseForm;
+import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.AnalysisService;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.NoteService;

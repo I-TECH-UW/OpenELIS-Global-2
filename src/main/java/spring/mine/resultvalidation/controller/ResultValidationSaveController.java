@@ -107,11 +107,7 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 		if (form.getErrors() != null) {
 			errors = (BaseErrors) form.getErrors();
 		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		
 
 		List<IResultUpdate> updaters = ValidationUpdateRegister.getRegisteredUpdaters();
 		boolean areListeners = updaters != null && !updaters.isEmpty();
@@ -158,7 +154,7 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 		try {
-			ResultSaveService.removeDeletedResultsInTransaction(deletableList, currentUserId);
+			ResultSaveService.removeDeletedResultsInTransaction(deletableList, getSysUserId(request));
 
 			// update analysis
 			for (Analysis analysis : analysisUpdateList) {
@@ -283,7 +279,7 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 				Analysis analysis = analysisService.getAnalysis();
 				NoteService noteService = new NoteService(analysis);
 
-				analysis.setSysUserId(currentUserId);
+				analysis.setSysUserId(getSysUserId(request));
 
 				if (!analysisIdList.contains(analysis.getId())) {
 
@@ -321,13 +317,13 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 	private void createNeededNotes(AnalysisItem analysisItem, NoteService noteService, List<Note> noteUpdateList) {
 		if (analysisItem.getIsRejected()) {
 			Note note = noteService.createSavableNote(NoteType.INTERNAL,
-					MessageUtil.getMessage("validation.note.retest"), RESULT_SUBJECT, currentUserId);
+					MessageUtil.getMessage("validation.note.retest"), RESULT_SUBJECT, getSysUserId(request));
 			noteUpdateList.add(note);
 		}
 
 		if (!GenericValidator.isBlankOrNull(analysisItem.getNote())) {
 			NoteType noteType = analysisItem.getIsAccepted() ? NoteType.EXTERNAL : NoteType.INTERNAL;
-			Note note = noteService.createSavableNote(noteType, analysisItem.getNote(), RESULT_SUBJECT, currentUserId);
+			Note note = noteService.createSavableNote(noteType, analysisItem.getNote(), RESULT_SUBJECT, getSysUserId(request));
 			noteUpdateList.add(note);
 		}
 	}
@@ -479,7 +475,7 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 		Analysis analysis = new Analysis();
 		analysis.setId(id);
 		analysisDAO.getData(analysis);
-		analysis.setSysUserId(currentUserId);
+		analysis.setSysUserId(getSysUserId(request));
 
 		return analysis;
 	}
@@ -488,12 +484,12 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 			NoteService noteService, List<Note> noteUpdateList, List<Result> deletableList) {
 
 		ResultSaveBean bean = ResultSaveBeanAdapter.fromAnalysisItem(analysisItem);
-		ResultSaveService resultSaveService = new ResultSaveService(analysisService.getAnalysis(), currentUserId);
+		ResultSaveService resultSaveService = new ResultSaveService(analysisService.getAnalysis(), getSysUserId(request));
 		List<Result> results = resultSaveService.createResultsFromTestResultItem(bean, deletableList);
 		if (analysisService.patientReportHasBeenDone() && resultSaveService.isUpdatedResult()) {
 			analysisService.getAnalysis().setCorrectedSincePatientReport(true);
 			noteUpdateList.add(noteService.createSavableNote(NoteType.EXTERNAL,
-					MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, currentUserId));
+					MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
 		}
 		return results;
 	}
@@ -524,7 +520,7 @@ public class ResultValidationSaveController extends BaseResultValidationControll
 
 	private SystemUser createSystemUser() {
 		SystemUser systemUser = new SystemUser();
-		systemUser.setId(currentUserId);
+		systemUser.setId(getSysUserId(request));
 		SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
 		systemUserDAO.getData(systemUser);
 		return systemUser;

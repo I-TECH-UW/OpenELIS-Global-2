@@ -13,6 +13,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -49,15 +50,8 @@ public class BatchTestReassignmentUpdateController extends BaseController {
 			form = new BatchTestReassignment();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 		String currentUserId = getSysUserId(request);
 		String jsonString = form.getString("jsonWad");
 		// System.out.println(jsonString);
@@ -74,12 +68,12 @@ public class BatchTestReassignmentUpdateController extends BaseController {
 		try {
 			for (Analysis analysis : cancelAnalysis) {
 				analysis.setStatusId(cancelStatus);
-				analysis.setSysUserId(currentUserId);
+				analysis.setSysUserId(getSysUserId(request));
 				analysisDAO.updateData(analysis);
 			}
 
 			for (Analysis analysis : newAnalysis) {
-				analysis.setSysUserId(currentUserId);
+				analysis.setSysUserId(getSysUserId(request));
 				analysisDAO.insertData(analysis, false);
 			}
 

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.struts.Globals;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -126,15 +127,8 @@ public class OrganizationController extends BaseController {
 		}
 		form.setFormAction("");
 		form.setCancelAction("CancelOrganization.do");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 		// The first job is to determine if we are coming to this action with an
 		// ID parameter in the request. If there is no parameter, we are
 		// creating a new Organization.
@@ -309,15 +303,8 @@ public class OrganizationController extends BaseController {
 			form = new OrganizationForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "false");
@@ -352,7 +339,7 @@ public class OrganizationController extends BaseController {
 		String direction = request.getParameter("direction");
 
 		Organization organization = new Organization();
-		organization.setSysUserId(currentUserId);
+		organization.setSysUserId(getSysUserId(request));
 
 		List states = getPossibleStates(form);
 
@@ -504,7 +491,7 @@ public class OrganizationController extends BaseController {
 				}
 
 				departmentAddress.setValue(form.getString("department"));
-				departmentAddress.setSysUserId(currentUserId);
+				departmentAddress.setSysUserId(getSysUserId(request));
 			}
 
 			if (useCommune) {
@@ -515,7 +502,7 @@ public class OrganizationController extends BaseController {
 				}
 
 				communeAddress.setValue(form.getString("commune"));
-				communeAddress.setSysUserId(currentUserId);
+				communeAddress.setSysUserId(getSysUserId(request));
 			}
 
 			if (useVillage) {
@@ -526,7 +513,7 @@ public class OrganizationController extends BaseController {
 				}
 
 				villageAddress.setValue(form.getString("village"));
-				villageAddress.setSysUserId(currentUserId);
+				villageAddress.setSysUserId(getSysUserId(request));
 			}
 		}
 	}

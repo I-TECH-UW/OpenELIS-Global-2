@@ -1,6 +1,5 @@
 package spring.mine.testconfiguration.controller;
 
-import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.testconfiguration.form.TestRenameEntryForm;
@@ -36,12 +36,6 @@ public class TestRenameUpdateController extends BaseController {
 			return new ModelAndView("loginPageDefinition");
 		}
 
-		ModelAndView mv = checkUserAndSetup(form, result, request);
-
-		if (result.hasErrors()) {
-			return mv;
-		}
-
 		String testId = form.getTestId();
 		String nameEnglish = form.getNameEnglish();
 		String nameFrench = form.getNameFrench();
@@ -59,6 +53,7 @@ public class TestRenameUpdateController extends BaseController {
 		return findForward(forward, form);
 	}
 
+	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if ("success".equals(forward)) {
 			return new ModelAndView("testRenameDefinition", "form", form);
@@ -101,10 +96,12 @@ public class TestRenameUpdateController extends BaseController {
 		DisplayListService.getFreshList(DisplayListService.ListType.ORDERABLE_TESTS);
 	}
 
+	@Override
 	protected String getPageTitleKey() {
 		return null;
 	}
 
+	@Override
 	protected String getPageSubtitleKey() {
 		return null;
 	}

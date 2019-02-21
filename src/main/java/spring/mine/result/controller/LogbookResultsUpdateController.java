@@ -141,11 +141,7 @@ public class LogbookResultsUpdateController extends BaseController {
 		if (form.getErrors() != null) {
 			errors = (BaseErrors) form.getErrors();
 		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		
 
 		List<IResultUpdate> updaters = ResultUpdateRegister.getRegisteredUpdaters();
 
@@ -153,7 +149,7 @@ public class LogbookResultsUpdateController extends BaseController {
 		paging.updatePagedResults(request, form);
 		List<TestResultItem> tests = paging.getResults(request);
 
-		ResultsUpdateDataSet actionDataSet = new ResultsUpdateDataSet(currentUserId);
+		ResultsUpdateDataSet actionDataSet = new ResultsUpdateDataSet(getSysUserId(request));
 		actionDataSet.filterModifiedItems(tests);
 
 		errors = actionDataSet.validateModifiedItems();
@@ -222,7 +218,7 @@ public class LogbookResultsUpdateController extends BaseController {
 				analysisDAO.updateData(analysis);
 			}
 
-			ResultSaveService.removeDeletedResultsInTransaction(actionDataSet.getDeletableResults(), currentUserId);
+			ResultSaveService.removeDeletedResultsInTransaction(actionDataSet.getDeletableResults(), getSysUserId(request));
 
 			setTestReflexes(actionDataSet);
 
@@ -276,14 +272,14 @@ public class LogbookResultsUpdateController extends BaseController {
 			referralDAO.insertData(referral);
 			ReferralResult referralResult = new ReferralResult();
 			referralResult.setReferralId(referral.getId());
-			referralResult.setSysUserId(currentUserId);
+			referralResult.setSysUserId(getSysUserId(request));
 			referralResultDAO.insertData(referralResult);
 		}
 	}
 
 	protected void setTestReflexes(ResultsUpdateDataSet actionDataSet) {
 		TestReflexUtil testReflexUtil = new TestReflexUtil();
-		testReflexUtil.setCurrentUserId(currentUserId);
+		testReflexUtil.setCurrentUserId(getSysUserId(request));
 		testReflexUtil.addNewTestsToDBForReflexTests(convertToTestReflexBeanList(actionDataSet.getNewResults()));
 		testReflexUtil.updateModifiedReflexes(convertToTestReflexBeanList(actionDataSet.getModifiedResults()));
 	}
@@ -336,7 +332,7 @@ public class LogbookResultsUpdateController extends BaseController {
 				sampleDAO.getData(newSample);
 
 				newSample.setStatusId(sampleTestingStartedId);
-				newSample.setSysUserId(currentUserId);
+				newSample.setSysUserId(getSysUserId(request));
 				sampleDAO.updateData(newSample);
 			}
 		}
@@ -345,7 +341,7 @@ public class LogbookResultsUpdateController extends BaseController {
 	private void createAnalysisOnlyUpdates(ResultsUpdateDataSet actionDataSet) {
 		for (TestResultItem testResultItem : actionDataSet.getAnalysisOnlyChangeResults()) {
 			AnalysisService analysisService = new AnalysisService(testResultItem.getAnalysisId());
-			analysisService.getAnalysis().setSysUserId(currentUserId);
+			analysisService.getAnalysis().setSysUserId(getSysUserId(request));
 			analysisService.getAnalysis()
 					.setCompletedDate(DateUtil.convertStringDateToSqlDate(testResultItem.getTestDate()));
 			if (testResultItem.getAnalysisMethod() != null) {
@@ -360,27 +356,27 @@ public class LogbookResultsUpdateController extends BaseController {
 		for (TestResultItem testResultItem : actionDataSet.getModifiedItems()) {
 			AnalysisService analysisService = new AnalysisService(testResultItem.getAnalysisId());
 			analysisService.getAnalysis().setStatusId(getStatusForTestResult(testResultItem));
-			analysisService.getAnalysis().setSysUserId(currentUserId);
+			analysisService.getAnalysis().setSysUserId(getSysUserId(request));
 			handleReferrals(testResultItem, analysisService.getAnalysis(), actionDataSet);
 			actionDataSet.getModifiedAnalysis().add(analysisService.getAnalysis());
 
 			NoteService noteService = new NoteService(analysisService.getAnalysis());
 			actionDataSet.addToNoteList(noteService.createSavableNote(NoteType.INTERNAL, testResultItem.getNote(),
-					RESULT_SUBJECT, currentUserId));
+					RESULT_SUBJECT, getSysUserId(request)));
 
 			if (testResultItem.isShadowRejected()) {
 				String rejectedReasonId = testResultItem.getRejectReasonId();
 				for (IdValuePair rejectReason : DisplayListService.getList(ListType.REJECTION_REASONS)) {
 					if (rejectedReasonId.equals(rejectReason.getId())) {
 						actionDataSet.addToNoteList(noteService.createSavableNote(NoteType.REJECTION_REASON,
-								rejectReason.getValue(), RESULT_SUBJECT, currentUserId));
+								rejectReason.getValue(), RESULT_SUBJECT, getSysUserId(request)));
 						break;
 					}
 				}
 			}
 
 			ResultSaveBean bean = ResultSaveBeanAdapter.fromTestResultItem(testResultItem);
-			ResultSaveService resultSaveService = new ResultSaveService(analysisService.getAnalysis(), currentUserId);
+			ResultSaveService resultSaveService = new ResultSaveService(analysisService.getAnalysis(), getSysUserId(request));
 			// deletable Results will be written to, not read
 			List<Result> results = resultSaveService.createResultsFromTestResultItem(bean,
 					actionDataSet.getDeletableResults());
@@ -390,7 +386,7 @@ public class LogbookResultsUpdateController extends BaseController {
 
 			if (analysisService.hasBeenCorrectedSinceLastPatientReport()) {
 				actionDataSet.addToNoteList(noteService.createSavableNote(NoteType.EXTERNAL,
-						StringUtil.getMessageForKey("note.corrected.result"), RESULT_SUBJECT, currentUserId));
+						StringUtil.getMessageForKey("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
 			}
 
 			// If there is more than one result then each user selected reflex gets mapped
@@ -422,7 +418,7 @@ public class LogbookResultsUpdateController extends BaseController {
 						|| GenericValidator.isBlankOrNull(testResultItem.getReferralId())) {
 					referral = new Referral();
 					referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
-					referral.setSysUserId(currentUserId);
+					referral.setSysUserId(getSysUserId(request));
 					referral.setRequestDate(new Timestamp(new Date().getTime()));
 					referral.setRequesterName(testResultItem.getTechnician());
 					referral.setAnalysis(analysis);
@@ -430,7 +426,7 @@ public class LogbookResultsUpdateController extends BaseController {
 				} else if (testResultItem.isReferralCanceled()) {
 					referral = referralDAO.getReferralById(testResultItem.getReferralId());
 					referral.setCanceled(false);
-					referral.setSysUserId(currentUserId);
+					referral.setSysUserId(getSysUserId(request));
 					referral.setRequesterName(testResultItem.getTechnician());
 					referral.setReferralReasonId(testResultItem.getReferralReasonId());
 				}
@@ -560,7 +556,7 @@ public class LogbookResultsUpdateController extends BaseController {
 
 		testKit.setInventoryLocationId(testResult.getTestKitInventoryId());
 		testKit.setDescription(testKitName);
-		testKit.setSysUserId(currentUserId);
+		testKit.setSysUserId(getSysUserId(request));
 		return testKit;
 	}
 
@@ -603,7 +599,7 @@ public class LogbookResultsUpdateController extends BaseController {
 			sig.setIsSupervisor(false);
 			sig.setNonUserName(testResult.getTechnician());
 
-			sig.setSysUserId(currentUserId);
+			sig.setSysUserId(getSysUserId(request));
 		}
 		return sig;
 	}

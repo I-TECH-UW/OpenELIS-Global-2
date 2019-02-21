@@ -109,15 +109,8 @@ public class SampleEditUpdateController extends BaseController {
 			form = new SampleEditForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
@@ -142,7 +135,7 @@ public class SampleEditUpdateController extends BaseController {
 		List<Analysis> addAnalysisList = createAddAanlysisList(form.getPossibleTests());
 
 		List<IResultUpdate> updaters = ResultUpdateRegister.getRegisteredUpdaters();
-		ResultsUpdateDataSet actionDataSet = new ResultsUpdateDataSet(currentUserId);
+		ResultsUpdateDataSet actionDataSet = new ResultsUpdateDataSet(getSysUserId(request));
 
 		if (updatedSample == null) {
 			updatedSample = sampleDAO.getSampleByAccessionNumber(form.getAccessionNumber());
@@ -156,13 +149,13 @@ public class SampleEditUpdateController extends BaseController {
 			collectionDateFromRecieveDate = receivedDateForDisplay + " 00:00:00";
 		}
 
-		SampleAddService sampleAddService = new SampleAddService(form.getSampleXML(), currentUserId, updatedSample,
+		SampleAddService sampleAddService = new SampleAddService(form.getSampleXML(), getSysUserId(request), updatedSample,
 				collectionDateFromRecieveDate);
 		List<SampleTestCollection> addedSamples = createAddSampleList(form, sampleAddService);
 
 		SampleOrderService sampleOrderService = new SampleOrderService(form.getSampleOrderItems());
 		SampleOrderService.SampleOrderPersistenceArtifacts orderArtifacts = sampleOrderService
-				.getPersistenceArtifacts(updatedSample, currentUserId);
+				.getPersistenceArtifacts(updatedSample, getSysUserId(request));
 
 		if (orderArtifacts.getSample() != null) {
 			sampleChanged = true;
@@ -228,7 +221,7 @@ public class SampleEditUpdateController extends BaseController {
 						observation.setPatientId(patient.getId());
 						observation.setSampleItemId(sampleTestCollection.item.getId());
 						observation.setSampleId(sampleTestCollection.item.getSample().getId());
-						observation.setSysUserId(currentUserId);
+						observation.setSysUserId(getSysUserId(request));
 						observationDAO.insertData(observation);
 					}
 				}
@@ -350,7 +343,7 @@ public class SampleEditUpdateController extends BaseController {
 								: editItem.getCollectionTime());
 						sampleItem.setCollectionDate(DateUtil.convertStringDateToTimestamp(collectionTime));
 					}
-					sampleItem.setSysUserId(currentUserId);
+					sampleItem.setSysUserId(getSysUserId(request));
 					modifyList.add(sampleItem);
 				}
 			}
@@ -431,7 +424,7 @@ public class SampleEditUpdateController extends BaseController {
 
 		if (item.getId() != null) {
 			item.setStatusId(CANCELED_SAMPLE_STATUS_ID);
-			item.setSysUserId(currentUserId);
+			item.setSysUserId(getSysUserId(request));
 			return item;
 		}
 
@@ -467,7 +460,7 @@ public class SampleEditUpdateController extends BaseController {
 
 		if (sample != null) {
 			sample.setAccessionNumber(form.getNewAccessionNumber());
-			sample.setSysUserId(currentUserId);
+			sample.setSysUserId(getSysUserId(request));
 		}
 
 		return sample;
@@ -498,7 +491,7 @@ public class SampleEditUpdateController extends BaseController {
 		Analysis analysis = new Analysis();
 		analysis.setId(sampleEditItem.getAnalysisId());
 		analysisDAO.getData(analysis);
-		analysis.setSysUserId(currentUserId);
+		analysis.setSysUserId(getSysUserId(request));
 		analysis.setStatusId(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled));
 		return analysis;
 	}
@@ -531,7 +524,7 @@ public class SampleEditUpdateController extends BaseController {
 				}
 
 				analysis.setStatusId(StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted));
-				analysis.setSysUserId(currentUserId);
+				analysis.setSysUserId(getSysUserId(request));
 
 				addAnalysisList.add(analysis);
 			}

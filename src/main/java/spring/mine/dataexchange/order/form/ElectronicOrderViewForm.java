@@ -1,8 +1,8 @@
 package spring.mine.dataexchange.order.form;
 
-import java.lang.String;
 import java.sql.Timestamp;
 import java.util.List;
+
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
 

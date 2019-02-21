@@ -14,6 +14,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -102,15 +103,8 @@ public class AnalyzerResultsController extends BaseController {
 			form = new AnalyzerResultsForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
@@ -279,7 +273,7 @@ public class AnalyzerResultsController extends BaseController {
 
 			try {
 				for (AnalyzerResults analyzerResult : resolvedResults) {
-					analyzerResult.setSysUserId(currentUserId);
+					analyzerResult.setSysUserId(getSysUserId(request));
 					analyzerResultsDAO.updateData(analyzerResult);
 				}
 

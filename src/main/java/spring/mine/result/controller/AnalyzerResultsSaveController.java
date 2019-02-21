@@ -126,11 +126,7 @@ public class AnalyzerResultsSaveController extends BaseController {
 		if (form.getErrors() != null) {
 			errors = (Errors) form.getErrors();
 		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		
 
 		AnalyzerResultsPaging paging = new AnalyzerResultsPaging();
 		paging.updatePagedResults(request, form);
@@ -284,7 +280,7 @@ public class AnalyzerResultsSaveController extends BaseController {
 		}
 
 		TestReflexUtil testReflexUtil = new TestReflexUtil();
-		testReflexUtil.setCurrentUserId(currentUserId);
+		testReflexUtil.setCurrentUserId(getSysUserId(request));
 		testReflexUtil.addNewTestsToDBForReflexTests(convertGroupListToTestReflexBeans(sampleGroupList));
 
 		return true;
@@ -603,7 +599,7 @@ public class AnalyzerResultsSaveController extends BaseController {
 				noteList.add(null);
 			} else {
 				Note note = new NoteService(analysis).createSavableNote(NoteService.NoteType.INTERNAL,
-						resultItem.getNote(), RESULT_SUBJECT, currentUserId);
+						resultItem.getNote(), RESULT_SUBJECT, getSysUserId(request));
 				noteList.add(note);
 			}
 		}
@@ -726,7 +722,7 @@ public class AnalyzerResultsSaveController extends BaseController {
 				noteList.add(null);
 			} else {
 				Note note = new NoteService(analysis).createSavableNote(NoteService.NoteType.INTERNAL,
-						resultItem.getNote(), RESULT_SUBJECT, currentUserId);
+						resultItem.getNote(), RESULT_SUBJECT, getSysUserId(request));
 				noteList.add(note);
 			}
 		}
@@ -752,7 +748,7 @@ public class AnalyzerResultsSaveController extends BaseController {
 				String resultValue = resultItem.getIsRejected() ? REJECT_VALUE : resultItem.getResult();
 				result.setValue(resultValue);
 				result.setTestResult(getTestResultForResult(resultItem));
-				result.setSysUserId(currentUserId);
+				result.setSysUserId(getSysUserId(request));
 
 				setAnalyte(result);
 			}

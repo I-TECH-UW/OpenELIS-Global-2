@@ -14,7 +14,8 @@
 				 us.mn.state.health.lims.common.util.StringUtil,
 				 us.mn.state.health.lims.common.util.Versioning,
                  us.mn.state.health.lims.login.valueholder.UserSessionData,
-				 us.mn.state.health.lims.menu.util.MenuUtil"%>
+				 us.mn.state.health.lims.menu.util.MenuUtil,
+				 spring.mine.common.form.BaseForm"%>
 
 <%!String path = "";
 	String basePath = "";
@@ -28,6 +29,8 @@
 
 	languageSwitch = "true".equals(ConfigurationProperties.getInstance().getPropertyValue(Property.languageSwitch));
 %>
+
+<c:set var="formName" value="${form.formName}"/>
 
 
 <script>
@@ -128,7 +131,7 @@ function displayHelp(){
 </div> <!-- Closes id=header -->
 
 
-<% if( languageSwitch && "loginForm".equals((String)request.getAttribute(IActionConstants.FORM_NAME)) ){ %>
+<% if( languageSwitch && "loginForm".equals((String) pageContext.getAttribute("formName")) ){ %>
   <div id="language-chooser"><a href="#" onclick="setLanguage('fr_FR')">Français</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setLanguage('en_US')">English</a></div>
 <% } %>
 

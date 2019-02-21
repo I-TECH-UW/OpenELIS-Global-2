@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.hibernate.StaleObjectStateException;
 import org.hibernate.Transaction;
 import org.springframework.validation.Errors;

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.Globals;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,15 +47,8 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 			form = new AnalyzerTestNameMenuForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		return performMenuAction(form, request);
 	}
@@ -141,15 +135,8 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 			form = new AnalyzerTestNameMenuForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		String[] selectedIDs = (String[]) form.get("selectedIDs");
 
@@ -168,7 +155,7 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 		try {
 
 			AnalyzerTestMappingDAO testMappingDAO = new AnalyzerTestMappingDAOImpl();
-			testMappingDAO.deleteData(testMappingList, currentUserId);
+			testMappingDAO.deleteData(testMappingList, getSysUserId(request));
 
 			tx.commit();
 		} catch (LIMSRuntimeException lre) {

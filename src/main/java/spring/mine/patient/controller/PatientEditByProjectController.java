@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,11 +28,7 @@ public class PatientEditByProjectController extends BasePatientEntryByProject {
 			form = new PatientEditByProjectForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
+		Errors errors = new BaseErrors();
 
 		request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.TRUE);
 		updateRequestType(request);
@@ -43,10 +40,6 @@ public class PatientEditByProjectController extends BasePatientEntryByProject {
 		PropertyUtils.setProperty(form, "patientSearch", patientSearch);
 
 		addAllPatientFormLists(form);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
 
 		return findForward(forward, form);
 	}

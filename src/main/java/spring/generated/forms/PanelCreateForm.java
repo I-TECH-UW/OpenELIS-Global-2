@@ -1,8 +1,8 @@
 package spring.generated.forms;
 
-import java.lang.String;
 import java.util.List;
 import java.util.Map;
+
 import spring.mine.common.form.BaseForm;
 
 public class PanelCreateForm extends BaseForm {

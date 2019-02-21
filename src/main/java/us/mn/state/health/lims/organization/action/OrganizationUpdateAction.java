@@ -48,7 +48,6 @@ import us.mn.state.health.lims.common.provider.validation.CityValidationProvider
 import us.mn.state.health.lims.common.provider.validation.ZipValidationProvider;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.resources.ResourceLocator;
 import us.mn.state.health.lims.common.util.validator.ActionError;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.organization.dao.OrganizationDAO;

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.struts.Globals;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,15 +48,8 @@ public class SiteInformationMenuController extends BaseMenuController {
 		MenuForm form = findForm(request);
 		form.setFormAction("");
 		form.setFormMethod(RequestMethod.POST);
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		return performMenuAction(form, request);
 	}
@@ -156,15 +150,8 @@ public class SiteInformationMenuController extends BaseMenuController {
 	public ModelAndView showDeleteSiteInformation(HttpServletRequest request, @ModelAttribute("form") MenuForm form) {
 		String forward = FWD_SUCCESS;
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 		String[] selectedIDs = (String[]) form.get("selectedIDs");
 		String currentUserId = getSysUserId(request);
 
@@ -174,7 +161,7 @@ public class SiteInformationMenuController extends BaseMenuController {
 		try {
 
 			for (String siteInformationId : selectedIDs) {
-				siteInformationDAO.deleteData(siteInformationId, currentUserId);
+				siteInformationDAO.deleteData(siteInformationId, getSysUserId(request));
 			}
 
 			tx.commit();

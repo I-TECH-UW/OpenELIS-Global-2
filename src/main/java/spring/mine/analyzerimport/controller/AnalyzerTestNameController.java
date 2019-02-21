@@ -54,15 +54,8 @@ public class AnalyzerTestNameController extends BaseController {
 		}
 		form.setFormAction("");
 		form.setCancelAction("CancelAnalyzerTestName.do");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "true");
@@ -103,15 +96,8 @@ public class AnalyzerTestNameController extends BaseController {
 			form = new AnalyzerTestNameForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "false");
@@ -154,9 +140,9 @@ public class AnalyzerTestNameController extends BaseController {
 
 		try {
 			if (newMapping) {
-				mappingDAO.insertData(analyzerTestNameMapping, currentUserId);
+				mappingDAO.insertData(analyzerTestNameMapping, getSysUserId(request));
 			} else {
-				mappingDAO.updateMapping(analyzerTestNameMapping, currentUserId);
+				mappingDAO.updateMapping(analyzerTestNameMapping, getSysUserId(request));
 			}
 
 		} catch (LIMSRuntimeException lre) {

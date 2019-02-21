@@ -1,28 +1,28 @@
 package spring.generated.sample.controller;
 
-import java.lang.String;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
 import spring.generated.forms.SampleEntryByProjectForm;
-import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.sample.controller.BaseSampleEntryController;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
+import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.SampleStatus;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -99,15 +99,8 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 	organizationTypeMapOfLists.put("EID_ORGS", OrganizationTypeList.EID_ORGS.getList());
 	form.setOrganizationTypeLists(organizationTypeMapOfLists);
 	    
-    BaseErrors errors = new BaseErrors();
-    if (form.getErrors() != null) {
-    	errors = (BaseErrors) form.getErrors();
-    }
-    ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-    if (errors.hasErrors()) {
-    	return mv;
-    }
+    Errors errors = new BaseErrors();
+    
 
     return findForward(forward, form);}
   
@@ -129,21 +122,21 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 	    String forward = FWD_SUCCESS;
 
 	    Accessioner accessioner;
-	    accessioner = new SampleSecondEntry(form, currentUserId, request);
+	    accessioner = new SampleSecondEntry(form, getSysUserId(request), request);
 	    if (accessioner.canAccession()) {
 	        forward = handleSave(request, accessioner, form);
 	        if (forward != null) {
 	            return findForward(forward, form);
 	        }
 	    }
-	    accessioner = new SampleEntry(form, currentUserId, request);
+	    accessioner = new SampleEntry(form, getSysUserId(request), request);
 	    if (accessioner.canAccession()) {
 	        forward = handleSave(request, accessioner, form);
 	        if (forward != null) {
 	            return findForward(forward, form);
 	        }
 	    }
-	    accessioner = new SampleEntryAfterPatientEntry(form, currentUserId, request);
+	    accessioner = new SampleEntryAfterPatientEntry(form, getSysUserId(request), request);
 	    if (accessioner.canAccession()) {
 	        forward = handleSave(request, accessioner, form);
 	        if (forward != null) {
@@ -174,15 +167,8 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 	    observationHistoryMapOfLists.put("YES_NO", ObservationHistoryList.YES_NO.getList());
 	    form.setDictionaryLists(observationHistoryMapOfLists);
 
-	    BaseErrors errors = new BaseErrors();
-	    if (form.getErrors() != null) {
-	    	errors = (BaseErrors) form.getErrors();
-	    }
-	    ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-	    if (errors.hasErrors()) {
-	    	return mv;
-	    }
+	    Errors errors = new BaseErrors();
+	    
 	    
 	    // return findForward(FWD_FAIL, form);
 	    return findForward(forward, form);

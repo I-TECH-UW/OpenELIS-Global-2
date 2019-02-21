@@ -13,6 +13,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -54,15 +55,7 @@ public class ReportController extends BaseController {
 			form = new ReportForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
 
 		PropertyUtils.setProperty(form, "type", request.getParameter("type"));
 		PropertyUtils.setProperty(form, "report", request.getParameter("report"));
@@ -85,15 +78,7 @@ public class ReportController extends BaseController {
 		}
 		form.setFormAction("");
 		form.setFormMethod(RequestMethod.GET);
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return;
-		}
+		Errors errors = new BaseErrors();
 
 		PropertyUtils.setProperty(form, "type", request.getParameter("type"));
 
@@ -143,7 +128,8 @@ public class ReportController extends BaseController {
 	}
 
 	private void trackReports(IReportCreator reportCreator, String reportName, ReportType type) {
-		new ReportTrackingService().addReports(reportCreator.getReportedOrders(), type, reportName, currentUserId);
+		new ReportTrackingService().addReports(reportCreator.getReportedOrders(), type, reportName,
+				getSysUserId(request));
 	}
 
 	public String getReportPath() {

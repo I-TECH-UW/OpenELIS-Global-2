@@ -1,22 +1,21 @@
 package spring.generated.testconfiguration.controller;
 
-import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import spring.generated.forms.TestSectionRenameEntryForm;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
-import spring.generated.forms.TestSectionRenameEntryForm;
 import us.mn.state.health.lims.common.services.DisplayListService;
-
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
 import us.mn.state.health.lims.localization.valueholder.Localization;
@@ -36,12 +35,8 @@ public class TestSectionRenameEntryController extends BaseController {
 			 form = new TestSectionRenameEntryForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		form.setTestSectionList(DisplayListService.getList(DisplayListService.ListType.TEST_SECTION));
 
