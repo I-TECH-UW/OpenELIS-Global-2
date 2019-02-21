@@ -38,7 +38,7 @@ public class ListPluginsController extends BaseController {
 	}
 
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
+		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("ListPluginsPageDefinition", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");

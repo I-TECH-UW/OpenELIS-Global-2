@@ -185,13 +185,13 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 	}
 
   protected ModelAndView findLocalForward(String forward, BaseForm form) {
-    if ("success".equals(forward)) {
+    if (FWD_SUCCESS.equals(forward)) {
       return new ModelAndView("sampleEntryByProjectDefinition", "form", form);
     } else if ("eid_entry".equals(forward)) {
       return new ModelAndView("sampleEntryEIDDefinition", "form", form);
     } else if ("vl_entry".equals(forward)) {
       return new ModelAndView("sampleEntryVLDefinition", "form", form);
-    } else if ("fail".equals(forward)) {
+    } else if (FWD_FAIL.equals(forward)) {
       return new ModelAndView("homePageDefinition", "form", form);
     } else {
       return new ModelAndView("PageNotFound");

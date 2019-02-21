@@ -33,7 +33,7 @@ public class PanelCreateUpdateController extends BaseController {
     return findForward(forward, form);}
 
   protected ModelAndView findLocalForward(String forward, BaseForm form) {
-    if ("success".equals(forward)) {
+    if (FWD_SUCCESS.equals(forward)) {
       return new ModelAndView("/PanelCreate.do", "form", form);
     } else {
       return new ModelAndView("PageNotFound");

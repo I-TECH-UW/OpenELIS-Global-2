@@ -350,9 +350,9 @@ public class UnifiedSystemUserController extends BaseController {
 
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
+		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("unifiedSystemUserDefinition", "form", form);
-		} else if ("fail".equals(forward)) {
+		} else if (FWD_FAIL.equals(forward)) {
 			return new ModelAndView("haitiMasterListsPageDefinition", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");

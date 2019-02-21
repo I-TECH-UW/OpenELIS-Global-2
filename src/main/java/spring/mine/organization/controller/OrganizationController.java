@@ -553,13 +553,13 @@ public class OrganizationController extends BaseController {
 
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
+		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("organizationDefinition", "form", form);
-		} else if ("fail".equals(forward)) {
+		} else if (FWD_FAIL.equals(forward)) {
 			return new ModelAndView("masterListsPageDefinition", "form", form);
-		} else if ("insertSuccess".equals(forward)) {
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return new ModelAndView("redirect:/OrganizationMenu.do", "form", form);
-		} else if ("insertFail".equals(forward)) {
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
 			return new ModelAndView("organizationDefinition", "form", form);
 		} else if (FWD_CANCEL.equals(forward)) {
 			return new ModelAndView("redirect:/OrganizationMenu.do", "form", form);

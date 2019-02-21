@@ -33,9 +33,9 @@ public class UpdateTypeOfSampleTestController extends BaseController {
     return findForward(forward, form);}
 
   protected ModelAndView findLocalForward(String forward, BaseForm form) {
-    if ("insertSuccess".equals(forward)) {
+    if (FWD_SUCCESS_INSERT.equals(forward)) {
       return new ModelAndView("/TypeOfSampleTest.do", "form", form);
-    } else if ("fail".equals(forward)) {
+    } else if (FWD_FAIL.equals(forward)) {
       return new ModelAndView("typeOfSampleTestDefinition", "form", form);
     } else {
       return new ModelAndView("PageNotFound");

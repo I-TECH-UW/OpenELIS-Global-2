@@ -168,7 +168,7 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 			return new ModelAndView("sampleStudyBatchEntryOnDemandDefinition", "form", form);
 		} else if (PRE_PRINTED.equals(forward)) {
 			return new ModelAndView("sampleStudyBatchEntryPrePrintedDefinition", "form", form);
-		} else if ("fail".equals(forward)) {
+		} else if (FWD_FAIL.equals(forward)) {
 			return new ModelAndView("sampleBatchEntrySetupDefinition", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");

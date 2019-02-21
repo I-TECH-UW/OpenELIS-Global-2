@@ -224,9 +224,9 @@ public class AnalyzerTestNameController extends BaseController {
 
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
+		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("analyzerTestNameDefinition", "form", form);
-		} else if ("fail".equals(forward)) {
+		} else if (FWD_FAIL.equals(forward)) {
 			return new ModelAndView("masterListsPageDefinition", "form", form);
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return new ModelAndView("redirect:/AnalyzerTestNameMenu.do", "form", form);

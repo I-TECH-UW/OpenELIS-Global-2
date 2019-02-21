@@ -137,9 +137,9 @@ public class DeleteUnifiedSystemUserController extends BaseController {
 
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
+		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("redirect:/UnifiedSystemUserMenu.do", "form", form);
-		} else if ("fail".equals(forward)) {
+		} else if (FWD_FAIL.equals(forward)) {
 			return new ModelAndView("redirect:/UnifiedSystemUserMenu.do", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");

@@ -33,9 +33,9 @@ public class ManageInventoryUpdateController extends BaseController {
     return findForward(forward, form);}
 
   protected ModelAndView findLocalForward(String forward, BaseForm form) {
-    if ("success".equals(forward)) {
+    if (FWD_SUCCESS.equals(forward)) {
       return new ModelAndView("/ManageInventory.do?forward=success", "form", form);
-    } else if ("fail".equals(forward)) {
+    } else if (FWD_FAIL.equals(forward)) {
       return new ModelAndView("manageInventoryDefinition", "form", form);
     } else {
       return new ModelAndView("PageNotFound");

@@ -147,7 +147,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
+		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("resultsLogbookDefinition", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");

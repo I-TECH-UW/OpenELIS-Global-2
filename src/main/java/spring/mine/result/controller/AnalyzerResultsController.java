@@ -612,9 +612,9 @@ public class AnalyzerResultsController extends BaseController {
 
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("fail".equals(forward)) {
+		if (FWD_FAIL.equals(forward)) {
 			return new ModelAndView("homePageDefinition", "form", form);
-		} else if ("success".equals(forward)) {
+		} else if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("analyzerResultsDefinition", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");

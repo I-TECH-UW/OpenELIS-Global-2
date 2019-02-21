@@ -30,9 +30,9 @@ public class PatientManagementController extends PatientManagementBaseController
 
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
+		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("patientManagementDefinition", "form", form);
-		} else if ("fail".equals(forward)) {
+		} else if (FWD_FAIL.equals(forward)) {
 			return new ModelAndView("homePageDefinition", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");

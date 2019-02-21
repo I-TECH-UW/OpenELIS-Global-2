@@ -100,11 +100,11 @@ public class ResultValidationController extends BaseResultValidationController {
 
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
+		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("resultValidationDefinition", "form", form);
 		} else if ("elisaSuccess".equals(forward)) {
 			return new ModelAndView("elisaAlgorithmResultValidationDefinition", "form", form);
-		} else if ("fail".equals(forward)) {
+		} else if (FWD_FAIL.equals(forward)) {
 			return new ModelAndView("homePageDefinition", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");

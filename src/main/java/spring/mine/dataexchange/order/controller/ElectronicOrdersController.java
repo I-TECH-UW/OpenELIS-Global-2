@@ -90,7 +90,7 @@ public class ElectronicOrdersController extends BaseController {
 	}
 
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
+		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("electronicOrderViewDefinition", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");

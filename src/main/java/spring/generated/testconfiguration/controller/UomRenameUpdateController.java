@@ -31,7 +31,7 @@ public class UomRenameUpdateController extends BaseController {
 
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
+		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("/UomRenameEntry.do", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");

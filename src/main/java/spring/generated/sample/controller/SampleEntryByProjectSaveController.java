@@ -38,9 +38,9 @@ public class SampleEntryByProjectSaveController extends BaseSampleEntryControlle
 
   protected ModelAndView findLocalForward(String forward, BaseForm form) {
 	  
-    if ("success".equals(forward)) {
+    if (FWD_SUCCESS.equals(forward)) {
       return new ModelAndView("forward:/SampleEntryByProject.do?forward=success", "form", form);
-    } else if ("fail".equals(forward)) {
+    } else if (FWD_FAIL.equals(forward)) {
       return new ModelAndView("sampleEntryByProjectDefinition", "form", form);
     } else {
       return new ModelAndView("PageNotFound");
