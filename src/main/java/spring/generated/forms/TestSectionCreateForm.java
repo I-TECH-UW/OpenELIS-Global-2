@@ -3,6 +3,7 @@ package spring.generated.forms;
 import java.lang.String;
 import java.util.List;
 import spring.mine.common.form.BaseForm;
+import us.mn.state.health.lims.common.util.IdValuePair;
 
 public class TestSectionCreateForm extends BaseForm {
   private List existingTestUnitList;
@@ -25,7 +26,7 @@ public class TestSectionCreateForm extends BaseForm {
     return this.existingTestUnitList;
   }
 
-  public void setExistingTestUnitList(List existingTestUnitList) {
+  public void setExistingTestUnitList(List<IdValuePair> existingTestUnitList) {
     this.existingTestUnitList = existingTestUnitList;
   }
 

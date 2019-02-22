@@ -16,7 +16,7 @@ import spring.mine.common.validator.BaseErrors;
 public class TestSectionManagementController extends BaseController {
   @RequestMapping(
       value = "/TestSectionManagement",
-      method = RequestMethod.GET
+      method = { RequestMethod.GET, RequestMethod.POST }
   )
   public ModelAndView showTestSectionManagement(HttpServletRequest request) {
     String forward = FWD_SUCCESS;

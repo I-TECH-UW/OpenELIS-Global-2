@@ -49,8 +49,10 @@ public class SampleTypeRenameEntryController extends BaseController {
 	}
 
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
+		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("sampleTypeRenameDefinition", "form", form);
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+		      return new ModelAndView("redirect:/SampleTypeRenameEntry.do", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");
 		}
@@ -63,7 +65,7 @@ public class SampleTypeRenameEntryController extends BaseController {
 	public ModelAndView updateSampleTypeRenameEntry(HttpServletRequest request,
 			@ModelAttribute("form") SampleTypeRenameEntryForm form) {	
 		
-		String forward = FWD_SUCCESS;
+		String forward = FWD_SUCCESS_INSERT;
 
 		String sampleTypeId = form.getSampleTypeId();
 		String nameEnglish = form.getNameEnglish();

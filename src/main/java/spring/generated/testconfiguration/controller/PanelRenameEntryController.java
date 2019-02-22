@@ -53,8 +53,10 @@ public class PanelRenameEntryController extends BaseController {
 	}
 
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
+		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("panelRenameDefinition", "form", form);
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+		      return new ModelAndView("redirect:/PanelRenameEntry.do", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");
 		}
@@ -67,7 +69,7 @@ public class PanelRenameEntryController extends BaseController {
 	public ModelAndView updatePanelRenameEntry(HttpServletRequest request,
 			@ModelAttribute("form") PanelRenameEntryForm form) {	
 		
-		String forward = FWD_SUCCESS;
+		String forward = FWD_SUCCESS_INSERT;
 
 		String panelId = form.getPanelId();
 		String nameEnglish = form.getNameEnglish();
