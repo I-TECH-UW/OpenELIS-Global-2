@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="us.mn.state.health.lims.systemmodule.valueholder">
+    <class name="SystemModuleUrl" table="SYSTEM_MODULE_URL" optimistic-lock="version" dynamic-update="true">
+        <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+             <generator class="sequence">
+               <param name="sequence">SYSTEM_MODULE_URL_SEQ</param>
+            </generator>   
+        </id>
+        <property name="urlPath" type="java.lang.String" column="url_path" not-null="true" />
+        <many-to-one name="systemModule" column="system_module_id" class="SystemModule" fetch="select" not-null="true"/>
+        <many-to-one name="param" column="system_module_param_id" class="SystemModuleParam" cascade="save-update" fetch="select"/>
+
+     </class>
+</hibernate-mapping>

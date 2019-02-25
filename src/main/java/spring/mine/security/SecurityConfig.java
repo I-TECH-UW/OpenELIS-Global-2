@@ -18,10 +18,18 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+	// pages open to anyone regardless of authentication status
 	public static final String[] OPEN_PAGES = { "/ChangePasswordLogin.do", "/UpdateLoginChangePassword.do",
 			"/LoginPage.do" };
+	// pages open to anyone that is authenticated
+	public static final String[] AUTH_OPEN_PAGES = { "/Home.do", "/Dashboard.do", "/Logout.do" };
+	// resource pages open to everyone
 	public static final String[] RESOURCE_PAGES = { "/css/**", "/images/**", "/documentation/**", "/scripts/**",
 			"/jsp/**" };
+
+	// whether to reject access to protected pages if no modules are assigned to
+	// them
+	public static final boolean REQUIRE_MODULE = true;
 
 	@Autowired
 	UserDetailsService userDetailsService;

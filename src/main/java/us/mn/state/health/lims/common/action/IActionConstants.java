@@ -256,8 +256,5 @@ public interface IActionConstants {
 	String REQUEST_ERRORS = "RequestErrors";
 	String REQUEST_WARNINGS = "RequestWarnings";
 	String REQUEST_MESSAGES = "RequestMessages";
-	// for storage in session for redirect. Removed from session upon redirect in
-	// RedirectErrorsInterceptor.java
-	String REDIRECT_ERRORS = "RedirectErrors";
 
 }

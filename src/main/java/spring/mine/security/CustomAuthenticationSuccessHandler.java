@@ -14,9 +14,7 @@ import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.validation.Errors;
 
-import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.login.dao.LoginDAO;
@@ -41,16 +39,16 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
-
+		String homePath = "/Dashboard.do";
 		LoginDAO loginDao = new LoginDAOImpl();
 		Login loginInfo = loginDao.getUserProfile(request.getParameter("loginName"));
 		setupUserSession(request, loginInfo);
 
 		if (passwordExpiringSoon(loginInfo)) {
-			addPasswordChangeReminder(request);
+			homePath += "?passReminder=true";
 		}
 
-		redirectStrategy.sendRedirect(request, response, "/Dashboard.do");
+		redirectStrategy.sendRedirect(request, response, homePath);
 		clearAuthenticationAttributes(request);
 
 	}
@@ -105,16 +103,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 				.parseInt(SystemConfiguration.getInstance().getLoginUserPasswordExpiredReminderDay())
 				&& (loginInfo.getPasswordExpiredDayNo() > Integer
 						.parseInt(SystemConfiguration.getInstance().getLoginUserChangePasswordAllowDay()));
-	}
-
-	private void addPasswordChangeReminder(HttpServletRequest request) {
-		Errors errors = new BaseErrors();
-		errors.reject("login.password.expired.reminder", "login.password.expired.reminder");
-		if (request.getSession().getAttribute(REDIRECT_ERRORS) == null) {
-			request.getSession().setAttribute(REDIRECT_ERRORS, errors);
-		} else {
-			((Errors) request.getSession().getAttribute(REDIRECT_ERRORS)).addAllErrors(errors);
-		}
 	}
 
 	protected void clearAuthenticationAttributes(HttpServletRequest request) {

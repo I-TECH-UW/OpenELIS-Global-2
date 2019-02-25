@@ -22,7 +22,7 @@ import org.springframework.web.servlet.view.tiles3.TilesView;
 
 import spring.mine.interceptor.ModuleAuthenticationInterceptor;
 import spring.mine.interceptor.PageAttributesInterceptor;
-import spring.mine.interceptor.RedirectErrorsInterceptor;
+import spring.mine.interceptor.UrlErrorsInterceptor;
 import spring.mine.security.SecurityConfig;
 
 @EnableWebMvc
@@ -33,7 +33,7 @@ public class AppConfig implements WebMvcConfigurer {
 	@Autowired
 	ModuleAuthenticationInterceptor moduleAuthenticationInterceptor;
 	@Autowired
-	RedirectErrorsInterceptor redirectErrorsInterceptor;
+	UrlErrorsInterceptor urlLocatedErrorsInterceptor;
 	@Autowired
 	PageAttributesInterceptor pageAttributesInterceptor;
 	@Autowired
@@ -82,8 +82,9 @@ public class AppConfig implements WebMvcConfigurer {
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(localeChangeInterceptor()).addPathPatterns("/**");
 		registry.addInterceptor(moduleAuthenticationInterceptor).addPathPatterns("/**")
-				.excludePathPatterns(SecurityConfig.OPEN_PAGES).excludePathPatterns(SecurityConfig.RESOURCE_PAGES);
-		registry.addInterceptor(redirectErrorsInterceptor).addPathPatterns("/**");
+				.excludePathPatterns(SecurityConfig.OPEN_PAGES).excludePathPatterns(SecurityConfig.RESOURCE_PAGES)
+				.excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES);
+		registry.addInterceptor(urlLocatedErrorsInterceptor).addPathPatterns("/**");
 		registry.addInterceptor(pageAttributesInterceptor).addPathPatterns("/**");
 	}
 
