@@ -1,12 +1,12 @@
 CREATE TABLE clinlims.system_module_param (
   id numeric(10,0) PRIMARY KEY,
-  name varchar(20) NOT NULL,
-  value varchar(20) NOT NULL
+  name varchar(255) NOT NULL,
+  value varchar(255) NOT NULL
 ); 
 
 CREATE TABLE clinlims.system_module_url (
   id numeric(10,0) PRIMARY KEY,
-  url_path varchar(40) NOT NULL,
+  url_path varchar(255) NOT NULL,
   system_module_id numeric(10,0) NOT NULL,
   system_module_param_id numeric(10,0),
   CONSTRAINT param_fk FOREIGN KEY (system_module_param_id) REFERENCES clinlims.system_module_param (id),

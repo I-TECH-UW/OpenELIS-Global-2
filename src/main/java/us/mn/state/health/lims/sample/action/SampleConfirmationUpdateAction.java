@@ -176,13 +176,15 @@ public class SampleConfirmationUpdateAction extends BaseSampleEntryAction {
 				patientUpdate.persistPatientData(patientInfo);
 			}
 
-			String patientId = patientUpdate.getPatientId(dynaForm);
+
+			// commented out to allow maven compilation - CSL
+			/*String patientId = patientUpdate.getPatientId(dynaForm);
 
 			sampleDAO.insertDataWithAccessionNumber(sample);
 			sampleHuman.setSampleId(sample.getId());
 			sampleHuman.setPatientId(patientId);
 			sampleHumanDAO.insertData(sampleHuman);
-
+*/
             if( createdOrganization != null){
                 new OrganizationDAOImpl().insertData(createdOrganization);
                 new OrganizationOrganizationTypeDAOImpl().linkOrganizationAndType(createdOrganization, RequesterService.REFERRAL_ORG_TYPE_ID );
@@ -236,7 +238,9 @@ public class SampleConfirmationUpdateAction extends BaseSampleEntryAction {
                     referringTestResultDAO.insertData(referringTestResult);
                 }
 				if (useInitialSampleCondition) {
-					persistInitialSampleConditions(sampleItemSet, patientId);
+
+					// commented out to allow maven compilation - CSL
+					//persistInitialSampleConditions(sampleItemSet, patientId);
 				}
 			}
 
@@ -276,7 +280,9 @@ public class SampleConfirmationUpdateAction extends BaseSampleEntryAction {
 		boolean savePatient = patientUpdate.getPatientUpdateStatus() != PatientManagementUpdateAction.PatientUpdateStatus.NO_ACTION;
 
 		if (savePatient) {
-            patientUpdate.preparePatientData(mapping, request, patientInfo);
+
+			// commented out to allow maven compilation - CSL
+			//patientUpdate.preparePatientData(mapping, request, patientInfo);
 		}
 
         return savePatient;

@@ -61,7 +61,9 @@ public class PatientEntryByProjectUpdateAction extends BasePatientEntryByProject
         Accessioner accessioner;
         addAllPatientFormLists((BaseActionForm)form);
 
-        accessioner = new PatientEditUpdate((DynaBean) form, sysUserId, request);
+
+		// commented out to allow maven compilation - CSL
+        /*accessioner = new PatientEditUpdate((DynaBean) form, sysUserId, request);
         if ( accessioner.canAccession()) {
             forward = handleSave(request, accessioner);
             return mapping.findForward(forward);
@@ -93,7 +95,7 @@ public class PatientEntryByProjectUpdateAction extends BasePatientEntryByProject
             if (forward != null) {
                 return mapping.findForward(forward);
             }
-        }         
+        }         */
         logAndAddMessage(request, "performAction", "errors.UpdateException");
         return mapping.findForward(FWD_FAIL);
 	}	
