@@ -22,7 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public static final String[] OPEN_PAGES = { "/ChangePasswordLogin.do", "/UpdateLoginChangePassword.do",
 			"/LoginPage.do" };
 	// pages open to anyone that is authenticated
-	public static final String[] AUTH_OPEN_PAGES = { "/Home.do", "/Dashboard.do", "/Logout.do" };
+	public static final String[] AUTH_OPEN_PAGES = { "/Home.do", "/Dashboard.do", "/Logout.do", "/MasterListsPage.do" };
 	// resource pages open to everyone
 	public static final String[] RESOURCE_PAGES = { "/css/**", "/images/**", "/documentation/**", "/scripts/**",
 			"/jsp/**" };
@@ -30,7 +30,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	// whether to reject access to protected pages if no modules are assigned to
 	// them
 	public static final boolean REQUIRE_MODULE = true;
-
+	
+	public static final String CONTENT_SECURITY_POLICY = 
+			"default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval';"
+			+ " connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline';"
+			+ " frame-src 'self'; object-src 'self';";
 	@Autowired
 	UserDetailsService userDetailsService;
 
@@ -42,19 +46,38 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
+		http
+			.authorizeRequests()
 				// allow all users to access these pages no matter authentication status
-				.antMatchers(OPEN_PAGES).permitAll().antMatchers(RESOURCE_PAGES).permitAll()
+				.antMatchers(OPEN_PAGES).permitAll()
+				.antMatchers(RESOURCE_PAGES).permitAll()
 				// ensure all other requests are authenticated
-				.anyRequest().authenticated().and()
-				// setup login redirection and logic
-				.formLogin().loginPage("/LoginPage.do").permitAll().loginProcessingUrl("/ValidateLogin.do")
-				.usernameParameter("loginName").passwordParameter("password").permitAll()
+				.anyRequest().authenticated()
+				.and()
+			// setup login redirection and logic
+			.formLogin()
+				.loginPage("/LoginPage.do").permitAll()
+				.loginProcessingUrl("/ValidateLogin.do")
+				.usernameParameter("loginName")
+				.passwordParameter("password")
 				.failureHandler(customAuthenticationFailureHandler())
-				.successHandler(customAuthenticationSuccessHandler()).and()
-				// setup logout
-				.logout().logoutUrl("/Logout.do").logoutSuccessUrl("/LoginPage.do?logout=true")
-				.invalidateHttpSession(true).and().csrf().and().exceptionHandling().accessDeniedPage("/Access_denied");
+				.successHandler(customAuthenticationSuccessHandler())
+				.and()
+			// setup logout
+			.logout()
+				.logoutUrl("/Logout.do")
+				.logoutSuccessUrl("/LoginPage.do?logout=true")
+				.invalidateHttpSession(true)
+				.and()
+			.csrf()
+				.and()
+			.exceptionHandling()
+				.accessDeniedPage("/Access_denied")
+				.and()
+			// add security headers
+			.headers()
+				.frameOptions().sameOrigin()
+				.contentSecurityPolicy(CONTENT_SECURITY_POLICY);
 	}
 
 	@Bean
