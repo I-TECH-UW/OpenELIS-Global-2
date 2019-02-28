@@ -1,0 +1,20 @@
+INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Stat-Pak(Plasma)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Invalide' )  , now() , 10),
+   ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Stat-Pak(Plasma)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Négatif' )  , now() , 20),
+   ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Stat-Pak(Plasma)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif' )  , now() , 30),
+   ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Stat-Pak(Sérum)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Invalide' )  , now() , 40),
+   ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Stat-Pak(Sérum)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Négatif' )  , now() , 50),
+   ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Stat-Pak(Sérum)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif' )  , now() , 60),
+   ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Stat-Pak(Sang total)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Invalide' )  , now() , 70),
+   ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Stat-Pak(Sang total)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Négatif' )  , now() , 80),
+   ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Stat-Pak(Sang total)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif' )  , now() , 90),
+   ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Determine(Plasma)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Invalide' )  , now() , 100),
+   ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Determine(Plasma)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Négatif' )  , now() , 110),
+   ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Determine(Plasma)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif' )  , now() , 120),
+   ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Determine(Sérum)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Invalide' )  , now() , 130),
+   ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Determine(Sérum)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Négatif' )  , now() , 140),
+   ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Determine(Sérum)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif' )  , now() , 150),
+   ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Determine(Sang total)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Invalide' )  , now() , 160),
+   ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Determine(Sang total)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Négatif' )  , now() , 170),
+   ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Determine(Sang total)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif' )  , now() , 180);
+

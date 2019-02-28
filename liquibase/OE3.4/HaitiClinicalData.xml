@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <!-- Data specific to haiti clinical -->
+    
+    <changeSet author="jfurlong" id="1" context="haiti">
+        <comment>Add unit of measure to Plaquettes test</comment>
+        <sqlFile path="OE3.4/UpdateHaitiClinicalUnitOfMeasure.sql" />
+    </changeSet>
+    <include file="OE3.4/testCatalogHT_CLINICAL/TestCatalogUpdate.xml" />
+    <changeSet author="paulsc" id="1" context="haiti" >
+        <comment>Changes the result type of Malaria to cascading multiselect</comment>
+        <update tableName="test_result" >
+            <column name="tst_rslt_type" value="C" />
+            <where>test_id = (select id from clinlims.test where name = 'Malaria' and is_active = 'Y') </where>
+        </update>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  
+<changeSet author="csteele" id="1">
+	<comment>Set up table for tracking the number of barcodes that have een printed and other barcode metadata</comment>
+  <sql>
+    CREATE TABLE clinlims.barcode_label_info (
+      "id" NUMERIC (20),
+      "code" VARCHAR (20) NOT NULL,
+      "numprinted" NUMERIC (3),
+      "type" VARCHAR (20),
+      "lastupdated" timestamp without time zone NOT NULL,
+      PRIMARY KEY ("id")
+    );
+    
+    CREATE SEQUENCE clinlims.barcode_label_info_seq START 1; 
+  </sql>
+</changeSet>
+<changeSet author="csteele" id="2">
+	<comment>Enable audit trail to track changes to barcode</comment>
+  <sql>
+    INSERT INTO clinlims.reference_tables (id, name, keep_history, is_hl7_encoded)
+    VALUES (nextval('clinlims.reference_tables_seq'), 'BARCODE_LABEL_INFO', 'Y', 'N');
+  </sql>
+</changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,11 @@
+Liquibase is a tool for managing the versioning of databases.  For more information see http://www.liquibase.org/
+
+The tool can be run from this directory as:
+java -jar .\lib\liquibase-1.9.5.jar --defaultsFile=liquibase.properties update
+
+users etc are listed in liquibase.properties
+
+1.9.5 notes
+
+1. The 'remarks' attribute does not seem to work for postgres
+2. The graphical tools are sort of flacky, even the IntelliJ one which is currently the most stable 

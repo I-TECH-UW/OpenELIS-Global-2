@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+  <changeSet author="CI OpenELIS developers group" id="1" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.system_role_module where id= '1000';
+    		</sqlCheck>
+    </preConditions>
+    <comment>Insert in clinlims new role_module</comment>
+    <sql>
+	INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1000,'Y','Y','Y','Y',1,(select id from clinlims.system_module where name='SampleEntryConfig'));
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1001,'Y','Y','Y','Y',1,(select id from clinlims.system_module where name='WorkplanConfiguration'));
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1002,'Y','Y','Y','Y',1,(select id from clinlims.system_module where name='TestActivation'));
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1003,'Y','Y','Y','Y',1,(select id from clinlims.system_module where name='PanelRenameEntry'));
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1004,'Y','Y','Y','Y',1,(select id from clinlims.system_module where name='TestOrderability'));
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1005,'Y','Y','Y','Y',1,(select id from clinlims.system_module where name='TestCatalog'));
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1006,'Y','Y','Y','Y',1,(select id from clinlims.system_module where name='BatchTestReassign'));
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1007,'Y','Y','Y','Y',1,(select id from clinlims.system_module where name='TestSectionManagement'));
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1008,'Y','Y','Y','Y',1,(select id from clinlims.system_module where name='TestSectionOrder'));
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1009,'Y','Y','Y','Y',1,(select id from clinlims.system_module where name='TestSectionTestAssign'));
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1010,'Y','Y','Y','Y',1,(select id from clinlims.system_module where name='TestSectionCreate'));
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1011,'Y','Y','Y','Y',1,(select id from clinlims.system_module where name='SampleTypeRenameEntry'));
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1012,'Y','Y','Y','Y',4,51);
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1013,'Y','Y','Y','Y',4,52);
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1014,'Y','Y','Y','Y',4,53);
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1015,'Y','Y','Y','Y',4,54);
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1016,'Y','Y','Y','Y',4,55);
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1017,'Y','Y','Y','Y',4,56);
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1018,'Y','Y','Y','Y',4,116);
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1019,'Y','Y','Y','Y',4,173);
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1020,'Y','Y','Y','Y',4,174);
+
+	
+	 </sql>
+  </changeSet>
+  
+<changeSet author="CI OpenELIS developers group" id="2" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.system_module where name= 'MenuStatementConfig';
+    		</sqlCheck>
+    </preConditions>
+    <comment>Insert in clinlims new module and role_module</comment>
+    <sql>
+alter sequence clinlims.system_module_seq restart with 1500;
+	
+INSERT INTO clinlims.system_module(id, name, description, has_select_flag, has_add_flag, has_update_flag,has_delete_flag) VALUES (nextval('clinlims.system_module_seq'),'MenuStatementConfig','Admin=>MenuStatementConfig','Y','Y','Y','Y');
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1021,'Y','Y','Y','Y',1,(select id from clinlims.system_module where name='MenuStatementConfig'));
+
+	
+	 </sql>
+  </changeSet> 
+  
+  
+  
+</databaseChangeLog>

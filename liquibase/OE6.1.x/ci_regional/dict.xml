@@ -1,0 +1,218 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--Some settings-->
+  <!-- Data specific to ci_regional,ci_general -->
+  <changeSet author="CI OpenELIS developers group" id="1" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.dictionary_category where description = 'Reason for Second PCR Test';
+    		</sqlCheck>
+    </preConditions>
+    <comment>adds in dictionary_type</comment>
+    <sql>
+alter sequence clinlims.dictionary_category_seq restart with 420;
+
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (240,'Education Level Demographic Information',now(),'Education','Education Level');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (78,'Marital Status Demographic Information',now(),'Marital','Marital Status');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (79,'Nationality Demographic Information',now(),'National','Nationality');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (80,'Yes No N/A question choices',now(),'YesNoNA','Yes No NA');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (81,'Yes No question choices',now(),'YesNo','Yes No');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (82,'ARV diseases for demographic question',now(),'ARVDisease','ARV Disease');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (83,'ARV Prophylaxis treatments for demographic question choices',now(),'ARVProphyl','ARV Prophylaxis');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (84,'AID Stages demographic question choices',now(),'AIDSStg','AIDS Stages');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (97,'Simplified list of nationality demographic question choices',now(),'RegionNat','Regional Nationality');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (241,'possible HIV status for demographic question choices',now(),'HIVStatus','HIV Status');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (242,'Secondary ARV Prophlaxis choices for ARV studies.',now(),'arvProph2','Secondary Prophylaxis');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (243,'Simplified Nationality Choices for demographic questions',now(),'NatSimple','Simplified Nationality');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (158,'ARV treatment regime choices for ARV studies.',now(),'arvRegime','ARV Treatment Regime');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (244,'Diseases for Routine Tests',now(),'RTNDisease','RTN Diseases');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (178,'Diseases for Routine Test Examine Questions',now(),'RTNExam','RTN Examination Diseases');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (245,'Result Values - Pos, Neg, Indeterminate, Invalid',now(),'PsNgIndInv','PosNegIndInv');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (198,'HIV Result-HIV1, HIV2, HIVD, Neg, Indtrminate, Invalid',now(),'HIVResult','HIVResult');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (246,'Result Values - HIV 1, Negative, Indeterminate',now(),'HIV1NInd','HIV1NInd');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (267,'EID Which PCR Test',now(),'whichPCR','EID Which PCR Test');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (258,'Reason for Second PCR Test',now(),'rsonPCRTst','Reason for Second PCR Test');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (287,'EID Type of Clinic',now(),'typOfClinc','EID Type of Clinic');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (278,'EID How Infant Eating',now(),'howEating','EID How Infant Eating');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (279,'Mother''s HIV Status',now(),'momsStatus','Mother''s HIV Status');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (280,'Mother''s ARV Treatment',now(),'momsTrtmnt','Mother''s ARV Treatment');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (281,'EID Infant''s ARV Prophylaxis',now(),'infantARV','EID Infant''s ARV Prophylaxis');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (282,'EID Infant Cotrimoxazole',now(),'eidCotrim','EID Cotrimoxazole');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (297,'Special Request Reason',now(),'SpeclReasn','Special Request Reason');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (298,'ARV Demographic Marital Status',now(),'ARVMarital','');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (299,'RTN Demographic Info: Nationality',now(),'RTNNation','');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (305,'ARV Demographic Info: Nationality',now(),'ARVNation','');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (317,'Choices for when an infant stopped breastfeeding',now(),'stopFeed','EID Stopped Breastfeeding');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (400,'Reason for Viral Load Request',now(),'vlReason','Reason for Viral Load Request');
+
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (403,'Test Location Codes for CI LNSP',now(),'LocatCode','testLocationCode');
+INSERT INTO clinlims.dictionary_category(id, description, lastupdated, local_abbrev, name)  VALUES (404,'ARV Demographic Education Level',now(),'ARVEd','');
+</sql>
+  </changeSet>
+  <changeSet author="CI OpenELIS developers group" id="2" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.dictionary where local_abbrev = 'NotSpeced';
+    		</sqlCheck>
+    </preConditions>
+    <comment>adds in dictionary</comment>
+    <sql>
+alter sequence clinlims.dictionary_seq restart with 1200;
+
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','1 - PCR to confirm first Positive PCR test result',now(),'confirmPCR',258,'EID.confirmationPCR',88200);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','1 = AZT + NVP',now(),'infaztNVP',281,'EID.infantAztNvp',91800);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','1 = Exclusivly Breastfeeding',now(),'olyBrstFed',278,'EID.onlyBreastfeeding',90400);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','1 = HIV-1',now(),'eidHiv1',279,'EID.hiv1',90900);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','1 = NVP',now(),'eidNVP',280,'EID.nvp',91400);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','1 = Vaccination',now(),'vaccinatn',287,'EID.vaccination',90000);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','1st Line',now(),'line1',158,'arvRegime.firstLine',74400);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','2 - PCR six weeks after stopping breastfeeding',now(),'sixWeekPCR',258,'EID.sixWeeksPCR',88300);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','2 = AZT + NVP + 3TC',now(),'eid.aztNvp',280,'EID.aztNvp',91500);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','2 = HIV-2',now(),'ediHiv2',279,'EID.hiv2',91000);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','2 = Mixed Feeding',now(),'mixedFed',278,'EID.mixedfeeding',90500);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','2 = NVP Single Dose',now(),'nvpSingle',281,'EID.nvpSingleDose',91900);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','2 = Pediatrician',now(),'pediatricn',287,'EID.pediatrician',90100);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','2nd Line',now(),'line2',158,'arvRegime.secondLine',74500);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','3 - PCR after indeterminate result',now(),'indeterPCR',258,'EID.indeterminatePCR',88400);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','3 = Dietitian',now(),'dietitian',287,'EID.dietitian',90200);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','3 = HAART',now(),'eid.haart',280,'EID.haart',91600);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','3 = Never breastfed',now(),'nvrBrstfd',278,'EID.neverBreastfed',90600);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','3 = Other',now(),'infARVOthr',281,'EID.infantARVOther',92000);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','3rd Line',now(),'line3',158,'arvRegime.thirdLine',74600);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','4 = Other(Specify)',now(),'otherSpcfy',287,'EID.otherSpecify',90300);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','4 = Stopped breastfeeding Less than 6 weeks ago',now(),'Brstfedlt6',317,'EID.stoppedBreastfedless6weeks',90700);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','5 = Stopped breastfeeding More than 6 weeks ago',now(),'Brstfedmt6',317,'EID.stoppedBreastfedmore6weeks',90800);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','7 - Not Applicable for First PCR Test',now(),'nonAppPCR',258,'EID.nonApplicablePCR',88500);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','9 = Inconclusive',now(),'inconclsve',279,'EID.inconclusive',91300);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','A cough lasting more than a month?',now(),'cough',244,'diseases.RTN.cough',78300);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','A diarrhea lasting more than a month?',now(),'diarrhea',244,'diseases.RTN.diarrhea',78100);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','A fever lasting more than a month?',now(),'fever',244,'diseases.RTN.fever',78200);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','ACONDA Request',now(),'ACONDA',297,'special.request.reason.ACONDA',100300);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Adiazine® (Sulfadiazine) + pyrimethamine + folinic acid',now(),'adiPyrFolA',240,'arvProphyl.adiazinePyrimethamineFolinicAcid',72200);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','AES (FR) (AIDs Prophylaxis)',now(),'AES',83,'prophylaxis.AES',65700);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','AIDS Stage A (Adult)',now(),'AIDSStgA-A',84,'AIDSStage.adultA',65900);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','AIDS Stage A (Infant)',now(),'AIDSStgA-I',84,'AIDSStage.infantA',66300);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','AIDS Stage B (Adult)',now(),'AIDSStgB-A',84,'AIDSStage.adultB',66000);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','AIDS Stage B (Infant)',now(),'AIDSStgB-I',84,'AIDSStage.infantB',66400);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','AIDS Stage C (Adult)',now(),'AIDSStgC-A',84,'AIDSStage.adultC',66100);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','AIDS Stage C (Infant)',now(),'AIDSStgC-I',84,'AIDSStage.infantC',66500);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','AIDS Stage N (Infant)',now(),'AIDSStgN-I',84,'AIDSStage.infantN',66200);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','another nationality',now(),'other',79,'nationality.Other',76000);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Anphotericine B',now(),'anphoterB',242,'arvProphyl.anphotericineB',72300);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Cachexia?',now(),'cachexie',178,'diseases.RTN.cachexia',79300);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Cerebral Toxoplamosis : Demographic Answer to AVR disease question',now(),'CrblToxo',82,'disease.cerebralToxoplamosis',64800);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Cervical Cancer : Demographic Answer to AVR disease question',now(),'CervCancer',82,'disease.cervicalCancer',65200);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Chronic Diarrhea : Demographic Answer to ARV disease question',now(),'DiarrheaC',82,'disease.diarrhea',94000);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','College or University',now(),'PostSecond',240,'education.postSecondary',62300);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Cryoptococcal Meningitis : Demographic Answer to AVR disease question',now(),'CryptoMen',82,'disease.cryoptococcalMeningitis',64900);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','cryptococcus meningitis?',now(),'cryptoMen',244,'diseases.RTN.cryptococcusMeningitis',78700);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','D = HIV 1+2',now(),'eidHivd',279,'EID.hivD',91100);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Dalacine® (clindamycine) + pyrimethamine + folinic acid',now(),'dalPyrFolA',242,'arvProphyl.dalacinePyrimethamineFolinicAcid',72100);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Dementia or a neurological deficit associated with HIV?',now(),'HIVDement',178,'diseases.RTN.hivDementia',80000);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Demographic Response N/A (Yes, No or N/A)',now(),'NA',80,'answer.notApplicable',64300);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Demographic Response No (in Yes or No)',now(),'No',81,'answer.no',64500);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Demographic Response No (Yes, No or N/A)',now(),'No',80,'answer.no',64200);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Demographic Response Yes (in Yes or No)',now(),'Yes',81,'answer.yes',64400);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Demographic Response Yes (in Yes, No or N/A)',now(),'Yes',80,'answer.yes',64100);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','EGPAF Request',now(),'EGPAF',297,'special.request.reason.EGPAF',100400);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Expulmonary TB : Demographic Answer to AVR disease question',now(),'TBExpul',82,'disease.tbExpulmonary',64700);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','External Request',now(),'extnlReqst',297,'special.request.reason.externalRequest',100200);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Extrapulmonary tuberculosis',now(),'expulTB',244,'diseases.RTN.expulmonaryTuberculosis',78500);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','First PCR',now(),'firstPCR',267,'EID.firstPCR',88000);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Fluconazole',now(),'flucona',242,'arvProphyl.fluconazole',72000);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','General Prurigo : Demographic Answer to AVR disease question',now(),'GenPrurigo',82,'disease.generalPrurigo',65000);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Herpes (chronic progressive or generalized)?',now(),'herpes',178,'diseases.RTN.herpes',79600);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','HIV Status HIV-1 and HIV-2',now(),'HIVDual',241,'HIVStatus.HIVDual',70200);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','HIV Status HIV-1 infection',now(),'HIV-1',241,'HIVStatus.HIV_1',70000);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','HIV Status HIV-2 infection',now(),'HIV-2',241,'HIVStatus.HIV_2',70100);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (824,'Y','HIV1',now(),'',198,'dict.HIVResult.hiv1',82400);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (825,'Y','HIV2',now(),'',198,'dict.HIVResult.hiv2',82500);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (826,'Y','HIVD',now(),'',198,'dict.HIVResult.hivd',82600);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','INCONCLUSIVE',now(),'',3,'',9400);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Invasive cancer of the cervix or the uterus?',now(),'curvixC',244,'diseases.RTN.curvixCancer',79100);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Is the patient''s mother known to be infected by HIV?',now(),'matHIV',244,'diseases.RTN.maternalHIV',79200);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','IST (?) : Demographic Answer to AVR disease question',now(),'IST',82,'disease.IST',65100);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Ivorian',now(),'Ivorian',243,'nationality.simple.CI',74000);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Kaposi''s sarcoma : Demographic Answer to AVR disease question',now(),'KaposiSarc',82,'disease.KaposisSarcoma',65400);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Kaposi''s Sarcoma?',now(),'sarcKapo',178,'diseases.RTN.kaposisSarcoma',79800);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Marital Status Divorced',now(),'divorced',78,'marital.divorced',102000);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Marital Status Single (for ARV)',now(),'celibate',78,'marital.single',62400);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Martial Status cohabiting (for ARV)',now(),'cohab',78,'marital.cohabitating',62600);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Martial Status Married (for ARV)',now(),'married',78,'marital.married',62500);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Martial Status N/A for children (for ARV)',now(),'NA',78,'marital.n_a',62800);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Martial Status window(er) (for ARV)',now(),'widow',78,'marital.widow',62700);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','N/A',now(),'na',242,'answer.notApplicable',72500);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','No Schooling',now(),'NoSchool',240,'education.noSchool',62000);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Not applicable (AIDS Prophylaxis)',now(),'NA',83,'answer.notApplicable',65800);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Oropharyngeal Candidiasis : Demographic Answer to AVR disease question',now(),'OpharCand',82,'disease.oropharyngealCandidiasis',65300);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Oropharyngeal candidiasis?',now(),'thrush',178,'diseases.RTN.thrush',79400);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Other African',now(),'African',243,'nationality.simple.OtherAfrican',74200);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','P = HIV-POS',now(),'hivpos',279,'EID.hivP',91200);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Pain on swallowing?',now(),'swallPaint',244,'diseases.RTN.painfulSwallowing',78600);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Primary School',now(),'Primary',240,'education.primary',62100);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Pulmonary TB : Demographic Answer to AVR disease question',now(),'TBPul',82,'disease.tbPulmonary',64600);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Pulmonary tuberculosis?',now(),'pulTB',244,'diseases.RTN.pulmonaryTuberculosis',78400);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','QA Event Type',now(),'',36,'',98100);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','recurrent infections (otite, pharyngite)?',now(),'recInfect',244,'diseases.RTN.recurrentInfections',79000);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Recurrent pneumonia?',now(),'recPneumon',244,'diseases.RTN.recurrentPneumonia',78800);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Retro CI Staff',now(),'retroCStaf',297,'special.request.reason.retroCIStaff',100000);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Second PCR',now(),'secondPCR',267,'EID.secondPCR',88100);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Secondary School',now(),'Secondary',240,'education.secondary',62200);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Sepsis?',now(),'sespis',244,'diseases.RTN.sespis',78900);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','shingles : Demographic Answer to AVR disease question',now(),'Shingles',82,'disease.shingles',65500);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Significant weight loss?',now(),'weightLoss',244,'diseases.RTN.weightLoss',78000);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','US Embassy',now(),'USEmbassy',297,'special.request.reason.USEmbassy',100100);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (1178,'Y','Valid',now(),'',245,'dict.PosNegIndInv.valid',82350);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Widespread Dermititis pruipineuse?',now(),'dermPruip',178,'diseases.RTN.generalDermititisPruipineuse',79500);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Zona?',now(),'zona',178,'diseases.RTN.zona',79700);
+
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (823,'Y','Invalid',now(),'',245,'dict.PosNegIndInv.invalid',82300);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (829,'Y','Invalid',now(),'',198,'dict.HIVResult.invalid',82900);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (1171,'Y','Negative',now(),'',246,'dict.HIV1NInd.negative',86100);
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (1172,'Y','Indeterminate',now(),'',246,'dict.HIV1NInd.indeterminate',86200);
+
+INSERT INTO clinlims.dictionary (id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (1179,'Y','VL under ARV control', now(),'null',400,'sample.entry.project.vl.arv',1);
+
+INSERT INTO clinlims.dictionary (id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (1180,'Y','Virological Failure', now(),'null',400,'sample.entry.project.vl.virologicalfail',2);
+
+INSERT INTO clinlims.dictionary (id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (1181,'Y','Clinical Failure', now(),'null',400,'sample.entry.project.vl.clinicalfail',3);
+
+INSERT INTO clinlims.dictionary (id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (1182,'Y','Immunological Failure', now() ,'null',400,'sample.entry.project.vl.immunologicalfail',4);
+
+INSERT INTO clinlims.dictionary (id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (1183,'Y','VL Reason Other', now(),'null',400,'sample.entry.project.vl.other',5);
+
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','the paper form doesn''t have any explicit answer.',now(),'NotSpeced',null,'answer.notSpecified',106000);
+
+INSERT INTO clinlims.dictionary(id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','B1',now(),'B1',403,'',10);
+INSERT INTO clinlims.dictionary(id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','J0',now(),'J0',403,'',20);
+INSERT INTO clinlims.dictionary(id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','J15',now(),'J15',403,'',30);
+INSERT INTO clinlims.dictionary(id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','M1',now(),'M1',403,'',40);
+INSERT INTO clinlims.dictionary(id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','M3',now(),'M3',403,'',50);
+INSERT INTO clinlims.dictionary(id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','M6',now(),'M6',403,'',60);
+INSERT INTO clinlims.dictionary(id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','M12',now(),'M12',403,'',70);
+INSERT INTO clinlims.dictionary(id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Other',now(),'Other',403,'labOrder.hiv.followup.byPeriod.other',80);
+
+
+
+
+
+
+
+
+
+
+</sql>
+  </changeSet>
+  
+  <changeSet author="CI OpenELIS developers group" id="3" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="1">select count(*) from clinlims.dictionary_category where id = 57;
+    		</sqlCheck>
+    </preConditions>
+    <comment>update in dictionary_category</comment>
+    <sql>
+UPDATE clinlims.dictionary_category
+   SET name='Yes No Unknown'
+ WHERE local_abbrev='YesNoUnkn';
+	
+	</sql>
+</changeSet>
+</databaseChangeLog>

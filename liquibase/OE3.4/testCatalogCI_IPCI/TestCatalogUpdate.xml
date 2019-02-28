@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+
+	<changeSet author="paulsc" id="1" context="CI_IPCI">
+		<comment>Adds needed dictionary values</comment>
+		<sqlFile path="OE3.4/testCatalogCI_IPCI/dictionary.sql"/>
+	</changeSet>
+
+	<changeSet author="paulsc" id="2" context="CI_IPCI">
+		<comment>Adds needed uom values</comment>
+		<sqlFile path="OE3.4/testCatalogCI_IPCI/UOM.sql"/>
+	</changeSet>
+
+    <changeSet author="paulsc" id="3" context="CI_IPCI">
+        <comment>adds in the new panels</comment>
+        <sqlFile path="OE3.4/testCatalogCI_IPCI/Panel.sql" />
+    </changeSet>
+
+    <changeSet author="paulsc" id="4" context="CI_IPCI">
+     <comment>add the new sample types</comment>
+     <sqlFile path="OE3.4/testCatalogCI_IPCI/sampleType.sql" />
+     <sqlFile path="OE3.4/testCatalogCI_IPCI/typeOrder.sql" />
+    </changeSet>
+
+    <changeSet author="paulsc" id="5" context="CI_IPCI">
+     <comment>Associates new and existing sample types with new and existing panels</comment>
+     <sqlFile path="OE3.4/testCatalogCI_IPCI/sampleTypePanel.sql" />
+    </changeSet>
+
+    <changeSet author="paulsc" id="6" context="CI_IPCI">
+        <comment>Order test sections</comment>
+        <sql>
+            INSERT INTO clinlims.test_section( id, "name", description, org_id, is_external, lastupdated, display_key )
+            VALUES (nextval( 'test_section_seq' ), 'Malaria', 'Malaria',
+                    (select id from clinlims.organization where name = 'Haiti' ), 'N', now(), 'test.section.malaria' ),
+                    (nextval( 'test_section_seq' ), 'mycology', 'mycology',
+                    (select id from clinlims.organization where name = 'Haiti' ), 'N', now(), 'test.section.mycologie' );
+            UPDATE clinlims.test_section set is_active = 'Y' where name = 'Parasitology';
+        </sql>
+        <sqlFile path="OE3.4/testCatalogCI_IPCI/SectionOrder.sql" />
+    </changeSet>
+
+    <changeSet author="paulsc" id="7" context="CI_IPCI">
+        <comment>adds tests</comment>
+        <sqlFile path="OE3.4/testCatalogCI_IPCI/Test.sql" />
+    </changeSet>
+
+    <changeSet author="paulsc" id="8" context="CI_IPCI">
+        <comment>Add tests to panels</comment>
+        <sqlFile path="OE3.4/testCatalogCI_IPCI/testPanel.sql" />
+    </changeSet>
+
+    <changeSet author="paulsc" id="9" context="CI_IPCI">
+        <comment>Add tests to sample types</comment>
+        <sqlFile path="OE3.4/testCatalogCI_IPCI/TestSampleTypes.sql" />
+    </changeSet>
+
+    <changeSet author="paulsc" id="10" context="CI_IPCI">
+        <comment>Adds to test_result table</comment>
+        <sqlFile path="OE3.4/testCatalogCI_IPCI/TestResults.sql"/>
+    </changeSet>
+
+    <changeSet author="paulsc" id="11" context="CI_IPCI">
+        <comment>Adds result limits to test</comment>
+        <sqlFile path="OE3.4/testCatalogCI_IPCI/ResultLimits.sql"/>
+    </changeSet>
+
+    <changeSet author="paulsc" id="12" context="CI_IPCI" >
+        <comment>Adds lab order type bindings and test codes</comment>
+        <sqlFile path="OE3.4/testCatalogCI_IPCI/orderTypeResult.sql"/>
+        <sqlFile path="OE3.4/testCatalogCI_IPCI/testCodeResult.sql"/>
+    </changeSet>
+
+    <changeSet author="paulsc" id="13" context="CI_IPCI">
+        <comment>Sets the links between the tests and variable sample types</comment>
+        <sqlFile path="OE3.4/testCatalogCI_IPCI/testDictionary.sql"/>
+    </changeSet>
+    <changeSet id="14" author="paulsc" context="CI_IPCI">
+        <comment>Adds reflex tests</comment>
+        <sqlFile path="OE3.4/testCatalogCI_IPCI/Reflex.sql" />
+    </changeSet>
+    <changeSet id="15" author="paulsc" context="CI_IPCI">
+        <comment>Adds significant digits to test_results</comment>
+        <update tableName="test_result" >
+            <column name="significant_digits" valueNumeric="0" />
+        </update>
+        <sqlFile path="OE3.4/testCatalogCI_IPCI/significantDigits.sql" />
+    </changeSet>
+</databaseChangeLog>
+

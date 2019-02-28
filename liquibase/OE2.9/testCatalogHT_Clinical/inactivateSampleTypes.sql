@@ -1,0 +1,2 @@
+update clinlims.type_of_sample set is_active='N' where description in 
+('Crachat', 'LCR', 'Urine', 'Serum/Urine Concentre du Matin', 'Secretions genito-urinaire', 'Aspiration nasopharyngée', 'Ecouvillonage nasal', 'Ecouvillonage nosapharyngé', 'Sécrétion de la gorge', 'Prélèvement rhinopharyngé', 'Liquide Amniotique', 'Liquide Ascite', 'Liquide Synovial', 'Secretion Vaginale', 'Culot Urinaire', 'DBS', 'Pus' );

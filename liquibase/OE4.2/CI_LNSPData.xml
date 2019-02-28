@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ The contents of this file are subject to the Mozilla Public License
+  ~ Version 1.1 (the "License"); you may not use this file except in
+  ~ compliance with the License. You may obtain a copy of the License at
+  ~ http://www.mozilla.org/MPL/
+  ~
+  ~ Software distributed under the License is distributed on an "AS IS"
+  ~ basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+  ~ License for the specific language governing rights and limitations under
+  ~ the License.
+  ~
+  ~ The Original Code is OpenELIS code.
+  ~
+  ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <!-- Data specific to CI LNSP -->
+    <changeSet id="1" author="paulsc" context="ciLNSP">
+        <comment>Adds dictionary values for TestLocationCodes</comment>
+        <insert tableName="dictionary_category">
+            <column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) " />
+            <column name="description" value="Test Location Codes for CI LNSP" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="name" value="testLocationCode" />
+            <column name="local_abbrev" value="LocatCode" />
+        </insert>
+        <insert tableName="dictionary">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) " />
+            <column name="dict_entry" value="B1" />
+            <column name="local_abbrev" value="B1" />
+            <column name="sort_order" valueNumeric="10" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) " />
+            <column name="is_active" value="Y" />
+        </insert>
+        <insert tableName="dictionary">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) " />
+            <column name="dict_entry" value="J0" />
+            <column name="local_abbrev" value="J0" />
+            <column name="sort_order" valueNumeric="20" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) " />
+            <column name="is_active" value="Y" />
+        </insert>
+        <insert tableName="dictionary">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) " />
+            <column name="dict_entry" value="J15" />
+            <column name="local_abbrev" value="J15" />
+            <column name="sort_order" valueNumeric="30" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) " />
+            <column name="is_active" value="Y" />
+        </insert>
+        <insert tableName="dictionary">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) " />
+            <column name="dict_entry" value="M1" />
+            <column name="local_abbrev" value="M1" />
+            <column name="sort_order" valueNumeric="40" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) " />
+            <column name="is_active" value="Y" />
+        </insert>
+        <insert tableName="dictionary">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) " />
+            <column name="dict_entry" value="M3" />
+            <column name="local_abbrev" value="M3" />
+            <column name="sort_order" valueNumeric="50" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) " />
+            <column name="is_active" value="Y" />
+        </insert>
+        <insert tableName="dictionary">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) " />
+            <column name="dict_entry" value="M6" />
+            <column name="local_abbrev" value="M6" />
+            <column name="sort_order" valueNumeric="60" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) " />
+            <column name="is_active" value="Y" />
+        </insert>
+        <insert tableName="dictionary">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) " />
+            <column name="dict_entry" value="M12" />
+            <column name="local_abbrev" value="M12" />
+            <column name="sort_order" valueNumeric="70" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) " />
+            <column name="is_active" value="Y" />
+        </insert>
+        <insert tableName="dictionary">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) " />
+            <column name="dict_entry" value="Other" />
+            <column name="local_abbrev" value="Other" />
+            <column name="sort_order" valueNumeric="80" />
+            <column name="display_key" value="labOrder.hiv.followup.byPeriod.other" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) " />
+            <column name="is_active" value="Y" />
+        </insert>
+    </changeSet>
+    <changeSet id="2" author="paulsc" context="ciLNSP">
+        <comment>Adds test location code to observation history</comment>
+        <insert tableName="observation_history_type">
+            <column name="id" valueNumeric=" nextval( 'observation_history_type_seq' ) " />
+            <column name="type_name" value="testLocationCode" />
+            <column name="description" value="The location code for this order" />
+            <column name="lastupdated" valueDate=" now() " />
+        </insert>
+        <insert tableName="observation_history_type">
+            <column name="id" valueNumeric=" nextval( 'observation_history_type_seq' ) " />
+            <column name="type_name" value="testLocationCodeOther" />
+            <column name="description" value="The location code for this order if other" />
+            <column name="lastupdated" valueDate=" now() " />
+        </insert>
+    </changeSet>
+    <changeSet author="paulsc" id="3" context="ciLNSP">
+        <comment>Adds new uom</comment>
+        <insert tableName="unit_of_measure">
+            <column name="id" valueNumeric=" nextval( 'unit_of_measure_seq' ) " />
+            <column name="name" value="g/dL" />
+            <column name="description" value="g/dL" />
+            <column name="lastupdated" valueDate=" now() " />
+        </insert>
+    </changeSet>
+    <changeSet id="4" author="paulsc" context="ciLNSP">
+        <comment>Change uom for Concentration Corpusculaire Moyenne en Hémoglobine</comment>
+        <update tableName="test" >
+            <column name="uom_id" valueNumeric=" (select id from clinlims.unit_of_measure where name = 'g/dL') " />
+            <where>name like 'Concentration Corpusculaire Moyenne%' </where>
+        </update>
+    </changeSet>
+    <changeSet author="paulsc" id="5" context="ciLNSP">
+        <comment>Set header text</comment>
+        <update tableName="localization" >
+            <column name="english" value="Cote d'Ivoire LNSP Laboratory Information System" />
+            <column name="french"  value="Système d'Information Électronique de Laboratoire - Côte d'Ivoire LNSP" />
+            <where>cast(id as varchar) = (select value from clinlims.site_information where name = 'bannerHeading') </where>
+        </update>
+    </changeSet>
+</databaseChangeLog>

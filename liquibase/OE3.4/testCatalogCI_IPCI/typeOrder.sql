@@ -1,0 +1,9 @@
+update clinlims.type_of_sample set sort_order=40 where local_abbrev ILIKE 'Sang total';
+update clinlims.type_of_sample set sort_order=50 where local_abbrev ILIKE 'Scotch Tes';
+update clinlims.type_of_sample set sort_order=60 where local_abbrev ILIKE 'Selles';
+update clinlims.type_of_sample set sort_order=10 where local_abbrev ILIKE 'Sérum';
+update clinlims.type_of_sample set sort_order=30 where local_abbrev ILIKE 'Urines';
+update clinlims.type_of_sample set sort_order=190 where local_abbrev ILIKE 'Variable';
+update clinlims.type_of_sample set sort_order=70 where local_abbrev ILIKE 'Biopsie';
+update clinlims.type_of_sample set sort_order=80 where local_abbrev ILIKE 'LCR';
+update clinlims.type_of_sample set sort_order=20 where local_abbrev ILIKE 'Plasma';

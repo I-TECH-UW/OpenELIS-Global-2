@@ -1,0 +1,57 @@
+Determine
+Determine
+Determine
+Bioline
+Bioline
+Bioline
+Stat PaK
+Stat PaK
+Stat PaK
+Dénombrement des lymphocytes CD4 (mm3)
+Dénombrement des lymphocytes  CD4 (%)
+Transaminases GPT (37°C)
+Transaminases G0T (37°C)
+Glucose
+Glucose
+Créatinine
+Amylase
+Albumine recherche miction
+Cholestérol total
+Cholestérol HDL
+Triglycérides
+Mesure de la charge virale
+Prolans (BHCG) urines de 24 h
+Numération des globules blancs
+Numération des globules rouges
+Hémoglobine
+Hémotocrite
+Volume Globulaire Moyen
+Teneur Corpusculaire Moyenne en Hémoglobine
+Concentration Corpusculaire Moyenne en Hémoglobine
+Plaquette
+Polynucléaires Neutrophiles (%)
+Polynucléaires Neutrophiles (Abs)
+Polynucléaires Eosinophiles (%)
+Polynucléaires Eosinophiles (Abs)
+Polynucléaires basophiles (%)
+Polynucléaires basophiles (Abs)
+Lymphocytes (%)
+Lymphocytes (Abs)
+Monocytes (%)
+Monocytes (Abs)
+HBs AG (antigén australia)
+Test urinaire de grossesse
+Protéinurie sur bandelette
+Genie II
+Genie II
+Genie II 1/10
+Genie II 1/10
+Genie II 1/100
+Genie II 1/100
+Vironstika
+Murex
+Integral
+Western blot 1
+Western blot 2
+p24Ag
+DNA PCR

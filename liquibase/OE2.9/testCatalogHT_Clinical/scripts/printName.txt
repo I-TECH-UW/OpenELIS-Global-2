@@ -1,0 +1,356 @@
+Globules Blancs
+Globules Rouges
+Hb
+Ht
+VGM
+TCMH
+CCMH
+Plaquettes
+Neutrophiles
+Lymphocytes
+Globules Blancs
+Globules Rouges
+Hemoglobine
+Hematocrite
+Plaquettes
+Mixtes
+Neutrophiles
+Lymphocytes
+Monocytes
+Eosinophiles
+Basophiles
+Vitesse de Sedimentation
+Temps de Coagulation en tube
+Temps de Coagulation
+Temps de saignement
+Electrophorese de l'hemoglobine
+Sickling Test
+Reticulo-Auto
+Reticulo-Manu
+PTT
+PT
+INR
+Facteur VIII
+Facteur IX
+Heparinemie
+AT III Dosage
+AT III Active
+Groupe sanguin ABO
+Groupe sanguin Rhesus
+crossmatch
+crossmatch
+Coombs Direct
+
+
+Coombs Indirect
+
+
+Azote de l'Uree
+Uree
+creatinine 
+Glycemie
+Glycemie
+Glycemie
+Proteines
+Chlore
+glycemie
+Albumine
+α1 globuline
+α2 globuline
+β globuline
+ϒ globuline
+Phosphatase Acide
+Chlorures
+Chlorures
+CPK
+Amylase
+Lipase
+Chlorures
+Sodium
+Potassium
+Bicarbonates
+Calcium
+magnésium 
+phosphore 
+Lithium
+Fer Serique
+Bilirubine totale
+Bilirubine directe
+Bilirubine indirecte
+SGOT/ AST
+SGPT/ ALT
+Phosphatase Alcaline
+Cholesterol Total
+Triglyceride
+Lipide
+HDL
+LDL
+VLDL
+MBG 
+Hémoglobine glycosee
+
+LDH
+Triponine I
+Ph
+PaCO2
+HCO3
+O2 Saturation
+PaO2
+BE
+Ph
+PaCO2
+HCO3
+O2 Saturation
+PaO2
+BE
+Glycémie 
+Glycemie Fasting
+Glycémie provoquee 1/2 hre
+Glycémie provoquee 1hre
+Glycémie provoquee 2hres
+Glycémie provoquee 3 hres
+Glycémie provoquee 4 hres
+Glycémie provoquee 5 hres
+Glycemie Fastning
+Glycemie postprandiale 2hres
+Azote Urée
+Urée (calculée)
+Créatinine
+Bilirubine total
+SGPT (ALT)
+SGOT (AST)
+Cholestérol total
+HDL-cholestérol
+LDL-cholesterol (calculée)
+VLDL – cholesterol (calculée)
+Triglycéride
+Acide urique
+Sodium
+Potassium
+Chlorure
+Calcium (Ca++)
+Protéines totales
+Albumine
+Creatinine
+Creatinine
+Creatinine
+SGPT (ALT)
+SGPT (ALT)
+SGPT (ALT)
+SGOT (AST)
+SGOT (AST)
+SGOT (AST)
+CRP Quantitatif
+CRP Quantitatif
+C3 du Complement
+C4 du complement
+C3 du Complement
+C4 du complement
+Facteur Rhumatoide
+
+
+Bacteries
+Levures Simples
+Levures Bourgeonantes
+Trichomonas vaginalis
+Leucocytes
+Hematies
+Filaments Myceliens
+Cellules Epitheliales
+Bacteries
+Levures Simples
+Levures Bourgeonantes
+Trichomonas hominis
+Leucocytes
+Hematies
+Filament Mycelien
+Cellules Epitheliales
+KOH
+Test de Rivalta
+
+Catalase
+Oxydase
+Coagulase libre
+DNAse
+Hydrolyse de l'esculine
+Urée-tryptophane
+Mobilité
+Test à la potasse
+Test à la porphyrine
+ONPG
+Réaction de Voges-Proskauer
+Camp-test
+Techniques d'agglutination
+Coloration de Gram
+Coloration de Ziehl-Neelsen
+Coloration à l'auramine
+Coloration à l'acridine orange
+Coloration de Kinyoun
+
+Frottis Vaginal Gram
+Frottis Uretral Gram
+Cholera Rapide
+Coproculture
+Couleur
+Liquefaction
+pH
+Fructose
+Volume
+Compte Spermes
+Formes normales
+Formes anormales
+Motilite STAT
+Motilite/heure
+Motilite/3heures
+Coloration de Gram
+
+
+Culture Bacterienne
+Hemoculture
+
+Couleur
+Aspect
+Densite
+pH
+Proteines
+Glucose
+Cetones
+Bilirubine
+Sang 
+Leucocytes
+Acide ascorbique
+Urobilinogene
+Nitrites
+Hematies
+Leucocytes
+Cell Epith
+Bacteries
+Levures
+Mycelium
+spores
+trichomonas
+Cylindres
+Cristaux
+
+
+Couleur
+Aspect
+Sang Occulte
+B. Methylene
+Examen Microscopique direct
+Examen Microscopique apres concentration
+Cryptosporidium et Oocystes
+Microfiliares
+
+Malaria
+Malaria Test Rapide
+
+CD4 en mm3
+CD4 en %
+
+VIH test rapide
+VIH test rapide
+VIH test rapide
+VIH Elisa
+VIH Elisa
+VIH Elisa
+Hepatite B Ag
+Hepatite B Ag
+Hepatite B Ag
+Hepatite C Aby
+Hepatite C Aby
+Hepatite C Aby
+Dengue NS1 Ag
+Dengue NS1 Ag
+Dengue NS1 Ag
+
+Recherche BAAR par Ziehl Neelsen Specimen 1
+Recherche BAAR par Ziehl Neelsen Specimen 2
+Recherche BAAR par Ziehl Neelsen Specimen 3
+Recherche de BARR par Fluorochrome Specimen 1
+Recherche de BARR par Fluorochrome Specimen 2
+Recherche de BARR par Fluorochrome Specimen 3
+
+Recherche BAAR Specimen 1
+Recherche BAAR Specimen 2
+Recherche BAAR Specimen 3
+Rech BAAR Fluo 1
+Rech BAAR Fluo 2
+Rech BAAR Fluo 3
+Culture BK
+PPD Qualitatif
+PPD Quantitatif
+
+Prolactine
+FSH
+FSH
+LH
+LH
+Oestrogene
+Progesterone
+T3
+B-HCG 
+B-HCG 
+Test Grossesse
+T4
+TSH
+
+LCR GRAM
+LCR ZIELH
+
+
+Toxoplasma IgG
+Toxoplasma IgM
+Malaria Test Rapide
+Malaria Test Rapide
+Syphilis Test Rapide
+Syphilis Test Rapide
+Malaria Test Rapide
+Syphilis Rapide
+HTLV I et II
+HTLV I et II
+HTLV I et II
+Syphilis RPR
+Syphilis RPR
+Syphilis TPHA
+Syphilis RPR
+Syphilis TPHA
+Syphilis TPHA
+H Pilori
+H Pilori
+H Pilori
+Herpes Simplex
+Herpes Simplex
+Chlamydia Ab
+Chlamydia Ag
+CRP
+CRP
+CRP
+ASO
+ASO
+ASO
+Widal Ag O 
+Widal Ag H
+Widal Ag O 
+Widal Ag H
+Mono Test
+LE Cell
+Dengue Ig G
+Dengue Ig A
+CMV Ig G
+CMV Ig A
+Cryptococcal Ag
+Clostridium Difficile Toxin A & B                                                                                         
+
+Determine VIH
+Determine VIH
+Determine VIH
+Colloidal Gold HIV
+Colloidal Gold HIV
+Colloidal Gold HIV
+Syphilis Bioline
+Syphilis Bioline
+Syphilis Bioline
+
+PSA
+PSA

@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <!--Add change tags here-->
+    <!-- Data specific to HaitiLNSP -->
+    <changeSet id="1" author="paulscLNSP" context="haitiLNSP">
+    <preConditions onFail="WARN">
+    <sqlCheck expectedResult="0">
+             select count(*) from clinlims.project;
+    </sqlCheck>
+    </preConditions>
+    <comment>Initializes the project table for LNSP</comment>
+    <insert schemaName="clinlims" tableName="project">
+       <column name="id" valueNumeric="1"/>
+       <column name="name" value="Testing"/>
+       <column name="description" value="Sample sent to lab for testing"/>
+       <column name="is_active" value="1"/>
+       <column name="display_key" value="database.project.testing"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="project">
+       <column name="id" valueNumeric="2"/>
+       <column name="name" value="Confirmation"/>
+       <column name="description" value="Sample sent to lab for confirmation of result"/>
+       <column name="is_active" value="1"/>
+       <column name="display_key" value="database.project.confirmation"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="project">
+       <column name="id" valueNumeric="3"/>
+       <column name="name" value="Quality Control"/>
+       <column name="description" value="Sample is part of quality control"/>
+       <column name="is_active" value="1"/>
+       <column name="display_key" value="database.project.quality_control"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="project">
+       <column name="id" valueNumeric="4"/>
+       <column name="name" value="EEQ"/>
+       <column name="description" value="Sample is part of external quality control"/>
+       <column name="is_active" value="1"/>
+       <column name="display_key" value="database.project.eeq"/>
+    </insert>
+    <sql>
+    update clinlims.project set lastupdated=now();
+    ALTER SEQUENCE clinlims.project_seq RESTART WITH 5;
+    </sql>
+    </changeSet>
+    
+    <changeSet author="paulsc" id="2" context="haitiLNSP" >
+           <comment>Setting Status for Haiti LNSP</comment>
+           <delete schemaName="clinlims" tableName="status_of_sample"/>
+           <insert schemaName="clinlims" tableName="status_of_sample">
+                   <column name="id" valueNumeric="1"/>
+                   <column name="code" value="1"/>
+                   <column name="lastupdated" valueDate='now()' />
+                   <column name="status_type" value="SAMPLE"/>
+                   <column name="name" value="Test Entered"/>
+                   <column name="description" value="No tests have been run for this sample"/>
+                   <column name="display_key" value="status.sample.notStarted"/>
+           </insert>
+           <insert schemaName="clinlims" tableName="status_of_sample">
+                   <column name="id" valueNumeric="2"/>
+                   <column name="code" value="1"/>
+                   <column name="lastupdated" valueDate='now()' />
+                   <column name="status_type" value="SAMPLE"/>
+                   <column name="name" value="Testing Started"/>
+                   <column name="description" value="Some tests have been run on this sample"/>
+                   <column name="display_key" value="status.sample.started"/>
+           </insert>
+           <insert schemaName="clinlims" tableName="status_of_sample">
+                   <column name="id" valueNumeric="3"/>
+                   <column name="code" value="1"/>
+                   <column name="lastupdated" valueDate='now()' />
+                   <column name="status_type" value="SAMPLE"/>
+                   <column name="name" value="Testing finished"/>
+                   <column name="description" value="All tests have been run on this sample"/>
+                   <column name="display_key" value="status.sample.finished"/>
+           </insert>
+           <insert schemaName="clinlims" tableName="status_of_sample">
+                   <column name="id" valueNumeric="4"/>
+                   <column name="code" value="1"/>
+                   <column name="lastupdated" valueDate='now()' />
+                   <column name="status_type" value="ANALYSIS"/>
+                   <column name="name" value="Not Tested"/>
+                   <column name="description" value="This test has not yet been done"/>
+                   <column name="display_key" value="status.test.notStarted"/>
+           </insert>
+           <insert schemaName="clinlims" tableName="status_of_sample">
+                   <column name="id" valueNumeric="5"/>
+                   <column name="code" value="1"/>
+                   <column name="lastupdated" valueDate='now()' />
+                   <column name="status_type" value="ANALYSIS"/>
+                   <column name="name" value="Started"/>
+                   <column name="description" value="The test was started but not finished"/>
+                   <column name="display_key" value="status.test.started"/>
+           </insert>
+           <insert schemaName="clinlims" tableName="status_of_sample">
+                   <column name="id" valueNumeric="6"/>
+                   <column name="code" value="1"/>
+                   <column name="lastupdated" valueDate='now()' />
+                   <column name="status_type" value="ANALYSIS"/>
+                   <column name="name" value="Finished"/>
+                   <column name="description" value="The results of the test were accepted"/>
+                   <column name="display_key" value="status.test.valid"/>
+           </insert>
+           <insert schemaName="clinlims" tableName="status_of_sample">
+                   <column name="id" valueNumeric="7"/>
+                   <column name="code" value="1"/>
+                   <column name="lastupdated" valueDate='now()' />
+                   <column name="status_type" value="ANALYSIS"/>
+                   <column name="name" value="Invalid Not Signed"/>
+                   <column name="description" value="The result was not valid and not signed by the supervisor"/>
+                   <column name="display_key" value="status.test.invalid.notsigned"/>
+           </insert>
+</changeSet>
+
+<changeSet author="paulsc" id="3" context="haitiLNSP" runOnChange="false">
+           <comment>Update analysis and sample so that the status_id matches status</comment>
+           <sql>
+           UPDATE clinlims.sample s set status_id = cast(( select status from clinlims.sample where s.id = id ) as numeric);
+           UPDATE clinlims.analysis a set status_id = cast(( select status from clinlims.analysis where a.id = id ) as numeric);
+           </sql>
+</changeSet>
+
+<changeSet author="paulsc" id="4" context="haitiLNSP">
+    <comment>Sets the app name in the site information database</comment>
+    <delete schemaName="clinlims" tableName="site_information">
+            <where>name = 'appName'</where>
+    </delete>
+    <insert schemaName="clinlims" tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+            <column name="name" value="appName"/>
+            <column name="description" value="The name of the application."/>
+            <column name="value" value="LNSP_HaitiOpenElis"/>
+            <column name="lastupdated" valueDate=" now() "/>
+    </insert>
+</changeSet>
+
+<changeSet id="6" author="pauls" context="haitiLNSP" runOnChange="true">
+    <comment>Adds Mantenance Admin to the module site_information</comment>
+    <sql>
+        INSERT INTO clinlims.system_role_module( id, has_select, has_add, has_update, has_delete, system_role_id, system_module_id)
+        VALUES (nextval('clinlims.system_user_module_seq' ), 'Y', 'Y', 'Y', 'Y',
+            (select id from clinlims.system_role where name = 'Maintenance Admin' limit 1 ),
+            (select id from clinlims.system_module where name = 'SiteInformation' limit 1));
+    </sql>
+</changeSet>
+
+ <changeSet id="7" author="pauls" context="haitiLNSP" runOnChange="true">
+    <comment>Adding localization keys to the sample type table</comment>
+        <update schemaName="clinlims" tableName="type_of_sample">
+            <column name="display_key" value="sample.type.spit"/>
+            <where>description='Crachat'</where>
+        </update>
+        <update schemaName="clinlims" tableName="type_of_sample">
+            <column name="display_key" value="sample.type.cfs"/>
+            <where>description='LCR'</where>
+        </update>
+        <update schemaName="clinlims" tableName="type_of_sample">
+            <column name="display_key" value="sample.type.ambionic.fluid"/>
+            <where>description='Liquide Amniotique'</where>
+        </update>
+        <update schemaName="clinlims" tableName="type_of_sample">
+            <column name="display_key" value="sample.type.ascite.fluid"/>
+            <where>description='Liquide Ascite'</where>
+        </update>
+        <update schemaName="clinlims" tableName="type_of_sample">
+            <column name="display_key" value="sample.type.pleural.fluid"/>
+            <where>description='Liquide Pleural'</where>
+        </update>
+        <update schemaName="clinlims" tableName="type_of_sample">
+            <column name="display_key" value="sample.type.synovial.fluid"/>
+            <where>description='Liquide Synovial'</where>
+        </update>
+        <update schemaName="clinlims" tableName="type_of_sample">
+            <column name="display_key" value="sample.type.plasma"/>
+            <where>description='Plasma'</where>
+        </update>
+        <update schemaName="clinlims" tableName="type_of_sample">
+            <column name="display_key" value="sample.type.pus"/>
+            <where>description='Pus'</where>
+        </update>
+        <update schemaName="clinlims" tableName="type_of_sample">
+            <column name="display_key" value="sample.type.saliva"/>
+            <where>description='Salive'</where>
+        </update>
+        <update schemaName="clinlims" tableName="type_of_sample">
+            <column name="display_key" value="sample.type.blood"/>
+            <where>description='Sang'</where>
+        </update>
+        <update schemaName="clinlims" tableName="type_of_sample">
+            <column name="display_key" value="sample.type.throat"/>
+            <where>description='Secretion de la Gorge'</where>
+        </update>
+        <update schemaName="clinlims" tableName="type_of_sample">
+            <column name="display_key" value="sample.type.urethral"/>
+            <where>description='Secretion Urethrale'</where>
+        </update>
+        <update schemaName="clinlims" tableName="type_of_sample">
+            <column name="display_key" value="sample.type.vaginal"/>
+            <where>description='Secretion Vaginale'</where>
+        </update>
+        <update schemaName="clinlims" tableName="type_of_sample">
+            <column name="display_key" value="sample.type.stool"/>
+            <where>description='Selles'</where>
+        </update>
+        <update schemaName="clinlims" tableName="type_of_sample">
+            <column name="display_key" value="sample.type.serum"/>
+            <where>description='Serum'</where>
+        </update>
+        <update schemaName="clinlims" tableName="type_of_sample">
+            <column name="display_key" value="sample.type.urine"/>
+            <where>description='Urine'</where>
+        </update>
+ </changeSet>
+ 
+ <changeSet author="paulsc" id="8" context="haitiLNSP" runOnChange="false">
+    <comment>Adjusts the current result module names to reflect the new naming schema</comment>
+    <update schemaName="clinlims" tableName="system_module">
+        <column name="name" value="LogbookResults:chem"/>
+        <where>name='LogbookResultsChem'</where>
+    </update>
+    <update schemaName="clinlims" tableName="system_module">
+        <column name="name" value="LogbookResults:HIV"/>
+        <where>name='LogbookResultsVCT'</where>
+    </update>
+    <update schemaName="clinlims" tableName="system_module">
+        <column name="name" value="LogbookResults:bacteriology"/>
+        <where>name='LogbookResultsBacteria'</where>
+    </update>
+    <update schemaName="clinlims" tableName="system_module">
+        <column name="name" value="LogbookResults:ECBU"/>
+        <where>name='LogbookResultsECBU'</where>
+    </update>
+    <update schemaName="clinlims" tableName="system_module">
+        <column name="name" value="LogbookResults:hematology"/>
+        <where>name='LogbookResultsHematology'</where>
+    </update>
+    <update schemaName="clinlims" tableName="system_module">
+        <column name="name" value="LogbookResults:immuno"/>
+        <where>name='LogbookResultsImmuno'</where>
+    </update>
+    <update schemaName="clinlims" tableName="system_module">
+        <column name="name" value="LogbookResults:parasitology"/>
+        <where>name='LogbookResultsParasitology'</where>
+    </update>
+    <sql>
+       delete from system_module where id not in (select min(id) from system_module group by name );
+    </sql>
+</changeSet>
+
+<changeSet author="paulsc" id="5" context="haitiLNSP">
+       <comment>Sets modules to roles</comment>
+       <delete schemaName="clinlims" tableName="system_role_module"/>
+       <loadData file="Haiti_CSV/Haiti_Role_Module.csv" schemaName="clinlims" tableName="system_role_module">
+             <column name="id" header="id" type="NUMERIC"/>
+             <column name="has_select" header="has_select" type="STRING"/>
+             <column name="has_add" header="has_add" type="STRING"/>
+             <column name="has_update" header="has_update" type="STRING"/>
+             <column name="has_delete" header="has_delete" type="STRING"/>
+             <column name="system_role_id" header="system_role_id" type="NUMERIC"/>
+             <column name="system_module_id" header="system_module_id" type="NUMERIC"/>
+       </loadData>
+</changeSet>
+<changeSet author="paulsc" id="6" context="haitiLNSP">
+    <comment>Adds referral types</comment>
+    <insert schemaName="clinlims" tableName="referral_type">
+            <column name="id" valueNumeric=" nextval( 'referral_type_seq' ) "/>
+            <column name="name" value="Confirmation"/>
+            <column name="description" value="Sent out to confirm result"/>
+            <column name="display_key" value="referral.type.confirmation"/>
+            <column name="lastupdated" valueDate=" now() "/>
+    </insert>
+    <insert schemaName="clinlims" tableName="referral_type">
+            <column name="id" valueNumeric=" nextval( 'referral_type_seq' ) "/>
+            <column name="name" value="QA"/>
+            <column name="description" value="Quality assurance"/>
+            <column name="display_key" value="referral.type.qa"/>
+            <column name="lastupdated" valueDate=" now() "/>
+    </insert>
+    <insert schemaName="clinlims" tableName="referral_type">
+            <column name="id" valueNumeric=" nextval( 'referral_type_seq' ) "/>
+            <column name="name" value="EQA"/>
+            <column name="description" value="External Qaulity Assurance"/>
+            <column name="display_key" value="referral.type.eqa"/>
+            <column name="lastupdated" valueDate=" now() "/>
+    </insert>
+</changeSet>
+
+<changeSet author="paulsc" id="7" context="haitiLNSP">
+      	<comment>Add referral reasons to DB</comment>
+      	<loadData file="Haiti_CSV/Haiti_Referral_Reasons.csv" schemaName="clinlims" tableName="referral_reason">
+      		<column name="id" header="id" type="NUMERIC"/>
+            <column name="name" header="name" type="STRING"/>
+            <column name="description" header="description" type="STRING"/>
+            <column name="display_key" header="display_key" type="STRING"/>
+            <column name="lastupdated" header="lastUpdated" type="DATE"/>
+      	</loadData>
+</changeSet>
+<changeSet author="paulsc" id="9" context="haitiLNSP">
+      	<comment>Add referral reasons to DB</comment>
+      	<loadData file="Haiti_CSV/Haiti_Referral_Reasons_Rev1.csv" schemaName="clinlims" tableName="referral_reason">
+      		<column name="id" header="id" type="NUMERIC"/>
+            <column name="name" header="name" type="STRING"/>
+            <column name="description" header="description" type="STRING"/>
+            <column name="display_key" header="display_key" type="STRING"/>
+            <column name="lastupdated" header="lastUpdated" type="DATE"/>
+      	</loadData>
+</changeSet>
+<changeSet author="paulsc" id="10" context="haitiLNSP">
+       <comment>Sets modules to roles</comment>
+       <delete schemaName="clinlims" tableName="system_role_module"/>
+       <loadData file="Haiti_CSV/Haiti_Role_Module_Rev4.csv" schemaName="clinlims" tableName="system_role_module">
+             <column name="id" header="id" type="NUMERIC"/>
+             <column name="has_select" header="has_select" type="STRING"/>
+             <column name="has_add" header="has_add" type="STRING"/>
+             <column name="has_update" header="has_update" type="STRING"/>
+             <column name="has_delete" header="has_delete" type="STRING"/>
+             <column name="system_role_id" header="system_role_id" type="NUMERIC"/>
+             <column name="system_module_id" header="system_module_id" type="NUMERIC"/>
+       </loadData>
+</changeSet>
+<changeSet author="paulsc" id="11" context="haitiLNSP">
+       <comment>Fixing screwup Sets modules to roles</comment>
+       <loadData file="Haiti_CSV/Haiti_Role_Module.csv" schemaName="clinlims" tableName="system_role_module">
+             <column name="id" header="id" type="NUMERIC"/>
+             <column name="has_select" header="has_select" type="STRING"/>
+             <column name="has_add" header="has_add" type="STRING"/>
+             <column name="has_update" header="has_update" type="STRING"/>
+             <column name="has_delete" header="has_delete" type="STRING"/>
+             <column name="system_role_id" header="system_role_id" type="NUMERIC"/>
+             <column name="system_module_id" header="system_module_id" type="NUMERIC"/>
+       </loadData>
+</changeSet>
+<changeSet author="paulsc" id="12" context="haitiLNSP">
+       <comment>Fixing screwup Sets modules to roles</comment>
+       <loadData file="Haiti_CSV/Haiti_Role_Module_Rev1.csv" schemaName="clinlims" tableName="system_role_module">
+             <column name="id" header="id" type="NUMERIC"/>
+             <column name="has_select" header="has_select" type="STRING"/>
+             <column name="has_add" header="has_add" type="STRING"/>
+             <column name="has_update" header="has_update" type="STRING"/>
+             <column name="has_delete" header="has_delete" type="STRING"/>
+             <column name="system_role_id" header="system_role_id" type="NUMERIC"/>
+             <column name="system_module_id" header="system_module_id" type="NUMERIC"/>
+       </loadData>
+</changeSet>
+<changeSet author="paulsc" id="13" context="haitiLNSP">
+       <comment>Fixing screwup Sets modules to roles</comment>
+       <loadData file="Haiti_CSV/Haiti_Role_Module_Rev2.csv" schemaName="clinlims" tableName="system_role_module">
+             <column name="id" header="id" type="NUMERIC"/>
+             <column name="has_select" header="has_select" type="STRING"/>
+             <column name="has_add" header="has_add" type="STRING"/>
+             <column name="has_update" header="has_update" type="STRING"/>
+             <column name="has_delete" header="has_delete" type="STRING"/>
+             <column name="system_role_id" header="system_role_id" type="NUMERIC"/>
+             <column name="system_module_id" header="system_module_id" type="NUMERIC"/>
+       </loadData>
+</changeSet>
+<changeSet author="paulsc" id="14" context="haitiLNSP">
+       <comment>Fixing screwup Sets modules to roles</comment>
+       <loadData file="Haiti_CSV/Haiti_Role_Module_Rev3.csv" schemaName="clinlims" tableName="system_role_module">
+             <column name="id" header="id" type="NUMERIC"/>
+             <column name="has_select" header="has_select" type="STRING"/>
+             <column name="has_add" header="has_add" type="STRING"/>
+             <column name="has_update" header="has_update" type="STRING"/>
+             <column name="has_delete" header="has_delete" type="STRING"/>
+             <column name="system_role_id" header="system_role_id" type="NUMERIC"/>
+             <column name="system_module_id" header="system_module_id" type="NUMERIC"/>
+       </loadData>
+</changeSet>
+<changeSet author="paulsc" id="15" context="haitiLNSP">
+       <comment>Adding organizations for referrals</comment>
+       <loadData file="Haiti_CSV/RefOutOrganization.csv" schemaName="clinlims" tableName="organization">
+            <column name="id" header="id" type="NUMERIC"/>
+			<column name="name" header="name"  type="STRING" />
+			<column name="lastupdated" header="lastupdated" type="DATE"/>
+			<column name="is_active" header="active" type="STRING"/>
+       </loadData>
+       <loadData file="Haiti_CSV/RefOutOrgOrgType.csv" schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" header="org_id" type="NUMERIC"/>
+			<column name="org_type_id" header="org_type_id"  type="NUMERIC" />
+       </loadData>
+  </changeSet>
+  <changeSet author="paulsc" id="16" context="haitiLNSP">
+             <comment>Adding dictionary category HIV conclusion and dictionary values</comment>
+             <delete schemaName="clinlims" tableName="dictionary">
+                     <where>dictionary_category_id=( select id from clinlims.dictionary_category where description='Conclusion' )</where>
+             </delete>
+             <delete schemaName="clinlims" tableName="dictionary_category">
+                     <where>description='Conclusion'</where>
+             </delete>
+             <insert schemaName="clinlims" tableName="dictionary_category">
+                     <column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) "/>
+                     <column name="name" value="HIVResult"/>
+                     <column name="description" value="Conclusion"/>
+                     <column name="local_abbrev" value="Conclusion"/>
+                     <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="dictionary">
+                     <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+                     <column name="is_active" value="Y"/>
+                     <column name="dict_entry" value="Positive"/>
+                     <column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+                      <column name="lastupdated" valueDate='now()' />
+                      <column name="display_key" value="dict.HIVResult.positive"/>
+        </insert>
+        <insert schemaName="clinlims" tableName="dictionary">
+                     <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+                     <column name="is_active" value="Y"/>
+                     <column name="dict_entry" value="Negative"/>
+                     <column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+                      <column name="lastupdated" valueDate='now()' />
+                      <column name="display_key" value="dict.HIVResult.negative"/>
+        </insert>
+        <insert schemaName="clinlims" tableName="dictionary">
+                     <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+                     <column name="is_active" value="Y"/>
+                     <column name="dict_entry" value="Indeterminate"/>
+                     <column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+                      <column name="lastupdated" valueDate='now()' />
+                      <column name="display_key" value="dict.HIVResult.indeterminate"/>
+        </insert>
+  </changeSet>
+ <changeSet author="paulsc" id="17" context="haitiLNSP">
+<comment>drops anaylsis status of 'started' and adds analysis status of 'refered'. Note that this is a repeat of changelog.xml paulsc 48 which was overwritten</comment>
+               <delete tableName="status_of_sample" schemaName="clinlims">
+                       <where>name = 'Started'</where>
+               </delete>
+               <insert tableName="status_of_sample" schemaName="clinlims">
+                       <column name="id" valueNumeric=" (nextVal('status_of_sample_seq')) "/>
+                       <column name="description" value="test has been referred to an outside lab and the results have not been returned"/>
+                       <column name="code" valueNumeric="1"/>
+                       <column name="status_type" value="ANALYSIS"/>
+                       <column name="lastupdated" valueDate=" now() "/>
+                       <column name="name" value="referred out"/>
+                       <column name="display_key" value="status.test.referred.out"/>
+               </insert>
+</changeSet>
+<changeSet author="paulsc" id="18" context="haitiLNSP">
+           <comment>Sets the site id to "lnsp"</comment>
+           <update schemaName="clinlims" tableName="site_information">
+                   <column name="value" value="lnsp"/>
+                   <column name="lastupdated" valueDate=" now() "/>
+                   <where>name='siteNumber'</where>
+           </update>
+</changeSet>
+<changeSet author="paulsc" id="19" context="haitiLNSP">
+           <comment>sets the site id to 'lnsp' for haiti LNSP</comment>
+           <update schemaName="clinlims" tableName="site_information">
+                   <column name="value" value="lnsp"/>
+                   <where>name='siteNumber'</where>
+           </update>
+</changeSet>
+<changeSet author="paulsc" id="20" context="haitiLNSP">
+           <comment>Adds sample confirmation entry to the sample entry role</comment>
+           <insert schemaName="clinlims" tableName="system_role_module">
+                   <column name="id" valueNumeric=" nextval( 'system_user_module_seq' ) "/>
+                   <column name="has_select" value="Y"/>
+                   <column name="has_add" value="Y"/>
+                   <column name="has_update" value="Y"/>
+                   <column name="has_delete" value="Y"/>
+                   <column name="system_role_id" valueNumeric=" (select id from clinlims.system_role where name ='Intake' ) "/>
+                   <column name="system_module_id" valueNumeric=" (select id from clinlims.system_module where name='SampleConfirmationEntry') "  />
+           </insert>
+           <insert schemaName="clinlims" tableName="system_role_module">
+                   <column name="id" valueNumeric=" nextval( 'system_user_module_seq' ) "/>
+                   <column name="has_select" value="Y"/>
+                   <column name="has_add" value="Y"/>
+                   <column name="has_update" value="Y"/>
+                   <column name="has_delete" value="Y"/>
+                   <column name="system_role_id" valueNumeric=" (select id from clinlims.system_role where name ='Supervisor' ) "/>
+                   <column name="system_module_id" valueNumeric=" (select id from clinlims.system_module where name='SampleConfirmationEntry') "  />
+           </insert>
+</changeSet>
+ <changeSet author="paulsc" id="21" context="haitiLNSP">
+       <comment>Adding organizations for referrals after droping current assignment as refer out types</comment>
+       <delete schemaName="clinlims" tableName="organization_organization_type">
+               <where>org_type_id = ( select id from clinlims.organization_type where short_name = 'referralLab') </where>
+       </delete>
+       <loadData file="Haiti_CSV/RefOutOrganization_Rev1.csv" schemaName="clinlims" tableName="organization">
+            <column name="id" header="id" type="NUMERIC"/>
+			<column name="name" header="name"  type="STRING" />
+			<column name="lastupdated" header="lastupdated" type="DATE"/>
+			<column name="is_active" header="active" type="STRING"/>
+       </loadData>
+       <loadData file="Haiti_CSV/RefOutOrgOrgType_Rev1.csv" schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" header="org_id" type="NUMERIC"/>
+			<column name="org_type_id" header="org_type_id"  type="NUMERIC" />
+       </loadData>
+  </changeSet>
+ <changeSet author="paulsc" id="22" context="haitiLNSP">
+            <comment>Adding the user for IndicatorAggregationReportServlet</comment>
+            <insert schemaName="clinlims" tableName="login_user">
+                    <column name="id" valueNumeric=" nextval( 'login_user_seq' ) "/>
+                    <column name="login_name" value="aggUser"/>
+                    <column name="password" value="fruwkmHht3w1j3kXBc2CcQ=="/>
+                    <column name="password_expired_dt" valueDate="2050-01-01"/>
+                    <column name="account_locked" value="N"/>
+                    <column name="account_disabled" value="N"/>
+                    <column name="is_admin" value="N"/>
+                    <column name="user_time_out" value="480"/>
+            </insert>
+ </changeSet>
+ <changeSet author="paulsc" id="23" context="haitiLNSP" >
+	<comment>Sets the default for site_information ResultTechnicianRequired to true</comment>
+	<update schemaName="clinlims" tableName="site_information" >
+		<column name="value" value="true" />
+		<where>name = 'ResultTechnicianName' </where>
+	</update>
+</changeSet>
+<changeSet  author="paulsc" id="24" context="haitiLNSP" >
+	<comment>Makes the autofill results tech name with login user on by default</comment>
+	<update schemaName="clinlims" tableName="site_information" >
+		<column name="value" valueBoolean="true" />
+		<where>name = 'autoFillTechNameUser'</where>
+	</update>
+</changeSet>
+ <changeSet author="paulsc" id="25" context="haitiLNSP">
+       <comment>Sets modules to roles</comment>
+       <loadData file="Haiti_CSV/HaitiLNSP_Role_Module.csv" schemaName="clinlims" tableName="system_role_module">
+             <column name="id" header="id" type="NUMERIC"/>
+             <column name="has_select" header="has_select" type="STRING"/>
+             <column name="has_add" header="has_add" type="STRING"/>
+             <column name="has_update" header="has_update" type="STRING"/>
+             <column name="has_delete" header="has_delete" type="STRING"/>
+             <column name="system_role_id" header="system_role_id" type="NUMERIC"/>
+             <column name="system_module_id" header="system_module_id" type="NUMERIC"/>
+       </loadData>
+</changeSet>
+<include file="HaitiLNSPMassive/MassiveUpdate.xml" />
+<changeSet author="paulsc" id="26" context="haitiLNSP" >
+	<comment>Adds Mycology test_section and moves mis-applied test to that section</comment>
+	<insert tableName="test_section" schemaName="clinlims">
+		<column name="id" valueNumeric=" nextval( 'test_section_seq' ) " />
+		<column name="name" value="mycology" />
+		<column name="description" value="mycology" />
+		<column name="display_key" value="test.section.mycology" />
+		<column name="sort_order" valueNumeric="70" />
+		<column name="is_external" value="N" />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="org_id" valueNumeric=" (select id from clinlims.organization where name = 'Haiti') "></column>
+	</insert>
+	<update tableName="test" schemaName="clinlims" >
+		<column name="test_section_id" valueNumeric=" (select id from clinlims.test_section where name = 'mycology') " />
+		<where> is_active = 'Y' and test_section_id = ( select id from clinlims.test_section where name = 'Mycobacteriology') </where>
+	</update>
+	<sql>
+		update clinlims.analysis a set test_sect_id = ( select test_section_id from test t where t.id = a.test_id ) where test_sect_id is null;
+	</sql>
+</changeSet>
+<changeSet author="paulsc" id="27" context="haitiLNSP">
+    <comment>Makes Mycobacteriology inactive</comment>
+    <update tableName="test_section" schemaName="">
+    	<column name="is_active" value="N" />
+    	<where>name = 'Mycobacteriology'</where>
+    </update>
+</changeSet>
+<changeSet id="28" author="pauls" context="haitiLNSP" >
+    <comment>Adds mycology module for both workplan and results and adds them to results role</comment>
+    <sql>
+        INSERT INTO clinlims.system_role_module( id, has_select, has_add, has_update, has_delete, system_role_id, system_module_id)
+        VALUES (nextval('clinlims.system_user_module_seq' ), 'Y', 'Y', 'Y', 'Y',
+            (select id from clinlims.system_role where name = 'Results entry' limit 1 ),
+            (select id from clinlims.system_module where name = 'Workplan:mycology' limit 1));
+            
+        INSERT INTO clinlims.system_role_module( id, has_select, has_add, has_update, has_delete, system_role_id, system_module_id)
+        VALUES (nextval('clinlims.system_user_module_seq' ), 'Y', 'Y', 'Y', 'Y',
+            (select id from clinlims.system_role where name = 'Results entry' limit 1 ),
+            (select id from clinlims.system_module where name = 'LogbookResults:mycology' limit 1));    
+    </sql>
+</changeSet>
+</databaseChangeLog>
+

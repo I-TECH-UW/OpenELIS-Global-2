@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--Some settings-->
+  <!-- Data specific to ci_regional,ci_general -->
+  <changeSet id="1" author="CI OpenELIS developers group" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <columnExists columnName="display_key" schemaName="clinlims" tableName="test_section" />
+      </not>
+    </preConditions>
+    <comment>Adds display_key columns to test_section</comment>
+    <addColumn tableName="test_section">
+      <column name="display_key" type="varchar(60)"></column>
+    </addColumn>
+    <sql>
+	       COMMENT ON COLUMN clinlims.test_section.display_key IS 'Resource file lookup key for localization of displaying the name';
+    </sql>
+  </changeSet>
+   
+  <changeSet id="2" author="CI OpenELIS developers group" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <columnExists columnName="display_key" schemaName="clinlims" tableName="type_of_sample" />
+      </not>
+    </preConditions>
+    <comment>Adds display_key columns to type_of_sample</comment>
+    <addColumn tableName="type_of_sample">
+      <column name="display_key" type="varchar(60)"></column>
+    </addColumn>
+    <sql>
+	       COMMENT ON COLUMN clinlims.type_of_sample.display_key IS 'Resource file lookup key for localization of displaying the name';
+    </sql>
+  </changeSet>
+  
+ <changeSet id="3" author="CI OpenELIS developers group" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <columnExists columnName="test_id" schemaName="clinlims" tableName="analyzer_results" />
+      </not>
+    </preConditions>
+    <comment>Adds test_id columns to analyzer_results</comment>
+    <addColumn tableName="analyzer_results">
+      <column name="test_id" type="numeric(10,0)"></column>
+    </addColumn>
+    <sql>
+	       COMMENT ON COLUMN clinlims.analyzer_results.test_id IS 'test_id from test';
+    </sql>
+  </changeSet>
+  
+   <changeSet author="CI OpenELIS developers group" id="4" context="ci_regional,ci_general">
+    <comment>update on type_of_sample</comment>
+    <sql>
+    UPDATE clinlims.type_of_sample
+   SET display_key = 'sample.type.Plasma'
+ WHERE local_abbrev='Plasma';
+ 
+    UPDATE clinlims.type_of_sample
+   SET display_key = 'sample.type.Serum'
+ WHERE local_abbrev='Serum';
+  
+    UPDATE clinlims.type_of_sample
+   SET display_key = 'sample.type.Sang'
+ WHERE local_abbrev='Sang total';
+ 
+  UPDATE clinlims.type_of_sample
+   SET display_key = 'sample.type.Urines'
+ WHERE local_abbrev='Urines';
+ </sql>
+  </changeSet>
+  
+  
+  <changeSet author="CI OpenELIS developers group" id="5" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.type_of_sample where display_key = 'Sample.type.DBS';
+    		</sqlCheck>
+    </preConditions>
+    <comment>update on type_of_sample</comment>
+    <sql>
+INSERT INTO clinlims.localization(id,description,english,french,lastupdated)  VALUES(nextval('clinlims.localization_seq'),'sampleType name','Dry Tube','Tube sec - Rouge',now());
+INSERT INTO clinlims.localization(id,description,english,french,lastupdated)  VALUES(nextval('clinlims.localization_seq'),'sampleType name','EDTA Tube','Tube EDTA - Violet',now());
+INSERT INTO clinlims.localization(id,description,english,french,lastupdated)  VALUES(nextval('clinlims.localization_seq'),'sampleType name','DBS','DBS',now());
+
+
+INSERT INTO clinlims.type_of_sample (id,description,domain,lastupdated,local_abbrev,is_active,sort_order,name_localization_id,display_key) VALUES (24,'Dry Tube','H',now(),'Dry','t',default,(select id from clinlims.localization where english='Dry Tube'),'sample.type.dryTube');
+INSERT INTO clinlims.type_of_sample (id,description,domain,lastupdated,local_abbrev,is_active,sort_order,name_localization_id,display_key) VALUES (25,'EDTA Tube','H',now(),'EDTA','t',default,(select id from clinlims.localization where english='EDTA Tube'),'sample.type.edtaTube');
+INSERT INTO clinlims.type_of_sample (id,description,domain,lastupdated,local_abbrev,is_active,sort_order,name_localization_id,display_key) VALUES (26,'DBS','H',now(),'DBS','t',default,(select id from clinlims.localization where english='DBS'),'sample.type.DBS');
+
+alter sequence clinlims.type_of_sample_seq restart with 30;
+alter sequence clinlims.localization_seq restart with 400;
+alter sequence clinlims.test_section_seq restart with 160;
+
+</sql>
+  </changeSet> 
+  
+  
+ <changeSet author="CI OpenELIS developers group" id="6" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.test_section where display_key = 'testSection.EID';
+    		</sqlCheck>
+    </preConditions>
+    <comment>update on test_section</comment>
+    <sql>
+INSERT INTO clinlims.localization(id,description,english,french,lastupdated)  VALUES(nextval('clinlims.localization_seq'),'test unit name','EID','EID',now());
+INSERT INTO clinlims.localization(id,description,english,french,lastupdated)  VALUES(nextval('clinlims.localization_seq'),'test unit name','VL','VL',now());
+
+
+INSERT INTO clinlims.test_section (id,name, description,org_id,is_external,lastupdated,parent_test_section,sort_order,is_active,name_localization_id,display_key) VALUES (nextval('clinlims.test_section_seq'),'EID', 'Virologie_EID',NULL,'N',now(),NULL,2147483647,'N',(select id from clinlims.localization where english='EID'),'testSection.EID');
+INSERT INTO clinlims.test_section (id,name, description,org_id,is_external,lastupdated,parent_test_section,sort_order,is_active,name_localization_id,display_key) VALUES (nextval('clinlims.test_section_seq'),'VL', 'Virologie_VL',NULL,'N',now(),NULL,2147483647,'N',(select id from clinlims.localization where english='VL'),'testSection.VL');
+
+
+alter sequence clinlims.test_section_seq restart with 150;
+
+
+UPDATE clinlims.test_section
+   SET display_key='testSection.Parasitologie'
+ WHERE name='Parasitology';
+ 
+ UPDATE clinlims.test_section
+   SET display_key='testSection.ECBU'
+ WHERE name='ECBU';
+ 
+ UPDATE clinlims.test_section
+ SET display_key='testSection.Biochimie'
+ WHERE name='Biochemistry';
+ 
+ 
+ 
+ UPDATE clinlims.test_section
+   SET display_key='testSection.Hematologie'
+ WHERE name='Hematology';
+ 
+ UPDATE clinlims.test_section
+   SET display_key='testsection.Immunologie'
+   WHERE name='Immunology';
+ 
+ UPDATE clinlims.test_section
+   SET display_key='testSection.Virologie'
+ WHERE name='Virologie';
+ 
+ UPDATE clinlims.test_section
+   SET display_key='testSection.VCT'
+ WHERE name='VCT';
+ 
+ UPDATE clinlims.test_section
+   SET display_key='testSection.Bacteriologie'
+ WHERE name='Bacteria';
+ 
+ UPDATE clinlims.test_section
+   SET display_key='testSection.Mycobacteriologie'
+ WHERE name='Mycobacteriology';
+ 
+ UPDATE clinlims.test_section
+   SET display_key='testSection.Serology-Immunologie'
+ WHERE name='Serology-Immunology';
+ 
+ UPDATE clinlims.test_section
+   SET display_key='testSection.Biologie_Moleculaire'
+ WHERE name='Molucular Biology';
+ 
+ UPDATE clinlims.test_section
+   SET display_key='testSection.Hemato_Immunologie'
+ WHERE name='Hemto-Immunology'; 
+ 
+ </sql>
+  </changeSet>  
+    
+<changeSet author="CI OpenELIS developers group" id="7" context="ci_regional,ci_general">
+    
+    <sql>
+ALTER TABLE clinlims.organization
+ALTER COLUMN short_name SET DEFAULT '""';
+ 
+ </sql>
+  </changeSet> 	
+	
+	
+</databaseChangeLog>

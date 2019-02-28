@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ The contents of this file are subject to the Mozilla Public License
+  ~ Version 1.1 (the "License"); you may not use this file except in
+  ~ compliance with the License. You may obtain a copy of the License at
+  ~ http://www.mozilla.org/MPL/
+  ~
+  ~ Software distributed under the License is distributed on an "AS IS"
+  ~ basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+  ~ License for the specific language governing rights and limitations under
+  ~ the License.
+  ~
+  ~ The Original Code is OpenELIS code.
+  ~
+  ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+<changeSet id="1" author="paulsc" context="ci_regional">
+    <comment>Add guids to test table</comment>
+    <sqlFile path="OE4.2/testCatalogCI_Regional_labs/addGuid.sql" />
+</changeSet>
+<changeSet id="2" author="paulsc" context="ci_regional">
+    <comment>Add names to localization</comment>
+    <sqlFile path="OE4.2/testCatalogCI_Regional_labs/populateNames.sql" />
+</changeSet>
+<changeSet id="3" author="paulsc" context="ci_regional">
+    <comment>update the local_code column to be a local code</comment>
+   <sqlFile path="OE4.2/testCatalogCI_Regional_labs/localCode.sql" />
+</changeSet>
+<changeSet id="4" author="paulsc" context="ci_regional">
+    <comment>update the local_code column to be a local code</comment>
+    <sqlFile path="OE4.2/testCatalogCI_Regional_labs/HIVSpelling.sql" />
+</changeSet>
+<changeSet id="5" author="paulsc" context="ci_regional">
+    <comment>change indeterminate to invalid for HIV rapid test</comment>
+    <sql>
+        update clinlims.test_result set value = ( cast((select max(id) from clinlims.dictionary where dict_entry = 'Invalide') as varchar))
+        where id in (select tr.id from clinlims.dictionary d
+        join clinlims.test_result tr on tr.value = cast(d.id as varchar)
+        join clinlims.test t on t.id = tr.test_id
+        where t.name like '%HIV%') and value = cast((select max(id) from clinlims.dictionary where dict_entry ilike 'Ind%termin%') as varchar );
+    </sql>
+</changeSet>
+<changeSet id="6" author="paulsc" context="ci_regional">
+    <comment>Updating missing dictionary values in test result</comment>
+    <sqlFile path="OE4.2/testCatalogCI_Regional_labs/missingTestResult.sql" />
+</changeSet>
+    <changeSet id="7" author="paulsc" context="ci_regional">
+        <comment>fix missing significant digit values</comment>
+        <sqlFile path="OE4.2/testCatalogCI_Regional_labs/significantDigitFix.sql" />
+    </changeSet>
+</databaseChangeLog>

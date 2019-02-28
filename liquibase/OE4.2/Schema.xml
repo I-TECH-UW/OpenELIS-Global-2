@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ The contents of this file are subject to the Mozilla Public License
+  ~ Version 1.1 (the "License"); you may not use this file except in
+  ~ compliance with the License. You may obtain a copy of the License at
+  ~ http://www.mozilla.org/MPL/
+  ~
+  ~ Software distributed under the License is distributed on an "AS IS"
+  ~ basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+  ~ License for the specific language governing rights and limitations under
+  ~ the License.
+  ~
+  ~ The Original Code is OpenELIS code.
+  ~
+  ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+<changeSet author="paulsc" id="1" >
+   <comment>Widen qa_observation value column</comment>
+    <sql>
+        alter table clinlims.qa_observation alter column value type varchar(120);
+    </sql>
+</changeSet>
+<changeSet id="2" author="paulsc">
+    <comment>Adds an is_active column to test_result</comment>
+    <addColumn tableName="test_result">
+        <column name="is_active" type="boolean" defaultValueBoolean="true" />
+    </addColumn>
+    <sql>
+        COMMENT ON COLUMN clinlims.test_result.is_active IS 'Is this test_result active.  If a select list option is removed it still may be referenced by a result so we have to inactivate it';
+    </sql>
+</changeSet>
+<changeSet id="3" author="paulsc">
+    <comment>Adds GUID column to test table</comment>
+    <addColumn tableName="test">
+        <column name="GUID" type="varchar(128)"/>
+    </addColumn>
+    <sql>
+        COMMENT ON COLUMN clinlims.test.GUID IS 'The positive identifier for this test in the OpenELIS ecosystem';
+    </sql>
+</changeSet>
+<changeSet id="4" author="paulsc">
+    <comment>Add a localization table</comment>
+    <createTable tableName="localization">
+        <column name="id" type="numeric" />
+        <column name="description" type="text" />
+        <column name="english" type="text" />
+        <column name="french" type="text" />
+        <column name="lastupdated" type="timestamp(6)" />
+    </createTable>
+    <addPrimaryKey tableName="localization" columnNames="id" />
+    <createSequence sequenceName="localization_seq" incrementBy="1" startValue="1" />
+    <sql>
+        ALTER TABLE clinlims.localization ALTER COLUMN english SET NOT NULL;
+        ALTER TABLE clinlims.localization ALTER COLUMN french SET NOT NULL;
+
+        COMMENT ON TABLE clinlims.localization IS 'This is for localization maintained by end user';
+        COMMENT ON COLUMN clinlims.localization.description IS 'A brief description to give some context';
+        COMMENT ON COLUMN clinlims.localization.english IS 'English localization';
+        COMMENT ON COLUMN clinlims.localization.french IS 'French localization';
+        COMMENT ON COLUMN clinlims.localization.lastupdated IS '';
+    </sql>
+</changeSet>
+<changeSet id="5" author="paulsc">
+    <comment>Adds localization columns to test table and drops display key column</comment>
+    <addColumn tableName="test">
+        <column name="name_localization_id" type="numeric(10,0)" />
+        <column name="reporting_name_localization_id" type="numeric(10,0)" />
+    </addColumn>
+    <dropColumn tableName="test" columnName="display_key" />
+    <addForeignKeyConstraint baseTableName="test" baseColumnNames="name_localization_id"
+                             constraintName="name_fk" referencedTableName="localization"
+                             referencedColumnNames="id" deleteCascade="true"/>
+    <addForeignKeyConstraint baseTableName="test" baseColumnNames="reporting_name_localization_id"
+                             constraintName="reporting_name_fk" referencedTableName="localization"
+                             referencedColumnNames="id" deleteCascade="true" />
+    <sql>
+        COMMENT ON COLUMN clinlims.test.name_localization_id IS 'reference to the localization record for the test name';
+        COMMENT ON COLUMN clinlims.test.reporting_name_localization_id IS 'reference to the localization record for the reporting name';
+    </sql>
+    <insert tableName="reference_tables">
+        <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) " />
+        <column name="name" value="LOCALIZATION" />
+        <column name="keep_history" value="Y" />
+        <column name="is_hl7_encoded" value="N" />
+    </insert>
+</changeSet>
+<changeSet id="6" author="paulsc">
+    <comment>renames test local_abrev to local_code</comment>
+    <renameColumn tableName="test" oldColumnName="local_abbrev" newColumnName="local_code" />
+</changeSet>
+<changeSet id="7" author="paulsc">
+    <comment>Drops lab_order item and type tables</comment>
+    <dropTable tableName="lab_order_item" />
+    <dropTable tableName="lab_order_type" />
+    <dropSequence sequenceName="lab_order_type_seq" />
+    <dropSequence sequenceName="lab_order_item_seq" />
+</changeSet>
+<changeSet author="kone" id="21">
+	<comment>Adds a new column to site_information table</comment>
+	<addColumn tableName="site_information" schemaName="clinlims">  
+		<column name="description_key"  type="varchar(42)"  />
+	</addColumn> 	
+</changeSet>
+</databaseChangeLog>

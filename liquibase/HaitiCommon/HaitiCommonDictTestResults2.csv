@@ -1,0 +1,11 @@
+id,active,dict_entry,lastupdated,category,display_key 
+ nextval( 'dictionary_seq' ) ,Y,Couleur: Marron, now() ,3, dict.color.brown 
+ nextval( 'dictionary_seq' ) ,Y,Couleur: Jaunâtre, now() ,3, dict.color.yellowish 
+ nextval( 'dictionary_seq' ) ,Y,Couleur: Verdatre, now() ,3, dict.color.greenish 
+ nextval( 'dictionary_seq' ) ,Y,Couleur: Blanchâtre, now() ,3, dict.color.whitish 
+ nextval( 'dictionary_seq' ) ,Y,Consistance: molle, now() ,3, dict.consistency.soft 
+ nextval( 'dictionary_seq' ) ,Y,Consistance: glaireuse, now() ,3, dict.consistency.slimy 
+ nextval( 'dictionary_seq' ) ,Y,Consistance: pâteuse, now() ,3, dict.consistency.pasty  
+ nextval( 'dictionary_seq' ) ,Y,Consistance: ferme, now() ,3, dict.consistency.firm 
+ nextval( 'dictionary_seq' ) ,Y,Consistance: liquide, now() ,3, dict.consistency.liquid 
+ nextval( 'dictionary_seq' ) ,Y,Consistance: semi-liquide, now() ,3, dict.consistency.semiliquid 

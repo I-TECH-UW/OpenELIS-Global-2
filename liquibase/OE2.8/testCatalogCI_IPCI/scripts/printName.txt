@@ -1,0 +1,52 @@
+TGP
+TGO
+Glycémie
+Creatinine
+Amylase
+Albumine 
+Chol total
+Chol HDL
+Triglycérides
+Béta HCG – 24 h
+Test Grossesse
+Protéines  
+GB
+GR
+Hb
+Hte
+VGM
+TCMH
+CCMH
+Plaquettes
+PNN %
+PNN (Abs)
+PNE (%)
+PNE (Abs)
+PNB (%)
+PNB (Abs)
+Lympho (%)
+Lympho (Abs)
+Mono (%)
+Mono (Abs)
+VIH rapide-Serum
+VIH rapide-Plasm
+VIH rapide-SangT
+CD4  (Abs)
+CD4 %
+ Ag HBs
+Charge virale VIH
+ARV res
+WB-Serum
+WB-Plasma
+Bioline-Plasma
+Bioline-Serum
+Bioline-Sang total
+Genie III-Plasma
+Genie III-Serum
+Genie III-Sang t
+Murex-Plasma
+Murex-Serum
+Vironostika-Plas
+Vironostika-Seru
+P24 Ag-Plasma
+P24 Ag-Serum

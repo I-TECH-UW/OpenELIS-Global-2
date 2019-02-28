@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<!-- Data specific to CILNSP -->
+	<changeSet author="paulsc" id="2" context="ciLNSP">
+		<comment>Adds the AuditTrailView to a new Audit Trail Role</comment>
+		<insert tableName="system_role">
+			<column name="id" valueNumeric=" nextval( 'system_role_seq' ) " />
+			<column name="name" value="Audit Trail" />
+			<column name="description" value="Able to view the audit trail" />
+			<column name="display_key" value="role.audittrail" />
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+			<column name="system_role_id"
+				valueNumeric=" ( select id from system_role where name = 'Audit Trail' ) " />
+			<column name="system_module_id"
+				valueNumeric=" ( select id from system_module where name = 'AuditTrailView' ) " />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="3" context="ciLNSP">
+		<comment>changes the accession rules to yynnnnnnn</comment>
+		<update tableName="site_information" schemaName="clinlims">
+			<column name="value" value="YEARNUM_SEVEN"/>
+			<where>name = 'acessionFormat'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="4" context="ciLNSP">
+		<comment>changes the accession rules to yy-nnnnnnn</comment>
+		<update tableName="site_information" schemaName="clinlims">
+			<column name="value" value="YEARNUM_DASH_SEVEN"/>
+			<where>name = 'acessionFormat'</where>
+		</update>
+	</changeSet>
+	<include file="OE2.8/testCatalogCI_LNSP/TestCatalogUpdate.xml"/>
+	<changeSet author="paulsc" id="5" context="ciLNSP">
+		<comment>fixes error where qa_events were droped. reload form Haiti</comment>
+		<delete schemaName="clinlims" tableName="qa_event"/>
+		<delete schemaName="clinlims" tableName="sample_qaevent"/>
+		<loadData file="Haiti_CSV/Haiti_QA_Events.csv" schemaName="clinlims" tableName="qa_event">
+       		<column name="id" header="id" type="NUMERIC"/>
+       		<column name="name" header="name" type="STRING"/>
+       		<column name="description" header="description" type="STRING"/>
+       		<column name="lastupdated" header="lastupdated" type="DATE"/>
+       		<column name="display_key" header="display_key" type="STRING"/>
+       		<column name="is_holdable" header="is_holdable" type="STRING"/>
+	</loadData>
+</changeSet>
+<changeSet author="paulsc" id="6" context="ciLNSP">
+	<comment>Updates the inactive status of test section</comment>
+	<update tableName="test_section">
+		<column name="is_active" value="N" />
+		<column name="sort_order" valueNumeric="2147483647" />
+		<where>name not in ('Hemto-Immunology','Serology-Immunology','Biochemistry','Hematology')</where>
+	</update>
+</changeSet>
+<changeSet author="paulsc" id="7" context="ciLNSP">
+	<comment>Set sorting of the qa events list to false</comment>
+	<update tableName="site_information">
+		<column name="value" value="false"/>
+		<where>name = 'sortQaEvents'</where> 
+	</update>
+</changeSet>
+<changeSet author="paulsc" id="8"  context="ciLNSP" >
+	   	<comment>maintenance admin missing access to result and report configuration</comment>
+	   	<insert tableName="system_module">
+	   		<column name="id"  valueNumeric=" nextval( 'system_module_seq' ) "/>
+		<column name="name"  value="PrintedReportsConfiguration"/>
+		<column name="description" value="admin->PrintedReportsConfiguration" />
+		<column name="has_select_flag" value="N" />
+		<column name="has_add_flag" value="N" />
+		<column name="has_update_flag" value="N" />
+		<column name="has_delete_flag" value="N" />
+	   	</insert>
+	   	<insert tableName="system_module">
+	   		<column name="id"  valueNumeric=" nextval( 'system_module_seq' ) "/>
+		<column name="name"  value="ResultConfiguration"/>
+		<column name="description" value="admin->ResultConfiguration" />
+		<column name="has_select_flag" value="N" />
+		<column name="has_add_flag" value="N" />
+		<column name="has_update_flag" value="N" />
+		<column name="has_delete_flag" value="N" />
+	   	</insert>
+	      <insert tableName="system_role_module">
+	           <column name="id" valueNumeric=" nextval( 'system_user_module_seq' ) "/>
+	           <column name="has_select" value="Y"/>
+	           <column name="has_add" value="Y"/>
+	           <column name="has_update"  value="Y"/>
+	           <column name="has_delete"  value="Y"/>
+	           <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Maintenance Admin' ) "/>
+	           <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'PrintedReportsConfiguration' ) " />
+	      </insert>
+	      <insert tableName="system_role_module">
+	           <column name="id" valueNumeric=" nextval( 'system_user_module_seq' ) "/>
+	           <column name="has_select" value="Y"/>
+	           <column name="has_add" value="Y"/>
+	           <column name="has_update"  value="Y"/>
+	           <column name="has_delete"  value="Y"/>
+	           <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Maintenance Admin' ) "/>
+	           <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'ResultConfiguration' ) " />
+	      </insert>
+</changeSet>
+</databaseChangeLog>

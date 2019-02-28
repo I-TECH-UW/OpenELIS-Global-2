@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+	<changeSet author="paulsc" id="1" context="haiti">
+		<comment>Deactivates all of the current tests</comment>
+		<update tableName="test">
+			<column name="is_active" value="N" />
+			<column name="sort_order" valueNumeric="2147483647" />
+		</update>
+	</changeSet>
+
+	<changeSet author="paulsc" id="2" context="haiti">
+		<comment>Adds new dictionary values</comment>
+		<sqlFile path="OE2.9/testCatalogHT_Clinical/dictionary.sql"/>
+	</changeSet>
+
+	<changeSet author="paulsc" id="3" context="haiti">
+		<comment>Adds new uom values</comment>
+		<sqlFile path="OE2.9/testCatalogHT_Clinical/UOM.sql"/>
+	</changeSet>
+
+	<changeSet author="paulsc" id="4" context="haiti">
+		<comment>Update sample types</comment>
+		<sqlFile path="OE2.9/testCatalogHT_Clinical/inactivateSampleTypes.sql"/>
+		<sqlFile path="OE2.9/testCatalogHT_Clinical/newSampleType.sql"/>
+	</changeSet>
+
+	<changeSet author="paulsc" id="5" context="haiti">
+		<comment>Add new tests</comment>
+		<sqlFile path="OE2.9/testCatalogHT_Clinical/tests.sql"/>
+	</changeSet>
+
+	<changeSet author="paulsc" id="6" context="haiti">
+		<comment>Add new panels</comment>
+		<delete tableName="panel_item" />
+		<delete tableName="sampletype_panel"></delete>
+		<delete tableName="panel" />
+		<sqlFile path="OE2.9/testCatalogHT_Clinical/panels.sql"/>
+		<sqlFile path="OE2.9/testCatalogHT_Clinical/testPanel.sql"/>
+		<sqlFile path="OE2.9/testCatalogHT_Clinical/typePanelResults.sql"/>
+	</changeSet>
+
+	<changeSet author="paulsc" id="7" context="haiti">
+		<comment>Update test section order</comment>
+		<sqlFile path="OE2.9/testCatalogHT_Clinical/SectionOrder.sql"/>
+	</changeSet>
+
+	<changeSet author="paulsc" id="8" context="haiti">
+		<comment>bind sample_types with tests</comment>
+		<sqlFile path="OE2.9/testCatalogHT_Clinical/sampleTypeTest.sql"/>
+	</changeSet>
+		
+	<changeSet author="paulsc" id="9" context="haiti">
+		<comment>Update test results</comment>
+		<sqlFile path="OE2.9/testCatalogHT_Clinical/testResults.sql"/>
+	</changeSet>
+		
+	<changeSet author="paulsc" id="10" context="haiti">
+		<comment>Update test results done by hand</comment>
+		<sqlFile path="OE2.9/testCatalogHT_Clinical/leucocytesUpdate.sql"/>
+		<sqlFile path="OE2.9/testCatalogHT_Clinical/handTestResults.sql"/>
+	</changeSet>
+		
+	<changeSet author="paulsc" id="11" context="haiti">
+		<comment>result limits</comment>
+		<sqlFile path="OE2.9/testCatalogHT_Clinical/resultLimits.sql"/>
+	</changeSet>
+	<changeSet author="paulsc" id="12" context="haiti">
+		<comment>Update CD4 test names</comment>
+		<sql>
+			Update test SET description='CD4 Compte Abs(Sang)', reporting_description='CD4 Compte Abs', local_abbrev='CD4 Compte Abs', name='CD4 Compte Abs', lastupdated=now()
+				WHERE description = 'CD4 en mm3(Sang)';
+			Update test SET description='CD4 Compte en %(Sang)', reporting_description='CD4 Compte en %', local_abbrev='CD4 Compte en %', name='CD4 Compte en %', lastupdated=now()
+				WHERE description = 'CD4 en %(Sang)';
+		</sql>
+	</changeSet>
+	<changeSet author="paulsc" id="13" context="haiti">
+		<comment>Update CD4 test names</comment>
+		<sql>
+			Update test SET description='CD4 Compte Absolu(Sang)', reporting_description='CD4 Compte Absolu', local_abbrev='CD4 Compte Absolu', name='CD4 Compte Absolu', lastupdated=now(),
+				uom_id= ( select id from clinlims.unit_of_measure where name='μl')
+				WHERE description = 'CD4 Compte Abs(Sang)';
+		</sql>
+	</changeSet>
+	<changeSet author="paulsc" id="14" context="haiti">
+		<comment>result limits</comment>
+		<sqlFile path="OE2.9/testCatalogHT_Clinical/ul_update.sql"/>
+	</changeSet>			
+</databaseChangeLog>

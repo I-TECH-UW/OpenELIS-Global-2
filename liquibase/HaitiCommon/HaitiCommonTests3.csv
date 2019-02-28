@@ -1,0 +1,4 @@
+id,test_section,description,local_abbrev,lastupdated,display_key,active,reportable
+ nextval( 'test_seq' ) , ( select id from clinlims.test_section where name='Bacteria' ) ,Chlore (Serum), ChloreSerum, now() , test.chlore.serum ,Y,N
+ nextval( 'test_seq' ) , ( select id from clinlims.test_section where name='Biochemistry' ) ,Vitesse de Sédimentation (Sang),VitesseSang, now() , test.vitesse.sang ,Y,N
+ nextval( 'test_seq' ) , ( select id from clinlims.test_section where name='Bacteria' ) ,Mantoux / PPD,Mantoux / PPD, now() , test.Mantoux/PPD.crachat ,Y,N 

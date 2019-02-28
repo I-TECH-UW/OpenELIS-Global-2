@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--system role and module updating-->
+  <!-- Data specific to CDIRetroCI -->
+  
+   <changeSet author="CI OpenELIS developers group" id="3" context="CDIRetroCI,CDIRetroCI_CT" >
+       <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.system_role_module where id= '1701';
+    		</sqlCheck>
+    </preConditions>
+    <comment>Insert in clinlims new system role module</comment>
+    <sql>
+
+	INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1701,'Y','Y','Y','Y',42,513);
+
+	</sql>
+	</changeSet>
+  
+ <changeSet author="CI OpenELIS developers group" id="2" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.system_role where name= 'Immunology automatic';
+    		</sqlCheck>
+    </preConditions>
+    <comment>Insert in clinlims new role</comment>
+    <sql>
+
+INSERT INTO clinlims.system_role(id, name, description, is_grouping_role, grouping_parent, display_key, active, editable)
+    VALUES (21, 'Hematology automatic', 'Able to transfer results from analyzer to OpenLIS', default,null,'role.hematology.automatic ', 
+            default, default);
+			
+INSERT INTO clinlims.system_role(id, name, description, is_grouping_role, grouping_parent, display_key,active, editable)
+    VALUES (16, 'Immunology automatic', 'Able to transfer results from analyzer to OpenLIS', default,null,'role.immuno.automatic ', 
+            default, default);
+			
+INSERT INTO clinlims.system_role(id, name, description, is_grouping_role, grouping_parent, display_key, active, editable)
+    VALUES (26, 'Serology automatic', 'Able to transfer results from analyzer to OpenLIS', default,null,'role.serology.automatic  ', 
+            default, default);
+			
+INSERT INTO clinlims.system_role(id, name, description, is_grouping_role, grouping_parent, display_key,active, editable)
+    VALUES (31, 'Biochemistry automatic', 'Able to transfer results from analyzer to OpenLIS', default,null,'role.biochem.automatic  ', 
+            default, default);			
+			
+			
+INSERT INTO clinlims.system_role(id, name, description, is_grouping_role, grouping_parent, display_key,active, editable)
+    VALUES (36, 'Virology automatic', 'Able to transfer results from analyzer to OpenLIS', default,null,'role.virology.automatic ', 
+            default, default);			
+			
+		
+</sql>
+  </changeSet>
+ 
+  
+ 
+</databaseChangeLog>
+  
+ 

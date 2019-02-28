@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--Menu Study settings-->
+  <!-- Data specific to ci_regional,ci_general -->
+  <changeSet author="CI OpenELIS developers group" id="1" context="ci_regional,ci_general" runAlways="true">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.menu where element_id = 'menu_sample_create';
+    		</sqlCheck>
+    </preConditions>
+    <comment>Insert in clinlims new menu study</comment>
+    <sql>ALTER SEQUENCE clinlims.menu_seq restart WITH 40;
+	ALTER TABLE clinlims.menu ALTER COLUMN element_id TYPE VARCHAR;
+
+ 
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_sample'),2,'menu_sample_create',null,default,'banner.menu.sampleCreate','tooltip.bannner.menu.sampleCreate',default,default);
+  
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_sample_create'),1,'menu_sample_create_initial','/SampleEntryByProject.do?type=initial',default,'banner.menu.createInitial','tooltip.bannner.menu.createInitial',default,default);
+  
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_sample_create'),2,'menu_sample_create_double','/SampleEntryByProject.do?type=verify',default,'banner.menu.createDouble','tooltip.banner.menu.createDouble',default,default);
+  
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_sample_create'),3,'menu_sample_consult','/SampleEdit.do?type=readonly',default,'banner.menu.sampleConsult','tooltip.banner.menu.sampleConsult',default,default);
+  
+ 
+ 
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_patient'),2,'menu_patient_create',null,default,'banner.menu.patient.Create','tooltip.banner.menu.patient.Create',default,default);
+  
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_patient_create'),1,'menu_patient_create_initial','/PatientEntryByProject.do?type=initial',default,'banner.menu.createInitial','tooltip.bannner.menu.createInitial',default,default);
+  
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_patient_create'),2,'menu_patient_create_double','/PatientEntryByProject.do?type=verify',default,'banner.menu.createDouble','tooltip.banner.menu.createDouble',default,default);
+  
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_patient_create'),3,'menu_patient_edit','/PatientEditByProject.do?type=readwrite',default,'banner.menu.patientEdit','tooltip.banner.menu.patientEdit',default,default);
+  
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_patient_create'),4,'menu_patient_consult','/PatientEditByProject.do?type=readonly',default,'banner.menu.patientConsult','tooltip.banner.menu.patientConsult',default,default);
+  
+ 
+ 
+ 
+  INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_resultvalidation'),1,'menu_resultvalidation_routine','/ResultValidation.do?type=&amp;test=',default,'banner.menu.resultvalidation_routine','tooltip.bannner.menu.resultvalidation_routine',default,default);
+  
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_resultvalidation'),2,'menu_resultvalidation_study',null,default,'banner.menu.resultvalidation_study','tooltip.bannner.menu.resultvalidation_study',default,default);
+  
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_resultvalidation_study'),1,'menu_resultvalidation_immunology','/ResultValidationRetroC.do?type=immunology&amp;test=',default,'banner.menu.resultvalidation.immunologyHematology','tooltip.banner.menu.resultvalidation.immunologyHematology',default,default);
+  
+ 
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_resultvalidation_study'),2,'menu_resultvalidation_biochemistry','/ResultValidationRetroC.do?type=biochemistry&amp;test=',default,'banner.menu.resultvalidation.biochemistry','tooltip.banner.menu.resultvalidation.immunologyHematology',default,default);
+  
+ 
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_resultvalidation_study'),3,'menu_resultvalidation_serology','/ResultValidationRetroC.do?type=serology',default,'banner.menu.resultvalidation.serology','tooltip.banner.menu.resultvalidation.biochemistry',default,default);
+  
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_resultvalidation_study'),4,'menu_resultvalidation_virology','/ResultValidationRetroC.do?type=virology&amp;test=',default,'banner.menu.resultvalidation.virology','tooltip.banner.menu.resultvalidation.virology',default,default);
+  
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_resultvalidation_virology'),1,'menu_resultvalidation_dnapcr','/ResultValidationRetroC.do?type=virology&amp;test=DNA PCR',default,'banner.menu.resultvalidation.dnapcr','tooltip.banner.menu.resultvalidation.dnapcr',default,default);
+  
+ 
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_resultvalidation_virology'),2,'menu_resultvalidation_viralload','/ResultValidationRetroC.do?type=virology&amp;test=Viral Load',default,'banner.menu.resultvalidation.viralload','banner.menu.resultvalidation.viralload',default,default);
+  
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_resultvalidation_virology'),3,'menu_resultvalidation_genotyping','/ResultValidationRetroC.do?type=virology&amp;test=Genotyping',default,'banner.menu.resultvalidation.genotyping','tooltip.banner.menu.resultvalidation.genotyping',default,default);
+  
+
+  
+  
+  
+INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports'),1,'menu_reports_routine',null,default,'banner.menu.reports.routine','tooltip.banner.menu.reports.routine',default,default);
+    
+INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_routine'),50,'menu_reports_export_routine','/Report.do?type=patient&amp;report=CISampleRoutineExport',default,'reports.export.byDate_routine','tooltip.reports.export.byDate_routine',default,default);
+ 
+INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, 
+            display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_status_patient'),20,'menu_reports_status_patient.vreduit','/Report.do?type=patient&amp;report=patientCILNSP_vreduit',default,'openreports.patientTestStatus.vreduit','tooltip.openreports.patientTestStatus.vreduit',default,default);
+	
+INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, 
+            display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_status_patient'),10,'menu_reports_status_patient.classique','/Report.do?type=patient&amp;report=patientCILNSP',default,'openreports.patientTestStatus.classique','tooltip.openreports.patientTestStatus.classique',default,default);
+
+
+	
+	
+	UPDATE clinlims.menu
+   SET parent_id=(select id from clinlims.menu where element_id='menu_reports_routine')
+   WHERE element_id='menu_reports_aggregate';  
+   
+UPDATE clinlims.menu
+   SET parent_id=(select id from clinlims.menu where element_id='menu_reports_routine')
+   WHERE element_id='menu_reports_management'; 
+   
+ UPDATE clinlims.menu
+   SET parent_id=(select id from clinlims.menu where element_id='menu_reports_routine')
+   WHERE element_id='menu_reports_status_patient';    
+
+UPDATE clinlims.menu
+   SET parent_id=(select id from clinlims.menu where element_id='menu_reports_management')
+   WHERE element_id='menu_reports_nonconformity';     
+   
+ UPDATE clinlims.menu
+   SET parent_id=(select id from clinlims.menu where element_id='menu_reports_management')
+   WHERE element_id='menu_reports_validation_backlog';    
+   
+  UPDATE clinlims.menu
+   SET parent_id=(select id from clinlims.menu where element_id='menu_reports_management')
+   WHERE element_id='menu_reports_validation_backlog';     
+   
+ UPDATE clinlims.menu
+   SET parent_id=(select id from clinlims.menu where element_id='menu_reports_management')
+   WHERE element_id='menu_reports_auditTrail';  
+   
+   
+ UPDATE clinlims.menu
+   SET parent_id=(select id from clinlims.menu where element_id='menu_reports_management')
+   WHERE element_id='menu_reports_activity';     
+   
+ UPDATE clinlims.menu
+   SET parent_id=(select id from clinlims.menu where element_id='menu_reports_management')
+   WHERE element_id='menu_reports_referred';   
+   
+   
+ UPDATE clinlims.menu
+   SET parent_id=(select id from clinlims.menu where element_id='menu_reports_activity')
+   WHERE element_id='menu_activity_report_test';   
+   
+  UPDATE clinlims.menu
+   SET parent_id=(select id from clinlims.menu where element_id='menu_reports_activity')
+   WHERE element_id='menu_activity_report_panel';    
+   
+ UPDATE clinlims.menu
+   SET parent_id=(select id from clinlims.menu where element_id='menu_reports_activity')
+   WHERE element_id='menu_activity_report_bench';   
+   
+  UPDATE clinlims.menu
+   SET parent_id=(select id from clinlims.menu where element_id='menu_reports_nonconformity')
+   WHERE element_id='menu_reports_nonconformity_date';    
+     
+    UPDATE clinlims.menu
+   SET parent_id=(select id from clinlims.menu where element_id='menu_reports_nonconformity')
+   WHERE element_id='menu_reports_nonconformity_section';  
+   
+   
+ UPDATE clinlims.menu
+   SET parent_id=(select id from clinlims.menu where element_id='menu_reports_aggregate')
+   WHERE element_id='menu_reports_aggregate_hiv';   
+   
+  UPDATE clinlims.menu
+   SET parent_id=(select id from clinlims.menu where element_id='menu_reports_aggregate')
+   WHERE element_id='menu_reports_aggregate_all';    
+     
+ 
+   
+   
+   
+  INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports'),2,'menu_reports_study',null,default,'banner.menu.reports.study','tooltip.banner.menu.reports.study',default,default);
+  
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_study'),10,'menu_reports_patients',null,default,'openreports.patientreports.title','tooltip.openreports.patientreports.title',default,default);
+    
+  INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_patients'),1,'menu_reports_arv',null,default,'project.ARVStudies.name','project.ARVStudies.name',default,default);
+     
+   INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_arv'),1,'menu_reports_arv_initial1','/Report.do?type=patient&amp;report=patientARVInitial1',default,'reports.patient.ARVInitial.version1','tooltip.reports.patient.ARVInitial.version1',default,default);
+      
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_arv'),2,'menu_reports_arv_initial2','/Report.do?type=patient&amp;report=patientARVInitial2',default,'reports.patient.ARVInitial.version2','tooltip.reports.patient.ARVInitial.version2',default,default);
+        
+   
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_arv'),3,'menu_reports_arv_followup1','/Report.do?type=patient&amp;report=patientARVFollowup1',default,'reports.patient.ARVFollowup.version1','tooltip.reports.patient.ARVFollowup.version1',default,default);
+        
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_arv'),4,'menu_reports_arv_followup2','/Report.do?type=patient&amp;report=patientARVFollowup2',default,'reports.patient.ARVFollowup.version2','tooltip.reports.patient.ARVFollowup.version2',default,default);
+        
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_arv'),5,'menu_reports_arv_all','/Report.do?type=patient&amp;report=patientARV1',default,'reports.patient.ARV.version1','tooltip.reports.patient.ARVFollowup.version1',default,default);
+        
+  INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_patients'),2,'menu_reports_eid',null,default,'project.EIDStudy.name','tooltip.project.EIDStudy.name',default,default);
+       
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_eid'),1,'menu_reports_eid_version1','/Report.do?type=patient&amp;report=patientEID1',default,'openreports.patient.EID.version1','tooltip.openreports.patient.EID.version1',default,default);
+        
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_eid'),2,'menu_reports_eid_version2','/Report.do?type=patient&amp;report=patientEID2',default,'openreports.patient.EID.version2','tooltip.openreports.patient.EID.version2',default,default);
+        
+   
+  INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_patients'),30,'menu_reports_indeterminate',null,default,'project.IndeterminateStudy.name','tooltip.project.IndeterminateStudy.name',default,default);
+       
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_indeterminate'),1,'menu_reports_indeterminate_version1','/Report.do?type=patient&amp;report=patientIndeterminate1',default,'reports.patient.Indeterminate.version1','tooltip.reports.patient.Indeterminate.version1',default,default);
+        
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_indeterminate'),2,'menu_reports_indeterminate_version2','/Report.do?type=patient&amp;report=patientIndeterminate2',default,'reports.patient.Indeterminate.version2','tooltip.reports.patient.Indeterminate.version2',default,default);
+        
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_indeterminate'),3,'menu_reports_indeterminate_location','/Report.do?type=patient&amp;report=patientIndeterminateByLocation',default,'reports.patient.Indeterminate.location','tooltip.reports.patient.Indeterminate.location',default,default);
+    
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_patients'),40,'menu_reports_special','/Report.do?type=patient&amp;report=patientSpecialReport',default,'project.SpecialRequestStudy.name','tooltip.project.SpecialRequestStudy.name',default,default);
+        
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_patients'),50,'menu_reports_patient_collection','/Report.do?type=patient&amp;report=patientCollection',default,'patient.report.collection.name','patient.report.collection.name',default,default);
+        
+  INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_patients'),60,'menu_reports_patient_associated','/Report.do?type=patient&amp;report=patientAssociated',default,'patient.report.associated.name','patient.report.associated.name',default,default);
+       
+   
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_study'),20,'menu_reports_indicator',null,default,'reports.label.indicator','reports.label.indicator',default,default);
+      
+  INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_indicator'),1,'menu_reports_indicator_performance','/ReportPrint.do?type=indicator&amp;report=indicatorSectionPerformance',default,'reports.label.indicator.performance','tooltip.reports.label.indicator.performance',default,default);
+      
+  INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_indicator'),2,'menu_reports_validation_backlog.study','/ReportPrint.do?type=indicator&amp;report=validationBacklog',default,'banner.menu.report.validation.backlog','banner.menu.report.validation.backlog',default,default);
+       
+   
+ INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_study'),30,'menu_reports_nonconformity.study',null,default,'reports.nonConformity.menu','tooltip.reports.nonConformity.menu',default,default);
+      
+  INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_nonconformity.study'),1,'menu_reports_nonconformity_date.study','/Report.do?type=patient&amp;report=retroCINonConformityByDate',default,'reports.nonConformity.byDate.report','tooltip.reports.nonConformity.byDate.report',default,default);
+      
+  INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_nonconformity.study'),2,'menu_reports_nonconformity_section.study','/Report.do?type=patient&amp;report=retroCInonConformityBySectionReason',default,'reports.nonConformity.bySectionReason.report','tooltip.reports.nonConformity.bySectionReason.report',default,default);
+         
+  INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_nonconformity.study'),4,'menu_reports_nonconformity_notification.study','/Report.do?type=patient&amp;report=retroCInonConformityNotification',default,'reports.nonConformity.notification.report','tooltip.reports.nonConformity.notification.report',default,default);
+      
+  INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_nonconformity.study'),5,'menu_reports_followupRequired_ByLocation.study','/Report.do?type=patient&amp;report=retroCIFollowupRequiredByLocation',default,'reports.followupRequired.byLocation','tooltip.reports.followupRequired.byLocation',default,default);
+          
+  INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_nonconformity.study'),3,'menu_reports_nonconformity.Labno','/Report.do?type=patient&amp;report=retroCINonConformityByLabno',default,'reports.nonConformity.byLabno.report','tooltip.reports.nonConformity.byLabno.report',default,default);
+  
+
+INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_study'),40,'menu_reports_export','/Report.do?type=patient&amp;report=CISampleExport',default,'reports.export.byDate','tooltip.reports.export.byDate',default,default);
+      
+
+INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_study'),50,'menu_reports_auditTrail.study','/AuditTrailReport.do',default,'reports.auditTrail','reports.auditTrail',default,default);
+ 
+
+
+INSERT INTO clinlims.menu (id,parent_id,presentation_order,element_id,action_url,click_action,display_key,tool_tip_key,new_window,is_active) VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_patients'),3,'menu_reports_vl','','','project.VLStudy.name','tooltip.project.VLStudy.name','FALSE','TRUE');
+
+INSERT INTO clinlims.menu (id,parent_id,presentation_order,element_id,action_url,click_action,display_key,tool_tip_key,new_window,is_active) VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_vl'),1,'menu_reports_vl_version1','/Report.do?type=patient&amp;report=patientVL1','','openreports.patient.VL.version1','tooltip.openreports.patient.VL.version1','FALSE','TRUE');
+
+ALTER SEQUENCE clinlims.menu_seq restart WITH 180;
+</sql>
+</changeSet>
+  
+</databaseChangeLog>

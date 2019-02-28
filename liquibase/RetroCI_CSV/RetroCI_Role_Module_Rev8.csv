@@ -1,0 +1,6 @@
+id,has_select,has_add,has_update,has_delete,system_role_id,system_module_id
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Immunology Validation' ) , ( select id from system_module where name  = 'ResultValidation' )  
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Hematology Validation' ) , ( select id from system_module where name  = 'ResultValidation' )  
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Biochemistry Validation' ) , ( select id from system_module where name  = 'ResultValidation' )  
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Serology Validation' ) , ( select id from system_module where name  = 'ResultValidation' )  
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Biologist' ) , ( select id from system_module where name  = 'ResultValidation' )  

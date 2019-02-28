@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<changeSet author="paulsc" id="1" context="ci_regional,ciLNSP,haiti,haitiLNSP,CI_IPCI">
+		<comment>Adding modules to roles</comment>
+		 <insert schemaName="clinlims" tableName="system_role_module">
+             <column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) "/>
+             <column name="has_select" value="Y"/>
+             <column name="has_add" value="Y"/>
+             <column name="has_update" value="Y"/>
+             <column name="has_delete" value="Y"/>
+             <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Maintenance Admin' ) "/>
+             <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'SampleEntryConfig' ) "/>
+         </insert>    
+		 <insert schemaName="clinlims" tableName="system_role_module">
+             <column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) "/>
+             <column name="has_select" value="Y"/>
+             <column name="has_add" value="Y"/>
+             <column name="has_update" value="Y"/>
+             <column name="has_delete" value="Y"/>
+             <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Maintenance Admin' ) "/>
+             <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'WorkplanConfiguration' ) "/>
+         </insert>    
+	</changeSet>
+    <changeSet author="jfurlong" id="2" context="haiti,haitiLNSP">
+        <comment>Copying test_name to reporting_description</comment>
+        <sql>update clinlims.test set reporting_description = name;</sql>
+    </changeSet>
+    <changeSet author="paulsc" id="2" context="ci_regional,ciLNSP,haiti,haitiLNSP,CI_IPCI" >
+    	<comment>Backfills analysis with tests but no test_section. Caused by bug in update conformation</comment>
+ 			<sql>
+ 				update clinlims.analysis a set test_sect_id = ( select t.test_section_id from clinlims.test t where t.id = a.test_id ) where a.test_id is not null and a.test_sect_id is null; 			
+ 			</sql>   
+    </changeSet>
+    <changeSet author="paulsc" id="3">
+    	<comment>Turn the validation icon on by default for all sites</comment>
+    	<update tableName="site_information">
+    		<column name="value" value="true" />
+    		<where>name = 'showValidationFailureIcon'</where>
+    	</update>
+    </changeSet>
+</databaseChangeLog>

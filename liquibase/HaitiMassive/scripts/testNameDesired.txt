@@ -1,0 +1,373 @@
+Compte des Globules Blancs
+Copmte des Globules Rouges
+Hemoglobine
+Hematocrite
+VGM
+TCMH
+CCMH
+Plaquettes
+Neutrophiles
+Lymphocytes
+Compte des Globules Blancs
+Copmte des Globules Rouges
+Hemoglobine
+Hematocrite
+Plaquettes
+Mixtes
+Neutrophiles
+Lymphocytes
+Monocytes
+Eosinophiles
+Basophiles
+Vitesse de Sedimentation
+Temps de Coagulation en tube
+Temps de Coagulation
+temps de saignement
+Electrophorese de l'hemoglobine
+Sickling Test
+Taux reticulocytes - Auto
+Taux reticulocytes - Manual
+Temps de cephaline Activé(TCA)
+Fibrinogene
+Facteur VIII
+Facteur IX
+Heparinemie
+Anti-Thrombine III (Dosage)
+Anti-Thrombine III (Activite)
+Groupe Sanguin - ABO
+Groupe Sanguin - Rhesus
+Coombs Test Direct
+Coombs Test Direct
+Coombs Test Indirect
+Coombs Test Indirect
+
+Azote de l'Uree
+Uree
+creatinine 
+Glycemie
+Glycemie
+Glucose
+Proteines
+Chlore
+Alpha-foetoproteine
+dosage des phospholipides
+creatinine 
+Proteines
+Albumine
+glucose
+Uree
+Acide urique
+proteine total
+glycemie
+Albumine
+α1 globuline
+α2 globuline
+β globuline
+ϒ globuline
+Phosphatase Acide
+Chlorures
+Chlorures
+Chlorures
+CPK
+Amylase
+Lipase
+Chlorures
+Sodium
+Potassium
+Bicarbonates
+Calcium
+magnésium 
+phosphore 
+Lithium
+Fer Serique
+Bilirubine totale
+Bilirubine directe
+Bilirubine indirecte
+SGOT
+SGPT
+Phosphatase Alcaline
+Cholesterol Total
+Triglyceride
+Lipide
+HDL
+LDL
+VLDL
+MBG 
+Hémoglobine glyqué
+Ck-mB                         
+Ck total         
+ASAT 30° C
+ASAT 37° C
+ALAT 30° C
+ALAT 37° C
+LDH
+Troponine 1
+Glycémie provoquée
+Ph
+PaCO2
+HCO3
+O2 Saturation
+PaO2
+BE
+Ph
+PaCO2
+HCO3
+O2 Saturation
+PaO2
+BE
+
+
+Bacteries
+Levures Simples
+Levures Bourgeonantes
+Trichomonas vaginalis
+Globules Blancs
+Globules Rouges
+Filaments Myceliens
+Cellules Epitheliales
+Levures Simples
+Levures Bourgeonantes
+Trichomonas vaginalis
+Globules Blancs
+Globules Rouges
+Filaments Myceliens
+Cellules Epitheliales
+Bacteries
+Levures Simples
+Levures Bourgeonantes
+Trichomonas vaginalis
+Globules Blancs
+Globules Rouges
+Filaments Myceliens
+Cellules Epitheliales
+KOH
+Test de Rivalta
+Bacilles Gram+
+Bacilles Gram-
+Cocci Gram+
+Cocci Gram-
+Cocobacilles Gram -
+Cellules epitheliales cloutees
+Levures Simples
+Levures Bourgeonantes
+Diplocoque Gram (-) Intra cellulaire
+Diplocoque Gram (-) Extra cellulaire
+Cellules Epitheliales
+Bacilles Gram+
+Bacilles Gram-
+Cocci Gram+
+Cocci Gram-
+Cocobacilles Gram -
+Cellules epitheliales cloutees
+Levures Simples
+Levures Bourgeonantes
+Diplocoque Gram (-) Intra cellulaire
+Diplocoque Gram (-) Extra cellulaire
+Frottis Vaginal/Gram
+Frottis Uretral/Gram
+Cholera Test rapide
+Coproculture
+Couleur
+Liquefaction
+pH
+Fructose
+Volume
+Compte de spermes
+Formes normales
+Formes anormales
+Motilite STAT
+Motilite 1 heure
+Motilite 3 heures
+Gram
+
+Couleur
+Aspect
+Densite
+Ph
+Proteines
+Glucose
+Cetones
+Bilirubine
+Sang 
+Acide ascorbique
+Urobilinogene
+Nitrites
+Hematies
+Leucocytes
+cellules epitheliales
+Bacteries
+Levures
+filaments myceliens
+spores
+trichomonas
+Cylindres
+Cristaux
+
+
+Couleur
+Aspect
+Sang Occulte
+Bacteries
+cellules vegetales
+Protozoaires
+Metazoaires
+Recherche de cryptosporidium et Oocyste
+Recheche de microfilaire
+
+Recherche de plasmodiun - Especes
+Recherche de plasmodiun - Trophozoit
+Recherche de plasmodiun - Gametocyte
+Recherche de plasmodiun - Schizonte
+
+CD4 en mm3
+CD4 en %
+CMV Ig G
+CMV Ig M   
+RUBELLA Ig G
+RUBELLA Ig M
+HERPESTYPE I   Ig G
+HERPESTYPE II Ig M
+HIV test rapide
+HIV test rapide
+HIV test rapide
+HIV Elisa
+HIV Elisa
+HIV Elisa
+HBsAg - Hépatite B
+HBsAg - Hépatite B
+HBsAg - Hépatite B
+HCV - Hépatite C
+HCV - Hépatite C
+HCV - Hépatite C
+Dengue
+Dengue
+Dengue
+Toxoplasmose
+Toxoplasmose
+Toxoplasmose
+Rubeole
+Rubeole
+Rubeole
+HIV Western Blot
+HIV Western Blot
+HIV Western Blot
+Hépatite B - HBsAg IGG
+Hépatite B - HBsAg IGG
+Hépatite B - HBsAg IGG
+Hépatite B - HBV :AcHbC,AcHbe
+Hépatite B - HBV :AcHbC,AcHbe
+Hépatite B - HBV :AcHbC,AcHbe
+Hépatite C - HCV IGG
+Hépatite C - HCV IGG
+Hépatite C - HCV IGG
+Hépatite B - HCV IGM
+Hépatite B - HCV IGM
+Hépatite B - HCV IGM
+P24
+
+
+Charge Virale
+ADN VIH-1
+PCR Resistance TB
+
+Culture
+Antibiogramme
+recherche des bacteries
+pneumocoques
+streptocoques
+staphylocoques
+Recherche de BAAR Auramine
+Recherche de BAAR Zielh Neelsen
+culture BK
+
+Antibiogramme
+culture 
+cristaux d'urates
+cristaux de cholesterol
+Examen direct
+Culture
+Antibiogramme
+Liquide Ascite Recherche des Lymphocytes
+Liquide Ascite GRAM
+Liquide Ascite ZIELH NIELSEN
+Recherche des Lymphocytes
+Eosinophile
+cellules atypiques/polynucleaires
+globules rouges 
+GRAM
+ZIELH NIELSEN
+Cellules polynucleaires
+leucocytes
+Numeration des globules blancs
+LCR GRAM
+LCR ZIELH NIELSEN
+
+Recherche de BAAR
+Recherche de BK Auramine
+Culture de M. tuberculosis
+
+Prolactine
+FSH
+FSH
+LH
+LH
+Oestrogene
+Progesterone
+T3
+B-HCG 
+B-HCG 
+Test de Grossesse
+T4
+TSH
+
+TOXOPLASMOSE GONDII IgG Ac
+TOXOPLASMOSE GONDII Ig M Ac
+Malaria Test Rapide
+Malaria Test Rapide
+Malaria Test Rapide
+Syphilis Test Rapide
+Syphilis Test Rapide
+Syphilis Test Rapide
+HTLV I et II 
+HTLV I et II 
+HTLV I et II 
+Syphilis RPR
+Syphilis RPR
+Syphilis RPR
+Syphilis TPHA
+Syphilis TPHA
+Syphilis TPHA
+Helicobacter Pilori
+Helicobacter Pilori
+Helicobacter Pilori
+CRP
+CRP
+CRP
+ASO
+ASO
+ASO
+Test de Widal Ag O
+Test de Widal Ag H
+Typhoide Test Rapide
+Typhoide Test Rapide
+
+Determine
+Determine
+Determine
+Colloidal Gold / Shangai Kehua
+Colloidal Gold / Shangai Kehua
+Colloidal Gold / Shangai Kehua
+Syphilis Bioline
+Syphilis Bioline
+Syphilis Bioline
+
+
+
+
+
+
+
+
+
+
+

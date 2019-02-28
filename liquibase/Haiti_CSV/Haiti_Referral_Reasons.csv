@@ -1,0 +1,10 @@
+id,name,description,display_key,lastupdated
+nextval( 'referral_reason_seq' ) ,Test not performed,Test was not performed,referral.reason.testNotPerformed, now()   
+nextval( 'referral_reason_seq' ) ,Confirmation requested,Confirmation requested,referral.reason.confirmation, now() 
+nextval( 'referral_reason_seq' ) ,Further testing required ,Further testing required ,referral.reason.moreTests, now() 
+nextval( 'referral_reason_seq' ) ,Reagent expired,Reagent expired,referral.reason.reagent.expired, now() 
+nextval( 'referral_reason_seq' ) ,Reagents unavailable ,Reagents unavailable ,referral.reason.reagent.unavailabe, now()    
+nextval( 'referral_reason_seq' ) ,Equipment failure,Equipment failure,referral.reason.equipment, now()    
+nextval( 'referral_reason_seq' ) ,Verification of EQA,Verification of EQA,referral.reason.EQA.verification, now()    
+nextval( 'referral_reason_seq' ) ,Specimen sent for serotyping,Specimen sent for serotyping,referral.reason.serotyping, now()    
+nextval( 'referral_reason_seq' ) ,EQA by Repeat Testing,EQA by Repeat Testing,referral.reason.EQA.testing, now()   

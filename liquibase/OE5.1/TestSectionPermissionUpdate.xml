@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ The contents of this file are subject to the Mozilla Public License
+  ~ Version 1.1 (the "License"); you may not use this file except in
+  ~ compliance with the License. You may obtain a copy of the License at
+  ~ http://www.mozilla.org/MPL/
+  ~
+  ~ Software distributed under the License is distributed on an "AS IS"
+  ~ basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+  ~ License for the specific language governing rights and limitations under
+  ~ the License.
+  ~
+  ~ The Original Code is OpenELIS code.
+  ~
+  ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<!-- Data specific to CDI regional labs -->
+	<changeSet author="jfurlong" id="1" context="ci_regional">
+		<comment>Update the permissions for test section specific actions(system_module table)</comment>
+		<sql>
+			insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'Workplan', 'Workplan=>Enter', 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			update clinlims.system_module set name = 'LogbookResults:Biochemistry', description = 'LogbookResults=>Biochemistry' where name = 'LogbookResults:biochemistry';
+			update clinlims.system_module set name = 'ResultValidation:Biochemistry', description = 'ResultValidation=>Biochemistry' where name = 'ResultValidation:biochemistry';
+			update clinlims.system_module set name = 'Workplan:Biochemistry', description = 'Workplan=>Biochemistry' where name = 'Workplan:biochemistry';
+			update clinlims.system_module set name = 'LogbookResults:Hematology', description = 'LogbookResults=>Hematology' where name = 'LogbookResults:hematology';
+			update clinlims.system_module set name = 'ResultValidation:Hematology', description = 'ResultValidation=>Hematology' where name = 'ResultValidation:hematology';
+			update clinlims.system_module set name = 'Workplan:Hematology', description = 'Workplan=>Hematology' where name = 'Workplan:hematology';
+			update clinlims.system_module set name = 'LogbookResults:Serology-Immunology', description = 'LogbookResults=>Serology-Immunology' where name = 'LogbookResults:serolo-immunology';
+			update clinlims.system_module set name = 'ResultValidation:Serology-Immunology', description = 'ResultValidation=>Serology-Immunology' where name = 'ResultValidation:Serology-Immunology';
+			update clinlims.system_module set name = 'Workplan:Serology-Immunology', description = 'Workplan=>Serology-Immunology' where name = 'Workplan:serology-immunology';
+			update clinlims.system_module set name = 'LogbookResults:Immunology', description = 'LogbookResults=>Immunology' where name = 'LogbookResults:immunology';
+			update clinlims.system_module set name = 'ResultValidation:Immunology', description = 'ResultValidation=>Immunology' where name = 'ResultValidation:immunology';
+			update clinlims.system_module set name = 'Workplan:Immunology', description = 'Workplan=>Immunology' where name = 'Workplan:immunology';
+			update clinlims.system_module set name = 'LogbookResults:Molecular Biology', description = 'LogbookResults=>Molecular Biology' where name = 'LogbookResults:molecularBio';
+			update clinlims.system_module set name = 'ResultValidation:Molecular Biology', description = 'ResultValidation=>Molecular Biology' where name = 'ResultValidation:molecularBio';
+			update clinlims.system_module set name = 'Workplan:Molecular Biology', description = 'Workplan=>Molecular Biology' where name = 'Workplan:molecularBio';
+		</sql>
+	</changeSet>
+	<!-- Data specific to CDIRetroCI lab -->
+	<changeSet author="jfurlong" id="2" context="CDIRetroCI">
+		<comment>Update the permissions for test section specific actions(system_module table)</comment>
+		<sql>
+			update clinlims.system_module set name = 'LogbookResults:Immunology', description = 'LogbookResults=>Immunology' where name = 'LogbookResults:immuno';
+			update clinlims.system_module set name = 'Workplan:Immunology', description = 'Workplan=>Immunology' where name = 'Workplan:immunology';
+			update clinlims.system_module set name = 'LogbookResults:Hematology', description = 'LogbookResults=>Hematology' where name = 'LogbookResults:hematology';
+			update clinlims.system_module set name = 'Workplan:Hematology', description = 'Workplan=>Hematology' where name = 'Workplan:hematology';
+			update clinlims.system_module set name = 'LogbookResults:Biochemistry', description = 'LogbookResults=>Biochemistry' where name = 'LogbookResults:chem';
+			update clinlims.system_module set name = 'Workplan:Biochemistry', description = 'Workplan=>Biochemistry' where name = 'Workplan:biochemistry';
+			update clinlims.system_module set name = 'LogbookResults:Serology', description = 'LogbookResults=>Serology' where name = 'LogbookResults:serology';
+			update clinlims.system_module set name = 'Workplan:Serology', description = 'Workplan=>Serology' where name = 'Workplan:serology';
+			update clinlims.system_module set name = 'LogbookResults:Virology', description = 'LogbookResults=>Virology' where name = 'LogbookResults:virology';
+			update clinlims.system_module set name = 'Workplan:Virology', description = 'Workplan=>Virology ' where name = 'Workplan:virology';
+		</sql>
+	</changeSet>
+	<!-- Data specific to CI_IPCI lab -->
+	<changeSet author="jfurlong" id="3" context="CI_IPCI">
+		<comment>Update the permissions for test section specific actions(system_module table)</comment>
+		<sql>
+			insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'Workplan', 'Workplan=>Enter', 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			update clinlims.system_module set name = 'LogbookResults:Biochemistry', description = 'LogbookResults=>Biochemistry' where name = 'LogbookResults:biochemistry';
+			update clinlims.system_module set name = 'ResultValidation:Biochemistry', description = 'ResultValidation=>Biochemistry' where name = 'ResultValidation:biochemistry';
+			update clinlims.system_module set name = 'Workplan:Biochemistry', description = 'Workplan=>Biochemistry' where name = 'Workplan:biochemistry';
+			update clinlims.system_module set name = 'LogbookResults:Hematology', description = 'LogbookResults=>Hematology' where name = 'LogbookResults:hematology';
+			update clinlims.system_module set name = 'ResultValidation:Hematology', description = 'ResultValidation=>Hematology' where name = 'ResultValidation:hematology';
+			update clinlims.system_module set name = 'Workplan:Hematology', description = 'Workplan=>Hematology' where name = 'Workplan:hematology';
+			update clinlims.system_module set name = 'LogbookResults:Serology-Immunology', description = 'LogbookResults=>Serology-Immunology' where name = 'LogbookResults:serolo-immunology';
+			update clinlims.system_module set name = 'ResultValidation:Serology-Immunology', description = 'ResultValidation=>Serology-Immunology' where name = 'ResultValidation:Serology-Immunology';
+			update clinlims.system_module set name = 'Workplan:Serology-Immunology', description = 'Workplan=>Serology-Immunology' where name = 'Workplan:serology-immunology';
+			update clinlims.system_module set name = 'LogbookResults:Immunology', description = 'LogbookResults=>Immunology' where name = 'LogbookResults:immunology';
+			update clinlims.system_module set name = 'ResultValidation:Immunology', description = 'ResultValidation=>Immunology' where name = 'ResultValidation:immunology';
+			update clinlims.system_module set name = 'Workplan:Immunology', description = 'Workplan=>Immunology' where name = 'Workplan:immunology';
+			update clinlims.system_module set name = 'LogbookResults:Molecular Biology', description = 'LogbookResults=>Molecular Biology' where name = 'LogbookResults:molecularBio';
+			update clinlims.system_module set name = 'ResultValidation:Molecular Biology', description = 'ResultValidation=>Molecular Biology' where name = 'Workplan:molecularBio';
+			update clinlims.system_module set name = 'Workplan:Molecular Biology', description = 'Workplan=>Molecular Biology' where name = 'ResultValidation:molecularBio';
+			update clinlims.system_module set name = 'LogbookResults:Malaria', description = 'LogbookResults=>Malaria' where name = 'LogbookResults:malaria';
+			update clinlims.system_module set name = 'ResultValidation:Malaria', description = 'ResultValidation=>Malaria' where name = 'ResultValidation:malaria';
+			update clinlims.system_module set name = 'Workplan:Malaria', description = 'Workplan=>Malaria' where name = 'Workplan:malaria';
+			update clinlims.system_module set name = 'LogbookResults:Parasitology', description = 'LogbookResults=>Parasitology' where name = 'LogbookResults:parasitology';
+			update clinlims.system_module set name = 'ResultValidation:Parasitology', description = 'ResultValidation=>Parasitology' where name = 'ResultValidation:parasitology';
+			update clinlims.system_module set name = 'Workplan:Parasitology', description = 'Workplan=>Parasitology' where name = 'Workplan:parasitology';
+			update clinlims.test_section set name = 'Mycology' where name = 'mycology';
+			update clinlims.system_module set name = 'LogbookResults:Mycology', description = 'LogbookResults=>Mycology' where name = 'ResultValidation:mycology';
+			update clinlims.system_module set name = 'ResultValidation:Mycology', description = 'ResultValidation=>Mycology' where name = 'LogbookResults:mycology';
+			update clinlims.system_module set name = 'Workplan:Mycology', description = 'Workplan=>Mycology' where name = 'Workplan:mycology';
+		</sql>
+	</changeSet>
+	<!-- Data specific to ciLNSP lab -->
+	<changeSet author="jfurlong" id="4" context="ciLNSP">
+		<comment>Update the permissions for test section specific actions(system_module table)</comment>
+		<sql>
+			insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'Workplan', 'Workplan=>Enter', 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			update clinlims.system_module set name = 'LogbookResults:Serology-Immunology', description = 'LogbookResults=>Serology-Immunology' where name = 'LogbookResults:serolo-immunology';
+			update clinlims.system_module set name = 'ResultValidation:Serology-Immunology', description = 'ResultValidation=>Serology-Immunology' where name = 'ResultValidation:Serology-Immunology';
+			update clinlims.system_module set name = 'Workplan:Serology-Immunology', description = 'Workplan=>Serology-Immunology' where name = 'Workplan:serology-immunology';
+			update clinlims.system_module set name = 'LogbookResults:Hemato-Immunology', description = 'LogbookResults=>Hemato-Immunology' where name = 'LogbookResults:hemato-immunology';
+			update clinlims.system_module set name = 'ResultValidation:Hemato-Immunology', description = 'ResultValidation=>Hemato-Immunology' where name = 'ResultValidation:Hemto-Immunology';
+			update clinlims.system_module set name = 'Workplan:Hemato-Immunology', description = 'Workplan=>Hemato-Immunology' where name = 'Workplan:hemato-immunology';
+			update clinlims.system_module set name = 'LogbookResults:Biochemistry', description = 'LogbookResults=>Biochemistry' where name = 'LogbookResults:biochemistry';
+			update clinlims.system_module set name = 'ResultValidation:Biochemistry', description = 'ResultValidation=>Biochemistry' where name = 'ResultValidation:biochemistry';
+			update clinlims.system_module set name = 'Workplan:Biochemistry', description = 'Workplan=>Biochemistry' where name = 'Workplan:biochemistry';
+			update clinlims.system_module set name = 'LogbookResults:Hematology', description = 'LogbookResults=>Hematology' where name = 'LogbookResults:hematology';
+			update clinlims.system_module set name = 'ResultValidation:Hematology', description = 'ResultValidation=>Hematology' where name = 'ResultValidation:hematology';
+			update clinlims.system_module set name = 'Workplan:Hematology', description = 'Workplan=>Hematology' where name = 'Workplan:hematology';		
+		</sql>
+	</changeSet>
+	<!-- Data specific to haiti lab -->
+	<changeSet author="jfurlong" id="5" context="haiti">
+		<comment>Update the permissions for test section specific actions(system_module table)</comment>
+		<sql>
+			insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'Workplan', 'Workplan=>Enter', 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);		
+			update clinlims.system_module set name = 'LogbookResults:Immunology', description = 'LogbookResults=>Immunology' where name = 'LogbookResults:immuno';
+			update clinlims.system_module set name = 'ResultValidation:Immunology', description = 'ResultValidation=>Immunology' where name = 'ResultValidation:immunology';
+			update clinlims.system_module set name = 'Workplan:Immunology', description = 'Workplan=>Immunology' where name = 'Workplan:immuno';
+			update clinlims.system_module set name = 'LogbookResults:VCT', description = 'LogbookResults=>VCT' where name = 'LogbookResults:HIV';
+			update clinlims.system_module set name = 'ResultValidation:VCT', description = 'ResultValidation=>VCT' where name = 'ResultValidation:VCT';
+			update clinlims.system_module set name = 'Workplan:VCT', description = 'Workplan=>VCT' where name = 'Workplan:HIV';
+			update clinlims.system_module set name = 'LogbookResults:Hematology', description = 'LogbookResults=>Hematology' where name = 'LogbookResults:hematology';
+			update clinlims.system_module set name = 'ResultValidation:Hematology', description = 'ResultValidation=>Hematology' where name = 'Workplan:hematology';
+			update clinlims.system_module set name = 'Workplan:Hematology', description = 'Workplan=>Hematology' where name = 'ResultValidation:hematology';
+			update clinlims.system_module set name = 'LogbookResults:Biochemistry', description = 'LogbookResults=>Biochemistry' where name = 'LogbookResults:biochemistry';
+			update clinlims.system_module set name = 'ResultValidation:Biochemistry', description = 'ResultValidation=>Biochemistry' where name = 'ResultValidation:biochemistry';
+			update clinlims.system_module set name = 'Workplan:Biochemistry', description = 'Workplan=>Biochemistry' where name = 'Workplan:chem';
+			update clinlims.system_module set name = 'LogbookResults:Cytobacteriology', description = 'LogbookResults=>Cytobacteriology' where name = 'LogbookResults:cytobacteriology';
+			update clinlims.system_module set name = 'ResultValidation:Cytobacteriology', description = 'ResultValidation=>Cytobacteriology' where name = 'ResultValidation:Cytobacteriologie';
+			update clinlims.system_module set name = 'Workplan:Cytobacteriology', description = 'Workplan=>Cytobacteriology' where name = 'Workplan:cytobacteriology';
+			update clinlims.system_module set name = 'LogbookResults:Bacteria', description = 'LogbookResults=>Bacteria' where name = 'LogbookResults:bacteriology';
+			update clinlims.system_module set name = 'ResultValidation:Bacteria', description = 'ResultValidation=>Bacteria' where name = 'ResultValidation:Bacteria';
+			update clinlims.system_module set name = 'Workplan:Bacteria', description = 'Workplan=>Bacteria' where name = 'Workplan:bacteriology';
+			update clinlims.system_module set name = 'LogbookResults:ECBU', description = 'LogbookResults=>ECBU' where name = 'LogbookResults:ECBU';
+			update clinlims.system_module set name = 'ResultValidation:ECBU', description = 'ResultValidation=>ECBU' where name = 'ResultValidation:ECBU';
+			update clinlims.system_module set name = 'Workplan:ECBU', description = 'Workplan=>ECBU' where name = 'Workplan:ECBU';
+			update clinlims.system_module set name = 'LogbookResults:Parasitology', description = 'LogbookResults=>Parasitology' where name = 'LogbookResults:parasitology';
+			update clinlims.system_module set name = 'ResultValidation:Parasitology', description = 'ResultValidation=>Parasitology' where name = 'ResultValidation:Parasitology';
+			update clinlims.system_module set name = 'Workplan:Parasitology', description = 'Workplan=>Parasitology' where name = 'Workplan:parasitology';
+			update clinlims.system_module set name = 'LogbookResults:Mycobacteriology', description = 'LogbookResults=>Mycobacteriology' where name = 'LogbookResults:mycobacteriology';
+			update clinlims.system_module set name = 'ResultValidation:Mycobacteriology', description = 'ResultValidation=>Mycobacteriology' where name = 'ResultValidation:Mycobacteriology';
+			update clinlims.system_module set name = 'Workplan:Mycobacteriology', description = 'Workplan=>Mycobacteriology' where name = 'Workplan:mycrobacteriology';
+			update clinlims.system_module set name = 'LogbookResults:Endocrinology', description = 'LogbookResults=>Endocrinology' where name = 'LogbookResults:endocrin';
+			update clinlims.system_module set name = 'ResultValidation:Endocrinology', description = 'ResultValidation=>Endocrinology' where name = 'ResultValidation:Endocrinologie';
+			update clinlims.system_module set name = 'Workplan:Endocrinology', description = 'Workplan=>Endocrinology' where name = 'Workplan:endocrin';
+			update clinlims.system_module set name = 'LogbookResults:Liquid Biology', description = 'LogbookResults=>Liquid Biology' where name = 'LogbookResults:liquidBio';
+			update clinlims.system_module set name = 'ResultValidation:Liquid Biology', description = 'ResultValidation=>Liquid Biology' where name = 'ResultValidation:Liquides biologique';
+			update clinlims.system_module set name = 'Workplan:Liquid Biology', description = 'Workplan=>Liquid Biology' where name = 'Workplan:liquidBio';
+			update clinlims.system_module set name = 'LogbookResults:Serology', description = 'LogbookResults=>Serology' where name = 'LogbookResults:serology';
+			update clinlims.system_module set name = 'ResultValidation:Serology', description = 'ResultValidation=>Serology' where name = 'ResultValidation:Serologie';
+			update clinlims.system_module set name = 'Workplan:Serology', description = 'Workplan=>Serology ' where name = 'Workplan:serologie';
+		</sql>
+	</changeSet>
+	<!-- Data specific to haitiLNSP lab -->
+	<changeSet author="jfurlong" id="6" context="haitiLNSP">
+		<comment>Update the permissions for test section specific actions(system_module table)</comment>
+		<sql>
+			insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'Workplan', 'Workplan=>Enter', 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			update clinlims.test_section set name = 'Virology' where name = 'Virologie';
+			update clinlims.test_section set name = 'Molecular Biology' where name = 'Biologie Moleculaire';
+			update clinlims.system_module set name = 'LogbookResults:Virology', description = 'LogbookResults=>Virologie' where name = 'LogbookResults:virologie';
+			update clinlims.system_module set name = 'ResultValidation:Virology', description = 'ResultValidation=>Virologie' where name = 'ResultValidation:virologie';
+			update clinlims.system_module set name = 'Workplan:Virology', description = 'Workplan=>Virologie' where name = 'Workplan:virologie';
+			update clinlims.system_module set name = 'LogbookResults:Molecular Biology', description = 'LogbookResults=>Biologie Moleculaire' where name = 'LogbookResults:molecularBio';
+			update clinlims.system_module set name = 'ResultValidation:Molecular Biology', description = 'ResultValidation=>Biologie Moleculaire' where name = 'ResultValidation:molecularBio';
+			update clinlims.system_module set name = 'Workplan:Molecular Biology', description = 'Workplan=>Biologie Moleculaire' where name = 'Workplan:molecularBio';
+			update clinlims.system_module set name = 'LogbookResults:Bacteria', description = 'LogbookResults=>Bacteria' where name = 'LogbookResults:bacteriology';
+			update clinlims.system_module set name = 'ResultValidation:Bacteria', description = 'ResultValidation=>Bacteria' where name = 'ResultValidation:Bacteria';
+			update clinlims.system_module set name = 'Workplan:Bacteria', description = 'Workplan=>Bacteria' where name = 'Workplan:bacteriology';
+			update clinlims.system_module set name = 'LogbookResults:Parasitology', description = 'LogbookResults=>Parasitology' where name = 'LogbookResults:parasitology';
+			update clinlims.system_module set name = 'ResultValidation:Parasitology', description = 'ResultValidation=>Parasitology' where name = 'ResultValidation:Parasitology';
+			update clinlims.system_module set name = 'Workplan:Parasitology', description = 'Workplan=>Parasitology' where name = 'Workplan:parasitology';
+			update clinlims.system_module set name = 'LogbookResults:Mycobacteriology', description = 'LogbookResults=>Mycobacteriology' where name = 'LogbookResults:mycobacteriology';
+			update clinlims.system_module set name = 'ResultValidation:Mycobacteriology', description = 'ResultValidation=>Mycobacteriology' where name = 'ResultValidation:Mycobacteriology';
+			update clinlims.system_module set name = 'Workplan:Mycobacteriology', description = 'Workplan=>Mycobacteriology' where name = 'Workplan:mycrobacteriology';
+			update clinlims.system_module set name = 'LogbookResults:Hematology', description = 'LogbookResults=>Hematology' where name = 'LogbookResults:hematology';
+			update clinlims.system_module set name = 'ResultValidation:Hematology', description = 'ResultValidation=>Hematology' where name = 'ResultValidation:hematology';
+			update clinlims.system_module set name = 'Workplan:Hematology', description = 'Workplan=>Hematology' where name = 'Workplan:hematology';
+ 		</sql>
+	</changeSet>
+	<!-- Data specific to haiti lab -->
+	<changeSet author="jfurlong" id="8" context="haiti">
+		<comment>Update the permissions for test section specific actions(system_module table)</comment>
+		<sql>
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), (select id from clinlims.system_module where name = 'LogbookResults:Biochemistry'));
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), (select id from clinlims.system_module where name = 'Workplan:Bacteria'));	
+		</sql>
+	</changeSet>	
+	<changeSet author="jfurlong" id="9" context="CDIRetroCI">
+		<comment>Update the permissions for test section specific actions(system_module/system_role_module table)</comment>
+		<sql>
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Immunology super user'), (select id from clinlims.system_module where name = 'LogbookResults'));
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Hematology super user'), (select id from clinlims.system_module where name = 'LogbookResults'));
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Serology super user'), (select id from clinlims.system_module where name = 'LogbookResults'));
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Biochemistry super user'), (select id from clinlims.system_module where name = 'LogbookResults'));
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Virology super user'), (select id from clinlims.system_module where name = 'LogbookResults'));
+
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Immunology super user'), (select id from clinlims.system_module where name = 'Workplan'));
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Hematology super user'), (select id from clinlims.system_module where name = 'Workplan'));
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Serology super user'), (select id from clinlims.system_module where name = 'Workplan'));
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Biochemistry super user'), (select id from clinlims.system_module where name = 'Workplan'));
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Virology super user'), (select id from clinlims.system_module where name = 'Workplan'));
+
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Immunology super user'), (select id from clinlims.system_module where name = 'LogbookResults:Immunology'));
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Hematology super user'), (select id from clinlims.system_module where name = 'LogbookResults:Hematology'));
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Serology super user'), (select id from clinlims.system_module where name = 'LogbookResults:Serology'));
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Biochemistry super user'), (select id from clinlims.system_module where name = 'LogbookResults:Biochemistry'));
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Virology super user'), (select id from clinlims.system_module where name = 'LogbookResults:Virology'));
+
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Immunology super user'), (select id from clinlims.system_module where name = 'Workplan:Immunology'));
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Hematology super user'), (select id from clinlims.system_module where name = 'Workplan:Hematology'));
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Serology super user'), (select id from clinlims.system_module where name = 'Workplan:Serology'));
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Biochemistry super user'), (select id from clinlims.system_module where name = 'Workplan:Biochemistry'));
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Virology super user'), (select id from clinlims.system_module where name = 'Workplan:Virology'));
+		</sql>
+	</changeSet>
+	<changeSet author="jfurlong" id="10" context="Kenya">
+		<comment>Update the permissions for test section specific actions(system_module/system_role_module table)</comment>
+		<sql>
+		insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'Workplan:Microscopy' ,  'Workplan=>Microscopy' , 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Validator'), currval('clinlims.system_module_seq')-2);
+
+		insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'Workplan:Bacteriology' ,  'Workplan=>Bacteriology' , 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Validator'), currval('clinlims.system_module_seq')-2);
+		insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'Workplan:Blood Bank' ,  'Workplan=>Blood Bank' , 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Validator'), currval('clinlims.system_module_seq')-2);
+		insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'Workplan:Histology / Cytology' ,  'Workplan=>Histology / Cytology' , 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Validator'), currval('clinlims.system_module_seq')-2);
+		insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'ResultValidation:Microscopy' ,  'ResultValidation=>Microscopy' , 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Validator'), currval('clinlims.system_module_seq')-2);
+		insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'ResultValidation:Bacteriology' ,  'ResultValidation=>Bacteriology' , 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Validator'), currval('clinlims.system_module_seq')-2);
+		insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'ResultValidation:Blood Bank' ,  'ResultValidation=>Blood Bank' , 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Validator'), currval('clinlims.system_module_seq')-2);
+		insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'ResultValidation:Histology / Cytology' ,  'ResultValidation=>Histology / Cytology' , 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Validator'), currval('clinlims.system_module_seq')-2);
+		insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'LogbookResults:Microscopy' ,  'LogbookResults=>Microscopy' , 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Validator'), currval('clinlims.system_module_seq')-2);
+		insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'LogbookResults:Bacteriology' ,  'LogbookResults=>Bacteriology' , 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Validator'), currval('clinlims.system_module_seq')-2);
+		insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'LogbookResults:Blood Bank' ,  'LogbookResults=>Blood Bank' , 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Validator'), currval('clinlims.system_module_seq')-2);
+		insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'LogbookResults:Histology / Cytology' ,  'LogbookResults=>Histology / Cytology' , 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Validator'), currval('clinlims.system_module_seq')-2);
+		insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'ResultValidation:Microscopy' ,  'ResultValidation=>Microscopy' , 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Validator'), currval('clinlims.system_module_seq')-2);
+		insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'ResultValidation:Bacteriology' ,  'ResultValidation=>Bacteriology' , 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Validator'), currval('clinlims.system_module_seq')-2);
+		insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'ResultValidation:Blood Bank' ,  'ResultValidation=>Blood Bank' , 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Validator'), currval('clinlims.system_module_seq')-2);
+		insert into clinlims.system_module values (nextval('clinlims.system_module_seq'), 'ResultValidation:Histology / Cytology' ,  'ResultValidation=>Histology / Cytology' , 'Y', 'Y', 'Y', 'Y');
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Results entry'), currval('clinlims.system_module_seq')-1);
+			insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Validator'), currval('clinlims.system_module_seq')-2);
+		</sql>
+	</changeSet>
+</databaseChangeLog>
+
+
+

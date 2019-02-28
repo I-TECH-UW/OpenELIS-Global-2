@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ The contents of this file are subject to the Mozilla Public License
+  ~ Version 1.1 (the "License"); you may not use this file except in
+  ~ compliance with the License. You may obtain a copy of the License at
+  ~ http://www.mozilla.org/MPL/
+  ~
+  ~ Software distributed under the License is distributed on an "AS IS"
+  ~ basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+  ~ License for the specific language governing rights and limitations under
+  ~ the License.
+  ~
+  ~ The Original Code is OpenELIS code.
+  ~
+  ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<!-- Data specific to HaitiLNSP -->
+	<changeSet author="paulsc" id="1" context="haitiLNSP">
+		<comment>Make the culture des selles reflexs non-quantifiable</comment>
+        <sql>
+            update clinlims.test_result set is_quantifiable = false
+            where test_id in ( select id from clinlims.test
+            where guid in('806d1f8e-3619-44b5-bdb3-8924487c0253',
+            '57c96193-5390-46d7-a3ab-02a7268dc057',
+            'f56ed65c-0f23-40cc-bb8a-54e298353ec0',
+            '72fd780a-9523-4d3a-be0c-ef55da931a63',
+            'f47f26c8-241a-438b-86b6-02140453f56c',
+            '31069e5e-9c28-4761-90cd-d60c9f2fa103',
+            'b39b4926-9070-40c3-91b9-f59b273f337d',
+            '0c066a7c-c74d-4035-beb7-016ab4f9b96e',
+            'b6af5f95-0d6e-47fe-b807-fee697562494',
+            '3cf8dbb7-d5b5-49bc-ad62-14483c63471f') );
+        </sql>
+	</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,11 @@
+id,has_select,has_add,has_update,has_delete,system_role_id,system_module_id
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = '' ) , ( select id from system_module where name = 'AnalyzerResults' ) 
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Facsalibur user' ) , ( select id from system_module where name = 'AnalyzerResults' ) 
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Sysmex user' ) , ( select id from system_module where name = 'AnalyzerResults' ) 
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Evolis user' ) , ( select id from system_module where name = 'AnalyzerResults' ) 
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Cobas Integra user' ) , ( select id from system_module where name = 'AnalyzerResults' ) 
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'ABI Prism user' ) , ( select id from system_module where name = 'AnalyzerResults' ) 
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Cobas Taqman user' ) , ( select id from system_module where name = 'AnalyzerResults' ) 
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Cobas Amplicor user' ) , ( select id from system_module where name = 'AnalyzerResults' ) 
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'BSD Duet user' ) , ( select id from system_module where name = 'AnalyzerResults' ) 
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'ELISA Bioteck EL800 user' ) , ( select id from system_module where name = 'AnalyzerResults' ) 

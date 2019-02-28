@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<changeSet author="paulsc" id="1">
+		<comment>Adds a new document type for document tracking</comment>
+		<insert tableName="document_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'document_type_seq' ) " />
+			<column name="name" value="patientReport" />
+			<column name="description" value="Any patient report, name in report_tracker" />
+			<column name="lastupdated" valueDate=" now() " />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="2">
+		<comment>Adds ability to turn page numbers on and off to site_information</comment>
+		<insert tableName="site_information_domain" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'site_information_domain_seq' ) " />
+			<column name="name" value="printedReportsConfig" />
+			<column name="description" value="items which effect printed reports"/>
+		</insert>
+		<insert tableName="site_information" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'site_information_seq' ) "></column>
+			<column name="name" value="reportPageNumbers" />
+			<column name="description" value="use page numbers on reports" />
+			<column name="value" value="false" />
+			<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'printedReportsConfig') "/>
+			<column name="value_type" value="boolean" />
+			<column name="instruction_key" value="siteInformation.instruction.pageNumbers" />			
+			<column name="lastupdated" valueDate=" now() " />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="3">
+		<comment>Moves lab director, siteName and useLogoInReport to configure reports</comment>
+		<update tableName="site_information" schemaName="clinlims">
+			<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'printedReportsConfig') "/>
+			<where>name in ('lab director','SiteName','useLogoInReport') </where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="4">
+		<comment>Removes un-used site_information</comment>
+		<delete tableName="site_information" schemaName="clinlims">
+			<where>name = 'form_fields'</where>
+		</delete>
+	</changeSet>
+	<changeSet author="paulsc" id="5">
+		<comment>Changes Border Line to Borderline in dictionary.  Only effects haiti lnsp</comment>
+		<update tableName="dictionary">
+			<column name="dict_entry" value="Borderline" />
+			<where>dict_entry = 'Border Line'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="6">
+		<comment>makes the non-conformity an inactive status</comment>
+		<update tableName="status_of_sample">
+			<column name="is_active" value="N" />
+			<where>name = 'NonConforming'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="7">
+		<comment>corrects spelling for name_key for qa_event</comment>
+		<update tableName="qa_event">
+			<column name="display_key" value="qa_event.coagulated"/>
+			<where>display_key = 'qa_event.colagulated'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="8">
+		<comment>Adds new site identity for triggering the sorting of qa_event reasons</comment>
+		<insert tableName="site_information" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'site_information_seq' ) "></column>
+			<column name="name" value="sortQaEvents" />
+			<column name="description" value="sort qa events in lists" />
+			<column name="value" value="true" />
+			<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'siteIdentity') "/>
+			<column name="value_type" value="boolean" />
+			<column name="instruction_key" value="siteInformation.instruction.sortQaEvents" />			
+			<column name="lastupdated" valueDate=" now() " />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="9">
+		<comment>Removes an extraneous system_role called enter. It ha no modules</comment>
+		<delete tableName="system_user_role">
+			<where>role_id = ( select id from clinlims.system_role where name = 'enter' ) </where>
+		</delete>
+		<delete tableName="system_role">
+			<where>name = 'enter' </where>
+		</delete>
+	</changeSet>
+	<changeSet author="paulsc" id="10">
+		<comment>Removes un-used site information entry</comment>
+		<delete tableName="site_information">
+			<where>name in ('string context','status rules', 'accession_number', 'password', 'configuration_name' ) </where>
+		</delete>
+	</changeSet>
+	<changeSet author="paulsc" id="11">
+		<comment>Adds new site_information item for changing workflow</comment>
+		<insert tableName="site_information" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'site_information_seq' ) "></column>
+			<column name="name" value="validate all results" />
+			<column name="description" value="all results should be validated even if normal" />
+			<column name="value" value="true" />
+			<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'resultConfiguration') "/>
+			<column name="value_type" value="boolean" />
+			<column name="instruction_key" value="siteInformation.instruction.validate.all" />			
+			<column name="lastupdated" valueDate=" now() " />
+		</insert>
+	</changeSet>
+</databaseChangeLog>

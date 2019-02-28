@@ -1,0 +1,356 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Negatif, Positif
+
+
+
+
+
+
+
+
+
+
+A, B, AB, O
+RH Pos, RH Neg
+Compatible, Incompatible
+Compatible, Incompatible
+Positif, Negatif
+
+
+Negatif, Positif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Negatif, Positif 1+, Positif 2+, Positif 3+, positif 4+
+Negatif, Positif 1+, Positif 2+, Positif 3+, positif 4+
+Negatif, Positif 1+, Positif 2+, Positif 3+, positif 4+
+Negatif, 0 -1/ch, 1-5/ch, 5-10/ch, 10-15/ch, 15-20/ch, 20-25/ch, 25-30/ch, 30-35/ch,35-40/ch, 40-45/ch, 45-50/ch, 50-100/ch, Superieur a 100/ch
+Negatif, 0 -1/ch, 1-5/ch, 5-10/ch, 10-15/ch, 15-20/ch, 20-25/ch, 25-30/ch, 30-35/ch,35-40/ch, 40-45/ch, 45-50/ch, 50-100/ch, Superieur a 100/ch
+Negatif, 0 -1/ch, 1-5/ch, 5-10/ch, 10-15/ch, 15-20/ch, 20-25/ch, 25-30/ch, 30-35/ch,35-40/ch, 40-45/ch, 45-50/ch, 50-100/ch, Superieur a 100/ch
+Negatif, Positif 1+, Positif 2+, Positif 3+, positif 4+
+Negatif, Positif 1+, Positif 2+, Positif 3+, positif 4+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, 0 -1/ch, 1-5/ch, 5-10/ch, 10-15/ch, 15-20/ch, 20-25/ch, 25-30/ch, 30-35/ch,35-40/ch, 40-45/ch, 45-50/ch, 50-100/ch, >100/ch
+Negatif, 0 -1/ch, 1-5/ch, 5-10/ch, 10-15/ch, 15-20/ch, 20-25/ch, 25-30/ch, 30-35/ch,35-40/ch, 40-45/ch, 45-50/ch, 50-100/ch, >100/ch
+Negatif, 0 -1/ch, 1-5/ch, 5-10/ch, 10-15/ch, 15-20/ch, 20-25/ch, 25-30/ch, 30-35/ch,35-40/ch, 40-45/ch, 45-50/ch, 50-100/ch, >100/ch
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif
+Negatif, Positif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reactif, Non Reactif
+
+Blanc jaunatre, jaune paille, jaune citrin, ambre, orange, jaune fonce, rouge, autre
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Jaune Paille, Jaune citrin, Ambre,Orange,Jaune Fonce, Rouge, Autre
+Clair, Trouble, Icterique, normal,Fonce, Legerement trouble,Autre
+
+
+Negatif, trace, Positif 1+, Positif 2+, Positif 3+
+Negatif, trace, Positif 1+, Positif 2+, Positif 3+
+Negatif, trace, Positif 1+, Positif 2+, Positif 3+
+Negatif, trace, Positif 1+, Positif 2+, Positif 3+
+Negatif, trace, Positif 1+, Positif 2+, Positif 3+
+Negatif, trace, Positif 1+, Positif 2+, Positif 3+
+Negatif, trace, Positif 1+, Positif 2+, Positif 3+
+Negatif, trace, Positif 1+, Positif 2+, Positif 3+
+Negatif, trace, Positif 1+, Positif 2+, Positif 3+
+Negatif, En amas, 0-1/ ch,1- 5 /ch, 5-10/ ch, 10-15/ch, 15- 20/ch, 20-25/ch, 25- 30/ch, 30-35/ch, 35- 40/ch, 40-45/ch, 45- 50/ch, 50- 100/ch, Superieur a 100/ch
+Negatif, En amas, 0-1/ ch,1- 5 /ch, 5-10/ ch, 10-15/ch, 15- 20/ch, 20-25/ch, 25- 30/ch, 30-35/ch, 35- 40/ch, 40-45/ch, 45- 50/ch, 50- 100/ch, Superieur a 100/ch
+Negatif, Rare,Positif 1+, Positif 2+, Positif 3+
+Negatif,Rare,Positif 1+, Positif 2+, Positif 3+
+Negatif, Rare,Positif 1+, Positif 2+, Positif 3+
+Negatif,Rare,Positif 1+, Positif 2+, Positif 3+
+Negatif,Rare,Positif 1+, Positif 2+, Positif 3+
+Negatif, 0-1/ ch,1- 5 /ch, 5-10/ ch, 10-15/ch, 15- 20/ch, 20-25/ch, 25- 30/ch, 30-35/ch, 35- 40/ch, 40-45/ch, 45- 50/ch, 50- 100/ch, Superieur a 100/ch
+Negatif, 0-1/ ch,1- 5 /ch, 5-10/ ch, 10-15/ch, 15- 20/ch, 20-25/ch, 25- 30/ch, 30-35/ch, 35- 40/ch, 40-45/ch, 45- 50/ch, 50- 100/ch, Superieur a 100/ch, Hyalins, Granuleux, Graisseux, Epitheliales, Leucocytaires, Cireux
+Negatif, 0-1/ ch,1- 5 /ch, 5-10/ ch, 10-15/ch, 15- 20/ch, 20-25/ch, 25- 30/ch, 30-35/ch, 35- 40/ch, 40-45/ch, 45- 50/ch, 50- 100/ch, Superieur a 100/ch, Oxalate de Calcium, Acide Urique, Cystine, Phosphate de Calcium,Urates Amorphes, Triple phosphate,Phosphate de Ca,Phosphate de Mg, Sulfate de Ca,Urate d'Ammonium 
+
+
+Noiratre,Sanguinolant, Jaunatre,Maron,Verdatre,Grisatre Autre
+Liquide, Solide, Semi Liquide, Pateuse,Glaireuse, Molle
+Negatif, Positif
+
+
+
+
+
+
+Negatif , P. falciparum; P. vivax,P. malariae, P. ovale, Trophozoite,Gametocyte,Schizonte,1+,2+,3+,4+
+Negatif , Positif
+
+
+
+
+Negatif, Positif, Indetermine
+Negatif, Positif, Indetermine
+Negatif, Positif, Indetermine
+Negatif,Positif
+Negatif,Positif
+Negatif,Positif
+Negatif,Positif
+Negatif,Positif
+Negatif,Positif
+Negatif,Positif
+Negatif,Positif
+Negatif,Positif
+Negatif,Positif
+Negatif,Positif
+Negatif,Positif
+
+Negatif, Positif 1+, Positif 2+, Positif 3+, Rare (1-9 BAAR/100ch)
+Negatif, Positif 1+, Positif 2+, Positif 3+, Rare (1-9 BAAR/100ch)
+Negatif, Positif 1+, Positif 2+, Positif 3+, Rare (1-9 BAAR/100ch)
+Negatif, Positif 1+, Positif 2+, Positif 3+, Rare (1-9 BAAR/40ch)
+Negatif, Positif 1+, Positif 2+, Positif 3+, Rare (1-9 BAAR/40ch)
+Negatif, Positif 1+, Positif 2+, Positif 3+, Rare (1-9 BAAR/40ch)
+
+Negatif, Positif 1+, Positif 2+, Positif 3+, Rare (1-9 BAAR/100ch)
+Negatif, Positif 1+, Positif 2+, Positif 3+, Rare (1-9 BAAR/100ch)
+Negatif, Positif 1+, Positif 2+, Positif 3+, Rare (1-9 BAAR/100ch)
+Negatif, Positif 1+, Positif 2+, Positif 3+, Rare (1-9 BAAR/40ch)
+Negatif, Positif 1+, Positif 2+, Positif 3+, Rare (1-9 BAAR/40ch)
+Negatif, Positif 1+, Positif 2+, Positif 3+, Rare (1-9 BAAR/40ch)
+Absence de BAAR, Positif 1+, Positif 2+, Positif 3+
+Non- Reactif, Reactif
+
+
+
+
+
+
+
+
+
+
+ 
+Positif, Negatif
+Positif, Negatif
+
+
+
+
+Negatif, Positif 1+, Positif 2+, Positif 3+, Rare (1-9 BAAR/100ch)
+
+
+
+
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Non-Reactif, Reactif, 2u, 4u,8u, 16u, 32u, 64u, 128u,256u, > 572
+Non-Reactif, Reactif, 2u, 4u,8u, 16u, 32u, 64u, 128u,256u, > 572
+Negatif, Positif 
+Non-Reactif, Reactif, 2u, 4u,8u, 16u, 32u, 64u, 128u,256u, > 572
+Negatif, Positif 
+Negatif, Positif 
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Negatif, Positif
+Negatif, Positif
+Negatif, Positif
+Negatif, Positif
+Negatif  < 200 unites/ml, Positif > 200 unités/ml
+Negatif  < 200 unites/ml, Positif > 200 unités/ml
+Negatif  < 200 unites/ml, Positif > 200 unités/ml
+Positif  > 200 U ASLO/ml, Negatif  < 200 U ASLO/ml
+Negatif < 200 U ASLO/ml, Positif  > 200 U ASLO/ml
+Negatif < 200 U ASLO/ml, Positif  > 200 U ASLO/ml
+Non Reactif, Reactif , Reactif 1/20, Reactif 1/40, Reactif 1/80, Reactif 1/160,Reactif 1/320, Reactif 1/640
+Non Reactif, Reactif , Reactif 1/20, Reactif 1/40, Reactif 1/80, Reactif 1/160,Reactif 1/320, Reactif 1/640
+Non Reactif, Reactif , Reactif 1/2, Reactif 1/4, Reactif 1/8, Reactif 1/16,Reactif 1/32, Reactif 1/64
+Non Reactif, Reactif , Reactif 1/2, Reactif 1/4, Reactif 1/8, Reactif 1/16,Reactif 1/32, Reactif 1/64
+Negatif,Positif,Indetermine
+Negatif,Positif,Indetermine
+Negatif, Positif
+Negatif, Positif
+Negatif, Positif
+Negatif, Positif
+
+Negatif, Positif
+
+Negatif, Positif, Indetermine
+Negatif, Positif, Indetermine
+Negatif, Positif, Indetermine
+Negatif, Positif, Indetermine
+Negatif, Positif, Indetermine
+Negatif, Positif, Indetermine
+Negatif, Positif, Indetermine
+Negatif, Positif, Indetermine
+Negatif, Positif, Indetermine
+
+<4 Negatif, > 4 Positif
+<4 Negatif, > 4 Positif

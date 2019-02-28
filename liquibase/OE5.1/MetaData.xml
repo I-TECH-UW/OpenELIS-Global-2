@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ The contents of this file are subject to the Mozilla Public License
+  ~ Version 1.1 (the "License"); you may not use this file except in
+  ~ compliance with the License. You may obtain a copy of the License at
+  ~ http://www.mozilla.org/MPL/
+  ~
+  ~ Software distributed under the License is distributed on an "AS IS"
+  ~ basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+  ~ License for the specific language governing rights and limitations under
+  ~ the License.
+  ~
+  ~ The Original Code is OpenELIS code.
+  ~
+  ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+<changeSet author="paulsc" id="1">
+    <comment>Add tag to site logo information and update the name</comment>
+    <update tableName="site_information" >
+        <column name="name" value="headerRightImage" />
+        <column name="lastupdated" valueDate=" now() " />
+        <column name="description" value="Image for the right side of report header" />
+        <column name="value" value="" />
+        <column name="instruction_key" value="siteInfo.instruction.labLogo.right" />
+        <column name="description_key" value="siteInfo.lab.logo.right" />
+        <where>name = 'lab logo'</where>
+    </update>
+    <insert schemaName="clinlims" tableName="site_information" >
+        <column name="id" valueNumeric=" nextval( 'site_information_seq' ) " />
+        <column name="name"  value="headerLeftImage" />
+        <column name="description" value="Image for the left side of report header" />
+        <column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'printedReportsConfig' ) " />
+        <column name="lastupdated" valueDate=" now() " />
+        <column name="value_type" value="logoUpload" />
+        <column name="value" value="" />
+        <column name="instruction_key" value="siteInfo.instruction.labLogo.left" />
+        <column name="description_key" value="siteInfo.lab.logo.left" />
+    </insert>
+</changeSet>
+    <changeSet id="2" author="paulsc" >
+        <comment>Removes the use logo entry from site information</comment>
+        <delete tableName="site_information" >
+            <where>name = 'useLogoInReport'</where>
+        </delete>
+    </changeSet>
+    <changeSet id="3" author="paulsc" context="CI_IPCI, haiti, haitiLNSP, ci_regional, Kenya">
+        <comment>Backfills admin permission</comment>
+        <insert schemaName="clinlims" tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+            <column name="name" value="PatientConfiguration"/>
+            <column name="description" value="Admin=&gt;patient config"/>
+            <column name="has_select_flag" value="Y"/>
+            <column name="has_add_flag" value="Y"/>
+            <column name="has_update_flag" value="Y"  />
+            <column name="has_delete_flag" value="Y"/>
+        </insert>
+        <insert schemaName="clinlims" tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+            <column name="name" value="ResultConfiguration"/>
+            <column name="description" value="Admin=&gt;Result config"/>
+            <column name="has_select_flag" value="Y"/>
+            <column name="has_add_flag" value="Y"/>
+            <column name="has_update_flag" value="Y"  />
+            <column name="has_delete_flag" value="Y"/>
+        </insert>
+        <insert schemaName="clinlims" tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+            <column name="name" value="PrintedReportsConfiguration"/>
+            <column name="description" value="Admin=&gt;printed reports config"/>
+            <column name="has_select_flag" value="Y"/>
+            <column name="has_add_flag" value="Y"/>
+            <column name="has_update_flag" value="Y"  />
+            <column name="has_delete_flag" value="Y"/>
+        </insert>
+        <insert schemaName="clinlims" tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+            <column name="name" value="NonConformityConfiguration"/>
+            <column name="description" value="Admin=&gt;non-conformity config"/>
+            <column name="has_select_flag" value="Y"/>
+            <column name="has_add_flag" value="Y"/>
+            <column name="has_update_flag" value="Y"  />
+            <column name="has_delete_flag" value="Y"/>
+        </insert>
+        <insert tableName="system_role_module">
+            <column name="id" valueNumeric=" nextval( 'system_user_module_seq' )  " />
+            <column name="system_role_id" valueNumeric=" ( select id from clinlims.system_role where name = 'Maintenance Admin' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from clinlims.system_module where name = 'PatientConfiguration' ) " />
+        </insert>
+        <insert tableName="system_role_module">
+            <column name="id" valueNumeric=" nextval( 'system_user_module_seq' )  " />
+            <column name="system_role_id" valueNumeric=" ( select id from clinlims.system_role where name = 'Maintenance Admin' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from clinlims.system_module where name = 'ResultConfiguration' ) " />
+        </insert>
+        <insert tableName="system_role_module">
+            <column name="id" valueNumeric=" nextval( 'system_user_module_seq' )  " />
+            <column name="system_role_id" valueNumeric=" ( select id from clinlims.system_role where name = 'Maintenance Admin' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from clinlims.system_module where name = 'PrintedReportsConfiguration' ) " />
+        </insert>
+        <insert tableName="system_role_module">
+            <column name="id" valueNumeric=" nextval( 'system_user_module_seq' )  " />
+            <column name="system_role_id" valueNumeric=" ( select id from clinlims.system_role where name = 'Maintenance Admin' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from clinlims.system_module where name = 'NonConformityConfiguration' ) " />
+        </insert>
+    </changeSet>
+    <changeSet id="4" author="paulsc" context="ciLNSP, CDIRetroCI">
+        <comment>Backfills admin permission</comment>
+        <insert schemaName="clinlims" tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+            <column name="name" value="PatientConfiguration"/>
+            <column name="description" value="Admin=&gt;patient config"/>
+            <column name="has_select_flag" value="Y"/>
+            <column name="has_add_flag" value="Y"/>
+            <column name="has_update_flag" value="Y"  />
+            <column name="has_delete_flag" value="Y"/>
+        </insert>
+        <insert schemaName="clinlims" tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+            <column name="name" value="NonConformityConfiguration"/>
+            <column name="description" value="Admin=&gt;non-conformity config"/>
+            <column name="has_select_flag" value="Y"/>
+            <column name="has_add_flag" value="Y"/>
+            <column name="has_update_flag" value="Y"  />
+            <column name="has_delete_flag" value="Y"/>
+        </insert>
+        <insert tableName="system_role_module">
+            <column name="id" valueNumeric=" nextval( 'system_user_module_seq' )  " />
+            <column name="system_role_id" valueNumeric=" ( select id from clinlims.system_role where name = 'Maintenance Admin' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from clinlims.system_module where name = 'PatientConfiguration' ) " />
+        </insert>
+        <insert tableName="system_role_module">
+            <column name="id" valueNumeric=" nextval( 'system_user_module_seq' )  " />
+            <column name="system_role_id" valueNumeric=" ( select id from clinlims.system_role where name = 'Maintenance Admin' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from clinlims.system_module where name = 'NonConformityConfiguration' ) " />
+        </insert>
+    </changeSet>
+    <changeSet author="paulsc" id="5" >
+        <comment>Sets permissions for activating and deactivating tests</comment>
+        <insert schemaName="clinlims" tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+            <column name="name" value="TestActivation"/>
+            <column name="description" value="Admin=&gt;test mang=&gt;activate"/>
+            <column name="has_select_flag" value="Y"/>
+            <column name="has_add_flag" value="Y"/>
+            <column name="has_update_flag" value="Y"  />
+            <column name="has_delete_flag" value="Y"/>
+        </insert>
+        <insert tableName="system_role_module">
+            <column name="id" valueNumeric=" nextval( 'system_user_module_seq' )  " />
+            <column name="system_role_id" valueNumeric=" ( select id from clinlims.system_role where name = 'Test Management' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from clinlims.system_module where name = 'TestActivation' ) " />
+        </insert>
+    </changeSet>
+    <changeSet author="paulsc" id="6" >
+        <comment>Adds display_key to all dictionary results</comment>
+        <sql>
+            update clinlims.dictionary set display_key = substr(replace(replace(replace(replace(('dictionary.result.' || dict_entry), ' ', '_'), 'Ã©', 'e'),'é','e' ),$$'$$,''),0,60)
+            where dictionary_category_id = (select id from clinlims.dictionary_category where description = 'Haiti Lab') and dict_entry != '';
+        </sql>
+    </changeSet>
+    <changeSet author="paulsc" id="7" >
+        <insert schemaName="clinlims" tableName="site_information" >
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) " />
+            <column name="name"  value="supportPatientNationality" />
+            <column name="description" value="Should the nationality of the patient be specified" />
+            <column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'patientEntryConfig' ) " />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="value_type" value="boolean" />
+            <column name="value" value="false" />
+            <column name="instruction_key" value="siteInfo.instruction.patient.nationality" />
+            <column name="description_key" value="siteInfo.patient.nationality" />
+        </insert>
+    </changeSet>
+    <changeSet author="paulsc" id="8" context="CI_IPCI, ciLNSP, ci_regional" >
+        <comment>Setting correct defaults for patient nationality</comment>
+        <update tableName="site_information" >
+            <column name="value" value="true" />
+            <where>name = 'supportPatientNationality' </where>
+        </update>
+    </changeSet>
+    <changeSet id="1" author="jfurlong">
+        <comment>Adds the configurable item of restricting free text entries for referring site in sample entry</comment>
+        <insert tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+            <column name="name" value="restrictFreeTextRefSiteEntry" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="description" value="Users cannot enter new referring sites through sample entry" />
+            <column name="domain_id" valueNumeric=" ( select id from clinlims.site_information_domain where name = 'sampleEntryConfig' ) " />
+            <column name="value_type" value="boolean" />
+            <column name="value" value="false" />
+            <column name="instruction_key" value="instructions.sample.entry.limit.ref.site" />
+            <column name="description_key" value="siteInfo.restrictFreeTextRefSiteEntry" />
+        </insert>
+	</changeSet>
+    <changeSet author="paulsc" id="9" context="haiti-hide, haitiLNSP-hide" >
+        <comment>removes un-referenced tests, sample types and panels</comment>
+        <sqlFile path="OE5.1/orphanTestCleanup.sql"/>
+    </changeSet>
+    <changeSet id="2" author="jfurlong" context="Kenya">
+        <comment>Updates site_information so that Kenya has its own context</comment>    
+		    <sql>
+			    update clinlims.site_information set value = 'KENYA' where name = 'configuration name';
+				update clinlims.site_information set value = 'KENYA' where name = 'setFieldForm';
+				update clinlims.site_information set value = 'KENYA' where name = 'stringContext';
+		    </sql>
+	</changeSet>
+    <changeSet id="10" author="paulsc">
+        <comment>remove supervisor role, it is not used</comment>
+        <delete tableName="system_role_module" >
+            <where>system_role_id = (select id from clinlims.system_role where name = 'Supervisor')</where>
+        </delete>
+        <delete tableName="system_role" >
+            <where>name = 'Supervisor'</where>
+        </delete>
+    </changeSet>
+    <changeSet id="11" author="paulsc">
+        <comment>Set the display keys for system roles</comment>
+        <update tableName="system_role" >
+            <column name="name" value="Validator" />
+            <where>name = 'Validation'</where>
+        </update>
+        <update tableName="system_role" >
+            <column name="display_key" value="role.intake" />
+            <where>name = 'Intake'</where>
+        </update>
+        <update tableName="system_role" >
+            <column name="display_key" value="role.inventory" />
+            <where>name = 'Inventory mgr'</where>
+        </update>
+        <update tableName="system_role" >
+            <column name="display_key" value="role.maintenance" />
+            <where>name = 'Maintenance Admin'</where>
+        </update>
+        <update tableName="system_role" >
+            <column name="display_key" value="role.reports" />
+            <where>name = 'Reports'</where>
+        </update>
+        <update tableName="system_role" >
+            <column name="display_key" value="role.results" />
+            <where>name = 'Results entry'</where>
+        </update>
+        <update tableName="system_role" >
+            <column name="display_key" value="role.users" />
+            <where>name = 'User Admin'</where>
+        </update>
+        <update tableName="system_role" >
+            <column name="display_key" value="role.validator" />
+            <where>name = 'Validator'</where>
+        </update>
+    </changeSet>
+    <changeSet id="12" author="paulsc">
+        <comment>This will move the data from the old format for tests done at referring sites to the new format</comment>
+        <sql>
+            update clinlims.sample set is_confirmation = true where id in
+            (select s.id from clinlims.sample s
+            join clinlims.sample_item si on si.samp_id = s.id
+            join clinlims.analysis a on a.sampitem_id = si.id
+            where a.status_id = (select id from clinlims.status_of_sample where name = 'referred in'));
+
+            insert into clinlims.referring_test_result (id,sample_item_id, result_value, test_name, lastupdated )
+            select nextval( 'referring_test_result_seq' ), si.id,
+            case WHEN r.result_type in ('D', 'M', 'C') then (case when r.value = 'null' or r.value = '0' then ''
+            else (select d.dict_entry from clinlims.dictionary d where d.id = cast(r.value as numeric))
+            end)
+            else r.value || ( case when t.uom_id is null then '' else ( select ' ' || name from clinlims.unit_of_measure where id = t.uom_id) end )
+            end as result,
+            case when a.test_id  is null then ''
+            else ( select name from clinlims.test where id = a.test_id )
+            end as name,
+            now()
+            from clinlims.analysis a
+            join clinlims.sample_item si on si.id = a.sampitem_id
+            join clinlims.result r on r.analysis_id = a.id
+            join clinlims.test t on t.id = a.test_id
+            where a.status_id = (select id from clinlims.status_of_sample where name = 'referred in');
+
+            delete from clinlims.referring_test_result where id in
+            (select id from clinlims.referring_test_result
+            where test_name = '' and result_value = '');
+
+            delete from clinlims.result where id in
+            (select r.id from clinlims.result r
+            join clinlims.analysis a on a.id = r.analysis_id
+            where a.status_id = (select id from clinlims.status_of_sample where name = 'referred in'));
+
+            delete from clinlims.analysis where status_id = (select id from clinlims.status_of_sample where name = 'referred in');
+            delete from clinlims.status_of_sample where name = 'referred in';
+        </sql>
+    </changeSet>
+</databaseChangeLog>

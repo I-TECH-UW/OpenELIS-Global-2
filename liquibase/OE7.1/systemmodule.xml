@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+	  <changeSet author="csteele" id="1">
+	  	<insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="SampleBatchEntrySetup"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+      <insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="SampleBatchEntryOnDemand"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+      <insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="SampleBatchEntryPrePrinted"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+      <insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="PrintBarcode"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+    </changeSet>
+    
+	  <changeSet author="csteele" id="2">
+	  	<insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="TestSectionRenameEntry"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+      
+	  	<insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="UnitOfMeasureRenameEntry"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+      
+	  	<insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="TestAdd"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+      
+	  	<insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="PanelManagement"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+      
+	  	<insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="SampleTypeManagement"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+    </changeSet>
+    
+     <changeSet author="csteele" id="3">
+      
+	  	<insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="UomManagement"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+      
+	  	<insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="UomCreate"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+      
+	  	<insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="SampleTypeCreate"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+      
+	  	<insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="SampleTypeOrder"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+      
+	  	<insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="SampleTypeTestAssign"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+      
+	  	<insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="PanelCreate"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+      
+	  	<insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="PanelOrder"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+      
+	  	<insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="PanelTestAssign"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+    </changeSet>
+      
+</databaseChangeLog>

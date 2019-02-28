@@ -1,0 +1,52 @@
+
+
+
+
+
+
+
+
+
+
+Positif ,Negatif
+Positif +,Positif ++,Positif +++ ,Negatif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Négatif, Positif VIH 1, Positif VIH 2, Positif VIH1 et 2, Indéterminé
+Négatif, Positif VIH 1, Positif VIH 2, Positif VIH1 et 2, Indéterminé
+Négatif, Positif VIH 1, Positif VIH 2, Positif VIH1 et 2, Indéterminé
+
+
+Positif ,Negatif
+
+
+Négatif, Positif VIH1, PositifVIH2, Positif VIH1 et VIH2
+Négatif, Positif VIH1, PositifVIH2, Positif VIH1 et VIH2
+Invalide, Négatif, Positif VIH1, Positif VIH2, Positif VIH1 et VIH2
+Invalide, Négatif, Positif VIH1, Positif VIH2, Positif VIH1 et VIH2
+Invalide, Négatif, Positif VIH1, Positif VIH2, Positif VIH1 et VIH2
+Invalide, Négatif, Positif VIH1, Positif VIH2, Positif VIH1 et VIH2
+Invalide, Négatif, Positif VIH1, Positif VIH2, Positif VIH1 et VIH2
+Invalide, Négatif, Positif VIH1, Positif VIH2, Positif VIH1 et VIH2
+Invalide, Indetermine, Négatif, Positif 
+Invalide, Indetermine, Négatif, Positif 
+Invalide, Indetermine, Négatif, Positif 
+Invalide, Indetermine, Négatif, Positif 
+ Indetermine, Négatif, Positif HIV1 
+ Indetermine, Négatif, Positif HIV1 

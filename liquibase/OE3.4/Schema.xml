@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+<changeSet author="paulsc" id="1" >
+	<comment>Creates a new table to map tests to dictionary values with arbitrary context</comment>
+    <createSequence sequenceName="test_dictionary_seq" startValue="1" incrementBy="1" />
+    <createTable tableName="test_dictionary">
+        <column name="id" type="numeric(10,0)" >
+            <constraints primaryKey="true" />
+        </column>
+        <column name="test_id" type="numeric(10,0)" >
+            <constraints nullable="false" />
+        </column>
+        <column name="dictionary_category_id" type="numeric(10,0)" >
+            <constraints nullable="false" />
+        </column>
+        <column name="context" type="varchar(20)" >
+            <constraints nullable="false" />
+        </column>
+        <column name="qualifiable_entry_id" type="numeric(10,0)" />
+        <column name="lastupdated" type="timestamp" defaultValueDate=" now() " />
+    </createTable>
+    <addForeignKeyConstraint baseTableName="test_dictionary"
+                             baseColumnNames="test_id"
+                             constraintName="fk_test_dictioanry_test"
+                             referencedTableName="test"
+                             referencedColumnNames="id"
+                             onDelete="CASCADE" />
+    <addForeignKeyConstraint baseTableName="test_dictionary"
+                             baseColumnNames="dictionary_category_id"
+                             constraintName="fk_test_dictionary_dictionary"
+                             referencedTableName="dictionary_category"
+                             referencedColumnNames="id"
+                             onDelete="CASCADE" />
+    <addForeignKeyConstraint baseTableName="test_dictionary"
+                             baseColumnNames="qualifiable_entry_id"
+                             constraintName="fk_test_dictionary_qualifiable"
+                             referencedTableName="dictionary"
+                             referencedColumnNames="id"
+                             onDelete="CASCADE" />
+	<sql>
+        COMMENT ON TABLE clinlims.test_dictionary IS 'Links between tests and dictionary categories.  Intended use is for when a user might have to select dictioanry values for some asspect of a test';
+        COMMENT ON COLUMN clinlims.test_dictionary.test_id IS 'The test part of the linkage';
+        COMMENT ON COLUMN clinlims.test_dictionary.dictionary_category_id IS 'The dictionary category part of the linkage';
+        COMMENT ON COLUMN clinlims.test_dictionary.context IS 'The context of the linkage.  Make it literate';
+        COMMENT ON COLUMN clinlims.test_dictionary.qualifiable_entry_id IS 'This value has to be further qualified.  It''s intended value is ''other''';
+    </sql>
+</changeSet>
+<changeSet id="2" author="paulsc">
+    <comment>Adds a column to the sample_item table which indicates the sample type name.  Used to support arbitrary types</comment>
+    <addColumn tableName="analysis">
+        <column name="type_of_sample_name" type="varchar(40)" />
+    </addColumn>
+    <sql>
+        update analysis a set type_of_sample_name = ( select description from clinlims.type_of_sample tos, clinlims.sample_item si where tos.id = si.typeosamp_id and si.id = a.sampitem_id );
+        COMMENT ON COLUMN clinlims.analysis.type_of_sample_name IS 'Used to support arbitrary sample types.  Usually from type_of_sample table but may be a dictionary value or a response to ''other''';
+    </sql>
+</changeSet>
+<changeSet id="3" author="paulsc">
+    <comment>Lengths the uom name column</comment>
+    <modifyColumn tableName="unit_of_measure">
+        <column name="name" type="varchar(26)" />
+    </modifyColumn>
+</changeSet>
+<changeSet id="4" author="paulsc">
+    <comment>Widen patient columns</comment>
+    <sql>
+        drop view clinlims.sampletracking;
+        alter table clinlims.patient_identity alter column identity_data type varchar(255);
+        alter table clinlims.person alter column last_name type varchar(255);
+        alter table clinlims.person alter column first_name type varchar(255);
+        alter table clinlims.person alter column middle_name type varchar(255);
+        alter table clinlims.person alter column street_address type varchar(255);
+        alter table clinlims.person alter column home_phone type varchar(255);
+        alter table clinlims.person alter column work_phone type varchar(255);
+        alter table clinlims.person alter column cell_phone type varchar(255);
+        alter table clinlims.person alter column fax type varchar(255);
+        alter table clinlims.person alter column email type varchar(255);
+        alter table clinlims.person alter column country type varchar(255);
+        alter table clinlims.person alter column city type varchar(255);
+        alter table clinlims.person alter column multiple_unit type varchar(255);
+        alter table clinlims.person_address alter column value type varchar(255);
+        alter table clinlims.patient alter column external_id type varchar( 255 );
+        alter table clinlims.patient alter column national_id type varchar(255);
+        alter table clinlims.patient alter column birth_place type varchar(255);
+    </sql>
+</changeSet>
+<changeSet id="5" author="paulsc">
+   <comment>Widen dictionary abbrev column</comment>
+    <sql>
+        alter table clinlims.dictionary alter column local_abbrev type varchar(60);
+    </sql>
+</changeSet>
+<changeSet id="6" author="paulsc">
+    <comment>Remove requester_id as a primary key memberWiden dictionary abbrev column</comment>
+    <dropPrimaryKey tableName="sample_requester" constraintName="sample_requester_pk" />
+    <addPrimaryKey tableName="sample_requester" columnNames="sample_id, requester_type_id" constraintName="sample_requester_pk" />
+</changeSet>
+<changeSet id="7" author="paulsc">
+    <comment>Adds an id column to sample_requester and makes it the primary key</comment>
+    <sqlFile path="OE3.4/SampleRequesterID.sql" />
+</changeSet>  
+<changeSet id="8" author="paulsc">
+    <comment>Add a significant digit column to result</comment>
+    <addColumn tableName="result">
+        <column name="significant_digits" type="numeric" defaultValue="0"/>
+    </addColumn>
+    <sql>
+        COMMENT on COLUMN clinlims.result.significant_digits is 'Significant digits for results at the time the results were entered';
+    </sql>
+</changeSet>
+<changeSet id="9" author="paulsc">
+    <comment>Add is quantifiable column to test_result</comment>
+    <addColumn tableName="test_result">
+        <column name="is_quantifiable" type="boolean" defaultValueBoolean="false" />
+    </addColumn>
+    <sql>
+        COMMENT on COLUMN clinlims.test_result.is_quantifiable is 'True if the user should be able to quantify the result.  Is only meaningful for D and M types';
+    </sql>
+</changeSet>
+<changeSet id="10" author="paulsc">
+    <comment>backfill test_result table and result table for the change to a boolean for is_quantifiable</comment>
+    <update tableName="test_result" >
+        <column name="is_quantifiable" valueBoolean="true" />
+        <column name="tst_rslt_type" value="D" />
+        <where>tst_rslt_type = 'Q'</where>
+    </update>
+    <update tableName="result" >
+        <column name="result_type" value="D" />
+        <where>result_type = 'Q'</where>
+    </update>
+</changeSet>
+<changeSet id="11" author="paulsc">
+    <comment>Widen type_of_test_result description column</comment>
+    <sql>
+        alter table clinlims.type_of_test_result alter column description type varchar(60);
+    </sql>
+</changeSet>
+<changeSet author="paulsc" id="12" >
+    <comment>Adds a grouping column to result table</comment>
+    <addColumn tableName="result" >
+        <column name="grouping" type="numeric" defaultValue="0" />
+    </addColumn>
+    <sql>
+        COMMENT on COLUMN clinlims.result.grouping is 'When an analysis has more then one set of results this groups them';
+    </sql>
+</changeSet>
+<changeSet id="13" author="paulsc">
+    <comment>Adds a new column to analysis table to track updates</comment>
+    <addColumn tableName="analysis">
+        <column name="corrected" type="boolean" defaultValueBoolean="false" />
+    </addColumn>
+    <sql>
+        COMMENT ON COLUMN clinlims.analysis.corrected IS 'Signifies that the result has been updated since the last patient report was generated'
+    </sql>
+</changeSet>
+<changeSet id="14" author="paulsc">
+    <comment>the foreign key from the analyzer.parent_result_id to result_id is now a nulling delete</comment>
+    <dropForeignKeyConstraint baseTableName="analysis" constraintName="analysis_parent_result_fk" />
+    <addForeignKeyConstraint baseTableName="analysis" baseColumnNames="parent_result_id" constraintName="analysis_parent_result_fk" referencedTableName="result"
+                             referencedColumnNames="id" onDelete="SET NULL" />
+</changeSet>
+<changeSet id="1" author="jfurlong">
+    <comment>Adds a new column to dictionary to allow optional odering</comment>
+    <addColumn tableName="dictionary">
+        <column name="sort_order" type="numeric" defaultValue="0"/>
+    </addColumn>
+    <sql>
+        COMMENT ON COLUMN clinlims.dictionary.sort_order IS 'Sets the sort order for dictionary categories.  The sort_order is WITHIN a category.'
+    </sql>
+</changeSet>
+</databaseChangeLog>

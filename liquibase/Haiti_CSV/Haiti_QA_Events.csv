@@ -1,0 +1,17 @@
+id,name,description,lastupdated,display_key,is_holdable
+ nextval( 'qa_event_seq' ) ,Coagulated,Coagulated sample,now(),qa_event.colagulated,Y,
+ nextval( 'qa_event_seq' ) ,Insufficient,Insufficient sample,now() ,qa_event.insufficient,Y,
+ nextval( 'qa_event_seq' ) ,Hemolytic,Hemolytic sample,now() ,qa_event.hemolytic,Y,
+ nextval( 'qa_event_seq' ) ,Mislabeled,Bad or mislabled sample,now() ,qa_event.mislabled,Y,
+ nextval( 'qa_event_seq' ) ,No form, No form with sample,now() ,qa_event.noForm,Y,
+ nextval( 'qa_event_seq' ) ,Incorrect Form,Form not filled out correctly,now() ,qa_event.formNotCorrect,Y,
+ nextval( 'qa_event_seq' ) ,No Sample,No sample with form,now() ,qa_event.noSample,Y,
+ nextval( 'qa_event_seq' ) ,Bloodstained Tube,Bloodstained tube,now() ,qa_event.bloodstained.tube,Y,
+ nextval( 'qa_event_seq' ) ,Bloodstained Form,Bloodstained form,now() ,qa_event.bloodstained.form,Y,
+ nextval( 'qa_event_seq' ) ,Other,Other,now() ,qa_event.other,Y,
+ nextval( 'qa_event_seq' ) ,Broken,Broken tube/container,now() ,qa_event.broken,Y,
+ nextval( 'qa_event_seq' ) ,Contaminated,Contaminated sample,now() ,qa_event.contaminated,Y,
+ nextval( 'qa_event_seq' ) ,Frozen,Frozen sample,now() ,qa_event.frozen,Y
+ nextval( 'qa_event_seq' ) ,Inadequate,Inadequate sample,now() ,qa_event.inadequate,Y,
+ nextval( 'qa_event_seq' ) ,unrefrigerated,unrefrigerated sample,now() ,qa_event.unrefrigerated,Y
+ nextval( 'qa_event_seq' ) ,Overturned,Overturned specimen,now() ,qa_event.overturned,Y,

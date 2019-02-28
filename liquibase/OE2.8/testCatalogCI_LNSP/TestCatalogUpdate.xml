@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+
+	<changeSet author="paulsc" id="8" context="ciLNSP">
+		<comment>Adds needed dictionary values</comment>
+		<sqlFile path="OE2.8/testCatalogCI_LNSP/Dictionary.sql"/>
+	</changeSet>
+	
+	<changeSet author="paulsc" id="9" context="ciLNSP">
+		<comment>Adds needed uom values</comment>
+		<sqlFile path="OE2.8/testCatalogCI_LNSP/UOM.sql"/>
+	</changeSet>
+
+	<changeSet author="paulsc" id="14" context="ciLNSP">
+		<comment>Deletes all data needed to do a clean install</comment>
+		<sqlFile path="OE2.8/testCatalogCI_LNSP/cleanData.sql" />
+	</changeSet>
+
+	
+	<changeSet author="paulsc" id="1" context="ciLNSP">
+		<comment>adds in the new panels</comment>
+		<sql>alter table clinlims.panel_item alter column test_id set not null</sql>
+		<sqlFile path="OE2.8/testCatalogCI_LNSP/Panel.sql" />
+	</changeSet>
+
+	<changeSet author="paulsc" id="2" context="ciLNSP">
+		<comment>add the new sample types</comment>
+		<sqlFile path="OE2.8/testCatalogCI_LNSP/SampleType.sql" />
+		<sqlFile path="OE2.8/testCatalogCI_LNSP/TypeOrder.sql" />
+	</changeSet>
+
+
+
+	<changeSet author="paulsc" id="3" context="ciLNSP">
+		<comment>Associates new and existing sample types with new and existing panels</comment>
+		<sqlFile path="OE2.8/testCatalogCI_LNSP/SampleTypePanel.sql" />
+	</changeSet>
+
+	<changeSet author="paulsc" id="4" context="ciLNSP">
+		<comment>Order test sections</comment>
+		<sql>
+		INSERT INTO clinlims.test_section( id, "name", description, org_id, is_external, lastupdated, display_key )
+    VALUES (nextval( 'test_section_seq' ), 'Biologie Moleculaire', 'Biologie Moleculaire', 
+	                (select id from clinlims.organization where name = 'Haiti' ), 'N', now(), 'test.section.Moleoularbiology' );
+		</sql>
+		<sqlFile path="OE2.8/testCatalogCI_LNSP/SectionOrder.sql" />
+	</changeSet>
+
+	<changeSet author="paulsc" id="5" context="ciLNSP">
+		<comment>adds tests</comment>
+		<sqlFile path="OE2.8/testCatalogCI_LNSP/Test.sql" />
+	</changeSet>
+	
+	<changeSet author="paulsc" id="6" context="ciLNSP">
+		<comment>Add tests to panels</comment>
+		<loadData tableName="panel_item" schemaName="clinlims"
+			file="OE2.8/testCatalogCI_LNSP/TestPanel.csv">
+			<column name="id" header="id" type="NUMERIC" />
+			<column name="panel_id" header="panel_id" type="NUMERIC" />
+			<column name="test_id" header="test_id" type="NUMERIC" />
+			<column name="sort_order" header="sort_order" type="NUMERIC" />
+			<column name="lastupdated" header="lastupdated" type="DATE" />
+		</loadData>
+	</changeSet>
+
+	<changeSet author="paulsc" id="7" context="ciLNSP">
+		<comment>Add tests to sample types</comment>
+		<sqlFile path="OE2.8/testCatalogCI_LNSP/TestSampleTypes.sql" />
+	</changeSet>
+
+	<changeSet author="paulsc" id="10" context="ciLNSP">
+		<comment>Adds to test_result table</comment>
+		<sqlFile path="OE2.8/testCatalogCI_LNSP/TestResults.sql"/>
+	</changeSet>
+	<changeSet author="paulsc" id="11" context="ciLNSP">
+		<comment>Adds result limits to test</comment>
+		<sqlFile path="OE2.8/testCatalogCI_LNSP/ResultLimits.sql"/>
+	</changeSet>
+	<changeSet author="paulsc" id="12" context="ciLNSP" >
+		<comment>Adds dictionary result limits to tests</comment>
+		<sqlFile path="OE2.8/testCatalogCI_LNSP/DictResultLimits.sql"/>
+	</changeSet>
+	<changeSet author="paulsc" id="15" context="ciLNSP" >
+		<comment>Adds lab order type bindings and test codes</comment>
+		<sqlFile path="OE2.8/testCatalogCI_LNSP/orderTypeResult.sql"/>
+		<sqlFile path="OE2.8/testCatalogCI_LNSP/testCodeResult.sql"/>
+	</changeSet>
+	
+
+</databaseChangeLog>
+

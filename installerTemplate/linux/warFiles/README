@@ -1,0 +1,7 @@
+The war file for the installation should be placed here.  It should be one of
+'CDIOpenElis.war'
+'LNSP_HaitiOpenElis.war'
+'haitiOpenElis.war'
+'CI_LNSPOpenElis.war'
+'CI_IPCIOpenElis.war'
+'CDI_RegLabOpenElis.war'

@@ -1,0 +1,6 @@
+id,is_active,entry,lastupdated,local_abbrev,category_id,display_key
+ nextval( 'dictionary_seq' ) ,Y,Refrigerated, now() ,Refrig, (select id from clinlims.dictionary_category where local_abbrev='reciptCond' ) , dictionary.condition.Regrigerated 
+ nextval( 'dictionary_seq' ) ,Y,Not refrigerated, now() ,notRefrig, (select id from clinlims.dictionary_category where local_abbrev='reciptCond' ) , dictionary.condition.notRegrigerated 
+ nextval( 'dictionary_seq' ) ,Y,Frozen, now() ,Frozen, (select id from clinlims.dictionary_category where local_abbrev='reciptCond' ) , dictionary.condition.frozen 
+ nextval( 'dictionary_seq' ) ,Y,Leaked Sample, now() ,leaked, (select id from clinlims.dictionary_category where local_abbrev='reciptCond' ) , dictionary.condition.leakedTube 
+ nextval( 'dictionary_seq' ) ,Y,Broken Tubes, now() ,broken, (select id from clinlims.dictionary_category where local_abbrev='reciptCond' ) , dictionary.condition.brokenTube 
