@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.apache.struts.Globals;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,6 +27,7 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.qaevent.form.NonConformityForm;
+import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSInvalidConfigurationException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -59,6 +61,8 @@ import us.mn.state.health.lims.provider.dao.ProviderDAO;
 import us.mn.state.health.lims.provider.daoimpl.ProviderDAOImpl;
 import us.mn.state.health.lims.provider.valueholder.Provider;
 import us.mn.state.health.lims.qaevent.valueholder.retroCI.QaEventItem;
+import us.mn.state.health.lims.qaevent.worker.NonConformityUpdateData;
+import us.mn.state.health.lims.qaevent.worker.NonConformityUpdateWorker;
 import us.mn.state.health.lims.requester.dao.SampleRequesterDAO;
 import us.mn.state.health.lims.requester.daoimpl.SampleRequesterDAOImpl;
 import us.mn.state.health.lims.requester.valueholder.SampleRequester;
@@ -446,6 +450,31 @@ public class NonConformityController extends BaseController {
 		return sections;
 	}
 
+	@RequestMapping(value = "/NonConformityUpdate", method = RequestMethod.POST)
+	public ModelAndView showNonConformityUpdate(HttpServletRequest request,
+			@ModelAttribute("form") NonConformityForm form) {
+		String forward = FWD_SUCCESS_INSERT;
+		if (form == null) {
+			form = new NonConformityForm();
+		}
+		form.setFormAction("");
+		Errors errors = new BaseErrors();
+		if (getErrors() != null) {
+			errors = getErrors();
+		}
+
+		NonConformityUpdateData data = new NonConformityUpdateData(form, getSysUserId(request));
+		NonConformityUpdateWorker worker = new NonConformityUpdateWorker(data);
+		String result = worker.update();
+
+		if (IActionConstants.FWD_FAIL_INSERT.equals(result)) {
+			saveErrors(worker.getErrors());
+			request.setAttribute(Globals.ERROR_KEY, errors);
+		}
+
+		return findForward(forward, form);
+	}
+
 	@Override
 	protected String getPageSubtitleKey() {
 		return "qaevent.add.title";
@@ -459,6 +488,10 @@ public class NonConformityController extends BaseController {
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if (FWD_SUCCESS.equals(forward)) {
+			return new ModelAndView("nonConformityDefiniton", "form", form);
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return new ModelAndView("redirect:NonConformity.do?forward=success", "form", form);
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
 			return new ModelAndView("nonConformityDefiniton", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");

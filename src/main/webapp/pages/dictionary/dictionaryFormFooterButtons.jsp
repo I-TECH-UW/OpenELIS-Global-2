@@ -181,7 +181,7 @@ function nextAction(form, ignoreFields) {
 	<tbody valign="middle">
 		<tr>
 	      	<td>
-  			<button type="button" onclick="if(checkClicked()) {	return false; } else { saveIt(document.getElementById("mainForm"));}" 
+  			<button type="button" onclick="if(checkClicked()) {	return false; } else { saveIt(document.getElementById('mainForm'));}" 
   			id="save" 
   			<%if (Boolean.valueOf(saveDisabled).booleanValue()) {%>
   			disabled="disabled"
@@ -206,7 +206,7 @@ function nextAction(form, ignoreFields) {
   		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
  	    <td>
   			<button type="button"
-  					onclick="previousAction(document.getElementById("mainForm"), '');" 
+  					onclick="previousAction(document.getElementById('mainForm'), '');" 
   				    id="previous" 
   				    <%if (Boolean.valueOf(previousDisabled).booleanValue()) { %>
   				    disabled="disabled"
@@ -217,7 +217,7 @@ function nextAction(form, ignoreFields) {
 	    </td>
      	<td>&nbsp;</td>
  	    <td>
-  			<button onclick="nextAction(document.getElementById("mainForm"), '');"  
+  			<button onclick="nextAction(document.getElementById('mainForm'), '');"  
 					id="next" 
 					<% if (Boolean.valueOf(nextDisabled).booleanValue()) { %>
 					disabled="disabled"

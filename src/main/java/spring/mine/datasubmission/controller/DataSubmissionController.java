@@ -16,35 +16,47 @@ import spring.mine.datasubmission.form.DataSubmissionForm;
 
 @Controller
 public class DataSubmissionController extends BaseController {
-  @RequestMapping(
-      value = "/DataSubmission",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showDataSubmission(HttpServletRequest request,
-      @ModelAttribute("form") DataSubmissionForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new DataSubmissionForm();
-    }
-        form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+	@RequestMapping(value = "/DataSubmission", method = RequestMethod.GET)
+	public ModelAndView showDataSubmission(HttpServletRequest request,
+			@ModelAttribute("form") DataSubmissionForm form) {
+		String forward = FWD_SUCCESS;
+		if (form == null) {
+			form = new DataSubmissionForm();
+		}
+		form.setFormAction("");
+		Errors errors = new BaseErrors();
 
-    return findForward(forward, form);}
+		return findForward(forward, form);
+	}
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return new ModelAndView("dataSubmissionDefinition", "form", form);
-    } else {
-      return new ModelAndView("PageNotFound");
-    }
-  }
+	@RequestMapping(value = "/DataSubmissionSave", method = RequestMethod.POST)
+	public ModelAndView showDataSubmissionSave(HttpServletRequest request,
+			@ModelAttribute("form") DataSubmissionForm form) {
+		String forward = FWD_SUCCESS_INSERT;
+		form.setFormAction("");
+		Errors errors = new BaseErrors();
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+		return findForward(forward, form);
+	}
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+	@Override
+	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return new ModelAndView("dataSubmissionDefinition", "form", form);
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return new ModelAndView("dataSubmissionDefinition", "form", form);
+		} else {
+			return new ModelAndView("PageNotFound");
+		}
+	}
+
+	@Override
+	protected String getPageTitleKey() {
+		return null;
+	}
+
+	@Override
+	protected String getPageSubtitleKey() {
+		return null;
+	}
 }

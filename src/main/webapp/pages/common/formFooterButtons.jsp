@@ -196,7 +196,7 @@ if( typeof(showSuccessMessage) != 'undefined' ){
   		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	    <td>
   			<button type="button" 
-  					onclick="previousAction(document.getElementById("mainForm"), '');" 
+  					onclick="previousAction(document.getElementById('mainForm'), '');" 
   					name="previous" 
   					property="previous" 
   					<% if (Boolean.valueOf(previousDisabled).booleanValue()) {%>
@@ -209,7 +209,7 @@ if( typeof(showSuccessMessage) != 'undefined' ){
      	<td>&nbsp;</td>
 	    <td>
   			<button type="button" 
-  					onclick="nextAction(document.getElementById("mainForm"), '');"  
+  					onclick="nextAction(document.getElementById('mainForm'), '');"  
   					name="next" 
   					property="next" 
   					<% if (Boolean.valueOf(nextDisabled).booleanValue()) {%>

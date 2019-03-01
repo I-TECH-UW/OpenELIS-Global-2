@@ -12,8 +12,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,43 +69,18 @@ public class PrintBarcodeController extends BaseController {
 		ABLE_TO_CANCEL_ROLE_NAMES.add("Biologist");
 	}
 
-	@RequestMapping(value = "/PrintBarcode", method = RequestMethod.GET)
-	public ModelAndView showPrintBarcode(HttpServletRequest request)
+	@RequestMapping(value = "/PrintBarcode", method = { RequestMethod.GET, RequestMethod.POST })
+	public ModelAndView showPrintBarcode(@ModelAttribute("form") PrintBarcodeForm form, HttpServletRequest request)
 			throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 		String forward = FWD_SUCCESS;
 
-		PrintBarcodeForm form = new PrintBarcodeForm();
+		if (form == null) {
+			form = new PrintBarcodeForm();
+		}
 		form.setFormAction("PrintBarcode");
+
 		Errors errors = new BaseErrors();
 
-		String accessionNumber = form.getAccessionNumber();
-
-		// if accession provided, data collected for display
-		if (!GenericValidator.isBlankOrNull(accessionNumber)) {
-			Sample sample = getSample(accessionNumber);
-			if (sample != null && !GenericValidator.isBlankOrNull(sample.getId())) {
-				List<SampleItem> sampleItemList = getSampleItems(sample);
-				setPatientInfo(form, sample);
-				List<SampleEditItem> currentTestList = getCurrentTestInfo(sampleItemList, accessionNumber, false);
-				form.setExistingTests(currentTestList);
-			}
-		}
-
-		// search by accession number
-		PatientSearch patientSearch = new PatientSearch();
-		patientSearch.setLoadFromServerWithPatient(true);
-		patientSearch.setSelectedPatientActionButtonText(StringUtil.getMessageForKey("label.patient.search.select"));
-		form.setPatientSearch(patientSearch);
-
-		return findForward(forward, form);
-	}
-
-	@RequestMapping(value = "/PrintBarcode", method = RequestMethod.POST)
-	public ModelAndView showPrintBarcodeResultPage(@ModelAttribute("form") PrintBarcodeForm form, BindingResult result,
-			ModelMap model, HttpServletRequest request) throws Exception {
-		String forward = FWD_SUCCESS;
-
-		form.setFormAction("PrintBarcode");
 		String accessionNumber = form.getAccessionNumber();
 
 		// if accession provided, data collected for display

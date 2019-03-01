@@ -18,16 +18,17 @@ public class PageAttributesInterceptor implements HandlerInterceptor {
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-
-		BaseForm form = (BaseForm) modelAndView.getModel().get("form");
-
-		if (form != null) {
-			String name = form.getFormName();
-			String actionName = name.substring(1, name.length() - 4);
-			actionName = name.substring(0, 1).toUpperCase() + actionName;
-			request.setAttribute(IActionConstants.ACTION_KEY, actionName);
-			LogEvent.logInfo("PageAttributesInterceptor", "postHandle()",
-					"PageAttributesInterceptor formName = " + name + " actionName " + actionName);
+		BaseForm form;
+		if (modelAndView != null) {
+			form = (BaseForm) modelAndView.getModel().get("form");
+			if (form != null) {
+				String name = form.getFormName();
+				String actionName = name.substring(1, name.length() - 4);
+				actionName = name.substring(0, 1).toUpperCase() + actionName;
+				request.setAttribute(IActionConstants.ACTION_KEY, actionName);
+				LogEvent.logInfo("PageAttributesInterceptor", "postHandle()",
+						"PageAttributesInterceptor formName = " + name + " actionName " + actionName);
+			}
 		}
 	}
 
