@@ -128,7 +128,7 @@ public class OrganizationController extends BaseController {
 		form.setFormAction("");
 		form.setCancelAction("CancelOrganization.do");
 		Errors errors = new BaseErrors();
-		
+
 		// The first job is to determine if we are coming to this action with an
 		// ID parameter in the request. If there is no parameter, we are
 		// creating a new Organization.
@@ -304,7 +304,6 @@ public class OrganizationController extends BaseController {
 		}
 		form.setFormAction("");
 		Errors errors = new BaseErrors();
-		
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "false");
@@ -556,7 +555,7 @@ public class OrganizationController extends BaseController {
 		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("organizationDefinition", "form", form);
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("masterListsPageDefinition", "form", form);
+			return new ModelAndView("redirect:/MasterListsPage.do", "form", form);
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return new ModelAndView("redirect:/OrganizationMenu.do", "form", form);
 		} else if (FWD_FAIL_INSERT.equals(forward)) {

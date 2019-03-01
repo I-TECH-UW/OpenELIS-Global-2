@@ -48,7 +48,6 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 		}
 		form.setFormAction("");
 		Errors errors = new BaseErrors();
-		
 
 		return performMenuAction(form, request);
 	}
@@ -136,7 +135,6 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 		}
 		form.setFormAction("");
 		Errors errors = new BaseErrors();
-		
 
 		String[] selectedIDs = (String[]) form.get("selectedIDs");
 
@@ -191,7 +189,7 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("haitiMasterListsPageDefinition", "form", form);
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("/MasterListsPage.do", "form", form);
+			return new ModelAndView("redirect:/MasterListsPage.do", "form", form);
 		} else if (FWD_SUCCESS_DELETE.equals(forward)) {
 			return new ModelAndView("redirect:/AnalyzerTestNameMenu.do", "form", form);
 		} else if (FWD_FAIL_DELETE.equals(forward)) {

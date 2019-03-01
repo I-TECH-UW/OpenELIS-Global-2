@@ -31,8 +31,6 @@ public class LoginPageController extends BaseController {
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("loginPageDefinition", "form", form);
-		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("loginPageDefinition", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");
 		}

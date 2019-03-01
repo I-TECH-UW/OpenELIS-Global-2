@@ -42,7 +42,6 @@ public class DictionaryMenuController extends BaseMenuController {
 		}
 		form.setFormAction("");
 		Errors errors = new BaseErrors();
-		
 
 		return performMenuAction(form, request);
 	}
@@ -127,7 +126,6 @@ public class DictionaryMenuController extends BaseMenuController {
 		}
 		form.setFormAction("");
 		Errors errors = new BaseErrors();
-		
 
 		String[] selectedIDs = (String[]) form.get("selectedIDs");
 

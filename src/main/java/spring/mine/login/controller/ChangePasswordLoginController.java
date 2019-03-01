@@ -151,11 +151,11 @@ public class ChangePasswordLoginController extends BaseController {
 		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("loginChangePasswordDefinition", "form", form);
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("loginChangePasswordDefinition", "form", form);
+			return new ModelAndView("redirect:/LoginPage.do", "form", form);
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("loginPageDefinition", "form", form);
+			return new ModelAndView("redirect:/LoginPage.do", "form", form);
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return new ModelAndView("loginChangePasswordDefinition", "form", form);
+			return new ModelAndView("redirect:/ChangePasswordLogin.do?error=true", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");
 		}

@@ -44,7 +44,7 @@ public class DataSubmissionController extends BaseController {
 		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("dataSubmissionDefinition", "form", form);
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("dataSubmissionDefinition", "form", form);
+			return new ModelAndView("redirect:/DataSubmission.do", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");
 		}

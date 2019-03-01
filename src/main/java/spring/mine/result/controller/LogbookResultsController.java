@@ -717,50 +717,66 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 		return sig;
 	}
 
+	private ModelAndView findLogBookForward(String forward, BaseForm form) {
+		if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return new ModelAndView("redirect:/LogbookResults.do?forward=success", "form", form);
+		} else if (FWD_VALIDATION_ERROR.equals(forward)) {
+			return new ModelAndView("resultsLogbookDefinition", "form", form);
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return new ModelAndView("homePageDefinition", "form", form);
+		} else {
+			return new ModelAndView("PageNotFound");
+		}
+	}
+
+	private ModelAndView findAccessionForward(String forward, BaseForm form) {
+		if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return new ModelAndView("redirect:/AccessionResults.do?forward=success", "form", form);
+		} else if (FWD_VALIDATION_ERROR.equals(forward)) {
+			return new ModelAndView("accessionResultDefinition", "form", form);
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return new ModelAndView("homePageDefinition", "form", form);
+		} else {
+			return new ModelAndView("PageNotFound");
+		}
+	}
+
+	private ModelAndView findPatientForward(String forward, BaseForm form) {
+		if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return new ModelAndView("redirect:/PatientResults.do?forward=success", "form", form);
+		} else if (FWD_VALIDATION_ERROR.equals(forward)) {
+			return new ModelAndView("patientResultDefinition", "form", form);
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return new ModelAndView("homePageDefinition", "form", form);
+		} else {
+			return new ModelAndView("PageNotFound");
+		}
+	}
+
+	private ModelAndView findStatusForward(String forward, BaseForm form) {
+		if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return new ModelAndView("redirect:/StatusResults.do?forward=success&blank=true", "form", form);
+		} else if (FWD_VALIDATION_ERROR.equals(forward)) {
+			return new ModelAndView("statusResultDefinition", "form", form);
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return new ModelAndView("homePageDefinition", "form", form);
+		} else {
+			return new ModelAndView("PageNotFound");
+		}
+	}
+
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
 		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("resultsLogbookDefinition", "form", form);
 		} else if (request.getRequestURL().indexOf("LogbookResultsUpdate") >= 0) {
-			if (FWD_SUCCESS_INSERT.equals(forward)) {
-				return new ModelAndView("redirect:/LogbookResults.do?forward=success", "form", form);
-			} else if (FWD_VALIDATION_ERROR.equals(forward)) {
-				return new ModelAndView("resultsLogbookDefinition", "form", form);
-			} else if (FWD_FAIL_INSERT.equals(forward)) {
-				return new ModelAndView("homePageDefinition", "form", form);
-			} else {
-				return new ModelAndView("PageNotFound");
-			}
+			return findLogBookForward(forward, form);
 		} else if (request.getRequestURL().indexOf("AccessionResultsUpdate") >= 0) {
-			if (FWD_SUCCESS_INSERT.equals(forward)) {
-				return new ModelAndView("redirect:/AccessionResults.do?forward=success", "form", form);
-			} else if (FWD_VALIDATION_ERROR.equals(forward)) {
-				return new ModelAndView("accessionResultDefinition", "form", form);
-			} else if (FWD_FAIL_INSERT.equals(forward)) {
-				return new ModelAndView("homePageDefinition", "form", form);
-			} else {
-				return new ModelAndView("PageNotFound");
-			}
+			return findAccessionForward(forward, form);
 		} else if (request.getRequestURL().indexOf("PatientResultsUpdate") >= 0) {
-			if (FWD_SUCCESS_INSERT.equals(forward)) {
-				return new ModelAndView("redirect:/PatientResults.do?forward=success", "form", form);
-			} else if (FWD_VALIDATION_ERROR.equals(forward)) {
-				return new ModelAndView("patientResultDefinition", "form", form);
-			} else if (FWD_FAIL_INSERT.equals(forward)) {
-				return new ModelAndView("homePageDefinition", "form", form);
-			} else {
-				return new ModelAndView("PageNotFound");
-			}
+			return findPatientForward(forward, form);
 		} else if (request.getRequestURL().indexOf("StatusResultsUpdate") >= 0) {
-			if (FWD_SUCCESS_INSERT.equals(forward)) {
-				return new ModelAndView("redirect:/StatusResults.do?forward=success&blank=true", "form", form);
-			} else if (FWD_VALIDATION_ERROR.equals(forward)) {
-				return new ModelAndView("statusResultDefinition", "form", form);
-			} else if (FWD_FAIL_INSERT.equals(forward)) {
-				return new ModelAndView("homePageDefinition", "form", form);
-			} else {
-				return new ModelAndView("PageNotFound");
-			}
+			return findStatusForward(forward, form);
 		} else {
 			return new ModelAndView("PageNotFound");
 		}

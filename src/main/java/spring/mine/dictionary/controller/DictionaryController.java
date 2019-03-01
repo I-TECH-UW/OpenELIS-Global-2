@@ -343,7 +343,7 @@ public class DictionaryController extends BaseController {
 		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("dictionaryDefinition", "form", form);
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("masterListsPageDefinition", "form", form);
+			return new ModelAndView("redirect:/MasterListsPage.do", "form", form);
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return new ModelAndView("redirect:/DictionaryMenu.do", "form", form);
 		} else if (FWD_FAIL_INSERT.equals(forward)) {

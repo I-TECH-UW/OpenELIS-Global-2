@@ -1492,14 +1492,14 @@ public class AnalyzerResultsController extends BaseController {
 
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("homePageDefinition", "form", form);
-		} else if (FWD_SUCCESS.equals(forward)) {
+		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("analyzerResultsDefinition", "form", form);
-		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("/AnalyzerResults.do", "form", form);
-		} else if (FWD_FAIL_INSERT.equals(forward)) {
+		} else if (FWD_FAIL.equals(forward)) {
 			return new ModelAndView("homePageDefinition", "form", form);
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return new ModelAndView("redirect:/AnalyzerResults.do", "form", form);
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return new ModelAndView("analyzerResultsDefinition", "form", form);
 		} else if (FWD_VALIDATION_ERROR.equals(forward)) {
 			return new ModelAndView("analyzerResultsDefinition", "form", form);
 		} else {

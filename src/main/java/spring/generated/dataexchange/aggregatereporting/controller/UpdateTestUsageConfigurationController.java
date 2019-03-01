@@ -34,7 +34,7 @@ public class UpdateTestUsageConfigurationController extends BaseController {
 
   protected ModelAndView findLocalForward(String forward, BaseForm form) {
     if (FWD_SUCCESS.equals(forward)) {
-      return new ModelAndView("masterListsPageDefinition", "form", form);
+      return new ModelAndView("redirect:/MasterListsPage.do", "form", form);
     } else {
       return new ModelAndView("PageNotFound");
     }

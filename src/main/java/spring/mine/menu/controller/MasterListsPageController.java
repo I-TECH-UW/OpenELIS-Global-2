@@ -24,7 +24,6 @@ public class MasterListsPageController extends BaseController {
 		}
 		form.setFormAction("");
 		Errors errors = new BaseErrors();
-		
 
 		return findForward(forward, form);
 	}

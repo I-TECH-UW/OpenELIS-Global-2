@@ -957,7 +957,7 @@ public class ReferredOutTestsController extends BaseController {
 		} else if (FWD_VALIDATION_ERROR.equals(forward)) {
 			return new ModelAndView("referredOutDefinition", "form", form);
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return new ModelAndView("homePageDefinition", "form", form);
+			return new ModelAndView("referredOutDefinition", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");
 		}

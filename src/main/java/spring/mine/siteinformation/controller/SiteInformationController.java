@@ -483,7 +483,7 @@ public class SiteInformationController extends BaseController {
 		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("siteInformationDefinition", "form", form);
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("masterListsPageDefinition", "form", form);
+			return new ModelAndView("redirect:/MasterListsPage.do", "form", form);
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			String url = form.getFormAction() + "Menu.do";
 			return new ModelAndView("redirect:/" + url, "form", form);

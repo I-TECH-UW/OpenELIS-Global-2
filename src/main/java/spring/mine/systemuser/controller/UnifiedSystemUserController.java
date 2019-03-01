@@ -643,9 +643,9 @@ public class UnifiedSystemUserController extends BaseController {
 		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("unifiedSystemUserDefinition", "form", form);
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("haitiMasterListsPageDefinition", "form", form);
+			return new ModelAndView("redirect:/MasterListsPage.do", "form", form);
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:UnifiedSystemUser.do", "form", form);
+			return new ModelAndView("redirect:/UnifiedSystemUser.do", "form", form);
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
 			return new ModelAndView("unifiedSystemUserDefinition", "form", form);
 		} else {

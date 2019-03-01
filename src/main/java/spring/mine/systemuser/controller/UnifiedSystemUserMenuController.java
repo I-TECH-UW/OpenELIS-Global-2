@@ -236,7 +236,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("haitiMasterListsPageDefinition", "form", form);
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("/MasterListsPage.do", "form", form);
+			return new ModelAndView("redirect:/MasterListsPage.do", "form", form);
 		} else if (FWD_SUCCESS_DELETE.equals(forward)) {
 			return new ModelAndView("redirect:/UnifiedSystemUserMenu.do", "form", form);
 		} else if (FWD_FAIL_DELETE.equals(forward)) {
