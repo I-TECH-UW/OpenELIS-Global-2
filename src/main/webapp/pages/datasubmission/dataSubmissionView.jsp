@@ -130,14 +130,14 @@ function confirmSentWarning() {
 	<td colspan="3"><b></b></td>
 	<td><b></b></td>
 </tr>
-<c:forEach var="indicator" items="${form.indicators}">
+<c:forEach var="indicator" items="${form.indicators}" varStatus="iter">
 	<c:set var="nameKey" value="${indicator.typeOfIndicator.nameKey}"/>
 	<c:set var="descriptionKey" value="${indicator.typeOfIndicator.descriptionKey}"/>
 <tr class="border_top">
 	<td>
 		<!--  checkbox-hidden combo trick to make struts send true when checked, false when unchecked as opposed to default checkbox (true when checked, false when unchecked)-->
-		<form:checkbox path="indicator.sendIndicator" value="true" />
-		<form:hidden path="indicator.sendIndicator" value="false" />
+		<form:checkbox path="indicators[${iter.index}].sendIndicator" value="true" />
+		<form:hidden path="indicators[${iter.index}].sendIndicator" value="false" />
 	</td>
 	<td colspan="3">
 		<span id="<spring:message code="${nameKey} }>" />" class="<c:out value="${indicator.status}" />">
@@ -152,7 +152,7 @@ function confirmSentWarning() {
 <tr>
 	<td></td>
 	<td  colspan="3"><c:out value="${indicator.dataValue.value}" /></td>
-	<td >	<form:input path="indicator.dataValue.value"/> </td>
+	<td >	<form:input path="indicators[${iter.index}].dataValue.value"/> </td>
 </tr>
 
 	</c:if></c:if>
@@ -162,7 +162,7 @@ function confirmSentWarning() {
 		<spring:message code="${descriptionKey}" />
 	</td>
 </tr>
-	<c:forEach var="resource" items="${form.indicators.resources}">
+	<c:forEach var="resource" items="${indicator.resources}" varStatus="resIter">
 		<c:if test="${not empty resource.headerKey}">
 <tr>
 	<td></td>
@@ -172,17 +172,17 @@ function confirmSentWarning() {
 	</td>
 </tr>
 		</c:if>
-		<c:forEach var="columnValue" items="${resource.columnValue}" varStatus="loop">
-			<c:if test="${columnValue}">
+		<c:forEach var="columnValue" items="${resource.columnValues}" varStatus="valIter">
+			<c:if test="${columnValue.visible}">
 <tr>
 	<td></td>
 	<td  colspan="3">
 		
 	</td>
 	<td >
-		<form:input path='indicator.resource.value[${loop.index}]"' />
+		<form:input path='indicators[${iter.index}].resources[${resIter.index}].columnValues[${valIter.index}].value' />
 			<c:if test="${not empty columnValue.displayKey}">
-		<spring:message code="${columnValue.displayKey}>" />
+		<spring:message code="${columnValue.displayKey}" />
 			</c:if>
 	</td>
 </tr>
