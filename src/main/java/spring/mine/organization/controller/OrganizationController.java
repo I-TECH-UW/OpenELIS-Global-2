@@ -55,7 +55,7 @@ import us.mn.state.health.lims.organization.valueholder.OrganizationType;
 public class OrganizationController extends BaseController {
 
 	@ModelAttribute("form")
-	public OrganizationForm form() {
+	public BaseForm form() {
 		return new OrganizationForm();
 	}
 
@@ -119,11 +119,12 @@ public class OrganizationController extends BaseController {
 
 	@RequestMapping(value = { "/Organization", "/NextPreviousOrganization" }, method = { RequestMethod.POST,
 			RequestMethod.GET })
-	public ModelAndView showOrganization(HttpServletRequest request, @ModelAttribute("form") OrganizationForm form)
+	public ModelAndView showOrganization(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
-		if (form == null) {
+		if (form.getClass() != OrganizationForm.class) {
 			form = new OrganizationForm();
+			request.getSession().setAttribute("form", form);
 		}
 		form.setFormAction("");
 		form.setCancelAction("CancelOrganization.do");

@@ -43,16 +43,17 @@ public class ReportController extends BaseController {
 	private static String imagesPath = null;
 
 	@ModelAttribute("form")
-	public ReportForm form() {
+	public BaseForm form() {
 		return new ReportForm();
 	}
 
 	@RequestMapping(value = "/Report", method = RequestMethod.GET)
-	public ModelAndView showReport(HttpServletRequest request, @ModelAttribute("form") ReportForm form)
+	public ModelAndView showReport(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
-		if (form == null) {
+		if (form.getClass() != ReportForm.class) {
 			form = new ReportForm();
+			request.getSession().setAttribute("form", form);
 		}
 		form.setFormAction("");
 		Errors errors = new BaseErrors();

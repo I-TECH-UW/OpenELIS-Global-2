@@ -4,69 +4,71 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
+import us.mn.state.health.lims.common.util.IdValuePair;
+import us.mn.state.health.lims.inventory.form.InventoryKitItem;
 
 public class InventoryForm extends BaseForm {
-  private String currentDate = "";
+	private String currentDate = "";
 
-  private Timestamp lastupdated;
+	private Timestamp lastupdated;
 
-  private List inventoryItems;
+	private List<InventoryKitItem> inventoryItems;
 
-  private List sources;
+	private List<String> sources;
 
-  private List kitTypes;
+	private List<IdValuePair> kitTypes;
 
-  private String newKitsXML = "";
+	private String newKitsXML = "";
 
-  public InventoryForm() {
-    setFormName("InventoryForm");
-  }
+	public InventoryForm() {
+		setFormName("InventoryForm");
+	}
 
-  public String getCurrentDate() {
-    return this.currentDate;
-  }
+	public String getCurrentDate() {
+		return currentDate;
+	}
 
-  public void setCurrentDate(String currentDate) {
-    this.currentDate = currentDate;
-  }
+	public void setCurrentDate(String currentDate) {
+		this.currentDate = currentDate;
+	}
 
-  public Timestamp getLastupdated() {
-    return this.lastupdated;
-  }
+	public Timestamp getLastupdated() {
+		return lastupdated;
+	}
 
-  public void setLastupdated(Timestamp lastupdated) {
-    this.lastupdated = lastupdated;
-  }
+	public void setLastupdated(Timestamp lastupdated) {
+		this.lastupdated = lastupdated;
+	}
 
-  public List getInventoryItems() {
-    return this.inventoryItems;
-  }
+	public List<InventoryKitItem> getInventoryItems() {
+		return inventoryItems;
+	}
 
-  public void setInventoryItems(List inventoryItems) {
-    this.inventoryItems = inventoryItems;
-  }
+	public void setInventoryItems(List<InventoryKitItem> inventoryItems) {
+		this.inventoryItems = inventoryItems;
+	}
 
-  public List getSources() {
-    return this.sources;
-  }
+	public List<String> getSources() {
+		return sources;
+	}
 
-  public void setSources(List sources) {
-    this.sources = sources;
-  }
+	public void setSources(List<String> sources) {
+		this.sources = sources;
+	}
 
-  public List getKitTypes() {
-    return this.kitTypes;
-  }
+	public List<IdValuePair> getKitTypes() {
+		return kitTypes;
+	}
 
-  public void setKitTypes(List kitTypes) {
-    this.kitTypes = kitTypes;
-  }
+	public void setKitTypes(List<IdValuePair> kitTypes) {
+		this.kitTypes = kitTypes;
+	}
 
-  public String getNewKitsXML() {
-    return this.newKitsXML;
-  }
+	public String getNewKitsXML() {
+		return newKitsXML;
+	}
 
-  public void setNewKitsXML(String newKitsXML) {
-    this.newKitsXML = newKitsXML;
-  }
+	public void setNewKitsXML(String newKitsXML) {
+		this.newKitsXML = newKitsXML;
+	}
 }

@@ -14,39 +14,39 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 
+//seemingly unused controller
 @Controller
 public class UpdateRoleController extends BaseController {
-  @RequestMapping(
-      value = "/UpdateRole",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showUpdateRole(HttpServletRequest request,
-      @ModelAttribute("form") RoleForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new RoleForm();
-    }
-        form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+	@RequestMapping(value = "/UpdateRole", method = RequestMethod.GET)
+	public ModelAndView showUpdateRole(HttpServletRequest request, @ModelAttribute("form") RoleForm form) {
+		String forward = FWD_SUCCESS;
+		if (form == null) {
+			form = new RoleForm();
+		}
+		form.setFormAction("");
+		Errors errors = new BaseErrors();
 
-    return findForward(forward, form);}
+		return findForward(forward, form);
+	}
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
-    if (FWD_SUCCESS_INSERT.equals(forward)) {
-      return new ModelAndView("/Role.do", "form", form);
-    } else if (FWD_FAIL.equals(forward)) {
-      return new ModelAndView("/Role.do", "form", form);
-    } else {
-      return new ModelAndView("PageNotFound");
-    }
-  }
+	@Override
+	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+		if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return new ModelAndView("/Role.do", "form", form);
+		} else if (FWD_FAIL.equals(forward)) {
+			return new ModelAndView("/Role.do", "form", form);
+		} else {
+			return new ModelAndView("PageNotFound");
+		}
+	}
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+	@Override
+	protected String getPageTitleKey() {
+		return null;
+	}
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+	@Override
+	protected String getPageSubtitleKey() {
+		return null;
+	}
 }

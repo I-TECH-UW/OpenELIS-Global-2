@@ -14,41 +14,42 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 
+//seemingly unused controller
 @Controller
 public class UpdatePatientTypeController extends BaseController {
-  @RequestMapping(
-      value = "/UpdatePatientType",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showUpdatePatientType(HttpServletRequest request,
-      @ModelAttribute("form") PatientTypeForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new PatientTypeForm();
-    }
-        form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+	@RequestMapping(value = "/UpdatePatientType", method = RequestMethod.GET)
+	public ModelAndView showUpdatePatientType(HttpServletRequest request,
+			@ModelAttribute("form") PatientTypeForm form) {
+		String forward = FWD_SUCCESS;
+		if (form == null) {
+			form = new PatientTypeForm();
+		}
+		form.setFormAction("");
+		Errors errors = new BaseErrors();
 
-    return findForward(forward, form);}
+		return findForward(forward, form);
+	}
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
-    if (FWD_SUCCESS_INSERT.equals(forward)) {
-      return new ModelAndView("/PatientType.do", "form", form);
-    } else if (FWD_SUCCESS.equals(forward)) {
-      return new ModelAndView("/PatientTypeMenu.do", "form", form);
-    } else if (FWD_FAIL.equals(forward)) {
-      return new ModelAndView("patientTypeDefinition", "form", form);
-    } else {
-      return new ModelAndView("PageNotFound");
-    }
-  }
+	@Override
+	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+		if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return new ModelAndView("/PatientType.do", "form", form);
+		} else if (FWD_SUCCESS.equals(forward)) {
+			return new ModelAndView("/PatientTypeMenu.do", "form", form);
+		} else if (FWD_FAIL.equals(forward)) {
+			return new ModelAndView("patientTypeDefinition", "form", form);
+		} else {
+			return new ModelAndView("PageNotFound");
+		}
+	}
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+	@Override
+	protected String getPageTitleKey() {
+		return null;
+	}
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+	@Override
+	protected String getPageSubtitleKey() {
+		return null;
+	}
 }

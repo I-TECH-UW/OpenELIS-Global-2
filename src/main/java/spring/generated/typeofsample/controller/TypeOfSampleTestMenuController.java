@@ -14,39 +14,40 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 
+//seemingly unused controller
 @Controller
 public class TypeOfSampleTestMenuController extends BaseController {
-  @RequestMapping(
-      value = "/TypeOfSampleTestMenu",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showTypeOfSampleTestMenu(HttpServletRequest request,
-      @ModelAttribute("form") TypeOfSampleTestMenuForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new TypeOfSampleTestMenuForm();
-    }
-        form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+	@RequestMapping(value = "/TypeOfSampleTestMenu", method = RequestMethod.GET)
+	public ModelAndView showTypeOfSampleTestMenu(HttpServletRequest request,
+			@ModelAttribute("form") TypeOfSampleTestMenuForm form) {
+		String forward = FWD_SUCCESS;
+		if (form == null) {
+			form = new TypeOfSampleTestMenuForm();
+		}
+		form.setFormAction("");
+		Errors errors = new BaseErrors();
 
-    return findForward(forward, form);}
+		return findForward(forward, form);
+	}
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return new ModelAndView("haitiMasterListsPageDefinition", "form", form);
-    } else if (FWD_FAIL.equals(forward)) {
-      return new ModelAndView("/MasterListsPage.do", "form", form);
-    } else {
-      return new ModelAndView("PageNotFound");
-    }
-  }
+	@Override
+	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return new ModelAndView("haitiMasterListsPageDefinition", "form", form);
+		} else if (FWD_FAIL.equals(forward)) {
+			return new ModelAndView("/MasterListsPage.do", "form", form);
+		} else {
+			return new ModelAndView("PageNotFound");
+		}
+	}
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+	@Override
+	protected String getPageTitleKey() {
+		return null;
+	}
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+	@Override
+	protected String getPageSubtitleKey() {
+		return null;
+	}
 }

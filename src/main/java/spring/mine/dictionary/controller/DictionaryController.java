@@ -43,7 +43,7 @@ import us.mn.state.health.lims.login.valueholder.UserSessionData;
 public class DictionaryController extends BaseController {
 
 	@ModelAttribute("form")
-	public DictionaryForm form() {
+	public BaseForm form() {
 		return new DictionaryForm();
 	}
 
@@ -51,16 +51,16 @@ public class DictionaryController extends BaseController {
 
 	@RequestMapping(value = { "/Dictionary", "/NextPreviousDictionary" }, method = { RequestMethod.POST,
 			RequestMethod.GET })
-	public ModelAndView showDictionary(HttpServletRequest request, @ModelAttribute("form") DictionaryForm form)
+	public ModelAndView showDictionary(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
-		if (form == null) {
+		if (form.getClass() != DictionaryForm.class) {
 			form = new DictionaryForm();
+			request.getSession().setAttribute("form", form);
 		}
 		form.setFormAction("");
 		form.setCancelAction("CancelDictionary.do");
 		Errors errors = new BaseErrors();
-		
 
 		String id = request.getParameter(ID);
 		String start = request.getParameter("startingRecNo");
@@ -145,7 +145,6 @@ public class DictionaryController extends BaseController {
 		}
 		form.setFormAction("");
 		Errors errors = new BaseErrors();
-		
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "false");

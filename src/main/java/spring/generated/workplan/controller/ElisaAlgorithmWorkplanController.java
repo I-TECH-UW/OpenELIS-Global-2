@@ -14,6 +14,7 @@ import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.workplan.form.WorkplanForm;
 
+//seemingly unused controller
 @Controller
 public class ElisaAlgorithmWorkplanController extends BaseController {
 	@RequestMapping(value = "/ElisaAlgorithmWorkplan", method = RequestMethod.GET)
@@ -25,7 +26,6 @@ public class ElisaAlgorithmWorkplanController extends BaseController {
 		}
 		form.setFormAction("");
 		Errors errors = new BaseErrors();
-		
 
 		return findForward(forward, form);
 	}

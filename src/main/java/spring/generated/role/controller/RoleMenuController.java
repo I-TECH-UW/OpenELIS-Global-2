@@ -14,39 +14,39 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 
+//seemingly unused controller
 @Controller
 public class RoleMenuController extends BaseController {
-  @RequestMapping(
-      value = "/RoleMenu",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showRoleMenu(HttpServletRequest request,
-      @ModelAttribute("form") RoleMenuForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new RoleMenuForm();
-    }
-        form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+	@RequestMapping(value = "/RoleMenu", method = RequestMethod.GET)
+	public ModelAndView showRoleMenu(HttpServletRequest request, @ModelAttribute("form") RoleMenuForm form) {
+		String forward = FWD_SUCCESS;
+		if (form == null) {
+			form = new RoleMenuForm();
+		}
+		form.setFormAction("");
+		Errors errors = new BaseErrors();
 
-    return findForward(forward, form);}
+		return findForward(forward, form);
+	}
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return new ModelAndView("haitiMasterListsPageDefinition", "form", form);
-    } else if (FWD_FAIL.equals(forward)) {
-      return new ModelAndView("/MasterListsPage.do", "form", form);
-    } else {
-      return new ModelAndView("PageNotFound");
-    }
-  }
+	@Override
+	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return new ModelAndView("haitiMasterListsPageDefinition", "form", form);
+		} else if (FWD_FAIL.equals(forward)) {
+			return new ModelAndView("/MasterListsPage.do", "form", form);
+		} else {
+			return new ModelAndView("PageNotFound");
+		}
+	}
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+	@Override
+	protected String getPageTitleKey() {
+		return null;
+	}
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+	@Override
+	protected String getPageSubtitleKey() {
+		return null;
+	}
 }

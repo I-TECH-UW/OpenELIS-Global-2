@@ -32,7 +32,7 @@ import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
 
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler, IActionConstants {
 
-	private static final int SESSION_TIMEOUT_IN_MINUTES = 20;
+	private static final int DEFAULT_SESSION_TIMEOUT_IN_MINUTES = 20;
 
 	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
@@ -54,7 +54,13 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 	}
 
 	private void setupUserSession(HttpServletRequest request, Login loginInfo) {
-		request.getSession().setMaxInactiveInterval(SESSION_TIMEOUT_IN_MINUTES * 60);
+		int timeout;
+		if (loginInfo.getUserTimeOut() != null) {
+			timeout = Integer.parseInt(loginInfo.getUserTimeOut()) * 60;
+		} else {
+			timeout = DEFAULT_SESSION_TIMEOUT_IN_MINUTES * 60;
+		}
+		request.getSession().setMaxInactiveInterval(timeout);
 
 		// get system user and link to login user
 		SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
@@ -66,7 +72,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		usd.setSytemUserId(loginInfo.getSystemUserId());
 		usd.setLoginName(loginInfo.getLoginName());
 		usd.setElisUserName(su.getNameForDisplay());
-		usd.setUserTimeOut(SESSION_TIMEOUT_IN_MINUTES * 60);
+		usd.setUserTimeOut(timeout * 60);
 		request.getSession().setAttribute(IActionConstants.USER_SESSION_DATA, usd);
 
 		// get permitted actions map (available modules for the current user)

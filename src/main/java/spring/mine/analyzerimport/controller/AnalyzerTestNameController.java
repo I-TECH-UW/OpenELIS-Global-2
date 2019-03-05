@@ -40,22 +40,21 @@ import us.mn.state.health.lims.test.valueholder.Test;
 public class AnalyzerTestNameController extends BaseController {
 
 	@ModelAttribute("form")
-	public AnalyzerTestNameForm initForm() {
+	public BaseForm initForm() {
 		return new AnalyzerTestNameForm();
 	}
 
 	@RequestMapping(value = "/AnalyzerTestName", method = RequestMethod.POST)
-	public ModelAndView showAnalyzerTestName(HttpServletRequest request,
-			@ModelAttribute("form") AnalyzerTestNameForm form)
+	public ModelAndView showAnalyzerTestName(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
-		if (form == null) {
+		if (form.getClass() != AnalyzerTestNameForm.class) {
 			form = new AnalyzerTestNameForm();
+			request.getSession().setAttribute("form", form);
 		}
 		form.setFormAction("");
 		form.setCancelAction("CancelAnalyzerTestName.do");
 		Errors errors = new BaseErrors();
-		
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "true");
@@ -97,7 +96,6 @@ public class AnalyzerTestNameController extends BaseController {
 		}
 		form.setFormAction("");
 		Errors errors = new BaseErrors();
-		
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "false");

@@ -14,39 +14,40 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 
+//seemingly unused controller
 @Controller
 public class DeleteTypeOfSampleTestController extends BaseController {
-  @RequestMapping(
-      value = "/DeleteTypeOfSampleTest",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showDeleteTypeOfSampleTest(HttpServletRequest request,
-      @ModelAttribute("form") TypeOfSampleTestMenuForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new TypeOfSampleTestMenuForm();
-    }
-        form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+	@RequestMapping(value = "/DeleteTypeOfSampleTest", method = RequestMethod.GET)
+	public ModelAndView showDeleteTypeOfSampleTest(HttpServletRequest request,
+			@ModelAttribute("form") TypeOfSampleTestMenuForm form) {
+		String forward = FWD_SUCCESS;
+		if (form == null) {
+			form = new TypeOfSampleTestMenuForm();
+		}
+		form.setFormAction("");
+		Errors errors = new BaseErrors();
 
-    return findForward(forward, form);}
+		return findForward(forward, form);
+	}
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return new ModelAndView("/TypeOfSampleTestMenu.do", "form", form);
-    } else if (FWD_FAIL.equals(forward)) {
-      return new ModelAndView("/TypeOfSampleTestMenu.do", "form", form);
-    } else {
-      return new ModelAndView("PageNotFound");
-    }
-  }
+	@Override
+	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return new ModelAndView("/TypeOfSampleTestMenu.do", "form", form);
+		} else if (FWD_FAIL.equals(forward)) {
+			return new ModelAndView("/TypeOfSampleTestMenu.do", "form", form);
+		} else {
+			return new ModelAndView("PageNotFound");
+		}
+	}
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+	@Override
+	protected String getPageTitleKey() {
+		return null;
+	}
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+	@Override
+	protected String getPageSubtitleKey() {
+		return null;
+	}
 }
