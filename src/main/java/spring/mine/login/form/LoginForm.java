@@ -1,61 +1,29 @@
 package spring.mine.login.form;
 
-import java.sql.Timestamp;
-
 import spring.mine.common.form.BaseForm;
 
 public class LoginForm extends BaseForm {
-  private String loginName = "";
+	private String loginName = "";
 
-  private String password = "";
+	private String password = "";
 
-  private String newPassword = "";
+	public LoginForm() {
+		setFormName("loginForm");
+	}
 
-  private String confirmPassword = "";
+	public String getLoginName() {
+		return loginName;
+	}
 
-  private Timestamp lastupdated;
+	public void setLoginName(String loginName) {
+		this.loginName = loginName;
+	}
 
-  public LoginForm() {
-    setFormName("loginForm");
-  }
+	public String getPassword() {
+		return password;
+	}
 
-  public String getLoginName() {
-    return this.loginName;
-  }
-
-  public void setLoginName(String loginName) {
-    this.loginName = loginName;
-  }
-
-  public String getPassword() {
-    return this.password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  public String getNewPassword() {
-    return this.newPassword;
-  }
-
-  public void setNewPassword(String newPassword) {
-    this.newPassword = newPassword;
-  }
-
-  public String getConfirmPassword() {
-    return this.confirmPassword;
-  }
-
-  public void setConfirmPassword(String confirmPassword) {
-    this.confirmPassword = confirmPassword;
-  }
-
-  public Timestamp getLastupdated() {
-    return this.lastupdated;
-  }
-
-  public void setLastupdated(Timestamp lastupdated) {
-    this.lastupdated = lastupdated;
-  }
+	public void setPassword(String password) {
+		this.password = password;
+	}
 }

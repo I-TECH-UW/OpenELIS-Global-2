@@ -22,11 +22,12 @@ public class UrlErrorsInterceptor implements HandlerInterceptor {
 		if ("true".equals(request.getParameter("passReminder"))) {
 			errors.reject("login.password.expired.reminder", "login.password.expired.reminder");
 		}
-
-		if (request.getAttribute(IActionConstants.REQUEST_ERRORS) == null) {
-			request.setAttribute(IActionConstants.REQUEST_ERRORS, errors);
-		} else {
-			((Errors) request.getAttribute(IActionConstants.REQUEST_ERRORS)).addAllErrors(errors);
+		if (errors.hasErrors()) {
+			if (request.getAttribute(IActionConstants.URL_REQUEST_ERRORS) == null) {
+				request.setAttribute(IActionConstants.URL_REQUEST_ERRORS, errors);
+			} else {
+				((Errors) request.getAttribute(IActionConstants.URL_REQUEST_ERRORS)).addAllErrors(errors);
+			}
 		}
 
 		return true;

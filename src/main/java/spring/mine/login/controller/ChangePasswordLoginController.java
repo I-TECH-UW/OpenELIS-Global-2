@@ -1,27 +1,30 @@
 package spring.mine.login.controller;
 
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Date;
+import java.util.Calendar;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.validator.GenericValidator;
+import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
-import spring.mine.login.form.LoginChangePasswordForm;
+import spring.mine.login.form.ChangePasswordLoginForm;
+import spring.mine.login.validator.ChangePasswordLoginFormValidator;
+import spring.mine.login.validator.LoginValidator;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.provider.validation.PasswordValidationFactory;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.login.dao.LoginDAO;
@@ -31,133 +34,98 @@ import us.mn.state.health.lims.login.valueholder.Login;
 @Controller
 public class ChangePasswordLoginController extends BaseController {
 
-	@RequestMapping(value = "/ChangePasswordLogin", method = { RequestMethod.GET, RequestMethod.POST })
+	@Autowired
+	ChangePasswordLoginFormValidator formValidator;
+	@Autowired
+	LoginValidator loginValidator;
+
+	@RequestMapping(value = "/ChangePasswordLogin", method = RequestMethod.GET)
 	public ModelAndView showChangePasswordLogin(HttpServletRequest request) {
 		String forward = FWD_SUCCESS;
-		LoginChangePasswordForm form = new LoginChangePasswordForm();
-		form.setFormAction("UpdateLoginChangePassword.do");
-		Errors errors = new BaseErrors();
-
-		form.setPassword("");
-		form.setNewPassword("");
-		form.setConfirmPassword("");
-
+		ChangePasswordLoginForm form = new ChangePasswordLoginForm();
+		form.setFormAction("ChangePasswordLogin.do");
 		return findForward(forward, form);
 	}
 
-	@RequestMapping(value = "/UpdateLoginChangePassword", method = RequestMethod.POST)
-	public ModelAndView showUpdateLoginChangePassword(@Valid @ModelAttribute("form") LoginChangePasswordForm form,
-			ModelMap model, HttpServletRequest request)
+	@RequestMapping(value = "/ChangePasswordLogin", method = RequestMethod.POST)
+	public String showUpdateLoginChangePassword(@ModelAttribute("form") ChangePasswordLoginForm form,
+			BindingResult result, RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result, redirectAttributes);
+			return findLocalForward(FWD_FAIL_INSERT);
+		}
+
 		String forward = FWD_SUCCESS_INSERT;
 
-		String newPassword = form.getNewPassword();
-		String confirmPassword = form.getConfirmPassword();
-
-		Errors errors = new BaseErrors();
-		if (GenericValidator.isBlankOrNull(newPassword) || !newPassword.equals(confirmPassword)) {
-			errors.reject("login.error.password.notmatch");
-		} else if (!PasswordValidationFactory.getPasswordValidator().passwordValid(newPassword)) {
-			errors.reject("login.error.message");
-		}
-
-		if (errors.hasErrors()) {
-			saveErrors(errors);
-			return findForward(FWD_FAIL_INSERT, form);
-		}
-
 		Login login = new Login();
-		org.hibernate.Transaction tx = HibernateUtil.getSession().beginTransaction();
+		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		// populate valueholder from form
 		PropertyUtils.copyProperties(login, form);
 		LoginDAO loginDAO = new LoginDAOImpl();
-		boolean isSuccess = false;
 		try {
-			// get user infomation
+			// get user information if password correct
 			Login loginInfo = loginDAO.getValidateLogin(login);
 			if (loginInfo == null) {
-				tx.rollback();
-				errors.reject("login.error.message");
-				saveErrors(errors);
-				return findForward(FWD_FAIL_INSERT, form);
+				result.reject("login.error.message");
 			} else {
-
-				// validate account disabled
-				if (loginInfo.getAccountDisabled().equals(YES)) {
-					errors.reject("login.error.account.disable");
-					saveErrors(errors);
-					return findForward(FWD_FAIL_INSERT, form);
-				}
-				// validate account locked
-				if (loginInfo.getAccountLocked().equals(YES)) {
-					errors.reject("login.error.account.disable");
-					saveErrors(errors);
-					return findForward(FWD_FAIL_INSERT, form);
-				}
-				// validate password expired day
-				// bugzilla 2286
-				if (loginInfo.getPasswordExpiredDayNo() <= 0) {
-					errors.reject("login.error.password.expired");
-					saveErrors(errors);
-					return findForward(FWD_FAIL_INSERT, form);
-				}
-				// validate user id exists in system_user table
-				if (loginInfo.getSystemUserId() == 0) {
-					errors.reject("login.error.system.user.id", loginInfo.getLoginName());
-					saveErrors(errors);
-					return findForward(FWD_FAIL_INSERT, form);
-				}
-
-				// validate and update password
+				// update fields of login before validating again
 				loginInfo.setPassword(login.getNewPassword());
-
-				java.util.Calendar rightNow = java.util.Calendar.getInstance();
-				rightNow.add(java.util.Calendar.MONTH,
+				Calendar passwordExpiredDate = Calendar.getInstance();
+				passwordExpiredDate.add(Calendar.MONTH,
 						Integer.parseInt(SystemConfiguration.getInstance().getLoginUserChangePasswordExpiredMonth()));
-				loginInfo.setPasswordExpiredDate(new java.sql.Date(rightNow.getTimeInMillis()));
-
+				loginInfo.setPasswordExpiredDate(new Date(passwordExpiredDate.getTimeInMillis()));
 				loginInfo.setSysUserId(String.valueOf(loginInfo.getSystemUserId())); // there is no loggedin user when
-																						// you reset your password
-				isSuccess = loginDAO.updatePassword(loginInfo);
-				if (isSuccess) {
-					tx.commit();
-					errors.reject("login.success.changePass.message");
-					saveErrors(errors);
-				} else {
-					tx.rollback();
-					errors.reject("login.error.password.requirement");
-					saveErrors(errors);
-					forward = FWD_FAIL_INSERT;
-				}
+
+				loginValidator.unauthenticatedPasswordUpdateValidate(loginInfo, result);
 			}
+
+			if (result.hasErrors()) {
+				saveErrors(result);
+				return findLocalForward(FWD_FAIL_INSERT);
+			}
+			loginDAO.updatePassword(loginInfo);
+			tx.commit();
 
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
 			LogEvent.logError("LoginChangePasswordUpdateAction", "performAction()", lre.toString());
 			tx.rollback();
-			errors.reject("login.error.message");
-			saveErrors(errors);
-			return findForward(FWD_FAIL_INSERT, form);
+			result.reject("login.error.message");
 		} finally {
 			HibernateUtil.closeSession();
 		}
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findLocalForward(FWD_FAIL_INSERT);
+		}
 
-		form.setFormAction("ValidateLogin.do");
-		return findForward(forward, form);
+		return findLocalForward(forward);
+	}
+
+	private void saveErrors(Errors errors, RedirectAttributes redirectAttrs) {
+		redirectAttrs.addFlashAttribute("FormErrors", errors);
 	}
 
 	@Override
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+		return new ModelAndView(findLocalForward(forward), "form", form);
+	}
+
+	@Override
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("loginChangePasswordDefinition", "form", form);
+			return "loginChangePasswordDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("redirect:/LoginPage.do", "form", form);
+			return "redirect:/LoginPage.do";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/LoginPage.do", "form", form);
+			return "redirect:/LoginPage.do";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/ChangePasswordLogin.do?error=true", "form", form);
+			return "loginChangePasswordDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

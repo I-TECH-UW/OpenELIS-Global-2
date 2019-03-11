@@ -256,5 +256,6 @@ public interface IActionConstants {
 	String REQUEST_ERRORS = "RequestErrors";
 	String REQUEST_WARNINGS = "RequestWarnings";
 	String REQUEST_MESSAGES = "RequestMessages";
+	String URL_REQUEST_ERRORS = "UrlRequestErrors";
 
 }

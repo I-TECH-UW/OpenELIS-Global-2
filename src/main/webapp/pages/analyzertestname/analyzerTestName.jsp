@@ -13,9 +13,9 @@
 
  
 <c:set var="analyzerList" value="${form.analyzerList}" />
-<c:set var="analyzerName" value="${form.analyzerId}" />
+<c:set var="analyzerNameOrId" value="${form.analyzerId}" />
 <c:set var="testList" value="${form.testList}" />
-<c:set var="testName" value="${form.testId}" />
+<c:set var="testNameOrId" value="${form.testId}" />
 
 <%!String allowEdits = "true";%>
 
@@ -62,7 +62,7 @@ function validateForm(form) {
 	<select id="analyzerId" onchange="copyToHiddenAnalyzer(this);" >
 		<option value="0"></option>
 		<c:forEach items="${analyzerList}" var="analyzer">
-		<option value="${analyzer.id}" ${(analyzer.name == analyzerName) ? "selected='selected'" : ""}>
+		<option value="${analyzer.id}" ${(analyzer.id == analyzerNameOrId || analyzer.name == analyzerNameOrId) ? "selected='selected'" : ""}>
 			${analyzer.name}
 		</option>
 		</c:forEach>
@@ -82,7 +82,7 @@ function validateForm(form) {
 <form:select path="testId" id="testId" >
 	<form:option value="0">&nbsp;</form:option>
 	<c:forEach items="${testList}" var="test">
-		<option value="${test.id}" ${test.name == testName  ? "selected='selected'" : ""}>
+		<option value="${test.id}" ${(test.id == testNameOrId || test.name == testNameOrId)  ? "selected='selected'" : ""}>
 			${test.name}
 		</option>
 	</c:forEach>

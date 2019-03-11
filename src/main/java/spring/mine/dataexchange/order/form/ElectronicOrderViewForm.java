@@ -1,43 +1,42 @@
 package spring.mine.dataexchange.order.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
 
 public class ElectronicOrderViewForm extends BaseForm {
-  private Timestamp lastupdated;
+	private String sortOrder = "lastupdated";
 
-  private String sortBy;
+	private int page = 1;
 
-  private List<ElectronicOrder> eOrders;
+	private List<ElectronicOrder> eOrders;
 
-  public ElectronicOrderViewForm() {
-    setFormName("ElectronicOrderViewForm");
-  }
+	public ElectronicOrderViewForm() {
+		setFormName("ElectronicOrderViewForm");
+	}
 
-  public Timestamp getLastupdated() {
-    return this.lastupdated;
-  }
+	public String getSortOrder() {
+		return sortOrder;
+	}
 
-  public void setLastupdated(Timestamp lastupdated) {
-    this.lastupdated = lastupdated;
-  }
+	public void setSortOrder(String sortBy) {
+		sortOrder = sortBy;
+	}
 
-  public String getSortBy() {
-    return this.sortBy;
-  }
+	public int getPage() {
+		return page;
+	}
 
-  public void setSortBy(String sortBy) {
-    this.sortBy = sortBy;
-  }
+	public void setPage(int page) {
+		this.page = page;
+	}
 
-  public List<ElectronicOrder> getEOrders() {
-    return this.eOrders;
-  }
+	public List<ElectronicOrder> getEOrders() {
+		return eOrders;
+	}
 
-  public void setEOrders(List<ElectronicOrder> eOrders) {
-    this.eOrders = eOrders;
-  }
+	public void setEOrders(List<ElectronicOrder> eOrders) {
+		this.eOrders = eOrders;
+	}
 }

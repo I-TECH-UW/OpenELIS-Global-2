@@ -257,7 +257,12 @@ public abstract class BaseController implements IActionConstants {
 		if (request.getAttribute(REQUEST_ERRORS) == null) {
 			request.setAttribute(REQUEST_ERRORS, errors);
 		} else {
-			((Errors) request.getAttribute(REQUEST_ERRORS)).addAllErrors(errors);
+			Errors previousErrors = (Errors) request.getAttribute(REQUEST_ERRORS);
+			if (previousErrors.hasErrors() && previousErrors.getObjectName().equals(errors.getObjectName())) {
+				previousErrors.addAllErrors(errors);
+			} else {
+				request.setAttribute(REQUEST_ERRORS, errors);
+			}
 		}
 	}
 

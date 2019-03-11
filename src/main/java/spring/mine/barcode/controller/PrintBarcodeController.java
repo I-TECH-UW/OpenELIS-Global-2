@@ -11,17 +11,20 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.barcode.form.PrintBarcodeForm;
+import spring.mine.barcode.validator.PrintBarcodeFormValidator;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -32,8 +35,8 @@ import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.SampleStatus;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
+import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.sample.bean.SampleEditItem;
@@ -69,38 +72,53 @@ public class PrintBarcodeController extends BaseController {
 		ABLE_TO_CANCEL_ROLE_NAMES.add("Biologist");
 	}
 
-	@RequestMapping(value = "/PrintBarcode", method = { RequestMethod.GET, RequestMethod.POST })
-	public ModelAndView showPrintBarcode(@ModelAttribute("form") PrintBarcodeForm form, HttpServletRequest request)
-			throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-		String forward = FWD_SUCCESS;
+	@Autowired
+	PrintBarcodeFormValidator formValidator;
 
-		if (form == null) {
-			form = new PrintBarcodeForm();
-		}
+	@RequestMapping(value = "/PrintBarcode", method = RequestMethod.GET)
+	public ModelAndView setupPrintBarcode(HttpServletRequest request) {
+		String forward = FWD_SUCCESS;
+		PrintBarcodeForm form = new PrintBarcodeForm();
 		form.setFormAction("PrintBarcode");
 
-		Errors errors = new BaseErrors();
-
-		String accessionNumber = form.getAccessionNumber();
-
-		// if accession provided, data collected for display
-		if (!GenericValidator.isBlankOrNull(accessionNumber)) {
-			Sample sample = getSample(accessionNumber);
-			if (sample != null && !GenericValidator.isBlankOrNull(sample.getId())) {
-				List<SampleItem> sampleItemList = getSampleItems(sample);
-				setPatientInfo(form, sample);
-				List<SampleEditItem> currentTestList = getCurrentTestInfo(sampleItemList, accessionNumber, false);
-				form.setExistingTests(currentTestList);
-			}
-		}
-
-		// search by accession number
-		PatientSearch patientSearch = new PatientSearch();
-		patientSearch.setLoadFromServerWithPatient(true);
-		patientSearch.setSelectedPatientActionButtonText(StringUtil.getMessageForKey("label.patient.search.select"));
-		form.setPatientSearch(patientSearch);
+		addPatientSearch(form);
 
 		return findForward(forward, form);
+	}
+
+	@RequestMapping(value = "/PrintBarcode", method = RequestMethod.POST)
+	public ModelAndView printBarcode(@ModelAttribute("form") PrintBarcodeForm form, HttpServletRequest request,
+			BindingResult result) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+		String forward = FWD_SUCCESS;
+		formValidator.validate(form, result);
+
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL, form);
+		}
+
+		form.setFormAction("PrintBarcode");
+		addPatientSearch(form);
+
+		Transaction tx = HibernateUtil.getSession().beginTransaction();
+		String accessionNumber = form.getAccessionNumber();
+		Sample sample = getSample(accessionNumber);
+		if (sample != null && !GenericValidator.isBlankOrNull(sample.getId())) {
+			List<SampleItem> sampleItemList = getSampleItems(sample);
+			setPatientInfo(form, sample);
+			List<SampleEditItem> currentTestList = getCurrentTestInfo(sampleItemList, accessionNumber, false);
+			form.setExistingTests(currentTestList);
+		}
+		tx.commit();
+		return findForward(forward, form);
+	}
+
+	private void addPatientSearch(PrintBarcodeForm form) {
+		PatientSearch patientSearch = new PatientSearch();
+		patientSearch.setLoadFromServerWithPatient(true);
+		patientSearch.setSelectedPatientActionButtonText(MessageUtil.getMessage("label.patient.search.select"));
+		form.setPatientSearch(patientSearch);
+
 	}
 
 	@Override

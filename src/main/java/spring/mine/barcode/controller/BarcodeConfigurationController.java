@@ -6,17 +6,18 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.barcode.form.BarcodeConfigurationForm;
+import spring.mine.barcode.validator.BarcodeConfigurationFormValidator;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
@@ -28,6 +29,9 @@ import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 @Controller
 public class BarcodeConfigurationController extends BaseController {
 
+	@Autowired
+	BarcodeConfigurationFormValidator validator;
+
 	@RequestMapping(value = "/BarcodeConfiguration", method = RequestMethod.GET)
 	public ModelAndView showBarcodeConfiguration(HttpServletRequest request,
 			@ModelAttribute("form") BarcodeConfigurationForm form)
@@ -36,8 +40,6 @@ public class BarcodeConfigurationController extends BaseController {
 		if (form == null) {
 			form = new BarcodeConfigurationForm();
 		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
 		setFields(form);
 
@@ -94,13 +96,13 @@ public class BarcodeConfigurationController extends BaseController {
 
 	@RequestMapping(value = "/BarcodeConfigurationSave", method = RequestMethod.POST)
 	public ModelAndView showBarcodeConfigurationSave(HttpServletRequest request,
-			@ModelAttribute("form") BarcodeConfigurationForm form) {
+			@ModelAttribute("form") BarcodeConfigurationForm form, BindingResult result) {
 		String forward = FWD_SUCCESS_INSERT;
-		if (form == null) {
-			form = new BarcodeConfigurationForm();
+		validator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
 		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
 		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
 		Transaction tx = HibernateUtil.getSession().beginTransaction();
@@ -121,14 +123,14 @@ public class BarcodeConfigurationController extends BaseController {
 			tx.commit();
 		} catch (LIMSRuntimeException lre) {
 			tx.rollback();
-			errors.reject("barcode.config.error.insert");
+			result.reject("barcode.config.error.insert");
 		} finally {
 			HibernateUtil.closeSession();
 			ConfigurationProperties.forceReload();
 		}
 
-		if (errors.hasErrors()) {
-			saveErrors(errors);
+		if (result.hasErrors()) {
+			saveErrors(result);
 			forward = FWD_FAIL_INSERT;
 		}
 

@@ -7,8 +7,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.struts.Globals;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.organization.form.OrganizationForm;
+import spring.mine.organization.validator.OrganizationFormValidator;
 import us.mn.state.health.lims.address.dao.AddressPartDAO;
 import us.mn.state.health.lims.address.dao.OrganizationAddressDAO;
 import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
@@ -53,6 +55,9 @@ import us.mn.state.health.lims.organization.valueholder.OrganizationType;
 @Controller
 @SessionAttributes("form")
 public class OrganizationController extends BaseController {
+
+	@Autowired
+	OrganizationFormValidator validator;
 
 	@ModelAttribute("form")
 	public BaseForm form() {
@@ -126,6 +131,7 @@ public class OrganizationController extends BaseController {
 			form = new OrganizationForm();
 			request.getSession().setAttribute("form", form);
 		}
+
 		form.setFormAction("");
 		form.setCancelAction("CancelOrganization.do");
 		Errors errors = new BaseErrors();
@@ -297,14 +303,14 @@ public class OrganizationController extends BaseController {
 
 	@RequestMapping(value = "/UpdateOrganization", method = RequestMethod.POST)
 	public ModelAndView showUpdateOrganization(HttpServletRequest request,
-			@ModelAttribute("form") OrganizationForm form, SessionStatus status)
+			@ModelAttribute("form") OrganizationForm form, BindingResult result, SessionStatus status)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new OrganizationForm();
+		String forward = FWD_SUCCESS_INSERT;
+		validator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
 		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "false");
@@ -321,19 +327,6 @@ public class OrganizationController extends BaseController {
 		}
 
 		selectedOrgTypes = form.getStrings("selectedTypes");
-
-		/*
-		 * Errors errors = form.validate(mapping, request);
-		 *
-		 * try { errors = validateAll(errors, form); } catch (Exception e) {
-		 * LogEvent.logError("OrganizationUpdateAction", "performAction()",
-		 * e.toString()); ActionError error = new
-		 * ActionError("errors.ValidationException", null, null);
-		 * errors.add(Errors.GLOBAL_MESSAGE, error); }
-		 *
-		 * if (errors != null && errors.size() > 0) { saveErrors(request, errors);
-		 * return mapping.findForward(FWD_FAIL); }
-		 */
 
 		String start = request.getParameter("startingRecNo");
 		String direction = request.getParameter("direction");
@@ -378,7 +371,7 @@ public class OrganizationController extends BaseController {
 				// how can I get popup instead of struts error at the top of
 				// page?
 				// Errors errors = form.validate(mapping, request);
-				errors.reject("errors.OptimisticLockException");
+				result.reject("errors.OptimisticLockException");
 
 			} else {
 				// bugzilla 1482
@@ -387,15 +380,14 @@ public class OrganizationController extends BaseController {
 							.getAttribute("org.apache.struts.action.LOCALE");
 					String messageKey = "organization.organization";
 					String msg = ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey);
-					errors.reject("errors.DuplicateRecord.activeonly", new String[] { msg },
+					result.reject("errors.DuplicateRecord.activeonly", new String[] { msg },
 							"errors.DuplicateRecord.activeonly");
 
 				} else {
-					errors.reject("errors.UpdateException");
+					result.reject("errors.UpdateException");
 				}
 			}
-			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
+			saveErrors(result);
 
 			request.setAttribute(PREVIOUS_DISABLED, "true");
 			request.setAttribute(NEXT_DISABLED, "true");

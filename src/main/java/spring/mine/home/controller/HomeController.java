@@ -22,7 +22,6 @@ public class HomeController extends BaseController {
 		form.setFormName("mainForm");
 		form.setFormAction("");
 		Errors errors = new BaseErrors();
-		
 
 		return findForward(forward, form);
 	}
