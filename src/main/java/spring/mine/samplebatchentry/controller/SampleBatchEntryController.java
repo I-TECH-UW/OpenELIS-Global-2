@@ -193,15 +193,15 @@ public class SampleBatchEntryController extends BaseController {
 	 */
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if ("On Demand".equals(forward)) {
-			return new ModelAndView("sampleBatchEntryOnDemandDefinition", "form", form);
+			return "sampleBatchEntryOnDemandDefinition";
 		} else if ("Pre-Printed".equals(forward)) {
-			return new ModelAndView("sampleBatchEntryPrePrintedDefinition", "form", form);
+			return "sampleBatchEntryPrePrintedDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("/SampleBatchEntrySetup.do", "form", form);
+			return "/SampleBatchEntrySetup.do";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

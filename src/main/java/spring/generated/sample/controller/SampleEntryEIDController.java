@@ -32,13 +32,13 @@ public class SampleEntryEIDController extends BaseController {
 
     return findForward(forward, form);}
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
+  protected String findLocalForward(String forward) {
     if ("eid_entry".equals(forward)) {
-      return new ModelAndView("sampleEntryEIDDefinition", "form", form);
+      return "sampleEntryEIDDefinition";
     } else if (FWD_FAIL.equals(forward)) {
-      return new ModelAndView("homePageDefinition", "form", form);
+      return "homePageDefinition";
     } else {
-      return new ModelAndView("PageNotFound");
+      return "PageNotFound";
     }
   }
 

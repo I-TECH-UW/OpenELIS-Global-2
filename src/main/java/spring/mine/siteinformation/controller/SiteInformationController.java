@@ -481,22 +481,22 @@ public class SiteInformationController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("siteInformationDefinition", "form", form);
+			return "siteInformationDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("redirect:/MasterListsPage.do", "form", form);
+			return "redirect:/MasterListsPage.do";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			String url = form.getFormAction() + "Menu.do";
-			return new ModelAndView("redirect:/" + url, "form", form);
+			return "redirect:/" + url;
 		} else if ("insertFailure".equals(forward)) {
 			String url = form.getFormAction() + ".do";
-			return new ModelAndView("redirect:/" + url, "form", form);
+			return "redirect:/" + url;
 		} else if (FWD_CANCEL.equals(forward)) {
 			String url = form.getFormAction() + "Menu.do";
-			return new ModelAndView("redirect:/" + url, "form", form);
+			return "redirect:/" + url;
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

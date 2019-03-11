@@ -191,17 +191,17 @@ public class OrganizationMenuController extends BaseMenuController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("masterListsPageDefinition", "form", form);
+			return "masterListsPageDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("redirect:/MasterListsPage.do", "form", form);
+			return "redirect:/MasterListsPage.do";
 		} else if (FWD_SUCCESS_DELETE.equals(forward)) {
-			return new ModelAndView("redirect:/OrganizationMenu.do", "form", form);
+			return "redirect:/OrganizationMenu.do";
 		} else if (FWD_FAIL_DELETE.equals(forward)) {
-			return new ModelAndView("redirect:/OrganizationMenu.do", "form", form);
+			return "redirect:/OrganizationMenu.do";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

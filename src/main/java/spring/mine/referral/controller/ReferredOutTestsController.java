@@ -947,19 +947,19 @@ public class ReferredOutTestsController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("referredOutDefinition", "form", form);
+			return "referredOutDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("homePageDefinition", "form", form);
+			return "homePageDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/ReferredOutTests.do?forward=success", "form", form);
+			return "redirect:/ReferredOutTests.do?forward=success";
 		} else if (FWD_VALIDATION_ERROR.equals(forward)) {
-			return new ModelAndView("referredOutDefinition", "form", form);
+			return "referredOutDefinition";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return new ModelAndView("referredOutDefinition", "form", form);
+			return "referredOutDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

@@ -30,13 +30,13 @@ public class DeleteRoleController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("/RoleMenu.do", "form", form);
+			return "/RoleMenu.do";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("/RoleMenu.do", "form", form);
+			return "/RoleMenu.do";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

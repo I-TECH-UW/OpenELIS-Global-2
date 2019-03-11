@@ -32,11 +32,11 @@ public class SampleTypeCreateUpdateController extends BaseController {
 
     return findForward(forward, form);}
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
+  protected String findLocalForward(String forward) {
     if (FWD_SUCCESS.equals(forward)) {
-      return new ModelAndView("/SampleTypeCreate.do", "form", form);
+      return "/SampleTypeCreate.do";
     } else {
-      return new ModelAndView("PageNotFound");
+      return "PageNotFound";
     }
   }
 

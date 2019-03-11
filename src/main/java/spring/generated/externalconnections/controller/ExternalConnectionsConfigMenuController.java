@@ -69,13 +69,13 @@ public class ExternalConnectionsConfigMenuController extends BaseMenuController 
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("externalConnectionsConfigMenuDefinition", "form", form);
+			return "externalConnectionsConfigMenuDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("/MasterListsPage.do", "form", form);
+			return "/MasterListsPage.do";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 }

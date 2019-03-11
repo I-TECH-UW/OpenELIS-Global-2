@@ -31,15 +31,15 @@ public class UpdatePatientTypeController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("/PatientType.do", "form", form);
+			return "/PatientType.do";
 		} else if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("/PatientTypeMenu.do", "form", form);
+			return "/PatientTypeMenu.do";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("patientTypeDefinition", "form", form);
+			return "patientTypeDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

@@ -31,13 +31,13 @@ public class NextPreviousUserRoleController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("/UserRole.do", "form", form);
+			return "/UserRole.do";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("userRoleDefinition", "form", form);
+			return "userRoleDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

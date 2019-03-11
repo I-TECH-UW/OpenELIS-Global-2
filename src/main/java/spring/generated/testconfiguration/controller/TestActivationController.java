@@ -285,11 +285,11 @@ public class TestActivationController extends BaseController {
       
       return list;
   }
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
+  protected String findLocalForward(String forward) {
     if (FWD_SUCCESS.equals(forward)) {
-      return new ModelAndView("testActivationDefinition", "form", form);
+      return "testActivationDefinition";
     } else {
-      return new ModelAndView("PageNotFound");
+      return "PageNotFound";
     }
   }
   

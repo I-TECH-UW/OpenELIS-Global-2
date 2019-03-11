@@ -28,11 +28,11 @@ public class TestSectionManagementController extends BaseController {
 
     return findForward(forward, form);}
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
+  protected String findLocalForward(String forward) {
     if (FWD_SUCCESS.equals(forward)) {
-      return new ModelAndView("testSectionManagementDefinition", "form", form);
+      return "testSectionManagementDefinition";
     } else {
-      return new ModelAndView("PageNotFound");
+      return "PageNotFound";
     }
   }
 

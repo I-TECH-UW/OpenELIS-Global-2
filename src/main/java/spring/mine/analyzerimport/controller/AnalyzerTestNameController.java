@@ -225,19 +225,19 @@ public class AnalyzerTestNameController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("analyzerTestNameDefinition", "form", form);
+			return "analyzerTestNameDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("redirect:/MasterListsPage.do", "form", form);
+			return "redirect:/MasterListsPage.do";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/AnalyzerTestNameMenu.do", "form", form);
+			return "redirect:/AnalyzerTestNameMenu.do";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/AnalyzerTestName.do", "form", form);
+			return "redirect:/AnalyzerTestName.do";
 		} else if (FWD_CANCEL.equals(forward)) {
-			return new ModelAndView("redirect:/AnalyzerTestNameMenu.do", "form", form);
+			return "redirect:/AnalyzerTestNameMenu.do";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

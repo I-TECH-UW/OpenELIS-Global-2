@@ -31,13 +31,13 @@ public class TypeOfSampleTestController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("typeOfSampleTestDefinition", "form", form);
+			return "typeOfSampleTestDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("redirect:/MasterListsPage.do", "form", form);
+			return "redirect:/MasterListsPage.do";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

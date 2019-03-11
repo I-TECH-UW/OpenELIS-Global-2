@@ -163,15 +163,15 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 		}
 	}
 
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (ON_DEMAND.equals(forward)) {
-			return new ModelAndView("sampleStudyBatchEntryOnDemandDefinition", "form", form);
+			return "sampleStudyBatchEntryOnDemandDefinition";
 		} else if (PRE_PRINTED.equals(forward)) {
-			return new ModelAndView("sampleStudyBatchEntryPrePrintedDefinition", "form", form);
+			return "sampleStudyBatchEntryPrePrintedDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("sampleBatchEntrySetupDefinition", "form", form);
+			return "sampleBatchEntrySetupDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

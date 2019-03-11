@@ -43,11 +43,11 @@ public class TestRenameEntryController extends BaseController {
 		return findForward(forward, form);
 	}
 
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("testRenameDefinition", "form", form);
+			return "testRenameDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 	
@@ -63,7 +63,7 @@ public class TestRenameEntryController extends BaseController {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			forward = FWD_FAIL;
-			return new ModelAndView("loginPageDefinition");
+			return "loginPageDefinition");
 		}
 
 		ModelAndView mv = checkUserAndSetup(form, result, request);

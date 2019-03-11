@@ -402,15 +402,15 @@ public class ManageInventoryController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("manageInventoryDefinition", "form", form);
+			return "manageInventoryDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/ManageInventory.do?forward=success", "form", form);
+			return "redirect:/ManageInventory.do?forward=success";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return new ModelAndView("manageInventoryDefinition", "form", form);
+			return "manageInventoryDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

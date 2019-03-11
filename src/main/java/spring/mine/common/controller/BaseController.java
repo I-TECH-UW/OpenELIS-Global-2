@@ -33,7 +33,7 @@ public abstract class BaseController implements IActionConstants {
 	@Autowired
 	protected HttpServletRequest request;
 
-	protected abstract ModelAndView findLocalForward(String forward, BaseForm form);
+	protected abstract String findLocalForward(String forward);
 
 	/**
 	 * Must be implemented by subclasses to set the title for the requested page.
@@ -211,19 +211,22 @@ public abstract class BaseController implements IActionConstants {
 		return true;
 	}
 
+	protected String findForward(String forward) {
+		if (LOGIN_PAGE.equals(forward)) {
+			return "redirect:LoginPage.do";
+		}
+		if (HOME_PAGE.equals(forward)) {
+			return "redirect:Home.do";
+		}
+		return findLocalForward(forward);
+	}
+
 	protected ModelAndView findForward(String forward, BaseForm form) {
 		// TO DO move the set page titles into an interceptor if possible
 		setPageTitles(request, form);
 
-		if (LOGIN_PAGE.equals(forward)) {
-			return new ModelAndView("redirect:LoginPage.do", "errors", getErrors());
-		}
-		if (HOME_PAGE.equals(forward)) {
-			return new ModelAndView("redirect:Home.do", "errors", getErrors());
-		}
-
 		// insert global forwards here
-		return findLocalForward(forward, form);
+		return new ModelAndView(findForward(forward), "form", form);
 	}
 
 	protected ModelAndView findForward(String forward, Map<String, Object> requestObjects, BaseForm form) {

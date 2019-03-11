@@ -31,13 +31,13 @@ public class UpdateTypeOfSamplePanelController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("/TypeOfSamplePanel.do", "form", form);
+			return "/TypeOfSamplePanel.do";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("typeOfSamplePanelDefinition", "form", form);
+			return "typeOfSamplePanelDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

@@ -134,13 +134,13 @@ public class DataSubmissionController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("dataSubmissionDefinition", "form", form);
+			return "dataSubmissionDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/DataSubmission.do", "form", form);
+			return "redirect:/DataSubmission.do";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

@@ -77,7 +77,7 @@ public class DictionaryController extends BaseController {
 
 			String newId = dictionary.getId();
 			String url = "redirect:/Dictionary.do?ID=" + newId + "&startingRecNo=" + start;
-			return new ModelAndView(url, "form", form);
+			return url;
 		} else if ((id != null) && (!"0".equals(id))) { // this is an existing
 			// dictionary
 			dictionaryDAO.getData(dictionary);
@@ -311,20 +311,20 @@ public class DictionaryController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("dictionaryDefinition", "form", form);
+			return "dictionaryDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("redirect:/MasterListsPage.do", "form", form);
+			return "redirect:/MasterListsPage.do";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/DictionaryMenu.do", "form", form);
+			return "redirect:/DictionaryMenu.do";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return new ModelAndView("dictionaryDefinition", "form", form);
+			return "dictionaryDefinition";
 		} else if (FWD_CANCEL.equals(forward)) {
-			return new ModelAndView("redirect:/DictionaryMenu.do", "form", form);
+			return "redirect:/DictionaryMenu.do";
 		} else {
 
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

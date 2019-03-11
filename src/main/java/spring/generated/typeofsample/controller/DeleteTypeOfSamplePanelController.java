@@ -31,13 +31,13 @@ public class DeleteTypeOfSamplePanelController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("/TypeOfSamplePanelMenu.do", "form", form);
+			return "/TypeOfSamplePanelMenu.do";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("/TypeOfSamplePanelMenu.do", "form", form);
+			return "/TypeOfSamplePanelMenu.do";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

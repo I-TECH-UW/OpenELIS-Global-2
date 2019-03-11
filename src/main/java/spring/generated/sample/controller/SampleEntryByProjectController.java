@@ -184,17 +184,17 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 		return item;
 	}
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
+  protected String findLocalForward(String forward) {
     if (FWD_SUCCESS.equals(forward)) {
-      return new ModelAndView("sampleEntryByProjectDefinition", "form", form);
+      return "sampleEntryByProjectDefinition";
     } else if ("eid_entry".equals(forward)) {
-      return new ModelAndView("sampleEntryEIDDefinition", "form", form);
+      return "sampleEntryEIDDefinition";
     } else if ("vl_entry".equals(forward)) {
-      return new ModelAndView("sampleEntryVLDefinition", "form", form);
+      return "sampleEntryVLDefinition";
     } else if (FWD_FAIL.equals(forward)) {
-      return new ModelAndView("homePageDefinition", "form", form);
+      return "homePageDefinition";
     } else {
-      return new ModelAndView("PageNotFound");
+      return "PageNotFound";
     }
   }
 

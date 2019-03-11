@@ -33,7 +33,7 @@ public class TestRenameUpdateController extends BaseController {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			forward = FWD_FAIL;
-			return new ModelAndView("loginPageDefinition");
+			return "loginPageDefinition");
 		}
 
 		String testId = form.getTestId();
@@ -54,11 +54,11 @@ public class TestRenameUpdateController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("testRenameDefinition", "form", form);
+			return "testRenameDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

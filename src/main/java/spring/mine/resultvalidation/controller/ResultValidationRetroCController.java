@@ -98,15 +98,15 @@ public class ResultValidationRetroCController extends BaseResultValidationRetroC
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("resultValidationDefinition", "form", form);
+			return "resultValidationDefinition";
 		} else if ("elisaSuccess".equals(forward)) {
-			return new ModelAndView("elisaAlgorithmResultValidationDefinition", "form", form);
+			return "elisaAlgorithmResultValidationDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("homePageDefinition", "form", form);
+			return "homePageDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 }

@@ -719,56 +719,56 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
 	private ModelAndView findLogBookForward(String forward, BaseForm form) {
 		if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/LogbookResults.do?forward=success", "form", form);
+			return "redirect:/LogbookResults.do?forward=success";
 		} else if (FWD_VALIDATION_ERROR.equals(forward)) {
-			return new ModelAndView("resultsLogbookDefinition", "form", form);
+			return "resultsLogbookDefinition";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return new ModelAndView("homePageDefinition", "form", form);
+			return "homePageDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 
 	private ModelAndView findAccessionForward(String forward, BaseForm form) {
 		if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/AccessionResults.do?forward=success", "form", form);
+			return "redirect:/AccessionResults.do?forward=success";
 		} else if (FWD_VALIDATION_ERROR.equals(forward)) {
-			return new ModelAndView("accessionResultDefinition", "form", form);
+			return "accessionResultDefinition";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return new ModelAndView("homePageDefinition", "form", form);
+			return "homePageDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 
 	private ModelAndView findPatientForward(String forward, BaseForm form) {
 		if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/PatientResults.do?forward=success", "form", form);
+			return "redirect:/PatientResults.do?forward=success";
 		} else if (FWD_VALIDATION_ERROR.equals(forward)) {
-			return new ModelAndView("patientResultDefinition", "form", form);
+			return "patientResultDefinition";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return new ModelAndView("homePageDefinition", "form", form);
+			return "homePageDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 
 	private ModelAndView findStatusForward(String forward, BaseForm form) {
 		if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/StatusResults.do?forward=success&blank=true", "form", form);
+			return "redirect:/StatusResults.do?forward=success&blank=true";
 		} else if (FWD_VALIDATION_ERROR.equals(forward)) {
-			return new ModelAndView("statusResultDefinition", "form", form);
+			return "statusResultDefinition";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return new ModelAndView("homePageDefinition", "form", form);
+			return "homePageDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("resultsLogbookDefinition", "form", form);
+			return "resultsLogbookDefinition";
 		} else if (request.getRequestURL().indexOf("LogbookResultsUpdate") >= 0) {
 			return findLogBookForward(forward, form);
 		} else if (request.getRequestURL().indexOf("AccessionResultsUpdate") >= 0) {
@@ -778,7 +778,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 		} else if (request.getRequestURL().indexOf("StatusResultsUpdate") >= 0) {
 			return findStatusForward(forward, form);
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 }

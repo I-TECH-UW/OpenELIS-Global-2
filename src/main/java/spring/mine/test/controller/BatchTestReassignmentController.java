@@ -282,15 +282,15 @@ public class BatchTestReassignmentController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("BatchTestReassignmentDefinition", "form", form);
+			return "BatchTestReassignmentDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/BatchTestReassignment.do?forward=success", "form", form);
+			return "redirect:/BatchTestReassignment.do?forward=success";
 		} else if ("resubmit".equals(forward)) {
-			return new ModelAndView("BatchTestReassignmentDefinition", "form", form);
+			return "BatchTestReassignmentDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

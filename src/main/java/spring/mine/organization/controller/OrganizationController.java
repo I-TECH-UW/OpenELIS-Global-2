@@ -169,7 +169,7 @@ public class OrganizationController extends BaseController {
 			}
 			String newId = organization.getId();
 			String url = "redirect:/Organization.do?ID=" + newId + "&startingRecNo=" + start;
-			return new ModelAndView(url, "form", form);
+			return url;
 		}
 
 		boolean isNew = (id == null) || "0".equals(id);
@@ -544,19 +544,19 @@ public class OrganizationController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("organizationDefinition", "form", form);
+			return "organizationDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("redirect:/MasterListsPage.do", "form", form);
+			return "redirect:/MasterListsPage.do";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/OrganizationMenu.do", "form", form);
+			return "redirect:/OrganizationMenu.do";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return new ModelAndView("organizationDefinition", "form", form);
+			return "organizationDefinition";
 		} else if (FWD_CANCEL.equals(forward)) {
-			return new ModelAndView("redirect:/OrganizationMenu.do", "form", form);
+			return "redirect:/OrganizationMenu.do";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

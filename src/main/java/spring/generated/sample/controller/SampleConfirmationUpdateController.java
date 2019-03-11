@@ -32,13 +32,13 @@ public class SampleConfirmationUpdateController extends BaseController {
 
     return findForward(forward, form);}
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
+  protected String findLocalForward(String forward) {
     if (FWD_SUCCESS.equals(forward)) {
-      return new ModelAndView("/SampleConfirmationEntry.do?forward=success", "form", form);
+      return "/SampleConfirmationEntry.do?forward=success";
     } else if (FWD_FAIL.equals(forward)) {
-      return new ModelAndView("/SampleConfirmationEntry.do?forward=fail", "form", form);
+      return "/SampleConfirmationEntry.do?forward=fail";
     } else {
-      return new ModelAndView("PageNotFound");
+      return "PageNotFound";
     }
   }
 

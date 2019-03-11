@@ -19,7 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.login.form.ChangePasswordLoginForm;
 import spring.mine.login.validator.ChangePasswordLoginFormValidator;
 import spring.mine.login.validator.LoginValidator;
@@ -107,11 +106,6 @@ public class ChangePasswordLoginController extends BaseController {
 
 	private void saveErrors(Errors errors, RedirectAttributes redirectAttrs) {
 		redirectAttrs.addFlashAttribute("FormErrors", errors);
-	}
-
-	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		return new ModelAndView(findLocalForward(forward), "form", form);
 	}
 
 	@Override

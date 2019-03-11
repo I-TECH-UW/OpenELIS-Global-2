@@ -116,18 +116,18 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("patientEntryByProjectDefinition", "form", form);
+			return "patientEntryByProjectDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("homePageDefinition", "form", form);
+			return "homePageDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			String redirectURL = "/PatientEntryByProject.do?forward=success&type=" + request.getParameter("type");
-			return new ModelAndView("redirect:" + redirectURL, "form", form);
+			return "redirect:" + redirectURL;
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return new ModelAndView("patientEntryByProjectDefinition", "form", form);
+			return "patientEntryByProjectDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

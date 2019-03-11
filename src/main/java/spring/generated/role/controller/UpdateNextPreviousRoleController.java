@@ -30,13 +30,13 @@ public class UpdateNextPreviousRoleController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("/Role.do", "form", form);
+			return "/Role.do";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("roleDefinition", "form", form);
+			return "roleDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

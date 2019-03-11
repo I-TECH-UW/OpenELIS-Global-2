@@ -32,13 +32,13 @@ public class SampleEntryVLSaveController extends BaseController {
 
     return findForward(forward, form);}
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
+  protected String findLocalForward(String forward) {
     if (FWD_SUCCESS.equals(forward)) {
-      return new ModelAndView("/SampleEntryVL.do?forward=success", "form", form);
+      return "/SampleEntryVL.do?forward=success";
     } else if (FWD_FAIL.equals(forward)) {
-      return new ModelAndView("sampleEntryVLDefinition", "form", form);
+      return "sampleEntryVLDefinition";
     } else {
-      return new ModelAndView("PageNotFound");
+      return "PageNotFound";
     }
   }
 

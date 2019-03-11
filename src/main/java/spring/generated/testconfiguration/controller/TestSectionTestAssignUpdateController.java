@@ -32,11 +32,11 @@ public class TestSectionTestAssignUpdateController extends BaseController {
 
     return findForward(forward, form);}
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
+  protected String findLocalForward(String forward) {
     if (FWD_SUCCESS.equals(forward)) {
-      return new ModelAndView("/TestSectionTestAssign.do", "form", form);
+      return "/TestSectionTestAssign.do";
     } else {
-      return new ModelAndView("PageNotFound");
+      return "PageNotFound";
     }
   }
 

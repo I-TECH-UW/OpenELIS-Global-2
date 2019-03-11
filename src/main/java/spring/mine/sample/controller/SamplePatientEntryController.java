@@ -395,17 +395,17 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("samplePatientEntryDefinition", "form", form);
+			return "samplePatientEntryDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("homePageDefinition", "form", form);
+			return "homePageDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/SamplePatientEntry.do?forward=success", "form", form);
+			return "redirect:/SamplePatientEntry.do?forward=success";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return new ModelAndView("samplePatientEntryDefinition", "form", form);
+			return "samplePatientEntryDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 }

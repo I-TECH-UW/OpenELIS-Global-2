@@ -609,23 +609,23 @@ public class ResultValidationController extends BaseResultValidationController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("resultValidationDefinition", "form", form);
+			return "resultValidationDefinition";
 		} else if ("elisaSuccess".equals(forward)) {
-			return new ModelAndView("elisaAlgorithmResultValidationDefinition", "form", form);
+			return "elisaAlgorithmResultValidationDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return new ModelAndView("homePageDefinition", "form", form);
+			return "homePageDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/ResultValidation.do?forward=success", "form", form);
+			return "redirect:/ResultValidation.do?forward=success";
 		} else if ("successRetroC".equals(forward)) {
-			return new ModelAndView("redirect:/ResultValidationRetroC.do?forward=success", "form", form);
+			return "redirect:/ResultValidationRetroC.do?forward=success";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return new ModelAndView("homePageDefinition", "form", form);
+			return "homePageDefinition";
 		} else if (FWD_VALIDATION_ERROR.equals(forward)) {
-			return new ModelAndView("resultValidationDefinition", "form", form);
+			return "resultValidationDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 }

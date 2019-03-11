@@ -486,15 +486,15 @@ public class NonConformityController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("nonConformityDefiniton", "form", form);
+			return "nonConformityDefiniton";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:NonConformity.do?forward=success", "form", form);
+			return "redirect:NonConformity.do?forward=success";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return new ModelAndView("nonConformityDefiniton", "form", form);
+			return "nonConformityDefiniton";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 }
