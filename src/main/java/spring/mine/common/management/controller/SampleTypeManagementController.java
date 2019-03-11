@@ -16,7 +16,7 @@ import spring.mine.common.validator.BaseErrors;
 public class SampleTypeManagementController extends BaseController {
   @RequestMapping(
       value = "/SampleTypeManagement",
-      method = RequestMethod.GET
+      method = { RequestMethod.GET, RequestMethod.POST }
   )
   public ModelAndView showSampleTypeManagement(HttpServletRequest request) {
     String forward = FWD_SUCCESS;

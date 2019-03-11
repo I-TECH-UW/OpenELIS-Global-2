@@ -1,10 +1,12 @@
 <%@ page language="java"
          contentType="text/html; charset=utf-8"
-         import="us.mn.state.health.lims.common.action.IActionConstants,
+         import="java.util.List,
+         		java.util.LinkedHashMap,
+         		java.util.Map,
+         		us.mn.state.health.lims.common.action.IActionConstants,
          		us.mn.state.health.lims.common.util.IdValuePair,
          		us.mn.state.health.lims.common.util.StringUtil,
-         		us.mn.state.health.lims.common.util.Versioning,
-         		java.util.List" %>
+         		us.mn.state.health.lims.common.util.Versioning" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -31,10 +33,8 @@
 <script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="scripts/jquery-ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 
-
- 
-<bean:define id="sampleTypeList" name='${form.formName}' property="sampleTypeList" type="java.util.List"/>
-
+<c:set var="sampleTypeList" value="${form.sampleTypeList}" />
+<c:set var="sampleTypeTestList" value="${form.sampleTypeTestList}" />
 
 <%!
     String basePath = "";
@@ -53,7 +53,6 @@
 <link rel="stylesheet" media="screen" type="text/css"
       href="<%=basePath%>css/jquery_ui/jquery.ui.theme.css?ver=<%= Versioning.getBuildNumber() %>"/>
 
-<form>
 <script type="text/javascript">
     if (!$jq) {
         var $jq = jQuery.noConflict();
@@ -107,7 +106,7 @@
     function confirmValues() {
         $jq("#editButtons").hide();
         $jq(".confirmation-step").show();
-        $jq("#action").text('<%=StringUtil.getMessageForKey("label.confirmation")%>');
+        $jq("#action").text('<%=StringUtil.getContextualMessageForKey("label.confirmation")%>');
         if( $jq("#deactivateSampleTypeId").val().length > 0){
             $jq("#deatcitvateWarning").show();
         }else{
@@ -121,7 +120,7 @@
     function rejectConfirmation() {
         $jq("#editButtons").show();
         $jq(".confirmation-step").hide();
-        $jq("#action").text('<%=StringUtil.getMessageForKey("label.button.edit")%>');
+        $jq("#action").text('<%=StringUtil.getContextualMessageForKey("label.button.edit")%>');
 
         $jq("#sampleTypeSelection").attr("disabled", false);
     }
@@ -130,25 +129,46 @@
     function savePage() {
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         var form = window.document.forms[0];
-        form.action = "SampleTypeTestAssignUpdate.do";
+        form.action = "SampleTypeTestAssign.do";
         form.submit();
     }
 </script>
+
+<style>
+table{
+  width: 80%;
+}
+td {
+  width: 25%;
+}
+</style>
+
+<form:form name="${form.formName}" 
+				   action="${form.formAction}" 
+				   modelAttribute="form" 
+				   onSubmit="return submitForm(this);" 
+				   method="${form.formMethod}"
+				   id="mainForm">
+
+
     <form:hidden path="testId" id="testId"/>
     <form:hidden path="sampleTypeId" id="sampleTypeId"/>
     <form:hidden path="deactivateSampleTypeId" id="deactivateSampleTypeId"/>
 
-    <input type="button" value='<%= StringUtil.getMessageForKey("banner.menu.administration") %>'
+    <input type="button" value='<%= StringUtil.getContextualMessageForKey("banner.menu.administration") %>'
            onclick="submitAction('MasterListsPage.do');"
            class="textButton"/>&rarr;
-    <input type="button" value='<%= StringUtil.getMessageForKey("configuration.test.management") %>'
+    <input type="button" value='<%= StringUtil.getContextualMessageForKey("configuration.test.management") %>'
            onclick="submitAction('TestManagementConfigMenu.do');"
            class="textButton"/>&rarr;
-    <input type="button" value='<%= StringUtil.getMessageForKey("configuration.sampleType.manage") %>'
+    <input type="button" value='<%= StringUtil.getContextualMessageForKey("configuration.sampleType.manage") %>'
            onclick="submitAction('SampleTypeManagement.do');"
            class="textButton"/>&rarr;
 
-<%=StringUtil.getMessageForKey( "configuration.sampleType.assign" )%>
+<%=StringUtil.getContextualMessageForKey( "configuration.sampleType.assign" )%>
+
+<%    List sampleTypeList = (List) pageContext.getAttribute("sampleTypeList"); %>
+
 <br><br>
 
     <h1 id="action" ><spring:message code="label.form.select"/></h1>
@@ -162,8 +182,8 @@
 
         Test: <span class="selectedTestName" ></span><br><br>
         &nbsp;&nbsp;<spring:message code="configuration.sampleType.assign.new.type" />:&nbsp;
+   
     <select id="sampleTypeSelection" onchange="sampleTypeSelected(this);">
-
         <% for(int i = 0; i < sampleTypeList.size(); i++){
             IdValuePair sampleType = (IdValuePair)sampleTypeList.get(i);
         %>
@@ -179,19 +199,26 @@
     </div>
 
     <div style="text-align: center" id="editButtons">
-        <input id="saveButton" type="button" value='<%=StringUtil.getMessageForKey("label.button.next")%>'
+        <input id="saveButton" type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.next")%>'
                onclick="confirmValues();" disabled="disabled"/>
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous")%>'
+        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.previous")%>'
                onclick='window.onbeforeunload = null; submitAction("SampleTypeTestAssign.do")'/>
     </div>
     <div style="text-align: center; display: none;" class="confirmation-step">
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.accept")%>'
+        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.accept")%>'
                onclick="savePage();"/>
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.reject")%>'
+        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.reject")%>'
                onclick='rejectConfirmation();'/>
     </div>
 </div>
-    <bean:define id="testMap" name='${form.formName}' property="sampleTypeTestList" type="java.util.LinkedHashMap<IdValuePair, java.util.List<IdValuePair>>"/>
+    
+    
+    	<%
+    	//<bean:define id="testMap" name='${form.formName}' property="sampleTypeTestList" type="java.util.LinkedHashMap<IdValuePair, java.util.List<IdValuePair>>"/>
+    	
+			LinkedHashMap<IdValuePair, List<IdValuePair>> testMap = new LinkedHashMap<IdValuePair, List<IdValuePair>>();
+			testMap = (LinkedHashMap<IdValuePair, List<IdValuePair>>) pageContext.getAttribute("sampleTypeTestList");
+      %>
 
 <% for( IdValuePair pair : testMap.keySet()){
  List<IdValuePair> testList = testMap.get(pair);
@@ -227,3 +254,5 @@
 
     </div>
 <%}%>
+</form:form>
+

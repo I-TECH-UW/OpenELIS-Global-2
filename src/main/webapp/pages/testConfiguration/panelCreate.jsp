@@ -3,9 +3,9 @@
          import="us.mn.state.health.lims.common.action.IActionConstants,
          		java.util.List,
          		us.mn.state.health.lims.panel.valueholder.Panel,
+         		us.mn.state.health.lims.common.util.IdValuePair,
          		us.mn.state.health.lims.common.util.StringUtil,
          		us.mn.state.health.lims.common.util.Versioning,
-         		us.mn.state.health.lims.testconfiguration.action.TestSectionCreateAction,
          		us.mn.state.health.lims.testconfiguration.action.SampleTypePanel" %>
 
 <%@ page isELIgnored="false" %>
@@ -14,6 +14,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+
 <%--
   ~ The contents of this file are subject to the Mozilla Public License
   ~ Version 1.1 (the "License"); you may not use this file except in
@@ -32,7 +33,7 @@
 
 <script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 
- 
+<%-- 
 <bean:define id="testList" name='${form.formName}' property="existingPanelList" type="java.util.List"/>
 <bean:define id="inactiveTestList" name='${form.formName}' property="inactivePanelList" type="java.util.List"/>
 
@@ -42,8 +43,20 @@
 <bean:define id="existingSampleTypes" name='${form.formName}' property="existingSampleTypeList" type="java.util.List"/>
 <bean:define id="englishSectionNames" name='${form.formName}' property="existingEnglishNames" type="String"/>
 <bean:define id="frenchSectionNames" name='${form.formName}' property="existingFrenchNames" type="String"/>
+--%>
+ 
+<c:set var="testList" value="${form.existingPanelList}" />
+<c:set var="inactiveTestList" value="${form.inactivePanelList}" />
+
+<c:set var="existingPanels" value="${form.existingPanelList}" />
+<c:set var="inactivePanels" value="${form.inactivePanelList}" />
+
+<c:set var="existingSampleTypeList" value="${form.existingSampleTypeList}" />
+<c:set var="englishSectionNames" value="${form.existingEnglishNames}" />
+<c:set var="frenchSectionNames" value="${form.existingFrenchNames}" />
 
 <%!
+	public static final String NAME_SEPARATOR = "$";
     int testCount = 0;
     int columnCount = 0;
     int columns = 4;
@@ -54,7 +67,7 @@
     columnCount = 0;
     testCount = 0;
 %>
-<form>
+
 <script type="text/javascript">
     if (!$jq) {
         var $jq = jQuery.noConflict();
@@ -73,34 +86,6 @@
         form.submit();
     }
 
-    function confirmValues() {
-        var hasError = false;
-        $jq(".required").each(function () {
-            var input = $jq(this);
-            if (!input.val() || input.val().strip().length == 0) {
-                input.addClass("error");
-                hasError = true;
-            }
-        });
-
-        if (hasError) {
-            alert("<%=StringUtil.getMessageForKey("error.all.required")%>");
-        } else {
-            $jq(".required").each(function () {
-                var element = $jq(this);
-                element.prop("readonly", true);
-                element.addClass("confirmation");
-            });
-            $jq(".requiredlabel").each(function () {
-                $jq(this).hide();
-            });
-            $jq("#editButtons").hide();
-            $jq("#confirmationButtons").show();
-            $jq("#confirmationMessage").show();
-            $jq("#action").text("<%=StringUtil.getMessageForKey("label.confirmation")%>");
-        }
-    }
-
     function rejectConfirmation() {
         $jq(".required").each(function () {
             var element = $jq(this);
@@ -114,17 +99,17 @@
         $jq("#editButtons").show();
         $jq("#confirmationButtons").hide();
         $jq("#confirmationMessage").hide();
-        $jq("#action").text("<%=StringUtil.getMessageForKey("label.button.edit")%>");
+        $jq("#action").text("<%=StringUtil.getContextualMessageForKey("label.button.edit")%>");
     }
 
     function handleInput(element, locale) {
-        var englishNames = "<%= englishSectionNames %>".toLowerCase();
-        var frenchNames = "<%= frenchSectionNames %>".toLowerCase();
+        var englishNames = "${form.existingEnglishNames}".toLowerCase();
+        var frenchNames = "${form.existingFrenchNames}".toLowerCase();
         var duplicate = false;
         if( locale == 'english'){
-            duplicate = englishNames.indexOf( '<%=TestSectionCreateAction.NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=TestSectionCreateAction.NAME_SEPARATOR%>') != -1;
+            duplicate = englishNames.indexOf( '<%=NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=NAME_SEPARATOR%>') != -1;
         }else{
-            duplicate = frenchNames.indexOf( '<%=TestSectionCreateAction.NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=TestSectionCreateAction.NAME_SEPARATOR%>') != -1;
+            duplicate = frenchNames.indexOf( '<%=NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=NAME_SEPARATOR%>') != -1;
         }
 
         if(duplicate){
@@ -140,23 +125,72 @@
     function savePage() {
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         var form = window.document.forms[0];
-        form.action = "PanelCreateUpdate.do";
+        form.action = "PanelCreate.do";
         form.submit();
+    }
+    
+    function confirmValues() {
+        var hasError = false;
+        $jq(".required").each(function () {
+            var input = $jq(this);
+            if (!input.val() || input.val().strip().length == 0) {
+            	input.addClass("error");
+                hasError = true;
+            }
+        });
+
+        if (hasError) {
+            alert("<%=StringUtil.getContextualMessageForKey("error.all.required")%>");
+        } else {
+            $jq(".required").each(function () {
+                var element = $jq(this);
+                element.prop("readonly", true);
+                element.addClass("confirmation");
+            });
+            $jq(".requiredlabel").each(function () {
+                $jq(this).hide();
+            });
+            $jq("#editButtons").hide();
+            $jq("#confirmationButtons").show();
+            $jq("#confirmationMessage").show();
+            $jq("#action").text("<%=StringUtil.getContextualMessageForKey("label.confirmation")%>");
+        }
     }
 </script>
 
+<style>
+table{
+  width: 80%;
+}
+td {
+  width: 25%;
+}
+</style>
 
-    <input type="button" value="<%= StringUtil.getMessageForKey("banner.menu.administration") %>"
+<form:form name="${form.formName}" 
+				   action="${form.formAction}" 
+				   modelAttribute="form" 
+				   onSubmit="return submitForm(this);" 
+				   method="${form.formMethod}"
+				   id="mainForm">
+
+
+    <input type="button" value="<%= StringUtil.getContextualMessageForKey("banner.menu.administration") %>"
            onclick="submitAction('MasterListsPage.do');"
            class="textButton"/>&rarr;
-    <input type="button" value="<%= StringUtil.getMessageForKey("configuration.test.management") %>"
+    <input type="button" value="<%= StringUtil.getContextualMessageForKey("configuration.test.management") %>"
            onclick="submitAction('TestManagementConfigMenu.do');"
            class="textButton"/>&rarr;
-    <input type="button" value="<%= StringUtil.getMessageForKey("configuration.panel.manage") %>"
+    <input type="button" value="<%= StringUtil.getContextualMessageForKey("configuration.panel.manage") %>"
            onclick="submitAction('PanelManagement.do');"
            class="textButton"/>&rarr;
 
-<%=StringUtil.getMessageForKey( "configuration.panel.create" )%>
+<%=StringUtil.getContextualMessageForKey( "configuration.panel.create" )%>
+
+<%    List existingSampleTypeList = (List) pageContext.getAttribute("existingSampleTypeList"); %>
+<%    List existingPanels = (List) pageContext.getAttribute("existingPanels"); %>
+<%    List inactivePanels = (List) pageContext.getAttribute("inactivePanels"); %>
+
 <br><br>
 
 <div id="editDiv" >
@@ -173,40 +207,39 @@
             <td style="text-align: center"><spring:message code="label.sampleType"/></td>
         </tr>
         <tr>
-            <td><span class="requiredlabel">*</span><html:text property="panelEnglishName" name="${form.formName}" size="40"
-                                                               styleClass="required"
+        	<td><span class="requiredlabel">*</span><form:input path="panelEnglishName" cssClass="required" size="40"
                                                                onchange="handleInput(this, 'english');checkForDuplicates('english');"/>
             </td>
-            <td><span class="requiredlabel">*</span><html:text property="panelFrenchName" name="${form.formName}" size="40"
-                                                               styleClass="required" onchange="handleInput(this, 'french');"/>
-            </td>             
+            <td><span class="requiredlabel">*</span><form:input path="panelFrenchName" cssClass="required" size="40"
+                                                               onchange="handleInput(this, 'french');"/>
+            </td>
             <td>
-                <span class="requiredlabel">*</span>
-                <html:select name='${form.formName}' property="sampleTypeId" styleClass="required">
-                    <app:optionsCollection name="${form.formName}" property="existingSampleTypeList" label="value" value="id" />
-                </html:select>
-            </td>        
+            <span class="requiredlabel">*</span>
+            		<form:select cssClass="required" path="sampleTypeId">
+            			<option value="">
+        				<% for(int i = 0; i < existingSampleTypeList.size(); i++){
+            				IdValuePair sampleType = (IdValuePair)existingSampleTypeList.get(i);
+        				%>
+        					<option id='<%="option_" + sampleType.getId()%>' value="<%=sampleType.getId()%>"><%=sampleType.getValue()%></option>
+        				<% } %>
+    				</form:select>
+            </td>
         </tr>
     </table>
-    <table>
-        <tr>
-        </tr>
-        <tr>
-        </tr>
-    </table>
+    
     <div id="confirmationMessage" style="display:none">
         <h4><spring:message code="configuration.panel.confirmation.explain" /></h4>
     </div>
     <div style="text-align: center" id="editButtons">
-        <input type="button" value="<%=StringUtil.getMessageForKey("label.button.next")%>"
+        <input type="button" value="<%=StringUtil.getContextualMessageForKey("label.button.next")%>"
                onclick="confirmValues();"/>
-        <input type="button" value="<%=StringUtil.getMessageForKey("label.button.previous")%>"
+        <input type="button" value="<%=StringUtil.getContextualMessageForKey("label.button.previous")%>"
                onclick="submitAction('PanelManagement.do');"/>
     </div>
     <div style="text-align: center; display: none;" id="confirmationButtons">
-        <input type="button" value="<%=StringUtil.getMessageForKey("label.button.accept")%>"
+        <input type="button" value="<%=StringUtil.getContextualMessageForKey("label.button.accept")%>"
                onclick="savePage();"/>
-        <input type="button" value="<%=StringUtil.getMessageForKey("label.button.reject")%>"
+        <input type="button" value="<%=StringUtil.getContextualMessageForKey("label.button.reject")%>"
                onclick='rejectConfirmation();'/>
     </div>
 </div>
@@ -216,7 +249,7 @@
 <% while(sampleTypeCount < existingPanels.size()){%>
 <b><%=((SampleTypePanel)existingPanels.get(sampleTypeCount)).getTypeOfSampleName() %></b>
 
-<table width="80%">
+<table>
     <tr>
         <td width='100%>'>
         <% if( ((SampleTypePanel)existingPanels.get(sampleTypeCount)).getPanels() != null){ 
@@ -244,9 +277,9 @@
 <% sampleTypeCount = 0; %>
 <% while(sampleTypeCount < inactivePanels.size()){%>
 <b><%=((SampleTypePanel)inactivePanels.get(sampleTypeCount)).getTypeOfSampleName() %></b>
- <table width="80%"> 
+ <table> 
      <tr> 
-        <td width="100%">
+        <td>
         <% if( ((SampleTypePanel)inactivePanels.get(sampleTypeCount)).getPanels() != null){ 
         
         	testCount = 0;
@@ -267,3 +300,6 @@
 <br>
 <% } %>
 <% } %>
+
+</form:form>
+

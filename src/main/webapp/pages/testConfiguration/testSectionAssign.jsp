@@ -6,8 +6,7 @@
          		us.mn.state.health.lims.common.action.IActionConstants,
          		us.mn.state.health.lims.common.util.IdValuePair,
          		us.mn.state.health.lims.common.util.StringUtil,
-         		us.mn.state.health.lims.common.util.Versioning,
-         		java.util.List" %>
+         		us.mn.state.health.lims.common.util.Versioning" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -150,8 +149,6 @@ td {
 				   onSubmit="return submitForm(this);" 
 				   method="${form.formMethod}"
 				   id="mainForm">
-
-
 
     <form:hidden path="testId" id="testId"/>
     <form:hidden path="testSectionId" id="testSectionId"/>

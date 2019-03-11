@@ -135,7 +135,7 @@ public class TestSectionTestAssignController extends BaseController {
 
         //This covers the case that they are moving the test to the same test section they are moving it from
         if(testSectionId.equals(deactivateTestSectionId)){
-            return findForward(FWD_SUCCESS, form);
+            return findForward(FWD_SUCCESS_INSERT, form);
         }
 
         if( "N".equals(testSection.getIsActive())){
