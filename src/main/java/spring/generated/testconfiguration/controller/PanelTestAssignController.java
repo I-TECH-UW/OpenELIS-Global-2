@@ -23,6 +23,7 @@ import spring.generated.forms.PanelTestAssignForm;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -147,12 +148,11 @@ public class PanelTestAssignController extends BaseController {
 	    	return mv;
 	    }
 	    
-        String panelId = form.getString("panelId");
+        String panelId = removeComma(form.getString("panelId"));
         String currentUser = getSysUserId(request);
         boolean updatepanel = false;
         
         Panel panel = new PanelDAOImpl().getPanelById(panelId);
-        
                                 
         if (!GenericValidator.isBlankOrNull(panelId)) {
         	PanelItemDAO panelItemDAO = new PanelItemDAOImpl();
@@ -190,8 +190,9 @@ public class PanelTestAssignController extends BaseController {
                  }    
         		
         		tx.commit();
-            } catch (HibernateException e) {
+            } catch (LIMSRuntimeException lre) {
                 tx.rollback();
+                lre.printStackTrace();
             } finally {
                 HibernateUtil.closeSession();
             }
@@ -212,13 +213,22 @@ public class PanelTestAssignController extends BaseController {
   }
 
   protected ModelAndView findLocalForward(String forward, BaseForm form) {
-    if ("success".equals(forward)) {
+    if (FWD_SUCCESS.equals(forward)) {
       return new ModelAndView("panelAssignDefinition", "form", form);
     } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-	      return new ModelAndView("redirect:/PanelTestAssign.do", "form", form);
+	  return new ModelAndView("redirect:/PanelTestAssign.do", "form", form);
     } else {
       return new ModelAndView("PageNotFound");
     }
+  }
+  
+  protected String removeComma(String str) {
+	  if (str.charAt(str.length()-1)==','){
+	      str = str.replace(str.substring(str.length()-1), "");
+	      return str;
+	  } else{
+	      return str;
+	  }  
   }
 
   protected String getPageTitleKey() {

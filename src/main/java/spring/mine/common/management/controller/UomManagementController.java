@@ -14,7 +14,7 @@ import spring.mine.common.validator.BaseErrors;
 
 @Controller
 public class UomManagementController extends BaseController {
-	@RequestMapping(value = "/UomManagement", method = RequestMethod.GET)
+	@RequestMapping(value = "/UomManagement", method = { RequestMethod.GET, RequestMethod.POST })
 	public ModelAndView showUomManagement(HttpServletRequest request) {
 		String forward = FWD_SUCCESS;
 		UomManagementForm form = new UomManagementForm();

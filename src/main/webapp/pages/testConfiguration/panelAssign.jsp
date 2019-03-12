@@ -105,9 +105,8 @@
 
     }
 
-    function panelSelected( selection){
-   	    window.location.href = "PanelTestAssign.do?panelId=" + selection.value ;
-
+    function panelSelected(panelId){
+   	    window.location.href = "PanelTestAssign.do?panelId=" + panelId ;
     }
 
     function confirmValues() {
@@ -177,16 +176,23 @@ td {
 				   id="mainForm">
 
 
-<div id="successMsg" style="text-align:center; color:seagreen;  width : 100%;font-size:170%; visibility : <%=((success != null && success) ? "visible" : "hidden") %>" >
-                <spring:message code="save.success"/>
+<div id="successMsg" style="text-align:center; color:seagreen;  width : 100%;font-size:170%; 
+  visibility : <%=((success != null && success) ? "visible" : "hidden") %>" >
+    <spring:message code="save.success"/>
 </div>
 
     <%-- <bean:define id="selectedPanel" name='${form.formName}' property="selectedPanel" type="us.mn.state.health.lims.testconfiguration.action.PanelTests"/> --%>
 <%--    
     <form:hidden path="panelId" id="panelId" value="<%=(selectedPanel.getPanelIdValuePair() != null ? selectedPanel.getPanelIdValuePair().getId() : new String()) %>"/>
     <form:hidden path="deactivatePanelId" id="deactivatePanelId"/>
+        
+        
+     <form:hidden path="panelId" id="panelId" value="<%=(selectedPanel.getPanelIdValuePair()%>"/>
+     <form:hidden path="panelId" id="panelId" value="<%=(selectedPanel.getPanelIdValuePair() %>"/>
      --%>
-     <form:hidden path="panelId" id="panelId"/>
+     
+     <%    PanelTests selectedPanel = (PanelTests) pageContext.getAttribute("selectedPanel"); %>
+     <form:hidden path="panelId" id="panelId" value="<%=(selectedPanel.getPanelIdValuePair() != null ? selectedPanel.getPanelIdValuePair().getId() : new String()) %>"/>
      <form:hidden path="deactivatePanelId" id="deactivatePanelId"/>
 
     <input type="button" value='<%= StringUtil.getContextualMessageForKey("banner.menu.administration") %>'
@@ -210,17 +216,14 @@ td {
     
     <%    List panelList = (List) pageContext.getAttribute("panelList"); %>
     
-    Panel:<form:select cssClass="required" path="panelId" onchange="panelSelected(this);">
+    Panel:<form:select cssClass="required" path="panelId" onchange="panelSelected(this.value);">
             			<option value="">
         				<% for(int i = 0; i < panelList.size(); i++){
-            				IdValuePair panel = (IdValuePair)panelList.get(i);
-        				%>
+            				IdValuePair panel = (IdValuePair)panelList.get(i);	%>
         					<option id='<%="option_" + panel.getId()%>' value="<%=panel.getId()%>"><%=panel.getValue()%></option>
         				<% } %>
     				</form:select>
-<%--<br> --%>
-
-    
+<br> 
                 
     </div>
     <div class="edit-step" style="display:none">
@@ -249,7 +252,6 @@ td {
     </div>
 </div>
 
-<%    PanelTests selectedPanel = (PanelTests) pageContext.getAttribute("selectedPanel"); %>
 <% if (selectedPanel.getPanelIdValuePair()!= null )  {%>
 
 <table style="width:80%">
@@ -260,7 +262,6 @@ td {
     <h3><%=selectedPanel.getPanelIdValuePair().getValue() %> Tests</h3>
     
     <form:select style="height:200px;line-height:200px;width:100%;" cssClass="required" path="currentTests" id="list1">
-       <option value="">
         <% for (IdValuePair panelTest : selectedPanel.getTests()) {%>
        		<option id='<%="option_" + panelTest.getId()%>' value="<%=panelTest.getId()%>"><%=panelTest.getValue()%></option>
        <% } %>
@@ -277,7 +278,6 @@ td {
      <h3>Available Tests (<%=selectedPanel.getSampleTypeIdValuePair().getValue() %>)</h3>
      
     <form:select style="height:200px;line-height:200px;width:100%;" cssClass="required" path="availableTests" id="list2">
-       <option value="">
         <% for (IdValuePair availableTest : selectedPanel.getAvailableTests()) {%>
        		<option id='<%="option_" + availableTest.getId()%>' value="<%=availableTest.getId()%>"><%=availableTest.getValue()%></option>
        <% } %>
