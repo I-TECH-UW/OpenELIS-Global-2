@@ -13,38 +13,29 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 	
-<bean:define id="kitSources" name="${form.formName}" property="sources" type="List<IdValuePair>" />
-<bean:define id="kitTypeList" name="${form.formName}" property="kitTypes" type="List<String>" />
-<bean:size id="currentKitCount" name="${form.formName}" property="inventoryItems"/>
+<c:set var="kitSources" value="${form.sources}" />
+<c:set var="kitTypeList" value="${form.kitTypes}"/>
+<c:set var="currentKitCount" value="${fn:length(form.inventoryItems)}"/>
 <script type="text/javascript">
 
 var dirty = false;
-var nextKitValue = 	<%= currentKitCount%> + 1;
+var nextKitValue = 	${currentKitCount} + 1;
 var errorColor = "#ff0000";
 var DatePattern = /^((((0?[1-9]|[12]\d|3[01])[\.\-\/](0?[13578]|1[02])[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|((0?[1-9]|[12]\d|30)[\.\-\/](0?[13456789]|1[012])[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|((0?[1-9]|1\d|2[0-8])[\.\-\/]0?2[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|(29[\.\-\/]0?2[\.\-\/]((1[6-9]|[2-9]\d)?(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)|00)))|(((0[1-9]|[12]\d|3[01])(0[13578]|1[02])((1[6-9]|[2-9]\d)?\d{2}))|((0[1-9]|[12]\d|30)(0[13456789]|1[012])((1[6-9]|[2-9]\d)?\d{2}))|((0[1-9]|1\d|2[0-8])02((1[6-9]|[2-9]\d)?\d{2}))|(2902((1[6-9]|[2-9]\d)?(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)|00))))$/;
 var TEST_KIT_PROTOTYPE_ID = '<input name="inventoryLocationId" size="3" value="" disabled="disabled" type="text">';
 var TEST_KIT_PROTOTYPE_NAME = '<input name="kitName" value="" type="text" class="kitName" onblur="checkIfEmpty(this);">';
 var TEST_KIT_PROTOTYPE_TYPE = '<select name="type" class="kitType" > \
 								<option value="" ></option> ' +
-								'<%
-									for( String kitTypeValue : kitTypeList ){
-									out.print("<option value=\"" + kitTypeValue + "\">" + kitTypeValue +"</option>" );
-									}
-								%>'
+								'<c:forEach items="${kitTypeList}" var="kitTypeValue"> <option value="${kitTypeValue}">${kitTypeValue}</option> </c:forEach>'
 								+ '</select>';
 var TEST_KIT_PROTOTYPE_RECEIVE = '<input name="receiveDate" class="receiveDate" size="12" value="" type="text" onblur="validateDate(this);">';
 var TEST_KIT_PROTOTYPE_EXPIRE = '<input name="expirationDate" class="expirationDate" size="12" value=""  type="text" onblur="validateDate(this);">';
 var TEST_KIT_PROTOTYPE_LOT = '<input name="lotNumber" class="lotNumber" size="6" value="" type="text">';
 var TEST_KIT_PROTOTYPE_SOURCE = '<select name="organizationId" class="organizationId" > \
-								' +
-
-								'<%
-									for( IdValuePair pair : kitSources ){
-									out.print("<option value=\"" + pair.getId() + "\">" + pair.getValue() +"</option>" );
-									}
-								%>'
+								' + '<c:forEach items="${kitSources}" var="pair"> <option value="${pair.id}">${pair.value}</option>	</c:forEach>'
 								+ '</select>';
 var TEST_KIT_PROTOTYPE_REMOVE = '<input name="removeButton" value="' + '<spring:message code="label.button.remove"/>' + '" onclick="removeTestKit(#);" class="textButton" type="button">';
 
@@ -168,7 +159,7 @@ function /*void*/ createNewKitXML(){
 function  /*void*/ setMyCancelAction(form, action, validate, parameters)
 {
 	//first turn off any further validation
-	setAction(window.document.forms[0], 'Cancel', 'no', '');
+	setAction(document.getElementById("mainForm"), 'Cancel', 'no', '');
 }
 
 function  /*void*/ savePage()
@@ -205,7 +196,7 @@ function  /*void*/ savePage()
 	createNewKitXML();
   
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-	var form = window.document.forms[0];
+	var form = document.getElementById("mainForm");
 	form.action = "ManageInventoryUpdate.do";
 	form.submit();
 
@@ -226,7 +217,7 @@ function /*void*/ makeDirty(){
 </script>
 
 <div id="PatientPage" class="colorFill" style="display:inline" >
-	<logic:present name="${form.formName}" property="inventoryItems" >
+	<c:if test="${not (form.inventoryItems == null)}">
 	<form:hidden path="newKitsXML" id="newKits" />
 	<table id="testKitTable"   style="width:100%" >
 	<tr >
@@ -256,71 +247,63 @@ function /*void*/ makeDirty(){
 		<th style="width:10%">
 		</th>
 	</tr>
-	<logic:iterate id="inventoryItems"  name="${form.formName}" property="inventoryItems" indexId="index" type="InventoryKitItem" >
-		<tr <% if(!inventoryItems.getIsActive()){out.print("style=\"display:none\"");} %> id='<%="activeRow_" + index %>' >
+	<c:forEach var="inventoryItems"  items="${form.inventoryItems}" varStatus="iter">
+		<tr
+			<c:if test="${not inventoryItems.isActive}">style="display:none"</c:if> id='activeRow_${iter.index}'>
 			<td >
-				<html:hidden indexed="true" name="inventoryItems" property="isActive" id='<%= "isActive_" + index %>'/>
-				<html:hidden indexed="true" name="inventoryItems" property="isModified" id='<%= "isModified_" + index %>'/>
-				<html:text  indexed="true" name="inventoryItems" property="inventoryLocationId" disabled="true" size="3" />
+				<form:hidden path="inventoryItems[${iter.index}].isActive" id='isActive_${iter.index}'/>
+				<form:hidden path="inventoryItems[${iter.index}].isModified" id='isModified_${iter.index}'/>
+				<form:input path="inventoryItems[${iter.index}].inventoryLocationId" disabled="true" size="3" />
 			</td>
 			<td>
-			<html:text  indexed="true"
-			            name="inventoryItems"
-			            property="kitName"
-			            styleClass="kitName"
-			            onchange='<%="setModifiedFlag(" + index + ");" %>'
+			<form:input path="inventoryItems[${iter.index}].kitName"
+			            cssClass="kitName"
+			            onchange='setModifiedFlag(${iter.index});'
 			            onblur="checkIfEmpty(this);"/>
 			</td>
 			<td >
-				<html:select indexed="true"
-							 name="inventoryItems"
-							 property="type"  value='<%=inventoryItems.getType()%>'
-							 onchange= '<%=" setModifiedFlag(" + index + ");" %>' >
+				<form:select path="inventoryItems[${iter.index}].type"  
+				 	value='${inventoryItems.type}'
+					onchange= 'setModifiedFlag(${iter.index});' >
 				    <option value="" ></option>
-					<html:options name="${form.formName}" property="kitTypes" />
-				</html:select>
+					<form:options items="${form.kitTypes}" />
+				</form:select>
 			</td>
 			<td >
-				<html:text  indexed="true"
-							name="inventoryItems"
-							property="receiveDate"
-							styleClass="receiveDate"
+				<form:input path="inventoryItems[${iter.index}].receiveDate"
+							cssClass="receiveDate"
 							size="12"
-							onchange='<%="setModifiedFlag(" + index + "); " %>' onblur="validateDate(this);"/>
+							onchange='setModifiedFlag(${iter.index});' 
+							onblur="validateDate(this);"/>
 			</td>
 			<td >
-				<html:text  indexed="true"
-				            name="inventoryItems"
-				            property="expirationDate"
-				            styleClass="expirationDate"
+				<form:input path="inventoryItems[${iter.index}].expirationDate"
+				            cssClass="expirationDate"
 				            size="12"
-				            onchange='<%="setModifiedFlag(" + index + ");" %>' onblur="validateDate(this);"/>
+				            onchange='setModifiedFlag(${iter.index});' 
+				            onblur="validateDate(this);"/>
 			</td>
 			<td >
-				<html:text  indexed="true"
-				            name="inventoryItems"
-				            property="lotNumber"
+				<form:input path="inventoryItems[${iter.index}].lotNumber"
 				            size="6"
-				            onchange='<%="setModifiedFlag(" + index + ");" %>'/>
+				            onchange='setModifiedFlag(${iter.index});'/>
 			</td>
 			<td >
-						<html:select indexed="true"
-				             name="inventoryItems"
-				             property="organizationId"
-				             value='<%=inventoryItems.getOrganizationId()%>'
-				             onchange='<%="setModifiedFlag(" + index + ");" %>'>
+						<form:select path="inventoryItems[${iter.index}].organizationId"
+				             value='${inventoryItems.organizationId}'
+				             onchange='setModifiedFlag(${iter.index});'>
 
-					<html:optionsCollection name="${form.formName}" property="sources" value="id" label="value"/>
-				</html:select>
+					<form:options items="${form.sources}" itemValue="id" itemLabel="value"/>
+				</form:select>
 			</td>
 			<td >
                 <input type="button"
-                       value='<%= StringUtil.getMessageForKey("label.button.deactivate")%>'
-                       onclick='<%= "deactivateTestKit(" + index + ");"%>'
+                       value='<spring:message code="label.button.deactivate"/>'
+                       onclick='deactivateTestKit(${iter.index});'
                        class="textButton">
 			</td>
 		</tr>
-	</logic:iterate>
+	</c:forEach>
 	</table>
 	<div id="inactiveInventoryItems" style="display:none" >
 	<hr>
@@ -329,37 +312,38 @@ function /*void*/ makeDirty(){
 	<tr>
 		<th colspan="8"  align="left"><spring:message code="invnetory.testKit.inactiveKits"/></th>
 	</tr>
-	<logic:iterate id="item"  name="${form.formName}" property="inventoryItems" indexId="index" type="InventoryKitItem" >
-		<tr <% if(item.getIsActive()){out.print("style=\"display:none\"");} %> id='<%="inactiveRow_" + index %>' >
+	<c:forEach var="item"  items="${form.inventoryItems}" varStatus="iter">
+	
+		<tr <c:if test="${item.isActive}"> style="display:none"  </c:if> id='inactiveRow_${iter.index}'>
 			<td style="width:5%">
-				<html:text name="item" property="inventoryLocationId" disabled="true" size="3" />
+				<form:input path="inventoryItems[${iter.index}].inventoryLocationId" disabled="true" size="3" />
 			</td>
 			<td style="width:15%">
-				<html:text name="item" property="kitName" disabled="true" />
+				<form:input path="inventoryItems[${iter.index}].kitName" disabled="true" />
 			</td>
 			<td style="width:10%" >
-				<html:text name="item" property="type" disabled="true" size="12" />
+				<form:input path="inventoryItems[${iter.index}].type" disabled="true" size="12" />
 			</td>
 			<td style="width:10%">
-				<html:text name="item" property="receiveDate" disabled="true" size="12" />
+				<form:input path="inventoryItems[${iter.index}].receiveDate" disabled="true" size="12" />
 			</td>
 			<td style="width:10%">
-				<html:text name="item" property="expirationDate" disabled="true" size="12" />
+				<form:input path="inventoryItems[${iter.index}].expirationDate" disabled="true" size="12" />
 			</td>
 			<td style="width:10%">
-				<html:text name="item" property="lotNumber" disabled="true" size="6" />
+				<form:input path="inventoryItems[${iter.index}].lotNumber" disabled="true" size="6" />
 			</td>
 			<td style="width:20%">
-				<html:text name="item" property="source" disabled="true" />
+				<form:input path="inventoryItems[${iter.index}].source" disabled="true" />
 			</td>
 			<td style="width:10%">
                     <input type="button"
                            value='<%= StringUtil.getMessageForKey("label.button.reactivate")%>'
-                           onclick='<%= "reactivateTestKit(" + index + ");"%>'
+                           onclick='<%= "reactivateTestKit(${iter.index});"%>'
                            class="textButton">
 			</td>
 		</tr>
-	</logic:iterate>
+	</c:forEach>
 	</table>
 	</div>
 	<br/>
@@ -378,10 +362,10 @@ function /*void*/ makeDirty(){
                value='<%= StringUtil.getMessageForKey("inventory.testKit.add")%>'
                onclick="addNewTestKit();"
                class="textButton">
-</logic:present>
-<logic:notPresent name="${form.formName}" property="inventoryItems" >
+</c:if>
+<c:if test="${form.inventoryItems == null}" >
 	<spring:message code="inventory.testKit.none"/>
-</logic:notPresent>
+</c:if>
 
 
 </div>

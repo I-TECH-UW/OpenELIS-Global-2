@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
-import spring.mine.resultvalidation.controller.BaseResultValidationRetroCIController;
 import spring.mine.resultvalidation.form.ResultValidationForm;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -38,15 +38,8 @@ public class ResultValidationRetroCController extends BaseResultValidationRetroC
 			form = new ResultValidationForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 		request.getSession().setAttribute(SAVE_DISABLED, "true");
 		String testSectionName = (request.getParameter("type"));
 		String testName = (request.getParameter("test"));
@@ -105,15 +98,15 @@ public class ResultValidationRetroCController extends BaseResultValidationRetroC
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
-			return new ModelAndView("resultValidationDefinition", "form", form);
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "resultValidationDefinition";
 		} else if ("elisaSuccess".equals(forward)) {
-			return new ModelAndView("elisaAlgorithmResultValidationDefinition", "form", form);
-		} else if ("fail".equals(forward)) {
-			return new ModelAndView("homePageDefinition", "form", form);
+			return "elisaAlgorithmResultValidationDefinition";
+		} else if (FWD_FAIL.equals(forward)) {
+			return "homePageDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 }

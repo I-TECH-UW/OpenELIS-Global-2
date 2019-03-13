@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--Some settings-->
+   <changeSet author="CI OpenELIS developers group" id="1">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="1"> select count(*) from clinlims.dictionary where dict_entry = 'A';
+    		</sqlCheck>
+    </preConditions>
+    <comment>update in dictionary_type</comment>
+    <sql>
+UPDATE clinlims.dictionary
+   SET lastupdated=now(), local_abbrev='A', 
+       dictionary_category_id=38, display_key='dictionary.result.A'
+ WHERE sort_order = 50100;
+ </sql>
+</changeSet>
+
+ <changeSet author="CI OpenELIS developers group" id="2">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0"> select count(*) from clinlims.dictionary where dict_entry = 'B';
+    		</sqlCheck>
+    </preConditions>
+    <comment>Adds in dictionary_type</comment>
+    <sql>
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','B',now(),'B',38,'dictionary.result.B',50350);
+
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','O',now(),'O',38,'dictionary.result.O',50450);
+
+ </sql>
+</changeSet>
+
+
+
+
+
+
+
+
+</databaseChangeLog>

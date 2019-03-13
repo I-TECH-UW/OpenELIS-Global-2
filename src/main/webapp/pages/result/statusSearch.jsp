@@ -28,7 +28,7 @@ var newSearchInfo = false;
 
 function doShowTests(){
     newSearchInfo = false;
-	var form = document.forms[0];
+	var form = document.getElementById("mainForm");
 
 	form.action = "StatusResults.do"; 
 	form.method ="get";

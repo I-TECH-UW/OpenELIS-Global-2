@@ -98,17 +98,17 @@ function confirmSaveForwardPopup(direction)
     
     strHTML += '  function goToNextActionSave(){ ';
     strHTML += ' var reqParms = "?direction=next&ID="; ';
-    strHTML += ' window.opener.setAction(window.opener.document.forms[0], "UpdateNextPrevious", "yes", reqParms);self.close();} ';
+    strHTML += ' window.opener.setAction(window.opener.document.getElementById("mainForm"), "UpdateNextPrevious", "yes", reqParms);self.close();} ';
     strHTML += '  function goToPreviousActionSave(){ ';
     strHTML += ' var reqParms = "?direction=previous&ID="; ';
-    strHTML += ' window.opener.setAction(window.opener.document.forms[0], "UpdateNextPrevious", "yes", reqParms);self.close();} ';
+    strHTML += ' window.opener.setAction(window.opener.document.getElementById("mainForm"), "UpdateNextPrevious", "yes", reqParms);self.close();} ';
     
     strHTML += '  function goToNextActionNoSave(){ ';
     strHTML += ' var reqParms = "?direction=next&ID="; ';
-    strHTML += ' window.opener.setAction(window.opener.document.forms[0], "NextPrevious", "no", reqParms);self.close();} ';
+    strHTML += ' window.opener.setAction(window.opener.document.getElementById("mainForm"), "NextPrevious", "no", reqParms);self.close();} ';
     strHTML += '  function goToPreviousActionNoSave(){ ';
     strHTML += ' var reqParms = "?direction=previous&ID="; ';
-    strHTML += ' window.opener.setAction(window.opener.document.forms[0], "NextPrevious", "no", reqParms);self.close();} ';
+    strHTML += ' window.opener.setAction(window.opener.document.getElementById("mainForm"), "NextPrevious", "no", reqParms);self.close();} ';
     
     strHTML += ' setTimeout("impor()",359999);</SCRIPT'; 
     strHTML += '><title>' + "<%=title%>" + '</title></head>'; 
@@ -161,7 +161,7 @@ function previousAction(form, ignoreFields) {
      confirmSaveForwardPopup('previous');
   } else {
      setDirtyFormFields(form);
-     setAction(form, 'NextPrevious', 'no', '?direction=previous&ID=');
+     navigationAction(form, 'NextPrevious', 'no', '?direction=previous&ID=');
   }
 }
 
@@ -172,7 +172,7 @@ function nextAction(form, ignoreFields) {
       confirmSaveForwardPopup('next');
   } else {
       setDirtyFormFields(form);
-      setAction(form, 'NextPrevious', 'no', '?direction=next&ID=');
+      navigationAction(form, 'NextPrevious', 'no', '?direction=next&ID=');
   }
 }
 </script>
@@ -181,7 +181,7 @@ function nextAction(form, ignoreFields) {
 	<tbody valign="middle">
 		<tr>
 	      	<td>
-  			<button type="button" onclick="if(checkClicked()) {	return false; } else { saveIt(window.document.forms[0]);}" 
+  			<button type="button" onclick="if(checkClicked()) {	return false; } else { saveIt(document.getElementById('mainForm'));}" 
   			id="save" 
   			<%if (Boolean.valueOf(saveDisabled).booleanValue()) {%>
   			disabled="disabled"
@@ -206,7 +206,7 @@ function nextAction(form, ignoreFields) {
   		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
  	    <td>
   			<button type="button"
-  					onclick="previousAction(window.document.forms[0], '');" 
+  					onclick="previousAction(document.getElementById('mainForm'), '');" 
   				    id="previous" 
   				    <%if (Boolean.valueOf(previousDisabled).booleanValue()) { %>
   				    disabled="disabled"
@@ -217,7 +217,8 @@ function nextAction(form, ignoreFields) {
 	    </td>
      	<td>&nbsp;</td>
  	    <td>
-  			<button onclick="nextAction(window.document.forms[0], '');"  
+  			<button type="button" 
+  					onclick="nextAction(document.getElementById('mainForm'), '');"  
 					id="next" 
 					<% if (Boolean.valueOf(nextDisabled).booleanValue()) { %>
 					disabled="disabled"

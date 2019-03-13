@@ -1,0 +1,1 @@
+alter role clinlims PASSWORD '[% postgres_password %]';

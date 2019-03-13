@@ -1,0 +1,10 @@
+id,panel_id,lastupdated,test_local_abbrev
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Cristaux' ) , now() ,Cristaux - OdCa
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Cristaux' ) , now() ,Cristaux - PA
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Cristaux' ) , now() ,Cristaux - PT
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Cristaux' ) , now() ,Cristaux - PdCa
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Cristaux' ) , now() ,Cristaux - PdMg
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Cristaux' ) , now() ,Cristaux - SdCa
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Cristaux' ) , now() ,Cristaux - UAm
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Cristaux' ) , now() ,Cristaux - UA
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Cristaux' ) , now() ,Cristaux - AU

@@ -1,0 +1,52 @@
+Transaminases GPT (37°C)
+Transaminases G0T (37°C)
+Glucose
+Créatinine
+Amylase
+Albumine recherche miction
+Cholestérol total
+Cholestérol HDL
+Triglycérides
+Prolans (BHCG) urines de 24 h
+Test urinaire de grossesse
+Protéinurie sur bandelette
+Numération des globules blancs
+Numération des globules rouges
+Hémoglobine
+Hémotocrite
+Volume Globulaire Moyen
+Teneur Corpusculaire Moyenne en Hémoglobine
+Concentration Corpusculaire Moyenne en Hémoglobine
+Plaquette
+Polynucléaires Neutrophiles (%)
+Polynucléaires Neutrophiles (Abs)
+Polynucléaires Eosinophiles (%)
+Polynucléaires Eosinophiles (Abs)
+Polynucléaires basophiles (%)
+Polynucléaires basophiles (Abs)
+Lymphocytes (%)
+Lymphocytes (Abs)
+Monocytes (%)
+Monocytes (Abs)
+Test rapide HIV 1 + HIV 2
+Test rapide HIV 1 + HIV 2
+Test rapide HIV 1 + HIV 2
+Dénombrement des lymphocytes CD4 (mm3)
+Dénombrement des lymphocytes  CD4 (%)
+HBs AG (antigén australia)
+Mesure de la charge virale
+Detection de la resistance aux antiretroviraux
+Western blot VIH
+Western blot VIH
+Bioline
+Bioline
+Bioline
+Genie III
+Genie III
+Genie III
+Murex
+Murex
+Vironostika
+Vironostika
+P24 Ag
+P24 Ag

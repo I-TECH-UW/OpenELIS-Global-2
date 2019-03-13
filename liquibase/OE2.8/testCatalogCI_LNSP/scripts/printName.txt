@@ -1,0 +1,57 @@
+VIH test rapide-determine
+VIH test rapide-determine
+VIH test rapide-determine
+VIH test rapide - bioline
+VIH test rapide - bioline
+VIH test rapide - bioline
+VIH test rapide - Stat PaK
+VIH test rapide - Stat PaK
+VIH test rapide - Stat PaK
+CD4  Abs
+CD4 (%)
+TGP (37°C)
+TGO (37°C)
+Gly
+Gly
+Creatinine
+Amylase
+Albumine 
+Chol total
+Chol HDL
+Triglycérides
+charge virale
+Béta HCG – 24 h
+GB
+GR
+Hb
+Hte
+VGM
+TCMH
+CCMH
+PQTES
+PNN (%)
+PNN (Abs)
+PNE (%)
+PNE (Abs)
+PNB (%)
+PNB (Abs)
+Lympho (%)
+Lympho (Abs)
+Mono (%)
+Mono (Abs)
+Ag HBs
+Test Grossesse
+Protéines
+Genie II
+Genie II
+Genie II 10
+Genie II 10
+Genie II 100
+Genie II 100
+Vironstika
+Murex
+Integral
+Western blot 1
+Western blot 2
+p24Ag
+DNA PCR

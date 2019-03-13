@@ -1,0 +1,1055 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ The contents of this file are subject to the Mozilla Public License
+  ~ Version 1.1 (the "License"); you may not use this file except in
+  ~ compliance with the License. You may obtain a copy of the License at
+  ~ http://www.mozilla.org/MPL/
+  ~
+  ~ Software distributed under the License is distributed on an "AS IS"
+  ~ basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+  ~ License for the specific language governing rights and limitations under
+  ~ the License.
+  ~
+  ~ The Original Code is OpenELIS code.
+  ~
+  ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
+  -->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet id="1" author="paulsc" context="CDIRetroCI">
+        <comment>assign module master list to Test Management</comment>
+        <insert tableName="system_role_module">
+            <column name="id" valueNumeric=" nextval( 'system_user_module_seq' )  "/>
+            <column name="system_role_id"  valueNumeric=" ( select id from clinlims.system_role where name = 'Test Management' ) "/>
+            <column name="system_module_id" valueNumeric=" ( select id from clinlims.system_module where name = 'MasterList' ) "/>
+        </insert>
+    </changeSet>
+    <changeSet id="2" author="paulsc" context="CDIRetroCI">
+        <comment>Changes the test reflexes that add Vironostika to instead use a script that selects between that or Innolia</comment>
+        <insert schemaName="clinlims" tableName="scriptlet">
+            <column name="id" valueNumeric=" nextval( 'scriptlet_seq' ) "/>
+            <column name="name" value="Vironostika or Innolia"/>
+            <column name="code_type" value="I"/>
+            <column name="code_source" value="Vir. or Innolia"/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="add_test_id" value="null" />
+            <column name="scriptlet_id" valueNumeric=" currval( 'scriptlet_seq' ) " />
+            <where>add_test_id = (select id from clinlims.test where name = 'Vironostika')</where>
+        </update>
+    </changeSet>
+    <changeSet id="3" author="paulsc" context="CDIRetroCI">
+        <comment>Adds new analyte, test analyte and adjusts the sort order</comment>
+        <update tableName="test_analyte" >
+            <column name="sort_order" valueNumeric="2" />
+            <where>test_id = ( select id from clinlims.test where name = 'Vironostika' )</where>
+        </update>
+        <insert schemaName="clinlims" tableName="analyte">
+            <column name="id" valueNumeric=" nextval( 'analyte_seq' ) "/>
+            <column name="name" value="Vironostika Unreflex Result"/>
+            <column name="is_active" value='Y' />
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_analyte">
+            <column name="id" valueNumeric=" nextval( 'test_analyte_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="analyte_id" valueNumeric=" currval( 'analyte_seq' ) "/>
+            <column name="result_group" valueNumeric="15"/>
+            <column name="lastupdated" valueDate='now()' />
+            <column name="sort_order" valueNumeric="1"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="4" author="paulsc" context="CDIRetroCI">
+        <comment>Adding reflexes for murex Vironstika</comment>
+
+        <!-- Vironostika Reflex Tests -->
+        <!-- Vironostika and Integral -->
+        <!--  If Vironostika is Positive and Integral is Positive -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Positive') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Integral handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Integral' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Integral' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Positive') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Integral') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Positive and Integral is Negative -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Positive') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Integral handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Integral' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Integral' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Negative') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Integral') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Positive and Integral is Indeterminate -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Positive') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Integral handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Integral' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Integral' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Indeterminate') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Integral') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Positive and Integral is Invalid -->
+
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Positive') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Integral handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Integral' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Integral' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Invalid') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Integral') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Negative and Integral is Positive -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Negative') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Integral handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Integral' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Integral' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Positive') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Integral') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Negative and Integral is Negative  -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Negative') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="scriptlet_id" valueNumeric=" ( select id from clinlims.scriptlet where name = 'HIV Status Negative' ) " />
+            <!--  Integral handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Integral' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Integral' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Negative') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Integral') ) "/>
+            <column name="scriptlet_id" valueNumeric=" ( select id from clinlims.scriptlet where name = 'HIV Status Negative' ) " />
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+
+        <!--  If Vironostika is Negative and Integral is  Indeterminate-->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Negative') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Integral handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Integral' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Integral' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Indeterminate') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Integral') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Negative and Integral is  Invalid -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Negative') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Integral handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Integral' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Integral' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Invalid') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Integral') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Indeterminate and Integral is  Positive -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Indeterminate') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Integral handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Integral' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Integral' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Positive') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Integral') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Indeterminate and Integral is  Negative -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Indeterminate') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Integral handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Integral' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Integral' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Negative') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Integral') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Indeterminate and Integral is Indeterminate -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Indeterminate') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Integral handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Integral' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Integral' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Indeterminate') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Integral') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Indeterminate and Integral is Invalid -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Indeterminate') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Integral handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Integral' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Integral' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Invalid') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Integral') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Invalid and Integral is  Positive -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Invalid') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Integral handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Integral' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Integral' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Positive') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Integral') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Invalid and Integral is  Negative -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Invalid') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Integral handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Integral' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Integral' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Negative') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Integral') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Invalid and Integral is  Indeterminate -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Invalid') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Integral handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Integral' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Integral' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Indeterminate') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Integral') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Invalid and Integral is  Invalid -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Invalid') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Integral handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Integral' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Integral' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Invalid') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Integral') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!-- Vironostika and Murex -->
+        <!--  If Vironostika is Positive and Murex is Positive -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Positive') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Murex handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Murex' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Murex' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Positive') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Murex') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Positive and Murex is Negative -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Positive') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Murex handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Murex' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Murex' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Negative') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Murex') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Positive and Murex is Indeterminate -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Positive') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Murex handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Murex' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Murex' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Indeterminate') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Murex') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Positive and Murex is Invalid -->
+
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Positive') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Murex handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Murex' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Murex' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Invalid') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Murex') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Negative and Murex is Positive -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Negative') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Murex handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Murex' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Murex' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Positive') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Murex') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Negative and Murex is Negative  -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Negative') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="scriptlet_id" valueNumeric=" ( select id from clinlims.scriptlet where name = 'HIV Status Negative' ) " />
+            <!--  Murex handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Murex' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Murex' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Negative') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Murex') ) "/>
+            <column name="scriptlet_id" valueNumeric=" ( select id from clinlims.scriptlet where name = 'HIV Status Negative' ) " />
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+
+        <!--  If Vironostika is Negative and Murex is  Indeterminate-->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Negative') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Murex handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Murex' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Murex' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Indeterminate') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Murex') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Negative and Murex is  Invalid -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Negative') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Murex handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Murex' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Murex' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Invalid') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Murex') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Indeterminate and Murex is  Positive -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Indeterminate') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Murex handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Murex' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Murex' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Positive') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Murex') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Indeterminate and Murex is  Negative -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Indeterminate') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Murex handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Murex' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Murex' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Negative') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Murex') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Indeterminate and Murex is Indeterminate -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Indeterminate') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Murex handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Murex' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Murex' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Indeterminate') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Murex') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Indeterminate and Murex is Invalid -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Indeterminate') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Murex handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Murex' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Murex' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Invalid') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Murex') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Invalid and Murex is  Positive -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Invalid') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Murex handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Murex' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Murex' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Positive') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Murex') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Invalid and Murex is  Negative -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Invalid') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Murex handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Murex' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Murex' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Negative') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Murex') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Invalid and Murex is  Indeterminate -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Invalid') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Murex handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Murex' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Murex' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Indeterminate') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Murex') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+
+        <!--  If Vironostika is Invalid and Murex is  Invalid -->
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Vironostika' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Vironostika' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Invalid') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select max(id) from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Vironostika') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <!--  Murex handles sibling id <column name="sibling_reflex" valueNumeric=""/>-->
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="test_reflex">
+            <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+            <column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'Murex' ) "/>
+            <column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result
+            where test_id = ( select id from clinlims.test where name = 'Murex' ) and
+            cast( value as numeric ) in (select id from clinlims.dictionary where dict_entry = 'Invalid') ) "/>
+            <column name="test_analyte_id" valueNumeric=" (select id from clinlims.test_analyte
+            where test_id = (select id from clinlims.test where name = 'Murex') ) "/>
+            <column name="add_test_id" valueNumeric=" ( select id from clinlims.test where name='Innolia' ) "/>
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) - 1 "/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <update tableName="test_reflex" >
+            <column name="sibling_reflex" valueNumeric=" currval( 'test_reflex_seq' ) " />
+            <where>id = ( currval( 'test_reflex_seq' ) - 1 )</where>
+        </update>
+    </changeSet>
+    <changeSet id="1" author="jfurlong" context="CDIRetroCI">
+        <comment>Add permissions for hemotology super user and validator to access Result Validation > Immunology - Hematology</comment>
+        <sql>
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Hematology Validation'), (select id from clinlims.system_module where name = 'ResultValidation:immunology'));
+		insert into clinlims.system_role_module values (nextval('clinlims.system_module_seq'), 'Y', 'Y', 'Y', 'Y', (select id from clinlims.system_role where name = 'Hematology super user'), (select id from clinlims.system_module where name = 'ResultValidation:immunology'));
+        </sql>
+    </changeSet>
+    <changeSet id="5" author="paulsc" context="CDIRetroCI">
+        <comment>Droping invalid and indeterminate from Vironostika</comment>
+        <sql>
+            delete from clinlims.test_reflex where test_id = ( select id from clinlims.test where name = 'Vironostika') AND
+            tst_rslt_id in ( select id from clinlims.test_result where test_id = ( select id from clinlims.test where name = 'Vironostika' AND
+            cast(value as numeric) in (select id from
+            clinlims.dictionary where dict_entry in ('Invalid', 'Indeterminate'))) );
+
+            update clinlims.test_result set is_active = false where test_id = ( select id from clinlims.test where name = 'Vironostika' ) AND
+            cast(value as numeric) in (select id from
+            clinlims.dictionary where dict_entry in ('Invalid', 'Indeterminate'));
+        </sql>
+    </changeSet>
+</databaseChangeLog>

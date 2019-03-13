@@ -299,7 +299,7 @@ function handleSelectedPatient(){
     }
 
     $("searchResultsDiv").style.display = "none";
-    var form = document.forms[0];
+    var form = document.getElementById("mainForm");
     form.action = '${form.formAction}' + ".do?";
     if( !(typeof requestType === 'undefined') ){
         form.action += "&type=" + requestType;

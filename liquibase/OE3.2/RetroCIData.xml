@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<!-- Data specific to RetroCI -->
+	<changeSet author="paulsc" id="1" context="CDIRetroCI">
+		<comment>Sets up new site information for CDI regional labs</comment>
+		<sql>
+		update clinlims.sample_item si set collection_date = (select collection_date from clinlims.sample s where s.id = si.samp_id); 
+		</sql>
+	</changeSet>
+</databaseChangeLog>

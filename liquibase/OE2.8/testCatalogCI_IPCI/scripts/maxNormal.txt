@@ -1,0 +1,52 @@
+40
+40
+1.1
+13
+486
+50
+2.6
+0.7
+1.7
+0.2
+
+
+Homme -femme : 10.0 / Nouveau-né : 25.0 /3mois : 15.0/8mois : 15.0/1 an : 13.0/  4-10 ans: 10.0
+Homme: 6.00 / Femme: 5.50 / Nouveau-né: 6.20 /Nourrisson : 5.00
+femme:16.00 / Homme:18.00 / nouveau-ne: 20.00 / enfant:16.00
+Femme:47 /Homme:52  / Nouveau-né: 62 / Enfant :42
+Adulte: 95 /Nouveau-né: 106
+31
+36
+400
+70
+7000
+4
+400
+0.5
+50
+40
+4000
+10
+1000
+
+
+
+1750
+55
+
+300
+300
+
+
+
+
+
+
+
+
+
+
+
+
+
+

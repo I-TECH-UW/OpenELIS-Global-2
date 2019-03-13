@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--Menu Study settings-->
+    
+ 
+ <changeSet author="csteele" id="2"  context="CDIRetroCI">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                select count(*) from clinlims.menu where element_id = 'menu_sample_eorder';
+    		</sqlCheck>
+        </preConditions>
+        <comment>Insert in clinlims new menu electronic orders</comment>
+        <sql>
+ 
+            INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+            VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_sample'),5,'menu_sample_eorder','/ElectronicOrders.do',default,'banner.menu.eorders','tooltip.bannner.menu.eorders',default,default);
+
+        </sql>
+    </changeSet>
+	
+	
+<changeSet author="CI OpenELIS developers group" id="2" >
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                select count(*) from clinlims.menu where element_id = 'menu_help_user_manual';
+    		</sqlCheck>
+        </preConditions>
+        <comment>Insert in clinlims new submenu in help</comment>
+        <sql>
+ 
+			UPDATE clinlims.menu SET action_url=null where element_id = 'menu_help';
+ 
+            INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+            VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_help'),1,'menu_help_user_manual','/documentation/CI_Regional_fr.pdf',default,'banner.menu.help.usermanual','tooltip.bannner.menu.help.usermanual','true',default);
+
+			INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+            VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_help'),2,'menu_help_documents',default,default,'banner.menu.help.documents','tooltip.bannner.menu.help.documents',default,default);
+
+			INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+            VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_help_documents'),1,'menu_help_form_VL','/documentation/FICHE_DEMANDE_CHARGE_VIRALE_VF_25102016.pdf',default,'banner.menu.help.formVL','tooltip.bannner.menu.help.formVL','true',default);
+	
+			INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, display_key, tool_tip_key, new_window, is_active)
+            VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_help_documents'),2,'menu_help_form_DBS','/documentation/DBS_Identn_18Juin2010.pdf',default,'banner.menu.help.formDBS','tooltip.bannner.menu.help.formDBS','true',default);
+
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

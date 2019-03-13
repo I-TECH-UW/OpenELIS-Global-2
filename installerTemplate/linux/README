@@ -1,0 +1,9 @@
+This is the framework for installing linux openElis
+Before it is run the correct files need to be installed
+
+1) warFiles -- The current openElis and openreports war file.  
+	The openreports war file must be named openreports.war
+	The openElis war file must be one of "haitiOpenElis.war, LNSP_haitiOpenElis.war, CDIOpenElis.war, haitiOpenElis_English.war"
+	    The install script makes use of the text before "OpenElis.war" to decide which database updates should be run
+2) liquibase -- The most recent changeLogs.xml file and site specific xml files, e.g. haiti.xml should be added here.  Even if the site specific file is not going to be used it should be included, changeLogs.xml will have a reference to it.
+3) databaseFiles -- actually only one is expected; "databaseInstall.backup"

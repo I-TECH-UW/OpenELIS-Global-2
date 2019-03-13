@@ -82,7 +82,7 @@
     }
 
     function submitAction(target) {
-        var form = window.document.forms[0];
+        var form = document.getElementById("mainForm");
         form.action = target;
         form.submit();
     }
@@ -95,7 +95,7 @@
     testCatalogList =  ((TestCatalogForm) request.getAttribute("form")).getTestCatalogList();
 %>
 
-<form>
+<form id="mainForm">
     <input type="button" value="<%= StringUtil.getContextualMessageForKey("banner.menu.administration") %>"
            onclick="submitAction('MasterListsPage.do');"
            class="textButton"/> &rarr;

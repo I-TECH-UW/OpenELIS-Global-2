@@ -1,6 +1,5 @@
 package spring.mine.dictionary.form;
 
-import java.sql.Timestamp;
 import java.util.Collection;
 
 import spring.mine.common.form.BaseForm;
@@ -21,9 +20,9 @@ public class DictionaryForm extends BaseForm {
 
 	private String localAbbreviation = "";
 
-	private Timestamp lastupdated;
-
 	private String dirtyFormFields = "";
+
+	private boolean newDictionary;
 
 	public DictionaryForm() {
 		setFormName("dictionaryForm");
@@ -85,19 +84,19 @@ public class DictionaryForm extends BaseForm {
 		this.localAbbreviation = localAbbreviation;
 	}
 
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
-	}
-
 	public String getDirtyFormFields() {
 		return dirtyFormFields;
 	}
 
 	public void setDirtyFormFields(String dirtyFormFields) {
 		this.dirtyFormFields = dirtyFormFields;
+	}
+
+	public boolean isNewDictionary() {
+		return newDictionary;
+	}
+
+	public void setNewDictionary(boolean newDictionary) {
+		this.newDictionary = newDictionary;
 	}
 }

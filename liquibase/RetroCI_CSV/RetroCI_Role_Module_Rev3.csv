@@ -1,0 +1,3 @@
+id,has_select,has_add,has_update,has_delete,system_role_id,system_module_id
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Patient Reports' ) , ( select id from system_module where name  = 'ReportUserDetail:patientARV2' )  
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Patient Reports' ) , ( select id from system_module where name  = 'ReportUserDetail:patientEID' ) 

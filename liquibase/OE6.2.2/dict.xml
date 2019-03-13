@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--Some settings-->
+   <changeSet author="CI OpenELIS developers group" id="1" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0"> select count(*) from clinlims.dictionary where display_key = 'EID.none';
+    		</sqlCheck>
+    </preConditions>
+    <comment>adds in dictionary_type</comment>
+    <sql>
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Not Applicable',now(),'NA',317,'answer.notApplicable',90900);
+
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Unknown',now(),'Unknown',281,'answer.unknown',92200);
+
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','4 = None',now(),'infARVNone',281,'EID.infantARVNone',92100);
+
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','Unknown',now(),'Unknown',280,'answer.unknown',92200);
+
+INSERT INTO clinlims.dictionary(id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, display_key, sort_order) VALUES (nextval('clinlims.dictionary_seq'),'Y','4 = None',now(),'eid.none',280,'EID.none',91700);
+
+ </sql>
+</changeSet>
+</databaseChangeLog>

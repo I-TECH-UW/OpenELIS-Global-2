@@ -28,7 +28,7 @@ $jq(document).ready( function() {
 
 
 function /*boolean*/ sendingEnabled(){
-	var form = window.document.forms[0];
+	var form = document.getElementById("mainForm");
 	return form.enableSending[0].checked;
 }
 
@@ -53,7 +53,7 @@ function disableElementArray( elements ){
 }
 	
 function setMyCancelAction(){
-	var form = window.document.forms[0];
+	var form = document.getElementById("mainForm");
 	form.action = "CancelTestUsageConfiguration.do";
 	form.submit();
 	return true;	
@@ -61,7 +61,7 @@ function setMyCancelAction(){
 
 function savePage(){
 	if( formValid() ){
-		var form = window.document.forms[0];
+		var form = document.getElementById("mainForm");
 		form.action = "UpdateTestUsageConfiguration.do";
 		form.submit();
 		return true;		

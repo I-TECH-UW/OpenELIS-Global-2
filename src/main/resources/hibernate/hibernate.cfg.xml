@@ -159,6 +159,8 @@
 		<mapping resource="hibernate/hbm/DataResource.hbm.xml" />
 		<mapping resource="hibernate/hbm/DataValue.hbm.xml" />
 		<mapping resource="hibernate/hbm/TypeOfDataIndicator.hbm.xml" />
+		<mapping resource="hibernate/hbm/SystemModuleUrl.hbm.xml" />
+		<mapping resource="hibernate/hbm/SystemModuleParam.hbm.xml" />
 
 	</session-factory>
 

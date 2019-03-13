@@ -2,7 +2,9 @@
 	import="us.mn.state.health.lims.common.util.SystemConfiguration,
 			us.mn.state.health.lims.common.util.ConfigurationProperties,
 			us.mn.state.health.lims.common.formfields.AdminFormFields,
-			us.mn.state.health.lims.common.formfields.AdminFormFields.Field"%>
+			us.mn.state.health.lims.common.formfields.AdminFormFields.Field,
+			us.mn.state.health.lims.siteinformation.valueholder.SiteInformation,
+			us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl"%>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -22,19 +24,19 @@
 	<%-- similar code will need to be added in the left panel and in tabs.jsp for any menu tab that has the submenu on the left hand side--%>
 
 	<ul id="masterListsSubMenu.do" class="leftnavigation">
-		<%
+		 <%-- <%
 			if ("true"
 					.equals(ConfigurationProperties
 							.getInstance()
 							.getPropertyValueLowerCase(
 									ConfigurationProperties.Property.TrainingInstallation))) {
 		%>
-		<li><a href=<c:url value="/DatabaseCleaning"/> >
+		<li><a href=<c:url value="/DatabaseCleaningRequest"/> >
 				<spring:message code="database.clean" />
 			</a></li>
 		<%
 			}
-		%>
+		%> --%>
 		<%
 			if (adminFields.useField(Field.AnalyzerTestNameMenu)) {
 		%>
@@ -44,7 +46,7 @@
 		<%
 			}
 		%>
-		<%
+		 <%--<%
 			if (adminFields.useField(Field.CodeElementXref)) {
 		%>
 		<li><a href=<c:url value="/CodeElementXref.do"/> >
@@ -70,7 +72,7 @@
 			</a></li>
 		<%
 			}
-		%>
+		%> --%>
 		<%
 			if (adminFields.useField(Field.DictionaryMenu)) {
 		%>
@@ -80,7 +82,7 @@
 		<%
 			}
 		%>
-		<%
+<%-- 		<%
 			if (adminFields.useField(Field.DictionaryCategoryMenu)) {
 		%>
 		<li><a href=<c:url value="/DictionaryCategoryMenu.do"/> >
@@ -106,7 +108,7 @@
 			</a></li>
 		<%
 			}
-		%>
+		%> --%>
 		<%
 			if (adminFields.useField(Field.OrganizationMenu)) {
 		%>
@@ -116,7 +118,7 @@
 		<%
 			}
 		%>
-		<%
+		<%-- <%
 			if (adminFields.useField(Field.PanelMenu)) {
 		%>
 		<li><a href=<c:url value="/PanelMenu.do"/> >
@@ -133,7 +135,7 @@
 			</a></li>
 		<%
 			}
-		%>
+		%> --%>
 		<%
 			if (adminFields.useField(Field.PatientTypeMenu)) {
 		%>
@@ -143,7 +145,7 @@
 		<%
 			}
 		%>
-		<%
+		<%-- <%
 			if (adminFields.useField(Field.ProgramMenu)) {
 		%>
 		<li><a href=<c:url value="/ProgramMenu.do"/> >
@@ -214,7 +216,7 @@
 			</a></li>
 		<%
 			}
-		%>
+		%> --%>
 		<%
 			if (adminFields.useField(Field.SiteInformationMenu)) {
 		%>
@@ -291,7 +293,7 @@
 		<%
 			}
 		%>
-		<%
+		<%-- <%
 			if (adminFields.useField(Field.SampleDomainMenu)) {
 		%>
 		<li><a href=<c:url value="/SampleDomainMenu.do"/> >
@@ -389,7 +391,7 @@
 			</a></li>
 		<%
 			}
-		%>
+		%> --%>
 		<%
 			if (adminFields.useField(Field.TypeOfSamplePanelMenu)) {
 		%>
@@ -408,7 +410,7 @@
 		<%
 			}
 		%>
-		<%
+		<%-- <%
 			if (adminFields.useField(Field.TypeOfTestResultMenu)) {
 		%>
 		<li><a href=<c:url value="/TypeOfTestResultMenu.do"/> >
@@ -434,7 +436,7 @@
 			</a></li>
 		<%
 			}
-		%>
+		%> --%>
 		<%
 			if (adminFields.useField(Field.TestUsageAggregatation)) {
 		%>
@@ -458,11 +460,31 @@
 				<spring:message code="barcodeconfiguration.browse.title" />
 		</a></li>
 		
+	<%-- 	<%
+			if ("true".equalsIgnoreCase((new SiteInformationDAOImpl()).getSiteInformationByName("Data Submission").getValue())) {
+		%>
+		<li><c:url value="/DataSubmission.do">
+				<spring:message code="datasubmission.browse.title" />
+		</c:url></li>
+		<%
+			}
+		%>
+		
+		<%
+			if (adminFields.useField(Field.ExternalConnections)) {
+		%>
+		<li><c:url value="/ExternalConnectionsConfigMenu.do">
+				<spring:message code="externalconnect.browse.title" />
+		</c:url></li>
+		<%
+			}
+		%> --%>
+		
 		<li><a href=<c:url value="/ListPlugins.do"/> >
 				<spring:message code="plugin.menu.list.plugins" />
 			</a></li>
 		<hr>
-		<%
+		<%--<%
 			if (adminFields.useField(Field.SystemUserModuleMenu)) {
 		%>
 		<li><a href=<c:url value="/SystemUserModuleMenu.do"/> >
@@ -471,14 +493,15 @@
 		<%
 			}
 		%>
-		<%
+		 <%
 			if (permissionBase.equals("USER")) {
 		%>
 		<li><a href=<c:url value="/SystemUserSectionMenu.do"/> >
 				<spring:message code="systemusersection.browse.title" />
 			</a></li>
+		<% } %> --%>
 		<%
-			} else if (permissionBase.equals("ROLE")) {
+			if (permissionBase.equals("ROLE")) {
 		%>
 		<li><a href=<c:url value="/UnifiedSystemUserMenu.do"/> >
 				<spring:message code="unifiedSystemUser.browser.title" />

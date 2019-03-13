@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ The contents of this file are subject to the Mozilla Public License
+  ~ Version 1.1 (the "License"); you may not use this file except in
+  ~ compliance with the License. You may obtain a copy of the License at
+  ~ http://www.mozilla.org/MPL/
+  ~
+  ~ Software distributed under the License is distributed on an "AS IS"
+  ~ basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+  ~ License for the specific language governing rights and limitations under
+  ~ the License.
+  ~
+  ~ The Original Code is OpenELIS code.
+  ~
+  ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+<changeSet author="paulsc" id="1">
+    <comment>Change test section values from strings to keys to support localization</comment>
+    <sqlFile path="OE4.2/QAObservationUpdate.sql" />
+</changeSet>
+<changeSet id="2" author="paulsc">
+    <comment>remove spaces from test_section keys</comment>
+    <sql>
+        update clinlims.test_section set display_key = trim(display_key);
+    </sql>
+</changeSet>
+    <changeSet id="3" author="paulsc">
+        <comment>Adds setting to augment test name with sample type</comment>
+        <insert tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) " />
+            <column name="name" value="augmentTestNameWithType" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="description" value="If true then in certain places the test name will have the the test type" />
+            <column name="value" value="true" />
+            <column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'hiddenProperties' ) " />
+            <column name="value_type" value="boolean" />
+        </insert>
+    </changeSet>
+    <changeSet id="4" author="paulsc">
+        <comment>Adds the configurable item of billing code</comment>
+        <insert tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+            <column name="name" value="billingRefNumber" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="description" value="Number used to track billing" />
+            <column name="domain_id" valueNumeric=" ( select id from clinlims.site_information_domain where name = 'sampleEntryConfig' ) " />
+            <column name="value_type" value="boolean" />
+            <column name="value" value="false" />
+            <column name="instruction_key" value="instructions.sample.entry.billing.ref" />
+        </insert>
+        <insert tableName="localization">
+            <column name="id" valueNumeric=" nextval( 'localization_seq' ) " />
+            <column name="description" value="Billing reference label" />
+            <column name="english" value="URAP Number" />
+            <column name="french" value="N° URAP" />
+            <column name="lastupdated" valueDate=" now() " />
+        </insert>
+        <insert tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+            <column name="name" value="billingRefNumberLocalization" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="description" value="Term used to for billing reference field" />
+            <column name="domain_id" valueNumeric=" ( select id from clinlims.site_information_domain where name = 'sampleEntryConfig' ) " />
+            <column name="value_type" value="text" />
+            <column name="value" valueNumeric=" currval( 'localization_seq' ) " />
+            <column name="tag" value="localization" />
+            <column name="instruction_key" value="instructions.sampleEntry.bill.ref.label" />
+        </insert>
+        <insert tableName="observation_history_type">
+            <column name="id" valueNumeric=" nextval( 'observation_history_type_seq' ) " />
+            <column name="type_name" value="billingRefNumber" />
+            <column name="description" value="Number used to track billing" />
+            <column name="lastupdated" valueDate=" now() " />
+        </insert>
+    </changeSet>
+    <changeSet id="5" author="paulsc">
+        <comment>Inserts the needed rows to support permissions for editing test information</comment>
+        <insert schemaName="clinlims" tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+            <column name="name" value="TestManagementConfig"/>
+            <column name="description" value="Admin=&gt;test config"/>
+            <column name="has_select_flag" value="Y"/>
+            <column name="has_add_flag" value="Y"/>
+            <column name="has_update_flag" value="Y"  />
+            <column name="has_delete_flag" value="Y"/>
+        </insert>
+        <insert schemaName="clinlims" tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+            <column name="name" value="TestRenameEntry"/>
+            <column name="description" value="Admin=&gt;test config=&gt;test rename"/>
+            <column name="has_select_flag" value="Y"/>
+            <column name="has_add_flag" value="Y"/>
+            <column name="has_update_flag" value="Y"  />
+            <column name="has_delete_flag" value="Y"/>
+        </insert>
+        <insert tableName="system_role">
+            <column name="id" valueNumeric=" nextval( 'system_role_seq' ) " />
+            <column name="name"  value="Test Management" />
+            <column name="description" value="Able to modify test catalog" />
+            <column name="display_key" value="role.test.configuration" />
+        </insert>
+        <insert tableName="system_role_module">
+            <column name="id" valueNumeric=" nextval( 'system_user_module_seq' )  " />
+            <column name="system_role_id" valueNumeric=" ( select id from clinlims.system_role where name = 'Test Management' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from clinlims.system_module where name = 'TestManagementConfig' ) " />
+        </insert>
+        <insert tableName="system_role_module">
+            <column name="id" valueNumeric=" nextval( 'system_user_module_seq' )  " />
+            <column name="system_role_id" valueNumeric=" ( select id from clinlims.system_role where name = 'Test Management' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from clinlims.system_module where name = 'TestRenameEntry' ) " />
+        </insert>
+    </changeSet>
+    <changeSet id="6" author="paulsc">
+        <comment>Adds program configuration</comment>
+        <insert tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) " />
+            <column name="name" value="programs" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="description" value="Management of assigning orders to lab programs" />
+            <column name="value" value="" />
+            <column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'hiddenProperties' ) " />
+            <column name="value_type" value="complex" />
+            <column name="tag" value="programConfiguration" />
+        </insert>
+    </changeSet>
+    <changeSet id="7" author="paulsc">
+        <comment>appends the comment for value type in site_information</comment>
+        <sql>
+            comment on column clinlims.site_information.value_type is $$The type of value which can be specified for the value. Currently either 'boolean','text','dictionary','logoUpload' or 'complex' $$;
+        </sql>
+    </changeSet>
+    <changeSet id="8" author="paulsc" >
+        <comment>Change from order type to program</comment>
+        <delete tableName="observation_history" >
+            <where>observation_history_type_id in ( select id from clinlims.observation_history_type where description in ('primaryOrderType','secondaryOrderType','otherSecondaryOrderType')) </where>
+        </delete>
+        <delete tableName="observation_history_type" >
+            <where> description in ('primaryOrderType','secondaryOrderType','otherSecondaryOrderType') </where>
+        </delete>
+        <insert tableName="observation_history_type">
+            <column name="id" valueNumeric=" nextval( 'observation_history_type_seq' ) " />
+            <column name="type_name" value="program" />
+            <column name="description" value="What program the order is in" />
+            <column name="lastupdated" valueDate=" now() " />
+        </insert>
+    </changeSet>
+    <changeSet id="9" author="paulsc">
+        <comment>Adds program settings to the dictionary</comment>
+        <insert tableName="dictionary_category">
+            <column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) " />
+            <column name="description" value="Programs for orders" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="name" value="programs" />
+            <column name="local_abbrev" value="programs" />
+        </insert>
+        <insert tableName="dictionary">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) " />
+            <column name="dict_entry" value="Routine Testing" />
+            <column name="local_abbrev" value="Routine" />
+            <column name="sort_order" valueNumeric="10" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) " />
+            <column name="is_active" value="Y" />
+            <column name="display_key" value="dictionary.program.routine" />
+        </insert>
+        <insert tableName="dictionary">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) " />
+            <column name="dict_entry" value="HIV Program - Initial Visit" />
+            <column name="local_abbrev" value="Initial Visit" />
+            <column name="sort_order" valueNumeric="20" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) " />
+            <column name="is_active" value="Y" />
+            <column name="display_key" value="dictionary.program.initial" />
+        </insert>
+        <insert tableName="dictionary">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) " />
+            <column name="dict_entry" value="HIV Program Follow up" />
+            <column name="local_abbrev" value="Follow up" />
+            <column name="sort_order" valueNumeric="30" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) " />
+            <column name="is_active" value="Y" />
+            <column name="display_key" value="dictionary.program.followUp" />
+        </insert>
+    </changeSet>
+    <changeSet id="10" author="paulsc">
+        <comment>Adds program as configurable item</comment>
+        <insert tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+            <column name="name" value="Program" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="description" value="Is a program part of an order" />
+            <column name="domain_id" valueNumeric=" ( select id from clinlims.site_information_domain where name = 'sampleEntryConfig' ) " />
+            <column name="value_type" value="boolean" />
+            <column name="value" value="false" />
+            <column name="instruction_key" value="instructions.sample.entry.program" />
+        </insert>
+    </changeSet>
+    <changeSet id="5" author="kone" >
+    <comment>Adds data in description_key </comment>
+    <sql>
+         UPDATE site_information SET description_key = (SELECT  REPLACE(name, ' ','.'))  ;
+         UPDATE clinlims.site_information SET description_key = ('siteInfo.' || description_key)  ;
+
+    </sql>
+</changeSet>	
+<changeSet id="11" author="paulsc">
+    <comment>make configuration name hidden</comment>
+    <update tableName="site_information" >
+        <column name="domain_id" valueNumeric=" ( select id from clinlims.site_information_domain where name = 'hiddenProperties' ) " />
+        <column name="lastupdated" valueDate=" now() " />
+        <where>name = 'configuration name' </where>
+    </update>
+</changeSet>
+<changeSet id="12" author="paulsc">
+    <comment>Adding configuration item for title</comment>
+    <insert tableName="localization">
+        <column name="id" valueNumeric=" nextval( 'localization_seq' ) " />
+        <column name="description" value="Site information banner test" />
+        <column name="english" value="set" />
+        <column name="french" value="set" />
+        <column name="lastupdated" valueDate=" now() " />
+    </insert>
+    <insert tableName="site_information">
+        <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+        <column name="name" value="bannerHeading" />
+        <column name="lastupdated" valueDate=" now() " />
+        <column name="description" value="Text for banner" />
+        <column name="domain_id" valueNumeric=" ( select id from clinlims.site_information_domain where name = 'siteIdentity' ) " />
+        <column name="value_type" value="text" />
+        <column name="value" valueNumeric=" currval( 'localization_seq' ) " />
+        <column name="tag" value="localization" />
+        <column name="instruction_key" value="instructions.bannerHeading" />
+        <column name="description_key" value="siteInfo.bannerHeading" />
+    </insert>
+</changeSet>
+<changeSet id="13" author="paulsc">
+    <comment>Adds a configuration item for using a 12 hour clock</comment>
+    <insert tableName="site_information">
+        <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+        <column name="name" value="24 hour clock" />
+        <column name="lastupdated" valueDate=" now() " />
+        <column name="description" value="12 vs. 24 hour clock" />
+        <column name="domain_id" valueNumeric=" ( select id from clinlims.site_information_domain where name = 'siteIdentity' ) " />
+        <column name="value_type" value="boolean" />
+        <column name="value" value="true" />
+        <column name="instruction_key" value="instructions.clock" />
+        <column name="description_key" value="siteInfo.clock" />
+    </insert>
+</changeSet>
+<changeSet id="14" author="paulsc">
+    <comment>Moves sort QA configuration item to non-conformity section</comment>
+    <update tableName="site_information" >
+        <column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'non_conformityConfig' ) " />
+        <where>name = 'sortQaEvents' </where>
+    </update>
+</changeSet>
+</databaseChangeLog>

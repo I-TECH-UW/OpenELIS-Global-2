@@ -3,15 +3,11 @@
 		us.mn.state.health.lims.common.action.IActionConstants"
  %>
 
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<!DOCTYPE html>
-<html:html lang="true">
+<html>
   <head>
-    <html:base />
+    <base/>
     
     <title>webtestInfo.jsp</title>
 
@@ -23,6 +19,6 @@
   </head>
   
   <body>
-    <bean:write name='<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>' property="xmlWad"/>
+    <c:out value='${form.xmlWad}'/>
   </body>
-</html:html>
+</html>

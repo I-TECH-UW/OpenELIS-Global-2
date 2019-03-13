@@ -53,75 +53,81 @@ public class ResultsLogbookEntryAction extends ResultsLogbookBaseAction {
 
 	private InventoryUtility inventoryUtility = new InventoryUtility();
 
+	@Override
 	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
 		String forward = FWD_SUCCESS;
-		
+
 		DynaActionForm dynaForm = (DynaActionForm) form;
-		
+
 		String requestedPage = request.getParameter("page");
-		
+
 		String testSectionId = request.getParameter("testSectionId");
-		
+
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
-		TestSection ts = null;		
-		
+		TestSection ts = null;
+
 		String currentDate = getCurrentDate();
 		PropertyUtils.setProperty(dynaForm, "currentDate", currentDate);
 		PropertyUtils.setProperty(dynaForm, "logbookType", request.getParameter("type"));
-		PropertyUtils.setProperty(dynaForm, "referralReasons", DisplayListService.getList( DisplayListService.ListType.REFERRAL_REASONS));
-        PropertyUtils.setProperty( dynaForm, "rejectReasons", DisplayListService.getNumberedListWithLeadingBlank( DisplayListService.ListType.REJECTION_REASONS ) );
-        
+		PropertyUtils.setProperty(dynaForm, "referralReasons",
+				DisplayListService.getList(DisplayListService.ListType.REFERRAL_REASONS));
+		PropertyUtils.setProperty(dynaForm, "rejectReasons",
+				DisplayListService.getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+
 		// load testSections for drop down
 		TestSectionDAO testSectionDAO = new TestSectionDAOImpl();
 		List<IdValuePair> testSections = DisplayListService.getList(ListType.TEST_SECTION);
 		PropertyUtils.setProperty(dynaForm, "testSections", testSections);
-		PropertyUtils.setProperty(dynaForm, "testSectionsByName", DisplayListService.getList(ListType.TEST_SECTION_BY_NAME));
-		
+		PropertyUtils.setProperty(dynaForm, "testSectionsByName",
+				DisplayListService.getList(ListType.TEST_SECTION_BY_NAME));
+
 		if (!GenericValidator.isBlankOrNull(testSectionId)) {
 			ts = testSectionDAO.getTestSectionById(testSectionId);
 			PropertyUtils.setProperty(dynaForm, "testSectionId", "0");
-		} 
-		
-		
-		
+		}
+
 		setRequestType(ts == null ? StringUtil.getMessageForKey("workplan.unit.types") : ts.getLocalizedName());
-		
+
 		List<TestResultItem> tests;
 
 		ResultsPaging paging = new ResultsPaging();
-		List<InventoryKitItem> inventoryList = new ArrayList<InventoryKitItem>();
+		List<InventoryKitItem> inventoryList = new ArrayList<>();
 		ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility(currentUserId);
 
 		if (GenericValidator.isBlankOrNull(requestedPage)) {
-			
+
 			new StatusRules().setAllowableStatusForLoadingResults(resultsLoadUtility);
-			
+
 			if (!GenericValidator.isBlankOrNull(testSectionId)) {
 				tests = resultsLoadUtility.getUnfinishedTestResultItemsInTestSection(testSectionId);
 			} else {
-				tests = new ArrayList<TestResultItem>();
+				tests = new ArrayList<>();
 			}
 
-			if( ConfigurationProperties.getInstance().isPropertyValueEqual(Property.PATIENT_DATA_ON_RESULTS_BY_ROLE, "true") &&   
-					!userHasPermissionForModule(request, "PatientResults") ){
-				for( TestResultItem resultItem : tests){
+			if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.PATIENT_DATA_ON_RESULTS_BY_ROLE,
+					"true") && !userHasPermissionForModule(request, "PatientResults")) {
+				for (TestResultItem resultItem : tests) {
 					resultItem.setPatientInfo("---");
 				}
-				
+
 			}
-			
-			paging.setDatabaseResults(request, dynaForm, tests);
+
+			// commented out to allow maven compilation - CSL
+			// paging.setDatabaseResults(request, dynaForm, tests);
 
 		} else {
-			paging.page(request, dynaForm, requestedPage);
+
+			// commented out to allow maven compilation - CSL
+			// paging.page(request, dynaForm, requestedPage);
 		}
 		if (ts != null) {
-			//this does not look right what happens after a new page!!!
-			boolean isHaitiClinical = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "Haiti Clinical");
-			if (resultsLoadUtility.inventoryNeeded() || (isHaitiClinical && ("VCT").equals(ts.getTestSectionName()))) { 
+			// this does not look right what happens after a new page!!!
+			boolean isHaitiClinical = ConfigurationProperties.getInstance()
+					.isPropertyValueEqual(Property.configurationName, "Haiti Clinical");
+			if (resultsLoadUtility.inventoryNeeded() || (isHaitiClinical && ("VCT").equals(ts.getTestSectionName()))) {
 				inventoryList = inventoryUtility.getExistingActiveInventory();
 				PropertyUtils.setProperty(dynaForm, "displayTestKit", true);
 			} else {

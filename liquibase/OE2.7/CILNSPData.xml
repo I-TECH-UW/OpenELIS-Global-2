@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<!--Add change tags here -->
+	<!-- Data specific to CILNSP -->
+	<changeSet author="paulsc" id="1" context="ciLNSP">
+		<comment>Set the configuration name</comment>
+		<update tableName="site_information" schemaName="clinlims">
+			<column name="value" value="CI LNSP" />
+			<where>name = 'configuration name'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="3" context="ciLNSP">
+		<comment>Adds the module workplan:panel to Results entry role</comment>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+             <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Results entry' ) "/>
+             <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'Workplan:panel' ) "/>
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="4" context="ciLNSP">
+		<comment>Adds workplan by test sections to the correct roles</comment>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+             <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Results entry' ) "/>
+             <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'Workplan:immunology' ) "/>
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+             <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Results entry' ) "/>
+             <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'Workplan:hemato-immunology' ) "/>
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+             <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Results entry' ) "/>
+             <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'Workplan:biochemistry' ) "/>
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+             <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Results entry' ) "/>
+             <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'Workplan:hematology' ) "/>
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="5" context="ciLNSP">
+		<comment>Adds lab order types to db</comment>
+		<insert tableName="lab_order_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'lab_order_type_seq' ) " />
+			<column name="domain" value="HUMAN" />
+			<column name="type" value="HIV_firstVisit" />
+			<column name="context" value="samplePatientEntryPrimary" />
+			<column name="description" value="The first visit for an HIV patient" />
+			<column name="sort_order" valueNumeric="10" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="labOrder.hiv.inital" />
+		</insert>
+		<insert tableName="lab_order_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'lab_order_type_seq' ) " />
+			<column name="domain" value="HUMAN" />
+			<column name="type" value="HIV_followupVisit" />
+			<column name="context" value="samplePatientEntryPrimary" />
+			<column name="description" value="The followup visit for an HIV patient" />
+			<column name="sort_order" valueNumeric="20" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="labOrder.hiv.followup" />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="6" context="ciLNSP">
+		<comment>Adds workplan for serology-immunology to results role</comment>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+             <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Results entry' ) "/>
+             <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'Workplan:serology-immunology' ) "/>
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="7" context="ciLNSP">
+		<comment>Add roles for result logbooks</comment>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+             <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Results entry' ) "/>
+             <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'LogbookResults:immunology' ) "/>
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+             <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Results entry' ) "/>
+             <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'LogbookResults:hemato-immunology' ) "/>
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+             <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Results entry' ) "/>
+             <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'LogbookResults:biochemistry' ) "/>
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+             <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Results entry' ) "/>
+             <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'LogbookResults:serolo-immunology' ) "/>
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="8" context="ciLNSP">
+		<comment>gives CI LNSP it's own stringContext</comment>
+		<update tableName="site_information" schemaName="clinlims">
+			<column name="value" value="CI_LNSP" />
+			<where>name = 'stringContext'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="9" context="ciLNSP">
+		<comment>Adds the role of validator to roles</comment>
+		<insert tableName="system_role" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'system_role_seq') " />
+  			<column name="name" value="Validator" />
+			<column name="description" value="A person who can validate results" />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="10" context="ciLNSP">
+		<comment>Adds validator modules to validator role</comment>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+            <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Validator' ) "/>
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'ResultValidation:immunology' ) "/>
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+            <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Validator' ) "/>
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'ResultValidation:Hemto-Immunology' ) "/>
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+            <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Validator' ) "/>
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'ResultValidation:biochemistry' ) "/>
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+            <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Validator' ) "/>
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'ResultValidation:hematology' ) "/>
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+            <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Validator' ) "/>
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'ResultValidation:Serology-Immunology' ) "/>
+		</insert>
+	</changeSet>
+		<changeSet author="paulsc" id="11" context="ciLNSP">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="0">
+				select count(*) from clinlims.test_section where name = 'Hemto-Immunology'
+			</sqlCheck>
+		</preConditions>
+		<comment>Adds hematology-Immunology test section if does not already exist</comment>
+		<insert tableName="test_section" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'test_section_seq' ) " />
+			<column name="name" value='Hemto-Immunology' /> 
+  			<column name="description" value="Hemto-Immunology test section" />
+  			<column name="org_id" valueNumeric="3" />
+  			<column name="is_external" value="N"/>
+  			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="test.section.hemtoImmunology" />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="12" context="ciLNSP">
+		<comment>Adds serology-Immunology test section</comment>
+		<insert tableName="test_section" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'test_section_seq' ) " />
+			<column name="name" value='Serology-Immunology' /> 
+  			<column name="description" value="Serology-Immunology test section" />
+  			<column name="org_id" valueNumeric="3" />
+  			<column name="is_external" value="N"/>
+  			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="test.section.serologyImmunology" />
+		</insert>
+		
+	</changeSet>
+	<changeSet author="paulsc" id="13" context="ciLNSP">
+		<comment>Sets the accession number format to 7 digits</comment>
+		<update tableName="site_information" schemaName="clinlims">
+			<column name="value" value="SEVEN_DIGIT" />
+			<where>name = 'acessionFormat'</where>
+		</update>
+	</changeSet>
+	<include file="OE2.7/CILNSPMassive/MassiveUpdate.xml" />
+	<changeSet author="paulsc" id="14" context="ciLNSP">
+		<comment>Adds districts and regions to the organization table</comment>
+		<sqlFile path="OE2.7/CILNSP_orgs.sql"/>
+	</changeSet>
+	<changeSet author="paulsc" id="15" context="ciLNSP">
+		<comment>Adds lab order sub types</comment>
+		<insert tableName="lab_order_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'lab_order_type_seq' ) " />
+			<column name="domain" value="HUMAN" />
+			<column name="type" value="J15" />
+			<column name="context" value="samplePatientEntryPrimaryHIV_follow_up" />
+			<column name="description" value="The followup visit for an HIV patient by period" />
+			<column name="sort_order" valueNumeric="10" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="labOrder.hiv.followup.byPeriod.j15" />
+		</insert>
+		<insert tableName="lab_order_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'lab_order_type_seq' ) " />
+			<column name="domain" value="HUMAN" />
+			<column name="type" value="M1" />
+			<column name="context" value="samplePatientEntryPrimaryHIV_follow_up" />
+			<column name="description" value="The followup visit for an HIV patient by period" />
+			<column name="sort_order" valueNumeric="20" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="labOrder.hiv.followup.byPeriod.m1" />
+		</insert>
+		<insert tableName="lab_order_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'lab_order_type_seq' ) " />
+			<column name="domain" value="HUMAN" />
+			<column name="type" value="M3" />
+			<column name="context" value="samplePatientEntryPrimaryHIV_follow_up" />
+			<column name="description" value="The followup visit for an HIV patient by period" />
+			<column name="sort_order" valueNumeric="30" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="labOrder.hiv.followup.byPeriod.m3" />
+		</insert>
+		<insert tableName="lab_order_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'lab_order_type_seq' ) " />
+			<column name="domain" value="HUMAN" />
+			<column name="type" value="M6" />
+			<column name="context" value="samplePatientEntryPrimaryHIV_follow_up" />
+			<column name="description" value="The followup visit for an HIV patient by period" />
+			<column name="sort_order" valueNumeric="40" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="labOrder.hiv.followup.byPeriod.m6" />
+		</insert>
+		<insert tableName="lab_order_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'lab_order_type_seq' ) " />
+			<column name="domain" value="HUMAN" />
+			<column name="type" value="M12" />
+			<column name="context" value="samplePatientEntryPrimaryHIV_follow_up" />
+			<column name="description" value="The followup visit for an HIV patient by period" />
+			<column name="sort_order" valueNumeric="50" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="labOrder.hiv.followup.byPeriod.m12" />
+		</insert>
+		<insert tableName="lab_order_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'lab_order_type_seq' ) " />
+			<column name="domain" value="HUMAN" />
+			<column name="type" value="other" />
+			<column name="context" value="samplePatientEntryPrimaryHIV_follow_up" />
+			<column name="description" value="The followup visit for an HIV patient by period" />
+			<column name="sort_order" valueNumeric="60" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="labOrder.hiv.followup.byPeriod.other" />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="16" context="ciLNSP">
+		<comment>More lab order subtypes</comment>
+		<insert tableName="lab_order_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'lab_order_type_seq' ) " />
+			<column name="domain" value="HUMAN" />
+			<column name="type" value="B1" />
+			<column name="context" value="samplePatientEntryPrimaryHIV_initial" />
+			<column name="description" value="The initial visit for an HIV patient by period" />
+			<column name="sort_order" valueNumeric="10" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="labOrder.hiv.followup.byPeriod.b1" />
+		</insert>
+		<insert tableName="lab_order_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'lab_order_type_seq' ) " />
+			<column name="domain" value="HUMAN" />
+			<column name="type" value="J0" />
+			<column name="context" value="samplePatientEntryPrimaryHIV_initial" />
+			<column name="description" value="The initial visit for an HIV patient by period" />
+			<column name="sort_order" valueNumeric="20" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="labOrder.hiv.followup.byPeriod.j0" />
+		</insert>
+		<insert tableName="lab_order_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'lab_order_type_seq' ) " />
+			<column name="domain" value="HUMAN" />
+			<column name="type" value="other" />
+			<column name="context" value="samplePatientEntryPrimaryHIV_initial" />
+			<column name="description" value="The initial visit for an HIV patient by period" />
+			<column name="sort_order" valueNumeric="30" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="labOrder.hiv.followup.byPeriod.other" />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="17" context="ciLNSP" >
+		<comment>Adds observation history types</comment>
+		<insert tableName="observation_history_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'observation_history_type_seq' ) "></column>
+			<column name="type_name" value="requestDate" />
+			<column name="description" value="When the order was requested" />
+			<column name="lastupdated" valueDate=" now() " />
+		</insert>
+		<insert tableName="observation_history_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'observation_history_type_seq' ) "></column>
+			<column name="type_name" value="nextVisitDate" />
+			<column name="description" value="When the patient should return" />
+			<column name="lastupdated" valueDate=" now() " />
+		</insert>
+		<insert tableName="observation_history_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'observation_history_type_seq' ) "></column>
+			<column name="type_name" value="referringSite" />
+			<column name="description" value="Non-lab referring organization" />
+			<column name="lastupdated" valueDate=" now() " />
+		</insert>
+		<insert tableName="observation_history_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'observation_history_type_seq' ) "></column>
+			<column name="type_name" value="primaryOrderType" />
+			<column name="description" value="What kind of order is this" />
+			<column name="lastupdated" valueDate=" now() " />
+		</insert>
+		<insert tableName="observation_history_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'observation_history_type_seq' ) "></column>
+			<column name="type_name" value="secondaryOrderType" />
+			<column name="description" value="The sub order kind" />
+			<column name="lastupdated" valueDate=" now() " />
+		</insert>
+		<insert tableName="observation_history_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'observation_history_type_seq' ) "></column>
+			<column name="type_name" value="otherSecondaryOrderType" />
+			<column name="description" value="The sub order kind" />
+			<column name="lastupdated" valueDate=" now() " />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="18" context="ciLNSP">
+		<comment>Adds a patient referral organization</comment>
+		<insert tableName="organization_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'organization_type_seq' ) "/>
+			<column name="short_name" value="patient referral" />
+			<column name="description" value="Clinic which referred the lab" />		
+			<column name="name_display_key" value="organization.type.patient.referral" />
+  			<column name="lastupdated" valueDate=" now() " />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="19" context="ciLNSP">
+		<comment>Adds various patient status to dictionary</comment>
+		<sql>
+		INSERT INTO dictionary( id, is_active, dict_entry, lastupdated, dictionary_category_id, display_key)
+    			VALUES ( nextval( 'dictionary_seq' ), 'Y', 'none', now(), (select id from clinlims.dictionary_category where local_abbrev = 'education') ,  'dictionary.education.none'),
+    			( nextval( 'dictionary_seq' ), 'Y', 'primary', now(), (select id from clinlims.dictionary_category where local_abbrev = 'education') ,  'dictionary.education.primary'),
+    			( nextval( 'dictionary_seq' ), 'Y', 'secondary' , now(), (select id from clinlims.dictionary_category where local_abbrev = 'education') ,  'dictionary.education.secondary'),
+    			( nextval( 'dictionary_seq' ), 'Y', 'upper', now(), (select id from clinlims.dictionary_category where local_abbrev = 'education') ,  'dictionary.education.upper'),
+    			( nextval( 'dictionary_seq' ), 'Y', 'single', now(), (select id from clinlims.dictionary_category where local_abbrev = 'marriage') ,  'dictionary.marriage.single'),
+    			( nextval( 'dictionary_seq' ), 'Y', 'married', now(), (select id from clinlims.dictionary_category where local_abbrev = 'marriage') ,  'dictionary.marriage.married'),
+    			( nextval( 'dictionary_seq' ), 'Y', 'livingWith', now(), (select id from clinlims.dictionary_category where local_abbrev = 'marriage') ,  'dictionary.marriage.livingWith'),
+    			( nextval( 'dictionary_seq' ), 'Y', 'divorced', now(), (select id from clinlims.dictionary_category where local_abbrev = 'marriage') ,  'dictionary.marriage.divorced'),
+    			( nextval( 'dictionary_seq' ), 'Y', 'widowed', now(), (select id from clinlims.dictionary_category where local_abbrev = 'marriage') ,  'dictionary.marriage.widowed'),
+    			( nextval( 'dictionary_seq' ), 'Y', 'DNA', now(), (select id from clinlims.dictionary_category where local_abbrev = 'marriage') ,  'dictionary.marriage.DNA'),
+    			( nextval( 'dictionary_seq' ), 'Y', 'Ivoirian', now(), (select id from clinlims.dictionary_category where local_abbrev = 'nation') ,  'dictionary.nationality.Ivoirian'),
+    			( nextval( 'dictionary_seq' ), 'Y', 'West African', now(), (select id from clinlims.dictionary_category where local_abbrev = 'nation') ,  'dictionary.nationality.african.west'),
+    			( nextval( 'dictionary_seq' ), 'Y', 'African', now(), (select id from clinlims.dictionary_category where local_abbrev = 'nation') ,  'dictionary.nationality.african'),
+    			( nextval( 'dictionary_seq' ), 'Y', 'other', now(), (select id from clinlims.dictionary_category where local_abbrev = 'nation') ,  'dictionary.nationality.other');		
+		</sql>
+	</changeSet>
+	<changeSet author="paulsc" id="20" context="ciLNSP">
+		<comment>marks test sections with high sort orders as in active</comment>
+		<update tableName="test_section" schemaName="clinlims">
+			<column name="is_active" value="N" />
+			<where>
+				sort_order > 2000;
+			</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="21" context="ciLNSP">
+		<comment>Corrects the spelling of the display keys in test section</comment>
+		<update tableName="test_section" schemaName="clinlims">
+			<column name="display_key" value="test.section.hemato-immunology"/>
+			<where>display_key = 'test.section.hemtoImmunology'</where>
+		</update>
+		<update tableName="test_section" schemaName="clinlims">
+			<column name="display_key" value="test.section.serology-immunology"/>
+			<where>display_key = 'test.section.serologyImmunology'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="22" context="ciLNSP">
+		<comment>Fixes errors in the origional insert for orgs and sub orgs</comment>
+		<sqlFile path="OE2.7/CILNSP_orgs_fix.sql"/>
+	</changeSet>
+	<changeSet author="paulsc" id="23" context="ciLNSP">
+		<comment>Inactivates supperviser and Inventory manager roles</comment>
+		<update tableName="system_role" schemaName="clinlims">
+			<column name="active" valueBoolean="false" />
+			<where>name like 'Supervisor%' or name like 'Inventory mgr%' </where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="24" context="ciLNSP">
+	<comment>Drop old OpenELIS (domestic) qa_events and reload for Haiti</comment>
+	<delete schemaName="clinlims" tableName="qa_event"/>
+	<loadData file="Haiti_CSV/Haiti_QA_Events.csv" schemaName="clinlims" tableName="qa_event">
+       <column name="id" header="id" type="NUMERIC"/>
+       <column name="name" header="name" type="STRING"/>
+       <column name="description" header="description" type="STRING"/>
+       <column name="lastupdated" header="lastupdated" type="DATE"/>
+       <column name="display_key" header="display_key" type="STRING"/>
+       <column name="is_holdable" header="is_holdable" type="STRING"/>
+	</loadData>
+</changeSet>
+<changeSet author="paulsc" id="25" context="ciLNSP">
+		<comment>Fixes localization errors in the origional insert for orgs and sub orgs</comment>
+		<sqlFile path="OE2.7/CILNSP_orgs_localization_fix.sql"/>
+	</changeSet>
+	<changeSet author="paulsc" id="26" context="ciLNSP" >
+		<comment>Deletes existing referring clinic organizations</comment>
+		<sql>
+			delete from clinlims.organization where id in ( select org_id from clinlims.organization_organization_type where org_type_id = (select id from clinlims.organization_type where short_name = 'referring clinic'));
+		</sql>
+	</changeSet>
+	<changeSet author="paulsc" id="27" context="ciLNSP" >
+		<comment>Deletes existing referral clinic organizations</comment>
+		<sql>
+			delete from clinlims.organization where id in 
+			     ( select org_id from clinlims.organization_organization_type where org_type_id = 
+			          (select id from clinlims.organization_type where short_name = 'referralLab'));
+		</sql>
+	</changeSet>
+	<changeSet author="paulsc" id="28" context="ciLNSP" >
+		<comment>Adds back Retroci and CIRBA</comment>	
+		<insert tableName="organization" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'organization_seq') "></column>
+			<column name="name" value="CIBRA" />
+			<column name="mls_sentinel_lab_flag" value="N" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="is_active" value="Y" />
+		</insert>
+		<insert tableName="organization" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'organization_seq') "></column>
+			<column name="name" value="PROJECT RETROCI" />
+			<column name="mls_sentinel_lab_flag" value="N" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="is_active" value="Y" />
+		</insert>
+		<insert tableName="organization_organization_type" schemaName="clinlims" >
+			<column name="org_id" valueNumeric=" (select id from clinlims.organization where name = 'CIBRA') " />
+			<column name="org_type_id" valueNumeric=" ( select id from clinlims.organization_type where short_name = 'referralLab' ) "></column>
+		</insert>
+		<insert tableName="organization_organization_type" schemaName="clinlims" >
+			<column name="org_id" valueNumeric=" (select id from clinlims.organization where name = 'PROJECT RETROCI') " />
+			<column name="org_type_id" valueNumeric=" ( select id from clinlims.organization_type where short_name = 'referralLab' ) "></column>
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="30" context="ciLNSP">
+		<comment>Adds the module workplan:test to Results entry role and non-conformity to intake</comment>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+             <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Results entry' ) "/>
+             <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'Workplan:test' ) "/>
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+             <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Intake' ) "/>
+             <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'NonConformity' ) "/>
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+             <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Results entry' ) "/>
+             <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'NonConformity' ) "/>
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="31" context="ciLNSP">
+		<comment>Correcting Status of sample for analysis non_conforming</comment>
+		<update tableName="status_of_sample" schemaName="clinlims">
+			<column name="status_type" value="ANALYSIS" />
+			<where>display_key = 'status.analysis.nonConforming'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="32" context="ciLNSP">
+		<comment>Ammends the reporting description of the HIV tests</comment>
+		<update tableName="test" >
+			<column name="reporting_description" value="VIH rapide(Serum)"/>
+			<where>description = 'Test rapide HIV 1 + HIV 2(Serum)'</where>
+		</update>
+		<update tableName="test" >
+			<column name="reporting_description" value="VIH rapide(Plasma)"/>
+			<where>description = 'Test rapide HIV 1 + HIV 2(Plasma)'</where>
+		</update>
+		<update tableName="test" >
+			<column name="reporting_description" value="VIH rapide(Sang)"/>
+			<where>description = 'Test rapide HIV 1 + HIV 2(Sang total)'</where>
+		</update>
+	</changeSet>
+</databaseChangeLog>

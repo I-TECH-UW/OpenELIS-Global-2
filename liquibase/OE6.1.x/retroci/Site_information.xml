@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--Site Information settings-->
+  <!-- Data specific to CDIRetroCI -->
+  <changeSet author="CI OpenELIS developers group" id="1" context="CDIRetroCI,CDIRetroCI_CT">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.site_information where name = 'Study Management tab';
+    		</sqlCheck>
+    </preConditions>
+    <comment>Insert in clinlims new site information</comment>
+    <sql>INSERT INTO clinlims.site_information_domain(
+            id, name, description)
+    VALUES (nextval('clinlims.site_information_domain_seq'),'MenuStatementConfig','Manage menu Item');
+
+INSERT INTO clinlims.site_information(
+            id, name, lastupdated, description, value, encrypted, domain_id, 
+            value_type, instruction_key, "group", schedule_id, tag, dictionary_category_id, 
+            description_key, name_key)
+    VALUES (nextval('clinlims.site_information_seq'),'siteNumber',now(),'site Id Number','lnsp',default,1,'text',default,0,default,default,default,'siteInfo.siteNumber',default);
+	
+	
+INSERT INTO clinlims.site_information(
+            id, name, lastupdated, description, value, encrypted, domain_id, 
+            value_type, instruction_key, "group", schedule_id, tag, dictionary_category_id, 
+            description_key, name_key)
+    VALUES (nextval('clinlims.site_information_seq'),'Study Management tab',now(),'If true, display study tab','true',default,(select id from clinlims.site_information_domain where name='MenuStatementConfig'),'boolean','instruction.tabs.studyIdentity',0,default,default,default,'site.info.tabs.studyIdentity',default);
+	
+	UPDATE clinlims.site_information
+   SET domain_id= (select id from clinlims.site_information_domain where name='MenuStatementConfig')
+ WHERE name='Patient management tab';
+
+ UPDATE clinlims.site_information
+   SET value = 'CI_GENERAL'
+ WHERE name='setFieldForm';
+ 
+  UPDATE clinlims.site_information
+   SET value = 'SiteYearNum'
+ WHERE name='acessionFormat';
+ 
+   UPDATE clinlims.site_information
+   SET value = 'ITECH'
+ WHERE name='Accession number prefix';
+
+
+ </sql>
+  </changeSet>
+</databaseChangeLog>

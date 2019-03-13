@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ The contents of this file are subject to the Mozilla Public License
+  ~ Version 1.1 (the "License"); you may not use this file except in
+  ~ compliance with the License. You may obtain a copy of the License at
+  ~ http://www.mozilla.org/MPL/
+  ~
+  ~ Software distributed under the License is distributed on an "AS IS"
+  ~ basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+  ~ License for the specific language governing rights and limitations under
+  ~ the License.
+  ~
+  ~ The Original Code is OpenELIS code.
+  ~
+  ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet id="1" author="paulsc">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="animal_common_name"/>
+        </preConditions>
+        <dropTable tableName="sample_animal" />
+        <dropTable tableName="animal_scientific_name"/>
+        <dropTable tableName="animal_common_name"/>
+    </changeSet>
+    <changeSet id="3" author="paulsc">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sequence"/>
+        </preConditions>
+        <dropTable tableName="sequence"/>
+    </changeSet>
+    <changeSet id="4" author="paulsc">
+        <preConditions onFail="MARK_RAN">
+            <viewExists viewName="hiv_patients" />
+        </preConditions>
+        <dropView viewName="hiv_patients" />
+    </changeSet>
+    <changeSet id="5" author="paulsc">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="aux_field" />
+        </preConditions>
+        <dropTable tableName="aux_data" />
+        <dropTable tableName="aux_field_values" />
+        <dropTable tableName="aux_field" />
+    </changeSet>
+    <changeSet id="6" author="paulsc">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="ethnicity" />
+        </preConditions>
+        <dropTable tableName="ethnicity" />
+    </changeSet>
+    <changeSet id="7" author="paulsc">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="district" />
+        </preConditions>
+        <dropTable tableName="district" />
+    </changeSet>
+    <changeSet id="8" author="paulsc">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="contact_type" />
+        </preConditions>
+        <dropTable tableName="contact_type" />
+    </changeSet>
+    <changeSet id="9" author="paulsc">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="analysis_storages" />
+        </preConditions>
+        <dropTable tableName="analysis_storages" />
+        <dropTable tableName="analysis_users" />
+    </changeSet>
+    <changeSet id="10" author="paulsc">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="occupation" />
+        </preConditions>
+        <dropTable tableName="occupation" />
+    </changeSet>
+    <changeSet id="11" author="paulsc">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="patient_occupation" />
+        </preConditions>
+        <dropTable tableName="patient_occupation" />
+    </changeSet>
+    <changeSet id="12" author="paulsc">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="race" />
+        </preConditions>
+        <dropTable tableName="race" />
+    </changeSet>
+    <changeSet id="14" author="paulsc">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="worksheets" />
+        </preConditions>
+        <dropTable tableName="worksheet_qc" />
+        <dropTable tableName="worksheet_analyte" />
+        <dropTable tableName="worksheet_analysis" />
+        <dropTable tableName="worksheet_heading" />
+        <dropTable tableName="worksheet_item" />
+        <dropTable tableName="worksheets" />
+    </changeSet>
+    <changeSet id="15" author="paulsc">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="user_security" />
+        </preConditions>
+        <dropTable tableName="user_security" />
+    </changeSet>
+    <changeSet id="16" author="paulsc">
+        <comment>Adds a table to hold images</comment>
+        <createSequence sequenceName="image_seq" incrementBy="1" startValue="1" />
+        <createTable tableName="image" schemaName="clinlims">
+            <column name="id" type="numeric" >
+                <constraints primaryKey="true" primaryKeyName="image_pk" />
+            </column>
+            <column name="description" type="text" />
+            <column name="image" type="blob" />
+            <column name="lastupdated" type="timestamp" />
+        </createTable>
+        <sql>
+            comment on table clinlims.image is 'Primary table for db based images';
+            comment on column clinlims.image.id is 'Primary key';
+            comment on column clinlims.image.description is 'Brief description of image';
+            comment on column clinlims.image.image is 'The image itself';
+        </sql>
+    </changeSet>
+    <changeSet id="17" author="paulsc">
+        <comment>Adds a table to track the test and results of confirmation samples</comment>
+        <createSequence sequenceName="referring_test_result_seq" incrementBy="1" startValue="1" />
+        <insert tableName="reference_tables">
+            <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) " />
+            <column name="name" value="REFERRING_TEST_RESULT" />
+            <column name="keep_history" value="Y" />
+            <column name="is_hl7_encoded" value="N" />
+            <column name="lastupdated" valueDate=" now() " />
+        </insert>
+        <createTable tableName="referring_test_result">
+            <column name="id" type="numeric" >
+                <constraints primaryKey="true" primaryKeyName="referring_test_result_pk" />
+            </column>
+            <column name="sample_item_id" type="numeric" >
+                <constraints nullable="false" />
+            </column>
+            <column name="test_name" type="text" />
+            <column name="result_value" type="text" />
+            <column name="lastupdated" type="timestamp" />
+        </createTable>
+        <addForeignKeyConstraint baseTableName="referring_test_result"
+                                 baseColumnNames="sample_item_id"
+                                 constraintName="referring_sample_item_fk"
+                                 referencedTableName="sample_item"
+                                 referencedColumnNames="id" deleteCascade="true" />
+        <createIndex tableName="referring_test_result" indexName="referring_sample_item_indx">
+            <column name="sample_item_id" />
+        </createIndex>
+        <sql>
+            comment on table clinlims.referring_test_result is 'Holds the test names and results of test done at referring lab.  Breaks reliance on test catalog';
+            comment on column clinlims.referring_test_result.sample_item_id  is 'Reference to the sample item on which the test was done';
+            comment on column clinlims.referring_test_result.test_name is 'The name of the test done at the referring lab';
+            comment on column clinlims.referring_test_result.result_value is 'The value of the result from the referring lab';
+        </sql>
+    </changeSet>
+    <changeSet id="18" author="paulsc">
+        <comment>Adds column to sample table to indicate that it is a confirmation sample</comment>
+        <addColumn tableName="sample">
+            <column name="is_confirmation" type="boolean" defaultValueBoolean="false" >
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

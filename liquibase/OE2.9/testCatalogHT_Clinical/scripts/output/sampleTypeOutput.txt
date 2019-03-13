@@ -1,0 +1,37 @@
+
+Paste following in SampleType.sql
+
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'plasma','H', now() , 'plasma', 'sample.type.plasma', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Liquide Biologique','H', now() , 'Liquide Bi', 'sample.type.Liquide', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Sputum','H', now() , 'Sputum', 'sample.type.Sputum', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'serum','H', now() , 'serum', 'sample.type.serum', 'Y');
+
+Paste following in TypeOrder.sql
+
+update clinlims.type_of_sample set sort_order=10 where description ILIKE 'Sang';
+update clinlims.type_of_sample set sort_order=20 where description ILIKE 'Plasma';
+update clinlims.type_of_sample set sort_order=30 where description ILIKE 'Serum';
+update clinlims.type_of_sample set sort_order=40 where description ILIKE 'LCR/CSF';
+update clinlims.type_of_sample set sort_order=50 where description ILIKE 'Plasma hepariné';
+update clinlims.type_of_sample set sort_order=60 where description ILIKE 'Urines/24 heures';
+update clinlims.type_of_sample set sort_order=70 where description ILIKE 'plasma';
+update clinlims.type_of_sample set sort_order=80 where description ILIKE 'Secretion vaginale';
+update clinlims.type_of_sample set sort_order=90 where description ILIKE 'Secretion Urethrale';
+update clinlims.type_of_sample set sort_order=100 where description ILIKE 'Selles';
+update clinlims.type_of_sample set sort_order=110 where description ILIKE 'Liquide Spermatique';
+update clinlims.type_of_sample set sort_order=120 where description ILIKE 'Liquide Biologique';
+update clinlims.type_of_sample set sort_order=130 where description ILIKE 'Urines';
+update clinlims.type_of_sample set sort_order=140 where description ILIKE 'Liquide Pleural';
+update clinlims.type_of_sample set sort_order=150 where description ILIKE 'Sputum';
+update clinlims.type_of_sample set sort_order=160 where description ILIKE 'Expectoration';
+update clinlims.type_of_sample set sort_order=170 where description ILIKE 'In Vivo';
+update clinlims.type_of_sample set sort_order=180 where description ILIKE 'Urine concentré du matin';
+update clinlims.type_of_sample set sort_order=190 where description ILIKE 'serum';
+
+Paste following in TestCatalogUpdate.xml in the set inactive list
+
+Crachat, LCR, Urine, Serum/Urine Concentre du Matin, Secretions genito-urinaire, Aspiration nasopharyngée, Ecouvillonage nasal, Ecouvillonage nosapharyngé, Sécrétion de la gorge, Prélèvement rhinopharyngé, Liquide Amniotique, Liquide Ascite, Liquide Synovial, Secretion Vaginale, Culot Urinaire, DBS, Pus, 

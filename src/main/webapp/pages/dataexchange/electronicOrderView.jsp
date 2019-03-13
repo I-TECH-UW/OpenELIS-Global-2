@@ -26,9 +26,7 @@ function prevPage() {
 	window.location.href = "ElectronicOrders.do?sortOrder=" + sortOption + "&page=" + (pageNumber - 1);
 }
 
-$jq(window).load(function(){
-	$jq('#sortSelect').val("<c:out value='${sortOrder}'/>");
-	
+$jq(window).load(function(){	
 	$jq('button.prevButton').each(function(){
 		$jq(this).prop('disabled', firstPage);
 	});
@@ -39,11 +37,12 @@ $jq(window).load(function(){
 </script>
 
 <spring:message code="eorder.sort"/>: 
-<select id="sortSelect" onchange="sortBy(this.value)">
+<form:select path="sortOrder" id="sortSelect" onchange="sortBy(this.value)">
 	<option value="lastupdated"><spring:message code="eorder.lastupdated"/></option>
 	<option value="externalId"><spring:message code="eorder.externalid"/></option>
 	<option value="statusId"><spring:message code="eorder.status"/></option>
-</select>
+</form:select>
+<form:hidden path="page"/>
 
 <c:if test="${empty form.EOrders}">
 	<h2><spring:message code="eorder.noresults"/></h2>

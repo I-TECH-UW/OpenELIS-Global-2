@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <!--Add change tags here-->
+    <!-- Data specific to CILNSP  -->    
+    <changeSet author="paulsc" id="1" context="haitiLNSP">
+    	<comment>Set the configuration name</comment>
+    	<update tableName="site_information" schemaName="clinlims">
+    		<column name="value" value="Haiti LNSP" />
+    		<where>name = 'configuration name'</where>
+    	</update>
+    </changeSet>
+</databaseChangeLog>

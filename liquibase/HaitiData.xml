@@ -1,0 +1,767 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <!--Add change tags here-->
+    <changeSet id="1" author="paulHaiti" context="haiti" runOnChange="true">
+    <comment>Adds Mantenance Admin to the module site_information</comment>
+    <sql>
+        INSERT INTO clinlims.system_role_module( id, has_select, has_add, has_update, has_delete, system_role_id, system_module_id)
+        VALUES (nextval('clinlims.system_user_module_seq' ), 'Y', 'Y', 'Y', 'Y',
+            (select id from clinlims.system_role where name = 'Maintenance Admin' limit 1 ),
+            (select id from clinlims.system_module where name = 'SiteInformation' limit 1));
+    </sql>
+    </changeSet>
+    
+    <changeSet id="2" author="pauls" context="haiti" runOnChange="true">
+    <comment>Adding localization keys to the sample type table</comment>
+    <update schemaName="clinlims" tableName="type_of_sample">
+    <column name="display_key" value="sample.type.spit"/>
+    <where>description='Crachat'</where>
+    </update>
+    <update schemaName="clinlims" tableName="type_of_sample">
+    <column name="display_key" value="sample.type.cfs"/>
+    <where>description='LCR'</where>
+    </update>
+    <update schemaName="clinlims" tableName="type_of_sample">
+    <column name="display_key" value="sample.type.ambionic.fluid"/>
+    <where>description='Liquide Amniotique'</where>
+    </update>
+    <update schemaName="clinlims" tableName="type_of_sample">
+    <column name="display_key" value="sample.type.ascite.fluid"/>
+    <where>description='Liquide Ascite'</where>
+    </update>
+    <update schemaName="clinlims" tableName="type_of_sample">
+    <column name="display_key" value="sample.type.pleural.fluid"/>
+    <where>description='Liquide Pleural'</where>
+    </update>
+    <update schemaName="clinlims" tableName="type_of_sample">
+    <column name="display_key" value="sample.type.synovial.fluid"/>
+    <where>description='Liquide Synovial'</where>
+    </update>
+    <update schemaName="clinlims" tableName="type_of_sample">
+    <column name="display_key" value="sample.type.plasma"/>
+    <where>description='Plasma'</where>
+    </update>
+    <update schemaName="clinlims" tableName="type_of_sample">
+    <column name="display_key" value="sample.type.pus"/>
+    <where>description='Pus'</where>
+    </update>
+    <update schemaName="clinlims" tableName="type_of_sample">
+    <column name="display_key" value="sample.type.saliva"/>
+    <where>description='Salive'</where>
+    </update>
+    <update schemaName="clinlims" tableName="type_of_sample">
+    <column name="display_key" value="sample.type.blood"/>
+    <where>description='Sang'</where>
+    </update>
+    <update schemaName="clinlims" tableName="type_of_sample">
+    <column name="display_key" value="sample.type.throat"/>
+    <where>description='Secretion de la Gorge'</where>
+    </update>
+    <update schemaName="clinlims" tableName="type_of_sample">
+    <column name="display_key" value="sample.type.urethral"/>
+    <where>description='Secretion Urethrale'</where>
+    </update>
+    <update schemaName="clinlims" tableName="type_of_sample">
+    <column name="display_key" value="sample.type.vaginal"/>
+    <where>description='Secretion Vaginale'</where>
+    </update>
+    <update schemaName="clinlims" tableName="type_of_sample">
+    <column name="display_key" value="sample.type.stool"/>
+    <where>description='Selles'</where>
+    </update>
+    <update schemaName="clinlims" tableName="type_of_sample">
+    <column name="display_key" value="sample.type.serum"/>
+    <where>description='Serum'</where>
+    </update>
+    <update schemaName="clinlims" tableName="type_of_sample">
+    <column name="display_key" value="sample.type.urine"/>
+    <where>description='Urine'</where>
+    </update>
+    </changeSet>
+    
+    <changeSet author="pauls" id="3" context="haiti" runOnChange="true">
+           <comment>Setting Status for Haiti clinical</comment>
+           <delete schemaName="clinlims" tableName="status_of_sample"/>
+           <insert schemaName="clinlims" tableName="status_of_sample">
+                   <column name="id" valueNumeric="1"/>
+                   <column name="code" value="1"/>
+                   <column name="lastupdated" valueDate='now()' />
+                   <column name="status_type" value="SAMPLE"/>
+                   <column name="name" value="Test Entered"/>
+                   <column name="description" value="No tests have been run for this sample"/>
+                   <column name="display_key" value="status.sample.notStarted"/>
+           </insert>
+           <insert schemaName="clinlims" tableName="status_of_sample">
+                   <column name="id" valueNumeric="2"/>
+                   <column name="code" value="1"/>
+                   <column name="lastupdated" valueDate='now()' />
+                   <column name="status_type" value="SAMPLE"/>
+                   <column name="name" value="Testing Started"/>
+                   <column name="description" value="Some tests have been run on this sample"/>
+                   <column name="display_key" value="status.sample.started"/>
+           </insert>
+           <insert schemaName="clinlims" tableName="status_of_sample">
+                   <column name="id" valueNumeric="3"/>
+                   <column name="code" value="1"/>
+                   <column name="lastupdated" valueDate='now()' />
+                   <column name="status_type" value="SAMPLE"/>
+                   <column name="name" value="Testing finished"/>
+                   <column name="description" value="All tests have been run on this sample"/>
+                   <column name="display_key" value="status.sample.finished"/>
+           </insert>
+           <insert schemaName="clinlims" tableName="status_of_sample">
+                   <column name="id" valueNumeric="4"/>
+                   <column name="code" value="1"/>
+                   <column name="lastupdated" valueDate='now()' />
+                   <column name="status_type" value="ANALYSIS"/>
+                   <column name="name" value="Not Tested"/>
+                   <column name="description" value="This test has not yet been done"/>
+                   <column name="display_key" value="status.test.notStarted"/>
+           </insert>
+           <insert schemaName="clinlims" tableName="status_of_sample">
+                   <column name="id" valueNumeric="5"/>
+                   <column name="code" value="1"/>
+                   <column name="lastupdated" valueDate='now()' />
+                   <column name="status_type" value="ANALYSIS"/>
+                   <column name="name" value="Started"/>
+                   <column name="description" value="The test was started but not finished"/>
+                   <column name="display_key" value="status.test.started"/>
+           </insert>
+           <insert schemaName="clinlims" tableName="status_of_sample">
+                   <column name="id" valueNumeric="6"/>
+                   <column name="code" value="1"/>
+                   <column name="lastupdated" valueDate='now()' />
+                   <column name="status_type" value="ANALYSIS"/>
+                   <column name="name" value="Finished"/>
+                   <column name="description" value="The results of the test were accepted"/>
+                   <column name="display_key" value="status.test.valid"/>
+           </insert>
+           <insert schemaName="clinlims" tableName="status_of_sample">
+                   <column name="id" valueNumeric="7"/>
+                   <column name="code" value="1"/>
+                   <column name="lastupdated" valueDate='now()' />
+                   <column name="status_type" value="ANALYSIS"/>
+                   <column name="name" value="Invalid Not Signed"/>
+                   <column name="description" value="The result was not valid and not signed by the supervisor"/>
+                   <column name="display_key" value="status.test.invalid.notsigned"/>
+           </insert>
+</changeSet>
+
+<changeSet author="paulsc" id="4" context="haiti" runOnChange="false">
+           <comment>Update analysis and sample so that the status_id matches status</comment>
+           <sql>
+           UPDATE clinlims.sample s set status_id = cast(( select status from clinlims.sample where s.id = id ) as numeric);
+           UPDATE clinlims.analysis a set status_id = cast(( select status from clinlims.analysis where a.id = id ) as numeric);
+           </sql>
+</changeSet>
+
+<changeSet author="paulsc" id="5" context="haiti" runOnChange="true">
+    <comment>Changes the views to match the new status set</comment>
+    <createView replaceIfExists="true" schemaName="clinlims" viewName="hiv_patients">
+    SELECT DISTINCT ON (pt.id) pt.id AS patient_id, pt.person_id, pt.gender, age(a.started_date, pt.birth_date) &lt; (28::double precision * '1 day'::interval) AS infant, a.completed_date
+       FROM clinlims.analysis a
+       JOIN clinlims.sample_item si ON a.sampitem_id = si.id
+       JOIN clinlims.sample_human sh ON si.samp_id = sh.samp_id
+       JOIN clinlims.patient pt ON sh.patient_id = pt.id
+       JOIN clinlims.test t ON a.test_id = t.id
+       JOIN clinlims.test_section ts ON t.test_section_id = ts.id AND ts.name::text = 'VCT'::text
+       JOIN clinlims.status_of_sample sos ON sos.name::text ~~ 'Finished'::text AND sos.id = to_number(a.status_id::text, '999999999'::text)
+      ORDER BY pt.id;
+    </createView>
+    <createView replaceIfExists="true" schemaName="clinlims" viewName="hiv_tests">
+    SELECT a.test_id, rc.outcome, a.completed_date
+       FROM clinlims.analysis a
+       JOIN clinlims.status_of_sample sos ON sos.name::text ~~ 'Finished'::text AND sos.id = to_number(a.status_id::text, '9999999999'::text)
+       JOIN clinlims.result r ON r.analysis_id = a.id
+       JOIN clinlims.result_context rc ON rc.result_id = r.id
+       JOIN clinlims.test t ON t.id = a.test_id
+       JOIN clinlims.test_section ts ON ts.name::text = 'VCT'::text AND t.test_section_id = ts.id;
+    </createView>
+</changeSet>
+
+<changeSet author="paulsc" id="6" context="haiti">
+    <comment>Sets the app name in the site information database</comment>
+    <delete schemaName="clinlims" tableName="site_information">
+            <where>name = 'appName'</where>
+    </delete>
+    <insert schemaName="clinlims" tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+            <column name="name" value="appName"/>
+            <column name="description" value="The name of the application."/>
+            <column name="value" value="haitiOpenElis"/>
+            <column name="lastupdated" valueDate=" now() "/>
+    </insert>
+</changeSet>
+
+<changeSet author="paulsc" id="7" context="haiti" runOnChange="false">
+    <comment>Adjusts the current result module names to reflect the new naming schema</comment>
+    <update schemaName="clinlims" tableName="system_module">
+        <column name="name" value="LogbookResults:chem"/>
+        <where>name='LogbookResultsChem'</where>
+    </update>
+    <update schemaName="clinlims" tableName="system_module">
+        <column name="name" value="LogbookResults:HIV"/>
+        <where>name='LogbookResultsVCT'</where>
+    </update>
+    <update schemaName="clinlims" tableName="system_module">
+        <column name="name" value="LogbookResults:bacteriology"/>
+        <where>name='LogbookResultsBacteria'</where>
+    </update>
+    <update schemaName="clinlims" tableName="system_module">
+        <column name="name" value="LogbookResults:ECBU"/>
+        <where>name='LogbookResultsECBU'</where>
+    </update>
+    <update schemaName="clinlims" tableName="system_module">
+        <column name="name" value="LogbookResults:hematology"/>
+        <where>name='LogbookResultsHematology'</where>
+    </update>
+    <update schemaName="clinlims" tableName="system_module">
+        <column name="name" value="LogbookResults:immuno"/>
+        <where>name='LogbookResultsImmuno'</where>
+    </update>
+    <update schemaName="clinlims" tableName="system_module">
+        <column name="name" value="LogbookResults:parasitology"/>
+        <where>name='LogbookResultsParasitology'</where>
+    </update>
+    <sql>
+       delete from system_module where id not in (select min(id) from system_module group by name );
+    </sql>
+</changeSet>
+<changeSet author="paulsc" id="8" context="haiti">
+       <comment>Sets modules to roles</comment>
+       <delete schemaName="clinlims" tableName="system_role_module"/>
+       <loadData file="Haiti_CSV/Haiti_Role_Module.csv" schemaName="clinlims" tableName="system_role_module">
+             <column name="id" header="id" type="NUMERIC"/>
+             <column name="has_select" header="has_select" type="STRING"/>
+             <column name="has_add" header="has_add" type="STRING"/>
+             <column name="has_update" header="has_update" type="STRING"/>
+             <column name="has_delete" header="has_delete" type="STRING"/>
+             <column name="system_role_id" header="system_role_id" type="NUMERIC"/>
+             <column name="system_module_id" header="system_module_id" type="NUMERIC"/>
+       </loadData>
+</changeSet>
+<changeSet author="paulsc" id="9" context="haiti">
+       <comment>Sets modules to roles</comment>
+       <loadData file="Haiti_CSV/Haiti_Role_Module_Rev1.csv" schemaName="clinlims" tableName="system_role_module">
+             <column name="id" header="id" type="NUMERIC"/>
+             <column name="has_select" header="has_select" type="STRING"/>
+             <column name="has_add" header="has_add" type="STRING"/>
+             <column name="has_update" header="has_update" type="STRING"/>
+             <column name="has_delete" header="has_delete" type="STRING"/>
+             <column name="system_role_id" header="system_role_id" type="NUMERIC"/>
+             <column name="system_module_id" header="system_module_id" type="NUMERIC"/>
+       </loadData>
+</changeSet>
+<changeSet author="paulsc" id="11" context="haiti">
+       <comment>Sets modules to roles</comment>
+       <loadData file="Haiti_CSV/Haiti_Role_Module_Rev2.csv" schemaName="clinlims" tableName="system_role_module">
+             <column name="id" header="id" type="NUMERIC"/>
+             <column name="has_select" header="has_select" type="STRING"/>
+             <column name="has_add" header="has_add" type="STRING"/>
+             <column name="has_update" header="has_update" type="STRING"/>
+             <column name="has_delete" header="has_delete" type="STRING"/>
+             <column name="system_role_id" header="system_role_id" type="NUMERIC"/>
+             <column name="system_module_id" header="system_module_id" type="NUMERIC"/>
+       </loadData>
+</changeSet>
+<changeSet author="paulsc" id="12" context="haiti">
+       <comment>Sets modules to roles</comment>
+       <loadData file="Haiti_CSV/Haiti_Role_Module_Rev3.csv" schemaName="clinlims" tableName="system_role_module">
+             <column name="id" header="id" type="NUMERIC"/>
+             <column name="has_select" header="has_select" type="STRING"/>
+             <column name="has_add" header="has_add" type="STRING"/>
+             <column name="has_update" header="has_update" type="STRING"/>
+             <column name="has_delete" header="has_delete" type="STRING"/>
+             <column name="system_role_id" header="system_role_id" type="NUMERIC"/>
+             <column name="system_module_id" header="system_module_id" type="NUMERIC"/>
+       </loadData>
+</changeSet>
+<changeSet author="paulsc" id="13" context="haiti">
+       <comment>Sets modules to roles</comment>
+       <delete schemaName="clinlims" tableName="system_role_module"/>
+       <loadData file="Haiti_CSV/Haiti_Role_Module_Rev4.csv" schemaName="clinlims" tableName="system_role_module">
+             <column name="id" header="id" type="NUMERIC"/>
+             <column name="has_select" header="has_select" type="STRING"/>
+             <column name="has_add" header="has_add" type="STRING"/>
+             <column name="has_update" header="has_update" type="STRING"/>
+             <column name="has_delete" header="has_delete" type="STRING"/>
+             <column name="system_role_id" header="system_role_id" type="NUMERIC"/>
+             <column name="system_module_id" header="system_module_id" type="NUMERIC"/>
+       </loadData>
+</changeSet>
+<changeSet author="paulsc" id="14" context="haiti">
+       <comment>Fixing screwup Sets modules to roles</comment>
+       <loadData file="Haiti_CSV/Haiti_Role_Module.csv" schemaName="clinlims" tableName="system_role_module">
+             <column name="id" header="id" type="NUMERIC"/>
+             <column name="has_select" header="has_select" type="STRING"/>
+             <column name="has_add" header="has_add" type="STRING"/>
+             <column name="has_update" header="has_update" type="STRING"/>
+             <column name="has_delete" header="has_delete" type="STRING"/>
+             <column name="system_role_id" header="system_role_id" type="NUMERIC"/>
+             <column name="system_module_id" header="system_module_id" type="NUMERIC"/>
+       </loadData>
+</changeSet>
+<changeSet author="paulsc" id="15" context="haiti">
+       <comment>Fixing screwup Sets modules to roles</comment>
+       <loadData file="Haiti_CSV/Haiti_Role_Module_Rev1.csv" schemaName="clinlims" tableName="system_role_module">
+             <column name="id" header="id" type="NUMERIC"/>
+             <column name="has_select" header="has_select" type="STRING"/>
+             <column name="has_add" header="has_add" type="STRING"/>
+             <column name="has_update" header="has_update" type="STRING"/>
+             <column name="has_delete" header="has_delete" type="STRING"/>
+             <column name="system_role_id" header="system_role_id" type="NUMERIC"/>
+             <column name="system_module_id" header="system_module_id" type="NUMERIC"/>
+       </loadData>
+</changeSet>
+<changeSet author="paulsc" id="16" context="haiti">
+       <comment>Fixing screwup Sets modules to roles</comment>
+       <loadData file="Haiti_CSV/Haiti_Role_Module_Rev2.csv" schemaName="clinlims" tableName="system_role_module">
+             <column name="id" header="id" type="NUMERIC"/>
+             <column name="has_select" header="has_select" type="STRING"/>
+             <column name="has_add" header="has_add" type="STRING"/>
+             <column name="has_update" header="has_update" type="STRING"/>
+             <column name="has_delete" header="has_delete" type="STRING"/>
+             <column name="system_role_id" header="system_role_id" type="NUMERIC"/>
+             <column name="system_module_id" header="system_module_id" type="NUMERIC"/>
+       </loadData>
+</changeSet>
+<changeSet author="paulsc" id="17" context="haiti">
+       <comment>Fixing screwup Sets modules to roles</comment>
+       <loadData file="Haiti_CSV/Haiti_Role_Module_Rev4.csv" schemaName="clinlims" tableName="system_role_module">
+             <column name="id" header="id" type="NUMERIC"/>
+             <column name="has_select" header="has_select" type="STRING"/>
+             <column name="has_add" header="has_add" type="STRING"/>
+             <column name="has_update" header="has_update" type="STRING"/>
+             <column name="has_delete" header="has_delete" type="STRING"/>
+             <column name="system_role_id" header="system_role_id" type="NUMERIC"/>
+             <column name="system_module_id" header="system_module_id" type="NUMERIC"/>
+       </loadData>
+</changeSet>
+<changeSet author="paulsc" id="18" context="haiti">
+       <comment>Fixing screwup Sets modules to roles</comment>
+       <loadData file="Haiti_CSV/Haiti_Role_Module_Rev3.csv" schemaName="clinlims" tableName="system_role_module">
+             <column name="id" header="id" type="NUMERIC"/>
+             <column name="has_select" header="has_select" type="STRING"/>
+             <column name="has_add" header="has_add" type="STRING"/>
+             <column name="has_update" header="has_update" type="STRING"/>
+             <column name="has_delete" header="has_delete" type="STRING"/>
+             <column name="system_role_id" header="system_role_id" type="NUMERIC"/>
+             <column name="system_module_id" header="system_module_id" type="NUMERIC"/>
+       </loadData>
+</changeSet>
+
+<changeSet author="nixonl" id="1" context="haiti">
+		<comment>Add Scriptlets for HIV algorithm</comment>  
+		<!-- Add Scriptlets -->
+		<insert schemaName="clinlims" tableName="scriptlet">
+        		<column name="id" valueNumeric=" nextval( 'scriptlet_seq' ) "/>  
+        		<column name="name" value="HIV Status Indeterminate"/>
+        		<column name="code_type" value="I"/>
+        		<column name="code_source" value="HIV Indeterminate"/>
+        		<column name="lastupdated" valueDate='now()' /> 
+		</insert>
+	   	<insert schemaName="clinlims" tableName="scriptlet">
+           		<column name="id" valueNumeric=" nextval( 'scriptlet_seq' ) "/>  
+           		<column name="name" value="HIV Status Negative"/>
+           		<column name="code_type" value="I"/>
+           		<column name="code_source" value="HIV N"/>
+           		<column name="lastupdated" valueDate='now()' /> 
+		</insert>
+		<insert schemaName="clinlims" tableName="scriptlet">
+           		<column name="id" valueNumeric=" nextval( 'scriptlet_seq' ) "/>  
+           		<column name="name" value="HIV Status Positive"/>
+           		<column name="code_type" value="I"/>
+           		<column name="code_source" value="HIV Positive"/>
+           		<column name="lastupdated" valueDate='now()' /> 
+		</insert>
+</changeSet>
+
+<changeSet author="nixonl" id="2" context="haiti">
+		<comment>Reflex algorithm for HIV Test Algorithm - Determine and Colloidal Gold/Shengai - Kehua</comment>  
+		
+
+		<!-- VIH Test - Collodial Gold/Shangai Kehua -->
+		<insert schemaName="clinlims" tableName="test">
+				 <column name="id" valueNumeric=" nextval( 'test_seq' ) "/>
+				 <column name="description" value="VIH Test - Collodial Gold/Shangai Kehua"/> 
+				 <column name="lastupdated" valueDate='now()' /> 
+				 <column name="is_active" value='Y' /> 
+				 <column name="is_reportable" value='N' /> 
+				 <column name="test_section_id" valueNumeric=" ( select id from clinlims.test_section where name='Immunology' )  "/> 
+				 <column name="local_abbrev" value='CollGold/Shangai' />			                 
+		</insert> 
+		<insert schemaName="clinlims" tableName="sampletype_test">
+				<column name="id" valueNumeric=" nextval( 'sample_type_test_seq' )  "/>    
+				<column name="sample_type_id" valueNumeric=" ( select id from clinlims.type_of_sample where description='Sang' ) "/>
+				<column name="test_id" valueNumeric=" ( select id from clinlims.test where description='VIH Test - Collodial Gold/Shangai Kehua' ) "/>
+				<column name="is_panel" value="False"/>           
+		</insert> 
+		<!-- Adding Reactive Test Result -->
+ 		<insert schemaName="clinlims" tableName="test_result">
+           		<column name="id" valueNumeric=" nextval( 'test_result_seq' ) "/>   
+           		<column name="test_id" valueNumeric=" ( select id from clinlims.test where description='VIH Test - Collodial Gold/Shangai Kehua' ) "/>
+           		<column name="tst_rslt_type" value="D"/> 
+           		<column name="value" valueNumeric=" ( select id from clinlims.dictionary where local_abbrev='R' and dict_entry='REACTIVE' ) "/>
+           		<column name="lastupdated" valueDate='now()' /> 
+		</insert>
+		<!-- Adding Non Reactive Test Result -->
+		<insert schemaName="clinlims" tableName="test_result">
+           		<column name="id" valueNumeric=" nextval( 'test_result_seq' ) "/>   
+           		<column name="test_id" valueNumeric=" ( select id from clinlims.test where description='VIH Test - Collodial Gold/Shangai Kehua' ) "/>
+           		<column name="tst_rslt_type" value="D"/> 
+           		<column name="value" valueNumeric=" ( select id from clinlims.dictionary where local_abbrev='NR' and dict_entry='NONREACTIVE') "/>		
+           		<column name="lastupdated" valueDate='now()' /> 
+		</insert>
+		<insert schemaName="clinlims" tableName="analyte">
+				 <column name="id" valueNumeric=" nextval( 'analyte_seq' ) "/> 
+				 <column name="name" value="VIH Test - Collodial Gold/Shangai Kehua Result"/>   
+				 <column name="is_active" value='Y' /> 
+				 <column name="lastupdated" valueDate='now()' /> 
+		</insert>
+		<insert schemaName="clinlims" tableName="test_analyte">
+				<column name="id" valueNumeric=" nextval( 'test_analyte_seq' ) "/>  
+				<column name="test_id" valueNumeric=" ( select id from clinlims.test where description='VIH Test - Collodial Gold/Shangai Kehua' ) "/>
+				<column name="analyte_id" valueNumeric=" currval( 'analyte_seq' ) "/>
+				<column name="result_group" valueNumeric="1"/>
+				<column name="lastupdated" valueDate='now()' />             	
+		</insert>
+		<!--  If VIH Test - Collodial Gold/Shangai Kehua  is Reactive - Final Result Positive -->
+		<insert schemaName="clinlims" tableName="test_reflex">
+		        <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>  
+		        <column name="test_id" valueNumeric=" ( select id from clinlims.test where description='VIH Test - Collodial Gold/Shangai Kehua' ) "/>
+		        <column name="tst_rslt_id" valueNumeric=" ( select r.id from clinlims.test_result r where r.test_id = ( select a.id from clinlims.test a where a.description='VIH Test - Collodial Gold/Shangai Kehua' ) and cast ( r.value as numeric) = ( select d.id from clinlims.dictionary d where d.local_abbrev='R' and d.dict_entry='REACTIVE')) "/>
+		        <column name="test_analyte_id" valueNumeric=" ( select ta.id from clinlims.test_analyte ta, clinlims.analyte a, clinlims.test t where a.id = ta.analyte_id and a.name = 'VIH Test - Collodial Gold/Shangai Kehua Result' and t.id = ta.test_id and t.description = 'VIH Test - Collodial Gold/Shangai Kehua') "/>   		
+           		<column name="scriptlet_id" valueNumeric=" ( select id from clinlims.scriptlet where name='HIV Status Positive' ) "/>     		
+           		<column name="lastupdated" valueDate='now()' /> 
+		</insert> 
+
+
+		<!--  If VIH Test - Collodial Gold/Shangai Kehua is Non-Reactive - Final Result Indeterminate -->
+		<insert schemaName="clinlims" tableName="test_reflex">
+		        <column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>  
+		        <column name="test_id" valueNumeric=" ( select id from clinlims.test where description='VIH Test - Collodial Gold/Shangai Kehua' ) "/>
+		        <column name="tst_rslt_id" valueNumeric=" ( select r.id from clinlims.test_result r where r.test_id = ( select a.id from clinlims.test a where a.description='VIH Test - Collodial Gold/Shangai Kehua' ) and cast ( r.value as numeric) = ( select d.id from clinlims.dictionary d where d.local_abbrev='NR' and d.dict_entry='NONREACTIVE' )) "/>
+		        <column name="test_analyte_id" valueNumeric=" ( select ta.id from clinlims.test_analyte ta, clinlims.analyte a, clinlims.test t where a.id = ta.analyte_id and a.name = 'VIH Test - Collodial Gold/Shangai Kehua Result' and t.id = ta.test_id and t.description = 'VIH Test - Collodial Gold/Shangai Kehua') "/>   		
+		        <column name="scriptlet_id" valueNumeric=" ( select id from clinlims.scriptlet where name='HIV Status Indeterminate' ) "/>     		
+		        <column name="lastupdated" valueDate='now()' /> 
+		</insert> 
+
+
+		<!-- Determine -->
+		
+		<insert schemaName="clinlims" tableName="sampletype_test">
+				<column name="id" valueNumeric=" nextval( 'sample_type_test_seq' )  "/>    
+				<column name="sample_type_id" valueNumeric=" ( select id from clinlims.type_of_sample where description='Sang' ) "/>
+				<column name="test_id" valueNumeric=" ( select id from clinlims.test where local_abbrev='Determine' ) "/>
+				<column name="is_panel" value="False"/>           
+		</insert> 
+
+		<!-- Adding Reactive Test Result -->
+		<insert schemaName="clinlims" tableName="test_result">
+           		<column name="id" valueNumeric=" nextval( 'test_result_seq' ) "/>   
+           		<column name="test_id" valueNumeric=" ( select id from clinlims.test where local_abbrev='Determine' ) "/>
+           		<column name="tst_rslt_type" value="D"/> 
+           		<column name="value" valueNumeric=" ( select id from clinlims.dictionary where local_abbrev='R' and dict_entry='REACTIVE' ) "/>
+
+           		<column name="lastupdated" valueDate='now()' /> 
+		</insert>
+		<!-- Adding Non Reactive Test Result -->
+		<insert schemaName="clinlims" tableName="test_result">
+           		<column name="id" valueNumeric=" nextval( 'test_result_seq' ) "/>   
+           		<column name="test_id" valueNumeric=" ( select id from clinlims.test where local_abbrev='Determine' ) "/>
+           		<column name="tst_rslt_type" value="D"/> 
+           		<column name="value" valueNumeric=" ( select id from clinlims.dictionary where local_abbrev='NR' and dict_entry='NONREACTIVE' ) "/>		
+           		<column name="lastupdated" valueDate='now()' /> 
+		</insert>
+
+		<insert schemaName="clinlims" tableName="analyte">
+            	<column name="id" valueNumeric=" nextval( 'analyte_seq' ) "/> 
+            	<column name="name" value="Determine Result"/>   
+            	<column name="is_active" value='Y' /> 
+            	<column name="lastupdated" valueDate='now()' /> 
+		</insert>
+
+		<insert schemaName="clinlims" tableName="test_analyte">
+           		<column name="id" valueNumeric=" nextval( 'test_analyte_seq' ) "/>  
+           		<column name="test_id" valueNumeric=" ( select id from clinlims.test where local_abbrev='Determine' ) "/>
+           		<column name="analyte_id" valueNumeric=" currval( 'analyte_seq' ) "/>
+           		<column name="result_group" valueNumeric="1"/>
+           		<column name="lastupdated" valueDate='now()' /> 
+		 </insert>
+
+		<!--  If Determine is Reactive - VIH Test - Collodial Gold/Shengai Kehua -->
+		 <insert schemaName="clinlims" tableName="test_reflex">
+          		<column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>  
+          		<column name="test_id" valueNumeric=" ( select id from clinlims.test where local_abbrev='Determine' ) "/>
+          		<column name="tst_rslt_id" valueNumeric=" ( select r.id from clinlims.test_result r where r.test_id = ( select a.id from clinlims.test a where a.local_abbrev='Determine' ) and cast ( r.value as numeric) = ( select d.id from clinlims.dictionary d where d.local_abbrev='R' and d.dict_entry='REACTIVE' )) "/>
+          		<column name="test_analyte_id" valueNumeric=" currval( 'test_analyte_seq' ) "/>          		
+          		<column name="add_test_id" valueNumeric=" ( select id from clinlims.test where description='VIH Test - Collodial Gold/Shangai Kehua' ) "/>
+          		<!--  No sibling -->
+          		<column name="lastupdated" valueDate='now()' /> 
+		</insert> 
+		<!--  If Determine is Non-Reactive - Final Results Negative -->
+		<insert schemaName="clinlims" tableName="test_reflex">
+           		<column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>  
+           		<column name="test_id" valueNumeric=" ( select id from clinlims.test where local_abbrev='Determine' ) "/>
+           		<column name="tst_rslt_id" valueNumeric=" ( select r.id from clinlims.test_result r where r.test_id = ( select a.id from clinlims.test a where a.local_abbrev='Determine' ) and cast ( r.value as numeric) = ( select d.id from clinlims.dictionary d where d.local_abbrev='NR' and d.dict_entry='NONREACTIVE' )) "/>
+           		<column name="test_analyte_id" valueNumeric=" ( select ta.id from clinlims.test_analyte ta, clinlims.analyte a, clinlims.test t where a.id = ta.analyte_id and a.name = 'Determine Result' and t.id = ta.test_id and t.local_abbrev = 'Determine') "/>   		
+           		<column name="scriptlet_id" valueNumeric=" ( select id from clinlims.scriptlet where name='HIV Status Negative' ) "/>     		
+           		<column name="lastupdated" valueDate='now()' /> 
+		</insert> 
+     
+</changeSet>
+
+<changeSet author="nixonl" id="3" context="haiti">
+		<comment>Additional sampletypes for Determine and Collodial Gold/Shengai and remove extra test </comment>  
+
+
+<insert schemaName="clinlims" tableName="sampletype_test">
+				<column name="id" valueNumeric=" nextval( 'sample_type_test_seq' )  "/>    
+				<column name="sample_type_id" valueNumeric=" ( select id from clinlims.type_of_sample where description='Plasma' ) "/>
+				<column name="test_id" valueNumeric=" ( select id from clinlims.test where description='VIH Test - Collodial Gold/Shangai Kehua' ) "/>
+				<column name="is_panel" value="False"/>           
+		</insert> 
+		<insert schemaName="clinlims" tableName="sampletype_test">
+				<column name="id" valueNumeric=" nextval( 'sample_type_test_seq' )  "/>    
+				<column name="sample_type_id" valueNumeric=" ( select id from clinlims.type_of_sample where description='Serum' ) "/>
+				<column name="test_id" valueNumeric=" ( select id from clinlims.test where description='VIH Test - Collodial Gold/Shangai Kehua' ) "/>
+				<column name="is_panel" value="False"/>           
+		</insert> 
+		<insert schemaName="clinlims" tableName="sampletype_test">
+				<column name="id" valueNumeric=" nextval( 'sample_type_test_seq' )  "/>    
+				<column name="sample_type_id" valueNumeric=" ( select id from clinlims.type_of_sample where description='Plasma' ) "/>
+				<column name="test_id" valueNumeric=" ( select id from clinlims.test where local_abbrev='Determine' ) "/>
+				<column name="is_panel" value="False"/>           
+		</insert> 
+		<insert schemaName="clinlims" tableName="sampletype_test">
+				<column name="id" valueNumeric=" nextval( 'sample_type_test_seq' )  "/>    
+				<column name="sample_type_id" valueNumeric=" ( select id from clinlims.type_of_sample where description='Serum' ) "/>
+				<column name="test_id" valueNumeric=" ( select id from clinlims.test where local_abbrev='Determine' ) "/>
+				<column name="is_panel" value="False"/>           
+		</insert>
+		
+		<update schemaName="clinlims" tableName="test">
+			<column name="test_section_id" valueNumeric=" ( select id from clinlims.test_section where name='VCT' )  "/> 
+			<where>description='VIH Test - Collodial Gold/Shangai Kehua'</where>
+		</update>
+		<update schemaName="clinlims" tableName="test">
+			<column name="test_section_id" valueNumeric=" ( select id from clinlims.test_section where name='VCT' )  "/> 
+			<column name="description" value="VIH Test - Determine"/> 
+			<where>local_abbrev='Determine'</where>
+		</update>
+
+</changeSet>
+
+ <changeSet author="paulsc" id="19" context="haiti">
+             <comment>Adding dictionary category HIV conclusion and dictionary values</comment>
+             <insert schemaName="clinlims" tableName="dictionary_category">
+                     <column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) "/>
+                     <column name="name" value="HIVResult"/>
+                     <column name="description" value="Conclusion"/>
+                     <column name="local_abbrev" value="Conclusion"/>
+                     <column name="lastupdated" valueDate='now()' />
+        </insert>
+        <insert schemaName="clinlims" tableName="dictionary">
+                     <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+                     <column name="is_active" value="Y"/>
+                     <column name="dict_entry" value="Positive"/>
+                     <column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+                      <column name="lastupdated" valueDate='now()' />
+                      <column name="display_key" value="dict.HIVResult.positive"/>
+        </insert>
+        <insert schemaName="clinlims" tableName="dictionary">
+                     <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+                     <column name="is_active" value="Y"/>
+                     <column name="dict_entry" value="Negative"/>
+                     <column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+                      <column name="lastupdated" valueDate='now()' />
+                      <column name="display_key" value="dict.HIVResult.negative"/>
+        </insert>
+        <insert schemaName="clinlims" tableName="dictionary">
+                     <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+                     <column name="is_active" value="Y"/>
+                     <column name="dict_entry" value="Indeterminate"/>
+                     <column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+                      <column name="lastupdated" valueDate='now()' />
+                      <column name="display_key" value="dict.HIVResult.indeterminate"/>
+        </insert>
+  </changeSet>
+  
+  <changeSet author="nixonl" id="4" context="haiti">
+        <comment>Adding display key for Reactive/NonReactive dictionary values</comment>
+        <update schemaName="clinlims" tableName="dictionary">
+        	<column name="dict_entry" value="Réactif"/>	
+			<where>local_abbrev='R' and dict_entry='REACTIVE'</where>
+		</update>
+		<update schemaName="clinlims" tableName="dictionary"> 
+			<column name="dict_entry" value="Non Réactif"/>	
+			<where>local_abbrev='NR' and dict_entry='NONREACTIVE'</where>
+		</update>         
+        <update schemaName="clinlims" tableName="dictionary">
+        	<column name="dict_entry" value="Négatif"/>	
+			<where>dict_entry='NEGATIVE'</where>
+		</update>
+		<update schemaName="clinlims" tableName="dictionary"> 
+			<column name="dict_entry" value="Positif"/>	
+			<where>dict_entry='POSITIVE'</where>
+		</update>  
+		<update schemaName="clinlims" tableName="dictionary"> 
+			<column name="dict_entry" value="Indéterminé"/>	
+			<where>dict_entry='INCONCLUSIVE'</where>
+		</update>       
+             
+  </changeSet>
+  <changeSet author="nixonl" id="5" context="haiti">
+        <comment>Remove all Test Kit Suppliers, add Unknown supplier</comment>
+        <delete schemaName="clinlims" tableName="inventory_receipt">
+    	</delete>
+    	 <delete schemaName="clinlims" tableName="inventory_location">
+    	</delete>
+    	 <delete schemaName="clinlims" tableName="inventory_item">
+    	</delete>
+  		<delete schemaName="clinlims" tableName="organization">
+            <where>org_id = ( select o.id from clinlims.organization o where o.name='TESTKIT' ) </where>
+    	</delete>
+  		<insert schemaName="clinlims" tableName="organization">
+  			<column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+  			<column name="org_id" valueNumeric= " ( select o.id from clinlims.organization o where o.name='TESTKIT' ) " />
+			<column name="name" value="Inconnu"/>
+			<column name="is_active" value="Y"/>
+          	<column name="mls_lab_flag" value="N"/>
+           	<column name="mls_sentinel_lab_flag" value="N"/>
+            <column name="lastupdated" valueDate='now()' />
+        </insert>
+  </changeSet>
+  <changeSet author="nixonl" id="6" context="haiti">
+        <comment>Adding HIV Test Kits and Syphilis Test Kits Tests</comment>
+  		<update schemaName="clinlims" tableName="test"> 
+			<column name="method_id" valueNumeric=" ( select id from clinlims.method where name='HIV_TEST_KIT' ) "/>	
+			<where>description='VIH Test - Determine'</where>
+		</update>
+		<update schemaName="clinlims" tableName="test"> 
+			<column name="method_id" valueNumeric=" ( select id from clinlims.method where name='HIV_TEST_KIT' ) "/>	
+			<where>description='VIH Test - Collodial Gold/Shangai Kehua'</where>
+		</update>
+		<update schemaName="clinlims" tableName="test"> 
+			<column name="method_id" valueNumeric=" ( select id from clinlims.method where name='SYPHILIS_TEST_KIT' ) "/>	
+			<where>description='Bioline (syphillis)'</where>
+		</update>
+		<update schemaName="clinlims" tableName="test"> 
+			<column name="method_id" valueNumeric=" ( select id from clinlims.method where name='SYPHILIS_TEST_KIT' ) "/>	
+			<where>description='Syphilis RPR'</where>
+		</update>
+  </changeSet>
+  <changeSet author="nixonl" id="7" context="haiti">
+  	 <comment>Deleting Mycobacteriology dept from clinical</comment>  
+  		<delete schemaName="clinlims" tableName="test_section">	
+  			<where>name='Mycobacteriology'</where>
+  		</delete>
+  </changeSet>
+<changeSet author="paulsc" id="20" context="haiti">
+  <comment>ads iSante organization and sets the HL7 encoding type to LOINC</comment>
+               <insert schemaName="clinlims" tableName="organization_type">
+                       <column name="id" valueNumeric=" nextval( 'organization_type_seq' ) "/>
+                       <column name="short_name" value="resultRequester"/>
+                       <column name="description" value="An organization which can request lab results"/>
+                       <column name="name_display_key" value="org_type.resultRequester"/>
+                       <column name="lastupdated" valueDate=" now() "/>
+               </insert>
+               <insert schemaName="clinlims" tableName="organization">
+                       <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+                       <column name="name" value="iSante"/>
+                       <column name="mls_sentinel_lab_flag" value="N"/>
+                       <column name="lastupdated" valueDate=" now()"/>
+                       <column name="is_active" value="Y"/>
+               </insert>
+               <insert schemaName="clinlims" tableName="organization_organization_type">
+                       <column name="org_id" valueNumeric=" ( select id from clinlims.organization where name='iSante' ) "/>
+                       <column name="org_type_id" valueNumeric=" ( select id from clinlims.organization_type where short_name='resultRequester' ) "  />
+               </insert>
+               <insert schemaName="clinlims" tableName="org_hl7_encoding_type">
+                       <column name="organization_id" valueNumeric=" ( select id from clinlims.organization where name='iSante' ) "/>
+                       <column name="encoding_type_id" valueNumeric=" ( select id from clinlims.hl7_encoding_type where schema_name='LOINC' ) "/>
+                       <column name="lastupdated" valueDate=" now() "/>
+               </insert>
+
+ </changeSet>
+  <changeSet author="paulsc" id="21" context="haiti">
+        <comment>Adding HIV Test Kits and Syphilis Test Kits Tests</comment>
+  		<update schemaName="clinlims" tableName="test"> 
+			<column name="method_id" valueNumeric=" ( select id from clinlims.method where name='HIV_TEST_KIT' ) "/>	
+			<where>name='Determine'</where>
+		</update>
+		<update schemaName="clinlims" tableName="test"> 
+			<column name="method_id" valueNumeric=" ( select id from clinlims.method where name='HIV_TEST_KIT' ) "/>	
+			<where>name='Colloidal Gold / Shangai Kehua'</where>
+		</update>
+		<update schemaName="clinlims" tableName="test"> 
+			<column name="method_id" valueNumeric=" ( select id from clinlims.method where name='SYPHILIS_TEST_KIT' ) "/>	
+			<where>name='Syphilis Bioline'</where>
+		</update>
+		<update schemaName="clinlims" tableName="test"> 
+			<column name="method_id" valueNumeric=" ( select id from clinlims.method where name='SYPHILIS_TEST_KIT' ) "/>	
+			<where>name='Syphilis RPR'</where>
+		</update>
+  </changeSet>
+  <changeSet author="paulsc" id="22" context="haiti">
+       <comment>Sets modules to roles</comment>
+       <loadData file="Haiti_CSV/Haiti_Role_Module_Rev6.csv" schemaName="clinlims" tableName="system_role_module">
+             <column name="id" header="id" type="NUMERIC"/>
+             <column name="has_select" header="has_select" type="STRING"/>
+             <column name="has_add" header="has_add" type="STRING"/>
+             <column name="has_update" header="has_update" type="STRING"/>
+             <column name="has_delete" header="has_delete" type="STRING"/>
+             <column name="system_role_id" header="system_role_id" type="NUMERIC"/>
+             <column name="system_module_id" header="system_module_id" type="NUMERIC"/>
+       </loadData>
+</changeSet>
+
+<include file="HaitiMassive/MassiveUpdate.xml" />
+<include file="HaitiCommon/HaitiClinicalMarTemplate.xml"/>
+
+<changeSet author="paulsc" id="24" context="haiti">
+<preConditions onFail="MARK_RAN">
+	<sqlCheck expectedResult="0" >
+		select count(*) from clinlims.test_section where name = 'Mycobacteriology'
+	</sqlCheck>
+</preConditions>
+<insert tableName="test_section" schemaName="clinlims">
+		<column name="id" valueNumeric=" nextval( 'test_section_seq' ) " />
+		<column name="name" value="Mycobacteriology" />
+		<column name="description" value="Mycobacteriology" />
+		<column name="display_key" value="test.section.mycobacteriology" />
+		<column name="sort_order" valueNumeric="90" />
+		<column name="is_external" value="N" />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="org_id" valueNumeric=" (select id from clinlims.organization where name = 'Haiti') "></column>
+</insert>
+<update tableName="test" schemaName="clinlims" >
+	<column name="test_section_id" valueNumeric=" (select id from clinlims.test_section where name = 'Mycobacteriology' ) " />
+	<where>test_section_id is null</where>
+</update>
+<sql>
+	update clinlims.analysis a set test_sect_id = ( select test_section_id from clinlims.test t where t.id = a.test_id );
+</sql>
+<update tableName="analysis" schemaName="clinlims" >
+	<column name="test_sect_id" valueNumeric=" (select id from clinlims.test_section where name = 'Mycobacteriology' ) " />
+	<where>test_sect_id is null</where>
+</update>
+</changeSet>
+<changeSet author="paulsc" id="23">
+	<comment>fixes the issue with Mycobacteriology and Mycrobacteriology</comment>
+	<update tableName="test" schemaName="clinlims">
+		<column name="test_section_id" valueNumeric=" (select id from clinlims.test_section where name = 'Mycobacteriology' ) " />
+		<where>test_section_id = (select id from clinlims.test_section where name = 'Mycrobacteriology' ) </where>
+	</update>
+	<update tableName="analysis" schemaName="clinlims">
+		<column name="test_sect_id" valueNumeric=" (select id from clinlims.test_section where name = 'Mycobacteriology' ) " />
+		<where>test_sect_id = (select id from clinlims.test_section where name = 'Mycrobacteriology' ) </where>
+	</update>
+	<delete tableName="test_section" schemaName="clinlims">
+		<where>name = 'Mycrobacteriology'</where>
+	</delete>
+</changeSet>
+</databaseChangeLog>
+

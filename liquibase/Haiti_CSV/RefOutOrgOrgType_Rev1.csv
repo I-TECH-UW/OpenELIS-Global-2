@@ -1,0 +1,3 @@
+org_type_id,org_id
+ ( select id from organization_type ot where ot.short_name='referralLab' ) , ( select id from organization o where o.name='CDC') 
+ ( select id from organization_type ot where ot.short_name='referralLab' ) , ( select id from organization o where o.name='CAREC') 

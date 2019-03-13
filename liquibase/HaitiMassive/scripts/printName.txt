@@ -1,0 +1,395 @@
+WBC
+RBC
+Hb
+Ht
+VGM
+TCMH
+CCMH
+Plaquettes
+Neutrophiles
+Lymphocytes
+WBC
+RBC
+Hemoglobine
+Hematocrite
+Plaquettes
+Mixtes
+Neutrophiles
+Lymphocytes
+Monocytes
+Eosinophiles
+Basophiles
+Sedimentation
+Coag en tube
+Temps de Coag
+Temps Saignement
+Electrophor Hb
+Sickling Test
+Reticulo-Auto
+Reticulo-Manu
+PTT
+Fibrinogene
+Facteur VIII
+Facteur IX
+Heparinemie
+AT III Dosage
+AT III Active
+Groupe ABO
+Groupe Rhesus
+Coombs Direct
+Coombs Direct
+Coombs Indirect
+Coombs Indirect
+0
+Azote de l'Uree
+Uree
+creatinine 
+Glycemie
+Glycemie
+Glucose
+Proteines
+Chlore
+α-foetoprotiene
+PhosLipDosage
+creatinine 
+Proteines
+Albumine
+glucose
+Uree
+Acide urique
+proteine total
+glycemie
+Albumine
+α1 globuline
+α2 globuline
+β globuline
+ϒ globuline
+Phosphatase Acid
+Chlorures
+Chlorures
+Chlorures
+CPK
+Amylase
+Lipase
+Chlorures
+Sodium
+Potassium
+Bicarbonates
+Calcium
+magnésium 
+phosphore 
+Lithium
+Fer Serique
+BiliTotale
+BiliDirect
+BiliIndirect
+SGOT
+SGPT
+Phosphatase Alka
+CholesterolTot
+Triglyceride
+Lipide
+HDL
+LDL
+VLDL
+MBG 
+HbGlyque
+Ck-mb
+Ck total
+ASAT 30° C
+ASAT 37° C
+ALAT 30° C
+ALAT 37° C
+LDH
+Troponine 1
+GPP
+Ph
+PaCO2
+HCO3
+O2 Saturation
+PaO2
+BE
+Ph
+PaCO2
+HCO3
+O2 Saturation
+PaO2
+BE
+
+0
+Bacteries
+Levures Simples
+Lev Bourg
+Tricho Vag
+Leucocytes
+Hematies
+Mycelium
+Cell Epith
+Levures Simples
+Lev Bourg
+Tricho Vag
+Leucocytes
+Hematies
+Mycelium
+Cell Epith
+Bacteries
+Levures Simples
+Lev Bourg
+Tricho Vag
+Leucocytes
+Hematies
+Mycelium
+Cell Epith
+KOH
+Test de Rivalta
+Bacilles Gram+
+Bacilles Gram-
+Cocci Gram+
+Cocci Gram-
+CoccoBac Gram-
+Clue Cells 
+Levures Simples
+Lev Bourg
+IntraDiploGram-
+ExtraDiploGram-
+Cell Epith
+Bacilles Gram+
+Bacilles Gram-
+Cocci Gram+
+Cocci Gram-
+Cocobact Gram-
+Clue Cells 
+Levures Simples
+Lev Bourg
+IntraDiploGram-
+ExtraDiploGram-
+Frot VagGram
+Frot Ureth Gram
+Cholera Rapide
+Coproculture
+Couleur
+Liquefaction
+pH
+Fructose
+Volume
+Compte Spermes
+Formes normales
+Formes anormales
+Motilite STAT
+Motilite/heure
+Motilite/3heures
+Gram
+0
+Couleur
+Aspect
+Densite
+Ph
+Proteines
+Glucose
+Cetones
+Bilirubine
+Sang 
+Acide ascorbique
+Urobilinogene
+Nitrites
+Hematies
+Leucocytes
+Cell Epith
+Bacteries
+Levures
+Mycelium
+spores
+trichomonas
+Cylindres
+Cristaux
+0
+0
+Couleur
+Aspect
+Sang Occulte
+Bacteries
+Cell Vegetales
+Protozoaires
+Metazoaires
+Crypto Zielh
+Microfiliares
+0
+Plasmodiun Esp
+Plasmodiun Troph
+Plasmodiun Game
+Plasmodium Sch
+0
+CD4 en mm3
+CD4 en %
+CMV Ig G
+CMV Ig M   
+RUBELLA Ig G
+RUBELLA Ig M
+Herpes I lg G
+Herpes II lg M
+HIV test rapide
+HIV test rapide
+HIV test rapide
+HIV Elisa
+HIV Elisa
+HIV Elisa
+HBsAg - IgG
+HBsAg - IgG
+HBsAg - IgG
+HCV - Hépatite C
+HCV - Hépatite C
+HCV - Hépatite C
+Dengue
+Dengue
+Dengue
+Toxoplasmose
+Toxoplasmose
+Toxoplasmose
+Rubeole
+Rubeole
+Rubeole
+HIV Western Blot
+HIV Western Blot
+HIV Western Blot
+HBsAg IGG
+HBsAg IGG
+HBsAg IGG
+HBV AcHbC AcHbe
+HBV AcHbC AcHbe
+HBV AcHbC AcHbe
+HCV IGG
+HCV IGG
+HCV IGG
+HCV IGM
+HCV IGM
+HCV IGM
+P24
+0
+0
+Charge Virale
+ADN VIH-1
+PCR MDR TB
+0
+Culture
+Antibiogramme
+Bacteries
+pneumocoques
+streptocoques
+staphylocoques
+BAAR Auramine
+BAAR Zielh
+culture BK
+0
+Antibiogramme
+culture 
+Cristal Urate
+Cristal Cholest
+Examen direct
+Culture
+Antibiogramme
+LymphoAscites
+GRAM Ascites
+ZIELH Ascites
+LymphoPleural
+Eosinophile
+Atypique Cell
+globules rouges 
+GRAM
+ZIELH NIELSEN
+Polynuclear Cell
+leucocytes
+leucocytes
+LCR GRAM
+LCR ZIELH
+0
+ExpectoZIELH
+ExpectoAURAMINE
+Culture BK
+0
+Prolactine
+FSH
+FSH
+LH
+LH
+Oestrogene
+Progesterone
+T3
+B-HCG 
+B-HCG 
+Test Grossesse
+T4
+TSH
+0
+TOXO IgG
+TOXO IgM
+Malaria Test Rapide
+Malaria Test Rapide
+Malaria Test Rapide
+Syphilis Rapide
+Syphilis Rapide
+Syphilis Rapide
+HTLV I et II 
+HTLV I et II 
+HTLV I et II 
+Syphilis RPR
+Syphilis RPR
+Syphilis RPR
+Syphilis TPHA
+Syphilis TPHA
+Syphilis TPHA
+H Pilori
+H Pilori
+H Pilori
+CRP
+CRP
+CRP
+ASO
+ASO
+ASO
+Widal Ag O 
+Widal Ag H
+Widal Ag O
+Widal Ag H
+0
+Determine
+Determine
+Determine
+Colloidal Gold
+Colloidal Gold
+Colloidal Gold
+Syphilis Bioline
+Syphilis Bioline
+Syphilis Bioline
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

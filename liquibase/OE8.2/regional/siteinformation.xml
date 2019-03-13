@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  
+<changeSet author="csteele" id="1">
+    <preConditions onFail="MARK_RAN">
+		<sqlCheck expectedResult="0">SELECT COUNT(*) FROM clinlims.site_information WHERE name = 'Data Submission'</sqlCheck>
+	</preConditions>
+	<comment>toggle data submission menu option</comment>
+  <sql>
+    INSERT INTO clinlims.site_information ("id", "name", "lastupdated", "description", "value", "encrypted", "domain_id", "value_type", "description_key")
+	VALUES (nextval('clinlims.site_information_seq'), 'Data Submission', current_timestamp, 'Show Option to submit data to VL DASH', 'true', false, (SELECT id FROM clinlims.site_information_domain WHERE name = 'MenuStatementConfig'), 'boolean', 'siteInfo.dataSubmission');
+  </sql>
+</changeSet>  
+
+</databaseChangeLog>

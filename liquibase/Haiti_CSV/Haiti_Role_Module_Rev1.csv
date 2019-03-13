@@ -1,0 +1,4 @@
+id,has_select,has_add,has_update,has_delete,system_role_id,system_module_id
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Intake' ) , ( select id from system_module where name = 'SampleEdit:readwrite' ) 
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Intake' ) , ( select id from system_module where name = 'SampleEdit:readonly' ) 
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Intake' ) , ( select id from system_module where name = 'SampleEdit' ) 

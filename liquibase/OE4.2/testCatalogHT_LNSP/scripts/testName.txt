@@ -1,0 +1,450 @@
+VIH Test Rapide
+VIH Test Rapide
+VIH Test Rapide
+VIH Elisa
+VIH Test Rapide
+VIH Elisa
+VIH Elisa
+VIH Elisa
+VIH Western Blot
+VIH Western Blot
+VIH Western Blot
+VIH Western Blot
+Rougeole IgM
+Rougeole IgG
+Rougeole IgM
+Rougeole IgG
+Dengue IgM
+Dengue IgG
+Dengue IgM
+Dengue IgG
+Rubeole IgM
+Rubeole IgG
+Rubeole IgM
+Rubeole IgG
+Dengue NS1Ag
+Dengue NS1Ag
+Hepatite A IgM
+Hepatite A IgM
+Hepatite B Ag
+Hepatite B Ag
+Hepatite C IgM
+Hepatite C IgM
+Hepatite E IgM
+Hepatite E IgM
+Influenza A/Immunofluoresence
+Influenza A/Immunofluoresence
+Influenza A/Immunofluoresence
+Influenza B/Immunofluoresence
+Influenza B/Immunofluoresence
+Influenza B/Immunofluoresence
+Para Influenza 1/Immunofluoresence
+Para Influenza 1/Immunofluoresence
+Para Influenza 1/Immunofluoresence
+Para Influenza 2/Immunofluoresence
+Para Influenza 2/Immunofluoresence
+Para Influenza 2/Immunofluoresence
+Para Influenza 3/Immunofluoresence
+Para Influenza 3/Immunofluoresence
+Para Influenza 3/Immunofluoresence
+Virus Respiratoire Synctial
+Virus Respiratoire Synctial
+Virus Respiratoire Synctial
+Adenivirus/Immunofluoresence
+Adenivirus/Immunofluoresence
+Adenivirus/Immunofluoresence
+Rotavirus
+Test Rapide Rotavirus
+Culture des Selles
+SyphilisTest Rapide
+Polio
+Polio Selles 1
+Polio Selles 2
+
+Syphilis RPR
+Syphilis TPHA
+Cryptococcus test rapide
+Cryptococcus test rapide
+Cryptococcus test rapide
+Chikungunya Test Rapide
+
+VIH-1 PCR 1 Qualitatif
+VIH-1 PCR 2 Qualitatif
+VIH-1 PCR 3 Qualitatif
+VIH-1 PCR 4 Qualitatif
+VIH-1 PCR 5 Qualitatif
+VIH-1 PCR 1 Qualitatif
+VIH-1 PCR 2 Qualitatif
+VIH-1 PCR 3 Qualitatif
+VIH-1 PCR 4 Qualitatif
+VIH-1 PCR 5 Qualitatif
+VIH-1 Charge Virale
+Score d'adherence
+Date de mise sous ARV
+VIH-1 Charge Virale
+Recherche de Virus Respiratoire Influenza
+Germes pathogènes Gatro-enterogastriques
+Recherche de Virus Respiratoire
+Mycobacterium tuberculosis résistant
+Mycobacterium tuberculosis résistant
+S. pneumonaiae
+H. influenzae
+N. Meningitidis
+Recherche du Virus Chikungunya
+
+
+CD4  Compte Abs
+CD4 Compte en %
+Compte des Globules Blancs
+Compte des Globules Rouges
+Hemoglobine
+Hematocrite
+VGM
+TCMH
+CCMH
+Plaquettes
+Neutrophiles
+Lymphocytes
+Mixtes
+Monocytes
+Eosinophiles
+Basophiles
+
+
+LCR Coloration de Gram  
+Selles Coloration de Gram
+Coloration de Gram Ecouvillon Pharynge
+Coloration de Gram Ecouvillon Naso-Pharynge
+Coloration de Gram Sang Total
+Immuno Dot Leptospira IgM 
+Type d'echantillon
+Resultats
+Type d'echantillon
+Resutats
+Leptospirose IgM
+Leptospirose IgM
+Leptospirose IgM
+Leptospirose IgM
+Hemoculture
+Salmonella typhi IgM 09 Test Rapide
+Salmonella typhi IgM 09 Test Rapide
+Culture du LCR
+LCR Test Rapide
+Recherche de Salmonelle
+Recherche de Shigelle
+Recherche de V.cholerae
+Recherche de C. diphteriae
+Recherche de B. pertussis
+Cuture des Selles
+Antibiogramme des Selles
+Culture
+PCR
+Acide nalidixique 30 μg
+Acide nalidixique 30 μg
+Acide nalidixique 30 μg
+Acide nalidixique 30 μg
+Acide nalidixique 30 μg
+Acide nalidixique 30 μg
+Acide fusidique 10 μg
+Acide fusidique 10 μg
+Acide fusidique 10 μg
+Acide fusidique 10 μg
+Acide fusidique 10 μg
+Acide fusidique 10 μg
+Amikacine 30 μg
+Amikacine 30 μg
+Amikacine 30 μg
+Amikacine 30 μg
+Amikacine 30 μg
+Amikacine 30 μg
+Ampicilline 10 μg
+Ampicilline 10 μg
+Ampicilline 10 μg
+Ampicilline 10 μg
+Ampicilline 10 μg
+Ampicilline 10 μg
+Ampicilline/Sulbactam 10/10 μg
+Ampicilline/Sulbactam 10/10 μg
+Ampicilline/Sulbactam 10/10 μg
+Ampicilline/Sulbactam 10/10 μg
+Ampicilline/Sulbactam 10/10 μg
+Ampicilline/Sulbactam 10/10 μg
+Amoxicilline/Acide clavulanique 20/10 μg
+Amoxicilline/Acide clavulanique 20/10 μg
+Amoxicilline/Acide clavulanique 20/10 μg
+Amoxicilline/Acide clavulanique 20/10 μg
+Amoxicilline/Acide clavulanique 20/10 μg
+Amoxicilline/Acide clavulanique 20/10 μg
+Azithromicine 15 μg
+Azithromicine 15 μg
+Azithromicine 15 μg
+Azithromicine 15 μg
+Azithromicine 15 μg
+Azithromicine 15 μg
+Aztreinam 30 μg
+Aztreinam 30 μg
+Aztreinam 30 μg
+Aztreinam 30 μg
+Aztreinam 30 μg
+Aztreinam 30 μg
+Cefalotine 30 μg
+Cefalotine 30 μg
+Cefalotine 30 μg
+Cefalotine 30 μg
+Cefalotine 30 μg
+Cefalotine 30 μg
+Cefotaxime 30 μg
+Cefotaxime 30 μg
+Cefotaxime 30 μg
+Cefotaxime 30 μg
+Cefotaxime 30 μg
+Cefotaxime 30 μg
+Ceftazidime 30 μg
+Ceftazidime 30 μg
+Ceftazidime 30 μg
+Ceftazidime 30 μg
+Ceftazidime 30 μg
+Ceftazidime 30 μg
+Ceftriaxone 30 μg
+Ceftriaxone 30 μg
+Ceftriaxone 30 μg
+Ceftriaxone 30 μg
+Ceftriaxone 30 μg
+Ceftriaxone 30 μg
+Cefixime10 μg
+Cefixime10 μg
+Cefixime10 μg
+Cefixime10 μg
+Cefixime10 μg
+Cefixime10 μg
+Ceftizoxime 30 μg
+Ceftizoxime 30 μg
+Ceftizoxime 30 μg
+Ceftizoxime 30 μg
+Ceftizoxime 30 μg
+Ceftizoxime 30 μg
+Chloramfenicol 30 μg
+Chloramfenicol 30 μg
+Chloramfenicol 30 μg
+Chloramfenicol 30 μg
+Chloramfenicol 30 μg
+Chloramfenicol 30 μg
+Ciprofloxacine 5 μg
+Ciprofloxacine 5 μg
+Ciprofloxacine 5 μg
+Ciprofloxacine 5 μg
+Ciprofloxacine 5 μg
+Ciprofloxacine 5 μg
+Colistine 50 μg
+Colistine 50 μg
+Colistine 50 μg
+Colistine 50 μg
+Colistine 50 μg
+Colistine 50 μg
+Enoxacine 50 μg
+Enoxacine 50 μg
+Enoxacine 50 μg
+Enoxacine 50 μg
+Enoxacine 50 μg
+Enoxacine 50 μg
+Erythromycine 15 UI
+Erythromycine 15 UI
+Erythromycine 15 UI
+Erythromycine 15 UI
+Erythromycine 15 UI
+Erythromycine 15 UI
+Fosfomycine 50 μg
+Fosfomycine 50 μg
+Fosfomycine 50 μg
+Fosfomycine 50 μg
+Fosfomycine 50 μg
+Fosfomycine 50 μg
+Gentamicine 15 μg
+Gentamicine 15 μg
+Gentamicine 15 μg
+Gentamicine 15 μg
+Gentamicine 15 μg
+Gentamicine 15 μg
+Lincomycine 15 μg
+Lincomycine 15 μg
+Lincomycine 15 μg
+Lincomycine 15 μg
+Lincomycine 15 μg
+Lincomycine 15 μg
+Levofloxacine 5 μg
+Levofloxacine 5 μg
+Levofloxacine 5 μg
+Levofloxacine 5 μg
+Levofloxacine 5 μg
+Levofloxacine 5 μg
+Lomefloxacine 5 μg
+Lomefloxacine 5 μg
+Lomefloxacine 5 μg
+Lomefloxacine 5 μg
+Lomefloxacine 5 μg
+Lomefloxacine 5 μg
+Mecillinam 10 μg
+Mecillinam 10 μg
+Mecillinam 10 μg
+Mecillinam 10 μg
+Mecillinam 10 μg
+Mecillinam 10 μg
+Meropeneme 10 μg
+Meropeneme 10 μg
+Meropeneme 10 μg
+Meropeneme 10 μg
+Meropeneme 10 μg
+Meropeneme 10 μg
+Moxalactam
+Moxalactam
+Moxalactam
+Moxalactam
+Moxalactam
+Moxalactam
+Moxifloxacine 5 μg
+Moxifloxacine 5 μg
+Moxifloxacine 5 μg
+Moxifloxacine 5 μg
+Moxifloxacine 5 μg
+Nitrofuranes 300 μg
+Nitrofuranes 300 μg
+Nitrofuranes 300 μg
+Nitrofuranes 300 μg
+Nitrofuranes 300 μg
+Nitrofuranes 300 μg
+Norfloxacine 5 μg
+Norfloxacine 5 μg
+Norfloxacine 5 μg
+Norfloxacine 5 μg
+Norfloxacine 5 μg
+Norfloxacine 5 μg
+Oxacilline 1 μg
+Oxacilline 1 μg
+Oxacilline 1 μg
+Oxacilline 1 μg
+Oxacilline 1 μg
+Oxacilline 1 μg
+Oxacilline 5 μg
+Oxacilline 5 μg
+Oxacilline 5 μg
+Oxacilline 5 μg
+Oxacilline 5 μg
+Oxacilline 5 μg
+Ofloxacine 5 μg
+Ofloxacine 5 μg
+Ofloxacine 5 μg
+Ofloxacine 5 μg
+Ofloxacine 5 μg
+Ofloxacine 5 μg
+Pefloxacine 5 μg
+Pefloxacine 5 μg
+Pefloxacine 5 μg
+Pefloxacine 5 μg
+Pefloxacine 5 μg
+Pefloxacine 5 μg
+Penicilline G 6 μg (10 UI)
+Penicilline G 6 μg (10 UI)
+Penicilline G 6 μg (10 UI)
+Penicilline G 6 μg (10 UI)
+Penicilline G 6 μg (10 UI)
+Penicilline G 6 μg (10 UI)
+Piperacilline 75 μg
+Piperacilline 75 μg
+Piperacilline 75 μg
+Piperacilline 75 μg
+Piperacilline 75 μg
+Piperacilline 75 μg
+Pristinamycine 15 μg
+Pristinamycine 15 μg
+Pristinamycine 15 μg
+Pristinamycine 15 μg
+Pristinamycine 15 μg
+Pristinamycine 15 μg
+Quinupristine- Dalfopristine 15 μg
+Quinupristine- Dalfopristine 15 μg
+Quinupristine- Dalfopristine 15 μg
+Quinupristine- Dalfopristine 15 μg
+Quinupristine- Dalfopristine 15 μg
+Quinupristine- Dalfopristine 15 μg
+Rifampicine 30 μg
+Rifampicine 30 μg
+Rifampicine 30 μg
+Rifampicine 30 μg
+Rifampicine 30 μg
+Rifampicine 30 μg
+Sparfloxacine 5 μg
+Sparfloxacine 5 μg
+Sparfloxacine 5 μg
+Sparfloxacine 5 μg
+Sparfloxacine 5 μg
+Sparfloxacine 5 μg
+Sulfamethoxazole /Trimethroprime23.75 /1,25 μg
+Sulfamethoxazole /Trimethroprime23.75 /1,25 μg
+Sulfamethoxazole /Trimethroprime23.75 /1,25 μg
+Sulfamethoxazole /Trimethroprime23.75 /1,25 μg
+Sulfamethoxazole /Trimethroprime23.75 /1,25 μg
+Sulfamethoxazole /Trimethroprime23.75 /1,25 μg
+Teiclopanine 30 μg
+Teiclopanine 30 μg
+Teiclopanine 30 μg
+Teiclopanine 30 μg
+Teiclopanine 30 μg
+Teiclopanine 30 μg
+Tetracycline 30 UI
+Tetracycline 30 UI
+Tetracycline 30 UI
+Tetracycline 30 UI
+Tetracycline 30 UI
+Tetracycline 30 UI
+Ticarcilline 75 μg
+Ticarcilline 75 μg
+Ticarcilline 75 μg
+Ticarcilline 75 μg
+Ticarcilline 75 μg
+Ticarcilline 75 μg
+Tobramycine 10 μg
+Tobramycine 10 μg
+Tobramycine 10 μg
+Tobramycine 10 μg
+Tobramycine 10 μg
+Tobramycine 10 μg
+
+Echantillon
+Colaration de Gram
+Culture
+
+Couleur
+Consistance
+Globules Blancs
+Globules Rouges
+Cellules Vegetales
+Sang Occulte
+Bacteries
+Levures simples
+Levures bourgeonantes
+Examen Microscopique direct
+Examen Microscopique après concentration
+Examen Microscopique
+Recherche d'Oxyures (Scotch Tape)
+
+
+
+
+Ziehl Neelsen modifiee
+Malaria
+
+
+
+Malaria Test Rapide
+Recherche de Microfilaires
+
+Recherche de BARR par Ziehl Neelsen Specimen 1
+Recherche de BARR par Ziehl Neelsen Specimen 2
+Recherche de BARR par Ziehl Neelsen Specimen 3
+Recherche de BARR par Fluorochrome Specimen 1
+Recherche de BARR par Fluorochrome Specimen 2
+Recherche de BARR par Fluorochrome Specimen 3
+Culture de mycobacteries Solide
+Culture de mycobacteries liquide
+Mycobacterium tuberculosis
+Resistance a la Rifampicine

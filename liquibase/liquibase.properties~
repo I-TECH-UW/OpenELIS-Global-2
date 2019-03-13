@@ -1,0 +1,10 @@
+#liquibase.properties
+driver: org.postgresql.Driver
+classpath: ./lib/postgresql.jar
+url: jdbc:postgresql://localhost:5432/htClinical
+username: clinlims
+password: clinlims
+defaultSchemaName: clinlims
+changeLogFile: ./changeLogs.xml
+contexts: ''
+

@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--system role and module updating-->
+  <!-- Data specific to CDIRetroCI -->
+  
+   <changeSet author="CI OpenELIS developers group" id="1" context="CDIRetroCI,CDIRetroCI_CT"  >
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="1">select count(*) from clinlims.menu where element_id= 'menu_results_cobasc311';
+    		</sqlCheck>
+    </preConditions>
+    <comment>deavtivation of hardcoded aanalyzers links</comment>
+    <sql>
+
+UPDATE clinlims.menu
+   SET is_active=FALSE
+ WHERE element_id='menu_results_cobas_taqman';
+
+ UPDATE clinlims.menu
+   SET is_active=FALSE
+ WHERE element_id='menu_results_coabas_DBS';
+
+ UPDATE clinlims.menu
+   SET is_active=FALSE
+ WHERE element_id='menu_results_sysmex';
+
+ UPDATE clinlims.menu
+   SET is_active=FALSE
+ WHERE element_id='menu_results_facscalibur';
+
+
+
+</sql>
+  </changeSet>
+  
+ 
+</databaseChangeLog>

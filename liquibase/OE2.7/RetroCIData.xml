@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <!--Add change tags here-->
+    <!-- Data specific to CDIRetroCI  -->    
+    <changeSet author="paulsc" id="1" context="CDIRetroCI">
+    	<comment>Set the configuration name</comment>
+    	<update tableName="site_information" schemaName="clinlims">
+    		<column name="value" value="CI RetroCI" />
+    		<where>name = 'configuration name'</where>
+    	</update>
+    </changeSet>
+    <changeSet author="paulsc" id="2" context="CDIRetroCI">
+    	<comment>Updates test reflexes to support selection of GenieII or Bioline</comment>
+    	<update tableName="test_reflex" schemaName="clinlims">
+    		<column name="flags" value="UC" />
+    		<where>tst_rslt_id = (select id from clinlims.test_result where test_id = (select id from clinlims.test where name = 'Vironostika') and value = CAST( (selecT MAX( id ) from clinlims.dictionary where dict_entry = 'Positive') as varchar))  </where>
+    	</update>
+    	<insert tableName="test_reflex" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+			<column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result where test_id = (select id from clinlims.test where name = 'Vironostika') and value = CAST( (selecT MAX( id ) from clinlims.dictionary where dict_entry = 'Positive') as varchar)) " /> 
+			<column name="flags" value="UC" />   
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="test_analyte_id" valueNumeric=" ( select id from clinlims.test_analyte where test_id = (select id from clinlims.test where name = 'Vironostika') ) " />
+			<column name="test_id" valueNumeric=" (select id from clinlims.test where name = 'Vironostika' )  "/>	
+  			<column name="add_test_id" valueNumeric=" (select id from clinlims.test where name = 'Bioline' )  "/>
+    	</insert>
+    </changeSet>
+    <changeSet author="paulsc" id="3" context="CDIRetroCI">
+    	<comment>Updates test reflexes to support selection of GenieII or Bioline for positive murex and integral</comment>
+    	<update tableName="test_reflex" schemaName="clinlims">
+    		<column name="flags" value="UC" />
+    		<where>tst_rslt_id = 
+    		(select id from clinlims.test_result where test_id = (select id from clinlims.test where name = 'Murex') and value = CAST( (selecT MAX( id ) from clinlims.dictionary where dict_entry = 'Positive') as varchar))  
+    		and add_test_id = ( select id from clinlims.test where name = 'Genie II')
+    		</where>
+    	</update>
+    	<update tableName="test_reflex" schemaName="clinlims">
+    		<column name="flags" value="UC" />
+    		<where>tst_rslt_id = 
+    		(select id from clinlims.test_result where test_id = (select id from clinlims.test where name = 'Integral') and value = CAST( (selecT MAX( id ) from clinlims.dictionary where dict_entry = 'Positive') as varchar))  
+    		and add_test_id = ( select id from clinlims.test where name = 'Genie II')
+    		</where>
+    	</update>
+    	<insert tableName="test_reflex" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+			<column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result where test_id = (select id from clinlims.test where name = 'Murex') and value = CAST( (selecT MAX( id ) from clinlims.dictionary where dict_entry = 'Positive') as varchar)) " /> 
+			<column name="flags" value="UC" />   
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="test_analyte_id" valueNumeric=" ( select id from clinlims.test_analyte where test_id = (select id from clinlims.test where name = 'Murex') ) " />
+			<column name="test_id" valueNumeric=" (select id from clinlims.test where name = 'Murex' )  "/>	
+  			<column name="add_test_id" valueNumeric=" (select id from clinlims.test where name = 'Bioline' )  "/>
+    	</insert>
+    	<insert tableName="test_reflex" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval( 'test_reflex_seq' ) "/>
+			<column name="tst_rslt_id" valueNumeric=" (select id from clinlims.test_result where test_id = (select id from clinlims.test where name = 'Integral') and value = CAST( (selecT MAX( id ) from clinlims.dictionary where dict_entry = 'Positive') as varchar)) " /> 
+			<column name="flags" value="UC" />   
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="test_analyte_id" valueNumeric=" ( select id from clinlims.test_analyte where test_id = (select id from clinlims.test where name = 'Integral') ) " />
+			<column name="test_id" valueNumeric=" (select id from clinlims.test where name = 'Integral' )  "/>	
+  			<column name="add_test_id" valueNumeric=" (select id from clinlims.test where name = 'Bioline' )  "/>
+    	</insert>
+    	<update tableName="test_reflex" schemaName="clinlims">
+    		<column name="sibling_reflex" valueNumeric=" (select max(id) from clinlims.test_reflex where test_id = (select id from clinlims.test where name = 'Integral' ) ) " />
+    		<where>id = (select max(id) from clinlims.test_reflex where test_id = ( select id from clinlims.test where name = 'Murex' )) </where>
+    	</update>
+    	<update tableName="test_reflex" schemaName="clinlims">
+    		<column name="sibling_reflex" valueNumeric=" (select max(id) from clinlims.test_reflex where test_id = (select id from clinlims.test where name = 'Murex' ) ) " />
+    		<where>id = (select max(id) from clinlims.test_reflex where test_id = ( select id from clinlims.test where name = 'Integral' )) </where>
+    	</update>
+    </changeSet>
+    <changeSet author="paulsc" id="4" context="CDIRetroCI">
+    	<comment>sets site information for condenseNFS to true</comment>
+    	<update tableName="site_information" schemaName="clinlims">
+    		<column name="value" value="true" />
+    		<where>name = 'condenseNFS'</where>
+    	</update>
+    </changeSet>
+    <changeSet author="paulsc" id="5" context="CDIRetroCI">
+    	<comment>Adds the show patient module to biologist</comment>
+    	<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+            <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Biologist' ) "/>
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'PatientDataOnResults' ) "/>
+		</insert>
+    </changeSet>
+    <changeSet author="paulsc" id="6" context="CDIRetroCI">
+		<comment>Sets role needed to view patient info to true in site information</comment>
+		<update tableName="site_information" schemaName="clinlims">
+			<column name="value" valueBoolean="true" />
+			<where>name = 'roleForPatientOnResults' </where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="7" context="CDIRetroCI">
+		<comment>Adds the Cobas DBS analyzer</comment>
+		<insert tableName="analyzer" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'analyzer_seq' ) "/>
+			<column name="name" value="CobasDBS" />
+			<column name="description" value="Cobastaqman" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="8" context="CDIRetroCI">
+		<comment>Add the mapping between the cobasDBS and test name</comment>
+		<insert tableName="analyzer_test_map" schemaName="clinlims">
+			<column name="analyzer_id" valueNumeric=" (select id from clinlims.analyzer where name = 'CobasDBS') "/>
+			<column name="analyzer_test_name" value="HIQCAP48" />
+			<column name="test_id" valueNumeric=" ( select id from clinlims.test where name = 'DNA PCR' ) " />
+			<column name="lastupdated" valueDate=" now() " />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="9" context="CDIRetroCI">
+		<comment>Adds new role, patient reports, and move patient search from current role to the new role</comment>
+		<insert tableName="system_role" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval('system_role_seq') " />
+			<column name="name" value="Patient Results" />
+			<column name="description" value="Able to access results by patient search" />
+			<column name="display_key" value="role.result.patient" />
+		</insert>
+		<delete tableName="system_role_module" schemaName="clinlims">
+			<where>system_module_id = ( select id from clinlims.system_module where name = 'PatientResults' )</where>
+		</delete>
+		<insert tableName="system_role_module">
+			<column name="id" valueNumeric=" nextval('system_user_module_seq') " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+			<column name="has_select" value="Y" />
+			<column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Patient Results') " />
+			<column name="system_module_id" valueNumeric="  ( select id from clinlims.system_module where name = 'PatientResults' )  " />
+		</insert>
+		<delete tableName="system_role_module" schemaName="clinlims">
+			<where>system_module_id = ( select id from clinlims.system_module where name = 'PatientDataOnResults' )</where>
+		</delete>
+		<delete tableName="system_module" schemaName="clinlims">
+			<where>name = 'PatientDataOnResults'</where>
+		</delete>
+	</changeSet>
+	<changeSet author="paulsc" id="10" context="CDIRetroCI">
+		<comment>Sets the test reporting description to be the same as the test name</comment>
+		<sql>update clinlims.test set reporting_description = name;</sql>
+	</changeSet>
+	 <changeSet author="paulsc" id="11" context="CDIRetroCI">
+    	<comment>Adds the show patient module to biologist</comment>
+    	<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+            <column name="system_role_id" valueNumeric=" ( select id from system_role where name ='Immunology Validation' ) "/>
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'ResultValidation' ) "/>
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+            <column name="system_role_id" valueNumeric=" ( select id from system_role where name ='Hematology Validation' ) "/>
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'ResultValidation' ) "/>
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+            <column name="system_role_id" valueNumeric=" ( select id from system_role where name ='Serology Validation' ) "/>
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'ResultValidation' ) "/>
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+            <column name="system_role_id" valueNumeric=" ( select id from system_role where name ='Biochemistry Validation' ) "/>
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'ResultValidation' ) "/>
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+            <column name="system_role_id" valueNumeric=" ( select id from system_role where name ='Virology validation' ) "/>
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'ResultValidation' ) "/>
+		</insert>
+    </changeSet>
+</databaseChangeLog>

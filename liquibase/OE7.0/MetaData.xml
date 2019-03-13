@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--Viral Load Study settings-->
+ 
+ 
+  <changeSet author="CI OpenELIS developers group" id="1" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+              <sqlCheck expectedResult="0">select count(*) from clinlims.observation_history_type where type_name = 'vlPregnancy';</sqlCheck>
+          </preConditions>
+    <comment>Insert answers to viral load study observation question</comment>
+    <sql>INSERT INTO clinlims.observation_history_type (id, type_name, description, lastupdated) VALUES (nextval('clinlims.observation_history_type_seq'),'vlPregnancy','VL Pregnancy?', now());</sql>
+    <sql>INSERT INTO clinlims.observation_history_type (id, type_name, description, lastupdated) VALUES (nextval('clinlims.observation_history_type_seq'),'vlSuckle','VL Suckle?', now());</sql>
+  </changeSet>
+  
+  
+  <changeSet author="CI OpenELIS developers group" id="2" runOnChange="true">
+    <comment>Update column type</comment>
+    <sql>ALTER TABLE clinlims.panel ALTER COLUMN name TYPE VARCHAR;</sql>
+    <sql>ALTER TABLE clinlims.panel ALTER COLUMN description TYPE VARCHAR;</sql>
+	<sql>ALTER TABLE clinlims.system_module ALTER COLUMN name TYPE VARCHAR;</sql>
+	<sql>ALTER TABLE clinlims.system_module ALTER COLUMN description TYPE VARCHAR;</sql>
+	<sql>ALTER TABLE clinlims.test ALTER COLUMN description TYPE VARCHAR;</sql>
+	<sql>ALTER TABLE clinlims.test ALTER COLUMN reporting_description TYPE VARCHAR;</sql>
+	<sql>ALTER TABLE clinlims.test ALTER COLUMN local_code TYPE VARCHAR;</sql>
+	<sql>ALTER TABLE clinlims.test ALTER COLUMN name TYPE VARCHAR;</sql>
+  </changeSet>
+  
+
+  <changeSet author="CI OpenELIS developers group" id="3" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+              <sqlCheck expectedResult="0">select count(*) from clinlims.localization where french = 'Hématocrite';</sqlCheck>
+          </preConditions>
+    <comment>Insert answers to viral load study observation question</comment>
+    <sql>	update clinlims.localization
+			set french='Hématocrite'
+			where english='Hematocrit';
+			</sql>
+   </changeSet>
+  
+  
+   
+</databaseChangeLog>

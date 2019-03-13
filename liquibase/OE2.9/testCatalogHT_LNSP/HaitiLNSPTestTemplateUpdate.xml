@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    
+    <changeSet author="paulsc" id="1" context="haitiLNSP">
+		<comment>Adds needed dictionary values</comment>
+		<sqlFile path="OE2.9/testCatalogHT_LNSP/dictionaryResult.sql"/>
+	</changeSet>
+	
+    <changeSet author="paulsc" id="2" context="haitiLNSP">
+		<comment>Adds needed uom values</comment>
+		<sqlFile path="OE2.9/testCatalogHT_LNSP/UOM.sql"/>
+	</changeSet>
+
+	<changeSet author="paulsc" id="3" context="haitiLNSP">
+		<comment>Deletes all data needed to do a clean install</comment>
+		<sqlFile path="OE2.9/testCatalogHT_LNSP/cleanData.sql" />
+	</changeSet>
+
+	
+	<changeSet author="paulsc" id="4" context="haitiLNSP">
+		<comment>adds in the new panels</comment>
+		<sql>alter table clinlims.panel_item alter column test_id set not null</sql>
+		<sqlFile path="OE2.9/testCatalogHT_LNSP/panelResults.sql" />
+	</changeSet>
+
+	<changeSet author="paulsc" id="5" context="haitiLNSP">
+		<comment>add the new sample types</comment>
+		<sqlFile path="OE2.9/testCatalogHT_LNSP/sampleType.sql" />
+		<sqlFile path="OE2.9/testCatalogHT_LNSP/typeOrder.sql" />
+	</changeSet>
+
+	<changeSet author="paulsc" id="6" context="haitiLNSP">
+		<comment>Associates new and existing sample types with new and existing panels</comment>
+		<sqlFile path="OE2.9/testCatalogHT_LNSP/sampleTypePanel.sql" />
+	</changeSet>
+
+	<changeSet author="paulsc" id="7" context="haitiLNSP">
+		<comment>Order test sections</comment>
+		<sqlFile path="OE2.9/testCatalogHT_LNSP/SectionOrder.sql" />
+	</changeSet>
+
+	<changeSet author="paulsc" id="8" context="haitiLNSP">
+		<comment>adds tests</comment>
+		<sqlFile path="OE2.9/testCatalogHT_LNSP/tests.sql" />
+	</changeSet>
+	
+	<changeSet author="paulsc" id="9" context="haitiLNSP">
+		<comment>Add tests to panels</comment>
+		<sqlFile path="OE2.9/testCatalogHT_LNSP/testPanel.sql" />	
+	</changeSet>
+
+	<changeSet author="paulsc" id="10" context="haitiLNSP">
+		<comment>Add tests to sample types</comment>
+		<sqlFile path="OE2.9/testCatalogHT_LNSP/sampleTypeTestResult.sql" />
+	</changeSet>
+
+	<changeSet author="paulsc" id="11" context="haitiLNSP">
+		<comment>Adds to test_result table</comment>
+		<sqlFile path="OE2.9/testCatalogHT_LNSP/testResults.sql"/>
+	</changeSet>
+	
+	<changeSet author="paulsc" id="12" context="haitiLNSP">
+		<comment>Adds result limits to test</comment>
+		<sqlFile path="OE2.9/testCatalogHT_LNSP/resultLimits.sql"/>
+	</changeSet>
+	
+	<changeSet author="paulsc" id="13" context="haitiLNSP" >
+		<comment>Adds dictionary result limits to tests</comment>
+		<sqlFile path="OE2.9/testCatalogHT_LNSP/dictResultLimits.sql"/>
+	</changeSet>
+	<changeSet author="paulsc" id="14" context="haitiLNSP">
+		<comment>Deactivate the Free Text test section</comment>
+		<update tableName="type_of_sample">
+			<column name="is_active" valueBoolean="false" />
+			<where>description = 'Free text'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="15" context="haitiLNSP">
+		<comment>Update the system module to mycobacteriologie from mycobology</comment>
+		<update tableName="system_role_module">
+			<column name="system_module_id" valueNumeric=" (select id from clinlims.system_module where name = 'ResultValidation:Mycobacteriology' ) " />
+			<where> system_module_id = ( select id from clinlims.system_module where name = 'ResultValidation:mycology' ) </where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="16" context="haitiLNSP">
+		<comment>Fix error with multiselect items</comment>
+		<sql>
+		update clinlims.test_result set tst_rslt_type = 'M' where test_id in 
+			( select id from clinlims.test 
+				where name in ('Rougeole','Dengue','Rubeole','Syphilis RPR','VIH-1 PCR Qualitatif','Recherche de Virus Respiratoire Influenza',
+				'Germes Enterogastriques pathogènes','Virus Respiratoire','Micobacterium tuberculosis Drug Resistant','Ziehl Neelsen modifiee',
+				'Malaria','Recherche de Microfilaires'));
+		</sql>
+	</changeSet>
+	<changeSet author="paulsc" id="17" context="haitiLNSP" >
+		<comment>Result limits for CD4 abs were missed</comment>
+		<sqlFile path="OE2.9/testCatalogHT_LNSP/update1ResultLimits.sql" />
+	</changeSet>
+	<changeSet author="paulsc" id="18" context="haitiLNSP" >
+		<comment>Test_results update</comment>
+		<sqlFile path="OE2.9/testCatalogHT_LNSP/update1TestResults.sql" />
+	</changeSet>
+	<changeSet author="paulsc" id="19" context='haitiLNSP'>
+		<comment>Updating dictionary value</comment>
+		<update tableName="dictionary">
+			<column name="dict_entry" value="> 572u" />
+			<where>dict_entry = '> 572'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="20" context="haitiLNSP">
+		<comment>Update viral load to add quanitive qualification</comment>
+		<sql>
+		update clinlims.test_result set tst_rslt_type='Q'
+			where test_id in (select id from clinlims.test where name ilike '%Charge Virale%') and
+			value = cast( (select id from clinlims.dictionary where dict_entry = 'Detectable') as varchar);
+		</sql>
+	
+	</changeSet>
+		<changeSet author="paulsc" id="21" context="haitiLNSP" >
+		<comment>Test updates</comment>
+		<sqlFile path="OE2.9/testCatalogHT_LNSP/update1Tests.sql" />
+	</changeSet>
+		<changeSet author="paulsc" id="22" context="haitiLNSP">
+		<comment>Update CD4 test names</comment>
+		<sql>
+			Update test SET description='CD4 Compte Absolu(Sang Total)', reporting_description='CD4 Compte Absolu', local_abbrev='CD4 Compte Absolu', name='CD4 Compte Absolu', lastupdated=now()
+				WHERE description = 'CD4  Compte Abs(Sang Total)';
+		</sql>
+	</changeSet>
+	<changeSet author="paulsc" id="23" context="haitiLNSP">
+		<comment>Update the result limits for Neutrophiles and Lymphocytes</comment>
+		<update tableName="result_limits">
+			<column name="high_valid" value="99" />
+			<where>test_id = (select id from clinlims.test where name = 'Neutrophiles') </where>
+		</update>
+		<update tableName="result_limits">
+			<column name="high_valid" value="90" />
+			<where>test_id = (select id from clinlims.test where name = 'Lymphocytes') </where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="24" context="haitiLNSP">
+		<comment>Makes all the antiboiotics un orderable</comment>
+		<sqlFile path="OE2.9/testCatalogHT_LNSP/anitbiotics.sql"/>
+	</changeSet>
+</databaseChangeLog>

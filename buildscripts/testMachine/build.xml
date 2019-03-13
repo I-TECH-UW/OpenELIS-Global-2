@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+
+<project basedir="." default="help" name="openElisGlobal">
+
+    <property environment="env"/>
+    <property name="wardir" value="${basedir}/warRoot"/>
+    <property name="projectroot" value="${basedir}/source/openelisglobal-core/app"/>
+    <property name="db_root" value="${basedir}/source/openelisglobal-core/liquibase"/>
+    <property name="junit.output.dir" value="junit"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="debug" value="true"/>
+    <property name="target" value="1.5"/>
+    <property name="source" value="1.5"/>
+    <property name="clinlimsPW" value=""/>
+    <property name="installerDir" value="${basedir}/installers"/>
+    <property name="installerTemplateDir" value="${basedir}/source/openelisglobal-core/installerTemplate" />
+    <property name="tomcatVersion" value="tomcat6" />
+    <property file="./build.txt" />
+
+
+    <path id="Web App Libraries.libraryclasspath">
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/ajaxtags-1.2-beta3.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/antlr-2.7.5H3.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/antlr.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/asm-attrs.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/asm.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/barbecue-1.0.6b.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/castor-1.0.5-xml.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/castor-1.0.5.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/cglib-2.1.3.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/commons-beanutils.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/commons-codec-1.3.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/commons-collections-2.1.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/commons-collections4-4.0.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/commons-digester.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/commons-fileupload.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/commons-httpclient-3.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/commons-javaflow-20060411.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/commons-lang-2.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/commons-logging.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/commons-validator-1.3.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/commons-validator.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/crypto.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/dom4j-1.6.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/ehcache-1.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/encoder-1.2.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/hamcrest-core-1.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/hamcrest-library-1.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/hibernate-3.1.3.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/iText-2.1.7.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/jakarta-oro.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/jasperreports-3.7.2-applet.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/jasperreports-3.7.2.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/jdbc-se2.0.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/jdt-compiler-3.1.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/jmock-2.5.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/jmock-junit4-2.5.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/jta.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/jta1.0.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/junit-4.6.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/lims.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/log4j-1.2.8.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/ojdbc14.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/servlet.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/standard.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/struts.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/struts2-core-2.0.9.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/struts2-spring-plugin-2.0.6.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/xerces.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/jbcrypt-0.4.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/jcommon-1.0.16.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/jfreechart-1.0.13.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/quartz-all-2.0.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/slf4j-api-1.6.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/slf4j-simple-1.6.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/json_simple-1.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/mockito-all-1.9.5.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/commons-io-2.4.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/hapi-base-2.1.jar"/>
+
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/hapi-hl7overhttp-2.1-patched.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/hapi-structures-v21-2.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/hapi-structures-v22-2.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/hapi-structures-v23-2.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/hapi-structures-v231-2.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/hapi-structures-v24-2.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/hapi-structures-v25-2.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/hapi-structures-v251-2.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/httpclient-4.2.5.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/hapi-structures-v26-2.1.jar"/>
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/lib/httpcore-4.2.4.jar"/>
+
+
+    </path>
+
+
+    <path id="openElisGlobal.classpath">
+
+        <pathelement location="${projectroot}/WebContent/WEB-INF/classes"/>
+
+        <path refid="Web App Libraries.libraryclasspath"/>
+
+    </path>
+
+
+    <target name="initBuild">
+
+        <mkdir dir="${projectroot}/WebContent/WEB-INF/classes"/>
+
+        <mkdir dir="${wardir}"/>
+
+
+        <copy includeemptydirs="false" todir="${projectroot}/WebContent/WEB-INF/classes">
+
+            <fileset dir="${projectroot}/src">
+
+                <exclude name="**/*.launch"/>
+
+                <exclude name="**/*.java"/>
+
+            </fileset>
+
+        </copy>
+
+        <copy includeemptydirs="false" todir="${projectroot}/WebContent/WEB-INF/classes">
+
+            <fileset dir="${projectroot}/test">
+
+                <exclude name="**/*.launch"/>
+
+                <exclude name="**/*.java"/>
+
+            </fileset>
+
+        </copy>
+
+    </target>
+
+
+    <target name="versionNumber">
+
+        <echo message="finding build number"/>
+
+        <exec outputproperty="build.current.revision" executable="cat">
+            <arg line=" version.txt"/>
+        </exec>
+
+        <echo message="build number: ${build.current.revision} "/>
+
+        <replaceregexp file="${projectroot}/src/build.properties"
+                       match="build=.*"
+                       replace="build=${build.current.revision}"
+                       byline="true"/>
+    </target>
+
+    <target name="applyUpdate" description="Does the actual update to database">
+        <echo message="Updating ${dbName}"/>
+        <exec executable="java" dir="${db_root}">
+
+            <arg line="-jar -Dfile.encoding=utf-8 ./lib/liquibase-1.9.5.jar --defaultsFile=./liquibase.properties  --contexts=${context} --password=${clinlimsPW} --url=jdbc:postgresql://localhost:5432/${dbName} update"/>
+
+        </exec>
+
+
+    </target>
+
+    <target name="updateDB" description="Installs changes to DB using liquibase">
+
+
+        <antcall target="applyUpdate">
+            <param name="context" value="CDIRetroCI"/>
+            <param name="dbName" value="cdielis"/>
+        </antcall>
+
+        <antcall target="applyUpdate">
+            <param name="context" value="haiti"/>
+            <param name="dbName" value="clinlims"/>
+        </antcall>
+
+        <antcall target="applyUpdate">
+            <param name="context" value="haitiLNSP"/>
+            <param name="dbName" value="lnsphaiti"/>
+        </antcall>
+
+        <antcall target="applyUpdate">
+            <param name="context" value="ciLNSP"/>
+            <param name="dbName" value="cilnsp"/>
+        </antcall>
+
+        <antcall target="applyUpdate">
+            <param name="context" value="CI_IPCI"/>
+            <param name="dbName" value="ci_ipci"/>
+        </antcall>
+
+        <antcall target="applyUpdate">
+            <param name="context" value="ci_regional"/>
+            <param name="dbName" value="ci_reg_lab"/>
+        </antcall>
+
+        <antcall target="applyUpdate">
+            <param name="context" value="Kenya"/>
+            <param name="dbName" value="kenya"/>
+        </antcall>
+    </target>
+
+
+    <target name="clean">
+
+        <delete dir="${projectroot}/WebContent/WEB-INF/classes"/>
+
+    </target>
+
+
+    <target name="build" depends="versionNumber, initBuild" description="builds application and tests">
+
+        <echo message="${ant.project.name}: ${ant.file}"/>
+
+        <javac debug="${debug}" debuglevel="${debuglevel}" destdir="${projectroot}/WebContent/WEB-INF/classes"
+               source="${source}" target="${target}" encoding="utf-8">
+
+            <src path="${projectroot}/src"/>
+
+            <classpath refid="openElisGlobal.classpath"/>
+
+        </javac>
+
+        <javac debug="${debug}" debuglevel="${debuglevel}" destdir="${projectroot}/WebContent/WEB-INF/classes"
+               source="${source}" target="${target}">
+
+            <src path="${projectroot}/test"/>
+
+            <classpath refid="openElisGlobal.classpath"/>
+
+        </javac>
+
+    </target>
+
+
+    <target name="buildpackage"
+            description="builds and packages all of the current implementations using the .properties files"
+            depends="build">
+
+        <echo message="Packaging war file ..."/>
+
+        <delete file="${wardir}/openElis.war"/>
+
+        <jar jarfile="${wardir}/openElis.war">
+
+            <fileset dir="${projectroot}/WebContent" includes="**"/>
+
+        </jar>
+
+    </target>
+
+    <target name="buildInstaller" description="Builds the installers">
+        <echo message="Creating installer for ${context}"/>
+
+        <mkdir dir="${installerDir}/${context}"/>
+        <copy todir="${installerDir}/${context}">
+            <fileset dir="${installerTemplateDir}"/>
+        </copy>
+        <copy todir="${installerDir}/${context}/linux/liquibase/" >
+            <fileset dir="${db_root}/" />
+        </copy>
+
+        <copy  file="/usr/share/${tomcatVersion}/webapps/${context}.war" todir="${installerDir}/${context}/linux/warFiles/" />
+        <echo message="Copying ${basedir}/source/openelisglobal-core/tools/DBBackup/installerTemplates/${backupTemplate} to ${installerDir}/${context}/linux/templates/DatabaseBackup.pl" />
+        <!-- we're using tofile due to ant version on our build machine, todir would be better -->
+        <copy  verbose="true" file="${basedir}/source/openelisglobal-core/tools/DBBackup/installerTemplates/${backupTemplate}"
+               tofile="${installerDir}/${context}/linux/templates/DatabaseBackup.pl" />
+
+        <copy  verbose="true" file="${installerDir}/${context}/baseDatabases/${context}.backup"
+               tofile="${installerDir}/${context}/linux/databaseFiles/databaseInstall.backup" />
+
+        <delete dir="${installerDir}/${context}/baseDatabases" />
+
+        <echo message="compressing to ${context}_${release}_Installer.tar.gz" />
+        <exec failifexecutionfails="true" failonerror="true" executable="tar"  dir="${installerDir}" >
+            <arg value="-cf" />
+            <arg value="${context}_${release}_Installer.tar" />
+            <arg value="${context}/" />
+        </exec>
+
+        <exec failifexecutionfails="true" failonerror="true" executable="gzip"  dir="${installerDir}" >
+            <arg value="${context}_${release}_Installer.tar" />
+        </exec>
+
+    </target>
+
+
+    <target name="installers">
+        <mkdir dir="${installerDir}"/>
+
+        <delete dir="${installerDir}/" />
+
+        <antcall target="buildInstaller">
+            <param name="context" value="CDIOpenElis"/>
+            <param name="dbName" value="cdielis"/>
+            <param name="backupTemplate" value="OffSiteBackupLinux.pl" />
+        </antcall>
+
+        <antcall target="buildInstaller">
+            <param name="context" value="CDI_RegLabOpenElis"/>
+            <param name="dbName" value="ci_reg_lab"/>
+            <param name="backupTemplate" value="OffSiteBackupLinux.pl" />
+        </antcall>
+		
+		<antcall target="buildInstaller">
+            <param name="context" value="CI_OpenElis"/>
+            <param name="dbName" value="ci_reg_lab"/>
+            <param name="backupTemplate" value="OffSiteBackupLinux.pl" />
+        </antcall>
+
+        <antcall target="buildInstaller">
+            <param name="context" value="CI_IPCIOpenElis"/>
+            <param name="dbName" value="ci_ipci"/>
+            <param name="backupTemplate" value="OffSiteBackupLinux.pl" />
+        </antcall>
+
+        <antcall target="buildInstaller">
+            <param name="context" value="CI_LNSPOpenElis"/>
+            <param name="dbName" value="cilnsp"/>
+            <param name="backupTemplate" value="OffSiteBackupLinux.pl" />
+        </antcall>
+
+        <antcall target="buildInstaller">
+            <param name="context" value="haitiOpenElis"/>
+            <param name="dbName" value="clinlims"/>
+            <param name="backupTemplate" value="HaitiBackup.pl" />
+        </antcall>
+
+        <antcall target="buildInstaller">
+            <param name="context" value="LNSP_HaitiOpenElis"/>
+            <param name="dbName" value="lnsphaiti"/>
+            <param name="backupTemplate" value="HaitiBackup.pl" />
+        </antcall>
+
+        <antcall target="buildInstaller">
+            <param name="context" value="KenyaOpenElis"/>
+            <param name="dbName" value="kenya"/>
+            <param name="backupTemplate" value="OffSiteBackupLinux.pl" />
+        </antcall>
+    </target>
+
+
+    <target name="help">
+
+        <echo message="Available targets:"/>
+
+        <echo message="    updateDB -- updates Haiti, LNSP_Haiti, CDI and CI_LNSP databases"/>
+
+        <echo message="    buildpackage --  builds and builds war files for Haiti, LNSP_Haiti, CDI and CI_LNSP "/>
+
+    </target>
+
+</project>
+
+

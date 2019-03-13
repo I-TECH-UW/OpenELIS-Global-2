@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <!--Add change tags here-->
+    <!-- Data specific to CILNSP  -->    
+  
+    <changeSet author="nixonl" id="1" context="ciLNSP">
+    	<comment>Removing site lists and creating fake data for demos</comment>	
+    	<sql>
+    		delete from clinlims.organization_address;
+    		delete from clinlims.organization_organization_type;
+    		delete from clinlims.referral_result;
+    		delete from clinlims.referral;
+    		delete from clinlims.organization_contact where organization_id in ( select id from clinlims.organization where name not in ('Haiti', 'Inconnu', 'TESTKIT', 'ACME SUPPLY', 'BETA SUPPLY'));
+    		delete from clinlims.organization where name not in ('Haiti', 'Inconnu', 'TESTKIT', 'ACME SUPPLY', 'BETA SUPPLY');
+    	</sql> 
+    	<sql>
+    		update clinlims.organization set name = 'CI' where name='Haiti' ;			
+    	</sql>
+    	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic A"/>
+            <column name="short_name" value="11114"/>
+            <column name="is_active" value="Y"/>               
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic B"/>
+            <column name="is_active" value="Y"/>       
+            <column name="short_name" value="11115"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic C"/>
+            <column name="is_active" value="Y"/>  
+            <column name="short_name" value="11116"/>           
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic D"/>
+            <column name="short_name" value="11117"/>
+            <column name="is_active" value="Y"/>               
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic E"/>
+            <column name="is_active" value="Y"/>       
+            <column name="short_name" value="11118"/>        
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic F"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11119"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic G"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11120"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic H"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11121"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic I"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11122"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic J"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11123"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic K"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11124"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic L"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11125"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic M"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11126"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic N"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11127"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic O"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11128"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic P"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11129"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic Q"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11130"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic R"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11131"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic S"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11132"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic T"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11133"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic U"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11134"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic V"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11135"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic W"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11136"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic X"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11137"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic Y"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11138"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Clinic Z"/>
+            <column name="is_active" value="Y"/>      
+            <column name="short_name" value="11139"/>         
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_type">
+                   <column name="id" valueNumeric=" nextval( 'organization_type_seq' ) "/>
+                   <column name="short_name" value="referring clinic"/>
+                   <column name="description" value="Name of org who can order lab tests"/>
+                   <column name="lastupdated" value=" now() "/>
+        </insert>
+        <insert schemaName="clinlims" tableName="organization_type">
+             <column name="id" valueNumeric=" nextval( 'organization_type_seq' ) "/>
+             <column name="short_name" value="referralLab"/>
+             <column name="description" value="An organization to which samples may be sent"/>
+             <column name="name_display_key" value="orgainzation.type.referral.lab"/>
+             <column name="lastupdated" valueDate=" now() "/>
+     	</insert>	
+      	 <insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Inconnu' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'TestKitVender' ) "/>
+      	</insert>   	
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic A' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic B' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic C' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic D' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic E' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic F' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic G' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic H' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic I' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic J' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic K' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic L' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic M' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic N' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic O' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic P' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic Q' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic R' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic S' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic T' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic U' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic V' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic W' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic X' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic Y' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Clinic Z' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referring clinic' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="RetroCI"/>
+            <column name="is_active" value="Y"/>               
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="CIRBA"/>
+            <column name="is_active" value="Y"/>              
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="IPCI"/>
+            <column name="is_active" value="Y"/>                
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Lab 1"/>
+            <column name="is_active" value="Y"/>                
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Lab 2"/>
+            <column name="is_active" value="Y"/>                
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Lab 3"/>
+            <column name="is_active" value="Y"/>               
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization">
+            <column name="id" valueNumeric=" nextval( 'organization_seq' ) "/>
+            <column name="name" value="Lab 4"/>
+            <column name="is_active" value="Y"/>                
+            <column name="lastupdated" valueNumeric=" now() "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'RetroCI' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referralLab' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'IPCI' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referralLab' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'CIRBA' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referralLab' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Lab 1' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referralLab' ) "/>
+      	</insert>
+      	<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Lab 2' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referralLab' ) "/>
+      	</insert>
+      		<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Lab 3' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referralLab' ) "/>
+      	</insert>
+      		<insert schemaName="clinlims" tableName="organization_organization_type">
+            <column name="org_id" valueNumeric=" ( select id from organization where name = 'Lab 4' ) "/>
+            <column name="org_type_id" valueNumeric=" ( select id from organization_type where short_name = 'referralLab' ) "/>
+      	</insert>    	
+    </changeSet>
+    <changeSet author="nixonl" id="2" context="ciLNSP">
+    	<comment>Removing inventory items and creating fake data for demos</comment>
+    	<sql>
+    		delete from clinlims.inventory_receipt where invitem_id not in (select id from clinlims.inventory_item where name in ('VIH Test Kit', 'Syphilis Test Kit'));
+    		delete from clinlims.inventory_location where inv_item_id not in (select id from clinlims.inventory_item where name in ('VIH Test Kit', 'Syphilis Test Kit'));
+    		delete from clinlims.inventory_item where name not in ('VIH Test Kit', 'Syphilis Test Kit');
+    	</sql>
+    </changeSet>	
+        	    	
+</databaseChangeLog>

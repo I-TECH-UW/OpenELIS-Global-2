@@ -1,0 +1,2 @@
+id,name,description,org_id,is_external,lastupdated,display_key 
+nextval( 'test_section_seq' ) ,Biologie Moleculaire,Biologie Moleculaire, (select id from clinlims.organization where name = 'Haiti' ) ,N, now() , test.section.Moleoularbiology 

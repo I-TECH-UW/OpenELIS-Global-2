@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+<changeSet author="paulsc" id="1">
+    <comment>Deactivates existing payment options and adds new ones</comment>
+    <update tableName="dictionary" >
+        <column name="is_active" value="N" />
+        <where>dictionary_category_id = ( select id from clinlims.dictionary_category where description = 'patientPayment' )</where>
+    </update>
+    <insert tableName="dictionary" schemaName="clinlims">
+        <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+        <column name="is_active" value="Y" />
+        <column name="dict_entry" value="normalCash" />
+        <column name="lastupdated" value="  now() " />
+        <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'patientPayment') " />
+        <column name="display_key" value="dictionary.patient.payment.normal.cash" />
+    </insert>
+    <insert tableName="dictionary" schemaName="clinlims">
+        <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+        <column name="is_active" value="Y" />
+        <column name="dict_entry" value="reducedCash" />
+        <column name="lastupdated" value="  now() " />
+        <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'patientPayment') " />
+        <column name="display_key" value="dictionary.patient.payment.reduced.cash" />
+    </insert>
+    <insert tableName="dictionary" schemaName="clinlims">
+        <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+        <column name="is_active" value="Y" />
+        <column name="dict_entry" value="normalInsurance" />
+        <column name="lastupdated" value="  now() " />
+        <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'patientPayment') " />
+        <column name="display_key" value="dictionary.patient.payment.normal.insurance" />
+    </insert>
+    <insert tableName="dictionary" schemaName="clinlims">
+        <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+        <column name="is_active" value="Y" />
+        <column name="dict_entry" value="reducedInsurance" />
+        <column name="lastupdated" value="  now() " />
+        <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'patientPayment') " />
+        <column name="display_key" value="dictionary.patient.payment.reduced.insurance" />
+    </insert>
+</changeSet>
+<changeSet id="2" author="paulsc">
+    <comment>Add notes section to site configuration</comment>
+    <insert tableName="site_information">
+        <column name="id" valueNumeric=" nextval( 'site_information_seq' ) " />
+        <column name="name" value="validationOnlyNotesAreExternal" />
+        <column name="lastupdated" valueDate=" now() " />
+        <column name="description" value="If true note are internal except validation" />
+        <column name="value" value="false" />
+        <column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'hiddenProperties' ) " />
+        <column name="value_type" value="boolean" />
+    </insert>
+</changeSet>
+<changeSet id="3" author="paulsc">
+    <comment>Sets all note types to external</comment>
+    <update tableName="note" >
+        <column name="note_type" value="E" />
+    </update>
+</changeSet>
+<changeSet id="4" author="paulsc">
+    <comment>Adds configurable phone format</comment>
+    <insert tableName="site_information">
+        <column name="id" valueNumeric=" nextval( 'site_information_seq' ) " />
+        <column name="name" value="phone format" />
+        <column name="lastupdated" valueDate=" now() " />
+        <column name="description" value="The acceptable format for a phone number" />
+        <column name="value" value="(ddd) dddd-dddd" />
+        <column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'siteIdentity' ) " />
+        <column name="value_type" value="text" />
+        <column name="tag" value="numericOnly" />
+        <column name="instruction_key" value="instructions.site.phone" />
+    </insert>
+</changeSet>
+    <changeSet id="5" author="paulsc">
+        <comment>Adds configurable phone format validation</comment>
+        <insert tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) " />
+            <column name="name" value="validate phone format" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="description" value="Should the format for a phone number be validated" />
+            <column name="value" value="true" />
+            <column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'siteIdentity' ) " />
+            <column name="value_type" value="boolean" />
+            <column name="instruction_key" value="instructions.site.phone.validation" />
+        </insert>
+    </changeSet>
+    <changeSet id="6" author="paulsc" >
+        <comment>Adds a sample type of variable</comment>
+        <insert tableName="type_of_sample">
+            <column name="id" valueNumeric=" nextval( 'type_of_sample_seq' ) " />
+            <column name="description" value="Actual type will be selected by user" />
+            <column name="domain" value="H" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="local_abbrev" value="Variable" />
+            <column name="display_key" value="sample.type.variable" />
+            <column name="is_active" value="N" />
+        </insert>
+    </changeSet>
+    <changeSet id="7" author="paulsc">
+        <comment>Adds accents</comment>
+        <update tableName="dictionary" >
+            <column name="dict_entry" value="Présence" />
+            <where>dict_entry = 'Presence' </where>
+        </update>
+        <update tableName="type_of_sample" >
+            <column name="description" value="Sérum" />
+            <column name="local_abbrev" value="Sérum" />
+            <where>description = 'Serum' </where>
+        </update>
+    </changeSet>
+    <changeSet id="8" author="paulsc">
+        <comment>Remove trailing spaces in system_role name</comment>
+        <update tableName="system_role" >
+            <column name="name" value="Results entry" />
+            <where>name like 'Results entry%'</where>
+        </update>
+        <comment>Remove trailing spaces in system_role name</comment>
+        <update tableName="system_role" >
+            <column name="name" value="Validator" />
+            <where>name like 'Validator%'</where>
+        </update>
+    </changeSet>
+    <changeSet id="9" author="paulsc">
+        <comment>Adds patient entry as configuration domain</comment>
+        <insert tableName="site_information_domain">
+            <column name="id" valueNumeric=" nextval( 'site_information_domain_seq' ) "  />
+            <column name="name" value="patientEntryConfig" />
+            <column name="description" value="Configuration items for patient entry" />
+        </insert>
+    </changeSet>
+    <changeSet id="10" author="paulsc">
+        <comment>Adds allowing duplicate subject numbers as configurable item</comment>
+        <insert tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) " />
+            <column name="name" value="Allow duplicate subject number" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="description" value="Allow more than one patient to have same subject number" />
+            <column name="value" value="true" />
+            <column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'patientEntryConfig' ) " />
+            <column name="value_type" value="boolean" />
+            <column name="instruction_key" value="instructions.patient.duplicate.subject" />
+        </insert>
+    </changeSet>
+    <changeSet id="11" author="paulsc">
+        <comment>Adding "Test Result" as a general dictionary category</comment>
+        <insert tableName="dictionary_category">
+            <column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) "/>
+            <column name="description" value="General test result" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="name" value="Test Result" />
+            <column name="local_abbrev" value="Test Reslt" />
+        </insert>
+    </changeSet>
+    <changeSet id="12" author="paulsc">
+        <comment>Update layout of VIH 1 and 2 dictionary value</comment>
+        <update tableName="dictionary" >
+            <column name="dict_entry" value="Positif VIH 1 et 2" />
+            <where>dict_entry = 'Positif VIH1 et 2'</where>
+        </update>
+    </changeSet>
+    <changeSet id="13" author="paulsc" >
+        <comment>Change result notes to analysis notes.update from results to analysis.remove orphaned notes.remove duplicates from multiselects</comment>
+        <sql>
+            update clinlims.note set
+            reference_id= (select analysis_id from clinlims.result where id = reference_id),
+            reference_table=(select id from clinlims.reference_tables where name = 'ANALYSIS')
+            where reference_table=(select id from clinlims.reference_tables where name = 'RESULT');
+
+            delete from clinlims.note where reference_id is null;
+
+            DELETE FROM clinlims.note WHERE id NOT IN (SELECT MIN(id) FROM clinlims.note GROUP BY reference_id, reference_table, subject, text, note_type);
+        </sql>
+    </changeSet>
+    <changeSet author="paulsc" id="14" >
+        <comment>Add cascading multiselect to result type</comment>
+        <insert schemaName="clinlims" tableName="type_of_test_result" >
+            <column name="id" valueNumeric=" nextval( 'type_of_test_result_seq' ) " />
+            <column name="test_result_type" value="C" />
+            <column name="description" value="Cascading Multiselect" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="hl7_value" value="TX" />
+        </insert>
+    </changeSet>
+    <changeSet id="15" author="paulsc">
+        <comment>Add flag to send technical rejected analysis to validation</comment>
+        <insert tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) " />
+            <column name="name" value="validateTechnicalRejection" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="description" value="If true and a technician rejects test results then they are ready to be validated" />
+            <column name="value" value="true" />
+            <column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'resultConfiguration' ) " />
+            <column name="value_type" value="boolean" />
+            <column name="instruction_key" value="instructions.validation.techRejection" />
+        </insert>
+    </changeSet>
+    <changeSet id="16" author="paulsc">
+        <comment>Sets validationOnlyNotesAreExternal to true</comment>
+        <update tableName="site_information" >
+            <column name="value" value="true" />
+            <where>name = 'validationOnlyNotesAreExternal'</where>
+        </update>
+    </changeSet>
+  <changeSet id="1" author="jfurlong">
+        <comment>Adding "Rejection reasons" as a general dictionary category</comment>
+        <insert tableName="dictionary_category">
+            <column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) "/>
+            <column name="description" value="Reasons for rejecting test results" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="name" value="resultRejectionReasons" />
+            <column name="local_abbrev" value="resReject" />
+        </insert>
+    </changeSet>
+    <changeSet author="jfurlong" id="2">
+        <comment>Adding reasons for rejection list</comment>
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="Measurement not available due to technical problem. Please submit another sample." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.technical.problem" />
+        </insert>
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value=" Sample / request form not / misidentified . Please submit another sample." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.form.misidentified" />
+        </insert>    
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="Sample / request form incompatible . Please submit another sample." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.form.incompatible" />
+        </insert>    
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="Free sample request form or vice versa. Please submit another sample." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.free.request.form" />
+        </insert>    
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="Sample transported / stored incorrectly. Please submit another sample." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.stored.incorrectly" />
+        </insert>    
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="Identification of improper sample. Please submit another sample." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.identification.improper" />
+        </insert>    
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="Sample was collected in the wrong tube. Please submit another sample." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.wrong.tube" />
+        </insert>    
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value=" Incorrect quantity of the sample. Please submit another sample." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.incorrect.quantity" />
+        </insert>    
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="The sample received is not suitable for test requested . Please submit the appropriate sample." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.not.suitable" />
+        </insert>    
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="The sample received is coagulated . Please submit another sample." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.coagulated" />
+        </insert>    
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="The received sample was refrigerated . Please submit another sample." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.was.referigerated" />
+        </insert>    
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="Tube received arrived broken or spilled . Please submit another sample." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.broken.tube" />
+        </insert>    
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="The received sample is hemolyzed . Please submit another sample." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.hemolyzed" />
+        </insert>    
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="The sample is contaminated. Please submit another sample." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.contaminated" />
+        </insert>    
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="The sample received was insufficient volume . Please submit another sample." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.insufficient.volume" />
+        </insert>    
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="Following a mistake in sample intake, a not requested test has been scheduled but not executed." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.mistake.not.executed" />
+        </insert>    
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="Please submit another sample. Need to re-test ." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.re-test" />
+        </insert>    
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="Need to re-test. Sample already available in the laboratory." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.already.available" />
+        </insert>    
+    </changeSet>
+    <changeSet author="jfurlong" id="3">
+        <comment>Add reject reasons to the result page</comment>
+        <insert schemaName="clinlims" tableName="site_information" >
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) " />
+            <column name="name"  value="allowResultRejection" />
+            <column name="description" value="If true then a technician has the ability to reject an individual test and select a reason for rejection" />
+            <column name="value" value="false" />
+            <column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'resultConfiguration' ) " />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="value_type" value="boolean" />
+            <column name="instruction_key" value="allow.result.rejections" />
+        </insert>
+    </changeSet>
+    <changeSet id="17" author="paulsc">
+        <comment>drops  Patient report with no alerts from site_information table</comment>
+        <delete tableName="site_information" >
+            <where>name = 'Patient report with no alerts'</where>
+        </delete>
+    </changeSet>
+    <changeSet author="jfurlong" id="4">
+        <comment>Remove reject reason where display_key = 'dictionary.reject.result.already.available'</comment>
+        <sql>
+            delete from clinlims.dictionary where display_key = 'dictionary.reject.result.already.available';
+            update clinlims.dictionary set sort_order = (100 * id); 
+        </sql>
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="The sample received is jaundiced. Please submit another sample." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.jaundiced" />
+            <column name="sort_order" valueNumeric=" (select (sort_order + 33) from clinlims.dictionary where display_key = 'dictionary.reject.result.hemolyzed') " />
+        </insert>
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="The sample received is lipemic. Please submit another sample." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.lipemic" />
+            <column name="sort_order" valueNumeric=" (select (sort_order + 66) from clinlims.dictionary where display_key = 'dictionary.reject.result.hemolyzed') " />
+        </insert>    
+        <insert tableName="dictionary" schemaName="clinlims">
+            <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+            <column name="is_active" value="Y" />
+            <column name="dict_entry" value="Other." />
+            <column name="lastupdated" value="  now() " />
+            <column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'resultRejectionReasons') " />
+            <column name="display_key" value="dictionary.reject.result.other" />
+            <column name="sort_order" valueNumeric=" (currval( 'dictionary_seq' ) * 100) " />
+        </insert>    
+    </changeSet>
+</databaseChangeLog>

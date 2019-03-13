@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<!-- Data specific to haiti Clinical -->
+	
+	<changeSet author="paulsc" id="1" context="haiti">
+		<comment>By default the haiti clinical sites can accept electronic orders</comment>
+		<update tableName="site_information">
+			<column name="value" value="true" />
+			<where>name = 'external orders'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="2" context="haiti" >
+		<comment>change panel name to match what is in test catalog</comment>
+		<update tableName="panel">
+			<column name="name" value="TS / TC" />
+			<column name="description" value="TS / TC" />
+			<where>name = 'TS/TC'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="3" context="haiti" >
+		<comment>Updates to the test catalog</comment>
+		<update tableName="panel">
+			<column name="name" value="Fluorescent / Auramine" />
+			<where>name = 'Fluorescent/Auramine' </where>
+		</update>
+		<update tableName="panel">
+			<column name="is_active" value="Y" />
+			<where>name = 'Malaria'</where>
+		</update>
+		<update tableName="test">
+			<column name="is_active" value='Y' />
+			<column name="sort_order" valueNumeric="495" />
+			<where>description = 'Phosphatase Acide(Serum)'</where>
+		</update>
+		<sqlFile path="OE3.3/HaitiClinicalTestUpdate.sql"/>
+	</changeSet>
+    <changeSet author="jfurlong" id="4" context="haiti" >
+        <comment>User permission to access Validation Bacteriology</comment>
+	    <insert schemaName="clinlims" tableName="system_role_module">
+            <column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+            <column name="has_select" value="Y" />
+            <column name="has_add"    value="Y" />
+            <column name="has_update" value="Y" />
+            <column name="has_delete" value="Y" />
+            <column name="system_role_id"   valueNumeric=" ( select id from system_role where name = 'Validation' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'ResultValidation:Bacteria' ) " />
+        </insert>
+    </changeSet>
+	<changeSet author="paulsc" id="4" context="haiti" >
+		<comment>Update the valid range of tests that were inconsistent in the test catalog</comment>
+		<update tableName="result_limits">
+			<column name="low_valid" valueNumeric="0" />
+			<column name="lastupdated" valueDate=" now() " />
+			<where>test_id in (select id from clinlims.test where description in('Cholesterol Total(Serum)', 'Cholest�rol total(Serum)', 'Triglyceride(Serum)','Triglyc�ride(Serum)' ) )</where>
+		</update>
+		<update tableName="result_limits">
+			<column name="high_valid" valueNumeric="62" />
+			<column name="lastupdated" valueDate=" now() " />
+			<where>test_id = (select id from clinlims.test where description = 'Hematocrite(Sang)' )</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="5" context="haiti">
+		<comment>Update Glycemie Provoquee, it was missing it's result type</comment>
+		<sqlFile path="OE3.3/HaitiClinicalTestUpdate2.sql"/>
+	</changeSet>
+	<changeSet author="paulsc" id="6" context="haiti">
+		<comment>Redoing 4, failed because of UTF8 issues</comment>
+		<sqlFile path="OE3.3/HaitiClinicalTestUpdate3.sql"/>
+	</changeSet>
+</databaseChangeLog>
+

@@ -94,9 +94,11 @@ function submitSearchForEnter(e){
     if (enterKeyPressed(e)) {
        var button = document.getElementById("searchButton");
        e.returnValue=false;
+       e.preventDefault();
        e.cancel = true;
        button.click();
     }
+    return false;
 }
 
 function submitSearchForClick(button){

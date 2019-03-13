@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+
+	<changeSet author="paulsc" id="8" context="CI_IPCI">
+		<comment>Adds needed dictionary values</comment>
+		<sqlFile path="OE2.8/testCatalogCI_IPCI/Dictionary.sql"/>
+	</changeSet>
+	
+	<changeSet author="paulsc" id="9" context="CI_IPCI">
+		<comment>Adds needed uom values</comment>
+		<sqlFile path="OE2.8/testCatalogCI_IPCI/UOM.sql"/>
+	</changeSet>
+
+	<changeSet author="paulsc" id="14" context="CI_IPCI">
+		<comment>Deletes all data needed to do a clean install</comment>
+		<sqlFile path="OE2.8/testCatalogCI_IPCI/cleanData.sql" />
+	</changeSet>
+
+	
+	<changeSet author="paulsc" id="1" context="CI_IPCI">
+		<comment>adds in the new panels</comment>
+		<sql>alter table clinlims.panel_item alter column test_id set not null</sql>
+		<sqlFile path="OE2.8/testCatalogCI_IPCI/Panel.sql" />
+	</changeSet>
+
+	<changeSet author="paulsc" id="2" context="CI_IPCI">
+		<comment>add the new sample types</comment>
+		<sqlFile path="OE2.8/testCatalogCI_IPCI/SampleType.sql" />
+		<sqlFile path="OE2.8/testCatalogCI_IPCI/TypeOrder.sql" />
+	</changeSet>
+
+
+
+	<changeSet author="paulsc" id="3" context="CI_IPCI">
+		<comment>Associates new and existing sample types with new and existing panels</comment>
+		<sqlFile path="OE2.8/testCatalogCI_IPCI/SampleTypePanel.sql" />
+	</changeSet>
+
+	<changeSet author="paulsc" id="4" context="CI_IPCI">
+		<comment>Order test sections</comment>
+		<sql>
+		INSERT INTO clinlims.test_section( id, "name", description, org_id, is_external, lastupdated, display_key )
+    VALUES (nextval( 'test_section_seq' ), 'Biologie Moleculaire', 'Biologie Moleculaire', 
+	                (select id from clinlims.organization where name = 'Haiti' ), 'N', now(), 'test.section.Moleoularbiology' );
+		</sql>
+		<sqlFile path="OE2.8/testCatalogCI_IPCI/SectionOrder.sql" />
+	</changeSet>
+
+	<changeSet author="paulsc" id="5" context="CI_IPCI">
+		<comment>adds tests</comment>
+		<sqlFile path="OE2.8/testCatalogCI_IPCI/Test.sql" />
+	</changeSet>
+	
+	<changeSet author="paulsc" id="6" context="CI_IPCI">
+		<comment>Add tests to panels</comment>
+		<loadData tableName="panel_item" schemaName="clinlims"
+			file="OE2.8/testCatalogCI_IPCI/TestPanel.csv">
+			<column name="id" header="id" type="NUMERIC" />
+			<column name="panel_id" header="panel_id" type="NUMERIC" />
+			<column name="test_id" header="test_id" type="NUMERIC" />
+			<column name="sort_order" header="sort_order" type="NUMERIC" />
+			<column name="lastupdated" header="lastupdated" type="DATE" />
+		</loadData>
+	</changeSet>
+
+	<changeSet author="paulsc" id="7" context="CI_IPCI">
+		<comment>Add tests to sample types</comment>
+		<sqlFile path="OE2.8/testCatalogCI_IPCI/TestSampleTypes.sql" />
+	</changeSet>
+
+	<changeSet author="paulsc" id="10" context="CI_IPCI">
+		<comment>Adds to test_result table</comment>
+		<sqlFile path="OE2.8/testCatalogCI_IPCI/TestResults.sql"/>
+	</changeSet>
+	<changeSet author="paulsc" id="11" context="CI_IPCI">
+		<comment>Adds result limits to test</comment>
+		<sqlFile path="OE2.8/testCatalogCI_IPCI/ResultLimits.sql"/>
+	</changeSet>
+	<changeSet author="paulsc" id="12" context="CI_IPCI" >
+		<comment>Adds dictionary result limits to tests</comment>
+		<sqlFile path="OE2.8/testCatalogCI_IPCI/DictResultLimits.sql"/>
+	</changeSet>
+	<changeSet author="paulsc" id="15" context="CI_IPCI" >
+		<comment>Adds lab order type bindings and test codes</comment>
+		<sqlFile path="OE2.8/testCatalogCI_IPCI/orderTypeResult.sql"/>
+		<sqlFile path="OE2.8/testCatalogCI_IPCI/testCodeResult.sql"/>
+	</changeSet>
+	
+
+</databaseChangeLog>
+

@@ -1,0 +1,43 @@
+id,name,description,is_grouping_role,grouping_parent,display_key
+nextval( 'system_role_seq' ) ,Maintenance Admin,"Able to add tests, new roles etc",false,NULL,role.maintanceAdmin 
+nextval( 'system_role_seq' ) ,User Admin,Add/remove users and assign roles and passwords,false,NULL,role.userAdmin
+nextval( 'system_role_seq' ) ,,Able to access all results forms,true,NULL,role.results.all 
+nextval( 'system_role_seq' ) ,Reports Admin,Able to access all reports,true,NULL,role.reports.all 
+nextval( 'system_role_seq' ) ,Test Result Entry,Able to enter initial test request,false,NULL,role.test.request.initial 
+nextval( 'system_role_seq' ) ,Test Request Verify,Able to verify the test request was entered correctly,false,NULL,role.test.request.verify 
+nextval( 'system_role_seq' ) ,Test Request Search,Able to search for and view test requests,false,NULL,role.test.request.search 
+nextval( 'system_role_seq' ) ,Test Request Edit,Able to edit already entered test requests,false,NULL,role.test.request.edit 
+nextval( 'system_role_seq' ) ,Demographics Entry,Able to enter demographics,false,NULL,role.demographics.entry 
+nextval( 'system_role_seq' ) ,Demographics Verify,Able to verify the demographics were entered correctly,false,NULL,role.demographics.verify 
+nextval( 'system_role_seq' ) ,Sample Reception,Able to view the HIV status for a subject number,false,NULL,role.reception.sample 
+nextval( 'system_role_seq' ) ,Biologist,Able to access all of the validation forms,false,NULL,role.biologist 
+nextval( 'system_role_seq' ) ,Quality control,Able to access quality control forms,false,NULL,role.qualiity.control 
+nextval( 'system_role_seq' ) ,Immunology super user,Able to enter all results for immunology,true,NULL,role.immunology.super.user 
+nextval( 'system_role_seq' ) ,Immunology manual,Able to manually enter results,false, ( select id from system_role where name = 'Immunology super user' ) ,role.immuno.manual 
+nextval( 'system_role_seq' ) ,Immunology automatic,Able to transfer results from analyzer to OpenLIS,true, ( select id from system_role where name = 'Immunology super user' ) ,role.immuno.automatic 
+nextval( 'system_role_seq' ) ,Facsalibur user,Verify results from Facsalibur analyzer,false, ( select id from system_role where name = 'Immunology automatic' ) ,role.immuno.facsaliibur 
+nextval( 'system_role_seq' ) ,Immunology Validation,Able to access Immunology validation,false, ( select id from system_role where name = 'Immunology super user' ) ,role.immuno.validation 
+nextval( 'system_role_seq' ) ,Hematology super user,Able to enter all results for hematology,true,NULL,role.hematology.super.user 
+nextval( 'system_role_seq' ) ,Hematology manual,Able to manually enter results,false, ( select id from system_role where name = 'Hematology super user' ) ,role.hematology.manual 
+nextval( 'system_role_seq' ) ,Hematology automatic,Able to transfer results from analyzer to OpenLIS,true, ( select id from system_role where name = 'Hematology super user' ) ,role.hematology.automatic 
+nextval( 'system_role_seq' ) ,Sysmex user,Verify results from Sysmex analyzer,false, ( select id from system_role where name = 'Hematology automatic' ) ,role.hematology.sysmex 
+nextval( 'system_role_seq' ) ,Hematology Validation,Able to access Hematology validation,false, ( select id from system_role where name = 'Hematology super user' ) ,role.hematology.sysmex 
+nextval( 'system_role_seq' ) ,Serology super user,Able to enter all results for serology,true,NULL,role.serology.super.user 
+nextval( 'system_role_seq' ) ,Serology manual,Able to manually enter results,false, ( select id from system_role where name = 'Serology super user' ) ,role.serology.manual 
+nextval( 'system_role_seq' ) ,Serology automatic,Able to transfer results from analyzer to OpenLIS,true, ( select id from system_role where name = 'Serology super user' ) ,role.serology.automatic 
+nextval( 'system_role_seq' ) ,Evolis user,Verify results from Evolis analyzer,false, ( select id from system_role where name = 'Serology automatic' ) ,role.serology.evolis 
+nextval( 'system_role_seq' ) ,Serology Validation,Able to access Serology validation,false, ( select id from system_role where name = 'Serology super user' ) ,role.serology.validation 
+nextval( 'system_role_seq' ) ,Biochemistry super user,Able to enter all results for biochemistry,true,NULL,role.biochem.super.user 
+nextval( 'system_role_seq' ) ,Biochemistry manual,Able to manually enter results,false, ( select id from system_role where name = 'Biochemistry super user' ) ,role.biochem.manual
+nextval( 'system_role_seq' ) ,Biochemistry automatic,Able to transfer results from analyzer to OpenLIS,true, ( select id from system_role where name = 'Biochemistry super user' ) ,role.biochem.automatic 
+nextval( 'system_role_seq' ) ,Cobas Integra user,Able to verify results for Cobas Integra analyzer,false, ( select id from system_role where name = 'Biochemistry automatic' ) ,role.biochem.cobas 
+nextval( 'system_role_seq' ) ,Biochemistry Validation,Able to access Biochemistry validation,false, ( select id from system_role where name = 'Biochemistry super user' ) ,role.biochem.validation 
+nextval( 'system_role_seq' ) ,Virology super user,Able to enter all results for virology,true,NULL,role.virology.super.user 
+nextval( 'system_role_seq' ) ,Virology manual,Able to manually enter results,false, ( select id from system_role where name = 'Virology super user' ) ,role.virology.manual 
+nextval( 'system_role_seq' ) ,Virology automatic,Able to transfer results from analyzer to OpenLIS,true, ( select id from system_role where name = 'Virology super user' ) ,role.virology.automatic 
+nextval( 'system_role_seq' ) ,ABI Prism user,Enter results from ABI Prism,false, ( select id from system_role where name = 'Virology automatic' ) ,role.virology.ABI 
+nextval( 'system_role_seq' ) ,Cobas Taqman user,Verify results from Cobas Taqman,false, ( select id from system_role where name = 'Virology automatic' ) ,role.virology.cobas.taqman 
+nextval( 'system_role_seq' ) ,Cobas Amplicor user,Enter/verify analyzer results,false, ( select id from system_role where name = 'Virology automatic' ) ,role.virology.cobas.amplicor 
+nextval( 'system_role_seq' ) ,BSD Duet user,Enter/verify analyzer results,false, ( select id from system_role where name = 'Virology automatic' ) ,role.virology.bsd 
+nextval( 'system_role_seq' ) ,ELISA Bioteck EL800 user,Enter/verify analyzer results,false, ( select id from system_role where name = 'Virology automatic' ) ,role.virology.elisa
+nextval( 'system_role_seq' ) ,Virology validation,Able to access Virology validation,false, ( select id from system_role where name = 'Virology super user' ) ,role.virology.validation

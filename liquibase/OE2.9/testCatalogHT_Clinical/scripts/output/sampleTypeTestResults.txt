@@ -1,0 +1,930 @@
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Compte des Globules Blancs(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Compte des Globules Blancs(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Compte des Globules Rouges(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Compte des Globules Rouges(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Hemoglobine(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Hemoglobine(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Hematocrite(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Hematocrite(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'VGM(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'VGM(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'TCMH(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'TCMH(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'CCMH(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'CCMH(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Plaquettes(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Plaquettes(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Neutrophiles(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Neutrophiles(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Lymphocytes(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Lymphocytes(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Mixtes(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Mixtes(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Monocytes(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Monocytes(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Eosinophiles(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Eosinophiles(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Basophiles(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Basophiles(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Vitesse de Sedimentation(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Vitesse de Sedimentation(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Temps de Coagulation en tube(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Temps de Coagulation en tube(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Temps de Coagulation(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Temps de Coagulation(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Temps de saignement(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Temps de saignement(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = $$Electrophorese de l'hemoglobine(Sang)$$ )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = $$Electrophorese de l'hemoglobine(Sang)$$ )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Sickling Test(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Sickling Test(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Taux reticulocytes - Auto(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Taux reticulocytes - Auto(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Taux reticulocytes - Manual(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Taux reticulocytes - Manual(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Temps de cephaline Activé(TCA)(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Temps de cephaline Activé(TCA)(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Temps de Prothrombine(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Temps de Prothrombine(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'INR(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'INR(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Facteur VIII(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Facteur VIII(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Facteur IX(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Facteur IX(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Heparinemie(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Heparinemie(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Anti-Thrombine III (Dosage)(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Anti-Thrombine III (Dosage)(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Anti-Thrombine III (Activite)(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Anti-Thrombine III (Activite)(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Groupe Sanguin - ABO(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Groupe Sanguin - ABO(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Groupe Sanguin - Rhesus(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Groupe Sanguin - Rhesus(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Test de comptabilite(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Test de comptabilite(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Test de comptabilite(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Test de comptabilite(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Coombs Test Direct(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Coombs Test Direct(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Coombs Test Indirect(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Coombs Test Indirect(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = $$Azote de l'Uree(Serum)$$ )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = $$Azote de l'Uree(Serum)$$ )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Uree(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Uree(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'creatinine(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'creatinine(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Glycemie(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Glycemie(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Glycemie(LCR/CSF)' )  and sample_type_id =  (select id from type_of_sample where description = 'LCR/CSF') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Glycemie(LCR/CSF)' )  ,    (select id from type_of_sample where description = 'LCR/CSF')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Proteines(LCR/CSF)' )  and sample_type_id =  (select id from type_of_sample where description = 'LCR/CSF') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Proteines(LCR/CSF)' )  ,    (select id from type_of_sample where description = 'LCR/CSF')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Chlore(LCR/CSF)' )  and sample_type_id =  (select id from type_of_sample where description = 'LCR/CSF') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Chlore(LCR/CSF)' )  ,    (select id from type_of_sample where description = 'LCR/CSF')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'glycemie(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'glycemie(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Albumine(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Albumine(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'α1 globuline(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'α1 globuline(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'α2 globuline(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'α2 globuline(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'β globuline(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'β globuline(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'ϒ globuline(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'ϒ globuline(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Phosphatase Acide(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Phosphatase Acide(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Chlorures(Plasma heparin�)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma heparin�') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Chlorures(Plasma heparin�)' )  ,    (select id from type_of_sample where description = 'Plasma heparin�')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Chlorures(Urines/24 heures)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines/24 heures') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Chlorures(Urines/24 heures)' )  ,    (select id from type_of_sample where description = 'Urines/24 heures')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'CPK(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'CPK(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Amylase(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Amylase(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Lipase(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Lipase(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Chlorures(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Chlorures(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Sodium(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Sodium(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Potassium(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Potassium(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Bicarbonates(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Bicarbonates(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Calcium(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Calcium(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'magnésium(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'magnésium(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'phosphore(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'phosphore(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Lithium(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Lithium(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Fer Serique(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Fer Serique(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Bilirubine totale(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Bilirubine totale(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Bilirubine directe(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Bilirubine directe(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Bilirubine indirecte(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Bilirubine indirecte(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'SGOT/ AST(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'SGOT/ AST(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'SGPT/ ALT(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'SGPT/ ALT(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Phosphatase Alcaline(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Phosphatase Alcaline(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Cholesterol Total(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Cholesterol Total(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Triglyceride(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Triglyceride(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Lipide(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Lipide(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'HDL(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'HDL(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'LDL(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'LDL(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'VLDL(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'VLDL(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'MBG(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'MBG(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Hémoglobine glycolisee(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Hémoglobine glycolisee(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'LDH(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'LDH(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Triponine I(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Triponine I(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Ph(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Ph(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'PaCO2(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'PaCO2(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'HCO3(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'HCO3(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'O2 Saturation(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'O2 Saturation(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'PaO2(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'PaO2(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'BE(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'BE(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Glycémie(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Glycémie(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Glycemie Provoquee Fasting()' )  and sample_type_id =  (select id from type_of_sample where description = '') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Glycemie Provoquee Fasting()' )  ,    (select id from type_of_sample where description = '')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Glycémie provoquée 1/2 hre(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Glycémie provoquée 1/2 hre(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Glycémie provoquée 1hre(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Glycémie provoquée 1hre(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Glycémie provoquée 2hres(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Glycémie provoquée 2hres(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Glycémie provoquée 3hres(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Glycémie provoquée 3hres(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Glycémie provoquée 4hres(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Glycémie provoquée 4hres(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Glycémie provoquée(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Glycémie provoquée(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Glycemie Postprandiale(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Glycemie Postprandiale(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Azote Urée(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Azote Urée(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Urée (calculée)(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Urée (calculée)(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Créatinine(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Créatinine(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'SGPT (ALT)(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'SGPT (ALT)(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'SGOT (AST)(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'SGOT (AST)(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Cholestérol total(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Cholestérol total(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'HDL-cholestérol(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'HDL-cholestérol(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'LDL-cholesterol (calculée)(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'LDL-cholesterol (calculée)(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'VLDL – cholesterol (calculée)(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'VLDL – cholesterol (calculée)(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Triglycéride(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Triglycéride(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Acide urique(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Acide urique(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Chlorure(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Chlorure(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Calcium (Ca++)(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Calcium (Ca++)(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Protéines totales(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Protéines totales(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Creatinine(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Creatinine(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Creatinine(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Creatinine(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Creatinine(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Creatinine(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'SGPT/ALT(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'SGPT/ALT(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'SGPT/ALT(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'SGPT/ALT(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'SGPT/ALT(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'SGPT/ALT(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'SGOT/AST(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'SGOT/AST(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'SGOT/AST(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'SGOT/AST(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'SGOT/AST(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'SGOT/AST(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'CRP Quantitatif(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'CRP Quantitatif(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'CRP Quantitatif(plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'CRP Quantitatif(plasma)' )  ,    (select id from type_of_sample where description = 'plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'C3 du Complement(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'C3 du Complement(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'C4 du complement(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'C4 du complement(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'C3 du Complement(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'C3 du Complement(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'C4 du complement(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'C4 du complement(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Facteur Rhumatoide(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Facteur Rhumatoide(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Bacteries(Secretion vaginale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion vaginale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Bacteries(Secretion vaginale)' )  ,    (select id from type_of_sample where description = 'Secretion vaginale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Levures Simples(Secretion vaginale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion vaginale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Levures Simples(Secretion vaginale)' )  ,    (select id from type_of_sample where description = 'Secretion vaginale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Levures Bourgeonantes(Secretion vaginale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion vaginale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Levures Bourgeonantes(Secretion vaginale)' )  ,    (select id from type_of_sample where description = 'Secretion vaginale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Trichomonas vaginalis(Secretion vaginale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion vaginale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Trichomonas vaginalis(Secretion vaginale)' )  ,    (select id from type_of_sample where description = 'Secretion vaginale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Globules Blancs(Secretion vaginale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion vaginale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Globules Blancs(Secretion vaginale)' )  ,    (select id from type_of_sample where description = 'Secretion vaginale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Globules Rouges(Secretion vaginale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion vaginale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Globules Rouges(Secretion vaginale)' )  ,    (select id from type_of_sample where description = 'Secretion vaginale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Filaments Myceliens(Secretion vaginale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion vaginale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Filaments Myceliens(Secretion vaginale)' )  ,    (select id from type_of_sample where description = 'Secretion vaginale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Cellules Epitheliales(Secretion vaginale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion vaginale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Cellules Epitheliales(Secretion vaginale)' )  ,    (select id from type_of_sample where description = 'Secretion vaginale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Bacteries(Secretion Urethrale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion Urethrale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Bacteries(Secretion Urethrale)' )  ,    (select id from type_of_sample where description = 'Secretion Urethrale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Levures Simples(Secretion Urethrale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion Urethrale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Levures Simples(Secretion Urethrale)' )  ,    (select id from type_of_sample where description = 'Secretion Urethrale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Levures Bourgeonantes(Secretion Urethrale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion Urethrale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Levures Bourgeonantes(Secretion Urethrale)' )  ,    (select id from type_of_sample where description = 'Secretion Urethrale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Trichomonas hominis(Secretion Urethrale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion Urethrale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Trichomonas hominis(Secretion Urethrale)' )  ,    (select id from type_of_sample where description = 'Secretion Urethrale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Globules Blancs(Secretion Urethrale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion Urethrale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Globules Blancs(Secretion Urethrale)' )  ,    (select id from type_of_sample where description = 'Secretion Urethrale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Globules Rouges(Secretion Urethrale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion Urethrale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Globules Rouges(Secretion Urethrale)' )  ,    (select id from type_of_sample where description = 'Secretion Urethrale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Filaments Myceliens(Secretion Urethrale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion Urethrale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Filaments Myceliens(Secretion Urethrale)' )  ,    (select id from type_of_sample where description = 'Secretion Urethrale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Cellules Epitheliales(Secretion Urethrale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion Urethrale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Cellules Epitheliales(Secretion Urethrale)' )  ,    (select id from type_of_sample where description = 'Secretion Urethrale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'KOH(Secretion vaginale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion vaginale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'KOH(Secretion vaginale)' )  ,    (select id from type_of_sample where description = 'Secretion vaginale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Test de Rivalta(Secretion vaginale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion vaginale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Test de Rivalta(Secretion vaginale)' )  ,    (select id from type_of_sample where description = 'Secretion vaginale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Catalase(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Catalase(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Oxydase(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Oxydase(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Coagulase libre(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Coagulase libre(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'DNAse(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'DNAse(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = $$Hydrolyse de l'esculine(Sang)$$ )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = $$Hydrolyse de l'esculine(Sang)$$ )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Urée-tryptophane(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Urée-tryptophane(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Mobilité(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Mobilité(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Test à la potasse(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Test à la potasse(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Test à la porphyrine(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Test à la porphyrine(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'ONPG(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'ONPG(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Réaction de Voges-Proskauer(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Réaction de Voges-Proskauer(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Camp-test(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Camp-test(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = $$Techniques d'agglutination(Sang)$$ )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = $$Techniques d'agglutination(Sang)$$ )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Coloration de Gram(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Coloration de Gram(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Coloration de Ziehl-Neelsen(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Coloration de Ziehl-Neelsen(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = $$Coloration à l'auramine(Sang)$$ )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = $$Coloration à l'auramine(Sang)$$ )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = $$Coloration à l'acridine orange(Sang)$$ )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = $$Coloration à l'acridine orange(Sang)$$ )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Coloration de Kinyoun(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Coloration de Kinyoun(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Frottis Vaginal/Gram(Secretion vaginale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion vaginale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Frottis Vaginal/Gram(Secretion vaginale)' )  ,    (select id from type_of_sample where description = 'Secretion vaginale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Frottis Uretral/Gram(Secretion Urethrale)' )  and sample_type_id =  (select id from type_of_sample where description = 'Secretion Urethrale') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Frottis Uretral/Gram(Secretion Urethrale)' )  ,    (select id from type_of_sample where description = 'Secretion Urethrale')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Cholera Test rapide(Selles)' )  and sample_type_id =  (select id from type_of_sample where description = 'Selles') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Cholera Test rapide(Selles)' )  ,    (select id from type_of_sample where description = 'Selles')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Coproculture(Selles)' )  and sample_type_id =  (select id from type_of_sample where description = 'Selles') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Coproculture(Selles)' )  ,    (select id from type_of_sample where description = 'Selles')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Couleur(Liquide Spermatique)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Spermatique') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Couleur(Liquide Spermatique)' )  ,    (select id from type_of_sample where description = 'Liquide Spermatique')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Liquefaction(Liquide Spermatique)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Spermatique') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Liquefaction(Liquide Spermatique)' )  ,    (select id from type_of_sample where description = 'Liquide Spermatique')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'pH(Liquide Spermatique)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Spermatique') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'pH(Liquide Spermatique)' )  ,    (select id from type_of_sample where description = 'Liquide Spermatique')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Fructose(Liquide Spermatique)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Spermatique') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Fructose(Liquide Spermatique)' )  ,    (select id from type_of_sample where description = 'Liquide Spermatique')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Volume(Liquide Spermatique)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Spermatique') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Volume(Liquide Spermatique)' )  ,    (select id from type_of_sample where description = 'Liquide Spermatique')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Compte de spermes(Liquide Spermatique)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Spermatique') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Compte de spermes(Liquide Spermatique)' )  ,    (select id from type_of_sample where description = 'Liquide Spermatique')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Formes normales(Liquide Spermatique)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Spermatique') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Formes normales(Liquide Spermatique)' )  ,    (select id from type_of_sample where description = 'Liquide Spermatique')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Formes anormales(Liquide Spermatique)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Spermatique') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Formes anormales(Liquide Spermatique)' )  ,    (select id from type_of_sample where description = 'Liquide Spermatique')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Motilite STAT(Liquide Spermatique)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Spermatique') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Motilite STAT(Liquide Spermatique)' )  ,    (select id from type_of_sample where description = 'Liquide Spermatique')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Motilite 1 heure(Liquide Spermatique)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Spermatique') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Motilite 1 heure(Liquide Spermatique)' )  ,    (select id from type_of_sample where description = 'Liquide Spermatique')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Motilite 3 heures(Liquide Spermatique)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Spermatique') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Motilite 3 heures(Liquide Spermatique)' )  ,    (select id from type_of_sample where description = 'Liquide Spermatique')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Coloration de Gram(Liquide Spermatique)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Spermatique') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Coloration de Gram(Liquide Spermatique)' )  ,    (select id from type_of_sample where description = 'Liquide Spermatique')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Culture Bacterienne(Liquide Biologique)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Biologique') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Culture Bacterienne(Liquide Biologique)' )  ,    (select id from type_of_sample where description = 'Liquide Biologique')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Hemoculture(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Hemoculture(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Couleur(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Couleur(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Aspect(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Aspect(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Densite(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Densite(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'pH(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'pH(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Proteines(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Proteines(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Glucose(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Glucose(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Cetones(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Cetones(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Bilirubine(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Bilirubine(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Sang(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Sang(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Leucocytes(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Leucocytes(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Acide ascorbique(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Acide ascorbique(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Urobilinogene(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Urobilinogene(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Nitrites(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Nitrites(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Hematies(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Hematies(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'cellules epitheliales(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'cellules epitheliales(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Bacteries(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Bacteries(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Levures(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Levures(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'filaments myceliens(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'filaments myceliens(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'spores(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'spores(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'trichomonas(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'trichomonas(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Cylindres(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Cylindres(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Cristaux(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Cristaux(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Couleur(Selles)' )  and sample_type_id =  (select id from type_of_sample where description = 'Selles') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Couleur(Selles)' )  ,    (select id from type_of_sample where description = 'Selles')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Aspect(Selles)' )  and sample_type_id =  (select id from type_of_sample where description = 'Selles') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Aspect(Selles)' )  ,    (select id from type_of_sample where description = 'Selles')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Sang Occulte(Selles)' )  and sample_type_id =  (select id from type_of_sample where description = 'Selles') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Sang Occulte(Selles)' )  ,    (select id from type_of_sample where description = 'Selles')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Bleu de Methylene(Selles)' )  and sample_type_id =  (select id from type_of_sample where description = 'Selles') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Bleu de Methylene(Selles)' )  ,    (select id from type_of_sample where description = 'Selles')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Examen Microscopique direct(Selles)' )  and sample_type_id =  (select id from type_of_sample where description = 'Selles') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Examen Microscopique direct(Selles)' )  ,    (select id from type_of_sample where description = 'Selles')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Examen Microscopique apres concentration(Selles)' )  and sample_type_id =  (select id from type_of_sample where description = 'Selles') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Examen Microscopique apres concentration(Selles)' )  ,    (select id from type_of_sample where description = 'Selles')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Recherche de cryptosporidium et Oocyste(Selles)' )  and sample_type_id =  (select id from type_of_sample where description = 'Selles') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Recherche de cryptosporidium et Oocyste(Selles)' )  ,    (select id from type_of_sample where description = 'Selles')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Recheche de microfilaire(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Recheche de microfilaire(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Malaria(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Malaria(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Malaria Test Rapide(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Malaria Test Rapide(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'CD4 en mm3(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'CD4 en mm3(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'CD4 en %(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'CD4 en %(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'VIH test rapide(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'VIH test rapide(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'VIH test rapide(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'VIH test rapide(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'VIH test rapide(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'VIH test rapide(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'VIH Elisa(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'VIH Elisa(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'VIH Elisa(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'VIH Elisa(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'VIH Elisa(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'VIH Elisa(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Hépatite B Ag(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Hépatite B Ag(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Hépatite B Ag(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Hépatite B Ag(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Hépatite B Ag(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Hépatite B Ag(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Hépatite C IgM(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Hépatite C IgM(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Hépatite C IgM(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Hépatite C IgM(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Hépatite C IgM(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Hépatite C IgM(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Dengue NS1 Ag(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Dengue NS1 Ag(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Dengue NS1 Ag(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Dengue NS1 Ag(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Dengue(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Dengue(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Recherche de BARR par Ziehl Neelsen Specimen 1(Liquide Pleural)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Pleural') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Recherche de BARR par Ziehl Neelsen Specimen 1(Liquide Pleural)' )  ,    (select id from type_of_sample where description = 'Liquide Pleural')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Recherche de BARR par Ziehl Neelsen Specimen 2(Liquide Pleural)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Pleural') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Recherche de BARR par Ziehl Neelsen Specimen 2(Liquide Pleural)' )  ,    (select id from type_of_sample where description = 'Liquide Pleural')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Recherche de BARR par Ziehl Neelsen Specimen 3(Liquide Pleural)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Pleural') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Recherche de BARR par Ziehl Neelsen Specimen 3(Liquide Pleural)' )  ,    (select id from type_of_sample where description = 'Liquide Pleural')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Recherche de BARR par Fluorochrome Specimen 1(Liquide Pleural)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Pleural') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Recherche de BARR par Fluorochrome Specimen 1(Liquide Pleural)' )  ,    (select id from type_of_sample where description = 'Liquide Pleural')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Recherche de BARR par Fluorochrome Specimen 2(Liquide Pleural)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Pleural') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Recherche de BARR par Fluorochrome Specimen 2(Liquide Pleural)' )  ,    (select id from type_of_sample where description = 'Liquide Pleural')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Recherche de BARR par Fluorochrome Specimen 3(Liquide Pleural)' )  and sample_type_id =  (select id from type_of_sample where description = 'Liquide Pleural') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Recherche de BARR par Fluorochrome Specimen 3(Liquide Pleural)' )  ,    (select id from type_of_sample where description = 'Liquide Pleural')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Recherche de BARR par Ziehl Neelsen Specimen 1(Sputum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sputum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Recherche de BARR par Ziehl Neelsen Specimen 1(Sputum)' )  ,    (select id from type_of_sample where description = 'Sputum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Recherche de BARR par Ziehl Neelsen Specimen 2(Sputum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sputum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Recherche de BARR par Ziehl Neelsen Specimen 2(Sputum)' )  ,    (select id from type_of_sample where description = 'Sputum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Recherche de BARR par Ziehl Neelsen Specimen 3(Sputum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sputum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Recherche de BARR par Ziehl Neelsen Specimen 3(Sputum)' )  ,    (select id from type_of_sample where description = 'Sputum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Recherche de BARR par Fluorochrome Specimen 1(Sputum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sputum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Recherche de BARR par Fluorochrome Specimen 1(Sputum)' )  ,    (select id from type_of_sample where description = 'Sputum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Recherche de BARR par Fluorochrome Specimen 2(Sputum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sputum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Recherche de BARR par Fluorochrome Specimen 2(Sputum)' )  ,    (select id from type_of_sample where description = 'Sputum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Recherche de BARR par Fluorochrome Specimen 3(Sputum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sputum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Recherche de BARR par Fluorochrome Specimen 3(Sputum)' )  ,    (select id from type_of_sample where description = 'Sputum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Culture de M. tuberculosis(Expectoration)' )  and sample_type_id =  (select id from type_of_sample where description = 'Expectoration') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Culture de M. tuberculosis(Expectoration)' )  ,    (select id from type_of_sample where description = 'Expectoration')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'PPD Qualitaitif(In Vivo)' )  and sample_type_id =  (select id from type_of_sample where description = 'In Vivo') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'PPD Qualitaitif(In Vivo)' )  ,    (select id from type_of_sample where description = 'In Vivo')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'PPD Quantitatif(In Vivo)' )  and sample_type_id =  (select id from type_of_sample where description = 'In Vivo') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'PPD Quantitatif(In Vivo)' )  ,    (select id from type_of_sample where description = 'In Vivo')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Prolactine(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Prolactine(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'FSH(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'FSH(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'FSH(Plasma heparin�)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma heparin�') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'FSH(Plasma heparin�)' )  ,    (select id from type_of_sample where description = 'Plasma heparin�')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'LH(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'LH(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'LH(Plasma heparin�)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma heparin�') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'LH(Plasma heparin�)' )  ,    (select id from type_of_sample where description = 'Plasma heparin�')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Oestrogene(Urines/24 heures)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines/24 heures') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Oestrogene(Urines/24 heures)' )  ,    (select id from type_of_sample where description = 'Urines/24 heures')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Progesterone(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Progesterone(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'T3(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'T3(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'B-HCG(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'B-HCG(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'B-HCG(Urine concentr� du matin)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urine concentr� du matin') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'B-HCG(Urine concentr� du matin)' )  ,    (select id from type_of_sample where description = 'Urine concentr� du matin')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Test de Grossesse(Urines)' )  and sample_type_id =  (select id from type_of_sample where description = 'Urines') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Test de Grossesse(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'T4(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'T4(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'TSH(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'TSH(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'LCR GRAM(LCR/CSF)' )  and sample_type_id =  (select id from type_of_sample where description = 'LCR/CSF') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'LCR GRAM(LCR/CSF)' )  ,    (select id from type_of_sample where description = 'LCR/CSF')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'LCR ZIELH NIELSEN(LCR/CSF)' )  and sample_type_id =  (select id from type_of_sample where description = 'LCR/CSF') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'LCR ZIELH NIELSEN(LCR/CSF)' )  ,    (select id from type_of_sample where description = 'LCR/CSF')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'TOXOPLASMOSE GONDII IgG Ac(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'TOXOPLASMOSE GONDII IgG Ac(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'TOXOPLASMOSE GONDII Ig M Ac(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'TOXOPLASMOSE GONDII Ig M Ac(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Malaria Test Rapide(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Malaria Test Rapide(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Syphilis Test Rapide(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Syphilis Test Rapide(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Syphilis Test Rapide(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Syphilis Test Rapide(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Malaria Test Rapide(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Malaria Test Rapide(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Syphilis Test Rapide(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Syphilis Test Rapide(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'HTLV I et II(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'HTLV I et II(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'HTLV I et II(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'HTLV I et II(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'HTLV I et II(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'HTLV I et II(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Syphilis RPR(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Syphilis RPR(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Syphilis RPR(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Syphilis RPR(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Syphilis TPHA(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Syphilis TPHA(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Syphilis RPR(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Syphilis RPR(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Syphilis TPHA(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Syphilis TPHA(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Syphilis TPHA(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Syphilis TPHA(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Helicobacter Pilori(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Helicobacter Pilori(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Helicobacter Pilori(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Helicobacter Pilori(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Helicobacter Pilori(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Helicobacter Pilori(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Herpes Simplex(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Herpes Simplex(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Herpes Simplex(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Herpes Simplex(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Chlamydia Ab(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Chlamydia Ab(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Chlamydia Ag(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Chlamydia Ag(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'CRP(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'CRP(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'CRP(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'CRP(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'CRP(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'CRP(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'ASO(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'ASO(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'ASO(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'ASO(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'ASO(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'ASO(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Test de Widal Ag O(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Test de Widal Ag O(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Test de Widal Ag H(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Test de Widal Ag H(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Typhoide Widal Ag O(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Typhoide Widal Ag O(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Typhoide Widal Ag H(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Typhoide Widal Ag H(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Mono Test(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Mono Test(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'LE Cell(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'LE Cell(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Dengue Ig G(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Dengue Ig G(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Dengue Ig A(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Dengue Ig A(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'CMV Ig G(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'CMV Ig G(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'CMV Ig A(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'CMV Ig A(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Cryptococcus Antigene dipstick(serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Cryptococcus Antigene dipstick(serum)' )  ,    (select id from type_of_sample where description = 'serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Clostridium Difficile Toxin A & B(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Clostridium Difficile Toxin A & B(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Determine VIH(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Determine VIH(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Determine VIH(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Determine VIH(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Determine VIH(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Determine VIH(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Colloidal Gold / Shangai Kehua VIH(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Colloidal Gold / Shangai Kehua VIH(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Colloidal Gold / Shangai Kehua VIH(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Colloidal Gold / Shangai Kehua VIH(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Colloidal Gold / Shangai Kehua VIH(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Colloidal Gold / Shangai Kehua VIH(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Syphilis Bioline(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Syphilis Bioline(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Syphilis Bioline(Plasma)' )  and sample_type_id =  (select id from type_of_sample where description = 'Plasma') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Syphilis Bioline(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'Syphilis Bioline(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Syphilis Bioline(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'PSA(Serum)' )  and sample_type_id =  (select id from type_of_sample where description = 'Serum') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'PSA(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+DELETE from clinlims.sampletype_test where test_id =  (select id from test where description = 'PSA(Sang)' )  and sample_type_id =  (select id from type_of_sample where description = 'Sang') ;
+INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'PSA(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );

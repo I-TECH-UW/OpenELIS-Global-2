@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+<changeSet author="jfurlong" id="3">
+    <comment>Adds status_of_sample entries for electron_orders</comment>
+    <insert schemaName="clinlims" tableName="status_of_sample" >
+        <column name="id" valueNumeric=" nextval( 'status_of_sample_seq' ) " /> 
+        <column name="code"  valueNumeric="1" />
+        <column name="description" value="The electronic order has been entered into OE" />
+        <column name="status_type" value="EXTERNAL_ORDER" />
+        <column name="name" value="Entered" />
+        <column name="lastupdated" valueDate=" now() " />
+        <column name="display_key" value="status.sample.entered" />
+        <column name="is_active" value="Y" />
+    </insert>
+    <insert schemaName="clinlims" tableName="status_of_sample" >
+        <column name="id" valueNumeric=" nextval( 'status_of_sample_seq' ) " /> 
+        <column name="code"  valueNumeric="1" />
+        <column name="description" value="The electronic order has been cancelled" />
+        <column name="status_type" value="EXTERNAL_ORDER" />
+        <column name="name" value="Cancelled" />
+        <column name="lastupdated" valueDate=" now() " />
+        <column name="display_key" value="status.sample.cancelled" />
+        <column name="is_active" value="Y" />
+    </insert>
+    <insert schemaName="clinlims" tableName="status_of_sample" >
+        <column name="id" valueNumeric=" nextval( 'status_of_sample_seq' ) " /> 
+        <column name="code"  valueNumeric="1" />
+        <column name="description" value="The patient associated with the electronic order has appeared at the lab" />
+        <column name="status_type" value="EXTERNAL_ORDER" />
+        <column name="name" value="Realized" />
+        <column name="lastupdated" valueDate=" now() " />
+        <column name="display_key" value="status.sample.realized" />
+        <column name="is_active" value="Y" />
+    </insert>
+</changeSet>
+<changeSet author="paulsc" id="3">
+	<comment>Adds configuration property of enabling accepting electronic orders</comment>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="external orders" />
+		<column name="description" value="Allow external sites to send electronic orders" />
+		<column name="value" value="false" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'sampleEntryConfig' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="value_type" value="boolean" />
+		<column name="instruction_key" value="instructions.sampleEntry.acceptOrders" />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="4">
+	<comment>Adds a service user</comment>
+	<insert tableName="system_user">
+		<column name="id" valueNumeric=" nextval('system_user_seq') " />
+		<column name="external_id" value="1" />
+		<column name="login_name" value="serviceUser" />		
+		<column name="last_name" value="External" />
+		<column name="first_name" value="Service" />
+		<column name="is_active" value="N" />
+		<column name="is_employee" value="N" />
+		<column name="lastupdated" valueDate=" now() " />		
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="5">
+	<comment>Add OBNumber and PCNumber as patient identity types</comment>
+	<insert tableName="patient_identity_type">
+		<column name="id"  valueNumeric=" nextval('patient_identity_type_seq') " />
+		<column name="identity_type" value="OB_NUMBER" />
+		<column name="description" value="Obstetrics ID number" />
+		<column name="lastupdated" valueDate=" now() " />
+	</insert>
+	<insert tableName="patient_identity_type">
+		<column name="id"  valueNumeric=" nextval('patient_identity_type_seq') " />
+		<column name="identity_type" value="PC_NUMBER" />
+		<column name="description" value="Primary care ID number" />
+		<column name="lastupdated" valueDate=" now() " />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="6">
+	<comment>Adds configuration property of adding supervisors signature to non-conformity report</comment>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="non-conformity signature" />
+		<column name="description" value="Add line for supervisor signature on non-conformity report" />
+		<column name="value" value="false" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'printedReportsConfig' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="value_type" value="boolean" />
+		<column name="instruction_key" value="instructions.reports.nonconformity.sig" />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="7">
+	<comment>Removes referred out from status_of_sample table</comment>
+	<delete tableName="status_of_sample">
+		<where>name = 'referred out' and status_type = 'ANALYSIS' </where>
+	</delete>
+</changeSet>
+<changeSet author="paulsc" id="8">
+	<comment>Adds configuration property of auto-filling collection date/time</comment>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="auto-fill collection date/time" />
+		<column name="description" value="Should the specimen collection time and date be autofilled" />
+		<column name="value" value="true" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'sampleEntryConfig' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="value_type" value="boolean" />
+		<column name="instruction_key" value="instructions.sampleEntry.autofillColl" />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="9">
+	<comment>Adds configuration property of space for results on workplan</comment>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="results on workplan" />
+		<column name="description" value="Should there be a space for results on workplan" />
+		<column name="value" value="false" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'workplanConfig' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="value_type" value="boolean" />
+		<column name="instruction_key" value="instructions.workplan.result" />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="10">
+	<comment>Add non-conformity site_information_domain</comment>
+	<insert tableName="site_information_domain">
+		<column name="id" valueNumeric=" nextval('site_information_domain_seq') " />
+		<column name="name" value="non_conformityConfig" />
+		<column name="description" value="Items which have to do with configuration of non-conformity page" />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="11">
+	<comment>Add reception and sample collection as non-conformity sections</comment>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="Reception as unit" />
+		<column name="description" value="Should reception be a place where a non-conformity is reported" />
+		<column name="value" value="true" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'non_conformityConfig' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="value_type" value="boolean" />
+		<column name="instruction_key" value="instructions.nonconformnity.reception" />
+	</insert>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="Collection as unit" />
+		<column name="description" value="Should sample collection be a place where a non-conformity is reported" />
+		<column name="value" value="false" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'non_conformityConfig' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="value_type" value="boolean" />
+		<column name="instruction_key" value="instructions.nonconformity.collection" />
+	</insert>	
+</changeSet>
+<changeSet author="paulsc" id="12">
+	<comment>Making the display of referred out tests optional on patient reports</comment>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="Patient report with no alerts" />
+		<column name="description" value="Variation on Haiti patinet report which does not have the alert column and does not show referrals" />
+		<column name="value" value="true" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'hiddenProperties' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="value_type" value="boolean" />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="13">
+	<comment>Correct spelling of CIRBA</comment>
+	<update tableName="organization">
+		<column name="name" value="CIRBA" />
+		<where>name = 'CIBRA'</where>
+	</update>
+</changeSet>
+<changeSet author="paulsc" id="14">
+	<comment>Adds site information of accession number prefix</comment>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="Accession number prefix" />
+		<column name="description" value="Prefix for SITEYEARNUM format.  Can not be changed if there are samples" />
+		<column name="value" value="" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'siteIdentity' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="value_type" value="text" />
+		<column name="instruction_key" value="instructions.accession.prefix" />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="15">
+	<comment>copies the site id to the accession number prefix</comment>
+	<sql>
+	UPDATE clinlims.site_information
+   		SET value= (select value from clinlims.site_information where name = 'siteNumber')
+ 		WHERE name = 'Accession number prefix';
+	</sql>
+</changeSet>
+<changeSet author="paulsc" id="16">
+	<comment>Migrate all of the AlphaSiteNumYear accession formats to SiteNumYear</comment>
+	<update tableName="site_information">
+		<column name="value" value="SiteYearNum" />
+		<where>value = 'AlphaSiteYearNum'</where>
+	</update>
+</changeSet>
+</databaseChangeLog>

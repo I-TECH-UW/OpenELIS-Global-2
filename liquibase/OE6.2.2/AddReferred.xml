@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--Some settings-->
+   <changeSet id="1" author="CI OpenELIS developers group" context="CDIRetroCI,CDIRetroCI_CT">
+   <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.menu where element_id= 'menu_results_referred';
+    		</sqlCheck>
+    </preConditions>
+    <comment>Add referred link in the menu</comment>
+    <sql>
+INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, 
+            display_key, tool_tip_key, new_window, is_active)
+    VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_results'),5,'menu_results_referred','/ReferredOutTests.do',default,'banner.menu.referredOut','tooltip.banner.menu.referredOut',default,default);
+   
+</sql>
+  </changeSet>
+  
+   <changeSet id="2" author="CI OpenELIS developers group" context="CDIRetroCI,CDIRetroCI_CT, ci_regional, ci_general">
+   <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="1">select count(*) from clinlims.menu where element_id= 'menu_results_referred';
+    		</sqlCheck>
+    </preConditions>
+    <comment>Add cedres as referral lab</comment>
+     <sql>
+     INSERT INTO clinlims.organization (id,name, city, zip_code, mls_sentinel_lab_flag, org_mlt_org_mlt_id, org_id, short_name, multiple_unit, street_address, state, internet_address, clia_num, pws_id, lastupdated, mls_lab_flag, is_active, local_abbrev,code) VALUES(nextval('clinlims.organization_seq'),'CEDRES',default,default,'N',null,null,default,default,default,default,default,default,default,now(),default,'Y',default,default);
+
+	 INSERT INTO clinlims.organization_organization_type(org_id, org_type_id)  VALUES ((select id from clinlims.organization where name ='CEDRES'),(select id from clinlims.organization_type where short_name = 'referralLab'));
+</sql>
+  </changeSet>  
+  
+</databaseChangeLog>

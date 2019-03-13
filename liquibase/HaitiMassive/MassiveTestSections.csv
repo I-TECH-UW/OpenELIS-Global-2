@@ -1,0 +1,7 @@
+id,name,description,org_id,is_external,lastupdated,display_key 
+nextval( 'test_section_seq' ) ,Serologie,Serologie, (select id from clinlims.organization where name = 'Haiti' ) ,N, now() , test.section.serology 
+nextval( 'test_section_seq' ) ,Biologie Moleculaire,Biologie Moleculaire, (select id from clinlims.organization where name = 'Haiti' ) ,N, now() , test.section.Moleoularbiology 
+nextval( 'test_section_seq' ) ,Liquides biologique,Liquides biologique, (select id from clinlims.organization where name = 'Haiti' ) ,N, now() , test.section.Liquidbiology 
+nextval( 'test_section_seq' ) ,Endocrinologie,Endocrinologie, (select id from clinlims.organization where name = 'Haiti' ) ,N, now() , test.section.Endocrinology 
+nextval( 'test_section_seq' ) ,Cytobacteriologie,Cytobacteriologie, (select id from clinlims.organization where name = 'Haiti' ) ,N, now() , test.section.Cytobacteriologie
+nextval( 'test_section_seq' ) ,Mycrobacteriology,Mycrobacteriology, (select id from clinlims.organization where name = 'Haiti' ) ,N, now() , test.section.Mycobacteriology

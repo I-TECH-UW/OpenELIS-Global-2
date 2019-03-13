@@ -1,0 +1,1021 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+<changeSet author="paulsc" id="1" context="haiti">
+	<comment>Updates to the metadata</comment>
+	<sql>
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , 'Positif 4+' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , 'Legerement trouble' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , 'Sanguinolant' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , 'Grisatre' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , 'Glaireuse' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , 'Absence de BAAR' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+	INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active, sort_order )
+	    VALUES ( nextval( 'type_of_sample_seq' ) , 'In Vivo','H', now() , 'In Vivo', 'sample.type.InVivo', 'Y', 200);
+	INSERT INTO clinlims.panel( id, name, description, lastupdated, display_key, sort_order) 
+	    VALUES (nextval( 'panel_seq' ) , 'PPD' , 'PPD' , now() ,'panel.name.ppd' ,330);
+	INSERT INTO clinlims.sampletype_panel (id, sample_type_id, panel_id ) 
+		VALUES (nextval( 'sample_type_panel_seq') , (select id from clinlims.type_of_sample where description = 'In Vivo' ) , (select id from clinlims.panel where name = 'PPD' ) );
+	INSERT INTO unit_of_measure( id, name , description, lastupdated) 
+		VALUES ( nextval( 'unit_of_measure_seq' ) , 'mm' , 'mm' , now());    
+	INSERT INTO unit_of_measure( id, name , description, lastupdated) 
+		VALUES ( nextval( 'unit_of_measure_seq' ) , 'UI' , 'UI' , now());    	
+	</sql>
+</changeSet>
+<changeSet author="paulsc" id="2" context="haiti">
+	<comment>Updates to specific tables</comment>	
+	<update tableName="dictionary" schemaName="clinlims">
+		<column name="dict_entry" value="Semi Liquide" />
+		<where>dict_entry = 'semi liquide'</where>
+	</update>
+
+	<update tableName="test">
+		<column name="reporting_description" value="GB" />
+		<where>reporting_description = 'WBC' </where>
+	</update>
+
+	<update tableName="test">
+		<column name="reporting_description" value="GR" />
+		<where>reporting_description = 'RBC' </where>
+	</update>
+	
+	<update tableName="test">
+		<column name="description" value="Trichomonas hominis(Secretion Urethrale)"/>
+		<column name="local_abbrev" value="Trichomonas hominis"/>
+		<column name="name" value="Trichomonas hominis"/>
+		<column name="reporting_description" value="Tricho hom" />
+		<where>description = 'Trichomonas vaginalis(Secretion Urethrale)'	</where>
+	</update>
+	<update tableName="test_result" schemaName="clinlims">
+		<column name="sort_order" valueNumeric="279"/>
+		<where>test_id = ( select id from clinlims.test where description = 'Aspect(Urines)') and sort_order = 278</where>
+	</update>
+	
+	<update tableName="test_result" schemaName="clinlims">
+		<column name="sort_order" valueNumeric="393" />
+		<where>test_id = ( select id from clinlims.test where description = 'Couleur(Selles)') and sort_order = 392</where>
+	</update>
+	<update tableName="test_result" schemaName="clinlims">
+		<column name="value" valueNumeric=" ( SELECT CAST(id as varchar(80)) from clinlims.dictionary where dict_entry = 'Sanguinolant'  ) " />
+		<where>test_id = ( select id from clinlims.test where description = 'Couleur(Selles)') and sort_order = 388</where>
+	</update>
+	<update tableName="test_result" schemaName="clinlims">
+		<column name="value" valueNumeric=" ( SELECT CAST(max(id) as varchar(80)) from clinlims.dictionary where dict_entry = 'Pateuse' ) "/>
+		<where>test_id = ( select id from clinlims.test where description = 'Aspect(Selles)') and CAST(value as numeric) = ( SELECT max(id) from clinlims.dictionary where dict_entry = 'pateuse' ) </where>
+	</update>
+	<update tableName="test_result" schemaName="clinlims">
+		<column name="sort_order" valueNumeric=" sort_order + 20" />
+		<where>test_id = ( select id from clinlims.test where description = 'Cylindres(Urines)') and sort_order > 365</where>
+	</update>
+	<update tableName="test_result" schemaName="clinlims">
+		<column name="sort_order" valueNumeric=" sort_order + 20" />
+		<where>test_id = ( select id from clinlims.test where description = 'Cristaux(Urines)') and sort_order > 376</where>
+	</update>
+	
+	<delete tableName="test_result" schemaName="clinlims">
+		<where>test_id = ( select id from clinlims.test where description = 'HCV - Hépatite C(Plasma)')</where>
+	</delete>
+
+	<delete tableName="test_result" schemaName="clinlims">
+		<where>test_id = ( select id from clinlims.test where description = 'HCV - Hépatite C(Serum)')</where>
+	</delete>
+	
+	<delete tableName="test_result" schemaName="clinlims">
+		<where>test_id = ( select id from clinlims.test where description = 'Recherche de BAAR Auramine(Liquide Pleural)')</where>
+	</delete>
+	
+	<delete tableName="test_result" schemaName="clinlims">
+		<where>test_id = ( select id from clinlims.test where description = 'Recherche de BAAR Zielh Neelsen(Liquide Pleural)')</where>
+	</delete>
+	
+	<update tableName="test">
+		<column name="description" value="Recherche de BAAR A(Expectoration)"/>
+		<column name="local_abbrev" value="Recherche de BAAR A"/>
+		<column name="reporting_description" value="BAAR A" />
+		<column name="name" value="Recherche de BAAR A"/>
+		<where>description = 'Recherche de BAAR(Expectoration)'	</where>
+	</update>
+	
+	<update tableName="test_result" schemaName="clinlims">
+		<column name="value" valueNumeric =" CAST( (select id from clinlims.dictionary where dict_entry = 'Absence de BAAR') as varchar) " />
+		<where>test_id = ( select id from clinlims.test where description = 'Recherche de BAAR A(Expectoration)' ) and
+		       value = CAST( (select id from clinlims.dictionary where dict_entry = 'Rares') as varchar )</where>
+	</update>
+	
+	<delete tableName="test_result" schemaName="clinlims" >
+		<where>test_id = ( select id from clinlims.test where description = 'Recherche de BAAR A(Expectoration)' ) and
+		       value in ( CAST( (select max(id) from clinlims.dictionary where dict_entry = 'Negatif') as varchar ) ) </where>
+	</delete>
+	
+	<update tableName="test_result" schemaName="clinlims">
+		<column name="value" valueNumeric =" CAST( (select id from clinlims.dictionary where dict_entry = 'Absence de BAAR') as varchar) " />
+		<where>test_id = ( select id from clinlims.test where description = 'Recherche de BK Auramine(Expectoration)' ) and
+		       value = CAST( (select id from clinlims.dictionary where dict_entry = 'Rares') as varchar )</where>
+	</update>
+	
+	<delete tableName="test_result" schemaName="clinlims" >
+		<where>test_id = ( select id from clinlims.test where description = 'Recherche de BK Auramine(Expectoration)' ) and
+		       value in ( CAST( (select max(id) from clinlims.dictionary where dict_entry = 'Negatif') as varchar ) ) </where>
+	</delete>
+	
+	<update tableName="test" schemaName="clinlims">
+		<column name="description" value="Recherche de BK Crachat A Auramine(Expectoration)" />
+	    <column name="reporting_description" value="Crachat A" />
+	    <column name="local_abbrev" value="Crachat A" />
+	    <column name="name" value="Recherche de BK Crachat A Auramine" />
+	    <where>name = 'Recherche de BK Auramine'</where>
+	</update>
+	
+	<update tableName="test" schemaName="clinlims">
+		<column name="description" value="Typhoide Test Rapide -Ag O(Serum)" />
+	    <column name="local_abbrev" value="Typhoide Ag O" />
+	    <column name="name" value="Typhoide Test Rapide -Ag O" />
+	    <column name="reporting_description" value="Typhoide Ag O"></column>
+	    <where>name = 'Typhoide Test Rapide'</where>
+	</update>
+	
+	<update tableName="result_limits" schemaName="clinlims">
+		<column name="gender" value="" />
+		<column name="high_normal" valueNumeric="20.00" />
+		<where>test_id = ( select id from clinlims.test where description = 'Prolactine(Serum)') AND
+		gender = 'M'</where>
+	</update>
+	
+	<delete tableName="result_limits" schemaName="clinlims">
+		<where>test_id = ( select id from clinlims.test where description = 'Prolactine(Serum)') AND
+		gender = 'F'</where>
+	</delete>
+	
+	<update tableName="result_limits" schemaName="clinlims">
+		<column name="low_normal" valueNumeric="1.00" />
+		<column name="high_normal" valueNumeric="5.00" />
+		<where>test_id = ( select id from clinlims.test where description = 'FSH(Serum)') </where>
+	</update>
+	
+	<update tableName="result_limits" schemaName="clinlims">
+		<column name="low_normal" valueNumeric="1.00" />
+		<column name="high_normal" valueNumeric="5.00" />
+		<where>test_id = ( select id from clinlims.test where description = 'FSH(Plasma hepariné)') </where>
+	</update>
+	
+	<update tableName="result_limits" schemaName="clinlims">
+		<column name="low_normal" valueNumeric="1.00" />
+		<column name="high_normal" valueNumeric="7.00" />
+		<where>test_id = ( select id from clinlims.test where description = 'LH(Serum)') </where>
+	</update>
+	
+	<update tableName="result_limits" schemaName="clinlims">
+		<column name="low_normal" valueNumeric="1.00" />
+		<column name="high_normal" valueNumeric="7.00" />
+		<where>test_id = ( select id from clinlims.test where description = 'LH(Plasma hepariné)') </where>
+	</update>
+	
+	<update tableName="result_limits" schemaName="clinlims">
+		<column name="low_normal" valueNumeric="7.00" />
+		<column name="high_normal" valueNumeric="370.00" />
+		<where>test_id = ( select id from clinlims.test where description = 'Oestrogene(Urines/24 heures)') </where>
+	</update>
+	
+	<update tableName="result_limits" schemaName="clinlims">
+		<column name="low_normal" valueNumeric="7.00" />
+		<column name="high_normal" valueNumeric="370.00" />
+		<where>test_id = ( select id from clinlims.test where description = 'Oestrogene(Urines/24 heures)') </where>
+	</update>
+
+	<update tableName="result_limits" schemaName="clinlims">
+		<column name="gender" value="" />
+		<column name="low_normal" valueNumeric="0.47" />
+		<column name="high_normal" valueNumeric="1.57" />
+		<where>test_id = ( select id from clinlims.test where description = 'Progesterone(Serum)') AND
+		gender = 'M'</where>
+	</update>
+	
+	<update tableName="result_limits" schemaName="clinlims">
+		<column name="low_normal" valueNumeric="0" />
+		<column name="high_normal" value="Infinity" />
+		<column name="low_valid" valueNumeric="0" />
+		<column name="high_valid" value="Infinity" />
+		<where>test_id = ( select id from clinlims.test where description = 'Alpha-foetoproteine(Liquide Amniotique)') </where>
+	</update>
+	
+	
+	<update tableName="result_limits" schemaName="clinlims">
+		<column name="low_normal" valueNumeric="0" />
+		<column name="high_normal" value="Infinity" />
+		<column name="low_valid" valueNumeric="0" />
+		<column name="high_valid" value="Infinity" />
+		<where>test_id = ( select id from clinlims.test where description = 'dosage des phospholipides(Liquide Amniotique)') </where>
+	</update>
+
+	
+	<update tableName="result_limits" schemaName="clinlims">
+		<column name="low_normal" valueNumeric="1.00" />
+		<column name="high_normal" valueNumeric="5.00" />
+		<where>test_id = ( select id from clinlims.test where description like 'FSH(Plasma hep%') </where>
+	</update>
+
+	<update tableName="result_limits" schemaName="clinlims">
+		<column name="low_normal" valueNumeric="1.00" />
+		<column name="high_normal" valueNumeric="7.00" />
+		<where>test_id = ( select id from clinlims.test where description like 'LH(Plasma hep%') </where>
+	</update>
+
+	<delete tableName="result_limits" schemaName="clinlims">
+		<where>test_id = ( select id from clinlims.test where description = 'Progesterone(Serum)') AND
+		gender = 'F'</where>
+	</delete>
+	
+	<delete tableName="result_limits" schemaName="clinlims">
+		<where>test_id = ( select id from clinlims.test where description = 'B-HCG(Serum)') AND
+		test_result_type_id = ( select id from clinlims.type_of_test_result where test_result_type = 'D') </where>
+	</delete>
+
+	<update tableName="result_limits" schemaName="clinlims">
+		<column name="low_normal" valueNumeric="0" />
+		<column name="high_normal" valueNumeric="4" />
+		<column name="low_valid" valueNumeric="0" />
+		<column name="high_valid" valueNumeric="8" />
+		<where>test_id = ( select id from clinlims.test where description = 'BE(Serum)') </where>
+	</update>
+
+	<delete tableName="test_result" schemaName="clinlims">
+		<where>test_id = ( select id from clinlims.test where description = 'Cholera Test rapide(Selles)')</where>
+	</delete>
+	
+	<delete tableName="test_result" schemaName="clinlims">
+		<where>test_id = ( select id from clinlims.test where description = 'Culture de M. tuberculosis(Expectoration)')</where>
+	</delete>
+
+	<update tableName="test_result" schemaName="clinlims" >
+		<column name="tst_rslt_type" value="N" />
+		<where>test_id = ( select id from clinlims.test where description = 'Facteur VIII(Plasma)' ) </where>
+	</update>
+	
+	<update tableName="test_result" schemaName="clinlims" >
+		<column name="tst_rslt_type" value="N" />
+		<where>test_id = ( select id from clinlims.test where description = 'Anti-Thrombine III (Dosage)(Plasma)' ) </where>
+	</update>
+	
+	<update tableName="test" schemaName="clinlims">
+		<column name="uom_id" valueNumeric=" ( select id from clinlims.unit_of_measure where name = 'UI') " />
+		<where>description = 'B-HCG(Serum)'</where>
+	</update>
+	<sql>
+	
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , '0-1/ch' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , '1-5/ch' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , '5-10/ch' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , '10-15/ch' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , '15-20/ch' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , '20-25/ch' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , '25-30/ch' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , '30-35/ch' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , '35-40/ch' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , '40-45/ch' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , '45-50/ch' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , '50-100/ch' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+	INSERT INTO clinlims.dictionary ( id, is_active, dict_entry, lastupdated, dictionary_category_id ) 
+		VALUES ( nextval( 'dictionary_seq' ) , 'Y' , 'Superieur a 100/ch' , now(), ( select id from clinlims.dictionary_category where description = 'Haiti Lab' ));
+		
+	DELETE FROM test_result where value in ( SELECT CAST( id as varchar(80)) from clinlims.dictionary where dict_entry in ('Positif 1+','Positif 2+','Positif 3+')) and 
+	       test_id in (SELECT id from clinlims.test where description in ('Trichomonas vaginalis(Secretion vaginale)','Globules Blancs(Secretion vaginale)',
+	                                                                      'Globules Rouges(Secretion vaginale)','Trichomonas hominis(Secretion Urethrale)',
+	                                                                      'Globules Blancs(Secretion Urethrale)','Globules Rouges(Secretion Urethrale)'));
+	                                                                      
+	DELETE FROM test_result where value in ( SELECT CAST( id as varchar(80)) from clinlims.dictionary where dict_entry ILIKE '%champs%') and 
+	       test_id in (SELECT id from clinlims.test where description in ('Hematies(Urines)', 'Leucocytes(Urines)',
+	                                                                      'cellules epitheliales(Urines)','Bacteries(Urines)',
+	                                                                      'Levures(Urines)','filaments myceliens(Urines)',
+	                                                                      'spores(Urines)','trichomonas(Urines)',
+	                                                                      'Cylindres(Urines)','Cristaux(Urines)'));
+	                                                                      
+	                                                                      
+	DELETE FROM test_result where value in ( SELECT CAST(max(id) as varchar(80)) from clinlims.dictionary where dict_entry ILIKE 'En amas') and 
+	       test_id in (SELECT id from clinlims.test where description in ('cellules epitheliales(Urines)','Bacteries(Urines)',
+	                                                                      'Levures(Urines)','filaments myceliens(Urines)',
+	                                                                      'spores(Urines)','trichomonas(Urines)',
+	                                                                      'Cylindres(Urines)','Cristaux(Urines)'));
+	                                                                      
+	                                                                      
+	--select list values
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Bacteries(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 4+' )  , now() , 115);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Levures Simples(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 4+' )  , now() , 119);
+    INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Levures Bourgeonantes(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 4+' )  , now() , 123);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Filaments Myceliens(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 4+' )  , now() , 139);		
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cellules Epitheliales(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 4+' )  , now() , 143);
+	
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas vaginalis(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='0-1/ch' )  , now() , 750);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas vaginalis(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='1-5/ch' )  , now() , 751);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas vaginalis(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='5-10/ch' )  , now() , 752);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas vaginalis(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='10-15/ch' )  , now() , 753);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas vaginalis(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='15-20/ch' )  , now() , 754);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas vaginalis(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='20-25/ch' )  , now() , 755);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas vaginalis(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='25-30/ch' )  , now() , 756);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas vaginalis(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='30-35/ch' )  , now() , 757);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas vaginalis(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='35-40/ch' )  , now() , 758);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas vaginalis(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='40-45/ch' )  , now() , 759);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas vaginalis(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry = '45-50/ch' )  , now() , 760);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas vaginalis(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='50-100/ch' )  , now() , 761);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas vaginalis(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Superieur a 100/ch' )  , now() , 762);
+
+INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='0-1/ch' )  , now() , 763);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='1-5/ch' )  , now() , 764);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='5-10/ch' )  , now() , 765);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='10-15/ch' )  , now() , 766);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='15-20/ch' )  , now() , 767);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='20-25/ch' )  , now() , 768);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='25-30/ch' )  , now() , 769);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='30-35/ch' )  , now() , 770);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='35-40/ch' )  , now() , 771);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='40-45/ch' )  , now() , 772);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry = '45-50/ch' )  , now() , 773);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='50-100/ch' )  , now() , 774);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Superieur a 100/ch' )  , now() , 775);
+		
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='0-1/ch' )  , now() , 776);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='1-5/ch' )  , now() , 777);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='5-10/ch' )  , now() , 778);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='10-15/ch' )  , now() , 779);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='15-20/ch' )  , now() , 780);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='20-25/ch' )  , now() , 781);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='25-30/ch' )  , now() , 782);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='30-35/ch' )  , now() , 783);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='35-40/ch' )  , now() , 784);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='40-45/ch' )  , now() , 785);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry = '45-50/ch' )  , now() , 786);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='50-100/ch' )  , now() , 787);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion vaginale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Superieur a 100/ch' )  , now() , 788);
+		
+		
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas hominis(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='0-1/ch' )  , now() , 789);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas hominis(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='1-5/ch' )  , now() , 790);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas hominis(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='5-10/ch' )  , now() , 791);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas hominis(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='10-15/ch' )  , now() , 792);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas hominis(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='15-20/ch' )  , now() , 793);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas hominis(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='20-25/ch' )  , now() , 794);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas hominis(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='25-30/ch' )  , now() , 795);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas hominis(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='30-35/ch' )  , now() , 796);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas hominis(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='35-40/ch' )  , now() , 797);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas hominis(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='40-45/ch' )  , now() , 798);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas hominis(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry = '45-50/ch' )  , now() , 799);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas hominis(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='50-100/ch' )  , now() , 800);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Trichomonas hominis(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Superieur a 100/ch' )  , now() , 801);
+
+		
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='0-1/ch' )  , now() , 802);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='1-5/ch' )  , now() , 803);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='5-10/ch' )  , now() , 804);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='10-15/ch' )  , now() , 805);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='15-20/ch' )  , now() , 806);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='20-25/ch' )  , now() , 807);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='25-30/ch' )  , now() , 808);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='30-35/ch' )  , now() , 809);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='35-40/ch' )  , now() , 810);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='40-45/ch' )  , now() , 811);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry = '45-50/ch' )  , now() , 812);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='50-100/ch' )  , now() , 813);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Blancs(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Superieur a 100/ch' )  , now() , 814);
+
+		
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='0-1/ch' )  , now() , 815);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='1-5/ch' )  , now() , 816);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='5-10/ch' )  , now() , 817);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='10-15/ch' )  , now() , 818);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='15-20/ch' )  , now() , 819);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='20-25/ch' )  , now() , 820);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='25-30/ch' )  , now() , 821);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='30-35/ch' )  , now() , 822);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='35-40/ch' )  , now() , 823);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='40-45/ch' )  , now() , 824);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry = '45-50/ch' )  , now() , 825);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='50-100/ch' )  , now() , 826);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Globules Rouges(Secretion Urethrale)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Superieur a 100/ch' )  , now() , 827);
+
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Aspect(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Legerement trouble' )  , now() , 278);
+
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Hematies(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='0-1/ch' )  , now() , 915);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Hematies(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='1-5/ch' )  , now() , 916);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Hematies(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='5-10/ch' )  , now() , 917);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Hematies(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='10-15/ch' )  , now() , 918);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Hematies(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='15-20/ch' )  , now() , 919);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Hematies(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='20-25/ch' )  , now() , 920);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Hematies(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='25-30/ch' )  , now() , 921);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Hematies(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='30-35/ch' )  , now() , 922);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Hematies(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='35-40/ch' )  , now() , 923);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Hematies(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='40-45/ch' )  , now() , 924);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Hematies(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry = '45-50/ch' )  , now() , 925);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Hematies(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='50-100/ch' )  , now() , 926);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Hematies(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Superieur a 100/ch' )  , now() , 927);
+		
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='0-1/ch' )  , now() , 935);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='1-5/ch' )  , now() , 936);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='5-10/ch' )  , now() , 937);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='10-15/ch' )  , now() , 938);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='15-20/ch' )  , now() , 939);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='20-25/ch' )  , now() , 940);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='25-30/ch' )  , now() , 941);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='30-35/ch' )  , now() , 942);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='35-40/ch' )  , now() , 943);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='40-45/ch' )  , now() , 944);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry = '45-50/ch' )  , now() , 945);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='50-100/ch' )  , now() , 946);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Superieur a 100/ch' )  , now() , 947);
+		
+    INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'trichomonas(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='0-1/ch' )  , now() , 955);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'trichomonas(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='1-5/ch' )  , now() , 956);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'trichomonas(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='5-10/ch' )  , now() , 957);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'trichomonas(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='10-15/ch' )  , now() , 958);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'trichomonas(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='15-20/ch' )  , now() , 959);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'trichomonas(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='20-25/ch' )  , now() , 960);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'trichomonas(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='25-30/ch' )  , now() , 961);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'trichomonas(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='30-35/ch' )  , now() , 962);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'trichomonas(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='35-40/ch' )  , now() , 963);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'trichomonas(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='40-45/ch' )  , now() , 964);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'trichomonas(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry = '45-50/ch' )  , now() , 965);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'trichomonas(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='50-100/ch' )  , now() , 966);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'trichomonas(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Superieur a 100/ch' )  , now() , 967);
+		
+		
+    INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cylindres(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='0-1/ch' )  , now() , 362);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cylindres(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='1-5/ch' )  , now() , 363);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cylindres(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='5-10/ch' )  , now() , 364);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cylindres(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='10-15/ch' )  , now() , 365);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cylindres(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='15-20/ch' )  , now() , 366);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cylindres(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='20-25/ch' )  , now() , 367);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cylindres(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='25-30/ch' )  , now() , 368);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cylindres(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='30-35/ch' )  , now() , 369);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cylindres(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='35-40/ch' )  , now() , 370);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cylindres(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='40-45/ch' )  , now() , 381);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cylindres(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry = '45-50/ch' )  , now() , 382);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cylindres(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='50-100/ch' )  , now() , 383);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cylindres(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Superieur a 100/ch' )  , now() , 384);
+	
+	
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cristaux(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='0-1/ch' )  , now() , 373);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cristaux(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='1-5/ch' )  , now() , 374);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cristaux(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='5-10/ch' )  , now() , 375);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cristaux(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='10-15/ch' )  , now() , 376);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cristaux(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='15-20/ch' )  , now() , 377);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cristaux(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='20-25/ch' )  , now() , 378);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cristaux(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='25-30/ch' )  , now() , 379);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cristaux(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='30-35/ch' )  , now() , 380);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cristaux(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='35-40/ch' )  , now() , 381);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cristaux(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='40-45/ch' )  , now() , 382);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cristaux(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry = '45-50/ch' )  , now() , 383);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cristaux(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='50-100/ch' )  , now() , 384);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cristaux(Urines)' ) , 'M' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Superieur a 100/ch' )  , now() , 385);
+	
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'cellules epitheliales(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Rare' )  , now() , 1115);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'cellules epitheliales(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 1+' )  , now() , 1119);
+    INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'cellules epitheliales(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 2+' )  , now() , 1123);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'cellules epitheliales(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 3+' )  , now() , 1139);		
+	
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Bacteries(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Rare' )  , now() , 1218);
+    INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Bacteries(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 1+' )  , now() , 1219);
+    INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Bacteries(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 2+' )  , now() , 1223);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Bacteries(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 3+' )  , now() , 1239);		
+	
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Levures(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Rare' )  , now() , 1318);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Levures(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 1+' )  , now() , 1319);
+    INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Levures(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 2+' )  , now() , 1323);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Levures(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 3+' )  , now() , 1339);		
+	
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'filaments myceliens(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Rare' )  , now() , 1418);
+    INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'filaments myceliens(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 1+' )  , now() , 1419);
+    INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'filaments myceliens(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 2+' )  , now() , 1423);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'filaments myceliens(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 3+' )  , now() , 1439);		
+			
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'spores(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Rare' )  , now() , 1518);
+    INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'spores(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 1+' )  , now() , 1519);
+    INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'spores(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 2+' )  , now() , 1523);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'spores(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 3+' )  , now() , 1539);		
+			
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Couleur(Selles)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Grisatre' )  , now() , 392);		
+	
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Aspect(Selles)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Glaireuse' )  , now() , 400);		
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Aspect(Selles)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Molle' )  , now() , 401);		
+	
+	
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description like 'HCV - H%' and description like '%Plasma%' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif' )  , now() , 459);		
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description like 'HCV - H%' and description like '%Plasma%' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Negatif' )  , now() , 460);		
+	INSERT INTO result_limits(  id, test_id, test_result_type_id, lastupdated, normal_dictionary_id) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description like 'HCV - H%' and description like '%Plasma%' ) , (select id from clinlims.type_of_test_result where test_result_type = 'D' ) ,  now() , (select max(id) from clinlims.dictionary where dict_entry = 'Negatif' ) );
+	
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description like 'HCV - H%' and description like '%Serum%' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif' )  , now() , 460);		
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description like 'HCV - H%' and description like '%Serum%' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Negatif' )  , now() , 461);		
+	INSERT INTO result_limits(  id, test_id, test_result_type_id, lastupdated, normal_dictionary_id) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description like 'HCV - H%' and description like '%Serum%' ) , (select id from clinlims.type_of_test_result where test_result_type = 'D' ) ,  now() , (select max(id) from clinlims.dictionary where dict_entry = 'Negatif' ) );
+
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BAAR Auramine(Liquide Pleural)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Abs BK' )  , now() , 460);		
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BAAR Auramine(Liquide Pleural)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Pres BK 1+' )  , now() , 461);		
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BAAR Auramine(Liquide Pleural)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Pres BK 2+' )  , now() , 462);		
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BAAR Auramine(Liquide Pleural)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Pres BK 3+' )  , now() , 463);		
+
+
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BAAR Zielh Neelsen(Liquide Pleural)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Abs BK' )  , now() , 460);		
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BAAR Zielh Neelsen(Liquide Pleural)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Pres BK 1+' )  , now() , 461);		
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BAAR Zielh Neelsen(Liquide Pleural)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Pres BK 2+' )  , now() , 462);		
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BAAR Zielh Neelsen(Liquide Pleural)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Pres BK 3+' )  , now() , 463);		
+	
+	</sql>
+	<update tableName="test" schemaName="clinlims" >
+		<column name="description" value="Compte des Globules Rouges(Sang)"/>
+		<column name="local_abbrev" value="Compte des Globules"/>
+		<column name="name" value="Compte des Globules Rouges"/>
+		<where>description = 'Copmte des Globules Rouges(Sang)'	</where>
+	</update>
+	<update tableName="test" schemaName="clinlims" >
+		<column name="description" value="Temps de saignement(Sang)"/>
+		<column name="local_abbrev" value="Temps de saignement"/>
+		<column name="name" value="Temps de saignement"/>
+		<where>description = 'temps de saignement(Sang)'	</where>
+	</update>
+	
+	<update tableName="test" schemaName="clinlims" >
+		<column name="is_active" value="N"/>
+		<where>description like 'ASAT 30%' and description like '%C(Serum)'	</where>
+	</update>
+	<update tableName="test">
+		<column name="is_active" value="N"/>
+		<where>description like 'ALAT 30%' and description like '%C(Serum)'	</where>
+	</update>
+	
+	<delete tableName="panel_item" schemaName="clinlims">
+	<where>panel_id = ( select id from clinlims.panel where name = 'Bilan Hepatique') and test_id = ( select id from clinlims.test where description = 'Phosphatase Alcaline(Serum)')</where>
+	</delete>
+	<delete tableName="panel_item" schemaName="clinlims">
+	<where>panel_id = ( select id from clinlims.panel where name = 'KOH(Secretion vaginale)') and test_id = ( select id from clinlims.test where description = 'Phosphatase Alcaline(Serum)')</where>
+	</delete>
+
+	<update tableName="result_limits" schemaName="clinlims">
+		<column name="low_normal" valueNumeric="36" />
+		<where>test_id = ( select id from clinlims.test where description = 'Hematocrite(Sang)' ) and gender = 'M' </where>
+	</update>
+	
+	<update tableName="result_limits" schemaName="clinlims">
+		<column name="high_normal" valueNumeric="10" />
+		<where>test_id = ( select id from clinlims.test where description = 'Mixtes(Sang)' ) </where>
+	</update>
+	
+	<sql>
+	INSERT INTO test( id,  uom_id, description, reporting_description, is_active, is_reportable, lastupdated, test_section_id, local_abbrev, sort_order, name )
+	VALUES ( nextval( 'test_seq' ) , ( select id from clinlims.unit_of_measure where name='Secondes') , 'Temps de Prothrombine(Plasma)' , 'PT' , 'Y' , 'N' , now() , (select id from clinlims.test_section where name = 'Hematology' ) ,'Temps de Proth' ,235 , 'Temps de Prothrombine' );
+	INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Temps de Prothrombine(Plasma)' )  ,    (select id from type_of_sample where description = 'Plasma')  );
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Temps de Prothrombine(Plasma)' ) , 'N' , null , now() , 24);
+    INSERT INTO result_limits(  id, test_id, test_result_type_id, min_age, max_age, gender, low_normal, high_normal, low_valid, high_valid, lastupdated) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description = 'Temps de Prothrombine(Plasma)' ) , 
+	 (select id from clinlims.type_of_test_result where test_result_type = 'N' ) , 0, 'Infinity' , '' ,10.00,13.00,5.00,18.00, now() );
+	INSERT INTO panel_item( id, panel_id, lastupdated, test_id)
+    VALUES (nextval( 'panel_item_seq' ) , (select id from panel where name = 'Coagulation') , now() , (select id from test where description = 'Temps de Prothrombine(Plasma)') );
+
+	INSERT INTO test( id,  uom_id, description, reporting_description, is_active, is_reportable, lastupdated, test_section_id, local_abbrev, sort_order, name )
+	VALUES ( nextval( 'test_seq' ) , null , 'Test de comptabilite(Sang)' , 'crossmatch' , 'Y' , 'N' , now() , (select id from clinlims.test_section where name = 'Hematology' ) ,'comptabilite' ,313 , 'Test de comptabilite' );
+	INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Test de comptabilite(Sang)' )  ,    (select id from type_of_sample where description = 'Sang')  );
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Test de comptabilite(Sang)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Negatif' )  , now() , 828);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Test de comptabilite(Sang)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif' )  , now() , 829);
+	INSERT INTO result_limits(  id, test_id, test_result_type_id, lastupdated, normal_dictionary_id) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description = 'Test de comptabilite(Sang)' ) , (select id from clinlims.type_of_test_result where test_result_type = 'D' ) ,  now() , (select max(id) from clinlims.dictionary where dict_entry = 'Negatif' ) );
+
+	INSERT INTO test( id,  uom_id, description, reporting_description, is_active, is_reportable, lastupdated, test_section_id, local_abbrev, sort_order, name )
+	VALUES ( nextval( 'test_seq' ) , null , 'Test de comptabilite(Serum)' , 'crossmatch' , 'Y' , 'N' , now() , (select id from clinlims.test_section where name = 'Hematology' ) ,'comptabilite' ,316 , 'Test de comptabilite' );
+	INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	(nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Test de comptabilite(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Test de comptabilite(Serum)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Negatif' )  , now() , 828);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Test de comptabilite(Serum)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif' )  , now() , 829);
+	INSERT INTO result_limits(  id, test_id, test_result_type_id, lastupdated, normal_dictionary_id) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description = 'Test de comptabilite(Serum)' ) , (select id from clinlims.type_of_test_result where test_result_type = 'D' ) ,  now() , (select max(id) from clinlims.dictionary where dict_entry = 'Negatif' ) );
+
+	--INSERT INTO test( id,  uom_id, description, reporting_description, is_active, is_reportable, lastupdated, test_section_id, local_abbrev, sort_order, name )
+	--  VALUES ( nextval( 'test_seq' ) , null , 'Leucocytes(Urines)' , 'Leucocytes' , 'Y' , 'N' , now() , (select id from clinlims.test_section where name = 'ECBU' ) ,'Leucocytes' ,1615 , 'Leucocytes' );
+	--INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	-- (nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Leucocytes(Urines)' )  ,    (select id from type_of_sample where description = 'Urines')  );
+	--INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	-- VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Negatif' )  , now() , 830);
+	--INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	-- VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='trace' )  , now() , 831);
+	--INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	-- VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 1+' )  , now() , 832);
+	--INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	-- VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 2+' )  , now() , 833);
+	--INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	-- VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 3+' )  , now() , 834);
+	--INSERT INTO result_limits(  id, test_id, test_result_type_id, lastupdated, normal_dictionary_id) 
+	-- VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description = 'Leucocytes(Urines)' ) , (select id from clinlims.type_of_test_result where test_result_type = 'D' ) ,  now() , (select max(id) from clinlims.dictionary where dict_entry = 'Negatif' ) );
+	INSERT INTO panel_item( id, panel_id, lastupdated, test_id)
+    VALUES (nextval( 'panel_item_seq' ) , (select id from panel where name = 'Urine Macro') , now() , (select id from test where description = 'Leucocytes(Urines)') );
+
+	INSERT INTO test( id,  uom_id, description, reporting_description, is_active, is_reportable, lastupdated, test_section_id, local_abbrev, sort_order, name )
+	  VALUES ( nextval( 'test_seq' ) , null , 'Levures Simples(Selles)' , 'Levures S' , 'Y' , 'N' , now() , (select id from clinlims.test_section where name = 'Parasitology' ) ,'Levures Simples' ,1803 , 'Levures Simples' );
+	INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	 (nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Levures Simples(Selles)' )  ,    (select id from type_of_sample where description = 'Selles')  );
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Levures Simples(Selles)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Negatif' )  , now() , 835);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Levures Simples(Selles)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 1+' )  , now() , 836);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Levures Simples(Selles)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 2+' )  , now() , 837);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Levures Simples(Selles)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 3+' )  , now() , 838);
+	INSERT INTO result_limits(  id, test_id, test_result_type_id, lastupdated, normal_dictionary_id) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description = 'Levures Simples(Selles)' ) , (select id from clinlims.type_of_test_result where test_result_type = 'D' ) ,  now() , (select max(id) from clinlims.dictionary where dict_entry = 'Negatif' ) );
+	INSERT INTO panel_item( id, panel_id, lastupdated, test_id)
+    VALUES (nextval( 'panel_item_seq' ) , (select id from panel where name = 'Selles Micro') , now() , (select id from test where description = 'Levures Simples(Selles)') );
+
+	INSERT INTO test( id,  uom_id, description, reporting_description, is_active, is_reportable, lastupdated, test_section_id, local_abbrev, sort_order, name )
+	  VALUES ( nextval( 'test_seq' ) , null , 'Levures Bourgeonnantes(Selles)' , 'Levures B' , 'Y' , 'N' , now() , (select id from clinlims.test_section where name = 'Parasitology' ) ,'Levures Bourg' ,1806 , 'Levures Bourgeonnantes' );
+	INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	 (nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Levures Bourgeonnantes(Selles)' )  ,    (select id from type_of_sample where description = 'Selles')  );
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Levures Bourgeonnantes(Selles)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Negatif' )  , now() , 839);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Levures Bourgeonnantes(Selles)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 1+' )  , now() , 840);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Levures Bourgeonnantes(Selles)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 2+' )  , now() , 841);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Levures Bourgeonnantes(Selles)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 3+' )  , now() , 842);
+	INSERT INTO result_limits(  id, test_id, test_result_type_id, lastupdated, normal_dictionary_id) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description = 'Levures Bourgeonnantes(Selles)' ) , (select id from clinlims.type_of_test_result where test_result_type = 'D' ) ,  now() , (select max(id) from clinlims.dictionary where dict_entry = 'Negatif' ) );
+	INSERT INTO panel_item( id, panel_id, lastupdated, test_id)
+    VALUES (nextval( 'panel_item_seq' ) , (select id from panel where name = 'Selles Micro') , now() , (select id from test where description = 'Levures Bourgeonnantes(Selles)') );
+
+	INSERT INTO test( id,  uom_id, description, reporting_description, is_active, is_reportable, lastupdated, test_section_id, local_abbrev, sort_order, name )
+	  VALUES ( nextval( 'test_seq' ) , null , 'Bleu de Methylene(Selles)' , 'B Methylene' , 'Y' , 'N' , now() , (select id from clinlims.test_section where name = 'Parasitology' ) ,'B Methylene' ,1808 , 'Bleu de Methylene' );
+	INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	 (nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Bleu de Methylene(Selles)' )  ,    (select id from type_of_sample where description = 'Selles')  );
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Bleu de Methylene(Selles)' ) , 'R' , null  , now() , 843);
+
+	INSERT INTO test( id,  uom_id, description, reporting_description, is_active, is_reportable, lastupdated, test_section_id, local_abbrev, sort_order, name )
+	  VALUES ( nextval( 'test_seq' ) , null , 'Recherche de BAAR B(Expectoration)' , 'BAAR B' , 'Y' , 'N' , now() , (select id from clinlims.test_section where name = 'Mycrobacteriology' ) ,'BAAR B' , 2663 , 'Recherche de BAAR B' );
+	INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	 (nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Recherche de BAAR B(Expectoration)' )  ,    (select id from type_of_sample where description = 'Expectoration')  );
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BAAR B(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Absence de BAAR' )  , now() , 843);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BAAR B(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 1+' )  , now() , 844);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BAAR B(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 2+' )  , now() , 845);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BAAR B(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 3+' )  , now() , 846);
+	INSERT INTO result_limits(  id, test_id, test_result_type_id, lastupdated, normal_dictionary_id) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description = 'Recherche de BAAR B(Expectoration)' ) , (select id from clinlims.type_of_test_result where test_result_type = 'D' ) ,  now() , (select max(id) from clinlims.dictionary where dict_entry = 'Negatif' ) );
+	INSERT INTO panel_item( id, panel_id, lastupdated, test_id)
+    VALUES (nextval( 'panel_item_seq' ) , (select id from panel where name = 'Zielh Nielsen') , now() , (select id from test where description = 'Recherche de BAAR B(Expectoration)') );
+
+	INSERT INTO test( id,  uom_id, description, reporting_description, is_active, is_reportable, lastupdated, test_section_id, local_abbrev, sort_order, name )
+	  VALUES ( nextval( 'test_seq' ) , null , 'Recherche de BAAR C(Expectoration)' , 'BAAR C' , 'Y' , 'N' , now() , (select id from clinlims.test_section where name = 'Mycrobacteriology' ) ,'BAAR C' , 2666 , 'Recherche de BAAR C' );
+	INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	 (nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Recherche de BAAR C(Expectoration)' )  ,    (select id from type_of_sample where description = 'Expectoration')  );
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BAAR C(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Absence de BAAR' )  , now() , 847);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BAAR C(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 1+' )  , now() , 848);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BAAR C(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 2+' )  , now() , 849);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BAAR C(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 3+' )  , now() , 850);
+	INSERT INTO result_limits(  id, test_id, test_result_type_id, lastupdated, normal_dictionary_id) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description = 'Recherche de BAAR C(Expectoration)' ) , (select id from clinlims.type_of_test_result where test_result_type = 'D' ) ,  now() , (select max(id) from clinlims.dictionary where dict_entry = 'Negatif' ) );
+	INSERT INTO panel_item( id, panel_id, lastupdated, test_id)
+    VALUES (nextval( 'panel_item_seq' ) , (select id from panel where name = 'Zielh Nielsen') , now() , (select id from test where description = 'Recherche de BAAR C(Expectoration)') );
+
+	INSERT INTO test( id,  uom_id, description, reporting_description, is_active, is_reportable, lastupdated, test_section_id, local_abbrev, sort_order, name )
+	  VALUES ( nextval( 'test_seq' ) , null , 'Recherche de BK Crachat B Auramine(Expectoration)' , 'Crachat B' , 'Y' , 'N' , now() , (select id from clinlims.test_section where name = 'Mycrobacteriology' ) ,'B Auramine' , 2673 , 'Recherche de BK Crachat B Auramine' );
+	INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	 (nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Recherche de BK Crachat B Auramine(Expectoration)' )  ,    (select id from type_of_sample where description = 'Expectoration')  );
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BK Crachat B Auramine(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Absence de BAAR' )  , now() , 851);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BK Crachat B Auramine(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 1+' )  , now() , 852);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BK Crachat B Auramine(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 2+' )  , now() , 853);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BK Crachat B Auramine(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 3+' )  , now() , 854);
+	INSERT INTO result_limits(  id, test_id, test_result_type_id, lastupdated, normal_dictionary_id) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description = 'Recherche de BK Crachat B Auramine(Expectoration)' ) , (select id from clinlims.type_of_test_result where test_result_type = 'D' ) ,  now() , (select max(id) from clinlims.dictionary where dict_entry = 'Negatif' ) );
+	INSERT INTO panel_item( id, panel_id, lastupdated, test_id)
+    VALUES (nextval( 'panel_item_seq' ) , (select id from panel where name = 'Fluorescent / Auramine') , now() , (select id from test where description = 'Recherche de BK Crachat B Auramine(Expectoration)') );
+
+	INSERT INTO test( id,  uom_id, description, reporting_description, is_active, is_reportable, lastupdated, test_section_id, local_abbrev, sort_order, name )
+	  VALUES ( nextval( 'test_seq' ) , null , 'Recherche de BK Crachat C Auramine(Expectoration)' , 'Crachat C' , 'Y' , 'N' , now() , (select id from clinlims.test_section where name = 'Mycrobacteriology' ) ,'C Auramine' , 2673 , 'Recherche de BK Crachat C Auramine' );
+	INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	 (nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Recherche de BK Crachat C Auramine(Expectoration)' )  ,    (select id from type_of_sample where description = 'Expectoration')  );
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BK Crachat C Auramine(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Absence de BAAR' )  , now() , 855);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BK Crachat C Auramine(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 1+' )  , now() , 856);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BK Crachat C Auramine(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 2+' )  , now() , 857);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Recherche de BK Crachat C Auramine(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 3+' )  , now() , 858);
+	INSERT INTO result_limits(  id, test_id, test_result_type_id, lastupdated, normal_dictionary_id) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description = 'Recherche de BK Crachat C Auramine(Expectoration)' ) , (select id from clinlims.type_of_test_result where test_result_type = 'D' ) ,  now() , (select max(id) from clinlims.dictionary where dict_entry = 'Negatif' ) );
+	INSERT INTO panel_item( id, panel_id, lastupdated, test_id)
+    VALUES (nextval( 'panel_item_seq' ) , (select id from panel where name = 'Fluorescent / Auramine') , now() , (select id from test where description = 'Recherche de BK Crachat C Auramine(Expectoration)') );
+
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Culture de M. tuberculosis(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Absence de BAAR' )  , now() , 855);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Culture de M. tuberculosis(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 1+' )  , now() , 856);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Culture de M. tuberculosis(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 2+' )  , now() , 857);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Culture de M. tuberculosis(Expectoration)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif 3+' )  , now() , 858);
+
+
+	INSERT INTO test( id,  uom_id, description, reporting_description, is_active, is_reportable, lastupdated, test_section_id, local_abbrev, sort_order, name )
+	  VALUES ( nextval( 'test_seq' ) , null , 'PPD Qualitaitif(In Vivo)' , 'PPD Qualitaitif' , 'Y' , 'N' , now() , (select id from clinlims.test_section where name = 'Mycrobacteriology' ) ,'PPD Qualitaitif' , 2683 , 'PPD Qualitaitif' );
+	INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	 (nextval( 'sample_type_test_seq' ) , (select id from test where description = 'PPD Qualitaitif(In Vivo)' )  ,    (select id from type_of_sample where description = 'In Vivo')  );
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'PPD Qualitaitif(In Vivo)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Non Reactif' )  , now() , 859);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'PPD Qualitaitif(In Vivo)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Reactif' )  , now() , 860);
+	INSERT INTO result_limits(  id, test_id, test_result_type_id, lastupdated, normal_dictionary_id) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description = 'PPD Qualitaitif(In Vivo)' ) , (select id from clinlims.type_of_test_result where test_result_type = 'D' ) ,  now() , (select max(id) from clinlims.dictionary where dict_entry = 'Non Reactif' ) );
+	INSERT INTO panel_item( id, panel_id, lastupdated, test_id)
+    VALUES (nextval( 'panel_item_seq' ) , (select id from panel where name = 'PPD') , now() , (select id from test where description = 'PPD Qualitaitif(In Vivo)') );
+
+	INSERT INTO test( id,  uom_id, description, reporting_description, is_active, is_reportable, lastupdated, test_section_id, local_abbrev, sort_order, name )
+	  VALUES ( nextval( 'test_seq' ) , ( select id from clinlims.unit_of_measure where name='mm') , 'PPD Quantitatif(In Vivo)' , 'PPD Quantitatif' , 'Y' , 'N' , now() , (select id from clinlims.test_section where name = 'In Vivo' ) ,'PPD Quantitatif' , 2686 , 'PPD Quantitatif' );
+	INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	 (nextval( 'sample_type_test_seq' ) , (select id from test where description = 'PPD Quantitatif(In Vivo)' )  ,    (select id from type_of_sample where description = 'In Vivo')  );
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'PPD Quantitatif(In Vivo)' ) , 'N' ,  null  , now() , 61);
+	INSERT INTO result_limits(  id, test_id, test_result_type_id, min_age, max_age, gender, low_normal, high_normal, low_valid, high_valid, lastupdated) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description = 'PPD Quantitatif(In Vivo)' ) , 
+	 (select id from clinlims.type_of_test_result where test_result_type = 'N' ) , 0, 'Infinity' , '' ,0,15,0.00,25.00, now() );
+	INSERT INTO panel_item( id, panel_id, lastupdated, test_id)
+    VALUES (nextval( 'panel_item_seq' ) , (select id from panel where name = 'PPD') , now() , (select id from test where description = 'PPD Quantitatif(In Vivo)') );
+		
+		
+	INSERT INTO test( id,  uom_id, description, reporting_description, is_active, is_reportable, lastupdated, test_section_id, local_abbrev, sort_order, name )
+	  VALUES ( nextval( 'test_seq' ) , null , 'Typhoide Test Rapide -Ag H(Serum)' , 'Typhoide Ag H' , 'Y' , 'N' , now() , (select id from clinlims.test_section where name = 'Serologie' ) ,'Widal Ag H' , 3105 , 'Typhoide Test Rapide -Ag H' );
+	INSERT INTO clinlims.sampletype_test (id, test_id , sample_type_id) VALUES 
+	 (nextval( 'sample_type_test_seq' ) , (select id from test where description = 'Typhoide Test Rapide -Ag H(Serum)' )  ,    (select id from type_of_sample where description = 'Serum')  );
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Typhoide Test Rapide -Ag H(Serum)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Non Reactif' )  , now() , 859);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Typhoide Test Rapide -Ag H(Serum)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Reactif' )  , now() , 860);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Typhoide Test Rapide -Ag H(Serum)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Reactif 1/2' )  , now() , 860);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Typhoide Test Rapide -Ag H(Serum)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Reactif 1/4' )  , now() , 860);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Typhoide Test Rapide -Ag H(Serum)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Reactif 1/8' )  , now() , 860);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Typhoide Test Rapide -Ag H(Serum)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Reactif 1/16' )  , now() , 860);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Typhoide Test Rapide -Ag H(Serum)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Reactif 1/32' )  , now() , 860);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Typhoide Test Rapide -Ag H(Serum)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Reactif 1/64' )  , now() , 860);
+	INSERT INTO result_limits(  id, test_id, test_result_type_id, lastupdated, normal_dictionary_id) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description = 'Typhoide Test Rapide -Ag H(Serum)' ) , (select id from clinlims.type_of_test_result where test_result_type = 'D' ) ,  now() , (select max(id) from clinlims.dictionary where dict_entry = 'Non Reactif' ) );
+
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cholera Test rapide(Selles)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Non Reactif' )  , now() , 860);
+	INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+	 VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Cholera Test rapide(Selles)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Reactif' )  , now() , 859);
+	INSERT INTO result_limits(  id, test_id, test_result_type_id, lastupdated, normal_dictionary_id) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description = 'Cholera Test rapide(Selles)' ) , (select id from clinlims.type_of_test_result where test_result_type = 'D' ) ,  now() , (select max(id) from clinlims.dictionary where dict_entry = 'Non Reactif' ) );
+	
+	INSERT INTO result_limits(  id, test_id, test_result_type_id, min_age, max_age, gender, low_normal, high_normal, low_valid, high_valid, lastupdated) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description = 'Facteur VIII(Plasma)' ) , 
+	 (select id from clinlims.type_of_test_result where test_result_type = 'N' ) , 0, 'Infinity' , '' ,60.00,120.00,40.00,160.00, now() );
+	 
+	INSERT INTO result_limits(  id, test_id, test_result_type_id, min_age, max_age, gender, low_normal, high_normal, low_valid, high_valid, lastupdated) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description = 'Anti-Thrombine III (Dosage)(Plasma)' ) , 
+	 (select id from clinlims.type_of_test_result where test_result_type = 'N' ) , 0, 'Infinity' , '' ,0.21,0.35,0,1, now() );
+	 
+	INSERT INTO result_limits(  id, test_id, test_result_type_id, min_age, max_age, gender, low_normal, high_normal, low_valid, high_valid, lastupdated) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description = 'Formes anormales(Liquide Spermatique)' ) , 
+	 (select id from clinlims.type_of_test_result where test_result_type = 'N' ) , 0, 'Infinity' , '' ,0,'Infinity',0,'Infinity', now() );
+	
+	INSERT INTO result_limits(  id, test_id, test_result_type_id, min_age, max_age, gender, low_normal, high_normal, low_valid, high_valid, lastupdated) 
+	 VALUES ( nextval( 'result_limits_seq' ) , ( select id from clinlims.test where description = 'Progesterone(Serum)' ) , 
+	 (select id from clinlims.type_of_test_result where test_result_type = 'N' ) , 0, 'Infinity' , '' ,0.47,1.57,0.00,500.00, now() );
+	 
+	</sql>
+</changeSet>
+
+<changeSet author="paulsc" id="3" context="haiti">
+	<comment>Updates the normal range of Charge viral</comment>
+		<update tableName="result_limits" schemaName="clinlims">
+		<column name="low_normal" valueNumeric="0" />
+		<column name="high_normal" value="299" />
+		<column name="low_valid" value="0" />
+		<where>test_id = ( select id from clinlims.test where description = 'Charge Virale(Plasma)') </where>
+	</update>
+</changeSet>
+</databaseChangeLog>

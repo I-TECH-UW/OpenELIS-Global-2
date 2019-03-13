@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+<changeSet author="CI OpenELIS developers group" id="1" context="ci_regional,ci_general">
+    <comment>Insert in clinlims new module </comment>
+    <sql>
+	
+UPDATE clinlims.system_module
+ SET name='Workplan:Serology', description='Workplan=&gt;Serology'
+ WHERE name='Workplan:serology';
+ 
+INSERT INTO clinlims.system_module(id, name, description, has_select_flag, has_add_flag, has_update_flag,has_delete_flag) VALUES (nextval('clinlims.system_module_seq'),'LogbookResults:Serology','LogbookResults=&gt;Serology','Y','Y','Y','Y');
+
+INSERT INTO clinlims.system_module(id, name, description, has_select_flag, has_add_flag, has_update_flag,has_delete_flag) VALUES (nextval('clinlims.system_module_seq'),'ResultValidation:Serology','Validation=&gt;Serology','Y','Y','Y','Y');
+
+INSERT INTO clinlims.system_module(id, name, description, has_select_flag, has_add_flag, has_update_flag,has_delete_flag) VALUES (nextval('clinlims.system_module_seq'),'ResultValidation:serology','ResultValidation=&gt;serology','Y','Y','Y','Y');
+
+INSERT INTO clinlims.system_module(id, name, description, has_select_flag, has_add_flag, has_update_flag,has_delete_flag) VALUES (nextval('clinlims.system_module_seq'),'ResultValidation:virology','ResultValidation=&gt;virology','Y','Y','Y','Y');
+
+     </sql>
+</changeSet>
+  
+<changeSet author="CI OpenELIS developers group" id="2" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.system_role_module where id= 1023;
+    		</sqlCheck>
+    </preConditions>
+    <comment>Insert in clinlims new role_module and role_module</comment>
+    <sql>
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1023,'Y','Y','Y','Y',5,(select id from clinlims.system_module where name='Workplan:Serology'));
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1024,'Y','Y','Y','Y',5,(select id from clinlims.system_module where name='LogbookResults:Serology'));
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1025,'Y','Y','Y','Y',10,(select id from clinlims.system_module where name='ResultValidation:Serology'));
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1026,'Y','Y','Y','Y',10,(select id from clinlims.system_module where description='ResultValidation=&gt;serology'));
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1027,'Y','Y','Y','Y',10,(select id from clinlims.system_module where description='ResultValidation=&gt;virology'));
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1028,'Y','Y','Y','Y',4,117);
+
+	
+	 </sql>
+  </changeSet>
+  
+<changeSet author="CI OpenELIS developers group" id="3" context="ci_regional,ci_general">
+        <comment>Insert in clinlims site_information and menu</comment>
+    <sql>
+	
+UPDATE clinlims.site_information
+   SET value = 'CI_GENERAL'
+ WHERE name='configuration name';
+ 
+UPDATE clinlims.menu
+   SET action_url = '/ResultValidationRetroC.do?type=Immunology&amp;test='
+ WHERE action_url='/ResultValidationRetroC.do?type=immunology&amp;test='; 
+ 
+UPDATE clinlims.menu
+   SET action_url = '/ResultValidationRetroC.do?type=Biochemistry&amp;test='
+ WHERE action_url='/ResultValidationRetroC.do?type=biochemistry&amp;test=';  
+ 
+UPDATE clinlims.menu
+   SET action_url = default
+ WHERE action_url='/ResultValidationRetroC.do?type=virology&amp;test='; 
+ 
+ 
+
+ 
+	 </sql>
+  </changeSet>
+  
+<changeSet author="CI OpenELIS developers group" id="4" context="ci_regional,ci_general">
+        <comment>Insert virologie functions </comment>
+    <sql>
+	
+UPDATE clinlims.test_section
+   SET is_active='Y'
+ WHERE name='Virologie';
+	
+UPDATE clinlims.system_module
+ SET name='Workplan:Virologie', description='Workplan=&gt;Virologie'
+ WHERE name='Workplan:virology';
+ 
+UPDATE clinlims.system_module
+ SET name='LogbookResults:Virologie', description='LogbookResults=&gt;Enter=&gt;Virologie'
+ WHERE name='LogbookResults:virology';
+ 
+UPDATE clinlims.system_module
+ SET name='ResultValidation:Virologie', description='ResultValidation=&gt;Virologie'
+ WHERE name='ResultValidation:virologie';
+ 
+ 
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1029,'Y','Y','Y','Y',5,(select id from clinlims.system_module where description='Workplan=&gt;Virologie'));
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1030,'Y','Y','Y','Y',5,(select id from clinlims.system_module where description='LogbookResults=&gt;Enter=&gt;Virologie'));
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1031,'Y','Y','Y','Y',10,(select id from clinlims.system_module where description='ResultValidation=&gt;Virologie'));
+
+ 
+ 
+UPDATE clinlims.site_information
+   SET domain_id = 1
+ WHERE name='siteNumber';
+ 
+   UPDATE clinlims.site_information
+   SET domain_id = 1
+ WHERE name='Accession number prefix'; 
+ 
+	 </sql>
+  </changeSet>  
+
+   
+</databaseChangeLog>

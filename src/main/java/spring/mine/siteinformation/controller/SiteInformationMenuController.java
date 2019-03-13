@@ -6,15 +6,17 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
-import org.apache.struts.Globals;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import spring.mine.common.constants.Constants;
 import spring.mine.common.controller.BaseMenuController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.form.MenuForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.siteinformation.form.MenuStatementConfigMenuForm;
@@ -41,23 +43,22 @@ public class SiteInformationMenuController extends BaseMenuController {
 			"/PrintedReportsConfigurationMenu", "/SampleEntryConfigMenu", "/ResultConfigurationMenu",
 			"/MenuStatementConfigMenu", "/PatientConfigurationMenu",
 			"/SiteInformationMenu" }, method = RequestMethod.GET)
-	public ModelAndView showSiteInformationMenu(HttpServletRequest request)
+	public ModelAndView showSiteInformationMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
 		MenuForm form = findForm(request);
 		form.setFormAction("");
 		form.setFormMethod(RequestMethod.POST);
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
 
-		if (errors.hasErrors()) {
-			return mv;
+		String forward = performMenuAction(form, request);
+		if (FWD_FAIL.equals(forward)) {
+			Errors errors = new BaseErrors();
+			errors.reject("error.generic");
+			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, errors);
+			return findForward(FWD_FAIL, form);
+		} else {
+			addFlashMsgsToRequest(request);
+			return findForward(forward, form);
 		}
-
-		return performMenuAction(form, request);
 	}
 
 	private MenuForm findForm(HttpServletRequest request) {
@@ -153,20 +154,10 @@ public class SiteInformationMenuController extends BaseMenuController {
 	@RequestMapping(value = { "/DeleteMenuStatementConfig", "/DeleteWorkplanConfiguration",
 			"/DeletePatientConfiguration", "/DeleteNonConformityConfiguration", "/DeleteResultConfiguration",
 			"/DeletePrintedReportsConfiguration", "/DeleteSiteInformation" }, method = RequestMethod.GET)
-	public ModelAndView showDeleteSiteInformation(HttpServletRequest request, @ModelAttribute("form") MenuForm form) {
-		String forward = FWD_SUCCESS;
-		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
+	public ModelAndView showDeleteSiteInformation(HttpServletRequest request, @ModelAttribute("form") MenuForm form,
+			BindingResult result, RedirectAttributes redirectAttributes) {
 
-		if (errors.hasErrors()) {
-			return mv;
-		}
 		String[] selectedIDs = (String[]) form.get("selectedIDs");
-		String currentUserId = getSysUserId(request);
 
 		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
 
@@ -174,7 +165,7 @@ public class SiteInformationMenuController extends BaseMenuController {
 		try {
 
 			for (String siteInformationId : selectedIDs) {
-				siteInformationDAO.deleteData(siteInformationId, currentUserId);
+				siteInformationDAO.deleteData(siteInformationId, getSysUserId(request));
 			}
 
 			tx.commit();
@@ -187,38 +178,31 @@ public class SiteInformationMenuController extends BaseMenuController {
 			} else {
 				errorMsg = "errors.DeleteException";
 			}
-			errors.reject(errorMsg);
-			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
-			forward = FWD_FAIL;
+			result.reject(errorMsg);
+			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, result);
+			return findForward(FWD_FAIL_DELETE, form);
 
 		} finally {
 			HibernateUtil.closeSession();
 		}
 
-		if (forward.equals(FWD_FAIL)) {
-			return findForward(forward, form);
-		}
-
-		if (TRUE.equalsIgnoreCase(request.getParameter("close"))) {
-			forward = FWD_CLOSE;
-		}
-
 		ConfigurationProperties.forceReload();
 
-		request.setAttribute("menuDefinition", "SiteInformationMenuDefinition");
-
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_DELETE, form);
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
-			return new ModelAndView("haitiMasterListsPageDefinition", "form", form);
-		} else if ("fail".equals(forward)) {
-			return new ModelAndView("redirect:/MasterListsPage.do", "form", form);
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "haitiMasterListsPageDefinition";
+		} else if (FWD_FAIL.equals(forward)) {
+			return "redirect:/MasterListsPage.do";
+		} else if (FWD_SUCCESS_DELETE.equals(forward)) {
+			return "redirect:/MasterListsPage.do";
+		} else if (FWD_FAIL_DELETE.equals(forward)) {
+			return "redirect:/MasterListsPage.do";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

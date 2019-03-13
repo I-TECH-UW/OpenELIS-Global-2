@@ -1,0 +1,22 @@
+Liquibase is a tool for managing the versioning of databases.  For more information see http://www.liquibase.org/
+
+This tool can be run from this directory using the following commands.
+
+java -jar .\lib\liquibase-1.9.5.jar --url=jdbc:postgresql://localhost:5432/cdielis --logLevel=warning --defaultsFile=liquibase.properties  --contexts=CDIRetroCI update
+
+user name, database etc are listed in liquibase.properties file.
+Other contexts include
+--contexts=haitiLNSP and --contexts="haiti"
+in the following examples, the names of your databases may be different.
+
+To update a haitiLNSP DB with haitiLNSP context changes use:
+java -jar .\lib\liquibase-1.9.5.jar --contexts=haitiLNSP --url=jdbc:postgresql://localhost:5432/lnsphaiti --logLevel=warning --defaultsFile=liquibase.properties update
+
+To update a (clinical) haiti which is typically named clinlims in our development environments with all haiti context changes use:
+java -jar .\lib\liquibase-1.9.5.jar --contexts=haiti --url=jdbc:postgresql://localhost:5432/clinlims --logLevel=warning --defaultsFile=liquibase.properties update
+
+
+1.9.5 notes
+
+1. The 'remarks' attribute does not seem to work for postgres
+2. The graphical tools are sort of flacky, even the IntelliJ one which is currently the most stable 

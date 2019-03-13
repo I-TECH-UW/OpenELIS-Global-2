@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--system role and module updating-->
+  <!-- Data specific to CDIRetroCI -->
+  
+   <changeSet author="CI OpenELIS developers group" id="1" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.system_role_module where system_module_id= '1383';
+    		</sqlCheck>
+    </preConditions>
+    <comment>Insert in clinlims new system role module</comment>
+    <sql>
+
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1600,'Y','Y','Y','Y',5,427);
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1601,'Y','Y','Y','Y',10,1383);
+
+</sql>
+  </changeSet>
+  
+ <changeSet author="CI OpenELIS developers group" id="2" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.system_module where name= 'Workplan:Parasitology';
+    		</sqlCheck>
+    </preConditions>
+    <comment>Insert in clinlims new system role module</comment>
+    <sql>
+
+
+UPDATE clinlims.system_module
+SET name='Workplan:Parasitology', description='Workplan=>Parasitology'
+where name='Workplan:parasitology';
+
+UPDATE clinlims.system_module
+SET name='LogbookResults:Parasitology', description='Results->By Logbook->Parasitology'
+where name='LogbookResults:parasitology';
+
+
+
+</sql>
+  </changeSet> 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+</databaseChangeLog>

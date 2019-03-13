@@ -1,0 +1,9 @@
+id,test_section,description,local_abbrev,lastupdated,active,reportable
+ nextval( 'test_seq' ) , (select id from clinlims.test_section where name='Bacteria' ) ,Coloration de Gram,GramStain, now() ,Y,N   
+ nextval( 'test_seq' ) , (select id from clinlims.test_section where name='Bacteria' ) ,Antibiogramme,Antibiogram, now() ,Y,N
+ nextval( 'test_seq' ) , (select id from clinlims.test_section where name='Bacteria' ) ,Hemoculture,Hemoculure, now() ,Y,N 
+ nextval( 'test_seq' ) , (select id from clinlims.test_section where name='Bacteria' ) ,Uriculture,Uriculture, now() ,Y,N
+ nextval( 'test_seq' ) , (select id from clinlims.test_section where name='Bacteria' ) ,Coproculture,Coproculture, now() ,Y,N
+ nextval( 'test_seq' ) , (select id from clinlims.test_section where name='Bacteria' ) ,Culture (Pus),Culture(Pus), now() ,Y,N
+ nextval( 'test_seq' ) , (select id from clinlims.test_section where name='Bacteria' ) ,Culture (Liquid Amniotique),Culture(LiqAmn), now() ,Y,N
+ nextval( 'test_seq' ) , (select id from clinlims.test_section where name='Bacteria' ) ,Culture (Liquide Ascite),Culture(LiqAsc), now() ,Y,N

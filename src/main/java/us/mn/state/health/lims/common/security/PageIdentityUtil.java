@@ -20,7 +20,6 @@ package us.mn.state.health.lims.common.security;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
-import org.owasp.encoder.Encode;
 
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -38,22 +37,24 @@ public class PageIdentityUtil {
 	}
 
 	/*
-	 * This is ripped and simplified from UserModuleDAOImp.  In it's most basic form it gets the ACTION_KEY
+	 * This is ripped and simplified from UserModuleDAOImp. In it's most basic form
+	 * it gets the ACTION_KEY
 	 */
-	public static String getActionName(HttpServletRequest request, boolean useParameterExtention) throws LIMSRuntimeException {
+	public static String getActionName(HttpServletRequest request, boolean useParameterExtention)
+			throws LIMSRuntimeException {
 
 		String actionName = null;
 
 		actionName = (String) request.getAttribute(IActionConstants.ACTION_KEY);
-		
+
 		String localizedName = StringUtil.getContextualMessageForKey("dictionary.result.Positif_VIH_2");
-		System.out.println("gnrTest: " + localizedName);
-		
+		// System.out.println("gnrTest: " + localizedName);
+
 		if (actionName == null) {
-			System.out.println("actionName is null");
+			// System.out.println("actionName is null");
 			actionName = "dummy";
 		} else {
-			System.out.println("actionName is " + Encode.forJava(actionName));
+			// System.out.println("actionName is " + Encode.forJava(actionName));
 		}
 
 		if (actionName.equals("QuickEntryAddTestPopup")) {
@@ -75,14 +76,14 @@ public class PageIdentityUtil {
 
 		actionName = actionName.endsWith("Menu") ? actionName.substring(0, actionName.length() - 4) : actionName;
 
-		if(useParameterExtention){
+		if (useParameterExtention) {
 			String parameter = request.getParameter(TYPE_PARAMETER);
 
-			if( GenericValidator.isBlankOrNull(parameter)){
+			if (GenericValidator.isBlankOrNull(parameter)) {
 				parameter = request.getParameter(REPORT_PARAMETER);
 			}
 
-			if( !GenericValidator.isBlankOrNull(parameter)){
+			if (!GenericValidator.isBlankOrNull(parameter)) {
 				actionName += ":" + parameter;
 			}
 		}

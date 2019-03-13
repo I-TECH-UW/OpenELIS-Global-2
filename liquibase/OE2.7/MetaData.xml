@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+ 	<changeSet author="paulsc" id="1">
+		<comment>Adds dictionary value for default languages and new entry for site information</comment>
+		<insert tableName="dictionary_category" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) " />
+			<column name="description" value="possible language locales for the user to select" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="local_abbrev" value="locale" />
+			<column name="name" value="locale" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims" >
+			<column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+			<column name="is_active" value="Y" />
+			<column name="dict_entry" value="fr-FR" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="local_abbrev" value="fr-FR" />
+			<column name="dictionary_category_id" valueNumeric=" ( select id from clinlims.dictionary_category where name = 'locale' ) " />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims" >
+			<column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+			<column name="is_active" value="Y" />
+			<column name="dict_entry" value="en-US" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="local_abbrev" value="en-US" />
+			<column name="dictionary_category_id" valueNumeric=" ( select id from clinlims.dictionary_category where name = 'locale' ) " />
+		</insert>
+		<insert schemaName="clinlims" tableName="site_information" >
+			<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+			<column name="name"  value="default language locale" />
+			<column name="description" value="The default language local" />
+			<column name="value" value="fr-FR" />
+			<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'siteIdentity' ) " />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="dictionary_category_id" valueNumeric=" ( select id from clinlims.dictionary_category where name = 'locale' ) " />
+			<column name="value_type" value="dictionary" />
+		</insert>
+		<insert schemaName="clinlims" tableName="site_information" >
+			<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+			<column name="name"  value="default date locale" />
+			<column name="description" value="The default date local" />
+			<column name="value" value="fr-FR" />
+			<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'siteIdentity' ) " />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="dictionary_category_id" valueNumeric=" ( select id from clinlims.dictionary_category where name = 'locale' ) " />
+			<column name="value_type" value="dictionary" />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="2">
+		<comment>Adding configuration name to site information</comment>
+		<insert schemaName="clinlims" tableName="site_information" >
+			<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+			<column name="name"  value="configuration name" />
+			<column name="description" value="The name which will appear after the version number in header" />
+			<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'siteIdentity' ) " />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="value_type" value="text" />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="3">
+		<comment>Add analyze and billing code to test code type</comment>
+		<insert tableName="test_code_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'hl7_encoding_type_seq' ) " />
+			<column name="schema_name" value="billingCode"/>
+			<column name="lastupdated" valueDate=" now() " />
+		</insert>
+		<insert tableName="test_code_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'hl7_encoding_type_seq' ) " />
+			<column name="schema_name" value="analyzeCode"/>
+			<column name="lastupdated" valueDate=" now() " />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="6">
+		<comment>adds condenseNFS as a configuration property</comment>
+		<insert schemaName="clinlims" tableName="site_information" >
+			<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+			<column name="name"  value="condenseNSF" />
+			<column name="description" value="Should NFS be represented as NFS or as individual tests" />
+			<column name="value" value="false" />
+			<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'hiddenProperties' ) " />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="value_type" value="boolean" />
+		</insert>
+	</changeSet>
+		<changeSet author="paulsc" id="7" >
+		<comment>Adds new address parts</comment>
+		<sql>
+		INSERT INTO address_part( id, part_name, display_key)
+    		VALUES ( nextval( 'address_part_seq' ) , 'fax', 'address.fax'),
+    		       ( nextval( 'address_part_seq' ) , 'phone', 'address.phone'),
+				   ( nextval( 'address_part_seq' ) , 'street', 'address.street');		
+		</sql>
+	</changeSet>
+	<changeSet author="paulsc" id="8">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="0">
+				select count(*) from clinlims.dictionary_category where name = 'Education Level Demographic Information';
+			</sqlCheck>
+		</preConditions>
+		<comment>Adds Education Level Demographic Information as dictionary category if it does not exist</comment>
+		<insert tableName="dictionary_category" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) "/>
+			<column name="name" value="Education Level Demographic Information"/>
+			<column name="description" value="Possible education levels" />
+			<column name="local_abbrev" value="education" />
+			<column name="lastupdated" valueDate=" now() " />			
+		</insert>	
+	</changeSet>
+	<changeSet author="paulsc" id="9">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="0">
+				select count(*) from clinlims.dictionary_category where name = 'Marital Status Demographic Information';
+			</sqlCheck>
+		</preConditions>
+		<comment>Adds Marital Status Demographic Information as dictionary category if it does not exist</comment>
+		<insert tableName="dictionary_category" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) "/>
+			<column name="name" value="Marital Status Demographic Information"/>
+			<column name="description" value="Possible marriage status" />
+			<column name="local_abbrev" value="marriage" />
+			<column name="lastupdated" valueDate=" now() " />			
+		</insert>	
+	</changeSet>
+	<changeSet author="paulsc" id="10">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="0">
+				select count(*) from clinlims.dictionary_category where name = 'Nationality Demographic Information';
+			</sqlCheck>
+		</preConditions>
+		<comment>Adds Nationality Demographic Information as dictionary category if it does not exist</comment>
+		<insert tableName="dictionary_category" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) "/>
+			<column name="name" value="Nationality Demographic Information"/>
+			<column name="description" value="Possible nationalities" />
+			<column name="local_abbrev" value="nation" />
+			<column name="lastupdated" valueDate=" now() " />			
+		</insert>	
+	</changeSet>
+	<changeSet author="paulsc" id="11" >
+		<comment>Adds education, marital status and nationality to patient identity type</comment>
+		<insert tableName="patient_identity_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'patient_identity_type_seq' ) " />
+			<column name="identity_type" value="EDUCATION" />
+			<column name="description" value="Patients education level" />
+			<column name="lastupdated" valueDate=" now() " />		
+		</insert>
+		<insert tableName="patient_identity_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'patient_identity_type_seq' ) " />
+			<column name="identity_type" value="MARITIAL" />
+			<column name="description" value="Patients maritial status" />
+			<column name="lastupdated" valueDate=" now() " />		
+		</insert>
+		<insert tableName="patient_identity_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'patient_identity_type_seq' ) " />
+			<column name="identity_type" value="NATIONALITY" />
+			<column name="description" value="Patients nationality" />
+			<column name="lastupdated" valueDate=" now() " />		
+		</insert>
+		<insert tableName="patient_identity_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'patient_identity_type_seq' ) " />
+			<column name="identity_type" value="OTHER NATIONALITY" />
+			<column name="description" value="Named nationality if OTHER is selected" />
+			<column name="lastupdated" valueDate=" now() " />		
+		</insert>
+		<insert tableName="patient_identity_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'patient_identity_type_seq' ) " />
+			<column name="identity_type" value="HEALTH DISTRICT" />
+			<column name="description" value="Patients health district" />
+			<column name="lastupdated" valueDate=" now() " />		
+		</insert>
+		<insert tableName="patient_identity_type" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'patient_identity_type_seq' ) " />
+			<column name="identity_type" value="HEALTH REGION" />
+			<column name="description" value="Patients health region" />
+			<column name="lastupdated" valueDate=" now() " />		
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="12">
+		<comment>Adds role needed to view patient results</comment>
+		<insert schemaName="clinlims" tableName="site_information" >
+			<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+			<column name="name"  value="roleForPatientOnResults" />
+			<column name="description" value="Is patient information restricted to those in correct role" />
+			<column name="value" value="false" />
+			<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'resultConfiguration' ) " />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="value_type" value="boolean" />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="13" >
+		<comment>Correcting Status of sample for analysis non_conforming</comment>
+		<update tableName="status_of_sample" schemaName="clinlims">
+			<column name="status_type" value="ANALYSIS" />
+			<where>display_key = 'status.analysis.nonConforming'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="14" >
+		<comment>Correcting Status of sample for analysis non_conforming</comment>
+		<update tableName="status_of_sample" schemaName="clinlims">
+			<column name="status_type" value="ANALYSIS" />
+			<where>display_key = 'status.analysis.nonconforming'</where>
+		</update>
+	</changeSet>
+</databaseChangeLog>

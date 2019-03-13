@@ -1,0 +1,150 @@
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+P17,P24,P31,GP41,P51, P55, P66, GP120,GP160,Positif, Negatif, Indetermine
+P17,P24,P31,GP41,P51, P55, P66, GP120,GP160,Positif, Negatif, Indetermine
+P17,P24,P31,GP41,P51, P55, P66, GP120,GP160,Positif, Negatif, Indetermine
+P17,P24,P31,GP41,P51, P55, P66, GP120,GP160,Positif, Negatif, Indetermine
+IgG Negatif, IgG Positif, IgM Negatif, IgM Positif,IgM Douteux, IgG Douteux
+IgG Negatif, IgG Positif, IgM Negatif, IgM Positif,IgM Douteux, IgG Douteux
+IgG Negatif, IgG Positif, IgM Negatif, IgM Positif,IgM Douteux, IgG Douteux
+IgG Negatif, IgG Positif, IgM Negatif, IgM Positif,IgM Douteux, IgG Douteux
+IgG Negatif, IgG Positif, IgM Negatif, IgM Positif,IgM Douteux, IgG Douteux
+IgG Negatif, IgG Positif, IgM Negatif, IgM Positif,IgM Douteux, IgG Douteux
+Positif, Negatif, Douteux
+Positif, Negatif, Douteux
+Positif, Negatif, Douteux
+Positif, Negatif, Douteux
+Positif, Negatif
+Positif, Negatif
+Non Reactif, Reactif
+Non Reactif, Reactif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Non-Reactif, Reactif, 2u, 4u, 16u, 32u, 64u, 128u,256u
+Positif, Negatif
+.ADN VIH-1  Non-Détecté, .ADN VIH-1 Detecte, PCR1, PCR2, PCR3
+.ADN VIH-1  Non-Détecté, .ADN VIH-1 Detecte, PCR1, PCR2, PCR3
+
+
+Influenza A H1N1v, Influenza A H1N1s, Influenza A H3N2s, Influenza A H5N1, Influenza A Negatif
+Influenza B Negatif, Influenza B Positif
+
+
+
+
+
+
+
+Positif,Negatif
+Positif,Negatif
+Positif,Negatif
+Positif,Negatif
+
+Positif, Negatif, Border Line
+Positif, Negatif, Border Line
+
+
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Positif, Negatif
+Sensible, Inteermediaire, Resistant
+Sensible, Inteermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Sensible, Intermediaire, Resistant
+Noiratre,Sanguinolant, Jaunatre,Marron,Verdatre,Grisatre, Autre
+Liquide, Solide, semi liquide, pateuse, molle, Glaireuse
+Positif, Negatif
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+
+
+Positif, Negatif, Ascaris feconde, Ascaris non feconde,Trichuris trichiura, Ankylostoma doudenale
+Positif, Negatif, Ascaris feconde, Ascaris non feconde,Trichuris trichiura, Ankylostoma doudenale, Oeuf d'oxyure, Hymenolepis nana
+Negatif, Postif, Larve d'Anguilllule, Larve d'Ankylostome
+
+Negatif, Positif, Cryptosporidium, Cyclospora, isospora belli
+Negatif ; P. Falciparum; P. Vivax ; P. Malariae; P.Ovale
+Negatif, Positif 1+, Positif 2+, Positif 3+, Positif 4+
+Negatif, Positif 1+, Positif 2+, Positif 3+, Positif 4+
+Negatif, Positif 1+, Positif 2+, Positif 3+, Positif 4+
+Negatif, Positif
+Negatif, Positif, Wuchereria bancrofti, Mansonella spp
+Negatif, 1 BAAR/ch, 2 BAAR/ch, 3 BAAR/ch, 4 BAAR/ch, 5 BAAR/ch, 6 BAAR/ch, 7 BAAR/ch, 8 BAAR/ch, 9 BAAR/ch, 1+, 2+, 3+
+Negatif, 1 BAAR/ch, 2 BAAR/ch, 3 BAAR/ch, 4 BAAR/ch, 5 BAAR/ch, 6 BAAR/ch, 7 BAAR/ch, 8 BAAR/ch, 9 BAAR/ch, 1+, 2+, 3+
+Negatif, 1 BAAR/ch, 2 BAAR/ch, 3 BAAR/ch, 4 BAAR/ch, 5 BAAR/ch, 6 BAAR/ch, 7 BAAR/ch, 8 BAAR/ch, 9 BAAR/ch, 1+, 2+, 3+
+Negatif, 1 BAAR/ch, 2 BAAR/ch, 3 BAAR/ch, 4 BAAR/ch, 5 BAAR/ch, 6 BAAR/ch, 7 BAAR/ch, 8 BAAR/ch, 9 BAAR/ch, 1+, 2+, 3+
+Negatif, 1 BAAR/ch, 2 BAAR/ch, 3 BAAR/ch, 4 BAAR/ch, 5 BAAR/ch, 6 BAAR/ch, 7 BAAR/ch, 8 BAAR/ch, 9 BAAR/ch, 1+, 2+, 3+
+Negatif, 1 BAAR/ch, 2 BAAR/ch, 3 BAAR/ch, 4 BAAR/ch, 5 BAAR/ch, 6 BAAR/ch, 7 BAAR/ch, 8 BAAR/ch, 9 BAAR/ch, 1+, 2+, 3+
+Purulent, Sanguinolent, salivaire, negatif, contamine, 1-9 colonies, Positif 1+, Positif 2+, Positif 3+
+Purulent, Sanguinolent, salivaire, negatif, contamine, 1-9 colonies, Positif 1+, Positif 2+, Positif 3+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

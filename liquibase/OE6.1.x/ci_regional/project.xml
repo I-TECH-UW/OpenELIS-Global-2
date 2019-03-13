@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+  <changeSet author="CI OpenELIS developers group" id="1" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.project where name = 'Indeterminate Results';
+    		</sqlCheck>
+    </preConditions>
+    <comment>Insert in clinlims new project</comment>
+    <sql>
+	
+	INSERT INTO clinlims.project(id, name, sys_user_id, description, started_date, completed_date,is_active, reference_to, program_code, lastupdated, scriptlet_id, 
+            local_abbrev, display_key)
+    VALUES (21,'Indeterminate Results',default,'Indeterminate Results', default,default,'Y',default,'LIND',now(),default,default,'project.IndeterminateStudy.name');
+
+	INSERT INTO clinlims.project(id, name, sys_user_id, description, started_date, completed_date,is_active, reference_to, program_code, lastupdated, scriptlet_id, 
+            local_abbrev, display_key)
+    VALUES (22,'Cell Sequencing',default,'Cell Sequencing', default,default,'Y',default,'LSEQ',now(),default,default,'project.SequencingStudy.name');
+
+	
+	INSERT INTO clinlims.project(id, name, sys_user_id, description, started_date, completed_date,is_active, reference_to, program_code, lastupdated, scriptlet_id, 
+            local_abbrev, display_key)
+    VALUES (23,'Special Request',default,'Special Requests', default,default,'Y',default,'LSPE',now(),default,default,'project.SpecialRequestStudy.name');
+
+	INSERT INTO clinlims.project(id, name, sys_user_id, description, started_date, completed_date,is_active, reference_to, program_code, lastupdated, scriptlet_id, 
+            local_abbrev, display_key)
+    VALUES (24,'Antiretroviral Study',default,'Antiretroviral Treatment Study', default,default,'Y',default,'LARC',now(),default,default,'project.ARVStudy.name');
+
+	
+	INSERT INTO clinlims.project(id, name, sys_user_id, description, started_date, completed_date,is_active, reference_to, program_code, lastupdated, scriptlet_id, 
+            local_abbrev, display_key)
+    VALUES (25,'Early Infant Diagnosis for HIV Study',default,'Early Infant Diagnosis for HIV Study', default,default,'Y',default,'LDBS',now(),default,default,'project.EIDStudy.name');
+
+	INSERT INTO clinlims.project(id, name, sys_user_id, description, started_date, completed_date,is_active, reference_to, program_code, lastupdated, scriptlet_id, 
+            local_abbrev, display_key)
+    VALUES (26,'Routine HIV Testing',default,'Routine HIV Tests', default,default,'Y',default,'LRTN',now(),default,default,'project.RTNStudy.name');
+
+	INSERT INTO clinlims.project(id, name, sys_user_id, description, started_date, completed_date,is_active, reference_to, program_code, lastupdated, scriptlet_id, 
+            local_abbrev, display_key)
+    VALUES (27,'Antiretroviral Followup Study',default,'Antiretroviral Followup Study', default,default,'Y',default,'LARC',now(),default,default,'project.ARVFollowupStudy.name');
+
+	INSERT INTO clinlims.project(id, name, sys_user_id, description, started_date, completed_date,is_active, reference_to, program_code, lastupdated, scriptlet_id, 
+            local_abbrev, display_key)
+    VALUES (28,'Viral Load Results',default,'Viral Load Results', default,default,'Y',default,'LARC',now(),default,default,'project.VLStudy.name');
+
+	
+	 </sql>
+  </changeSet>
+</databaseChangeLog>

@@ -2,6 +2,7 @@ package spring.mine.analyzer.form;
 
 import java.sql.Timestamp;
 import java.util.List;
+
 import spring.mine.common.form.BaseForm;
 
 public class ListPluginForm extends BaseForm {

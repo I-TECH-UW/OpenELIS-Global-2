@@ -69,7 +69,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters)
 {
 	// patientLoader.compareDetails($("patientPK"));
 	// actually needs to move to the 'third' AJAX thread after laoding for comparison of patient, sample and observation history fields.
-	setAction(window.document.forms[0], 'Cancel', 'no', '');
+	setAction(document.getElementById("mainForm"), 'Cancel', 'no', '');
 }
 
 function clearAllFormFields(formName) {
@@ -166,7 +166,7 @@ projectChecker = null;
 // set the selected value of the study drop down and switch to display that study
 function selectStudy( divId ) {
 	var i = getSelectIndexFor("studyFormsID", divId);
-	document.forms[0].studyForms.selectedIndex = i;
+	document.getElementById("mainForm").studyForms.selectedIndex = i;
 	switchStudyForm( divId );
 }
 
@@ -211,7 +211,7 @@ function adjustFieldsForRequestType() {
 		//$("iarv.underInvestigationCommentRow").style.display = "table-row";
     }
 
-	var elements = document.forms[0].elements;
+	var elements = document.getElementById("mainForm").elements;
 	
 	if (projectChecker == null ) {
 		return;
@@ -233,16 +233,16 @@ function adjustFieldsForRequestType() {
 		for (i=0; i< elements.length; i++) {
 			setFieldReadOnly(elements[i], true);
 		}
-	//	setFieldReadOnly( document.forms[0].searchLastName, false);
-	//	setFieldReadOnly( document.forms[0].searchFirstName, false);
-	//	setFieldReadOnly( document.forms[0].searchNationalID, false);
-		setFieldReadOnly( document.forms[0].searchButton, false);
-		setFieldReadOnly( document.forms[0].cancelButtonId, false);
-	//	setFieldReadOnly( document.forms[0].searchLabNumber, false);
-        setFieldReadOnly( document.forms[0].saveButtonId, false );
-        setFieldReadOnly( document.forms[0].searchValue, false );
-        setFieldReadOnly( document.forms[0].searchCriteria, false );
-		document.forms[0].saveButtonId.disabled = true;
+	//	setFieldReadOnly( document.getElementById("mainForm").searchLastName, false);
+	//	setFieldReadOnly( document.getElementById("mainForm").searchFirstName, false);
+	//	setFieldReadOnly( document.getElementById("mainForm").searchNationalID, false);
+		setFieldReadOnly( document.getElementById("mainForm").searchButton, false);
+		setFieldReadOnly( document.getElementById("mainForm").cancelButtonId, false);
+	//	setFieldReadOnly( document.getElementById("mainForm").searchLabNumber, false);
+        setFieldReadOnly( document.getElementById("mainForm").saveButtonId, false );
+        setFieldReadOnly( document.getElementById("mainForm").searchValue, false );
+        setFieldReadOnly( document.getElementById("mainForm").searchCriteria, false );
+		document.getElementById("mainForm").saveButtonId.disabled = true;
 		break;
 	}
 }
@@ -294,7 +294,7 @@ function /*void*/ makeDirty(){
 
 function savePage__() {
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-	var form = window.document.forms[0];
+	var form = document.getElementById("mainForm");
 	if ( requestType == "readwrite" ) {
 		form.action = "PatientEditByProjectSave.do?type=" + requestType;
 	} else {

@@ -20,10 +20,10 @@ package us.mn.state.health.lims.reports.action.implementation;
 import java.util.ArrayList;
 import java.util.List;
 
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.analyte.dao.AnalyteDAO;
 import us.mn.state.health.lims.analyte.daoimpl.AnalyteDAOImpl;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
-import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
 import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistorytype.dao.ObservationHistoryTypeDAO;

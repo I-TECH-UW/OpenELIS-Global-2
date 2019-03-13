@@ -1,0 +1,99 @@
+
+Paste following in SampleType.sql
+
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Urine','H', now() , 'Urine', 'sample.type.Urine', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Genital Swab','H', now() , 'Genital Sw', 'sample.type.Genital', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Blood','H', now() , 'Blood', 'sample.type.Blood', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Genital Specimen','H', now() , 'Genital Sp', 'sample.type.Genital', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Stool','H', now() , 'Stool', 'sample.type.Stool', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Skin','H', now() , 'Skin', 'sample.type.Skin', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Bone Marrow','H', now() , 'Bone Marro', 'sample.type.Bone', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'CSF','H', now() , 'CSF', 'sample.type.CSF', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Bone marrow','H', now() , 'Bone marro', 'sample.type.Bone', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Pus swab','H', now() , 'Pus swab', 'sample.type.Pus', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Vaginal swab','H', now() , 'Vaginal sw', 'sample.type.Vaginal', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Respiratory specimen','H', now() , 'Respirator', 'sample.type.Respiratory', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Rectal swab','H', now() , 'Rectal swa', 'sample.type.Rectal', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Urethral swab','H', now() , 'Urethral s', 'sample.type.Urethral', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Aspirates','H', now() , 'Aspirates', 'sample.type.Aspirates', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Eye swab','H', now() , 'Eye swab', 'sample.type.Eye', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Ear swab','H', now() , 'Ear swab', 'sample.type.Ear', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Dried Blood Spots','H', now() , 'Dried Bloo', 'sample.type.Dried', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Lymph nodes','H', now() , 'Lymph node', 'sample.type.Lymph', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Respiratory tract lavage','H', now() , 'Respirator', 'sample.type.Respiratory', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Pleural fluid','H', now() , 'Pleural fl', 'sample.type.Pleural', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Ascitic fluid','H', now() , 'Ascitic fl', 'sample.type.Ascitic', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Liver tissue','H', now() , 'Liver tiss', 'sample.type.Liver', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Kidney tissue','H', now() , 'Kidney tis', 'sample.type.Kidney', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Cervix','H', now() , 'Cervix', 'sample.type.Cervix', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Prostrate','H', now() , 'Prostrate', 'sample.type.Prostrate', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Breast','H', now() , 'Breast', 'sample.type.Breast', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Ovarian cyst','H', now() , 'Ovarian cy', 'sample.type.Ovarian', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Fibroids','H', now() , 'Fibroids', 'sample.type.Fibroids', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Bone Marrow Biopsy','H', now() , 'Bone Marro', 'sample.type.Bone', 'Y');
+INSERT INTO clinlims.type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'clinlims.type_of_sample_seq' ) , 'Cervical smear','H', now() , 'Cervical s', 'sample.type.Cervical', 'Y');
+
+Paste following in TypeOrder.sql
+
+update clinlims.type_of_sample set sort_order=10 where description ILIKE 'Urine';
+update clinlims.type_of_sample set sort_order=20 where description ILIKE 'Genital Swab';
+update clinlims.type_of_sample set sort_order=30 where description ILIKE 'Blood';
+update clinlims.type_of_sample set sort_order=40 where description ILIKE 'Genital Specimen';
+update clinlims.type_of_sample set sort_order=50 where description ILIKE 'Stool';
+update clinlims.type_of_sample set sort_order=60 where description ILIKE 'Skin';
+update clinlims.type_of_sample set sort_order=70 where description ILIKE 'Bone Marrow';
+update clinlims.type_of_sample set sort_order=80 where description ILIKE 'CSF';
+update clinlims.type_of_sample set sort_order=90 where description ILIKE 'Bone marrow';
+update clinlims.type_of_sample set sort_order=100 where description ILIKE 'Pus swab';
+update clinlims.type_of_sample set sort_order=110 where description ILIKE 'Vaginal swab';
+update clinlims.type_of_sample set sort_order=120 where description ILIKE 'Respiratory specimen';
+update clinlims.type_of_sample set sort_order=130 where description ILIKE 'Rectal swab';
+update clinlims.type_of_sample set sort_order=140 where description ILIKE 'Urethral swab';
+update clinlims.type_of_sample set sort_order=150 where description ILIKE 'Aspirates';
+update clinlims.type_of_sample set sort_order=160 where description ILIKE 'Eye swab';
+update clinlims.type_of_sample set sort_order=170 where description ILIKE 'Ear swab';
+update clinlims.type_of_sample set sort_order=180 where description ILIKE 'Dried Blood Spots';
+update clinlims.type_of_sample set sort_order=190 where description ILIKE 'Lymph nodes';
+update clinlims.type_of_sample set sort_order=200 where description ILIKE 'Respiratory tract lavage';
+update clinlims.type_of_sample set sort_order=210 where description ILIKE 'Pleural fluid';
+update clinlims.type_of_sample set sort_order=220 where description ILIKE 'Ascitic fluid';
+update clinlims.type_of_sample set sort_order=230 where description ILIKE 'Liver tissue';
+update clinlims.type_of_sample set sort_order=240 where description ILIKE 'Kidney tissue';
+update clinlims.type_of_sample set sort_order=250 where description ILIKE 'Cervix';
+update clinlims.type_of_sample set sort_order=260 where description ILIKE 'Prostrate';
+update clinlims.type_of_sample set sort_order=270 where description ILIKE 'Breast';
+update clinlims.type_of_sample set sort_order=280 where description ILIKE 'Ovarian cyst';
+update clinlims.type_of_sample set sort_order=290 where description ILIKE 'Fibroids';
+update clinlims.type_of_sample set sort_order=300 where description ILIKE 'Bone Marrow Biopsy';
+update clinlims.type_of_sample set sort_order=310 where description ILIKE 'Cervical smear';

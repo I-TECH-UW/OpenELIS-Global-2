@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+<changeSet author="paulsc" id="1" >
+	<comment>Adds new column to Sample(aka Order) table</comment>
+	<addColumn tableName="sample">
+		<column name="referring_id" type="varchar(30)" />
+	</addColumn>
+	<sql>
+		COMMENT ON COLUMN clinlims.sample.referring_id IS 'The external number supplied the referrer.  AKA Order number';		
+	</sql>
+</changeSet>
+<changeSet author="jfurlong" id="2">
+    <sql>
+         ALTER TABLE clinlims.status_of_sample ALTER status_type TYPE character varying(24);
+    </sql>
+</changeSet>
+<changeSet author="jfurlong" id="5">
+    <sql>
+        CREATE TABLE clinlims.electronic_order (
+		   id numeric(10,0) NOT NULL, 
+		   external_id character varying(60) NOT NULL, 
+		   patient_id numeric(10,0), 
+		   status_id numeric(10,0) NOT NULL, 
+		   order_timestamp timestamp without time zone NOT NULL, 
+		   data text NOT NULL, 
+		   lastupdated timestamp without time zone NOT NULL, 
+		   CONSTRAINT electronic_order_pk PRIMARY KEY (id), 
+		   CONSTRAINT electronic_order_patient_fk FOREIGN KEY (patient_id) REFERENCES clinlims.patient (id) ON UPDATE NO ACTION ON DELETE NO ACTION, 
+		   CONSTRAINT status_id FOREIGN KEY (status_id) REFERENCES clinlims.status_of_sample (id) ON UPDATE NO ACTION ON DELETE NO ACTION
+		) 
+		WITH (
+		  OIDS = FALSE
+		);
+		ALTER TABLE clinlims.electronic_order OWNER TO clinlims;
+
+		ALTER TABLE clinlims.sample ADD COLUMN clinical_order_id numeric(10,0);
+		ALTER TABLE clinlims.sample ADD CONSTRAINT sample_electronic_order_fk FOREIGN KEY (clinical_order_id) REFERENCES clinlims.electronic_order (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+		
+		CREATE SEQUENCE clinlims.electronic_order_seq
+		  INCREMENT 1
+		  MINVALUE 1
+		  MAXVALUE 9223372036854775807
+		  START 4819
+		  CACHE 20;
+		ALTER TABLE clinlims.electronic_order_seq OWNER TO clinlims;
+    </sql>
+</changeSet>
+<changeSet author="jfurlong" id="6">
+    <sql>
+        COMMENT ON COLUMN clinlims.electronic_order."external_id" IS 'An order ID assigned by another system (i.e. iSante) submitted electronically';
+        COMMENT ON COLUMN clinlims.electronic_order."patient_id" IS 'The id and foreign key to the patient record for this electronic order';
+        COMMENT ON COLUMN clinlims.electronic_order."status_id" IS 'The ID and foreign key to the status_of_sample table. Possible status (Entered, Cancelled, Realized)';
+        COMMENT ON COLUMN clinlims.electronic_order."order_timestamp" IS 'Timestamp when the order was received';
+        COMMENT ON COLUMN clinlims.electronic_order."data" IS 'The order in CLOB form';
+    </sql>
+</changeSet>
+<changeSet author="paulsc" id="2">
+	<comment>Change the start of electronic_order_seq so it starts at 1</comment>
+	<sql>
+		ALTER SEQUENCE clinlims.electronic_order_seq RESTART WITH 1; 
+	</sql>
+</changeSet>
+<changeSet author="paulsc" id="3">
+	<comment>Add electronic_orders to reference_tables table</comment>
+	<insert tableName="reference_tables">
+		<column name="id" valueNumeric=" nextval('reference_tables_seq') " />
+		<column name="name" value="ELECTROINIC_ORDER"/>
+		<column name="keep_history" value="Y" />
+  		<column name="is_hl7_encoded" value="N" />
+  		<column name="lastupdated"  valueDate=" now() " />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="4">
+	<comment>Adding column to analysis table to mark if the analysis has been referred out, will replace ""referred out" status</comment>
+	<addColumn tableName="analysis">
+		<column name="referred_out" type="boolean"  defaultValueBoolean="false"/>
+	</addColumn>
+	<sql>
+		comment on column clinlims.analysis.referred_out is 'True if this analysis has been referred out, false otherwise';
+		
+		update clinlims.analysis set referred_out = true where status_id = (select id from clinlims.status_of_sample where name='referred out' and status_type = 'ANALYSIS');
+		
+		update clinlims.analysis set status_id = (select id from clinlims.status_of_sample where name='Finalized' and status_type = 'ANALYSIS') where
+		id in (select a.id from clinlims.analysis a
+			  join clinlims.result r on r.analysis_id = a.id
+			  where a.status_id = (select id from clinlims.status_of_sample where name='referred out' )
+			  and not (r.value is null or r.value = '' or (r.result_type = 'D' and r.value = '0')));
+			  
+		update clinlims.analysis set status_id = (select id from clinlims.status_of_sample where name='Not Tested' and status_type = 'ANALYSIS') where
+		id in (select a.id from clinlims.analysis a
+			  join clinlims.result r on r.analysis_id = a.id
+			  where a.status_id = (select id from clinlims.status_of_sample where name='referred out' )
+			  and (r.value is null or r.value = '' or (r.result_type = 'D' and r.value = '0')));	  
+	</sql>
+</changeSet>
+    <changeSet id="5" author="paulsc">
+        <comment>Expand the sample referring_id column so it is the same width as the provider external_id column</comment>
+        <modifyColumn tableName="sample">
+            <column name="referring_id" type="varchar(50)"/>
+        </modifyColumn>
+</changeSet>
+</databaseChangeLog>

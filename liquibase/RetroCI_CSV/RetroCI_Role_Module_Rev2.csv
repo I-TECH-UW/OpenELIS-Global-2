@@ -1,0 +1,9 @@
+id,has_select,has_add,has_update,has_delete,system_role_id,system_module_id
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Test Request Entry' ) , ( select id from system_module where name  = 'SampleEntryByProject' ) 
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Test Request Verify' ) , ( select id from system_module where name = 'SampleEntryByProject' ) 
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Test Request Search') , ( select id from system_module where name  = 'SampleEditByProject' ) 
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Test Request Edit' ) , ( select id from system_module where name   = 'SampleEditByProject' ) 
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Demographics Entry' ) , ( select id from system_module where name  = 'PatientEntryByProject' ) 
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Demographics Verify' ) , ( select id from system_module where name = 'PatientEntryByProject' ) 
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Demographics Search' ) , ( select id from system_module where name = 'PatientEditByProject' ) 
+nextval( 'system_user_module_seq' ) ,Y,Y,Y,Y, ( select id from system_role where name = 'Demographics Edit' ) , ( select id from system_module where name   = 'PatientEditByProject' ) 

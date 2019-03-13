@@ -18,7 +18,8 @@
         <input type="button" id="submitButton" onclick="submitOnClick(this);return false;" value="${submitText}"/>
   			
 		<spring:message code="label.button.changePassword" var="changePasswordText"/>
-        <input type="button" id="changePasswordButton" onclick="setAction(window.document.forms[0], 'ChangePassword', 'no', '');" value="${changePasswordText}"/>
+		<spring:url var="changePassUrl" value="/ChangePasswordLogin.do" htmlEscape="true"/>
+        <button type="button" onclick="window.location.href='${changePassUrl}'"><c:out value="${changePasswordText}"/> </button>
   		   
     </td>        
 </tr>         

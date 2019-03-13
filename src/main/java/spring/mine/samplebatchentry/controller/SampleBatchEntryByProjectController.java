@@ -12,12 +12,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import spring.mine.common.controller.BaseController;
+
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.sample.controller.BaseSampleEntryController;
 import spring.mine.samplebatchentry.form.SampleBatchEntryForm;
-import us.mn.state.health.lims.common.action.BaseActionForm;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dictionary.ObservationHistoryList;
@@ -39,14 +38,8 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 			form = new SampleBatchEntryForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		String study = request.getParameter("study");
 		try {
@@ -170,15 +163,15 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 		}
 	}
 
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	protected String findLocalForward(String forward) {
 		if (ON_DEMAND.equals(forward)) {
-			return new ModelAndView("sampleStudyBatchEntryOnDemandDefinition", "form", form);
+			return "sampleStudyBatchEntryOnDemandDefinition";
 		} else if (PRE_PRINTED.equals(forward)) {
-			return new ModelAndView("sampleStudyBatchEntryPrePrintedDefinition", "form", form);
-		} else if ("fail".equals(forward)) {
-			return new ModelAndView("sampleBatchEntrySetupDefinition", "form", form);
+			return "sampleStudyBatchEntryPrePrintedDefinition";
+		} else if (FWD_FAIL.equals(forward)) {
+			return "sampleBatchEntrySetupDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

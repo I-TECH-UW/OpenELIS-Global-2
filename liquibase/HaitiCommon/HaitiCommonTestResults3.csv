@@ -1,0 +1,6 @@
+id,result_type,value,test,lastupdated
+ nextval( 'test_result_seq' ) ,D, (select id from clinlims.dictionary where dict_entry='Réactif' ) , ( select id from clinlims.test where description='Mantoux / PPD' ) , now() 
+ nextval( 'test_result_seq' ) ,D, (select id from clinlims.dictionary where dict_entry='Non Réactif' ) , ( select id from clinlims.test where description='Mantoux / PPD' ) , now() 
+ nextval( 'test_result_seq' ) ,D, (select id from clinlims.dictionary where local_abbrev='IND' ) , ( select id from clinlims.test where description='Mantoux / PPD' ) , now() 
+ nextval( 'test_result_seq' ) ,D, (select id from clinlims.dictionary where local_abbrev='POSITIF' ) , (select id from clinlims.test where description='Adénovirus (Serum)' ) , now() 
+ nextval( 'test_result_seq' ) ,D, (select id from clinlims.dictionary where dict_entry='Négatif' ) , ( select id from clinlims.test where description='Adénovirus (Serum)' ) , now() 

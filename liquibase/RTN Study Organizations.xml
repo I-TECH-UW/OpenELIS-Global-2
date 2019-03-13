@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<changeSet author="pahill" id="1" context="CDIRetroCI" runOnChange="true">
+		<comment>routine HIV request site definitions</comment>
+		<insert schemaName="clinlims" tableName="project">
+			<column name="id" valueNumeric=" nextval( 'project_seq' ) "/>
+			<column name="name" value="Routine HIV Testing"/>
+			<column name="display_key" value="project.RTNStudy.name"/>
+			<column name="description" value="Routine HIV Tests"/>
+			<column name="program_code" value="LRTN"/>
+			<column name="is_active" value="Y"/>
+			<column name="lastupdated" valueDate=" now() "/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_type">
+			<column name="id" valueNumeric=" nextval( 'organization_type_seq' ) "/>
+			<column name="short_name" value="RTN HIV Service Loc"/>
+			<column name="description" value="Côte d'Ivoire Routine HIV Tests Service Locations"/>
+			<column name="name_display_key"  value="org_type.RTNSites.name" />
+			<column name="lastupdated" valueDate=" now() "/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="01"/>
+			<column name="name"       value="MALADIES INFECTIEUSES" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="02"/>
+			<column name="name"       value="PPH" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="03"/>
+			<column name="name"       value="DERMATOLOGIE" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="04"/>
+			<column name="name"       value="MEDECINE INTERNE" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="05"/>
+			<column name="name"       value="NEUROLOGIE" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="06"/>
+			<column name="name"       value="PEDIATRIE" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="07"/>
+			<column name="name"       value="CTRO" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="08"/>
+			<column name="name"       value="GYNECOLOGIE" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="09"/>
+			<column name="name"       value="CHIRURGIE" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="10"/>
+			<column name="name"       value="AUTRE" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="11"/>
+			<column name="name"       value="ABENGOUROU" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="12"/>
+			<column name="name"       value="BOUAKE" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="13"/>
+			<column name="name"       value="DALOA" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="14"/>
+			<column name="name"       value="GAGNOA" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="15"/>
+			<column name="name"       value="KORHOGO" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="16"/>
+			<column name="name"       value="MAN" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="17"/>
+			<column name="name"       value="AUTRES INTERIEUR" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="18"/>
+			<column name="name"       value="CANCEROLOGIE" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="19"/>
+			<column name="name"       value="CARDIOLOGIE" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="20"/>
+			<column name="name"       value="USAC" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization">
+			<column name="id"         valueNumeric=" nextval( 'organization_seq' ) " />
+			<column name="short_name" value="21"/>
+			<column name="name"       value="INHP" />
+			<column name="lastupdated" valueDate=" now() "/>
+			<column name="mls_sentinel_lab_flag" value="N"/>
+			<column name="is_active" value="Y"/>
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="organization_organization_type">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="org_type_id"   valueNumeric=" currval( 'organization_type_seq' ) " />
+		</insert>
+		
+		<insert schemaName="clinlims" tableName="project_organization">
+			<column name="org_id"        valueNumeric=" currval( 'organization_seq' ) " />
+			<column name="project_id"    valueNumeric=" currval( 'project_seq' ) " />
+		</insert>
+		
+	</changeSet>
+    <changeSet author="paulsc" id="1" context="CDIRetroCI">
+        <comment>Change USAC to U.S.A.C</comment>
+        <update schemaName="clinlims" tableName="organization">
+                <column name="name" value="U.S.A.C."/>
+                <where>name='USAC'</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>
+

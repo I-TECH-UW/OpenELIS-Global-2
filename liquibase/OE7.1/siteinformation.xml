@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--bugfix for repeated value entry https://www.pivotaltracker.com/n/projects/18030/stories/155913308/comments/187011668-->
+  <!--fix is to put lastupdated value when missing -->
+  
+ <changeSet author="CI OpenELIS developers group" id="1" runAlways="true">
+    <comment>update lastupdated when null</comment>
+    <sql>
+		UPDATE clinlims.site_information 
+		SET lastupdated = current_timestamp
+		WHERE lastupdated IS NULL;
+ </sql>
+  </changeSet>
+  
+</databaseChangeLog>

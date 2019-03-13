@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+
+    <changeSet id="1" author="paulsc" context="haitiLNSP">
+        <comment>Adds significant digits to test_results</comment>
+        <update tableName="test_result" >
+            <column name="significant_digits" valueNumeric="0" />
+        </update>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/significantDigits.sql" />
+    </changeSet>
+    <changeSet id="2" author="paulsc" context="haitiLNSP">
+        <comment>Adds reference range for multi select</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/multiresultRefRange.sql" />
+    </changeSet>
+    <changeSet id="3" author="paulsc" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/testUpdates.sql" />
+    </changeSet>
+    <changeSet id="4" author="paulsc" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/testUpdates2.sql" />
+    </changeSet>
+    <changeSet id="1" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog (add Chikungunya and modify tests)</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/testUpdates3.sql" />
+    </changeSet>
+    <changeSet id="2" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog (localization fixes for culture des Selles)</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/testUpdates4.sql" />
+    </changeSet>
+    <changeSet id="3" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog (de-activate tests)</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/testUpdates5.sql" />
+    </changeSet>
+    <changeSet id="4" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog (add tests and panels)</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/testUpdates6.sql" />
+    </changeSet>
+    <changeSet id="5" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog (add tests and panels)</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/testUpdates7.sql" />
+    </changeSet>
+    <changeSet id="6" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog (deactivate sample_types)</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/testUpdates8.sql" />
+    </changeSet>
+    <changeSet id="7" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog (deactivate sample_types)</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/testUpdates9.sql" />
+    </changeSet>
+    <changeSet id="8" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/testUpdates10.sql" />
+    </changeSet>
+    <changeSet id="5" author="paulsc" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/ExamenMicroscopiqueTest.sql" />
+    </changeSet>
+    <changeSet id="6" author="paulsc" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/AntigramToPositive.sql" />
+    </changeSet>
+    <changeSet id="7" author="paulsc" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/missingDictionary.sql" />
+    </changeSet>
+    <changeSet id="8" author="paulsc" context="haitiLNSP">
+        <comment>Update the sample type in the test name</comment>
+        <sql>
+            update clinlims.test set description = replace( description, 'Sputum', 'Crachats') where description like '%Sputum%';
+        </sql>
+    </changeSet>
+    <changeSet id="9" author="paulsc" context="haitiLNSP">
+        <comment>Update the reporting description</comment>
+        <sql>
+            update clinlims.test set reporting_description = name where reporting_description = 'c';
+        </sql>
+    </changeSet>
+    <changeSet id="9" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/testUpdates11.sql" />
+    </changeSet>
+    <changeSet id="10" author="paulsc" context="haitiLNSP">
+        <comment>re-enable tests in reflexes</comment>
+        <sql>
+            update clinlims.test set is_active = 'Y' where id in (select t.id from clinlims.test t
+            join clinlims.test_reflex tr on tr.add_test_id = t.id
+            where t.is_active = 'N');
+        </sql>
+    </changeSet>
+    <changeSet id="10" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/testUpdates12.sql" />
+    </changeSet>    
+    <changeSet id="11" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/testUpdates13.sql" />
+    </changeSet> 
+    <changeSet id="12" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/testUpdates14.sql" />
+    </changeSet>    
+    <changeSet id="13" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/testUpdates15.sql" />
+    </changeSet>  
+    <changeSet id="14" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sql>
+        update clinlims.test set uom_id = (select id from clinlims.unit_of_measure where name like '10^3/_l') where name in ( 'Compte des Globules Blancs', 'Plaquettes');
+        </sql>
+    </changeSet>  
+    <changeSet id="15" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sqlFile path="OE3.4/testCatalogHT_LNSP/testUpdates16.sql" />
+    </changeSet>  
+    <changeSet id="16" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sql>
+            update clinlims.unit_of_measure set name = '10^3/µl', description = '10^3/µl'  where name like '10^3/_l';
+        </sql>
+    </changeSet>  
+    <changeSet id="17" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sql>
+                insert  into clinlims.result_limits (id, test_id, test_result_type_id, lastupdated, normal_dictionary_id, always_validate)
+                    values (nextval('result_limits_seq'), (select id from clinlims.test where description = 'Hemoculture(Sang Total)'), (select id from clinlims.type_of_test_result where test_result_type = 'D'), now(), (select max(id) from clinlims.dictionary where dict_entry = 'Negatif' ), 'f');
+                    
+                insert  into clinlims.result_limits (id, test_id, test_result_type_id, lastupdated, normal_dictionary_id, always_validate)
+                    values (nextval('result_limits_seq'), (select id from clinlims.test where description = 'Recherche du Virus Chikungunya(Sérum)'), (select id from clinlims.type_of_test_result where test_result_type = 'D'), now(), (select max(id) from clinlims.dictionary where dict_entry = 'Negatif' ), 'f');
+                    
+                
+                delete from clinlims.result_limits where test_id in (select id from clinlims.test where description in ('Couleur(Selles)', 'Consistance(Selles)','Levures simples(Selles)','Levures bourgeonantes(Selles)'));
+
+
+        </sql>
+    </changeSet>  
+    <changeSet id="18" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sql>
+            update clinlims.result_limits set test_result_type_id = (select id from clinlims.type_of_test_result where test_result_type = 'R') where test_id = (select id from clinlims.test where description = 'Hemoculture(Sang Total)');
+        </sql>
+    </changeSet>  
+    <changeSet id="19" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sql>
+            update clinlims.result_limits set test_result_type_id = (select id from clinlims.type_of_test_result where test_result_type = 'R') where test_id = (select id from clinlims.test where description = 'Hemoculture(Sang Total)');
+        </sql>
+    </changeSet> 
+     <changeSet id="20" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sql>
+            insert into clinlims.dictionary (id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, sort_order) 
+                values (nextval('clinlims.dictionary_seq'), 'Y', 'Absence de pousse', now(), 'ABSENCEPOUSSE', 38, 900000);
+        </sql>
+    </changeSet> 
+     <changeSet id="21" author="jfurlong" context="haitiLNSP">
+        <comment>Updates to the test catalog</comment>
+        <sql>
+             insert  into clinlims.result_limits (id, test_id, test_result_type_id, lastupdated, normal_dictionary_id, always_validate)
+                    values (nextval('result_limits_seq'), (select id from clinlims.test where description = 'Culture du LCR(LCR)'), (select id from clinlims.type_of_test_result where test_result_type = 'R'), now(), (select max(id) from clinlims.dictionary where dict_entry = 'Absence de pousse' ), 'f');
+
+            update clinlims.result_limits set normal_dictionary_id = (select max(id) from clinlims.dictionary where dict_entry = 'Absence de pousse' ) where test_id = (select id from clinlims.test where description = 'Hemoculture(Sang Total)');
+        </sql>
+    </changeSet> 
+</databaseChangeLog>

@@ -1,0 +1,10 @@
+id,is_active,entry,lastupdated,local_abbrev,category_id,display_key
+ nextval( 'dictionary_seq' ) ,Y,Hemolysis, now() ,Hemo, (select id from clinlims.dictionary_category where local_abbrev='reciptCond' ) , dictionary.condition.hematolysis
+ nextval( 'dictionary_seq' ) ,Y,Coagulated, now() ,Coag, (select id from clinlims.dictionary_category where local_abbrev='reciptCond' ) , dictionary.condition.coagulated
+ nextval( 'dictionary_seq' ) ,Y,Insuffient Amount, now() ,Insuff, (select id from clinlims.dictionary_category where local_abbrev='reciptCond' ) , dictionary.condition.insufficient
+ nextval( 'dictionary_seq' ) ,Y,Contaminated, now() ,Contamin, (select id from clinlims.dictionary_category where local_abbrev='reciptCond' ) , dictionary.condition.contaminated 
+ nextval( 'dictionary_seq' ) ,Y,Inadequate Sampling, now() ,Inadequ, (select id from clinlims.dictionary_category where local_abbrev='reciptCond' ) , dictionary.condition.inadequate 
+ nextval( 'dictionary_seq' ) ,Y,Overturned Sample, now() ,Overturned, (select id from clinlims.dictionary_category where local_abbrev='reciptCond' ) , dictionary.condition.overturned
+ nextval( 'dictionary_seq' ) ,Y,Other, now() ,Other, (select id from clinlims.dictionary_category where local_abbrev='reciptCond' ) , dictionary.condition.other
+ nextval( 'dictionary_seq' ) ,Y,Sample without Form, now() ,NoForm, (select id from clinlims.dictionary_category where local_abbrev='reciptCond' ) , dictionary.condition.sampleNoForm
+ nextval( 'dictionary_seq' ) ,Y,Form without Sample, now() ,NoSample, (select id from clinlims.dictionary_category where local_abbrev='reciptCond' ) , dictionary.condition.formNoSample

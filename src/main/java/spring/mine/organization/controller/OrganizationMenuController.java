@@ -8,13 +8,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.Globals;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import spring.mine.common.constants.Constants;
 import spring.mine.common.controller.BaseMenuController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.form.MenuForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.organization.form.OrganizationMenuForm;
@@ -31,27 +33,21 @@ import us.mn.state.health.lims.organization.valueholder.Organization;
 @Controller
 public class OrganizationMenuController extends BaseMenuController {
 
-	@RequestMapping(value = { "/OrganizationMenu", "/SearchOrganizationMenu" }, method = { RequestMethod.GET,
-			RequestMethod.POST })
-	public ModelAndView showOrganizationMenu(HttpServletRequest request,
-			@ModelAttribute("form") OrganizationMenuForm form)
+	@RequestMapping(value = { "/OrganizationMenu", "/SearchOrganizationMenu" }, method = RequestMethod.GET)
+	public ModelAndView showOrganizationMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new OrganizationMenuForm();
-		}
-		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
+		OrganizationMenuForm form = new OrganizationMenuForm();
 
-		if (errors.hasErrors()) {
-			return mv;
+		forward = performMenuAction(form, request);
+		if (FWD_FAIL.equals(forward)) {
+			Errors errors = new BaseErrors();
+			errors.reject("error.generic");
+			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, errors);
+			return findForward(forward, form);
+		} else {
+			return findForward(forward, form);
 		}
-
-		return performMenuAction(form, request);
 	}
 
 	@Override
@@ -136,15 +132,7 @@ public class OrganizationMenuController extends BaseMenuController {
 			form = new OrganizationMenuForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
 
 		String[] selectedIDs = (String[]) form.get("selectedIDs");
 
@@ -206,17 +194,17 @@ public class OrganizationMenuController extends BaseMenuController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
-			return new ModelAndView("masterListsPageDefinition", "form", form);
-		} else if ("fail".equals(forward)) {
-			return new ModelAndView("redirect:/MasterListsPage.do", "form", form);
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "masterListsPageDefinition";
+		} else if (FWD_FAIL.equals(forward)) {
+			return "redirect:/MasterListsPage.do";
 		} else if (FWD_SUCCESS_DELETE.equals(forward)) {
-			return new ModelAndView("redirect:/OrganizationMenu.do", "form", form);
+			return "redirect:/OrganizationMenu.do";
 		} else if (FWD_FAIL_DELETE.equals(forward)) {
-			return new ModelAndView("redirect:/OrganizationMenu.do", "form", form);
+			return "redirect:/OrganizationMenu.do";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

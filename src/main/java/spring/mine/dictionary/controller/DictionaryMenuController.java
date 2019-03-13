@@ -6,18 +6,22 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.struts.Globals;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import spring.mine.common.constants.Constants;
 import spring.mine.common.controller.BaseMenuController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.form.MenuForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.dictionary.form.DictionaryMenuForm;
+import spring.mine.dictionary.validator.DictionaryMenuFormValidator;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -31,26 +35,25 @@ import us.mn.state.health.lims.login.valueholder.UserSessionData;
 @Controller
 public class DictionaryMenuController extends BaseMenuController {
 
-	@RequestMapping(value = { "/DictionaryMenu", "/SearchDictionaryMenu" }, method = { RequestMethod.GET,
-			RequestMethod.POST })
-	public ModelAndView showDictionaryMenu(HttpServletRequest request, @ModelAttribute("form") DictionaryMenuForm form)
+	@Autowired
+	DictionaryMenuFormValidator formValidator;
+
+	@RequestMapping(value = { "/DictionaryMenu", "/SearchDictionaryMenu" }, method = RequestMethod.GET)
+	public ModelAndView showDictionaryMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new DictionaryMenuForm();
-		}
-		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
+		DictionaryMenuForm form = new DictionaryMenuForm();
 
-		if (errors.hasErrors()) {
-			return mv;
+		forward = performMenuAction(form, request);
+		if (FWD_FAIL.equals(forward)) {
+			Errors errors = new BaseErrors();
+			errors.reject("error.generic");
+			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, errors);
+			return findForward(forward, form);
+		} else {
+			addFlashMsgsToRequest(request);
+			return findForward(forward, form);
 		}
-
-		return performMenuAction(form, request);
 	}
 
 	@Override
@@ -126,21 +129,9 @@ public class DictionaryMenuController extends BaseMenuController {
 
 	@RequestMapping(value = "/DeleteDictionary", method = RequestMethod.POST)
 	public ModelAndView showDeleteDictionary(HttpServletRequest request,
-			@ModelAttribute("form") DictionaryMenuForm form) {
+			@ModelAttribute("form") DictionaryMenuForm form, BindingResult result,
+			RedirectAttributes redirectAttributes) {
 		String forward = FWD_SUCCESS_DELETE;
-		if (form == null) {
-			form = new DictionaryMenuForm();
-		}
-		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
 
 		String[] selectedIDs = (String[]) form.get("selectedIDs");
 
@@ -171,18 +162,17 @@ public class DictionaryMenuController extends BaseMenuController {
 			tx.rollback();
 
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
-				errors.reject("errors.OptimisticLockException");
+				result.reject("errors.OptimisticLockException");
 			} else {
-				errors.reject("errors.DeleteException");
+				result.reject("errors.DeleteException");
 			}
-			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
 			forward = FWD_FAIL_DELETE;
 
 		} finally {
 			HibernateUtil.closeSession();
 		}
 		if (forward.equals(FWD_FAIL_DELETE)) {
+			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, result);
 			return findForward(forward, form);
 		}
 
@@ -193,21 +183,25 @@ public class DictionaryMenuController extends BaseMenuController {
 		// menuDefinition");
 		request.setAttribute("menuDefinition", "DictionaryMenuDefinition");
 
+		if (FWD_SUCCESS_DELETE.equals(forward)) {
+			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+			return findForward(forward, form);
+		}
 		return findForward(forward, form);
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
-			return new ModelAndView("masterListsPageDefinition", "form", form);
-		} else if ("fail".equals(forward)) {
-			return new ModelAndView("redirect:/MasterListsPage.do", "form", form);
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "masterListsPageDefinition";
+		} else if (FWD_FAIL.equals(forward)) {
+			return "redirect:/MasterListsPage.do";
 		} else if (FWD_SUCCESS_DELETE.equals(forward)) {
-			return new ModelAndView("redirect:/DictionaryMenu.do", "form", form);
+			return "redirect:/DictionaryMenu.do";
 		} else if (FWD_FAIL_DELETE.equals(forward)) {
-			return new ModelAndView("redirect:/DictionaryMenu.do", "form", form);
+			return "redirect:/DictionaryMenu.do";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

@@ -1,0 +1,43 @@
+
+Paste following in MassiveSampleType.sql
+
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Ecouvillon Nasal','H', now() , 'Ecouvillon', 'sample.type.Ecouvillon', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Ecouvillon Naso-Pharynge','H', now() , 'Ecouvillon', 'sample.type.Ecouvillon', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Aspiration Naso-Pharyngee','H', now() , 'Aspiration', 'sample.type.Aspiration', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Selles 1','H', now() , 'Selles 1', 'sample.type.Selles', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Selles 2','H', now() , 'Selles 2', 'sample.type.Selles', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Sang Total','H', now() , 'Sang Total', 'sample.type.Sang', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Ecouvillon Pharynge','H', now() , 'Ecouvillon', 'sample.type.Ecouvillon', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Sang capillaire','H', now() , 'Sang capil', 'sample.type.Sang', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Expectoration','H', now() , 'Expectorat', 'sample.type.Expectoration', 'Y');
+
+Paste following in MassiveUpdate.xml under Remove the unused sample types and add the new sample types
+
+update clinlims.type_of_sample set sort_order=1 where description ILIKE 'Sang';
+update clinlims.type_of_sample set sort_order=2 where description ILIKE 'Serum';
+update clinlims.type_of_sample set sort_order=3 where description ILIKE 'Plasma';
+update clinlims.type_of_sample set sort_order=4 where description ILIKE 'DBS';
+update clinlims.type_of_sample set sort_order=5 where description ILIKE 'Ecouvillon Nasal';
+update clinlims.type_of_sample set sort_order=6 where description ILIKE 'Ecouvillon Naso-Pharynge';
+update clinlims.type_of_sample set sort_order=7 where description ILIKE 'Aspiration Naso-Pharyngee';
+update clinlims.type_of_sample set sort_order=8 where description ILIKE 'Selles 1';
+update clinlims.type_of_sample set sort_order=9 where description ILIKE 'Selles 2';
+update clinlims.type_of_sample set sort_order=10 where description ILIKE 'Selles';
+update clinlims.type_of_sample set sort_order=11 where description ILIKE 'Sang Total';
+update clinlims.type_of_sample set sort_order=12 where description ILIKE 'LCR';
+update clinlims.type_of_sample set sort_order=13 where description ILIKE 'Ecouvillon Pharynge';
+update clinlims.type_of_sample set sort_order=14 where description ILIKE 'Sang capillaire';
+update clinlims.type_of_sample set sort_order=15 where description ILIKE 'Expectoration';
+
+Paste following in MassiveUpdate in the set inactive list
+
+Urine, Crachat, Secretion Urethrale, Secretion Vaginale, Pus, Liquide Ascite, Liquide Synovial, Liquide Amniotique, Liquide Pleural, Serum/Urine Concentre du Matin, Culot Urinaire, Secretions genito-urinaire, Aspiration nasopharyngée, Ecouvillonage nasal, Ecouvillonage nosapharyngé, Sécrétion de la gorge, Prélèvement rhinopharyngé, , 

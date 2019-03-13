@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<!-- Data specific to CDI regional labs -->
+	<changeSet author="paulsc" id="1" context="ci_regional">
+		<comment>Sets up new site information for CDI regional labs</comment>
+		<update tableName="site_information">
+			<column name="value" value="CI_REG"/>
+			<where>name = 'stringContext'</where>
+		</update>
+		<update tableName="site_information">
+			<column name="value" value="CI_REGIONAL"/>
+			<where>name = 'setFieldForm'</where>
+		</update>
+		<update tableName="site_information">
+			<column name="value" value="CI_REGIONAL"/>
+			<where>name = 'configuration name'</where>
+		</update>
+	</changeSet>
+</databaseChangeLog>

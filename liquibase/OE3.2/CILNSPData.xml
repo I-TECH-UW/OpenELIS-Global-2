@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<!-- Data specific to CILNSP -->
+	<changeSet author="paulsc" id="2" context="ciLNSP">
+		<comment>Corrects miss-spelled test</comment>
+		<sqlFile path="OE3.2/CI_LNSP_testupdate.sql"/>
+	</changeSet>
+	<changeSet author="paulsc" id="3" context="ciLNSP">
+		<comment>Adds "normal" as an initial sample condition</comment>
+		<insert tableName="dictionary">
+			<column name="id" valueNumeric=" nextval( 'dictionary_seq') " />
+			<column name="is_active" value="Y" />
+			<column name="dict_entry" value="Normal" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="local_abbrev" value="Normal" />
+			<column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'specimen reception condition' ) " />
+			<column name="display_key" value="dictionary.condition.normal" />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="4" context="ciLNSP">
+		<comment>Sets the status of subject on workplan to true</comment>
+		<update tableName="site_information">
+			<column name="value" value="true" />
+			<where>name = 'subject on workplan'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="5" context="ciLNSP">
+		<comment>Sets the status of next visit on workplan to true</comment>
+		<update tableName="site_information">
+			<column name="value" value="true" />
+			<where>name = 'next visit on workplan'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="6" context="ciLNSP">
+		<comment>Activating test that accidently got de-activated</comment>
+		<update tableName="test">
+			<column name="is_active" value="Y" />
+			<where>name like 'Transaminases%'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="7" context="ciLNSP">
+		<comment>Corrects miss-spelled test</comment>
+		<sqlFile path="OE3.2/CI_LNSP_testupdate2.sql"/>
+	</changeSet>	
+</databaseChangeLog>

@@ -1,0 +1,46 @@
+id,is_active,entry,lastupdated,local_abbrev,display_key 
+ nextval( 'dictionary_seq' ) ,Y,Oxalate de Ca - Positif (+), now() ,OxCa1, dictionary.result.oxalateCa.pos1 
+ nextval( 'dictionary_seq' ) ,Y,Oxalate de Ca - Positif (++), now() ,OxCa2, dictionary.result.oxalateCa.pos2 
+ nextval( 'dictionary_seq' ) ,Y,Oxalate de Ca - Positif (+++), now() ,OxCa3, dictionary.result.oxalateCa.pos3 
+ nextval( 'dictionary_seq' ) ,Y,Oxalate de Ca - Positif (++++), now() ,OxCa4, dictionary.result.oxalateCa.pos4 
+ nextval( 'dictionary_seq' ) ,Y,Oxalate de Ca - En Amas, now() ,OxCaClust, dictionary.result.oxalateCa.clusters 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate Amorphes - Positif (+), now() ,PhosAm1, dictionary.result.phosphateAmor.pos1 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate Amorphes - Positif (++), now() ,PhosAm2, dictionary.result.phosphateAmor.pos2 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate Amorphes - Positif (+++), now() ,PhosAm3, dictionary.result.phosphateAmor.pos3 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate Amorphes - Positif (++++), now() ,PhosAm4, dictionary.result.phosphateAmor.pos4 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate Amorphes - En Amas, now() ,PhosAmClus, dictionary.result.phosphateAmor.clusters 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate Triples - Positif (+), now() ,PhosTr1, dictionary.result.phosphateTriple.pos1 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate Triples - Positif (++), now() ,PhosTr2, dictionary.result.phosphateTriple.pos2 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate Triples - Positif (+++), now() ,PhosTr3, dictionary.result.phosphateTriple.pos3 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate Triples - Positif (++++), now() ,PhosTr4, dictionary.result.phosphateTriple.pos4 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate Triples - En Amas, now() ,PhosTrClus, dictionary.result.phosphateTriple.clusters 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate de Ca - Positif (+), now() ,PhosCa1, dictionary.result.phosphateCa.pos1 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate de Ca - Positif (++), now() ,PhosCa2, dictionary.result.phosphateCa.pos2 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate de Ca - Positif (+++), now() ,PhosCa3, dictionary.result.phosphateCa.pos3 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate de Ca - Positif (++++), now() ,PhosCa4, dictionary.result.phosphateCa.pos4 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate de Ca - En Amas, now() ,PhosCaClus, dictionary.result.phosphateCa.clusters 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate de Mg - Positif (+), now() ,PhosMg1, dictionary.result.phosphateMg.pos1 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate de Mg - Positif (++), now() ,PhosMg2, dictionary.result.phosphateMg.pos2 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate de Mg - Positif (+++), now() ,PhosMg3, dictionary.result.phosphateMg.pos3 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate de Mg - Positif (++++), now() ,PhosMg4, dictionary.result.phosphateMg.pos4 
+ nextval( 'dictionary_seq' ) ,Y,Phosphate de Mg - En Amas, now() ,PhosMgClus, dictionary.result.phosphateMg.clusters 
+ nextval( 'dictionary_seq' ) ,Y,Sulfate de Ca - Positif (+), now() ,SulCa1, dictionary.result.sulfatCag.pos1 
+ nextval( 'dictionary_seq' ) ,Y,Sulfate de Ca - Positif (++), now() ,SulCa2, dictionary.result.sulfatCa.pos2 
+ nextval( 'dictionary_seq' ) ,Y,Sulfate de Ca - Positif (+++), now() ,SulCa3, dictionary.result.sulfatCa.pos3 
+ nextval( 'dictionary_seq' ) ,Y,Sulfate de Ca - Positif (++++), now() ,SulCa4, dictionary.result.sulfatCa.pos4 
+ nextval( 'dictionary_seq' ) ,Y,Sulfate de Ca - En Amas, now() ,SulCaClus, dictionary.result.sulfatCa.clusters 
+ nextval( 'dictionary_seq' ) ,Y,Urates Amorphes - Positif (+), now() ,UrAm1, dictionary.result.uratesAm.pos1 
+ nextval( 'dictionary_seq' ) ,Y,Urates Amorphes - Positif (++), now() ,UrAm2, dictionary.result.uratesAm.pos2 
+ nextval( 'dictionary_seq' ) ,Y,Urates Amorphes - Positif (+++), now() ,UrAm3, dictionary.result.uratesAm.pos3 
+ nextval( 'dictionary_seq' ) ,Y,Urates Amorphes - Positif (++++), now() ,UrAm4, dictionary.result.uratesAma.pos4 
+ nextval( 'dictionary_seq' ) ,Y,Urates Amorphes - En Amas, now() ,UrAmClus, dictionary.result.uratesAm.clusters 
+ nextval( 'dictionary_seq' ) ,Y,Urates d'Ammonium - Positif (+), now() ,UrAmm1, dictionary.result.uratesAmm.pos1 
+ nextval( 'dictionary_seq' ) ,Y,Urates d'Ammonium - Positif (++), now() ,UrAmm2, dictionary.result.uratesAmm.pos2 
+ nextval( 'dictionary_seq' ) ,Y,Urates d'Ammonium - Positif (+++), now() ,UrAmm3, dictionary.result.uratesAmm.pos3 
+ nextval( 'dictionary_seq' ) ,Y,Urates d'Ammonium - Positif (++++), now() ,UrAmm4, dictionary.result.uratesAmm.pos4 
+ nextval( 'dictionary_seq' ) ,Y,Urates d'Ammonium - En Amas, now() ,UrAmmClus, dictionary.result.uratesAm.clusters 
+ nextval( 'dictionary_seq' ) ,Y,Acid Urique - Positif (+), now() ,AcidUr1, dictionary.result.acidUr.pos1 
+ nextval( 'dictionary_seq' ) ,Y,Acid Urique - Positif (++), now() ,AcidUr2, dictionary.result.acidUr.pos2 
+ nextval( 'dictionary_seq' ) ,Y,Acid Urique - Positif (+++), now() ,AcidUr3, dictionary.result.acidUr.pos3 
+ nextval( 'dictionary_seq' ) ,Y,Acid Urique - Positif (++++), now() ,AcidUr4, dictionary.result.acidUr.pos4 
+ nextval( 'dictionary_seq' ) ,Y,Acid Urique - En Amas, now() ,AcidUrClus, dictionary.result.acidUr.clusters 

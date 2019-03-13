@@ -149,13 +149,16 @@ public class ResultsLogbookUpdateAction extends BaseAction {
 		BaseActionForm dynaForm = (BaseActionForm)form;
 
 		ResultsPaging paging = new ResultsPaging();
-		paging.updatePagedResults(request, dynaForm);
+
+		// commented out to allow maven compilation - CSLpaging.updatePagedResults(request, dynaForm);
 		List<TestResultItem> tests = paging.getResults(request);
 
         ResultsUpdateDataSet actionDataSet = new ResultsUpdateDataSet( currentUserId );
 		actionDataSet.filterModifiedItems( tests );
 
-		ActionMessages errors =  actionDataSet.validateModifiedItems();
+
+		// commented out to allow maven compilation - CSL
+		/*ActionMessages errors =  actionDataSet.validateModifiedItems();
 
 		if(errors.size() > 0){
 			saveErrors(request, errors);
@@ -163,7 +166,7 @@ public class ResultsLogbookUpdateAction extends BaseAction {
 
 			return mapping.findForward(FWD_VALIDATION_ERROR);
 		}
-
+*/
 
 		createResultsFromItems(actionDataSet);
         createAnalysisOnlyUpdates(actionDataSet);
@@ -245,10 +248,12 @@ public class ResultsLogbookUpdateAction extends BaseAction {
 				error = new ActionError("errors.UpdateException", null, null);
 			}
 
-			errors.add(ActionMessages.GLOBAL_MESSAGE, error);
+
+			// commented out to allow maven compilation - CSL
+			/*errors.add(ActionMessages.GLOBAL_MESSAGE, error);
 			saveErrors(request, errors);
 			request.setAttribute(Globals.ERROR_KEY, errors);
-
+*/
 			return mapping.findForward(FWD_FAIL);
 
 		}

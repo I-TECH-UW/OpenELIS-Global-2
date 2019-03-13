@@ -3,117 +3,107 @@ package spring.mine.barcode.form;
 import spring.mine.common.form.BaseForm;
 
 public class BarcodeConfigurationForm extends BaseForm {
-	private String lastupdated;
+	private int numOrderLabels;
 
-	private String numOrderLabels;
+	private int numSpecimenLabels;
 
-	private String numSpecimenLabels;
+	private int numAliquotLabels;
 
-	private String numAliquotLabels;
+	private float heightOrderLabels;
 
-	private String heightOrderLabels;
+	private float widthOrderLabels;
 
-	private String widthOrderLabels;
+	private float heightSpecimenLabels;
 
-	private String heightSpecimenLabels;
+	private float widthSpecimenLabels;
 
-	private String widthSpecimenLabels;
+	private boolean collectionDateCheck;
 
-	private String collectionDateCheck;
+	private boolean testsCheck;
 
-	private String testsCheck;
-
-	private String patientSexCheck;
+	private boolean patientSexCheck;
 
 	public BarcodeConfigurationForm() {
 		setFormName("BarcodeConfigurationForm");
 	}
 
-	public String getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(String lastupdated) {
-		this.lastupdated = lastupdated;
-	}
-
-	public String getNumOrderLabels() {
+	public int getNumOrderLabels() {
 		return numOrderLabels;
 	}
 
-	public void setNumOrderLabels(String numOrderLabels) {
+	public void setNumOrderLabels(int numOrderLabels) {
 		this.numOrderLabels = numOrderLabels;
 	}
 
-	public String getNumSpecimenLabels() {
+	public int getNumSpecimenLabels() {
 		return numSpecimenLabels;
 	}
 
-	public void setNumSpecimenLabels(String numSpecimenLabels) {
+	public void setNumSpecimenLabels(int numSpecimenLabels) {
 		this.numSpecimenLabels = numSpecimenLabels;
 	}
 
-	public String getNumAliquotLabels() {
+	public int getNumAliquotLabels() {
 		return numAliquotLabels;
 	}
 
-	public void setNumAliquotLabels(String numAliquotLabels) {
+	public void setNumAliquotLabels(int numAliquotLabels) {
 		this.numAliquotLabels = numAliquotLabels;
 	}
 
-	public String getHeightOrderLabels() {
+	public float getHeightOrderLabels() {
 		return heightOrderLabels;
 	}
 
-	public void setHeightOrderLabels(String heightOrderLabels) {
+	public void setHeightOrderLabels(float heightOrderLabels) {
 		this.heightOrderLabels = heightOrderLabels;
 	}
 
-	public String getWidthOrderLabels() {
+	public float getWidthOrderLabels() {
 		return widthOrderLabels;
 	}
 
-	public void setWidthOrderLabels(String widthOrderLabels) {
+	public void setWidthOrderLabels(float widthOrderLabels) {
 		this.widthOrderLabels = widthOrderLabels;
 	}
 
-	public String getHeightSpecimenLabels() {
+	public float getHeightSpecimenLabels() {
 		return heightSpecimenLabels;
 	}
 
-	public void setHeightSpecimenLabels(String heightSpecimenLabels) {
+	public void setHeightSpecimenLabels(float heightSpecimenLabels) {
 		this.heightSpecimenLabels = heightSpecimenLabels;
 	}
 
-	public String getWidthSpecimenLabels() {
+	public float getWidthSpecimenLabels() {
 		return widthSpecimenLabels;
 	}
 
-	public void setWidthSpecimenLabels(String widthSpecimenLabels) {
+	public void setWidthSpecimenLabels(float widthSpecimenLabels) {
 		this.widthSpecimenLabels = widthSpecimenLabels;
 	}
 
-	public String getCollectionDateCheck() {
+	public boolean getCollectionDateCheck() {
 		return collectionDateCheck;
 	}
 
-	public void setCollectionDateCheck(String collectionDateCheck) {
+	public void setCollectionDateCheck(boolean collectionDateCheck) {
 		this.collectionDateCheck = collectionDateCheck;
 	}
 
-	public String getTestsCheck() {
+	public boolean getTestsCheck() {
 		return testsCheck;
 	}
 
-	public void setTestsCheck(String testsCheck) {
+	public void setTestsCheck(boolean testsCheck) {
 		this.testsCheck = testsCheck;
 	}
 
-	public String getPatientSexCheck() {
+	public boolean getPatientSexCheck() {
 		return patientSexCheck;
 	}
 
-	public void setPatientSexCheck(String patientSexCheck) {
+	public void setPatientSexCheck(boolean patientSexCheck) {
 		this.patientSexCheck = patientSexCheck;
 	}
 }

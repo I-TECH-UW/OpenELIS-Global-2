@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet author="jfurlong" id="1">
+        <comment>Changing entered_birth_date field data in patient from XX/XX/yyyy to xx/xx/yyyy </comment>
+        <sql>
+        update clinlims.patient set entered_birth_date = lower(entered_birth_date) where entered_birth_date like '%XX%';
+        </sql>
+    </changeSet>
+    <changeSet id="1" author="paulsc" context="ci_regional, CI_IPCI">
+        <comment>Updating test results for HIV rapid test</comment>
+        <sql>
+            --Add new test result
+            INSERT INTO test_result( id, test_id, tst_rslt_type, value , lastupdated, sort_order)
+            VALUES ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Test rapide HIV 1 + HIV 2(Serum)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif' )  , now() , 385),
+            ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Test rapide HIV 1 + HIV 2(Plasma)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif' )  , now() , 435),
+            ( nextval( 'test_result_seq' ) , ( select id from clinlims.test where description = 'Test rapide HIV 1 + HIV 2(Sang total)' ) , 'D' ,  ( select max(id) from clinlims.dictionary where dict_entry ='Positif' )  , now() , 485);
+
+            --all of the results with VIH 1, VIH 2 or VIH 1 en 2 should now point to Positive for that test
+
+            update clinlims.result r set test_result_id = (select id from clinlims.test_result where  test_id = ( select id from clinlims.test where description = 'Test rapide HIV 1 + HIV 2(Serum)' ) and
+            cast( value as numeric) =  ( select max(id) from clinlims.dictionary where dict_entry = 'Positif'))
+            where
+            test_result_id in (select id from clinlims.test_result where  test_id = ( select id from clinlims.test where description = 'Test rapide HIV 1 + HIV 2(Serum)' ) and
+            cast( value as numeric) in  (select id from clinlims.dictionary where dict_entry in ('Positif VIH 1', 'Positif VIH 2', 'Positif VIH 1 et 2') )) ;
+
+            update clinlims.result r set test_result_id = (select id from clinlims.test_result where  test_id = ( select id from clinlims.test where description = 'Test rapide HIV 1 + HIV 2(Plasma)' ) and
+            cast( value as numeric) =  ( select max(id) from clinlims.dictionary where dict_entry = 'Positif'))
+            where
+            test_result_id in (select id from clinlims.test_result where  test_id = ( select id from clinlims.test where description = 'Test rapide HIV 1 + HIV 2(Plasma)' ) and
+            cast( value as numeric) in  (select id from clinlims.dictionary where dict_entry in ('Positif VIH 1', 'Positif VIH 2', 'Positif VIH 1 et 2') )) ;
+
+            update clinlims.result r set test_result_id = (select id from clinlims.test_result where  test_id = ( select id from clinlims.test where description = 'Test rapide HIV 1 + HIV 2(Sang total)' ) and
+            cast( value as numeric) =  ( select max(id) from clinlims.dictionary where dict_entry = 'Positif'))
+            where
+            test_result_id in (select id from clinlims.test_result where  test_id = ( select id from clinlims.test where description = 'Test rapide HIV 1 + HIV 2(Sang total)' ) and
+            cast( value as numeric) in  (select id from clinlims.dictionary where dict_entry in ('Positif VIH 1', 'Positif VIH 2', 'Positif VIH 1 et 2') )) ;
+
+
+            --The orphans should be deactivated
+            update clinlims.test_result set is_active = false where
+            test_id in ( select id from clinlims.test where name = 'Test rapide HIV 1 + HIV 2' ) and
+            cast( value as numeric) in ( select id from clinlims.dictionary where dict_entry in ('Positif VIH 1', 'Positif VIH 2', 'Positif VIH 1 et 2'));
+        </sql>
+    </changeSet>
+    <changeSet id="2" author="paulsc" context="ci_regional, CI_IPCI">
+        <comment>Update HIV test name</comment>
+        <sql>
+            update clinlims.test set description=replace(description, 'HIV 1 + HIV 2', 'HIV'),
+            name='Test rapide HIV',
+            local_code='Test rapide HIV' where name = 'Test rapide HIV 1 + HIV 2';
+        </sql>
+    </changeSet>
+    <changeSet id="3" author="paulsc" context="ci_regional, CI_IPCI, ciLNSP ">
+        <comment>Turns off adding program in site configuration</comment>
+        <update tableName="site_information" >
+            <column name="value" value="true" />
+            <where>name = 'Program'</where>
+        </update>
+    </changeSet>
+    <changeSet id="4" author="paulsc" context="haiti, haitiLNSP">
+        <comment>Sets the clock type to 12 hour</comment>
+        <update tableName="site_information" >
+            <column name="value" value="false" />
+            <where>name = '24 hour clock'</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>

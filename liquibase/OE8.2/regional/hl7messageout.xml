@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--Me-->
+  
+    <changeSet author="csteele" id="1"  context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="hl7_message_out" schemaName="clinlims" />
+      </not>
+    </preConditions>
+        <comment>create hl7 message out table</comment>
+        <sql>
+ 
+            CREATE TABLE clinlims.hl7_message_out
+            (
+                "id" NUMERIC (20) NOT NULL,
+                "data" text NOT NULL,
+                "lastupdated" timestamp without time zone NOT NULL,
+                "status" VARCHAR (20) NOT NULL,
+                PRIMARY KEY ("id")
+            );
+            ALTER TABLE clinlims.hl7_message_out OWNER to clinlims;
+        
+            CREATE SEQUENCE clinlims.hl7_message_out_seq
+                INCREMENT 1
+                START 1;
+
+            ALTER SEQUENCE clinlims.hl7_message_out_seq OWNER TO clinlims;
+            
+        </sql>
+    </changeSet>
+    
+    <changeSet author="csteele" id="2"  context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+		<sqlCheck expectedResult="0">SELECT COUNT(*) FROM clinlims.reference_tables WHERE name = 'HL7_MESSAGE_OUT'</sqlCheck>
+	</preConditions>
+        <comment>Enable audit trail to track changes to hl7 messages out</comment>
+        <sql>
+            INSERT INTO clinlims.reference_tables (id, name, keep_history, is_hl7_encoded)
+            VALUES (nextval('clinlims.reference_tables_seq'), 'HL7_MESSAGE_OUT', 'Y', 'N');
+        </sql>
+    </changeSet>
+  
+</databaseChangeLog>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <!--Add change tags here-->
+ 	<changeSet author="paulsc" id="1">
+ 		<comment>Adds dictionary type to site information</comment>
+ 		<addColumn tableName="site_information" schemaName="clinlims">
+ 			<column name="dictionary_category_id" type=" numeric(10,0) " >
+ 				<constraints foreignKeyName="site_info_dict_category_fk" references="clinlimims.dictionary_category(id)"/>
+ 			</column>
+ 		</addColumn>
+ 		<sql>
+ 			COMMENT ON COLUMN clinlims.site_information.dictionary_category_id IS 'Value of the dictionary category if the type of record is dictionary';
+ 			COMMENT ON COLUMN clinlims.site_information.value_type IS 'The type of value which can be specified for the value. Currently either ''boolean'',''text'' or ''dictionary''';
+ 		</sql>
+ 	</changeSet>  
+ 	<changeSet author="paulsc" id="4">
+ 		<preConditions onFail="MARK_RAN">
+ 			<sqlCheck expectedResult="0">
+ 				select count(*) from clinlims.status_of_sample where status_type = 'ORDER'
+ 			</sqlCheck>
+ 		</preConditions>
+ 		<comment>Adds status id to sampleItem</comment>
+ 		<update tableName="status_of_sample" schemaName="clinlims">
+ 			<column name="status_type" value="ORDER" />
+			<column name="description" value="No tests have been run for this order"/>
+ 			<where>name = 'Test Entered'</where>
+ 		</update>
+ 		<update tableName="status_of_sample" schemaName="clinlims">
+ 			<column name="status_type" value="ORDER" />
+			<column name="description" value="Some tests have been run on this order"/>
+ 			<where>name = 'Testing Started'</where>
+ 		</update>
+ 		<update tableName="status_of_sample" schemaName="clinlims">
+ 			<column name="status_type" value="ORDER" />
+			<column name="description" value="All tests have been run on this order"/>
+ 			<where>name = 'Testing finished'</where>
+ 		</update>
+ 		<update tableName="status_of_sample" schemaName="clinlims">
+ 			<column name="status_type" value="ORDER" />
+			<column name="description" value="The order is non-conforming"/>
+ 			<where>name = 'NonConforming'</where>
+ 		</update>
+ 		<insert tableName="status_of_sample">
+ 			<column name="id" valueNumeric=" nextval( 'status_of_sample_seq' ) " />
+ 			<column name="description" value="The sample has been canceled by the user"/>
+ 			<column name="code" valueNumeric="1" />
+ 			<column name="status_type" value="SAMPLE"></column>
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="name" value="SampleCanceled" />
+			<column name="display_key" value="status.sample.entered" /> 			
+ 		</insert>
+ 		<insert tableName="status_of_sample">
+ 			<column name="id" valueNumeric=" nextval( 'status_of_sample_seq' ) " />
+ 			<column name="description" value="The sample has been entered into the system"/>
+ 			<column name="code" valueNumeric="1" />
+ 			<column name="status_type" value="SAMPLE" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="name" value="SampleEntered" />
+			<column name="display_key" value="status.sample.entered" /> 			
+ 		</insert>
+ 		<sql>
+ 		    ALTER TABLE clinlims.sample_item ADD status_id numeric(10,0);
+ 			COMMENT ON COLUMN clinlims.sample_item.status_id IS 'The status of this sample item';
+ 		</sql>
+ 		<update tableName="sample_item" schemaName="clinlims">
+ 			<column name="status_id" valueNumeric=" ( select id from clinlims.status_of_sample where name = 'SampleEntered') " />
+ 		</update>
+ 		<addNotNullConstraint tableName="sample_item" schemaName="clinlims" columnName="status_id"/>
+  	</changeSet>
+  	<changeSet author="paulsc" id="5" >
+  		<comment>changing hl7 codes to a more general test code</comment>
+  		<renameTable newTableName="test_code_type" oldTableName="hl7_encoding_type" schemaName="clinlims"/>
+  		<renameTable newTableName="test_code" oldTableName="test_hl7_code" schemaName="clinlims"/>
+  		<renameColumn tableName="test_code" oldColumnName="encoding_type_id" newColumnName="code_type_id" schemaName="clinlims"/>
+  		<renameColumn tableName="test_code" oldColumnName="code" newColumnName="value" schemaName="clinlims"/>
+  		<sql>
+  			COMMENT ON COLUMN test_code.code_type_id IS 'The coding type id of the code';
+			COMMENT ON COLUMN test_code.value IS 'The actual code';
+  		</sql>
+  	</changeSet> 
+  	<changeSet author="paulsc" id="6">
+  		<comment>drop the dictionary_hl7_code table </comment>
+  		<dropTable tableName="dictionary_hl7_code" schemaName="clinlims"/>
+  	</changeSet> 
+  	<changeSet author="paulsc" id="7">
+  		<comment>Update the reference_tables to reflect the changes in the table names</comment>
+  		<update tableName="reference_tables" schemaName="clinlims">
+  			<column name="name" value='TEST_CODE' />
+  			<where>name = 'test_hl7_code'</where>
+  		</update>
+  		<update tableName="reference_tables" schemaName="clinlims">
+  			<column name="name" value='TEST_CODE_TYPE' />
+  			<where>name = 'hl7_encoding_type'</where>
+  		</update>
+  		<delete tableName="reference_tables" schemaName="clinlims">
+  			<where>name = 'dictionary_hl7_code'</where>
+  		</delete>
+  	</changeSet>
+  	<changeSet author="paulsc" id="8">
+  		<comment>Adds tables to support lab order types and members of those types</comment>
+  		<createSequence sequenceName="lab_order_type_seq" schemaName="clinlims"/>
+  		<createSequence sequenceName="lab_order_item_seq" schemaName="clinlims"/>
+  		<createTable tableName="lab_order_type" schemaName="clinlims">
+  			<column name="id" type="numeric(10,0)" >
+  				<constraints primaryKey="true" primaryKeyName="lab_order_type_pk"/>
+  			</column>
+  			<column name="domain" type="varchar(20) " >
+  				<constraints nullable="false"/>
+  			</column>
+  			<column name="type" type="varchar(40) " >
+  				<constraints nullable="false"/>
+  			</column>
+  			<column name="context" type="varchar(60) " />
+  			<column name="description" type="varchar(60)" />
+  			<column name="sort_order" type="numeric" />
+  			<column name="lastupdated" type="timestamp" />
+  			<column name="display_key" type="varchar(60) "></column>
+  		</createTable>
+		<createTable tableName="lab_order_item">
+			<column name="id" type="numeric(10,0)">
+				<constraints primaryKey="true" primaryKeyName="lab_order_item_pk"/>
+			</column>
+			<column name="lab_order_type_id" type="numeric(10,0)">
+				<constraints foreignKeyName="lab_order_item_type_fk" references="clinlims.lab_order_type(id)" nullable="false" />
+			</column>
+			<column name="table_ref" type="numeric(10,0)">
+				<constraints foreignKeyName="lab_order_item_table_fk" references="reference_tables(id)"  />
+			</column>
+			<column name="record_id" type="numeric(10) " />
+			<column name="identifier" type="varchar(20) " />
+			<column name="action" type="varchar(20) " />
+			<column name="lastupdated" type="timestamp" defaultValueDate=" now() "/>
+		</createTable>  		
+  		<sql>
+  			COMMENT ON TABLE clinlims.lab_order_type IS 'If lab differentiates based on the type of order i.e. first visit, follow-up.  The types are defined here';
+  			COMMENT ON COLUMN clinlims.lab_order_type.domain IS 'Refers to Human, Environmental, New born etc';
+  			COMMENT ON COLUMN clinlims.lab_order_type.type IS 'The lab order type i.e. first visit, follow-up etc';
+  			COMMENT ON COLUMN clinlims.lab_order_type.context IS 'What is the context that this type is significant. i.e. Sample Entry, confirmation entry';
+  			COMMENT ON COLUMN clinlims.lab_order_type.sort_order IS 'What is the order when displayed to the user';
+  			COMMENT ON COLUMN clinlims.lab_order_type.display_key IS 'Localization information.  Match found in MessageResource.properties';
+  			COMMENT ON TABLE clinlims.lab_order_item IS 'Association table between lab order type and the thing they affect';
+  			COMMENT ON COLUMN clinlims.lab_order_item.lab_order_type_id IS 'The lab order type this refers to';
+  			COMMENT ON COLUMN clinlims.lab_order_item.table_ref IS 'If the thing it refers to is a db object what table is it in';
+  			COMMENT ON COLUMN clinlims.lab_order_item.record_id IS 'If the thing it refers to is a db object what record in the table is it';
+  			COMMENT ON COLUMN clinlims.lab_order_item.identifier IS 'If this is not a db object then another way to identify it.  could be a class name on a form';
+  			COMMENT ON COLUMN clinlims.lab_order_item.action IS 'What should happen if this is in a lab order type';
+  		</sql>
+  	</changeSet> 	
+  	<changeSet author="paulsc" id="9">
+  		<comment>Adds collector column to sample item</comment>
+  		<addColumn tableName="sample_item" schemaName="clinlims">
+  			<column name="collector" type="varchar(60)" />
+  		</addColumn>
+  		<sql>
+  			COMMENT ON COLUMN clinlims.sample_item.collector IS 'The name of the person who collected the sample';
+  		</sql>
+  	</changeSet>
+  	<changeSet author="paulsc" id="10">
+  		<comment>Allows deletion from organization_organization_type to cascade to organization</comment>
+  		<sql>
+  			ALTER TABLE organization_organization_type DROP CONSTRAINT organization_fk;
+			ALTER TABLE organization_organization_type ADD CONSTRAINT organization_fk FOREIGN KEY (org_id) REFERENCES organization (id)  ON UPDATE NO ACTION ON DELETE CASCADE;
+  		</sql>
+  	
+  	</changeSet>   
+  		<changeSet author="paulsc" id="11">
+  		<comment>Allows deletion from organization_organization_type to cascade to organization</comment>
+  		<sql>
+  			ALTER TABLE referral DROP CONSTRAINT referral_organization_fk;
+			ALTER TABLE referral ADD CONSTRAINT referral_organization_fk FOREIGN KEY (organization_id) REFERENCES organization (id)  ON UPDATE NO ACTION ON DELETE CASCADE;
+  			ALTER TABLE referral_result DROP CONSTRAINT referral_result_referral_fk;
+			ALTER TABLE referral_result ADD CONSTRAINT referral_result_referral_fk FOREIGN KEY (referral_id) REFERENCES referral (id)  ON UPDATE NO ACTION ON DELETE CASCADE;
+  		
+  		</sql>
+  	
+  	</changeSet>    	
+</databaseChangeLog>

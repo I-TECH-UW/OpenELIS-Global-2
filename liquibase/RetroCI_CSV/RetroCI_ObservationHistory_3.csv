@@ -1,0 +1,3 @@
+id,type_name,description,lastUpdated
+nextval( 'observation_history_type_seq') ,nameOfSampler,Name of Sampler, NOW()      
+nextval( 'observation_history_type_seq') ,nameOfRequestor,Name of Requestor, NOW()     

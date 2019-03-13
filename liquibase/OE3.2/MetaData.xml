@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+<changeSet author="paulsc" id="1" >
+	<comment>Remove unused elements from site_identity</comment>
+	<delete tableName="site_information" >
+		<where>name = 'appName'</where>
+	</delete>
+	<delete tableName="site_information_domain">
+		<where>name = 'configIdentity'</where>
+	</delete>
+</changeSet>
+<changeSet author="paulsc" id="2">
+	<comment>Add workplan configuration to site information domain</comment>
+	<insert tableName="site_information_domain">
+		<column name="id" valueNumeric=" nextval('site_information_domain_seq') "/>
+		<column name="name" value="workplanConfig" />
+		<column name="description" value="Items having to do with the configuration of workplans" />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="3">
+	<comment>Adds configuration property of adding subject number to accession number for workplan</comment>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="subject on workplan" />
+		<column name="description" value="Use the subject number on the workplan" />
+		<column name="value" value="false" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'workplanConfig' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="value_type" value="boolean" />
+		<column name="instruction_key" value="instructions.workplan.subject" />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="4">
+	<comment>Adds configuration property of adding subject number to accession number for workplan</comment>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="next visit on workplan" />
+		<column name="description" value="Show the date of the next visit on the workplan" />
+		<column name="value" value="false" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'workplanConfig' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="value_type" value="boolean" />
+		<column name="instruction_key" value="instructions.workplan.next.visit" />
+	</insert>
+</changeSet>
+</databaseChangeLog>

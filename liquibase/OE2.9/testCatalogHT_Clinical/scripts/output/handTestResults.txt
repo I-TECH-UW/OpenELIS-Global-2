@@ -1,0 +1,443 @@
+Sickling Test(Sang);D;Negatif  order: 200
+Sickling Test(Sang);D;Positif  order: 200
+Groupe Sanguin - ABO(Sang);D;A  order: 310
+Groupe Sanguin - ABO(Sang);D;B  order: 310
+Groupe Sanguin - ABO(Sang);D;AB  order: 310
+Groupe Sanguin - ABO(Sang);D;O  order: 310
+Groupe Sanguin - Rhesus(Sang);D;RH Pos  order: 320
+Groupe Sanguin - Rhesus(Sang);D;RH Neg  order: 320
+Test de comptabilite(Sang);D;Compatible  order: 330
+Test de comptabilite(Sang);D;Incompatible  order: 330
+Test de comptabilite(Serum);D;Compatible  order: 340
+Test de comptabilite(Serum);D;Incompatible  order: 340
+Coombs Test Direct(Sang);D;Positif  order: 350
+Coombs Test Direct(Sang);D;Negatif  order: 350
+Coombs Test Indirect(Serum);D;Negatif  order: 360
+Coombs Test Indirect(Serum);D;Positif  order: 360
+Bacteries(Secretion vaginale);D;Negatif  order: 1260
+Bacteries(Secretion vaginale);D;Positif 1+  order: 1260
+Bacteries(Secretion vaginale);D;Positif 2+  order: 1260
+Bacteries(Secretion vaginale);D;Positif 3+  order: 1260
+Bacteries(Secretion vaginale);D;positif 4+  order: 1260
+Levures Simples(Secretion vaginale);D;Negatif  order: 1270
+Levures Simples(Secretion vaginale);D;Positif 1+  order: 1270
+Levures Simples(Secretion vaginale);D;Positif 2+  order: 1270
+Levures Simples(Secretion vaginale);D;Positif 3+  order: 1270
+Levures Simples(Secretion vaginale);D;positif 4+  order: 1270
+Levures Bourgeonantes(Secretion vaginale);D;Negatif  order: 1280
+Levures Bourgeonantes(Secretion vaginale);D;Positif 1+  order: 1280
+Levures Bourgeonantes(Secretion vaginale);D;Positif 2+  order: 1280
+Levures Bourgeonantes(Secretion vaginale);D;Positif 3+  order: 1280
+Levures Bourgeonantes(Secretion vaginale);D;positif 4+  order: 1280
+Trichomonas vaginalis(Secretion vaginale);D;Negatif  order: 1290
+Trichomonas vaginalis(Secretion vaginale);D;0 -1/ch  order: 1290
+Trichomonas vaginalis(Secretion vaginale);D;1-5/ch  order: 1290
+Trichomonas vaginalis(Secretion vaginale);D;5-10/ch  order: 1290
+Trichomonas vaginalis(Secretion vaginale);D;10-15/ch  order: 1290
+Trichomonas vaginalis(Secretion vaginale);D;15-20/ch  order: 1290
+Trichomonas vaginalis(Secretion vaginale);D;20-25/ch  order: 1290
+Trichomonas vaginalis(Secretion vaginale);D;25-30/ch  order: 1290
+Trichomonas vaginalis(Secretion vaginale);D;30-35/ch  order: 1290
+Trichomonas vaginalis(Secretion vaginale);D;35-40/ch  order: 1290
+Trichomonas vaginalis(Secretion vaginale);D;40-45/ch  order: 1290
+Trichomonas vaginalis(Secretion vaginale);D;45-50/ch  order: 1290
+Trichomonas vaginalis(Secretion vaginale);D;50-100/ch  order: 1290
+Trichomonas vaginalis(Secretion vaginale);D;Superieur a 100/ch  order: 1290
+Globules Blancs(Secretion vaginale);D;Negatif  order: 1300
+Globules Blancs(Secretion vaginale);D;0 -1/ch  order: 1300
+Globules Blancs(Secretion vaginale);D;1-5/ch  order: 1300
+Globules Blancs(Secretion vaginale);D;5-10/ch  order: 1300
+Globules Blancs(Secretion vaginale);D;10-15/ch  order: 1300
+Globules Blancs(Secretion vaginale);D;15-20/ch  order: 1300
+Globules Blancs(Secretion vaginale);D;20-25/ch  order: 1300
+Globules Blancs(Secretion vaginale);D;25-30/ch  order: 1300
+Globules Blancs(Secretion vaginale);D;30-35/ch  order: 1300
+Globules Blancs(Secretion vaginale);D;35-40/ch  order: 1300
+Globules Blancs(Secretion vaginale);D;40-45/ch  order: 1300
+Globules Blancs(Secretion vaginale);D;45-50/ch  order: 1300
+Globules Blancs(Secretion vaginale);D;50-100/ch  order: 1300
+Globules Blancs(Secretion vaginale);D;Superieur a 100/ch  order: 1300
+Globules Rouges(Secretion vaginale);D;Negatif  order: 1310
+Globules Rouges(Secretion vaginale);D;0 -1/ch  order: 1310
+Globules Rouges(Secretion vaginale);D;1-5/ch  order: 1310
+Globules Rouges(Secretion vaginale);D;5-10/ch  order: 1310
+Globules Rouges(Secretion vaginale);D;10-15/ch  order: 1310
+Globules Rouges(Secretion vaginale);D;15-20/ch  order: 1310
+Globules Rouges(Secretion vaginale);D;20-25/ch  order: 1310
+Globules Rouges(Secretion vaginale);D;25-30/ch  order: 1310
+Globules Rouges(Secretion vaginale);D;30-35/ch  order: 1310
+Globules Rouges(Secretion vaginale);D;35-40/ch  order: 1310
+Globules Rouges(Secretion vaginale);D;40-45/ch  order: 1310
+Globules Rouges(Secretion vaginale);D;45-50/ch  order: 1310
+Globules Rouges(Secretion vaginale);D;50-100/ch  order: 1310
+Globules Rouges(Secretion vaginale);D;Superieur a 100/ch  order: 1310
+Filaments Myceliens(Secretion vaginale);D;Negatif  order: 1320
+Filaments Myceliens(Secretion vaginale);D;Positif 1+  order: 1320
+Filaments Myceliens(Secretion vaginale);D;Positif 2+  order: 1320
+Filaments Myceliens(Secretion vaginale);D;Positif 3+  order: 1320
+Filaments Myceliens(Secretion vaginale);D;positif 4+  order: 1320
+Cellules Epitheliales(Secretion vaginale);D;Negatif  order: 1330
+Cellules Epitheliales(Secretion vaginale);D;Positif 1+  order: 1330
+Cellules Epitheliales(Secretion vaginale);D;Positif 2+  order: 1330
+Cellules Epitheliales(Secretion vaginale);D;Positif 3+  order: 1330
+Cellules Epitheliales(Secretion vaginale);D;positif 4+  order: 1330
+Bacteries(Secretion Urethrale);D;Negatif  order: 1340
+Bacteries(Secretion Urethrale);D;Positif 1+  order: 1340
+Bacteries(Secretion Urethrale);D;Positif 2+  order: 1340
+Bacteries(Secretion Urethrale);D;Positif 3+  order: 1340
+Levures Simples(Secretion Urethrale);D;Negatif  order: 1350
+Levures Simples(Secretion Urethrale);D;Positif 1+  order: 1350
+Levures Simples(Secretion Urethrale);D;Positif 2+  order: 1350
+Levures Simples(Secretion Urethrale);D;Positif 3+  order: 1350
+Levures Bourgeonantes(Secretion Urethrale);D;Negatif  order: 1360
+Levures Bourgeonantes(Secretion Urethrale);D;Positif 1+  order: 1360
+Levures Bourgeonantes(Secretion Urethrale);D;Positif 2+  order: 1360
+Levures Bourgeonantes(Secretion Urethrale);D;Positif 3+  order: 1360
+Trichomonas hominis(Secretion Urethrale);D;Negatif  order: 1370
+Trichomonas hominis(Secretion Urethrale);D;0 -1/ch  order: 1370
+Trichomonas hominis(Secretion Urethrale);D;1-5/ch  order: 1370
+Trichomonas hominis(Secretion Urethrale);D;5-10/ch  order: 1370
+Trichomonas hominis(Secretion Urethrale);D;10-15/ch  order: 1370
+Trichomonas hominis(Secretion Urethrale);D;15-20/ch  order: 1370
+Trichomonas hominis(Secretion Urethrale);D;20-25/ch  order: 1370
+Trichomonas hominis(Secretion Urethrale);D;25-30/ch  order: 1370
+Trichomonas hominis(Secretion Urethrale);D;30-35/ch  order: 1370
+Trichomonas hominis(Secretion Urethrale);D;35-40/ch  order: 1370
+Trichomonas hominis(Secretion Urethrale);D;40-45/ch  order: 1370
+Trichomonas hominis(Secretion Urethrale);D;45-50/ch  order: 1370
+Trichomonas hominis(Secretion Urethrale);D;50-100/ch  order: 1370
+Trichomonas hominis(Secretion Urethrale);D;>100/ch  order: 1370
+Globules Blancs(Secretion Urethrale);D;Negatif  order: 1380
+Globules Blancs(Secretion Urethrale);D;0 -1/ch  order: 1380
+Globules Blancs(Secretion Urethrale);D;1-5/ch  order: 1380
+Globules Blancs(Secretion Urethrale);D;5-10/ch  order: 1380
+Globules Blancs(Secretion Urethrale);D;10-15/ch  order: 1380
+Globules Blancs(Secretion Urethrale);D;15-20/ch  order: 1380
+Globules Blancs(Secretion Urethrale);D;20-25/ch  order: 1380
+Globules Blancs(Secretion Urethrale);D;25-30/ch  order: 1380
+Globules Blancs(Secretion Urethrale);D;30-35/ch  order: 1380
+Globules Blancs(Secretion Urethrale);D;35-40/ch  order: 1380
+Globules Blancs(Secretion Urethrale);D;40-45/ch  order: 1380
+Globules Blancs(Secretion Urethrale);D;45-50/ch  order: 1380
+Globules Blancs(Secretion Urethrale);D;50-100/ch  order: 1380
+Globules Blancs(Secretion Urethrale);D;>100/ch  order: 1380
+Globules Rouges(Secretion Urethrale);D;Negatif  order: 1390
+Globules Rouges(Secretion Urethrale);D;0 -1/ch  order: 1390
+Globules Rouges(Secretion Urethrale);D;1-5/ch  order: 1390
+Globules Rouges(Secretion Urethrale);D;5-10/ch  order: 1390
+Globules Rouges(Secretion Urethrale);D;10-15/ch  order: 1390
+Globules Rouges(Secretion Urethrale);D;15-20/ch  order: 1390
+Globules Rouges(Secretion Urethrale);D;20-25/ch  order: 1390
+Globules Rouges(Secretion Urethrale);D;25-30/ch  order: 1390
+Globules Rouges(Secretion Urethrale);D;30-35/ch  order: 1390
+Globules Rouges(Secretion Urethrale);D;35-40/ch  order: 1390
+Globules Rouges(Secretion Urethrale);D;40-45/ch  order: 1390
+Globules Rouges(Secretion Urethrale);D;45-50/ch  order: 1390
+Globules Rouges(Secretion Urethrale);D;50-100/ch  order: 1390
+Globules Rouges(Secretion Urethrale);D;>100/ch  order: 1390
+Filaments Myceliens(Secretion Urethrale);D;Negatif  order: 1400
+Filaments Myceliens(Secretion Urethrale);D;Positif 1+  order: 1400
+Filaments Myceliens(Secretion Urethrale);D;Positif 2+  order: 1400
+Filaments Myceliens(Secretion Urethrale);D;Positif 3+  order: 1400
+Cellules Epitheliales(Secretion Urethrale);D;Negatif  order: 1410
+Cellules Epitheliales(Secretion Urethrale);D;Positif 1+  order: 1410
+Cellules Epitheliales(Secretion Urethrale);D;Positif 2+  order: 1410
+Cellules Epitheliales(Secretion Urethrale);D;Positif 3+  order: 1410
+KOH(Secretion vaginale);D;Negatif  order: 1420
+KOH(Secretion vaginale);D;Positif  order: 1420
+Test de Rivalta(Secretion vaginale);D;Negatif  order: 1430
+Test de Rivalta(Secretion vaginale);D;Positif  order: 1430
+Cholera Test rapide(Selles);D;Reactif  order: 1640
+Cholera Test rapide(Selles);D;Non Reactif  order: 1640
+Couleur(Liquide Spermatique);D;Blanc jaunatre  order: 1660
+Couleur(Liquide Spermatique);D;jaune paille  order: 1660
+Couleur(Liquide Spermatique);D;jaune citrin  order: 1660
+Couleur(Liquide Spermatique);D;ambre  order: 1660
+Couleur(Liquide Spermatique);D;orange  order: 1660
+Couleur(Liquide Spermatique);D;jaune fonce  order: 1660
+Couleur(Liquide Spermatique);D;rouge  order: 1660
+Couleur(Liquide Spermatique);D;autre  order: 1660
+Couleur(Urines);D;Jaune Paille  order: 1800
+Couleur(Urines);D;Jaune citrin  order: 1800
+Couleur(Urines);D;Ambre  order: 1800
+Couleur(Urines);D;Orange  order: 1800
+Couleur(Urines);D;Jaune Fonce  order: 1800
+Couleur(Urines);D;Rouge  order: 1800
+Couleur(Urines);D;Autre  order: 1800
+Aspect(Urines);D;Clair  order: 1810
+Aspect(Urines);D;Trouble  order: 1810
+Aspect(Urines);D;Icterique  order: 1810
+Aspect(Urines);D;normal  order: 1810
+Aspect(Urines);D;Fonce  order: 1810
+Aspect(Urines);D;Legerement trouble  order: 1810
+Aspect(Urines);D;Autre  order: 1810
+Proteines(Urines);D;Negatif  order: 1840
+Proteines(Urines);D;trace  order: 1840
+Proteines(Urines);D;Positif 1+  order: 1840
+Proteines(Urines);D;Positif 2+  order: 1840
+Proteines(Urines);D;Positif 3+  order: 1840
+Glucose(Urines);D;Negatif  order: 1850
+Glucose(Urines);D;trace  order: 1850
+Glucose(Urines);D;Positif 1+  order: 1850
+Glucose(Urines);D;Positif 2+  order: 1850
+Glucose(Urines);D;Positif 3+  order: 1850
+Cetones(Urines);D;Negatif  order: 1860
+Cetones(Urines);D;trace  order: 1860
+Cetones(Urines);D;Positif 1+  order: 1860
+Cetones(Urines);D;Positif 2+  order: 1860
+Cetones(Urines);D;Positif 3+  order: 1860
+Bilirubine(Urines);D;Negatif  order: 1870
+Bilirubine(Urines);D;trace  order: 1870
+Bilirubine(Urines);D;Positif 1+  order: 1870
+Bilirubine(Urines);D;Positif 2+  order: 1870
+Bilirubine(Urines);D;Positif 3+  order: 1870
+Sang(Urines);D;Negatif  order: 1880
+Sang(Urines);D;trace  order: 1880
+Sang(Urines);D;Positif 1+  order: 1880
+Sang(Urines);D;Positif 2+  order: 1880
+Sang(Urines);D;Positif 3+  order: 1880
+Leucocytes(Urines);D;Negatif  order: 1890
+Leucocytes(Urines);D;trace  order: 1890
+Leucocytes(Urines);D;Positif 1+  order: 1890
+Leucocytes(Urines);D;Positif 2+  order: 1890
+Leucocytes(Urines);D;Positif 3+  order: 1890
+Acide ascorbique(Urines);D;Negatif  order: 1900
+Acide ascorbique(Urines);D;trace  order: 1900
+Acide ascorbique(Urines);D;Positif 1+  order: 1900
+Acide ascorbique(Urines);D;Positif 2+  order: 1900
+Acide ascorbique(Urines);D;Positif 3+  order: 1900
+Urobilinogene(Urines);D;Negatif  order: 1910
+Urobilinogene(Urines);D;trace  order: 1910
+Urobilinogene(Urines);D;Positif 1+  order: 1910
+Urobilinogene(Urines);D;Positif 2+  order: 1910
+Urobilinogene(Urines);D;Positif 3+  order: 1910
+Nitrites(Urines);D;Negatif  order: 1920
+Nitrites(Urines);D;trace  order: 1920
+Nitrites(Urines);D;Positif 1+  order: 1920
+Nitrites(Urines);D;Positif 2+  order: 1920
+Nitrites(Urines);D;Positif 3+  order: 1920
+Hematies(Urines);D;Negatif  order: 1930
+Hematies(Urines);D;En amas  order: 1930
+Hematies(Urines);D;0-1/ ch  order: 1930
+Hematies(Urines);D;1- 5 /ch  order: 1930
+Hematies(Urines);D;5-10/ ch  order: 1930
+Hematies(Urines);D;10-15/ch  order: 1930
+Hematies(Urines);D;15- 20/ch  order: 1930
+Hematies(Urines);D;20-25/ch  order: 1930
+Hematies(Urines);D;25- 30/ch  order: 1930
+Hematies(Urines);D;30-35/ch  order: 1930
+Hematies(Urines);D;35- 40/ch  order: 1930
+Hematies(Urines);D;40-45/ch  order: 1930
+Hematies(Urines);D;45- 50/ch  order: 1930
+Hematies(Urines);D;50- 100/ch  order: 1930
+Hematies(Urines);D;Superieur a 100/ch  order: 1930
+cellules epitheliales(Urines);D;Negatif  order: 1940
+cellules epitheliales(Urines);D;Rare  order: 1940
+cellules epitheliales(Urines);D;Positif 1+  order: 1940
+cellules epitheliales(Urines);D;Positif 2+  order: 1940
+cellules epitheliales(Urines);D;Positif 3+  order: 1940
+Bacteries(Urines);D;Negatif  order: 1950
+Bacteries(Urines);D;Rare  order: 1950
+Bacteries(Urines);D;Positif 1+  order: 1950
+Bacteries(Urines);D;Positif 2+  order: 1950
+Bacteries(Urines);D;Positif 3+  order: 1950
+Levures(Urines);D;Negatif  order: 1960
+Levures(Urines);D;Rare  order: 1960
+Levures(Urines);D;Positif 1+  order: 1960
+Levures(Urines);D;Positif 2+  order: 1960
+Levures(Urines);D;Positif 3+  order: 1960
+filaments myceliens(Urines);D;Negatif  order: 1970
+filaments myceliens(Urines);D;Rare  order: 1970
+filaments myceliens(Urines);D;Positif 1+  order: 1970
+filaments myceliens(Urines);D;Positif 2+  order: 1970
+filaments myceliens(Urines);D;Positif 3+  order: 1970
+spores(Urines);D;Negatif  order: 1980
+spores(Urines);D;Rare  order: 1980
+spores(Urines);D;Positif 1+  order: 1980
+spores(Urines);D;Positif 2+  order: 1980
+spores(Urines);D;Positif 3+  order: 1980
+trichomonas(Urines);D;Negatif  order: 1990
+trichomonas(Urines);D;0-1/ ch  order: 1990
+trichomonas(Urines);D;1- 5 /ch  order: 1990
+trichomonas(Urines);D;5-10/ ch  order: 1990
+trichomonas(Urines);D;10-15/ch  order: 1990
+trichomonas(Urines);D;15- 20/ch  order: 1990
+trichomonas(Urines);D;20-25/ch  order: 1990
+trichomonas(Urines);D;25- 30/ch  order: 1990
+trichomonas(Urines);D;30-35/ch  order: 1990
+trichomonas(Urines);D;35- 40/ch  order: 1990
+trichomonas(Urines);D;40-45/ch  order: 1990
+trichomonas(Urines);D;45- 50/ch  order: 1990
+trichomonas(Urines);D;50- 100/ch  order: 1990
+trichomonas(Urines);D;Superieur a 100/ch  order: 1990
+Cylindres(Urines);M;Negatif  order: 2000
+Cylindres(Urines);M;0-1/ ch  order: 2000
+Cylindres(Urines);M;1- 5 /ch  order: 2000
+Cylindres(Urines);M;5-10/ ch  order: 2000
+Cylindres(Urines);M;10-15/ch  order: 2000
+Cylindres(Urines);M;15- 20/ch  order: 2000
+Cylindres(Urines);M;20-25/ch  order: 2000
+Cylindres(Urines);M;25- 30/ch  order: 2000
+Cylindres(Urines);M;30-35/ch  order: 2000
+Cylindres(Urines);M;35- 40/ch  order: 2000
+Cylindres(Urines);M;40-45/ch  order: 2000
+Cylindres(Urines);M;45- 50/ch  order: 2000
+Cylindres(Urines);M;50- 100/ch  order: 2000
+Cylindres(Urines);M;Superieur a 100/ch  order: 2000
+Cylindres(Urines);M;Hyalins  order: 2000
+Cylindres(Urines);M;Granuleux  order: 2000
+Cylindres(Urines);M;Graisseux  order: 2000
+Cylindres(Urines);M;Epitheliales  order: 2000
+Cylindres(Urines);M;Leucocytaires  order: 2000
+Cylindres(Urines);M;Cireux  order: 2000
+Cristaux(Urines);M;Negatif  order: 2010
+Cristaux(Urines);M;0-1/ ch  order: 2010
+Cristaux(Urines);M;1- 5 /ch  order: 2010
+Cristaux(Urines);M;5-10/ ch  order: 2010
+Cristaux(Urines);M;10-15/ch  order: 2010
+Cristaux(Urines);M;15- 20/ch  order: 2010
+Cristaux(Urines);M;20-25/ch  order: 2010
+Cristaux(Urines);M;25- 30/ch  order: 2010
+Cristaux(Urines);M;30-35/ch  order: 2010
+Cristaux(Urines);M;35- 40/ch  order: 2010
+Cristaux(Urines);M;40-45/ch  order: 2010
+Cristaux(Urines);M;45- 50/ch  order: 2010
+Cristaux(Urines);M;50- 100/ch  order: 2010
+Cristaux(Urines);M;Superieur a 100/ch  order: 2010
+Cristaux(Urines);M; Oxalate de Calcium  order: 2010
+Cristaux(Urines);M;Acide Urique  order: 2010
+Cristaux(Urines);M;Cystine  order: 2010
+Cristaux(Urines);M;Phosphate de Calcium  order: 2010
+Cristaux(Urines);M;Urates Amorphes  order: 2010
+Cristaux(Urines);M;Triple phosphate  order: 2010
+Cristaux(Urines);M;Phosphate de Ca  order: 2010
+Cristaux(Urines);M;Phosphate de Mg  order: 2010
+Cristaux(Urines);M;Sulfate de Ca  order: 2010
+Cristaux(Urines);M;Urate d'Ammonium   order: 2010
+Couleur(Selles);D;Noiratre  order: 2020
+Couleur(Selles);D;Sanguinolant  order: 2020
+Couleur(Selles);D;Jaunatre  order: 2020
+Couleur(Selles);D;Maron  order: 2020
+Couleur(Selles);D;Verdatre  order: 2020
+Couleur(Selles);D;Grisatre Autre  order: 2020
+Aspect(Selles);D;Liquide  order: 2030
+Aspect(Selles);D;Solide  order: 2030
+Aspect(Selles);D;Semi Liquide  order: 2030
+Aspect(Selles);D;Pateuse  order: 2030
+Aspect(Selles);D;Glaireuse  order: 2030
+Aspect(Selles);D;Molle  order: 2030
+Sang Occulte(Selles);D;Negatif  order: 2040
+Sang Occulte(Selles);D;Positif  order: 2040
+Malaria Test Rapide(Sang);D;Negatif  order: 2210
+Malaria Test Rapide(Sang);D;Positif  order: 2210
+Dengue(Sang);D;Negatif  order: 2550
+Dengue(Sang);D;Positif  order: 2550
+PPD Qualitaitif(In Vivo);D;Non- Reactif  order: 3170
+PPD Qualitaitif(In Vivo);D;Reactif  order: 3170
+Test de Grossesse(Urines);D;Positif  order: 3300
+Test de Grossesse(Urines);D;Negatif  order: 3300
+LCR ZIELH NIELSEN(LCR/CSF);D;Negatif  order: 3340
+LCR ZIELH NIELSEN(LCR/CSF);D;Positif 1+  order: 3340
+LCR ZIELH NIELSEN(LCR/CSF);D;Positif 2+  order: 3340
+LCR ZIELH NIELSEN(LCR/CSF);D;Positif 3+  order: 3340
+LCR ZIELH NIELSEN(LCR/CSF);D;Rare (1-9 BAAR/100ch)  order: 3340
+Malaria Test Rapide(Serum);D;Positif  order: 3370
+Malaria Test Rapide(Serum);D;Negatif  order: 3370
+Syphilis Test Rapide(Serum);D;Positif  order: 3380
+Syphilis Test Rapide(Serum);D;Negatif  order: 3380
+Syphilis Test Rapide(Plasma);D;Positif  order: 3390
+Syphilis Test Rapide(Plasma);D;Negatif  order: 3390
+Malaria Test Rapide(Plasma);D;Positif  order: 3400
+Malaria Test Rapide(Plasma);D;Negatif  order: 3400
+Syphilis Test Rapide(Sang);D;Positif  order: 3410
+Syphilis Test Rapide(Sang);D;Negatif  order: 3410
+HTLV I et II(Serum);D;positif  order: 3420
+HTLV I et II(Serum);D;Negatif  order: 3420
+HTLV I et II(Plasma);D;Positif  order: 3430
+HTLV I et II(Plasma);D;Negatif  order: 3430
+HTLV I et II(Sang);D;Positif  order: 3440
+HTLV I et II(Sang);D;Negatif  order: 3440
+Syphilis RPR(Plasma);D;Non-Reactif  order: 3450
+Syphilis RPR(Plasma);D;Reactif  order: 3450
+Syphilis RPR(Plasma);D;2u  order: 3450
+Syphilis RPR(Plasma);D;4u  order: 3450
+Syphilis RPR(Plasma);D;8u  order: 3450
+Syphilis RPR(Plasma);D;16u  order: 3450
+Syphilis RPR(Plasma);D;32u  order: 3450
+Syphilis RPR(Plasma);D;64u  order: 3450
+Syphilis RPR(Plasma);D;128u  order: 3450
+Syphilis RPR(Plasma);D;256u  order: 3450
+Syphilis RPR(Plasma);D;> 572  order: 3450
+Syphilis RPR(Sang);D;Non-Reactif  order: 3460
+Syphilis RPR(Sang);D;Reactif  order: 3460
+Syphilis RPR(Sang);D;2u  order: 3460
+Syphilis RPR(Sang);D;4u  order: 3460
+Syphilis RPR(Sang);D;8u  order: 3460
+Syphilis RPR(Sang);D;16u  order: 3460
+Syphilis RPR(Sang);D;32u  order: 3460
+Syphilis RPR(Sang);D;64u  order: 3460
+Syphilis RPR(Sang);D;128u  order: 3460
+Syphilis RPR(Sang);D;256u  order: 3460
+Syphilis RPR(Sang);D;> 572  order: 3460
+Syphilis TPHA(Serum);D;Negatif  order: 3470
+Syphilis TPHA(Serum);D;Positif  order: 3470
+Syphilis RPR(Serum);D;Non-Reactif  order: 3480
+Syphilis RPR(Serum);D;Reactif  order: 3480
+Syphilis RPR(Serum);D;2u  order: 3480
+Syphilis RPR(Serum);D;4u  order: 3480
+Syphilis RPR(Serum);D;8u  order: 3480
+Syphilis RPR(Serum);D;16u  order: 3480
+Syphilis RPR(Serum);D;32u  order: 3480
+Syphilis RPR(Serum);D;64u  order: 3480
+Syphilis RPR(Serum);D;128u  order: 3480
+Syphilis RPR(Serum);D;256u  order: 3480
+Syphilis RPR(Serum);D;> 572  order: 3480
+Syphilis TPHA(Plasma);D;Negatif  order: 3490
+Syphilis TPHA(Plasma);D;Positif  order: 3490
+Syphilis TPHA(Sang);D;Negatif  order: 3500
+Syphilis TPHA(Sang);D;Positif  order: 3500
+Helicobacter Pilori(Serum);D;Positif  order: 3510
+Helicobacter Pilori(Serum);D;Negatif  order: 3510
+Helicobacter Pilori(Plasma);D;Positif  order: 3520
+Helicobacter Pilori(Plasma);D;Negatif  order: 3520
+Helicobacter Pilori(Sang);D;Positif  order: 3530
+Helicobacter Pilori(Sang);D;Negatif  order: 3530
+CRP(Serum);D;Negatif  < 200 unites/ml  order: 3620
+CRP(Serum);D;Positif > 200 unités/ml  order: 3620
+CRP(Plasma);D;Negatif  < 200 unites/ml  order: 3630
+CRP(Plasma);D;Positif > 200 unités/ml  order: 3630
+CRP(Sang);D;Negatif  < 200 unites/ml  order: 3640
+CRP(Sang);D;Positif > 200 unités/ml  order: 3640
+ASO(Serum);D;Positif  > 200 U ASLO/ml  order: 3650
+ASO(Serum);D;Negatif  < 200 U ASLO/ml  order: 3650
+ASO(Plasma);D;Negatif < 200 U ASLO/ml  order: 3660
+ASO(Plasma);D;Positif  > 200 U ASLO/ml  order: 3660
+ASO(Sang);D;Negatif < 200 U ASLO/ml  order: 3670
+ASO(Sang);D;Positif  > 200 U ASLO/ml  order: 3670
+Test de Widal Ag O(Serum);D;Non Reactif  order: 3680
+Test de Widal Ag O(Serum);D;Reactif  order: 3680
+Test de Widal Ag O(Serum);D;Reactif 1/20  order: 3680
+Test de Widal Ag O(Serum);D;Reactif 1/40  order: 3680
+Test de Widal Ag O(Serum);D;Reactif 1/80  order: 3680
+Test de Widal Ag O(Serum);D;Reactif 1/160  order: 3680
+Test de Widal Ag O(Serum);D;Reactif 1/320  order: 3680
+Test de Widal Ag O(Serum);D;Reactif 1/640  order: 3680
+Test de Widal Ag H(Serum);D;Non Reactif  order: 3690
+Test de Widal Ag H(Serum);D;Reactif  order: 3690
+Test de Widal Ag H(Serum);D;Reactif 1/20  order: 3690
+Test de Widal Ag H(Serum);D;Reactif 1/40  order: 3690
+Test de Widal Ag H(Serum);D;Reactif 1/80  order: 3690
+Test de Widal Ag H(Serum);D;Reactif 1/160  order: 3690
+Test de Widal Ag H(Serum);D;Reactif 1/320  order: 3690
+Test de Widal Ag H(Serum);D;Reactif 1/640  order: 3690
+CMV Ig G(Serum);D;Negatif  order: 3960
+CMV Ig G(Serum);D;Positif  order: 3960
+Syphilis Bioline(Serum);D;Negatif  order: 4200
+Syphilis Bioline(Serum);D;Positif  order: 4200
+Syphilis Bioline(Serum);D;Indetermine  order: 4200
+Syphilis Bioline(Plasma);D;Negatif  order: 4210
+Syphilis Bioline(Plasma);D;Positif  order: 4210
+Syphilis Bioline(Plasma);D;Indetermine  order: 4210
+Syphilis Bioline(Sang);D;Negatif  order: 4220
+Syphilis Bioline(Sang);D;Positif  order: 4220
+Syphilis Bioline(Sang);D;Indetermine  order: 4220

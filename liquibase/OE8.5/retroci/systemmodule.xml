@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+	<changeSet author="csteele" id="1" context="CDIRetroCI">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT count(*) FROM clinlims.system_module where "name" = 'ExternalConnectionsConfig';
+            </sqlCheck>
+        </preConditions>
+	  	<insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="ExternalConnectionsConfig"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+    </changeSet>
+	
+	<changeSet author="csteele" id="2" context="CDIRetroCI">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT count(*) FROM clinlims.system_module where "name" = 'ResultReportingConfiguration';
+            </sqlCheck>
+        </preConditions>
+	  	<insert schemaName="clinlims" tableName="system_module">
+        <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+        <column name="name" value="ResultReportingConfiguration"/>
+        <column name="description" value=""/>
+        <column name="has_select_flag" value="Y"/>
+        <column name="has_add_flag" value="Y"/>
+        <column name="has_update_flag" value="Y"  />
+        <column name="has_delete_flag" value="Y"/>
+      </insert>
+    </changeSet>
+      
+</databaseChangeLog>

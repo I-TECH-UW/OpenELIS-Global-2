@@ -56,7 +56,6 @@
     testCount = 0;
 %>
 
-
 <script type="text/javascript">
     if (!$jq) {
         var $jq = jQuery.noConflict();
@@ -70,7 +69,7 @@
     }
 
     function submitAction(target) {
-        var form = window.document.forms[0];
+        var form = document.getElementById("mainForm");
         form.action = target;
         form.submit();
     }

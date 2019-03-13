@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<changeSet author="paulsc" id="1" >
+		<comment>Update the significant digit column in result table</comment>
+        <sql>
+            update clinlims.result set significant_digits = (select significant_digits from clinlims.test_result where id = test_result_id ) where result_type = 'N';
+        </sql>
+	</changeSet>
+</databaseChangeLog>

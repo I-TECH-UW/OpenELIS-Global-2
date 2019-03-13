@@ -2,6 +2,7 @@
 	contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants,
 			us.mn.state.health.lims.common.util.StringUtil" %>
+<%@ page import="spring.mine.common.constants.Constants" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -27,12 +28,10 @@ function submitOnEnter(e){
 
 
 function submitOnClick(button){
-	window.document.forms[0].submit();
+	document.getElementById("mainForm").submit();
 }
 
 </script>
-
-
 <table width="100%">
 <tr>
     <td width="50%" valign="top">

@@ -73,13 +73,13 @@ public class StatusResultsAction extends BaseAction implements Serializable {
 	static {
 		// currently this is the only one being excluded for Haiti_LNSP. If it
 		// gets more complicate use the status sets
-		excludedStatusIds = new HashSet<Integer>();
+		excludedStatusIds = new HashSet<>();
 		excludedStatusIds.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled)));
 	}
 
 	@Override
-	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 
 		resultsUtility = new ResultsLoadUtility(currentUserId);
 		String forward = FWD_SUCCESS;
@@ -89,8 +89,10 @@ public class StatusResultsAction extends BaseAction implements Serializable {
 		String newRequest = request.getParameter("blank");
 
 		DynaActionForm dynaForm = (DynaActionForm) form;
-		PropertyUtils.setProperty(dynaForm, "referralReasons", DisplayListService.getList( DisplayListService.ListType.REFERRAL_REASONS));
-        PropertyUtils.setProperty( dynaForm, "rejectReasons", DisplayListService.getNumberedListWithLeadingBlank( DisplayListService.ListType.REJECTION_REASONS ) );
+		PropertyUtils.setProperty(dynaForm, "referralReasons",
+				DisplayListService.getList(DisplayListService.ListType.REFERRAL_REASONS));
+		PropertyUtils.setProperty(dynaForm, "rejectReasons",
+				DisplayListService.getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
 		ResultsPaging paging = new ResultsPaging();
 
@@ -107,21 +109,24 @@ public class StatusResultsAction extends BaseAction implements Serializable {
 					}
 				}
 
-				paging.setDatabaseResults(request, dynaForm, tests);
+				// commented out to allow maven compilation - CSL
+				// paging.setDatabaseResults(request, dynaForm, tests);
 			} else {
 				setEmptyResults(dynaForm);
 			}
 
 			setSelectionLists(dynaForm);
 		} else {
-			paging.page(request, dynaForm, newPage);
+
+			// commented out to allow maven compilation - CSL
+			// paging.page(request, dynaForm, newPage);
 		}
 
 		return mapping.findForward(forward);
 	}
 
-	private List<TestResultItem> setSearchResults(DynaActionForm dynaForm) throws IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException {
+	private List<TestResultItem> setSearchResults(DynaActionForm dynaForm)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		List<TestResultItem> tests = getSelectedTests(dynaForm);
 		PropertyUtils.setProperty(dynaForm, "searchFinished", Boolean.TRUE);
 
@@ -136,7 +141,8 @@ public class StatusResultsAction extends BaseAction implements Serializable {
 		return tests;
 	}
 
-	private void setEmptyResults(DynaActionForm dynaForm) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	private void setEmptyResults(DynaActionForm dynaForm)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		PropertyUtils.setProperty(dynaForm, "testResult", new ArrayList<TestResultItem>());
 		PropertyUtils.setProperty(dynaForm, "displayTestKit", false);
 		PropertyUtils.setProperty(dynaForm, "collectionDate", "");
@@ -146,22 +152,26 @@ public class StatusResultsAction extends BaseAction implements Serializable {
 		PropertyUtils.setProperty(dynaForm, "searchFinished", Boolean.FALSE);
 	}
 
-	private void addInventory(DynaActionForm dynaForm) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	private void addInventory(DynaActionForm dynaForm)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		List<InventoryKitItem> list = inventoryUtility.getExistingActiveInventory();
 		PropertyUtils.setProperty(dynaForm, "inventoryItems", list);
 	}
 
-	private void addEmptyInventoryList(DynaActionForm dynaForm) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	private void addEmptyInventoryList(DynaActionForm dynaForm)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		PropertyUtils.setProperty(dynaForm, "inventoryItems", new ArrayList<InventoryKitItem>());
 	}
 
-	private void setSelectionLists(DynaActionForm dynaForm) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	private void setSelectionLists(DynaActionForm dynaForm)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		List<DropPair> analysisStatusList = getAnalysisStatusTypes();
 
 		PropertyUtils.setProperty(dynaForm, "analysisStatusSelections", analysisStatusList);
-		PropertyUtils.setProperty(dynaForm, "testSelections", DisplayListService.getListWithLeadingBlank( DisplayListService.ListType.ALL_TESTS ));
+		PropertyUtils.setProperty(dynaForm, "testSelections",
+				DisplayListService.getListWithLeadingBlank(DisplayListService.ListType.ALL_TESTS));
 
 		List<DropPair> sampleStatusList = getSampleStatusTypes();
 		PropertyUtils.setProperty(dynaForm, "sampleStatusSelections", sampleStatusList);
@@ -175,54 +185,54 @@ public class StatusResultsAction extends BaseAction implements Serializable {
 		String sampleStatus = dynaForm.getString("selectedSampleStatus");
 		String test = dynaForm.getString("selectedTest");
 
-		List<Analysis> analysisList = new ArrayList<Analysis>();
+		List<Analysis> analysisList = new ArrayList<>();
 
 		if (!GenericValidator.isBlankOrNull(collectionDate)) {
 			analysisList = getAnalysisForCollectionDate(collectionDate);
-			if( analysisList.isEmpty()){
-				return new ArrayList<TestResultItem>();
+			if (analysisList.isEmpty()) {
+				return new ArrayList<>();
 			}
 		}
 
 		if (!GenericValidator.isBlankOrNull(receivedDate)) {
 			analysisList = blendLists(analysisList, getAnalysisForRecievedDate(receivedDate));
 			if (analysisList.isEmpty()) {
-				return new ArrayList<TestResultItem>();
+				return new ArrayList<>();
 			}
 		}
 
 		if (!(GenericValidator.isBlankOrNull(analysisStatus) || analysisStatus.equals("0"))) {
 			analysisList = blendLists(analysisList, getAnalysisForAnalysisStatus(analysisStatus));
-			if( analysisList.isEmpty()){
-				return new ArrayList<TestResultItem>();
+			if (analysisList.isEmpty()) {
+				return new ArrayList<>();
 			}
 		}
 
 		if (!(GenericValidator.isBlankOrNull(sampleStatus) || sampleStatus.equals("0"))) {
 			analysisList = blendLists(analysisList, getAnalysisForSampleStatus(sampleStatus));
-			if( analysisList.isEmpty()){
-				return new ArrayList<TestResultItem>();
+			if (analysisList.isEmpty()) {
+				return new ArrayList<>();
 			}
 		}
 
 		if (!(GenericValidator.isBlankOrNull(test) || test.equals("0"))) {
 			analysisList = blendLists(analysisList, getAnalysisForTest(test));
-			if( analysisList.isEmpty()){
-				return new ArrayList<TestResultItem>();
+			if (analysisList.isEmpty()) {
+				return new ArrayList<>();
 			}
 		}
 
 		return buildTestItems(analysisList);
 	}
 
-	private List<Analysis> blendLists(List<Analysis> masterList, List<Analysis> newList){
-		if( masterList.isEmpty() ){
+	private List<Analysis> blendLists(List<Analysis> masterList, List<Analysis> newList) {
+		if (masterList.isEmpty()) {
 			return newList;
-		}else{
-			List<Analysis> blendedList = new ArrayList<Analysis>();
-			for(Analysis master : masterList){
-				for( Analysis newAnalysis : newList){
-					if( master.getId().equals(newAnalysis.getId())){
+		} else {
+			List<Analysis> blendedList = new ArrayList<>();
+			for (Analysis master : masterList) {
+				for (Analysis newAnalysis : newList) {
+					if (master.getId().equals(newAnalysis.getId())) {
 						blendedList.add(master);
 					}
 				}
@@ -244,14 +254,15 @@ public class StatusResultsAction extends BaseAction implements Serializable {
 	}
 
 	private List<Analysis> getAnalysisListForSampleItems(List<Sample> sampleList) {
-		List<Analysis> analysisList = new ArrayList<Analysis>();
+		List<Analysis> analysisList = new ArrayList<>();
 		SampleItemDAO sampleItemDAO = new SampleItemDAOImpl();
 
 		for (Sample sample : sampleList) {
 			List<SampleItem> sampleItemList = sampleItemDAO.getSampleItemsBySampleId(sample.getId());
 
 			for (SampleItem sampleItem : sampleItemList) {
-				List<Analysis> analysisListForItem = analysisDAO.getAnalysesBySampleItemsExcludingByStatusIds(sampleItem, excludedStatusIds);
+				List<Analysis> analysisListForItem = analysisDAO
+						.getAnalysesBySampleItemsExcludingByStatusIds(sampleItem, excludedStatusIds);
 
 				analysisList.addAll(analysisListForItem);
 			}
@@ -270,14 +281,14 @@ public class StatusResultsAction extends BaseAction implements Serializable {
 
 	@SuppressWarnings("unchecked")
 	private List<Analysis> getAnalysisForTest(String testId) {
-		List<Integer> excludedStatusIntList = new ArrayList<Integer>();
+		List<Integer> excludedStatusIntList = new ArrayList<>();
 		excludedStatusIntList.addAll(excludedStatusIds);
 		return analysisDAO.getAllAnalysisByTestAndExcludedStatus(testId, excludedStatusIntList);
 	}
 
 	private List<TestResultItem> buildTestItems(List<Analysis> analysisList) {
-		if( analysisList.isEmpty()){
-			return new ArrayList<TestResultItem>();
+		if (analysisList.isEmpty()) {
+			return new ArrayList<>();
 		}
 
 		return resultsUtility.getGroupedTestsForAnalysisList(analysisList, REVERSE_SORT_ORDER);
@@ -285,28 +296,32 @@ public class StatusResultsAction extends BaseAction implements Serializable {
 
 	private List<DropPair> getAnalysisStatusTypes() {
 
-		List<DropPair> list = new ArrayList<DropPair>();
+		List<DropPair> list = new ArrayList<>();
 		list.add(new DropPair("0", ""));
 
-		list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted), StatusService.getInstance().getStatusName(AnalysisStatus.NotStarted)));
-		list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled), StatusService.getInstance().getStatusName(AnalysisStatus.Canceled)));
-		list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance), StatusService.getInstance()
-				.getStatusName(AnalysisStatus.TechnicalAcceptance)));
-		list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected), StatusService.getInstance()
-				.getStatusName(AnalysisStatus.TechnicalRejected)));
-		list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.BiologistRejected), StatusService.getInstance()
-				.getStatusName(AnalysisStatus.BiologistRejected)));
+		list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted),
+				StatusService.getInstance().getStatusName(AnalysisStatus.NotStarted)));
+		list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled),
+				StatusService.getInstance().getStatusName(AnalysisStatus.Canceled)));
+		list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance),
+				StatusService.getInstance().getStatusName(AnalysisStatus.TechnicalAcceptance)));
+		list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected),
+				StatusService.getInstance().getStatusName(AnalysisStatus.TechnicalRejected)));
+		list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.BiologistRejected),
+				StatusService.getInstance().getStatusName(AnalysisStatus.BiologistRejected)));
 
 		return list;
 	}
 
 	private List<DropPair> getSampleStatusTypes() {
 
-		List<DropPair> list = new ArrayList<DropPair>();
+		List<DropPair> list = new ArrayList<>();
 		list.add(new DropPair("0", ""));
 
-		list.add(new DropPair(StatusService.getInstance().getStatusID(OrderStatus.Entered), StatusService.getInstance().getStatusName(OrderStatus.Entered)));
-		list.add(new DropPair(StatusService.getInstance().getStatusID(OrderStatus.Started), StatusService.getInstance().getStatusName(OrderStatus.Started)));
+		list.add(new DropPair(StatusService.getInstance().getStatusID(OrderStatus.Entered),
+				StatusService.getInstance().getStatusName(OrderStatus.Entered)));
+		list.add(new DropPair(StatusService.getInstance().getStatusID(OrderStatus.Started),
+				StatusService.getInstance().getStatusName(OrderStatus.Started)));
 
 		return list;
 	}

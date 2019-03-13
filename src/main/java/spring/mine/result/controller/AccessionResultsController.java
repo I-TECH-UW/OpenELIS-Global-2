@@ -68,15 +68,8 @@ public class AccessionResultsController extends BaseController {
 			form = new AccessionResultsForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 		PropertyUtils.setProperty(form, "referralReasons",
@@ -92,7 +85,7 @@ public class AccessionResultsController extends BaseController {
 			PropertyUtils.setProperty(form, "displayTestKit", false);
 
 			if (!GenericValidator.isBlankOrNull(accessionNumber)) {
-				ResultsLoadUtility resultsUtility = new ResultsLoadUtility(currentUserId);
+				ResultsLoadUtility resultsUtility = new ResultsLoadUtility(getSysUserId(request));
 				// This is for Haiti_LNSP if it gets more complicated use the status set stuff
 				resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
 				// resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Finalized);
@@ -152,7 +145,7 @@ public class AccessionResultsController extends BaseController {
 
 		UserRoleDAO userRoleDAO = new UserRoleDAOImpl();
 
-		List<String> roleIds = userRoleDAO.getRoleIdsForUser(currentUserId);
+		List<String> roleIds = userRoleDAO.getRoleIdsForUser(getSysUserId(request));
 
 		return !roleIds.contains(RESULT_EDIT_ROLE_ID);
 	}
@@ -212,13 +205,13 @@ public class AccessionResultsController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
-			return new ModelAndView("accessionResultDefinition", "form", form);
-		} else if ("fail".equals(forward)) {
-			return new ModelAndView("accessionResultDefinition", "form", form);
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "accessionResultDefinition";
+		} else if (FWD_FAIL.equals(forward)) {
+			return "accessionResultDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

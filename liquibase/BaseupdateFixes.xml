@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file has updates which will allow an update from a general initial DB to a specific -->
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+<changeSet author="paulsc" id="1" context="haiti,haitiLNSP" runOnChange="true">
+	<comment>Updates the type_of_sample_seq, it got behind the actual ids in DB</comment>
+	<sql>
+		ALTER SEQUENCE clinlims.type_of_sample_seq RESTART WITH 80; 
+		ALTER SEQUENCE clinlims.patient_identity_type_seq RESTART WITH 30; 
+	</sql>
+</changeSet>
+</databaseChangeLog>

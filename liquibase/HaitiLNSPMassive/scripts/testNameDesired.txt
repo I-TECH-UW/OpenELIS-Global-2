@@ -1,0 +1,150 @@
+Test Rapide VIH
+Test Rapide VIH
+Test Rapide VIH
+Test Rapide VIH
+VIH Elisa
+VIH Elisa
+VIH Elisa
+VIH Elisa
+VIH Western Blot
+VIH Western Blot
+VIH Western Blot
+VIH Western Blot
+Rougeole
+Rougeole
+Dengue
+Dengue
+Rubeole
+Rubeole
+Dengue NS1Ag
+Dengue NS1Ag
+Hepatite A IgM
+Hepatite A IgM
+Hepatite B Ag
+Hepatite B Ag
+Hepatite C IgM
+Hepatite C IgM
+Hepatite E IgM
+Hepatite E IgM
+Influenza A/Immunofluoresence 
+Influenza A/Immunofluoresence 
+Influenza A/Immunofluoresence 
+Influenza B/Immunofluoresence 
+Influenza B/Immunofluoresence 
+Influenza B/Immunofluoresence 
+Para Influenza 1/Immunofluoresence 
+Para Influenza 1/Immunofluoresence 
+Para Influenza 1/Immunofluoresence 
+Para Influenza 2/Immunofluoresence 
+Para Influenza 2/Immunofluoresence 
+Para Influenza 2/Immunofluoresence 
+Para Influenza 3/Immunofluoresence 
+Para Influenza 3/Immunofluoresence 
+Para Influenza 3/Immunofluoresence 
+VR/ Immunofluoresence 
+VR/ Immunofluoresence 
+VR/ Immunofluoresence 
+Adenovirus/Immunofluoresence 
+Adenovirus/Immunofluoresence 
+Adenovirus/Immunofluoresence 
+Polio
+Polio
+Rotavirus
+Syphilis RPR
+Syphilis TPHA
+VIH-1 PCR Qualitative
+VIH-1 PCR Qualitative
+VIH-1 Charge Virale
+VIH-1 Charge Virale
+Recherche de Virus Respiratoire
+Recherche de Virus Respiratoire
+CD4  Compte Abs
+CD4 Compte en % 
+Coloration de Gramm
+Coloration de Gramm
+Coloration de Gramm
+Coloration de Gramm
+Coloration de Gramm
+Leptospirose
+Leptospirose
+Leptospirose
+Leptospirose
+Hemoculture
+Serologie Salmonelle
+Serologie Salmonelle
+Meningite Culture
+Meningite Test Rapide
+Recherche de Salmonelle
+Recherche de Shigelle
+Recherche de V.cholerea
+Recherche de C. diphteriae
+Recherche de B. pertussis
+Sensibilite a l'Acide Nalixidique (NA 30)
+Sensibilite a l'Ampiciline (AM10) 
+Sensibilite a Amoxyline/Acide Clavulanique (NAC 30)
+Sensibilite Azithromycine (AZM15)  
+Sensibilite a la Sulfaméthoxazole/triméthoprime (SXT25) 
+Sensibilite a la Tetracycline (TE 30)
+Sensibilite a la Ciprofloxacine (CIP5) 
+Sensibilite a l'Acide Nalixidique (NA 30)
+Sensibilite Amoxyline/Acide Clavulanique (AMC 30)
+Sensibilite a la Ceftriaxone (CRO30)  
+Sensibilite a la Ciprofloxacine (CIP5) 
+Sensibilite a la Tetracycline (TE 30)
+Sensibilite Gentamycine (CN10)
+Sensibilite Chloramphénicol (C30)
+Sensibilite Céfalotine (CF30)
+Sensibilite a la Ceftazidime (CAZ30)
+Sensibilite Amoxyline/Acide Clavulanique (AMC 30)
+Sensibilite a la Ceftriaxone (CRO30)  
+Sensibilite a la Ciprofloxacine (CIP5) 
+Sensibilite a la Tetracycline (TE 30)
+Sensibilite Gentamycine (CN10)
+Sensibilite Chloramphénicol (C30)
+Sensibilite Céfalotine (CF30)
+Sensibilite a la Ceftazidime (CAZ30)
+Couleur
+Aspect
+Sang Occulte
+Bacteries
+Levures simples
+Levures bourgeonantes
+Recherche de Protozoaires
+recherche de Metazoaires
+Scotch Tape
+Methode Kato
+Methode Willis
+Methode Baermann
+Ritchie
+Ziehl Neelsen modifiee
+Recherche de Plasmodium- Especes
+Recherche de Plasmodium- Trophozoite
+Recherche de Plasmodium- Gametocyte
+Recherche de Plasmodium- Schizonte
+Malaria Test Rapide
+Recherche de Microfilaires
+Recherche de BAAR par Zeihl Neelsen Specimen 1
+Recherche de BAAR par Zeihl Neelsen Specimen 2
+Recherche de BAAR par Zeihl Neelsen Specimen 3
+Recherche de BAAR par Fluorochrome Specimen 1
+Recherche de BAAR par Fluorochrome Specimen 2
+Recherche de BAAR par Fluorochrome Specimen 3
+Culture LJ/Ogawa
+Culture en milieu liquide
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

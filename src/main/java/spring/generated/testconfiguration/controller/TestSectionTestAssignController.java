@@ -1,6 +1,5 @@
 package spring.generated.testconfiguration.controller;
 
-import java.lang.String;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -12,13 +11,14 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
 import spring.generated.forms.TestSectionTestAssignForm;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.TestSectionService;
@@ -33,145 +33,128 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 
 @Controller
 public class TestSectionTestAssignController extends BaseController {
-  @RequestMapping(
-      value = "/TestSectionTestAssign",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showTestSectionTestAssign(HttpServletRequest request,
-      @ModelAttribute("form") TestSectionTestAssignForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new TestSectionTestAssignForm();
-    }
-        form.setFormAction("");
-    BaseErrors errors = new BaseErrors();
-    if (form.getErrors() != null) {
-    	errors = (BaseErrors) form.getErrors();
-    }
-    ModelAndView mv = checkUserAndSetup(form, errors, request);
+	@RequestMapping(value = "/TestSectionTestAssign", method = RequestMethod.GET)
+	public ModelAndView showTestSectionTestAssign(HttpServletRequest request,
+			@ModelAttribute("form") TestSectionTestAssignForm form) {
+		String forward = FWD_SUCCESS;
+		if (form == null) {
+			form = new TestSectionTestAssignForm();
+		}
+		form.setFormAction("");
+		Errors errors = new BaseErrors();
 
-    if (errors.hasErrors()) {
-    	return mv;
-    }
-    
-    List<IdValuePair> testSections = DisplayListService.getListWithLeadingBlank(DisplayListService.ListType.TEST_SECTION);
-    LinkedHashMap<IdValuePair, List<IdValuePair>> testSectionTestsMap = new LinkedHashMap<IdValuePair, List<IdValuePair>>(testSections.size());
+		List<IdValuePair> testSections = DisplayListService
+				.getListWithLeadingBlank(DisplayListService.ListType.TEST_SECTION);
+		LinkedHashMap<IdValuePair, List<IdValuePair>> testSectionTestsMap = new LinkedHashMap<>(
+				testSections.size());
 
-    for( IdValuePair sectionPair : testSections){
-        List<IdValuePair> tests = new ArrayList<IdValuePair>();
-        testSectionTestsMap.put(sectionPair, tests );
-        List<Test> testList = TestSectionService.getTestsInSection(sectionPair.getId());
+		for (IdValuePair sectionPair : testSections) {
+			List<IdValuePair> tests = new ArrayList<>();
+			testSectionTestsMap.put(sectionPair, tests);
+			List<Test> testList = TestSectionService.getTestsInSection(sectionPair.getId());
 
-        for( Test test : testList){
-            if( test.isActive()) {
-                tests.add(new IdValuePair(test.getId(), TestService.getLocalizedTestNameWithType(test)));
-            }
-        }
-    }
+			for (Test test : testList) {
+				if (test.isActive()) {
+					tests.add(new IdValuePair(test.getId(), TestService.getLocalizedTestNameWithType(test)));
+				}
+			}
+		}
 
-    //we can't just append the original list because that list is in the cache
-    List<IdValuePair> joinedList = new ArrayList<IdValuePair>(testSections);
-    joinedList.addAll(DisplayListService.getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
-    try {
-		PropertyUtils.setProperty(form, "testSectionList", joinedList);
-		PropertyUtils.setProperty(form, "sectionTestList", testSectionTestsMap);
-	} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+		// we can't just append the original list because that list is in the cache
+		List<IdValuePair> joinedList = new ArrayList<>(testSections);
+		joinedList.addAll(DisplayListService.getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
+		try {
+			PropertyUtils.setProperty(form, "testSectionList", joinedList);
+			PropertyUtils.setProperty(form, "sectionTestList", testSectionTestsMap);
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return findForward(forward, form);
 	}
-   
-    return findForward(forward, form);
-  }
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return new ModelAndView("testSectionAssignDefinition", "form", form);
-    } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-      return new ModelAndView("redirect:/TestSectionTestAssign.do", "form", form);
-    } else {
-      return new ModelAndView("PageNotFound");
-    }
-  }
+	@Override
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "testSectionAssignDefinition";
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return "redirect:/TestSectionTestAssign.do";
+		} else {
+			return "PageNotFound";
+		}
+	}
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+	@Override
+	protected String getPageTitleKey() {
+		return null;
+	}
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
-  
-  @RequestMapping(
-	      value = "/TestSectionTestAssign",
-	      method = RequestMethod.POST
-	  )
-	  public ModelAndView postTestSectionTestAssign(HttpServletRequest request,
-	      @ModelAttribute("form") TestSectionTestAssignForm form) {
-	    String forward = FWD_SUCCESS_INSERT;
-	    if (form == null) {
-	    	form = new TestSectionTestAssignForm();
-	    }
-	        form.setFormAction("");
-	    BaseErrors errors = new BaseErrors();
-	    if (form.getErrors() != null) {
-	    	errors = (BaseErrors) form.getErrors();
-	    }
-	    ModelAndView mv = checkUserAndSetup(form, errors, request);
+	@Override
+	protected String getPageSubtitleKey() {
+		return null;
+	}
 
-	    if (errors.hasErrors()) {
-	    	return mv;
-	    }
-	    
-        String testId = form.getString("testId");
-        String testSectionId = form.getString("testSectionId");
-        String deactivateTestSectionId = form.getString("deactivateTestSectionId");
-        boolean updateTestSection = false;
-        String currentUser = getSysUserId(request);
-        Test test = new TestService(testId).getTest();
-        TestSection testSection = new TestSectionService(testSectionId).getTestSection();
-        TestSection deActivateTestSection = null;
-        test.setTestSection(testSection);
-        test.setSysUserId(currentUser);
+	@RequestMapping(value = "/TestSectionTestAssign", method = RequestMethod.POST)
+	public ModelAndView postTestSectionTestAssign(HttpServletRequest request,
+			@ModelAttribute("form") TestSectionTestAssignForm form) {
+		String forward = FWD_SUCCESS_INSERT;
+		if (form == null) {
+			form = new TestSectionTestAssignForm();
+		}
+		form.setFormAction("");
+		BaseErrors errors = new BaseErrors();
 
-        //This covers the case that they are moving the test to the same test section they are moving it from
-        if(testSectionId.equals(deactivateTestSectionId)){
-            return findForward(FWD_SUCCESS_INSERT, form);
-        }
+		String testId = form.getString("testId");
+		String testSectionId = form.getString("testSectionId");
+		String deactivateTestSectionId = form.getString("deactivateTestSectionId");
+		boolean updateTestSection = false;
+		String currentUser = getSysUserId(request);
+		Test test = new TestService(testId).getTest();
+		TestSection testSection = new TestSectionService(testSectionId).getTestSection();
+		TestSection deActivateTestSection = null;
+		test.setTestSection(testSection);
+		test.setSysUserId(currentUser);
 
-        if( "N".equals(testSection.getIsActive())){
-            testSection.setIsActive("Y");
-            testSection.setSysUserId(currentUser);
-            updateTestSection = true;
-        }
+		// This covers the case that they are moving the test to the same test section
+		// they are moving it from
+		if (testSectionId.equals(deactivateTestSectionId)) {
+			return findForward(FWD_SUCCESS_INSERT, form);
+		}
 
-        if( !GenericValidator.isBlankOrNull(deactivateTestSectionId) ){
-            deActivateTestSection  = new TestSectionService(deactivateTestSectionId).getTestSection();
-            deActivateTestSection.setIsActive("N");
-            deActivateTestSection.setSysUserId(currentUser);
-        }
+		if ("N".equals(testSection.getIsActive())) {
+			testSection.setIsActive("Y");
+			testSection.setSysUserId(currentUser);
+			updateTestSection = true;
+		}
 
-        Transaction tx = HibernateUtil.getSession().beginTransaction();
-        try {
-            new TestDAOImpl().updateData(test);
+		if (!GenericValidator.isBlankOrNull(deactivateTestSectionId)) {
+			deActivateTestSection = new TestSectionService(deactivateTestSectionId).getTestSection();
+			deActivateTestSection.setIsActive("N");
+			deActivateTestSection.setSysUserId(currentUser);
+		}
 
-            if(updateTestSection){
-                new TestSectionDAOImpl().updateData(testSection);
-            }
+		Transaction tx = HibernateUtil.getSession().beginTransaction();
+		try {
+			new TestDAOImpl().updateData(test);
 
-            if( deActivateTestSection != null){
-                new TestSectionDAOImpl().updateData(deActivateTestSection);
-            }
-            tx.commit();
-        } catch (HibernateException e) {
-            tx.rollback();
-        } finally {
-            HibernateUtil.closeSession();
-        }
+			if (updateTestSection) {
+				new TestSectionDAOImpl().updateData(testSection);
+			}
 
-        DisplayListService.refreshList(DisplayListService.ListType.TEST_SECTION);
-        DisplayListService.refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);
-        
-	    return findForward(forward, form);
-  }
+			if (deActivateTestSection != null) {
+				new TestSectionDAOImpl().updateData(deActivateTestSection);
+			}
+			tx.commit();
+		} catch (HibernateException e) {
+			tx.rollback();
+		} finally {
+			HibernateUtil.closeSession();
+		}
+
+		DisplayListService.refreshList(DisplayListService.ListType.TEST_SECTION);
+		DisplayListService.refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);
+
+		return findForward(forward, form);
+	}
 }
-
