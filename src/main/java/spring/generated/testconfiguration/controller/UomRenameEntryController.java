@@ -50,8 +50,10 @@ public class UomRenameEntryController extends BaseController {
 	}
 
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
+		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("uomRenameDefinition", "form", form);
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+		      return new ModelAndView("redirect:/UomRenameEntry.do", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");
 		}
@@ -64,7 +66,7 @@ public class UomRenameEntryController extends BaseController {
 	public ModelAndView updateUomRenameEntry(HttpServletRequest request,
 			@ModelAttribute("form") UomRenameEntryForm form) {	
 		
-		String forward = FWD_SUCCESS;
+		String forward = FWD_SUCCESS_INSERT;
 
 		String uomId = form.getUomId();
 		String nameEnglish = form.getNameEnglish();

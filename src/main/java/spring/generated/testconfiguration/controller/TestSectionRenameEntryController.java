@@ -49,8 +49,10 @@ public class TestSectionRenameEntryController extends BaseController {
 	}
 
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
+		if (FWD_SUCCESS.equals(forward)) {
 			return new ModelAndView("testSectionRenameDefinition", "form", form);
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+		      return new ModelAndView("redirect:/TestSectionRenameEntry.do", "form", form);
 		} else {
 			return new ModelAndView("PageNotFound");
 		}
@@ -63,7 +65,7 @@ public class TestSectionRenameEntryController extends BaseController {
 	public ModelAndView updateTestSectionRenameEntry(HttpServletRequest request,
 			@ModelAttribute("form") TestSectionRenameEntryForm form) {	
 		
-		String forward = FWD_SUCCESS;
+		String forward = FWD_SUCCESS_INSERT;
 
 		String testSectionId = form.getTestSectionId();
 		String nameEnglish = form.getNameEnglish();

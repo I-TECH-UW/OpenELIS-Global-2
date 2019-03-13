@@ -2,13 +2,10 @@ package spring.mine.testconfiguration.controller;
 
 import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,12 +48,14 @@ public class TestRenameEntryController extends BaseController {
 	}
 
 	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
-			return new ModelAndView("testRenameDefinition", "form", form);
-		} else {
-			return new ModelAndView("PageNotFound");
-		}
-	}
+		  if (FWD_SUCCESS.equals(forward)) {
+		      return new ModelAndView("testRenameDefinition", "form", form);
+		    } else if (FWD_SUCCESS_INSERT.equals(forward)) {
+		      return new ModelAndView("redirect:/TestRenameEntry.do", "form", form);
+		    } else {
+		    	return new ModelAndView("PageNotFound");
+		    }
+	  }
 	
 	@RequestMapping(
 			value = "/TestRenameEntry", 
@@ -65,22 +64,21 @@ public class TestRenameEntryController extends BaseController {
 	public ModelAndView updateTestRenameEntry(HttpServletRequest request,
 			@ModelAttribute("form") TestRenameEntryForm form) {	
 		
-		String forward = FWD_SUCCESS;
-/*
-		if (result.hasErrors()) {
-			saveErrors(result);
-			forward = FWD_FAIL;
-			return new ModelAndView("loginPageDefinition");
+		String forward = FWD_SUCCESS_INSERT;
+		if (form == null) {
+			form = new TestRenameEntryForm();
 		}
+		form.setFormAction("");
+		form.setCancelAction("CancelDictionary.do");
+		BaseErrors errors = new BaseErrors();
+		if (form.getErrors() != null) {
+			errors = (BaseErrors) form.getErrors();
+		}
+		ModelAndView mv = checkUserAndSetup(form, errors, request);
 
-		ModelAndView mv = checkUserAndSetup(form, result, request);
-
-		if (result.hasErrors()) {
+		if (errors.hasErrors()) {
 			return mv;
 		}
-		*/
-		
-		
 
 		String testId = form.getTestId();
 		String nameEnglish = form.getNameEnglish();
@@ -90,11 +88,6 @@ public class TestRenameEntryController extends BaseController {
 		String userId = getSysUserId(request);
 
 		updateTestNames(testId, nameEnglish, nameFrench, reportNameEnglish, reportNameFrench, userId);
-
-		form = new TestRenameEntryForm();
-		form.setFormAction("");
-
-		form.setTestList(DisplayListService.getList(DisplayListService.ListType.ALL_TESTS));
 
 		return findForward(forward, form);
 	}

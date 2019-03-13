@@ -16,7 +16,7 @@ import spring.mine.common.validator.BaseErrors;
 public class PanelManagementController extends BaseController {
   @RequestMapping(
       value = "/PanelManagement",
-      method = RequestMethod.GET
+      method = { RequestMethod.GET, RequestMethod.POST }
   )
   public ModelAndView showPanelManagement(HttpServletRequest request) {
     String forward = FWD_SUCCESS;

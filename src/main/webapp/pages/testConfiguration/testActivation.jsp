@@ -368,7 +368,7 @@
     }
     function configureForSelect() {
         $jq("#step").text("<%=StringUtil.getContextualMessageForKey("label.testActivate")%>");
-        $jq("#instructions").text("<spring:message code="instructions.test.activation"/>");
+        $jq("#instructions").text("<spring:message code="instructions.test.activation" htmlEscape="false"/>");
         $jq("#activateSection input").prop("disabled", false);
         $jq(".selectHide").hide();
         $jq(".selectShow").show();
@@ -458,7 +458,8 @@ td {
 
 <h1 id="step"><spring:message code="label.testActivate"/></h1><br/>
 
-<div class="indent"><span id="instructions"><spring:message code="instructions.test.activation"/></span></div>
+<div class="indent"><span id="instructions"><spring:message code="instructions.test.activation" htmlEscape="false" /></span></div>
+
 <br>
 
 <div id="testActivate" class="selectHide sortHide" >
