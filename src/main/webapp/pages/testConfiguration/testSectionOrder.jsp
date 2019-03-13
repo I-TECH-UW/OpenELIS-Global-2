@@ -1,6 +1,7 @@
 <%@ page language="java"
          contentType="text/html; charset=utf-8"
-         import="us.mn.state.health.lims.common.action.IActionConstants,
+         import="java.util.List,
+         		us.mn.state.health.lims.common.action.IActionConstants,
          		us.mn.state.health.lims.common.util.IdValuePair,
          		us.mn.state.health.lims.common.util.StringUtil,
          		us.mn.state.health.lims.common.util.Versioning" %>
@@ -30,10 +31,7 @@
 <script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="scripts/jquery-ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 
-
- 
-<bean:define id="testList" name='${form.formName}' property="testSectionList" type="java.util.List"/>
-
+ <c:set var="testList" value="${form.testSectionList}" />
 
 <%!
     String basePath = "";
@@ -51,7 +49,6 @@
 <link rel="stylesheet" media="screen" type="text/css"
       href="<%=basePath%>css/jquery_ui/jquery.ui.theme.css?ver=<%= Versioning.getBuildNumber() %>"/>
 
-<form id="mainForm">
 <script type="text/javascript">
     if (!$jq) {
         var $jq = jQuery.noConflict();
@@ -76,12 +73,11 @@
         form.submit();
     }
 
-
     function confirmValues() {
         $jq("#editButtons").hide();
         $jq("#confirmationButtons").show();
         $jq("#editMessage").hide();
-        $jq("#action").text('<%=StringUtil.getMessageForKey("label.confirmation")%>');
+        $jq("#action").text('<%=StringUtil.getContextualMessageForKey("label.confirmation")%>');
 
         $jq(".sortable").sortable("disable");
     }
@@ -90,7 +86,7 @@
         $jq("#editButtons").show();
         $jq("#confirmationButtons").hide();
         $jq("#editMessage").show();
-        $jq("#action").text('<%=StringUtil.getMessageForKey("label.button.edit")%>');
+        $jq("#action").text('<%=StringUtil.getContextualMessageForKey("label.button.edit")%>');
 
         $jq(".sortable").sortable("enable");
     }
@@ -113,24 +109,44 @@
         buildJSONList();
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         var form = document.getElementById("mainForm");
-        form.action = "TestSectionOrderUpdate.do";
+        form.action = "TestSectionOrder.do";
         form.submit();
     }
 </script>
-    <form:hidden path="jsonChangeList" id="jsonChangeList"/>
 
-    <input type="button" value='<%= StringUtil.getMessageForKey("banner.menu.administration") %>'
+<style>
+table{
+  width: 80%;
+}
+td {
+  width: 25%;
+}
+</style>
+
+<form:form name="${form.formName}" 
+				   action="${form.formAction}" 
+				   modelAttribute="form" 
+				   onSubmit="return submitForm(this);" 
+				   method="${form.formMethod}"
+				   id="mainForm">
+
+    <input type="button" value='<%= StringUtil.getContextualMessageForKey("banner.menu.administration") %>'
            onclick="submitAction('MasterListsPage.do');"
            class="textButton"/>&rarr;
-    <input type="button" value='<%= StringUtil.getMessageForKey("configuration.test.management") %>'
+    <input type="button" value='<%= StringUtil.getContextualMessageForKey("configuration.test.management") %>'
            onclick="submitAction('TestManagementConfigMenu.do');"
            class="textButton"/>&rarr;
-    <input type="button" value='<%= StringUtil.getMessageForKey("configuration.testUnit.manage") %>'
+    <input type="button" value='<%= StringUtil.getContextualMessageForKey("configuration.testUnit.manage") %>'
            onclick="submitAction('TestSectionManagement.do');"
            class="textButton"/>&rarr;
 
-<%=StringUtil.getMessageForKey( "configuration.testUnit.order" )%>
+<%=StringUtil.getContextualMessageForKey( "configuration.testUnit.order" )%>
+   
+<%    List testList = (List) pageContext.getAttribute("testList"); %>
+
 <br><br>
+
+<form:hidden path="jsonChangeList" id="jsonChangeList"/>
 
 <div id="editDiv" >
     <h1 id="action"><spring:message code="label.button.edit"/></h1>
@@ -150,16 +166,16 @@
     </UL>
 
     <div style="text-align: center" id="editButtons">
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.next")%>'
+        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.next")%>'
                onclick="confirmValues();"/>
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous")%>'
+        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.previous")%>'
                onclick='submitAction("TestSectionManagement.do")'/>
     </div>
     <div style="text-align: center; display: none;" id="confirmationButtons">
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.accept")%>'
+        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.accept")%>'
                onclick="savePage();"/>
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.reject")%>'
+        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.reject")%>'
                onclick='rejectConfirmation();'/>
     </div>
 </div>
-
+  </form:form>

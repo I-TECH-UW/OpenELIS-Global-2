@@ -13,7 +13,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.forms.TestSectionRenameEntryForm;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -24,41 +23,37 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 
 @Controller
 public class TestSectionRenameEntryController extends BaseController {
-	@RequestMapping(
-			value = "/TestSectionRenameEntry", 
-			method = RequestMethod.GET
-	)
+	@RequestMapping(value = "/TestSectionRenameEntry", method = RequestMethod.GET)
 	public ModelAndView showTestSectionRenameEntry(HttpServletRequest request,
-			@ModelAttribute("form") TestSectionRenameEntryForm form) {	
+			@ModelAttribute("form") TestSectionRenameEntryForm form) {
 		String forward = FWD_SUCCESS;
-		if (form == null ) {
-			 form = new TestSectionRenameEntryForm();
+		if (form == null) {
+			form = new TestSectionRenameEntryForm();
 		}
 		form.setFormAction("");
 		Errors errors = new BaseErrors();
-		
 
 		form.setTestSectionList(DisplayListService.getList(DisplayListService.ListType.TEST_SECTION));
 
 		return findForward(forward, form);
 	}
 
+	@Override
 	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
 			return "testSectionRenameDefinition";
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return "redirect:/TestSectionRenameEntry.do";
 		} else {
 			return "PageNotFound";
 		}
 	}
-	
-	@RequestMapping(
-			value = "/TestSectionRenameEntry", 
-			method = RequestMethod.POST
-		)
+
+	@RequestMapping(value = "/TestSectionRenameEntry", method = RequestMethod.POST)
 	public ModelAndView updateTestSectionRenameEntry(HttpServletRequest request,
-			@ModelAttribute("form") TestSectionRenameEntryForm form) {	
-		
-		String forward = FWD_SUCCESS;
+			@ModelAttribute("form") TestSectionRenameEntryForm form) {
+
+		String forward = FWD_SUCCESS_INSERT;
 
 		String testSectionId = form.getTestSectionId();
 		String nameEnglish = form.getNameEnglish();
@@ -77,7 +72,7 @@ public class TestSectionRenameEntryController extends BaseController {
 
 	private void updateTestSectionNames(String testSectionId, String nameEnglish, String nameFrench, String userId) {
 		TestSection testSection = new TestSectionDAOImpl().getTestSectionById(testSectionId);
-		
+
 		if (testSection != null) {
 
 			Localization name = testSection.getLocalization();
@@ -102,10 +97,12 @@ public class TestSectionRenameEntryController extends BaseController {
 		DisplayListService.getFreshList(DisplayListService.ListType.TEST_SECTION);
 	}
 
+	@Override
 	protected String getPageTitleKey() {
 		return null;
 	}
 
+	@Override
 	protected String getPageSubtitleKey() {
 		return null;
 	}

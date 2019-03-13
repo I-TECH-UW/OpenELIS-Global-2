@@ -13,7 +13,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.forms.UomRenameEntryForm;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -42,6 +41,8 @@ public class UomRenameEntryController extends BaseController {
 	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
 			return "uomRenameDefinition";
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return "redirect:/UomRenameEntry.do";
 		} else {
 			return "PageNotFound";
 		}
@@ -51,7 +52,7 @@ public class UomRenameEntryController extends BaseController {
 	public ModelAndView updateUomRenameEntry(HttpServletRequest request,
 			@ModelAttribute("form") UomRenameEntryForm form) {
 
-		String forward = FWD_SUCCESS;
+		String forward = FWD_SUCCESS_INSERT;
 
 		String uomId = form.getUomId();
 		String nameEnglish = form.getNameEnglish();

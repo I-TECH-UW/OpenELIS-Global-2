@@ -1,10 +1,11 @@
 <%@ page language="java"
          contentType="text/html; charset=utf-8"
-         import="us.mn.state.health.lims.common.action.IActionConstants,
+         import="java.util.List,
+         		us.mn.state.health.lims.common.action.IActionConstants,
          		us.mn.state.health.lims.common.util.IdValuePair,
          		us.mn.state.health.lims.common.util.StringUtil,
          		us.mn.state.health.lims.common.util.Versioning,
-         		us.mn.state.health.lims.testconfiguration.action.TestSectionCreateAction" %>
+         		spring.generated.forms.SampleTypeCreateForm" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -30,13 +31,20 @@
 
 <script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 
- 
+ <%--
 <bean:define id="testList" name='${form.formName}' property="existingSampleTypeList" type="java.util.List"/>
 <bean:define id="inactiveTestList" name='${form.formName}' property="inactiveSampleTypeList" type="java.util.List"/>
 <bean:define id="englishSectionNames" name='${form.formName}' property="existingEnglishNames" type="String"/>
 <bean:define id="frenchSectionNames" name='${form.formName}' property="existingFrenchNames" type="String"/>
+--%>
+
+<c:set var="testList" value="${form.existingSampleTypeList}" />
+<c:set var="inactiveSampleTypeList" value="${form.inactiveSampleTypeList}" />
+<c:set var="existingEnglishNames" value="${form.existingEnglishNames}" />
+<c:set var="existingFrenchNames" value="${form.existingFrenchNames}" />
 
 <%!
+	public static final String NAME_SEPARATOR = "$";
     int testCount = 0;
     int columnCount = 0;
     int columns = 4;
@@ -46,7 +54,6 @@
     columnCount = 0;
     testCount = 0;
 %>
-<form id="mainForm">
 <script type="text/javascript">
     if (!$jq) {
         var $jq = jQuery.noConflict();
@@ -76,7 +83,7 @@
         });
 
         if (hasError) {
-            alert("<%=StringUtil.getMessageForKey("error.all.required")%>");
+            alert("<%=StringUtil.getContextualMessageForKey("error.all.required")%>");
         } else {
             $jq(".required").each(function () {
                 var element = $jq(this);
@@ -89,7 +96,7 @@
             $jq("#editButtons").hide();
             $jq("#confirmationButtons").show();
             $jq("#confirmationMessage").show();
-            $jq("#action").text("<%=StringUtil.getMessageForKey("label.confirmation")%>");
+            $jq("#action").text("<%=StringUtil.getContextualMessageForKey("label.confirmation")%>");
         }
     }
 
@@ -106,17 +113,17 @@
         $jq("#editButtons").show();
         $jq("#confirmationButtons").hide();
         $jq("#confirmationMessage").hide();
-        $jq("#action").text("<%=StringUtil.getMessageForKey("label.button.edit")%>");
+        $jq("#action").text("<%=StringUtil.getContextualMessageForKey("label.button.edit")%>");
     }
 
     function handleInput(element, locale) {
-        var englishNames = "<%= englishSectionNames %>".toLowerCase();
-        var frenchNames = "<%= frenchSectionNames %>".toLowerCase();
+        var englishNames = "${form.existingEnglishNames}".toLowerCase();
+        var frenchNames = "${form.existingFrenchNames}".toLowerCase();
         var duplicate = false;
         if( locale == 'english'){
-            duplicate = englishNames.indexOf( '<%=TestSectionCreateAction.NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=TestSectionCreateAction.NAME_SEPARATOR%>') != -1;
+            duplicate = englishNames.indexOf( '<%=NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=NAME_SEPARATOR%>') != -1;
         }else{
-            duplicate = frenchNames.indexOf( '<%=TestSectionCreateAction.NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=TestSectionCreateAction.NAME_SEPARATOR%>') != -1;
+            duplicate = frenchNames.indexOf( '<%=NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=NAME_SEPARATOR%>') != -1;
         }
 
         if(duplicate){
@@ -132,23 +139,39 @@
     function savePage() {
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         var form = document.getElementById("mainForm");
-        form.action = "SampleTypeCreateUpdate.do";
+        form.action = "SampleTypeCreate.do";
         form.submit();
     }
 </script>
 
+<style>
+table{
+  width: 80%;
+}
+td {
+  width: 25%;
+}
+</style>
 
-    <input type="button" value="<%= StringUtil.getMessageForKey("banner.menu.administration") %>"
+<form:form name="${form.formName}" 
+				   action="${form.formAction}" 
+				   modelAttribute="form" 
+				   onSubmit="return submitForm(this);" 
+				   method="${form.formMethod}"
+				   id="mainForm">
+
+
+    <input type="button" value="<%= StringUtil.getContextualMessageForKey("banner.menu.administration") %>"
            onclick="submitAction('MasterListsPage.do');"
            class="textButton"/>&rarr;
-    <input type="button" value="<%= StringUtil.getMessageForKey("configuration.test.management") %>"
+    <input type="button" value="<%= StringUtil.getContextualMessageForKey("configuration.test.management") %>"
            onclick="submitAction('TestManagementConfigMenu.do');"
            class="textButton"/>&rarr;
-    <input type="button" value="<%= StringUtil.getMessageForKey("configuration.sampleType.manage") %>"
+    <input type="button" value="<%= StringUtil.getContextualMessageForKey("configuration.sampleType.manage") %>"
            onclick="submitAction('SampleTypeManagement.do');"
            class="textButton"/>&rarr;
 
-<%=StringUtil.getMessageForKey( "configuration.sampleType.create" )%>
+<%=StringUtil.getContextualMessageForKey( "configuration.sampleType.create" )%>
 <br><br>
 
 <div id="editDiv" >
@@ -164,12 +187,11 @@
             <td style="text-align: center"><spring:message code="label.french"/></td>
         </tr>
         <tr>
-            <td><span class="requiredlabel">*</span><html:text property="sampleTypeEnglishName" name="${form.formName}" size="40"
-                                                               styleClass="required"
+            <td><span class="requiredlabel">*</span><form:input path="sampleTypeEnglishName" cssClass="required" size="40"
                                                                onchange="handleInput(this, 'english');checkForDuplicates('english');"/>
             </td>
-            <td><span class="requiredlabel">*</span><html:text property="sampleTypeFrenchName" name="${form.formName}" size="40"
-                                                               styleClass="required" onchange="handleInput(this, 'french');"/>
+            <td><span class="requiredlabel">*</span><form:input path="sampleTypeFrenchName" cssClass="required" size="40"
+                                                               onchange="handleInput(this, 'french');"/>
             </td>
         </tr>
     </table>
@@ -177,21 +199,27 @@
         <h4><spring:message code="configuration.sampleType.confirmation.explain" /></h4>
     </div>
     <div style="text-align: center" id="editButtons">
-        <input type="button" value="<%=StringUtil.getMessageForKey("label.button.next")%>"
+        <input type="button" value="<%=StringUtil.getContextualMessageForKey("label.button.next")%>"
                onclick="confirmValues();"/>
-        <input type="button" value="<%=StringUtil.getMessageForKey("label.button.previous")%>"
+        <input type="button" value="<%=StringUtil.getContextualMessageForKey("label.button.previous")%>"
                onclick="submitAction('SampleTypeManagement.do');"/>
     </div>
     <div style="text-align: center; display: none;" id="confirmationButtons">
-        <input type="button" value="<%=StringUtil.getMessageForKey("label.button.accept")%>"
+        <input type="button" value="<%=StringUtil.getContextualMessageForKey("label.button.accept")%>"
                onclick="savePage();"/>
-        <input type="button" value="<%=StringUtil.getMessageForKey("label.button.reject")%>"
+        <input type="button" value="<%=StringUtil.getContextualMessageForKey("label.button.reject")%>"
                onclick='rejectConfirmation();'/>
     </div>
 </div>
 
 <h3><spring:message code="sampleType.existing" /></h3>
-<table width="80%">
+<table>
+
+<%  
+    List testList = (List) pageContext.getAttribute("testList");
+	List inactiveTestList = (List) pageContext.getAttribute("inactiveSampleTypeList");
+%>
+
     <% while(testCount < testList.size()){%>
     <tr>
         <td width='<%= 100/columns + "%"%>'><%= ((IdValuePair)testList.get(testCount)).getValue()%>
@@ -212,7 +240,7 @@
 </table>
     <% if( !inactiveTestList.isEmpty()){ %>
     <h3><spring:message code="sampleType.existing.inactive" /></h3>
-    <table width="80%">
+    <table>
         <%  testCount = 0;
             columnCount = 0;
             while(testCount < inactiveTestList.size()){%>
@@ -234,3 +262,5 @@
         <% } %>
     </table>
     <% } %>
+  </form:form>
+    

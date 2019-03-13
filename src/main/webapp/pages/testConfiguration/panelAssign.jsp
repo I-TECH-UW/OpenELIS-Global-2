@@ -36,7 +36,9 @@
 
 
  
-<bean:define id="panelList" name='${form.formName}' property="panelList" type="java.util.List"/>
+<%--<bean:define id="panelList" name='${form.formName}' property="panelList" type="java.util.List"/> --%>
+<c:set var="panelList" value="${form.panelList}" />
+<c:set var="selectedPanel" value="${form.selectedPanel}" />
 
 
 <%!
@@ -60,7 +62,6 @@
 <link rel="stylesheet" media="screen" type="text/css"
       href="<%=basePath%>css/jquery_ui/jquery.ui.theme.css?ver=<%= Versioning.getBuildNumber() %>"/>
 
-<form id="mainForm">
 <script type="text/javascript">
     if (!$jq) {
         var $jq = jQuery.noConflict();
@@ -104,15 +105,14 @@
 
     }
 
-    function panelSelected( selection){
-   	    window.location.href = "PanelTestAssign.do?panelId=" + selection.value ;
-
+    function panelSelected(panelId){
+   	    window.location.href = "PanelTestAssign.do?panelId=" + panelId ;
     }
 
     function confirmValues() {
         $jq("#editButtons").hide();
         $jq(".confirmation-step").show();
-        $jq("#action").text('<%=StringUtil.getMessageForKey("label.confirmation")%>');
+        $jq("#action").text('<%=StringUtil.getContextualMessageForKey("label.confirmation")%>');
         if( $jq("#deactivatePanelId").val().length > 0){
             $jq("#deatcitvateWarning").show();
         }else{
@@ -126,7 +126,7 @@
     function rejectConfirmation() {
         $jq("#editButtons").show();
         $jq(".confirmation-step").hide();
-        $jq("#action").text('<%=StringUtil.getMessageForKey("label.button.edit")%>');
+        $jq("#action").text('<%=StringUtil.getContextualMessageForKey("label.button.edit")%>');
 
         $jq("#panelSelection").attr("disabled", false);
     }
@@ -136,7 +136,7 @@
         //window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         $jq('#list1 option').prop('selected', true);
         var form = document.getElementById("mainForm");
-        form.action = "PanelTestAssignUpdate.do";
+        form.action = "PanelTestAssign.do";
         form.submit();
     }
     
@@ -159,26 +159,53 @@
 
 </script>
 
-<div id="successMsg" style="text-align:center; color:seagreen;  width : 100%;font-size:170%; visibility : <%=((success != null && success) ? "visible" : "hidden") %>" >
-                <spring:message code="save.success"/>
+<style>
+table{
+  width: 80%;
+}
+td {
+  width: 25%;
+}
+</style>
+
+<form:form name="${form.formName}" 
+				   action="${form.formAction}" 
+				   modelAttribute="form" 
+				   onSubmit="return submitForm(this);" 
+				   method="${form.formMethod}"
+				   id="mainForm">
+
+
+<div id="successMsg" style="text-align:center; color:seagreen;  width : 100%;font-size:170%; 
+  visibility : <%=((success != null && success) ? "visible" : "hidden") %>" >
+    <spring:message code="save.success"/>
 </div>
 
-    <bean:define id="selectedPanel" name='${form.formName}' property="selectedPanel" type="us.mn.state.health.lims.testconfiguration.action.PanelTests"/>
-    
+    <%-- <bean:define id="selectedPanel" name='${form.formName}' property="selectedPanel" type="us.mn.state.health.lims.testconfiguration.action.PanelTests"/> --%>
+<%--    
     <form:hidden path="panelId" id="panelId" value="<%=(selectedPanel.getPanelIdValuePair() != null ? selectedPanel.getPanelIdValuePair().getId() : new String()) %>"/>
     <form:hidden path="deactivatePanelId" id="deactivatePanelId"/>
+        
+        
+     <form:hidden path="panelId" id="panelId" value="<%=(selectedPanel.getPanelIdValuePair()%>"/>
+     <form:hidden path="panelId" id="panelId" value="<%=(selectedPanel.getPanelIdValuePair() %>"/>
+     --%>
+     
+     <%    PanelTests selectedPanel = (PanelTests) pageContext.getAttribute("selectedPanel"); %>
+     <form:hidden path="panelId" id="panelId" value="<%=(selectedPanel.getPanelIdValuePair() != null ? selectedPanel.getPanelIdValuePair().getId() : new String()) %>"/>
+     <form:hidden path="deactivatePanelId" id="deactivatePanelId"/>
 
-    <input type="button" value='<%= StringUtil.getMessageForKey("banner.menu.administration") %>'
+    <input type="button" value='<%= StringUtil.getContextualMessageForKey("banner.menu.administration") %>'
            onclick="submitAction('MasterListsPage.do');"
            class="textButton"/>&rarr;
-    <input type="button" value='<%= StringUtil.getMessageForKey("configuration.test.management") %>'
+    <input type="button" value='<%= StringUtil.getContextualMessageForKey("configuration.test.management") %>'
            onclick="submitAction('TestManagementConfigMenu.do');"
            class="textButton"/>&rarr;
-    <input type="button" value='<%= StringUtil.getMessageForKey("configuration.panel.manage") %>'
+    <input type="button" value='<%= StringUtil.getContextualMessageForKey("configuration.panel.manage") %>'
            onclick="submitAction('PanelManagement.do');"
            class="textButton"/>&rarr;
 
-<%=StringUtil.getMessageForKey( "configuration.panel.assign" )%>
+<%=StringUtil.getContextualMessageForKey( "configuration.panel.assign" )%>
 <br><br>
 
     <h1 id="action" ><spring:message code="label.form.select"/></h1>
@@ -186,13 +213,17 @@
     <h2><spring:message code="configuration.panel.assign"/> </h2>
 
     <div class="select-step" >
-    Panel:<html:select name='${form.formName}' property="panelId" 
-         onchange="panelSelected(this);" >
-        <app:optionsCollection name="${form.formName}" property="panelList" label="value" value="id" />
-    </html:select>
-<br>
-
     
+    <%    List panelList = (List) pageContext.getAttribute("panelList"); %>
+    
+    Panel:<form:select cssClass="required" path="panelId" onchange="panelSelected(this.value);">
+            			<option value="">
+        				<% for(int i = 0; i < panelList.size(); i++){
+            				IdValuePair panel = (IdValuePair)panelList.get(i);	%>
+        					<option id='<%="option_" + panel.getId()%>' value="<%=panel.getId()%>"><%=panel.getValue()%></option>
+        				<% } %>
+    				</form:select>
+<br> 
                 
     </div>
     <div class="edit-step" style="display:none">
@@ -208,19 +239,18 @@
     </div>
 
     <div style="text-align: center" id="editButtons">
-        <input id="saveButton" type="button" value='<%=StringUtil.getMessageForKey("label.button.next")%>'
+        <input id="saveButton" type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.next")%>'
                onclick="confirmValues();" disabled="disabled"/>configuration.testUnit.confirmation.move.phrase
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous")%>'
+        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.previous")%>'
                onclick='window.onbeforeunload = null; submitAction("PanelTestAssign.do")'/>
     </div>
     <div style="text-align: center; display: none;" class="confirmation-step">
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.accept")%>'
+        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.accept")%>'
                onclick="savePage();"/>
-        <input type="button" value='<%=StringUtil.getMessageForKey("label.button.reject")%>'
+        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.reject")%>'
                onclick='rejectConfirmation();'/>
     </div>
 </div>
-
 
 <% if (selectedPanel.getPanelIdValuePair()!= null )  {%>
 
@@ -228,15 +258,15 @@
 <tr>
 <td >
 <div>
-    <h3><%=selectedPanel.getPanelIdValuePair().getValue() %> Tests</h3>
 
-    <select name='currentTests' style="height:200px;line-height:200px;width:100%;" id="list1" multiple="multiple" property="currentTests">
+    <h3><%=selectedPanel.getPanelIdValuePair().getValue() %> Tests</h3>
+    
+    <form:select style="height:200px;line-height:200px;width:100%;" cssClass="required" path="currentTests" id="list1">
         <% for (IdValuePair panelTest : selectedPanel.getTests()) {%>
-            <%="<option value='" + panelTest.getId() + "'>" + panelTest.getValue() + "</option>" %>
-        <%} %>
-    </select>
-    
-    
+       		<option id='<%="option_" + panelTest.getId()%>' value="<%=panelTest.getId()%>"><%=panelTest.getValue()%></option>
+       <% } %>
+    </form:select>
+
 </div>
 </td>
 <td align="center" valign="middle">
@@ -246,12 +276,12 @@
 <td>
 <div>
      <h3>Available Tests (<%=selectedPanel.getSampleTypeIdValuePair().getValue() %>)</h3>
-    <select name='availableTests' style="height:200px;line-height:200px;width:100%;" id="list2" multiple="multiple" style="width:100%;" property="availableTests">
+     
+    <form:select style="height:200px;line-height:200px;width:100%;" cssClass="required" path="availableTests" id="list2">
         <% for (IdValuePair availableTest : selectedPanel.getAvailableTests()) {%>
-            <%="<option value='" + availableTest.getId() + "'>" + availableTest.getValue() + "</option>" %>
-        <%} %>     
-    </select>
-
+       		<option id='<%="option_" + availableTest.getId()%>' value="<%=availableTest.getId()%>"><%=availableTest.getValue()%></option>
+       <% } %>
+    </form:select>
 
 </div>
 </td>
@@ -259,12 +289,11 @@
 <tr>
 <td colspan="3" align="right">
 
-        <input type="button" value='Save'
-           onclick="savePage();"
-           />
+        <input type="button" value='Save' onclick="savePage();" />
 </td>
 </tr>
 
 </table>
-<%} %>
-</form>
+<% } %>
+</form:form>
+

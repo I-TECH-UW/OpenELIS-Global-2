@@ -23,7 +23,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.forms.TestActivationForm;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.TestService;
@@ -40,269 +39,270 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Controller
 public class TestActivationController extends BaseController {
-  @RequestMapping(
-      value = "/TestActivation",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showTestActivation(HttpServletRequest request,
-      @ModelAttribute("form") TestActivationForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new TestActivationForm();
-    }
-        form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
-    
-    List<TestActivationBean> activeTestList = createTestList(true, false);
-    List<TestActivationBean> inactiveTestList = createTestList(false, false);
-    form.setActiveTestList(activeTestList);
-    form.setInactiveTestList(inactiveTestList);
-    
-    return findForward(forward, form);
-  }
-  
-  private List<TestActivationBean> createTestList(boolean active, boolean refresh) {
-      ArrayList<TestActivationBean> testList = new ArrayList<TestActivationBean>();
+	@RequestMapping(value = "/TestActivation", method = RequestMethod.GET)
+	public ModelAndView showTestActivation(HttpServletRequest request,
+			@ModelAttribute("form") TestActivationForm form) {
+		String forward = FWD_SUCCESS;
+		if (form == null) {
+			form = new TestActivationForm();
+		}
+		form.setFormAction("");
+		Errors errors = new BaseErrors();
 
-      if (refresh) 
-    	  DisplayListService.refreshList(active ? DisplayListService.ListType.SAMPLE_TYPE_ACTIVE : DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
-      	  
-      List<IdValuePair> sampleTypeList = DisplayListService.getList(active ? DisplayListService.ListType.SAMPLE_TYPE_ACTIVE : DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
-      
-      //if not active we use alphabetical ordering, the default is display order
-      if( !active){
-        IdValuePair.sortByValue( sampleTypeList );
-      }
+		List<TestActivationBean> activeTestList = createTestList(true, false);
+		List<TestActivationBean> inactiveTestList = createTestList(false, false);
+		form.setActiveTestList(activeTestList);
+		form.setInactiveTestList(inactiveTestList);
 
-      for( IdValuePair pair : sampleTypeList){
-          TestActivationBean bean = new TestActivationBean();
+		return findForward(forward, form);
+	}
 
-          List<Test> tests = TypeOfSampleService.getAllTestsBySampleTypeId(pair.getId());
-          List<IdValuePair> activeTests = new ArrayList<IdValuePair>();
-          List<IdValuePair> inactiveTests = new ArrayList<IdValuePair>();
+	private List<TestActivationBean> createTestList(boolean active, boolean refresh) {
+		ArrayList<TestActivationBean> testList = new ArrayList<>();
 
-          //initial ordering will be by display order.  Inactive tests will then be re-ordered alphabetically
-          Collections.sort(tests, new Comparator<Test>() {
-              @Override
-              public int compare(Test o1, Test o2) {
-              	//compare sort order
-              	if (NumberUtils.isNumber(o1.getSortOrder()) && NumberUtils.isNumber(o2.getSortOrder())) {
-              		return Integer.parseInt(o1.getSortOrder()) - Integer.parseInt(o2.getSortOrder());
-                  //if o2 has no sort order o1 does, o2 is assumed to be higher
-              	} else if (NumberUtils.isNumber(o1.getSortOrder())){
-                  	return -1;
-                  //if o1 has no sort order o2 does, o1 is assumed to be higher
-                  } else if (NumberUtils.isNumber(o2.getSortOrder())) {
-                  	return 1;
-                  //else they are considered equal
-                  } else {
-                  	return 0;
-                  }
-              }
-          });
+		if (refresh) {
+			DisplayListService.refreshList(active ? DisplayListService.ListType.SAMPLE_TYPE_ACTIVE
+					: DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
+		}
 
-          for( Test test : tests) {
-              if( test.isActive()) {
-                  activeTests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
-              }else{
-                  inactiveTests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
-              }
-          }
+		List<IdValuePair> sampleTypeList = DisplayListService
+				.getList(active ? DisplayListService.ListType.SAMPLE_TYPE_ACTIVE
+						: DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
 
-          IdValuePair.sortByValue( inactiveTests);
+		// if not active we use alphabetical ordering, the default is display order
+		if (!active) {
+			IdValuePair.sortByValue(sampleTypeList);
+		}
 
-          bean.setActiveTests(activeTests);
-          bean.setInactiveTests(inactiveTests);
-          if( !activeTests.isEmpty() || !inactiveTests.isEmpty()) {
-              bean.setSampleType(pair);
-              testList.add(bean);
-          }
-      }
+		for (IdValuePair pair : sampleTypeList) {
+			TestActivationBean bean = new TestActivationBean();
 
-      return testList;
-  }
-  
-  @RequestMapping(
-	      value = "/TestActivation",
-	      method = RequestMethod.POST
-	  )
-	  public ModelAndView postTestActivation(HttpServletRequest request,
-	      @ModelAttribute("form") TestActivationForm form) throws Exception {
-	  
-	    String forward = FWD_SUCCESS;
+			List<Test> tests = TypeOfSampleService.getAllTestsBySampleTypeId(pair.getId());
+			List<IdValuePair> activeTests = new ArrayList<>();
+			List<IdValuePair> inactiveTests = new ArrayList<>();
 
-	    Errors errors = new BaseErrors();
-	    
+			// initial ordering will be by display order. Inactive tests will then be
+			// re-ordered alphabetically
+			Collections.sort(tests, new Comparator<Test>() {
+				@Override
+				public int compare(Test o1, Test o2) {
+					// compare sort order
+					if (NumberUtils.isNumber(o1.getSortOrder()) && NumberUtils.isNumber(o2.getSortOrder())) {
+						return Integer.parseInt(o1.getSortOrder()) - Integer.parseInt(o2.getSortOrder());
+						// if o2 has no sort order o1 does, o2 is assumed to be higher
+					} else if (NumberUtils.isNumber(o1.getSortOrder())) {
+						return -1;
+						// if o1 has no sort order o2 does, o1 is assumed to be higher
+					} else if (NumberUtils.isNumber(o2.getSortOrder())) {
+						return 1;
+						// else they are considered equal
+					} else {
+						return 0;
+					}
+				}
+			});
 
-	    String changeList = form.getJsonChangeList();
-        
-	    JSONParser parser=new JSONParser();
+			for (Test test : tests) {
+				if (test.isActive()) {
+					activeTests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
+				} else {
+					inactiveTests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
+				}
+			}
 
-        JSONObject obj = (JSONObject)parser.parse(changeList);
+			IdValuePair.sortByValue(inactiveTests);
 
-        List<ActivateSet> activateSampleSets = getActivateSetForActions("activateSample", obj, parser);
-        List<String> deactivateSampleIds = getIdsForActions("deactivateSample", obj, parser);
-        List<ActivateSet> activateTestSets = getActivateSetForActions("activateTest", obj, parser);
-        List<String> deactivateTestIds = getIdsForActions("deactivateTest", obj, parser);
+			bean.setActiveTests(activeTests);
+			bean.setInactiveTests(inactiveTests);
+			if (!activeTests.isEmpty() || !inactiveTests.isEmpty()) {
+				bean.setSampleType(pair);
+				testList.add(bean);
+			}
+		}
 
-        List<Test> deactivateTests = getDeactivatedTests(deactivateTestIds);
-        List<Test> activateTests = getActivatedTests(activateTestSets);
-        List<TypeOfSample> deactivateSampleTypes = getDeactivatedSampleTypes(deactivateSampleIds );
-        List<TypeOfSample> activateSampleTypes = getActivatedSampleTypes(activateSampleSets);
+		return testList;
+	}
 
-        Transaction tx = HibernateUtil.getSession().beginTransaction();
+	@RequestMapping(value = "/TestActivation", method = RequestMethod.POST)
+	public ModelAndView postTestActivation(HttpServletRequest request, @ModelAttribute("form") TestActivationForm form)
+			throws Exception {
 
-        TestDAO testDAO = new TestDAOImpl();
-        TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
+		String forward = FWD_SUCCESS;
 
-        try{
-            for(Test test : deactivateTests){
-                testDAO.updateData(test);
-            }
+		Errors errors = new BaseErrors();
 
-            for(Test test : activateTests){
-                testDAO.updateData(test);
-            }
+		String changeList = form.getJsonChangeList();
 
-            for(TypeOfSample typeOfSample : deactivateSampleTypes){
-                typeOfSampleDAO.updateData(typeOfSample);
-            }
+		JSONParser parser = new JSONParser();
 
-            for(TypeOfSample typeOfSample : activateSampleTypes){
-                typeOfSampleDAO.updateData(typeOfSample);
-            }
+		JSONObject obj = (JSONObject) parser.parse(changeList);
 
-            if( !deactivateSampleTypes.isEmpty() || !activateSampleTypes.isEmpty()){
-                TypeOfSampleService.clearCache();
-            }
+		List<ActivateSet> activateSampleSets = getActivateSetForActions("activateSample", obj, parser);
+		List<String> deactivateSampleIds = getIdsForActions("deactivateSample", obj, parser);
+		List<ActivateSet> activateTestSets = getActivateSetForActions("activateTest", obj, parser);
+		List<String> deactivateTestIds = getIdsForActions("deactivateTest", obj, parser);
 
-            tx.commit();
-        }catch( HibernateException e ){
-            tx.rollback();
-        }finally{
-            HibernateUtil.closeSession();
-        }
+		List<Test> deactivateTests = getDeactivatedTests(deactivateTestIds);
+		List<Test> activateTests = getActivatedTests(activateTestSets);
+		List<TypeOfSample> deactivateSampleTypes = getDeactivatedSampleTypes(deactivateSampleIds);
+		List<TypeOfSample> activateSampleTypes = getActivatedSampleTypes(activateSampleSets);
 
-	    List<TestActivationBean> activeTestList = createTestList(true, true);
-	    List<TestActivationBean> inactiveTestList = createTestList(false, true);
-	    form.setActiveTestList(activeTestList);
-	    form.setInactiveTestList(inactiveTestList);
-	  
-	  return findForward(forward, form);
-  }
-  
-  private List<Test> getDeactivatedTests(List<String> testIds) {
-      List<Test> tests = new ArrayList<Test>();
+		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
-      for( String testId : testIds){
-          Test test = new TestService(testId).getTest();
-          test.setIsActive( "N");
-          test.setSysUserId(getSysUserId(request));
-          tests.add(test);
-      }
+		TestDAO testDAO = new TestDAOImpl();
+		TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
 
-      return tests;
-  }
+		try {
+			for (Test test : deactivateTests) {
+				testDAO.updateData(test);
+			}
 
-  private List<Test> getActivatedTests(List<ActivateSet> testIds) {
-      List<Test> tests = new ArrayList<Test>();
+			for (Test test : activateTests) {
+				testDAO.updateData(test);
+			}
 
-      for( ActivateSet set : testIds){
-          Test test = new TestService(set.id).getTest();
-          test.setIsActive( "Y");
-          test.setSortOrder( String.valueOf(set.sortOrder * 10));
-          test.setSysUserId(getSysUserId(request));
-          tests.add(test);
-      }
+			for (TypeOfSample typeOfSample : deactivateSampleTypes) {
+				typeOfSampleDAO.updateData(typeOfSample);
+			}
 
-      return tests;
-  }
+			for (TypeOfSample typeOfSample : activateSampleTypes) {
+				typeOfSampleDAO.updateData(typeOfSample);
+			}
 
-  private List<TypeOfSample> getDeactivatedSampleTypes(List<String> sampleTypeIds) {
-      List<TypeOfSample> sampleTypes = new ArrayList<TypeOfSample>();
+			if (!deactivateSampleTypes.isEmpty() || !activateSampleTypes.isEmpty()) {
+				TypeOfSampleService.clearCache();
+			}
 
-      for( String id : sampleTypeIds){
-          TypeOfSample typeOfSample = TypeOfSampleService.getTransientTypeOfSampleById(id);
-          typeOfSample.setActive( false );
-          typeOfSample.setSysUserId(getSysUserId(request));
-          sampleTypes.add(typeOfSample);
-      }
+			tx.commit();
+		} catch (HibernateException e) {
+			tx.rollback();
+		} finally {
+			HibernateUtil.closeSession();
+		}
 
-      return sampleTypes;
-  }
+		List<TestActivationBean> activeTestList = createTestList(true, true);
+		List<TestActivationBean> inactiveTestList = createTestList(false, true);
+		form.setActiveTestList(activeTestList);
+		form.setInactiveTestList(inactiveTestList);
 
-  private List<TypeOfSample> getActivatedSampleTypes(List<ActivateSet> sampleTypeSets) {
-      List<TypeOfSample> sampleTypes = new ArrayList<TypeOfSample>();
+		return findForward(forward, form);
+	}
 
-      for( ActivateSet set : sampleTypeSets){
-          TypeOfSample typeOfSample = TypeOfSampleService.getTransientTypeOfSampleById(set.id);
-          typeOfSample.setActive( true );
-          typeOfSample.setSortOrder(set.sortOrder * 10);
-          typeOfSample.setSysUserId(getSysUserId(request));
-          sampleTypes.add(typeOfSample);
-      }
+	private List<Test> getDeactivatedTests(List<String> testIds) {
+		List<Test> tests = new ArrayList<>();
 
-      return sampleTypes;
-  }
+		for (String testId : testIds) {
+			Test test = new TestService(testId).getTest();
+			test.setIsActive("N");
+			test.setSysUserId(getSysUserId(request));
+			tests.add(test);
+		}
 
-  private List<String> getIdsForActions(String key, JSONObject root, JSONParser parser){
-      List<String> list = new ArrayList<String>();
+		return tests;
+	}
 
-      String action = (String)root.get(key);
+	private List<Test> getActivatedTests(List<ActivateSet> testIds) {
+		List<Test> tests = new ArrayList<>();
 
-      try {
-          JSONArray actionArray = (JSONArray)parser.parse(action);
+		for (ActivateSet set : testIds) {
+			Test test = new TestService(set.id).getTest();
+			test.setIsActive("Y");
+			test.setSortOrder(String.valueOf(set.sortOrder * 10));
+			test.setSysUserId(getSysUserId(request));
+			tests.add(test);
+		}
 
-          for(int i = 0 ; i < actionArray.size(); i++   ){
-              list.add((String) ((JSONObject) actionArray.get(i)).get("id"));
-          }
-      } catch (ParseException e) {
-          e.printStackTrace();
-      }
+		return tests;
+	}
 
-      return list;
-  }
+	private List<TypeOfSample> getDeactivatedSampleTypes(List<String> sampleTypeIds) {
+		List<TypeOfSample> sampleTypes = new ArrayList<>();
 
-  private List<ActivateSet> getActivateSetForActions(String key, JSONObject root, JSONParser parser) {
-      List<ActivateSet> list = new ArrayList<ActivateSet>();
+		for (String id : sampleTypeIds) {
+			TypeOfSample typeOfSample = TypeOfSampleService.getTransientTypeOfSampleById(id);
+			typeOfSample.setActive(false);
+			typeOfSample.setSysUserId(getSysUserId(request));
+			sampleTypes.add(typeOfSample);
+		}
 
-      String action = (String)root.get(key);
+		return sampleTypes;
+	}
 
-      try {
-          JSONArray actionArray = (JSONArray)parser.parse(action);
+	private List<TypeOfSample> getActivatedSampleTypes(List<ActivateSet> sampleTypeSets) {
+		List<TypeOfSample> sampleTypes = new ArrayList<>();
 
-          for(int i = 0 ; i < actionArray.size(); i++   ){
-              ActivateSet set = new ActivateSet();
-              set.id = String.valueOf(((JSONObject) actionArray.get(i)).get("id"));
-              Long longSort = (Long)((JSONObject) actionArray.get(i)).get("sortOrder");
-              set.sortOrder = longSort.intValue();
-              list.add(set);
-          }
-      } catch (ParseException e) {
-          e.printStackTrace();
-      }
-      
-      return list;
-  }
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "testActivationDefinition";
-    } else {
-      return "PageNotFound";
-    }
-  }
-  
-  private class ActivateSet{
-      public String id;
-      public Integer sortOrder;
-  }
+		for (ActivateSet set : sampleTypeSets) {
+			TypeOfSample typeOfSample = TypeOfSampleService.getTransientTypeOfSampleById(set.id);
+			typeOfSample.setActive(true);
+			typeOfSample.setSortOrder(set.sortOrder * 10);
+			typeOfSample.setSysUserId(getSysUserId(request));
+			sampleTypes.add(typeOfSample);
+		}
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+		return sampleTypes;
+	}
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+	private List<String> getIdsForActions(String key, JSONObject root, JSONParser parser) {
+		List<String> list = new ArrayList<>();
+
+		String action = (String) root.get(key);
+
+		try {
+			JSONArray actionArray = (JSONArray) parser.parse(action);
+
+			for (int i = 0; i < actionArray.size(); i++) {
+				list.add((String) ((JSONObject) actionArray.get(i)).get("id"));
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		return list;
+	}
+
+	private List<ActivateSet> getActivateSetForActions(String key, JSONObject root, JSONParser parser) {
+		List<ActivateSet> list = new ArrayList<>();
+
+		String action = (String) root.get(key);
+
+		try {
+			JSONArray actionArray = (JSONArray) parser.parse(action);
+
+			for (int i = 0; i < actionArray.size(); i++) {
+				ActivateSet set = new ActivateSet();
+				set.id = String.valueOf(((JSONObject) actionArray.get(i)).get("id"));
+				Long longSort = (Long) ((JSONObject) actionArray.get(i)).get("sortOrder");
+				set.sortOrder = longSort.intValue();
+				list.add(set);
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		return list;
+	}
+
+	@Override
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "testActivationDefinition";
+		} else {
+			return "PageNotFound";
+		}
+	}
+
+	private class ActivateSet {
+		public String id;
+		public Integer sortOrder;
+	}
+
+	@Override
+	protected String getPageTitleKey() {
+		return null;
+	}
+
+	@Override
+	protected String getPageSubtitleKey() {
+		return null;
+	}
 }
