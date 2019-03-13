@@ -12,11 +12,13 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.generated.forms.PanelTestAssignForm;
 import spring.mine.common.controller.BaseController;
@@ -97,6 +99,7 @@ public class PanelTestAssignController extends BaseController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		addFlashMsgsToRequest(request);
 
 		return findForward(forward, form);
 	}
@@ -118,7 +121,8 @@ public class PanelTestAssignController extends BaseController {
 
 	@RequestMapping(value = "/PanelTestAssign", method = RequestMethod.POST)
 	public ModelAndView postPanelTestAssign(HttpServletRequest request,
-			@ModelAttribute("form") PanelTestAssignForm form) throws Exception {
+			@ModelAttribute("form") PanelTestAssignForm form, BindingResult result,
+			RedirectAttributes redirectAttributes) throws Exception {
 
 		String forward = FWD_SUCCESS_INSERT;
 
@@ -183,8 +187,9 @@ public class PanelTestAssignController extends BaseController {
 		DisplayListService.refreshList(DisplayListService.ListType.PANELS);
 		DisplayListService.refreshList(DisplayListService.ListType.PANELS_INACTIVE);
 
-		setSuccessFlag(request);
-
+		if (FWD_SUCCESS_INSERT.equals(forward)) {
+			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+		}
 		return findForward(forward, form);
 	}
 
@@ -193,7 +198,8 @@ public class PanelTestAssignController extends BaseController {
 		if (FWD_SUCCESS.equals(forward)) {
 			return "panelAssignDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return "redirect:/PanelTestAssign.do";
+			String url = "/PanelTestAssign.do?panelId=" + request.getParameter("panelId");
+			return "redirect:" + url;
 		} else {
 			return "PageNotFound";
 		}
