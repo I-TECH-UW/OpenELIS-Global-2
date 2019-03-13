@@ -8,7 +8,7 @@ import spring.mine.common.validator.ValidationHelper;
 import spring.mine.dictionary.form.DictionaryForm;
 
 @Component
-public class DictionaryValidator implements Validator {
+public class DictionaryFormValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -32,21 +32,13 @@ public class DictionaryValidator implements Validator {
 
 		// TODO make a charset that is tight to this input
 		// right now all chars are permitted
-		ValidationHelper.validateFieldAndCharset(form.getDictEntry(), "dictEntry", errors, true, 4000, ".");
+		ValidationHelper.validateFieldAndCharset(form.getDictEntry(), "dictEntry", errors, true, 4000, "\\s\\S");
 
 		// TODO validate localAbbreviation
 
 		// TODO validate dirtyFormFields
 
 		// newDictionary doesn't need to be validated as it is not saved
-
-	}
-
-	public void preInsertValidate(DictionaryForm form, Errors errors) {
-
-	}
-
-	public void preUpdateValidate(DictionaryForm form, Errors errors) {
 
 	}
 

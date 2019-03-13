@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.sample.form.SamplePatientEntryForm;
 import us.mn.state.health.lims.address.dao.AddressPartDAO;
@@ -89,8 +89,8 @@ public class PatientManagementController extends PatientManagementBaseController
 		String forward = FWD_SUCCESS;
 		SamplePatientEntryForm form = new SamplePatientEntryForm();
 		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
+		addFlashMsgsToRequest(request);
 		cleanAndSetupRequestForm(form, request);
 
 		return findForward(forward, form);
@@ -98,7 +98,7 @@ public class PatientManagementController extends PatientManagementBaseController
 
 	@RequestMapping(value = "/PatientManagementUpdate", method = RequestMethod.POST)
 	public ModelAndView showPatientManagementUpdate(@ModelAttribute("form") SamplePatientEntryForm form, ModelMap model,
-			HttpServletRequest request)
+			HttpServletRequest request, RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS_INSERT;
 		Errors errors = new BaseErrors();
@@ -112,7 +112,6 @@ public class PatientManagementController extends PatientManagementBaseController
 		if (patientInfo.getPatientUpdateStatus() != PatientUpdateStatus.NO_ACTION) {
 
 			preparePatientData(errors, request, patientInfo, patient);
-
 			if (errors.hasErrors()) {
 				saveErrors(errors);
 				return findForward(FWD_FAIL_INSERT, form);
@@ -144,9 +143,9 @@ public class PatientManagementController extends PatientManagementBaseController
 			}
 
 		}
+		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 
-		setSuccessFlag(request, forward);
-
+		// don't need to attach form, as we are doing a redirect
 		return findForward(forward, form);
 	}
 
@@ -451,9 +450,9 @@ public class PatientManagementController extends PatientManagementBaseController
 		if (FWD_SUCCESS.equals(forward)) {
 			return "patientManagementDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return "homePageDefinition";
+			return "redirect:/Dashboard.do";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return "patientManagementDefinition";
+			return "redirect:/PatientManagement.do";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
 			return "patientManagementDefinition";
 		} else {

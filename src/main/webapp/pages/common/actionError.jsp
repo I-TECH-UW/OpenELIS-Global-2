@@ -10,6 +10,7 @@
 		us.mn.state.health.lims.common.util.validator.ActionError,
 		us.mn.state.health.lims.common.util.SystemConfiguration,
 		org.owasp.encoder.Encode"%>
+<%@ page import="spring.mine.common.constants.Constants" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -62,21 +63,19 @@ myActionForm = document.forms["<%= (String)request.getAttribute(IActionConstants
 
 
 </script>
+<c:if test="${not empty requestScope[Constants.REQUEST_ERRORS].allErrors}">
 <center><h1>
-<c:if test="${!empty form.errors}">
-	<c:forEach items="${form.errors}" var="error">
-		<spring:message code="${error.code}" arguments="${error.arguments}" text="${error.defaultMessage}" /><br>
-	</c:forEach>
-</c:if>
-<c:if test="${!empty errors}">
-	<c:forEach items="${errors}" var="error">
-		<spring:message code="${error.code}" arguments="${error.arguments}"  text="${error.defaultMessage}" /><br>
-	</c:forEach>
-</c:if>
-<c:if test="${not empty RequestErrors.allErrors}">
-	<c:forEach items="${RequestErrors.allErrors}" var="error">
-		<spring:message code="${error.code}" arguments="${error.arguments}" text="${error.defaultMessage}" /><br>
-	</c:forEach>
-</c:if>
+<c:forEach items="${requestScope[Constants.REQUEST_ERRORS].allErrors}" var="error">
+	<spring:message code="${error.code}" arguments="${error.arguments}" text="${error.defaultMessage}" /><br>
+</c:forEach>
 </h1></center>
+</c:if>
+
+<c:if test="${not empty requestScope[Constants.REQUEST_WARNINGS]}">
+<center><h1>
+<c:forEach items="${requestScope[Constants.REQUEST_WARNINGS]}" var="warningMsg">
+	<c:out value="${warningMsg}"/><br>
+</c:forEach>
+</h1></center>
+</c:if>
 

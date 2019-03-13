@@ -25,10 +25,10 @@ public class AnalyzerTestMappingValidator implements Validator {
 
 		ValidationHelper.validateIdField(analyzerTestMapping.getAnalyzerId(), "analyzerId", errors, true);
 
-		ValidationHelper.validateFieldAndCharset("analyzerTestName", analyzerTestMapping.getAnalyzerTestName(), errors,
-				true, 30, " a-zA-Z0-9àâäèéêëîïôœùûüÿçÀÂÄÈÉÊËÎÏÔŒÙÛÜŸÇ\\\\-%#()/^_");
+		ValidationHelper.validateFieldAndCharset(analyzerTestMapping.getAnalyzerTestName(), "analyzerTestName", errors,
+				true, 30, " a-zA-Z0-9àâäèéêëîïôœùûüÿçÀÂÄÈÉÊËÎÏÔŒÙÛÜŸÇ\\\\\\-%#\\(\\)\\^_");
 
-		ValidationHelper.validateIdField("testId", analyzerTestMapping.getTestId(), errors, true);
+		ValidationHelper.validateIdField(analyzerTestMapping.getTestId(), "testId", errors, true);
 
 	}
 

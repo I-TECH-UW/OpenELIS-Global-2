@@ -27,7 +27,7 @@ var validator = new FieldValidator();
 validator.setRequiredFields( new Array("heightOrderLabels", "widthOrderLabels", "heightSpecimenLabels", "widthSpecimenLabels", "numOrderLabels", "numSpecimenLabels") );
 
 function savePage() {
-	document.getElementById("mainForm").action = "BarcodeConfigurationSave.do"
+	document.getElementById("mainForm").action = "BarcodeConfiguration.do"
 	document.getElementById("mainForm").submit();
 }
 

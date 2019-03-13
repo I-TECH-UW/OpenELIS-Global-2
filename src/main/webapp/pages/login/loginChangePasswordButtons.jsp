@@ -23,9 +23,10 @@
                 <form:button type="submit" value="submit" >
   		            <spring:message code="label.button.submit"/>
                 </form:button>
-                <a href="LoginPage.do">
+                <spring:url var="loginUrl" value="/LoginPage.do"/>
+                <button type="button" onclick="window.location.href='${loginUrl}'">
   		            <spring:message code="label.button.exit"/>
-                </a>
+                </button>
             </td> 
         </tr>
         </table>

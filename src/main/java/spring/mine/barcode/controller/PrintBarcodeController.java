@@ -23,7 +23,6 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.mine.barcode.form.PrintBarcodeForm;
 import spring.mine.barcode.validator.PrintBarcodeFormValidator;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
@@ -75,23 +74,22 @@ public class PrintBarcodeController extends BaseController {
 	@Autowired
 	PrintBarcodeFormValidator formValidator;
 
-	@RequestMapping(value = "/PrintBarcode", method = RequestMethod.GET)
-	public ModelAndView setupPrintBarcode(HttpServletRequest request) {
-		String forward = FWD_SUCCESS;
-		PrintBarcodeForm form = new PrintBarcodeForm();
-		form.setFormAction("PrintBarcode");
-
-		addPatientSearch(form);
-
-		return findForward(forward, form);
-	}
-
-	@RequestMapping(value = "/PrintBarcode", method = RequestMethod.POST)
-	public ModelAndView printBarcode(@ModelAttribute("form") PrintBarcodeForm form, HttpServletRequest request,
+	// TODO make only get
+	@RequestMapping(value = "/PrintBarcode", method = { RequestMethod.GET, RequestMethod.POST })
+	public ModelAndView setupPrintBarcode(HttpServletRequest request, @ModelAttribute("form") PrintBarcodeForm form,
 			BindingResult result) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 		String forward = FWD_SUCCESS;
-		formValidator.validate(form, result);
+		if (form == null) {
+			form = new PrintBarcodeForm();
+		}
+		form.setFormAction("PrintBarcode");
+		addPatientSearch(form);
 
+		if (GenericValidator.isBlankOrNull(request.getParameter("accessionNumber"))) {
+			return findForward(forward, form);
+		}
+
+		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL, form);
@@ -110,6 +108,7 @@ public class PrintBarcodeController extends BaseController {
 			form.setExistingTests(currentTestList);
 		}
 		tx.commit();
+
 		return findForward(forward, form);
 	}
 

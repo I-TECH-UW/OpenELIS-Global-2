@@ -60,7 +60,7 @@ public class OrganizationFormValidator implements Validator {
 		}
 		if (useShortName) {
 			// TODO tighten regex
-			ValidationHelper.validateFieldAndCharset(form.getShortName(), "shortName", errors, true, 15, ".");
+			ValidationHelper.validateFieldAndCharset(form.getShortName(), "shortName", errors, true, 15, "\\s\\S");
 		}
 		if (useAddressInfo) {
 			validateAddressInfo(form, errors);

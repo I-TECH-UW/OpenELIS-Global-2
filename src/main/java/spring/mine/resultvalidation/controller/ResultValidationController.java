@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.resultvalidation.form.ResultValidationForm;
@@ -176,10 +175,6 @@ public class ResultValidationController extends BaseResultValidationController {
 		}
 		form.setFormAction("");
 		Errors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-
 		List<IResultUpdate> updaters = ValidationUpdateRegister.getRegisteredUpdaters();
 		boolean areListeners = updaters != null && !updaters.isEmpty();
 

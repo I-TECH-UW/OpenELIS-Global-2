@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.testconfiguration.form.TestRenameEntryForm;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.TestService;
@@ -33,7 +32,7 @@ public class TestRenameUpdateController extends BaseController {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			forward = FWD_FAIL;
-			return "loginPageDefinition");
+			return findForward(FWD_FAIL, form);
 		}
 
 		String testId = form.getTestId();
@@ -57,6 +56,8 @@ public class TestRenameUpdateController extends BaseController {
 	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
 			return "testRenameDefinition";
+		} else if (FWD_FAIL.equals(forward)) {
+			return "redirect:/TestManagementConfigMenu.do";
 		} else {
 			return "PageNotFound";
 		}

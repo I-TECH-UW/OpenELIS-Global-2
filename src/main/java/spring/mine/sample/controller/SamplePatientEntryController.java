@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.sample.form.SamplePatientEntryForm;
 import us.mn.state.health.lims.address.dao.OrganizationAddressDAO;
@@ -161,7 +160,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 		if (result.hasErrors()) {
 			saveErrors(errors);
 			request.setAttribute(Globals.ERROR_KEY, result);
-			setSuccessFlag(request, "success");
+			setSuccessFlag(request, true);
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
@@ -208,14 +207,14 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 			saveErrors(result);
 			request.setAttribute(Globals.ERROR_KEY, result);
 			request.setAttribute(ALLOW_EDITS_KEY, "false");
-			setSuccessFlag(request, "success");
+			setSuccessFlag(request, true);
 			return findForward(FWD_FAIL_INSERT, form);
 
 		} finally {
 			HibernateUtil.closeSession();
 		}
 
-		setSuccessFlag(request, "success");
+		setSuccessFlag(request, true);
 
 		return findForward(forward, form);
 	}

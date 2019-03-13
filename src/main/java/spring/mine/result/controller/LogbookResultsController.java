@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.result.form.LogbookResultsForm;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
@@ -250,9 +249,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 		}
 		form.setFormAction("");
 		Errors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
 
 		List<IResultUpdate> updaters = ResultUpdateRegister.getRegisteredUpdaters();
 
@@ -365,7 +361,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 			updater.postTransactionalCommitUpdate(actionDataSet);
 		}
 
-		setSuccessFlag(request, "success");
+		setSuccessFlag(request, true);
 
 		if (GenericValidator.isBlankOrNull(form.getString("logbookType"))) {
 			return findForward(forward, form);
@@ -717,7 +713,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 		return sig;
 	}
 
-	private ModelAndView findLogBookForward(String forward, BaseForm form) {
+	private String findLogBookForward(String forward) {
 		if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/LogbookResults.do?forward=success";
 		} else if (FWD_VALIDATION_ERROR.equals(forward)) {
@@ -729,7 +725,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 		}
 	}
 
-	private ModelAndView findAccessionForward(String forward, BaseForm form) {
+	private String findAccessionForward(String forward) {
 		if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/AccessionResults.do?forward=success";
 		} else if (FWD_VALIDATION_ERROR.equals(forward)) {
@@ -741,7 +737,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 		}
 	}
 
-	private ModelAndView findPatientForward(String forward, BaseForm form) {
+	private String findPatientForward(String forward) {
 		if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/PatientResults.do?forward=success";
 		} else if (FWD_VALIDATION_ERROR.equals(forward)) {
@@ -753,7 +749,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 		}
 	}
 
-	private ModelAndView findStatusForward(String forward, BaseForm form) {
+	private String findStatusForward(String forward) {
 		if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/StatusResults.do?forward=success&blank=true";
 		} else if (FWD_VALIDATION_ERROR.equals(forward)) {
@@ -770,13 +766,13 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 		if (FWD_SUCCESS.equals(forward)) {
 			return "resultsLogbookDefinition";
 		} else if (request.getRequestURL().indexOf("LogbookResultsUpdate") >= 0) {
-			return findLogBookForward(forward, form);
+			return findLogBookForward(forward);
 		} else if (request.getRequestURL().indexOf("AccessionResultsUpdate") >= 0) {
-			return findAccessionForward(forward, form);
+			return findAccessionForward(forward);
 		} else if (request.getRequestURL().indexOf("PatientResultsUpdate") >= 0) {
-			return findPatientForward(forward, form);
+			return findPatientForward(forward);
 		} else if (request.getRequestURL().indexOf("StatusResultsUpdate") >= 0) {
-			return findStatusForward(forward, form);
+			return findStatusForward(forward);
 		} else {
 			return "PageNotFound";
 		}

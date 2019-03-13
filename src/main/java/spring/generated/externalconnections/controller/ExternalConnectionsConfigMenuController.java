@@ -8,12 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.generated.forms.ExternalConnectionsConfigForm;
+import spring.mine.common.constants.Constants;
 import spring.mine.common.controller.BaseMenuController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.form.MenuForm;
 import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.formfields.AdminFormFields;
@@ -27,15 +27,20 @@ public class ExternalConnectionsConfigMenuController extends BaseMenuController 
 	// @RequestMapping(value = "/ExternalConnectionsConfigMenu", method =
 	// RequestMethod.GET)
 	public ModelAndView showExternalConnectionsConfigMenu(HttpServletRequest request,
-			@ModelAttribute("form") ExternalConnectionsConfigForm form)
+			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new ExternalConnectionsConfigForm();
+		ExternalConnectionsConfigForm form = new ExternalConnectionsConfigForm();
+
+		forward = performMenuAction(form, request);
+		if (FWD_FAIL.equals(forward)) {
+			Errors errors = new BaseErrors();
+			errors.reject("error.generic");
+			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, errors);
+			return findForward(forward, form);
+		} else {
+			return findForward(forward, form);
 		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
-		return performMenuAction(form, request);
 
 	}
 

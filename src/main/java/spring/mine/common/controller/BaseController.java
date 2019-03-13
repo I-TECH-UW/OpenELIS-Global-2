@@ -1,6 +1,7 @@
 package spring.mine.common.controller;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
+import spring.mine.common.constants.Constants;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.action.IActionConstants;
@@ -191,8 +194,8 @@ public abstract class BaseController implements IActionConstants {
 		return String.valueOf(usd.getSystemUserId());
 	}
 
-	protected void setSuccessFlag(HttpServletRequest request, String forwardFlag) {
-		request.setAttribute(FWD_SUCCESS, FWD_SUCCESS.equals(forwardFlag));
+	protected void setSuccessFlag(HttpServletRequest request, boolean success) {
+		request.setAttribute(FWD_SUCCESS, success);
 	}
 
 	protected void setSuccessFlag(HttpServletRequest request) {
@@ -222,11 +225,14 @@ public abstract class BaseController implements IActionConstants {
 	}
 
 	protected ModelAndView findForward(String forward, BaseForm form) {
-		// TO DO move the set page titles into an interceptor if possible
-		setPageTitles(request, form);
-
-		// insert global forwards here
-		return new ModelAndView(findForward(forward), "form", form);
+		String realForward = findForward(forward);
+		if (realForward.startsWith("redirect:")) {
+			return new ModelAndView(realForward);
+		} else {
+			setPageTitles(request, form);
+			// insert global forwards here
+			return new ModelAndView(realForward, "form", form);
+		}
 	}
 
 	protected ModelAndView findForward(String forward, Map<String, Object> requestObjects, BaseForm form) {
@@ -257,20 +263,41 @@ public abstract class BaseController implements IActionConstants {
 	}
 
 	protected void saveErrors(Errors errors) {
-		if (request.getAttribute(REQUEST_ERRORS) == null) {
-			request.setAttribute(REQUEST_ERRORS, errors);
+		if (request.getAttribute(Constants.REQUEST_ERRORS) == null) {
+			request.setAttribute(Constants.REQUEST_ERRORS, errors);
 		} else {
-			Errors previousErrors = (Errors) request.getAttribute(REQUEST_ERRORS);
+			Errors previousErrors = (Errors) request.getAttribute(Constants.REQUEST_ERRORS);
 			if (previousErrors.hasErrors() && previousErrors.getObjectName().equals(errors.getObjectName())) {
 				previousErrors.addAllErrors(errors);
 			} else {
-				request.setAttribute(REQUEST_ERRORS, errors);
+				request.setAttribute(Constants.REQUEST_ERRORS, errors);
 			}
 		}
 	}
 
 	protected Errors getErrors() {
-		return (Errors) request.getAttribute(REQUEST_ERRORS);
+		return (Errors) request.getAttribute(Constants.REQUEST_ERRORS);
+	}
+
+	// move flash attributes into request
+	protected void addFlashMsgsToRequest(HttpServletRequest request) {
+		Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
+		if (inputFlashMap != null) {
+			Boolean success = (Boolean) inputFlashMap.get(FWD_SUCCESS);
+			request.setAttribute(FWD_SUCCESS, success);
+
+			String successMessage = (String) inputFlashMap.get(Constants.SUCCESS_MSG);
+			request.setAttribute(Constants.SUCCESS_MSG, successMessage);
+
+			Errors errors = (Errors) inputFlashMap.get(Constants.REQUEST_ERRORS);
+			request.setAttribute(Constants.SUCCESS_MSG, errors);
+
+			List<String> messages = (List<String>) inputFlashMap.get(Constants.REQUEST_MESSAGES);
+			request.setAttribute(Constants.REQUEST_MESSAGES, messages);
+
+			List<String> warnings = (List<String>) inputFlashMap.get(Constants.REQUEST_WARNINGS);
+			request.setAttribute(Constants.SUCCESS_MSG, warnings);
+		}
 	}
 
 }

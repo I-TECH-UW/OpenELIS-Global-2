@@ -10,17 +10,16 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.organization.form.OrganizationForm;
 import spring.mine.organization.validator.OrganizationFormValidator;
 import us.mn.state.health.lims.address.dao.AddressPartDAO;
@@ -122,8 +121,7 @@ public class OrganizationController extends BaseController {
 
 	}
 
-	@RequestMapping(value = { "/Organization", "/NextPreviousOrganization" }, method = { RequestMethod.POST,
-			RequestMethod.GET })
+	@RequestMapping(value = { "/Organization", "/NextPreviousOrganization" }, method = RequestMethod.GET)
 	public ModelAndView showOrganization(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
@@ -134,7 +132,6 @@ public class OrganizationController extends BaseController {
 
 		form.setFormAction("");
 		form.setCancelAction("CancelOrganization.do");
-		Errors errors = new BaseErrors();
 
 		// The first job is to determine if we are coming to this action with an
 		// ID parameter in the request. If there is no parameter, we are
@@ -164,12 +161,12 @@ public class OrganizationController extends BaseController {
 			} else {
 				organizations = organizationDAO.getPreviousOrganizationRecord(organization.getId());
 			}
-			if (organizations != null && organizations.size() > 0) {
-				organization = (Organization) organizations.get(0);
+			if (organizations != null && !organizations.isEmpty()) {
+				organization = (Organization) organizations.get(organizations.size() - 1);
 			}
 			String newId = organization.getId();
 			String url = "redirect:/Organization.do?ID=" + newId + "&startingRecNo=" + start;
-			return url;
+			return new ModelAndView(url);
 		}
 
 		boolean isNew = (id == null) || "0".equals(id);
@@ -301,16 +298,18 @@ public class OrganizationController extends BaseController {
 		return dictionaryDAO.getDictionaryEntrysByCategoryAbbreviation("description", "haitiDepartment", true);
 	}
 
-	@RequestMapping(value = "/UpdateOrganization", method = RequestMethod.POST)
+	@RequestMapping(value = "/Organization", method = RequestMethod.POST)
 	public ModelAndView showUpdateOrganization(HttpServletRequest request,
-			@ModelAttribute("form") OrganizationForm form, BindingResult result, SessionStatus status)
+			@ModelAttribute("form") OrganizationForm form, BindingResult result, SessionStatus status,
+			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS_INSERT;
 		validator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);
 		}
+
+		String forward = FWD_SUCCESS_INSERT;
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "false");
@@ -406,22 +405,19 @@ public class OrganizationController extends BaseController {
 			PropertyUtils.setProperty(form, "states", states);
 		}
 
-		if ("true".equalsIgnoreCase(request.getParameter("close"))) {
-			forward = FWD_CLOSE;
-		}
-
 		if (organization.getId() != null && !organization.getId().equals("0")) {
 			request.setAttribute(ID, organization.getId());
 		}
 
-		if (isNew) {
-			forward = FWD_SUCCESS_INSERT;
+		if (FWD_SUCCESS_INSERT.equals(forward)) {
+			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 			status.setComplete();
+			return findForward(forward, form);
 		}
 
 		DisplayListService.refreshList(DisplayListService.ListType.REFERRAL_ORGANIZATIONS);
 
-		return getForward(findForward(forward, form), id, start, direction);
+		return findForward(forward, form);
 	}
 
 	private void persistAddressParts(Organization organization) {

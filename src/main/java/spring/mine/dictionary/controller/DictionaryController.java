@@ -16,11 +16,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.dictionary.form.DictionaryForm;
-import spring.mine.dictionary.validator.DictionaryValidator;
+import spring.mine.dictionary.validator.DictionaryFormValidator;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSFrozenRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -42,15 +43,14 @@ import us.mn.state.health.lims.login.valueholder.UserSessionData;
 public class DictionaryController extends BaseController {
 
 	@Autowired
-	DictionaryValidator formValidator;
+	DictionaryFormValidator formValidator;
 
 	@ModelAttribute("form")
 	public BaseForm form() {
 		return new DictionaryForm();
 	}
 
-	@RequestMapping(value = { "/Dictionary", "/NextPreviousDictionary" }, method = { RequestMethod.POST,
-			RequestMethod.GET })
+	@RequestMapping(value = "/Dictionary", method = RequestMethod.GET)
 	public ModelAndView showDictionary(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
@@ -62,8 +62,6 @@ public class DictionaryController extends BaseController {
 		form.setCancelAction("CancelDictionary.do");
 
 		String id = request.getParameter(ID);
-		String start = request.getParameter("startingRecNo");
-		String direction = request.getParameter("direction");
 
 		setDefaultButtonAttributes(request);
 
@@ -71,34 +69,26 @@ public class DictionaryController extends BaseController {
 		Dictionary dictionary = new Dictionary();
 		dictionary.setId(id);
 
-		// redirect to get dictionary for next or previous entry
-		if (FWD_NEXT.equals(direction) || FWD_PREVIOUS.equals(direction)) {
-			dictionary = getNextPreviousDictionary(dictionary, dictionaryDAO, direction);
-
-			String newId = dictionary.getId();
-			String url = "redirect:/Dictionary.do?ID=" + newId + "&startingRecNo=" + start;
-			return url;
-		} else if ((id != null) && (!"0".equals(id))) { // this is an existing
+		if ((id != null) && (!"0".equals(id))) { // this is an existing
 			// dictionary
 			dictionaryDAO.getData(dictionary);
-			PropertyUtils.setProperty(form, "newDictionary", false);// this is to set correct page title
+			PropertyUtils.setProperty(form, "newDictionary", false);
 
 			// do we need to enable next or previous?
 			List<Dictionary> dictionaries = dictionaryDAO.getNextDictionaryRecord(dictionary.getId());
-			if (dictionaries.isEmpty()) {
+			if (!dictionaries.isEmpty()) {
 				// enable next button
 				request.setAttribute(NEXT_DISABLED, "false");
 			}
 			dictionaries = dictionaryDAO.getPreviousDictionaryRecord(dictionary.getId());
-			if (dictionaries.isEmpty()) {
+			if (!dictionaries.isEmpty()) {
 				// enable next button
 				request.setAttribute(PREVIOUS_DISABLED, "false");
 			}
-			// end of logic to enable next or previous button
 		} else { // this is a new dictionary
 			// default isActive to 'Y'
 			dictionary.setIsActive(YES);
-			PropertyUtils.setProperty(form, "newDictionary", true); // this is to set correct page title
+			PropertyUtils.setProperty(form, "newDictionary", true);
 		}
 
 		if (dictionary.getId() != null && !dictionary.getId().equals("0")) {
@@ -120,20 +110,6 @@ public class DictionaryController extends BaseController {
 		return findForward(forward, form);
 	}
 
-	private Dictionary getNextPreviousDictionary(Dictionary dictionary, DictionaryDAO dictionaryDAO, String direction) {
-		List dictionaries;
-		dictionaryDAO.getData(dictionary);
-		if (FWD_NEXT.equals(direction)) {
-			dictionaries = dictionaryDAO.getNextDictionaryRecord(dictionary.getId());
-		} else {
-			dictionaries = dictionaryDAO.getPreviousDictionaryRecord(dictionary.getId());
-		}
-		if (dictionaries != null && dictionaries.isEmpty()) {
-			return (Dictionary) dictionaries.get(0);
-		}
-		return dictionary;
-	}
-
 	private void setDefaultButtonAttributes(HttpServletRequest request) {
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		// bugzilla 2062
@@ -142,9 +118,43 @@ public class DictionaryController extends BaseController {
 		request.setAttribute(NEXT_DISABLED, "true");
 	}
 
+	@RequestMapping(value = "/NextPreviousDictionary", method = RequestMethod.GET)
+	public ModelAndView showNextPreviousDictionary(HttpServletRequest request) {
+		String id = request.getParameter(ID);
+		String direction = request.getParameter("direction");
+
+		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
+		Dictionary dictionary = new Dictionary();
+		dictionary.setId(id);
+
+		if (FWD_NEXT.equals(direction) || FWD_PREVIOUS.equals(direction)) {
+			dictionary = getNextPreviousDictionary(dictionary, dictionaryDAO, direction);
+
+			String newId = dictionary.getId();
+			String url = "redirect:/Dictionary.do?ID=" + newId;
+			return new ModelAndView(url);
+		} else {
+			return new ModelAndView(findForward(FWD_FAIL));
+		}
+	}
+
+	private Dictionary getNextPreviousDictionary(Dictionary dictionary, DictionaryDAO dictionaryDAO, String direction) {
+		List dictionaries;
+		dictionaryDAO.getData(dictionary);
+		if (FWD_NEXT.equals(direction)) {
+			dictionaries = dictionaryDAO.getNextDictionaryRecord(dictionary.getId());
+		} else {
+			dictionaries = dictionaryDAO.getPreviousDictionaryRecord(dictionary.getId());
+		}
+		if (dictionaries != null && !dictionaries.isEmpty()) {
+			return (Dictionary) dictionaries.get(0);
+		}
+		return dictionary;
+	}
+
 	@RequestMapping(value = "/UpdateDictionary", method = RequestMethod.POST)
 	public ModelAndView showUpdateDictionary(HttpServletRequest request, @ModelAttribute("form") DictionaryForm form,
-			BindingResult result, SessionStatus status)
+			BindingResult result, SessionStatus status, RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		formValidator.validate(form, result);
@@ -231,7 +241,7 @@ public class DictionaryController extends BaseController {
 		forward = FWD_SUCCESS_INSERT;
 
 		status.setComplete();
-		// bugzilla 1467 added direction for redirect to NextPreviousAction
+		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 		return findForward(forward, form);
 	}
 
@@ -315,7 +325,7 @@ public class DictionaryController extends BaseController {
 		if (FWD_SUCCESS.equals(forward)) {
 			return "dictionaryDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return "redirect:/MasterListsPage.do";
+			return "redirect:/DictionaryMenu.do";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/DictionaryMenu.do";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {

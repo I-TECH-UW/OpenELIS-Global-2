@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.analyzerimport.form.AnalyzerTestNameForm;
 import spring.mine.analyzerimport.validator.AnalyzerTestMappingValidator;
@@ -53,8 +54,9 @@ public class AnalyzerTestNameController extends BaseController {
 		return new AnalyzerTestNameForm();
 	}
 
-	@RequestMapping(value = "/AnalyzerTestName", method = { RequestMethod.POST, RequestMethod.GET })
-	public ModelAndView showAnalyzerTestName(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
+	@RequestMapping(value = "/AnalyzerTestName", method = RequestMethod.GET)
+	public ModelAndView showAnalyzerTestName(HttpServletRequest request, @ModelAttribute("form") BaseForm form,
+			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
 		if (form.getClass() != AnalyzerTestNameForm.class) {
@@ -74,7 +76,8 @@ public class AnalyzerTestNameController extends BaseController {
 		PropertyUtils.setProperty(form, "analyzerList", analyzerList);
 		PropertyUtils.setProperty(form, "testList", testList);
 
-		String id = request.getParameter("selectedIDs");
+		String id = request.getParameter("ID");
+
 		if (id != null) {
 			String[] splitId = id.split("#");
 			PropertyUtils.setProperty(form, "analyzerTestName", splitId[1]);
@@ -101,9 +104,10 @@ public class AnalyzerTestNameController extends BaseController {
 		return testDAO.getAllActiveTests(false);
 	}
 
-	@RequestMapping(value = "/UpdateAnalyzerTestName", method = RequestMethod.POST)
+	@RequestMapping(value = "/AnalyzerTestName", method = RequestMethod.POST)
 	public ModelAndView showUpdateAnalyzerTestName(HttpServletRequest request,
-			@ModelAttribute("form") AnalyzerTestNameForm form, SessionStatus status, BindingResult result) {
+			@ModelAttribute("form") AnalyzerTestNameForm form, BindingResult result, SessionStatus status,
+			RedirectAttributes redirectAttributes) {
 
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {
@@ -120,6 +124,8 @@ public class AnalyzerTestNameController extends BaseController {
 		forward = updateAnalyzerTestName(request, form, result);
 		if (FWD_SUCCESS_INSERT.equals(forward)) {
 			status.setComplete();
+			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+			return findForward(forward, form);
 		}
 		return findForward(forward, form);
 	}
@@ -229,11 +235,11 @@ public class AnalyzerTestNameController extends BaseController {
 		if (FWD_SUCCESS.equals(forward)) {
 			return "analyzerTestNameDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return "redirect:/MasterListsPage.do";
+			return "redirect:/AnalyzerTestNameMenu.do";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/AnalyzerTestNameMenu.do";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return "redirect:/AnalyzerTestName.do";
+			return "analyzerTestNameDefinition";
 		} else if (FWD_CANCEL.equals(forward)) {
 			return "redirect:/AnalyzerTestNameMenu.do";
 		} else {

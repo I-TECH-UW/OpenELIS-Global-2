@@ -6,7 +6,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.form.MenuForm;
 import us.mn.state.health.lims.common.action.IActionConstants;
@@ -28,7 +27,7 @@ public abstract class BaseMenuController extends BaseController implements IActi
 		return SystemConfiguration.getInstance().getDefaultPageSize();
 	}
 
-	protected ModelAndView performMenuAction(MenuForm form, HttpServletRequest request)
+	protected String performMenuAction(MenuForm form, HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		String forward = FWD_SUCCESS;
@@ -65,7 +64,7 @@ public abstract class BaseMenuController extends BaseController implements IActi
 
 		PropertyUtils.setProperty(form, "selectedIDs", selectedIDs);
 
-		return findForward(forward, form);
+		return forward;
 	}
 
 	protected List doNextPage(MenuForm form, HttpServletRequest request) throws Exception {

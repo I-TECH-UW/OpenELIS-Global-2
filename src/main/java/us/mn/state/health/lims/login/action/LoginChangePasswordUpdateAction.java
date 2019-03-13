@@ -2,15 +2,15 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
  */
 package us.mn.state.health.lims.login.action;
@@ -42,6 +42,7 @@ import us.mn.state.health.lims.login.valueholder.Login;
  */
 public class LoginChangePasswordUpdateAction extends LoginBaseAction {
 
+	@Override
 	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
@@ -55,8 +56,8 @@ public class LoginChangePasswordUpdateAction extends LoginBaseAction {
 		// dynaForm.validate(mapping, request);
 
 		/*
-		 * if (errors != null && errors.size() > 0) { saveErrors(request,
-		 * errors); return mapping.findForward(FWD_FAIL); }
+		 * if (errors != null && errors.size() > 0) { saveErrors(request, errors);
+		 * return mapping.findForward(FWD_FAIL); }
 		 */
 
 		String newPassword = dynaForm.getString("newPassword");
@@ -122,14 +123,12 @@ public class LoginChangePasswordUpdateAction extends LoginBaseAction {
 				/*
 				 * if ( loginInfo.getPasswordExpiredDayNo() <=
 				 * Integer.parseInt(SystemConfiguration
-				 * .getInstance().getLoginUserChangePasswordAllowDay()) ) {
-				 * errors = new ActionMessages(); ActionError error = new
-				 * ActionError("login.error.password.day",
-				 * SystemConfiguration.getInstance
+				 * .getInstance().getLoginUserChangePasswordAllowDay()) ) { errors = new
+				 * ActionMessages(); ActionError error = new
+				 * ActionError("login.error.password.day", SystemConfiguration.getInstance
 				 * ().getLoginUserChangePasswordAllowDay(), null);
-				 * errors.add(ActionMessages.GLOBAL_MESSAGE, error);
-				 * saveErrors(request, errors); return
-				 * mapping.findForward(FWD_FAIL); }
+				 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); saveErrors(request,
+				 * errors); return mapping.findForward(FWD_FAIL); }
 				 */
 				// validate user id exists in system_user table
 				if (loginInfo.getSystemUserId() == 0) {
@@ -144,13 +143,15 @@ public class LoginChangePasswordUpdateAction extends LoginBaseAction {
 				loginInfo.setPassword(login.getNewPassword());
 
 				java.util.Calendar rightNow = java.util.Calendar.getInstance();
-				rightNow.add(java.util.Calendar.MONTH, Integer.parseInt(SystemConfiguration.getInstance()
-						.getLoginUserChangePasswordExpiredMonth()));
+				rightNow.add(java.util.Calendar.MONTH,
+						Integer.parseInt(SystemConfiguration.getInstance().getLoginUserChangePasswordExpiredMonth()));
 				loginInfo.setPasswordExpiredDate(new java.sql.Date(rightNow.getTimeInMillis()));
 
-				loginInfo.setSysUserId(String.valueOf(loginInfo.getSystemUserId())); //there is no loggedin user when you reset your password
-				isSuccess = loginDAO.updatePassword(loginInfo);
-				if (isSuccess) {
+				loginInfo.setSysUserId(String.valueOf(loginInfo.getSystemUserId())); // there is no loggedin user when
+																						// you reset your password
+
+				try {
+					loginDAO.updatePassword(loginInfo);
 					tx.commit();
 					// successfully changed password
 					// force user to relogin with the new password
@@ -158,7 +159,7 @@ public class LoginChangePasswordUpdateAction extends LoginBaseAction {
 					ActionError error = new ActionError("login.success.changePass.message", null, null);
 					errors.add(ActionMessages.GLOBAL_MESSAGE, error);
 					saveErrors(request, errors);
-				} else {
+				} catch (LIMSRuntimeException e) {
 					tx.rollback();
 					errors = new ActionMessages();
 					ActionError error = new ActionError("login.error.password.requirement", null, null);
@@ -184,10 +185,12 @@ public class LoginChangePasswordUpdateAction extends LoginBaseAction {
 		return mapping.findForward(forward);
 	}
 
+	@Override
 	protected String getPageTitleKey() {
 		return null;
 	}
 
+	@Override
 	protected String getPageSubtitleKey() {
 		return null;
 	}

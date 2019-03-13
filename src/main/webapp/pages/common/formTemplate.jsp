@@ -95,6 +95,35 @@ function setMainFormMethod(method) {
 	$jq('#mainForm').attr('method', method);
 }
 
+function navigationAction(form, action, validate, parameters) {
+	var context = '<%= request.getContextPath() %>';
+	var formName = form.name;
+	//alert("form name " + formName);
+	var parsedFormName = formName.substring(1, formName.length - 4);
+	parsedFormName = formName.substring(0,1).toUpperCase() + parsedFormName;
+    //alert("parsedFormName " + parsedFormName);
+
+    var idParameter = '<%= Encode.forJavaScript((String)request.getParameter("ID")) %>';
+    var startingRecNoParameter = '<%= Encode.forJavaScript((String)request.getParameter("startingRecNo")) %>';
+    //alert("This is idParameter " + idParameter);
+    if (!idParameter) {
+       idParameter = '0';
+    }
+
+    if (!startingRecNoParameter) {
+       startingRecNoParameter = '1';
+    }
+
+    if (parameters != '') {
+	   parameters = parameters + idParameter;
+	} else {
+	   parameters = parameters + "?ID=" + idParameter;
+	}
+    parameters = parameters + "&startingRecNo=" + startingRecNoParameter;
+    
+    window.location.href = context + '/' + action + parsedFormName + ".do"  + parameters ;
+}
+
 function setAction(form, action, validate, parameters, method) {
     //alert("Iam in setAction " + form.name + " " + form.action);
    //for (var i = 0; i < form.elements.length; i++) {

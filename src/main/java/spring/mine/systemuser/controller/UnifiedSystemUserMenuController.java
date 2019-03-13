@@ -15,9 +15,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import spring.mine.common.constants.Constants;
 import spring.mine.common.controller.BaseMenuController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.form.MenuForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.systemuser.form.UnifiedSystemUserMenuForm;
@@ -40,19 +41,21 @@ import us.mn.state.health.lims.userrole.valueholder.UserRole;
 public class UnifiedSystemUserMenuController extends BaseMenuController {
 
 	@RequestMapping(value = "/UnifiedSystemUserMenu", method = RequestMethod.GET)
-	public ModelAndView showUnifiedSystemUserMenu(HttpServletRequest request,
-			@ModelAttribute("form") UnifiedSystemUserMenuForm form)
+	public ModelAndView showUnifiedSystemUserMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new UnifiedSystemUserMenuForm();
-		}
+		UnifiedSystemUserMenuForm form = new UnifiedSystemUserMenuForm();
+
 		form.setFormAction("UnifiedSystemUserMenu.do");
-		Errors errors = new BaseErrors();
-
-		performMenuAction(form, request);
-
-		return findForward(forward, form);
+		forward = performMenuAction(form, request);
+		if (FWD_FAIL.equals(forward)) {
+			Errors errors = new BaseErrors();
+			errors.reject("error.generic");
+			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, errors);
+			return findForward(forward, form);
+		} else {
+			return findForward(forward, form);
+		}
 	}
 
 	@Override

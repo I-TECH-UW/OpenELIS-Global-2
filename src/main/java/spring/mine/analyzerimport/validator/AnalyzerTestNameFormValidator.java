@@ -23,7 +23,7 @@ public class AnalyzerTestNameFormValidator implements Validator {
 		ValidationHelper.validateIdField(form.getAnalyzerId(), "id", errors, true);
 
 		ValidationHelper.validateFieldAndCharset(form.getAnalyzerTestName(), "analyzerTestName", errors, true, 30,
-				" a-zA-Z0-9àâäèéêëîïôœùûüÿçÀÂÄÈÉÊËÎÏÔŒÙÛÜŸÇ\\\\-%#()/^_");
+				" a-zA-Z0-9àâäèéêëîïôœùûüÿçÀÂÄÈÉÊËÎÏÔŒÙÛÜŸÇ\\\\\\-%#\\(\\)\\^_");
 
 		ValidationHelper.validateIdField(form.getTestId(), "testId", errors, true);
 

@@ -66,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			// setup logout
 			.logout()
 				.logoutUrl("/Logout.do")
-				.logoutSuccessUrl("/LoginPage.do?logout=true")
+				.logoutSuccessUrl("/LoginPage.do")
 				.invalidateHttpSession(true)
 				.and()
 			.csrf()
@@ -94,7 +94,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
 		return new CustomAuthenticationSuccessHandler();
 	}
-
 	@Bean
 	public DaoAuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();

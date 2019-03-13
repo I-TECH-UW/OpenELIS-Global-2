@@ -12,6 +12,7 @@ import org.apache.struts.Globals;
 import org.hibernate.StaleObjectStateException;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.generated.forms.MenuStatementConfigForm;
 import spring.generated.forms.NonConformityConfigurationForm;
@@ -70,7 +72,11 @@ public class SiteInformationController extends BaseController {
 
 	@RequestMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration", "/PrintedReportsConfiguration",
 			"/SampleEntryConfig", "/ResultConfiguration", "/MenuStatementConfig", "/PatientConfiguration",
-			"/SiteInformation" }, method = RequestMethod.POST)
+			"/SiteInformation", "/NextPreviousNonConformityConfiguration", "/NextPreviousWorkplanConfiguration",
+			"/NextPreviousPrintedReportsConfiguration", "/NextPreviousSampleEntryConfig",
+			"/NextPreviousResultConfiguration", "/NextPreviousMenuStatementConfig", "/NextPreviousPatientConfiguration",
+			"/NextPreviousSiteInformation" }, method = RequestMethod.GET)
+	// TODO decide if still needing NextPrevious (functionality is not implemented)
 	public ModelAndView showSiteInformation(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
@@ -79,11 +85,7 @@ public class SiteInformationController extends BaseController {
 			form = newForm;
 			request.getSession().setAttribute("form", form);
 		}
-		Errors errors = new BaseErrors();
 		form.setCancelAction("Cancel" + form.getFormAction() + ".do");
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
 
 		String id = request.getParameter(ID);
 
@@ -208,14 +210,12 @@ public class SiteInformationController extends BaseController {
 		return Boolean.TRUE;
 	}
 
-	@RequestMapping(value = { "/UpdateNonConformityConfiguration", "/UpdateWorkplanConfiguration",
-			"/UpdatePrintedReportsConfiguration", "/UpdateSampleEntryConfig", "/UpdateResultConfiguration",
-			"/UpdateMenuStatementConfig", "/UpdatePatientConfiguration",
-			"/UpdateSiteInformation" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration", "/PrintedReportsConfiguration",
+			"/SampleEntryConfig", "/ResultConfiguration", "/MenuStatementConfig", "/PatientConfiguration",
+			"/SiteInformation" }, method = RequestMethod.POST)
 	public ModelAndView showUpdateSiteInformation(HttpServletRequest request, @ModelAttribute("form") BaseForm form,
-			SessionStatus status) {
-		String forward = FWD_SUCCESS;
-		Errors errors = new BaseErrors();
+			BindingResult result, SessionStatus status, RedirectAttributes redirectAttributes) {
+		String forward;
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "false");
@@ -223,9 +223,6 @@ public class SiteInformationController extends BaseController {
 
 		String id = request.getParameter(ID);
 		boolean isNew = id == null || id.equals("0");
-
-		String start = request.getParameter("startingRecNo");
-		String direction = request.getParameter("direction");
 
 		String tag = form.getString("tag");
 
@@ -242,9 +239,11 @@ public class SiteInformationController extends BaseController {
 		// makes the changes take effect immediately
 		ConfigurationProperties.forceReload();
 		// signal to remove from from session
-		status.setComplete();
-		return FWD_FAIL.equals(forward) || FWD_FAIL_INSERT.equals(forward) ? findForward(forward, form)
-				: getForward(findForward(forward, form), id, start, direction);
+		if (FWD_SUCCESS_INSERT.equals(forward)) {
+			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+			status.setComplete();
+		}
+		return findForward(forward, form);
 	}
 
 	private String validateAndUpdateLocalization(HttpServletRequest request, String localizationId, String english,
@@ -374,101 +373,76 @@ public class SiteInformationController extends BaseController {
 		return true;
 	}
 
-	@RequestMapping(value = { "/NextPreviousNonConformityConfiguration", "/NextPreviousWorkplanConfiguration",
-			"/NextPreviousPrintedReportsConfiguration", "/NextPreviousSampleEntryConfig",
-			"/NextPreviousResultConfiguration", "/NextPreviousMenuStatementConfig", "/NextPreviousPatientConfiguration",
-			"/NextPreviousSiteInformation", "/UpdateNextPreviousNonConformityConfiguration",
-			"/UpdateNextPreviousWorkplanConfiguration", "/UpdateNextPreviousPrintedReportsConfiguration",
-			"/UpdateNextPreviousSampleEntryConfig", "/UpdateNextPreviousResultConfiguration",
-			"/UpdateNextPreviousMenuStatementConfig", "/UpdateNextPreviousPatientConfiguration",
-			"/UpdateNextPreviousSiteInformation" }, method = RequestMethod.POST)
-	public ModelAndView showNextPreviousSiteInformation(HttpServletRequest request,
-			@ModelAttribute("form") BaseForm form) {
-		String forward = FWD_SUCCESS;
-		Errors errors = new BaseErrors();
-
-		request.setAttribute(ALLOW_EDITS_KEY, TRUE);
-		request.setAttribute(PREVIOUS_DISABLED, FALSE);
-		request.setAttribute(NEXT_DISABLED, FALSE);
-
-		String id = request.getParameter(ID);
-
-		String start = request.getParameter("startingRecNo");
-		String direction = request.getParameter("direction");
-
-		if (id != null && !id.equals("0")) {
-			String updateResponse = validateAndUpdateSiteInformation(request, form, false);
-
-			if (updateResponse == FWD_FAIL_INSERT) {
-				return getForward(findForward(FWD_FAIL_INSERT, form), id, start, null);
-			}
-		}
-
-		SiteInformation siteInformation = new SiteInformation();
-		siteInformation.setId(id);
-
-		try {
-
-			SiteInformationDAO SiteInformationDAO = new SiteInformationDAOImpl();
-
-			SiteInformationDAO.getData(siteInformation);
-
-			if (FWD_NEXT.equals(direction)) {
-
-				List<SiteInformation> SiteInformations = SiteInformationDAO
-						.getNextSiteInformationRecord(siteInformation.getId());
-
-				if (SiteInformations != null && SiteInformations.size() > 0) {
-					siteInformation = SiteInformations.get(0);
-					SiteInformationDAO.getData(siteInformation);
-					if (SiteInformations.size() < 2) {
-						// disable next button
-						request.setAttribute(NEXT_DISABLED, TRUE);
-					}
-					id = siteInformation.getId();
-				} else {
-					// just disable next button
-					request.setAttribute(NEXT_DISABLED, TRUE);
-				}
-			}
-
-			if (FWD_PREVIOUS.equals(direction)) {
-
-				List<SiteInformation> SiteInformations = SiteInformationDAO
-						.getPreviousSiteInformationRecord(siteInformation.getId());
-
-				if (SiteInformations != null && SiteInformations.size() > 0) {
-					siteInformation = SiteInformations.get(0);
-					SiteInformationDAO.getData(siteInformation);
-					if (SiteInformations.size() < 2) {
-						// disable previous button
-						request.setAttribute(PREVIOUS_DISABLED, TRUE);
-					}
-					id = siteInformation.getId();
-				} else {
-					// just disable next button
-					request.setAttribute(PREVIOUS_DISABLED, TRUE);
-				}
-			}
-
-		} catch (LIMSRuntimeException lre) {
-			request.setAttribute(ALLOW_EDITS_KEY, FALSE);
-			// disable previous and next
-			request.setAttribute(PREVIOUS_DISABLED, TRUE);
-			request.setAttribute(NEXT_DISABLED, TRUE);
-			forward = FWD_FAIL_INSERT;
-		}
-		if (forward.equals(FWD_FAIL)) {
-			return findForward(forward, form);
-		}
-
-		if (siteInformation.getId() != null && !siteInformation.getId().equals("0")) {
-			request.setAttribute(ID, siteInformation.getId());
-		}
-
-		return getForward(findForward(forward, form), id, start, null);
-
-	}
+	/*
+	 * @RequestMapping(value = { "/UpdateNextPreviousNonConformityConfiguration",
+	 * "/UpdateNextPreviousWorkplanConfiguration",
+	 * "/UpdateNextPreviousPrintedReportsConfiguration",
+	 * "/UpdateNextPreviousSampleEntryConfig",
+	 * "/UpdateNextPreviousResultConfiguration",
+	 * "/UpdateNextPreviousMenuStatementConfig",
+	 * "/UpdateNextPreviousPatientConfiguration",
+	 * "/UpdateNextPreviousSiteInformation" }, method = RequestMethod.POST) public
+	 * ModelAndView showNextPreviousSiteInformation(HttpServletRequest request,
+	 *
+	 * @ModelAttribute("form") BaseForm form, BindingResult result,
+	 * RedirectAttributes redirectAttributes) { String forward = FWD_SUCCESS_INSERT;
+	 * request.setAttribute(ALLOW_EDITS_KEY, TRUE);
+	 * request.setAttribute(PREVIOUS_DISABLED, FALSE);
+	 * request.setAttribute(NEXT_DISABLED, FALSE);
+	 *
+	 * String id = request.getParameter(ID);
+	 *
+	 * String start = request.getParameter("startingRecNo"); String direction =
+	 * request.getParameter("direction");
+	 *
+	 * if (id != null && !id.equals("0")) { String updateResponse =
+	 * validateAndUpdateSiteInformation(request, form, false);
+	 *
+	 * if (updateResponse.equals(FWD_FAIL_INSERT)) { return
+	 * getForward(findForward(FWD_FAIL_INSERT, form), id, start, null); } }
+	 *
+	 * SiteInformation siteInformation = new SiteInformation();
+	 * siteInformation.setId(id);
+	 *
+	 * try {
+	 *
+	 * SiteInformationDAO SiteInformationDAO = new SiteInformationDAOImpl();
+	 *
+	 * SiteInformationDAO.getData(siteInformation);
+	 *
+	 * if (FWD_NEXT.equals(direction)) {
+	 *
+	 * List<SiteInformation> SiteInformations = SiteInformationDAO
+	 * .getNextSiteInformationRecord(siteInformation.getId());
+	 *
+	 * if (SiteInformations != null && SiteInformations.size() > 0) {
+	 * siteInformation = SiteInformations.get(0);
+	 * SiteInformationDAO.getData(siteInformation); if (SiteInformations.size() < 2)
+	 * { // disable next button request.setAttribute(NEXT_DISABLED, TRUE); } id =
+	 * siteInformation.getId(); } else { // just disable next button
+	 * request.setAttribute(NEXT_DISABLED, TRUE); } }
+	 *
+	 * if (FWD_PREVIOUS.equals(direction)) {
+	 *
+	 * List<SiteInformation> SiteInformations = SiteInformationDAO
+	 * .getPreviousSiteInformationRecord(siteInformation.getId());
+	 *
+	 * if (SiteInformations != null && SiteInformations.size() > 0) {
+	 * siteInformation = SiteInformations.get(0);
+	 * SiteInformationDAO.getData(siteInformation); if (SiteInformations.size() < 2)
+	 * { // disable previous button request.setAttribute(PREVIOUS_DISABLED, TRUE); }
+	 * id = siteInformation.getId(); } else { // just disable next button
+	 * request.setAttribute(PREVIOUS_DISABLED, TRUE); } }
+	 *
+	 * } catch (LIMSRuntimeException lre) { request.setAttribute(ALLOW_EDITS_KEY,
+	 * FALSE); // disable previous and next request.setAttribute(PREVIOUS_DISABLED,
+	 * TRUE); request.setAttribute(NEXT_DISABLED, TRUE); forward = FWD_FAIL_INSERT;
+	 * } if (forward.equals(FWD_FAIL_INSERT)) { return findForward(forward, form); }
+	 * redirectAttributes.addFlashAttribute(FWD_SUCCESS, true); return new
+	 * ModelAndView(findForward(forward));
+	 *
+	 * }
+	 */
 
 	@RequestMapping(value = { "/CancelNonConformityConfiguration", "/CancelWorkplanConfiguration",
 			"/CancelPrintedReportsConfiguration", "/CancelSampleEntryConfig", "/CancelResultConfiguration",
@@ -482,19 +456,22 @@ public class SiteInformationController extends BaseController {
 
 	@Override
 	protected String findLocalForward(String forward) {
+		String path = request.getRequestURI().substring(request.getContextPath().length());
+		String pathNoSuffix = path.substring(0, path.lastIndexOf('.'));
 		if (FWD_SUCCESS.equals(forward)) {
 			return "siteInformationDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
 			return "redirect:/MasterListsPage.do";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			String url = form.getFormAction() + "Menu.do";
-			return "redirect:/" + url;
-		} else if ("insertFailure".equals(forward)) {
-			String url = form.getFormAction() + ".do";
-			return "redirect:/" + url;
+			String url = pathNoSuffix + "Menu.do";
+			return "redirect:" + url;
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			String url = pathNoSuffix + ".do";
+			return "redirect:" + url;
 		} else if (FWD_CANCEL.equals(forward)) {
-			String url = form.getFormAction() + "Menu.do";
-			return "redirect:/" + url;
+			String prefix = "Cancel";
+			String url = pathNoSuffix.substring(pathNoSuffix.indexOf(prefix) + prefix.length()) + "Menu.do";
+			return "redirect:" + url;
 		} else {
 			return "PageNotFound";
 		}

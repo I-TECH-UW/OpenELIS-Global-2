@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.result.form.AnalyzerResultsForm;
@@ -677,9 +676,6 @@ public class AnalyzerResultsController extends BaseController {
 		}
 		form.setFormAction("");
 		Errors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (Errors) form.getErrors();
-		}
 
 		AnalyzerResultsPaging paging = new AnalyzerResultsPaging();
 		paging.updatePagedResults(request, form);
@@ -732,7 +728,7 @@ public class AnalyzerResultsController extends BaseController {
 			return findForward(FWD_VALIDATION_ERROR, form);
 		}
 
-		setSuccessFlag(request, "success");
+		setSuccessFlag(request, true);
 
 		if (GenericValidator.isBlankOrNull(form.getString("analyzerType"))) {
 			return findForward(forward, form);

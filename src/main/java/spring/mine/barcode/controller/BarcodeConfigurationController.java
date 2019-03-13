@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.barcode.form.BarcodeConfigurationForm;
 import spring.mine.barcode.validator.BarcodeConfigurationFormValidator;
@@ -33,13 +34,13 @@ public class BarcodeConfigurationController extends BaseController {
 	BarcodeConfigurationFormValidator validator;
 
 	@RequestMapping(value = "/BarcodeConfiguration", method = RequestMethod.GET)
-	public ModelAndView showBarcodeConfiguration(HttpServletRequest request,
-			@ModelAttribute("form") BarcodeConfigurationForm form)
+	public ModelAndView showBarcodeConfiguration(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new BarcodeConfigurationForm();
-		}
+		BarcodeConfigurationForm form = new BarcodeConfigurationForm();
+
+		addFlashMsgsToRequest(request);
+		form.setCancelAction("MasterListsPage.do");
 
 		setFields(form);
 
@@ -68,10 +69,10 @@ public class BarcodeConfigurationController extends BaseController {
 		String widthSpecimenLabels = ConfigurationProperties.getInstance()
 				.getPropertyValue(Property.SPECIMEN_BARCODE_WIDTH);
 		// set the dimension values
-		PropertyUtils.setProperty(form, "heightOrderLabels", heightOrderLabels);
-		PropertyUtils.setProperty(form, "widthOrderLabels", widthOrderLabels);
-		PropertyUtils.setProperty(form, "heightSpecimenLabels", heightSpecimenLabels);
-		PropertyUtils.setProperty(form, "widthSpecimenLabels", widthSpecimenLabels);
+		PropertyUtils.setProperty(form, "heightOrderLabels", Float.parseFloat(heightOrderLabels));
+		PropertyUtils.setProperty(form, "widthOrderLabels", Float.parseFloat(widthOrderLabels));
+		PropertyUtils.setProperty(form, "heightSpecimenLabels", Float.parseFloat(heightSpecimenLabels));
+		PropertyUtils.setProperty(form, "widthSpecimenLabels", Float.parseFloat(widthSpecimenLabels));
 
 		// get the maximum print values
 		String numOrderLabels = ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_ORDER_PRINTED);
@@ -79,9 +80,9 @@ public class BarcodeConfigurationController extends BaseController {
 				.getPropertyValue(Property.MAX_SPECIMEN_PRINTED);
 		String numAliquotLabels = ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_ALIQUOT_PRINTED);
 		// set the maximum print values
-		PropertyUtils.setProperty(form, "numOrderLabels", numOrderLabels);
-		PropertyUtils.setProperty(form, "numSpecimenLabels", numSpecimenLabels);
-		PropertyUtils.setProperty(form, "numAliquotLabels", numAliquotLabels);
+		PropertyUtils.setProperty(form, "numOrderLabels", Integer.parseInt(numOrderLabels));
+		PropertyUtils.setProperty(form, "numSpecimenLabels", Integer.parseInt(numSpecimenLabels));
+		PropertyUtils.setProperty(form, "numAliquotLabels", Integer.parseInt(numAliquotLabels));
 
 		// get the optional specimen values
 		String collectionDateCheck = ConfigurationProperties.getInstance()
@@ -89,16 +90,17 @@ public class BarcodeConfigurationController extends BaseController {
 		String testsCheck = ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_FIELD_TESTS);
 		String patientSexCheck = ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_FIELD_SEX);
 		// set the optional specimen values
-		PropertyUtils.setProperty(form, "collectionDateCheck", collectionDateCheck);
-		PropertyUtils.setProperty(form, "testsCheck", testsCheck);
-		PropertyUtils.setProperty(form, "patientSexCheck", patientSexCheck);
+		PropertyUtils.setProperty(form, "collectionDateCheck", Boolean.valueOf(collectionDateCheck));
+		PropertyUtils.setProperty(form, "testsCheck", Boolean.valueOf(testsCheck));
+		PropertyUtils.setProperty(form, "patientSexCheck", Boolean.valueOf(patientSexCheck));
 	}
 
-	@RequestMapping(value = "/BarcodeConfigurationSave", method = RequestMethod.POST)
-	public ModelAndView showBarcodeConfigurationSave(HttpServletRequest request,
-			@ModelAttribute("form") BarcodeConfigurationForm form, BindingResult result) {
-		String forward = FWD_SUCCESS_INSERT;
+	@RequestMapping(value = "/BarcodeConfiguration", method = RequestMethod.POST)
+	public ModelAndView barcodeConfigurationSave(HttpServletRequest request,
+			@ModelAttribute("form") BarcodeConfigurationForm form, BindingResult result,
+			RedirectAttributes redirectAttributes) {
 		validator.validate(form, result);
+		form.setCancelAction("MasterListsPage.do");
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);
@@ -108,17 +110,23 @@ public class BarcodeConfigurationController extends BaseController {
 		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 		try {
-			updateSiteInfo(siteInformationDAO, "heightOrderLabels", form.getHeightOrderLabels(), "text");
-			updateSiteInfo(siteInformationDAO, "widthOrderLabels", form.getWidthOrderLabels(), "text");
-			updateSiteInfo(siteInformationDAO, "heightSpecimenLabels", form.getHeightSpecimenLabels(), "text");
-			updateSiteInfo(siteInformationDAO, "widthSpecimenLabels", form.getWidthSpecimenLabels(), "text");
+			updateSiteInfo(siteInformationDAO, "heightOrderLabels", Float.toString(form.getHeightOrderLabels()),
+					"text");
+			updateSiteInfo(siteInformationDAO, "widthOrderLabels", Float.toString(form.getWidthOrderLabels()), "text");
+			updateSiteInfo(siteInformationDAO, "heightSpecimenLabels", Float.toString(form.getHeightSpecimenLabels()),
+					"text");
+			updateSiteInfo(siteInformationDAO, "widthSpecimenLabels", Float.toString(form.getWidthSpecimenLabels()),
+					"text");
 
-			updateSiteInfo(siteInformationDAO, "numOrderLabels", form.getNumOrderLabels(), "text");
-			updateSiteInfo(siteInformationDAO, "numSpecimenLabels", form.getNumSpecimenLabels(), "text");
+			updateSiteInfo(siteInformationDAO, "numOrderLabels", Integer.toString(form.getNumOrderLabels()), "text");
+			updateSiteInfo(siteInformationDAO, "numSpecimenLabels", Integer.toString(form.getNumSpecimenLabels()),
+					"text");
 
-			updateSiteInfo(siteInformationDAO, "collectionDateCheck", form.getCollectionDateCheck(), "boolean");
-			updateSiteInfo(siteInformationDAO, "patientSexCheck", form.getPatientSexCheck(), "boolean");
-			updateSiteInfo(siteInformationDAO, "testsCheck", form.getTestsCheck(), "boolean");
+			updateSiteInfo(siteInformationDAO, "collectionDateCheck", Boolean.toString(form.getCollectionDateCheck()),
+					"boolean");
+			updateSiteInfo(siteInformationDAO, "patientSexCheck", Boolean.toString(form.getPatientSexCheck()),
+					"boolean");
+			updateSiteInfo(siteInformationDAO, "testsCheck", Boolean.toString(form.getTestsCheck()), "boolean");
 
 			tx.commit();
 		} catch (LIMSRuntimeException lre) {
@@ -131,10 +139,11 @@ public class BarcodeConfigurationController extends BaseController {
 
 		if (result.hasErrors()) {
 			saveErrors(result);
-			forward = FWD_FAIL_INSERT;
+			return findForward(FWD_FAIL_INSERT, form);
 		}
 
-		return findForward(forward, form);
+		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	/**
@@ -170,9 +179,9 @@ public class BarcodeConfigurationController extends BaseController {
 		if (FWD_SUCCESS.equals(forward)) {
 			return "BarcodeConfigurationDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return "redirect:/BarcodeConfiguration.do?forward=success";
+			return "redirect:/BarcodeConfiguration.do";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return "redirect:/BarcodeConfiguration.do?forward=fail";
+			return "BarcodeConfigurationDefinition";
 		} else {
 			return "PageNotFound";
 		}

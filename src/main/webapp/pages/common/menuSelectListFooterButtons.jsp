@@ -29,7 +29,7 @@
         %>
 	   <td >
   			<button type="button" 
-  					onclick="setMenuAction(this, document.getElementById('mainForm'), '', 'yes', '?paging=1');return false;" 
+  					onclick="setMenuAction(this, document.getElementById('menuForm'), '', 'yes', '?paging=1');return false;" 
   					name="previous" 
 					<%if ( Boolean.valueOf(previousDisabled).booleanValue() ) {%>
 					disabled="disabled"
@@ -43,7 +43,7 @@
 	   </td>
 	   <td>
   			<button type="button" 
-  					onclick="setMenuAction(this, document.getElementById('mainForm'), '', 'yes', '?paging=2');return false;" 
+  					onclick="setMenuAction(this, document.getElementById('menuForm'), '', 'yes', '?paging=2');return false;" 
   					name="next"  
 					<%if ( Boolean.valueOf(nextDisabled).booleanValue() ) {%>
 					disabled="disabled"

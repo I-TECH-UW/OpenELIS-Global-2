@@ -161,7 +161,7 @@ function previousAction(form, ignoreFields) {
      confirmSaveForwardPopup('previous');
   } else {
      setDirtyFormFields(form);
-     setAction(form, 'NextPrevious', 'no', '?direction=previous&ID=');
+     navigationAction(form, 'NextPrevious', 'no', '?direction=previous&ID=');
   }
 }
 
@@ -172,7 +172,7 @@ function nextAction(form, ignoreFields) {
       confirmSaveForwardPopup('next');
   } else {
       setDirtyFormFields(form);
-      setAction(form, 'NextPrevious', 'no', '?direction=next&ID=');
+      navigationAction(form, 'NextPrevious', 'no', '?direction=next&ID=');
   }
 }
 </script>
@@ -217,7 +217,8 @@ function nextAction(form, ignoreFields) {
 	    </td>
      	<td>&nbsp;</td>
  	    <td>
-  			<button onclick="nextAction(document.getElementById('mainForm'), '');"  
+  			<button type="button" 
+  					onclick="nextAction(document.getElementById('mainForm'), '');"  
 					id="next" 
 					<% if (Boolean.valueOf(nextDisabled).booleanValue()) { %>
 					disabled="disabled"

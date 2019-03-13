@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.referral.form.ReferredOutTestsForm;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
@@ -442,9 +441,6 @@ public class ReferredOutTestsController extends BaseController {
 		}
 		form.setFormAction("");
 		Errors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
 
 		List<ReferralSet> referralSetList = new ArrayList<>();
 		List<ReferralResult> removableReferralResults = new ArrayList<>();

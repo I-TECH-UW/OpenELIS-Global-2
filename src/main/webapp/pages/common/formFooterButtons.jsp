@@ -132,7 +132,7 @@ function previousAction(form, ignoreFields) {
   if (isDirty(form, ignoreFields)) {
      confirmSaveForwardPopup('previous');
   } else {
-     setAction(document.getElementById("mainForm"), 'NextPrevious', 'no', '?direction=previous&ID=');
+	  navigationAction(document.getElementById("mainForm"), 'NextPrevious', 'no', '?direction=previous&ID=');
   }
 }
 
@@ -142,7 +142,7 @@ function nextAction(form, ignoreFields) {
       //popup to give user option to save, don't save AND go to next, cancel
       confirmSaveForwardPopup('next');
   } else {
-      setAction(document.getElementById("mainForm"), 'NextPrevious', 'no', '?direction=next&ID=');
+	  navigationAction(document.getElementById("mainForm"), 'NextPrevious', 'no', '?direction=next&ID=');
   }
 }
 
@@ -154,7 +154,7 @@ function saveOnClickAction() {
  		return false;
  	} else {
 		window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed. Used in unifiedSystemUser.jsp
-  		setAction(document.getElementById("mainForm"), 'Update', 'yes', '?ID=');
+  		setAction(document.getElementById("mainForm"), '', 'yes', '?ID=');
  	}
  }
 

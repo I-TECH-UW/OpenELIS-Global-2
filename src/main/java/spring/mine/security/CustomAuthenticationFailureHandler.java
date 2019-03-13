@@ -17,6 +17,7 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.validation.Errors;
 
+import spring.mine.common.constants.Constants;
 import spring.mine.common.validator.BaseErrors;
 
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
@@ -39,9 +40,9 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 			errors.reject("login.error.account.lock");
 		}
 
-		request.getSession().setAttribute("login_errors", errors.getAllErrors());
+		request.getSession().setAttribute(Constants.LOGIN_ERRORS, errors);
 
-		redirectStrategy.sendRedirect(request, response, "/LoginPage.do?error=true");
+		redirectStrategy.sendRedirect(request, response, "/LoginPage.do");
 	}
 
 }
