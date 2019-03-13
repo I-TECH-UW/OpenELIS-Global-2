@@ -144,7 +144,7 @@
 
 <style>
 table{
-  width: 80%;
+  width: 100%;
 }
 td {
   width: 25%;
@@ -180,12 +180,12 @@ td {
     <h2><spring:message code="configuration.uom.create"/> </h2>
 
     <table>
-        <tr>
-            <th colspan="2" style="text-align: center"><spring:message code="uom.new"/></th>
-        </tr>
-        <tr>
-            <td><spring:message code="label.english"/></td>
-        </tr>
+    	<col style="width:40%">
+    	<col style="width:40%">
+    	<col style="width:40%">
+    	<thead>
+        <tr><th style="text-align: center"><spring:message code="uom.new"/></th></tr>
+        <tr><td style="text-align: center"><spring:message code="label.english"/></td></tr>
         <tr>
             <td><span class="requiredlabel">*</span><form:input path="uomEnglishName" cssClass="required" size="40"
                                                                onchange="handleInput(this, 'english');checkForDuplicates('english');"/>
@@ -195,7 +195,8 @@ td {
                                                                styleClass="required" onchange="handleInput(this, 'french');"/>
             </td>
             --%>
-        </tr> 
+        </tr>
+        </thead> 
     </table>
     <div id="confirmationMessage" style="display:none">
         <h4><spring:message code="configuration.uom.confirmation.explain" /></h4>
@@ -214,8 +215,10 @@ td {
     </div>
 </div>
 
+
+
 <h3><spring:message code="uom.existing" /></h3>
-<table width="80%">
+<table>
     <% while(testCount < testList.size()){%>
     <tr>
         <td width='<%= 100/columns + "%"%>'><%= ((IdValuePair)testList.get(testCount)).getValue()%>

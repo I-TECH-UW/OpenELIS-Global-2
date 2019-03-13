@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.generated.forms.PanelCreateForm;
 import spring.generated.forms.UomCreateForm;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
@@ -87,7 +86,7 @@ public class UomCreateController extends BaseController {
 	      method = RequestMethod.POST
 	  )
 	  public ModelAndView postUomCreate(HttpServletRequest request,
-	      @ModelAttribute("form") PanelCreateForm form) throws Exception {
+	      @ModelAttribute("form") UomCreateForm form) throws Exception {
 	  
 	    String forward = FWD_SUCCESS_INSERT;
 	    
@@ -101,7 +100,7 @@ public class UomCreateController extends BaseController {
 	    	return mv;
 	    }
 	    
-        String identifyingName = form.getString("uomEnglishName");
+        String identifyingName = form.getUomEnglishName();
         String userId = getSysUserId(request);
 
         //Localization localization = createLocalization(dynaForm.getString("uomFrenchName"), identifyingName, userId);
