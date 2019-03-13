@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Transaction;
+import org.owasp.encoder.Encode;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -198,7 +199,7 @@ public class PanelTestAssignController extends BaseController {
 		if (FWD_SUCCESS.equals(forward)) {
 			return "panelAssignDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			String url = "/PanelTestAssign.do?panelId=" + request.getParameter("panelId");
+			String url = "/PanelTestAssign.do?panelId=" + Encode.forUriComponent(request.getParameter("panelId"));
 			return "redirect:" + url;
 		} else {
 			return "PageNotFound";

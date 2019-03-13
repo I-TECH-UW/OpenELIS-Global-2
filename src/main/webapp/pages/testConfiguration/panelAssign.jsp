@@ -55,8 +55,6 @@
     columnCount = 0;
     testCount = 0;
     success = (Boolean)request.getAttribute("success");
-    
-
 %>
 
 <link rel="stylesheet" media="screen" type="text/css"
