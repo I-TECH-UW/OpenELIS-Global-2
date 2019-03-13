@@ -19,7 +19,7 @@ package us.mn.state.health.lims.patient.action.bean;
 import java.io.Serializable;
 import java.util.List;
 
-import spring.mine.patient.controller.PatientManagementUpdateController.PatientUpdateStatus;
+import spring.mine.patient.controller.PatientManagementController.PatientUpdateStatus;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.util.IdValuePair;

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ The contents of this file are subject to the Mozilla Public License
+  ~ Version 1.1 (the "License"); you may not use this file except in
+  ~ compliance with the License. You may obtain a copy of the License at
+  ~ http://www.mozilla.org/MPL/
+  ~
+  ~ Software distributed under the License is distributed on an "AS IS"
+  ~ basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+  ~ License for the specific language governing rights and limitations under
+  ~ the License.
+  ~
+  ~ The Original Code is OpenELIS code.
+  ~
+  ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+<changeSet id="1" author="paulsc" context="haiti">
+    <comment>Add guids to test table</comment>
+    <sqlFile path="OE4.2/testCatalogHT_Clinical/addGuid.sql" />
+</changeSet>
+<changeSet id="2" author="paulsc" context="haiti">
+    <comment>Add names to localization</comment>
+    <sqlFile path="OE4.2/testCatalogHT_Clinical/populateNames.sql" />
+</changeSet>
+<changeSet id="3" author="paulsc" context="haiti">
+    <comment>update the local_code column to be a local code</comment>
+   <sqlFile path="OE4.2/testCatalogHT_Clinical/localCode.sql" />
+</changeSet>
+<changeSet id="4" author="paulsc" context="haiti">
+    <comment>update inactive tests</comment>
+    <sql>select nextval('localization_seq');</sql>
+    <sqlFile path="OE4.2/testCatalogHT_Clinical/InactiveUpdate.sql" />
+</changeSet>
+<changeSet author="paulsc" id="5" context="haiti">
+    <comment>Adds new uom</comment>
+    <insert tableName="unit_of_measure">
+        <column name="id" valueNumeric=" nextval( 'unit_of_measure_seq' ) " />
+        <column name="name" value="g/dL" />
+        <column name="description" value="g/dL" />
+        <column name="lastupdated" valueDate=" now() " />
+    </insert>
+</changeSet>
+<changeSet id="6" author="paulsc" context="haiti">
+    <comment>Change uom for CCMH</comment>
+    <update tableName="test" >
+        <column name="uom_id" valueNumeric=" (select id from clinlims.unit_of_measure where name = 'g/dL') " />
+        <where>guid = 'b5075ca9-c16c-42df-8a44-95d122e7c84a' </where>
+    </update>
+</changeSet>
+</databaseChangeLog>

@@ -1,25 +1,20 @@
 package spring.generated.testconfiguration.controller;
 
-import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.generated.forms.PanelRenameEntryForm;
+import spring.mine.common.controller.BaseController;
+import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.services.DisplayListService;
-
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
 import us.mn.state.health.lims.localization.valueholder.Localization;
@@ -29,46 +24,36 @@ import us.mn.state.health.lims.panel.valueholder.Panel;
 
 @Controller
 public class PanelRenameEntryController extends BaseController {
-	@RequestMapping(
-			value = "/PanelRenameEntry", 
-			method = RequestMethod.GET
-	)
+	@RequestMapping(value = "/PanelRenameEntry", method = RequestMethod.GET)
 	public ModelAndView showPanelRenameEntry(HttpServletRequest request,
-			@ModelAttribute("form") PanelRenameEntryForm form) {	
+			@ModelAttribute("form") PanelRenameEntryForm form) {
 		String forward = FWD_SUCCESS;
-		if (form == null ) {
-			 form = new PanelRenameEntryForm();
+		if (form == null) {
+			form = new PanelRenameEntryForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
 
 		form.setPanelList(DisplayListService.getList(DisplayListService.ListType.PANELS));
 
 		return findForward(forward, form);
 	}
 
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	@Override
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("panelRenameDefinition", "form", form);
+			return "panelRenameDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-		      return new ModelAndView("redirect:/PanelRenameEntry.do", "form", form);
+			return "redirect:/PanelRenameEntry.do";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
-	
-	@RequestMapping(
-			value = "/PanelRenameEntry", 
-			method = RequestMethod.POST
-		)
+
+	@RequestMapping(value = "/PanelRenameEntry", method = RequestMethod.POST)
 	public ModelAndView updatePanelRenameEntry(HttpServletRequest request,
-			@ModelAttribute("form") PanelRenameEntryForm form) {	
-		
+			@ModelAttribute("form") PanelRenameEntryForm form) {
+
 		String forward = FWD_SUCCESS_INSERT;
 
 		String panelId = form.getPanelId();
@@ -89,7 +74,7 @@ public class PanelRenameEntryController extends BaseController {
 	private void updatePanelNames(String panelId, String nameEnglish, String nameFrench, String userId) {
 		PanelDAO panelDAO = new PanelDAOImpl();
 		Panel panel = panelDAO.getPanelById(panelId);
-		
+
 		if (panel != null) {
 
 			Localization name = panel.getLocalization();
@@ -114,10 +99,12 @@ public class PanelRenameEntryController extends BaseController {
 		DisplayListService.getFreshList(DisplayListService.ListType.PANELS);
 	}
 
+	@Override
 	protected String getPageTitleKey() {
 		return null;
 	}
 
+	@Override
 	protected String getPageSubtitleKey() {
 		return null;
 	}

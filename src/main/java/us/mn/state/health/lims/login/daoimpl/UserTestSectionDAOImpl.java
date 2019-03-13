@@ -28,7 +28,6 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.provider.validation.FileValidationProvider;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.common.util.resources.ResourceLocator;
 import us.mn.state.health.lims.login.dao.UserModuleDAO;
 import us.mn.state.health.lims.login.dao.UserTestSectionDAO;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;

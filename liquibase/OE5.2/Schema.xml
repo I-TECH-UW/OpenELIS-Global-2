@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ The contents of this file are subject to the Mozilla Public License
+  ~ Version 1.1 (the "License"); you may not use this file except in
+  ~ compliance with the License. You may obtain a copy of the License at
+  ~ http://www.mozilla.org/MPL/
+  ~
+  ~ Software distributed under the License is distributed on an "AS IS"
+  ~ basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+  ~ License for the specific language governing rights and limitations under
+  ~ the License.
+  ~
+  ~ The Original Code is OpenELIS code.
+  ~
+  ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet id="1" author="paulsc">
+        <comment>Adds localization columns to test_section</comment>
+        <addColumn tableName="test_section">
+            <column name="name_localization_id" type="numeric(10,0)"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="test_section" baseColumnNames="name_localization_id"
+                                 constraintName="name_fk" referencedTableName="localization"
+                                 referencedColumnNames="id" deleteCascade="true"/>
+        <sql>
+            COMMENT ON COLUMN clinlims.test.name_localization_id IS 'reference to the localization record for the test section
+            name';
+        </sql>
+    </changeSet>
+    <changeSet id="2" author="paulsc">
+        <comment>Adds localization columns to panel</comment>
+        <addColumn tableName="panel">
+            <column name="name_localization_id" type="numeric(10,0)"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="panel" baseColumnNames="name_localization_id"
+                                 constraintName="name_fk" referencedTableName="localization"
+                                 referencedColumnNames="id" deleteCascade="true"/>
+        <sql>
+            COMMENT ON COLUMN clinlims.panel.name_localization_id IS 'reference to the localization record for the panel name';
+        </sql>
+    </changeSet>
+    <changeSet id="3" author="paulsc">
+        <comment>Removes size restrictions on some fields in analyzer_results</comment>
+        <modifyColumn tableName="analyzer_results">
+            <column name="test_name" type="VARCHAR"/>
+            <column name="result" type="VARCHAR" />
+            <column name="units" type="VARCHAR" />
+        </modifyColumn>
+    </changeSet>
+    <changeSet id="4" author="paulsc">
+        <comment>Adds active column to menu table</comment>
+        <addColumn tableName="menu">
+            <column name="is_active" type="boolean" defaultValueBoolean="true"/>
+        </addColumn>
+        <sql>
+            COMMENT ON COLUMN clinlims.menu.is_active IS 'Is this menu item active.  Allows menu to be turned on/off programatically';
+        </sql>
+    </changeSet>
+    <changeSet id="5" author="paulsc">
+        <comment>Removes not null constraint from analyzer_test_mapping table</comment>
+        <dropNotNullConstraint tableName="analyzer_test_map" columnName="test_id" />
+    </changeSet>
+</databaseChangeLog>

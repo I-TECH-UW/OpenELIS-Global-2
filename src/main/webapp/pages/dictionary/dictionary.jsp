@@ -59,7 +59,7 @@ function validateForm(form) {
 							<spring:message code="dictionary.id"/>:
 						</td>	
 						<td> 
-							<form:input path="id" allowEdits="false"/>
+							<form:input path="id" readonly="true"/> 
 						</td>
 		</tr>
 		<tr>

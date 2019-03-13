@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--Menu Study settings-->
+    
+ <changeSet author="CI OpenELIS developers group" id="1" runAlways="true">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="1">select count(*) from clinlims.menu where element_id = 'menu_reports_export_specific';
+    		</sqlCheck>
+    </preConditions>
+    <comment>Insert in clinlims new CSV Export menu reports elements</comment>
+    <sql>
+			update clinlims.menu
+			set action_url='/Report.do?type=patient&amp;report=Trends'
+			where action_url='/Report.do?type=patient&amp;report=ForCIDashboard';
+			
+			update clinlims.menu
+			set presentation_order = 30 
+			where action_url='/Report.do?type=patient&amp;report=Trends';
+			
+			update clinlims.menu
+			set action_url='/Report.do?type=patient&amp;report=CIStudyExport'
+			where action_url='/Report.do?type=patient&amp;report=CISampleExport';
+			
+			update clinlims.menu
+			set tool_tip_key='tooltip.export.specific'
+			where action_url='tooltip.export.cpecific';
+			
+						
+			INSERT INTO clinlims.menu(id, parent_id, presentation_order, element_id, action_url, click_action, 
+            display_key, tool_tip_key, new_window, is_active)
+			VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_export'),20,'menu_reports_export_valid','/Report.do?type=patient&amp;report=CISampleExport',default,'reports.export.valid','tooltip.export.valid',default,default);
+
+			
+ </sql>
+  </changeSet>
+  
+</databaseChangeLog>

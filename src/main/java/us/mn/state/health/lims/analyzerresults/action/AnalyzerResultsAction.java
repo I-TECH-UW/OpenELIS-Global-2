@@ -83,7 +83,7 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 public class AnalyzerResultsAction extends BaseAction {
 
-    private String analyzer;
+	private String analyzer;
 	private AnalyzerResultsDAO analyzerResultsDAO = new AnalyzerResultsDAOImpl();
 	private DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
 	private TestResultDAO testResultDAO = new TestResultDAOImpl();
@@ -94,27 +94,29 @@ public class AnalyzerResultsAction extends BaseAction {
 	private TestReflexDAO testReflexDAO = new TestReflexDAOImpl();
 	private ResultDAO resultDAO = new ResultDAOImpl();
 
-    private static Map<String, String> analyzerNameToSubtitleKey = new HashMap<String, String>();
-    static{
-        analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.COBAS_INTEGRA400_NAME, "banner.menu.results.cobas.integra");
-        analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.SYSMEX_XT2000_NAME, "banner.menu.results.sysmex");
-        analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.FACSCALIBUR, "banner.menu.results.facscalibur");
-        analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.FACSCANTO, "banner.menu.results.facscanto");
-        analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.EVOLIS, "banner.menu.results.evolis");
-        analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.COBAS_TAQMAN, "banner.menu.results.cobas.taqman");
-        analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.COBAS_DBS, "banner.menu.results.cobasDBS");
-        analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.COBAS_C311, "banner.menu.results.cobasc311");
-    }
-	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	private static Map<String, String> analyzerNameToSubtitleKey = new HashMap<>();
+	static {
+		analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.COBAS_INTEGRA400_NAME, "banner.menu.results.cobas.integra");
+		analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.SYSMEX_XT2000_NAME, "banner.menu.results.sysmex");
+		analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.FACSCALIBUR, "banner.menu.results.facscalibur");
+		analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.FACSCANTO, "banner.menu.results.facscanto");
+		analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.EVOLIS, "banner.menu.results.evolis");
+		analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.COBAS_TAQMAN, "banner.menu.results.cobas.taqman");
+		analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.COBAS_DBS, "banner.menu.results.cobasDBS");
+		analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.COBAS_C311, "banner.menu.results.cobasc311");
+	}
+
+	@Override
+	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 
 		String forward = FWD_SUCCESS;
 
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
 		String page = request.getParameter("page");
-        String requestAnalyzerType = request.getParameter("type");
-		setAnalyzerRequest( requestAnalyzerType);
+		String requestAnalyzerType = request.getParameter("type");
+		setAnalyzerRequest(requestAnalyzerType);
 
 		DynaActionForm dynaForm = (DynaActionForm) form;
 		PropertyUtils.setProperty(dynaForm, "analyzerType", requestAnalyzerType);
@@ -128,16 +130,16 @@ public class AnalyzerResultsAction extends BaseAction {
 				PropertyUtils.setProperty(dynaForm, "resultList", new ArrayList<AnalyzerResultItem>());
 				String msg = StringUtil.getMessageForKey("result.noResultsFound");
 				PropertyUtils.setProperty(dynaForm, "notFoundMsg", msg);
-				paging.setEmptyPageBean(request,dynaForm);
+				// commented out to allow maven compilation - CSL
+				// paging.setEmptyPageBean(request,dynaForm);
 
 			} else {
 
 				/*
-				 * The problem we are solving is that the accession numbers may
-				 * not be consecutive but we still want to maintain the order So
-				 * we will form the groups (by analyzer runs) by going in order
-				 * but if the accession number is in another group it will be
-				 * boosted to the first group
+				 * The problem we are solving is that the accession numbers may not be
+				 * consecutive but we still want to maintain the order So we will form the
+				 * groups (by analyzer runs) by going in order but if the accession number is in
+				 * another group it will be boosted to the first group
 				 */
 				boolean missingTest = false;
 
@@ -145,7 +147,7 @@ public class AnalyzerResultsAction extends BaseAction {
 
 				List<List<AnalyzerResultItem>> accessionGroupedResultsList = groupAnalyzerResults(analyzerResultsList);
 
-				List<AnalyzerResultItem> analyzerResultItemList = new ArrayList<AnalyzerResultItem>();
+				List<AnalyzerResultItem> analyzerResultItemList = new ArrayList<>();
 
 				int sampleGroupingNumber = 0;
 				for (List<AnalyzerResultItem> group : accessionGroupedResultsList) {
@@ -155,8 +157,10 @@ public class AnalyzerResultsAction extends BaseAction {
 						if (groupHeader == null) {
 							groupHeader = resultItem;
 							setNonConformityStateForResultItem(resultItem);
-							if(FormFields.getInstance().useField(Field.QaEventsBySection) )
-								resultItem.setNonconforming(getQaEventByTestSection(analysisDAO.getAnalysisById(resultItem.getAnalysisId())));
+							if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
+								resultItem.setNonconforming(getQaEventByTestSection(
+										analysisDAO.getAnalysisById(resultItem.getAnalysisId())));
+							}
 
 						}
 						resultItem.setSampleGroupingNumber(sampleGroupingNumber);
@@ -179,10 +183,12 @@ public class AnalyzerResultsAction extends BaseAction {
 
 				PropertyUtils.setProperty(dynaForm, "missingTestMsg", new Boolean(missingTest));
 
-				paging.setDatabaseResults(request, dynaForm, analyzerResultItemList);
+				// commented out to allow maven compilation - CSL
+				// paging.setDatabaseResults(request, dynaForm, analyzerResultItemList);
 			}
 		} else {
-			paging.page(request, dynaForm, page);
+			// commented out to allow maven compilation - CSL
+			// paging.page(request, dynaForm, page);
 		}
 
 		return mapping.findForward(forward);
@@ -190,53 +196,58 @@ public class AnalyzerResultsAction extends BaseAction {
 
 	private void setNonConformityStateForResultItem(AnalyzerResultItem resultItem) {
 		boolean nonconforming = false;
-		
-		Sample sample = sampleDAO.getSampleByAccessionNumber(resultItem.getAccessionNumber());
-		if( sample!= null){
-			nonconforming = QAService.isOrderNonConforming(sample);
-			//The sample is nonconforming, now we have to check if any sample items are non_conforming and 
-			// if they are are they for this test
-			//Note we only have to check one test since the sample item is the same for all the tests
 
-			if( nonconforming ){
+		Sample sample = sampleDAO.getSampleByAccessionNumber(resultItem.getAccessionNumber());
+		if (sample != null) {
+			nonconforming = QAService.isOrderNonConforming(sample);
+			// The sample is nonconforming, now we have to check if any sample items are
+			// non_conforming and
+			// if they are are they for this test
+			// Note we only have to check one test since the sample item is the same for all
+			// the tests
+
+			if (nonconforming) {
 				List<SampleItem> nonConformingSampleItems = QAService.getNonConformingSampleItems(sample);
-				//If there is a nonconforming sample item then we need to check if it is the one for this
-				//test if it is then it is nonconforming if not then it is not nonconforming
-				if( !nonConformingSampleItems.isEmpty()){					
-					TypeOfSampleTest typeOfSample = sampleTypeTestDAO.getTypeOfSampleTestForTest(resultItem.getTestId());
-					if( typeOfSample != null){
+				// If there is a nonconforming sample item then we need to check if it is the
+				// one for this
+				// test if it is then it is nonconforming if not then it is not nonconforming
+				if (!nonConformingSampleItems.isEmpty()) {
+					TypeOfSampleTest typeOfSample = sampleTypeTestDAO
+							.getTypeOfSampleTestForTest(resultItem.getTestId());
+					if (typeOfSample != null) {
 						String sampleTypeId = typeOfSample.getTypeOfSampleId();
-						nonconforming = false;	
-						for( SampleItem sampleItem : nonConformingSampleItems ){
-							if( sampleTypeId.equals(sampleItem.getTypeOfSample().getId() )){
+						nonconforming = false;
+						for (SampleItem sampleItem : nonConformingSampleItems) {
+							if (sampleTypeId.equals(sampleItem.getTypeOfSample().getId())) {
 								nonconforming = true;
 								break;
 							}
 						}
-					
+
 					}
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		resultItem.setNonconforming(nonconforming);
-		
+
 	}
 
 	private List<List<AnalyzerResultItem>> groupAnalyzerResults(List<AnalyzerResults> analyzerResultsList) {
-		Map<String, Integer> accessionToAccessionGroupMap = new HashMap<String, Integer>();
-		List<List<AnalyzerResultItem>> accessionGroupedResultsList = new ArrayList<List<AnalyzerResultItem>>();
+		Map<String, Integer> accessionToAccessionGroupMap = new HashMap<>();
+		List<List<AnalyzerResultItem>> accessionGroupedResultsList = new ArrayList<>();
 
 		for (AnalyzerResults analyzerResult : analyzerResultsList) {
 			AnalyzerResultItem resultItem = analyzerResultsToAnalyzerResultItem(analyzerResult);
 			Integer groupIndex = accessionToAccessionGroupMap.get(resultItem.getAccessionNumber());
 			List<AnalyzerResultItem> group;
 			if (groupIndex == null) {
-				group = new ArrayList<AnalyzerResultItem>();
+				group = new ArrayList<>();
 				accessionGroupedResultsList.add(group);
-				accessionToAccessionGroupMap.put(resultItem.getAccessionNumber(), accessionGroupedResultsList.size() - 1);
+				accessionToAccessionGroupMap.put(resultItem.getAccessionNumber(),
+						accessionGroupedResultsList.size() - 1);
 			} else {
 				group = accessionGroupedResultsList.get(groupIndex.intValue());
 			}
@@ -248,7 +259,7 @@ public class AnalyzerResultsAction extends BaseAction {
 
 	private void resolveMissingTests(List<AnalyzerResults> analyzerResultsList) {
 		boolean reloadCache = true;
-		List<AnalyzerResults> resolvedResults = new ArrayList<AnalyzerResults>();
+		List<AnalyzerResults> resolvedResults = new ArrayList<>();
 
 		for (AnalyzerResults analyzerResult : analyzerResultsList) {
 			if (GenericValidator.isBlankOrNull(analyzerResult.getTestId())) {
@@ -315,19 +326,17 @@ public class AnalyzerResultsAction extends BaseAction {
 
 		if (resultItem.isUserChoiceReflex()) {
 			setChoiceForCurrentValue(resultItem, result);
-			resultItem.setUserChoicePending(!GenericValidator.isBlankOrNull(resultItem.getSelectionOneText()) );
+			resultItem.setUserChoicePending(!GenericValidator.isBlankOrNull(resultItem.getSelectionOneText()));
 		}
 		return resultItem;
 	}
 
 	private boolean giveUserChoice(AnalyzerResults result) {
 		/*
-		 * This is how we figure out if the user will be able to select 
-		 * 1. Is the test involved with triggering a user selection 
-		 *    reflex 
-		 * 2. If the reflex has sibs has the sample been entered yet 
-		 * 3. If the sample has been entered have all of the sibling 
-		 *    tests been ordered
+		 * This is how we figure out if the user will be able to select 1. Is the test
+		 * involved with triggering a user selection reflex 2. If the reflex has sibs
+		 * has the sample been entered yet 3. If the sample has been entered have all of
+		 * the sibling tests been ordered
 		 */
 		if (!TestReflexUtil.isTriggeringUserChoiceReflexTestId(result.getTestId())) {
 			return false;
@@ -345,7 +354,7 @@ public class AnalyzerResultsAction extends BaseAction {
 		List<TestReflex> reflexes = reflexUtil.getPossibleUserChoiceTestReflexsForTest(result.getTestId());
 
 		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleId(sample.getId());
-		Set<String> analysisTestIds = new HashSet<String>();
+		Set<String> analysisTestIds = new HashSet<>();
 
 		for (Analysis analysis : analysisList) {
 			analysisTestIds.add(analysis.getTest().getId());
@@ -365,36 +374,37 @@ public class AnalyzerResultsAction extends BaseAction {
 
 	private void setChoiceForCurrentValue(AnalyzerResultItem resultItem, AnalyzerResults analyzerResult) {
 		/*
-		 * If there are no siblings for the reflex then we just need to find if
-		 * there are choices for the current value
-		 * 
-		 * If there are siblings then we need to find if they are currently
-		 * satisfied
+		 * If there are no siblings for the reflex then we just need to find if there
+		 * are choices for the current value
+		 *
+		 * If there are siblings then we need to find if they are currently satisfied
 		 */
 		TestReflex selectionOne = null;
 		TestReflex selectionTwo = null;
-		
+
 		if (!TestReflexUtil.testIsTriggeringReflexWithSibs(analyzerResult.getTestId())) {
-			List<TestReflex> reflexes = reflexUtil.getTestReflexsForDictioanryResultTestId(analyzerResult.getResult(), analyzerResult.getTestId(), true);
+			List<TestReflex> reflexes = reflexUtil.getTestReflexsForDictioanryResultTestId(analyzerResult.getResult(),
+					analyzerResult.getTestId(), true);
 			resultItem.setReflexSelectionId(null);
 			for (TestReflex reflex : reflexes) {
-					if (selectionOne == null) {
-						selectionOne = reflex;
-					} else {
-						selectionTwo = reflex;
-					}
+				if (selectionOne == null) {
+					selectionOne = reflex;
+				} else {
+					selectionTwo = reflex;
+				}
 			}
 
 		} else {
-			
+
 			Sample sample = getSampleForAnalyzerResult(analyzerResult);
 
 			List<Analysis> analysisList = analysisDAO.getAnalysesBySampleId(sample.getId());
-			
-			List<TestReflex> reflexesForDisplayedTest = reflexUtil.getTestReflexsForDictioanryResultTestId(analyzerResult.getResult(), analyzerResult.getTestId(), true);
-			
+
+			List<TestReflex> reflexesForDisplayedTest = reflexUtil.getTestReflexsForDictioanryResultTestId(
+					analyzerResult.getResult(), analyzerResult.getTestId(), true);
+
 			for (TestReflex possibleTestReflex : reflexesForDisplayedTest) {
-				if (TestReflexUtil.isUserChoiceReflex( possibleTestReflex )) {
+				if (TestReflexUtil.isUserChoiceReflex(possibleTestReflex)) {
 					if (GenericValidator.isBlankOrNull(possibleTestReflex.getSiblingReflexId())) {
 						if (possibleTestReflex.getActionScriptlet() != null) {
 							selectionOne = possibleTestReflex;
@@ -421,9 +431,9 @@ public class AnalyzerResultsAction extends BaseAction {
 							Test test = analysis.getTest();
 
 							for (Result result : resultList) {
-								TestResult testResult = testResultDAO.getTestResultsByTestAndDictonaryResult(test.getId(),
-										result.getValue());
-								if (testResult != null && testResult.getId().equals(sibTestReflex.getTestResultId())) {	
+								TestResult testResult = testResultDAO
+										.getTestResultsByTestAndDictonaryResult(test.getId(), result.getValue());
+								if (testResult != null && testResult.getId().equals(sibTestReflex.getTestResultId())) {
 									if (possibleTestReflex.getActionScriptlet() != null) {
 										selectionOne = possibleTestReflex;
 										break;
@@ -443,7 +453,8 @@ public class AnalyzerResultsAction extends BaseAction {
 		populateAnalyzerResultItemWithReflexes(resultItem, selectionOne, selectionTwo);
 	}
 
-	private void populateAnalyzerResultItemWithReflexes(AnalyzerResultItem resultItem, TestReflex selectionOne, TestReflex selectionTwo) {
+	private void populateAnalyzerResultItemWithReflexes(AnalyzerResultItem resultItem, TestReflex selectionOne,
+			TestReflex selectionTwo) {
 		if (selectionOne != null) {
 			if (selectionTwo == null && !GenericValidator.isBlankOrNull(selectionOne.getActionScriptletId())
 					&& !GenericValidator.isBlankOrNull(selectionOne.getTestId())) {
@@ -467,31 +478,32 @@ public class AnalyzerResultsAction extends BaseAction {
 				} else {
 					resultItem.setSelectionTwoText(TestReflexUtil.makeReflexScriptName(selectionTwo));
 					resultItem.setSelectionTwoValue(TestReflexUtil.makeReflexScriptValue(selectionOne));
-				}					
+				}
 			}
 		}
 	}
 
 	private String getResultForItem(AnalyzerResults result) {
-		if(TypeOfTestResultService.ResultType.NUMERIC.matches(result.getResultType()) ){
-			return getRoundedToSignificantDigits( result );
+		if (TypeOfTestResultService.ResultType.NUMERIC.matches(result.getResultType())) {
+			return getRoundedToSignificantDigits(result);
 		}
 
-		if ( TypeOfTestResultService.ResultType.isTextOnlyVariant(result.getResultType())
-				|| GenericValidator.isBlankOrNull(result.getResultType()) || GenericValidator.isBlankOrNull(result.getResult())) {
+		if (TypeOfTestResultService.ResultType.isTextOnlyVariant(result.getResultType())
+				|| GenericValidator.isBlankOrNull(result.getResultType())
+				|| GenericValidator.isBlankOrNull(result.getResult())) {
 
 			return result.getResult();
 		}
 
-		//If it's readonly or the selectlist can not be gotten then we want the result
-		//otherwise we want the id so the correct selection will be choosen
-		if( result.isReadOnly() || result.getTestId() == null || result.getIsControl()){
-			return dictionaryDAO.getDictionaryById(result.getResult()).getDictEntry() ;
-		}else{
+		// If it's readonly or the selectlist can not be gotten then we want the result
+		// otherwise we want the id so the correct selection will be choosen
+		if (result.isReadOnly() || result.getTestId() == null || result.getIsControl()) {
+			return dictionaryDAO.getDictionaryById(result.getResult()).getDictEntry();
+		} else {
 			return result.getResult();
 		}
 	}
-	
+
 	private String getSignificantDigitsFromAnalyzerResults(AnalyzerResults result) {
 
 		List<TestResult> testResults = testResultDAO.getActiveTestResultsByTest(result.getTestId());
@@ -499,7 +511,7 @@ public class AnalyzerResultsAction extends BaseAction {
 		if (GenericValidator.isBlankOrNull(result.getResult()) || testResults.isEmpty()) {
 			return result.getResult();
 		}
-		
+
 		TestResult testResult = testResults.get(0);
 
 		return testResult.getSignificantDigits();
@@ -507,7 +519,7 @@ public class AnalyzerResultsAction extends BaseAction {
 	}
 
 	private String getRoundedToSignificantDigits(AnalyzerResults result) {
-		if( result.getTestId() != null) {
+		if (result.getTestId() != null) {
 
 			Double results;
 			try {
@@ -534,7 +546,7 @@ public class AnalyzerResultsAction extends BaseAction {
 
 			double power = Math.pow(10, significantDigits);
 			return String.valueOf(Math.round(results * power) / power);
-		}else{
+		} else {
 			return result.getResult();
 		}
 	}
@@ -547,14 +559,15 @@ public class AnalyzerResultsAction extends BaseAction {
 	}
 
 	private List<Dictionary> getDictionaryResultList(AnalyzerResults result) {
-		if ("N".equals(result.getResultType()) || "A".equals(result.getResultType()) || "R".equals(result.getResultType())
-				|| GenericValidator.isBlankOrNull(result.getResultType()) || result.getTestId() == null) {
+		if ("N".equals(result.getResultType()) || "A".equals(result.getResultType())
+				|| "R".equals(result.getResultType()) || GenericValidator.isBlankOrNull(result.getResultType())
+				|| result.getTestId() == null) {
 			return null;
 		}
 
-		List<Dictionary> dictionaryList = new ArrayList<Dictionary>();
+		List<Dictionary> dictionaryList = new ArrayList<>();
 
-		List<TestResult> testResults = testResultDAO.getActiveTestResultsByTest( result.getTestId() );
+		List<TestResult> testResults = testResultDAO.getActiveTestResultsByTest(result.getTestId());
 
 		for (TestResult testResult : testResults) {
 			dictionaryList.add(dictionaryDAO.getDictionaryById(testResult.getValue()));
@@ -563,48 +576,57 @@ public class AnalyzerResultsAction extends BaseAction {
 		return dictionaryList;
 	}
 
+	@Override
 	protected String getPageTitleKey() {
 		return "banner.menu.results.analyzer";
 	}
 
+	@Override
 	protected String getPageSubtitleKey() {
 		String key = analyzerNameToSubtitleKey.get(analyzer);
-		if( key == null){
+		if (key == null) {
 			key = PluginMenuService.getInstance().getKeyForAction("/AnalyzerResults.do?type=" + analyzer);
 		}
-        return key;
+		return key;
 
 	}
 
 	@Override
-	protected String getActualMessage( String messageKey){
+	protected String getActualMessage(String messageKey) {
 		String actualMessage = null;
-		if( messageKey != null){
-			actualMessage = PluginMenuService.getInstance().getMenuLabel(LocalizationService.getCurrentLocale(), messageKey);
+		if (messageKey != null) {
+			actualMessage = PluginMenuService.getInstance().getMenuLabel(LocalizationService.getCurrentLocale(),
+					messageKey);
 		}
 		return actualMessage == null ? analyzer : actualMessage;
 	}
+
 	protected void setAnalyzerRequest(String requestType) {
 		if (!GenericValidator.isBlankOrNull(requestType)) {
-           analyzer = AnalyzerTestNameCache.instance().getDBNameForActionName(requestType);
+			analyzer = AnalyzerTestNameCache.instance().getDBNameForActionName(requestType);
 		}
 	}
 
-	private boolean getQaEventByTestSection(Analysis analysis){
-		if(analysis==null) return false;
-		if (analysis.getTestSection()!=null && analysis.getSampleItem().getSample()!=null) {
-			Sample sample=analysis.getSampleItem().getSample();
-			List<SampleQaEvent> sampleQaEventsList=getSampleQaEvents(sample);
-			for(SampleQaEvent event : sampleQaEventsList){
+	private boolean getQaEventByTestSection(Analysis analysis) {
+		if (analysis == null) {
+			return false;
+		}
+		if (analysis.getTestSection() != null && analysis.getSampleItem().getSample() != null) {
+			Sample sample = analysis.getSampleItem().getSample();
+			List<SampleQaEvent> sampleQaEventsList = getSampleQaEvents(sample);
+			for (SampleQaEvent event : sampleQaEventsList) {
 				QAService qa = new QAService(event);
-				if(!GenericValidator.isBlankOrNull(qa.getObservationValue( QAObservationType.SECTION )) && qa.getObservationValue( QAObservationType.SECTION ).equals(analysis.getTestSection().getNameKey()))
-					 return true;				
+				if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
+						&& qa.getObservationValue(QAObservationType.SECTION)
+								.equals(analysis.getTestSection().getNameKey())) {
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 
-	public List<SampleQaEvent> getSampleQaEvents(Sample sample){
+	public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
 		SampleQaEventDAO sampleQaEventDAO = new SampleQaEventDAOImpl();
 		return sampleQaEventDAO.getSampleQaEventsBySample(sample);
 	}

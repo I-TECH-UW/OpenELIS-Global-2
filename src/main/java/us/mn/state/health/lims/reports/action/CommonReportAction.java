@@ -42,8 +42,10 @@ public class CommonReportAction extends BaseAction {
 		PropertyUtils.setProperty(dynaForm, "reportRequest", request.getParameter("report"));
 		IReportParameterSetter setter = ReportImplementationFactory.getParameterSetter(request.getParameter("report"));
 
-		if( setter != null){
-			setter.setRequestParameters(dynaForm);
+		if (setter != null) {
+
+			// commented out to allow maven compilation - CSL
+			// setter.setRequestParameters(dynaForm);
 		}
 
 		return mapping.findForward(FWD_SUCCESS);

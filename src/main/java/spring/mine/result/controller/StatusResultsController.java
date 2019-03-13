@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -72,17 +73,10 @@ public class StatusResultsController extends BaseController {
 			form = new StatusResultsForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
+		Errors errors = new BaseErrors();
+		
 
-		if (errors.hasErrors()) {
-			return mv;
-		}
-
-		resultsUtility = new ResultsLoadUtility(currentUserId);
+		resultsUtility = new ResultsLoadUtility(getSysUserId(request));
 
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
@@ -322,11 +316,11 @@ public class StatusResultsController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
-			return new ModelAndView("statusResultDefinition", "form", form);
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "statusResultDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

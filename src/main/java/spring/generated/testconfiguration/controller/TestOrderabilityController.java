@@ -1,6 +1,5 @@
 package spring.generated.testconfiguration.controller;
 
-import java.lang.String;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,15 +15,14 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.forms.TestOrderabilityForm;
-
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.TestService;
@@ -38,187 +36,170 @@ import us.mn.state.health.lims.test.valueholder.Test;
 
 @Controller
 public class TestOrderabilityController extends BaseController {
-  @RequestMapping(
-      value = "/TestOrderability",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showTestOrderability(HttpServletRequest request,
-      @ModelAttribute("form") TestOrderabilityForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new TestOrderabilityForm();
-    }
-        form.setFormAction("");
-    BaseErrors errors = new BaseErrors();
-    if (form.getErrors() != null) {
-    	errors = (BaseErrors) form.getErrors();
-    }
-    ModelAndView mv = checkUserAndSetup(form, errors, request);
+	@RequestMapping(value = "/TestOrderability", method = RequestMethod.GET)
+	public ModelAndView showTestOrderability(HttpServletRequest request,
+			@ModelAttribute("form") TestOrderabilityForm form) {
+		String forward = FWD_SUCCESS;
+		if (form == null) {
+			form = new TestOrderabilityForm();
+		}
+		form.setFormAction("");
+		Errors errors = new BaseErrors();
+		List<TestActivationBean> orderableTestList = createTestList(false);
+		form.setOrderableTestList(orderableTestList);
 
-    if (errors.hasErrors()) {
-    	return mv;
-    }
-    
-    List<TestActivationBean> orderableTestList = createTestList(false);
-    form.setOrderableTestList(orderableTestList);
-    
-    return findForward(forward, form);}
-  
-  private List<TestActivationBean> createTestList(boolean refresh) {
-      ArrayList<TestActivationBean> testList = new ArrayList<TestActivationBean>();
+		return findForward(forward, form);
+	}
 
-      if (refresh) 
-    	  DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
-      	  
-      List<IdValuePair> sampleTypeList = DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
-      
-      for( IdValuePair pair : sampleTypeList){
-          TestActivationBean bean = new TestActivationBean();
+	private List<TestActivationBean> createTestList(boolean refresh) {
+		ArrayList<TestActivationBean> testList = new ArrayList<>();
 
-          List<Test> tests = TypeOfSampleService.getAllTestsBySampleTypeId(pair.getId());
-          List<IdValuePair> orderableTests = new ArrayList<IdValuePair>();
-          List<IdValuePair> inorderableTests = new ArrayList<IdValuePair>();
+		if (refresh) {
+			DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
+		}
 
-          //initial ordering will be by display order.  Inactive tests will then be re-ordered alphabetically
-          Collections.sort(tests, new Comparator<Test>() {
-              @Override
-              public int compare(Test o1, Test o2) {
-              	//compare sort order
-              	if (NumberUtils.isNumber(o1.getSortOrder()) && NumberUtils.isNumber(o2.getSortOrder())) {
-              		return Integer.parseInt(o1.getSortOrder()) - Integer.parseInt(o2.getSortOrder());
-                  //if o2 has no sort order o1 does, o2 is assumed to be higher
-              	} else if (NumberUtils.isNumber(o1.getSortOrder())){
-                  	return -1;
-                  //if o1 has no sort order o2 does, o1 is assumed to be higher
-                  } else if (NumberUtils.isNumber(o2.getSortOrder())) {
-                  	return 1;
-                  //else they are considered equal
-                  } else {
-                  	return 0;
-                  }
-              }
-          });
+		List<IdValuePair> sampleTypeList = DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
 
-          for( Test test : tests) {
-              if( test.getOrderable()) {
-                  orderableTests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
-              }else{
-                  inorderableTests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
-              }
-          }
+		for (IdValuePair pair : sampleTypeList) {
+			TestActivationBean bean = new TestActivationBean();
 
-          IdValuePair.sortByValue( orderableTests);
+			List<Test> tests = TypeOfSampleService.getAllTestsBySampleTypeId(pair.getId());
+			List<IdValuePair> orderableTests = new ArrayList<>();
+			List<IdValuePair> inorderableTests = new ArrayList<>();
 
-          bean.setActiveTests(orderableTests);
-          bean.setInactiveTests(inorderableTests);
-          if( !orderableTests.isEmpty() || !inorderableTests.isEmpty()) {
-              bean.setSampleType(pair);
-              testList.add(bean);
-          }
-      }
+			// initial ordering will be by display order. Inactive tests will then be
+			// re-ordered alphabetically
+			Collections.sort(tests, new Comparator<Test>() {
+				@Override
+				public int compare(Test o1, Test o2) {
+					// compare sort order
+					if (NumberUtils.isNumber(o1.getSortOrder()) && NumberUtils.isNumber(o2.getSortOrder())) {
+						return Integer.parseInt(o1.getSortOrder()) - Integer.parseInt(o2.getSortOrder());
+						// if o2 has no sort order o1 does, o2 is assumed to be higher
+					} else if (NumberUtils.isNumber(o1.getSortOrder())) {
+						return -1;
+						// if o1 has no sort order o2 does, o1 is assumed to be higher
+					} else if (NumberUtils.isNumber(o2.getSortOrder())) {
+						return 1;
+						// else they are considered equal
+					} else {
+						return 0;
+					}
+				}
+			});
 
-      return testList;
-  }
+			for (Test test : tests) {
+				if (test.getOrderable()) {
+					orderableTests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
+				} else {
+					inorderableTests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
+				}
+			}
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
-    if ("success".equals(forward)) {
-      return new ModelAndView("testOrderabilityDefinition", "form", form);
-    } else {
-      return new ModelAndView("PageNotFound");
-    }
-  }
-  
-  @RequestMapping(
-	      value = "/TestOrderability",
-	      method = RequestMethod.POST
-	  )
-	  public ModelAndView postTestOrderability(HttpServletRequest request,
-	      @ModelAttribute("form") TestOrderabilityForm form) throws Exception {
-	  
-	    String forward = FWD_SUCCESS;
+			IdValuePair.sortByValue(orderableTests);
 
-	    BaseErrors errors = new BaseErrors();
-	    if (form.getErrors() != null) {
-	    	errors = (BaseErrors) form.getErrors();
-	    }
-	    ModelAndView mv = checkUserAndSetup(form, errors, request);
+			bean.setActiveTests(orderableTests);
+			bean.setInactiveTests(inorderableTests);
+			if (!orderableTests.isEmpty() || !inorderableTests.isEmpty()) {
+				bean.setSampleType(pair);
+				testList.add(bean);
+			}
+		}
 
-	    if (errors.hasErrors()) {
-	    	return mv;
-	    }
+		return testList;
+	}
 
-	    String changeList = form.getJsonChangeList();
-        
-	    JSONParser parser=new JSONParser();
+	@Override
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "testOrderabilityDefinition";
+		} else {
+			return "PageNotFound";
+		}
+	}
 
-        JSONObject obj = (JSONObject)parser.parse(changeList);
-        
-        List<String> orderableTestIds = getIdsForActions("activateTest", obj, parser);
-        List<String> unorderableTestIds = getIdsForActions("deactivateTest", obj, parser);
+	@RequestMapping(value = "/TestOrderability", method = RequestMethod.POST)
+	public ModelAndView postTestOrderability(HttpServletRequest request,
+			@ModelAttribute("form") TestOrderabilityForm form) throws Exception {
 
-        List<Test> tests = getTests(unorderableTestIds, false);
-        tests.addAll(getTests(orderableTestIds, true));
+		String forward = FWD_SUCCESS;
 
-        Transaction tx = HibernateUtil.getSession().beginTransaction();
+		BaseErrors errors = new BaseErrors();
 
-        TestDAO testDAO = new TestDAOImpl();
+		String changeList = form.getJsonChangeList();
 
-        try{
-            for(Test test : tests){
-                testDAO.updateData(test);
-            }
+		JSONParser parser = new JSONParser();
 
-            tx.commit();
-        }catch( HibernateException e ){
-            tx.rollback();
-        }finally{
-            HibernateUtil.closeSession();
-        }
+		JSONObject obj = (JSONObject) parser.parse(changeList);
 
-        TypeOfSampleService.clearCache();
+		List<String> orderableTestIds = getIdsForActions("activateTest", obj, parser);
+		List<String> unorderableTestIds = getIdsForActions("deactivateTest", obj, parser);
 
-	    List<TestActivationBean> orderableTestList = createTestList(true);
-	    form.setOrderableTestList(orderableTestList);
-	  
-	  return findForward(forward, form);
-  }
-  
-  private List<Test> getTests(List<String> testIds, boolean orderable) {
-      List<Test> tests = new ArrayList<Test>();
+		List<Test> tests = getTests(unorderableTestIds, false);
+		tests.addAll(getTests(orderableTestIds, true));
 
-      for( String testId : testIds){
-          Test test = new TestService(testId).getTest();
-          test.setOrderable( orderable );
-          test.setSysUserId(currentUserId);
-          tests.add(test);
-      }
+		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
-      return tests;
-  }
+		TestDAO testDAO = new TestDAOImpl();
 
-  private List<String> getIdsForActions(String key, JSONObject root, JSONParser parser){
-      List<String> list = new ArrayList<String>();
+		try {
+			for (Test test : tests) {
+				testDAO.updateData(test);
+			}
 
-      String action = (String)root.get(key);
+			tx.commit();
+		} catch (HibernateException e) {
+			tx.rollback();
+		} finally {
+			HibernateUtil.closeSession();
+		}
 
-      try {
-          JSONArray actionArray = (JSONArray)parser.parse(action);
+		TypeOfSampleService.clearCache();
 
-          for(int i = 0 ; i < actionArray.size(); i++   ){
-              list.add((String) ((JSONObject) actionArray.get(i)).get("id"));
-          }
-      } catch (ParseException e) {
-          e.printStackTrace();
-      }
+		List<TestActivationBean> orderableTestList = createTestList(true);
+		form.setOrderableTestList(orderableTestList);
 
-      return list;
-  }
+		return findForward(forward, form);
+	}
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+	private List<Test> getTests(List<String> testIds, boolean orderable) {
+		List<Test> tests = new ArrayList<>();
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+		for (String testId : testIds) {
+			Test test = new TestService(testId).getTest();
+			test.setOrderable(orderable);
+			test.setSysUserId(getSysUserId(request));
+			tests.add(test);
+		}
+
+		return tests;
+	}
+
+	private List<String> getIdsForActions(String key, JSONObject root, JSONParser parser) {
+		List<String> list = new ArrayList<>();
+
+		String action = (String) root.get(key);
+
+		try {
+			JSONArray actionArray = (JSONArray) parser.parse(action);
+
+			for (int i = 0; i < actionArray.size(); i++) {
+				list.add((String) ((JSONObject) actionArray.get(i)).get("id"));
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		return list;
+	}
+
+	@Override
+	protected String getPageTitleKey() {
+		return null;
+	}
+
+	@Override
+	protected String getPageSubtitleKey() {
+		return null;
+	}
 }

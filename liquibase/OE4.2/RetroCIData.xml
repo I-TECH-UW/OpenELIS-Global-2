@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ The contents of this file are subject to the Mozilla Public License
+  ~ Version 1.1 (the "License"); you may not use this file except in
+  ~ compliance with the License. You may obtain a copy of the License at
+  ~ http://www.mozilla.org/MPL/
+  ~
+  ~ Software distributed under the License is distributed on an "AS IS"
+  ~ basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+  ~ License for the specific language governing rights and limitations under
+  ~ the License.
+  ~
+  ~ The Original Code is OpenELIS code.
+  ~
+  ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <!-- Data specific to RetroCI lab -->
+    <changeSet author="paulsc" id="1" context="CDIRetroCI">
+        <comment>Sets the value for augmenting the test name with the sample type to false</comment>
+        <update tableName="site_information">
+            <column name="value" value="false"/>
+            <where>name = 'augmentTestNameWithType'</where>
+        </update>
+    </changeSet>
+    <changeSet id="2" author="paulsc" context="CDIRetroCI">
+        <comment>Turns off the role of Test Management</comment>
+        <update tableName="system_role" >
+            <column name="active" valueBoolean="false" />
+            <where>name = 'Test Configuration'</where>
+        </update>
+    </changeSet>
+    <changeSet author="paulsc" id="3" context="CDIRetroCI">
+        <comment>Set header text</comment>
+        <update tableName="localization" >
+            <column name="english" value="Cote d'Ivoire Laboratory Information System" />
+            <column name="french"  value="Système d'Information Électronique de Laboratoire - Côte d'Ivoire" />
+            <where>cast(id as varchar) = (select value from clinlims.site_information where name = 'bannerHeading') </where>
+        </update>
+    </changeSet>
+    <changeSet id="4" author="paulsc" context="CDIRetroCI">
+        <comment>Fix for significant digit bug</comment>
+        <update tableName="test_result" >
+            <column name="significant_digits" valueNumeric="-1" />
+            <where>tst_rslt_type = 'N'</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>

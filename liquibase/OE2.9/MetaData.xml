@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<changeSet author="paulsc" id="1">
+		<comment>Adds ability to turn page numbers on and off to site_information</comment>
+		<insert tableName="site_information" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'site_information_seq' ) "></column>
+			<column name="name" value="additional site info" />
+			<column name="description" value="additional information for report header" />
+			<column name="value" value="" />
+			<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'printedReportsConfig') "/>
+			<column name="value_type" value="freeText" />
+			<column name="instruction_key" value="siteInformation.instruction.headerInfo" />			
+			<column name="lastupdated" valueDate=" now() " />
+		</insert>
+	</changeSet>
+		<changeSet author="paulsc" id="2">
+		<comment>Adds ability to add site logo to reports</comment>
+		<insert tableName="site_information" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'site_information_seq' ) "></column>
+			<column name="name" value="lab logo" />
+			<column name="description" value="Provides for uploading lab logo" />
+			<column name="value" value="" />
+			<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'printedReportsConfig') "/>
+			<column name="value_type" value="logoUpload" />
+			<column name="instruction_key" value="siteInformation.instruction.labLogo" />			
+			<column name="lastupdated" valueDate=" now() " />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="3">
+		<comment>Adds a test section called user which indicates that the user selects the test section</comment>
+		<insert tableName="test_section">
+			<column name="id" valueNumeric=" nextval( 'test_section_seq' ) " />
+			<column name="name" value="user" />
+			<column name="description" value="Indicates user will chose test section" />
+			<column name="org_id" valueNumeric=" (select id from clinlims.organization where name = 'Haiti') " />
+			<column name="is_external" value="N" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="is_active" value="N" />			
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="4" context="haiti">
+		<comment>Missed unit of measure</comment>
+		<sql>
+		INSERT INTO unit_of_measure( id, name , description, lastupdated) 
+			VALUES ( nextval( 'unit_of_measure_seq' ) , 'μl' , 'μl' , now());
+		
+		</sql>
+	</changeSet>
+</databaseChangeLog>

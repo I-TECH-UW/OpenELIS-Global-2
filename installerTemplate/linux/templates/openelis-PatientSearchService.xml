@@ -1,0 +1,31 @@
+<Context path="/PatientSearchService" docBase="PatientSearchService"
+	 debug="1" reloadable="true" crossContext="true">
+  
+  <Logger className="org.apache.catalina.logger.FileLogger"
+	  prefix="localhost_PatientSearchService_log."
+	  suffix=".txt" timestamp="true"/>
+  
+  <Resource name="jdbc/PatientSearchServiceMsSql" auth="Container" type="javax.sql.DataSource"
+	    maxActive="100" maxIdle="30" maxWait="10000"
+	    username="itechApp" password=""
+	    driverClassName="net.sourceforge.jtds.jdbc.Driver"
+	    url="jdbc:jtds:sqlserver://localhost:1433/itech"/>
+
+  <Resource name="jdbc/PatientSearchServiceMySql" auth="Container" type="javax.sql.DataSource"
+	    maxActive="100" maxIdle="30" maxWait="10000"
+	    username="itechapp" password="[% itechappPassword %]" 
+	    driverClassName="com.mysql.jdbc.Driver"
+            url="jdbc:mysql://localhost:3306/itech"/>
+  
+  <!-- This parameter must be "MsSql" or "MySql" -->
+  <Parameter name="dbType" value="MySql" override="false"/>
+  
+  <!-- Enter the encoding type for the "patient" database table -->
+  <!-- Consult 'http://java.sun.com/j2se/1.4.2/docs/guide/intl/encoding.doc.html' -->
+  <Parameter name="dbEncoding" value="UTF-8" override="false"/>
+  
+  <Parameter name="svcUsername" value="iSanteSvcUser" override="false"/>
+
+  <Parameter name="svcPassword" value="cq:qzhuxpVz80oD" override="false"/>
+  
+</Context>

@@ -309,14 +309,14 @@ public abstract class Accessioner {
 			}
 			existingPatient = findPatient();
 			if (existingPatient && !validateFoundPatient()) {
-				return IActionConstants.FWD_FAIL;
+				return IActionConstants.FWD_FAIL_INSERT;
 			}
 			existingSample = findSample();
 			if (existingSample && !validateFoundSample()) {
-				return IActionConstants.FWD_FAIL;
+				return IActionConstants.FWD_FAIL_INSERT;
 			}
 			if (!matchPatientAndSample()) {
-				return IActionConstants.FWD_FAIL;
+				return IActionConstants.FWD_FAIL_INSERT;
 			}
 
 			populatePatientData();
@@ -343,13 +343,13 @@ public abstract class Accessioner {
 			deleteOldPatient();
 			populateAndPersistUnderInvestigationNote();
 			tx.commit();
-			return IActionConstants.FWD_SUCCESS;
+			return IActionConstants.FWD_SUCCESS_INSERT;
 		} catch (Exception e) {
 			if (null != tx) {
 				tx.rollback();
 			}
 			logAndAddMessage("save()", "errors.InsertException", e);
-			return IActionConstants.FWD_FAIL;
+			return IActionConstants.FWD_FAIL_INSERT;
 		} finally {
 			HibernateUtil.closeSession();
 		}

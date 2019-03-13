@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+<changeSet author="paulsc" id="1" >
+	<comment>Adds nonConformityNotification document type</comment>
+	<insert schemaName="clinlims" tableName="document_type" >
+		<column name="id" valueNumeric=" nextval( 'document_type_seq' ) " />
+		<column name="name" value="nonConformityNotification" />
+		<column name="description" value="Non_Conformity reports to be sent to clinic" />
+		<column name="lastupdated" valueDate=" now() " /> 		
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="2" >
+	<comment>Adds a results site-information domain and adds modifier role required to site information</comment>
+	<insert schemaName="clinlims" tableName="site_information_domain" >
+		<column name="id" valueNumeric=" nextval( 'site_information_domain_seq' ) " />
+		<column name="name" value="resultConfiguration" />
+		<column name="description" value="site information which effects the handling of results" />
+	</insert>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="modify results role" />
+		<column name="description" value="Should a separate role be required to be able to modify results" />
+		<column name="value" value="false" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'resultConfiguration' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+	</insert>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="modify results note required" />
+		<column name="description" value="Is a note required when results are modified" />
+		<column name="value" value="false" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'resultConfiguration' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="3" >
+	<comment>Sets the value_type of several rows to 'boolean' in the site_information table</comment>
+	<update schemaName="clinlims" tableName="site_information" >
+		<column name="value_type" value="boolean" />
+		<where>name in ('useExternalPatientSource','TrainingInstallation', 'allowLanguageChange', 'resultReporting', 'modify results role', 'modify results note required')</where>
+	</update>
+	<update schemaName="clinlims" tableName="site_information" >
+		<column name="value" value="true" />
+		<where>value = 'enable' and value_type = 'boolean'</where>
+	</update>
+	<update schemaName="clinlims" tableName="site_information" >
+		<column name="value" value="false" />
+		<where>value = 'disable' and value_type = 'boolean'</where>
+	</update>
+</changeSet>
+<changeSet author="paulsc" id="4" >
+	<comment>This will add three new rows to the site_information table</comment>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="ResultTechnicianName" />
+		<column name="description" value="If true then the technician name is required for entering results" />
+		<column name="value" value="false" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'resultConfiguration' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="value_type" value="boolean" />
+		<column name="instruction_key" value="instructions.results.technician" />
+	</insert>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="autoFillTechNameBox" />
+		<column name="description" value="If the techs name is required on results then add a box for autofill" />
+		<column name="value" value="false" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'resultConfiguration' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="value_type" value="boolean" />
+		<column name="instruction_key" value="instructions.results.autofilltechbox" />
+	</insert>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="autoFillTechNameUser" />
+		<column name="description" value="If the techs name is required on results then autofill with logged in user" />
+		<column name="value" value="false" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'resultConfiguration' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="value_type" value="boolean" />
+		<column name="instruction_key" value="instructions.results.autofilltech.user" />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="5" >
+	<comment>Adding biologist fail indicator on results page to site_information</comment>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="showValidationFailureIcon" />
+		<column name="description" value="If the analysis has failed validation show icon on results page" />
+		<column name="value" value="false" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'resultConfiguration' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="value_type" value="boolean" />
+		<column name="instruction_key" value="instructions.results.validationFailIcon" />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="6" >
+	<comment>Setting the name of the status for analysis being done to 'Finalized' </comment>
+	<update schemaName="clinlims" tableName="status_of_sample">
+		<column name="name" value="Finalized" />
+		<column name="description" value="The results of the analysis are final" />
+		<where>status_type = 'ANALYSIS' and name in ('Valid', 'Finished')</where>
+	</update>
+</changeSet>
+<changeSet author="paulsc" id="7">
+	<comment>Adds missing tables to reference_tables</comment>
+	<insert tableName="reference_tables" schemaName="clinlims">
+		<column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+		<column name="name" value="ANALYZER_TEST_MAP" />
+		<column name="keep_history" value="Y"/>
+		<column name="is_hl7_encoded" value="N"/>
+		<column name="lastupdated" valueDate=" now() " />
+	</insert>
+    <insert tableName="reference_tables" schemaName="clinlims">
+		<column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+		<column name="name" value="PATIENT_IDENTITY_TYPE" />
+		<column name="keep_history" value="Y"/>
+		<column name="is_hl7_encoded" value="N"/>
+		<column name="lastupdated" valueDate=" now() " />
+	</insert>
+	<insert tableName="reference_tables" schemaName="clinlims">
+		<column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+		<column name="name" value="SAMPLETYPE_TEST" />
+		<column name="keep_history" value="Y"/>
+		<column name="is_hl7_encoded" value="N"/>
+		<column name="lastupdated" valueDate=" now() " />
+	</insert>
+	<insert tableName="reference_tables" schemaName="clinlims">
+		<column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+		<column name="name" value="SAMPLETYPE_PANEL" />
+		<column name="keep_history" value="Y"/>
+		<column name="is_hl7_encoded" value="N"/>
+		<column name="lastupdated" valueDate=" now() " />
+	</insert>
+	<insert tableName="reference_tables" schemaName="clinlims">
+		<column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+		<column name="name" value="SAMPLE_REQUESTER" />
+		<column name="keep_history" value="Y"/>
+		<column name="is_hl7_encoded" value="N"/>
+		<column name="lastupdated" valueDate=" now() " />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="8">
+	<comment>Add site name to site_information table</comment>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="SiteName" />
+		<column name="description" value="The name of the site for reports and header" />
+		<column name="value" value="" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'siteIdentity' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="value_type" value="text" />
+		<column name="instruction_key" value="instructions.site.name" />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="9">
+    <preConditions onFail="MARK_RAN">
+    	<sqlCheck expectedResult="0">
+    		select count(*) from clinlims.site_information where name = 'lab director'
+    	</sqlCheck>
+    </preConditions>
+    
+	<comment>Add lab director to site_information table</comment>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="lab director" />
+		<column name="description" value="The lab directors name for the reports" />
+		<column name="value" value="" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'siteIdentity' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="value_type" value="text" />
+		<column name="instruction_key" value="instructions.site.lab.director" />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="10">
+        <comment>Adds results as a report queue type</comment>
+        <insert schemaName="clinlims" tableName="report_queue_type">
+                <column name="id" valueNumeric=" nextval( 'report_queue_type_seq' ) "/>
+                <column name="name" value="Results"/>
+                <column name="description" value="Result sharing with iSante"/>
+        </insert>
+</changeSet>
+<changeSet author="paulsc" id="11">
+	<comment>Adds data export as a document type</comment>
+	<insert tableName="document_type">
+		<column name="id" valueNumeric=" nextval( 'document_type_seq' ) " />
+		<column name="name" value="resultExport" />
+		<column name="description" value="Results sent electronically to other systems" />
+		<column name="lastupdated" value=" now() "/>
+	</insert>	
+</changeSet>
+<changeSet author="paulsc" id="12">
+	<comment>Add flag for using logo to site_information table</comment>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="useLogoInReport" />
+		<column name="description" value="Should the site logo be used in the report" />
+		<column name="value" value="true" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'siteIdentity' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="value_type" value="boolean" />
+		<column name="instruction_key" value="instructions.site.logo" />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="13" >
+	<comment>Changing all of the passwords in the site information to be visible.</comment>
+	<update tableName="site_information" schemaName="">
+		<column name="encrypted" valueBoolean="false" />
+	</update>
+</changeSet>
+<changeSet author="paulsc" id="14">
+	<comment>Adds payment dictionary category and populates it</comment>
+	<insert tableName="dictionary_category" schemaName="clinlims">
+		<column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) " />
+		<column name="name" value="patientPayment" />
+		<column name="description" value="patientPayment" />
+		<column name="local_abbrev" value="PP" />
+		<column name="lastupdated" valueDate=" now() " />
+	</insert>
+	<insert tableName="dictionary" schemaName="clinlims">
+		<column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+		<column name="is_active" value="Y" />
+		<column name="dict_entry" value="paidInFull" />
+		<column name="lastupdated" value="  now() " />
+		<column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'patientPayment') " />
+		<column name="display_key" value="dictionary.patient.payment.full" />
+	</insert>
+	<insert tableName="dictionary" schemaName="clinlims">
+		<column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+		<column name="is_active" value="Y" />
+		<column name="dict_entry" value="paidPartial" />
+		<column name="lastupdated" value="  now() " />
+		<column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'patientPayment') " />
+		<column name="display_key" value="dictionary.patient.payment.partial" />
+	</insert>
+	<insert tableName="dictionary" schemaName="clinlims">
+		<column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+		<column name="is_active" value="Y" />
+		<column name="dict_entry" value="paidNone" />
+		<column name="lastupdated" value="  now() " />
+		<column name="dictionary_category_id" valueNumeric=" (select id from clinlims.dictionary_category where name = 'patientPayment') " />
+		<column name="display_key" value="dictionary.patient.payment.none" />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="15">
+	<comment>Adds observation_history_type for payment status</comment>
+	<insert tableName="observation_history_type" schemaName="clinlims">
+		<column name="id" valueNumeric=" nextval( 'observation_history_type_seq' ) "/>
+		<column name="type_name" value="paymentStatus" />
+		<column name="description" value="The payment status of the patient" />
+		<column name="lastupdated" valueDate=" now() " />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="16">
+	<comment>Add flag for using pop-up when the result is out of valid range to site_information table</comment>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="alertWhenInvalidResult" />
+		<column name="description" value="Should there be an alert when the user enters a result outside of the valid range" />
+		<column name="value" value="false" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'resultConfiguration' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="value_type" value="boolean" />
+		<column name="instruction_key" value="instructions.results.invalidAlert" />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="17">
+	<comment>Sets all of the analysis revision counts to 1 which have a completion date</comment>
+	<update tableName="analysis" schemaName="clinlims">
+		<column name="revision" valueNumeric="1" />
+		<where>entry_date is not null</where>
+	</update>
+</changeSet>
+<changeSet author="paulsc" id="18">
+    <preConditions onFail="MARK_RAN" >
+    	<sqlCheck expectedResult="0">
+    		select count(*) from clinlims.site_information where name = 'TrainingInstallation';
+    	</sqlCheck>
+    </preConditions>
+	<comment>Adds TrainingInstallation to any DB which does not already have it</comment>
+	<insert schemaName="clinlims" tableName="site_information" >
+		<column name="id" valueNumeric=" nextval( 'site_information_seq' ) " /> 
+		<column name="name"  value="TrainingInstallation" />
+		<column name="description" value="Is this a training installation" />
+		<column name="value_type" value="boolean" />
+		<column name="value" value="false" />
+		<column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'siteIdentity' ) " />
+		<column name="lastupdated" valueDate=" now() " />
+	</insert>
+
+</changeSet>
+<changeSet author="paulsc" id="19">
+	<comment>Adds Malaraia case reporting as a queue type</comment>
+	<insert tableName="report_queue_type" schemaName="clinlims">
+		<column name="id" valueNumeric=" nextval( 'report_queue_type_seq' ) " />
+		<column name="name" value="malariaCase"/>
+		<column name="description" value="malaria case report" />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="20" >
+	<comment>Adds malaria case document type</comment>
+	<insert schemaName="clinlims" tableName="document_type" >
+		<column name="id" valueNumeric=" nextval( 'document_type_seq' ) " />
+		<column name="name" value="malariaCase" />
+		<column name="description" value="malaria case report sent" />
+		<column name="lastupdated" valueDate=" now() " /> 		
+	</insert>
+</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,22 @@
+
+Paste following in SampleType.sql
+
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Plasma','H', now() , 'Plasma', 'sample.type.Plasma', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Serum','H', now() , 'Serum', 'sample.type.Serum', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Sang total','H', now() , 'Sang total', 'sample.type.Sang', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Urines','H', now() , 'Urines', 'sample.type.Urines', 'Y');
+
+Paste following in TypeOrder.sql
+
+update clinlims.type_of_sample set sort_order=10 where description ILIKE 'Plasma';
+update clinlims.type_of_sample set sort_order=20 where description ILIKE 'Serum';
+update clinlims.type_of_sample set sort_order=30 where description ILIKE 'Sang total';
+update clinlims.type_of_sample set sort_order=40 where description ILIKE 'Urines';
+
+Paste following in TestCatalogUpdate.xml in the set inactive list
+
+, , , , , , 

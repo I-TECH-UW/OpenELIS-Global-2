@@ -1,0 +1,150 @@
+VIH test Rap
+VIH test Rap
+VIH test Rap
+VIH test Rap
+Elisa
+Elisa
+Elisa
+Elisa
+HIV Blot
+HIV Blot
+HIV Blot
+HIV Blot
+Rougoele
+Rougoele
+Duengue
+Duengue
+Rubeole
+Rubeole
+Dengue
+Dengue
+Hepatite A
+Hepatite A
+Hepatite B
+Hepatite B
+Hepatite C
+Hepatite C
+Hepatite E
+Hepatite E
+Infl A
+Infl A
+Infl A
+Infl B
+Infl B
+Infl B
+Para Infl 1
+Para Infl 1
+Para Infl 1
+Para Infl 2
+Para Infl 2
+Para Infl 2
+Para Infl 3
+Para Infl 3
+Para Infl 3
+VR
+VR
+VR
+Adenovirus
+Adenovirus
+Adenovirus
+Polio
+Polio
+Rotavirus
+RPR
+TPHA
+HIV PCR
+HIV PCR
+Charge Virale
+Charge Virale
+Infl A
+Infl B
+CD4
+CD4%
+Gramm
+Gramm
+Gramm
+Gramm
+Gramm
+Lepto
+Lepto
+Lepto
+Lepto
+Hemoculture
+Salmonelle
+Salmonelle
+Meningite Cul
+Meningite Rapide
+Salmonelle
+Shiguelle
+Cholera
+Diphterie
+Bordetella
+Acide Nalix
+Ampiciline
+Amox/Clavu
+Azithromicine
+Sulfame/Trimetho
+Tetracycline
+Ciprofloxacine
+Acide Nalix
+Amox/Clavu
+Amox/Clavu
+Ciprofloxacine
+Tetracycline
+Gentamycine
+Chloramphenicol
+Cefalotine
+Ceftazidime
+Amox/Clavu
+Amox/Clavu
+Ciprofloxacine
+Tetracycline
+Gentamycine
+Chloramphenicol
+Cefalotine
+Ceftazidime
+
+Aspect
+Sang Occulte
+Bacteries
+Levures Simple
+Levure Bourg
+Protozoaires
+Metazoaires
+Scotch Tape
+Kato
+Willis
+Baermann
+Ritchie
+Zeihl Neelsen
+Malaria Frottis
+Malaria Frottis
+Malaria Frottis
+Malaria Frottis
+Malaria Test Rapide
+Microfilaires
+Recherche BAAR
+Recherche BAAR
+Recherche BAAR
+Rech BAAR Fluo
+Rech BAAR Fluo
+Rech BAAR Fluo
+LJ / Ogawa
+Cult milieu Liqu
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

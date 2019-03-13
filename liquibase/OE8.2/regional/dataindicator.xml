@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  
+<changeSet author="csteele" id="1" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="type_of_data_indicator" schemaName="clinlims" />
+      </not>
+    </preConditions>
+	<comment>create type_of_data_indicator table</comment>
+  <sql>
+    CREATE TABLE clinlims.type_of_data_indicator (
+      "id" NUMERIC (20),
+      "name" VARCHAR (20) NOT NULL,
+      "name_key" VARCHAR (40),
+      "description" text,
+      "description_key" VARCHAR (40),
+      "lastupdated" timestamp without time zone NOT NULL,
+      PRIMARY KEY ("id")
+    );
+    
+    CREATE SEQUENCE clinlims.type_of_data_indicator_seq START 1; 
+	
+    INSERT INTO clinlims.reference_tables (id, name, keep_history, is_hl7_encoded)
+    VALUES (nextval('clinlims.reference_tables_seq'), 'TYPE_OF_DATA_INDICATOR', 'Y', 'N');
+
+  </sql>
+</changeSet>
+<changeSet author="csteele" id="2" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="data_indicator" schemaName="clinlims" />
+      </not>
+    </preConditions>
+	<comment>create data_indicator table</comment>
+  <sql>
+    CREATE TABLE clinlims.data_indicator (
+      "id" NUMERIC (20),
+      "data_value_id" NUMERIC (20),
+      "year" INTEGER,
+      "month" INTEGER,
+      "type_of_indicator_id" NUMERIC (20) NOT NULL,
+	  "status" VARCHAR (10),
+      "lastupdated" timestamp without time zone NOT NULL,
+      PRIMARY KEY ("id")
+    );
+    
+    CREATE SEQUENCE clinlims.data_indicator_seq START 1; 
+	
+    INSERT INTO clinlims.reference_tables (id, name, keep_history, is_hl7_encoded)
+    VALUES (nextval('clinlims.reference_tables_seq'), 'DATA_INDICATOR', 'Y', 'N');
+  </sql>
+</changeSet> 
+<changeSet author="csteele" id="3" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="data_resource" schemaName="clinlims" />
+      </not>
+    </preConditions>
+	<comment>create data_resource table and map tables</comment>
+  <sql>
+    CREATE TABLE clinlims.data_resource (
+      "id" NUMERIC (20),
+      "name" VARCHAR (20),
+      "collection_name" VARCHAR (20),
+      "header_key" VARCHAR (40),
+      "level" VARCHAR (20),
+      "indicator_id" NUMERIC (20),
+      "lastupdated" timestamp without time zone NOT NULL,
+      PRIMARY KEY ("id")
+    );
+    
+    CREATE SEQUENCE clinlims.data_resource_seq START 1; 
+	
+    INSERT INTO clinlims.reference_tables (id, name, keep_history, is_hl7_encoded)
+    VALUES (nextval('clinlims.reference_tables_seq'), 'DATA_RESOURCE', 'Y', 'N');
+	
+	CREATE TABLE clinlims.data_resource_level_id (
+	  "id" SERIAL,
+	  "level" VARCHAR (20),
+	  "id_for_level" VARCHAR (20),
+	  "data_resource_id" NUMERIC (20),
+      PRIMARY KEY ("id")
+	);
+  </sql>
+</changeSet>  
+<changeSet author="csteele" id="4" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="data_value" schemaName="clinlims" />
+      </not>
+    </preConditions>
+	<comment>create data_value table</comment>
+  <sql>
+    CREATE TABLE clinlims.data_value (
+      "id" NUMERIC (20),
+	  "data_resource_id" NUMERIC (20),
+	  "index" NUMERIC (20),
+	  "column_name" VARCHAR (20),
+      "value" VARCHAR (20),
+      "display_key" VARCHAR (40),
+      "visible" BOOLEAN,
+      "lastupdated" timestamp without time zone NOT NULL,
+      PRIMARY KEY ("id")
+    );
+    
+    CREATE SEQUENCE clinlims.data_value_seq START 1; 
+	
+    INSERT INTO clinlims.reference_tables (id, name, keep_history, is_hl7_encoded)
+    VALUES (nextval('clinlims.reference_tables_seq'), 'DATA_VALUE', 'Y', 'N');
+  </sql>
+</changeSet>
+<changeSet author="csteele" id="5" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+		<sqlCheck expectedResult="0">SELECT COUNT(*) FROM clinlims.type_of_data_indicator WHERE name = 'Turnaround Time'</sqlCheck>
+	</preConditions>
+	<comment>insert type of data indicators that will be created in OE</comment>
+  <sql>	
+	INSERT INTO clinlims.type_of_data_indicator (id, name, name_key, description, description_key, lastupdated)
+	VALUES (nextval('clinlims.type_of_data_indicator_seq'), 'Turnaround Time', 'datasubmission.tat', 'Difference of days between date of report generation date and interview date', 'datasubmission.tat.desc', current_timestamp);
+	
+	INSERT INTO clinlims.type_of_data_indicator (id, name, name_key, description, description_key, lastupdated)
+	VALUES (nextval('clinlims.type_of_data_indicator_seq'), 'VL Coverage', 'datasubmission.vlcov', 'Count of suppressed and unsuppresed divided by a reference (totalartmar)', 'datasubmission.vlcov.desc', current_timestamp);
+	
+	INSERT INTO clinlims.type_of_data_indicator (id, name, name_key, description, description_key, lastupdated)
+	VALUES (nextval('clinlims.type_of_data_indicator_seq'), 'VL Outcomes', 'datasubmission.vloutcomes', '', 'datasubmission.vloutcomes.desc', current_timestamp);
+	
+	INSERT INTO clinlims.type_of_data_indicator (id, name, name_key, description, description_key, lastupdated)
+	VALUES (nextval('clinlims.type_of_data_indicator_seq'), 'Testing Trends', 'datasubmission.testtrends', 'number of tests done', 'datasubmission.testtrends.desc', current_timestamp);
+	
+	INSERT INTO clinlims.type_of_data_indicator (id, name, name_key, description, description_key, lastupdated)
+	VALUES (nextval('clinlims.type_of_data_indicator_seq'), 'Gender Trends', 'datasubmission.gendertrend', 'number of tests done by gender', 'datasubmission.gendertrend.desc', current_timestamp);
+	
+	INSERT INTO clinlims.type_of_data_indicator (id, name, name_key, description, description_key, lastupdated)
+	VALUES (nextval('clinlims.type_of_data_indicator_seq'), 'Age Trends', 'datasubmission.agetrends', 'number of tests done by age', 'datasubmission.agetrends.desc', current_timestamp);
+	
+	INSERT INTO clinlims.type_of_data_indicator (id, name, name_key, description, description_key, lastupdated)
+	VALUES (nextval('clinlims.type_of_data_indicator_seq'), 'Justification', 'datasubmission.reason', 'number of tests done by reason', 'datasubmission.reason.desc', current_timestamp);
+	
+	INSERT INTO clinlims.type_of_data_indicator (id, name, name_key, description, description_key, lastupdated)
+	VALUES (nextval('clinlims.type_of_data_indicator_seq'), 'Gender Suppression', 'datasubmission.gendersuppress', 'suppression by gender', 'datasubmission.gendersuppress.desc', current_timestamp);
+	
+	INSERT INTO clinlims.type_of_data_indicator (id, name, name_key, description, description_key, lastupdated)
+	VALUES (nextval('clinlims.type_of_data_indicator_seq'), 'Age Suppression', 'datasubmission.agesuppress', 'suppression by age', 'datasubmission.agesuppress.desc', current_timestamp);
+	
+  </sql>
+</changeSet>
+<changeSet author="csteele" id="6" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+		<sqlCheck expectedResult="0">SELECT COUNT(*) FROM clinlims.site_information WHERE name = 'Data Sub URL'</sqlCheck>
+	</preConditions>
+	<comment>insert value for where data should be submitted to</comment>
+  <sql>	
+	INSERT INTO clinlims.site_information (id, name, lastupdated, description, value, encrypted, value_type)
+	VALUES (nextval('clinlims.site_information_seq'), 'Data Sub URL', current_timestamp, 'The url where data is submitted to the VL Dashboard', '', 'false', 'text');
+  </sql>
+</changeSet>
+
+</databaseChangeLog>

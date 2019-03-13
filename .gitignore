@@ -1,5 +1,17 @@
-build/*
-.settings
+# compiled code #
+*.class
+
+# Package Files #
+*.war
+*.ear
+
+#local use files
+liqubase.properties
+
+# IDE files #
 .classpath
+.settings/
 .project
-/target/
+
+# Maven Files #
+*target/

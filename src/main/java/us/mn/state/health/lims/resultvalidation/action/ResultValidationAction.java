@@ -2,15 +2,15 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
@@ -44,70 +44,69 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 
 public class ResultValidationAction extends BaseResultValidationAction {
 
-    @Override
-	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	@Override
+	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 
 		BaseActionForm dynaForm = (BaseActionForm) form;
 
 		request.getSession().setAttribute(SAVE_DISABLED, "true");
 		String testSectionId = (request.getParameter("testSectionId"));
-		
-		
 
 		ResultValidationPaging paging = new ResultValidationPaging();
 		String newPage = request.getParameter("page");
 
 		TestSection ts = null;
-		
-		
-		
 
 		if (GenericValidator.isBlankOrNull(newPage)) {
 
 			// Initialize the form.
 			dynaForm.initialize(mapping);
 
-		
-			
 			// load testSections for drop down
 			TestSectionDAO testSectionDAO = new TestSectionDAOImpl();
 			PropertyUtils.setProperty(dynaForm, "testSections", DisplayListService.getList(ListType.TEST_SECTION));
-			PropertyUtils.setProperty(dynaForm, "testSectionsByName", DisplayListService.getList(ListType.TEST_SECTION_BY_NAME));
-			
+			PropertyUtils.setProperty(dynaForm, "testSectionsByName",
+					DisplayListService.getList(ListType.TEST_SECTION_BY_NAME));
+
 			if (!GenericValidator.isBlankOrNull(testSectionId)) {
 				ts = testSectionDAO.getTestSectionById(testSectionId);
 				PropertyUtils.setProperty(dynaForm, "testSectionId", "0");
 			}
-			
-			
+
 			List<AnalysisItem> resultList;
 			ResultsValidationUtility resultsValidationUtility = new ResultsValidationUtility();
 			setRequestType(ts == null ? StringUtil.getMessageForKey("workplan.unit.types") : ts.getLocalizedName());
 			if (!GenericValidator.isBlankOrNull(testSectionId)) {
-               resultList = resultsValidationUtility.getResultValidationList( getValidationStatus(), testSectionId );
-				
+				resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(), testSectionId);
+
 			} else {
-				resultList = new ArrayList<AnalysisItem>();
+				resultList = new ArrayList<>();
 			}
-			paging.setDatabaseResults(request, dynaForm, resultList);
-			
+
+			// commented out to allow maven compilation - CSL
+			// paging.setDatabaseResults(request, dynaForm, resultList);
+
 		} else {
-			paging.page(request, dynaForm, newPage);
+
+			// commented out to allow maven compilation - CSL
+			// paging.page(request, dynaForm, newPage);
 		}
 
 		return mapping.findForward(FWD_SUCCESS);
 	}
 
 	public List<Integer> getValidationStatus() {
-        List<Integer> validationStatus = new ArrayList<Integer>();
-        validationStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance)));
-        if( ConfigurationProperties.getInstance().isPropertyValueEqual( ConfigurationProperties.Property.VALIDATE_REJECTED_TESTS , "true")){
-            validationStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected)));
-        }
+		List<Integer> validationStatus = new ArrayList<>();
+		validationStatus
+				.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance)));
+		if (ConfigurationProperties.getInstance()
+				.isPropertyValueEqual(ConfigurationProperties.Property.VALIDATE_REJECTED_TESTS, "true")) {
+			validationStatus
+					.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected)));
+		}
 
-        return validationStatus;
+		return validationStatus;
 	}
-	
 
 }

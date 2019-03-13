@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--Some settings-->
+  <changeSet author="CI OpenELIS developers group" id="1" >
+    <comment>Update in clinlims test_section information</comment>
+    <sql>
+
+UPDATE clinlims.test_section
+SET is_active='Y'
+WHERE id=58;
+
+UPDATE clinlims.test_section
+SET is_active='Y'
+WHERE id=60;
+
+UPDATE clinlims.test_section
+SET is_active='Y'
+WHERE id=121;
+
+UPDATE clinlims.test_section
+SET is_active='Y'
+WHERE id=117;
+
+UPDATE clinlims.test_section
+SET is_active='Y'
+WHERE id=136;
+
+UPDATE clinlims.test_section
+SET is_active='Y'
+WHERE description='Virologie_EID';
+
+
+UPDATE clinlims.test_section
+SET is_active='Y'
+WHERE description='Virologie_VL';
+
+
+
+
+</sql>
+  </changeSet>
+  
+</databaseChangeLog>

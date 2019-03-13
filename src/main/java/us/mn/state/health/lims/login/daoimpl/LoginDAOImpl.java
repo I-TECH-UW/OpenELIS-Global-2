@@ -500,7 +500,7 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 	 * @return true if success, false otherwise
 	 */
 	@Override
-	public boolean updatePassword(Login login) throws LIMSRuntimeException {
+	public void updatePassword(Login login) throws LIMSRuntimeException {
 
 		// Crypto crypto = new Crypto();
 		PasswordUtil passUtil = new PasswordUtil();
@@ -525,8 +525,6 @@ public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
 			LogEvent.logError("LoginDAOImpl", "updatePassword()", e.toString());
 			throw new LIMSRuntimeException("Error in Login updatePassword()", e);
 		}
-
-		return true;
 	}
 
 	/**

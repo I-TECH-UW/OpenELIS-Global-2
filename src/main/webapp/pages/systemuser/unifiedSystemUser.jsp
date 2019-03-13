@@ -122,6 +122,11 @@ function /*void*/ requiredFieldUpdated( field){
 	field.style.borderColor = field.value.blank() ? "red" : "";
 }
 
+function mySaveAction() {
+	window.onbeforeunload = null;
+	document.getElementById("mainForm").submit();
+}
+
 </script>
 <form:hidden path="systemUserId"/>
 <form:hidden path="loginUserId"/>

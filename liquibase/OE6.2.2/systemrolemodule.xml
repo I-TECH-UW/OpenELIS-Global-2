@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--system role and module updating-->
+  <!-- Data specific to CDIRetroCI -->
+  <changeSet author="CI OpenELIS developers group" id="1" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.system_role where name= 'Results Admin';
+    		</sqlCheck>
+    </preConditions>
+    <comment>Insert in clinlims new role</comment>
+    <sql>
+ALTER SEQUENCE clinlims.system_role_seq restart WITH 70;
+ALTER TABLE clinlims.system_role  ALTER COLUMN name TYPE character(30);
+  
+INSERT INTO clinlims.system_role(id, name, description, is_grouping_role, grouping_parent, display_key, active, editable)
+    VALUES (66, 'Results Admin', 'Able to access all results forms', default,null,'role.results.all', 
+            default, default);
+			
+INSERT INTO clinlims.system_role(id, name, description, is_grouping_role, grouping_parent, display_key,active, editable)
+    VALUES (67, 'Identifying Information Edit', 'Able to edit already entered patients and sample primary IDs', default,null,'role.edit.identifiers', 
+            default, default);
+</sql>
+  </changeSet>
+  
+  <changeSet author="CI OpenELIS developers group" id="2" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+	
+      <sqlCheck expectedResult="0">select count(*) from clinlims.system_module where id= 1100;
+    		</sqlCheck>
+	
+    </preConditions>
+    <comment>Insert in clinlims new module</comment>
+    <sql>
+
+INSERT INTO clinlims.system_module(
+            id, name, description, has_select_flag, has_add_flag, has_update_flag, 
+            has_delete_flag)
+    VALUES (1100,'Access.sample.accessionNo.edit', 'Sample-&gt;SampleEntryByProject edit sample number', 'Y', 'Y', 'Y', 
+            'Y');
+
+INSERT INTO clinlims.system_module(
+            id, name, description, has_select_flag, has_add_flag, has_update_flag, 
+            has_delete_flag)
+    VALUES (1101,'Access.patient.subjectNos.edit', 'Patient-&gt;PatientEntryByProject edit subject numbers', 'Y', 'Y', 'Y','Y');
+
+</sql>
+  </changeSet>
+  
+  
+  <changeSet author="CI OpenELIS developers group" id="3" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.system_role_module where system_role_id= '67';
+    		</sqlCheck>
+			
+	<sqlCheck expectedResult="0">select count(*) from clinlims.system_role_module where id= '1060';
+    		</sqlCheck>		
+			
+    </preConditions>
+    <comment>Insert in clinlims new system role module</comment>
+    <sql>
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1060,'Y','Y','Y','Y',67,1100);
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1061,'Y','Y','Y','Y',67,1101);
+
+</sql>
+  </changeSet>
+  
+ <changeSet author="CI OpenELIS developers group" id="4" context="ci_regional,ci_general">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.system_module where name= 'Workplan:EID';
+    		</sqlCheck>
+    </preConditions>
+    <comment>Insert in clinlims new system role module</comment>
+    <sql>
+
+
+INSERT INTO clinlims.system_module(id, name, description, has_select_flag, has_add_flag, has_update_flag,has_delete_flag) VALUES (1420,'Workplan:EID','Workplan=>EID','Y','Y','Y','Y');
+
+INSERT INTO clinlims.system_module(id, name, description, has_select_flag, has_add_flag, has_update_flag,has_delete_flag) VALUES (1421,'LogbookResults:EID','LogbookResults=>EID','Y','Y','Y','Y');
+
+INSERT INTO clinlims.system_module(id, name, description, has_select_flag, has_add_flag, has_update_flag,has_delete_flag) VALUES (1422,'ResultValidation:EID','ResultValidation=>EID','Y','Y','Y','Y');
+
+
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1510,'Y','Y','Y','Y',5,1420);
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1511,'Y','Y','Y','Y',5,1421);
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1512,'Y','Y','Y','Y',5,1422);
+
+
+INSERT INTO clinlims.system_module(id, name, description, has_select_flag, has_add_flag, has_update_flag,has_delete_flag) VALUES (1423,'Workplan:VL','Workplan=>VL','Y','Y','Y','Y');
+
+INSERT INTO clinlims.system_module(id, name, description, has_select_flag, has_add_flag, has_update_flag,has_delete_flag) VALUES (1424,'LogbookResults:VL','LogbookResults=>VL','Y','Y','Y','Y');
+
+INSERT INTO clinlims.system_module(id, name, description, has_select_flag, has_add_flag, has_update_flag,has_delete_flag) VALUES (1425,'ResultValidation:VL','ResultValidation=>VL','Y','Y','Y','Y');
+
+
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1513,'Y','Y','Y','Y',5,1423);
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1514,'Y','Y','Y','Y',5,1424);
+
+INSERT INTO clinlims.system_role_module(id, has_select, has_add, has_update, has_delete, system_role_id,system_module_id) VALUES (1515,'Y','Y','Y','Y',5,1425);
+
+</sql>
+  </changeSet> 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+</databaseChangeLog>

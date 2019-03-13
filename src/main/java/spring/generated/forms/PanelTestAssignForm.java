@@ -1,7 +1,7 @@
 package spring.generated.forms;
 
-import java.lang.String;
 import java.util.List;
+
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.testconfiguration.action.PanelTests;
 

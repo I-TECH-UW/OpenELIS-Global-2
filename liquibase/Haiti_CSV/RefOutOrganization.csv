@@ -1,0 +1,11 @@
+id,short_name,name,lastupdated,active
+ nextval( 'organization_seq' ) ,DSN,Departement Sanitaire du Nord, now() ,Y
+ nextval( 'organization_seq' ) ,DSNO,Departement Sanitaire du Nord Ouest, now() ,Y
+ nextval( 'organization_seq' ) ,DSNE,Departement Sanitaire du Nord d'est, now() ,Y
+ nextval( 'organization_seq' ) ,DSA ,Departement Sanitaire Artibonite, now() ,Y
+ nextval( 'organization_seq' ) ,DSS,Departement Sanitaire du Sud, now() ,Y
+ nextval( 'organization_seq' ) ,DSGA,Departement Sanitaire Grand'Anse, now() ,Y
+ nextval( 'organization_seq' ) ,DSNI,Departement Sanitaire des Nippes, now() ,Y
+ nextval( 'organization_seq' ) ,DSSE,Departement Sanitaire du Sud-est, now() ,Y
+ nextval( 'organization_seq' ) ,DSO,Departement Sanitaire de l'Ouest, now() ,Y
+ nextval( 'organization_seq' ) ,DSC,Departement Sanitaire du Centre, now() ,Y

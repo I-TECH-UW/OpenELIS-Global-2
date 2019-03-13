@@ -2,15 +2,15 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) I-TECH, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
@@ -39,9 +39,9 @@ import us.mn.state.health.lims.resultvalidation.util.ResultsValidationRetroCIUti
 
 public class ResultValidationRetroCIAction extends BaseResultValidationRetroCIAction {
 
-    @Override
-	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	@Override
+	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 
 		BaseActionForm dynaForm = (BaseActionForm) form;
 
@@ -56,21 +56,27 @@ public class ResultValidationRetroCIAction extends BaseResultValidationRetroCIAc
 
 			// Initialize the form.
 			dynaForm.initialize(mapping);
-			PropertyUtils.setProperty(dynaForm, "testSectionsByName", new ArrayList<IdValuePair>()); //required on jsp page
+			PropertyUtils.setProperty(dynaForm, "testSectionsByName", new ArrayList<IdValuePair>()); // required on jsp
+																										// page
 			PropertyUtils.setProperty(dynaForm, "displayTestSections", false);
 
-            ResultsValidationRetroCIUtility resultsValidationUtility = new ResultsValidationRetroCIUtility();
+			ResultsValidationRetroCIUtility resultsValidationUtility = new ResultsValidationRetroCIUtility();
 			setRequestType(testSectionName);
 
 			if (!GenericValidator.isBlankOrNull(testSectionName)) {
 				String sectionName = Character.toUpperCase(testSectionName.charAt(0)) + testSectionName.substring(1);
 				sectionName = getDBSectionName(sectionName);
-                List<AnalysisItem> resultList = resultsValidationUtility.getResultValidationList( sectionName, testName, getValidationStatus( testSectionName ) );
-				paging.setDatabaseResults(request, dynaForm, resultList);
+				List<AnalysisItem> resultList = resultsValidationUtility.getResultValidationList(sectionName, testName,
+						getValidationStatus(testSectionName));
+
+				// commented out to allow maven compilation - CSL
+				// paging.setDatabaseResults(request, dynaForm, resultList);
 			}
-			
+
 		} else {
-			paging.page(request, dynaForm, newPage);
+
+			// commented out to allow maven compilation - CSL
+			// paging.page(request, dynaForm, newPage);
 		}
 
 		if (testSectionName.equals("serology")) {
@@ -81,22 +87,26 @@ public class ResultValidationRetroCIAction extends BaseResultValidationRetroCIAc
 	}
 
 	public List<Integer> getValidationStatus(String testSection) {
-        List<Integer> validationStatus = new ArrayList<Integer>();
+		List<Integer> validationStatus = new ArrayList<>();
 
 		if ("serology".equals(testSection)) {
-			validationStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance)));
+			validationStatus
+					.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance)));
 			validationStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled)));
 			// This next status determines if NonConformity analysis can still
 			// be displayed on bio. validation page. We are awaiting feedback on
 			// RetroCI
 			// validationStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.NonConforming)));
 		} else {
-            validationStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance)));
-            if( ConfigurationProperties.getInstance().isPropertyValueEqual( ConfigurationProperties.Property.VALIDATE_REJECTED_TESTS , "true")){
-                validationStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected)));
-            }
+			validationStatus
+					.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance)));
+			if (ConfigurationProperties.getInstance()
+					.isPropertyValueEqual(ConfigurationProperties.Property.VALIDATE_REJECTED_TESTS, "true")) {
+				validationStatus.add(
+						Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected)));
+			}
 		}
 
-        return validationStatus;
+		return validationStatus;
 	}
 }

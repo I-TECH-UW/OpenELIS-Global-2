@@ -1,0 +1,11 @@
+org_type_id,org_id
+ ( select id from organization_type ot where ot.short_name='referralLab' ) , ( select id from organization o where o.name='Departement Sanitaire du Nord') 
+ ( select id from organization_type ot where ot.short_name='referralLab' ) , ( select id from organization o where o.name='Departement Sanitaire du Nord Ouest') 
+ ( select id from organization_type ot where ot.short_name='referralLab' ) , ( select id from organization o where o.name=$$Departement Sanitaire du Nord d'est$$) 
+ ( select id from organization_type ot where ot.short_name='referralLab' ) , ( select id from organization o where o.name='Departement Sanitaire Artibonite') 
+ ( select id from organization_type ot where ot.short_name='referralLab' ) , ( select id from organization o where o.name='Departement Sanitaire du Sud') 
+ ( select id from organization_type ot where ot.short_name='referralLab' ) , ( select id from organization o where o.name=$$Departement Sanitaire Grand'Anse$$) 
+ ( select id from organization_type ot where ot.short_name='referralLab' ) , ( select id from organization o where o.name='Departement Sanitaire des Nippes') 
+ ( select id from organization_type ot where ot.short_name='referralLab' ) , ( select id from organization o where o.name='Departement Sanitaire du Sud-est') 
+ ( select id from organization_type ot where ot.short_name='referralLab' ) , ( select id from organization o where o.name=$$Departement Sanitaire de l'Ouest$$) 
+ ( select id from organization_type ot where ot.short_name='referralLab' ) , ( select id from organization o where o.name='Departement Sanitaire du Centre') 

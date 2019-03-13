@@ -12,8 +12,11 @@
 
 <script>
     function validateForm(form) {
+        return validateLoginChangePasswordForm(form);
+    }
+    
+    function validateLoginChangePasswordForm(form) {
     	return true;
-      // return validateLoginChangePasswordForm(form);
     }
 
 </script>
@@ -35,14 +38,14 @@
         <td width="20%">&nbsp;</td>	
         <td width="10%" align="right" noWrap><spring:message code="login.msg.userName"/>:</td>
         <td colspan="2" align="left">
-            <form:input path="loginName"/>
+            <form:input id="loginName" path="loginName"/>
         </td>
     </tr>   
      <tr>
         <td width="20%">&nbsp;</td>
         <td width="10%" noWrap><spring:message code="login.msg.password.current"/>:</td>
         <td colspan="2" align="left">
-            <form:password path="password"/> 
+            <form:password id="password" path="password"/> 
         </td>
      </tr>
      <tr>
@@ -52,14 +55,14 @@
         <td width="20%">&nbsp;</td>
         <td width="10%" align="right" noWrap><spring:message code="login.msg.password.new"/>:</td>
         <td colspan="2" align="left">
-            <form:password path="newPassword"/>
+            <form:password id="newPassword" path="newPassword"/>
         </td> 
      </tr>
      <tr>
         <td width="20%">&nbsp;</td>
         <td width="10%" align="right" noWrap><spring:message code="login.msg.password.new.again"/>:</td>
         <td colspan="2" align="left">
-            <form:password path="confirmPassword"/>
+            <form:password id="confirmPassword" path="confirmPassword"/>
         </td>  
      </tr>                    
     </table>    

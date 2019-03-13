@@ -35,7 +35,6 @@ import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSInvalidPrinterException;
 import us.mn.state.health.lims.common.exception.LIMSPrintException;
 import us.mn.state.health.lims.common.servlet.reports.ReportsServlet;
-import us.mn.state.health.lims.common.util.resources.ResourceLocator;
 import us.mn.state.health.lims.reports.valueholder.resultsreport.ResultsReportTest;
 import us.mn.state.health.lims.reports.valueholder.resultsreport.ResultsReportTestComparator;
 

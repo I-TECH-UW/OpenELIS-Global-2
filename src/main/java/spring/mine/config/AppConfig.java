@@ -2,6 +2,7 @@ package spring.mine.config;
 
 import java.util.Locale;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -10,8 +11,8 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.handler.MappedInterceptor;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -19,10 +20,24 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesView;
 
+import spring.mine.interceptor.ModuleAuthenticationInterceptor;
+import spring.mine.interceptor.PageAttributesInterceptor;
+import spring.mine.interceptor.UrlErrorsInterceptor;
+import spring.mine.security.SecurityConfig;
+
 @EnableWebMvc
 @Configuration
 @ComponentScan("spring")
 public class AppConfig implements WebMvcConfigurer {
+
+	@Autowired
+	ModuleAuthenticationInterceptor moduleAuthenticationInterceptor;
+	@Autowired
+	UrlErrorsInterceptor urlLocatedErrorsInterceptor;
+	@Autowired
+	PageAttributesInterceptor pageAttributesInterceptor;
+	@Autowired
+	RequestMappingHandlerMapping requestMappingHandlerMapping;
 
 	@Bean
 	public ViewResolver viewResolver() {
@@ -57,15 +72,20 @@ public class AppConfig implements WebMvcConfigurer {
 	}
 
 	@Bean
-	public MappedInterceptor localeChangeInterceptor() {
+	public LocaleChangeInterceptor localeChangeInterceptor() {
 		LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
 		localeChangeInterceptor.setParamName("lang");
-		return new MappedInterceptor(null, localeChangeInterceptor);
+		return localeChangeInterceptor;
 	}
 
-	@Bean
-	public RequestMappingHandlerMapping requestMappingHandlerMapping() {
-		RequestMappingHandlerMapping handlerMap = new RequestMappingHandlerMapping();
-		return handlerMap;
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(localeChangeInterceptor()).addPathPatterns("/**");
+		registry.addInterceptor(moduleAuthenticationInterceptor).addPathPatterns("/**")
+				.excludePathPatterns(SecurityConfig.OPEN_PAGES).excludePathPatterns(SecurityConfig.RESOURCE_PAGES)
+				.excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES);
+		registry.addInterceptor(urlLocatedErrorsInterceptor).addPathPatterns("/**");
+		registry.addInterceptor(pageAttributesInterceptor).addPathPatterns("/**");
 	}
+
 }

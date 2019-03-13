@@ -30,10 +30,10 @@ import org.apache.struts.action.ActionMapping;
 import us.mn.state.health.lims.common.action.BaseActionForm;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.patient.saving.Accessioner;
 
 /**
  * Action for Côte d'Ivoire study based patient entry.
+ * 
  * @author pahill
  * @since 2010-04-16
  */
@@ -41,37 +41,35 @@ public class PatientEntryByProjectAction extends BasePatientEntryByProject {
 
 	private String todayAsText;
 
+	@Override
 	protected String getPageTitleKey() {
 		return "patient.project.title";
 	}
 
+	@Override
 	protected String getPageSubtitleKey() {
 		String key = null;
 
 		switch (requestType) {
-			case INITIAL: {
-				key = "banner.menu.createPatient.Initial";
-				break;
-			}
-			case VERIFY: {
-				key = "banner.menu.createPatient.Verify";
-				break;
-			}
+		case INITIAL: {
+			key = "banner.menu.createPatient.Initial";
+			break;
+		}
+		case VERIFY: {
+			key = "banner.menu.createPatient.Verify";
+			break;
+		}
 
-			default: {
-				key = "banner.menu.createPatient.Initial";
-			}
+		default: {
+			key = "banner.menu.createPatient.Initial";
+		}
 		}
 
 		return key;
 	}
 
-
-
-
 	@Override
-	protected ActionForward performAction(ActionMapping mapping,
-			ActionForm form, HttpServletRequest request,
+	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
 		todayAsText = DateUtil.formatDateAsText(new Date());
@@ -82,19 +80,24 @@ public class PatientEntryByProjectAction extends BasePatientEntryByProject {
 
 		request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.TRUE);
 
-		// retrieve the current project, before clearing, so that we can set it on later.
-		String projectFormName = Accessioner.findProjectFormName(dynaForm);
+		// retrieve the current project, before clearing, so that we can set it on
+		// later.
+
+		// commented out to allow maven compilation - CSL
+		// String projectFormName = Accessioner.findProjectFormName(dynaForm);
 		// Initialize the form.
 		dynaForm.initialize(mapping);
 		updateRequestType(request);
 
 		addAllPatientFormLists(dynaForm);
 
-		PropertyUtils.setProperty(form, "currentDate", todayAsText);	// TODO Needed?
+		PropertyUtils.setProperty(form, "currentDate", todayAsText); // TODO Needed?
 		PropertyUtils.setProperty(form, "receivedDateForDisplay", todayAsText);
 		PropertyUtils.setProperty(form, "interviewDate", todayAsText);
 		// put the projectFormName back in.
-        setProjectFormName(form, projectFormName);
+
+		// commented out to allow maven compilation - CSL
+		// setProjectFormName(form, projectFormName);
 		return mapping.findForward(forward);
 	}
 }

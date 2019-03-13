@@ -1,0 +1,6 @@
+Age ranges from John Wesley:
+newborn: 0-28 days
+infant 1-12 months
+young child 1 year - 5 years (need clarification about whether a 1 year old is 'infant' or 'young child')
+child 5 -14 years
+adult 15 years +

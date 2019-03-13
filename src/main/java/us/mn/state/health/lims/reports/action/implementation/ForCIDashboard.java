@@ -16,16 +16,7 @@
  */
 package us.mn.state.health.lims.reports.action.implementation;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.validator.GenericValidator;
-import org.jfree.util.Log;
-import spring.mine.common.form.BaseForm;
-import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.project.dao.ProjectDAO;
-import us.mn.state.health.lims.project.daoimpl.ProjectDAOImpl;
-import us.mn.state.health.lims.project.valueholder.Project;
-import us.mn.state.health.lims.reports.action.implementation.reportBeans.*;
-
+import static org.apache.commons.validator.GenericValidator.isBlankOrNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,7 +25,18 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import static org.apache.commons.validator.GenericValidator.isBlankOrNull;
+
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.validator.GenericValidator;
+import org.jfree.util.Log;
+
+import spring.mine.common.form.BaseForm;
+import us.mn.state.health.lims.common.util.StringUtil;
+import us.mn.state.health.lims.project.dao.ProjectDAO;
+import us.mn.state.health.lims.project.daoimpl.ProjectDAOImpl;
+import us.mn.state.health.lims.project.valueholder.Project;
+import us.mn.state.health.lims.reports.action.implementation.reportBeans.CSVColumnBuilder;
+import us.mn.state.health.lims.reports.action.implementation.reportBeans.ForCIDashboardColumnBuilder;
 
 /**
  * @author Paul A. Hill (pahill@uw.edu)

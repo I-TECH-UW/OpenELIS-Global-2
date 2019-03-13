@@ -1,16 +1,16 @@
 package spring.generated.testconfiguration.controller;
 
-import java.lang.String;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,15 +51,8 @@ public class TestCatalogController extends BaseController {
     	form = new TestCatalogForm();
     }
         form.setFormAction("");
-    BaseErrors errors = new BaseErrors();
-    if (form.getErrors() != null) {
-    	errors = (BaseErrors) form.getErrors();
-    }
-    ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-    if (errors.hasErrors()) {
-    	return mv;
-    }
+    Errors errors = new BaseErrors();
+    
     
     
     List<TestCatalog> testCatalogList = createTestList();
@@ -76,11 +69,11 @@ public class TestCatalogController extends BaseController {
 
     return findForward(forward, form);}
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
-    if ("success".equals(forward)) {
-      return new ModelAndView("testCatalogDefinition", "form", form);
+  protected String findLocalForward(String forward) {
+    if (FWD_SUCCESS.equals(forward)) {
+      return "testCatalogDefinition";
     } else {
-      return new ModelAndView("PageNotFound");
+      return "PageNotFound";
     }
   }
 

@@ -1,6 +1,5 @@
 package spring.mine.analyzerimport.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
@@ -18,7 +17,7 @@ public class AnalyzerTestNameForm extends BaseForm {
 
 	private String analyzerTestName;
 
-	private Timestamp lastupdated;
+	private boolean newMapping = true;
 
 	public AnalyzerTestNameForm() {
 		setFormName("analyzerTestNameForm");
@@ -64,11 +63,11 @@ public class AnalyzerTestNameForm extends BaseForm {
 		this.analyzerTestName = analyzerTestName;
 	}
 
-	public Timestamp getLastupdated() {
-		return lastupdated;
+	public boolean isNewMapping() {
+		return newMapping;
 	}
 
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
+	public void setNewMapping(boolean newMapping) {
+		this.newMapping = newMapping;
 	}
 }

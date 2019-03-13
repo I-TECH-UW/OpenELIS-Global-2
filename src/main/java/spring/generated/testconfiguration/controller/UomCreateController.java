@@ -1,6 +1,5 @@
 package spring.generated.testconfiguration.controller;
 
-import java.lang.String;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -9,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.forms.UomCreateForm;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -29,125 +28,112 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 @Controller
 public class UomCreateController extends BaseController {
-  public static final String NAME_SEPARATOR = "$";
-  @RequestMapping(
-      value = "/UomCreate",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showUomCreate(HttpServletRequest request,
-      @ModelAttribute("form") UomCreateForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new UomCreateForm();
-    }
-        form.setFormAction("");
-    BaseErrors errors = new BaseErrors();
-    if (form.getErrors() != null) {
-    	errors = (BaseErrors) form.getErrors();
-    }
-    ModelAndView mv = checkUserAndSetup(form, errors, request);
+	public static final String NAME_SEPARATOR = "$";
 
-    if (errors.hasErrors()) {
-    	return mv;
-    }
-    
-    try {
-    	PropertyUtils.setProperty(form, "existingUomList", DisplayListService.getList(DisplayListService.ListType.UNIT_OF_MEASURE));
-		PropertyUtils.setProperty(form, "inactiveUomList", DisplayListService.getList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE));
-	} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-    List<UnitOfMeasure> uoms = UnitOfMeasureService.getAllUnitOfMeasures();
-    try {
-		PropertyUtils.setProperty(form, "existingEnglishNames", getExistingUomNames(uoms, ConfigurationProperties.LOCALE.ENGLISH));
-		PropertyUtils.setProperty(form, "existingFrenchNames", getExistingUomNames(uoms, ConfigurationProperties.LOCALE.FRENCH));
-	} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+	@RequestMapping(value = "/UomCreate", method = RequestMethod.GET)
+	public ModelAndView showUomCreate(HttpServletRequest request, @ModelAttribute("form") UomCreateForm form) {
+		String forward = FWD_SUCCESS;
+		if (form == null) {
+			form = new UomCreateForm();
+		}
+		form.setFormAction("");
+		Errors errors = new BaseErrors();
+
+		try {
+			PropertyUtils.setProperty(form, "existingUomList",
+					DisplayListService.getList(DisplayListService.ListType.UNIT_OF_MEASURE));
+			PropertyUtils.setProperty(form, "inactiveUomList",
+					DisplayListService.getList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE));
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		List<UnitOfMeasure> uoms = UnitOfMeasureService.getAllUnitOfMeasures();
+		try {
+			PropertyUtils.setProperty(form, "existingEnglishNames",
+					getExistingUomNames(uoms, ConfigurationProperties.LOCALE.ENGLISH));
+			PropertyUtils.setProperty(form, "existingFrenchNames",
+					getExistingUomNames(uoms, ConfigurationProperties.LOCALE.FRENCH));
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return findForward(forward, form);
 	}
 
-    return findForward(forward, form);
-  }
-  
-  private String getExistingUomNames(List<UnitOfMeasure> uoms, ConfigurationProperties.LOCALE locale) {
-      StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
+	private String getExistingUomNames(List<UnitOfMeasure> uoms, ConfigurationProperties.LOCALE locale) {
+		StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
 
-      for( UnitOfMeasure uom : uoms){
-          builder.append(LocalizationService.getLocalizationValueByLocal(locale, uom.getLocalization()));
-          builder.append(NAME_SEPARATOR);
-      }
+		for (UnitOfMeasure uom : uoms) {
+			builder.append(LocalizationService.getLocalizationValueByLocal(locale, uom.getLocalization()));
+			builder.append(NAME_SEPARATOR);
+		}
 
-      return builder.toString();
-  }
-  
-  @RequestMapping(
-	      value = "/UomCreate",
-	      method = RequestMethod.POST
-	  )
-	  public ModelAndView postUomCreate(HttpServletRequest request,
-	      @ModelAttribute("form") UomCreateForm form) throws Exception {
-	  
-	    String forward = FWD_SUCCESS_INSERT;
-	    
-	    BaseErrors errors = new BaseErrors();
-	    if (form.getErrors() != null) {
-	    	errors = (BaseErrors) form.getErrors();
-	    }
-	    ModelAndView mv = checkUserAndSetup(form, errors, request);
+		return builder.toString();
+	}
 
-	    if (errors.hasErrors()) {
-	    	return mv;
-	    }
-	    
-        String identifyingName = form.getUomEnglishName();
-        String userId = getSysUserId(request);
+	@RequestMapping(value = "/UomCreate", method = RequestMethod.POST)
+	public ModelAndView postUomCreate(HttpServletRequest request, @ModelAttribute("form") UomCreateForm form)
+			throws Exception {
 
-        //Localization localization = createLocalization(dynaForm.getString("uomFrenchName"), identifyingName, userId);
+		String forward = FWD_SUCCESS_INSERT;
 
-        UnitOfMeasure unitOfMeasure = createUnitOfMeasure(identifyingName, userId);
+		BaseErrors errors = new BaseErrors();
 
-        Transaction tx = HibernateUtil.getSession().beginTransaction();
+		String identifyingName = form.getUomEnglishName();
+		String userId = getSysUserId(request);
 
-        try {
-            new UnitOfMeasureDAOImpl().insertData(unitOfMeasure);
-            tx.commit();
+		// Localization localization =
+		// createLocalization(dynaForm.getString("uomFrenchName"), identifyingName,
+		// userId);
 
-        } catch (LIMSRuntimeException lre) {
-            tx.rollback();
-            lre.printStackTrace();
-        } finally {
-            HibernateUtil.closeSession();
-        }
+		UnitOfMeasure unitOfMeasure = createUnitOfMeasure(identifyingName, userId);
 
-        DisplayListService.refreshList(DisplayListService.ListType.UNIT_OF_MEASURE);
-        DisplayListService.refreshList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE);
-	    
-	    return findForward(forward, form);
-  }
-  
-  private UnitOfMeasure createUnitOfMeasure(String identifyingName, String userId) {
-      UnitOfMeasure unitOfMeasure = new UnitOfMeasure();
-      unitOfMeasure.setDescription(identifyingName);
-      unitOfMeasure.setUnitOfMeasureName(identifyingName);
-      return unitOfMeasure;
-  }
+		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
-    if ("success".equals(forward)) {
-      return new ModelAndView("uomCreateDefinition", "form", form);
-    } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-	      return new ModelAndView("redirect:/UomCreate.do", "form", form);
-    } else {
-      return new ModelAndView("PageNotFound");
-    }
-  }
+		try {
+			new UnitOfMeasureDAOImpl().insertData(unitOfMeasure);
+			tx.commit();
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+		} catch (LIMSRuntimeException lre) {
+			tx.rollback();
+			lre.printStackTrace();
+		} finally {
+			HibernateUtil.closeSession();
+		}
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+		DisplayListService.refreshList(DisplayListService.ListType.UNIT_OF_MEASURE);
+		DisplayListService.refreshList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE);
+
+		return findForward(forward, form);
+	}
+
+	private UnitOfMeasure createUnitOfMeasure(String identifyingName, String userId) {
+		UnitOfMeasure unitOfMeasure = new UnitOfMeasure();
+		unitOfMeasure.setDescription(identifyingName);
+		unitOfMeasure.setUnitOfMeasureName(identifyingName);
+		return unitOfMeasure;
+	}
+
+	@Override
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "uomCreateDefinition";
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return "redirect:/UomCreate.do";
+		} else {
+			return "PageNotFound";
+		}
+	}
+
+	@Override
+	protected String getPageTitleKey() {
+		return null;
+	}
+
+	@Override
+	protected String getPageSubtitleKey() {
+		return null;
+	}
 }

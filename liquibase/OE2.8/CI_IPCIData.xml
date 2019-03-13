@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<!-- Data specific to CI_IPCI -->
+	<changeSet author="paulsc" id="1" context="CI_IPCI">
+		<comment>Updates new site_information values</comment>
+		<update tableName="site_information" schemaName="clinlims">
+			<column name="value" value="CI_IPCI" />
+			<where>name = 'stringContext'</where>
+		</update>
+		<update tableName="site_information" schemaName="clinlims">
+			<column name="value" value="CI_IPCI" />
+			<where>name = 'setFieldForm'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="2" context="CI_IPCI">
+		<comment>Adds the AuditTrailView to a new Audit Trail Role</comment>
+		<insert tableName="system_role">
+			<column name="id" valueNumeric=" nextval( 'system_role_seq' ) " />
+			<column name="name" value="Audit Trail" />
+			<column name="description" value="Able to view the audit trail" />
+			<column name="display_key" value="role.audittrail" />
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+			<column name="system_role_id"
+				valueNumeric=" ( select id from system_role where name = 'Audit Trail' ) " />
+			<column name="system_module_id"
+				valueNumeric=" ( select id from system_module where name = 'AuditTrailView' ) " />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="3" context="CI_IPCI">
+		<comment>changes the accession rules to yynnnnnnn</comment>
+		<update tableName="site_information" schemaName="clinlims">
+			<column name="value" value="YEARNUM_SEVEN"/>
+			<where>name = 'acessionFormat'</where>
+		</update>
+	</changeSet>
+	<include file="OE2.8/testCatalogCI_IPCI/TestCatalogUpdate.xml"/>
+	<changeSet author="paulsc" id="4" context="CI_IPCI">
+		<comment>Adds molecular biology modules to roles</comment>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+			<column name="system_role_id"
+				valueNumeric=" ( select id from system_role where name = 'Validator' ) " />
+			<column name="system_module_id"
+				valueNumeric=" ( select id from system_module where name = 'ResultValidation:molecularBio' ) " />
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+			<column name="system_role_id"
+				valueNumeric=" ( select id from system_role where name = 'Results entry' ) " />
+			<column name="system_module_id"
+				valueNumeric=" ( select id from system_module where name = 'LogbookResults:molecularBio' ) " />
+		</insert>
+		<insert schemaName="clinlims" tableName="system_role_module">
+			<column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+			<column name="has_select" value="Y" />
+			<column name="has_add" value="Y" />
+			<column name="has_update" value="Y" />
+			<column name="has_delete" value="Y" />
+			<column name="system_role_id"
+				valueNumeric=" ( select id from system_role where name = 'Results entry' ) " />
+			<column name="system_module_id"
+				valueNumeric=" ( select id from system_module where name = 'Workplan:molecularBio' ) " />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="5" context="CI_IPCI">
+		<comment>adds qa_events for non-conformity</comment>
+		<delete tableName="sample_qaevent" />
+		<delete tableName="qa_event" />
+		<insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="No Sample" />
+			<column name="description" value="No sample with order" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="qa_event.noSample" />
+		</insert>
+		<insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="No form" />
+			<column name="description" value="No form with sample" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="qa_event.noForm" />
+		</insert>
+		<insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Incorrect Form" />
+			<column name="description" value="" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="qa_event.formNotCorrect" />
+		</insert>
+		<insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Analysis Issue" />
+			<column name="description" value="There was a problem with the analysis" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="qa_event.analysis.issue" />
+		</insert>
+		<insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Coagulated" />
+			<column name="description" value="Coagulated sample" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="qa_event.colagulated" />
+		</insert>
+		<insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Hemolytic" />
+			<column name="description" value="Hemolytic sample" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="qa_event.hemolytic" />
+		</insert>
+		<insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Insufficient" />
+			<column name="description" value="Insufficient Sample" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="qa_event.insufficient" />
+		</insert>
+		<insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Inadequate" />
+			<column name="description" value="Inadequate Sample" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="qa_event.inadequate" />
+		</insert>
+		<insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Mislabeled" />
+			<column name="description" value="Tube has been mislabeled" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="qa_event.mislabled" />
+		</insert>
+		<insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Broken" />
+			<column name="description" value="Tube is cracked/broken" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="qa_event.broken" />
+		</insert>
+		<insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Transmission Delay " />
+			<column name="description" value="There was a dely in transmission" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="qa_event.delay" />
+		</insert>
+		<insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Temperature" />
+			<column name="description" value="Wrong temperature" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="qa_event.temperature" />
+		</insert>
+		<insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Other" />
+			<column name="description" value="Other" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="qa_event.other" />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="6" context="CI_IPCI">
+	<comment>Updates the inactive status of test section</comment>
+	<update tableName="test_section">
+		<column name="is_active" value="N" />
+		<column name="sort_order" valueNumeric="2147483647" />
+		<where>name not in ('Hemto-Immunology','Serology-Immunology','Biochemistry','Hematology')</where>
+	</update>
+	</changeSet>
+	<changeSet author="paulsc" id="7" context="CI_IPCI">
+		<comment>Set sorting of the qa events list to false</comment>
+		<update tableName="site_information">
+			<column name="value" value="false"/>
+			<where>name = 'sortQaEvents'</where> 
+		</update>
+	</changeSet>
+</databaseChangeLog>

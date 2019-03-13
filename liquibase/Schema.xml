@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+<changeSet author="paulsc" id="1" >
+	<comment>Adds a table for tracking documents.  Includes action type table</comment>
+	<createTable schemaName="clinlims" tableName="document_type" >
+		<column name="id" type="numeric(10,0)" >
+			<constraints primaryKeyName="pk_document_type" primaryKey="true" />
+		</column>
+		<column name="name" type="varchar(40)" >
+			<constraints nullable="false" />
+		</column>
+		<column name="description" type="varchar(80)" >
+			<constraints nullable="true" />
+		</column>
+		<column name="lastupdated" type="timestamp(6)" />
+	</createTable>
+	<sql>
+		COMMENT ON TABLE document_type IS 'Table which describes document types to be tracked by document_track table';
+		COMMENT ON COLUMN document_type.name IS 'The name of the document'; 
+		COMMENT ON COLUMN document_type.description IS 'The description of the document'; 
+		COMMENT ON COLUMN document_type.lastupdated IS 'Last time this record was updated'; 
+		INSERT INTO clinlims.reference_tables( id, "name", keep_history, is_hl7_encoded, lastupdated)VALUES (nextval('clinlims.reference_tables_seq'), 'document_type', 'Y', 'N', current_timestamp );
+	</sql>
+	<createSequence sequenceName="document_type_seq" minValue="0" startValue="1"/>
+	<createTable schemaName="clinlims" tableName="document_track" >
+		<column name="id" type="numeric(10,0)" >
+			<constraints primaryKeyName="pk_document_track" primaryKey="true" />
+		</column>
+		<column name="table_id" type="numeric(10,0)" >
+			<constraints foreignKeyName="fk_table_id" references="reference_tables(id)" nullable="false" />
+		</column>
+		<column name="row_id" type="numeric(10,0)" >
+			<constraints nullable="false" />
+		</column>
+		<column name="document_type_id" type="numeric(10,0)" >
+			<constraints foreignKeyName="fk_doc_type" references="document_type(id)" nullable="false" />
+		</column>
+		<column name="parent_id" type="numeric(10,0)"   >
+			<constraints foreignKeyName="fk_doc_parent_id" references="document_track(id)" nullable="true" />
+		</column>
+		<column name="report_generation_time" type="timestamp(6)" />
+		<column name="lastupdated" type="timestamp(6)" />
+	</createTable>
+	<sql>
+		COMMENT ON TABLE document_track IS 'Table to track operations on documents.  Expected use is for has a document of some been printed for a sample, qa_event etc';
+		COMMENT ON COLUMN document_track.table_id IS 'The table to which the row_id references'; 
+		COMMENT ON COLUMN document_track.row_id IS 'The particular record for which a document has been generated'; 
+		COMMENT ON COLUMN document_track.document_type_id IS 'References the type of document which the record has been generated for'; 
+		COMMENT ON COLUMN document_track.parent_id IS 'If the document has been generated more than once for this record then this will point to the previous record'; 
+		COMMENT ON COLUMN document_track.report_generation_time IS 'When this report was generated'; 
+		COMMENT ON COLUMN document_track.lastupdated IS 'Last time this record was updated'; 
+		INSERT INTO clinlims.reference_tables( id, "name", keep_history, is_hl7_encoded, lastupdated)VALUES (nextval('clinlims.reference_tables_seq'), 'document_track', 'Y', 'N', current_timestamp );
+    
+	</sql>
+	<createSequence sequenceName="document_track_seq" minValue="0" startValue="1"/>
+</changeSet>	
+<changeSet author="paulsc" id="2" >
+	<comment>Adds an index to the sample_id column of the observation_table</comment>
+	<createIndex schemaName="clinlims" tableName="observation_history" indexName="obs_history_sample_idx" >
+		<column name="sample_id" />
+	</createIndex>
+</changeSet>
+<changeSet author="paulsc" id="3" >
+	<comment>Adds both a type and instruction key column to site_information</comment>
+	<addColumn schemaName="clinlims" tableName="site_information" >
+		<column name="value_type" type="varchar(10)" defaultValue="text" >
+			<constraints nullable="false" />
+		</column>
+		<column name="instruction_key" type="varchar(40)" />
+	</addColumn>
+	<sql>
+		COMMENT ON COLUMN site_information.value_type IS 'The type of value which can be specified for the value. Currently either \'boolean\' or \'text\'';
+		COMMENT ON COLUMN site_information.instruction_key IS 'The key in Message_Resource which give the user the text for the meaning and consequences of the information';
+	</sql>
+</changeSet>
+<changeSet author="paulsc" id="4" >
+	<comment>Widen site_information value to 200 char</comment>
+	<modifyColumn schemaName="clinlims" tableName="site_information" >
+		<column name="value" type="varchar(200)" />
+	</modifyColumn>
+</changeSet>
+<changeSet author="paulsc" id="8">
+	<comment>The audit trail requires a lastupdated field</comment>
+	<addColumn tableName="analyzer_test_map" schemaName="clinlims">
+		<column name="lastupdated" type="timestamp(6)" defaultValue=" now() "/>
+	</addColumn>
+</changeSet>
+<changeSet author="paulsc" id="9">
+	<comment>Adds another column for bookkeeping data</comment>
+	<addColumn schemaName="clinlims" tableName="report_external_export">
+		<column name="bookkeeping" type="text"></column>
+	</addColumn>
+	<sql>
+		COMMENT ON COLUMN clinlims.report_external_export.bookkeeping is 'Data which the application will need to record that this document has been sent';
+	</sql>
+</changeSet>
+<changeSet author="paulsc" id="10">
+	<comment>Widens the panel name to 32</comment>
+	<modifyColumn tableName="panel" schemaName="clinlims">
+		<column name="name" type="varchar(32)" />
+	</modifyColumn>
+</changeSet>
+<changeSet author="paulsc" id="11">
+	<comment>Adds an inactive column to sample types</comment>
+	<addColumn tableName="type_of_sample">
+		<column name="is_active" type="boolean" defaultValueBoolean="true" />
+	</addColumn>
+</changeSet>
+<changeSet author="paulsc" id="12">
+	<comment>Adding a foreign key to the test table so we don't have to depend on names not changing</comment>
+	<addColumn tableName="panel_item" schemaName="clinlims">
+		<column name="test_id" type="numeric(10,0)">
+			<constraints foreignKeyName="test_fk" nullable="true" references="test(id)"  />
+		</column>
+	</addColumn>
+</changeSet>
+<changeSet author="paulsc" id="13" >
+	<comment>Adds sort order to panel, sample type and test sections</comment>
+	<addColumn tableName="panel" schemaName="clinlims " >
+		<column name="sort_order" type="numeric" defaultValueNumeric="2147483647" />
+	</addColumn>
+	<addColumn tableName="type_of_sample" schemaName="clinlims " >
+		<column name="sort_order" type="numeric" defaultValueNumeric="2147483647" />
+	</addColumn>
+	<addColumn tableName="test_section" schemaName="clinlims " >
+		<column name="sort_order" type="numeric" defaultValueNumeric="2147483647" />
+	</addColumn>
+	<addDefaultValue tableName="test" columnName="sort_order" defaultValueNumeric="2147483647"/>
+</changeSet>
+<changeSet author="paulsc" id="14">
+               <comment>widens the description column for site_information</comment>
+               <modifyColumn schemaName="clinlims" tableName="site_information">
+                             <column name="description" type="varchar(120)"/>
+               </modifyColumn>
+</changeSet>
+<changeSet author="paulsc" id="15">
+	<comment>add normal dictionary value to result range and remove units</comment>
+	<addColumn tableName="result_limits" schemaName="clinlims">
+		<column name="normal_dictionary_id" type="numeric(10,0)" >
+			<constraints foreignKeyName="result_limit_dictionary_fk" nullable="true" references="dictionary(id)" />
+		</column>
+	</addColumn>
+	<dropColumn tableName="result_limits" columnName="units" schemaName="clinlims"/>
+	<sql>
+		COMMENT ON COLUMN clinlims.result_limits.normal_dictionary_id IS 'Reference to the dictionary value which is normal for test';
+		COMMENT ON COLUMN clinlims.result_limits.test_result_type_id IS 'The data type of the results';
+	</sql>
+</changeSet>
+<changeSet author="paulsc" id="16">
+	<comment>Expands the test description to 120 char</comment>
+	<modifyColumn tableName="test" schemaName="clinlims">
+		<column name="description" type="varchar(120)" />
+	</modifyColumn>
+</changeSet>
+<changeSet author="paulsc" id="17">
+	<comment>Adds a group and schedule column to site_information table</comment>
+	<addColumn tableName="site_information" schemaName="clinlims">
+		<column name="group" type="numeric" defaultValue="0" />
+		<column name="schedule_id" type="numeric(10,0) " >
+			<constraints foreignKeyName="schedule_fk" nullable="true" references="quartz_cron_scheduler(id)" />
+		</column>
+		<column name="tag"  type="varchar(20)" />
+	</addColumn>
+	<sql>
+		COMMENT ON COLUMN clinlims.site_information.group IS 'If items should be grouped together when displaying they should have the same group number';
+		COMMENT ON COLUMN clinlims.site_information.schedule_id IS 'quartz_cron_scheduler id if the item is associated with a scheduler ';
+		COMMENT ON COLUMN clinlims.site_information.tag IS 'A tag to help determine how the information should be used';
+	</sql>
+	
+</changeSet>
+<changeSet author="paulsc" id="18">
+	<comment>Adds a is active column to test_section</comment>
+	<addColumn tableName="test_section" schemaName="clinlims">
+		<column name="is_active" type="varchar(1)" defaultValue="Y" />
+	</addColumn>
+</changeSet>
+<changeSet author="paulsc" id="19">
+	<comment>Widens the phone number columns for the person table</comment>
+	<modifyColumn tableName="person" schemaName="clinlims">
+		<column name="work_phone" type="varchar(17)" />
+		<column name="cell_phone" type="varchar(17)" />
+		<column name="fax" type="varchar(17)" />
+	</modifyColumn>
+</changeSet>
+</databaseChangeLog>

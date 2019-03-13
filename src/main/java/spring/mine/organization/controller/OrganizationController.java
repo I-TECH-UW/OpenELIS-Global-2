@@ -7,19 +7,21 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.struts.Globals;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.organization.form.OrganizationForm;
+import spring.mine.organization.validator.OrganizationFormValidator;
 import us.mn.state.health.lims.address.dao.AddressPartDAO;
 import us.mn.state.health.lims.address.dao.OrganizationAddressDAO;
 import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
@@ -53,8 +55,11 @@ import us.mn.state.health.lims.organization.valueholder.OrganizationType;
 @SessionAttributes("form")
 public class OrganizationController extends BaseController {
 
+	@Autowired
+	OrganizationFormValidator validator;
+
 	@ModelAttribute("form")
-	public OrganizationForm form() {
+	public BaseForm form() {
 		return new OrganizationForm();
 	}
 
@@ -116,25 +121,18 @@ public class OrganizationController extends BaseController {
 
 	}
 
-	@RequestMapping(value = { "/Organization", "/NextPreviousOrganization" }, method = { RequestMethod.POST,
-			RequestMethod.GET })
-	public ModelAndView showOrganization(HttpServletRequest request, @ModelAttribute("form") OrganizationForm form)
+	@RequestMapping(value = { "/Organization", "/NextPreviousOrganization" }, method = RequestMethod.GET)
+	public ModelAndView showOrganization(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
-		if (form == null) {
+		if (form.getClass() != OrganizationForm.class) {
 			form = new OrganizationForm();
+			request.getSession().setAttribute("form", form);
 		}
+
 		form.setFormAction("");
 		form.setCancelAction("CancelOrganization.do");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
 
-		if (errors.hasErrors()) {
-			return mv;
-		}
 		// The first job is to determine if we are coming to this action with an
 		// ID parameter in the request. If there is no parameter, we are
 		// creating a new Organization.
@@ -163,12 +161,12 @@ public class OrganizationController extends BaseController {
 			} else {
 				organizations = organizationDAO.getPreviousOrganizationRecord(organization.getId());
 			}
-			if (organizations != null && organizations.size() > 0) {
-				organization = (Organization) organizations.get(0);
+			if (organizations != null && !organizations.isEmpty()) {
+				organization = (Organization) organizations.get(organizations.size() - 1);
 			}
 			String newId = organization.getId();
 			String url = "redirect:/Organization.do?ID=" + newId + "&startingRecNo=" + start;
-			return new ModelAndView(url, "form", form);
+			return new ModelAndView(url);
 		}
 
 		boolean isNew = (id == null) || "0".equals(id);
@@ -300,24 +298,18 @@ public class OrganizationController extends BaseController {
 		return dictionaryDAO.getDictionaryEntrysByCategoryAbbreviation("description", "haitiDepartment", true);
 	}
 
-	@RequestMapping(value = "/UpdateOrganization", method = RequestMethod.POST)
+	@RequestMapping(value = "/Organization", method = RequestMethod.POST)
 	public ModelAndView showUpdateOrganization(HttpServletRequest request,
-			@ModelAttribute("form") OrganizationForm form, SessionStatus status)
+			@ModelAttribute("form") OrganizationForm form, BindingResult result, SessionStatus status,
+			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new OrganizationForm();
+		validator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
 		}
-		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
 
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		String forward = FWD_SUCCESS_INSERT;
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "false");
@@ -335,24 +327,11 @@ public class OrganizationController extends BaseController {
 
 		selectedOrgTypes = form.getStrings("selectedTypes");
 
-		/*
-		 * Errors errors = form.validate(mapping, request);
-		 *
-		 * try { errors = validateAll(errors, form); } catch (Exception e) {
-		 * LogEvent.logError("OrganizationUpdateAction", "performAction()",
-		 * e.toString()); ActionError error = new
-		 * ActionError("errors.ValidationException", null, null);
-		 * errors.add(Errors.GLOBAL_MESSAGE, error); }
-		 *
-		 * if (errors != null && errors.size() > 0) { saveErrors(request, errors);
-		 * return mapping.findForward(FWD_FAIL); }
-		 */
-
 		String start = request.getParameter("startingRecNo");
 		String direction = request.getParameter("direction");
 
 		Organization organization = new Organization();
-		organization.setSysUserId(currentUserId);
+		organization.setSysUserId(getSysUserId(request));
 
 		List states = getPossibleStates(form);
 
@@ -391,7 +370,7 @@ public class OrganizationController extends BaseController {
 				// how can I get popup instead of struts error at the top of
 				// page?
 				// Errors errors = form.validate(mapping, request);
-				errors.reject("errors.OptimisticLockException");
+				result.reject("errors.OptimisticLockException");
 
 			} else {
 				// bugzilla 1482
@@ -400,15 +379,14 @@ public class OrganizationController extends BaseController {
 							.getAttribute("org.apache.struts.action.LOCALE");
 					String messageKey = "organization.organization";
 					String msg = ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey);
-					errors.reject("errors.DuplicateRecord.activeonly", new String[] { msg },
+					result.reject("errors.DuplicateRecord.activeonly", new String[] { msg },
 							"errors.DuplicateRecord.activeonly");
 
 				} else {
-					errors.reject("errors.UpdateException");
+					result.reject("errors.UpdateException");
 				}
 			}
-			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
+			saveErrors(result);
 
 			request.setAttribute(PREVIOUS_DISABLED, "true");
 			request.setAttribute(NEXT_DISABLED, "true");
@@ -427,22 +405,19 @@ public class OrganizationController extends BaseController {
 			PropertyUtils.setProperty(form, "states", states);
 		}
 
-		if ("true".equalsIgnoreCase(request.getParameter("close"))) {
-			forward = FWD_CLOSE;
-		}
-
 		if (organization.getId() != null && !organization.getId().equals("0")) {
 			request.setAttribute(ID, organization.getId());
 		}
 
-		if (isNew) {
-			forward = FWD_SUCCESS_INSERT;
+		if (FWD_SUCCESS_INSERT.equals(forward)) {
+			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 			status.setComplete();
+			return findForward(forward, form);
 		}
 
 		DisplayListService.refreshList(DisplayListService.ListType.REFERRAL_ORGANIZATIONS);
 
-		return getForward(findForward(forward, form), id, start, direction);
+		return findForward(forward, form);
 	}
 
 	private void persistAddressParts(Organization organization) {
@@ -504,7 +479,7 @@ public class OrganizationController extends BaseController {
 				}
 
 				departmentAddress.setValue(form.getString("department"));
-				departmentAddress.setSysUserId(currentUserId);
+				departmentAddress.setSysUserId(getSysUserId(request));
 			}
 
 			if (useCommune) {
@@ -515,7 +490,7 @@ public class OrganizationController extends BaseController {
 				}
 
 				communeAddress.setValue(form.getString("commune"));
-				communeAddress.setSysUserId(currentUserId);
+				communeAddress.setSysUserId(getSysUserId(request));
 			}
 
 			if (useVillage) {
@@ -526,7 +501,7 @@ public class OrganizationController extends BaseController {
 				}
 
 				villageAddress.setValue(form.getString("village"));
-				villageAddress.setSysUserId(currentUserId);
+				villageAddress.setSysUserId(getSysUserId(request));
 			}
 		}
 	}
@@ -565,19 +540,19 @@ public class OrganizationController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
-			return new ModelAndView("organizationDefinition", "form", form);
-		} else if ("fail".equals(forward)) {
-			return new ModelAndView("masterListsPageDefinition", "form", form);
-		} else if ("insertSuccess".equals(forward)) {
-			return new ModelAndView("redirect:/OrganizationMenu.do", "form", form);
-		} else if ("insertFail".equals(forward)) {
-			return new ModelAndView("organizationDefinition", "form", form);
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "organizationDefinition";
+		} else if (FWD_FAIL.equals(forward)) {
+			return "redirect:/MasterListsPage.do";
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return "redirect:/OrganizationMenu.do";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return "organizationDefinition";
 		} else if (FWD_CANCEL.equals(forward)) {
-			return new ModelAndView("redirect:/OrganizationMenu.do", "form", form);
+			return "redirect:/OrganizationMenu.do";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

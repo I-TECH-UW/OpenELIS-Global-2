@@ -1,0 +1,7 @@
+<Context path="[% appname %]" >
+  <Resource name="jdbc/LimsDS" auth="Container"
+	    type="javax.sql.DataSource" driverClassName="org.postgresql.Driver"
+	    url="jdbc:postgresql://localhost:5432/clinlims"
+	    username="clinlims" password="[% itechappPassword %]" maxActive="20" maxIdle="10"
+	    maxWait="-1"/>
+</Context>

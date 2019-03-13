@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ The contents of this file are subject to the Mozilla Public License
+  ~ Version 1.1 (the "License"); you may not use this file except in
+  ~ compliance with the License. You may obtain a copy of the License at
+  ~ http://www.mozilla.org/MPL/
+  ~
+  ~ Software distributed under the License is distributed on an "AS IS"
+  ~ basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+  ~ License for the specific language governing rights and limitations under
+  ~ the License.
+  ~
+  ~ The Original Code is OpenELIS code.
+  ~
+  ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet author="paulsc" id="1" context="Kenya, haiti, haitiLNSP, CI_IPCI, ci_regional, ciLNSP"  >
+        <comment>Sets permissions for activating and deactivating tests</comment>
+        <insert schemaName="clinlims" tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+            <column name="name" value="PanelRenameEntry"/>
+            <column name="description" value="Admin=&gt;test mang=&gt;panel rename"/>
+            <column name="has_select_flag" value="Y"/>
+            <column name="has_add_flag" value="Y"/>
+            <column name="has_update_flag" value="Y"  />
+            <column name="has_delete_flag" value="Y"/>
+        </insert>
+        <insert tableName="system_role_module">
+            <column name="id" valueNumeric=" nextval( 'system_user_module_seq' )  " />
+            <column name="system_role_id" valueNumeric=" ( select id from clinlims.system_role where name = 'Test Management' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from clinlims.system_module where name = 'PanelRenameEntry' ) " />
+        </insert>
+    </changeSet>
+    <changeSet author="paulsc" id="2"   >
+        <comment>Sets permissions for making tests orderable</comment>
+        <insert schemaName="clinlims" tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+            <column name="name" value="TestOrderability"/>
+            <column name="description" value="Admin=&gt;test mang=&gt;Test Orderability"/>
+            <column name="has_select_flag" value="Y"/>
+            <column name="has_add_flag" value="Y"/>
+            <column name="has_update_flag" value="Y"  />
+            <column name="has_delete_flag" value="Y"/>
+        </insert>
+        <insert tableName="system_role_module">
+            <column name="id" valueNumeric=" nextval( 'system_user_module_seq' )  " />
+            <column name="system_role_id" valueNumeric=" ( select id from clinlims.system_role where name = 'Test Management' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from clinlims.system_module where name = 'TestOrderability' ) " />
+        </insert>
+    </changeSet>
+    <changeSet id="3" author="paulsc">
+        <comment>Adds information about patient age classification to site information table</comment>
+        <insert tableName="site_information_domain">
+            <column name="id" valueNumeric=" nextval( 'site_information_domain_seq' ) " />
+            <column name="name" value="resultAgeRange" />
+            <column name="description" value="The maximum age range in months" />
+        </insert>
+        <insert tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+            <column name="name" value="new born" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="description" value="max age of a new born" />
+            <column name="value" value="1" />
+            <column name="domain_id" valueNumeric=" currval( 'site_information_domain_seq' ) " />
+            <column name="value_type" value="text" />
+            <column name="instruction_key" value="instrution.result.age" />
+            <column name="group" value="0" />
+            <column name="description_key" value="site.info.result.age.newborn" />
+        </insert>
+        <insert tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+            <column name="name" value="infant" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="description" value="max age of an infant" />
+            <column name="value" value="12" />
+            <column name="domain_id" valueNumeric=" currval( 'site_information_domain_seq' ) " />
+            <column name="value_type" value="text" />
+            <column name="instruction_key" value="instrution.result.age" />
+            <column name="group" value="0" />
+            <column name="description_key" value="site.info.result.age.infant" />
+        </insert>
+        <insert tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+            <column name="name" value="young child" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="description" value="max age of a young child" />
+            <column name="value" value="60" />
+            <column name="domain_id" valueNumeric=" currval( 'site_information_domain_seq' ) " />
+            <column name="value_type" value="text" />
+            <column name="instruction_key" value="instrution.result.age" />
+            <column name="group" value="0" />
+            <column name="description_key" value="site.info.result.age.youngchild" />
+        </insert>
+        <insert tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+            <column name="name" value="child" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="description" value="max age of a child" />
+            <column name="value" value="168" />
+            <column name="domain_id" valueNumeric=" currval( 'site_information_domain_seq' ) " />
+            <column name="value_type" value="text" />
+            <column name="instruction_key" value="instrution.result.age" />
+            <column name="group" value="0" />
+            <column name="description_key" value="site.info.result.age.child" />
+        </insert>
+        <insert tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+            <column name="name" value="adult" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="description" value="max age of an adult" />
+            <column name="value" value="Infinity" />
+            <column name="domain_id" valueNumeric=" currval( 'site_information_domain_seq' ) " />
+            <column name="value_type" value="text" />
+            <column name="instruction_key" value="instrution.result.age" />
+            <column name="group" value="0" />
+            <column name="description_key" value="site.info.result.age.adult" />
+        </insert>
+    </changeSet>
+    <changeSet id="4" author="paulsc">
+        <comment>Adding new settings to site-information and out of form fields</comment>
+        <insert tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+            <column name="name" value="Patient ID required" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="description" value="Is an id required for the patient" />
+            <column name="value" value="true" />
+            <column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'patientEntryConfig' ) " />
+            <column name="value_type" value="boolean" />
+            <column name="instruction_key" value="instruction.patient.id.required" />
+            <column name="group" value="0" />
+            <column name="description_key" value="site.info.patient.id.required" />
+        </insert>
+        <insert tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+            <column name="name" value="Subject number required" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="description" value="Is a subject number required for patient" />
+            <column name="value" value="false" />
+            <column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'patientEntryConfig' ) " />
+            <column name="value_type" value="boolean" />
+            <column name="instruction_key" value="instruction.patient.subNumber.required" />
+            <column name="group" value="0" />
+            <column name="description_key" value="site.info.patient.subjectNumber.required" />
+        </insert>
+        <insert tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+            <column name="name" value="sample id required" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="description" value="Is an requester sample id required" />
+            <column name="value" value="true" />
+            <column name="domain_id" valueNumeric=" (select id from clinlims.site_information_domain where name = 'non_conformityConfig' ) " />
+            <column name="value_type" value="boolean" />
+            <column name="instruction_key" value="instruction.nonConformity.sample.id" />
+            <column name="group" value="0" />
+            <column name="description_key" value="site.info.nonConformity.sample.id" />
+        </insert>
+    </changeSet>
+    <changeSet id="5" author="paulsc" context="ci_regional">
+        <comment>Sets patient id to existing form field value</comment>
+        <update tableName="site_information" >
+            <column name="value" value="false" />
+            <where>id = ( select id from clinlims.site_information where name = 'Patient ID required' )</where>
+        </update>
+    </changeSet>
+    <changeSet id="6" author="paulsc" context="ci_regional, haitiLNSP">
+        <comment>Sets sample id to existing form field value</comment>
+        <update tableName="site_information" >
+            <column name="value" value="false" />
+            <where>id = ( select id from clinlims.site_information where name = 'sample_id_required' )</where>
+        </update>
+    </changeSet>
+    <changeSet id="7" author="paulsc" context="CI_IPCI, ciLNSP, Kenya">
+        <comment>Sets subject number require to existing form field value</comment>
+        <update tableName="site_information" >
+            <column name="value" value="true" />
+            <where>id = ( select id from clinlims.site_information where name = 'Subject number required' )</where>
+        </update>
+    </changeSet>
+    <changeSet id="8" author="paulsc" context="CI_IPCI, ci_regional">
+        <comment>Sets new field form value</comment>
+        <update tableName="site_information" >
+            <column name="value" value="CI_GENERAL" />
+            <where>id = ( select id from clinlims.site_information where name = 'setFieldForm' )</where>
+        </update>
+    </changeSet>
+    <changeSet id="9" author="paulsc">
+        <comment>Add module for test catalog</comment>
+        <insert schemaName="clinlims" tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+            <column name="name" value="TestCatalog"/>
+            <column name="description" value="Admin=&gt;test mang=&gt;activate"/>
+            <column name="has_select_flag" value="Y"/>
+            <column name="has_add_flag" value="Y"/>
+            <column name="has_update_flag" value="Y"  />
+            <column name="has_delete_flag" value="Y"/>
+        </insert>
+        <insert tableName="system_role_module">
+            <column name="id" valueNumeric=" nextval( 'system_user_module_seq' )  " />
+            <column name="system_role_id" valueNumeric=" ( select id from clinlims.system_role where name = 'Test Management' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from clinlims.system_module where name = 'TestCatalog' ) " />
+        </insert>
+    </changeSet>
+    <changeSet id="10" author="paulsc">
+        <comment>Adds patient tab configuration to site information table</comment>
+        <insert tableName="site_information">
+            <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+            <column name="name" value="Patient management tab" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="description" value="If true, display patient tab" />
+            <column name="value" value="true" />
+            <column name="domain_id" valueNumeric=" ( select id from clinlims.site_information_domain where name = 'patientEntryConfig' ) " />
+            <column name="value_type" value="boolean" />
+            <column name="instruction_key" value="instruction.tabs.patientIdentity" />
+            <column name="group" value="0" />
+            <column name="description_key" value="site.info.tabs.patientIdentity" />
+        </insert>
+    </changeSet>
+    <changeSet id="11" author="paulsc">
+        <comment>make patient entered_display_date well formated</comment>
+        <sql>
+            update clinlims.patient set entered_birth_date = replace(entered_birth_date, 'X', 'x');
+            update clinlims.patient set entered_birth_date = overlay( entered_birth_date PLACING '/' from 3 for 1) where length(entered_birth_date) = 10;
+            update clinlims.patient set entered_birth_date = overlay( entered_birth_date PLACING '/' from 6 for 1) where length(entered_birth_date) = 10;;
+        </sql>
+    </changeSet>
+    <changeSet author="paulsc" id="12"  >
+        <comment>Adds module for batch test reassignment</comment>
+        <insert schemaName="clinlims" tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+            <column name="name" value="BatchTestReassign"/>
+            <column name="description" value="Admin=&gt;batchTestReassignment"/>
+            <column name="has_select_flag" value="Y"/>
+            <column name="has_add_flag" value="Y"/>
+            <column name="has_update_flag" value="Y"  />
+            <column name="has_delete_flag" value="Y"/>
+        </insert>
+        <insert tableName="system_role_module">
+            <column name="id" valueNumeric=" nextval( 'system_user_module_seq' )  " />
+            <column name="system_role_id" valueNumeric=" ( select id from clinlims.system_role where name = 'Test Management' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from clinlims.system_module where name = 'BatchTestReassign' ) " />
+        </insert>
+    </changeSet>
+    <changeSet id="13" author="paulsc" context="Kenya, haiti, haitiLNSP, CI_IPCI, ci_regional, ciLNSP">
+        <comment>Links BatchTestReassignment to roles</comment>
+        <insert tableName="system_role_module">
+            <column name="id" valueNumeric=" nextval( 'system_user_module_seq' )  " />
+            <column name="system_role_id" valueNumeric=" ( select id from clinlims.system_role where name = 'Validator' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from clinlims.system_module where name = 'BatchTestReassign' ) " />
+        </insert>
+    </changeSet>
+    <changeSet id="14" author="paulsc" context="CDIRetroCI">
+        <comment>Links BatchTestReassignment to roles</comment>
+        <insert tableName="system_role_module">
+            <column name="id" valueNumeric=" nextval( 'system_user_module_seq' )  " />
+            <column name="system_role_id" valueNumeric=" ( select id from clinlims.system_role where name = 'Biologist' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from clinlims.system_module where name = 'BatchTestReassign' ) " />
+        </insert>
+    </changeSet>
+    <changeSet id="15" author="paulsc" >
+        <comment>Adds modules to test management tasks so they can get to the actual task</comment>
+        <insert schemaName="clinlims" tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+            <column name="name" value="TestSectionManagement"/>
+            <column name="description" value="Admin=&gt;test manag=&gt;test section"/>
+            <column name="has_select_flag" value="Y"/>
+            <column name="has_add_flag" value="Y"/>
+            <column name="has_update_flag" value="Y"  />
+            <column name="has_delete_flag" value="Y"/>
+        </insert>
+        <insert schemaName="clinlims" tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+            <column name="name" value="TestSectionOrder"/>
+            <column name="description" value="Admin=&gt;test manag=&gt;test section order"/>
+            <column name="has_select_flag" value="Y"/>
+            <column name="has_add_flag" value="Y"/>
+            <column name="has_update_flag" value="Y"  />
+            <column name="has_delete_flag" value="Y"/>
+        </insert>
+        <insert schemaName="clinlims" tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+            <column name="name" value="TestSectionTestAssign"/>
+            <column name="description" value="Admin=&gt;test manag=&gt;test section assign"/>
+            <column name="has_select_flag" value="Y"/>
+            <column name="has_add_flag" value="Y"/>
+            <column name="has_update_flag" value="Y"  />
+            <column name="has_delete_flag" value="Y"/>
+        </insert>
+        <insert schemaName="clinlims" tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+            <column name="name" value="TestSectionCreate"/>
+            <column name="description" value="Admin=&gt;test manag=&gt;test section create"/>
+            <column name="has_select_flag" value="Y"/>
+            <column name="has_add_flag" value="Y"/>
+            <column name="has_update_flag" value="Y"  />
+            <column name="has_delete_flag" value="Y"/>
+        </insert>
+        <sql>
+        INSERT INTO clinlims.system_role_module( id, has_select, has_add, has_update, has_delete, system_role_id, system_module_id)
+        VALUES ( nextval('system_user_module_seq' ), 'Y', 'Y', 'Y', 'Y',
+            ( select id from clinlims.system_role where name = 'Test Management' ) , ( select id from clinlims.system_module where name = 'MasterList')),
+            ( nextval('system_user_module_seq' ), 'Y', 'Y', 'Y', 'Y',
+            ( select id from clinlims.system_role where name = 'Test Management' ) , ( select id from clinlims.system_module where name = 'TestSectionManagement')),
+            ( nextval('system_user_module_seq' ), 'Y', 'Y', 'Y', 'Y',
+            ( select id from clinlims.system_role where name = 'Test Management' ) , ( select id from clinlims.system_module where name = 'TestSectionOrder')),
+            ( nextval('system_user_module_seq' ), 'Y', 'Y', 'Y', 'Y',
+            ( select id from clinlims.system_role where name = 'Test Management' ) , ( select id from clinlims.system_module where name = 'TestSectionTestAssign')),
+            ( nextval('system_user_module_seq' ), 'Y', 'Y', 'Y', 'Y',
+            ( select id from clinlims.system_role where name = 'Test Management' ) , ( select id from clinlims.system_module where name = 'TestSectionCreate'));
+        </sql>
+    </changeSet>
+</databaseChangeLog>
+

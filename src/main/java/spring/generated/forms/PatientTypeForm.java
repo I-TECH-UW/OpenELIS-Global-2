@@ -1,7 +1,7 @@
 package spring.generated.forms;
 
-import java.lang.String;
 import java.sql.Timestamp;
+
 import spring.mine.common.form.BaseForm;
 
 public class PatientTypeForm extends BaseForm {

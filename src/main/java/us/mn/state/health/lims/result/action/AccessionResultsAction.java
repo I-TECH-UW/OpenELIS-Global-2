@@ -64,15 +64,16 @@ public class AccessionResultsAction extends BaseAction {
 	private static SampleDAO sampleDAO = new SampleDAOImpl();
 	private static UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
 	private static String RESULT_EDIT_ROLE_ID;
-	
-	static{
+
+	static {
 		Role editRole = new RoleDAOImpl().getRoleByName("Results modifier");
-		
-		if( editRole != null){
+
+		if (editRole != null) {
 			RESULT_EDIT_ROLE_ID = editRole.getId();
 		}
 	}
 
+	@Override
 	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
@@ -81,8 +82,10 @@ public class AccessionResultsAction extends BaseAction {
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
 		DynaActionForm dynaForm = (DynaActionForm) form;
-		PropertyUtils.setProperty(dynaForm, "referralReasons", DisplayListService.getList( DisplayListService.ListType.REFERRAL_REASONS));
-        PropertyUtils.setProperty( dynaForm, "rejectReasons", DisplayListService.getNumberedListWithLeadingBlank( DisplayListService.ListType.REJECTION_REASONS ) );
+		PropertyUtils.setProperty(dynaForm, "referralReasons",
+				DisplayListService.getList(DisplayListService.ListType.REFERRAL_REASONS));
+		PropertyUtils.setProperty(dynaForm, "rejectReasons",
+				DisplayListService.getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
 		ResultsPaging paging = new ResultsPaging();
 		String newPage = request.getParameter("page");
@@ -93,9 +96,9 @@ public class AccessionResultsAction extends BaseAction {
 
 			if (!GenericValidator.isBlankOrNull(accessionNumber)) {
 				ResultsLoadUtility resultsUtility = new ResultsLoadUtility(currentUserId);
-				//This is for Haiti_LNSP if it gets more complicated use the status set stuff
+				// This is for Haiti_LNSP if it gets more complicated use the status set stuff
 				resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
-				//resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Finalized);
+				// resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Finalized);
 				resultsUtility.setLockCurrentResults(modifyResultsRoleBased() && userNotInRole(request));
 				ActionMessages errors = new ActionMessages();
 				errors = validateAll(request, errors, dynaForm);
@@ -115,7 +118,9 @@ public class AccessionResultsAction extends BaseAction {
 
 				if (!GenericValidator.isBlankOrNull(sample.getId())) {
 					Patient patient = getPatient();
-					resultsUtility.addIdentifingPatientInfo(patient, dynaForm);
+
+					// commented out to allow maven compilation - CSL
+					// resultsUtility.addIdentifingPatientInfo(patient, dynaForm);
 
 					List<TestResultItem> results = resultsUtility.getGroupedTestsForSample(sample, patient);
 
@@ -126,7 +131,8 @@ public class AccessionResultsAction extends BaseAction {
 						addEmptyInventoryList(dynaForm);
 					}
 
-					paging.setDatabaseResults(request, dynaForm, results);
+					// commented out to allow maven compilation - CSL
+					// paging.setDatabaseResults(request, dynaForm, results);
 				} else {
 					setEmptyResults(dynaForm);
 				}
@@ -135,44 +141,47 @@ public class AccessionResultsAction extends BaseAction {
 				PropertyUtils.setProperty(dynaForm, "searchFinished", Boolean.FALSE);
 			}
 		} else {
-			paging.page(request, dynaForm, newPage);
+
+			// commented out to allow maven compilation - CSL
+			// paging.page(request, dynaForm, newPage);
 		}
 
 		return mapping.findForward(forward);
 	}
 
 	private boolean modifyResultsRoleBased() {
-		return "true".equals(ConfigurationProperties.getInstance().getPropertyValue(Property.roleRequiredForModifyResults));
+		return "true"
+				.equals(ConfigurationProperties.getInstance().getPropertyValue(Property.roleRequiredForModifyResults));
 	}
 
 	private boolean userNotInRole(HttpServletRequest request) {
-		if( userModuleDAO.isUserAdmin(request)){
+		if (userModuleDAO.isUserAdmin(request)) {
 			return false;
 		}
-		
+
 		UserRoleDAO userRoleDAO = new UserRoleDAOImpl();
-		
-		List<String> roleIds = userRoleDAO.getRoleIdsForUser( currentUserId );
-		
+
+		List<String> roleIds = userRoleDAO.getRoleIdsForUser(currentUserId);
+
 		return !roleIds.contains(RESULT_EDIT_ROLE_ID);
 	}
 
-	private void setEmptyResults(DynaActionForm dynaForm) throws IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException {
+	private void setEmptyResults(DynaActionForm dynaForm)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		PropertyUtils.setProperty(dynaForm, "testResult", new ArrayList<TestResultItem>());
 		PropertyUtils.setProperty(dynaForm, "displayTestKit", false);
 		addEmptyInventoryList(dynaForm);
 	}
 
-	private void addInventory(DynaActionForm dynaForm) throws IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException {
+	private void addInventory(DynaActionForm dynaForm)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		List<InventoryKitItem> list = inventoryUtility.getExistingActiveInventory();
 		PropertyUtils.setProperty(dynaForm, "inventoryItems", list);
 	}
 
-	private void addEmptyInventoryList(DynaActionForm dynaForm) throws IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException {
+	private void addEmptyInventoryList(DynaActionForm dynaForm)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		PropertyUtils.setProperty(dynaForm, "inventoryItems", new ArrayList<InventoryKitItem>());
 	}
 
@@ -197,11 +206,13 @@ public class AccessionResultsAction extends BaseAction {
 		sample = sampleDAO.getSampleByAccessionNumber(accessionNumber);
 	}
 
+	@Override
 	protected String getPageTitleKey() {
 		return "banner.menu.results";
 
 	}
 
+	@Override
 	protected String getPageSubtitleKey() {
 		return "banner.menu.results";
 	}

@@ -8,17 +8,23 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.Globals;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.analyzerimport.form.AnalyzerTestNameMenuForm;
+import spring.mine.analyzerimport.validator.AnalyzerTestNameMenuFormValidator;
+import spring.mine.common.constants.Constants;
 import spring.mine.common.controller.BaseMenuController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.form.MenuForm;
 import spring.mine.common.validator.BaseErrors;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analyzer.dao.AnalyzerDAO;
 import us.mn.state.health.lims.analyzer.daoimpl.AnalyzerDAOImpl;
 import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
@@ -34,29 +40,28 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 @Controller
 public class AnalyzerTestNameMenuController extends BaseMenuController {
 
+	@Autowired
+	AnalyzerTestNameMenuFormValidator formValidator;
+
 	private static final int ANALYZER_NAME = 0;
 	private static final int ANALYZER_TEST = 1;
 
-	@RequestMapping(value = "/AnalyzerTestNameMenu", method = { RequestMethod.GET, RequestMethod.POST })
-	public ModelAndView showAnalyzerTestNameMenu(HttpServletRequest request,
-			@ModelAttribute("form") AnalyzerTestNameMenuForm form)
+	@RequestMapping(value = "/AnalyzerTestNameMenu", method = RequestMethod.GET)
+	public ModelAndView showAnalyzerTestNameMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new AnalyzerTestNameMenuForm();
-		}
-		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
+		AnalyzerTestNameMenuForm form = new AnalyzerTestNameMenuForm();
 
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		addFlashMsgsToRequest(request);
 
-		return performMenuAction(form, request);
+		String forward = performMenuAction(form, request);
+		if (FWD_FAIL.equals(forward)) {
+			Errors errors = new BaseErrors();
+			errors.reject("error.generic");
+			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, errors);
+			return findForward(forward, form);
+		} else {
+			return findForward(forward, form);
+		}
 	}
 
 	@Override
@@ -135,21 +140,17 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 
 	@RequestMapping(value = "/DeleteAnalyzerTestName", method = RequestMethod.POST)
 	public ModelAndView showDeleteAnalyzerTestName(HttpServletRequest request,
-			@ModelAttribute("form") AnalyzerTestNameMenuForm form) {
-		String forward = FWD_SUCCESS_DELETE;
-		if (form == null) {
-			form = new AnalyzerTestNameMenuForm();
-		}
-		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
+			@ModelAttribute("form") AnalyzerTestNameMenuForm form, BindingResult result,
+			RedirectAttributes redirectAttributes)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-		if (errors.hasErrors()) {
-			return mv;
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(performMenuAction(form, request), form);
 		}
+
+		String forward = FWD_SUCCESS_DELETE;
 
 		String[] selectedIDs = (String[]) form.get("selectedIDs");
 
@@ -168,25 +169,25 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 		try {
 
 			AnalyzerTestMappingDAO testMappingDAO = new AnalyzerTestMappingDAOImpl();
-			testMappingDAO.deleteData(testMappingList, currentUserId);
+			testMappingDAO.deleteData(testMappingList, getSysUserId(request));
 
 			tx.commit();
 		} catch (LIMSRuntimeException lre) {
 			tx.rollback();
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
-				errors.reject("errors.OptimisticLockException");
+				result.reject("errors.OptimisticLockException");
 			} else {
-				errors.reject("errors.DeleteException");
+				result.reject("errors.DeleteException");
 			}
-			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
+			saveErrors(result);
+			request.setAttribute(Globals.ERROR_KEY, result);
 			forward = FWD_FAIL_DELETE;
 
 		} finally {
 			HibernateUtil.closeSession();
 		}
 		if (forward.equals(FWD_FAIL_DELETE)) {
-			return findForward(forward, form);
+			return findForward(performMenuAction(form, request), form);
 		}
 
 		if (TRUE.equalsIgnoreCase(request.getParameter("close"))) {
@@ -195,22 +196,22 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 
 		AnalyzerTestNameCache.instance().reloadCache();
 		request.setAttribute("menuDefinition", "AnalyzerTestNameDefinition");
-
+		redirectAttributes.addFlashAttribute(Constants.SUCCESS_MSG, MessageUtil.getMessage("message.success.delete"));
 		return findForward(forward, form);
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
-			return new ModelAndView("haitiMasterListsPageDefinition", "form", form);
-		} else if ("fail".equals(forward)) {
-			return new ModelAndView("/MasterListsPage.do", "form", form);
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "haitiMasterListsPageDefinition";
+		} else if (FWD_FAIL.equals(forward)) {
+			return "redirect:/MasterListsPage.do";
 		} else if (FWD_SUCCESS_DELETE.equals(forward)) {
-			return new ModelAndView("redirect:/AnalyzerTestNameMenu.do", "form", form);
+			return "redirect:/AnalyzerTestNameMenu.do";
 		} else if (FWD_FAIL_DELETE.equals(forward)) {
-			return new ModelAndView("redirect:/AnalyzerTestNameMenu.do", "form", form);
+			return "haitiMasterListsPageDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

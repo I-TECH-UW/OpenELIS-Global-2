@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<!-- Data specific to haiti LNSP -->
+	<include file="OE2.9/testCatalogHT_LNSP/HaitiLNSPTestTemplateUpdate.xml"/>
+	<changeSet author="paulsc" id="1" context="haitiLNSP">
+		<comment>adds qa_events for non-conformity</comment>
+		<delete tableName="sample_qaevent" />
+		<delete tableName="qa_event" />
+		<insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Refrigerated" />
+			<column name="description" value="Refrigerated" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="dictionary.condition.Regrigerated" />
+		</insert>
+		<insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Not refrigerated" />
+			<column name="description" value="Not refrigerated" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="dictionary.condition.notRegrigerated" />
+		</insert>
+	    <insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Frozen" />
+			<column name="description" value="Frozen" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="dictionary.condition.frozen" />
+		</insert>
+	    <insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Leaked Sample" />
+			<column name="description" value="Leaked Sample" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="dictionary.condition.leakedTube" />
+		</insert>
+	    <insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Broken Tubes" />
+			<column name="description" value="Broken Tubes" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="dictionary.condition.brokenTube" />
+		</insert>
+	    <insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Hemolysis" />
+			<column name="description" value="Hemolysis" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="dictionary.condition.hematolysis" />
+		</insert>
+	    <insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Coagulated" />
+			<column name="description" value="Coagulated" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="dictionary.condition.coagulated" />
+		</insert>
+	    <insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Insuffient Amount" />
+			<column name="description" value="Insuffient Amount" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="dictionary.condition.insufficient" />
+		</insert>
+	    <insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Contaminated" />
+			<column name="description" value="Contaminated" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="dictionary.condition.contaminated" />
+		</insert>
+	    <insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Inadequate Sampling" />
+			<column name="description" value="Inadequate Sampling" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="dictionary.condition.inadequate" />
+		</insert>
+	    <insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Overturned Sample" />
+			<column name="description" value="Overturned Sample" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="dictionary.condition.overturned" />
+		</insert>
+	    <insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Other" />
+			<column name="description" value="Other" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="dictionary.condition.other" />
+		</insert>
+	    <insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Sample without Form" />
+			<column name="description" value="Sample without Form" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="dictionary.condition.sampleNoForm" />
+		</insert>
+	    <insert tableName="qa_event" >
+			<column name="id"  valueNumeric=" nextval( 'qa_event_seq' ) "/>
+			<column name="name" value="Form without Sample" />
+			<column name="description" value="Form without Sample" />
+			<column name="is_holdable" value="Y" />
+			<column name="lastupdated" valueDate=" now() " />
+			<column name="display_key" value="dictionary.condition.formNoSample" />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="2" context="haitiLNSP">
+		<comment>Remove test_results with type M or D but with no dictionary values</comment>
+		<delete tableName="test_result">
+			<where>tst_rslt_type in ('M', 'D') and value is null</where>
+		</delete>
+	</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,1162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <!-- Data specific to System_Modules -->
+    	<changeSet author="paulsc" id="9">
+  		<comment>lengthen allowable name size in system_module</comment>
+  		<modifyColumn tableName="system_module" schemaName="clinlims">
+  			<column name="name" type="varchar(40)"/>
+  		</modifyColumn>
+  	</changeSet>
+    <changeSet author="paulsc" id="1" runOnChange="true">
+    <comment>Adds all of the modules to the database for all instances.
+    Can be re-run because of the de-duplication at the end of the change set</comment>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="MasterList"/>
+             <column name="description" value="MasterList"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="SampleEntryByProject:initial"/>
+             <column name="description" value="Sample=&gt;CreateSample=&gt;initial"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="SampleEntryByProject:verify"/>
+             <column name="description" value="Sample=&gt;CreateSample=&gt;verify"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="SampleEdit:readwrite"/>
+             <column name="description" value="Sample=&gt;SampleEdit"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="SampleEdit:readonly"/>
+             <column name="description" value="Sample=&gt;SampleConsult"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="PatientEntryByProject:initial"/>
+             <column name="description" value="Patient=&gt;Enter=&gt;initial"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="PatientEntryByProject:verify"/>
+             <column name="description" value="Patient=&gt;Enter=&gt;verify"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="LogbookResults:hematology"/>
+             <column name="description" value="Results=&gt;Enter=&gt;hematology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="LogbookResults:chem"/>
+             <column name="description" value="Results=&gt;Enter=&gt;chemistry"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="LogbookResults:immuno"/>
+             <column name="description" value="Results=&gt;Enter=&gt;Immunology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="LogbookResults:serology"/>
+             <column name="description" value="Results=&gt;Enter=&gt;serology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+      <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="LogbookResults:serologie"/>
+             <column name="description" value="Results=&gt;Enter=&gt;serologie"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="LogbookResults:virology"/>
+             <column name="description" value="Results=&gt;Enter=&gt;virology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="PatientResults"/>
+             <column name="description" value="Results=&gt;Search=&gt;Patient"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="AccessionResults"/>
+             <column name="description" value="Results=&gt;Search=&gt;Lab No."/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="StatusResults"/>
+             <column name="description" value="Results=&gt;Search=&gt;Status"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="AnalyzerResults:cobas_integra"/>
+             <column name="description" value="Results=&gt;Analyzer=&gt;cobas_integra"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="AnalyzerResults:sysmex"/>
+             <column name="description" value="Results=&gt;Analyzer=&gt;sysmex"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="AnalyzerResults:facscalibur"/>
+             <column name="description" value="Results=&gt;Analyzer=&gt;facscalibur"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="AnalyzerResults:facscanto"/>
+             <column name="description" value="Results=&gt;Analyzer=&gt;facscanto"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="AnalyzerResults:evolis"/>
+             <column name="description" value="Results=&gt;Analyzer=&gt;evolis"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:test"/>
+             <column name="description" value="Workplan=&gt;test"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:serology"/>
+             <column name="description" value="Workplan=&gt;serology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:immunology"/>
+             <column name="description" value="Workplan=&gt;immunology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:hematology"/>
+             <column name="description" value="Workplan=&gt;hematology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:biochemistry"/>
+             <column name="description" value="Workplan=&gt;biochemistry"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:virology"/>
+             <column name="description" value="Workplan=&gt;virology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:chem"/>
+             <column name="description" value="Workplan=&gt;chem"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:cytobacteriology"/>
+             <column name="description" value="Workplan=&gt;cytobacteriology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+     <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:bacteriology"/>
+             <column name="description" value="Workplan=&gt;bacteriology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:ECBU"/>
+             <column name="description" value="Workplan=&gt;ECBU"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert><insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:parasitology"/>
+             <column name="description" value="Workplan=&gt;parasitology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert><insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:immuno"/>
+             <column name="description" value="Workplan=&gt;immuno"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert><insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:HIV"/>
+             <column name="description" value="Workplan=&gt;HIV"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert><insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:molecularBio"/>
+             <column name="description" value="Workplan=&gt;molecularBio"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert><insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:liquidBio"/>
+             <column name="description" value="Workplan=&gt;liquidBio"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert><insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:mycrobacteriology"/>
+             <column name="description" value="Workplan=&gt;mycrobacteriology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert><insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:endocrin"/>
+             <column name="description" value="Workplan=&gt;endocrin"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert><insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:serologie"/>
+             <column name="description" value="Workplan=&gt;serologie"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert> 
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="UnifiedSystemUser"/>
+             <column name="description" value="Admin=&gt;UnifiedSystemUser"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="SystemUserModule"/>
+             <column name="description" value="Admin=&gt;SystemUserModule"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="SystemModule"/>
+             <column name="description" value="Admin=&gt;SystemModule"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ReportAdmin"/>
+             <column name="description" value="Admin=&gt;ReportAdmin"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="UnitOfMeasure"/>
+             <column name="description" value="Admin=&gt;UnitOfMeasure"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="TypeOfTestResult"/>
+             <column name="description" value="Admin=&gt;TypeOfTestResult"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="TypeOfSampleTest"/>
+             <column name="description" value="Admin=&gt;TypeOfSampleTest"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="TypeOfSamplePanel"/>
+             <column name="description" value="Admin=&gt;TypeOfSamplePanel"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="TypeOfSample"/>
+             <column name="description" value="Admin=&gt;TypeOfSample"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="TestResult"/>
+             <column name="description" value="Admin=&gt;TestResult"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="TestSection"/>
+             <column name="description" value="Admin=&gt;TestSection"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="TestReflex"/>
+             <column name="description" value="Admin=&gt;TestReflex"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="TestAnalyte"/>
+             <column name="description" value="Admin=&gt;TestAnalyte"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Test"/>
+             <column name="description" value="Admin=&gt;Test"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="StatusOfSample"/>
+             <column name="description" value="Admin=&gt;StatusOfSample"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="SiteInformation"/>
+             <column name="description" value="Admin=&gt;SiteInformation"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Role"/>
+             <column name="description" value="Admin=&gt;Role"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultLimits"/>
+             <column name="description" value="Admin=&gt;ResultLimits"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="PatientType"/>
+             <column name="description" value="Admin=&gt;PatientType"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="PanelItem"/>
+             <column name="description" value="Admin=&gt;PanelItem"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Panel"/>
+             <column name="description" value="Admin=&gt;Panel"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Organization"/>
+             <column name="description" value="Admin=&gt;Organization"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Method"/>
+             <column name="description" value="Admin=&gt;Method"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Gender"/>
+             <column name="description" value="Admin=&gt;Gender"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Dictionary"/>
+             <column name="description" value="Admin=&gt;Dictionary"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="AnalyzerTestName"/>
+             <column name="description" value="Admin=&gt;AnalyzerTestName"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Analyte"/>
+             <column name="description" value="Admin=&gt;Analyte"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="SamplePatientEntry"/>
+             <column name="description" value="Sample=&gt;Sample Add/Edit"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="AnalyzerResults"/>
+             <column name="description" value="Results=&gt;Analyzer Save"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ReportUserDetail:patientARV2"/>
+             <column name="description" value="Report=&gt;patient=&gt;ARV follow-up Save"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ReportUserDetail:patientEID"/>
+             <column name="description" value="Report=&gt;patient=&gt;EID"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="SampleEdit"/>
+             <column name="description" value="Sample=&gt;edit"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="NonConformity"/>
+             <column name="description" value="NonConformity"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Report:patient"/>
+             <column name="description" value="Patient reports"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Report:summary"/>
+             <column name="description" value="Lab summary reports"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Report:indicator"/>
+             <column name="description" value="Lab quality indicator reports"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:serology"/>
+             <column name="description" value="Validation=&gt;serology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:immunology"/>
+             <column name="description" value="Validation=&gt;immunology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:hematology"/>
+             <column name="description" value="Validation=&gt;hematology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:biochemistry"/>
+             <column name="description" value="Validation=&gt;biochemistry"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:virology"/>
+             <column name="description" value="Validation=&gt;virology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert><insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ReferredOutTests"/>
+             <column name="description" value="Results=&gt;Referrals"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="SampleConfirmationEntry"/>
+             <column name="description" value="Sample=&gt;sample confirmation"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="LogbookResults:mycobacteriology"/>
+             <column name="description" value="Results=&gt;logbooks=&gt;mycobacteriology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+     <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:mycology"/>
+             <column name="description" value="Workplan=&gt;mycology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="LogbookResults:mycology"/>
+             <column name="description" value="LogbookResults=&gt;mycology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="LogbookResults:serolo-immunology"/>
+             <column name="description" value="LogbookResults=&gt;serology-immunology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="LogbookResults:immunology"/>
+             <column name="description" value="LogbookResults=&gt;immunology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="LogbookResults:hemato-immunology"/>
+             <column name="description" value="LogbookResults=&gt;hemato-immunology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+     <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="LogbookResults:biochemistry"/>
+             <column name="description" value="LogbookResults=&gt;biochemistry"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:hemato-immunology"/>
+             <column name="description" value="workplan=&gt;units=&gt;hemato-immunology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:serology-immunology"/>
+             <column name="description" value="workplan=&gt;units=&gt;serology-immunology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:Hemto-Immunology"/>
+             <column name="description" value="validation=&gt;units=&gt;Hemato-Immunity"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:biochemistry"/>
+             <column name="description" value="validation=&gt;units=&gt;biochemistry"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:Serology-Immunology"/>
+             <column name="description" value="validation=&gt;units=&gt;Serology-Immunity"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+     <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation"/>
+             <column name="description" value="validation return"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="PatientDataOnResults"/>
+             <column name="description" value="Able to view patient data when looking at results"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <sql>
+       delete from system_module where id not in (select min(id) from system_module group by name );
+    </sql>
+    </changeSet>
+    
+    <changeSet author="nixonl" id="1" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+  		<sqlCheck expectedResult="0">
+  				select count(*) from clinlims.system_module where name = 'PatientEditByProject:readwrite'
+  		</sqlCheck>
+    </preConditions>
+    <comment>Adds PatientEditByProject Modules</comment>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="PatientEditByProject:readwrite"/>
+             <column name="description" value="Patient=&gt;PatientEdit"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="PatientEditByProject:readonly"/>
+             <column name="description" value="Patient=&gt;PatientConsult"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+    </insert>
+    <sql>
+       delete from system_module where id not in (select min(id) from system_module group by name );
+    </sql>
+    </changeSet>
+    
+     <!-- Enhancement to paulsc:1  -->
+      <changeSet author="nixonl" id="2" runOnChange="true">
+    	<comment>Changing SampleEdit module to SampleEditByProject</comment>
+	    <update tableName="system_module" schemaName="clinlims">
+	    	 <column name="name" value="SampleEditByProject:readwrite"/>
+             <column name="description" value="Sample=&gt;SampleEditByProject:readwrite"/>
+	    	<where>name='SampleEdit:readwrite'</where>
+	    </update>
+	    <update tableName="system_module" schemaName="clinlims">
+	    	 <column name="name" value="SampleEditByProject:readonly"/>
+             <column name="description" value="Sample=&gt;SampleEditByProject:readonly"/>
+	    	<where>name='SampleEdit:readonly'</where>
+	    </update>
+	  </changeSet>
+
+      <changeSet author="paulsc" id="2">
+    	<comment>Drops two modules which are unused</comment>
+        <delete schemaName="clinlims" tableName="system_module">
+            <where>name = 'ReportUserDetail:patientEID' or name='ReportUserDetail:patientARV2'</where>
+        </delete>
+	  </changeSet>
+	  <changeSet author="paulsc" id="3">
+	  	<comment>Adds new result sections</comment>
+	  	  <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="LogbookResults:mycrobacteriology"/>
+             <column name="description" value="Results=&gt;logbooks=&gt;mycrobacteriology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+         </insert>
+         <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="LogbookResults:cytobacteriology"/>
+             <column name="description" value="Results=&gt;logbooks=&gt;cytobacteriology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+       </insert>
+       <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="LogbookResults:molecularBio"/>
+             <column name="description" value="Results=&gt;logbooks=&gt;molecularBio"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+       </insert>
+       <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="LogbookResults:liquidBio"/>
+             <column name="description" value="Results=&gt;logbooks=&gt;liquidBio"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+       </insert>
+       <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="LogbookResults:endocrin"/>
+             <column name="description" value="Results=&gt;logbooks=&gt;endocrin"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+       </insert>
+	  </changeSet>
+	  <changeSet author="paulsc" id="4">
+	    <comment>Adding workplan panel as system module</comment>
+	    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="Workplan:panel"/>
+             <column name="description" value="Workplan=&gt;panel"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+        </insert>
+      </changeSet>
+      <changeSet author="paulsc" id="5">
+	    <comment>Adding auditlogview system module</comment>
+	    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="AuditTrailView"/>
+             <column name="description" value="Report=&gt;view audit log"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+        </insert>
+      </changeSet>
+      <changeSet author="paulsc" id="6">
+	    <comment>Adding cobasDBS to system module</comment>
+	    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="AnalyzerResults:cobasDBS"/>
+             <column name="description" value="Result=&gt;analyzers=&gt;CobasTaqmanDBS"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+        </insert>
+      </changeSet>
+      <changeSet author="paulsc" id="7">
+	    <comment>Adding validation:molecular biology to system module</comment>
+	    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:molecularBio"/>
+             <column name="description" value="ResultValidation=&gt;molecularBio"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+        </insert>
+      </changeSet>
+      <changeSet author="paulsc" id="8">
+	    <comment>Adding additional validation to system module</comment>
+	    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:Cytobacteriologie"/>
+             <column name="description" value="ResultValidation=&gt;Cytobacteriologie"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+        </insert>
+	    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:ECBU"/>
+             <column name="description" value="ResultValidation=&gt;ECBU"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+        </insert>
+	    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:Parasitology"/>
+             <column name="description" value="ResultValidation=&gt;Parasitology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+        </insert>
+	    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:Liquides biologique"/>
+             <column name="description" value="ResultValidation=&gt;Liquides biologique"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+        </insert>
+	    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:Mycobacteriology"/>
+             <column name="description" value="ResultValidation=&gt;Mycobacteriology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+        </insert>
+	    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:Endocrinologie"/>
+             <column name="description" value="ResultValidation=&gt;Endocrinologie"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+        </insert>
+	    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:Serologie"/>
+             <column name="description" value="ResultValidation=&gt;Serologie"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+        </insert>
+	    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:VCT"/>
+             <column name="description" value="ResultValidation=&gt;VCT"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+        </insert>
+      </changeSet>
+      <changeSet author="paulsc" id="10">
+	    <comment>Adding additional validation to system module</comment>
+	    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:virologie"/>
+             <column name="description" value="ResultValidation=&gt;virologie"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+        </insert>
+	    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:Bacteria"/>
+             <column name="description" value="ResultValidation=&gt;Bacteria"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+        </insert>
+	    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="ResultValidation:mycology"/>
+             <column name="description" value="ResultValidation=&gt;mycology"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+        </insert>
+	  </changeSet>
+	   <changeSet author="paulsc" id="11">
+	    <comment>Adding additional validation to system module</comment>
+	    <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="AnalyzerResults:cobasc311"/>
+             <column name="description" value="AnalyzerResults=&gt;cobasc311"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+        </insert>
+	  </changeSet>
+	  	  <changeSet author="paulsc" id="12">
+	  	<comment>Adding admin items to system module</comment>
+	  	 <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="SampleEntryConfig"/>
+             <column name="description" value="Admin=&gt;Sample entry config"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+        </insert>
+        <insert schemaName="clinlims" tableName="system_module">
+             <column name="id" valueNumeric=" nextval( 'system_module_seq' )  "/>
+             <column name="name" value="WorkplanConfiguration"/>
+             <column name="description" value="Admin=&gt;Workplan configuration"/>
+             <column name="has_select_flag" value="Y"/>
+             <column name="has_add_flag" value="Y"/>
+             <column name="has_update_flag" value="Y"  />
+             <column name="has_delete_flag" value="Y"/>
+        </insert>
+	  </changeSet>
+</databaseChangeLog>

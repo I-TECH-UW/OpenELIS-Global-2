@@ -2,6 +2,7 @@ package spring.generated.forms;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.resultlimits.form.ResultLimitsLink;
 

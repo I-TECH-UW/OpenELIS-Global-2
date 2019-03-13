@@ -25,10 +25,10 @@ import org.apache.commons.validator.GenericValidator;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.services.NoteService;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.TypeOfSampleService;

@@ -2,15 +2,15 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.hibernate.StaleObjectStateException;
 import org.hibernate.Transaction;
 import org.springframework.validation.Errors;
@@ -109,7 +108,7 @@ public class NonConformityUpdateWorker {
 	private Patient patient;
 	private ObservationHistory doctorObservation;
 	private ObservationHistory serviceObservation;
-	private Map<String, SampleItem> sampleItemsByType = new HashMap<String, SampleItem>();
+	private Map<String, SampleItem> sampleItemsByType = new HashMap<>();
 
 	private List<SampleQaEvent> sampleQAEventInsertList;
 	private List<SampleQaEvent> sampleQAEventDeleteList;
@@ -117,7 +116,7 @@ public class NonConformityUpdateWorker {
 	private List<NoteSet> insertableNotes;
 	private List<Note> updateableNotes;
 	private List<Note> deleteableNotes;
-    private SampleProject sampleProject;
+	private SampleProject sampleProject;
 	private List<PersonAddress> addressPartList;
 	private PatientIdentity subjectNoPatientIdentity;
 	private PatientIdentity STNoPatientIdentity;
@@ -135,7 +134,6 @@ public class NonConformityUpdateWorker {
 
 	public static final String NOTE_SUBJECT = "QaEvent Note";
 
-	
 	private static final ObservationHistoryDAO observationDAO = new ObservationHistoryDAOImpl();
 	private static final SampleDAO sampleDAO = new SampleDAOImpl();
 	private static final PatientDAO patientDAO = new PatientDAOImpl();
@@ -154,25 +152,24 @@ public class NonConformityUpdateWorker {
 	private Person providerPerson;
 	private boolean insertProvider = false;
 	private Errors errors = new BaseErrors();
-	private Organization newOrganization= null;
+	private Organization newOrganization = null;
 	private boolean insertNewOrganizaiton = false;
 	private SampleRequester sampleRequester = null;
 
-    private final NonConformityUpdateData webData;
+	private final NonConformityUpdateData webData;
 	private final static boolean REJECT_IF_EMPTY = true;
-	
+
 	public NonConformityUpdateWorker(NonConformityUpdateData data) {
 		webData = data;
 	}
 
 	public String update() {
-		useFullProviderInfo = FormFields.getInstance().useField(FormFields.Field.QA_FULL_PROVIDER_INFO );
+		useFullProviderInfo = FormFields.getInstance().useField(FormFields.Field.QA_FULL_PROVIDER_INFO);
 
 		createSystemUser();
 		clearMembers();
 
 		boolean isNewSample = GenericValidator.isBlankOrNull(webData.getSampleId());
-
 
 		if (isNewSample) {
 			createNewArtifacts();
@@ -193,24 +190,24 @@ public class NonConformityUpdateWorker {
 				persistProviderData();
 			}
 
-			if( subjectNoPatientIdentity != null){
+			if (subjectNoPatientIdentity != null) {
 				subjectNoPatientIdentity.setPatientId(patient.getId());
-				if(GenericValidator.isBlankOrNull(subjectNoPatientIdentity.getId() ) ){
+				if (GenericValidator.isBlankOrNull(subjectNoPatientIdentity.getId())) {
 					patientIdentityDAO.insertData(subjectNoPatientIdentity);
-				}else{
+				} else {
 					patientIdentityDAO.updateData(subjectNoPatientIdentity);
 				}
 			}
-			
-			if( STNoPatientIdentity != null){
+
+			if (STNoPatientIdentity != null) {
 				STNoPatientIdentity.setPatientId(patient.getId());
-				if(GenericValidator.isBlankOrNull(STNoPatientIdentity.getId() ) ){
+				if (GenericValidator.isBlankOrNull(STNoPatientIdentity.getId())) {
 					patientIdentityDAO.insertData(STNoPatientIdentity);
-				}else{
+				} else {
 					patientIdentityDAO.updateData(STNoPatientIdentity);
 				}
 			}
-			
+
 			if (isNewSample) {
 				sampleDAO.insertDataWithAccessionNumber(sample);
 
@@ -253,16 +250,16 @@ public class NonConformityUpdateWorker {
 				observationDAO.insertData(serviceObservation);
 			}
 
-			if(insertNewOrganizaiton){
+			if (insertNewOrganizaiton) {
 				orgDAO.insertData(newOrganization);
 				orgOrgTypeDAO.linkOrganizationAndType(newOrganization, TableIdService.REFERRING_ORG_TYPE_ID);
 			}
-			
+
 			if (insertSampleRequester) {
-				if(insertNewOrganizaiton){
+				if (insertNewOrganizaiton) {
 					sampleRequester.setRequesterId(newOrganization.getId());
 				}
-				sampleRequester.setSampleId(Long.parseLong( sample.getId()));
+				sampleRequester.setSampleId(Long.parseLong(sample.getId()));
 				sampleRequesterDAO.insertData(sampleRequester);
 			}
 
@@ -291,7 +288,7 @@ public class NonConformityUpdateWorker {
 
 			for (QaObservation qa : qaObservationMap.keySet()) {
 				if (qa.getId() == null) {
-					qa.setObservedId( qaObservationMap.get( qa ).getId() );
+					qa.setObservedId(qaObservationMap.get(qa).getId());
 					qaObservationDAO.insertData(qa);
 				} else {
 					qaObservationDAO.updateData(qa);
@@ -310,13 +307,13 @@ public class NonConformityUpdateWorker {
 				errors.reject("errors.UpdateException", "errors.UpdateException");
 			}
 
-			return IActionConstants.FWD_FAIL;
+			return IActionConstants.FWD_FAIL_INSERT;
 
 		} finally {
 			HibernateUtil.closeSession();
 		}
 
-		return IActionConstants.FWD_SUCCESS;
+		return IActionConstants.FWD_SUCCESS_INSERT;
 	}
 
 	public Errors getErrors() {
@@ -324,10 +321,10 @@ public class NonConformityUpdateWorker {
 	}
 
 	private void createSystemUser() {
-        SystemUser systemUser = new SystemUser();
-		systemUser.setId( webData.getCurrentSysUserId() );
+		SystemUser systemUser = new SystemUser();
+		systemUser.setId(webData.getCurrentSysUserId());
 		SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
-		systemUserDAO.getData( systemUser );
+		systemUserDAO.getData(systemUser);
 	}
 
 	private void clearMembers() {
@@ -336,13 +333,13 @@ public class NonConformityUpdateWorker {
 		patient = null;
 		doctorObservation = null;
 		serviceObservation = null;
-		sampleItemsByType = new HashMap<String, SampleItem>();
-		sampleQAEventInsertList = new ArrayList<SampleQaEvent>();
-		sampleQAEventDeleteList = new ArrayList<SampleQaEvent>();
-		qaObservationMap = new HashMap<QaObservation, SampleQaEvent>();
-		insertableNotes = new ArrayList<NoteSet>();
-		updateableNotes = new ArrayList<Note>();
-		deleteableNotes = new ArrayList<Note>();
+		sampleItemsByType = new HashMap<>();
+		sampleQAEventInsertList = new ArrayList<>();
+		sampleQAEventDeleteList = new ArrayList<>();
+		qaObservationMap = new HashMap<>();
+		insertableNotes = new ArrayList<>();
+		updateableNotes = new ArrayList<>();
+		deleteableNotes = new ArrayList<>();
 		sampleProject = null;
 
 		insertPatient = false;
@@ -363,7 +360,7 @@ public class NonConformityUpdateWorker {
 		sample.setReceivedDate(DateUtil.convertStringDateToSqlDate(getCompleteDateTime()));
 		sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Entered));
 		sample.setReferringId(webData.getRequesterSpecimanID());
-		
+
 		sampleHuman = new SampleHuman();
 		sampleHuman.setSysUserId(webData.getCurrentSysUserId());
 
@@ -393,7 +390,7 @@ public class NonConformityUpdateWorker {
 		String receivedDateTime = webData.getReceivedDate();
 		if (!GenericValidator.isBlankOrNull(webData.getReceivedTime())) {
 			receivedDateTime += " " + webData.getReceivedTime();
-		}else{
+		} else {
 			receivedDateTime += " 00:00";
 		}
 		return receivedDateTime;
@@ -435,40 +432,41 @@ public class NonConformityUpdateWorker {
 			patient = sampleHumanDAO.getPatientForSample(sample);
 			patient.setSysUserId(webData.getCurrentSysUserId());
 			patient.setNationalId(webData.getNationalId());
-		} 
-		
+		}
+
 		if (webData.getNewSubject() && !GenericValidator.isBlankOrNull(webData.getSubjectNo())) {
-			if(patient == null){
+			if (patient == null) {
 				patient = sampleHumanDAO.getPatientForSample(sample);
 			}
-			
-			subjectNoPatientIdentity = patientIdentityDAO.getPatitentIdentityForPatientAndType(patient.getId(), TableIdService.PATIENT_SUBJECT_IDENTITY);
-			if( subjectNoPatientIdentity == null){
+
+			subjectNoPatientIdentity = patientIdentityDAO.getPatitentIdentityForPatientAndType(patient.getId(),
+					TableIdService.PATIENT_SUBJECT_IDENTITY);
+			if (subjectNoPatientIdentity == null) {
 				subjectNoPatientIdentity = new PatientIdentity();
 			}
-			
+
 			subjectNoPatientIdentity.setSysUserId(webData.getCurrentSysUserId());
 			subjectNoPatientIdentity.setIdentityData(webData.getSubjectNo());
 			subjectNoPatientIdentity.setIdentityTypeId(TableIdService.PATIENT_SUBJECT_IDENTITY);
-		} 
+		}
 
 		if (webData.getNewSTNumber() && !GenericValidator.isBlankOrNull(webData.getSTNumber())) {
-			if(patient == null){
+			if (patient == null) {
 				patient = sampleHumanDAO.getPatientForSample(sample);
 			}
-			
-			STNoPatientIdentity = patientIdentityDAO.getPatitentIdentityForPatientAndType(patient.getId(),TableIdService.PATIENT_ST_IDENTITY);
-			if( STNoPatientIdentity == null){
+
+			STNoPatientIdentity = patientIdentityDAO.getPatitentIdentityForPatientAndType(patient.getId(),
+					TableIdService.PATIENT_ST_IDENTITY);
+			if (STNoPatientIdentity == null) {
 				STNoPatientIdentity = new PatientIdentity();
 			}
-			
+
 			STNoPatientIdentity.setSysUserId(webData.getCurrentSysUserId());
 			STNoPatientIdentity.setIdentityData(webData.getSTNumber());
 			STNoPatientIdentity.setIdentityTypeId(TableIdService.PATIENT_ST_IDENTITY);
-		} 
+		}
 
-		
-		if(patient == null || GenericValidator.isBlankOrNull(patient.getId())){
+		if (patient == null || GenericValidator.isBlankOrNull(patient.getId())) {
 			setPatient();
 		}
 
@@ -493,14 +491,13 @@ public class NonConformityUpdateWorker {
 			providerDAO.insertData(provider);
 		}
 
-        if( providerPerson != null){
-            for( PersonAddress addressPart : addressPartList){
-                addressPart.setPersonId( providerPerson.getId() );
-                personAddressDAO.insert( addressPart );
-            }
+		if (providerPerson != null) {
+			for (PersonAddress addressPart : addressPartList) {
+				addressPart.setPersonId(providerPerson.getId());
+				personAddressDAO.insert(addressPart);
+			}
 		}
 	}
-
 
 	/**
 	 * This is for when patients can not be added through the form
@@ -523,22 +520,22 @@ public class NonConformityUpdateWorker {
 		patient.setSysUserId(webData.getCurrentSysUserId());
 	}
 
-	private void addPatientIdentityIfNeeded(){
-		if (webData.getNewSubject() && !GenericValidator.isBlankOrNull(webData.getSubjectNo())) { 	
+	private void addPatientIdentityIfNeeded() {
+		if (webData.getNewSubject() && !GenericValidator.isBlankOrNull(webData.getSubjectNo())) {
 			subjectNoPatientIdentity = new PatientIdentity();
 			subjectNoPatientIdentity.setSysUserId(webData.getCurrentSysUserId());
 			subjectNoPatientIdentity.setIdentityData(webData.getSubjectNo());
 			subjectNoPatientIdentity.setIdentityTypeId(TableIdService.PATIENT_SUBJECT_IDENTITY);
-		} 
+		}
 
-		if (webData.getNewSTNumber() && !GenericValidator.isBlankOrNull(webData.getSTNumber())) { 
+		if (webData.getNewSTNumber() && !GenericValidator.isBlankOrNull(webData.getSTNumber())) {
 			STNoPatientIdentity = new PatientIdentity();
 			STNoPatientIdentity.setSysUserId(webData.getCurrentSysUserId());
 			STNoPatientIdentity.setIdentityData(webData.getSTNumber());
 			STNoPatientIdentity.setIdentityTypeId(TableIdService.PATIENT_ST_IDENTITY);
-		} 
+		}
 	}
-	
+
 	private void addDoctorIfNeeded() {
 
 		if (useFullProviderInfo) {
@@ -559,8 +556,8 @@ public class NonConformityUpdateWorker {
 	}
 
 	private void initProvider() {
-		addressPartList = new ArrayList<PersonAddress>();
-		
+		addressPartList = new ArrayList<>();
+
 		if (webData.noRequesterInformation()) {
 			Person person = PatientUtil.getUnknownPerson();
 			provider = new Provider();
@@ -578,21 +575,22 @@ public class NonConformityUpdateWorker {
 			providerPerson.setWorkPhone(webData.getRequesterPhoneNumber());
 			providerPerson.setSysUserId(webData.getCurrentSysUserId());
 
-	//		provider.setExternalId(webData.getRequesterSpecimanID());
+			// provider.setExternalId(webData.getRequesterSpecimanID());
 			provider.setSysUserId(webData.getCurrentSysUserId());
 			updateSampleHuman = true;
 			sampleHuman.setSysUserId(webData.getCurrentSysUserId());
 			insertProvider = true;
-			
-			addAddressPart(webData.getRequesterCommune(), TableIdService.ADDRESS_COMMUNE_ID , addressPartList, "T");
+
+			addAddressPart(webData.getRequesterCommune(), TableIdService.ADDRESS_COMMUNE_ID, addressPartList, "T");
 			addAddressPart(webData.getRequesterVillage(), TableIdService.ADDRESS_VILLAGE_ID, addressPartList, "T");
-			addAddressPart(webData.getRequesterDepartment(), TableIdService.ADDRESS_DEPARTMENT_ID, addressPartList, "D");
+			addAddressPart(webData.getRequesterDepartment(), TableIdService.ADDRESS_DEPARTMENT_ID, addressPartList,
+					"D");
 		}
 
 	}
 
-	private void addAddressPart(String value, String partId, List<PersonAddress> addressPartList, String type){
-		if( !GenericValidator.isBlankOrNull(value) && !("D".equals(type) && "0".equals(value))){
+	private void addAddressPart(String value, String partId, List<PersonAddress> addressPartList, String type) {
+		if (!GenericValidator.isBlankOrNull(value) && !("D".equals(type) && "0".equals(value))) {
 			PersonAddress addressPart = new PersonAddress();
 			addressPart.setAddressPartId(partId);
 			addressPart.setValue(value);
@@ -603,18 +601,18 @@ public class NonConformityUpdateWorker {
 	}
 
 	private void addServiceIfNeeded() {
-		
+
 		if (!webData.getNewService()) {
 			return;
 		}
-		
+
 		String service = webData.getService();
-		if( GenericValidator.isBlankOrNull(service)){
+		if (GenericValidator.isBlankOrNull(service)) {
 			service = webData.getNewServiceName();
-			if( GenericValidator.isBlankOrNull(service)){
+			if (GenericValidator.isBlankOrNull(service)) {
 				return;
 			}
-			
+
 			if (useFullProviderInfo) {
 				newOrganization = new Organization();
 				newOrganization.setIsActive("Y");
@@ -624,14 +622,13 @@ public class NonConformityUpdateWorker {
 				insertNewOrganizaiton = true;
 			}
 		}
-		
-		
+
 		if (useFullProviderInfo) {
 			sampleRequester = new SampleRequester();
-			if( !insertNewOrganizaiton){
+			if (!insertNewOrganizaiton) {
 				sampleRequester.setRequesterId(service);
 			}
-			sampleRequester.setRequesterTypeId( TableIdService.ORGANIZATION_REQUESTER_TYPE_ID);
+			sampleRequester.setRequesterTypeId(TableIdService.ORGANIZATION_REQUESTER_TYPE_ID);
 			sampleRequester.setSysUserId(webData.getCurrentSysUserId());
 			insertSampleRequester = true;
 		} else {
@@ -650,8 +647,8 @@ public class NonConformityUpdateWorker {
 			// New event
 			if (isNonBlankNewEvent(item)) {
 				String sampleType = item.getSampleType();
-                //All samples has an id of -1
-				if (sampleType.equals("-1") ) {
+				// All samples has an id of -1
+				if (sampleType.equals("-1")) {
 					addSampleQaEvent(item, null);
 				} else {
 					insertSampleItems = true;
@@ -661,25 +658,25 @@ public class NonConformityUpdateWorker {
 				}
 				// Marked for removal
 			} else if (isOldForRemoval(item)) {
-                SampleQaEvent sampleQaEvent = new SampleQaEvent();
-				sampleQaEvent.setId( item.getId() );
-				sampleQaEvent.setSysUserId( webData.getCurrentSysUserId() );
-				this.sampleQAEventDeleteList.add( sampleQaEvent );
+				SampleQaEvent sampleQaEvent = new SampleQaEvent();
+				sampleQaEvent.setId(item.getId());
+				sampleQaEvent.setSysUserId(webData.getCurrentSysUserId());
+				sampleQAEventDeleteList.add(sampleQaEvent);
 				Note existingNote = findExistingQANote(item.getId());
 				if (existingNote != null) {
 					existingNote.setSysUserId(webData.getCurrentSysUserId());
-					this.deleteableNotes.add(existingNote);
+					deleteableNotes.add(existingNote);
 				}
 				// Updated note
 			} else {
-                SampleQaEvent sampleQaEvent = new SampleQaEvent();
-				sampleQaEvent.setId( item.getId() );
+				SampleQaEvent sampleQaEvent = new SampleQaEvent();
+				sampleQaEvent.setId(item.getId());
 				Note existingNote = findExistingQANote(item.getId());
 				if (existingNote == null) {
-					addNoteIfNeeded(item.getNote(), sampleQaEvent );
+					addNoteIfNeeded(item.getNote(), sampleQaEvent);
 				} else {
-					if ( (existingNote.getText() != null && !existingNote.getText().equals(item.getNote())) || 
-						 (existingNote.getText() == null && item.getNote() != null ) ) {
+					if ((existingNote.getText() != null && !existingNote.getText().equals(item.getNote()))
+							|| (existingNote.getText() == null && item.getNote() != null)) {
 						existingNote.setText(item.getNote());
 						existingNote.setSystemUserId(webData.getCurrentSysUserId());
 						existingNote.setSysUserId(webData.getCurrentSysUserId());
@@ -705,7 +702,8 @@ public class NonConformityUpdateWorker {
 			} else {
 				NoteSet noteSet = new NoteSet();
 				noteSet.referencedSample = sample;
-				noteSet.note = new NoteService( sample ).createSavableNote( NoteService.NoteType.NON_CONFORMITY, noteText, NOTE_SUBJECT, webData.getCurrentSysUserId() );
+				noteSet.note = new NoteService(sample).createSavableNote(NoteService.NoteType.NON_CONFORMITY, noteText,
+						NOTE_SUBJECT, webData.getCurrentSysUserId());
 				insertableNotes.add(noteSet);
 			}
 		}
@@ -713,35 +711,38 @@ public class NonConformityUpdateWorker {
 	}
 
 	private SampleQaEvent addSampleQaEvent(QaEventItem item, SampleItem sampleItem) {
-		QAService qaService = new QAService(new SampleQaEvent());			
+		QAService qaService = new QAService(new SampleQaEvent());
 		qaService.setCurrentUserId(webData.getCurrentSysUserId());
 		qaService.setReportTime(getCompleteDateTime());
 		qaService.setQaEventById(item.getQaEvent());
-		qaService.setObservation(QAObservationType.SECTION, item.getSection(), QAObservationValueType.KEY, REJECT_IF_EMPTY);
-		qaService.setObservation(QAObservationType.AUTHORIZER, item.getAuthorizer(), QAObservationValueType.LITERAL, REJECT_IF_EMPTY);
-		qaService.setObservation(QAObservationType.DOC_NUMBER, item.getRecordNumber(), QAObservationValueType.LITERAL, REJECT_IF_EMPTY);
+		qaService.setObservation(QAObservationType.SECTION, item.getSection(), QAObservationValueType.KEY,
+				REJECT_IF_EMPTY);
+		qaService.setObservation(QAObservationType.AUTHORIZER, item.getAuthorizer(), QAObservationValueType.LITERAL,
+				REJECT_IF_EMPTY);
+		qaService.setObservation(QAObservationType.DOC_NUMBER, item.getRecordNumber(), QAObservationValueType.LITERAL,
+				REJECT_IF_EMPTY);
 		qaService.setSampleItem(sampleItem);
 		addNoteIfNeeded(item.getNote(), qaService.getSampleQaEvent());
 
 		sampleQAEventInsertList.add(qaService.getSampleQaEvent());
 
 		for (QaObservation observation : qaService.getUpdatedObservations()) {
-			qaObservationMap.put( observation, qaService.getSampleQaEvent() );
+			qaObservationMap.put(observation, qaService.getSampleQaEvent());
 		}
 
 		return qaService.getSampleQaEvent();
 	}
 
 	/**
-	 * 
-	 * @param item  The Item to be evaluated
-	 * @param sampleItem The item being checked for existence
+	 *
+	 * @param item         The Item to be evaluated
+	 * @param sampleItem   The item being checked for existence
 	 * @param sampleTypeId The type of the sample item
 	 * @return if the return is null, the there was already a sampleItem on the
 	 *         Sample for the given sampleTypeId
 	 */
 	private SampleItem addSampleQaEventForItem(QaEventItem item, SampleItem sampleItem, String sampleTypeId) {
-		List<SampleItem> sampleItemsOfType = new ArrayList<SampleItem>();
+		List<SampleItem> sampleItemsOfType = new ArrayList<>();
 		if (sampleItem == null) {
 
 			TypeOfSample typeOfSample = typeOfSampleDAO.getTypeOfSampleById(sampleTypeId);
@@ -762,38 +763,39 @@ public class NonConformityUpdateWorker {
 				sampleItem.setStatusId(StatusService.getInstance().getStatusID(SampleStatus.Entered));
 			}
 		}
-		addSampleQaEvent( item, sampleItem );
+		addSampleQaEvent(item, sampleItem);
 		// if the DB already has this sample type don't bother returning it to
 		// the caller (who will want to save it later), because this update
 		// action never updates sampleItems
 		return (sampleItemsOfType != null && sampleItemsOfType.size() > 0) ? null : sampleItem;
 	}
 
-
-
 	private Note findExistingSampleNote() {
 		if (sample.getId() == null) {
 			return null;
 		}
 
-		List<Note> notes = noteDAO.getNoteByRefIAndRefTableAndSubject(sample.getId(),NoteService.getReferenceTableIdForNoteBinding( NoteService.BoundTo.SAMPLE ), NOTE_SUBJECT);
+		List<Note> notes = noteDAO.getNoteByRefIAndRefTableAndSubject(sample.getId(),
+				NoteService.getReferenceTableIdForNoteBinding(NoteService.BoundTo.SAMPLE), NOTE_SUBJECT);
 		return notes.isEmpty() ? null : notes.get(0);
 	}
 
-	private Note findExistingQANote(String sampleQAEventId ) {
+	private Note findExistingQANote(String sampleQAEventId) {
 		if (sampleQAEventId == null || !sampleQAEventId.matches("\\d+")) {
 			return null;
 		}
 
-		List<Note> notes = noteDAO.getNoteByRefIAndRefTableAndSubject(sampleQAEventId, NoteService.getReferenceTableIdForNoteBinding( NoteService.BoundTo.QA_EVENT ), NOTE_SUBJECT);
+		List<Note> notes = noteDAO.getNoteByRefIAndRefTableAndSubject(sampleQAEventId,
+				NoteService.getReferenceTableIdForNoteBinding(NoteService.BoundTo.QA_EVENT), NOTE_SUBJECT);
 		return notes.isEmpty() ? null : notes.get(0);
 	}
-	
+
 	private void addNoteIfNeeded(String noteText, SampleQaEvent event) {
 		if (!GenericValidator.isBlankOrNull(noteText)) {
 			NoteSet noteSet = new NoteSet();
 			noteSet.referencedEvent = event;
-			noteSet.note = new NoteService( event ).createSavableNote( NoteService.NoteType.NON_CONFORMITY, noteText, NOTE_SUBJECT, webData.getCurrentSysUserId() );
+			noteSet.note = new NoteService(event).createSavableNote(NoteService.NoteType.NON_CONFORMITY, noteText,
+					NOTE_SUBJECT, webData.getCurrentSysUserId());
 			insertableNotes.add(noteSet);
 		}
 	}
@@ -820,7 +822,7 @@ public class NonConformityUpdateWorker {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param item The Item to be evaluated
 	 * @return TRUE if is new, contains some reason and isn't marked for delete
 	 */
@@ -833,7 +835,7 @@ public class NonConformityUpdateWorker {
 	 * @return TRUE if Is not new and is marked for removal.
 	 */
 	private boolean isOldForRemoval(QaEventItem item) {
-		return item.getId() != null && !"NEW".equals( item.getId() ) && item.isRemove();
+		return item.getId() != null && !"NEW".equals(item.getId()) && item.isRemove();
 	}
 
 	private class NoteSet {

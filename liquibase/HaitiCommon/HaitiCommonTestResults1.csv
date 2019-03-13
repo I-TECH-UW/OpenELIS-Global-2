@@ -1,0 +1,9 @@
+id,result_type,test,lastupdated
+ nextval( 'test_result_seq' ) ,A, ( select id from clinlims.test where description='Coloration de Gram' ) , now() 
+ nextval( 'test_result_seq' ) ,A, (select id from clinlims.test where description='Antibiogramme' ) , now() 
+ nextval( 'test_result_seq' ) ,A, (select id from clinlims.test where description='Hemoculture' ) , now() 
+ nextval( 'test_result_seq' ) ,A, (select id from clinlims.test where description='Uriculture' ) , now() 
+ nextval( 'test_result_seq' ) ,A, (select id from clinlims.test where description='Coproculture' ) , now() 
+ nextval( 'test_result_seq' ) ,A, (select id from clinlims.test where description='Culture (Pus)' ) , now() 
+ nextval( 'test_result_seq' ) ,A, (select id from clinlims.test where description='Culture (Liquid Amniotique)' ) , now() 
+ nextval( 'test_result_seq' ) ,A, (select id from clinlims.test where description='Culture (Liquid Amniotique)' ) , now() 

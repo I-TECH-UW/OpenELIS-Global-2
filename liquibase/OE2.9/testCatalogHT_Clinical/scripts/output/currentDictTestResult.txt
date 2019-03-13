@@ -1,0 +1,602 @@
+Groupe Sanguin - ABO(Sang);D;A
+Groupe Sanguin - ABO(Sang);D;B
+Groupe Sanguin - ABO(Sang);D;AB
+Groupe Sanguin - ABO(Sang);D;O
+Groupe Sanguin - Rhesus(Sang);D;RH Pos
+Groupe Sanguin - Rhesus(Sang);D;RH Neg
+Coombs Test Direct(Sang);D;Compatible
+Coombs Test Direct(Sang);D;Incompatible
+Coombs Test Indirect(Serum);D;Compatible
+Coombs Test Indirect(Serum);D;Incompatible
+Bacteries(Secretion vaginale);D;Negatif
+Bacteries(Secretion vaginale);D;Positif 1+
+Bacteries(Secretion vaginale);D;Positif 2+
+Bacteries(Secretion vaginale);D;Positif 3+
+Bacteries(Secretion vaginale);D;Positif 4+
+Levures Simples(Secretion vaginale);D;Negatif
+Levures Simples(Secretion vaginale);D;Positif 1+
+Levures Simples(Secretion vaginale);D;Positif 2+
+Levures Simples(Secretion vaginale);D;Positif 3+
+Levures Simples(Secretion vaginale);D;Positif 4+
+Levures Bourgeonantes(Secretion vaginale);D;Negatif
+Levures Bourgeonantes(Secretion vaginale);D;Positif 1+
+Levures Bourgeonantes(Secretion vaginale);D;Positif 2+
+Levures Bourgeonantes(Secretion vaginale);D;Positif 3+
+Levures Bourgeonantes(Secretion vaginale);D;Positif 4+
+Trichomonas vaginalis(Secretion vaginale);D;Negatif
+Trichomonas vaginalis(Secretion vaginale);D;0-1/ch
+Trichomonas vaginalis(Secretion vaginale);D;1-5/ch
+Trichomonas vaginalis(Secretion vaginale);D;5-10/ch
+Trichomonas vaginalis(Secretion vaginale);D;10-15/ch
+Trichomonas vaginalis(Secretion vaginale);D;15-20/ch
+Trichomonas vaginalis(Secretion vaginale);D;20-25/ch
+Trichomonas vaginalis(Secretion vaginale);D;25-30/ch
+Trichomonas vaginalis(Secretion vaginale);D;30-35/ch
+Trichomonas vaginalis(Secretion vaginale);D;35-40/ch
+Trichomonas vaginalis(Secretion vaginale);D;40-45/ch
+Trichomonas vaginalis(Secretion vaginale);D;45-50/ch
+Trichomonas vaginalis(Secretion vaginale);D;50-100/ch
+Trichomonas vaginalis(Secretion vaginale);D;Superieur a 100/ch
+Globules Blancs(Secretion vaginale);D;Negatif
+Globules Blancs(Secretion vaginale);D;0-1/ch
+Globules Blancs(Secretion vaginale);D;1-5/ch
+Globules Blancs(Secretion vaginale);D;5-10/ch
+Globules Blancs(Secretion vaginale);D;10-15/ch
+Globules Blancs(Secretion vaginale);D;15-20/ch
+Globules Blancs(Secretion vaginale);D;20-25/ch
+Globules Blancs(Secretion vaginale);D;25-30/ch
+Globules Blancs(Secretion vaginale);D;30-35/ch
+Globules Blancs(Secretion vaginale);D;35-40/ch
+Globules Blancs(Secretion vaginale);D;40-45/ch
+Globules Blancs(Secretion vaginale);D;45-50/ch
+Globules Blancs(Secretion vaginale);D;50-100/ch
+Globules Blancs(Secretion vaginale);D;Superieur a 100/ch
+Globules Rouges(Secretion vaginale);D;Negatif
+Globules Rouges(Secretion vaginale);D;0-1/ch
+Globules Rouges(Secretion vaginale);D;1-5/ch
+Globules Rouges(Secretion vaginale);D;5-10/ch
+Globules Rouges(Secretion vaginale);D;10-15/ch
+Globules Rouges(Secretion vaginale);D;15-20/ch
+Globules Rouges(Secretion vaginale);D;20-25/ch
+Globules Rouges(Secretion vaginale);D;25-30/ch
+Globules Rouges(Secretion vaginale);D;30-35/ch
+Globules Rouges(Secretion vaginale);D;35-40/ch
+Globules Rouges(Secretion vaginale);D;40-45/ch
+Globules Rouges(Secretion vaginale);D;45-50/ch
+Globules Rouges(Secretion vaginale);D;50-100/ch
+Globules Rouges(Secretion vaginale);D;Superieur a 100/ch
+Filaments Myceliens(Secretion vaginale);D;Negatif
+Filaments Myceliens(Secretion vaginale);D;Positif 1+
+Filaments Myceliens(Secretion vaginale);D;Positif 2+
+Filaments Myceliens(Secretion vaginale);D;Positif 3+
+Filaments Myceliens(Secretion vaginale);D;Positif 4+
+Cellules Epitheliales(Secretion vaginale);D;Negatif
+Cellules Epitheliales(Secretion vaginale);D;Positif 1+
+Cellules Epitheliales(Secretion vaginale);D;Positif 2+
+Cellules Epitheliales(Secretion vaginale);D;Positif 3+
+Cellules Epitheliales(Secretion vaginale);D;Positif 4+
+Bacteries(Secretion Urethrale);D;Negatif
+Bacteries(Secretion Urethrale);D;Positif 1+
+Bacteries(Secretion Urethrale);D;Positif 2+
+Bacteries(Secretion Urethrale);D;Positif 3+
+Levures Simples(Secretion Urethrale);D;Negatif
+Levures Simples(Secretion Urethrale);D;Positif 1+
+Levures Simples(Secretion Urethrale);D;Positif 2+
+Levures Simples(Secretion Urethrale);D;Positif 3+
+Levures Bourgeonantes(Secretion Urethrale);D;Negatif
+Levures Bourgeonantes(Secretion Urethrale);D;Positif 1+
+Levures Bourgeonantes(Secretion Urethrale);D;Positif 2+
+Levures Bourgeonantes(Secretion Urethrale);D;Positif 3+
+Trichomonas hominis(Secretion Urethrale);D;Negatif
+Trichomonas hominis(Secretion Urethrale);D;0-1/ch
+Trichomonas hominis(Secretion Urethrale);D;1-5/ch
+Trichomonas hominis(Secretion Urethrale);D;5-10/ch
+Trichomonas hominis(Secretion Urethrale);D;10-15/ch
+Trichomonas hominis(Secretion Urethrale);D;15-20/ch
+Trichomonas hominis(Secretion Urethrale);D;20-25/ch
+Trichomonas hominis(Secretion Urethrale);D;25-30/ch
+Trichomonas hominis(Secretion Urethrale);D;30-35/ch
+Trichomonas hominis(Secretion Urethrale);D;35-40/ch
+Trichomonas hominis(Secretion Urethrale);D;40-45/ch
+Trichomonas hominis(Secretion Urethrale);D;45-50/ch
+Trichomonas hominis(Secretion Urethrale);D;50-100/ch
+Trichomonas hominis(Secretion Urethrale);D;Superieur a 100/ch
+Globules Blancs(Secretion Urethrale);D;Negatif
+Globules Blancs(Secretion Urethrale);D;0-1/ch
+Globules Blancs(Secretion Urethrale);D;1-5/ch
+Globules Blancs(Secretion Urethrale);D;5-10/ch
+Globules Blancs(Secretion Urethrale);D;10-15/ch
+Globules Blancs(Secretion Urethrale);D;15-20/ch
+Globules Blancs(Secretion Urethrale);D;20-25/ch
+Globules Blancs(Secretion Urethrale);D;25-30/ch
+Globules Blancs(Secretion Urethrale);D;30-35/ch
+Globules Blancs(Secretion Urethrale);D;35-40/ch
+Globules Blancs(Secretion Urethrale);D;40-45/ch
+Globules Blancs(Secretion Urethrale);D;45-50/ch
+Globules Blancs(Secretion Urethrale);D;50-100/ch
+Globules Blancs(Secretion Urethrale);D;Superieur a 100/ch
+Globules Rouges(Secretion Urethrale);D;Negatif
+Globules Rouges(Secretion Urethrale);D;0-1/ch
+Globules Rouges(Secretion Urethrale);D;1-5/ch
+Globules Rouges(Secretion Urethrale);D;5-10/ch
+Globules Rouges(Secretion Urethrale);D;10-15/ch
+Globules Rouges(Secretion Urethrale);D;15-20/ch
+Globules Rouges(Secretion Urethrale);D;20-25/ch
+Globules Rouges(Secretion Urethrale);D;25-30/ch
+Globules Rouges(Secretion Urethrale);D;30-35/ch
+Globules Rouges(Secretion Urethrale);D;35-40/ch
+Globules Rouges(Secretion Urethrale);D;40-45/ch
+Globules Rouges(Secretion Urethrale);D;45-50/ch
+Globules Rouges(Secretion Urethrale);D;50-100/ch
+Globules Rouges(Secretion Urethrale);D;Superieur a 100/ch
+Filaments Myceliens(Secretion Urethrale);D;Negatif
+Filaments Myceliens(Secretion Urethrale);D;Positif 1+
+Filaments Myceliens(Secretion Urethrale);D;Positif 2+
+Filaments Myceliens(Secretion Urethrale);D;Positif 3+
+Cellules Epitheliales(Secretion Urethrale);D;Negatif
+Cellules Epitheliales(Secretion Urethrale);D;Positif 1+
+Cellules Epitheliales(Secretion Urethrale);D;Positif 2+
+Cellules Epitheliales(Secretion Urethrale);D;Positif 3+
+KOH(Secretion vaginale);D;Positif
+KOH(Secretion vaginale);D;Negatif
+Test de Rivalta(Secretion vaginale);D;Positif
+Test de Rivalta(Secretion vaginale);D;Negatif
+Cholera Test rapide(Selles);D;Reactif
+Cholera Test rapide(Selles);D;Non Reactif
+Couleur(Liquide Spermatique);D;Blanc jaunatre
+Couleur(Liquide Spermatique);D;jaune paille
+Couleur(Liquide Spermatique);D;jaune citrin
+Couleur(Liquide Spermatique);D;ambre
+Couleur(Liquide Spermatique);D;orange
+Couleur(Liquide Spermatique);D;jaune fonce
+Couleur(Liquide Spermatique);D;rouge
+Couleur(Liquide Spermatique);D;autre
+Couleur(Urines);D;Autre
+Couleur(Urines);D;Jaune Paille
+Couleur(Urines);D;Rouge
+Couleur(Urines);D;Jaune citrin
+Couleur(Urines);D;Ambre
+Couleur(Urines);D;Orange
+Couleur(Urines);D;Jaune Fonce
+Aspect(Urines);D;Trouble
+Aspect(Urines);D;Clair
+Aspect(Urines);D;Autre
+Aspect(Urines);D;Fonce
+Aspect(Urines);D;Icterique
+Aspect(Urines);D;normal
+Aspect(Urines);D;Legerement trouble
+Proteines(Urines);D;Negatif
+Proteines(Urines);D;Positif 1+
+Proteines(Urines);D;Positif 2+
+Proteines(Urines);D;Positif 3+
+Proteines(Urines);D;trace
+Glucose(Urines);D;Negatif
+Glucose(Urines);D;Positif 1+
+Glucose(Urines);D;Positif 2+
+Glucose(Urines);D;Positif 3+
+Glucose(Urines);D;trace
+Cetones(Urines);D;Negatif
+Cetones(Urines);D;Positif 1+
+Cetones(Urines);D;Positif 2+
+Cetones(Urines);D;Positif 3+
+Cetones(Urines);D;trace
+Bilirubine(Urines);D;Negatif
+Bilirubine(Urines);D;Positif 1+
+Bilirubine(Urines);D;Positif 2+
+Bilirubine(Urines);D;Positif 3+
+Bilirubine(Urines);D;trace
+Sang(Urines);D;Negatif
+Sang(Urines);D;Positif 1+
+Sang(Urines);D;Positif 2+
+Sang(Urines);D;Positif 3+
+Sang(Urines);D;trace
+Acide ascorbique(Urines);D;Negatif
+Acide ascorbique(Urines);D;Positif 1+
+Acide ascorbique(Urines);D;Positif 2+
+Acide ascorbique(Urines);D;Positif 3+
+Acide ascorbique(Urines);D;trace
+Urobilinogene(Urines);D;Negatif
+Urobilinogene(Urines);D;Positif 1+
+Urobilinogene(Urines);D;Positif 2+
+Urobilinogene(Urines);D;Positif 3+
+Urobilinogene(Urines);D;trace
+Nitrites(Urines);D;Negatif
+Nitrites(Urines);D;Positif 1+
+Nitrites(Urines);D;Positif 2+
+Nitrites(Urines);D;Positif 3+
+Nitrites(Urines);D;trace
+Hematies(Urines);D;Negatif
+Hematies(Urines);D;En amas
+Hematies(Urines);D;0-1/ch
+Hematies(Urines);D;1-5/ch
+Hematies(Urines);D;5-10/ch
+Hematies(Urines);D;10-15/ch
+Hematies(Urines);D;15-20/ch
+Hematies(Urines);D;20-25/ch
+Hematies(Urines);D;25-30/ch
+Hematies(Urines);D;30-35/ch
+Hematies(Urines);D;35-40/ch
+Hematies(Urines);D;40-45/ch
+Hematies(Urines);D;45-50/ch
+Hematies(Urines);D;50-100/ch
+Hematies(Urines);D;Superieur a 100/ch
+Leucocytes(Urines);D;Negatif
+Leucocytes(Urines);D;En amas
+Leucocytes(Urines);D;0-1/ch
+Leucocytes(Urines);D;1-5/ch
+Leucocytes(Urines);D;5-10/ch
+Leucocytes(Urines);D;10-15/ch
+Leucocytes(Urines);D;15-20/ch
+Leucocytes(Urines);D;20-25/ch
+Leucocytes(Urines);D;25-30/ch
+Leucocytes(Urines);D;30-35/ch
+Leucocytes(Urines);D;35-40/ch
+Leucocytes(Urines);D;40-45/ch
+Leucocytes(Urines);D;45-50/ch
+Leucocytes(Urines);D;50-100/ch
+Leucocytes(Urines);D;Superieur a 100/ch
+cellules epitheliales(Urines);D;Negatif
+cellules epitheliales(Urines);D;Rare
+cellules epitheliales(Urines);D;Positif 1+
+cellules epitheliales(Urines);D;Positif 2+
+cellules epitheliales(Urines);D;Positif 3+
+Bacteries(Urines);D;Negatif
+Bacteries(Urines);D;Rare
+Bacteries(Urines);D;Positif 1+
+Bacteries(Urines);D;Positif 2+
+Bacteries(Urines);D;Positif 3+
+Levures(Urines);D;Negatif
+Levures(Urines);D;Rare
+Levures(Urines);D;Positif 1+
+Levures(Urines);D;Positif 2+
+Levures(Urines);D;Positif 3+
+filaments myceliens(Urines);D;Negatif
+filaments myceliens(Urines);D;Rare
+filaments myceliens(Urines);D;Positif 1+
+filaments myceliens(Urines);D;Positif 2+
+filaments myceliens(Urines);D;Positif 3+
+spores(Urines);D;Negatif
+spores(Urines);D;Rare
+spores(Urines);D;Positif 1+
+spores(Urines);D;Positif 2+
+spores(Urines);D;Positif 3+
+trichomonas(Urines);D;Negatif
+trichomonas(Urines);D;0-1/ch
+trichomonas(Urines);D;1-5/ch
+trichomonas(Urines);D;5-10/ch
+trichomonas(Urines);D;10-15/ch
+trichomonas(Urines);D;15-20/ch
+trichomonas(Urines);D;20-25/ch
+trichomonas(Urines);D;25-30/ch
+trichomonas(Urines);D;30-35/ch
+trichomonas(Urines);D;35-40/ch
+trichomonas(Urines);D;40-45/ch
+trichomonas(Urines);D;45-50/ch
+trichomonas(Urines);D;50-100/ch
+trichomonas(Urines);D;Superieur a 100/ch
+Cylindres(Urines);M;Negatif
+Cylindres(Urines);M;Granuleux
+Cylindres(Urines);M;Cireux
+Cylindres(Urines);M;Hyalins
+Cylindres(Urines);M;Graisseux
+Cylindres(Urines);M;Epitheliales
+Cylindres(Urines);M;Leucocytaires
+Cylindres(Urines);M;0-1/ch
+Cylindres(Urines);M;1-5/ch
+Cylindres(Urines);M;5-10/ch
+Cylindres(Urines);M;10-15/ch
+Cylindres(Urines);M;15-20/ch
+Cylindres(Urines);M;20-25/ch
+Cylindres(Urines);M;25-30/ch
+Cylindres(Urines);M;30-35/ch
+Cylindres(Urines);M;35-40/ch
+Cylindres(Urines);M;40-45/ch
+Cylindres(Urines);M;45-50/ch
+Cylindres(Urines);M;50-100/ch
+Cylindres(Urines);M;Superieur a 100/ch
+Cristaux(Urines);M;Negatif
+Cristaux(Urines);M;Phosphate de Ca
+Cristaux(Urines);M;Phosphate de Mg
+Cristaux(Urines);M;Sulfate de Ca
+Cristaux(Urines);M;Urates Amorphes
+Cristaux(Urines);M; Oxalate de Calcium
+Cristaux(Urines);M;Acide Urique
+Cristaux(Urines);M;Cystine
+Cristaux(Urines);M;Phosphate de Calcium
+Cristaux(Urines);M;Triple phosphate
+Cristaux(Urines);M;Urate d'Ammonium 
+Cristaux(Urines);M;0-1/ch
+Cristaux(Urines);M;1-5/ch
+Cristaux(Urines);M;5-10/ch
+Cristaux(Urines);M;10-15/ch
+Cristaux(Urines);M;15-20/ch
+Cristaux(Urines);M;20-25/ch
+Cristaux(Urines);M;25-30/ch
+Cristaux(Urines);M;30-35/ch
+Cristaux(Urines);M;35-40/ch
+Cristaux(Urines);M;40-45/ch
+Cristaux(Urines);M;45-50/ch
+Cristaux(Urines);M;50-100/ch
+Cristaux(Urines);M;Superieur a 100/ch
+Couleur(Selles);D;Autre
+Couleur(Selles);D;Verdatre
+Couleur(Selles);D;Jaunatre
+Couleur(Selles);D;Noiratre
+Couleur(Selles);D;Maron
+Couleur(Selles);D;Sanguinolant
+Couleur(Selles);D;Grisatre
+Aspect(Selles);D;Liquide
+Aspect(Selles);D;Molle
+Aspect(Selles);D;Pateuse
+Aspect(Selles);D;Solide
+Aspect(Selles);D;Semi Liquide
+Aspect(Selles);D;Glaireuse
+Sang Occulte(Selles);D;POSITIF
+Sang Occulte(Selles);D;NEGATIF
+Dengue(Sang);D;POSITIF
+Dengue(Sang);D;NEGATIF
+PPD Qualitaitif(In Vivo);D;Reactif
+PPD Qualitaitif(In Vivo);D;Non Reactif
+B-HCG(Urine concentré du matin);D;Positif
+B-HCG(Urine concentré du matin);D;Positif
+B-HCG(Urine concentré du matin);D;Negatif
+B-HCG(Urine concentré du matin);D;Negatif
+Test de Grossesse(Urines);D;Positif
+Test de Grossesse(Urines);D;Negatif
+Malaria Test Rapide(Serum);D;POS
+Malaria Test Rapide(Serum);D;NEG
+Malaria Test Rapide(Plasma);D;POS
+Malaria Test Rapide(Plasma);D;NEG
+Malaria Test Rapide(Sang);D;POS
+Malaria Test Rapide(Sang);D;NEG
+Syphilis Test Rapide(Serum);D;POS
+Syphilis Test Rapide(Serum);D;NEG
+Syphilis Test Rapide(Plasma);D;POS
+Syphilis Test Rapide(Plasma);D;NEG
+Syphilis Test Rapide(Sang);D;POS
+Syphilis Test Rapide(Sang);D;NEG
+HTLV I et II(Serum);D;POS
+HTLV I et II(Serum);D;NEG
+HTLV I et II(Plasma);D;POS
+HTLV I et II(Plasma);D;NEG
+HTLV I et II(Sang);D;POS
+HTLV I et II(Sang);D;NEG
+Syphilis RPR(Serum);D;Reactif
+Syphilis RPR(Serum);D;Non Reactif
+Syphilis RPR(Serum);D;Reactif 1/2
+Syphilis RPR(Serum);D;Reactif 1/4
+Syphilis RPR(Serum);D;Reactif 1/8
+Syphilis RPR(Serum);D;Reactif 1/16
+Syphilis RPR(Serum);D;Reactif 1/32
+Syphilis RPR(Serum);D;Reactif 1/64
+Syphilis RPR(Plasma);D;Reactif
+Syphilis RPR(Plasma);D;Non Reactif
+Syphilis RPR(Plasma);D;Reactif 1/2
+Syphilis RPR(Plasma);D;Reactif 1/4
+Syphilis RPR(Plasma);D;Reactif 1/8
+Syphilis RPR(Plasma);D;Reactif 1/16
+Syphilis RPR(Plasma);D;Reactif 1/32
+Syphilis RPR(Plasma);D;Reactif 1/64
+Syphilis RPR(Sang);D;Reactif
+Syphilis RPR(Sang);D;Non Reactif
+Syphilis RPR(Sang);D;Reactif 1/2
+Syphilis RPR(Sang);D;Reactif 1/4
+Syphilis RPR(Sang);D;Reactif 1/8
+Syphilis RPR(Sang);D;Reactif 1/16
+Syphilis RPR(Sang);D;Reactif 1/32
+Syphilis RPR(Sang);D;Reactif 1/64
+Syphilis TPHA(Serum);D;Positif
+Syphilis TPHA(Serum);D;Negatif
+Syphilis TPHA(Plasma);D;Positif
+Syphilis TPHA(Plasma);D;Negatif
+Syphilis TPHA(Sang);D;Positif
+Syphilis TPHA(Sang);D;Negatif
+Helicobacter Pilori(Serum);D;POS
+Helicobacter Pilori(Serum);D;NEG
+Helicobacter Pilori(Plasma);D;POS
+Helicobacter Pilori(Plasma);D;NEG
+Helicobacter Pilori(Sang);D;POS
+Helicobacter Pilori(Sang);D;NEG
+CRP(Serum);D;POS  > 200 unites/ml
+CRP(Serum);D;NEG  < 200 unites/ml
+CRP(Plasma);D;POS  > 200 unites/ml
+CRP(Plasma);D;NEG  < 200 unites/ml
+CRP(Sang);D;POS  > 200 unites/ml
+CRP(Sang);D;NEG  < 200 unites/ml
+ASO(Serum);D;POS  > 200 U ASLO/ml
+ASO(Serum);D;NEG  < 200 U ASLO/ml
+ASO(Plasma);D;POS  > 200 U ASLO/ml
+ASO(Plasma);D;NEG  < 200 U ASLO/ml
+ASO(Sang);D;POS  > 200 U ASLO/ml
+ASO(Sang);D;NEG  < 200 U ASLO/ml
+Test de Widal Ag O(Serum);D;Reactif
+Test de Widal Ag O(Serum);D;Non Reactif
+Test de Widal Ag O(Serum);D;Reactif 1/20
+Test de Widal Ag O(Serum);D;Reactif 1/40
+Test de Widal Ag O(Serum);D;Reactif 1/80
+Test de Widal Ag O(Serum);D;Reactif 1/160
+Test de Widal Ag O(Serum);D;Reactif 1/320
+Test de Widal Ag O(Serum);D;Reactif 1/640
+Test de Widal Ag H(Serum);D;Reactif
+Test de Widal Ag H(Serum);D;Non Reactif
+Test de Widal Ag H(Serum);D;Reactif 1/20
+Test de Widal Ag H(Serum);D;Reactif 1/40
+Test de Widal Ag H(Serum);D;Reactif 1/80
+Test de Widal Ag H(Serum);D;Reactif 1/160
+Test de Widal Ag H(Serum);D;Reactif 1/320
+Test de Widal Ag H(Serum);D;Reactif 1/640
+Syphilis Bioline(Serum);D;POSITIF
+Syphilis Bioline(Serum);D;NEGATIF
+Syphilis Bioline(Serum);D;INDETERMINE
+Syphilis Bioline(Plasma);D;POSITIF
+Syphilis Bioline(Plasma);D;NEGATIF
+Syphilis Bioline(Plasma);D;INDETERMINE
+Syphilis Bioline(Sang);D;POSITIF
+Syphilis Bioline(Sang);D;NEGATIF
+Syphilis Bioline(Sang);D;INDETERMINE
+Test de comptabilite(Sang);D;Positif
+Test de comptabilite(Sang);D;Negatif
+Test de comptabilite(Serum);D;Positif
+Test de comptabilite(Serum);D;Negatif
+Malaria(Sang);M;1+
+Malaria(Sang);M;2+
+Malaria(Sang);M;3+
+Malaria(Sang);M;4+
+Malaria(Sang);M;Negatif
+Malaria(Sang);M;P. falciparum; P. vivax
+Malaria(Sang);M;P. malariae
+Malaria(Sang);M;P. ovale
+Malaria(Sang);M;Trophozoite
+Malaria(Sang);M;Gametocyte
+Malaria(Sang);M;Schizonte
+VIH test rapide(Serum);D;Positif
+VIH test rapide(Serum);D;Negatif
+VIH test rapide(Serum);D;Indetermine
+VIH test rapide(Plasma);D;Positif
+VIH test rapide(Plasma);D;Negatif
+VIH test rapide(Plasma);D;Indetermine
+VIH test rapide(Sang);D;Positif
+VIH test rapide(Sang);D;Negatif
+VIH test rapide(Sang);D;Indetermine
+VIH Elisa(Serum);D;Positif
+VIH Elisa(Serum);D;Negatif
+VIH Elisa(Plasma);D;Positif
+VIH Elisa(Plasma);D;Negatif
+VIH Elisa(Sang);D;Positif
+VIH Elisa(Sang);D;Negatif
+Hépatite B Ag(Sang);D;Positif
+Hépatite B Ag(Sang);D;Negatif
+Hépatite B Ag(Plasma);D;Positif
+Hépatite B Ag(Plasma);D;Negatif
+Hépatite B Ag(Serum);D;Positif
+Hépatite B Ag(Serum);D;Negatif
+Hépatite C IgM(Sang);D;Positif
+Hépatite C IgM(Sang);D;Negatif
+Hépatite C IgM(Plasma);D;Positif
+Hépatite C IgM(Plasma);D;Negatif
+Hépatite C IgM(Serum);D;Positif
+Hépatite C IgM(Serum);D;Negatif
+Dengue NS1 Ag(Serum);D;Positif
+Dengue NS1 Ag(Serum);D;Negatif
+Dengue NS1 Ag(Plasma);D;Positif
+Dengue NS1 Ag(Plasma);D;Negatif
+Recherche de BARR par Ziehl Neelsen Specimen 1(Liquide Pleural);D;Negatif
+Recherche de BARR par Ziehl Neelsen Specimen 1(Liquide Pleural);D;Positif 1+
+Recherche de BARR par Ziehl Neelsen Specimen 1(Liquide Pleural);D;Positif 2+
+Recherche de BARR par Ziehl Neelsen Specimen 1(Liquide Pleural);D;Positif 3+
+Recherche de BARR par Ziehl Neelsen Specimen 1(Liquide Pleural);D;Rare (1-9 BAAR/100ch)
+Recherche de BARR par Ziehl Neelsen Specimen 2(Liquide Pleural);D;Negatif
+Recherche de BARR par Ziehl Neelsen Specimen 2(Liquide Pleural);D;Positif 1+
+Recherche de BARR par Ziehl Neelsen Specimen 2(Liquide Pleural);D;Positif 2+
+Recherche de BARR par Ziehl Neelsen Specimen 2(Liquide Pleural);D;Positif 3+
+Recherche de BARR par Ziehl Neelsen Specimen 2(Liquide Pleural);D;Rare (1-9 BAAR/100ch)
+Recherche de BARR par Ziehl Neelsen Specimen 3(Liquide Pleural);D;Negatif
+Recherche de BARR par Ziehl Neelsen Specimen 3(Liquide Pleural);D;Positif 1+
+Recherche de BARR par Ziehl Neelsen Specimen 3(Liquide Pleural);D;Positif 2+
+Recherche de BARR par Ziehl Neelsen Specimen 3(Liquide Pleural);D;Positif 3+
+Recherche de BARR par Ziehl Neelsen Specimen 3(Liquide Pleural);D;Rare (1-9 BAAR/100ch)
+Recherche de BARR par Fluorochrome Specimen 1(Liquide Pleural);D;Negatif
+Recherche de BARR par Fluorochrome Specimen 1(Liquide Pleural);D;Positif 1+
+Recherche de BARR par Fluorochrome Specimen 1(Liquide Pleural);D;Positif 2+
+Recherche de BARR par Fluorochrome Specimen 1(Liquide Pleural);D;Positif 3+
+Recherche de BARR par Fluorochrome Specimen 1(Liquide Pleural);D;Rare (1-9 BAAR/40ch)
+Recherche de BARR par Fluorochrome Specimen 2(Liquide Pleural);D;Negatif
+Recherche de BARR par Fluorochrome Specimen 2(Liquide Pleural);D;Positif 1+
+Recherche de BARR par Fluorochrome Specimen 2(Liquide Pleural);D;Positif 2+
+Recherche de BARR par Fluorochrome Specimen 2(Liquide Pleural);D;Positif 3+
+Recherche de BARR par Fluorochrome Specimen 2(Liquide Pleural);D;Rare (1-9 BAAR/40ch)
+Recherche de BARR par Fluorochrome Specimen 3(Liquide Pleural);D;Negatif
+Recherche de BARR par Fluorochrome Specimen 3(Liquide Pleural);D;Positif 1+
+Recherche de BARR par Fluorochrome Specimen 3(Liquide Pleural);D;Positif 2+
+Recherche de BARR par Fluorochrome Specimen 3(Liquide Pleural);D;Positif 3+
+Recherche de BARR par Fluorochrome Specimen 3(Liquide Pleural);D;Rare (1-9 BAAR/40ch)
+Recherche de BARR par Ziehl Neelsen Specimen 1(Sputum);D;Negatif
+Recherche de BARR par Ziehl Neelsen Specimen 1(Sputum);D;Positif 1+
+Recherche de BARR par Ziehl Neelsen Specimen 1(Sputum);D;Positif 2+
+Recherche de BARR par Ziehl Neelsen Specimen 1(Sputum);D;Positif 3+
+Recherche de BARR par Ziehl Neelsen Specimen 1(Sputum);D;Rare (1-9 BAAR/100ch)
+Recherche de BARR par Ziehl Neelsen Specimen 2(Sputum);D;Negatif
+Recherche de BARR par Ziehl Neelsen Specimen 2(Sputum);D;Positif 1+
+Recherche de BARR par Ziehl Neelsen Specimen 2(Sputum);D;Positif 2+
+Recherche de BARR par Ziehl Neelsen Specimen 2(Sputum);D;Positif 3+
+Recherche de BARR par Ziehl Neelsen Specimen 2(Sputum);D;Rare (1-9 BAAR/100ch)
+Recherche de BARR par Ziehl Neelsen Specimen 3(Sputum);D;Negatif
+Recherche de BARR par Ziehl Neelsen Specimen 3(Sputum);D;Positif 1+
+Recherche de BARR par Ziehl Neelsen Specimen 3(Sputum);D;Positif 2+
+Recherche de BARR par Ziehl Neelsen Specimen 3(Sputum);D;Positif 3+
+Recherche de BARR par Ziehl Neelsen Specimen 3(Sputum);D;Rare (1-9 BAAR/100ch)
+Recherche de BARR par Fluorochrome Specimen 1(Sputum);D;Negatif
+Recherche de BARR par Fluorochrome Specimen 1(Sputum);D;Positif 1+
+Recherche de BARR par Fluorochrome Specimen 1(Sputum);D;Positif 2+
+Recherche de BARR par Fluorochrome Specimen 1(Sputum);D;Positif 3+
+Recherche de BARR par Fluorochrome Specimen 1(Sputum);D;Rare (1-9 BAAR/40ch)
+Recherche de BARR par Fluorochrome Specimen 2(Sputum);D;Negatif
+Recherche de BARR par Fluorochrome Specimen 2(Sputum);D;Positif 1+
+Recherche de BARR par Fluorochrome Specimen 2(Sputum);D;Positif 2+
+Recherche de BARR par Fluorochrome Specimen 2(Sputum);D;Positif 3+
+Recherche de BARR par Fluorochrome Specimen 2(Sputum);D;Rare (1-9 BAAR/40ch)
+Recherche de BARR par Fluorochrome Specimen 3(Sputum);D;Negatif
+Recherche de BARR par Fluorochrome Specimen 3(Sputum);D;Positif 1+
+Recherche de BARR par Fluorochrome Specimen 3(Sputum);D;Positif 2+
+Recherche de BARR par Fluorochrome Specimen 3(Sputum);D;Positif 3+
+Recherche de BARR par Fluorochrome Specimen 3(Sputum);D;Rare (1-9 BAAR/40ch)
+Herpes Simplex(Serum);D;Positif
+Herpes Simplex(Serum);D;Negatif
+Herpes Simplex(Plasma);D;Positif
+Herpes Simplex(Plasma);D;Negatif
+Chlamydia Ab(Serum);D;Positif
+Chlamydia Ab(Serum);D;Negatif
+Chlamydia Ag(Serum);D;Positif
+Chlamydia Ag(Serum);D;Negatif
+Typhoide Widal Ag O(Serum);D;Reactif
+Typhoide Widal Ag O(Serum);D;Non Reactif
+Typhoide Widal Ag O(Serum);D;Reactif 1/2
+Typhoide Widal Ag O(Serum);D;Reactif 1/4
+Typhoide Widal Ag O(Serum);D;Reactif 1/8
+Typhoide Widal Ag O(Serum);D;Reactif 1/16
+Typhoide Widal Ag O(Serum);D;Reactif 1/32
+Typhoide Widal Ag O(Serum);D;Reactif 1/64
+Typhoide Widal Ag H(Serum);D;Reactif
+Typhoide Widal Ag H(Serum);D;Non Reactif
+Typhoide Widal Ag H(Serum);D;Reactif 1/2
+Typhoide Widal Ag H(Serum);D;Reactif 1/4
+Typhoide Widal Ag H(Serum);D;Reactif 1/8
+Typhoide Widal Ag H(Serum);D;Reactif 1/16
+Typhoide Widal Ag H(Serum);D;Reactif 1/32
+Typhoide Widal Ag H(Serum);D;Reactif 1/64
+Mono Test(Serum);D;Positif
+Mono Test(Serum);D;Negatif
+Mono Test(Serum);D;Indetermine
+LE Cell(Serum);D;Positif
+LE Cell(Serum);D;Negatif
+LE Cell(Serum);D;Indetermine
+Dengue Ig G(Serum);D;Positif
+Dengue Ig G(Serum);D;Negatif
+Dengue Ig A(Serum);D;Positif
+Dengue Ig A(Serum);D;Negatif
+CMV Ig A(Serum);D;Positif
+CMV Ig A(Serum);D;Negatif
+Clostridium Difficile Toxin A & B(Serum);D;Positif
+Clostridium Difficile Toxin A & B(Serum);D;Negatif
+Determine VIH(Serum);D;Positif
+Determine VIH(Serum);D;Negatif
+Determine VIH(Serum);D;Indetermine
+Determine VIH(Plasma);D;Positif
+Determine VIH(Plasma);D;Negatif
+Determine VIH(Plasma);D;Indetermine
+Determine VIH(Sang);D;Positif
+Determine VIH(Sang);D;Negatif
+Determine VIH(Sang);D;Indetermine
+Colloidal Gold / Shangai Kehua VIH(Serum);D;Positif
+Colloidal Gold / Shangai Kehua VIH(Serum);D;Negatif
+Colloidal Gold / Shangai Kehua VIH(Serum);D;Indetermine
+Colloidal Gold / Shangai Kehua VIH(Plasma);D;Positif
+Colloidal Gold / Shangai Kehua VIH(Plasma);D;Negatif
+Colloidal Gold / Shangai Kehua VIH(Plasma);D;Indetermine
+Colloidal Gold / Shangai Kehua VIH(Sang);D;Positif
+Colloidal Gold / Shangai Kehua VIH(Sang);D;Negatif
+Colloidal Gold / Shangai Kehua VIH(Sang);D;Indetermine
+PSA(Serum);D;<4 Negatif
+PSA(Serum);D;> 4 Positif
+PSA(Sang);D;<4 Negatif
+PSA(Sang);D;> 4 Positif

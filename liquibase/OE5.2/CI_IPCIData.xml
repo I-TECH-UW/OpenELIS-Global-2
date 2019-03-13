@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ The contents of this file are subject to the Mozilla Public License
+  ~ Version 1.1 (the "License"); you may not use this file except in
+  ~ compliance with the License. You may obtain a copy of the License at
+  ~ http://www.mozilla.org/MPL/
+  ~
+  ~ Software distributed under the License is distributed on an "AS IS"
+  ~ basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+  ~ License for the specific language governing rights and limitations under
+  ~ the License.
+  ~
+  ~ The Original Code is OpenELIS code.
+  ~
+  ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<!-- Data specific to CDI IPCI labs -->
+	<changeSet author="paulsc" id="1" context="CI_IPCI">
+		<comment>correct module being mapped to the wrong role</comment>
+        <update tableName="system_role_module" >
+            <column name="system_role_id" valueNumeric=" ( select id from clinlims.system_role where name = 'Results entry' ) " />
+            <where>system_role_id = (select id from clinlims.system_role where name = 'Validator' ) AND
+            system_module_id = ( select id from clinlims.system_module where name = 'LogbookResults:Mycology' ); </where>
+        </update>
+	</changeSet>
+    <changeSet id="2" author="paulsc" context="CI_IPCI">
+        <comment>Correcting spelling for several tests</comment>
+        <update tableName="localization" >
+            <column name="french" value="Scotch test cutané" />
+            <where>id = (select name_localization_id from clinlims.test where guid = 'fef166b1-ecd0-4b20-8b83-51caed628b40' )</where>
+        </update>
+        <update tableName="localization" >
+            <column name="french" value="Scotch test cutané" />
+            <where>id = (select reporting_name_localization_id from clinlims.test where guid = 'fef166b1-ecd0-4b20-8b83-51caed628b40' )</where>
+        </update>
+        <update tableName="localization" >
+            <column name="french" value="Détection de la résistance aux antirétroviraux" />
+            <where>id = (select name_localization_id from clinlims.test where guid = '73e029c6-0f66-428f-a873-5ed0ad219a1e' )</where>
+        </update>
+        <update tableName="localization" >
+            <column name="french" value="Hématocrite" />
+            <where>id = (select name_localization_id from clinlims.test where guid = '34e8dfa8-7971-47fe-b259-b55dac61bcf5' )</where>
+        </update>
+        <update tableName="localization" >
+            <column name="french" value="Hématocrite" />
+            <where>id = (select name_localization_id from clinlims.test where guid = '34e8dfa8-7971-47fe-b259-b55dac61bcf5' )</where>
+        </update>
+        <sql>update localization set french = replace( french, 'Serologie', 'Sérologie' ) where description = 'panel name'; </sql>
+        <update tableName="dictionary" >
+            <column name="dict_entry" value="Autre" />
+            <where>dict_entry = 'Autres'</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>

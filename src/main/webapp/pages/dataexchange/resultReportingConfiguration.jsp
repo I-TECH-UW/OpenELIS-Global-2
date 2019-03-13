@@ -29,7 +29,7 @@
 
 	
 function setMyCancelAction(){
-	var form = window.document.forms[0];
+	var form = document.getElementById("mainForm");
 	form.action = "CancelResultReportingConfiguration.do";
 	form.submit();
 	return true;	
@@ -37,7 +37,7 @@ function setMyCancelAction(){
 
 function savePage(){
 	if( formValid() ){
-		var form = window.document.forms[0];
+		var form = document.getElementById("mainForm");
 		form.action = "UpdateResultReportingConfiguration.do";
 		form.submit();
 		return true;		
@@ -53,7 +53,7 @@ function formValid(){
 function /*boolean*/ hasRequriedValues(){
 	//var url = $("urlField");
 
-	//if( window.document.forms[0].enabled[0].checked && url.value.blank() ){
+	//if( document.getElementById("mainForm").enabled[0].checked && url.value.blank() ){
 	//	url.style.borderColor = "red";
 	//	alert("<%= StringUtil.getMessageForKey("resultreporting.config.missing.url")%>");
 	//	return false;

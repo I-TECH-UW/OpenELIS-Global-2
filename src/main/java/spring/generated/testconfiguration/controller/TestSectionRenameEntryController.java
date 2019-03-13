@@ -1,22 +1,20 @@
 package spring.generated.testconfiguration.controller;
 
-import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.generated.forms.TestSectionRenameEntryForm;
+import spring.mine.common.controller.BaseController;
+import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.services.DisplayListService;
-
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
 import us.mn.state.health.lims.localization.valueholder.Localization;
@@ -25,46 +23,36 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 
 @Controller
 public class TestSectionRenameEntryController extends BaseController {
-	@RequestMapping(
-			value = "/TestSectionRenameEntry", 
-			method = RequestMethod.GET
-	)
+	@RequestMapping(value = "/TestSectionRenameEntry", method = RequestMethod.GET)
 	public ModelAndView showTestSectionRenameEntry(HttpServletRequest request,
-			@ModelAttribute("form") TestSectionRenameEntryForm form) {	
+			@ModelAttribute("form") TestSectionRenameEntryForm form) {
 		String forward = FWD_SUCCESS;
-		if (form == null ) {
-			 form = new TestSectionRenameEntryForm();
+		if (form == null) {
+			form = new TestSectionRenameEntryForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
 
 		form.setTestSectionList(DisplayListService.getList(DisplayListService.ListType.TEST_SECTION));
 
 		return findForward(forward, form);
 	}
 
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	@Override
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("testSectionRenameDefinition", "form", form);
+			return "testSectionRenameDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-		      return new ModelAndView("redirect:/TestSectionRenameEntry.do", "form", form);
+			return "redirect:/TestSectionRenameEntry.do";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
-	
-	@RequestMapping(
-			value = "/TestSectionRenameEntry", 
-			method = RequestMethod.POST
-		)
+
+	@RequestMapping(value = "/TestSectionRenameEntry", method = RequestMethod.POST)
 	public ModelAndView updateTestSectionRenameEntry(HttpServletRequest request,
-			@ModelAttribute("form") TestSectionRenameEntryForm form) {	
-		
+			@ModelAttribute("form") TestSectionRenameEntryForm form) {
+
 		String forward = FWD_SUCCESS_INSERT;
 
 		String testSectionId = form.getTestSectionId();
@@ -84,7 +72,7 @@ public class TestSectionRenameEntryController extends BaseController {
 
 	private void updateTestSectionNames(String testSectionId, String nameEnglish, String nameFrench, String userId) {
 		TestSection testSection = new TestSectionDAOImpl().getTestSectionById(testSectionId);
-		
+
 		if (testSection != null) {
 
 			Localization name = testSection.getLocalization();
@@ -109,10 +97,12 @@ public class TestSectionRenameEntryController extends BaseController {
 		DisplayListService.getFreshList(DisplayListService.ListType.TEST_SECTION);
 	}
 
+	@Override
 	protected String getPageTitleKey() {
 		return null;
 	}
 
+	@Override
 	protected String getPageSubtitleKey() {
 		return null;
 	}

@@ -77,12 +77,12 @@ function setMenuAction(button, form, action, validate, parameters) {
     //If only one checkbox
     if (fieldObj[0] == null) {
        if (fieldObj.value != null && fieldObj.checked == true) {
-         ID = fieldObj.value;
+         ID = encodeURIComponent(fieldObj.value);
        }
    } else {
       for (var i = 0; i < fieldObj.length; i++) {
          if (fieldObj[i].checked == true) {
-            ID = fieldObj[i].value;
+            ID = encodeURIComponent(fieldObj[i].value);
             break;
          }
        }
@@ -136,6 +136,7 @@ function setMenuAction(button, form, action, validate, parameters) {
     if (searchForm != null) {
         var fieldObj = searchForm.elements['searchString'];
         searchString = fieldObj.value;
+        parameters += "&searchString=" + searchString; 
     }
   }
    
@@ -143,8 +144,10 @@ function setMenuAction(button, form, action, validate, parameters) {
   form.action = context + '/' + action + parsedFormName + '.do' + sessionid + parameters;
   
   if ((button.name == 'edit' && ID == '') || (button.name=='search' && searchString == '') ||(button.name=='searchString' && searchString == '') ) {
-  } else {
+  } else if (button.name == 'deactivate'){
       form.submit();
+  } else {
+	  window.location.href = form.action;
   }
    
        

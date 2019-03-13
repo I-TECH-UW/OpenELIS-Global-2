@@ -7,117 +7,107 @@ import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 import us.mn.state.health.lims.sample.bean.SampleEditItem;
 
 public class PrintBarcodeForm extends BaseForm {
-  private String lastupdated;
+	private String accessionNumber;
 
-  private String accessionNumber;
+	private String patientId;
 
-  private String patientId;
+	private String barcode;
 
-  private String barcode;
+	private String patientName = "";
 
-  private String patientName = "";
+	private String dob = "";
 
-  private String dob = "";
+	private String gender = "";
 
-  private String gender = "";
+	private String nationalId = "";
 
-  private String nationalId = "";
+	private String searchCriteria;
 
-  private String searchCriteria;
+	private List<SampleEditItem> existingTests;
 
-  private List<SampleEditItem> existingTests;
+	private PatientSearch patientSearch;
 
-  private PatientSearch patientSearch;
+	public PrintBarcodeForm() {
+		setFormName("PrintBarcodeForm");
+	}
 
-  public PrintBarcodeForm() {
-    setFormName("PrintBarcodeForm");
-  }
+	public String getAccessionNumber() {
+		return accessionNumber;
+	}
 
-  public String getLastupdated() {
-    return this.lastupdated;
-  }
+	public void setAccessionNumber(String accessionNumber) {
+		this.accessionNumber = accessionNumber;
+	}
 
-  public void setLastupdated(String lastupdated) {
-    this.lastupdated = lastupdated;
-  }
+	public String getPatientId() {
+		return patientId;
+	}
 
-  public String getAccessionNumber() {
-    return this.accessionNumber;
-  }
+	public void setPatientId(String patientId) {
+		this.patientId = patientId;
+	}
 
-  public void setAccessionNumber(String accessionNumber) {
-    this.accessionNumber = accessionNumber;
-  }
+	public String getBarcode() {
+		return barcode;
+	}
 
-  public String getPatientId() {
-    return this.patientId;
-  }
+	public void setBarcode(String barcode) {
+		this.barcode = barcode;
+	}
 
-  public void setPatientId(String patientId) {
-    this.patientId = patientId;
-  }
+	public String getPatientName() {
+		return patientName;
+	}
 
-  public String getBarcode() {
-    return this.barcode;
-  }
+	public void setPatientName(String patientName) {
+		this.patientName = patientName;
+	}
 
-  public void setBarcode(String barcode) {
-    this.barcode = barcode;
-  }
+	public String getDob() {
+		return dob;
+	}
 
-  public String getPatientName() {
-    return this.patientName;
-  }
+	public void setDob(String dob) {
+		this.dob = dob;
+	}
 
-  public void setPatientName(String patientName) {
-    this.patientName = patientName;
-  }
+	public String getGender() {
+		return gender;
+	}
 
-  public String getDob() {
-    return this.dob;
-  }
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
 
-  public void setDob(String dob) {
-    this.dob = dob;
-  }
+	public String getNationalId() {
+		return nationalId;
+	}
 
-  public String getGender() {
-    return this.gender;
-  }
+	public void setNationalId(String nationalId) {
+		this.nationalId = nationalId;
+	}
 
-  public void setGender(String gender) {
-    this.gender = gender;
-  }
+	public String getSearchCriteria() {
+		return searchCriteria;
+	}
 
-  public String getNationalId() {
-    return this.nationalId;
-  }
+	public void setSearchCriteria(String searchCriteria) {
+		this.searchCriteria = searchCriteria;
+	}
 
-  public void setNationalId(String nationalId) {
-    this.nationalId = nationalId;
-  }
+	public List<SampleEditItem> getExistingTests() {
+		return existingTests;
+	}
 
-  public String getSearchCriteria() {
-    return this.searchCriteria;
-  }
+	public void setExistingTests(List<SampleEditItem> existingTests) {
+		this.existingTests = existingTests;
+	}
 
-  public void setSearchCriteria(String searchCriteria) {
-    this.searchCriteria = searchCriteria;
-  }
+	public PatientSearch getPatientSearch() {
+		return patientSearch;
+	}
 
-  public List<SampleEditItem> getExistingTests() {
-    return this.existingTests;
-  }
-
-  public void setExistingTests(List<SampleEditItem> existingTests) {
-    this.existingTests = existingTests;
-  }
-
-  public PatientSearch getPatientSearch() {
-    return this.patientSearch;
-  }
-
-  public void setPatientSearch(PatientSearch patientSearch) {
-    this.patientSearch = patientSearch;
-  }
+	public void setPatientSearch(PatientSearch patientSearch) {
+		this.patientSearch = patientSearch;
+	}
 }

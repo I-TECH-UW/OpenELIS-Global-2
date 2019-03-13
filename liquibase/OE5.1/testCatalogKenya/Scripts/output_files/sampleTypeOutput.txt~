@@ -1,0 +1,43 @@
+
+Paste following in SampleType.sql
+
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Urine','H', now() , 'Urine', 'sample.type.Urine', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Swab/Urine','H', now() , 'Swab/Urine', 'sample.type.Swab/Urine', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Urine/Blood','H', now() , 'Urine/Bloo', 'sample.type.Urine/Blood', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Blood','H', now() , 'Blood', 'sample.type.Blood', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Smear','H', now() , 'Smear', 'sample.type.Smear', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Genital Smears','H', now() , 'Genital Sm', 'sample.type.Genital', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Bone Marrow','H', now() , 'Bone Marro', 'sample.type.Bone', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Stool','H', now() , 'Stool', 'sample.type.Stool', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Skin','H', now() , 'Skin', 'sample.type.Skin', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Swab','H', now() , 'Swab', 'sample.type.Swab', 'Y');
+INSERT INTO type_of_sample( id, description, domain, lastupdated, local_abbrev, display_key, is_active )
+	VALUES ( nextval( 'type_of_sample_seq' ) , 'Tissue','H', now() , 'Tissue', 'sample.type.Tissue', 'Y');
+
+Paste following in TypeOrder.sql
+
+update clinlims.type_of_sample set sort_order=10 where description ILIKE 'Urine';
+update clinlims.type_of_sample set sort_order=20 where description ILIKE 'Swab/Urine';
+update clinlims.type_of_sample set sort_order=30 where description ILIKE 'Urine/Blood';
+update clinlims.type_of_sample set sort_order=40 where description ILIKE 'Blood';
+update clinlims.type_of_sample set sort_order=50 where description ILIKE 'Smear';
+update clinlims.type_of_sample set sort_order=60 where description ILIKE 'Genital Smears';
+update clinlims.type_of_sample set sort_order=70 where description ILIKE 'Bone Marrow';
+update clinlims.type_of_sample set sort_order=80 where description ILIKE 'Stool';
+update clinlims.type_of_sample set sort_order=90 where description ILIKE 'Skin';
+update clinlims.type_of_sample set sort_order=100 where description ILIKE 'Swab';
+update clinlims.type_of_sample set sort_order=110 where description ILIKE 'Tissue';
+
+Paste following in inactivateSampleTypes.sql in the set inactive list
+
+update clinlims.type_of_sample set is_active='N' where name in ('Urines', 'Sérum', 'Plasma', 'Sang total', 'Actual type will be selected by user', 'Scotch Test Anal', 'Selles', 'Biopsie', 'LCR', );

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+     <changeSet author="pahill" id="1" context="CDIRetroCI" runOnChange="false">
+    	<insert tableName="dictionary_category" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) "/>
+    		<column name="local_abbrev" value="RTNDisease"/>
+    		<column name="name" value="RTN Diseases"/>
+    		<column name="description" value="Diseases for Routine Tests"/>
+    		<column name="lastupdated" valueDate=" now() "/>
+    	</insert>     
+     	<comment>A list of diseases for CI routine (RTN) tests</comment>
+     	<insert tableName="dictionary" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+    		<column name="local_abbrev" value="weightLoss" />
+    		<column name="dict_entry" value="Significant weight loss?" />
+    		<column name="display_key" value="diseases.RTN.weightLoss" />
+        </insert>
+     	<insert tableName="dictionary" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+    		<column name="local_abbrev" value="diarrhea" />
+    		<column name="dict_entry" value="A diarrhea lasting more than a month?" />
+    		<column name="display_key" value="diseases.RTN.diarrhea" />
+        </insert>
+     	<insert tableName="dictionary" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+    		<column name="local_abbrev" value="fever" />
+    		<column name="dict_entry" value="A fever lasting more than a month?" />
+    		<column name="display_key" value="diseases.RTN.fever" />
+        </insert>
+     	<insert tableName="dictionary" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+    		<column name="local_abbrev" value="cough" />
+    		<column name="dict_entry" value="A cough lasting more than a month?" />
+    		<column name="display_key" value="diseases.RTN.cough" />
+        </insert>
+     	<insert tableName="dictionary" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+    		<column name="local_abbrev" value="pulTB" />
+    		<column name="dict_entry" value="Pulmonary tuberculosis?" />
+    		<column name="display_key" value="diseases.RTN.pulmonaryTuberculosis" />
+        </insert>
+     	<insert tableName="dictionary" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+    		<column name="local_abbrev" value="expulTB" />
+    		<column name="dict_entry" value="Extrapulmonary tuberculosis" />
+    		<column name="display_key" value="diseases.RTN.expulmonaryTuberculosis" />
+        </insert>
+     	<insert tableName="dictionary" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+    		<column name="local_abbrev" value="swallPaint" />
+    		<column name="dict_entry" value="Pain on swallowing?" />
+    		<column name="display_key" value="diseases.RTN.painfulSwallowing" />
+        </insert>
+     	<insert tableName="dictionary" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+    		<column name="local_abbrev" value="cryptoMen" />
+    		<column name="dict_entry" value="cryptococcus meningitis?" />
+    		<column name="display_key" value="diseases.RTN.cryptococcusMeningitis" />
+        </insert>
+     	<insert tableName="dictionary" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+    		<column name="local_abbrev" value="recPneumon" />
+    		<column name="dict_entry" value="Recurrent pneumonia?" />
+    		<column name="display_key" value="diseases.RTN.recurrentPneumonia" />
+        </insert>
+     	<insert tableName="dictionary" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+    		<column name="local_abbrev" value="sespis" />
+    		<column name="dict_entry" value="Sepsis?" />
+    		<column name="display_key" value="diseases.RTN.sespis" />
+        </insert>
+     	<insert tableName="dictionary" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+    		<column name="local_abbrev" value="recInfect" />
+    		<column name="dict_entry" value="recurrent infections (otite, pharyngite)?" />
+    		<column name="display_key" value="diseases.RTN.recurrentInfections" />
+        </insert>
+     	<insert tableName="dictionary" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+    		<column name="local_abbrev" value="curvixC" />
+    		<column name="dict_entry" value="Invasive cancer of the cervix or the uterus?" />
+    		<column name="display_key" value="diseases.RTN.curvixCancer" />
+        </insert>
+     	<insert tableName="dictionary" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+    		<column name="local_abbrev" value="matHIV" />
+    		<column name="dict_entry" value="Is the patient's mother known to be infected by HIV?" />
+    		<column name="display_key" value="diseases.RTN.maternalHIV" />
+        </insert>
+  	</changeSet>
+	<changeSet author="pahill" id="2" context="CDIRetroCI" runOnChange="false">
+	   	<comment>A list of current diseases found during a physical examination for CI routine (RTN) tests</comment>
+    	<insert tableName="dictionary_category" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) "/>
+    		<column name="local_abbrev" value="RTNExam"/>
+    		<column name="name" value="RTN Examination Diseases"/>
+    		<column name="description" value="Diseases for Routine Test Examine Questions"/>
+    		<column name="lastupdated" valueDate=" now() "/>
+    	</insert>
+  	    <insert tableName="dictionary" schemaName="clinlims">
+	       <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+	       <column name="local_abbrev" value="cachexie" />
+	       <column name="display_key" value="diseases.RTN.cachexia"/>
+	       <column name="dict_entry" value="Cachexia?"/>
+	    </insert>
+ 	    <insert tableName="dictionary" schemaName="clinlims">
+	        <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+	        <column name="local_abbrev" value="thrush" />
+	        <column name="display_key" value="diseases.RTN.thrush"/>
+	        <column name="dict_entry" value="Oropharyngeal candidiasis?"/>
+	    </insert>
+	    <insert tableName="dictionary" schemaName="clinlims">
+	        <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+	        <column name="local_abbrev" value="dermPruip" />
+	        <column name="display_key" value="diseases.RTN.generalDermititisPruipineuse"/>
+	        <column name="dict_entry" value="Widespread Dermititis pruipineuse?"/>
+	    </insert>
+	    <insert tableName="dictionary" schemaName="clinlims">
+	        <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+	        <column name="local_abbrev" value="herpes" />
+	        <column name="display_key" value="diseases.RTN.herpes"/>
+	        <column name="dict_entry" value="Herpes (chronic progressive or generalized)?"/>
+	    </insert>
+	    <insert tableName="dictionary" schemaName="clinlims">
+	        <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+	        <column name="local_abbrev" value="zona" />
+	        <column name="display_key" value="diseases.RTN.zona"/>
+	        <column name="dict_entry" value="Zona?"/>
+	    </insert>
+	    <insert tableName="dictionary" schemaName="clinlims">
+	        <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+	        <column name="local_abbrev" value="sarcKapo" />
+	        <column name="display_key" value="diseases.RTN.kaposisSarcoma"/>
+	        <column name="dict_entry" value="Kaposi's Sarcoma?"/>
+	    </insert>
+	    <insert tableName="dictionary" schemaName="clinlims">
+	        <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+	        <column name="local_abbrev" value="xIngPadenp" />
+	        <column name="display_key" value="diseases.RTN.extraInquinalePolyadenopathy"/>
+	        <column name="dict_entry" value="Polyadenopathy extra inguinale (> 1 site,\u2265 1 cm)?"/>
+	    </insert>
+	    <insert tableName="dictionary" schemaName="clinlims">
+	        <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+    		<column name="dictionary_category_id" valueNumeric=" currval( 'dictionary_category_seq' ) "/>
+    		<column name="is_active" value="Y"/>
+    		<column name="lastupdated" valueDate="now()"/>
+	        <column name="local_abbrev" value="HIVDement" />
+	        <column name="display_key" value="diseases.RTN.hivDementia"/>
+	        <column name="dict_entry" value="Dementia or a neurological deficit associated with HIV?"/>
+	    </insert>
+    </changeSet>     	  
+</databaseChangeLog>

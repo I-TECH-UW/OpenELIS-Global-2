@@ -1,0 +1,57 @@
+Négatif, Positif , Indéterminé
+Négatif, Positif , Indéterminé
+Négatif, Positif , Indéterminé
+Négatif, Positif VIH 1, Positif VIH 2, Positif VIH1 et 2, Indéterminé
+Négatif, Positif VIH 1, Positif VIH 2, Positif VIH1 et 2, Indéterminé
+Négatif, Positif VIH 1, Positif VIH 2, Positif VIH1 et 2, Indéterminé
+Négatif, Positif , Indéterminé
+Négatif, Positif , Indéterminé
+Négatif, Positif , Indéterminé
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Positif ,Negatif
+Positif ,Negatif
+Positif +,Positif ++,Positif +++ ,Negatif
+Négatif , HIV1, HIV2 , HIVD , Indeterminate , Invalid
+Négatif , HIV1, HIV2 , HIVD , Indeterminate , Invalid
+Négatif , HIV1, HIV2 , HIVD , Indeterminate , Invalid
+Négatif , HIV1, HIV2 , HIVD , Indeterminate , Invalid
+Négatif , HIV1, HIV2 , HIVD , Indeterminate , Invalid
+Négatif , HIV1, HIV2 , HIVD , Indeterminate , Invalid
+Positif , Négatif, Indeterminate , Invalid
+Positif , Négatif , Indeterminate , Invalid
+Positif , Négatif , Indeterminate , Invalid
+Positif , Négatif, Indeterminate , Invalid
+Positif , Négatif, Indeterminate , Invalid
+HIV1 , Négatif , Indeterminate
+Positif , Négatif, Indeterminate , Invalid

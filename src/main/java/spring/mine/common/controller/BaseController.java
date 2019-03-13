@@ -1,6 +1,7 @@
 package spring.mine.common.controller;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,14 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
+import spring.mine.common.constants.Constants;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.security.PageIdentityUtil;
-import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.login.dao.UserModuleDAO;
@@ -36,11 +36,7 @@ public abstract class BaseController implements IActionConstants {
 	@Autowired
 	protected HttpServletRequest request;
 
-	private static final boolean USE_PARAMETERS = true;
-
-	protected String currentUserId;
-
-	protected abstract ModelAndView findLocalForward(String forward, BaseForm form);
+	protected abstract String findLocalForward(String forward);
 
 	/**
 	 * Must be implemented by subclasses to set the title for the requested page.
@@ -146,23 +142,6 @@ public abstract class BaseController implements IActionConstants {
 		// messageKey, arg0);
 	}
 
-	protected void setFormAttributes(BaseForm form, HttpServletRequest request) {
-		if (null != form) {
-			String name = form.getFormName();
-			request.setAttribute(IActionConstants.FORM_NAME, name);
-			request.setAttribute("formType", form.getClass().toString());
-
-			String actionName = name.substring(1, name.length() - 4);
-			actionName = name.substring(0, 1).toUpperCase() + actionName;
-			request.setAttribute(IActionConstants.ACTION_KEY, actionName);
-			// System.out.println("LoginBaseAction formName = " + name + " actionName " +
-			// actionName);
-			// bugzilla 2154
-			LogEvent.logInfo("BaseController", "setFormAttributes()",
-					"BaseController formName = " + name + " actionName " + actionName);
-		}
-	}
-
 	protected void setPageTitles(HttpServletRequest request, BaseForm form) {
 
 		String pageSubtitle = null;
@@ -207,22 +186,16 @@ public abstract class BaseController implements IActionConstants {
 
 	}
 
-	protected void setLanguage(HttpServletRequest request) {
-		if ("true".equals(ConfigurationProperties.getInstance().getPropertyValue(Property.languageSwitch))) {
-			String language = request.getParameter("lang");
-			if (language != null) {
-				SystemConfiguration.getInstance().setDefaultLocale(language);
-			}
-		}
-	}
-
 	protected String getSysUserId(HttpServletRequest request) {
 		UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
+		if (usd == null) {
+			return null;
+		}
 		return String.valueOf(usd.getSystemUserId());
 	}
 
-	protected void setSuccessFlag(HttpServletRequest request, String forwardFlag) {
-		request.setAttribute(FWD_SUCCESS, FWD_SUCCESS.equals(forwardFlag));
+	protected void setSuccessFlag(HttpServletRequest request, boolean success) {
+		request.setAttribute(FWD_SUCCESS, success);
 	}
 
 	protected void setSuccessFlag(HttpServletRequest request) {
@@ -241,46 +214,25 @@ public abstract class BaseController implements IActionConstants {
 		return true;
 	}
 
-	protected ModelAndView checkUserAndSetup(BaseForm form, Errors errors, HttpServletRequest request) {
-
-		UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-		if (!isUserAuthenticated(userModuleDAO, errors, request)) {
-			return findForward(LOGIN_PAGE, form);
+	protected String findForward(String forward) {
+		if (LOGIN_PAGE.equals(forward)) {
+			return "redirect:LoginPage.do";
 		}
-
-		// Set language to be used
-		setLanguage(request);
-
-		currentUserId = getSysUserId(request);
-
-		// Set the form attributes
-		setFormAttributes(form, request);
-
-		if (!isAccountUsable(userModuleDAO, errors, request)) {
-			return findForward(LOGIN_PAGE, form);
+		if (HOME_PAGE.equals(forward)) {
+			return "redirect:Home.do";
 		}
-
-		if (!hasPermission(userModuleDAO, errors, request)) {
-			errors.reject("login.error.module.not.allow", "login.error.module.not.allow");
-			LogEvent.logInfo("BaseController", "execute()", "======> NOT ALLOWED ACCESS TO THIS MODULE");
-			return userModuleDAO.isSessionExpired(request) ? findForward(LOGIN_PAGE, form)
-					: findForward(HOME_PAGE, form);
-		}
-
-		userModuleDAO.setupUserSessionTimeOut(request);
-
-		return new ModelAndView();
+		return findLocalForward(forward);
 	}
 
 	protected ModelAndView findForward(String forward, BaseForm form) {
-		// TO DO move the set page titles into an interceptor
-		setPageTitles(request, form);
-		if (LOGIN_PAGE.equals(forward)) {
-			return new ModelAndView("redirect:LoginPage.do", "errors", getErrors());
+		String realForward = findForward(forward);
+		if (realForward.startsWith("redirect:")) {
+			return new ModelAndView(realForward);
+		} else {
+			setPageTitles(request, form);
+			// insert global forwards here
+			return new ModelAndView(realForward, "form", form);
 		}
-
-		// insert global forwards here
-		return findLocalForward(forward, form);
 	}
 
 	protected ModelAndView findForward(String forward, Map<String, Object> requestObjects, BaseForm form) {
@@ -311,85 +263,41 @@ public abstract class BaseController implements IActionConstants {
 	}
 
 	protected void saveErrors(Errors errors) {
-		if (request.getAttribute(REQUEST_ERRORS) == null) {
-			request.setAttribute(REQUEST_ERRORS, errors);
+		if (request.getAttribute(Constants.REQUEST_ERRORS) == null) {
+			request.setAttribute(Constants.REQUEST_ERRORS, errors);
 		} else {
-			((Errors) request.getAttribute(REQUEST_ERRORS)).addAllErrors(errors);
+			Errors previousErrors = (Errors) request.getAttribute(Constants.REQUEST_ERRORS);
+			if (previousErrors.hasErrors() && previousErrors.getObjectName().equals(errors.getObjectName())) {
+				previousErrors.addAllErrors(errors);
+			} else {
+				request.setAttribute(Constants.REQUEST_ERRORS, errors);
+			}
 		}
 	}
 
 	protected Errors getErrors() {
-		return (Errors) request.getAttribute(REQUEST_ERRORS);
+		return (Errors) request.getAttribute(Constants.REQUEST_ERRORS);
 	}
 
-	protected boolean isUserAuthenticated(UserModuleDAO userModuleDAO, Errors errors, HttpServletRequest request) {
-		// return to login page if user session is not found
-		if (userModuleDAO.isSessionExpired(request)) {
-			/*
-			 * ActionMessages errors = new ActionMessages(); ActionError error = new
-			 * ActionError("login.error.session.message", null, null);
-			 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); saveErrors(request,
-			 * errors); return mapping.findForward(LOGIN_PAGE);
-			 */
-			errors.reject("login.error.session.message", "login.error.session.message");
-			return false;
+	// move flash attributes into request
+	protected void addFlashMsgsToRequest(HttpServletRequest request) {
+		Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
+		if (inputFlashMap != null) {
+			Boolean success = (Boolean) inputFlashMap.get(FWD_SUCCESS);
+			request.setAttribute(FWD_SUCCESS, success);
+
+			String successMessage = (String) inputFlashMap.get(Constants.SUCCESS_MSG);
+			request.setAttribute(Constants.SUCCESS_MSG, successMessage);
+
+			Errors errors = (Errors) inputFlashMap.get(Constants.REQUEST_ERRORS);
+			request.setAttribute(Constants.SUCCESS_MSG, errors);
+
+			List<String> messages = (List<String>) inputFlashMap.get(Constants.REQUEST_MESSAGES);
+			request.setAttribute(Constants.REQUEST_MESSAGES, messages);
+
+			List<String> warnings = (List<String>) inputFlashMap.get(Constants.REQUEST_WARNINGS);
+			request.setAttribute(Constants.SUCCESS_MSG, warnings);
 		}
-		return true;
-	}
-
-	protected boolean isAccountUsable(UserModuleDAO userModuleDAO, Errors errors, HttpServletRequest request) {
-		if (userModuleDAO.isAccountDisabled(request)) {
-			// ActionMessages errors = new ActionMessages();
-			// ActionError error = new ActionError("login.error.account.disable", null,
-			// null);
-			// errors.add(ActionMessages.GLOBAL_MESSAGE, error);
-			// saveErrors(request, errors);
-			errors.reject("login.error.account.disable", "login.error.account.disable");
-			return false;
-		}
-
-		if (userModuleDAO.isAccountLocked(request)) {
-			// ActionMessages errors = new ActionMessages();
-			// ActionError error = new ActionError("login.error.account.lock", null, null);
-			// errors.add(ActionMessages.GLOBAL_MESSAGE, error);
-			// saveErrors(request, errors);
-			errors.reject("login.error.account.lock", "login.error.account.lock");
-			return false;
-		}
-
-		if (userModuleDAO.isPasswordExpired(request)) {
-			// ActionMessages errors = new ActionMessages();
-			// ActionError error = new ActionError("login.error.password.expired", null,
-			// null);
-			// errors.add(ActionMessages.GLOBAL_MESSAGE, error);
-			errors.reject("login.error.password.expired", "login.error.password.expired");
-			// saveErrors(request, errors);
-			return false;
-		}
-		return true;
-	}
-
-	protected boolean hasPermission(UserModuleDAO userModuleDAO, Errors errors, HttpServletRequest request) {
-		// check for user type (admin or non-admin)
-		if (!userModuleDAO.isUserAdmin(request)) {
-			if (SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
-				if (!PageIdentityUtil.isMainPage(request)) {
-
-					@SuppressWarnings("rawtypes")
-					HashSet accessMap = (HashSet) request.getSession()
-							.getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
-
-					if (!accessMap.contains(PageIdentityUtil.getActionName(request, USE_PARAMETERS))) {
-						return false;
-					}
-				}
-			} else {
-				if (!userModuleDAO.isVerifyUserModule(request)) {
-					return false;
-				}
-			}
-		}
-		return true;
 	}
 
 }

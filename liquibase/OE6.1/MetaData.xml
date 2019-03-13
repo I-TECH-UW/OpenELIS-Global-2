@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--Viral Load Study settings-->
+  <!-- Data specific to CDIRetroCI -->
+  <changeSet author="CI OpenELIS developers group" id="1" context="CDIRetroCI">
+    <preConditions onFail="MARK_RAN">
+      
+        <sqlCheck expectedResult="0">select count(*) from clinlims.project where name = 'Viral Load Results';
+    		</sqlCheck>
+      
+    </preConditions>
+    <comment>Insert clinlims project viral load study</comment>
+    <sql>INSERT INTO clinlims.project (id,name,sys_user_id,description,started_date,completed_date,
+is_active,reference_to,program_code,lastupdated,scriptlet_id,local_abbrev,display_key) 
+VALUES (nextval('clinlims.project_seq'),'Viral Load Results',null,'Viral Load Results',null,null,'Y',null,'LART',now(),null,null,'project.VLStudy.name');
+</sql>
+  </changeSet>
+  <changeSet author="CI OpenELIS developers group" id="2" context="CDIRetroCI" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+      
+        <sqlCheck expectedResult="0">select count(*) from clinlims.dictionary_category where local_abbrev = 'vlReason';
+    		</sqlCheck>
+      
+    </preConditions>
+    <comment>Insert answers to Viral Load request category: Reason for Viral Load Request</comment>
+    <sql>INSERT INTO clinlims.dictionary_category (id,description,lastupdated,local_abbrev,name) 
+VALUES (400,'Reason for Viral Load Request', now(),'vlReason','Reason for Viral Load Request');
+</sql>
+  </changeSet>
+  <changeSet author="CI OpenELIS developers group" id="3" context="CDIRetroCI" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+              <sqlCheck expectedResult="0">select count(*) from clinlims.dictionary where dict_entry = 'Valid';</sqlCheck>
+      
+    </preConditions>
+    <comment>Insert answers to Viral Load request reason and 'Valid' result</comment>
+    <sql>INSERT INTO clinlims.dictionary (id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (1148,'Y','Valid', now(),null,197,'dict.PosNegIndInv.invalid.valid',82300);
+
+INSERT INTO clinlims.dictionary (id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (1149,'Y','VL under ARV control', now(),'null',400,'sample.entry.project.vl.arv',1);
+
+INSERT INTO clinlims.dictionary (id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (1150,'Y','Virological Failure', now(),'null',400,'sample.entry.project.vl.virologicalfail',2);
+
+INSERT INTO clinlims.dictionary (id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (1151,'Y','Clinical Failure', now(),'null',400,'sample.entry.project.vl.clinicalfail',3);
+
+INSERT INTO clinlims.dictionary (id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (1152,'Y','Immunological Failure', now() ,'null',400,'sample.entry.project.vl.immunologicalfail',4);
+
+INSERT INTO clinlims.dictionary (id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order) VALUES (1153,'Y','VL Reason Other', now(),'null',400,'sample.entry.project.vl.other',5);
+</sql>
+  </changeSet>
+  <changeSet author="CI OpenELIS developers group4" id="4" context="CDIRetroCI" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+              <sqlCheck expectedResult="0">select count(*) from clinlims.test_result where value = '1148';   		</sqlCheck>
+          </preConditions>
+    <comment>Insert test result for viral load 'Valid' result</comment>
+    <sql>INSERT INTO clinlims.test_result (id,test_id,result_group,flags,tst_rslt_type,value,significant_digits,quant_limit,cont_level,lastupdated,scriptlet_id,sort_order,is_quantifiable,is_active) VALUES (nextval('clinlims.test_result_seq'),175,18,'','D','1148',0,'','', now(),null,null,'TRUE','TRUE');
+</sql>
+  </changeSet>
+  <changeSet author="CI OpenELIS developers group" id="5" context="CDIRetroCI" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+              <sqlCheck expectedResult="0">select count(*) from clinlims.menu where element_id = 'menu_reports_arv_all'</sqlCheck>
+          </preConditions>
+    <comment>Insert menu elements for viral load report</comment>
+	
+    <sql>
+	
+ALTER SEQUENCE clinlims.menu_seq restart WITH 72;
+INSERT INTO clinlims.menu (id,parent_id,presentation_order,element_id,action_url,click_action,display_key,tool_tip_key,new_window,is_active) VALUES (nextval('clinlims.menu_seq'),43,5,'menu_reports_arv_all','/Report.do?type=patient&amp;report=patientARV1','','reports.patient.ARV.version1','tooltip.reports.patient.ARVFollowup.version1','FALSE','TRUE');
+
+INSERT INTO clinlims.menu (id,parent_id,presentation_order,element_id,action_url,click_action,display_key,tool_tip_key,new_window,is_active) VALUES (nextval('clinlims.menu_seq'),42,2,'menu_reports_vl','','','project.VLStudy.name','tooltip.project.VLStudy.name','FALSE','TRUE');
+
+INSERT INTO clinlims.menu (id,parent_id,presentation_order,element_id,action_url,click_action,display_key,tool_tip_key,new_window,is_active) VALUES (nextval('clinlims.menu_seq'),(select id from clinlims.menu where element_id='menu_reports_vl'),1,'menu_reports_vl_version1','/Report.do?type=patient&amp;report=patientVL1','','openreports.patient.VL.version1','tooltip.openreports.patient.VL.version1','FALSE','TRUE');
+</sql>
+  </changeSet>
+  <changeSet author="CI OpenELIS developers group" id="6" context="CDIRetroCI" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+              <sqlCheck expectedResult="0">select count(*) from clinlims.observation_history_type where type_name = 'arvTreatmentInitDate';</sqlCheck>
+          </preConditions>
+    <comment>Insert answers to viral load sudy observation question</comment>
+    <sql>INSERT INTO clinlims.observation_history_type (id, type_name, description, lastupdated) VALUES (nextval('clinlims.observation_history_type_seq'),'arvTreatmentInitDate','Date of first ARV treatment initiation', now());
+
+INSERT INTO clinlims.observation_history_type (id, type_name, description, lastupdated) VALUES (nextval('clinlims.observation_history_type_seq'),'currentARVTreatmentINNs','Therapeutic Regimen', now());
+
+INSERT INTO clinlims.observation_history_type (id, type_name, description, lastupdated) VALUES (nextval('clinlims.observation_history_type_seq'),'vlReasonForRequest','Reason for VL Request', now());
+
+INSERT INTO clinlims.observation_history_type (id, type_name, description, lastupdated) VALUES (nextval('clinlims.observation_history_type_seq'),'vlOtherReasonForRequest','Other Reason for VL Request', now());
+
+INSERT INTO clinlims.observation_history_type (id, type_name, description, lastupdated) VALUES (nextval('clinlims.observation_history_type_seq'),'initcd4Count','CD4 at first ARV treatment initiation', now());
+
+INSERT INTO clinlims.observation_history_type (id, type_name, description, lastupdated) VALUES (nextval('clinlims.observation_history_type_seq'),'initcd4Percent','CD4 percent at first ARV treatment initiation', now());
+
+INSERT INTO clinlims.observation_history_type (id, type_name, description, lastupdated) VALUES (nextval('clinlims.observation_history_type_seq'),'initcd4Date','Date CD4 at first ARV treatment initiation', now());
+
+INSERT INTO clinlims.observation_history_type (id, type_name, description, lastupdated) VALUES (nextval('clinlims.observation_history_type_seq'),'demandcd4Count','CD4 at demand', now());
+
+INSERT INTO clinlims.observation_history_type (id, type_name, description, lastupdated) VALUES (nextval('clinlims.observation_history_type_seq'),'demandcd4Percent','CD4 percentat demand', now());
+
+INSERT INTO clinlims.observation_history_type (id, type_name, description, lastupdated) VALUES (nextval('clinlims.observation_history_type_seq'),'demandcd4Date','Date CD4 at demand', now());
+
+INSERT INTO clinlims.observation_history_type (id, type_name, description, lastupdated) VALUES (nextval('clinlims.observation_history_type_seq'),'vlBenefit','Prior VL Request?', now());
+
+INSERT INTO clinlims.observation_history_type (id, type_name, description, lastupdated) VALUES (nextval('clinlims.observation_history_type_seq'),'priorVLLab','Prior VL Lab', now());
+
+INSERT INTO clinlims.observation_history_type (id, type_name, description, lastupdated) VALUES (nextval('clinlims.observation_history_type_seq'),'priorVLValue','Prior VL Value', now());
+
+INSERT INTO clinlims.observation_history_type (id, type_name, description, lastupdated) VALUES (nextval('clinlims.observation_history_type_seq'),'priorVLDate','Prior VL Date', now());
+</sql>
+  </changeSet>
+</databaseChangeLog>

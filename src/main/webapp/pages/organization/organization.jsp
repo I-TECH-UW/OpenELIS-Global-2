@@ -92,7 +92,7 @@ function validateForm(form) {
 							<spring:message code="organization.id"/>:
 						</td>
 						<td>
-							<form:input path="id" allowEdits="false"/>
+							<form:input path="id" readonly="readonly"/>
 						</td>
 		</tr>
 		<% } %>

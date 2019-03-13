@@ -1,0 +1,34 @@
+nextval( 'panel_seq' ) ,﻿Hemogramme - Auto,﻿Hemogramme - Auto, now() ,panel.name.﻿Hemogramme,10
+nextval( 'panel_seq' ) ,Hemogramme - Auto,Hemogramme - Auto, now() ,panel.name.Hemogramme,20
+nextval( 'panel_seq' ) ,Hemogramme - Manual,Hemogramme - Manual, now() ,panel.name.Hemogramme,30
+nextval( 'panel_seq' ) ,TS,TS, now() ,panel.name.TS,40
+nextval( 'panel_seq' ) ,TC,TC, now() ,panel.name.TC,50
+nextval( 'panel_seq' ) ,Electrophorese Hb,Electrophorese Hb, now() ,panel.name.Electrophorese,60
+nextval( 'panel_seq' ) ,Sickling test,Sickling test, now() ,panel.name.Sickling,70
+nextval( 'panel_seq' ) ,Coagulation,Coagulation, now() ,panel.name.Coagulation,80
+nextval( 'panel_seq' ) ,Groupe Sanguin,Groupe Sanguin, now() ,panel.name.Groupe,90
+nextval( 'panel_seq' ) ,Chimie Sanguine,Chimie Sanguine, now() ,panel.name.Chimie,100
+nextval( 'panel_seq' ) ,Ionogramme,Ionogramme, now() ,panel.name.Ionogramme,110
+nextval( 'panel_seq' ) ,Bilan Hepatique,Bilan Hepatique, now() ,panel.name.Bilan,120
+nextval( 'panel_seq' ) ,Profil Lipidique,Profil Lipidique, now() ,panel.name.Profil,130
+nextval( 'panel_seq' ) ,Transaminases,Transaminases, now() ,panel.name.Transaminases,140
+nextval( 'panel_seq' ) ,Gaz du Sang Arteriel,Gaz du Sang Arteriel, now() ,panel.name.Gaz,150
+nextval( 'panel_seq' ) ,Gaz du Sang Veineux,Gaz du Sang Veineux, now() ,panel.name.Gaz,160
+nextval( 'panel_seq' ) ,Goutte Pendante,Goutte Pendante, now() ,panel.name.Goutte,170
+nextval( 'panel_seq' ) ,Frottis Vaginale Gram,Frottis Vaginale Gram, now() ,panel.name.Frottis,180
+nextval( 'panel_seq' ) ,Frottis Urethral Gram,Frottis Urethral Gram, now() ,panel.name.Frottis,190
+nextval( 'panel_seq' ) ,Cholera,Cholera, now() ,panel.name.Cholera,200
+nextval( 'panel_seq' ) ,Spermogramme,Spermogramme, now() ,panel.name.Spermogramme,210
+nextval( 'panel_seq' ) ,Urine Macro,Urine Macro, now() ,panel.name.Urine,220
+nextval( 'panel_seq' ) ,Urine Micro,Urine Micro, now() ,panel.name.Urine,230
+nextval( 'panel_seq' ) ,Selles Macro,Selles Macro, now() ,panel.name.Selles,240
+nextval( 'panel_seq' ) ,Selles Micro,Selles Micro, now() ,panel.name.Selles,250
+nextval( 'panel_seq' ) ,Selles Saline Lugol,Selles Saline Lugol, now() ,panel.name.Selles,260
+nextval( 'panel_seq' ) ,Zielh Modifie,Zielh Modifie, now() ,panel.name.Zielh,270
+nextval( 'panel_seq' ) ,Malaria Test,Malaria Test, now() ,panel.name.Malaria,280
+nextval( 'panel_seq' ) ,CD4,CD4, now() ,panel.name.CD4,290
+nextval( 'panel_seq' ) ,Zielh Nielsen,Zielh Nielsen, now() ,panel.name.Zielh,300
+nextval( 'panel_seq' ) ,Fluorescent,Fluorescent, now() ,panel.name.Fluorescent,310
+nextval( 'panel_seq' ) ,Auramine,Auramine, now() ,panel.name.Auramine,320
+nextval( 'panel_seq' ) ,Culture Mycobacteriologique,Culture Mycobacteriologique, now() ,panel.name.Culture,330
+nextval( 'panel_seq' ) ,CDV,CDV, now() ,panel.name.CDV,340

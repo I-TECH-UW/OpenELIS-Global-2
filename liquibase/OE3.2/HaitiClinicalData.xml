@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<!-- Data specific to haiti LNSP -->
+	
+	<changeSet author="paulsc" id="1" context="haiti">
+		<comment>De-activates unused test section</comment>
+		<update tableName="test_section">
+			<column name="is_active" value="N" />
+			<where>name in ('Serology-Immunology', 'Hemto-Immunology', 'Biologie Moleculaire')</where>
+		</update>
+		<update tableName="test_section">
+			<column name="is_active" value="Y" />
+			<where>name = 'Bacteria'</where>
+		</update>
+	</changeSet>
+    <changeSet author="jfurlong" id="1" context="haiti">
+        <comment>Makes iReport printable test names for alpha, beta and gamma characters</comment>
+        <sqlFile path="OE3.2/testReportingDescription.sql" />
+    </changeSet>
+</databaseChangeLog>

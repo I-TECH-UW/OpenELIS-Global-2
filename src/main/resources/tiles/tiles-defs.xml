@@ -18,7 +18,7 @@
     <put-attribute name="banner" value="/pages/common/banner.jsp" />
     <put-attribute name="login" value="/pages/common/loginHeader.jsp" />
     <put-attribute name="error" value="/pages/common/actionError.jsp" />
-    <put-attribute name="preSelectionHeader" value="/pages/common/emptyPlaceHolder.jsp" />
+    <put-attribute name="preSelectionHeader" value="/pages/common/actionSuccess.jsp" />
     <put-attribute name="header" value="/pages/common/formHeaderButtons.jsp" />
     <put-attribute name="body" value="/pages/common/emptyPlaceHolder.jsp" />
     <put-attribute name="footer" value="/pages/common/formFooterButtons.jsp" />

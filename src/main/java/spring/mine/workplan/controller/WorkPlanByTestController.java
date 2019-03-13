@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -59,15 +60,8 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 			form = new WorkplanForm();
 		}
 		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
+		Errors errors = new BaseErrors();
+		
 
 		request.getSession().setAttribute(SAVE_DISABLED, "true");
 
@@ -256,13 +250,13 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
-			return new ModelAndView("workplanResultDefinition", "form", form);
-		} else if ("fail".equals(forward)) {
-			return new ModelAndView("homePageDefinition", "form", form);
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "workplanResultDefinition";
+		} else if (FWD_FAIL.equals(forward)) {
+			return "homePageDefinition";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

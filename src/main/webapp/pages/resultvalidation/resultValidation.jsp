@@ -110,7 +110,7 @@ function showUserReflexChoices(){
 function  /*void*/ setMyCancelAction(form, action, validate, parameters)
 {
 	//first turn off any further validation
-	setAction(window.document.forms[0], 'Cancel', 'no', '');
+	setAction(document.getElementById("mainForm"), 'Cancel', 'no', '');
 }
 
 function /*void*/ enableDisableCheckboxes( matchedElement, groupingNumber ){
@@ -176,7 +176,7 @@ function savePage() {
     }
 
   window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-	var form = window.document.forms[0];
+	var form = document.getElementById("mainForm");
 	form.action = "ResultValidationSave.do" + '?type=<spring:escapeBody javaScriptEscape="true">${testSection}</spring:escapeBody>&test=<spring:escapeBody javaScriptEscape="true">${testName}</spring:escapeBody>&';
 	form.submit();
 }

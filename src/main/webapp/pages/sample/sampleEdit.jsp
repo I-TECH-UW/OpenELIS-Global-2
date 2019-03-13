@@ -66,7 +66,7 @@ $jq(function() {
 function  /*void*/ setMyCancelAction(form, action, validate, parameters)
 {
 	//first turn off any further validation
-	setAction(window.document.forms[0], 'Cancel', 'no', '');
+	setAction(document.getElementById("mainForm"), 'Cancel', 'no', '');
 }
 
 function /*void*/ addRemoveRequest( checkbox ){
@@ -106,7 +106,7 @@ function /*void*/ savePage(){
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	loadSamples();
 	
-	var form = document.forms[0];
+	var form = document.getElementById("mainForm");
 	form.action = "SampleEditUpdate.do";
 	form.submit();
 }

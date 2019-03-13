@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<!-- Data specific to haiti LNSP -->
+	
+	<changeSet author="paulsc" id="1" context="haitiLNSP">
+		<comment>Copies the provider external_id to the observation table.  This corrects a previous error</comment>
+		<sql>
+		INSERT INTO observation_history(id, patient_id, sample_id, observation_history_type_id, value_type, "value", lastupdated, sample_item_id)
+select nextval( 'observation_history_seq') , sh.patient_id, sh.samp_id, (select id from clinlims.observation_history_type where type_name = 'referrersPatientId'), 'L', p.external_id, now(), null 
+from clinlims.sample_human sh
+join clinlims.provider p on p.id = sh.provider_id
+where p.external_id is not null;
+		</sql>
+	</changeSet>
+	<changeSet author="paulsc" id="2" context="haitiLNSP">
+		<comment>Sets the specimen auto date/time to false</comment>
+		<update tableName="site_information">
+			<column name="value" value="false" />
+			<where>name = 'auto-fill collection date/time'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="3" context="haitiLNSP">
+		<comment>Update display order of "VIH-1 PCR Qualitatif"</comment>
+		<sqlFile path="OE3.3/HT_LNSPupdateSelectListOrder.sql"/>
+	
+	</changeSet>
+	<changeSet author="paulsc" id="4" context="haitiLNSP">
+		<comment>Deactivate the malaria panel</comment>
+		<update tableName="panel">
+			<column name="is_active" value="N" />
+			<where>name = 'Malaria'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="5" context="haitiLNSP">
+		<comment>Sets the correct values for showing results in patient reports</comment>
+		<update tableName="site_information" >
+			<column name="value" value="true" />
+			<where>name = 'Patient report with no alerts'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="6" context="haitiLNSP">
+		<comment>Add missing result limits</comment>
+		<sqlFile path="OE3.3/HT_LNSPupdateResultLimits.sql"/>
+	</changeSet>
+	<changeSet author="paulsc" id="7" context="haitiLNSP">
+		<comment>Add missing result limits</comment>
+		<sqlFile path="OE3.3/HT_LNSPBackfillResultLimits.sql"/>
+	</changeSet>
+</databaseChangeLog>

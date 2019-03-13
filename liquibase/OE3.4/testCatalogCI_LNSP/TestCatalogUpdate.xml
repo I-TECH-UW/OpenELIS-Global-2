@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+
+	<changeSet author="paulsc" id="1" context="ciLNSP">
+		<comment>Adds needed dictionary values</comment>
+        <sqlFile path="OE3.4/testCatalogCI_LNSP/dictionary1.sql"/>
+	</changeSet>
+    <changeSet id="2" author="paulsc" context="ciLNSP" >
+        <comment>Update existing tests</comment>
+        <sqlFile path="OE3.4/testCatalogCI_LNSP/updateTests.sql"/>
+    </changeSet>
+    <changeSet id="3" author="paulsc" context="ciLNSP">
+        <comment>Insert new tests</comment>
+        <sqlFile path="OE3.4/testCatalogCI_LNSP/insertTests.sql"/>
+    </changeSet>
+    <changeSet id="4" author="paulsc" context="ciLNSP">
+        <comment>Add significant digits to test_result</comment>
+        <update tableName="test_result" >
+            <column name="significant_digits" valueNumeric="0" />
+        </update>
+        <sqlFile path="OE3.4/testCatalogCI_LNSP/significantDigits.sql"/>
+    </changeSet>
+
+</databaseChangeLog>
+

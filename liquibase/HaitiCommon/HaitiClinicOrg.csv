@@ -1,0 +1,1274 @@
+id,name,short_name,lastupdated,active
+ nextval( 'organization_seq' ) ,GHESKIO, 11136, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL RENAISSANCE, 11129, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de santé Sainte elizabeth, 11131, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICO SOCIAL (PORT-AU-PRINCE), 11142, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE SAINT MICHEL, 11144, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE COMMUNATAIRE, 11143, now() ,Y 
+ nextval( 'organization_seq' ) ,CLINIQUE HOPITAL LAFLEUR DU CHENE, 11150, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE JOSEPH JANVIER, 11124, now() ,Y 
+ nextval( 'organization_seq' ) ,SANT SANTE KAY PA' W, 11157, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL SAINTE CLAIRE, 11146, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL LA SAINTE FAMILLE, 11149, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL SANATORIUM, 11123, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital du Canapé-vert, 11104, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de l’Ass. Des Chauffeurs guides, 11101, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Baillergeau c/s campêche, 11102, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Aurore du Belair, 11103, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Carifont de Fontamara, 11105, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de santé de St. Antoine, 11107, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Snelak, 11108, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé de Solino, 11109, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé trou sable, 11110, now() ,Y 
+ nextval( 'organization_seq' ) ,SOFA, 11111, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Richard Allen, 11112, now() ,Y 
+ nextval( 'organization_seq' ) ,ASOLDO, 11113, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital François, 11114, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé du Bon Secours, 11115, now() ,Y 
+ nextval( 'organization_seq' ) ,Klinik fanm kafou fey, 11116, now() ,Y 
+ nextval( 'organization_seq' ) ,Ligue anti anemie falciforme (LAAF), 11117, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de psychiatrie Mars & Kline, 11118, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre St Antoine, 11119, now() ,Y 
+ nextval( 'organization_seq' ) ,CAL SODEC, 11121, now() ,Y 
+ nextval( 'organization_seq' ) ,PROFAMIL (Port-au-Prince), 11122, now() ,Y 
+ nextval( 'organization_seq' ) ,World Relief, 11126, now() ,Y 
+ nextval( 'organization_seq' ) ,Institut Fame Pereo, 11127, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de santé croix des prés, 11128, now() ,Y 
+ nextval( 'organization_seq' ) ,APROSIFA, 11130, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de santé kay ti moun, 11132, now() ,Y 
+ nextval( 'organization_seq' ) ,CMS/FHSM, 11133, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de santé Martissant, 11134, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de santé Caravelle, 11135, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Bethanie, 11137, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre St Jude, 11138, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé ACDEF mapou, 11139, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Providence, 11140, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Bethesda, 11141, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital Saint-esprit, 11145, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital Sapiens, 11147, now() ,Y 
+ nextval( 'organization_seq' ) ,Maternité UMO, 11148, now() ,Y 
+ nextval( 'organization_seq' ) ,Maternité de Christ-roi, 11152, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé cite Canada (Haut Turgeau), 11153, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Cité l'Eternel, 11156, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Lak Descayettes, 11163, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Sante du Portail Leogane, 11106, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF-LALUE, 11151, now() ,Y 
+ nextval( 'organization_seq' ) ,Hopital de L'Université D'état D'Haiti, 11100, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital St. François de Salle, 11120, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre Pédodontique, 11125, now() ,Y 
+ nextval( 'organization_seq' ) ,Cavour, 95898, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinique de la Santé, 95899, now() ,Y 
+ nextval( 'organization_seq' ) ,Asie Communal Medical Campus, 95900, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinique Baptiste Chretienne: Project Haiti Heart, 95901, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre Medical Berca, 95902, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre Materno-Chirurgical, 95903, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinic: Church Base: Fond Jannwel, 95904, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinique Médecins Sans Frontières: Pétionville, 95905, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital St. Vincent, 95906, now() ,Y 
+ nextval( 'organization_seq' ) ,Maternité Solidarité Hospital, 95907, now() ,Y 
+ nextval( 'organization_seq' ) ,Port-au-Prince Blood Bank Croix Rouge, 95908, now() ,Y 
+ nextval( 'organization_seq' ) ,Malteser International Health Center, 95909, now() ,Y 
+ nextval( 'organization_seq' ) ,FAME, 95910, now() ,Y 
+ nextval( 'organization_seq' ) ,Sarthe Klinik Medikal, 95911, now() ,Y 
+ nextval( 'organization_seq' ) ,Solidarité Haiti, 95912, now() ,Y 
+ nextval( 'organization_seq' ) ,Japanese BHC Unit, 95913, now() ,Y 
+ nextval( 'organization_seq' ) ,Polyclinique du Centre de Scanner Computarise, 95914, now() ,Y 
+ nextval( 'organization_seq' ) ,IDASH Hospital, 95915, now() ,Y 
+ nextval( 'organization_seq' ) ,Killick Medical Center, 95916, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital Louis Mathieu (Bourdon), 95917, now() ,Y 
+ nextval( 'organization_seq' ) ,Healing Hands for Haiti: Kay Kapab Clinic, 95918, now() ,Y 
+ nextval( 'organization_seq' ) ,Fondation Docteur Michel Carvonis, 95919, now() ,Y 
+ nextval( 'organization_seq' ) ,Finnish BHC Unit: Place Jeremie, 95920, now() ,Y 
+ nextval( 'organization_seq' ) ,Finnish BHC Unit: Croix-Deprez, 95921, now() ,Y 
+ nextval( 'organization_seq' ) ,St. Vincent's Center for Handicapped Children, 95922, now() ,Y 
+ nextval( 'organization_seq' ) ,Stad Sylvio Cador, 95923, now() ,Y 
+ nextval( 'organization_seq' ) ,University of Miami Field Hospital, 95924, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICO POPULAIRE BAS FONDS PHILOMENE, 11202, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE ST PAUL, 11227, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE COMMUNAUTAIRE MAIS GATE, 11220, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL ESPOIR, 11209, now() ,Y 
+ nextval( 'organization_seq' ) ,GRACE CHILDREN HOSPITAL, 11208, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de santé  Armée du Salut, 11201, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Delmas 30, 11203, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S La Saline, 11204, now() ,Y 
+ nextval( 'organization_seq' ) ,Citymed de Delmas, 11205, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de santé de Delmas 33, 11206, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S communauté chrétienne Fleuriot de Tabarre, 11207, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de santé solidarité, 11210, now() ,Y 
+ nextval( 'organization_seq' ) ,Hopital saint Charbel (DASH), 11211, now() ,Y 
+ nextval( 'organization_seq' ) ,Hopital Jude Anne (DASH), 11212, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de santé lumière, 11213, now() ,Y 
+ nextval( 'organization_seq' ) ,CPFO, 11214, now() ,Y 
+ nextval( 'organization_seq' ) ,Vie et  santé, 11215, now() ,Y 
+ nextval( 'organization_seq' ) ,Fondeph delmas, 11216, now() ,Y 
+ nextval( 'organization_seq' ) ,Haiti Med, 11218, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de santé croix des missions, 11219, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé  Saint-Jean, 11222, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital de l'OFATMA, 11223, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé de Petite Place Cazeau, 11224, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Saint-Martin I, 11225, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Saint-Martin II, 11226, now() ,Y 
+ nextval( 'organization_seq' ) ,Bernard Mews, 11228, now() ,Y 
+ nextval( 'organization_seq' ) ,CHOSCAL, 11229, now() ,Y 
+ nextval( 'organization_seq' ) ,CHAPI, 11230, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Fontaine, 11231, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre médical & de nutrition Rosalie Rendu, 11232, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Pèlerin, 11233, now() ,Y 
+ nextval( 'organization_seq' ) ,AMI, 11234, now() ,Y 
+ nextval( 'organization_seq' ) ,Haiti Medicare, 11235, now() ,Y 
+ nextval( 'organization_seq' ) ,Dieu qui Donne, 11236, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE NAZAREEN, 11413, now() ,Y 
+ nextval( 'organization_seq' ) ,Hopital la paix Delmas 33, 11221, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Sante Hospice St. Joseph, 95859, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital St. Yves, 95860, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE BIZOTON BIZOTON, 11301, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE MARIE LOUISE DE JESUS, 11321, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL ADVENTISTE D'HAITI, 11306, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Cookson Hill, 11302, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital de carrefour, 11303, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre médico social (rivière froide), 11304, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Béthel Mahotière 81, 11305, now() ,Y 
+ nextval( 'organization_seq' ) ,CSL La Barque de Pierre, 11307, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire la main tendue de Bertin, 11308, now() ,Y 
+ nextval( 'organization_seq' ) ,CSL OBCG, 11309, now() ,Y 
+ nextval( 'organization_seq' ) ,SHEKINAH, 11310, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Taiffer, 11311, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Communautaire de Waney 87, 11312, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Béthel, 11313, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Multi fonctionnaire de sous-rail, 11314, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire ASCOSADEC, 11315, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital Food for the Poor, 11316, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Omes, 11317, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Mère Térésa, 11318, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Hands of Love, 11319, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de la communauté des frères unis, 11320, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Maranatha (DISP), 11322, now() ,Y 
+ nextval( 'organization_seq' ) ,Zion par la Foi, 11323, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Maranatha (CLS), 11324, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Mocot, 11325, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Bertin, 11326, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinique mennonite, 11327, now() ,Y 
+ nextval( 'organization_seq' ) ,Asad, 11331, now() ,Y 
+ nextval( 'organization_seq' ) ,Mocmocham, 11329, now() ,Y 
+ nextval( 'organization_seq' ) ,Hope Alive Clinic, 11334, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Haiti ST Rock Fondation, 11332, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Bérékia, 11333, now() ,Y 
+ nextval( 'organization_seq' ) ,MAIN DE DIEU, 11328, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL DE LA COMMUNAUTE HAITIENNE, 11404, now() ,Y 
+ nextval( 'organization_seq' ) ,CASF KAY POU ZAFET SANTE FANM, 11418, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE STE CLAIRE DE FRERES, 11410, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE HOSPITALIER DE PERNIER, 11415, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICO SOCIAL DE THOMASSIN 25, 11417, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE JN MOSSANTO PETIT, 11403, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé calebasse, 11401, now() ,Y 
+ nextval( 'organization_seq' ) ,Citymed de Pétion ville, 11402, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre Eliazar Germain, 11405, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Francisca Cabrini, 11406, now() ,Y 
+ nextval( 'organization_seq' ) ,Hopital Censhop, 11407, now() ,Y 
+ nextval( 'organization_seq' ) ,CSL family center, 11408, now() ,Y 
+ nextval( 'organization_seq' ) ,Fondeph, 11409, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S kay lavi, 11411, now() ,Y 
+ nextval( 'organization_seq' ) ,Hopital nos petits frères et soeurs, 11412, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Notre Dame du Cap, 11414, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S  retraite sainte Anne, 11416, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Concardia, 11419, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé philantropique de dupont, 11420, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Diegue, 11421, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S l’espoir, 11422, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Morne Hercule, 11424, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Canapé-Vert, 11423, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôtel Villa Creole, 95895, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé de Kenscoff, 11501, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Bolosse (mission baptiste), 11502, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de  Greffin (mission baptiste), 11504, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Robin  (mission baptiste), 11505, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Bongars (mission baptiste), 11506, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp. Notre Dame Perpétuel Secours (Furcy), 11507, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire d’Athis, 11508, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Godey (Afè nèg kombit), 11509, now() ,Y 
+ nextval( 'organization_seq' ) ,ANC Robin, 9992, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE AFE NEG KOMBIT DE DIMUSSEAU, 11510, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL FERMATHE, 11503, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire aux cadets (Afè nèg kombit), 11511, now() ,Y 
+ nextval( 'organization_seq' ) ,Hopital Isaïe Jeanty, 11217, now() ,Y 
+ nextval( 'organization_seq' ) ,Samaritan Purse International Relief, 95854, now() ,Y 
+ nextval( 'organization_seq' ) ,NYC Medics: Cité Soleil, 95855, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE NICOLAS ARMAND, 14101, now() ,Y 
+ nextval( 'organization_seq' ) ,SADA MATHEUX, 14103, now() ,Y 
+ nextval( 'organization_seq' ) ,CLINIQUE MERES ET ENFANTS, 14105, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE ST ART, 14107, now() ,Y 
+ nextval( 'organization_seq' ) ,SADA - FONDS BAPTISTE, 14108, now() ,Y 
+ nextval( 'organization_seq' ) ,CAL d’Arcahaie, 14102, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Notre Dame du Perpétuel Secours, 14104, now() ,Y 
+ nextval( 'organization_seq' ) ,CSL St Paul (montrouis), 14106, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE CASALE, 14203, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE SADA DE SOURCE MATELAS, 14201, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE CABARET, 14202, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE / BELLANGER, 14204, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE ST ANTOINE DE TITANYEN, 14205, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Action Globale, 9993, now() ,Y 
+ nextval( 'organization_seq' ) ,Grace of the Good Samaritan Health Center, 95852, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Gressier, 11607, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Bon Berger (11601), 11601, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé de Christianville, 11602, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé FOSADEC, 11603, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé de Alphonse, 11604, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Zev Atizan Lape, 11605, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire morne a bateau, 11606, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICO - COMMUNAUTAIRE DE DARBONE, 12102, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE FARNESE LOUIS CHARLES DE PASQUA, 12103, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL CARDINAL LEGER, 12104, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MATERNO INFANTIL DE LEOGANE, 12105, now() ,Y 
+ nextval( 'organization_seq' ) ,SANATORIUM DE LEOGANE, 12106, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL STE CROIX, 12108, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE ST ANTOINE DE FOND D'OIE, 12110, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE PETIT HARPON, 12112, now() ,Y 
+ nextval( 'organization_seq' ) ,BIRE (NEW MISSION), 12109, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Beauséjour, 12101, now() ,Y 
+ nextval( 'organization_seq' ) ,Asile de Sigueneau, 12107, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Trouin, 12111, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Marie Jean, 9997, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Petite Rivière:guerin, 9998, now() ,Y 
+ nextval( 'organization_seq' ) ,Cuban Field Hospital, 95879, now() ,Y 
+ nextval( 'organization_seq' ) ,MSF Léogâne, 95880, now() ,Y 
+ nextval( 'organization_seq' ) ,CMAT: Canadian Medical Assistance Teams, 95881, now() ,Y 
+ nextval( 'organization_seq' ) ,JICA (Disaster Relief Team JDR), 95882, now() ,Y 
+ nextval( 'organization_seq' ) ,Le Sourire, 95883, now() ,Y 
+ nextval( 'organization_seq' ) ,Japan Disaster Relief, 95884, now() ,Y 
+ nextval( 'organization_seq' ) ,Midic Clinic, 95885, now() ,Y 
+ nextval( 'organization_seq' ) ,Family Health Ministries: Blanchard Family Health and Léogâne Clinic, 95886, now() ,Y 
+ nextval( 'organization_seq' ) ,Canadian Field Hospital, 95887, now() ,Y 
+ nextval( 'organization_seq' ) ,Pompiers Sans Frontières Clinic, 95888, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE BILL RICE, 15102, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE COMMUNAUTAIRE DE GRANDE SOURCE, 15105, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE COMMUNAUTAIRE DE MARE SUCRIN, 15104, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL WESLEEN DE ANSE-A-GALETS, 15103, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp. Trou Ligeune, 15101, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE SAINT LOUIS, 15205, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE LA SOURCE, 15201, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE TOMARIN, 15202, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTE WORLD VISION DE TI PALMIS, 15204, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE WORLD VISION DE GROS MANGLE, 15203, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE METHODISTE DE SOURCE A PHILIPPE, 15206, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE VIALET, 12202, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE MADELAINE, 12203, now() ,Y 
+ nextval( 'organization_seq' ) ,DP ARNOUX, 12204, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DES PALMES, 12205, now() ,Y 
+ nextval( 'organization_seq' ) ,DP APV, 12209, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital Notre Dame, 12201, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinique mobile Olivier, 12207, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Henry Gérard Desgranges, 12208, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Methodiste, 9999, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE DESLATTES, 12206, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE GEORGES GAUVIN, 12301, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE MEYER, 12302, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE DUFOUR, 12303, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE DANO (Danneau ), 12304, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE BAS BOEN, 13101, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL DE BEUDET, 13102, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE CROIX-DES-BOUQUETS, 13103, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE OPERATION DOUBLE HARVEST, 13104, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE H.E.L.P. INC DE VAUDREUIL, 13105, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE SANTE LUCELIA BONTEMPS, 13106, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE TURBE, 13107, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE FOYER SAINT CAMILLE, 13109, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE LIFE LINE, 13111, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE PETITS AMIS DE JESUS, 13113, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Sainte thérèse de Santo, 13108, now() ,Y 
+ nextval( 'organization_seq' ) ,Bon Samaritain en action, 13112, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Christ-Roi, 13114, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Lespwa, 13115, now() ,Y 
+ nextval( 'organization_seq' ) ,CSE, 13116, now() ,Y 
+ nextval( 'organization_seq' ) ,FBSA/CMS, 13117, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Saint-esprit, 13118, now() ,Y 
+ nextval( 'organization_seq' ) ,SIF, 13119, now() ,Y 
+ nextval( 'organization_seq' ) ,Kay Lavi, 13120, now() ,Y 
+ nextval( 'organization_seq' ) ,Ag/s, 13121, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Maison, 9910, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de santé communautaire de Dumay, 13110, now() ,Y 
+ nextval( 'organization_seq' ) ,Haiti Medical Missions of Memphis, 95858, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE THOMAZEAU, 13201, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE L'ETANG, 13202, now() ,Y 
+ nextval( 'organization_seq' ) ,L'EAU DE VIE DE F.P, 13301, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE GANTHIER, 13302, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE SAVANNE CABRI, 13303, now() ,Y 
+ nextval( 'organization_seq' ) ,DP de FOPECG, 13304, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE CORNILLON, 13401, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE SAINT PIERRE, 13402, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Sante St. Vincent de Paul, 95856, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE FONDS-VERETTES, 13501, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE FORET DES PINS, 13502, now() ,Y 
+ nextval( 'organization_seq' ) ,NOTRE DAME DES PINS D'ORIANIE, 13503, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE JEUNES FOSREF, 21111, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE CYVADIER, 21103, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DES ORANGERS, 21101, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE LAFOND, 21110, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE MARBIAL, 21105, now() ,Y 
+ nextval( 'organization_seq' ) ,DP SAINTE THERESE DE MARBIAL, 21113, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE LAVOUTE, 21106, now() ,Y 
+ nextval( 'organization_seq' ) ,DP NOTRE DAME, 21108, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE LAVANNEAU, 21107, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL ST MICHEL, 21100, now() ,Y 
+ nextval( 'organization_seq' ) ,PROFAMIL (JACMEL), 21102, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire La Montagne, 21104, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Bellevue la Montagne, 21109, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre a lits Christian Martinez, 21112, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinique Mobile: Basfrontal, 95841, now() ,Y 
+ nextval( 'organization_seq' ) ,Private Clinic: Jacmel-Arguy, 95862, now() ,Y 
+ nextval( 'organization_seq' ) ,Birthing Centre: Jacmel-St. Helene, 95863, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinique Mobile: Dr. Ernest Desir, 95864, now() ,Y 
+ nextval( 'organization_seq' ) ,Cliniques Mobiles: Jacmel-Loge, 95865, now() ,Y 
+ nextval( 'organization_seq' ) ,DART Team: Canadian Military, 95866, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinique Mobile in Church: Jacmel, 95867, now() ,Y 
+ nextval( 'organization_seq' ) ,Bonaventure Hospital, 95868, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinic: Refugee Camp: Jacmel-Wolf, 95869, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinic: Refugee Camp: Jacmel-Pinchinat #2, 95870, now() ,Y 
+ nextval( 'organization_seq' ) ,FOTCOH, 95871, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinic: Church Base: Jacmel-Lavaneau, 95872, now() ,Y 
+ nextval( 'organization_seq' ) ,Hispanola International University Communitaire Clinic, 95873, now() ,Y 
+ nextval( 'organization_seq' ) ,Mission House, 95874, now() ,Y 
+ nextval( 'organization_seq' ) ,Pazapa Center, 95875, now() ,Y 
+ nextval( 'organization_seq' ) ,Marantha 7th Day Adventist Church: Mobile Clinic, 95894, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE ST JOSEPH, 21401, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Morne a Brûler, 21402, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Amalia, 21403, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE MARIGOT (Marigot-Cayes Jacmel), 21201, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE PEREDO, 21202, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Seguin, 21203, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Grande Riviere, 21204, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE CAP ROUGE, 21303, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE CAYES-JACMEL, 21301, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de sante Emmanuel Baptiste, 21302, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinique Mobile: Cap Rouge, 95846, now() ,Y 
+ nextval( 'organization_seq' ) ,Baptist Hospital, 95850, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre Diagnostic Integret Pour Le Sud-Est (Maternity: Cubans), 95851, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE BAINET, 22101, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Saurel, 22102, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Bahot, 22103, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Chomeille, 22104, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Brésilienne, 22105, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Orangers, 22106, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Bras gauche, 22107, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Bainet-Kajeune, 95840, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE BOUCAN BELIER, 22203, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE GRIS GRIS, 22201, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE RICOT, 22204, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Saint Joseph (Pignon), 22202, now() ,Y 
+ nextval( 'organization_seq' ) ,Villa, 95857, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire La Biche, 95877, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE BELLE ANSE, 23101, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE MAPOU, 23102, now() ,Y 
+ nextval( 'organization_seq' ) ,Poste de Soins, 95842, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinique Mobile: Belle-Anse - Mabriole, 95843, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE BOUDARIN, 23202, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE THIOTTE, 23301, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE SAVANNE ZOMBIE, 23303, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE GRAND GOSIER, 23201, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Bleck, 23302, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Mare Blanche, 23304, now() ,Y 
+ nextval( 'organization_seq' ) ,CSL Sacré Coeur, 23305, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE BANANE, 23402, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE D'ANSE A PITRES, 23401, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DU FORT ST MICHEL, 31102, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE SACRE-COEUR, 31105, now() ,Y 
+ nextval( 'organization_seq' ) ,CEMAD CENTRE MEDICAL AIDE DIVINE, 31109, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE CARITAS, 31111, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE MADELINE, 31108, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DISPENSAIRE NOTRE DAME DE LOURDES CARENAGE, 31103, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE STE PHILOMENE, 31107, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL JUSTINIEN, 31100, now() ,Y 
+ nextval( 'organization_seq' ) ,CMS LAFOSSETTE, 31101, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Labadie, 31104, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Solano SA: Labadie, 31106, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE FOSREF, 31110, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE GRAND PRE, 31206, now() ,Y 
+ nextval( 'organization_seq' ) ,DIPENSAIRE DE CADUSH, 31202, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE ST LOUIS, 31204, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE QUARTIER MORIN, 31201, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE STE BERNADETTE DE CADUSH, 31205, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp de Morne Pelé, 31203, now() ,Y 
+ nextval( 'organization_seq' ) ,Haiti Hospital Appeal Health Center, 95925, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE BORD DE MER LIMONADE, 31302, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE LIMONADE, 31301, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE THILBAULT, 32303, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE CARREFOUR DES PERES, 32302, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE LA PROVIDENCE DE LORY, 32305, now() ,Y 
+ nextval( 'organization_seq' ) ,HOP. SACRE COEUR DE MILOT, 32301, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp St Yves de Thibault, 32304, now() ,Y 
+ nextval( 'organization_seq' ) ,CLINIQUE METHODISTE LATANNERIE, 33102, now() ,Y 
+ nextval( 'organization_seq' ) ,HOP. GRANDE RIVIERE DU NORD, 33101, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE BAHON, 33201, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE LA BRUYERE, 32108, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE LA DELIVRANCE, 32106, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE TOVAR, 32102, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE CAMP LOUISE, 32105, now() ,Y 
+ nextval( 'organization_seq' ) ,Nativité, 32101, now() ,Y 
+ nextval( 'organization_seq' ) ,Grison Garde (NF), 32103, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp de Pilatre, 32104, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp de Soufrière, 32107, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE ZO MEDA DE MORNE ROUGE, 32203, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE ROBILLARD, 32204, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE ST FRANCOIS DE SALES, 32206, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE CATHOLIQUE DE BALAN, 32202, now() ,Y 
+ nextval( 'organization_seq' ) ,CLINIQUE MEDICO-CHIRURGICALE DUGUE (Acul), 32207, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE JEHOVAH JIREH, 32208, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICAL BETHESDA DE VAUDREUIL, 32205, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp de Paine du Nord, 32201, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Rose-Merci, 95926, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE ST JOSEPH (34102), 34102, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE SAINT RAPHAEL, 34101, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE DONDON, 34201, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE ST JOSEPH (34202), 34202, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE RANQUITTE, 34301, now() ,Y 
+ nextval( 'organization_seq' ) ,Palmary, 34302, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp Catholique, 34303, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE ST JOSEPH (34402), 34402, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL BIENFAISANCE DE PIGNON, 34401, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE LA VICTOIRE, 34501, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Saint Joseph (Cote de Fer), 34502, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE PETIT BOURG DE BORGNE, 35102, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPE(CORPUS CHRISTI), 35103, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE HOSPITALIER DU BORGNE, 35101, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE SAINT MALACHY, 35204, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE PETIT BOURG DE PORT-MARGOT, 35202, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE BAYEUX, 35203, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE WESLEYEN DE FAUCHE, 35205, now() ,Y 
+ nextval( 'organization_seq' ) ,CSL de Port Margot, 35201, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp Cath de Pt Bourg, 35206, now() ,Y 
+ nextval( 'organization_seq' ) ,CAL St Jean de Limbe, 36101, now() ,Y 
+ nextval( 'organization_seq' ) ,Hop Bon Samaritain, 36102, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp de Camp Coq, 36103, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp Haut Limbe, 36104, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp de Bas Limbé, 36201, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp de Gobert, 37102, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp La Trouble, 37103, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp St Henry de Puilboreau, 37104, now() ,Y 
+ nextval( 'organization_seq' ) ,CMP Progressio, 37101, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre Medico-Social Populorum Progressio (C.M.S.), 95897, now() ,Y 
+ nextval( 'organization_seq' ) ,CAL de Pilate, 37201, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE DERAC, 41101, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE D'ACUL SAMEDI, 41102, now() ,Y 
+ nextval( 'organization_seq' ) ,Hopital de Fort-Liberté, 41100, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE FERRIER, 41201, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICOSOCIAL DE OUANAMINTHE, 42101, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE D'ACUL DES PINS, 42102, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE GENS DE NANTES, 42103, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE CAPOTILLE, 42201, now() ,Y 
+ nextval( 'organization_seq' ) ,CAL de Mont Organise, 42301, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Carice, 44201, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Sainte Hélène de Carice, 44202, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Perches, 41301, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE SAINT PIERRE DE TERRIER - ROUGE, 43301, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE NOTRE DAME DE LOURDES DE GRAND - BASSIN, 43302, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE PHAETON, 43303, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE DANDA, 43304, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Vallières, 44101, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Grosse Roche, 44102, now() ,Y 
+ nextval( 'organization_seq' ) ,CAL de Trou du Nord, 43101, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Roche Plate, 43102, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Sainte Suzanne, 43201, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Dupity, 43202, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Jacquezyl, 43401, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp de Caracol, 43402, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Bois de Laurence, 44301, now() ,Y 
+ nextval( 'organization_seq' ) ,CAL de Mombin Crochu, 44302, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE BON BERGER BASSIN, 51107, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE BAYONNAIS, 51102, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICO - SOCIAL DE K- SOLEIL, 51106, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE COMMUNAUTAIRE DE POTEAU, 51111, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE LABRANLE, 51103, now() ,Y 
+ nextval( 'organization_seq' ) ,CDS EBEN EZER, 51105, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE TROU SABLE, 51110, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL LA PROVIDENCE, 51100, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE LA PIERRE, 51108, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL DE RABOTEAU, 51109, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinique Dr Baudin, 51104, now() ,Y 
+ nextval( 'organization_seq' ) ,BRUNETTE (DISP), 51112, now() ,Y 
+ nextval( 'organization_seq' ) ,TARASSE, 51113, now() ,Y 
+ nextval( 'organization_seq' ) ,TERRE BLANCHE, 51114, now() ,Y 
+ nextval( 'organization_seq' ) ,Bayonnais, 51101, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE TERRE - NEUVE, 52201, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE CORIDON, 52302, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE ILODEP, 52304, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE SOURCE CHAUDE, 52306, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE FIGUIER, 52303, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE D'ANSE ROUGE, 52301, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE ATREI, 52308, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE TENTE, 52307, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp. Plaine de l’Arbre, 52305, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL ALMA MATER DE GROS MORNE, 52101, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DAVID, 52102, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE MOULIN, 52107, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE VERNEUIL, 52109, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE TREUIL, 52106, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE SOS FRANCE, 52105, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE PENDU, 52103, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE RIVIERE MANCELLE, 52104, now() ,Y 
+ nextval( 'organization_seq' ) ,Pérou, 52108, now() ,Y 
+ nextval( 'organization_seq' ) ,Charbe, 9911, now() ,Y 
+ nextval( 'organization_seq' ) ,Decostiere, 9912, now() ,Y 
+ nextval( 'organization_seq' ) ,Corail, 9913, now() ,Y 
+ nextval( 'organization_seq' ) ,SFA, 51204, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL TOUSSAINT LOUVERTURE, 51201, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE SAVANNE CARREE, 51203, now() ,Y 
+ nextval( 'organization_seq' ) ,Passe Reine, 51202, now() ,Y 
+ nextval( 'organization_seq' ) ,Rouf, 9914, now() ,Y 
+ nextval( 'organization_seq' ) ,CSL, 55201, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE BAS DE SAULT, 55105, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE L'ERMITHE, 55106, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE MAMONT, 55103, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE GADE BAPTISTE, 55104, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE LALOMAS, 55102, now() ,Y 
+ nextval( 'organization_seq' ) ,Saint Michel de l’Attalaye, 55101, now() ,Y 
+ nextval( 'organization_seq' ) ,Camathe, 55107, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE L'ESTERE, 51302, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE LA CROIX MISSIONNAIRE DE PERISSE, 51301, now() ,Y 
+ nextval( 'organization_seq' ) ,New Testament la Croix Perisse, 51303, now() ,Y 
+ nextval( 'organization_seq' ) ,Mapou Lagon, 51304, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL CLAIRE HEUREUSE, 54101, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE SANOIX, 54108, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE COUPE A L'INDE, 54107, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE CHENOT, 54112, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE SAINTE CLAIRE, 54111, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE OGE, 54113, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE LA CROIX, 54103, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE POSTE - PIERROT, 54106, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DESEAUX, 54109, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE GRANDE HATTE, 54110, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE PELISSIER, 54102, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE SAINTE ROSE DE LIMA, 54116, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE NIEL, 54105, now() ,Y 
+ nextval( 'organization_seq' ) ,Celio, 54104, now() ,Y 
+ nextval( 'organization_seq' ) ,Hatte Chevreau, 54114, now() ,Y 
+ nextval( 'organization_seq' ) ,CMPP, 54115, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE GOYAVIER, 53104, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE BARBE, 53114, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE GILBERT, 53112, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE TERRE BALNCHE, 53113, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE PIERRE PAYEN, 53108, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE GRESSOT, 53105, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE JEANTON, 53106, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE PONT SONDE, 53109, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE CHARETTE, 53103, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE MONTROUIS, 53107, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL SAINT NICOLAS, 53101, now() ,Y 
+ nextval( 'organization_seq' ) ,Chardene, 53102, now() ,Y 
+ nextval( 'organization_seq' ) ,Bocozelle, 53110, now() ,Y 
+ nextval( 'organization_seq' ) ,Gervais, 53111, now() ,Y 
+ nextval( 'organization_seq' ) ,SSPE, 53115, now() ,Y 
+ nextval( 'organization_seq' ) ,RSCH, 53116, now() ,Y 
+ nextval( 'organization_seq' ) ,Bertrand, 53117, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre Medical Siméus, 53118, now() ,Y 
+ nextval( 'organization_seq' ) ,DP BEREE DE DROUIN, 54301, now() ,Y 
+ nextval( 'organization_seq' ) ,Grande Saline, 54302, now() ,Y 
+ nextval( 'organization_seq' ) ,Poteneau, 54303, now() ,Y 
+ nextval( 'organization_seq' ) ,DP AUX SOURCES, 54403, now() ,Y 
+ nextval( 'organization_seq' ) ,CSL St Pierre, 54401, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp. Descahos, 54402, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE GABRIEL, 53207, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE BASTIEN, 53203, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE LIANCOURT, 53208, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL DUMARSAIS ESTIME, 53206, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE DESARMES (SOE), 53204, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE DESCHAPELLES, 53205, now() ,Y 
+ nextval( 'organization_seq' ) ,Albert Schweitzer, 53201, now() ,Y 
+ nextval( 'organization_seq' ) ,Barbe, 53202, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE LACHAPELLE, 53301, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE PLASSAC, 54206, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE DESLANDES, 54202, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE MAUGE PLICHE, 54203, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE PERODIN, 54205, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICAL CHARLES COLIMON (Petite Rivière), 54201, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE SEGUR, 54208, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE JEAN DENIS, 54209, now() ,Y 
+ nextval( 'organization_seq' ) ,Deslandes, 54204, now() ,Y 
+ nextval( 'organization_seq' ) ,Savanne à Roche, 54207, now() ,Y 
+ nextval( 'organization_seq' ) ,MANMAN BON DIE DE LOS - PALIS, 61103, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE MARMONT, 61101, now() ,Y 
+ nextval( 'organization_seq' ) ,ABRICOT, 61104, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital Sainte Thérèse, 61100, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire la Belle Onde, 61102, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Los Palma (NF), 61105, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinique de l’incarnation de Pandiasou, 61106, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE CERCA - CARVAJAL, 61401, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Basin Zim, 61402, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Montegrande, 61403, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Los Palis, 61404, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Bon Samaritain, 61405, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire d’Angoman, 61406, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Farnèse Louis Jeune, 61407, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Nan Cajou, 64101, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Saltadère, 64102, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Baltazar (NF), 64103, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Pacasse (NF), 64104, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Ti Lory, 64105, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre du Santé: Nazareen, 95853, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé de Tilori, 95931, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE THOMASSIQUE, 64202, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE BOCBANIC, 64201, now() ,Y 
+ nextval( 'organization_seq' ) ,MARCHE CANARD, 62104, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE SARAZIN, 62101, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital Eye Care, 62102, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinique Mennonite, 62103, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Grand Boucan (NF), 62105, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Fonds Michel, 62106, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinique Bon Saveur (Mireblais), 95794, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE SAUT - D'EAU (CSSD), 62201, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Montagne Terrible, 62202, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Cap Anamur (NF), 62203, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire la Hoye, 63102, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Pareidon (NF), 63103, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Caste, 63104, now() ,Y 
+ nextval( 'organization_seq' ) ,CDS de Las Cahobas (Unité de Maladie Infectueuse), 63101, now() ,Y 
+ nextval( 'organization_seq' ) ,Carroll County Haiti Mission Project (CCHMP) Medical/Dental Clinic, 95876, now() ,Y 
+ nextval( 'organization_seq' ) ,Santé Fanm Lascahobas, 95878, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé de Savanette, 63301, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Colombier, 63302, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé de Thomonde, 61301, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Boucan Carré, 62301, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé avec Lits Saint Esprit, 62302, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé avec lits de Cange, 62303, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinique Bon Saveur (Boucan Carré), 95844, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE ROY - SEC, 63203, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE BAPTISTE, 63204, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital Notre Dame de la Nativité, 63201, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Croix de fer, 63202, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE MAISSADE, 61201, now() ,Y 
+ nextval( 'organization_seq' ) ,SELPETRE, 61204, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE CINQUIEME, 61205, now() ,Y 
+ nextval( 'organization_seq' ) ,BOIS - ROUGE, 61202, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Bassin Cave (NF), 61203, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Hatty (NF), 61206, now() ,Y 
+ nextval( 'organization_seq' ) ,DP ST ANTOINE DE VIEUX BOURG D'AQUIN, 73105, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE LA COLLINE, 73102, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE MOUILLAGE FOUQUET, 73107, now() ,Y 
+ nextval( 'organization_seq' ) ,CS Aquin, 73101, now() ,Y 
+ nextval( 'organization_seq' ) ,Fond des Blancs, 73103, now() ,Y 
+ nextval( 'organization_seq' ) ,Charles Pasqua, 73104, now() ,Y 
+ nextval( 'organization_seq' ) ,Ste Hélène, 73106, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinique Santé Familiale, 73108, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE SAINT LOUIS DU SUD, 73201, now() ,Y 
+ nextval( 'organization_seq' ) ,DP SAINTE ANNE DE SUCRERIE HENRY, 73203, now() ,Y 
+ nextval( 'organization_seq' ) ,DP SAINT PATRICK, 73202, now() ,Y 
+ nextval( 'organization_seq' ) ,World Vision BD, 73204, now() ,Y 
+ nextval( 'organization_seq' ) ,Cherette, 73205, now() ,Y 
+ nextval( 'organization_seq' ) ,Carpentier, 72103, now() ,Y 
+ nextval( 'organization_seq' ) ,Port Salut, 72101, now() ,Y 
+ nextval( 'organization_seq' ) ,Dumont, 72102, now() ,Y 
+ nextval( 'organization_seq' ) ,Coteaux, 74101, now() ,Y 
+ nextval( 'organization_seq' ) ,Damassin, 74102, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE PORT-A-PIMENT, 74201, now() ,Y 
+ nextval( 'organization_seq' ) ,DP LILIAN DE ROCHE A BATEAU, 74301, now() ,Y 
+ nextval( 'organization_seq' ) ,STE ANNE, 75101, now() ,Y 
+ nextval( 'organization_seq' ) ,DP SAINTE ANNE DE RENDEL, 75102, now() ,Y 
+ nextval( 'organization_seq' ) ,LES ANGLAIS, 75201, now() ,Y 
+ nextval( 'organization_seq' ) ,Disp. Roger Paradis, 75301, now() ,Y 
+ nextval( 'organization_seq' ) ,C.S  CAVAILLON, 73302, now() ,Y 
+ nextval( 'organization_seq' ) ,FLAMANDS, 73304, now() ,Y 
+ nextval( 'organization_seq' ) ,SUDRE, 73306, now() ,Y 
+ nextval( 'organization_seq' ) ,Cavaillon NDPS, 73303, now() ,Y 
+ nextval( 'organization_seq' ) ,Com. Bonne Fin, 73305, now() ,Y 
+ nextval( 'organization_seq' ) ,Hopital Lumière Bonne Fin, 73301, now() ,Y 
+ nextval( 'organization_seq' ) ,CLINIQUE CITYMED CAYES, 71103, now() ,Y 
+ nextval( 'organization_seq' ) ,KLINIK LA FANMY, 71105, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE CITE LUMIERE, 71104, now() ,Y 
+ nextval( 'organization_seq' ) ,LABORDE, 71109, now() ,Y 
+ nextval( 'organization_seq' ) ,DISP. WORLD VISION DE CANCE, 71114, now() ,Y 
+ nextval( 'organization_seq' ) ,COLETTE, 71110, now() ,Y 
+ nextval( 'organization_seq' ) ,LAURENT, 71112, now() ,Y 
+ nextval( 'organization_seq' ) ,FONFRED, 71113, now() ,Y 
+ nextval( 'organization_seq' ) ,INSTITUT D'OPHTALMOLOGIE BRENDA STRAFFORD, 71101, now() ,Y 
+ nextval( 'organization_seq' ) ,SANATORIUM DES CAYES, 71102, now() ,Y 
+ nextval( 'organization_seq' ) ,HIC, 71100, now() ,Y 
+ nextval( 'organization_seq' ) ,Quatre Chemins, 71106, now() ,Y 
+ nextval( 'organization_seq' ) ,LKTMBD, 71108, now() ,Y 
+ nextval( 'organization_seq' ) ,Bur/Enic, 71111, now() ,Y 
+ nextval( 'organization_seq' ) ,Terre des Hommes, 71115, now() ,Y 
+ nextval( 'organization_seq' ) ,FORSREF, 71116, now() ,Y 
+ nextval( 'organization_seq' ) ,Charpentier, 71107, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE CAMP-PERRIN, 71401, now() ,Y 
+ nextval( 'organization_seq' ) ,MAZENOD, 71402, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE MERSAN, 71404, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE GUICHARD, 71403, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE RHE, 71405, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire de Dominique, 71406, now() ,Y 
+ nextval( 'organization_seq' ) ,Hospital Ste. Anne/Camp Perrin, 95845, now() ,Y 
+ nextval( 'organization_seq' ) ,DISP DE MANICHE, 71501, now() ,Y 
+ nextval( 'organization_seq' ) ,DORY, 71502, now() ,Y 
+ nextval( 'organization_seq' ) ,MELON, 71503, now() ,Y 
+ nextval( 'organization_seq' ) ,ILE A VACHE, 71601, now() ,Y 
+ nextval( 'organization_seq' ) ,DISP. DE MAILLARD, 71204, now() ,Y 
+ nextval( 'organization_seq' ) ,DISP.  ST JOSEPH, 71202, now() ,Y 
+ nextval( 'organization_seq' ) ,FERME LEBLANC, 71206, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE BERAUD, 71205, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE DUCIS, 71203, now() ,Y 
+ nextval( 'organization_seq' ) ,Maison de Naissance, 71201, now() ,Y 
+ nextval( 'organization_seq' ) ,CHANTAL, 71301, now() ,Y 
+ nextval( 'organization_seq' ) ,LE PRETRE, 71302, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE  ST JEAN DU SUD, 72201, now() ,Y 
+ nextval( 'organization_seq' ) ,CARREFOUR JOUTE, 72202, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE CHATEAU, 72302, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE ARNIQUET, 72301, now() ,Y 
+ nextval( 'organization_seq' ) ,CAL DE CORAIL / HOPITAL SAINT PIERRE, 83101, now() ,Y 
+ nextval( 'organization_seq' ) ,SSPE de Moulines, 83102, now() ,Y 
+ nextval( 'organization_seq' ) ,Saint Gérard de chadonnette, 83105, now() ,Y 
+ nextval( 'organization_seq' ) ,Gébeau à Corail, 83103, now() ,Y 
+ nextval( 'organization_seq' ) ,Sainte Claire de Corail, 83104, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE LA PROVIDENCE DE BEAUMONT, 83302, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL SAINT AGNES DE BEAUMONT, 83301, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE PESTEL, 83401, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE DUCHITY, 83403, now() ,Y 
+ nextval( 'organization_seq' ) ,SSPE des Basses, 83402, now() ,Y 
+ nextval( 'organization_seq' ) ,SSPE Espwa de Pointe Sable, 83404, now() ,Y 
+ nextval( 'organization_seq' ) ,Anse -à- Maçon, 83405, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICO - SOCIAL DE GEBEAU, 81102, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE PREVILE, 81109, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE SILOE DE LEON, 81105, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE STE THERESE DE L'ENFANT JESUS DE C. SANON, 81103, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE MACKANDAL, 81106, now() ,Y 
+ nextval( 'organization_seq' ) ,HHF, 81101, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE MARFRANC, 81107, now() ,Y 
+ nextval( 'organization_seq' ) ,NUMERO 2, 81108, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE SAINT - HELENE, 81110, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE LATIBOLIERE, 81104, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL SAINT ANTOINE HAS, 81100, now() ,Y 
+ nextval( 'organization_seq' ) ,Sainte Famille de Bordes, 81113, now() ,Y 
+ nextval( 'organization_seq' ) ,CARITAS, 81112, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF JEUNES JEREMIE, 81111, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE LEON COICOU, 81202, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE SAINT JOSEPH DES ABRICOTS, 81201, now() ,Y 
+ nextval( 'organization_seq' ) ,Sidp. De Saint Victor de Abricots, 81203, now() ,Y 
+ nextval( 'organization_seq' ) ,Chemen La vi de Bonbon, 81301, now() ,Y 
+ nextval( 'organization_seq' ) ,HHF de Bonbon, 81302, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE ROSEAUX, 83205, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE CARREFOUR - CHARLES, 83202, now() ,Y 
+ nextval( 'organization_seq' ) ,LOPINEAU DISPENSAIRE ST ANTOINE DE PADONNE, 83204, now() ,Y 
+ nextval( 'organization_seq' ) ,Bon Samaritain des Roseaux, 83201, now() ,Y 
+ nextval( 'organization_seq' ) ,CMS de Gébeau à Roseaux, 83203, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE MORON (NOTRE DAME DE LOURDES), 81403, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE MORON, 81401, now() ,Y 
+ nextval( 'organization_seq' ) ,HHF de Moron, 81402, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE BOURDON, 81502, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE CHAMBELLAN, 81501, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE SAINT JEAN BAPTISTE, 82101, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE MANDOU, 82102, now() ,Y 
+ nextval( 'organization_seq' ) ,Iceus Picard de Sicard, 82104, now() ,Y 
+ nextval( 'organization_seq' ) ,Sainte Helène d'Ánse  d' Hainault, 82103, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL DE LA COMMUNAUTE DAME - MARIENNE, 82201, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE DESORMEAUX, 82205, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE NOTRE DAME DES MALADES, 82202, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE BARIADELLE, 82203, now() ,Y 
+ nextval( 'organization_seq' ) ,SKS Petite Rivière de Dame Marie, 82204, now() ,Y 
+ nextval( 'organization_seq' ) ,SANT SANTE ESPWA AFSC - I ROIS, 82301, now() ,Y 
+ nextval( 'organization_seq' ) ,Saint Joseph de Carcasse, 82303, now() ,Y 
+ nextval( 'organization_seq' ) ,Saint Martin de Porres, 82302, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE MOLE ST NICOLAS, 93101, now() ,Y 
+ nextval( 'organization_seq' ) ,FAITH MEDICAL CLINIC SENTRAIN, 93103, now() ,Y 
+ nextval( 'organization_seq' ) ,Mare Rouge, 93102, now() ,Y 
+ nextval( 'organization_seq' ) ,Côtes de Fer (Môle St Nicolas), 93104, now() ,Y 
+ nextval( 'organization_seq' ) ,Temps Perdu, 93105, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE LACOMA, 93404, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE CABARET, 93410, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE BON SECOURS DE CROIX SOVALE, 93417, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE GUINAUDEE, 93405, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE COMMUNAUTAIRE KA PHILIPPE, 93411, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE BOUCAN PATRIOT, 93412, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE ST BERNADETTE LABELLEE, 93415, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE GOMBO, 93407, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DU BORD DE MER, 93402, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE GRANDE LISON, 93416, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL NOTRE DAME DE LA PAIX, 93401, now() ,Y 
+ nextval( 'organization_seq' ) ,La Montagne, 93403, now() ,Y 
+ nextval( 'organization_seq' ) ,La Réserve, 93406, now() ,Y 
+ nextval( 'organization_seq' ) ,Raymond, 93408, now() ,Y 
+ nextval( 'organization_seq' ) ,Dubois, 93409, now() ,Y 
+ nextval( 'organization_seq' ) ,Port à l’Ecu, 93413, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE SICHEM DE CAFÉ PAUL, 93414, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE BAIE DE HENNE, 93203, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE DUPRE, 93204, now() ,Y 
+ nextval( 'organization_seq' ) ,Baie de Henne, 93201, now() ,Y 
+ nextval( 'organization_seq' ) ,La Source, 93202, now() ,Y 
+ nextval( 'organization_seq' ) ,Citenne Rémy, 93205, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL EVANGELIQUE DE BOMBARDOPOLIS, 93301, now() ,Y 
+ nextval( 'organization_seq' ) ,CLINIQUE MONT DES OLIVIERS, 93303, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE  ROCHEFORT, 93302, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE DESFORGES, 93305, now() ,Y 
+ nextval( 'organization_seq' ) ,Plate Forme, 93304, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICAL BERACA, 91114, now() ,Y 
+ nextval( 'organization_seq' ) ,CLINIQUE PROFAMIL PORT-DE-PAIX, 91102, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE COMMUNAUTAIRE DES TROIS RIVIERES, 91101, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE POSTE METIER, 91103, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE COMMUNAUTAIRE DE BEAUCHAMPS, 91106, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE PASSE CADABOIS, 91105, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE SAINTE THERESE DE CALUC, 91108, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE BAIE DES MOUSTIQUES, 91104, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL IMMACULEE CONCEPTION (HIC), 91100, now() ,Y 
+ nextval( 'organization_seq' ) ,LA COUPE FATIMA, 91111, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE NOTRE DAME LA CROIX SAINT JOSEPH, 91113, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE SOLEIL, 91116, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE NOTRE DAME DE FATIMA, 91112, now() ,Y 
+ nextval( 'organization_seq' ) ,Foison, 91107, now() ,Y 
+ nextval( 'organization_seq' ) ,Soleil, 91109, now() ,Y 
+ nextval( 'organization_seq' ) ,Monfort, 91115, now() ,Y 
+ nextval( 'organization_seq' ) ,Beaudin, 91110, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE HAUT MOUSTIQUE, 91303, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL BON SAMARITIN DE BASSIN BLEU, 91301, now() ,Y 
+ nextval( 'organization_seq' ) ,La Plate, 91302, now() ,Y 
+ nextval( 'organization_seq' ) ,La Brousse, 91304, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE CHAMSOLME (CHANSOLME), 91401, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE SAINT LOUIS DU NORD, 92102, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE SAINT JOSEPH DE BONNEAU, 92101, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE DESGRANGES, 92104, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE ZABRICO, 92112, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE VILLACEAU, 92111, now() ,Y 
+ nextval( 'organization_seq' ) ,NWCM, 92103, now() ,Y 
+ nextval( 'organization_seq' ) ,Chamoise, 92105, now() ,Y 
+ nextval( 'organization_seq' ) ,Glacis, 92106, now() ,Y 
+ nextval( 'organization_seq' ) ,La Perrière, 92107, now() ,Y 
+ nextval( 'organization_seq' ) ,Jean Clair, 92108, now() ,Y 
+ nextval( 'organization_seq' ) ,Gaspard, 92109, now() ,Y 
+ nextval( 'organization_seq' ) ,Chaineau, 92110, now() ,Y 
+ nextval( 'organization_seq' ) ,Guichard, 92113, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE DITTY, 92202, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE ANSE-A-FOLEUR, 92201, now() ,Y 
+ nextval( 'organization_seq' ) ,Côtes de Fer (Anse à Foleur), 92203, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL NOTRE DAME DES PALMISTES, 91201, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE MARE ROUGE, 91204, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE AUX PLAINES, 91202, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE MONTRY, 91205, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE LA VALLEE, 91203, now() ,Y 
+ nextval( 'organization_seq' ) ,Marie Curie, 91206, now() ,Y 
+ nextval( 'organization_seq' ) ,CAL DE MADIAN, 84201, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE PETITE RIVIERE DE NIPPES, 84202, now() ,Y 
+ nextval( 'organization_seq' ) ,SSPE de Beraca, 84105, now() ,Y 
+ nextval( 'organization_seq' ) ,SSPE de L homond, 84107, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE BELLE RIVIERE, 84108, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DISPENSAIRE DE CHALON, 84106, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL STE THERESE DE MIRAGOANE, 84100, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE ST MICHEL DU SUD, 84109, now() ,Y 
+ nextval( 'organization_seq' ) ,SSPE St Joseph de Pemerle, 84110, now() ,Y 
+ nextval( 'organization_seq' ) ,CAL DE PAILLANT, 84101, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE COMMUNAUTAIRE DE MUSSOTTE, 84103, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE ST MARC JANETTE, 84102, now() ,Y 
+ nextval( 'organization_seq' ) ,CLINIQUE BETHEL, 84111, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE BOUZY, 85102, now() ,Y 
+ nextval( 'organization_seq' ) ,SSPE de Etang, 84104, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE JAVEL (FERME), 85103, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE ST YVES, 85104, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL JULES FLEURY D'ANSE A VEAU, 85101, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE ARNAUD, 85105, now() ,Y 
+ nextval( 'organization_seq' ) ,Baradères, 85201, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE PETIT TROU DE NIPPES, 85301, now() ,Y 
+ nextval( 'organization_seq' ) ,SSPE de Plaisance, 85303, now() ,Y 
+ nextval( 'organization_seq' ) ,SSPE de Gauthier Civil, 85302, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE L'AZILE, 85401, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE BETHESDA PLEUVANT DE L'AZILE, 85402, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE CHARNGEUX, 85403, now() ,Y 
+ nextval( 'organization_seq' ) ,SSPE de Morisseaux, 85404, now() ,Y 
+ nextval( 'organization_seq' ) ,FONDEPH - MARTISSANT, 95338, now() ,Y 
+ nextval( 'organization_seq' ) ,CEGYPEF, 95163, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE APROCIPHA, 95420, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE COMMUNAUTAIRE TRIANGLE UNI-SANTEÉ, 95439, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE MORNE HERCULE, 95717, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE HAUT TURGEAU, 95433, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE HOSPITALIER, 95419, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE MATERNO-INFANTILE ET NUTRITION N.D.CARIDAD, 95421, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE UCPEDEC, 95430, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre D'Hygience de la Saline, 95715, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE HOSPITALIER DE LA RUE BERNE, 95446, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE HOSPITALIER DE LA VIE, 95445, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE JEUNES DE CHRIST-ROI, 95697, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MATERNITE DE LA GRAND RUE, 95423, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICO D'AIDE SOCIAL, 95424, now() ,Y 
+ nextval( 'organization_seq' ) ,CEPOZ CENTRE ESPOIR, 95698, now() ,Y 
+ nextval( 'organization_seq' ) ,CLINIQUE COMMUNAUTAIRE DE MARTISSANT, 95713, now() ,Y 
+ nextval( 'organization_seq' ) ,CROIX ROUGE HAITIENNE PAP, 95175, now() ,Y 
+ nextval( 'organization_seq' ) ,CSSH, 95187, now() ,Y 
+ nextval( 'organization_seq' ) ,DFPL/PNH, 95218, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE CITE MERICAIN, 95437, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE ST LUC, 95438, now() ,Y 
+ nextval( 'organization_seq' ) ,FILLES CHARITE, 95333, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF- J. DE CARREFOUR FEUILLE, 95341, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF LAKAY GRAND-RUE, 11151, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital Français, 95705, now() ,Y 
+ nextval( 'organization_seq' ) ,Hospital Militaire, 95696, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital Saint Joseph, 95704, now() ,Y 
+ nextval( 'organization_seq' ) ,INSTITUT FAME PEREO, 95699, now() ,Y 
+ nextval( 'organization_seq' ) ,Laboratoire Radiologique, 95692, now() ,Y 
+ nextval( 'organization_seq' ) ,Medical Center (95709), 95709, now() ,Y 
+ nextval( 'organization_seq' ) ,Medical Center (95714), 95714, now() ,Y 
+ nextval( 'organization_seq' ) ,Medical Center near Avenue Pie XI, 95712, now() ,Y 
+ nextval( 'organization_seq' ) ,Medical Center near Boulevard la Saline, 95716, now() ,Y 
+ nextval( 'organization_seq' ) ,Medical Center near Morne a Tuf, 95706, now() ,Y 
+ nextval( 'organization_seq' ) ,Medical Center near Rue Charvron, 95707, now() ,Y 
+ nextval( 'organization_seq' ) ,Medical Center near Rue du Docteur Dehoux, 95710, now() ,Y 
+ nextval( 'organization_seq' ) ,Medical Center near Rue Magny and Rue Oswald Durand, 95695, now() ,Y 
+ nextval( 'organization_seq' ) ,Medical Center near Rue Oswald Durand, 95703, now() ,Y 
+ nextval( 'organization_seq' ) ,Medicos Sem Fronteira, 95691, now() ,Y 
+ nextval( 'organization_seq' ) ,MEDIMAX, 95447, now() ,Y 
+ nextval( 'organization_seq' ) ,PORT AU PRINCE CLINC CLINIQUE NEUROPSYCHIATRIE, 95651, now() ,Y 
+ nextval( 'organization_seq' ) ,PORT AU PRINCE CLINIC CENTRE DE SANTE DE CATHEDRALE, 95592, now() ,Y 
+ nextval( 'organization_seq' ) ,PORT AU PRINCE CLINIC MULTIMED 1, 95675, now() ,Y 
+ nextval( 'organization_seq' ) ,PORT AU PRINCE HOSPITAL ASILE COMMUNAL, 95573, now() ,Y 
+ nextval( 'organization_seq' ) ,PORT AU PRINCE HOSPITAL ASILE FRANCAIS, 95603, now() ,Y 
+ nextval( 'organization_seq' ) ,PORT AU PRINCE HOSPITAL CENTRE DE PSYCHIATRIE, 95650, now() ,Y 
+ nextval( 'organization_seq' ) ,POZ CLINIQUE ESPOIR, 95463, now() ,Y 
+ nextval( 'organization_seq' ) ,POZ-PORT-AU-PRINCE, 95464, now() ,Y 
+ nextval( 'organization_seq' ) ,PROBABLE CHINESE FIELD HOSPITAL, 95684, now() ,Y 
+ nextval( 'organization_seq' ) ,SANATORIUM DE PORT AU PRINCE, 95702, now() ,Y 
+ nextval( 'organization_seq' ) ,TURGEAU HOSPITAL HEALTH CENTER SODEC, 95591, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre Hospitalier du Sacre Coeur (Hopital CDTI), 95797, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinique-Hopital Le Messie, 95798, now() ,Y 
+ nextval( 'organization_seq' ) ,Frances, 95799, now() ,Y 
+ nextval( 'organization_seq' ) ,King's Hospital, 95800, now() ,Y 
+ nextval( 'organization_seq' ) ,Le Nouveau Centre Medico Hospitalier de la Rue Capois, 95801, now() ,Y 
+ nextval( 'organization_seq' ) ,La Paix, 95804, now() ,Y 
+ nextval( 'organization_seq' ) ,Polyclinique de Croix Dieu / DASH, 95807, now() ,Y 
+ nextval( 'organization_seq' ) ,Medishare, 95810, now() ,Y 
+ nextval( 'organization_seq' ) ,Laboratoire Nationale (Blood Bank), 95812, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinic Albright, 95815, now() ,Y 
+ nextval( 'organization_seq' ) ,German Red Cross Basic Care Unit, 95818, now() ,Y 
+ nextval( 'organization_seq' ) ,Turkish Field Hospital, 95793, now() ,Y 
+ nextval( 'organization_seq' ) ,MDM GRIFFIF Hospital, 95792, now() ,Y 
+ nextval( 'organization_seq' ) ,Spanish Field Team, 95819, now() ,Y 
+ nextval( 'organization_seq' ) ,French Field Hospital, 95820, now() ,Y 
+ nextval( 'organization_seq' ) ,Columbian Field Team, 95821, now() ,Y 
+ nextval( 'organization_seq' ) ,American Field Team, 95822, now() ,Y 
+ nextval( 'organization_seq' ) ,UN Compound Field Hospital, 95823, now() ,Y 
+ nextval( 'organization_seq' ) ,Puerto Rican Field Team, 95824, now() ,Y 
+ nextval( 'organization_seq' ) ,Jordan Field Hospital, 95825, now() ,Y 
+ nextval( 'organization_seq' ) ,Norway Red Cross Field Team, 95826, now() ,Y 
+ nextval( 'organization_seq' ) ,Argentinian Military Hospital, 95827, now() ,Y 
+ nextval( 'organization_seq' ) ,MDM Greek Field Hospital, 95828, now() ,Y 
+ nextval( 'organization_seq' ) ,IDF Field Hospital, 95830, now() ,Y 
+ nextval( 'organization_seq' ) ,USNS Comfort, 95833, now() ,Y 
+ nextval( 'organization_seq' ) ,BRAZILLIAN FIELD HOSPITAL, 95683, now() ,Y 
+ nextval( 'organization_seq' ) ,BSD SANTE, 95193, now() ,Y 
+ nextval( 'organization_seq' ) ,C /S PETIT PLACE CAZEAU, 95729, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE CDPS, 95205, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE COMMUNAUTAIRE STE JUSTINE, 95192, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE CONCORDIA, 95190, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE CITE SICLAIR, 95195, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DELMAS #1, 95183, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DU SOUVENIR, 95206, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE ECERES, 95191, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE EXCLUSION EVANGELIQUE MONDIALE, 95210, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE FAMILIA LE CHAB, 95216, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DU VRAI DED DE L'EGLISE DE DIEU, 95207, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICAL SAINT MONFORT, 95194, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICO SOCIAL (DELMAS), 95215, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICO-SOCIAL PETIT PLACE CAZEAU, 95217, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE POPULAIRE MAHONAHIM, 95214, now() ,Y 
+ nextval( 'organization_seq' ) ,CLINIQUE COMMUNAUTAIRE DE DELMAS 75, 95213, now() ,Y 
+ nextval( 'organization_seq' ) ,COMPLEXE MEDICO-CHIRURGICAL DE SILO, 95211, now() ,Y 
+ nextval( 'organization_seq' ) ,DELMAS CLINIC MULTIMED 2, 95612, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE-LABORATOIRE RETRAITE SAINT-ANE, 95212, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF CHRIST-ROI, 11151, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF-J. DELMAS 19, 95343, now() ,Y 
+ nextval( 'organization_seq' ) ,FRERES HOSPITAL REHABILITATION, 95643, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL LA TRINITE, 95209, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL UNIMED, 95208, now() ,Y 
+ nextval( 'organization_seq' ) ,Hospital Caritas, 95725, now() ,Y 
+ nextval( 'organization_seq' ) ,Hospital da Cruz Vermelha, 95724, now() ,Y 
+ nextval( 'organization_seq' ) ,Hospital Medicos Sem Fronteiras (95722), 95722, now() ,Y 
+ nextval( 'organization_seq' ) ,Hospital Medicos Sem Fronteiras (95723), 95723, now() ,Y 
+ nextval( 'organization_seq' ) ,Hospital Medicos Sem Fronteiras (95727), 95727, now() ,Y 
+ nextval( 'organization_seq' ) ,Hospital Pediatrico Espoa, 95690, now() ,Y 
+ nextval( 'organization_seq' ) ,Hospital St. Charbel, 95686, now() ,Y 
+ nextval( 'organization_seq' ) ,Hospital Universitario de la Paiz, 95689, now() ,Y 
+ nextval( 'organization_seq' ) ,IMIS, 95381, now() ,Y 
+ nextval( 'organization_seq' ) ,ISRAELI FIELD HOSPITAL, 95681, now() ,Y 
+ nextval( 'organization_seq' ) ,Medical Center near Blanchard, 95728, now() ,Y 
+ nextval( 'organization_seq' ) ,Medical Center near R9, 95726, now() ,Y 
+ nextval( 'organization_seq' ) ,PORT AU PRINCE HOSPITAL MINUSTAH, 95674, now() ,Y 
+ nextval( 'organization_seq' ) ,PORT AU PRINCE HOSPITAL SAINTE CATHERINE LABOURE, 95647, now() ,Y 
+ nextval( 'organization_seq' ) ,Delmas Musseau, 95795, now() ,Y 
+ nextval( 'organization_seq' ) ,Merlin Field Hospital, 95831, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Main de Dieu, 95836, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE AU BON SECOURS DE LA FONDATION MISSION PAR LA FOI HAITIENNE, 95426, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE BETHESDA, 95133, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE BON SECOURS, 95138, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DU BON SAMARITAIN, 95427, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE LA MAIN TENDUE, 95130, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE LAVALE, 95147, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE OPA, 95128, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE TOTOLEAU, 95149, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICAL EBEN EZER, 95134, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICAL O.M./ PES SANTE PLUS, 95137, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICO - SOCIAL DE LA RIVIERE FROIDE, 95131, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICO SOCIAL ANTOINE LAVOISIER, 95135, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE PHILADELPHIE MEDICALE ET DENTAIRE, 95132, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE SANTE DICOU, 95148, now() ,Y 
+ nextval( 'organization_seq' ) ,CLINIQUE DE MORNE A CHANDELLE, 95150, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE MORNE A CHANDELLE, 95151, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE ZEV ATISAN LAPE, 95006, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF- J. DE CARREFOUR, 95339, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF-LAKAY CARREFOUR, 95340, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL CANADIEN LA VIGNE, 95139, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL SAINT CHARLES, 95140, now() ,Y 
+ nextval( 'organization_seq' ) ,MEDICO SOCIAL CLINIQUE BON BERGER, 95428, now() ,Y 
+ nextval( 'organization_seq' ) ,SANTE POUR TOUS, 95129, now() ,Y 
+ nextval( 'organization_seq' ) ,Grace church mission, 95809, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre Hospitalier de Carrefour, 95813, now() ,Y 
+ nextval( 'organization_seq' ) ,German Red Cross Field Hospital, 95817, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Foyer Saint Camille, 95847, now() ,Y 
+ nextval( 'organization_seq' ) ,MSF Carrefour, 95848, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE PERNIER, 95477, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE COMMUNAUTAIRE DE FECA(FESSARD, 95482, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE JALOUSIE, 95473, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE ET DE NUTRITION FOCOMEL, 95478, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE EVANGELIQUE DE TORCELLE, 95196, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE FOCOMEL (163), 95472, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE PAR LA FOI, 95475, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE ROSEMINA DE DIEGUE, 95480, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE LAKAY DE PETION-VILLE, 95718, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICO SOCIAL J.M.P. ANEXTE # 50, 95474, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE ET PHARMACIE NAN BANBOU, 95476, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF- J. DE PETION-VILLE, 95348, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF-LAKAY PETION-VILLE, 95349, now() ,Y 
+ nextval( 'organization_seq' ) ,FRIENDS FOR MISSIONS CENTRE DE NUTRITION ET CLINIQUE, 95470, now() ,Y 
+ nextval( 'organization_seq' ) ,JEAN MOSSANTO PEH'T, 95483, now() ,Y 
+ nextval( 'organization_seq' ) ,Medical Center near Avenue Pan-Americaine, 95721, now() ,Y 
+ nextval( 'organization_seq' ) ,PORT AU PRINCE CLINIC CENTRE DE SANTE ELIAZER, 95582, now() ,Y 
+ nextval( 'organization_seq' ) ,RUSSIAN FIELD HOSPITAL, 95682, now() ,Y 
+ nextval( 'organization_seq' ) ,SERVICE DE SANTE FONDEFH, 95471, now() ,Y 
+ nextval( 'organization_seq' ) ,UNITE CHIRURGICALE, 95469, now() ,Y 
+ nextval( 'organization_seq' ) ,Maternité de Petion-Ville, 95802, now() ,Y 
+ nextval( 'organization_seq' ) ,CLIMAPEV, 95806, now() ,Y 
+ nextval( 'organization_seq' ) ,Unité Chirugicale Dégand, 95808, now() ,Y 
+ nextval( 'organization_seq' ) ,Saint Landry, 95811, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE AFE NEG KOMBIT FURCY, 95395, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE LA FRATERNITE, 95481, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE PASTEUR RONCOURT, 95394, now() ,Y 
+ nextval( 'organization_seq' ) ,K-LA VI, 95479, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL STE CATHERINE, 95376, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE LA SANTE DE LA CROIX DES MISSIONS, 95203, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE TABARRE - HAITI -MED, 95200, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE ORGANISATION ROOM, 95198, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICAL COMMUNAUTAIRE DE TABARRE, 95199, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICO - CHIRUGICAL SAINT JEAN, 95204, now() ,Y 
+ nextval( 'organization_seq' ) ,LA VIERGE MIRACLE - CENTRE MEDICAL DE FLEURS, 95201, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital St. Damien, 95679, now() ,Y 
+ nextval( 'organization_seq' ) ,ARCAHAIE HOSPITAL SAINT JOSEPH DE GALILEE, 95606, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL COMMUNAUT. DE MIREBALAIS (MARCH CITY-MED), 95742, now() ,Y 
+ nextval( 'organization_seq' ) ,RABOTEAU CLINIC SOCIAL MEDICAL CENTER, 95595, now() ,Y 
+ nextval( 'organization_seq' ) ,Centre de Santé Arcahie, 95805, now() ,Y 
+ nextval( 'organization_seq' ) ,Hopital Belge de Léogane (Belge), 95816, now() ,Y 
+ nextval( 'organization_seq' ) ,SADA - BELLANGER, 95744, now() ,Y 
+ nextval( 'organization_seq' ) ,SADA - SOURCE MATELAS, 95745, now() ,Y 
+ nextval( 'organization_seq' ) ,C/S Fosadec, 95837, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Bon Berger (95838), 95838, now() ,Y 
+ nextval( 'organization_seq' ) ,OEUVRES DE BIENFAISANCE DE CARREFOUR ET DE GRESSIER, 95772, now() ,Y 
+ nextval( 'organization_seq' ) ,ASILE ST VINCENT DE PAUL, 95008, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE BON BERGER, 95005, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE JEUNES DE LEOGANE, 95732, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE JEUNES FOSREF LEOGANE, 95167, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE LAKAY DE MARIANI, 95731, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF J. DE JEREMIE, 95735, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF J. LEOGANE, 95345, now() ,Y 
+ nextval( 'organization_seq' ) ,SANATORIUM DE SIGUENEAU, 95734, now() ,Y 
+ nextval( 'organization_seq' ) ,Leogane Field Hospital, 95829, now() ,Y 
+ nextval( 'organization_seq' ) ,Merlin Field Hospital Leogane, 95832, now() ,Y 
+ nextval( 'organization_seq' ) ,BOIS NEUF / FOSREF, 95747, now() ,Y 
+ nextval( 'organization_seq' ) ,CLINIQUE MEDICO-CHIRURGICALE DUGUE (Goavienne), 95737, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE TROU CHOUCHOU (FERME), 95100, now() ,Y 
+ nextval( 'organization_seq' ) ,Merlin Field Hospital Petit Goave, 95834, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE RABOTEAU, 95736, now() ,Y 
+ nextval( 'organization_seq' ) ,Mission of Hope Clinic, 95814, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE JEUNES PLAINE DU CUL DE SAC, 95738, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICO SOCIAL (Cx des Bouquets), 95010, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF- J. PLAINE DU CUL DE SAC, 95342, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL WESLEYEN DE LA GONAVE, 95740, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE STE-ELISABETH, 95741, now() ,Y 
+ nextval( 'organization_seq' ) ,FOND PARISIEN HOSPITAL HEALTH CENTER, 95569, now() ,Y 
+ nextval( 'organization_seq' ) ,HAS PLASSAC UF 8, 95746, now() ,Y 
+ nextval( 'organization_seq' ) ,CRAAJ/Konesans Fanmi, 95396, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE LACROIX, 95310, now() ,Y 
+ nextval( 'organization_seq' ) ,JACMEL CLINIC ASILE COMMUNAL, 95609, now() ,Y 
+ nextval( 'organization_seq' ) ,VDH JACMEL, 95564, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE COMMUNAUTAIRE, 95277, now() ,Y 
+ nextval( 'organization_seq' ) ,DP ST FRANCOIS XAVIER DE BAUDIN, 95274, now() ,Y 
+ nextval( 'organization_seq' ) ,LA VALLEE HOSPITAL ST JOSEPH LA VALLE, 95664, now() ,Y 
+ nextval( 'organization_seq' ) ,Point Fixe Michinau, 21304, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Notre Dame de Lourdes, 22108, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE COTE DE FER (Cote de Fer), 95098, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire Ricot, 23103, now() ,Y 
+ nextval( 'organization_seq' ) ,THIOTE HOSPITAL BON BERGER, 95572, now() ,Y 
+ nextval( 'organization_seq' ) ,CAP HAITIEN CLINIC MILITARY, 95566, now() ,Y 
+ nextval( 'organization_seq' ) ,CAP HAITIEN HOSPITAL CENTRE DE SANTE HEALTH, 95565, now() ,Y 
+ nextval( 'organization_seq' ) ,CAP HAITIEN HOSPITAL PSYCHIATRIC, 95568, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE CHAMSOLME (Cap Haïtien), 95085, now() ,Y 
+ nextval( 'organization_seq' ) ,FILLES CHARITE/C.N.S.R.R, 95760, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL FORT ST MICHEL, 95756, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL UNIVERSITAIRE JUSTINIEN, 95757, now() ,Y 
+ nextval( 'organization_seq' ) ,MILOT HOSPITAL HEALTH CENTER, 95583, now() ,Y 
+ nextval( 'organization_seq' ) ,GRANDE RIVIERE DU NORD HOSPITAL MENNONITE, 95567, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICAL DE SECOURS CHRETIEN, 95059, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE COMMUNAUTAIRE DE DITY, 95055, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL DE SAINT MICHEL, 95755, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICO SOCIAL (PLAINE DU NORD), 95075, now() ,Y 
+ nextval( 'organization_seq' ) ,PIGNON HOSPITAL LA JEUNE, 95654, now() ,Y 
+ nextval( 'organization_seq' ) ,BORGNE HOSPITAL BORGNE, 95598, now() ,Y 
+ nextval( 'organization_seq' ) ,CLINIQUE SAINT BERTIN, 95053, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE LA FONDATION NOVION, 95066, now() ,Y 
+ nextval( 'organization_seq' ) ,FONDEFH BIZOTON, 95754, now() ,Y 
+ nextval( 'organization_seq' ) ,PORT MARGOT HOSPITAL WESLEYAN (FAUCHE), 95656, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL SAINT JEAN DE LIMBE, 95402, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE BAS- LIMBE, 95081, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE ST HENRY ROSE THOMAS, 95063, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE LA TROUBLE, 95064, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE GOBERT, 95065, now() ,Y 
+ nextval( 'organization_seq' ) ,PLAISANCE HOSPITAL PLAISANCE, 95655, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL ESPERANCE DE PILATE, 95461, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF J. DE FORT-LIBERTE, 95761, now() ,Y 
+ nextval( 'organization_seq' ) ,MAISON JEUNE DE FORT LIBERTÉ, 95763, now() ,Y 
+ nextval( 'organization_seq' ) ,PDC DE FORT LIBERTÉ, 95764, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE MARIGOT (Fort-Liberté), 95765, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE SAVANNE AU LAIT, 95486, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL NOTRE DAME DE LA PAIX JN RABEL, 95767, now() ,Y 
+ nextval( 'organization_seq' ) ,OUANAMINTHE HOSPITAL OUANAMINTHE, 95659, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICOSOCIAL DE MONT-ORGANISE, 95002, now() ,Y 
+ nextval( 'organization_seq' ) ,MONT ORGANISE CLINIC SOCIAL MEDICAL CENTER, 95588, now() ,Y 
+ nextval( 'organization_seq' ) ,MONT ORGANISE HOSPITAL MONT ORGANISE, 95658, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE CARICE, 95031, now() ,Y 
+ nextval( 'organization_seq' ) ,CARICE STE - HELENE, 95032, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE VALLIERES, 95029, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE GROSSE ROCHE, 95030, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE TROU DU NORD, 95003, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE ROCHES PLATES, 95004, now() ,Y 
+ nextval( 'organization_seq' ) ,TROU DU NORD HOSPITAL TRU DU NORD, 95660, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE SAINTE - SUZANNE, 95021, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE DUPITY, 95022, now() ,Y 
+ nextval( 'organization_seq' ) ,JACQUEZIL, 95027, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE CARACOL, 95028, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE BOIS DE LAURENCE, 95033, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE MOMBIN CROCHU, 95034, now() ,Y 
+ nextval( 'organization_seq' ) ,MOMBIN CROCHU HOSPITAL MOMBIN CROCHU, 95657, now() ,Y 
+ nextval( 'organization_seq' ) ,BRUNETTE (UKN), 95839, now() ,Y 
+ nextval( 'organization_seq' ) ,GONAIVES HOSPITAL DOCTEUR BAUDIN, 95617, now() ,Y 
+ nextval( 'organization_seq' ) ,TERRE NEUVE HOSPITAL TERRENEUVE, 95670, now() ,Y 
+ nextval( 'organization_seq' ) ,ANSE ROUGE HOSPITAL ANSE ROUGE (A.F.M.E.), 95610, now() ,Y 
+ nextval( 'organization_seq' ) ,CS CAMPECHE, 95752, now() ,Y 
+ nextval( 'organization_seq' ) ,CS LA FOSSETTE, 95753, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE MARMELADE, 95545, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE LIVING HOPE, 95548, now() ,Y 
+ nextval( 'organization_seq' ) ,ST MICHEL ATT HOSPITAL BON BERGER, 95669, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE LANZAC, 95046, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICAL DE LA RHEMA, 95296, now() ,Y 
+ nextval( 'organization_seq' ) ,DP CLEMENTINE ET LORISMENE, 95303, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE GRANDE SALINE, 95048, now() ,Y 
+ nextval( 'organization_seq' ) ,DP MAX FERDINAND, 95281, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF-LAKAY ST MARC, 95351, now() ,Y 
+ nextval( 'organization_seq' ) ,La SantT de vos Enfants, 95510, now() ,Y 
+ nextval( 'organization_seq' ) ,Service de SantT de PremiFre Echelon, 95487, now() ,Y 
+ nextval( 'organization_seq' ) ,ST MARC HOSPITAL PIERRE PAYEN, 95673, now() ,Y 
+ nextval( 'organization_seq' ) ,ST MARC HOSPITAL ST ANTOINE, 95668, now() ,Y 
+ nextval( 'organization_seq' ) ,DP PA NOU AN, 95289, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE DESDUNES, 95176, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE DESCAREAUX, 95287, now() ,Y 
+ nextval( 'organization_seq' ) ,DP COMMUNAUTAIRE DE MARIN, 95294, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE CHRISTANT (SOE), 95311, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE TERRE NETTE, 95036, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE BOSSOU, 95300, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE MEDOR, 95040, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE MOORNE DROUET, 95037, now() ,Y 
+ nextval( 'organization_seq' ) ,HAS DESLANDES (UF9), 95769, now() ,Y 
+ nextval( 'organization_seq' ) ,CAL ST ESPRIT DUFAILLY, 95181, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE PERE LOUIS FANESE LOUIS CHARLES, 95529, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE ABRIOT, 95528, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE LA BELONNE, 95513, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE OUANGOUMAN, 95523, now() ,Y 
+ nextval( 'organization_seq' ) ,HINCHE CLINIC CATHOLIC CLINIC, 95579, now() ,Y 
+ nextval( 'organization_seq' ) ,HINCHE HOSPITAL SACRE COEUR, 95570, now() ,Y 
+ nextval( 'organization_seq' ) ,NOTRE DAME DE FATIMA, 95527, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE CERCA LA SOURCE, 95182, now() ,Y 
+ nextval( 'organization_seq' ) ,MONTE GRANDE, 95526, now() ,Y 
+ nextval( 'organization_seq' ) ,FOND MICHEL, 95512, now() ,Y 
+ nextval( 'organization_seq' ) ,Clinique Saint Pierre, 95170, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE COLOMBIER, 95517, now() ,Y 
+ nextval( 'organization_seq' ) ,Hopital Communautaire de Mirebalais, 95360, now() ,Y 
+ nextval( 'organization_seq' ) ,MIREBALAIS CLINIC PROFAMIL FAMILY PLAN, 95571, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE COUPE MARDI - GRAS, 95511, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE SOCIO-MEDICAL DE CANGE, 95771, now() ,Y 
+ nextval( 'organization_seq' ) ,COMPLEXE MEDICO SOCIAL EDUCATIF DE CANGE, 95185, now() ,Y 
+ nextval( 'organization_seq' ) ,Hopital de Las Cahobas (Freinds of the Children), 95359, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE THOMONDE, 95525, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE HOYE, 95324, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE SAINT-MICHEL, 95164, now() ,Y 
+ nextval( 'organization_seq' ) ,CLINIQUE DE L'INCARNATION DOS - PALAIS, 95524, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE ST MICHEL BELLADERE, 95379, now() ,Y 
+ nextval( 'organization_seq' ) ,MADAME JOA, 95325, now() ,Y 
+ nextval( 'organization_seq' ) ,OSSENANDE, 95519, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE LUCELIA BONTEMPS, 95790, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICAL DE MASEILLAN, 95143, now() ,Y 
+ nextval( 'organization_seq' ) ,CLINIQUE MOBILE FHAPROMES, 95169, now() ,Y 
+ nextval( 'organization_seq' ) ,DESSALINES HOSPITAL DESSALINES CLAIRE HEUREUSE, 95611, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE LHOMON, 95412, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE ST JOSEPH, 95413, now() ,Y 
+ nextval( 'organization_seq' ) ,DP MEN ANSANM DE SAINTE THERESE, 95306, now() ,Y 
+ nextval( 'organization_seq' ) ,FOND DES BLANCS HOSPITAL SAINT BONIFACE, 95648, now() ,Y 
+ nextval( 'organization_seq' ) ,Hopital Communautaire de référence de Aquin, 95355, now() ,Y 
+ nextval( 'organization_seq' ) ,Hopital Saint Boniface, 95378, now() ,Y 
+ nextval( 'organization_seq' ) ,HCR PORT-SALUT, 95367, now() ,Y 
+ nextval( 'organization_seq' ) ,MHDR (PORT SALUT), 95780, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE COTEAUX, 95158, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE DAMASSIN, 95293, now() ,Y 
+ nextval( 'organization_seq' ) ,SANTE COMMUNAUTAIRE MEBSH, 95408, now() ,Y 
+ nextval( 'organization_seq' ) ,LA KAY TI MOUN BON DYE, 95226, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF JEUNES CAYES, 95352, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE LAKAY DES CAYES, 95782, now() ,Y 
+ nextval( 'organization_seq' ) ,CROIX ROUGE HAITIENNE CAYES, 95174, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF-LAKAY CAYES, 95350, now() ,Y 
+ nextval( 'organization_seq' ) ,Hopital Imaculée Conception des Cayes, 95357, now() ,Y 
+ nextval( 'organization_seq' ) ,LA FANMY, 95783, now() ,Y 
+ nextval( 'organization_seq' ) ,LES CAYES HOSPITAL CENTRE DE SANTE LA CHARITE, 95622, now() ,Y 
+ nextval( 'organization_seq' ) ,LES CAYES HOSPITAL GENERAL, 95613, now() ,Y 
+ nextval( 'organization_seq' ) ,LES CAYES HOSPITAL TUBERCULOSIS SANATORIUM, 95616, now() ,Y 
+ nextval( 'organization_seq' ) ,MISSIONNAIRES, 95225, now() ,Y 
+ nextval( 'organization_seq' ) ,Advantage Program - Physical Rehabilitation, 95889, now() ,Y 
+ nextval( 'organization_seq' ) ,Dispensaire N.D. des Malades, 95890, now() ,Y 
+ nextval( 'organization_seq' ) ,CSL ILE A VACHE, 95784, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE CHANTAL, 95778, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE CARPENTIER, 95284, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE DUMONT, 95301, now() ,Y 
+ nextval( 'organization_seq' ) ,CHOSCAL-CENTRE HOSPITALIER SAINTE-CATHERINE LABOURE, 95781, now() ,Y 
+ nextval( 'organization_seq' ) ,CORAIL HOSPITAL CORAIL, 95626, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE MOMBIN, 95251, now() ,Y 
+ nextval( 'organization_seq' ) ,ABRICOTS HOSPITAL MATERNITE DES ABRICOTS, 95644, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE  ESPWA '' DE CAYEMITTES, 95252, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE STE HELENE(CSSH), 95773, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE MEDICAL CHARLES COLIMON (Jérémie), 95775, now() ,Y 
+ nextval( 'organization_seq' ) ,JEREMIE HOSPITAL ASILE NOTRE DAME DE LOURDES, 95614, now() ,Y 
+ nextval( 'organization_seq' ) ,JEREMIE HOSPITAL LA SOURCE, 95631, now() ,Y 
+ nextval( 'organization_seq' ) ,SANT SANTE ESPWA - HHF, 95262, now() ,Y 
+ nextval( 'organization_seq' ) ,ANSE D HAINAU HOSPITAL ST JEAN BAPTISTE, 95645, now() ,Y 
+ nextval( 'organization_seq' ) ,CARE SOS FRANCE, 95750, now() ,Y 
+ nextval( 'organization_seq' ) ,MOLE HOSPITAL SAINT NICOLAS, 95663, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE DE MARE ROUGE, 95414, now() ,Y 
+ nextval( 'organization_seq' ) ,DP DE COTE DE FER (JEAN RABEL), 95015, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE DE PETITE RIVIERE, 95121, now() ,Y 
+ nextval( 'organization_seq' ) ,JOSHUA MEMORIAL CLINIC, 95122, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF LAKAY PORT-DE-PAIX, 95751, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF-LAKAY PORT-DE-PAIX, 95347, now() ,Y 
+ nextval( 'organization_seq' ) ,PORT DE PAIX HOSPITAL BERACA LA POINTE, 95625, now() ,Y 
+ nextval( 'organization_seq' ) ,PORT DE PAIX HOSPITAL ET SANATORIUM, 95642, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE COMMUNAUTAIRE DE FOISON, 95453, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE LA NATIVITE, 95112, now() ,Y 
+ nextval( 'organization_seq' ) ,LA PROVIDENCE DUGAS, 95113, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE DE SANTE MISSION CHRETIENNE, 95505, now() ,Y 
+ nextval( 'organization_seq' ) ,SAINT LOUIS DU NORD HOSPITAL BONNEAU SAINT JOSPEH, 95600, now() ,Y 
+ nextval( 'organization_seq' ) ,ANSE A FOLEUR HOSPITAL ANSE A FOLEUR, 95661, now() ,Y 
+ nextval( 'organization_seq' ) ,TORTUGA ISLAND HOSPITAL PERE RIO, 95615, now() ,Y 
+ nextval( 'organization_seq' ) ,BERACA, 95409, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF- J. DE MIRAGOANE, 95344, now() ,Y 
+ nextval( 'organization_seq' ) ,FOSREF LAKAY MIRAGOANE, 95335, now() ,Y 
+ nextval( 'organization_seq' ) ,MIRAGOANE HOSPITAL DISTRICT, 95621, now() ,Y 
+ nextval( 'organization_seq' ) ,MIRAGOANE HOSPITAL PAILLANT, 95633, now() ,Y 
+ nextval( 'organization_seq' ) ,Hôpital Bethel Fonds Des Negres/A. Du Salut, 95892, now() ,Y 
+ nextval( 'organization_seq' ) ,HOPITAL DE L'UNIVERSITE D'ETAT D'HAITI(HUEH), 95789, now() ,Y 
+ nextval( 'organization_seq' ) ,HOSPITAL ARMEE DU SALUT/CLINIC BETHEL, 95791, now() ,Y 
+ nextval( 'organization_seq' ) ,DISPENSAIRE LES BASSES, 95282, now() ,Y 
+ nextval( 'organization_seq' ) ,CENTRE JEUNES DE DELMAS 19, 95787, now() ,Y 
+ nextval( 'organization_seq' ) ,MATERNITE ISAIE JEANTY, 95788, now() ,Y 
+ nextval( 'organization_seq' ) ,PETIT TROU DE NIPPES HOSPITAL PETIT TROU DE NIPPES, 95594, now() ,Y 
+ nextval( 'organization_seq' ) ,Colorado Haiti Project, 95896, now() ,Y 

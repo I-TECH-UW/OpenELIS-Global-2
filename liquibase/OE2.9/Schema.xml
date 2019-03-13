@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet author="paulsc" id="1">
+    	<comment>Add is_active to panel</comment>
+    	<addColumn tableName="panel" schemaName="clinlims">
+    		<column name="is_active" type=" varchar(1) " defaultValue="Y" />
+    	</addColumn>
+    	<sql>
+    		comment on column clinlims.panel.is_active is 'Is this panel currently active';
+    	</sql>
+	</changeSet>
+   	<changeSet author="paulsc" id="2">
+   		<comment>Adds panel_id to analysis</comment>
+   		<addColumn tableName="analysis">
+   			<column name="panel_id" type=" numeric(10, 0) ">
+   				<constraints foreignKeyName="analysis_panel_FK" references="clinlims.panel(id) " nullable="true"/>
+   			</column>
+   		</addColumn>
+   		<sql>
+   			comment on column clinlims.analysis.panel_id is 'If this analysis is part of a panel then this is the id';
+   		</sql>
+   	</changeSet>
+   	<changeSet author="paulsc" id="3" >
+   		<comment>Adds a parent key to results</comment>
+   		<addColumn tableName="result">
+   			<column name="parent_id" type="numeric(10,0) " />
+   		</addColumn>
+   		<sql>
+   			comment on column clinlims.result.parent_id is 'The id of the result that this result is dependent on';
+   		</sql>
+   	</changeSet>
+   	<changeSet author="paulsc" id="4">
+   		<comment>Adding foreign keys that seem to have been missed by liquibase</comment>
+   		<addForeignKeyConstraint constraintName="result_parent_id_fk" 
+   		                         referencedTableName="result" 
+   		                         baseColumnNames="parent_id" 
+   		                         baseTableName="result" 
+   		                         referencedColumnNames="id"
+   		                         onDelete="CASCADE"/>
+   	</changeSet>
+   	<changeSet author="paulsc" id="5">
+   		<comment>Adding foreign keys that seem to have been missed by liquibase</comment>
+   		<addForeignKeyConstraint constraintName="analysis_panel_FK" 
+   		                         referencedTableName="panel" 
+   		                         baseColumnNames="panel_id" 
+   		                         baseTableName="analysis" 
+   		                         referencedColumnNames="id"
+   		                         onDelete="SET NULL"/>
+   	</changeSet>
+   	<changeSet author="paulsc" id="6">
+   		<comment>Widening the panel name to 64 chars</comment>
+   		<modifyColumn tableName="panel">
+   			<column name="name" type=" varchar(64) " />
+   			<column name="description" type=" varchar(64) " />
+   		</modifyColumn>
+   	</changeSet>
+   	<changeSet author="paulsc" id="7">
+   		<comment>Widening the external_id of the provider to 50 chars</comment>
+   		<modifyColumn tableName="provider" >
+   			<column name="external_id" type=" varchar(50) " />
+   		</modifyColumn>
+   	</changeSet>
+   	<changeSet author="paulsc" id="8">
+   		<comment>Add new column for test to indicate that it can not be ordered.  It is only a reflex test</comment>
+   		<addColumn tableName="test"  >
+   			<column name="orderable" type="boolean" defaultValueBoolean="true" />
+   		</addColumn>
+   		<sql>
+   			comment on column clinlims.test.orderable is 'Should this test show in list of tests which can be ordered.  If not it is a reflex only test';
+   		</sql>
+   	</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet author="paulsc" id="1">
+    	<comment>Adds report name column to document_tracking</comment>
+    	<addColumn tableName="document_track" schemaName="clinlims">
+    		<column name="name" type=" varchar(80) " />
+    	</addColumn>
+    	<sql>
+    		comment on column clinlims.document_track.name is 'The name of the report if there is more than one of the type';
+    	</sql>
+    </changeSet>
+    <changeSet author="paulsc" id="2">
+    	<comment>Adds an index to history table</comment>
+    	<sql>
+		    CREATE INDEX hist_table_row_i
+  			ON clinlims.history
+  			USING btree (reference_id, reference_table);
+
+    	</sql>
+    </changeSet>    
+    <changeSet author="paulsc" id="3">
+    	<comment>Remove entries in system_role_module table where the role_id is null and then add non-null constraints</comment>
+    	<delete tableName="system_role_module">
+    		<where>system_role_id is null OR system_module_id is null</where>
+    	</delete>
+    	<addNotNullConstraint tableName="system_role_module" columnName="system_role_id"/>
+    	<addNotNullConstraint tableName="system_role_module" columnName="system_module_id"/>
+    </changeSet>
+    <changeSet author="paulsc" id="4">
+    	<comment>Adds a column to the patient table to represent how birthdates were entered</comment>
+    	<addColumn tableName="patient" schemaName="clinlims">
+    		<column name="entered_birth_date" type="varchar(10)" />
+    	</addColumn>
+    	<sql>
+    		comment on column patient.entered_birth_date is 'Persons birthdate may not be known and it will be entered with XX for date and/or month';
+   
+    		update clinlims.patient set entered_birth_date = to_char( birth_date, 'DD/MM/YYYY');
+   
+    		update clinlims.patient p set entered_birth_date = COALESCE( (select identity_data from clinlims.patient_identity pi where pi.patient_id = p.id and 
+    		                    identity_type_id = (select id from clinlims.patient_identity_type where identity_type = 'AMBIGUOUS_DOB' )), entered_birth_date);
+    		
+    		delete from clinlims.patient_identity where identity_type_id = (select id from clinlims.patient_identity_type where identity_type = 'AMBIGUOUS_DOB' );                    
+   
+    		delete from clinlims.patient_identity_type where identity_type = 'AMBIGUOUS_DOB';
+    	</sql>
+    </changeSet>
+    <changeSet author="paulsc" id="5" >
+    	<comment>Adding an qa_observation_type and a qa_observation table</comment>
+    	<createTable tableName="qa_observation_type" schemaName="clinlims">
+    		<column name="id" type="numeric(10, 0) " >
+    			<constraints  primaryKey="true" />
+    		</column>
+    		<column name="name" type="varchar(30) " >
+    			<constraints nullable="false"/>
+    		</column>
+    		<column name="description" type="varchar(60) " />
+    		<column name="lastupdated" type="timestamp" defaultValueDate=" now() " />    	
+    	</createTable>
+    	<createTable tableName="qa_observation" schemaName="clinlims">
+    		<column name="id" type=" numeric(10, 0) " >
+    			<constraints primaryKey="true" />
+    		</column>
+    		<column name="observed_id" type=" numeric(10, 0) " >
+    			<constraints nullable="false"/>
+    		</column>
+    		<column name="observed_type" type="varchar(30) " >
+    			<constraints nullable="false"/>
+    		</column>
+    		<column name="qa_observation_type_id" type=" numeric(10, 0 ) " >
+    			<constraints foreignKeyName="qa_observation_type_k" references="clinlims.qa_observation_type(id) " nullable="false"/>
+    		</column>
+    		<column name="value_type" type="varchar(1) " >
+    			<constraints nullable="false"/>
+    		</column>
+    		<column name="value" type="varchar(30) "  >
+    			<constraints nullable="false"/>
+    		</column>
+    		<column name="lastupdated" type="timestamp" defaultValueDate=" now() " /> 
+    	</createTable>
+    	<createSequence sequenceName="qa_observation_type_seq" />
+    	<createSequence sequenceName="qa_observation_seq" />
+    	<insert tableName="reference_tables" schemaName="clinlims">
+    		<column name="id" valueNumeric=" nextval('reference_tables_seq') " />
+    		<column name="name" value="QA_OBSERVATION" />
+			<column name="keep_history" value="Y" />
+			<column name="is_hl7_encoded" value="N" />
+			<column name="lastupdated" value=" now() " />
+    	</insert>
+		<sql>
+				COMMENT ON TABLE clinlims.qa_observation_type IS 'The types of observation that are about sample/analysis qa_events ';
+				COMMENT ON TABLE clinlims.qa_observation IS 'The observation that are about sample/analysis qa_events.  Does not include data about the sample';
+				COMMENT ON COLUMN clinlims.qa_observation.observed_id IS 'The row id for either sample_qaEvent or analysis_qaEvent';
+				COMMENT ON COLUMN clinlims.qa_observation.observed_type IS 'One of ANALYSIS or SAMPLE';
+				COMMENT ON COLUMN clinlims.qa_observation.qa_observation_type_id IS 'The type of observation this is';
+				COMMENT ON COLUMN clinlims.qa_observation.value_type IS 'Dictionary or literal, D or L';
+				COMMENT ON COLUMN clinlims.qa_observation.value IS 'The actual value';
+				
+		</sql>
+    </changeSet>
+    <changeSet author="paulsc" id="6">
+		<comment>Adds first set of metadata to qa_observation_type so we can do the following update</comment>
+		<insert tableName="qa_observation_type" schemaName="clinlims">
+			<column name="id"  valueNumeric=" nextval( 'qa_observation_type_seq' ) "/>
+			<column name="name" value="authorizer" />
+			<column name="description" value="The name of the person who authorized the event" />
+		</insert>
+		<insert tableName="qa_observation_type" schemaName="clinlims">
+			<column name="id"  valueNumeric=" nextval( 'qa_observation_type_seq' ) "/>
+			<column name="name" value="section" />
+			<column name="description" value="The section in which this happened" />
+		</insert>
+		<insert tableName="qa_observation_type" schemaName="clinlims">
+			<column name="id"  valueNumeric=" nextval( 'qa_observation_type_seq' ) "/>
+			<column name="name" value="documentNumber" />
+			<column name="description" value="The qa document tracking number" />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="7">
+		<comment>Moves qa observation data from sample_qaevent table and then drops the columns</comment>
+		<sql>
+			Insert INTO clinlims.qa_observation SELECT nextval( 'qa_observation_seq' ) as id,
+													   sq.id as observed_id, 
+       												   CAST('SAMPLE' as text) as observed_type, 
+       												   (select id from clinlims.qa_observation_type where name = 'authorizer' ) as qa_observation_type_id,  
+       												   CAST('L' as text) as value_type,
+        											   sq.authorizer as value, 
+       												   ( now() ) as lastupdated
+           From clinlims.sample_qaevent sq
+           where sq.authorizer is not null AND sq.authorizer != ''; 
+		   
+		   Insert INTO clinlims.qa_observation SELECT nextval( 'qa_observation_seq' ) as id,
+													   sq.id as observed_id, 
+       												   CAST('SAMPLE' as text) as observed_type, 
+       												   (select id from clinlims.qa_observation_type where name = 'section' ) as qa_observation_type_id,  
+       												   CAST('L' as text) as value_type,
+        											   sq.section as value, 
+       												   ( now() ) as lastupdated
+           From clinlims.sample_qaevent sq
+           where sq.section is not null AND sq.section != ''; 
+		
+		</sql>
+		<dropColumn tableName="sample_qaevent" columnName="authorizer"/>
+		<dropColumn tableName="sample_qaevent" columnName="section"/>
+	</changeSet>
+	<changeSet author="paulsc" id="8">
+		<comment>Adds entered date to sample_qaevent</comment>
+		<addColumn tableName="sample_qaevent">
+			<column name="entered_date" type="timestamp" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="paulsc" id="9">
+		<comment>widen the local_abbrev column in test</comment>
+		<modifyColumn tableName="test" >
+			<column name="local_abbrev" type="varchar(50)"></column>
+		</modifyColumn>
+	</changeSet>
+	<changeSet author="paulsc" id="10">
+		<comment>adds inactive column to status of sample table</comment>
+		<addColumn tableName="status_of_sample">
+			<column name="is_active" type="varchar(1)" defaultValue="Y" />
+		</addColumn>
+		<sql>
+			COMMENT on COLUMN clinlims.status_of_sample.is_active is 'Either Y or N';
+		</sql>
+	</changeSet>
+	<changeSet author="paulsc" id="11">
+		<comment>Adds new field to result_limits to support concept of always requiring extra validation</comment>
+		<addColumn tableName="result_limits">
+			<column name="always_validate" type="Boolean" defaultValueBoolean="false" />
+		</addColumn>
+		<sql>
+			COMMENT ON COLUMN clinlims.result_limits.always_validate is 'Is further validation always required no matter what the results';
+		</sql>
+	</changeSet>
+</databaseChangeLog>

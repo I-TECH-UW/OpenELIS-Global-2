@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<!--Add change tags here -->
+
+	<changeSet author="paulsc" id="8" context="haiti">
+		<comment>Adds needed dictionary values</comment>
+		<sqlFile path="HaitiMassive/MassiveDictionary.sql"/>
+	</changeSet>
+	
+	<changeSet author="paulsc" id="9" context="haiti">
+		<comment>Adds needed uom values</comment>
+		<sqlFile path="HaitiMassive/MassiveUOM.sql"/>
+	</changeSet>
+
+
+	
+	<changeSet author="paulsc" id="1" context="haiti">
+		<comment>Drops all of the tables with dependencies on panel and adds in the new panels</comment>
+		<delete schemaName="clinlims" tableName="panel_item" />
+		<delete schemaName="clinlims" tableName="sampletype_panel" />
+		<delete schemaName="clinlims" tableName="panel" />
+		<sql>alter table clinlims.panel_item alter column test_id set not null</sql>
+		<sqlFile path="HaitiMassive/MassivePanel.sql" />
+	</changeSet>
+
+	<changeSet author="paulsc" id="2" context="haiti">
+		<comment>Remove the unused sample types and add the new sample types</comment>
+		<update tableName="type_of_sample" schemaName="clinlims">
+			<column name="is_active" valueBoolean="false" />
+			<where>description in ('Urine', 
+			                       'Crachat',
+								   'LCR',
+								   'Serum/Urine Concentre du Matin',
+								   'Serum/Urine concentre du matin',
+								   'Culot Urinaire',
+								   'Secretions genito-urinaire',
+								   'Aspiration nasopharyngée',
+								   'Ecouvillonage nasal',
+								   'Ecouvillonage nosapharyngé',
+								   'Sécrétion de la gorge',
+								   'Prélèvement rhinopharyngé',
+								   'Secretion Vaginale'	)
+			</where>
+		</update>
+		<sqlFile path="HaitiMassive/MassiveSampleType.sql" />
+		<sqlFile path="HaitiMassive/MassiveTypeOrder.sql" />
+	</changeSet>
+
+
+
+	<changeSet author="paulsc" id="3" context="haiti">
+		<comment>Associates new and existing sample types with new and existing panels</comment>
+		<sqlFile path="HaitiMassive/MassiveSampleTypePanel.sql" />
+	</changeSet>
+
+	<changeSet author="paulsc" id="4" context="haiti">
+		<comment>Adds new sections</comment>
+		<loadData tableName="test_section" schemaName="clinlims"
+			file="HaitiMassive/MassiveTestSections.csv">
+			<column name="id" header="id" type="NUMERIC" />
+			<column name="name" header="name" type="String" />
+			<column name="description" header="description" type="STRING" />
+			<column name="org_id" header="org_id" type="NUMERIC" />
+			<column name="is_external" header="is_external" type="STRING" />
+			<column name="lastupdated" header="lastupdated" type="DATE" />
+			<column name="display_key" header="display_key" type="STRING" />
+		</loadData>
+		<sqlFile path="HaitiMassive/MassiveSectionOrder.sql" />
+	</changeSet>
+
+	<changeSet author="paulsc" id="5" context="haiti">
+		<comment>In-activates and adds new tests</comment>
+		<update tableName="test" schemaName="clinlims">
+			<column name="sort_order" valueNumeric="2147483647"/>
+		</update>
+		<update tableName="test" schemaName="clinlims ">
+			<column name="is_active" value="N" />
+			<where>sort_order = 2147483647</where>
+		</update>
+		<sqlFile path="HaitiMassive/MassiveTest.sql" />
+		<sqlFile path="HaitiMassive/MassiveTestRename.sql"/>
+		<sqlFile path="HaitiMassive/MassiveUpdateTestOrder.sql"/>
+		<update tableName="test" schemaName="clinlims ">
+			<column name="is_active" value="N" />
+			<where>sort_order = 2147483647</where>
+		</update>
+		<update tableName="test" schemaName="clinlims ">
+			<column name="is_active" value="Y" />
+			<where>sort_order !=  2147483647</where>
+		</update>
+		
+	</changeSet>
+	
+	<changeSet author="paulsc" id="6" context="haiti">
+		<comment>Add tests to panels</comment>
+		<loadData tableName="panel_item" schemaName="clinlims"
+			file="HaitiMassive/MassiveTestPanel.csv">
+			<column name="id" header="id" type="NUMERIC" />
+			<column name="panel_id" header="panel_id" type="NUMERIC" />
+			<column name="test_id" header="test_id" type="NUMERIC" />
+			<column name="sort_order" header="sort_order" type="NUMERIC" />
+			<column name="lastupdated" header="lastupdated" type="DATE" />
+		</loadData>
+	</changeSet>
+
+	<changeSet author="paulsc" id="7" context="haiti">
+		<comment>Add tests to sample types</comment>
+		<sqlFile path="HaitiMassive/MassiveTestSampleTypes.sql" />
+	</changeSet>
+
+	<changeSet author="paulsc" id="10" context="haiti">
+		<comment>Adds to test_result table</comment>
+		<sqlFile path="HaitiMassive/MassiveTestResults.sql"/>
+	</changeSet>
+	<changeSet author="paulsc" id="11" context="haiti">
+		<comment>Adds result limits to test</comment>
+		<sqlFile path="HaitiMassive/MassiveResultLimits.sql"/>
+	</changeSet>
+	<changeSet author="paulsc" id="12" context="haiti" >
+		<comment>Adds dictionary result limits to tests</comment>
+		<sqlFile path="HaitiMassive/MassiveDictResultLimits.sql"/>
+	</changeSet>
+	
+
+</databaseChangeLog>
+

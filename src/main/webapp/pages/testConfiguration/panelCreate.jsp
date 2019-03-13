@@ -81,7 +81,7 @@
     }
 
     function submitAction(target) {
-        var form = window.document.forms[0];
+        var form = document.getElementById("mainForm");
         form.action = target;
         form.submit();
     }
@@ -124,7 +124,7 @@
 
     function savePage() {
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-        var form = window.document.forms[0];
+        var form = document.getElementById("mainForm");
         form.action = "PanelCreate.do";
         form.submit();
     }

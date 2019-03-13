@@ -1,41 +1,41 @@
 package spring.generated.forms;
 
-import java.lang.String;
 import java.util.List;
-import spring.mine.common.form.BaseForm;
 
-public class ExternalConnectionsConfigForm extends BaseForm {
-  private String lastupdated;
+import spring.mine.common.form.MenuForm;
 
-  private List menuList;
+public class ExternalConnectionsConfigForm extends MenuForm {
+	private String lastupdated;
 
-  private String[] selectedIDs;
+	private List menuList;
 
-  public ExternalConnectionsConfigForm() {
-    setFormName("ExternalConnectionsConfigForm");
-  }
+	private String[] selectedIDs;
 
-  public String getLastupdated() {
-    return this.lastupdated;
-  }
+	public ExternalConnectionsConfigForm() {
+		setFormName("ExternalConnectionsConfigForm");
+	}
 
-  public void setLastupdated(String lastupdated) {
-    this.lastupdated = lastupdated;
-  }
+	public String getLastupdated() {
+		return lastupdated;
+	}
 
-  public List getMenuList() {
-    return this.menuList;
-  }
+	public void setLastupdated(String lastupdated) {
+		this.lastupdated = lastupdated;
+	}
 
-  public void setMenuList(List menuList) {
-    this.menuList = menuList;
-  }
+	public List getMenuList() {
+		return menuList;
+	}
 
-  public String[] getSelectedIDs() {
-    return this.selectedIDs;
-  }
+	public void setMenuList(List menuList) {
+		this.menuList = menuList;
+	}
 
-  public void setSelectedIDs(String[] selectedIDs) {
-    this.selectedIDs = selectedIDs;
-  }
+	public String[] getSelectedIDs() {
+		return selectedIDs;
+	}
+
+	public void setSelectedIDs(String[] selectedIDs) {
+		this.selectedIDs = selectedIDs;
+	}
 }

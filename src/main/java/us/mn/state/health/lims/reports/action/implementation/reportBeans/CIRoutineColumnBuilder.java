@@ -8,9 +8,9 @@ import static us.mn.state.health.lims.reports.action.implementation.reportBeans.
 //import static us.mn.state.health.lims.reports.action.implementation.reportBeans.CSVRoutineColumnBuilder.Strategy.GENDER;
 //import static us.mn.state.health.lims.reports.action.implementation.reportBeans.CSVRoutineColumnBuilder.Strategy.LOG;
 import static us.mn.state.health.lims.reports.action.implementation.reportBeans.CSVRoutineColumnBuilder.Strategy.NONE;
+import static us.mn.state.health.lims.reports.action.implementation.reportBeans.CSVRoutineColumnBuilder.Strategy.PROGRAM;
 //import static us.mn.state.health.lims.reports.action.implementation.reportBeans.CSVRoutineColumnBuilder.Strategy.PROJECT;
 import static us.mn.state.health.lims.reports.action.implementation.reportBeans.CSVRoutineColumnBuilder.Strategy.SAMPLE_STATUS;
-import static us.mn.state.health.lims.reports.action.implementation.reportBeans.CSVRoutineColumnBuilder.Strategy.PROGRAM;
 
 //import org.apache.commons.validator.GenericValidator;
 

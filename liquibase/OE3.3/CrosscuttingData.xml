@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<changeSet author="paulsc" id="1" context="ci_regional,ciLNSP,haiti,haitiLNSP,CI_IPCI">
+		<comment>Adding modules to roles</comment>
+		 <insert schemaName="clinlims" tableName="system_role_module">
+             <column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) "/>
+             <column name="has_select" value="Y"/>
+             <column name="has_add" value="Y"/>
+             <column name="has_update" value="Y"/>
+             <column name="has_delete" value="Y"/>
+             <column name="system_role_id" valueNumeric=" ( select id from system_role where name = 'Validator' or name = 'Validation' ) "/>
+             <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'ResultValidation' ) "/>
+         </insert>    
+	</changeSet>
+    <changeSet author="paulsc" id="2">
+    	<comment>Move external ids from provider to sample referring id</comment>
+    	<sql>
+    	update clinlims.sample s set referring_id = 
+    	( select p.external_id from clinlims.provider p 
+    	   join clinlims.sample_human sh on p.id = sh.provider_id 
+    	   where s.id = sh.samp_id );
+    	</sql>
+    </changeSet>
+    <changeSet author="paulsc" id="3" context="haiti, haitiLNSP">
+		<comment>By default haiti sites require signatures on non_conformityy reports</comment>
+		<update tableName="site_information">
+			<column name="value" value="true" />
+			<where>name = 'non-conformity signature'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="4" context="haiti, haitiLNSP">
+		<comment>Adds referring patient id as observation history type</comment>
+		<insert tableName="observation_history_type">
+			<column name="id" valueNumeric=" nextval('observation_history_type_seq') " />
+			<column name="type_name" value="referrersPatientId" />
+  			<column name="description" value="The id given the patient by the clinic which sent them.  May not be ST, Nation ID etc" />
+			<column name="lastupdated" valueDate=" now() " />
+		</insert>
+	</changeSet>
+	<changeSet author="paulsc" id="5" context="haiti, haitiLNSP">
+		<comment>Turns on results on workplan</comment>
+		<update tableName="site_information">
+			<column name="value" value="true" />
+			<where>name = 'results on workplan'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="6" context="CI_REGIONAL, CI_IPCI">
+		<comment>Update the test sections</comment>
+		<update tableName="test_section">
+			<column name="sort_order" valueNumeric="30" />
+			<where>name = 'Serology-Immunology'</where>
+		</update>
+		<update tableName="test_section">
+			<column name="sort_order" valueNumeric="40" />
+			<column name="is_active" value="Y" />
+			<where>name = 'Immunology'</where>
+		</update><update tableName="test_section">
+			<column name="sort_order" valueNumeric="50" />
+			<column name="is_active" value="Y" />
+			<where>name = 'Biologie Moleculaire'</where>
+		</update><update tableName="test_section">
+			<column name="sort_order" valueNumeric="2147483647" />
+			<column name="is_active" value="N" />
+			<where>name = 'Hemto-Immunology'</where>
+		</update>
+	</changeSet>
+		<changeSet author="paulsc" id="7" context="CI_REGIONAL">
+		<comment>Update default for allowing sample collection to be a non-conformity area</comment>
+		<update tableName="site_information">
+			<column name="value" value="true" />
+			<where>name = 'Collection as unit'</where>
+		</update>
+	</changeSet>
+</databaseChangeLog>

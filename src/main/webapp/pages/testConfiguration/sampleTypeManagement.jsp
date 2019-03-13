@@ -20,11 +20,11 @@
   ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
   --%>
 
-<form>
+<form id="mainForm">
     <script type="text/javascript">
 
         function submitAction(target) {
-            var form = window.document.forms[0];
+            var form = document.getElementById("mainForm");
             form.action = target;
             form.submit();
         }

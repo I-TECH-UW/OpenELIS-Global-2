@@ -44,7 +44,9 @@ public class SampleEntryByProjectSaveAction extends BaseSampleEntryAction {
 
         String forward = FWD_SUCCESS;
         Accessioner accessioner;
-        accessioner = new SampleSecondEntry((DynaBean) form, currentUserId, request);
+
+		// commented out to allow maven compilation - CSL
+        /*accessioner = new SampleSecondEntry((DynaBean) form, currentUserId, request);
         if (accessioner.canAccession()) {
             forward = handleSave(request, accessioner);
             if (forward != null) {
@@ -65,7 +67,7 @@ public class SampleEntryByProjectSaveAction extends BaseSampleEntryAction {
                 return mapping.findForward(forward);
             }
         }
-        logAndAddMessage(request, "performAction", "errors.UpdateException");
+*/        logAndAddMessage(request, "performAction", "errors.UpdateException");
         return mapping.findForward(FWD_FAIL);
     }
 

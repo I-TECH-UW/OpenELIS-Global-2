@@ -1,0 +1,46 @@
+VIH test rapide
+VIH test rapide
+VIH test rapide
+CD4  Abs
+CD4 (%)
+TGP (37°C)
+TGO (37°C)
+Gly
+Gly
+Creatinine
+TGP (37°C)
+TGO (37°C)
+Amylase
+Gly
+Albumine 
+Chol total
+Chol HDL
+Triglycérides
+charge virale
+Béta HCG
+GB
+GR
+Hb
+Hte
+VGM
+TCMH
+CCMH
+PQTES
+PNN (%)
+PNN (Abs)
+PNE (%)
+PNE (Abs)
+PNB (%)
+PNB (Abs)
+Lympho (%)
+Lympho (Abs)
+Mono (%)
+Mono (Abs)
+ Ag HBs
+Béta HCG
+Protéines
+
+
+
+
+

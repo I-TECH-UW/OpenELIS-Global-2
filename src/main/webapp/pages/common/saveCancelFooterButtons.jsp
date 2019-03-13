@@ -24,7 +24,7 @@
 				<input type="button"
 					   id="saveButtonId"
 					   onclick="savePage();"
-					   disabled="<%=Boolean.valueOf(saveDisabled).booleanValue()%>"
+					   <c:if test="${saveDisabled}">disabled="disabled"</c:if>
 					   value="<spring:message code="label.button.save" />">
 				</td>
 				<td>

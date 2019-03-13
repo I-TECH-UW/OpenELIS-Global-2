@@ -1,0 +1,395 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Negatif, Positif
+
+
+
+
+
+
+
+
+
+A, B, AB, O
+RH Pos, RH Neg
+Compatible, Incompatible
+Compatible, Incompatible
+Compatible, Incompatible
+Compatible, Incompatible
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Positif , Negatif
+Positif , Negatif
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+
+
+Reactif, Non Reactif
+
+Blanc jaunatre, jaune paille, jaune citrin, ambre, orange, jaune fonce, rouge, autre
+
+
+
+
+
+
+
+
+
+
+
+
+Jaune Paille, Jaune citrin, Ambre,Orange,Jaune Fonce, Rouge, Autre
+Clair, Trouble, Icterique, normal,Fonce,Autre
+
+
+Negatif, trace, Positif 1+, Positif 2+, Positif 3+
+Negatif, trace, Positif 1+, Positif 2+, Positif 3+
+Negatif, trace, Positif 1+, Positif 2+, Positif 3+
+Negatif, trace, Positif 1+, Positif 2+, Positif 3+
+Negatif, trace, Positif 1+, Positif 2+, Positif 3+
+Negatif, trace, Positif 1+, Positif 2+, Positif 3+
+Negatif, trace, Positif 1+, Positif 2+, Positif 3+
+Negatif, trace, Positif 1+, Positif 2+, Positif 3+
+Negatif, En amas, 0 à 1/ champs, 2 à 5 / Champs, 5 à 10/ Champs
+Negatif, En amas, 0 à 1/ champs, 2 à 5 / Champs, 5 à 10/ Champs
+Negatif, En amas, 0 à 1/ champs, 2 à 5 / Champs, 5 à 10/ Champs
+Negatif, En amas, 0 à 1/ champs, 2 à 5 / Champs, 5 à 10/ Champs
+Negatif, En amas, 0 à 1/ champs, 2 à 5 / Champs, 5 à 10/ Champs
+Negatif, En amas, 0 à 1/ champs, 2 à 5 / Champs, 5 à 10/ Champs
+Negatif, En amas, 0 à 1/ champs, 2 à 5 / Champs, 5 à 10/ Champs
+Negatif, En amas, 0 à 1/ champs, 2 à 5 / Champs, 5 à 10/ Champs
+Negatif,En amas, 0 à 1/ champs, 2 à 5 / Champs, 5 à 10/ Champs, Hyalins, Granuleux, Graisseux, Epitheliales, Leucocytaires, Cireux
+Negatif,En amas, 0 à 1/ champs, 2 à 5 / Champs, 5 à 10/ Champs, Oxalate de Calcium, Acide Urique, Cystine, Phosphate de Calcium,Urates Amorphes, Triple phosphate,Phosphate de Ca,Phosphate de Mg, Sulfate de Ca,Urate d'Ammonium 
+
+
+Noiratre,Sang/Whole Blooduinolant, Jaunatre,Maron,Verdatre, Autre
+Liquide, Solide, semi liquide, pateuse
+POSITIF, NEGATIF
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+
+
+
+
+
+Negatif , P. Falciparum, P. Vivax , P. Malariae, P.Ovale
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+Negatif, Positif 1+, Positif 2+, Positif 3+
+
+
+
+
+
+
+
+
+
+POSITIF, NEGATIF, INDETERMINE
+POSITIF, NEGATIF, INDETERMINE
+POSITIF, NEGATIF, INDETERMINE
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+
+
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+POSITIF, NEGATIF
+
+
+
+Detecte, Non Detecte, Indetermine
+Detecte, Non Detecte, Indetermine
+
+
+
+Negatif, Rares, Positif 1+, Positif 2+, Positif 3+
+POS, NEG
+POS, NEG
+POS, NEG
+Pres BK, Abs BK, 1+, 2+, 3+
+Pres BK, Abs BK, 1+, 2+, 3+
+
+
+
+
+POS, NEG
+POS, NEG
+
+
+
+Pres ence des lymphocytes , Absence des lymphocytes
+
+
+Pres ence des lymphocytes , Absence des lymphocytes
+Pres eosinophiles
+Pres ence des cellules atypiques , Absence des cellules atypiques
+
+
+
+
+
+
+
+
+
+Negatif, Rares, Positif 1+, Positif 2+, Positif 3+
+Negatif, Rares, Positif 1+, Positif 2+, Positif 3+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+Positif, Negatif
+
+
+
+
+
+POS, NEG
+POS, NEG
+POS, NEG
+POS, NEG
+POS, NEG
+POS, NEG
+POS, NEG
+POS, NEG
+POS, NEG
+Non Reactif, Reactif , Reactif 1/2, Reactif 1/4, Reactif 1/8, Reactif 1/16,Reactif 1/32, Reactif 1/64
+Non Reactif, Reactif , Reactif 1/2, Reactif 1/4, Reactif 1/8, Reactif 1/16,Reactif 1/32, Reactif 1/64
+Non Reactif, Reactif , Reactif 1/2, Reactif 1/4, Reactif 1/8, Reactif 1/16,Reactif 1/32, Reactif 1/64
+Negatif, Positif 
+Negatif, Positif 
+Negatif, Positif 
+POS, NEG
+POS, NEG
+POS, NEG
+POS  > 200 unites/ml, NEG  < 200 unites/ml
+POS  > 200 unites/ml, NEG  < 200 unites/ml
+POS  > 200 unites/ml, NEG  < 200 unites/ml
+POS  > 200 U ASLO/ml, NEG  < 200 U ASLO/ml
+POS  > 200 U ASLO/ml, NEG  < 200 U ASLO/ml
+POS  > 200 U ASLO/ml, NEG  < 200 U ASLO/ml
+Non Reactif, Reactif , Reactif 1/20, Reactif 1/40, Reactif 1/80, Reactif 1/160,Reactif 1/320, Reactif 1/640
+Non Reactif, Reactif , Reactif 1/20, Reactif 1/40, Reactif 1/80, Reactif 1/160,Reactif 1/320, Reactif 1/640
+Non Reactif, Reactif , Reactif 1/2, Reactif 1/4, Reactif 1/8, Reactif 1/16,Reactif 1/32, Reactif 1/64
+Non Reactif, Reactif , Reactif 1/2, Reactif 1/4, Reactif 1/8, Reactif 1/16,Reactif 1/32, Reactif 1/64
+
+POSITIF,  NEGATIF, INDETERMINE
+POSITIF,  NEGATIF, INDETERMINE
+POSITIF,  NEGATIF, INDETERMINE
+POSITIF,  NEGATIF, INDETERMINE
+POSITIF,  NEGATIF, INDETERMINE
+POSITIF,  NEGATIF, INDETERMINE
+POSITIF,  NEGATIF, INDETERMINE
+POSITIF,  NEGATIF, INDETERMINE
+POSITIF,  NEGATIF, INDETERMINE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

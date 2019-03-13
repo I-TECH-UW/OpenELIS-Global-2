@@ -42,11 +42,10 @@ public class CommonReportPrintAction extends BaseAction {
 	private static String reportPath = null;
 	private static String imagesPath = null;
 
-
 	@SuppressWarnings("unchecked")
 	@Override
-	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 
 		BaseActionForm dynaForm = (BaseActionForm) form;
 
@@ -58,22 +57,25 @@ public class CommonReportPrintAction extends BaseAction {
 
 		if (reportCreator != null) {
 			reportCreator.setRequestedReport(request.getParameter("report"));
-			reportCreator.initializeReport(dynaForm);
+
+			// commented out to allow maven compilation - CSL
+			// reportCreator.initializeReport(dynaForm);
 			reportCreator.setReportPath(getReportPath());
 
 			HashMap<String, String> parameterMap = (HashMap<String, String>) reportCreator.getReportParameters();
 			parameterMap.put("SUBREPORT_DIR", getReportPath());
 			parameterMap.put("imagesPath", getImagesPath());
-			
+
 			try {
 
 				response.setContentType(reportCreator.getContentType());
 				String responseHeaderName = reportCreator.getResponseHeaderName();
 				String responseHeaderContent = reportCreator.getResponseHeaderContent();
-				if( !GenericValidator.isBlankOrNull(responseHeaderName) && !GenericValidator.isBlankOrNull(responseHeaderContent) ){
+				if (!GenericValidator.isBlankOrNull(responseHeaderName)
+						&& !GenericValidator.isBlankOrNull(responseHeaderContent)) {
 					response.setHeader(responseHeaderName, responseHeaderContent);
 				}
-				
+
 				byte[] bytes = reportCreator.runReport();
 
 				response.setContentLength(bytes.length);
@@ -89,15 +91,16 @@ public class CommonReportPrintAction extends BaseAction {
 			}
 		}
 
-		if("patient".equals(request.getParameter("type"))){
-			trackReports( reportCreator, request.getParameter("report"), ReportType.PATIENT);
+		if ("patient".equals(request.getParameter("type"))) {
+			trackReports(reportCreator, request.getParameter("report"), ReportType.PATIENT);
 		}
-		
+
 		return mapping.findForward(forward);
 	}
 
 	private void trackReports(IReportCreator reportCreator, String reportName, ReportType reportType) {
-		new ReportTrackingService().addReports(reportCreator.getReportedOrders(), reportType, reportName, currentUserId);
+		new ReportTrackingService().addReports(reportCreator.getReportedOrders(), reportType, reportName,
+				currentUserId);
 	}
 
 	@Override
@@ -112,13 +115,13 @@ public class CommonReportPrintAction extends BaseAction {
 
 	public String getReportPath() {
 		if (reportPath == null) {
-			//TO DO untested after restructure to maven
-	        File reportDir = new File(getClass().getClassLoader().getResource("/reports").getFile());
+			// TO DO untested after restructure to maven
+			File reportDir = new File(getClass().getClassLoader().getResource("/reports").getFile());
 			reportPath = reportDir.getAbsolutePath();
 		}
 		return reportPath;
 	}
-	
+
 	public String getImagesPath() {
 		if (imagesPath == null) {
 			imagesPath = "/images/";

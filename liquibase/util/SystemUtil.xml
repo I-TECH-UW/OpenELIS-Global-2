@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+   
+	<changeSet author="paulsc" id="3" context="deleteData" runAlways="true" runOnChange="true" >
+             <comment>This will truncate patient, test and releated data.  It is non-recoverable</comment>
+             <sql>
+             SET search_path = clinlims, pg_catalog;
+             
+	 truncate sample_projects   , 
+             sample_human , 
+             result_inventory , 
+             result_signature, 
+             result, 
+             analysis, 
+             analyzer_results, 
+             sample_item, 
+             observation_history, 
+             sample, 
+             provider, 
+             patient_identity, 
+             patient_patient_type, 
+             note, 
+             sample_requester, 
+             sample_qaevent, 
+             referral, 
+             patient, 
+             person, 
+             person_address, 
+             report_external_export, 
+             report_external_import, 
+             history,
+             document_track,
+             electronic_order CASCADE; 
+            
+	    ALTER SEQUENCE note_seq restart 1; 
+            ALTER SEQUENCE sample_human_seq restart 1; 
+            ALTER SEQUENCE result_inventory_seq restart 1; 
+            ALTER SEQUENCE result_signature_seq restart 1; 
+            ALTER SEQUENCE result_seq restart 1; 
+            ALTER SEQUENCE analysis_seq restart 1; 
+            ALTER SEQUENCE sample_item_seq restart 1; 
+            ALTER SEQUENCE sample_seq restart 1; 
+            ALTER SEQUENCE provider_seq restart 1; 
+            ALTER SEQUENCE patient_identity_seq restart 1; 
+            ALTER SEQUENCE patient_patient_type_seq restart 1; 
+            ALTER SEQUENCE patient_seq restart 1; 
+            ALTER SEQUENCE person_seq restart 1; 
+            ALTER SEQUENCE report_external_import_seq restart 1; 
+            ALTER SEQUENCE report_queue_seq restart 1; 
+            ALTER SEQUENCE sample_qaevent_seq restart 1; 
+            ALTER SEQUENCE sample_proj_seq restart 1; 
+            ALTER SEQUENCE history_seq restart 1;
+	        ALTER SEQUENCE electronic_order_seq restart 1;
+            </sql>
+   </changeSet>
+  <changeSet author="paulsc" id="2" context="Hide" >
+  	<comment>Corrects error of Absolute CD4 count being assigned to the wrong anaylsis</comment>
+  	<sql>
+  	update clinlims.result r1 set analysis_id = (select r2.analysis_id from clinlims.result r2 
+                                             			      where r2.analyte_id = ( select id from clinlims.analyte where name = 'CD4 percentage count Result' ) AND
+                                                                            ((select si.samp_id from clinlims.sample_item si
+                                                                              join clinlims.analysis a on a.sampitem_id = si.id
+                                                                             where a.id = r1.analysis_id)= (select si.samp_id from clinlims.sample_item si
+                                                                                                                            join clinlims.analysis a on a.sampitem_id = si.id
+                                                                                                                            where a.id = r2.analysis_id)))
+	where r1.analyte_id = ( select id from clinlims.analyte where name = 'generated CD4 Count' )
+  	</sql>
+  </changeSet>
+</databaseChangeLog>
+
+
+
+
+
+

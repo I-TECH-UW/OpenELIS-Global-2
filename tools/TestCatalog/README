@@ -1,0 +1,5 @@
+This is how to for maintaining test catalogs.  Some of the documentation 
+refers to specific online test catalogs but the ideas are the same.  There
+is some representation of the catalog in the real world and it needs
+to be implimented for OpenELis.  The guides in the directory will get you 
+going.

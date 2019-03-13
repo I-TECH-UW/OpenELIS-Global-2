@@ -91,7 +91,7 @@
 
     function submitAction(target) {
         window.onbeforeunload = null;
-        var form = window.document.forms[0];
+        var form = document.getElementById("mainForm");
         form.action = target;
         form.submit();
     }

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <!--system role and module updating-->
+  <!-- Data specific to CDIRetroCI -->
+  
+   <changeSet author="CI OpenELIS developers group" id="1" >
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.test where name= 'Hémotocrite';
+    		</sqlCheck>
+    </preConditions>
+    <comment>name update in clinlims</comment>
+    <sql>
+
+	UPDATE clinlims.test
+   SET name='Hématocrite',description='Hématocrite(Sang total)'
+   WHERE name='Hémotocrite';
+</sql>
+  </changeSet>
+  
+ 
+</databaseChangeLog>
+ 

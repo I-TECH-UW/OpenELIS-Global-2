@@ -310,7 +310,7 @@ function handleSelectedPatient(){
     }
 
     $("searchResultsDiv").style.display = "none";
-   /*  var form = document.forms[0];
+   /*  var form = document.getElementById("mainForm");
     form.method = "get";
     form.action = '${form.formAction}'.sub('Form','') + "?accessionNumber=" + accessionNumber + "&patientID=" + patientSelectID;
     if( !(typeof requestType === 'undefined') ){

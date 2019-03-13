@@ -2,7 +2,7 @@ function OEPager(formName, sufix) {
 	this.formName = formName;
 	this.sufix = sufix;
 	this.curentPageNumber = 0;
-	this.form = window.document.forms[0];
+	this.form = document.getElementById("mainForm");
 
 	this.setCurrentPageNumber = function(number) {
 		this.currentPageNumber = Number(number);

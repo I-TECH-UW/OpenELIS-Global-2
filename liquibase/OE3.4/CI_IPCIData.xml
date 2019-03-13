@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<!-- Data specific to CDI IPCI labs -->
+	<changeSet author="paulsc" id="1" context="CI_IPCI">
+		<comment>inserts parasites into the dictionary</comment>
+        <insert tableName="dictionary_category">
+            <column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) "/>
+            <column name="description" value="Possible parasites" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="local_abbrev" value="parasite" />
+            <column name="name" value="parasite" />
+        </insert>
+        <sqlFile path="OE3.4/IPCI_Parasites.sql" />
+	</changeSet>
+    <changeSet id="2" author="paulsc" context="CI_IPCI">
+        <comment>Activates sample type of Variable</comment>
+        <update tableName="type_of_sample" >
+            <column name="is_active" value="Y" />
+            <where>local_abbrev = 'Variable'</where>
+        </update>
+    </changeSet>
+    <changeSet id="3" author="paulsc" context="CI_IPCI">
+        <comment>Adds dictionary_categories and values for variable sample types</comment>
+        <insert tableName="dictionary_category">
+            <column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) " />
+            <column name="description" value="LCR sample type set 1" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="local_abbrev" value="LCR set 1" />
+            <column name="name" value="LCR set 1"/>
+        </insert>
+        <sqlFile path="OE3.4/LCRDictionary1.sql" />
+        <insert tableName="dictionary_category">
+            <column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) " />
+            <column name="description" value="LCR sample type set 2" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="local_abbrev" value="LCR set 2" />
+            <column name="name" value="LCR set 2"/>
+        </insert>
+        <sqlFile path="OE3.4/LCRDictionary2.sql" />
+        <insert tableName="dictionary_category">
+            <column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) " />
+            <column name="description" value="Biopsy sample type set 1" />
+            <column name="lastupdated" valueDate=" now() " />
+            <column name="local_abbrev" value="Biopsy 1" />
+            <column name="name" value="Biopsy set 1"/>
+        </insert>
+        <sqlFile path="OE3.4/BiopsyDictionary1.sql" />
+    </changeSet>
+    <include file="OE3.4/testCatalogCI_IPCI/TestCatalogUpdate.xml" />
+    <changeSet id="4" author="paulsc" context="CI_IPCI">
+        <comment>Add system modules for new test sections</comment>
+        <insert tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' ) " />
+            <column name="name" value="Workplan:malaria" />
+            <column name="description" value="Workplan->malaria" />
+            <column name="has_select_flag" value="Y" />
+            <column name="has_add_flag" value="Y" />
+            <column name="has_update_flag" value="Y" />
+            <column name="has_delete_flag" value="Y" />
+        </insert>
+        <insert tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' ) " />
+            <column name="name" value="LogbookResults:malaria" />
+            <column name="description" value="LogbookResults->malaria" />
+            <column name="has_select_flag" value="Y" />
+            <column name="has_add_flag" value="Y" />
+            <column name="has_update_flag" value="Y" />
+            <column name="has_delete_flag" value="Y" />
+        </insert>
+        <insert tableName="system_module">
+            <column name="id" valueNumeric=" nextval( 'system_module_seq' ) " />
+            <column name="name" value="ResultValidation:malaria" />
+            <column name="description" value="Validation->malaria" />
+            <column name="has_select_flag" value="Y" />
+            <column name="has_add_flag" value="Y" />
+            <column name="has_update_flag" value="Y" />
+            <column name="has_delete_flag" value="Y" />
+        </insert>
+        <insert schemaName="clinlims" tableName="system_role_module">
+            <column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+            <column name="has_select" value="Y" />
+            <column name="has_add"    value="Y" />
+            <column name="has_update" value="Y" />
+            <column name="has_delete" value="Y" />
+            <column name="system_role_id"   valueNumeric=" ( select id from system_role where name = 'Validator' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'ResultValidation:malaria' ) " />
+        </insert>
+        <insert schemaName="clinlims" tableName="system_role_module">
+            <column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+            <column name="has_select" value="Y" />
+            <column name="has_add"    value="Y" />
+            <column name="has_update" value="Y" />
+            <column name="has_delete" value="Y" />
+            <column name="system_role_id"   valueNumeric=" ( select id from system_role where name = 'Validator' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'ResultValidation:Parasitology' ) " />
+        </insert>
+        <insert schemaName="clinlims" tableName="system_role_module">
+            <column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+            <column name="has_select" value="Y" />
+            <column name="has_add"    value="Y" />
+            <column name="has_update" value="Y" />
+            <column name="has_delete" value="Y" />
+            <column name="system_role_id"   valueNumeric=" ( select id from system_role where name = 'Validator' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'ResultValidation:mycology' ) " />
+        </insert>
+        <insert schemaName="clinlims" tableName="system_role_module">
+            <column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+            <column name="has_select" value="Y" />
+            <column name="has_add"    value="Y" />
+            <column name="has_update" value="Y" />
+            <column name="has_delete" value="Y" />
+            <column name="system_role_id"   valueNumeric=" ( select id from system_role where name = 'Results entry' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'LogbookResults:malaria' ) " />
+        </insert>
+        <insert schemaName="clinlims" tableName="system_role_module">
+            <column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+            <column name="has_select" value="Y" />
+            <column name="has_add"    value="Y" />
+            <column name="has_update" value="Y" />
+            <column name="has_delete" value="Y" />
+            <column name="system_role_id"   valueNumeric=" ( select id from system_role where name = 'Results entry' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'LogbookResults:mycology' ) " />
+        </insert>
+        <insert schemaName="clinlims" tableName="system_role_module">
+            <column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+            <column name="has_select" value="Y" />
+            <column name="has_add"    value="Y" />
+            <column name="has_update" value="Y" />
+            <column name="has_delete" value="Y" />
+            <column name="system_role_id"   valueNumeric=" ( select id from system_role where name = 'Results entry' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'Workplan:malaria' ) " />
+        </insert>
+        <insert schemaName="clinlims" tableName="system_role_module">
+            <column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+            <column name="has_select" value="Y" />
+            <column name="has_add"    value="Y" />
+            <column name="has_update" value="Y" />
+            <column name="has_delete" value="Y" />
+            <column name="system_role_id"   valueNumeric=" ( select id from system_role where name = 'Results entry' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'Workplan:parasitology' ) " />
+        </insert>
+        <insert schemaName="clinlims" tableName="system_role_module">
+            <column name="id" valueNumeric=" nextVal( 'system_user_module_seq' ) " />
+            <column name="has_select" value="Y" />
+            <column name="has_add"    value="Y" />
+            <column name="has_update" value="Y" />
+            <column name="has_delete" value="Y" />
+            <column name="system_role_id"   valueNumeric=" ( select id from system_role where name = 'Results entry' ) " />
+            <column name="system_module_id" valueNumeric=" ( select id from system_module where name = 'Workplan:mycology' ) " />
+        </insert>
+    </changeSet>
+    <changeSet id="5" author="paulsc" context="CI_IPCI">
+        <comment>Change the Q test result type to D. is_quantifiable has been done already</comment>
+        <update tableName="test_result" >
+            <column name="tst_rslt_type" value="D" />
+            <where>tst_rslt_type = 'Q'</where>
+        </update>
+    </changeSet>
+    <changeSet id="6" author="paulsc" context="CI_IPCI">
+        <comment>Update the dictionary entries for the sample types</comment>
+        <sql>
+            update clinlims.dictionary set dict_entry = 'Cérosites' where dict_entry = 'Cerosites';
+            INSERT INTO clinlims."dictionary"( id, is_active, dict_entry, lastupdated, local_abbrev, dictionary_category_id, sort_order)
+            VALUES ( nextval( 'dictionary_seq'),
+            'Y',
+            'Cheveux',
+            now(),
+            'Cheveux',
+            (select dictionary_category_id from clinlims.dictionary where dict_entry = 'Ongles cheveux' ),
+            (select sort_order + 50 from clinlims.dictionary where dict_entry = 'Ongles cheveux' )
+            );
+            update clinlims.dictionary set dict_entry = 'Ongles' where dict_entry = 'Ongles cheveux';
+            update clinlims.dictionary set dict_entry = 'Prélèvement urétral' where dict_entry = 'Prelevement uretral';
+            update clinlims.dictionary set dict_entry= replace( dict_entry, 'Prelevement', 'Prélèvement') where dict_entry like 'Prelevement%';
+        </sql>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,450 @@
+HIV Rapid Test
+HIV Rapid Test
+HIV Rapid Test
+Elisa HIV
+HIV Rapid Test
+Elisa HIV
+Elisa HIV
+Elisa HIV
+Western Blot HIV
+Western Blot HIV
+Western Blot HIV
+Western Blot HIV
+Measles
+Measles
+Measles
+
+Dengue
+
+Dengue
+
+Rubella
+
+Rubella
+
+Dengue NS1Ag
+Dengue NS1Ag
+Hepatatis A IgM
+Hepatatis A IgM
+Hepatatis B Ag
+Hepatatis B Ag
+Hepatatis C IgM
+Hepatatis C IgM
+Hepatatis E IgM
+Hepatatis E IgM
+Influenza A/Immunofluoresence
+Influenza A/Immunofluoresence
+Influenza A/Immunofluoresence
+Influenza B/Immunofluoresence
+Influenza B/Immunofluoresence
+Influenza B/Immunofluoresence
+Para Influenza 1/Immunofluoresence
+Para Influenza 1/Immunofluoresence
+Para Influenza 1/Immunofluoresence
+Para Influenza 2/Immunofluoresence
+Para Influenza 2/Immunofluoresence
+Para Influenza 2/Immunofluoresence
+Para Influenza 3/Immunofluoresence
+Para Influenza 3/Immunofluoresence
+Para Influenza 3/Immunofluoresence
+Synctial respiratory virus
+Synctial respiratory virus
+Synctial respiratory virus
+Adenovirus
+Adenovirus
+Adenovirus
+Rotavirus
+Rotavirus Rapid test
+Stool Culture
+Syphilis Rapid Test
+Polio
+Polio stool 1
+Polio stool 2
+
+Syphilis RPR
+Syphilis TPHA
+Cryptococcus rapid test
+Cryptococcus rapid test
+Cryptococcus rapid test
+
+
+HIV DNA PCR
+HIV DNA PCR
+HIV DNA PCR
+HIV DNA PCR
+HIV DNA PCR
+HIV DNA PCR
+HIV DNA PCR
+HIV DNA PCR
+HIV DNA PCR
+HIV DNA PCR
+HIV Viral Load
+
+
+HIV Viral Load
+Influenza A rt-PCR
+Gastroenteric Pathogens
+Repiratory Virus
+Mycobacteium tuberculosis Drug Resistant
+Mycobacteium tuberculosis Drug Resistant
+
+
+
+
+
+
+CD4 Absolute Count
+CD4 % Count
+Compte des Globules Blancs
+Compte des Globules Rouges
+Hemoglobine
+Hematocrite
+VGM
+TCMH
+CCMH
+Plaquettes
+Neutrophiles
+Lymphocytes
+Mixtes
+
+
+
+
+
+Gram Stain
+Gram Stain
+Gram Stain
+Gram Stain
+Gramm Stain
+Leptospirosis
+
+
+
+
+Leptospirosis
+Leptospirosis
+
+Leptospirosis
+Hemoculture
+Salmonela
+Salmonela
+CSF culture
+CSF Rapid Test
+Salmonela
+Shigella
+Detection of Vibrio Cholerae
+Detection of Corynebacterium Diphteriae
+Detection of B. Pertussis
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Color
+Consistance
+
+
+
+Occult blood
+Bacteria
+Simple yeast
+Yeast
+Protozoa search
+Metazoa search
+
+Scotch tape
+
+
+
+
+Modified Ziehl Neelsen
+Malaria Smear - Species
+
+
+
+Malaria Rapid Test
+Microfilaire Search
+
+AFB by Ziehl Neelsen
+AFB by Ziehl Neelsen
+AFB by Ziehl Neelsen
+AFB by Fluorochrom
+AFB by Fluorochrom
+AFB by Fluorochrom
+LJ Culture
+Milieu Mgit
+
+

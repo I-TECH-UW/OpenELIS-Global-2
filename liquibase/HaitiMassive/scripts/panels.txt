@@ -1,0 +1,395 @@
+Hemogramme - Auto
+Hemogramme - Auto
+Hemogramme - Auto
+Hemogramme - Auto
+Hemogramme - Auto
+Hemogramme - Auto
+Hemogramme - Auto
+Hemogramme - Auto
+Hemogramme - Auto
+Hemogramme - Auto
+Hemogramme - Manual
+Hemogramme - Manual
+Hemogramme - Manual
+Hemogramme - Manual
+Hemogramme - Manual
+Hemogramme - Auto
+Hemogramme - Manual
+Hemogramme - Manual
+Hemogramme - Manual
+Hemogramme - Manual
+Hemogramme - Manual
+
+TS / TC
+TS / TC
+TS / TC
+Electrophorese Hb
+Sickling test
+
+
+Coagulation
+Coagulation
+
+Coagulation
+Coagulation
+
+Coagulation
+Groupe Sanguin
+Groupe Sanguin
+
+
+
+
+
+Chimie Sanguine
+Chimie Sanguine
+Chimie Sanguine
+Chimie Sanguine
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Ionogramme 
+Ionogramme
+Ionogramme
+Ionogramme
+Ionogramme
+Ionogramme
+Ionogramme
+Ionogramme
+
+Bilan Hepatique
+Bilan Hepatique
+Bilan Hepatique
+Bilan Hepatique
+Bilan Hepatique
+Bilan Hepatique
+Profil Lipidique
+Profil Lipidique
+Profil Lipidique
+Profil Lipidique
+Profil Lipidique
+Profil Lipidique
+
+
+
+
+Transaminases
+Transaminases
+Transaminases
+Transaminases
+
+
+
+Gaz du Sang Arteriel
+Gaz du Sang Arteriel
+Gaz du Sang Arteriel
+Gaz du Sang Arteriel
+Gaz du Sang Arteriel
+Gaz du Sang Arteriel
+Gaz du Sang Veineux
+Gaz du Sang Veineux
+Gaz du Sang Veineux
+Gaz du Sang Veineux
+Gaz du Sang Veineux
+Gaz du Sang Veineux
+
+
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+Goutte Pendante
+
+Frottis Vaginale Gram
+Frottis Vaginale Gram
+Frottis Vaginale Gram
+Frottis Vaginale Gram
+Frottis Vaginale Gram
+Frottis Vaginale Gram
+Frottis Vaginale Gram
+Frottis Vaginale Gram
+Frottis Vaginale Gram
+Frottis Vaginale Gram
+Frottis Urethral Gram
+Frottis Urethral Gram
+Frottis Urethral Gram
+Frottis Urethral Gram
+Frottis Urethral Gram
+Frottis Urethral Gram
+Frottis Urethral Gram
+Frottis Urethral Gram
+Frottis Urethral Gram
+Frottis Urethral Gram
+Frottis Urethral Gram
+
+
+Cholera
+Cholera
+Spermogramme
+Spermogramme
+Spermogramme
+Spermogramme
+Spermogramme
+Spermogramme
+Spermogramme
+Spermogramme
+Spermogramme
+Spermogramme
+Spermogramme
+Spermogramme
+
+Urine Macro
+Urine Macro
+Urine Macro
+Urine Macro
+Urine Macro
+Urine Macro
+Urine Macro
+Urine Macro
+Urine Macro
+Urine Macro
+Urine Macro
+Urine Macro
+Urine Micro
+Urine Micro
+Urine Micro
+Urine Micro
+Urine Micro
+Urine Micro
+Urine Micro
+Urine Micro
+Urine Micro
+Urine Micro
+
+
+Selles Macro
+Selles Macro
+Selles Macro
+Selles Micro
+Selles Micro
+Selles Saline Lugol
+Selles Saline Lugol
+Zielh Modifie
+
+
+Malaria Test
+Malaria Test
+Malaria Test
+Malaria Test
+
+CD4
+CD4
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Zielh Nielsen
+Fluorescent / Auramine
+Culture Mycobacteriologique
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Malaria Rapid
+Malaria Rapid
+Malaria Rapid
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CDV
+CDV
+CDV
+CDV
+CDV
+CDV
+CDV
+CDV
+CDV
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

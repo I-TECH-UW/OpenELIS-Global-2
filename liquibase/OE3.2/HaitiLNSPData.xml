@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<!-- Data specific to haiti LNSP -->
+	
+	<changeSet author="paulsc" id="1" context="haitiLNSP">
+		<comment>Inactivates river water</comment>
+		<update tableName="type_of_sample">
+			<column name="is_active" valueBoolean="false" />
+			<where>description = 'Eau de riviere'</where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="2" context="haitiLNSP">
+		<comment>Deactivate the Antibiogramme panel</comment>
+		<update tableName="panel">
+			<column name="is_active" value="N" />
+			<where>name = 'Antibiogramme' </where>
+		</update>
+	</changeSet>
+	<changeSet author="paulsc" id="3" context="haitiLNSP">
+		<comment>Tweaks a test name to avoid truncation collisions for data export</comment>
+		<update tableName="test">
+			<column name="description" value="Sulfamethoxazole /Trimethroprime23.75 /1.25 μg(Ecouvillon Nasal)" />
+			<where>description = 'Sulfamethoxazole /Trimethroprime23.75 /1,25 μg(Ecouvillon Nasal)'</where>
+		</update>
+	</changeSet>
+</databaseChangeLog>

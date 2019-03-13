@@ -1,0 +1,401 @@
+VIH test rapide
+VIH test rapide
+VIH test rapide
+Elisa VIH
+VIH test rapide
+Elisa VIH
+Elisa VIH
+Elisa VIH
+VIH Western blot
+VIHWestern blot
+VIHWestern blot
+VIHWestern blot
+Rougeole
+Rougeole
+Dengue
+Dengue
+Rubeole
+Rubeole
+Dengue NS1Ag
+Dengue NS1Ag
+Hepatite A IgM Aby
+Hepatite A IgM Aby
+Hepatite B Ag
+Hepatite B Ag
+Hepatite C IgM Aby
+Hepatite C IgM Aby
+Hepatite E IgM Aby
+Hepatite E IgM Aby
+Influenza A
+Influenza A
+Influenza A
+Influenza B
+Influenza B
+Influenza B
+Para Influenza 1
+Para Influenza 1
+Para Influenza 1
+Para Influenza 2
+Para Influenza 2
+Para Influenza 2
+Para Influenza 3
+Para Influenza 3
+Para Influenza 3
+Virus Respiratoire  Synccytial
+Virus Respiratoire  Synccytial
+Virus Respiratoire  Synccytial
+Adenovirus
+Adenovirus
+Adenovirus
+Rotavirus
+Syphilis Test Rapid
+Polio Selles 1
+Polio Selles 2
+
+Syphilis RPR
+Syphilis TPHA
+VIH-1 PCR Qualitatif
+VIH-1 PCR Qualitatif
+VIH-1 Charge Virale
+VIH-1 Charge Virale
+PCR Influenza
+Gastroenteric Pathogens
+Virus respiratoire
+Micobacterium tuberculosis Drug Resistant
+Micobacterium tuberculosis Drug Resistant
+
+
+CD4
+CD4%
+Compte des Globules Blancs
+Compte des Globules Rouges
+Hemoglobine
+Hematocrite
+VGM
+TCMH
+CCMH
+Plaquettes
+Neutrophiles
+Lymphocytes
+Mixtes
+
+Gram
+Gram
+Gram
+Gram
+Gram
+Leptospira IgM 
+Leptospira IgM
+Leptospira IgM
+Leptospira IgM
+Hemoculture
+Test Rapide Salmonelle typhi IgM 09
+Test Rapide Salmonelle typhi IgM 09
+LCR Culture
+LCR test Rapide
+Recherche de Salmonelle
+Recherche de Shigelle
+Recherche de V.cholerae
+Recherche de C. diphteriae
+Recherche de B. pertussis
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Echantillon
+Colaration de Gram
+Culture
+Couleur
+Consistance
+Sang Occulte
+Bacteries
+Levures Simple
+Levure Bourg
+Examen microscopique direct
+Examen microscopique apres concentration
+Recherche d'Oxyures (Scotch Tape)
+
+
+
+
+Ziehl Neelsen modifiee
+Plasmodiun Esp
+
+
+
+Malaria Test Rapide
+Microfilaires
+Recherche BAAR par Ziehl Neelsen Specimen 1
+Recherche BAAR par Ziehl Neelsen Specimen 2
+Recherche BAAR Ziehl Neelsen Specimen 3
+Recherche de BARR par Fluorochrome Specimen 1
+Recherche de BARR par Fluorochrome Specimen 2
+Recherche de BARR par Fluorochrome Specimen 3
+Culture de mycobacteries solide
+Culture de mycobacteries liquide

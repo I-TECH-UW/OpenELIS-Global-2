@@ -1,0 +1,27 @@
+id,panel_id,lastupdated,test_local_abbrev
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Culot Urinaire' ) , now() ,Bactéries (Urine)
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Culot Urinaire' ) , now() ,Cell Epith (Urine)
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Culot Urinaire' ) , now() ,Cristaux - OdCa
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Culot Urinaire' ) , now() ,Cristaux - PA
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Culot Urinaire' ) , now() ,Cristaux - PT
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Culot Urinaire' ) , now() ,Cristaux - PdCa
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Culot Urinaire' ) , now() ,Cristaux - PdMg
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Culot Urinaire' ) , now() ,Cristaux - SdCa
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Culot Urinaire' ) , now() ,Cristaux - UAm
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Culot Urinaire' ) , now() ,Cristaux - UA
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Culot Urinaire' ) , now() ,Cristaux - AU
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Culot Urinaire' ) , now() ,Cylindres (Urine)
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Culot Urinaire' ) , now() ,Fil Myceliens
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Culot Urinaire' ) , now() ,Hématies (Urine)
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Culot Urinaire' ) , now() ,Leucocytes (Urine)
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Culot Urinaire' ) , now() ,Levures (Urine)
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Culot Urinaire' ) , now() ,Trichomonas
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Urines' ) , now() ,Densité (Urine)
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Urines' ) , now() ,Glucose (Urine)
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Urines' ) , now() ,Nitrites (Urine)
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Urines' ) , now() ,Protéines (Urine)
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Urines' ) , now() ,Sang (Urine)
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Urines' ) , now() ,Urobilinogen
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Urines' ) , now() ,pH (Urine)
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Urines' ) , now() ,Cetones (Urine)
+ nextval( 'panel_item_seq' ) , (select id from clinlims.panel where name='Urines' ) , now() ,Acétone (Urine)

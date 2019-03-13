@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<AnalyzerFileBroker version="1.0">
+    <global>
+        <locale value="EN"/>
+        <period value="5" />
+        <connection url="http://localhost:8080/importAnalyzer" name="analyzer" password="ied1poh2Ku!"/>
+        <log path="" backlog="30"/>
+        <pre53 value="true" />
+    </global>
+    <analyzers>
+        <analyzer name = "FasCalibur" sourceDir="D:\analyzerSource\FasCalibur"  />
+    </analyzers>
+</AnalyzerFileBroker>

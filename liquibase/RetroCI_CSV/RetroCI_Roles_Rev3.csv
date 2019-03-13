@@ -1,0 +1,2 @@
+id,name,description,is_grouping_role,grouping_parent,display_key
+nextval( 'system_role_seq' ) ,Facscanto user,Verify results from Facscanto analyzer,false, ( select id from system_role where name = 'Immunology automatic' ) ,role.immuno.facscanto

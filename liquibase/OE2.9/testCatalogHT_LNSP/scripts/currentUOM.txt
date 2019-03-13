@@ -1,0 +1,62 @@
+ppl
+%
+ppm
+mm3
+mg/dl
+mlU/ml
+u/L
+ug/dL
+g/dl
+million/uL
+mille/mm^3
+K/mm^3
+pg
+mns
+micron^3
+cp/mL
+ui/ml
+mU/ml
+mm/h
+Vol%
+million/mm^3
+g/l
+Ul/l
+mg/l
+ug/l
+mille/mm3
+million/mm3
+fl
+mm/heure
+mn
+Secondes
+UI/ml
+g/l  %
+Î¼g/l
+g/100ml
+mg/100mol
+UI/l
+mmol/l 24h
+UI/l a 30Â°C
+UI/L
+U/I
+mEq/l
+millimol/L
+nmol/L
+%AIC
+N
+u/l
+mm Hg
+mEq/L
+mmol/L
+ml
+millions/ml
+UI/ML
+/Î¼l
+cells/mm3
+mUI/ml
+nmol/24 h
+nmol/l
+Î¼U/ml
+Copies/ml
+Î¼l
+

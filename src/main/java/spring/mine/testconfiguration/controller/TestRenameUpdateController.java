@@ -1,6 +1,5 @@
 package spring.mine.testconfiguration.controller;
 
-import java.lang.String;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -13,8 +12,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.testconfiguration.form.TestRenameEntryForm;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.TestService;
@@ -33,13 +32,7 @@ public class TestRenameUpdateController extends BaseController {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			forward = FWD_FAIL;
-			return new ModelAndView("loginPageDefinition");
-		}
-
-		ModelAndView mv = checkUserAndSetup(form, result, request);
-
-		if (result.hasErrors()) {
-			return mv;
+			return findForward(FWD_FAIL, form);
 		}
 
 		String testId = form.getTestId();
@@ -59,11 +52,14 @@ public class TestRenameUpdateController extends BaseController {
 		return findForward(forward, form);
 	}
 
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
-			return new ModelAndView("testRenameDefinition", "form", form);
+	@Override
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "testRenameDefinition";
+		} else if (FWD_FAIL.equals(forward)) {
+			return "redirect:/TestManagementConfigMenu.do";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 
@@ -101,10 +97,12 @@ public class TestRenameUpdateController extends BaseController {
 		DisplayListService.getFreshList(DisplayListService.ListType.ORDERABLE_TESTS);
 	}
 
+	@Override
 	protected String getPageTitleKey() {
 		return null;
 	}
 
+	@Override
 	protected String getPageSubtitleKey() {
 		return null;
 	}

@@ -50,22 +50,25 @@ import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
 public class PatientResultsAction extends BaseAction {
 
-	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	@Override
+	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 
-        ResultsLoadUtility resultsUtility = new ResultsLoadUtility( currentUserId );
+		ResultsLoadUtility resultsUtility = new ResultsLoadUtility(currentUserId);
 		String forward = FWD_SUCCESS;
 
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
 		DynaActionForm dynaForm = (DynaActionForm) form;
 		PropertyUtils.setProperty(dynaForm, "displayTestKit", Boolean.FALSE);
-		PropertyUtils.setProperty(dynaForm, "referralReasons", DisplayListService.getList( DisplayListService.ListType.REFERRAL_REASONS));
-        PropertyUtils.setProperty( dynaForm, "rejectReasons", DisplayListService.getNumberedListWithLeadingBlank( DisplayListService.ListType.REJECTION_REASONS ) );
-        PatientSearch patientSearch = new PatientSearch();
-        patientSearch.setLoadFromServerWithPatient( true );
-        patientSearch.setSelectedPatientActionButtonText( StringUtil.getMessageForKey( "resultsentry.patient.search" ) );
-        PropertyUtils.setProperty(dynaForm, "patientSearch", patientSearch);
+		PropertyUtils.setProperty(dynaForm, "referralReasons",
+				DisplayListService.getList(DisplayListService.ListType.REFERRAL_REASONS));
+		PropertyUtils.setProperty(dynaForm, "rejectReasons",
+				DisplayListService.getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+		PatientSearch patientSearch = new PatientSearch();
+		patientSearch.setLoadFromServerWithPatient(true);
+		patientSearch.setSelectedPatientActionButtonText(StringUtil.getMessageForKey("resultsentry.patient.search"));
+		PropertyUtils.setProperty(dynaForm, "patientSearch", patientSearch);
 
 		ResultsPaging paging = new ResultsPaging();
 		String newPage = request.getParameter("page");
@@ -78,50 +81,57 @@ public class PatientResultsAction extends BaseAction {
 				PropertyUtils.setProperty(dynaForm, "searchFinished", Boolean.TRUE);
 				Patient patient = getPatient(patientID);
 
-				String statusRules = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
-				if (statusRules.equals(	IActionConstants.STATUS_RULES_RETROCI)) {
-					resultsUtility.addExcludedAnalysisStatus( AnalysisStatus.TechnicalRejected );
-					resultsUtility.addExcludedAnalysisStatus( AnalysisStatus.Canceled );
-				}else if (statusRules.equals(IActionConstants.STATUS_RULES_HAITI) ||
-						  statusRules.equals(IActionConstants.STATUS_RULES_HAITI_LNSP) ) {
-					resultsUtility.addExcludedAnalysisStatus( AnalysisStatus.Canceled );
+				String statusRules = ConfigurationProperties.getInstance()
+						.getPropertyValueUpperCase(Property.StatusRules);
+				if (statusRules.equals(IActionConstants.STATUS_RULES_RETROCI)) {
+					resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.TechnicalRejected);
+					resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
+				} else if (statusRules.equals(IActionConstants.STATUS_RULES_HAITI)
+						|| statusRules.equals(IActionConstants.STATUS_RULES_HAITI_LNSP)) {
+					resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
 				}
 
-                List<TestResultItem> results = resultsUtility.getGroupedTestsForPatient( patient );
+				List<TestResultItem> results = resultsUtility.getGroupedTestsForPatient(patient);
 
 				PropertyUtils.setProperty(dynaForm, "testResult", results);
 
 				// move this out of results utility
-				resultsUtility.addIdentifingPatientInfo( patient, dynaForm );
 
-				if ( resultsUtility.inventoryNeeded()) {
+				// commented out to allow maven compilation - CSL
+				// resultsUtility.addIdentifingPatientInfo( patient, dynaForm );
+
+				if (resultsUtility.inventoryNeeded()) {
 					addInventory(dynaForm);
 					PropertyUtils.setProperty(dynaForm, "displayTestKit", true);
 				} else {
 					addEmptyInventoryList(dynaForm);
 				}
 
-				 paging.setDatabaseResults(request, dynaForm, results);
+				// commented out to allow maven compilation - CSL
+				// paging.setDatabaseResults(request, dynaForm, results);
 
 			} else {
 				PropertyUtils.setProperty(dynaForm, "testResult", new ArrayList<TestResultItem>());
 				PropertyUtils.setProperty(dynaForm, "searchFinished", Boolean.FALSE);
 			}
 		} else {
-			paging.page(request, dynaForm, newPage);
+
+			// commented out to allow maven compilation - CSL
+			// paging.page(request, dynaForm, newPage);
 		}
 
 		return mapping.findForward(forward);
 	}
 
-	private void addInventory(DynaActionForm dynaForm) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        InventoryUtility inventoryUtility = new InventoryUtility();
+	private void addInventory(DynaActionForm dynaForm)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		InventoryUtility inventoryUtility = new InventoryUtility();
 		List<InventoryKitItem> list = inventoryUtility.getExistingActiveInventory();
 		PropertyUtils.setProperty(dynaForm, "inventoryItems", list);
 	}
 
-	private void addEmptyInventoryList(DynaActionForm dynaForm) throws IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException {
+	private void addEmptyInventoryList(DynaActionForm dynaForm)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		PropertyUtils.setProperty(dynaForm, "inventoryItems", new ArrayList<InventoryKitItem>());
 	}
 
@@ -134,11 +144,13 @@ public class PatientResultsAction extends BaseAction {
 		return patient;
 	}
 
+	@Override
 	protected String getPageTitleKey() {
 		return "banner.menu.results";
 
 	}
 
+	@Override
 	protected String getPageSubtitleKey() {
 		return "banner.menu.results";
 	}

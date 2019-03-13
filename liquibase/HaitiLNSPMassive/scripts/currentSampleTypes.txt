@@ -1,0 +1,24 @@
+Sang
+Plasma
+Serum
+Urine
+Selles
+Crachat
+Secretion Urethrale
+Secretion Vaginale
+Pus
+LCR
+Liquide Ascite
+Liquide Synovial
+Liquide Amniotique
+Liquide Pleural
+Serum/Urine Concentre du Matin
+Culot Urinaire
+Secretions genito-urinaire
+Aspiration nasopharyngée
+Ecouvillonage nasal
+Ecouvillonage nosapharyngé
+Sécrétion de la gorge
+DBS
+Prélèvement rhinopharyngé
+

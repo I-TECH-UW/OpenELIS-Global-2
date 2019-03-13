@@ -1,6 +1,5 @@
 package spring.generated.testconfiguration.controller;
 
-import java.lang.String;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +14,14 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
 import spring.generated.forms.SampleTypeOrderForm;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -31,133 +31,113 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Controller
 public class SampleTypeOrderController extends BaseController {
-  @RequestMapping(
-      value = "/SampleTypeOrder",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showSampleTypeOrder(HttpServletRequest request,
-      @ModelAttribute("form") SampleTypeOrderForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new SampleTypeOrderForm();
-    }
-        form.setFormAction("");
-    BaseErrors errors = new BaseErrors();
-    if (form.getErrors() != null) {
-    	errors = (BaseErrors) form.getErrors();
-    }
-    ModelAndView mv = checkUserAndSetup(form, errors, request);
+	@RequestMapping(value = "/SampleTypeOrder", method = RequestMethod.GET)
+	public ModelAndView showSampleTypeOrder(HttpServletRequest request,
+			@ModelAttribute("form") SampleTypeOrderForm form) {
+		String forward = FWD_SUCCESS;
+		if (form == null) {
+			form = new SampleTypeOrderForm();
+		}
+		form.setFormAction("");
+		Errors errors = new BaseErrors();
 
-    if (errors.hasErrors()) {
-    	return mv;
-    }
-    
-    try {
-		PropertyUtils.setProperty(form, "sampleTypeList", DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE));
-	} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-		e.printStackTrace();
+		try {
+			PropertyUtils.setProperty(form, "sampleTypeList",
+					DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE));
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+
+		return findForward(forward, form);
 	}
 
+	private class ActivateSet {
+		public String id;
+		public Integer sortOrder;
+	}
 
-    return findForward(forward, form);
-  }
-  
-  private class ActivateSet {
-      public String id;
-      public Integer sortOrder;
-  }
-  
-  @RequestMapping(
-	      value = "/SampleTypeOrder",
-	      method = RequestMethod.POST
-	  )
-	  public ModelAndView postSampleTypeOrder(HttpServletRequest request,
-	      @ModelAttribute("form") SampleTypeOrderForm form) throws Exception {
-	  
-	    String forward = FWD_SUCCESS_INSERT;
-	    
-	    BaseErrors errors = new BaseErrors();
-	    if (form.getErrors() != null) {
-	    	errors = (BaseErrors) form.getErrors();
-	    }
-	    ModelAndView mv = checkUserAndSetup(form, errors, request);
+	@RequestMapping(value = "/SampleTypeOrder", method = RequestMethod.POST)
+	public ModelAndView postSampleTypeOrder(HttpServletRequest request,
+			@ModelAttribute("form") SampleTypeOrderForm form) throws Exception {
 
-	    if (errors.hasErrors()) {
-	    	return mv;
-	    }
-  
-	    String changeList = form.getJsonChangeList();
+		String forward = FWD_SUCCESS_INSERT;
 
-        JSONParser parser = new JSONParser();
-        JSONObject obj = (JSONObject) parser.parse(changeList);
-        List<ActivateSet> orderSet = getActivateSetForActions("sampleTypes", obj, parser);
-        List<TypeOfSample> typeOfSamples = new ArrayList<TypeOfSample>();
+		BaseErrors errors = new BaseErrors();
 
-        String currentUserId = getSysUserId(request);
-        TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
-        for (ActivateSet sets : orderSet) {
-            TypeOfSample typeOfSample = typeOfSampleDAO.getTypeOfSampleById(sets.id);
-            typeOfSample.setSortOrder(sets.sortOrder);
-            typeOfSample.setSysUserId(currentUserId);
-            typeOfSamples.add(typeOfSample);
-        }
+		String changeList = form.getJsonChangeList();
 
+		JSONParser parser = new JSONParser();
+		JSONObject obj = (JSONObject) parser.parse(changeList);
+		List<ActivateSet> orderSet = getActivateSetForActions("sampleTypes", obj, parser);
+		List<TypeOfSample> typeOfSamples = new ArrayList<>();
 
-        Transaction tx = HibernateUtil.getSession().beginTransaction();
-        try {
-            for (TypeOfSample typeOfSample : typeOfSamples) {
-            	typeOfSampleDAO.updateData(typeOfSample);
-            }
-            tx.commit();
-        } catch (HibernateException e) {
-            tx.rollback();
-        } finally {
-            HibernateUtil.closeSession();
-        }
+		String currentUserId = getSysUserId(request);
+		TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
+		for (ActivateSet sets : orderSet) {
+			TypeOfSample typeOfSample = typeOfSampleDAO.getTypeOfSampleById(sets.id);
+			typeOfSample.setSortOrder(sets.sortOrder);
+			typeOfSample.setSysUserId(currentUserId);
+			typeOfSamples.add(typeOfSample);
+		}
 
-        DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE);
-        DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
-        
-        return findForward(forward, form);
-  }
-  
-  private List<ActivateSet> getActivateSetForActions(String key, JSONObject root, JSONParser parser) {
-      List<ActivateSet> list = new ArrayList<ActivateSet>();
+		Transaction tx = HibernateUtil.getSession().beginTransaction();
+		try {
+			for (TypeOfSample typeOfSample : typeOfSamples) {
+				typeOfSampleDAO.updateData(typeOfSample);
+			}
+			tx.commit();
+		} catch (HibernateException e) {
+			tx.rollback();
+		} finally {
+			HibernateUtil.closeSession();
+		}
 
-      String action = (String) root.get(key);
+		DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE);
+		DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
 
-      try {
-          JSONArray actionArray = (JSONArray) parser.parse(action);
+		return findForward(forward, form);
+	}
 
-          for (int i = 0; i < actionArray.size(); i++) {
-              ActivateSet set = new ActivateSet();
-              set.id = String.valueOf(((JSONObject) actionArray.get(i)).get("id"));
-              Long longSort = (Long) ((JSONObject) actionArray.get(i)).get("sortOrder");
-              set.sortOrder = longSort.intValue();
-              list.add(set);
-          }
-      } catch (ParseException e) {
-          e.printStackTrace();
-      }
+	private List<ActivateSet> getActivateSetForActions(String key, JSONObject root, JSONParser parser) {
+		List<ActivateSet> list = new ArrayList<>();
 
-      return list;
-  }
+		String action = (String) root.get(key);
 
-  protected ModelAndView findLocalForward(String forward, BaseForm form) {
-    if ("success".equals(forward)) {
-      return new ModelAndView("sampleTypeOrderDefinition", "form", form);
-    } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-        return new ModelAndView("redirect:/SampleTypeOrder.do", "form", form);
-    } else {
-      return new ModelAndView("PageNotFound");
-    }
-  }
+		try {
+			JSONArray actionArray = (JSONArray) parser.parse(action);
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+			for (int i = 0; i < actionArray.size(); i++) {
+				ActivateSet set = new ActivateSet();
+				set.id = String.valueOf(((JSONObject) actionArray.get(i)).get("id"));
+				Long longSort = (Long) ((JSONObject) actionArray.get(i)).get("sortOrder");
+				set.sortOrder = longSort.intValue();
+				list.add(set);
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+		return list;
+	}
+
+	@Override
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "sampleTypeOrderDefinition";
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return "redirect:/SampleTypeOrder.do";
+		} else {
+			return "PageNotFound";
+		}
+	}
+
+	@Override
+	protected String getPageTitleKey() {
+		return null;
+	}
+
+	@Override
+	protected String getPageSubtitleKey() {
+		return null;
+	}
 }

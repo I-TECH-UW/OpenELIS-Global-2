@@ -44,7 +44,6 @@ import org.apache.struts.validator.Resources;
 import org.apache.struts.validator.ValidatorPlugIn;
 
 import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.common.util.resources.ResourceLocator;
 
 /**
  * Custom tag that generates JavaScript for client side validation based

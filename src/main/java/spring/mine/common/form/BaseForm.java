@@ -1,10 +1,8 @@
 package spring.mine.common.form;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 //a bean object to hold all objects to be passed between the server and the client and vice versa
@@ -17,8 +15,6 @@ public class BaseForm {
 	private String cancelAction = "Home.do";
 	private boolean submitOnCancel = false;
 	private RequestMethod cancelMethod = RequestMethod.POST;
-
-	private List<ObjectError> errors;
 
 	public String getFormName() {
 		return formName;
@@ -66,14 +62,6 @@ public class BaseForm {
 
 	public void setCancelMethod(RequestMethod cancelMethod) {
 		this.cancelMethod = cancelMethod;
-	}
-
-	public List<ObjectError> getErrors() {
-		return errors;
-	}
-
-	public void setErrors(List<ObjectError> list) {
-		errors = list;
 	}
 
 	public Object get(String propertyName) {

@@ -6,10 +6,11 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.validator.GenericValidator;
 import org.apache.struts.Globals;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +18,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.analyzerimport.form.AnalyzerTestNameForm;
+import spring.mine.analyzerimport.validator.AnalyzerTestMappingValidator;
+import spring.mine.analyzerimport.validator.AnalyzerTestNameFormValidator;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
@@ -30,6 +34,7 @@ import us.mn.state.health.lims.analyzerimport.daoimpl.AnalyzerTestMappingDAOImpl
 import us.mn.state.health.lims.analyzerimport.util.AnalyzerTestNameCache;
 import us.mn.state.health.lims.analyzerimport.valueholder.AnalyzerTestMapping;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
+import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.test.dao.TestDAO;
 import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
@@ -39,30 +44,27 @@ import us.mn.state.health.lims.test.valueholder.Test;
 @SessionAttributes("form")
 public class AnalyzerTestNameController extends BaseController {
 
+	@Autowired
+	AnalyzerTestNameFormValidator formValidator;
+	@Autowired
+	AnalyzerTestMappingValidator analyzerTestMappingValidator;
+
 	@ModelAttribute("form")
-	public AnalyzerTestNameForm initForm() {
+	public BaseForm initForm() {
 		return new AnalyzerTestNameForm();
 	}
 
-	@RequestMapping(value = "/AnalyzerTestName", method = RequestMethod.POST)
-	public ModelAndView showAnalyzerTestName(HttpServletRequest request,
-			@ModelAttribute("form") AnalyzerTestNameForm form)
+	@RequestMapping(value = "/AnalyzerTestName", method = RequestMethod.GET)
+	public ModelAndView showAnalyzerTestName(HttpServletRequest request, @ModelAttribute("form") BaseForm form,
+			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
-		if (form == null) {
+		if (form.getClass() != AnalyzerTestNameForm.class) {
 			form = new AnalyzerTestNameForm();
+			request.getSession().setAttribute("form", form);
 		}
 		form.setFormAction("");
 		form.setCancelAction("CancelAnalyzerTestName.do");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
-
-		if (errors.hasErrors()) {
-			return mv;
-		}
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "true");
@@ -74,12 +76,19 @@ public class AnalyzerTestNameController extends BaseController {
 		PropertyUtils.setProperty(form, "analyzerList", analyzerList);
 		PropertyUtils.setProperty(form, "testList", testList);
 
-		String id = request.getParameter("selectedIDs");
+		String id = request.getParameter("ID");
+
 		if (id != null) {
 			String[] splitId = id.split("#");
 			PropertyUtils.setProperty(form, "analyzerTestName", splitId[1]);
 			PropertyUtils.setProperty(form, "testId", splitId[2]);
 			PropertyUtils.setProperty(form, "analyzerId", splitId[0]);
+		}
+
+		if (GenericValidator.isBlankOrNull((String) PropertyUtils.getProperty(form, "analyzerId"))) {
+			PropertyUtils.setProperty(form, "newMapping", true);
+		} else {
+			PropertyUtils.setProperty(form, "newMapping", false);
 		}
 
 		return findForward(forward, form);
@@ -95,68 +104,66 @@ public class AnalyzerTestNameController extends BaseController {
 		return testDAO.getAllActiveTests(false);
 	}
 
-	@RequestMapping(value = "/UpdateAnalyzerTestName", method = RequestMethod.POST)
+	@RequestMapping(value = "/AnalyzerTestName", method = RequestMethod.POST)
 	public ModelAndView showUpdateAnalyzerTestName(HttpServletRequest request,
-			@ModelAttribute("form") AnalyzerTestNameForm form, SessionStatus status) {
-		String forward = FWD_SUCCESS_INSERT;
-		if (form == null) {
-			form = new AnalyzerTestNameForm();
-		}
-		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-		if (form.getErrors() != null) {
-			errors = (BaseErrors) form.getErrors();
-		}
-		ModelAndView mv = checkUserAndSetup(form, errors, request);
+			@ModelAttribute("form") AnalyzerTestNameForm form, BindingResult result, SessionStatus status,
+			RedirectAttributes redirectAttributes) {
 
-		if (errors.hasErrors()) {
-			return mv;
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
 		}
+
+		String forward;
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "false");
 		request.setAttribute(NEXT_DISABLED, "false");
 
-		forward = validateAndUpdateAnalyzerTestName(request, form);
+		forward = updateAnalyzerTestName(request, form, result);
 		if (FWD_SUCCESS_INSERT.equals(forward)) {
 			status.setComplete();
+			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+			return findForward(forward, form);
 		}
 		return findForward(forward, form);
 	}
 
-	public String validateAndUpdateAnalyzerTestName(HttpServletRequest request, BaseForm dynaForm) {
+	public String updateAnalyzerTestName(HttpServletRequest request, AnalyzerTestNameForm form, Errors errors) {
 		String forward = FWD_SUCCESS_INSERT;
-		String analyzerId = dynaForm.getString("analyzerId");
-		String testId = dynaForm.getString("testId");
-		String analyzerTestName = dynaForm.getString("analyzerTestName");
-		boolean newMapping = "0".equals(request.getParameter("ID"));
+		String analyzerId = form.getString("analyzerId");
+		String analyzerTestName = form.getString("analyzerTestName");
+		String testId = form.getString("testId");
+		boolean newMapping = (boolean) form.get("newMapping");
 
-		Errors errors = new BaseErrors();
-
-		AnalyzerTestMapping analyzerTestNameMapping = validateAnalyzerAndTestName(analyzerId, analyzerTestName, testId,
-				errors, newMapping);
-
-		if (errors.hasErrors()) {
-			saveErrors(errors);
-			return FWD_FAIL_INSERT;
-		}
-
+		AnalyzerTestMapping analyzerTestNameMapping;
 		if (newMapping) {
 			analyzerTestNameMapping = new AnalyzerTestMapping();
 			analyzerTestNameMapping.setAnalyzerId(analyzerId);
 			analyzerTestNameMapping.setAnalyzerTestName(analyzerTestName);
 			analyzerTestNameMapping.setTestId(testId);
+		} else {
+			analyzerTestNameMapping = getAnalyzerAndTestName(analyzerId, analyzerTestName, testId);
 		}
 
 		AnalyzerTestMappingDAO mappingDAO = new AnalyzerTestMappingDAOImpl();
-
 		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
 			if (newMapping) {
-				mappingDAO.insertData(analyzerTestNameMapping, currentUserId);
+				analyzerTestMappingValidator.preInsertValidate(analyzerTestNameMapping, errors);
+				if (errors.hasErrors()) {
+					saveErrors(errors);
+					return FWD_FAIL_INSERT;
+				}
+				mappingDAO.insertData(analyzerTestNameMapping, getSysUserId(request));
 			} else {
-				mappingDAO.updateMapping(analyzerTestNameMapping, currentUserId);
+				analyzerTestMappingValidator.preUpdateValidate(analyzerTestNameMapping, errors);
+				if (errors.hasErrors()) {
+					saveErrors(errors);
+					return FWD_FAIL_INSERT;
+				}
+				mappingDAO.updateMapping(analyzerTestNameMapping, getSysUserId(request));
 			}
 
 		} catch (LIMSRuntimeException lre) {
@@ -172,7 +179,7 @@ public class AnalyzerTestNameController extends BaseController {
 			persisteError(request, errorMsg);
 
 			disableNavigationButtons(request);
-			forward = FWD_FAIL;
+			forward = FWD_FAIL_INSERT;
 		} finally {
 			if (!tx.wasRolledBack()) {
 				tx.commit();
@@ -185,14 +192,7 @@ public class AnalyzerTestNameController extends BaseController {
 		return forward;
 	}
 
-	private AnalyzerTestMapping validateAnalyzerAndTestName(String analyzerId, String analyzerTestName, String testId,
-			Errors errors, boolean newMapping) {
-		// This is not very efficient but this is a very low usage action
-		if (GenericValidator.isBlankOrNull(analyzerId) || GenericValidator.isBlankOrNull(analyzerTestName)
-				|| GenericValidator.isBlankOrNull(testId)) {
-			errors.reject("error.all.required");
-			return null;
-		}
+	private AnalyzerTestMapping getAnalyzerAndTestName(String analyzerId, String analyzerTestName, String testId) {
 
 		AnalyzerTestMapping existingMapping = null;
 		AnalyzerTestMappingDAO mappingDAO = new AnalyzerTestMappingDAOImpl();
@@ -200,15 +200,9 @@ public class AnalyzerTestNameController extends BaseController {
 		for (AnalyzerTestMapping testMapping : testMappingList) {
 			if (analyzerId.equals(testMapping.getAnalyzerId())
 					&& analyzerTestName.equals(testMapping.getAnalyzerTestName())) {
-				if (newMapping) {
-					errors.reject("error.analyzer.test.name.duplicate");
-					return null;
-				} else {
-					existingMapping = testMapping;
-					testMapping.setTestId(testId);
-					break;
-				}
-
+				existingMapping = testMapping;
+				testMapping.setTestId(testId);
+				break;
 			}
 		}
 
@@ -237,19 +231,19 @@ public class AnalyzerTestNameController extends BaseController {
 	}
 
 	@Override
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
-		if ("success".equals(forward)) {
-			return new ModelAndView("analyzerTestNameDefinition", "form", form);
-		} else if ("fail".equals(forward)) {
-			return new ModelAndView("masterListsPageDefinition", "form", form);
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "analyzerTestNameDefinition";
+		} else if (FWD_FAIL.equals(forward)) {
+			return "redirect:/AnalyzerTestNameMenu.do";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/AnalyzerTestNameMenu.do", "form", form);
+			return "redirect:/AnalyzerTestNameMenu.do";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/AnalyzerTestName.do", "form", form);
+			return "analyzerTestNameDefinition";
 		} else if (FWD_CANCEL.equals(forward)) {
-			return new ModelAndView("redirect:/AnalyzerTestNameMenu.do", "form", form);
+			return "redirect:/AnalyzerTestNameMenu.do";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

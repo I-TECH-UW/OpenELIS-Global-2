@@ -99,7 +99,8 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 public class AnalyzerResultsSaveAction extends BaseAction {
 
-	private static final boolean IS_RETROCI = ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.configurationName, "CI_GENERAL");
+	private static final boolean IS_RETROCI = ConfigurationProperties.getInstance()
+			.isPropertyValueEqual(ConfigurationProperties.Property.configurationName, "CI_GENERAL");
 	private static final String REJECT_VALUE = "XXXX";
 	private ResultDAO resultDAO = new ResultDAOImpl();
 	private NoteDAO noteDAO = new NoteDAOImpl();
@@ -119,17 +120,18 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 	private static final String DBS_SAMPLE_TYPE_ID;
 
 	static {
-		if(IS_RETROCI) {
+		if (IS_RETROCI) {
 			TypeOfSample typeOfSample = new TypeOfSample();
 			typeOfSample.setDescription("DBS");
 			typeOfSample.setDomain("H");
 			typeOfSample = new TypeOfSampleDAOImpl().getTypeOfSampleByDescriptionAndDomain(typeOfSample, false);
 			DBS_SAMPLE_TYPE_ID = typeOfSample.getId();
-		}else{
+		} else {
 			DBS_SAMPLE_TYPE_ID = null;
 		}
 	}
 
+	@Override
 	protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
@@ -138,7 +140,9 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 		BaseActionForm dynaForm = (BaseActionForm) form;
 
 		AnalyzerResultsPaging paging = new AnalyzerResultsPaging();
-		paging.updatePagedResults(request, dynaForm);
+
+		// commented out to allow maven compilation - CSL
+		// paging.updatePagedResults(request, dynaForm);
 		List<AnalyzerResultItem> resultItemList = paging.getResults(request);
 
 		List<AnalyzerResultItem> actionableResults = extractActionableResult(resultItemList);
@@ -156,12 +160,13 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 			return mapping.findForward(FWD_VALIDATION_ERROR);
 		}
 
-		sampleGroupList = new ArrayList<SampleGrouping>();
+		sampleGroupList = new ArrayList<>();
 		sysUserId = getSysUserId(request);
 
 		resultItemList.removeAll(actionableResults);
 		List<AnalyzerResultItem> childlessControls = extractChildlessControls(resultItemList);
-		List<AnalyzerResults> deletableAnalyzerResults = getRemovableAnalyzerResults(actionableResults, childlessControls);
+		List<AnalyzerResults> deletableAnalyzerResults = getRemovableAnalyzerResults(actionableResults,
+				childlessControls);
 
 		createResultsFromItems(actionableResults);
 
@@ -194,7 +199,7 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 		if (GenericValidator.isBlankOrNull(dynaForm.getString("analyzerType"))) {
 			return mapping.findForward(forward);
 		} else {
-			Map<String, String> params = new HashMap<String, String>();
+			Map<String, String> params = new HashMap<>();
 			params.put("type", dynaForm.getString("analyzerType"));
 			params.put("forward", forward);
 			return getForwardWithParameters(mapping.findForward(forward), params);
@@ -228,7 +233,8 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 				} catch (LIMSRuntimeException lre) {
 
 					ActionMessages errors = new ActionMessages();
-					ActionError error = new ActionError("warning.duplicate.accession", grouping.sample.getAccessionNumber(), null);
+					ActionError error = new ActionError("warning.duplicate.accession",
+							grouping.sample.getAccessionNumber(), null);
 
 					errors.add(ActionMessages.GLOBAL_MESSAGE, error);
 					saveErrors(request, errors);
@@ -245,9 +251,14 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 				grouping.sampleHuman.setSampleId(sampleId);
 				sampleHumanDAO.insertData(grouping.sampleHuman);
 
-				RecordStatus patientStatus = grouping.statusSet.getPatientRecordStatus() == null ? RecordStatus.NotRegistered : null;
-				RecordStatus sampleStatus = grouping.statusSet.getSampleRecordStatus() == null ? RecordStatus.NotRegistered : null;
-				StatusService.getInstance().persistRecordStatusForSample(grouping.sample, sampleStatus, grouping.patient, patientStatus, sysUserId);
+				RecordStatus patientStatus = grouping.statusSet.getPatientRecordStatus() == null
+						? RecordStatus.NotRegistered
+						: null;
+				RecordStatus sampleStatus = grouping.statusSet.getSampleRecordStatus() == null
+						? RecordStatus.NotRegistered
+						: null;
+				StatusService.getInstance().persistRecordStatusForSample(grouping.sample, sampleStatus,
+						grouping.patient, patientStatus, sysUserId);
 			}
 
 			if (grouping.addSampleItem) {
@@ -283,7 +294,6 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 			}
 		}
 
-	
 		TestReflexUtil testReflexUtil = new TestReflexUtil();
 		testReflexUtil.setCurrentUserId(currentUserId);
 		testReflexUtil.addNewTestsToDBForReflexTests(convertGroupListToTestReflexBeans(sampleGroupList));
@@ -292,14 +302,14 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 	}
 
 	private List<TestReflexBean> convertGroupListToTestReflexBeans(List<SampleGrouping> sampleGroupList) {
-		List<TestReflexBean> reflexBeanList = new ArrayList<TestReflexBean>();
+		List<TestReflexBean> reflexBeanList = new ArrayList<>();
 
 		for (SampleGrouping sampleGroup : sampleGroupList) {
 			if (sampleGroup.accepted) {
 				for (Result result : sampleGroup.resultList) {
 					TestReflexBean reflex = new TestReflexBean();
 					reflex.setPatient(sampleGroup.patient);
-                    reflex.setTriggersToSelectedReflexesMap( sampleGroup.triggersToSelectedReflexesMap );
+					reflex.setTriggersToSelectedReflexesMap(sampleGroup.triggersToSelectedReflexesMap);
 					reflex.setResult(result);
 					reflex.setSample(sampleGroup.sample);
 					reflexBeanList.add(reflex);
@@ -315,10 +325,9 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 		List<AnalyzerResultItem> groupedResultList = null;
 
 		/*
-		 * Basic idea is that analyzerResultItems are put into a
-		 * groupedResultList if they have the same grouping number. When the
-		 * grouping number changes then the list is converted to a
-		 * sampleGrouping. Note that the first time through the
+		 * Basic idea is that analyzerResultItems are put into a groupedResultList if
+		 * they have the same grouping number. When the grouping number changes then the
+		 * list is converted to a sampleGrouping. Note that the first time through the
 		 * groupedResultList is empty so the sampleGrouping is null
 		 */
 		for (AnalyzerResultItem analyzerResultItem : actionableResults) {
@@ -332,11 +341,11 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 				SampleGrouping sampleGrouping = createRecordsForNewResult(groupedResultList);
 
 				if (sampleGrouping != null) {
-					sampleGrouping.triggersToSelectedReflexesMap = new HashMap<String, List<String>>( );
+					sampleGrouping.triggersToSelectedReflexesMap = new HashMap<>();
 					sampleGroupList.add(sampleGrouping);
 				}
 
-				groupedResultList = new ArrayList<AnalyzerResultItem>();
+				groupedResultList = new ArrayList<>();
 			}
 
 			if (!analyzerResultItem.isReadOnly()) {
@@ -347,8 +356,9 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 
 		// for the last set of results the grouping number will not change
 		SampleGrouping sampleGrouping = createRecordsForNewResult(groupedResultList);
-        //TODO currently there are no user selections of reflexes on the analyzer result page so for now this is ok
-		sampleGrouping.triggersToSelectedReflexesMap = new HashMap<String, List<String>>( );
+		// TODO currently there are no user selections of reflexes on the analyzer
+		// result page so for now this is ok
+		sampleGrouping.triggersToSelectedReflexesMap = new HashMap<>();
 
 		sampleGroupList.add(sampleGrouping);
 
@@ -376,7 +386,13 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 			} else if (statusSet.getSampleRecordStatus() == RecordStatus.NotRegistered) {
 				return createGroupForDemographicsEntered(groupedAnalyzerResultItems, statusSet);
 			} else {
-				return createGroupForSampleAndDemographicsEntered(groupedAnalyzerResultItems, statusSet); // this is called when just sample entry has been done/ fix
+				return createGroupForSampleAndDemographicsEntered(groupedAnalyzerResultItems, statusSet); // this is
+																											// called
+																											// when just
+																											// sample
+																											// entry has
+																											// been
+																											// done/ fix
 			}
 		}
 
@@ -400,21 +416,23 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 	 * Demographics and sample are stubbed out but we may need to add a new
 	 * sample_item, if the sample type is different then the current one.
 	 */
-	private SampleGrouping createGroupForPreviousAnalyzerDone(List<AnalyzerResultItem> groupedAnalyzerResultItems, StatusSet statusSet) {
+	private SampleGrouping createGroupForPreviousAnalyzerDone(List<AnalyzerResultItem> groupedAnalyzerResultItems,
+			StatusSet statusSet) {
 		SampleGrouping sampleGrouping = new SampleGrouping();
 		Sample sample = sampleDAO.getSampleByAccessionNumber(groupedAnalyzerResultItems.get(0).getAccessionNumber());
 
-		List<Analysis> analysisList = new ArrayList<Analysis>();
-		List<Result> resultList = new ArrayList<Result>();
-		Map<Result, String> resultToUserSelectionMap = new HashMap<Result, String>();
-		List<Note> noteList = new ArrayList<Note>();
+		List<Analysis> analysisList = new ArrayList<>();
+		List<Result> resultList = new ArrayList<>();
+		Map<Result, String> resultToUserSelectionMap = new HashMap<>();
+		List<Note> noteList = new ArrayList<>();
 
 		// we're not setting the sample status because this doesn't change it.
 		sample.setEnteredDate(new Date(new java.util.Date().getTime()));
 		sample.setSysUserId(sysUserId);
 
 		Patient patient = sampleHumanDAO.getPatientForSample(sample);
-		createAndAddItems_Analysis_Results(groupedAnalyzerResultItems, analysisList, resultList, resultToUserSelectionMap, noteList, patient);
+		createAndAddItems_Analysis_Results(groupedAnalyzerResultItems, analysisList, resultList,
+				resultToUserSelectionMap, noteList, patient);
 
 		// We either have to find an existing sample item or create a new one
 		SampleItem sampleItem = getOrCreateSampleItem(groupedAnalyzerResultItems, sample);
@@ -446,7 +464,8 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 
 		for (Analysis dbAnalysis : dBAnalysisList) {
 			if (GenericValidator.isBlankOrNull(dbAnalysis.getSampleItem().getSortOrder())) {
-				maxSampleItemSortOrder = Math.max(maxSampleItemSortOrder, Integer.parseInt(dbAnalysis.getSampleItem().getSortOrder()));
+				maxSampleItemSortOrder = Math.max(maxSampleItemSortOrder,
+						Integer.parseInt(dbAnalysis.getSampleItem().getSortOrder()));
 			}
 			if (typeOfSampleId.equals(dbAnalysis.getSampleItem().getTypeOfSampleId())) {
 				sampleItem = dbAnalysis.getSampleItem();
@@ -469,7 +488,8 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 		return sampleItem;
 	}
 
-	private SampleGrouping createGroupForDemographicsEntered(List<AnalyzerResultItem> groupedAnalyzerResultItems, StatusSet statusSet) {
+	private SampleGrouping createGroupForDemographicsEntered(List<AnalyzerResultItem> groupedAnalyzerResultItems,
+			StatusSet statusSet) {
 		SampleGrouping sampleGrouping = new SampleGrouping();
 		Sample sample = sampleDAO.getSampleByAccessionNumber(groupedAnalyzerResultItems.get(0).getAccessionNumber());
 
@@ -477,10 +497,10 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 		// patient demographics was entered
 		SampleItem sampleItem = getOrCreateSampleItem(groupedAnalyzerResultItems, sample);
 
-		List<Analysis> analysisList = new ArrayList<Analysis>();
-		List<Result> resultList = new ArrayList<Result>();
-		Map<Result, String> resultToUserSelectionMap = new HashMap<Result, String>();
-		List<Note> noteList = new ArrayList<Note>();
+		List<Analysis> analysisList = new ArrayList<>();
+		List<Result> resultList = new ArrayList<>();
+		Map<Result, String> resultToUserSelectionMap = new HashMap<>();
+		List<Note> noteList = new ArrayList<>();
 
 		if (StatusService.getInstance().getStatusID(OrderStatus.Entered).equals(sample.getStatusId())) {
 			sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Started));
@@ -489,7 +509,8 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 		sample.setSysUserId(sysUserId);
 
 		Patient patient = sampleHumanDAO.getPatientForSample(sample);
-		createAndAddItems_Analysis_Results(groupedAnalyzerResultItems, analysisList, resultList, resultToUserSelectionMap, noteList, patient);
+		createAndAddItems_Analysis_Results(groupedAnalyzerResultItems, analysisList, resultList,
+				resultToUserSelectionMap, noteList, patient);
 
 		sampleGrouping.sample = sample;
 		sampleGrouping.sampleItem = sampleItem;
@@ -512,10 +533,10 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 		SampleGrouping sampleGrouping = new SampleGrouping();
 		Sample sample = sampleDAO.getSampleByAccessionNumber(groupedAnalyzerResultItems.get(0).getAccessionNumber());
 
-		List<Analysis> analysisList = new ArrayList<Analysis>();
-		List<Result> resultList = new ArrayList<Result>();
-		Map<Result, String> resultToUserSelectionMap = new HashMap<Result, String>();
-		List<Note> noteList = new ArrayList<Note>();
+		List<Analysis> analysisList = new ArrayList<>();
+		List<Result> resultList = new ArrayList<>();
+		Map<Result, String> resultToUserSelectionMap = new HashMap<>();
+		List<Note> noteList = new ArrayList<>();
 
 		if (StatusService.getInstance().getStatusID(OrderStatus.Entered).equals(sample.getStatusId())) {
 			sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Started));
@@ -524,7 +545,9 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 		sample.setSysUserId(sysUserId);
 
 		SampleItem sampleItem = null;
-		/***** this is causing the status id for the sample in the DB to be updated *********/
+		/*****
+		 * this is causing the status id for the sample in the DB to be updated
+		 *********/
 		List<Analysis> dBAnalysisList = analysisDAO.getAnalysesBySampleId(sample.getId());
 		Patient patient = sampleHumanDAO.getPatientForSample(sample);
 
@@ -589,7 +612,8 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 			if (GenericValidator.isBlankOrNull(resultItem.getNote())) {
 				noteList.add(null);
 			} else {
-				Note note =  new NoteService( analysis ).createSavableNote( NoteService.NoteType.INTERNAL, resultItem.getNote(), RESULT_SUBJECT, currentUserId );
+				Note note = new NoteService(analysis).createSavableNote(NoteService.NoteType.INTERNAL,
+						resultItem.getNote(), RESULT_SUBJECT, currentUserId);
 				noteList.add(note);
 			}
 		}
@@ -610,7 +634,8 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 		return sampleGrouping;
 	}
 
-	private SampleGrouping createGroupForNoSampleEntryDone(List<AnalyzerResultItem> groupedAnalyzerResultItems, StatusSet statusSet) {
+	private SampleGrouping createGroupForNoSampleEntryDone(List<AnalyzerResultItem> groupedAnalyzerResultItems,
+			StatusSet statusSet) {
 		SampleGrouping sampleGrouping = new SampleGrouping();
 		Sample sample = new Sample();
 		SampleHuman sampleHuman = new SampleHuman();
@@ -619,10 +644,10 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 		sampleItem.setSortOrder("1");
 		sampleItem.setStatusId(StatusService.getInstance().getStatusID(SampleStatus.Entered));
 
-		List<Analysis> analysisList = new ArrayList<Analysis>();
-		List<Result> resultList = new ArrayList<Result>();
-		Map<Result, String> resultToUserSelectionMap = new HashMap<Result, String>();
-		List<Note> noteList = new ArrayList<Note>();
+		List<Analysis> analysisList = new ArrayList<>();
+		List<Result> resultList = new ArrayList<>();
+		Map<Result, String> resultToUserSelectionMap = new HashMap<>();
+		List<Note> noteList = new ArrayList<>();
 
 		sample.setAccessionNumber(groupedAnalyzerResultItems.get(0).getAccessionNumber());
 		sample.setDomain("H");
@@ -635,7 +660,8 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 		sampleHuman.setSysUserId(sysUserId);
 
 		Patient patient = PatientUtil.getUnknownPatient();
-		createAndAddItems_Analysis_Results(groupedAnalyzerResultItems, analysisList, resultList, resultToUserSelectionMap, noteList, patient);
+		createAndAddItems_Analysis_Results(groupedAnalyzerResultItems, analysisList, resultList,
+				resultToUserSelectionMap, noteList, patient);
 
 		addSampleTypeToSampleItem(sampleItem, analysisList, sample.getAccessionNumber());
 
@@ -664,7 +690,8 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 
 	private String getTypeOfSampleId(List<Analysis> analysisList, String accessionNumber) {
 		if (IS_RETROCI && accessionNumber.startsWith("LDBS")) {
-			List<TypeOfSampleTest> typeOfSmapleTestList = typeOfSampleTestDAO.getTypeOfSampleTestsForTest(analysisList.get(0).getTest().getId());
+			List<TypeOfSampleTest> typeOfSmapleTestList = typeOfSampleTestDAO
+					.getTypeOfSampleTestsForTest(analysisList.get(0).getTest().getId());
 
 			for (TypeOfSampleTest typeOfSampleTest : typeOfSmapleTestList) {
 				if (DBS_SAMPLE_TYPE_ID.equals(typeOfSampleTest.getTypeOfSampleId())) {
@@ -673,14 +700,15 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 			}
 
 		}
-		
-		return typeOfSampleTestDAO.getTypeOfSampleTestsForTest(analysisList.get(0).getTest().getId()).get(0).getTypeOfSampleId();
+
+		return typeOfSampleTestDAO.getTypeOfSampleTestsForTest(analysisList.get(0).getTest().getId()).get(0)
+				.getTypeOfSampleId();
 
 	}
 
 	private void createAndAddItems_Analysis_Results(List<AnalyzerResultItem> groupedAnalyzerResultItems,
-													List<Analysis> analysisList, List<Result> resultList, Map<Result, String> resultToUserSelectionMap,
-													List<Note> noteList, Patient patient) {
+			List<Analysis> analysisList, List<Result> resultList, Map<Result, String> resultToUserSelectionMap,
+			List<Note> noteList, Patient patient) {
 
 		for (AnalyzerResultItem resultItem : groupedAnalyzerResultItems) {
 			Analysis analysis = getExistingAnalysis(resultItem);
@@ -692,7 +720,8 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 				test = testDAO.getTestById(test);
 				populateAnalysis(resultItem, analysis, test);
 			} else {
-				String statusId = StatusService.getInstance().getStatusID(resultItem.getIsAccepted() ? AnalysisStatus.TechnicalAcceptance
+				String statusId = StatusService.getInstance()
+						.getStatusID(resultItem.getIsAccepted() ? AnalysisStatus.TechnicalAcceptance
 								: AnalysisStatus.TechnicalRejected);
 				analysis.setStatusId(statusId);
 			}
@@ -706,14 +735,16 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 			if (GenericValidator.isBlankOrNull(resultItem.getNote())) {
 				noteList.add(null);
 			} else {
-                Note note = new NoteService( analysis ).createSavableNote( NoteService.NoteType.INTERNAL, resultItem.getNote(), RESULT_SUBJECT, currentUserId );
+				Note note = new NoteService(analysis).createSavableNote(NoteService.NoteType.INTERNAL,
+						resultItem.getNote(), RESULT_SUBJECT, currentUserId);
 				noteList.add(note);
 			}
 		}
 	}
 
 	private Analysis getExistingAnalysis(AnalyzerResultItem resultItem) {
-		List<Analysis> analysisList = analysisDAO.getAnalysisByAccessionAndTestId(resultItem.getAccessionNumber(), resultItem.getTestId());
+		List<Analysis> analysisList = analysisDAO.getAnalysisByAccessionAndTestId(resultItem.getAccessionNumber(),
+				resultItem.getTestId());
 
 		return analysisList.isEmpty() ? null : analysisList.get(0);
 	}
@@ -727,7 +758,7 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 
 			if (!resultList.isEmpty()) {
 				result = resultList.get(resultList.size() - 1);
-				//this should be refactored -- it's very close to createNewResult
+				// this should be refactored -- it's very close to createNewResult
 				String resultValue = resultItem.getIsRejected() ? REJECT_VALUE : resultItem.getResult();
 				result.setValue(resultValue);
 				result.setTestResult(getTestResultForResult(resultItem));
@@ -757,12 +788,13 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 		String resultValue = resultItem.getIsRejected() ? REJECT_VALUE : resultItem.getResult();
 		result.setValue(resultValue);
 		result.setTestResult(getTestResultForResult(resultItem));
-		result.setResultType(resultItem.getTestResultType());				
-		//the results table is not autmatically updated with the significant digits from TestResult so we must do this
+		result.setResultType(resultItem.getTestResultType());
+		// the results table is not autmatically updated with the significant digits
+		// from TestResult so we must do this
 		if (!GenericValidator.isBlankOrNull(resultItem.getSignificantDigits())) {
 			result.setSignificantDigits(Integer.parseInt(resultItem.getSignificantDigits()));
 		}
-		
+
 		addMinMaxNormal(result, resultItem, patient);
 		result.setSysUserId(sysUserId);
 
@@ -772,28 +804,30 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 	private void addMinMaxNormal(Result result, AnalyzerResultItem resultItem, Patient patient) {
 		boolean limitsFound = false;
 
-		if( resultItem != null){
-			ResultLimit resultLimit = new ResultLimitService().getResultLimitForTestAndPatient(resultItem.getTestId(), patient);
-			if(resultLimit != null) {
+		if (resultItem != null) {
+			ResultLimit resultLimit = new ResultLimitService().getResultLimitForTestAndPatient(resultItem.getTestId(),
+					patient);
+			if (resultLimit != null) {
 				result.setMinNormal(resultLimit.getLowNormal());
 				result.setMaxNormal(resultLimit.getHighNormal());
 				limitsFound = true;
 			}
 		}
 
-		if( !limitsFound){
-			result.setMinNormal( Double.NEGATIVE_INFINITY);
-			result.setMaxNormal( Double.POSITIVE_INFINITY);
+		if (!limitsFound) {
+			result.setMinNormal(Double.NEGATIVE_INFINITY);
+			result.setMaxNormal(Double.POSITIVE_INFINITY);
 		}
 	}
 
 	private TestResult getTestResultForResult(AnalyzerResultItem resultItem) {
 		if ("D".equals(resultItem.getTestResultType())) {
 			TestResult testResult;
-			testResult = testResultDAO.getTestResultsByTestAndDictonaryResult(resultItem.getTestId(), resultItem.getResult());
+			testResult = testResultDAO.getTestResultsByTestAndDictonaryResult(resultItem.getTestId(),
+					resultItem.getResult());
 			return testResult;
 		} else {
-			List<TestResult> testResultList = testResultDAO.getActiveTestResultsByTest( resultItem.getTestId() );
+			List<TestResult> testResultList = testResultDAO.getActiveTestResultsByTest(resultItem.getTestId());
 			// we are assuming there is only one testResult for a numeric
 			// type result
 			if (!testResultList.isEmpty()) {
@@ -806,10 +840,11 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 
 	private void populateAnalysis(AnalyzerResultItem resultItem, Analysis analysis, Test test) {
 		if (!StatusService.getInstance().getStatusID(AnalysisStatus.Canceled).equals(analysis.getStatusId())) {
-			String statusId = StatusService.getInstance().getStatusID(resultItem.getIsAccepted() ? AnalysisStatus.TechnicalAcceptance
-							: AnalysisStatus.TechnicalRejected);
+			String statusId = StatusService.getInstance().getStatusID(
+					resultItem.getIsAccepted() ? AnalysisStatus.TechnicalAcceptance : AnalysisStatus.TechnicalRejected);
 			analysis.setStatusId(statusId);
-			analysis.setAnalysisType(resultItem.getManual() ? IActionConstants.ANALYSIS_TYPE_MANUAL : IActionConstants.ANALYSIS_TYPE_AUTO);
+			analysis.setAnalysisType(resultItem.getManual() ? IActionConstants.ANALYSIS_TYPE_MANUAL
+					: IActionConstants.ANALYSIS_TYPE_AUTO);
 			analysis.setCompletedDateForDisplay(resultItem.getCompleteDate());
 			analysis.setTest(test);
 			analysis.setTestSection(test.getTestSection());
@@ -829,7 +864,7 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 	private List<AnalyzerResults> getRemovableAnalyzerResults(List<AnalyzerResultItem> actionableResults,
 			List<AnalyzerResultItem> childlessControls) {
 
-		Set<AnalyzerResults> deletableAnalyzerResults = new HashSet<AnalyzerResults>();
+		Set<AnalyzerResults> deletableAnalyzerResults = new HashSet<>();
 
 		for (AnalyzerResultItem resultItem : actionableResults) {
 			AnalyzerResults result = new AnalyzerResults();
@@ -843,13 +878,13 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 			deletableAnalyzerResults.add(result);
 		}
 
-		List<AnalyzerResults> resultList = new ArrayList<AnalyzerResults>();
+		List<AnalyzerResults> resultList = new ArrayList<>();
 		resultList.addAll(deletableAnalyzerResults);
 		return resultList;
 	}
 
 	private List<AnalyzerResultItem> extractActionableResult(List<AnalyzerResultItem> resultItemList) {
-		List<AnalyzerResultItem> actionableResultList = new ArrayList<AnalyzerResultItem>();
+		List<AnalyzerResultItem> actionableResultList = new ArrayList<>();
 
 		int currentSampleGrouping = 0;
 		boolean acceptResult = false;
@@ -865,7 +900,8 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 				rejectResult = resultItem.getIsRejected();
 				deleteResult = resultItem.getIsDeleted();
 				// this clears the selection in case of failure
-				// Note it also screwed up acception and rejection.  This is why we should follow the struts pattern
+				// Note it also screwed up acception and rejection. This is why we should follow
+				// the struts pattern
 				// resultItem.setIsAccepted(false);
 				// resultItem.setIsRejected(false);
 				// resultItem.setIsDeleted(false);
@@ -887,12 +923,12 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 
 	private List<AnalyzerResultItem> extractChildlessControls(List<AnalyzerResultItem> resultItemList) {
 		/*
-		 * A childless control is a control which is adjacent to another
-		 * control. It is the first set of controls which will be removed. For
-		 * that reason we're going through the list backwards.
+		 * A childless control is a control which is adjacent to another control. It is
+		 * the first set of controls which will be removed. For that reason we're going
+		 * through the list backwards.
 		 */
 
-		List<AnalyzerResultItem> childLessControlList = new ArrayList<AnalyzerResultItem>();
+		List<AnalyzerResultItem> childLessControlList = new ArrayList<>();
 		int sampleGroupingNumber = 0;
 		boolean lastGroupIsControl = false;
 		boolean inControlGroup = true;// covers the bottom control has no
@@ -915,10 +951,12 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 		return childLessControlList;
 	}
 
+	@Override
 	protected String getPageTitleKey() {
 		return "banner.menu.results.analyzer";
 	}
 
+	@Override
 	protected String getPageSubtitleKey() {
 		return "banner.menu.results.analyzer";
 	}
@@ -932,7 +970,7 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 		private SampleItem sampleItem;
 		private List<Analysis> analysisList;
 		public List<Result> resultList;
-        public Map<String,List<String>> triggersToSelectedReflexesMap;
+		public Map<String, List<String>> triggersToSelectedReflexesMap;
 		private StatusSet statusSet;
 		private boolean addSample = false; // implies adding patient
 		private boolean updateSample = false;

@@ -1,0 +1,552 @@
+INFLUENZA VIRUS A RNA DETECTED
+INFLUENZA VIRUS A/H1 RNA DETECTED
+INFLUENZA VIRUS A/H5 RNA DETECTED
+INFLUENZA VIRUS A/H3 RNA DETECTED
+PRELIMINARY POSITIVE
+PRELIMINARY NEGATIVE
+gram + rod
+gram - rod
+Bacillus species (not anthracis)
+Coded comments need to be added
+Brucella species
+Giardia lamblia cysts
+Giardia lamblia trophozoites
+Entamoeba histolytica cysts
+Unsat interpretation 
+UNINTERPRETABLE = Bands on Western Blot suggest possible HIV vaccine recipient.
+POSITIVE = Specific cytoplasmic staining present. Patient is positive for anti-HIV-1 antibody.
+NEGATIVE = No specific fluorescent staining present. Patient is negative for HIV-1 antibody.
+INDETERMINATE = Non-specific staining present. Please submit another specimen.
+NONREACTIVE = No anti-HIV-1 antibody detected.
+POSITIVE = Any two of the following bands present: p24, gp41, and gp120/160. Other viral bands may be present. Indicates patient is positive for anti-HIV-1 antibody.
+NEGATIVE = No bands present indicating absence of anti-HIV-1 antibody. Please submit another OraSure (or serum) sample one month following the first sample for repeat testing.
+INDETERMINATE = Band pattern does not meet criteria for positive. Repeatedly similar indeterminate patterns indicate bands not specific for HIV. Please submit another OraSure (or serum) sample on month following the first sample for repeat testing.
+One or more bands are present but the blot does not meet the criteria for a positive HIV-1 Western Blot result. NOTE: The HIV-1 Western Blot confirms the presence of antibodies to HIV. This test does not always distinguish between the antibodies to HIV-1 and HIV-2 due to cross reactivity between the antibodies. If you suspect HIV-2, please contact the MDH Epidemiology at 877-676-5414 or 651-201-5414.
+No bands present on the HIV-1 Western Blot. NOTE:The HIV-1 Western Blot confirms the presence of antibodies to HIV. This test does not always distinguish between the antibodies to HIV-1 and HIV-2 due to cross reactivity between the antibodies. If you suspect HIV-2, please contact the MDH Epidemiology at 877-676-5414 or 651-201-5414.
+The HIV-1 Western Blot confirms the presence of antibodies to HIV. This test does not always distinguish between the antibodies to HIV-1 and HIV-2 due to cross reactivity between the antibodies. If you suspect HIV-2, please contact the MDH Epidemiology at 877-676-5414 or 651-201-5414.
+PRELIMINARY POSITIVE screen for HIV-1 antibodies and PRELIMINARY NEGATIVE screen for HIV-2 antibodies
+PRELIMINARY NEGATIVE screen for HIV-1 antibodies and PRELIMINARY POSITIVE screen for HIV-2 antibodies
+PRELIMINARY POSITIVE screen for antibodies to HIV-1 and HIV-2, undifferentiated
+PRELIMINARY NEGATIVE screen for HIV-1 and HIV-2 antibodies
+No anti-HIV-1/HIV-2 Plus O antibodies detected.
+FINAL INTERPRETATION: These results most closely indicate the presence of HIV-1 antibodies.
+FINAL INTERPRETATION: These results most closely indicate the presence of HIV-2 antibodies; however, confirmation testing for HIV-2 will be performed at the Centers for Disease Control and Prevention on this current specimen.
+FINAL INTERPRETATION: These results most closely indicate the presence of HIV antibodies (without differentiation). Please submit another specimen one month following the collection of the first specimen for repeat testing. This subsequent specimen may allow for HIV antibody differentiation.
+FINAL INTERPRETATION: These results most closely indicate the presence of HIV-1 antibodies. Please submit another specimen one month following the first specimen for repeat testing. This subsequent specimen may allow for confirmation of HIV-1 antibodies.
+FINAL INTERPRETATION: These results most closely indicate the presence of HIV-2 antibodies. Confirmation testing for HIV-2 will be performed at the Centers for Disease Control and Prevention on this current specimen. Please submit another specimen one month following the collection of the first specimen for repeat testing. 
+FINAL INTERPRETATION: These results most closely indicate the presence of HIV antibodies (without differentiation). Please submit another specimen one month following the first specimen for repeat testing. This subsequent specimen may allow for HIV antibody confirmation and differentiation. 
+Influenza Virus A/H3
+Influenza Virus A/H1
+Influenza Virus A/H7
+Influenza Virus A/H9
+INDETERMINATE
+UNSATISFACTORY
+REPEATEDLY REACTIVE
+NOT DETECTED
+Neisseria gonorrhoeae present
+REACTIVE
+NONREACTIVE
+Neisseria gonorrhoeae not found 
+IMPORTANT: You are legally required to return a case report form. See enclosures.
+MID = Patient ID ON Specimen and Request Mismatched
+NR = Specimen/Culture Not Received
+GH = Gross Hemolysis of Specimen
+ANO = Please Submit Another Specimen.
+Positif
+Négatif
+INTERMEDIATE
+INDETERMINATE = Band pattern does not meet criteria for positive. Repeatedly similar indeterminate patterns indicate bands not specific for HIV. Please submit another OraSure (or serum) sample one month following the first sample for repeat testing.
+Influenza Virus A/H5
+No Growth
+Gamma Hemolytic
+NEGATIVE (NOT LYSED)
+POSITIVE (LYSED)
+No Spores Present
+DETECTED
+Presumptive for Bacillus Anthracis
+Bacillus anthracis
+Indéterminé
+FLUORESCENCE NOT DETECTED
+NOT TESTED
+WARNING: PCR results are FOR RESEARCH USE ONLY and should not be used for diagnosis of disease. Patient management decisions must be based on appropriate findings by a physician and the clinical condition of the patient.
+acid fast bacilli
+PRESENT
+Mycobacterium not suggestive of M tuberculosis
+Mycobacterium fortuitum
+Mycobacterium kansasii
+Mycobacterium species
+Mycobacterium tuberculosis complex
+Mycobacterium gordonae
+1+ (rare)
+2+ (few)
+3+ (moderate)
+4+ (numerous)
+SENSITIVE
+RESISTANT
+UNINTERPRETABLE
+PENDING
+Preliminary
+FINAL
+acid fast bacilli present
+acid fast bacilli not found
+Most Closely Resembles
+PRESUMPTIVE
+Bacillus anthracis not found
++
++/-
+-
+POSITIVE = Any two of the following bands present: p24,gp41, and gp 120/160. Other viral bands may be present. Indicates patient is positive for anti-HIV-1 antibody.
+NEGATIVE = No bands are present indicating absence of anti-HIV-1 antibody. Please submit another OraSure (or serum) sample one month following the first sample for repeat testing.
+REDUCED SUSCEPTIBILITY
+Weakly Reactive
+No interpretation
+<2
+4
+8
+>16
+Viral Agent Not Isolated
+No growth present
+Motile
+Motility test inconclusive
+Non-motile
+Test not performed
+Not lysed by phage
+Lysed by phage
+Not performed
+Non-encapsulated
+Encapsulated
+Catalase produced
+No spores
+No Bacillus Anthracis cells detected
+Presumptive result for Bacillus anthracis cells
+No Bacillus anthracis spres detected
+Presumptive results for Bacillus anthracis spores
+Fluorescence detected
+Bacillus anthracis DNA detected
+Inconclusive for Bacillus anthracis DNA
+No Bacillus anthracis DNA detected
+Enrichment
+Recovered isolate
+Sample wash or extract
+Light cycler
+ABI 7000
+I cycler
+Cell lysates
+MasterPure complete RNA and DNA purification
+Spore prep
+Roche Fast Start DNA Master Hyridization Probe Kit
+Negative: Bacilli in chains
+Negative: Bacilli in no discernable pattern
+Negative: Bacilli in clusters
+Negative: Bacilli in pairs
+Negative: Cocci in chains
+Negative: Cocci in no discernable pattern
+Negative: Cocci in clusters
+Negative: Cocci in pairs
+Negative: Coccobacilli in chains
+Negative: Coccobacilli in no discernable pattern
+Negative: Coccobacilli in clusters
+Negative: Coccobacilli in pairs
+Negative: Other
+Positive: Bacilli in chains
+Positive: Bacilli in no discernable pattern
+Positive: Bacilli in clusters
+Positive: Bacilli in pairs
+Positive: Cocci in chains
+Positive: Cocci in no discernable pattern
+Positive: Cocci in clusters
+Positive: Cocci in pairs
+Positive: Coccobacilli in chains
+Positive: Coccobacilli in no discernable pattern
+Positive: Coccobacilli in clusters
+Positive:  Coccobacilli in pairs
+Positive: Other
+Variable: Bacilli in chains
+Variable: Bacilli in no discernable pattern
+Variable: Bacilli in clusters
+Variable: Cocci in chains
+Variable: Cocci in no discernable pattern
+Variable: Cocci in clusters
+Variable: Cocci in pairs
+Variable: Coccobacilli in chains
+Variable: Coccobacilli in no discernable pattern
+Variable: Coccobacilli in clusters
+Variable: Coccobacilli in pairs
+Variable: Other
+Positive: Coccobacilli in pairs
+Roche Fast Start DNA Master Hybridization Probe Kit
+Unsatisfactory
+Fluorescence detected +1
+Fluorescence detected +2
+Fluorescence detected +3
+Fluorescence detected +4
+No fluorescence detected
+Influenza Virus A RNA Not Detected
+Influenza Virus RNA Detected
+Influenza Virus A/H1 RNA Detected
+Influenza Virus A/H3 RNA Detected
+Influenza Virus A/H5 RNA Detected
+Influenza Virus A RNA Detected
+Influenza Virus A/Untypeable
+Internal
+Warning
+Override result
+dummy placeholder
+No comments.
+Suspect Colonies Present
+Variable: Bacilli in pairs
+Spores Present
+Atypical Suspect Colonies
+No Suspect Colonies Present
+Gamma Hemolytic Not Detected
+Alpha Hemolytic
+Alpha Hemolytic Not Detected
+Beta Hemolytic
+Beta Hemolytic Not Detected
+Choose Equipment
+ABI 7500
+Réactif
+BORDERLINE
+Non Réactif
+Results usually indicate syphilis. A follow-up specimen is recommended to confirm this result unless another specimen has already been submitted within the past 3 months.
+Results usually indicate syphilis.
+Nonreactive FTA-ABS test result does not confirm syphilis.
+Results indicate previous syphilis (treated or untreated) or late syphilis. A follow-up specimen is recommended to confirm this result unless another specimen has already been submitted.
+Results indicate previous syphilis (treated or untreated) or late syphilis.
+FTA-ABS test result equivocal. A follow-up specimen is recommended in 2-3 weeks to check for a possible early infection.
+FTA-ABS test result equivocal.
+Antibody detected may be maternal. Other criteria must be used to rule out congenital syphilis.
+Staining is atypical. Results are uninterpretable. Please submit another specimen.
+1+
+1/2+
+2+
+2/3+
+3+
+3/4+
+4+
+FTA Reactive
+Fluorescence
+Dilution 1:10
+Dilution 1:100
+Dilution 1:1000
+No Bacillus anthracis cells detected by TRF
+Presumptive result for Bacillus anthracis cells by TRF
+No Bacillus anthracis sprores detected by TRF
+Presumptive results for Bacillus anthracis spores by TRF
+Susceptible
+Nonsusceptible - Contact CDC for confirmation of resistance
+No Pass
+Pass
+< 0.002 ug/ml
+= 0.002 ug/ml
+=0.003 ug/ml
+=0.004 ug/ml
+=0.006 ug/ml
+=0.008 ug/ml
+=0.012 ug/ml
+=0.016 ug/ml
+=0.023 ug/ml
+=0.032 ug/ml
+=0.047 ug/ml
+=0.064 ug/ml
+=0.094 ug/ml
+=0.125 ug/ml
+=0.19 ug/ml
+=0.25 ug/ml
+=0.38 ug/ml
+=0.5 ug/ml
+=0.75 ug/ml
+=1.0 ug/ml
+=1.5 ug/ml
+=2.3 ug/ml
+=4.6 ug/ml
+=8 ug/ml
+=12 ug/ml
+=16 ug/ml
+=24 ug/ml
+=32 ug/ml
+> 32 ug/ml
+< 0.016 ug/ml
+=48 ug/ml
+=64 ug/ml
+=96 ug/ml
+=128 ug/ml
+=192 ug/ml
+=256 ug/ml
+> 256 ug/ml
+Tetracycline
+=2.0 ug/ml
+=3.0 ug/ml
+=4.0 ug/ml
+=6.0 ug/ml
+Influenza Virus A/H7 RNA Detected
+Influenza Virus A/H9 RNA Detected
+A
+AB
+O
+A+
+A
+Trace
+B+
+AB
+O+
+Wucheria Bancrofti
+Manzonella Ozardi
+Forme trophozoite
+Forme Gametocyte
+Forme Shizogonique
+Intermediare
+Positif (+)
+Positif (++)
+Positif (+++)
+Positif (++++)
+En Amas
+Liquide
+Diarrheique
+Molle
+Pateuse
+Moulée
+Dure
+Isospora Belli
+Cryptosporidium Parvum
+Cryptosporidium Cayetanensis
+Cyclospora
+Cryptosporidium canum
+Toxoplasma Gondii
+Cryptosporidium andersoni
+Cryptosporidium bailey
+Cryptosporidium canis
+Cryptosporidium felis
+Cryptosporidium galli
+Cryptosporidium hominis
+Cryptosporidium meleagridis
+Cryptosporidium muris
+Cryptosporidium saurophilum
+Cryptosporidium serpentis
+Cryptosporidium wrairi
+Tres Positive
+Positif
+Faiblement Positif
+Negatif
+Normal
+Anormal
+Ascaris Lumbricoides
+Enterobius Vermicularis
+Necator Americanus
+Ancyclostoma Duodenale
+Trichnella Spiralis
+Toxocara Canis
+Dracunculus Medinensis
+Entamoeba Histolitica
+Entamoeba Coli
+Iodamoeba
+Giardia
+Lamblia
+Trichomonas Intestinalis
+Trouble
+Clair
+lipemique
+icterique
+Autre
+Indeterminé
+Jaune Paille
+Jaune Citrin
+Jaune Foncee
+Rouge
+Marron
+Fonce
+Granuleux
+Cireux
+Hyalin
+Entamoeba Hartmani
+Endolimax Nana
+Dientamoeba Fragilis
+Chilomastix Mesnili
+Balantidium Coli
+Ankylostome Duodenale
+GP160
+P66
+GP41
+GP120
+P31
+P17
+P55
+P51
+P24
+Demographic Response Yes (in Yes, No or Unknown)
+Demographic Response No (Yes, No or Unknown)
+Demographic Response Unknown (Yes, No or Unknown)
+Filament Mycelium
+Leucocytaire
+Hematique
+Forme Gametocyte +
+Forme Gametocyte ++
+Forme Gametocyte +++
+Forme Trophozoite +
+Forme Trophozoite ++
+Forme Trophozoite +++
+Forme Schizogonique +
+Forme Schizogonique ++
+Forme Schizogonique +++
+Levures bourgeonnante
+Verdatre
+filament mycelium +
+Filament Mycelium ++
+Filament Mycelium +++
+Levures Bourgeonnante +
+Levures Bourgennante ++
+Levures Bourgeonnante +++
+1/40
+1/80
+1/160
+1/320
+The data entry has not yet started
+The initial entry has been done
+The second, validation, entry has been done
+There is reason to suspect that the form was not filled out correctly
+Sanguilant
+Rougeatre
+Jaunatre
+Presence
+Absence
+A-
+B-
+O-
+Spores
+Levures Simple
+Onchocera Volvulus
+Loa Loa
+Positive
+Negative
+Indeterminate
+Refrigerated
+Not refrigerated
+Frozen
+Leaked Sample
+Broken Tubes
+Ouest
+Nord
+Sud
+Artibonite
+Sud-Est
+Nord'Ouest
+Centre
+Grand'Anse
+Nord'Est
+Nippes
+Hemolysis
+Coagulated
+Insuffient Amount
+Contaminated
+Inadequate Sampling
+Overturned Sample
+Other
+Sample without Form
+Form without Sample
+Couleur: Marron
+Couleur: Jaunâtre
+Couleur: Verdatre
+Couleur: Blanchâtre
+Consistance: molle
+Consistance: glaireuse
+Consistance: pâteuse
+Consistance: ferme
+Consistance: liquide
+Consistance: semi-liquide
+Rare
+Oxalate de Ca
+Phosphate Amorphes
+Phosphate Triples
+Phosphate de Ca
+Phosphate de Mg
+Sulfate de Ca
+Urates Amorphes
+Urates d'Ammonium
+Acid Urique
+Invalide
+paidInFull
+paidPartial
+paidNone
+Indetermine
+IgG Negatif
+IgG Positif
+IgM Negatif
+IgM Positif
+IgM Douteux
+IgG Douteux
+Douteux
+Non Reactif
+Reactif
+Non-Reactif
+2u
+4u
+16u
+32u
+64u
+128u
+256u
+.ADN VIH-1  Non-DÃ©tectÃ©
+.ADN VIH-1 Detecte
+PCR1
+PCR2
+PCR3
+Influenza A H1N1v
+Influenza A H1N1s
+Influenza A H3N2s
+Influenza A H5N1
+Influenza A Negatif
+Influenza B Negatif
+Influenza B Positif
+Borderline
+Sensible
+Inteermediaire
+Resistant
+Intermediaire
+Noiratre
+Sanguinolant
+Grisatre
+Â Autre
+Solide
+semi liquide
+pateuse
+molle
+Glaireuse
+Positif 1+
+Positif 2+
+Positif 3+
+Ascaris feconde
+Ascaris non feconde
+Trichuris trichiura
+Ankylostoma doudenale
+Oeuf d'oxyure
+Hymenolepis nana
+Postif
+Larve d'Anguilllule
+Larve d'Ankylostome
+Cryptosporidium
+isospora belli
+P. Falciparum
+P. Vivax
+P. Malariae
+P.Ovale
+Positif 4+
+Wuchereria bancrofti
+Mansonella spp
+1 BAAR/ch
+2 BAAR/ch
+3 BAAR/ch
+4 BAAR/ch
+5 BAAR/ch
+6 BAAR/ch
+7 BAAR/ch
+8 BAAR/ch
+9 BAAR/ch
+Purulent
+Sanguinolent
+salivaire
+negatif
+contamine
+1-9 colonies
+fr-FR
+en-US
+

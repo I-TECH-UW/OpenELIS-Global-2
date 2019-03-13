@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet author="paulsc" id="1">
+               <comment>Adds the release to site information table</comment>
+               <insert schemaName="clinlims" tableName="site_information">
+                       <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+                       <column name="name" value="releaseNumber"/>
+                       <column name="description" value="The release number. Should only be updated by developers"/>
+                       <column name="lastupdated" valueDate=" now() "/>
+                       <column name="value" value="2.0"/>
+               </insert>
+    </changeSet>
+  
+    <changeSet author="paulsc" id="3" >
+    	<comment>Removes the release number from the database.  It is now in build.properties.</comment>
+    	<delete schemaName="clinlims" tableName="site_information" >
+    		<where>name = 'releaseNumber'</where>
+    	</delete>
+    </changeSet>
+</databaseChangeLog>
+
+
+
+
+

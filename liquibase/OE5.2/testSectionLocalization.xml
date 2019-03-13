@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ The contents of this file are subject to the Mozilla Public License
+  ~ Version 1.1 (the "License"); you may not use this file except in
+  ~ compliance with the License. You may obtain a copy of the License at
+  ~ http://www.mozilla.org/MPL/
+  ~
+  ~ Software distributed under the License is distributed on an "AS IS"
+  ~ basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+  ~ License for the specific language governing rights and limitations under
+  ~ the License.
+  ~
+  ~ The Original Code is OpenELIS code.
+  ~
+  ~ Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet id="1" author="paulsc" context="haiti">
+        <comment>localization for haiti clinical</comment>
+        <sqlFile path="OE5.2/haitiClinicaltestSectionLocalization.sql" />
+    </changeSet>
+    <changeSet id="2" author="paulsc" context="haitiLNSP">
+        <comment>localization for haiti clinical</comment>
+        <sqlFile path="OE5.2/haitiLNSPTestSectionLocalization.sql" />
+    </changeSet>
+    <changeSet id="3" author="paulsc" context="CDIRetroCI">
+        <comment>localization for haiti clinical</comment>
+        <sqlFile path="OE5.2/retroCITestSectionLocalization.sql" />
+    </changeSet>
+    <changeSet id="4" author="paulsc" context="CI_IPCI">
+        <comment>localization for ci IPCI</comment>
+        <sqlFile path="OE5.2/ciIPCITestSectionLocalization.sql" />
+    </changeSet>
+    <changeSet id="5" author="paulsc" context="ciLNSP">
+        <comment>localization for ci LNSP</comment>
+        <sqlFile path="OE5.2/ciLNSPTestSectionLocalization.sql" />
+    </changeSet>
+    <changeSet id="6" author="paulsc" context="ci_regional">
+        <comment>localization for ci regional lab</comment>
+        <sqlFile path="OE5.2/ciRegionalTestSectionLocalization.sql" />
+    </changeSet>
+    <changeSet id="7" author="paulsc" context="Kenya">
+        <comment>localization for ci regional lab</comment>
+        <sqlFile path="OE5.2/kenyaTestSectionLocalization.sql" />
+    </changeSet>
+    <changeSet id="8" author="paulsc" context="Kenya" >
+        <comment>Updates test section localization to include user</comment>
+        <sql>
+            INSERT INTO localization(  id, description, english, french, lastupdated)
+            VALUES ( nextval('localization_seq'), 'test unit name', 'user', 'user', now());
+            UPDATE test_section set name_localization_id = currval('localization_seq') where name = 'user';
+        </sql>
+    </changeSet>
+    <changeSet id="9" author="paulsc" context="Kenya">
+        <comment>Update for additional test sections</comment>
+        <sqlFile path="OE5.2/kenyaTestSectionLocalization2.sql" />
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,24 @@
+INSERT INTO clinlims.test_section( id, name, description, org_id, is_external, lastupdated, display_key, sort_order, is_active) VALUES
+	(nextval() , 'URINALYSIS
+' , URINALYSIS
+, 13704, 'N', now() ,'test.section.URINALYSIS' ,10, 'Y');
+INSERT INTO clinlims.test_section( id, name, description, org_id, is_external, lastupdated, display_key, sort_order, is_active) VALUES
+	(nextval() , 'PARASITOLOGY
+' , PARASITOLOGY
+, 13704, 'N', now() ,'test.section.PARASITOLOGY' ,20, 'Y');
+INSERT INTO clinlims.test_section( id, name, description, org_id, is_external, lastupdated, display_key, sort_order, is_active) VALUES
+	(nextval() , 'BACTERIOLOGY
+' , BACTERIOLOGY
+, 13704, 'N', now() ,'test.section.BACTERIOLOGY' ,30, 'Y');
+INSERT INTO clinlims.test_section( id, name, description, org_id, is_external, lastupdated, display_key, sort_order, is_active) VALUES
+	(nextval() , 'HEMATOLOGY
+' , HEMATOLOGY
+, 13704, 'N', now() ,'test.section.HEMATOLOGY' ,40, 'Y');
+INSERT INTO clinlims.test_section( id, name, description, org_id, is_external, lastupdated, display_key, sort_order, is_active) VALUES
+	(nextval() , 'HISTOLOGY AND CYTOLOGY
+' , HISTOLOGY AND CYTOLOGY
+, 13704, 'N', now() ,'test.section.HISTOLOGY' ,50, 'Y');
+INSERT INTO clinlims.test_section( id, name, description, org_id, is_external, lastupdated, display_key, sort_order, is_active) VALUES
+	(nextval() , 'SEROLOGY
+' , SEROLOGY
+, 13704, 'N', now() ,'test.section.SEROLOGY' ,60, 'Y');

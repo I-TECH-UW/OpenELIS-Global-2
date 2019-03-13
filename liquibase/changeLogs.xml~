@@ -1,0 +1,2232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <!--Add change tags here-->
+
+  <include file="util/SystemUtil.xml"/>
+  <changeSet author="paulsc" id="1" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+    <not>
+    <columnExists columnName="sibling_reflex" schemaName="clinlims" tableName="test_reflex"/>
+    </not>
+    </preConditions>
+    <comment>Allow more than one test result to trigger a reflex test</comment>
+    <addColumn tableName="test_reflex">
+      <column name="sibling_reflex" type="numeric(10,0)"/>
+    </addColumn>
+    <addForeignKeyConstraint constraintName="fk_sibling_reflex"
+			baseTableName="test_reflex" baseColumnNames="sibling_reflex"
+			referencedTableName="test_reflex" referencedColumnNames="id"
+		/>
+    <sql>
+		COMMENT ON COLUMN clinlims.test_reflex.sibling_reflex IS 'Reference to tests and results for reflexes with more than one condition.  All add_test_ids should be the same';
+	</sql>
+  </changeSet>
+
+  <changeSet author="paulsc" id="2" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists schemaName="clinlims" tableName="analyzer"/>
+      </not>
+    </preConditions>
+    <comment>Add analyzer table</comment>
+    <createTable tableName="analyzer" schemaName="clinlims">
+      <column name="id" type="numeric(10,0)">
+        <constraints primaryKey="true" primaryKeyName="analyzer_pk" nullable="false"/>
+      </column>
+      <column name="scrip_id" type="numeric(10,0)"/>
+      <column name="name" type="varchar(20)"/>
+      <column name="machine_id" type="varchar(20)"/>
+      <column name="description" type="varchar(60)"/>
+      <column name="analyzer_type" type="varchar(30)"/>
+      <column name="is_active" type="boolean"/>
+      <column name="location" type="varchar(60)"/>
+      <column name="lastupdated" type="timestamp(6)"/>
+    </createTable>
+    <createSequence sequenceName="analyzer_seq" minValue="0" startValue="1"/>
+    <sql>
+	 COMMENT ON COLUMN analyzer."name" IS 'Short name for analyzer';
+	 COMMENT ON COLUMN analyzer.machine_id IS 'id which uniquely matches a machine, descriminates between duplicate analyzers';
+	 COMMENT ON COLUMN analyzer.description IS 'analyzer description';
+	 COMMENT ON COLUMN analyzer.analyzer_type IS 'Type of analyzer: Mass Spec, HPLC, etc.';
+	 COMMENT ON COLUMN analyzer.is_active IS 'Flag indicating if the analyzer is active';
+	 COMMENT ON COLUMN analyzer."location" IS 'Location of analyzer';
+     INSERT INTO clinlims.reference_tables( id, "name", keep_history, is_hl7_encoded, lastupdated)VALUES (nextval('clinlims.reference_tables_seq'), 'analyzer', 'Y', 'N', current_timestamp );
+    </sql>
+  </changeSet>
+
+  <changeSet author="paulsc" id="4" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="analyzer_results" schemaName="clinlims"/>
+      </not>
+    </preConditions>
+    <comment>Creates analyzer_results and analyzer_results_status table</comment>
+    <createTable tableName="analyzer_result_status" schemaName="clinlims">
+      <column name="id" type="numeric(10,0)">
+        <constraints primaryKey="true" primaryKeyName="analyzer_results_status_pk" nullable="false"/>
+      </column>
+      <column name="name" type="varchar(30)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="description" type="varchar(60)"/>
+    </createTable>
+    <createSequence sequenceName="analyzer_results_seq" minValue="0" startValue="1"/>
+    <createTable tableName="analyzer_results" schemaName="clinlims">
+      <column name="id" type="numeric(10,0)">
+        <constraints primaryKey="true" primaryKeyName="analyzer_results_pk" nullable="false"/>
+      </column>
+      <column name="analyzer_id" type="numeric(10,0)">
+        <constraints foreignKeyName="analyzer_fk" nullable="false" references="analyzer(id)"  />
+      </column>
+      <column name="accession_number" type="varchar(20)">
+        <constraints  nullable="false" />
+      </column>
+      <column name="test_name" type="varchar(20)">
+        <constraints  nullable="false" />
+      </column>
+      <column name="result" type="varchar(20)">
+        <constraints  nullable="false" />
+      </column>
+      <column name="units" type="varchar(10)"/>
+      <column name="status_id" type="numeric(10,0)">
+        <constraints foreignKeyName="status_fk" nullable="false" references="analyzer_result_status(id)"/>
+      </column>
+      <column name="iscontrol" type="boolean" defaultValueBoolean="false">
+        <constraints  nullable="false" />
+      </column>
+      <column name="lastupdated" type="timestamp(6) without time zone"/>
+    </createTable>
+    <sql>
+    COMMENT ON TABLE clinlims.analyzer_results IS 'A holding table for analyzer results ';
+    COMMENT ON COLUMN clinlims.analyzer_results.analyzer_id IS 'Reference to analyzer table';
+    COMMENT ON COLUMN clinlims.analyzer_results.accession_number IS 'The display version of the accession number.  May be either the extended or normal accession number';
+    COMMENT ON COLUMN clinlims.analyzer_results.test_name IS 'The test name, if a mapping is found then the mapping will be used, if not then the analyzer test name will be useds';
+    COMMENT ON COLUMN clinlims.analyzer_results.result IS 'The result of the test, the meaning depends on the test itself';
+    COMMENT ON COLUMN clinlims.analyzer_results.units IS 'The units as sent from the analyzer';
+    COMMENT ON COLUMN clinlims.analyzer_results.status_id IS 'The status for the this analyzer result';
+    COMMENT ON COLUMN clinlims.analyzer_results.iscontrol IS 'Is this result a control';
+
+
+    INSERT INTO clinlims.analyzer_result_status(id, "name", description) VALUES (1, 'NOT_REVIEWED', 'The result has not yet been reviewed by the user');
+    INSERT INTO clinlims.analyzer_result_status(id, "name", description) VALUES (2, 'ACCEPTED', 'The result has been reviewed and accepted by the user');
+    INSERT INTO clinlims.analyzer_result_status(id, "name", description) VALUES (3, 'DECLINED', 'The result has been reviewed and not accepted by the user');
+    INSERT INTO clinlims.analyzer_result_status(id, "name", description) VALUES (4, 'MATCHING_ACCESSION_NOT_FOUND', 'The Lab No does not exist in the system');
+    INSERT INTO clinlims.analyzer_result_status(id, "name", description) VALUES (5, 'MATCHING_TEST_NOT_FOUND', 'The Lab No exists but the test has not been entered ');
+    INSERT INTO clinlims.analyzer_result_status(id, "name", description) VALUES (6, 'TEST_MAPPING_NOT_FOUND', 'The test name from the analyzer is not recognized');
+    INSERT INTO clinlims.analyzer_result_status(id, "name", description) VALUES (7, 'ERROR', 'The result sent from the analyzer can not be understood');
+
+    INSERT INTO clinlims.reference_tables( id, "name", keep_history, is_hl7_encoded, lastupdated) VALUES (nextval('clinlims.reference_tables_seq'), 'analyzer_results', 'Y', 'N', current_timestamp );
+    </sql>
+  </changeSet>
+
+  <changeSet id="5" author="paulsc" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+       <sqlCheck expectedResult="0">select count(*) from clinlims.patient_identity_type where identity_type='SUBJECT'</sqlCheck>
+    </preConditions>
+    <sql>
+     INSERT INTO clinlims.patient_identity_type(id, identity_type, description, lastupdated) VALUES (nextval('clinlims.patient_identity_type_seq'), 'SUBJECT', 'Subject Number', now());
+    </sql>
+  </changeSet>
+
+  <changeSet id="6" author="paulsc" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+       <sqlCheck expectedResult="0">select count(*) from clinlims.patient_identity_type where identity_type='AMBIGUOUS_DOB'</sqlCheck>
+    </preConditions>
+    <sql>
+     INSERT INTO clinlims.patient_identity_type(id, identity_type, description, lastupdated) VALUES (nextval('clinlims.patient_identity_type_seq'), 'AMBIGUOUS_DOB', 'Display ambiguous DOB', now());
+    </sql>
+  </changeSet>
+
+   <changeSet id="7" author="paulsc" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+      <not>
+          <tableExists tableName="organization_type" schemaName="clinlims"/>
+       </not>
+    </preConditions>
+    <comment>Adds organization_type and mapping table between organization and organization_type</comment>
+    <createTable tableName="organization_type" schemaName="clinlims">
+     <column name="id" type="numeric(10,0)">
+        <constraints primaryKey="true" primaryKeyName="org_type_pk" nullable="false"/>
+      </column>
+      <column name="short_name" type="varchar(20)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="description" type="varchar(60)"/>
+      <column name="name_display_key" type="varchar(60)"/>
+      <column name="lastupdated" type="timestamp(6) without time zone"/>
+    </createTable>
+    <createSequence sequenceName="organization_type_seq" minValue="0" startValue="3"/>
+    <createTable tableName="organization_organization_type" schemaName="clinlims">
+     <column name="org_id" type="numeric(10,0)">
+        <constraints foreignKeyName="organization_fk" references="organization (id)" nullable="false"/>
+      </column>
+      <column name="org_type_id" type="numeric(10,0)">
+        <constraints foreignKeyName="organization_type_fk" references="organization_type (id)" nullable="false"/>
+      </column>
+    </createTable>
+    <addPrimaryKey tableName="organization_organization_type" columnNames="org_id, org_type_id" constraintName="org_org_pk" schemaName="clinlims"/>
+    <sql>
+    COMMENT ON TABLE clinlims.organization_type IS 'The type of an organization.  Releationship will be many to many';
+    COMMENT ON COLUMN clinlims.organization_type.short_name IS 'The name to be displayed in when organization type is to be associated with an organization';
+    COMMENT ON COLUMN clinlims.organization_type.description IS 'Optional longer description of the type';
+    COMMENT ON COLUMN clinlims.organization_type.name_display_key IS 'Resource file lookup key for localization of displaying the name';
+
+    INSERT INTO clinlims.organization_type(id, short_name, description, name_display_key, lastupdated) VALUES (1, 'TestKitVender', 'Organization selling HIV test kits', 'db.organization.type.name.testkit', now());
+    INSERT INTO clinlims.organization_type(id, short_name, description, name_display_key, lastupdated) VALUES (2, 'Refering lab', 'Organization who refers to labs', 'db.organization.type.name.refering', now());
+
+    COMMENT ON TABLE clinlims.organization_organization_type IS 'many to many mapping table between organization and orginaztion type';
+    </sql>
+  </changeSet>
+
+   <changeSet id="8" author="paulsc" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+      <not>
+          <tableExists tableName="requester_type" schemaName="clinlims"/>
+       </not>
+    </preConditions>
+    <comment>Adds register_type and sample_requester tables</comment>
+    <createTable tableName="requester_type" schemaName="clinlims">
+     <column name="id" type="numeric(10,0)">
+        <constraints primaryKey="true" primaryKeyName="requester_type_pk" nullable="false"/>
+      </column>
+      <column name="requester_type" type="varchar(20)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <createTable tableName="sample_requester" schemaName="clinlims">
+     <column name="sample_id" type="numeric(10,0)">
+        <constraints foreignKeyName="sample_fk" references="sample(id)" nullable="false"/>
+      </column>
+     <column name="requester_id" type="numeric(10,0)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="requester_type_id" type="numeric(10,0)">
+        <constraints foreignKeyName="requester_type_fk" references="requester_type (id)" nullable="false"/>
+      </column>
+      <column name="lastupdated" type="timestamp(6) without time zone"/>
+    </createTable>
+    <addPrimaryKey tableName="sample_requester" columnNames="sample_id, requester_id, requester_type_id" constraintName="sample_requester_pk" schemaName="clinlims"/>
+    <sql>
+    COMMENT ON TABLE clinlims.requester_type IS 'The types of entities which can request test.  This table will be used by sample_requester so the type should map to table';
+    COMMENT ON COLUMN clinlims.requester_type.requester_type IS 'The type. i.e. organization or provider';
+
+    INSERT INTO clinlims.requester_type(id, requester_type) VALUES (1, 'organization' );
+    INSERT INTO clinlims.requester_type(id, requester_type) VALUES (2, 'provider' );
+
+    COMMENT ON TABLE clinlims.sample_requester IS 'Links a sample to the entity which requested it';
+    COMMENT ON COLUMN clinlims.sample_requester.sample_id IS 'The sample';
+    COMMENT ON COLUMN clinlims.sample_requester.requester_id IS 'The requester_id.  The exact table depends on the requester type. i.e. either a person or organization';
+    COMMENT ON COLUMN clinlims.sample_requester.requester_type_id IS 'The type from the requester_type table';
+    </sql>
+  </changeSet>
+
+  <changeSet id="9" author="paulsc" runOnChange="true">
+  <comment>Sets lastupdated in test_analyte.  Otherwise test_reflex update fails</comment>
+  <sql>
+       update clinlims.test_analyte set lastupdated = now() where lastupdated IS NULL;
+  </sql>
+  </changeSet>
+
+  <changeSet id="10" author="paulsc" runOnChange="true">
+  <comment>Adds the constraint to the test_reflex.reflex_sibling column to set it to null if the referencing row is deleted</comment>
+  <dropForeignKeyConstraint baseTableName="test_reflex" baseTableSchemaName="clinlims" constraintName="fk_sibling_reflex"/>
+  <addForeignKeyConstraint baseTableName="test_reflex"
+                           baseTableSchemaName="clinlims"
+                           baseColumnNames="sibling_reflex"
+                           constraintName="fk_sibling_reflex"
+                           referencedTableName="test_reflex"
+                           referencedTableSchemaName="clinlims"
+                           referencedColumnNames="id"
+                           onDelete="CASCADE" />
+
+  </changeSet>
+
+  <changeSet id="11" author="paulsc" context="haiti" runOnChange="true">
+   <preConditions onFail="MARK_RAN">
+                  <sqlCheck expectedResult="1">select count(*) from clinlims.dictionary where dict_entry = 'patuese';</sqlCheck>
+   </preConditions>
+   <comment>Correct dictionary spelling of patuese</comment>
+   <sql>update clinlims.dictionary set dict_entry='Pateuse', local_abbrev='PATEUSE' where dict_entry = 'patuese';</sql>
+  </changeSet>
+
+  <changeSet id="12" author="paulsc" context="haiti" runOnChange="true">
+   <preConditions onFail="MARK_RAN">
+                  <sqlCheck expectedResult="1">select count(*) from clinlims.panel_item pi
+                                               join clinlims.panel p on p.id = pi.panel_id
+                                               where p.name = 'Hemogramme' and pi.test_local_abbrev = 'Reticulocytes';</sqlCheck>
+   </preConditions>
+   <comment>Remove Reticulocytes from Hemogramme panel </comment>
+   <sql>delete from clinlims.panel_item
+   where id = ( select pi.id from clinlims.panel_item pi
+   join clinlims.panel p on p.id = pi.panel_id
+   where p.name = 'Hemogramme' and pi.test_local_abbrev = 'Reticulocytes'); </sql>
+  </changeSet>
+
+  <changeSet id="13" author="paulsc" runOnChange="true">
+  <preConditions onFail="MARK_RAN">
+         <and>
+         <tableExists schemaName="clinlims" tableName="analyzer_results"/>
+         </and>
+         <and>
+         <columnExists columnName="positive" schemaName="clinlims" tableName="analyzer_results"/>
+         </and>
+  </preConditions>
+  <comment>Drop positive column from analyzer_results</comment>
+  <dropColumn columnName="positive" schemaName="clinlims" tableName="analyzer_results"/>
+  </changeSet>
+
+  <changeSet id="14" author="paulsc" runOnChange="true">
+  <preConditions onFail="MARK_RAN">
+         <tableExists schemaName="clinlims" tableName="analyzer_results"/>
+  </preConditions>
+  <comment>Add read only column to analyzer_results</comment>
+  <addColumn schemaName="clinlims" tableName="analyzer_results">
+             <column name="read_only" defaultValueBoolean="false" type="boolean" remarks="Is this result read only"/>
+  </addColumn>
+  <sql>
+      COMMENT ON COLUMN clinlims.analyzer_results.read_only IS 'Is this result read only';
+  </sql>
+  </changeSet>
+
+  <changeSet id="15" author="paulsc" runOnChange="true">
+  <preConditions onFail="MARK_RAN">
+       <and>
+         <tableExists schemaName="clinlims" tableName="analyzer_results"/>
+       </and>
+       <and>
+         <columnExists columnName="test_id" schemaName="clinlims" tableName="analyzer_results"/>
+       </and>
+  </preConditions>
+  <comment>Drop columns that related to existing data in database</comment>
+  <dropForeignKeyConstraint baseTableName="analyzer_results" baseTableSchemaName="clinlims" constraintName="test_fk"/>
+  <dropForeignKeyConstraint baseTableName="analyzer_results" baseTableSchemaName="clinlims" constraintName="sample_fk"/>
+  <dropForeignKeyConstraint baseTableName="analyzer_results" baseTableSchemaName="clinlims" constraintName="analysis_fk"/>
+  <dropColumn columnName="test_id" schemaName="clinlims" tableName="analyzer_results"/>
+  <dropColumn columnName="sample_id" schemaName="clinlims" tableName="analyzer_results"/>
+  <dropColumn columnName="analysis_id" schemaName="clinlims" tableName="analyzer_results"/>
+  </changeSet>
+
+ <changeSet id="16" author="paulsc" runOnChange="true">
+  <preConditions onFail="MARK_RAN">
+         <viewExists  schemaName="clinlims" viewName="accession_test"/>
+  </preConditions>
+  <comment>Drop accession_test view</comment>
+  <dropView schemaName="clinlims" viewName="accession_test"/>
+  </changeSet>
+
+  <changeSet id="17" author="paulsc" runOnChange="true">
+  <preConditions onFail="MARK_RAN">
+         <viewExists  schemaName="clinlims" viewName="Accession_test"/>
+  </preConditions>
+  <comment>Drop Accession_Test view</comment>
+  <dropView schemaName="clinlims" viewName="Accession_Test"/>
+  </changeSet>
+
+  <changeSet id="18" author="paulsc" runOnChange="true">
+  <comment>Adds a column to the analysis table to indicate if an analysis is the root of a reflex test</comment>
+  <addColumn schemaName="clinlims" tableName="analysis">
+      <column name="reflex_trigger" defaultValueBoolean="false" type="boolean"/>
+  </addColumn>
+  <sql>
+         COMMENT ON COLUMN clinlims.analysis.reflex_trigger IS 'True if this analysis has triggered a reflex test';
+  </sql>
+  </changeSet>
+
+  <changeSet id="19" author="paulsc" runOnChange="true">
+  <comment>Adds commune and mothers initial as patient types</comment>
+  <sql>
+      INSERT INTO clinlims.patient_identity_type( id, identity_type, description, lastupdated)VALUES (nextval('clinlims.patient_identity_type_seq'), 'MOTHERS_INITIAL',  'Initial of mothers first name', current_timestamp );
+      INSERT INTO clinlims.patient_identity_type( id, identity_type, description, lastupdated)VALUES (nextval('clinlims.patient_identity_type_seq'), 'COMMUNE',  'Name of commune', current_timestamp );
+  </sql>
+  </changeSet>
+
+  <changeSet id="20" author="paulsc" runOnChange="true">
+  <comment>Adds localization columns to test, test_section, SampleTypes, dictonary, panel and project</comment>
+  <addColumn schemaName="clinlims" tableName="test_section">
+     <column name="display_key" type="varchar(60)"  />
+  </addColumn>
+  <addColumn schemaName="clinlims" tableName="type_of_sample">
+     <column name="display_key" type="varchar(60)"  />
+  </addColumn>
+  <addColumn schemaName="clinlims" tableName="test">
+     <column name="display_key" type="varchar(60)"  />
+  </addColumn>
+  <addColumn schemaName="clinlims" tableName="panel">
+     <column name="display_key" type="varchar(60)"  />
+  </addColumn>
+    <addColumn schemaName="clinlims" tableName="dictionary">
+     <column name="display_key" type="varchar(60)"  />
+  </addColumn>
+  <addColumn schemaName="clinlims" tableName="project">
+     <column name="display_key" type="varchar(60)"  />
+  </addColumn>
+
+  <sql>
+       COMMENT ON COLUMN clinlims.test_section.display_key IS 'Resource file lookup key for localization of displaying the name';
+       COMMENT ON COLUMN clinlims.type_of_sample.display_key IS 'Resource file lookup key for localization of displaying the name';
+       COMMENT ON COLUMN clinlims.test.display_key IS 'Resource file lookup key for localization of displaying the name';
+       COMMENT ON COLUMN clinlims.panel.display_key IS 'Resource file lookup key for localization of displaying the name';
+       COMMENT ON COLUMN clinlims.dictionary.display_key IS 'Resource file lookup key for localization of displaying the name';
+       COMMENT ON COLUMN clinlims.project.display_key IS 'Resource file lookup key for localization of displaying the name';
+  </sql>
+  </changeSet>
+
+  <changeSet id="21" author="paulsc" runOnChange="true">
+  <comment>Add foriegn key constraint between extended_accession_number and sample</comment>
+  <addForeignKeyConstraint baseTableSchemaName="clinlims"
+                           baseTableName="extended_accession_number"
+                           baseColumnNames="sample_id"
+                           constraintName="sample_fk"
+                           referencedTableSchemaName="clinlims"
+                           referencedTableName="sample" referencedColumnNames="id" />
+  </changeSet>
+
+  <changeSet id="22" author="paulsc" runOnChange="true">
+  <comment>Add Unique value contstraint to patient_identity_type</comment>
+               <addUniqueConstraint schemaName="clinlims"
+                                    tableName="patient_identity_type"
+                                    columnNames="identity_type"
+                                    constraintName="identity_type_uk" />
+  </changeSet>
+
+
+
+  <changeSet id="23" author="paulsc" runOnChange="true">
+  <preConditions onFail="MARK_RAN">
+  <not>
+       <tableExists schemaName="clinlims" tableName="site_information"/>
+  </not>
+  </preConditions>
+  <comment>Adds site_information to database</comment>
+  <createTable tableName="site_information" remarks="Information about a specific installation at a site, seperate from an implimentation">
+     <column name="id" type="INTEGER">
+      <constraints nullable="false"/>
+     </column>
+     <column name="name" type="VARCHAR(32)" remarks="Name by which this information will be found">
+       <constraints nullable="false"/>
+     </column>
+     <column name="lastupdated" type="TIMESTAMP"/>
+     <column name="description" type="VARCHAR(60)" remarks="Clarification of the name"/>
+     <column name="value" type="VARCHAR(60)" remarks="Value for the named information"/>
+  </createTable>
+  <addPrimaryKey tableName="site_information" constraintName="site_info_pk" columnNames="id"/>
+  <createSequence schemaName="clinlims" sequenceName="site_information_seq" startValue="1"/>
+  <sql>
+  COMMENT ON TABLE clinlims.site_information IS 'Information about a specific installation at a site, seperate from an implimentation';
+  COMMENT ON COLUMN clinlims.site_information.name IS 'Name by which this information will be found';
+  COMMENT ON COLUMN clinlims.site_information.description IS 'Clarification of the name';
+  COMMENT ON COLUMN clinlims.site_information.value IS 'Value for the named information';
+  INSERT INTO clinlims.reference_tables( id, "name", keep_history, is_hl7_encoded, lastupdated)
+      VALUES (nextval('clinlims.reference_tables_seq'), 'site_information', 'Y', 'N', now() );
+  INSERT INTO clinlims.system_module( id, "name", description, has_select_flag, has_add_flag, has_update_flag, has_delete_flag)
+      VALUES (nextval('clinlims.system_module_seq'), 'SiteInformation', 'MasterList=&gt;Site Information', 'Y', 'Y', 'Y', 'Y');
+  </sql>
+  </changeSet>
+
+  <changeSet id="24" author="nixonl" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="project_organization" schemaName="clinlims"/>
+      </not>
+    </preConditions>
+    <comment>Creates project_organization table</comment>
+    <createTable tableName="project_organization" schemaName="clinlims">
+  	  <column name="project_id" type="numeric(10,0)">
+        <constraints foreignKeyName="project_fk" references="project (id)" nullable="false"/>
+      </column>
+     <column name="org_id" type="numeric(10,0)">
+        <constraints foreignKeyName="organization_fk" references="organization (id)" nullable="false"/>
+      </column>
+    </createTable>
+    <addPrimaryKey tableName="project_organization" columnNames="project_id, org_id" constraintName="project_org_pk" schemaName="clinlims"/>
+    <sql>
+    	 COMMENT ON TABLE clinlims.project_organization IS 'many to many mapping table between project and organization';
+    </sql>
+  </changeSet>
+
+  <changeSet author="pahill" id="1" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+    <not>
+    <columnExists columnName="display_key" schemaName="clinlims" tableName="gender"/>
+    </not>
+    </preConditions>
+    <comment>added messageResources key for value to display</comment>
+    <addColumn tableName="gender">
+      <column name="name_key" type="varchar(60)" remarks="key in MessageResources.properties"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="pahill" id="2" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+    <columnExists columnName="name_key" schemaName="clinlims" tableName="gender"/>
+    </preConditions>
+    <comment>added values for name_key</comment>
+      <sql>
+    	UPDATE gender SET name_key ='gender.male' 	WHERE	gender_type='M';
+   		UPDATE gender SET name_key ='gender.female'  WHERE	gender_type='F';
+   		DELETE from gender WHERE gender_type='U';
+     </sql>
+  </changeSet>
+
+  <changeSet author="pahill" id="3" runOnChange="true">
+      <comment>Removed and replaced with observation_history_type</comment>
+  </changeSet>
+
+  <changeSet author="paulsc" id="27" runOnChange="true">
+  	<preConditions onFail="MARK_RAN">
+  		<not>
+	  		<tableExists tableName="observation_history_type" schemaName="clinlims"/>
+  		</not>
+  	</preConditions>
+    <comment>Added the typing table for observation history information which defines what each row is about (what question was asked).</comment>
+  	<createTable tableName="observation_history_type" remarks="All of the type of rows which might appear in observations_history">
+		<column name="id" type="numeric(10,0)">
+	        <constraints primaryKey="true" primaryKeyName="observation_history_type_pk" nullable="false"/>
+	    </column>
+	    <column name="type_name" type="varchar(30)" remarks="a tag for this type">
+	        <constraints nullable="false" unique="true" uniqueConstraintName="observation_history_type_type_name_u"/>
+	    </column>
+	    <column name="description" type="varchar(400)" remarks="long description of what this tag contains when used in observation_history"/>
+	    <column name="lastupdated" type="timestamp(6)"/>
+  	</createTable>
+  	<createSequence sequenceName="observation_history_type_seq" minValue="0" startValue="1"/>
+  	<sql>
+  	  INSERT INTO clinlims.reference_tables
+  	         ( "name",                     id, keep_history, is_hl7_encoded, lastupdated)
+      VALUES ( 'observation_history_type', nextval('clinlims.reference_tables_seq'), 'Y', 'N', now() );
+
+  	</sql>
+  	<sql>
+  	COMMENT ON TABLE  clinlims.observation_history_type IS 'defines the possible classes of values allowed in the demo. history table.';
+  	COMMENT ON COLUMN clinlims.observation_history_type.id IS 'primary key';
+  	COMMENT ON COLUMN clinlims.observation_history_type.type_name is 'a short tag (1 word) for this type. What was asked "Gender", "HIVPositive" etc.';
+  	COMMENT ON COLUMN clinlims.observation_history_type.description is 'a long description of this type.';
+  	COMMENT ON COLUMN clinlims.observation_history_type.lastupdated is 'the last time this item was written to the database.'
+  	</sql>
+  </changeSet>
+
+  <changeSet author="paulsc" id="26" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+         <tableExists schemaName="clinlims" tableName="demographic_history"/>
+         <not>
+	         <tableExists schemaName="clinlims" tableName="observation_history"/>
+         </not>
+    </preConditions>
+    <comment>If the demographics history table exists then rename it, and associated tables to observation_history etc</comment>
+    <renameTable newTableName="observation_history" oldTableName="demographic_history" schemaName="clinlims"/>
+    <renameTable newTableName="observation_history_type" oldTableName="demographic_history_type" schemaName="clinlims"/>
+    <renameTable newTableName="observation_history_seq" oldTableName="demographic_history_seq" schemaName="clinlims"/>
+    <renameTable newTableName="observation_history_type_seq" oldTableName="demographic_history_type_seq" schemaName="clinlims"/>
+    <renameColumn newColumnName="observation_history_type_id"
+                  oldColumnName="demographic_history_type_id"
+                  tableName="observation_history"
+                  schemaName="clinlims" />
+    <update schemaName="clinlims" tableName="reference_tables">
+     <column name="name" value="observation_history"/>
+     <where>name = 'demographic_history'</where>
+    </update>
+    <update schemaName="clinlims" tableName="reference_tables">
+     <column name="name" value="observation_history_type"/>
+     <where>name = 'demographic_history_type'</where>
+    </update>
+  </changeSet>
+
+  <changeSet author="pahill" id="4" runOnChange="true">
+             <comment>Removed.  Replaced with observation_history table</comment>
+  </changeSet>
+
+  <changeSet author="paulsc" id="28" runOnChange="true">
+  	<preConditions onFail="MARK_RAN">
+  		<not>
+	  		<tableExists tableName="observation_history" schemaName="clinlims"/>
+  		</not>
+  		<tableExists tableName="observation_history_type" schemaName="clinlims"/>
+  	</preConditions>
+  	<comment>Adds the observation history table which contains responses to observation questions from various forms. Associated to a patient and a sample.</comment>
+  	<createTable tableName="observation_history" schemaName="clinlims" remarks="observation survey information associated with a patient and sample.">
+		<column name="id" type="numeric(10,0)">
+	        <constraints primaryKey="true" primaryKeyName="observations_history_pk" nullable="false"/>
+	    </column>
+	    <column name="patient_id" type="numeric(10,0)">
+	    	<constraints foreignKeyName="patient_fk" references="patient(id)" nullable="false"/>
+	    </column>
+	    <column name="sample_id" type="numeric(10,0)">
+	    	<constraints foreignKeyName="sample_fk" references="sample(id)" nullable="false"/>
+	    </column>
+	    <column name="observation_history_type_id" type="numeric(10,0)">
+	    	<constraints foreignKeyName="observations_history_type_fk" references="observation_history_type(id)" nullable="false"/>
+	    </column>
+	    <column name="value_type" type="varchar(5)">
+	    	<constraints nullable="false"/>
+	    </column>
+	    <column name="value" type="varchar(80)">
+	    	<constraints nullable="true"/>
+	    </column>
+	    <column name="lastupdated" type="timestamp(6)"/>
+  	</createTable>
+  	<createSequence sequenceName="observation_history_seq" minValue="0" startValue="1"/>
+  	<insert schemaName="clinlims" tableName="reference_tables">
+         <column name="name" value="observation_history"/>
+         <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+         <column name="keep_history" value="Y"/>
+         <column name="is_hl7_encoded" value="N"/>
+         <column name="lastupdated" value=" now() "/>
+    </insert>
+  	<sql>
+  	COMMENT ON TABLE  clinlims.observation_history IS 'defines the answer at the time of a interview (with sample) to a observation question.';
+  	COMMENT ON COLUMN clinlims.observation_history.id IS 'primary key';
+  	COMMENT ON COLUMN clinlims.observation_history.patient_id IS 'FK linking this information to a patient';
+  	COMMENT ON COLUMN clinlims.observation_history.sample_id IS 'FK linking this information to a sample (and a collection date).';
+	COMMENT ON COLUMN clinlims.observation_history.observation_history_type_id IS 'FK to type table to define what is contained in the value column';
+  	COMMENT ON COLUMN clinlims.observation_history.value_type IS 'L=local or literal, a value right here in the history table. D=Defined/Dictionary, the value is a foreign key to the Dictionary table. For multiple choice questions with fixed answers.';
+  	COMMENT ON COLUMN clinlims.observation_history.value IS 'either a literal value for this demo. type, or a Foreign key to dictionary';
+  	</sql>
+  </changeSet>
+
+  <changeSet author="paulsc" id="24" runOnChange="true">
+  <preConditions onFail="MARK_RAN">
+       <not>
+            <columnExists columnName="display_key" schemaName="clinlims" tableName="status_of_sample"/>
+       </not>
+  </preConditions>
+  <comment>Add display key column to status_of_sample</comment>
+  <addColumn schemaName="clinlims" tableName="status_of_sample">
+        <column name="display_key" type="varchar(60)" remarks="display key for localization"/>
+  </addColumn>
+  </changeSet>
+
+  <changeSet author="paulsc" id="25" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+        <not>
+        <columnExists columnName="status_id" schemaName="clinlims" tableName="analysis"/>
+        </not>
+        </preConditions>
+        <comment>Addes status columns with foriegn key constraint</comment>
+        <addColumn schemaName="clinlims" tableName="analysis">
+                   <column name="status_id" type="numeric(10,0)">
+                            <constraints foreignKeyName="analysis_status_fk" nullable="true" references="status_of_sample(id)"/>
+                   </column>
+        </addColumn>
+        <addColumn schemaName="clinlims" tableName="sample">
+                   <column name="status_id" type="numeric(10,0)">
+                           <constraints foreignKeyName="sample_status_fk" nullable="true" references="status_of_sample(id)"/>
+                   </column>
+        </addColumn>
+        <sql>
+             COMMENT ON COLUMN clinlims.analysis.status_id IS 'foriegn key to status of analysis ';
+             COMMENT ON COLUMN clinlims.sample.status_id IS 'foriegn key to status of analysis ';
+        </sql>
+  </changeSet>
+
+  <changeSet author="paulsc" id="30" runOnChange="true">
+      <preConditions onFail="MARK_RAN">
+      <not>
+        <foreignKeyConstraintExists foreignKeyName="analysis_status_fk" schemaName="clinlims"/>
+      </not>
+      </preConditions>
+      <comment>Corrects the addition of a fk constraint in sample and analyysis</comment>
+      <addForeignKeyConstraint baseTableSchemaName="clinlims"
+                               baseTableName="analysis"
+                               baseColumnNames="status_id"
+                               constraintName="analysis_status_fk"
+                               referencedTableSchemaName="clinlims"
+                               referencedTableName="status_of_sample"
+                               referencedColumnNames="id" />
+      <addForeignKeyConstraint baseTableSchemaName="clinlims"
+                               baseTableName="sample"
+                               baseColumnNames="status_id"
+                               constraintName="sample_status_fk"
+                               referencedTableSchemaName="clinlims"
+                               referencedTableName="status_of_sample"
+                               referencedColumnNames="id" />
+
+  </changeSet>
+
+  <changeSet author="paulsc" id="29" runOnChange="true">
+      <preConditions onFail="MARK_RAN">
+            <not>
+            <tableExists schemaName="clinlims" tableName="analyzer_test_map"/>
+            </not>
+      </preConditions>
+      <comment>Adds a table which maps between tests as known to the analyzer and tests as known to OpenElis</comment>
+      <createTable schemaName="clinlims" tableName="analyzer_test_map">
+                   <column name="analyzer_id" type="numeric(10,0)">
+                           <constraints nullable="false" foreignKeyName="analyzer_test_map_analyzer_fk" references="analyzer(id)"  />
+                   </column>
+                   <column name="analyzer_test_name" type="varchar(30)">
+                           <constraints nullable="false"/>
+                   </column>
+                   <column name="test_id" type="numeric(10,0)">
+                           <constraints nullable="false" foreignKeyName="analyzer_test_map_test_fk" references="test(id)"/>
+                   </column>
+      </createTable>
+      <addPrimaryKey columnNames="analyzer_id, analyzer_test_name"
+                     constraintName="analyzer_test_map_pk"
+                     schemaName="clinlims"
+                     tableName="analyzer_test_map" />
+       <sql>
+             COMMENT ON TABLE clinlims.analyzer_test_map IS 'Maps the analyzers names to the tests in database';
+             COMMENT ON COLUMN clinlims.analyzer_test_map.analyzer_id  IS 'foriegn key to analyzer table';
+             COMMENT ON COLUMN clinlims.analyzer_test_map.analyzer_test_name  IS 'The name the analyzer uses for the test';
+             COMMENT ON COLUMN clinlims.analyzer_test_map.test_id  IS 'foriegn key to test table';
+        </sql>
+  </changeSet>
+
+  <changeSet author="paulsc" id="31" runOnChange="true">
+             <preConditions onFail="MARK_RAN">
+             <not>
+                  <columnExists schemaName="clinlims" tableName="analyzer_results" columnName="test_id"/>
+             </not>
+             </preConditions>
+             <comment>Adds a test_id column to the analyzer_results table</comment>
+             <addColumn schemaName="clinlims" tableName="analyzer_results">
+                        <column name="test_id" type="numeric(10,0)">
+                                <constraints nullable="true" foreignKeyName="analyzer_results_test_fk" references="test(id)"/>
+                        </column>
+             </addColumn>
+             <sql>
+                  COMMENT on COLUMN clinlims.analyzer_results.test_id IS 'Test this is result is mapped to'
+             </sql>
+  </changeSet>
+
+  <changeSet author="paulsc" id="32" runOnChange="true">
+  <preConditions onFail="MARK_RAN">
+     <not>
+          <columnExists schemaName="clinlims" tableName="analyzer_results" columnName="duplicate_id"/>
+     </not>
+  </preConditions>
+  <comment>Adds additional columns to the analyzer_results table</comment>
+  <addColumn schemaName="clinlims" tableName="analyzer_results">
+             <column name="duplicate_id" type="numeric(10,0)"/>
+             <column name="positive" type="boolean" defaultValueBoolean="false"/>
+             <column name="complete_date" type="timestamp"/>
+  </addColumn>
+  <sql>
+       COMMENT on COLUMN clinlims.analyzer_results.duplicate_id IS 'Reference to another analyzer result with the same analyzer and analyzer test';
+       COMMENT on COLUMN clinlims.analyzer_results.positive IS 'Is the test positive';
+       COMMENT on COLUMN clinlims.analyzer_results.complete_date IS 'The time stamp for when the analyzsis was done';
+  </sql>
+  </changeSet>
+
+  <changeSet author="paulsc" id="33">
+             <preConditions onFail="MARK_RAN">
+                 <sqlCheck expectedResult="0">
+                     select count(*) from clinlims.system_module sm where sm.name = 'AnalyzerTestName' ;
+                 </sqlCheck>
+             </preConditions>
+             <comment>Adds the AnalyzerTestName module</comment>
+             <insert schemaName="clinlims" tableName="system_module">
+                     <column name="id" valueNumeric=" nextval( 'system_module_seq' ) "/>
+                     <column name="name" value="AnalyzerTestName"/>
+                     <column name="description" value="MasterList-&gt;Analyzer Test Name"/>
+                     <column name="has_select_flag" value="Y"/>
+                     <column name="has_add_flag" value="Y"/>
+                     <column name="has_update_flag" value="Y"/>
+                     <column name="has_delete_flag" value="Y"/>
+             </insert>
+  </changeSet>
+  
+  <changeSet author="paulsc" id="34">
+             <preConditions onFail="MARK_RAN">
+                 <sqlCheck expectedResult="0">
+                     select count(*) from clinlims.system_module sm where sm.name = 'AnalyzerResults' ;
+                 </sqlCheck>
+             </preConditions>
+             <comment>Adds the AnalyzerResults module</comment>
+             <insert schemaName="clinlims" tableName="system_module">
+                     <column name="id" valueNumeric=" nextval( 'system_module_seq' ) "/>
+                     <column name="name" value="AnalyzerResults"/>
+                     <column name="description" value="Results-&gt;Analyzers"/>
+                     <column name="has_select_flag" value="Y"/>
+                     <column name="has_add_flag" value="Y"/>
+                     <column name="has_update_flag" value="Y"/>
+                     <column name="has_delete_flag" value="Y"/>
+             </insert>
+  </changeSet>
+
+  <changeSet author="paulsc" id="35">
+             <preConditions onFail="MARK_RAN">
+             <not>
+                  <columnExists schemaName="clinlims" tableName="system_role" columnName="display_key"/>
+             </not>
+             </preConditions>
+             <comment>Adds three columns to system_role; display_key, is_grouping_role and parent_role</comment>
+             <addColumn schemaName="clinlims" tableName="system_role">
+                  <column name="is_grouping_role" type="boolean" defaultValue="false"/>
+                  <column name="grouping_parent" type="numeric(10,0)">
+                          <constraints nullable="true" foreignKeyName="role_parent_role_fk" references="system_role(id)"  />
+                  </column>
+                  <column name="display_key" type="varchar(60)"/>
+             </addColumn>
+             <sql>
+                  COMMENT on COLUMN clinlims.system_role.is_grouping_role IS 'Indicates that this role is only for grouping other roles.  It should not have modules assigned to it';
+                  COMMENT on COLUMN clinlims.system_role.grouping_parent IS 'Should only refer to a grouping role';
+                  COMMENT on COLUMN clinlims.system_role.display_key IS  'key for localizing dropdown lists';
+             </sql>
+  </changeSet>
+  
+  <changeSet author="nixonl" id="36">
+             <preConditions onFail="MARK_RAN">
+                  <tableExists schemaName="clinlims" tableName="soon"/>
+             </preConditions>
+             <comment>Copy 'unit_of_measure' contents to 'soon' table and rename 'soon' to 'unit_of_measure'</comment>
+             <sql> INSERT INTO clinlims.soon ( SELECT * FROM clinlims.unit_of_measure );
+            	DELETE FROM clinlims.soon WHERE id NOT IN (SELECT  MAX(s.id) FROM clinlims.soon s group by s.name);              		
+             </sql>
+   
+             <dropTable schemaName="clinlims" tableName="unit_of_measure"/> 
+             <renameTable newTableName="unit_of_measure" oldTableName="soon" schemaName="clinlims"/>                      
+  </changeSet>
+
+  <changeSet author="paulsc" id="36">
+  <preConditions onFail="MARK_RAN">
+  <sqlCheck expectedResult="0">
+       select count(*) from clinlims.dictionary_category where name = 'REC_STATUS';
+  </sqlCheck>
+  </preConditions>
+  <comment>Adds record status to the dictonary and intake as a dictonary type</comment>
+  <delete schemaName="clinlims" tableName="status_of_sample">
+          <where>status_type = 'RECORD'</where>
+  </delete>
+  <insert schemaName="clinlims" tableName="dictionary_category">
+      <column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) "/>
+      <column name="description" value="intake status"/>
+      <column name="lastupdated" valueDate=" now() "/>
+      <column name="local_abbrev" value="REC_STATUS"/>
+      <column name="name" value="REC_STATUS"/>
+  </insert>
+  <insert schemaName="clinlims" tableName="dictionary">
+    <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+      <column name="lastupdated" valueDate=" now() "/>
+      <column name="local_abbrev" value="Not Start"/>
+      <column name="dict_entry" value="The data entry has not yet started"/>
+      <column name="is_active" value="Y"/>
+      <column name="dictionary_category_id" valueNumeric=" ( select id from clinlims.dictionary_category where name = 'REC_STATUS' ) "/>
+      <column name="display_key" value="record.notStarted"/>
+  </insert>
+  <insert schemaName="clinlims" tableName="dictionary">
+    <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+      <column name="lastupdated" valueDate=" now() "/>
+      <column name="local_abbrev" value="Init Ent"/>
+      <column name="dict_entry" value="The initial entry has been done"/>
+      <column name="is_active" value="Y"/>
+      <column name="dictionary_category_id" valueNumeric=" ( select id from clinlims.dictionary_category where name = 'REC_STATUS' ) "/>
+      <column name="display_key" value="record.initialEntry"/>
+  </insert>
+  <insert schemaName="clinlims" tableName="dictionary">
+    <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+      <column name="lastupdated" valueDate=" now() "/>
+      <column name="local_abbrev" value="Valid Ent"/>
+      <column name="dict_entry" value="The second, validation, entry has been done"/>
+      <column name="is_active" value="Y"/>
+      <column name="dictionary_category_id" valueNumeric=" ( select id from clinlims.dictionary_category where name = 'REC_STATUS' ) "/>
+      <column name="display_key" value="record.validationEntry"/>
+  </insert>
+  <insert schemaName="clinlims" tableName="dictionary">
+    <column name="id" valueNumeric=" nextval( 'dictionary_seq' ) "/>
+      <column name="lastupdated" valueDate=" now() "/>
+      <column name="local_abbrev" value="Under Inv"/>
+      <column name="dict_entry" value="There is reason to suspect that the form was not filled out correctly"/>
+      <column name="is_active" value="Y"/>
+      <column name="dictionary_category_id" valueNumeric=" ( select id from clinlims.dictionary_category where name = 'REC_STATUS' ) "/>
+      <column name="display_key" value="record.underInvestigation"/>
+  </insert>
+</changeSet>
+
+<changeSet author="paulsc" id="37">
+    <preConditions onFail="MARK_RAN">
+        <not>
+        <columnExists tableName="test_reflex" schemaName="clinlims" columnName="scriptlet_id"/>
+        </not>
+    </preConditions>
+    <comment>Adds a new column to test_reflex</comment>
+    <addColumn schemaName="clinlims" tableName="test_reflex">
+    <column name="scriptlet_id" type="numeric(10,0)">
+            <constraints nullable="true" foreignKeyName="test_reflex_scriptlet_fk" references="scriptlet(id)"/>
+    </column>
+    </addColumn>
+    <sql>
+         COMMENT on COLUMN clinlims.test_reflex.scriptlet_id IS 'If a non-test action should be taken then reference the scriptlet which says what to do'
+    </sql>
+</changeSet>
+
+<changeSet author="pauls" id="38">
+    <comment>Adds display_key to QA_Events</comment>
+    <addColumn schemaName="clinlims" tableName="qa_event">
+         <column name="display_key" type="varchar(60)"  />
+    </addColumn>
+    <sql>
+       COMMENT ON COLUMN clinlims.qa_event.display_key IS 'Resource file lookup key for localization of displaying the name';
+    </sql>
+</changeSet>
+
+<changeSet author="pauls" id="39">
+    <comment>Adds a sample_item_id to sample_qaevent to allow refinement of target</comment>
+    <addColumn schemaName="clinlims" tableName="sample_qaevent">
+       <column name="sampleitem_id" type="numeric(10,0)"  />
+    </addColumn>
+    <addForeignKeyConstraint baseTableSchemaName="clinlims"
+                             baseTableName="sample_qaevent"
+                             baseColumnNames="sampleitem_id"
+                             constraintName="sample_qaevent_sampleitem_fk"
+                             referencedTableSchemaName="clinlims"
+                             referencedTableName="sample_item"
+                             referencedColumnNames="id" />
+    <sql>
+       COMMENT ON COLUMN clinlims.sample_qaevent.sampleitem_id IS 'If the qaevent refers to a sampleitem of the sample use this column';
+    </sql>
+</changeSet>
+<changeSet author="paulsc" id="40">
+    <comment>Adding foreign key constraints which were not added due to liquibase bug</comment>
+    <addForeignKeyConstraint baseTableSchemaName="clinlims"
+                             baseTableName="analyzer_results"
+                             baseColumnNames="test_id"
+                             constraintName="analyzer_results_test_fk"
+                             referencedTableSchemaName="clinlims"
+                             referencedTableName="test"
+                             referencedColumnNames="id" />
+    <addForeignKeyConstraint baseTableSchemaName="clinlims"
+                             baseTableName="system_role"
+                             baseColumnNames="grouping_parent"
+                             constraintName="role_parent_role_fk"
+                             referencedTableSchemaName="clinlims"
+                             referencedTableName="system_role"
+                             referencedColumnNames="id" />
+    <addForeignKeyConstraint baseTableSchemaName="clinlims"
+                             baseTableName="test_reflex"
+                             baseColumnNames="scriptlet_id"
+                             constraintName="test_reflex_scriptlet_fk"
+                             referencedTableSchemaName="clinlims"
+                             referencedTableName="scriptlet"
+                             referencedColumnNames="id" />
+</changeSet>
+<changeSet author="paulsc" id="41">
+    <preConditions onFail="MARK_RAN">
+        <sqlCheck expectedResult="0">
+                  Select count(*) from clinlims.reference_tables where upper(name) = 'SAMPLE_QAEVENT';
+        </sqlCheck>
+    </preConditions>
+    <comment>Adding Sample_qaevent to reference_tables</comment>
+    <insert schemaName="clinlims" tableName="reference_tables">
+         <column name="name" value="SAMPLE_QAEVENT"/>
+         <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+         <column name="keep_history" value="Y"/>
+         <column name="is_hl7_encoded" value="N"/>
+         <column name="lastupdated" value=" now() "/>
+    </insert>
+</changeSet>
+<changeSet author="paulsc" id="42">
+           <comment>Changes test Section names form 'Immuno' to 'Immunology' and 'Chem' to 'Biochemistry'</comment>
+           <update schemaName="clinlims" tableName="test_section">
+                   <column name="name" value="Immunology"/>
+                   <where>name='Immuno'</where>
+           </update>
+           <update schemaName="clinlims" tableName="test_section">
+                   <column name="name" value="Biochemistry"/>
+                   <where>name='Chem'</where>
+           </update>
+</changeSet>
+<changeSet author="paulsc" id="43">
+           <comment>Adds a test result type of R (for remark )</comment>
+           <insert schemaName="clinlims" tableName="type_of_test_result">
+                   <column name="id" valueNumeric=" nextval( 'type_of_test_result_seq' ) "/>
+                   <column name="test_result_type" value="R"/>
+                   <column name="description" value="Remark"/>
+                   <column name="lastupdated" valueDate=" now() "/>
+                   <column name="hl7_value" value="TX"/>
+           </insert>
+</changeSet>
+<changeSet author="paulsc" id="44">
+           <comment>Adds 'Conclusion' to the analyte table</comment>
+           <insert schemaName="clinlims" tableName="analyte">
+                   <column name="id" valueNumeric=" nextval( 'analyte_seq') "/>
+                   <column name="name" value="Conclusion"/>
+                   <column name="is_active" value="Y"/>
+                   <column name="lastupdated" valueDate=" now() "/>
+           </insert>
+</changeSet>
+<changeSet author="paulsc" id="45" runOnChange="true">
+           <comment>Expand value column of result table to 200 char</comment>
+           <modifyColumn schemaName="clinlims" tableName="result">
+                         <column name="value" type="varchar(200)"/>
+           </modifyColumn>
+</changeSet>
+
+<changeSet author="paulsc" id="46">
+           <comment>Expand value column of first and last names from 20 to 40</comment>
+           <dropView schemaName="clinlims" viewName="sampletracking"/>
+           <modifyColumn schemaName="clinlims" tableName="person">
+                         <column name="first_name" type="varchar(40)"/>
+                         <column name="last_name" type="varchar(40)"/>
+                         <column name="middle_name" type="varchar(30)"/>
+           </modifyColumn>
+           <sql>
+CREATE OR REPLACE VIEW sampletracking AS
+ SELECT organizationinfo.accnum, patientinfo.patientid, organizationinfo.cliref, patientinfo.patientlastname, patientinfo.patientfirstname, patientinfo.dateofbirth, organizationinfo.orglocalabbrev AS org_local_abbrev, organizationinfo.orgname, organizationinfo.recddate, typeinfo.tosid, typeinfo.tosdesc, sourceinfo.sosid, sourceinfo.sosdesc, organizationinfo.colldate, sampleinfo.si AS sori
+   FROM ( SELECT s.accession_number AS accnum, p.last_name AS patientlastname, p.first_name AS patientfirstname, pt.external_id AS patientid, pt.birth_date AS dateofbirth
+           FROM sample s
+      LEFT JOIN sample_human samphum ON s.id = samphum.samp_id
+   LEFT JOIN patient pt ON samphum.patient_id = pt.id
+   LEFT JOIN person p ON pt.person_id = p.id) patientinfo, ( SELECT s.accession_number AS accnum, sos.id AS sosid, sos.description AS sosdesc
+           FROM sample s
+      LEFT JOIN sample_item sampitem ON s.id = sampitem.samp_id
+   LEFT JOIN source_of_sample sos ON sampitem.source_id = sos.id) sourceinfo, ( SELECT s.accession_number AS accnum, tos.id AS tosid, tos.description AS tosdesc
+           FROM sample s
+      LEFT JOIN sample_item sampitem ON s.id = sampitem.samp_id
+   LEFT JOIN type_of_sample tos ON sampitem.typeosamp_id = tos.id) typeinfo, ( SELECT s.accession_number AS accnum, org.local_abbrev AS orglocalabbrev, org.name AS orgname, s.received_date AS recddate, s.collection_date AS colldate, s.client_reference AS cliref
+           FROM sample s
+      LEFT JOIN sample_organization samporg ON s.id = samporg.samp_id
+   LEFT JOIN organization org ON samporg.org_id = org.id) organizationinfo, ( SELECT s.accession_number AS accnum, s.spec_or_isolate AS si
+           FROM sample s) sampleinfo
+  WHERE typeinfo.accnum = organizationinfo.accnum AND sourceinfo.accnum = organizationinfo.accnum AND patientinfo.accnum = organizationinfo.accnum AND sampleinfo.accnum = organizationinfo.accnum
+  ORDER BY organizationinfo.orglocalabbrev, organizationinfo.recddate, organizationinfo.colldate, typeinfo.tosdesc, sourceinfo.sosdesc;
+
+ALTER TABLE sampletracking OWNER TO clinlims;           </sql>
+</changeSet>
+<changeSet author="paulsc" id="47">
+           <comment>Adds a test result type of A (for AlphaNumeric )</comment>
+           <insert schemaName="clinlims" tableName="type_of_test_result">
+                   <column name="id" valueNumeric=" nextval( 'type_of_test_result_seq' ) "/>
+                   <column name="test_result_type" value="A"/>
+                   <column name="description" value="Alpha,no range check"/>
+                   <column name="lastupdated" valueDate=" now() "/>
+                   <column name="hl7_value" value="TX"/>
+           </insert>
+</changeSet>
+<changeSet author="paulsc" id="48">
+<comment>drops anaylsis status of 'started' and adds analysis status of 'refered'</comment>
+               <delete tableName="status_of_sample" schemaName="clinlims">
+                       <where>name = 'Started'</where>
+               </delete>
+               <insert tableName="status_of_sample" schemaName="clinlims">
+                       <column name="id" valueNumeric=" (nextVal('status_of_sample_seq')) "/>
+                       <column name="description" value="test has been referred to an outside lab and the results have not been returned"/>
+                       <column name="code" valueNumeric="1"/>
+                       <column name="status_type" value="ANALYSIS"/>
+                       <column name="lastupdated" valueDate=" now() "/>
+                       <column name="name" value="referred out"/>
+                       <column name="display_key" value="status.test.referred.out"/>
+               </insert>
+</changeSet>
+<changeSet author="paulsc" id="49">
+           <comment>Adds three new tables and sequences, referral and referral_reason and referral_type </comment>
+           <createTable tableName="referral_reason" schemaName="clinlims">
+                         <column name="id" type="numeric(10,0)">
+                                 <constraints primaryKey="true" primaryKeyName="referral_reason_pk" nullable="false"/>
+                         </column>
+                         <column name="name" type="varchar(30)">
+                                 <constraints nullable="false"/>
+                         </column>
+                         <column name="description" type="varchar(60)"/>
+                         <column name="display_key" type="varchar(60)"/>
+                         <column name="lastupdated" type="timestamp(6) without time zone"/>
+           </createTable>
+           <createTable tableName="referral_type" schemaName="clinlims">
+                         <column name="id" type="numeric(10,0)">
+                                 <constraints primaryKey="true" primaryKeyName="referral_type_pk" nullable="false"/>
+                         </column>
+                         <column name="name" type="varchar(30)">
+                                 <constraints nullable="false"/>
+                         </column>
+                         <column name="description" type="varchar(60)"/>
+                         <column name="display_key" type="varchar(60)"/>
+                         <column name="lastupdated" type="timestamp(6) without time zone"/>
+           </createTable>
+           <createTable tableName="referral" schemaName="clinlims">
+                         <column name="id" type="numeric(10,0)">
+                                 <constraints primaryKey="true" primaryKeyName="referral_pk" nullable="false"/>
+                         </column>
+                         <column name="analysis_id" type="numeric(10,0)">
+                                 <constraints foreignKeyName="referral_analysis_fk" references="analysis(id)" nullable="true"/>
+                         </column>
+                         <column name="organization_id" type="numeric(10,0)">
+                                 <constraints foreignKeyName="referral_organization_fk" references="organization(id)" nullable="true"/>
+                         </column>
+                         <column name="organization_name" type="varchar(30)"/>
+                         <column name="send_ready_date" type="timestamp(6) without time zone"/>
+                         <column name="sent_date" type="timestamp(6) without time zone"/>
+                         <column name="result_recieved_date" type="timestamp(6) without time zone"/>
+                         <column name="external_result_id" type="numeric(10,0)">
+                                 <constraints foreignKeyName="referral_external_result_fk" references="result(id)" nullable="true"/>
+                         </column>
+                         <column name="referral_reason_id" type="numeric(10,0)">
+                                 <constraints foreignKeyName="referral_reason_fk" references="referral_reason(id)" nullable="true"/>
+                         </column>
+                         <column name="referral_type_id" type="numeric(10,0)">
+                                 <constraints foreignKeyName="referral_type_fk" references="referral_type(id)" nullable="false"/>
+                         </column>
+                         <column name="requester_name" type="varchar(60)"/>
+                         <column name="lastupdated" type="timestamp(6) without time zone"/>
+           </createTable>
+           <sql>
+               COMMENT ON TABLE clinlims.referral_reason IS 'The reason a referral was made to or from the lab';
+               COMMENT ON COLUMN clinlims.referral_reason."name" IS 'The name of the reason, default value displayed to user if no display_key value';
+               COMMENT ON COLUMN clinlims.referral_reason.description IS 'Clarification of the reason';
+               COMMENT ON COLUMN clinlims.referral_reason.display_key  IS 'Key for localization files to display locale appropriate reasons';
+
+               COMMENT ON TABLE clinlims.referral_type IS 'The type of referral. i.e. a referral into the lab or a referral out of the lab';
+               COMMENT ON COLUMN clinlims.referral_type."name" IS 'The name of the type, default value displayed to user if no display_key value';
+               COMMENT ON COLUMN clinlims.referral_type.description IS 'Clarification of the type';
+               COMMENT ON COLUMN clinlims.referral_type.display_key  IS 'Key for localization files to display locale appropriate types';
+
+               COMMENT ON TABLE clinlims.referral IS 'Tracks referrals made to and from the lab.  If referrals should be attached to samples add another column for sample and edit this comment';
+               COMMENT ON COLUMN clinlims.referral.analysis_id IS  'The analysis which will be duplicated at other lab when refering out or which will be be done at this lab when referred in.  ';
+               COMMENT ON COLUMN clinlims.referral.organization_id IS  'The organization the sample was sent to or from';
+               COMMENT ON COLUMN clinlims.referral.organization_name IS  'The organiztion the sample was sent to or from, if busness rules allow them not to be in the organization table';
+               COMMENT ON COLUMN clinlims.referral.send_ready_date IS  'The date the referral out results are ready to be sent';
+               COMMENT ON COLUMN clinlims.referral.sent_date IS  'The date the referral out results are actually sent';
+               COMMENT ON COLUMN clinlims.referral.result_recieved_date IS  'If this was a referral out then the date the results were recieved from the external lab';
+               COMMENT ON COLUMN clinlims.referral.external_result_id IS  'The result which was found outside of this lab';
+               COMMENT ON COLUMN clinlims.referral.referral_reason_id IS  'Why was this referral done';
+               COMMENT ON COLUMN clinlims.referral.requester_name IS  'The name of the person who requested that the referral be done';
+           </sql>
+           <createSequence schemaName="clinlims" sequenceName="referral_reason_seq" minValue="0" startValue="1"/>
+           <createSequence schemaName="clinlims" sequenceName="referral_type_seq" minValue="0" startValue="1"/>
+           <createSequence schemaName="clinlims" sequenceName="referral_seq" minValue="0" startValue="1"/>
+           <insert schemaName="clinlims" tableName="reference_tables">
+                   <column name="name" value="referral_reason"/>
+                   <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+                   <column name="keep_history" value="Y"/>
+                   <column name="is_hl7_encoded" value="N"/>
+                   <column name="lastupdated" value=" now() "/>
+           </insert>
+           <insert schemaName="clinlims" tableName="reference_tables">
+                   <column name="name" value="referral_type"/>
+                   <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+                   <column name="keep_history" value="Y"/>
+                   <column name="is_hl7_encoded" value="N"/>
+                   <column name="lastupdated" value=" now() "/>
+           </insert>
+           <insert schemaName="clinlims" tableName="reference_tables">
+                   <column name="name" value="referral"/>
+                   <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+                   <column name="keep_history" value="Y"/>
+                   <column name="is_hl7_encoded" value="N"/>
+                   <column name="lastupdated" value=" now() "/>
+           </insert>
+</changeSet>
+<changeSet author="paulsc" id="50">
+           <comment>Adds a analyte of 'Calculated CD4 count' and moves all cd4 count results from 'conclusion' to new analyte</comment>
+           <insert schemaName="clinlims" tableName="analyte">
+                   <column name="id" valueNumeric=" nextval( 'analyte_seq' ) "/>
+                   <column name="name" value="generated CD4 Count"/>
+                   <column name="is_active" value="Y"/>
+                   <column name="lastupdated" valueDate=" now() "/>
+           </insert>
+           <update schemaName="clinlims" tableName="result">
+                   <column name="analyte_id" valueNumeric=" (select id from clinlims.analyte where name = 'generated CD4 Count' ) "/>
+                   <where>test_result_id is NULL and result_type = 'N' and analyte_id = ( select id from clinlims.analyte where name = 'Conclusion' )</where>
+           </update>
+</changeSet>
+<changeSet author="paulsc" id="51">
+       <comment>Expands value column of site_information table to 120 chars</comment>
+       <modifyColumn schemaName="clinlims" tableName="site_information">
+               <column name="value" type="varchar(120)"/>
+       </modifyColumn>
+</changeSet>
+<changeSet author="paulsc" id="52">
+	<preConditions onFail="MARK_RAN">
+		<tableExists schemaName="clinlims" tableName="extended_accession_number"/>
+	</preConditions>
+    <comment>removes duplicate accession numbers if they exist</comment>
+    <sql>
+        delete from extended_accession_number where sample_id not in (select min(sample_id) from extended_accession_number group by accession_number );
+    </sql>
+</changeSet>
+<changeSet author="pahill" id="5">
+	<preConditions onFail="MARK_RAN">
+		<tableExists schemaName="clinlims" tableName="extended_accession_number"/>
+	</preConditions>
+    <comment>getting rid of extended accesion number table.</comment>
+    <dropView schemaName="clinlims" viewName="sampletracking"/>	
+    <modifyColumn schemaName="clinlims" tableName="sample">
+		<column name="accession_number" type="varchar(20)"/>
+    </modifyColumn>
+	<sql>UPDATE clinlims.sample SET accession_number = xan.accession_number 
+	     FROM clinlims.extended_accession_number AS xan WHERE id = xan.sample_id
+	</sql>
+   	<sql>
+		CREATE OR REPLACE VIEW sampletracking AS
+		 SELECT organizationinfo.accnum, patientinfo.patientid, organizationinfo.cliref, patientinfo.patientlastname, patientinfo.patientfirstname, patientinfo.dateofbirth, organizationinfo.orglocalabbrev AS org_local_abbrev, organizationinfo.orgname, organizationinfo.recddate, typeinfo.tosid, typeinfo.tosdesc, sourceinfo.sosid, sourceinfo.sosdesc, organizationinfo.colldate, sampleinfo.si AS sori
+		   FROM ( SELECT s.accession_number AS accnum, p.last_name AS patientlastname, p.first_name AS patientfirstname, pt.external_id AS patientid, pt.birth_date AS dateofbirth
+		           FROM sample s
+		      LEFT JOIN sample_human samphum ON s.id = samphum.samp_id
+		   LEFT JOIN patient pt ON samphum.patient_id = pt.id
+		   LEFT JOIN person p ON pt.person_id = p.id) patientinfo, ( SELECT s.accession_number AS accnum, sos.id AS sosid, sos.description AS sosdesc
+		           FROM sample s
+		      LEFT JOIN sample_item sampitem ON s.id = sampitem.samp_id
+		   LEFT JOIN source_of_sample sos ON sampitem.source_id = sos.id) sourceinfo, ( SELECT s.accession_number AS accnum, tos.id AS tosid, tos.description AS tosdesc
+		           FROM sample s
+		      LEFT JOIN sample_item sampitem ON s.id = sampitem.samp_id
+		   LEFT JOIN type_of_sample tos ON sampitem.typeosamp_id = tos.id) typeinfo, ( SELECT s.accession_number AS accnum, org.local_abbrev AS orglocalabbrev, org.name AS orgname, s.received_date AS recddate, s.collection_date AS colldate, s.client_reference AS cliref
+		           FROM sample s
+		      LEFT JOIN sample_organization samporg ON s.id = samporg.samp_id
+		   LEFT JOIN organization org ON samporg.org_id = org.id) organizationinfo, ( SELECT s.accession_number AS accnum, s.spec_or_isolate AS si
+		           FROM sample s) sampleinfo
+		  WHERE typeinfo.accnum = organizationinfo.accnum AND sourceinfo.accnum = organizationinfo.accnum AND patientinfo.accnum = organizationinfo.accnum AND sampleinfo.accnum = organizationinfo.accnum
+		  ORDER BY organizationinfo.orglocalabbrev, organizationinfo.recddate, organizationinfo.colldate, typeinfo.tosdesc, sourceinfo.sosdesc;
+		
+		ALTER TABLE sampletracking OWNER TO clinlims;
+	</sql>
+	<dropTable schemaName="clinlims" tableName="extended_accession_number"/>
+</changeSet>
+	
+<changeSet author="paulsc" id="53">
+    <comment>Adding a canceled column to referral table so we know what to do with users changing their minds</comment>
+    <addColumn schemaName="clinlims" tableName="referral">
+          <column name="canceled" type="Boolean" defaultValueBoolean="false"/>
+    </addColumn>
+</changeSet>
+
+<changeSet author="paulsc" id="54">
+    <comment>Adds a referral results table since there may be more than one result per referral</comment>
+    <createTable tableName="referral_result">
+         <column name="id" type="NUMERIC(10,0)">
+                 <constraints primaryKey="true" primaryKeyName="referral_result_pk" nullable="false"/>
+         </column>
+         <column name="referral_id" type="NUMERIC(10,0)">
+                 <constraints foreignKeyName="referral_result_referral_fk" references="referral(id)" nullable="false"/>
+         </column>
+         <column name="test_id" type="NUMERIC(10,0)">
+                 <constraints foreignKeyName="referral_result_test_fk" references="test(id)" nullable="true"/>
+         </column>
+         <column name="result_id" type="INTEGER">
+                 <constraints  foreignKeyName="referral_result_result" references="result(id)" nullable="true"/>
+         </column>
+         <column name="referral_recieve_date" type="timestamp(6) without time zone"/>
+         <column name="referral_report_date" type="timestamp(6) without time zone"/>
+         <column name="lastupdated" type="timestamp(6) without time zone"/>
+         
+    </createTable>
+    <createSequence schemaName="clinlims" sequenceName="referral_result_seq" minValue="0" startValue="1"/>
+    <insert schemaName="clinlims" tableName="reference_tables">
+                   <column name="name" value="referral_result"/>
+                   <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+                   <column name="keep_history" value="Y"/>
+                   <column name="is_hl7_encoded" value="N"/>
+                   <column name="lastupdated" value=" now() "/>
+    </insert>
+    <sql>
+     COMMENT ON TABLE clinlims.referral_result IS 'A referral may have one or more results';
+     COMMENT ON COLUMN clinlims.referral_result.referral_id IS 'The referral for which this is a result. May be one to many';
+     COMMENT ON COLUMN clinlims.referral_result.test_id IS 'The test run by the referral lab';
+     COMMENT ON COLUMN clinlims.referral_result.result_id IS 'The result returned by the referral lab';
+     COMMENT ON COLUMN clinlims.referral_result.referral_recieve_date IS 'When the sample was recieved by the referral lab';
+     COMMENT ON COLUMN clinlims.referral_result.test_id IS 'When the referral lab reported the results back';
+    </sql>
+</changeSet>
+<changeSet author="paulsc" id="55">
+     <comment>Drops the external result id from referral table.  A referral results table has been created. Add request date</comment>
+     <dropColumn schemaName="clinlims" tableName="referral" columnName="external_result_id"/>
+     <addColumn schemaName="clinlims" tableName="referral">
+        <column name="referral_request_date" type="timestamp(6) without time zone"/>
+     </addColumn>
+     <sql>
+          COMMENT on COLUMN clinlims.referral.referral_request_date IS 'The date the referral request was made';
+     </sql>
+</changeSet>
+<changeSet author="paulsc" id="56">
+     <preConditions onFail="MARK_RAN">
+          <sqlCheck expectedResult="0">
+                    select count(*) from clinlims.organization_type where short_name = 'referralLab';
+          </sqlCheck>
+     </preConditions>
+     <comment>Adding referralLab as an organization type if it does not exist</comment>
+     <insert schemaName="clinlims" tableName="organization_type">
+             <column name="id" valueNumeric=" nextval( 'organization_type_seq' ) "/>
+             <column name="short_name" value="referralLab"/>
+             <column name="description" value="An organization to which samples may be sent"/>
+             <column name="name_display_key" value="orgainzation.type.referral.lab"/>
+             <column name="lastupdated" valueDate=" now() "/>
+     </insert>
+</changeSet>
+<changeSet author="paulsc" id="57">
+     <comment>Changing the type for referral_result column result_id from integer to numeric</comment>
+     <modifyColumn schemaName="clinlims" tableName="referral_result">
+                   <column name="result_id" type="NUMERIC(10,0)"/>
+     </modifyColumn>
+</changeSet>
+<changeSet author="paulsc" id="58">
+           <comment>drops the referral recieved date column from referral_result table</comment>
+           <dropColumn schemaName="clinlims" tableName="referral_result" columnName="referral_recieve_date"/>
+</changeSet>
+<changeSet author="pahill" id="7"> 
+	<preConditions onFail="MARK_RAN">
+		<sqlCheck expectedResult="0">
+			SELECT count(*) FROM pg_attribute WHERE attrelid = (SELECT oid FROM pg_class WHERE relname = 'sample_qaevent') AND ( attname = 'authorizer' OR attname = 'section' );
+		</sqlCheck>
+	</preConditions>
+     <comment>Add section and authorization text columns to the sample_qaevent table</comment>
+     <addColumn schemaName="clinlims" tableName="sample_qaevent">
+        <column name="authorizer" type="varchar(40)"/>
+        <column name="section" type="varchar(40)"/>
+     </addColumn>
+     <sql>
+          COMMENT on COLUMN clinlims.sample_qaevent.authorizer IS 'string describing what authorizes this event: lab manager, doctor name or other identifier.';
+          COMMENT on COLUMN clinlims.sample_qaevent.section IS 'a description of which section (department, bench etc.) created the Sample QA Event.';
+     </sql>
+</changeSet>
+<changeSet author="paulsc" id="59">
+     <comment>Fix for accidental removal of id number</comment>
+     <delete schemaName="clinlims" tableName="databasechangelog">
+             <where>id = ' '</where>
+     </delete>
+</changeSet>
+<changeSet author="paulsc" id="60">
+     <comment>Add default for minnesota only value in orginaztion table</comment>
+     <sql>
+          ALTER TABLE clinlims.organization ALTER COLUMN mls_sentinel_lab_flag SET DEFAULT 'N';
+     </sql>
+</changeSet>
+<changeSet author="paulsc" id="61">
+           <comment>Adds a test result type of M (for multi select )</comment>
+           <insert schemaName="clinlims" tableName="type_of_test_result">
+                   <column name="id" valueNumeric=" nextval( 'type_of_test_result_seq' ) "/>
+                   <column name="test_result_type" value="M"/>
+                   <column name="description" value="Multiselect"/>
+                   <column name="lastupdated" valueDate=" now() "/>
+                   <column name="hl7_value" value="TX"/>
+           </insert>
+</changeSet>
+
+<changeSet author="paulsc" id="62">
+           <comment>Adds a min and max normal range to result table</comment>
+           <addColumn schemaName="clinlims" tableName="result">
+                    <column name="min_normal" type="double precision"/>
+                    <column name="max_normal" type="double precision"/>
+           </addColumn>
+           <sql>
+               COMMENT on COLUMN clinlims.result.min_normal IS 'The min normal value for this result. (May vary by patient sex and age)';
+               COMMENT on COLUMN clinlims.result.max_normal IS 'The max normal value for this result. (May vary by patient sex and age)';
+           </sql>
+
+</changeSet>
+<changeSet author="paulsc" id="64">
+           <preConditions onFail="MARK_RAN">
+                          <columnExists schemaName="clinlims" columnName="hl7_transmission_code" tableName="test"/>
+           </preConditions>
+           <comment>Removes hl7_transmission_code column from test table if it exists</comment>
+           <dropColumn schemaName="clinlims" tableName="test" columnName="hl7_transmission_code"/>
+</changeSet>
+<changeSet author="paulsc" id="65">
+           <comment>Adds tables to support data exchange with other organizations</comment>
+           <createSequence schemaName="clinlims" sequenceName="hl7_encoding_type_seq" incrementBy="1" minValue="1"/>
+           <createTable schemaName="clinlims" tableName="hl7_encoding_type"  >
+                        <column name="id" type="numeric(10,0)">
+                                <constraints primaryKey="true" primaryKeyName="hl7_encoding_type_pk" nullable="false"/>
+                        </column>
+                        <column name="schema_name" type="varchar(32)">
+                                <constraints nullable="false"/>
+                        </column>
+                        <column name="lastupdated" type="timestamp(6)"/>
+           </createTable>
+           <createTable schemaName="clinlims" tableName="test_hl7_code">
+                        <column name="test_id" type="numeric(10,0)">
+                                <constraints primaryKey="true"
+                                             primaryKeyName="test_hl7_code_pk"
+                                             foreignKeyName="test_hl7_test_id_fk"
+                                             references="test(id)" />
+                        </column>
+                        <column name="encoding_type_id" type="numeric(10,0)">
+                                <constraints primaryKey="true"
+                                             primaryKeyName="test_hl7_code_pk"
+                                             foreignKeyName="test_hl7_encoding_id_fk"
+                                             references="hl7_encoding_type(id)" />
+                        </column>
+                        <column name="code" type="varchar(20)">
+                                <constraints nullable="false"/>
+                        </column>
+                        <column name="lastupdated" type="timestamp(6)"/>
+           </createTable>
+           <createTable schemaName="clinlims" tableName="org_hl7_encoding_type">
+                        <column name="organization_id" type="numeric(10,0)">
+                                <constraints primaryKey="true"
+                                             primaryKeyName="org_hl7_pk"
+                                             foreignKeyName="org_hl7_org_id_fk"
+                                             references="organization(id)" />
+                        </column>
+                        <column name="encoding_type_id" type="numeric(10,0)">
+                                <constraints primaryKey="true"
+                                             primaryKeyName="org_hl7_pk"
+                                             foreignKeyName="org_hl7_encoding_id_fk"
+                                             references="hl7_encoding_type(id)" />
+                        </column>
+                        <column name="lastupdated" type="timestamp(6)"/>
+           </createTable>
+           <sql>
+                COMMENT on TABLE clinlims.hl7_encoding_type is 'The names of the encoding schems supported (SNOMWD, LOINC etc)';
+                COMMENT on TABLE clinlims.test_hl7_code is 'For a given test and schema it gives the encoding';
+                COMMENT on COLUMN clinlims.test_hl7_code.test_id is 'The test for which the coding supports. FK to test table.';
+                COMMENT on COLUMN clinlims.test_hl7_code.encoding_type_id is 'The encoding type id of the code. FK to hl7_encoding_type table';
+                COMMENT on COLUMN clinlims.test_hl7_code.code is 'The actual code for the test in the given schema';
+                COMMENT on TABLE clinlims.org_hl7_encoding_type is 'mapping table to identify which organization uses which hly encoding schema';
+           </sql>
+</changeSet>
+<changeSet author="paulsc" id="66">
+           <comment>Adds a dictionary category for initial sample condition</comment>
+           <insert schemaName="clinlims" tableName="dictionary_category">
+                   <column name="id" valueNumeric=" nextval( 'dictionary_category_seq' ) "/>
+                   <column name="description" value="specimen reception condition"/>
+                   <column name="lastupdated" value=" now() "/>
+                   <column name="local_abbrev" value="reciptCond"/>
+                   <column name="name" value="specimen reception condition"/>
+           </insert>
+</changeSet>
+<changeSet author="paulsc" id="67">
+           <comment>droping unused result_context table</comment>
+           <dropTable schemaName="clinlims" tableName="result_context" cascadeConstraints="true"/>
+</changeSet>
+<changeSet author="paulsc" id="68">
+           <comment>Addes referring site as an org type</comment>
+           <insert schemaName="clinlims" tableName="organization_type">
+                   <column name="id" valueNumeric=" nextval( 'organization_type_seq' ) "/>
+                   <column name="short_name" value="referring clinic"/>
+                   <column name="description" value="Name of org who can order lab tests"/>
+                   <column name="lastupdated" value=" now() "/>
+           </insert>
+</changeSet>
+<changeSet author="nixonl" id="37" context="CDIRetroCI,ciLNSP">
+           <comment>Remove unused org types from retroCI and  CI LNSP</comment>
+           <delete schemaName="clinlims" tableName="organization_organization_type">
+                   <where>org_type_id in ( select id from organization_type where short_name='referring clinic' or short_name='referralLab' )</where>
+           </delete>
+</changeSet>
+<changeSet author="paulsc" id="71" context="CDIRetroCI,ciLNSP">
+           <comment>Remove unused org types from retroCI and  CI LNSP</comment>
+           <delete schemaName="clinlims" tableName="organization_type">
+                   <where>short_name='referring clinic' or short_name='referralLab'</where>
+           </delete>
+</changeSet>
+<changeSet author="paulsc" id="69">
+           <comment>widening the name column of the organization table to 80 char</comment>
+           <dropView schemaName="clinlims" viewName="sampletracking"/>
+           <modifyColumn schemaName="clinlims" tableName="organization">
+                         <column name="name" type="varchar(80)">
+                                 <constraints nullable="false"/>
+                         </column>
+           </modifyColumn>
+           <sql>
+           CREATE OR REPLACE VIEW sampletracking AS
+ SELECT organizationinfo.accnum, patientinfo.patientid, organizationinfo.cliref, patientinfo.patientlastname, patientinfo.patientfirstname, patientinfo.dateofbirth, organizationinfo.orglocalabbrev AS org_local_abbrev, organizationinfo.orgname, organizationinfo.recddate, typeinfo.tosid, typeinfo.tosdesc, sourceinfo.sosid, sourceinfo.sosdesc, organizationinfo.colldate, sampleinfo.si AS sori
+   FROM ( SELECT s.accession_number AS accnum, p.last_name AS patientlastname, p.first_name AS patientfirstname, pt.external_id AS patientid, pt.birth_date AS dateofbirth
+           FROM sample s
+      LEFT JOIN sample_human samphum ON s.id = samphum.samp_id
+   LEFT JOIN patient pt ON samphum.patient_id = pt.id
+   LEFT JOIN person p ON pt.person_id = p.id) patientinfo, ( SELECT s.accession_number AS accnum, sos.id AS sosid, sos.description AS sosdesc
+           FROM sample s
+      LEFT JOIN sample_item sampitem ON s.id = sampitem.samp_id
+   LEFT JOIN source_of_sample sos ON sampitem.source_id = sos.id) sourceinfo, ( SELECT s.accession_number AS accnum, tos.id AS tosid, tos.description AS tosdesc
+           FROM sample s
+      LEFT JOIN sample_item sampitem ON s.id = sampitem.samp_id
+   LEFT JOIN type_of_sample tos ON sampitem.typeosamp_id = tos.id) typeinfo, ( SELECT s.accession_number AS accnum, org.local_abbrev AS orglocalabbrev, org.name AS orgname, s.received_date AS recddate, s.collection_date AS colldate, s.client_reference AS cliref
+           FROM sample s
+      LEFT JOIN sample_organization samporg ON s.id = samporg.samp_id
+   LEFT JOIN organization org ON samporg.org_id = org.id) organizationinfo, ( SELECT s.accession_number AS accnum, s.spec_or_isolate AS si
+           FROM sample s) sampleinfo
+  WHERE typeinfo.accnum::text = organizationinfo.accnum::text AND sourceinfo.accnum::text = organizationinfo.accnum::text AND patientinfo.accnum::text = organizationinfo.accnum::text AND sampleinfo.accnum::text = organizationinfo.accnum::text
+  ORDER BY organizationinfo.orglocalabbrev, organizationinfo.recddate, organizationinfo.colldate, typeinfo.tosdesc, sourceinfo.sosdesc;
+
+ALTER TABLE sampletracking OWNER TO clinlims;
+           </sql>
+</changeSet>
+<changeSet author="paulsc" id="70">
+           <comment>adds a sample_id column to observbation history</comment>
+           <addColumn schemaName="clinlims" tableName="observation_history">
+                      <column name="sample_item_id" type="numeric(10,0)">
+                              <constraints nullable="true" foreignKeyName="observation_hist_sample_item_fk" references="sample_item(id)"/>
+                      </column>
+           </addColumn>
+           <sql>
+           COMMENT ON COLUMN clinlims.observation_history.sample_item_id IS 'Optional refereence to sample item';
+           </sql>
+</changeSet>
+<changeSet author="paulsc" id="72">
+           <comment>Adds a sequence for requester_type</comment>
+           <createSequence schemaName="clinlims" sequenceName="requester_type_seq" incrementBy="1" minValue="2"/>
+</changeSet>
+<changeSet author="paulsc" id="73">
+           <comment>Adds a column to the site information table to note if the entry should be encrypted</comment>
+           <addColumn schemaName="clinlims" tableName="site_information">
+                      <column name="encrypted" type="boolean"  defaultValueBoolean="false" />
+           </addColumn>
+           <sql>
+                COMMENT ON COLUMN clinlims.site_information.encrypted IS 'Is the value an encrypted value.  Used for passwords';
+           </sql>
+</changeSet>
+<changeSet author="paulsc" id="75">
+           <comment>Adds hl7 dictionary value table to support data exchange with other organizations</comment>
+           <createTable schemaName="clinlims" tableName="dictionary_hl7_code">
+                        <column name="dictionary_id" type="numeric(10,0)">
+                                <constraints primaryKey="true"
+                                             primaryKeyName="dictionary_hl7_code_pk"
+                                             foreignKeyName="dictionary_hl7_dictionary_id_fk"
+                                             references="dictionary(id)" />
+                        </column>
+                        <column name="encoding_type_id" type="numeric(10,0)">
+                                <constraints primaryKey="true"
+                                             primaryKeyName="dictionary_hl7_code_pk"
+                                             foreignKeyName="dictionary_hl7_encoding_id_fk"
+                                             references="hl7_encoding_type(id)" />
+                        </column>
+                        <column name="code" type="varchar(20)">
+                                <constraints nullable="false"/>
+                        </column>
+                        <column name="lastupdated" type="timestamp(6)"/>
+           </createTable>
+           <sql>
+                COMMENT on TABLE clinlims.dictionary_hl7_code is 'For a given dictionary value and schema it gives the encoding';
+                COMMENT on COLUMN clinlims.dictionary_hl7_code.dictionary_id is 'The test for which the coding supports. FK to test table.';
+                COMMENT on COLUMN clinlims.dictionary_hl7_code.encoding_type_id is 'The encoding type id of the code. FK to hl7_encoding_type table';
+                COMMENT on COLUMN clinlims.dictionary_hl7_code.code is 'The actual code for the test in the given schema';
+           </sql>
+</changeSet>
+<changeSet author="paulsc" id="76">
+           <comment>Adds the hl7 related tables to the history table</comment>
+           <insert schemaName="clinlims" tableName="reference_tables">
+                   <column name="name" value="org_hl7_encoding_type"/>
+                   <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+                   <column name="keep_history" value="Y"/>
+                   <column name="is_hl7_encoded" value="N"/>
+                   <column name="lastupdated" value=" now() "/>
+           </insert>
+           <insert schemaName="clinlims" tableName="reference_tables">
+                   <column name="name" value="hl7_encoding_type"/>
+                   <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+                   <column name="keep_history" value="Y"/>
+                   <column name="is_hl7_encoded" value="N"/>
+                   <column name="lastupdated" value=" now() "/>
+           </insert>
+           <insert schemaName="clinlims" tableName="reference_tables">
+                   <column name="name" value="test_hl7_code"/>
+                   <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+                   <column name="keep_history" value="Y"/>
+                   <column name="is_hl7_encoded" value="N"/>
+                   <column name="lastupdated" value=" now() "/>
+           </insert>
+           <insert schemaName="clinlims" tableName="reference_tables">
+                   <column name="name" value="dictionary_hl7_code"/>
+                   <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+                   <column name="keep_history" value="Y"/>
+                   <column name="is_hl7_encoded" value="N"/>
+                   <column name="lastupdated" value=" now() "/>
+           </insert>
+</changeSet>
+<changeSet author="paulsc" id="77">
+           <comment>Adds referral in as a analysis status type</comment>
+           <insert tableName="status_of_sample" schemaName="clinlims">
+                   <column name="id" valueNumeric=" (nextVal('status_of_sample_seq')) "/>
+                   <column name="description" value="test has been done at an outside lab and then referred to this lab"/>
+                   <column name="code" valueNumeric="1"/>
+                   <column name="status_type" value="ANALYSIS"/>
+                   <column name="lastupdated" valueDate=" now() "/>
+                   <column name="name" value="referred in"/>
+                   <column name="display_key" value="status.test.referred.in"/>
+           </insert>
+</changeSet>
+<changeSet author="paulsc" id="78">
+           <comment>Adding external_id and collection date to sampleItem</comment>
+           <addColumn schemaName="clinlims" tableName="sample_item">
+                      <column name="external_id" type="varchar(20)"/>
+                      <column name="collection_date" type="timestamp"/>
+           </addColumn>
+           <sql>
+                COMMENT ON COLUMN clinlims.sample_item.external_id IS 'An external id that may have been attached to the sample item before it came to the lab';
+                COMMENT ON COLUMN clinlims.sample_item.collection_date IS 'The date this sample_item was collected or seperated from other part of sample';
+           </sql>
+</changeSet>
+<changeSet author="paulsc" id="79">
+           <comment>Adds an address part table</comment>
+           <createTable schemaName="clinlims" tableName="address_part">
+                        <column name="id" type="NUMERIC(10)">
+                                <constraints primaryKey="true" primaryKeyName="address_part_pk" nullable="false"/>
+                        </column>
+                        <column name="part_name" type="varchar(20)">
+                                <constraints nullable="false" unique="true"/>
+                        </column>
+                        <column name="display_order" type="numeric(4)"/>
+                        <column name="display_key" type="varchar(20)"/>
+           </createTable>
+           <createSequence schemaName="clinlims" sequenceName="address_part_seq"/>
+           <createTable schemaName="clinlims" tableName="person_address">
+                        <column name="person_id" type="NUMERIC(10)">
+                                <constraints primaryKey="true"
+                                             primaryKeyName="person_address_pk"
+                                             foreignKeyName="person_address_person_fk"
+                                             references="person(id)" />
+                        </column>
+                        <column name="address_part_id" type="NUMERIC(10)">
+                                <constraints primaryKey="true"
+                                             primaryKeyName="person_address_pk"
+                                             foreignKeyName="person_address_address_fk"
+                                             references="address_part(id)" />
+                        </column>
+                        <column name="type" type="char(1)" defaultValue="T"/>
+                        <column name="value" type="varchar(120)"/>
+           </createTable>
+           <createTable schemaName="clinlims" tableName="organization_address">
+                        <column name="organization_id" type="NUMERIC(10)">
+                                <constraints primaryKey="true"
+                                             primaryKeyName="organization_address_pk"
+                                             foreignKeyName="organization_address_organization_fk"
+                                             references="organization(id)" />
+                        </column>
+                        <column name="address_part_id" type="NUMERIC(10)">
+                                <constraints primaryKey="true"
+                                             primaryKeyName="organization_address_pk"
+                                             foreignKeyName="organization_address_address_fk"
+                                             references="address_part(id)" />
+                        </column>
+                        <column name="type" type="char(1)" defaultValue="T"/>
+                        <column name="value" type="varchar(120)"/>
+           </createTable>
+           <sql>
+                comment on table clinlims.address_part is 'Holds the different parts of an address';
+                comment on column clinlims.address_part.id is 'Unique id genereated from address_part seq';
+                comment on column clinlims.address_part.part_name is 'What part of the address is this, street, commune state etc.';
+                comment on column clinlims.address_part.display_order is 'The order in which they are listed in the standardard address format';
+                comment on column clinlims.address_part.display_key is 'The display key for localization';
+                
+                comment on table clinlims.person_address is 'Join table between address parts and a person';
+                comment on column clinlims.person_address.person_id is 'The id of the person who this address is attached to';
+                comment on column clinlims.person_address.address_part_id is 'The id of the address part for which we have a value';
+                comment on column clinlims.person_address.type is 'The type of the value, either D for dictionary or T for text';
+                comment on column clinlims.person_address.value is 'The actual value for this part of the address';
+                
+                comment on table clinlims.organization_address is 'Join table between address parts and an organization';
+                comment on column clinlims.organization_address.organization_id is 'The id of the organization who this address is attached to';
+                comment on column clinlims.organization_address.address_part_id is 'The id of the address part for which we have a value';
+                comment on column clinlims.organization_address.type is 'The type of the value, either D for dictionary or T for text';
+                comment on column clinlims.organization_address.value is 'The actual value for this part of the address';
+           </sql>
+</changeSet>
+<changeSet author="paulsc" id="80">
+           <comment>Drops all of the tables for OpenReports</comment>
+           <sql>
+                drop table clinlims.report,
+                         clinlims.report_alert,
+                         clinlims.report_chart,
+                         clinlims.report_datasource,
+                         clinlims.report_delivery_log,
+                         clinlims.report_export_options,
+                         clinlims.report_group,
+                         clinlims.report_group_map,
+                         clinlims.report_log,
+                         clinlims.report_parameter,
+                         clinlims.report_parameter_map,
+                         clinlims.report_user cascade;
+           </sql>
+</changeSet>
+<changeSet author="paulsc" id="81">
+           <comment>Inserts the address tables into the reference table</comment>
+           <insert schemaName="clinlims" tableName="reference_tables">
+                   <column name="name" value="address_part"/>
+                   <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+                   <column name="keep_history" value="Y"/>
+                   <column name="is_hl7_encoded" value="N"/>
+                   <column name="lastupdated" value=" now() "/>
+           </insert>
+           <insert schemaName="clinlims" tableName="reference_tables">
+                   <column name="name" value="person_address"/>
+                   <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+                   <column name="keep_history" value="Y"/>
+                   <column name="is_hl7_encoded" value="N"/>
+                   <column name="lastupdated" value=" now() "/>
+           </insert>
+           <insert schemaName="clinlims" tableName="reference_tables">
+                   <column name="name" value="organization_address"/>
+                   <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+                   <column name="keep_history" value="Y"/>
+                   <column name="is_hl7_encoded" value="N"/>
+                   <column name="lastupdated" value=" now() "/>
+           </insert>
+</changeSet>
+<changeSet author="paulsc" id="82">
+           <comment>Drops the organization_contact table and then re-adds it with fewer columns</comment>
+           <dropTable schemaName="clinlims" tableName="organization_contact_reporting"/>
+           <dropTable schemaName="clinlims" tableName="organization_contact"/>
+           <createTable schemaName="clinlims" tableName="organization_contact">
+                        <column name="id" type="NUMERIC(10,0)">
+                                <constraints primaryKey="true" primaryKeyName="org_contact_pk"/>
+                        </column>
+                        <column name="organization_id" type="NUMERIC(10,0)">
+                                <constraints foreignKeyName="org_contact_org_fk" references="organization(id)" nullable="false"/>
+                        </column>
+                        <column name="person_id" type="NUMERIC(10,0)">
+                                <constraints foreignKeyName="org_contact_person_fk" references="person(id)" nullable="false"/>
+                        </column>
+                        <column name="position" type="varchar(32)"/>
+           </createTable>
+           <insert schemaName="clinlims" tableName="reference_tables">
+                   <column name="name" value="organization_contact"/>
+                   <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+                   <column name="keep_history" value="Y"/>
+                   <column name="is_hl7_encoded" value="N"/>
+                   <column name="lastupdated" value=" now() "/>
+           </insert>
+           <createSequence schemaName="clinlims" sequenceName="organization_contact_seq"/>
+           <sql>
+                COMMENT ON TABLE clinlims.organization_contact is 'A join table between organizations and persons';
+                COMMENT ON COLUMN clinlims.organization_contact.id is 'Unique key for each row';
+                COMMENT ON COLUMN clinlims.organization_contact.organization_id is 'The id of the organization being referred to';
+                COMMENT ON COLUMN clinlims.organization_contact.person_id is 'The id of the person being referred to';
+                COMMENT ON COLUMN clinlims.organization_contact.position is 'The position of the person within the organization';
+           </sql>
+</changeSet>
+<changeSet author="paulsc" id="83">
+           <comment>removes duplicate entries in sampletype_test table</comment>
+           <delete schemaName="clinlims" tableName="sampletype_test">
+                   <where>
+                         id not in (select min(id) from clinlims.sampletype_test group by sample_type_id, test_id)
+                   </where>
+           </delete>
+</changeSet>
+<changeSet author="paulsc" id="84" runOnChange="true">
+           <comment>Widens the name of the 'name' column of the test table and then copies the description over</comment>
+           <modifyColumn schemaName="clinlims" tableName="test">
+                         <column name="name" type="varchar(60)"/>
+           </modifyColumn>
+           <sql>update clinlims.test set name = description where name is null;</sql>
+</changeSet>
+<changeSet author="paulsc" id="88">
+           <preConditions onFail="MARK_RAN">
+                          <sqlCheck expectedResult="0">
+                          select count(*) from clinlims.site_information where name='allowLanguageChange'
+                          </sqlCheck>
+           </preConditions>
+           <comment>Adds allowLanguageChange to site_information</comment>
+           <insert schemaName="clinlims" tableName="site_information">
+                   <column name="id" valueNumeric=" nextval( 'site_information_seq' ) "/>
+                   <column name="name" value="allowLanguageChange"/>
+                   <column name="lastupdated" valueDate=" now() "/>
+                   <column name="description" value="Allows the user to change the language at login"/>
+                   <column name="value" value="false"/>
+           </insert>
+</changeSet>
+<changeSet author="pauls" id="89">
+  <comment>Adds LOINC and SNOMED as HL7 encoding types</comment>
+  <insert schemaName="clinlims" tableName="hl7_encoding_type">
+    <column name="id" valueNumeric=" nextval( 'hl7_encoding_type_seq' ) "/>
+    <column name="schema_name" value="LOINC"/>
+    <column name="lastupdated" valueDate= " now() " />
+  </insert>
+  <insert schemaName="clinlims" tableName="hl7_encoding_type">
+    <column name="id" valueNumeric=" nextval( 'hl7_encoding_type_seq' ) "/>
+    <column name="schema_name" value="SNOMED"/>
+    <column name="lastupdated" valueDate= " now() " />
+  </insert>
+</changeSet>
+
+<changeSet author="paulsc" id="90">
+<comment>Adds a site information domain table</comment>
+<createTable schemaName="clinlims" tableName="site_information_domain">
+  <column name="id" type="NUMERIC(10,0)">
+    <constraints nullable="false"/>
+  </column>
+  <column name="name" type="VARCHAR(20)">
+    <constraints nullable="false"/>
+  </column>
+  <column name="description" type="VARCHAR(40)">
+    <constraints nullable="true"/>
+  </column>
+</createTable>
+<addPrimaryKey tableName="site_information_domain" constraintName="site_information_domain_pk" columnNames="id"/>
+<sql>
+     COMMENT ON TABLE clinlims.site_information_domain IS 'Marks the domains to which site information belongs.  Intended use is administration pages';
+</sql>
+</changeSet>
+<changeSet author="paulsc" id="95"  >
+           <comment>Adds the sequence and entry in in reference table for site_information_domain</comment>
+           <createSequence schemaName="clinlims" sequenceName="site_information_domain_seq"/>
+           <insert schemaName="clinlims" tableName="reference_tables">
+                   <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+                   <column name="name" value="SITE_INFORMATION_DOMAIN"/>
+                   <column name="keep_history" value="Y"/>
+                   <column name="is_hl7_encoded" value="N"/>
+                   <column name="lastupdated" valueDate=" now() "/>
+           </insert>
+</changeSet>
+<changeSet author="paulsc" id="91">
+           <comment>Adds column to site_information table to tag them with the site information domain</comment>
+           <addColumn schemaName="clinlims" tableName="site_information">
+                      <column name="domain_id" type="numeric(10,0)">
+                              <constraints foreignKeyName="site_domain_fk" references="clinlims.site_information_domain(id)" nullable="true"/>
+                      </column>
+           </addColumn>
+
+</changeSet>
+<changeSet author="paulsc" id="93">
+           <comment>Widening the description column in site_information</comment>
+           <modifyColumn schemaName="clinlims" tableName="site_information_domain">
+                         <column name="description" type="varchar(120)"/>
+           </modifyColumn>
+</changeSet>
+<changeSet author="paulsc" id="92">
+           <comment>fixed miss-entered units of measure</comment>
+           <update schemaName="clinlims" tableName="unit_of_measure">
+                   <column name="name" value="10^3/µl"  />
+                   <column name="description" value="10^3/µl"/>
+                   <where>name = '103/µl'</where>
+           </update>
+           <update schemaName="clinlims" tableName="unit_of_measure">
+                   <column name="name" value="10^6/µl"  />
+                   <column name="description" value="10^6/µl"/>
+                   <where>name = '106/µl'</where>
+           </update>
+</changeSet>
+<changeSet author="paulsc" id="94">
+           <comment>Adds menu table</comment>
+           <createTable schemaName="clinlims" tableName="menu">
+                        <column name="id" type="numeric(10,0)">
+                                <constraints primaryKey="true"/>
+                        </column>
+                        <column name="parent_id" type="numeric(10,0)">
+                                <constraints foreignKeyName="menu_parent_fk" references="clinlims.menu(id)"/>
+                        </column>
+                        <column name="presentation_order" type="numeric"/>
+                        <column name="element_id" type="varchar(32)">
+                                <constraints nullable="false" unique="true"/>
+                        </column>
+                        <column name="action_url" type="varchar(120)"/>
+                        <column name="click_action" type="varchar(120)"/>
+                        <column name="display_key" type="varchar(60)"/>
+                        <column name="tool_tip_key" type="varchar(60)"/>
+           </createTable>
+           <sql>
+           COMMENT ON TABLE clinlims.menu IS 'Table for menuing system';
+           COMMENT ON COLUMN clinlims.menu.id IS 'primary key';
+           COMMENT ON COLUMN clinlims.menu.parent_id IS 'If this is a submenu then the parent menu id';
+           COMMENT ON COLUMN clinlims.menu.presentation_order IS 'For top level menus the order across the page for sub menu the order in the popup menu.  If there is a collision then the order is alphebetical';
+           COMMENT ON COLUMN clinlims.menu.element_id IS 'The element id in the context of HTML.';
+           COMMENT ON COLUMN clinlims.menu.action_url IS 'If clicking on the element moves to a new page, the url of that page';
+           COMMENT ON COLUMN clinlims.menu.click_action IS 'If clicking on the element calls javascript then the javascript call';
+           COMMENT ON COLUMN clinlims.menu.display_key IS 'The message key for what will be displayed in the menu';
+           COMMENT ON COLUMN clinlims.menu.tool_tip_key IS 'The message key for the tool-tip';
+           </sql>
+           <createSequence schemaName="clinlims" sequenceName="menu_seq"/>
+           <insert schemaName="clinlims" tableName="reference_tables">
+                   <column name="name" value="MENU"/>
+                   <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+                   <column name="keep_history" value="Y"/>
+                   <column name="is_hl7_encoded" value="N"/>
+                   <column name="lastupdated" value=" now() "/>
+           </insert>
+</changeSet>
+<changeSet author="paulsc" id="96">
+           <comment>Adds "new_window" column to the menu table</comment>
+           <addColumn schemaName="clinlims" tableName="menu">
+                      <column name="new_window" type="boolean" defaultValueBoolean="false"/>
+           </addColumn>
+           <sql>
+                COMMENT ON COLUMN clinlims.menu.new_window IS 'If true the menu action will be done in a new window'
+           </sql>
+</changeSet>
+<changeSet author="paulsc" id="97">
+           <comment>Adds a table for quartz cron jobs</comment>
+           <createTable schemaName="clinlims" tableName="quartz_cron_scheduler">
+                        <column name="id"  type="numeric(10,0)" >
+                                <constraints primaryKey="true" primaryKeyName="cron_scheduler_pk"/>
+                        </column>
+                        <column name="cron_statement" type="varchar(32)" defaultValue="never">
+                                <constraints nullable="false"/>
+                        </column>
+                        <column name="last_run" type="timestamp"/>
+                        <column name="active" type="boolean" defaultValueBoolean="true"/>
+                        <column name="run_if_past" type="boolean" defaultValueBoolean="true"/>
+                        <column name="name" type="varchar(40)"/>
+                        <column name="job_name" type="varchar(60)">
+                                <constraints nullable="false"/>
+                        </column>
+                        <column name="display_key" type="varchar(60)"/>
+                        <column name="description_key" type="varchar(60)"/>
+           </createTable>
+           <sql>
+                COMMENT ON TABLE clinlims.quartz_cron_scheduler IS 'Sets up the quartz scheduler for cron jobs';
+                COMMENT ON COLUMN clinlims.quartz_cron_scheduler.id IS 'Id for this schedule';
+                COMMENT ON COLUMN clinlims.quartz_cron_scheduler.cron_statement IS 'The cron statement for when the job should run. N.B. the default is not a valid cron expression';
+                COMMENT ON COLUMN clinlims.quartz_cron_scheduler.last_run IS 'The last time this job was run';
+                COMMENT ON COLUMN clinlims.quartz_cron_scheduler.active IS 'True if the schedule is active, false if it is suspended';
+                COMMENT ON COLUMN clinlims.quartz_cron_scheduler.run_if_past IS 'True if the job should be run if the application is started after the run time and it has not run yet that day';
+                COMMENT ON COLUMN clinlims.quartz_cron_scheduler.name IS 'The name for this job';
+                COMMENT ON COLUMN clinlims.quartz_cron_scheduler.job_name IS 'The internal job name, should not be editible by end user';
+                COMMENT ON COLUMN clinlims.quartz_cron_scheduler.display_key IS 'The localized name for this job';
+           </sql>
+           <createSequence schemaName="clinlims" sequenceName="quartz_cron_scheduler_seq"/>
+           <insert schemaName="clinlims" tableName="reference_tables">
+                   <column name="name" value="QUARTZ_CRON_SCHEDULER"/>
+                   <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+                   <column name="keep_history" value="Y"/>
+                   <column name="is_hl7_encoded" value="N"/>
+                   <column name="lastupdated" value=" now() "/>
+           </insert>
+</changeSet>
+<changeSet author="paulsc" id="98">
+           <comment>Adds agregation schedule to quartz_cron_scheduler</comment>
+           <insert schemaName="clinlims" tableName="quartz_cron_scheduler">
+                        <column name="id" valueNumeric=" nextval( 'quartz_cron_scheduler_seq' ) "/>
+                        <column name="active" type="boolean" valueBoolean="false"/>
+                        <column name="name" value="send site indicators"/>
+                        <column name="job_name" value="sendSiteIndicators"/>
+                        <column name="display_key" value="schedule.name.sendSiteIndicators"/>
+                        <column name="description_key" value="schedule.description.sendSiteIndicators"/>
+           </insert>
+           <insert schemaName="clinlims" tableName="quartz_cron_scheduler">
+                        <column name="id" valueNumeric=" nextval( 'quartz_cron_scheduler_seq' ) "/>
+                        <column name="active" type="boolean" valueBoolean="false"/>
+                        <column name="name" value="gather site indicators"/>
+                        <column name="job_name" value="gatherSiteIndicators"/>
+                        <column name="display_key" value="schedule.name.gatherSiteIndicators"/>
+                        <column name="description_key" value="schedule.description.gatherSiteIndicators"/>
+           </insert>
+</changeSet>
+<changeSet author="paulsc" id="99">
+           <comment>Widening the menu element_id column to 40 columns</comment>
+           <modifyColumn schemaName="clinlims" tableName="menu">
+                         <column name="element_id" type="varchar(40)"/>
+           </modifyColumn>
+</changeSet>
+<changeSet author="paulsc" id="100">
+           <comment>Adds report queue type table</comment>
+           <createTable schemaName="clinlims" tableName="report_queue_type">
+                        <column name="id" type="numeric(10,0)">
+                                <constraints primaryKey="true" primaryKeyName="report_queue_type_pk"/>
+                        </column>
+                        <column name="name" type="varchar(32) ">
+                                <constraints nullable="false"/>
+                        </column>
+                        <column name="description" type="varchar(60)"/>
+           </createTable>
+           <createSequence schemaName="clinlims" sequenceName="report_queue_type_seq"/>
+           <insert schemaName="clinlims" tableName="reference_tables">
+                   <column name="name" value="REPORT_QUEUE_TYPE"/>
+                   <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+                   <column name="keep_history" value="Y"/>
+                   <column name="is_hl7_encoded" value="N"/>
+                   <column name="lastupdated" value=" now() "/>
+           </insert>
+</changeSet>
+<changeSet author="pauls" id="101">
+           <comment>Adds a table for queuing up aggregate information to other sites</comment>
+           <createTable schemaName="clinlims" tableName="report_queue">
+                        <column name="id" type="numeric(10,0)">
+                                <constraints primaryKey="true" primaryKeyName="report_queue_pk"/>
+                        </column>
+                        <column name="event_date" type="timestamp">
+                                <constraints nullable="false"/>
+                        </column>
+                        <column name="collection_date" type="timestamp">
+                                <constraints nullable="false"/>
+                        </column>
+                        <column name="sent_date" type="timestamp"/>
+                        <column name="type" type="numeric(10,0)">
+                                <constraints nullable="false" foreignKeyName="report_queue_type_fk" references="clinlims.report_queue_type(id)"/>
+                        </column>
+                        <column name="recalculate_flag" type="boolean" defaultValue="false"/>
+                        <column name="sent_flag" type="boolean" defaultValue="false"/>
+                        <column name="data" type="text"/>
+                        <column name="lastupdated" type="timestamp"/>
+           </createTable>
+           <createIndex schemaName="clinlims" tableName="report_queue" indexName="report_queue_date">
+                        <column name="event_date"/>
+           </createIndex>
+           <sql>
+           CREATE INDEX report_queue_sent_idx ON clinlims.report_queue(sent_flag) WHERE sent_flag = FALSE;
+           CREATE INDEX report_queue_recal_idx ON clinlims.report_queue(recalculate_flag) WHERE recalculate_flag = TRUE;
+           COMMENT ON TABLE clinlims.report_queue IS 'Table for holding aggregated results to be sent to an external application';
+           COMMENT ON COLUMN clinlims.report_queue.id IS 'primary key';
+           COMMENT ON COLUMN clinlims.report_queue.event_date IS 'The date for which the information was collected.  Granularity assumed to be one day';
+           COMMENT ON COLUMN clinlims.report_queue.collection_date IS 'The date on which the information was collected.';
+           COMMENT ON COLUMN clinlims.report_queue.sent_date IS 'The date which the data was successfully sent';
+           COMMENT ON COLUMN clinlims.report_queue.type IS 'The type of report this is';
+           COMMENT ON COLUMN clinlims.report_queue.recalculate_flag IS 'True if the underlying data has changed since the row was created';
+           COMMENT ON COLUMN clinlims.report_queue.sent_flag IS 'True if the underlying data has been sent.  Reset to false if sent and recalculated';
+           COMMENT ON COLUMN clinlims.report_queue.data IS 'Formated data.  May be either JASON or xml.  Many datapoints per row';
+           COMMENT ON COLUMN clinlims.report_queue.lastupdated IS 'The last time the row was updated for any reason';
+           </sql>
+           <createSequence schemaName="clinlims" sequenceName="report_queue_seq"/>
+           <insert schemaName="clinlims" tableName="reference_tables">
+                   <column name="name" value="REPORT_QUEUE"/>
+                   <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+                   <column name="keep_history" value="Y"/>
+                   <column name="is_hl7_encoded" value="N"/>
+                   <column name="lastupdated" value=" now() "/>
+           </insert>
+</changeSet>
+<changeSet author="paulsc" id="102">
+           <comment>Adds lab indicators as a report queue type</comment>
+           <insert schemaName="clinlims" tableName="report_queue_type">
+                   <column name="id" valueNumeric=" nextval( 'report_queue_type_seq' ) "/>
+                   <column name="name" value="labIndicator"/>
+                   <column name="description" value="Lab indicator reports.  Number of tests run etc"/>
+           </insert>
+</changeSet>
+<changeSet author="paulsc" id="103">
+           <comment>Renaming report queue to report_external_export</comment>
+           <renameTable schemaName="clinlims" oldTableName="report_queue" newTableName="report_external_export"/>
+</changeSet>
+<changeSet author="pauls" id="104">
+           <comment>Adds a table for receiving reports other sites</comment>
+           <createTable schemaName="clinlims" tableName="report_external_import">
+                        <column name="id" type="numeric(10,0)">
+                                <constraints primaryKey="true" primaryKeyName="report_external_import_pk"/>
+                        </column>
+                        <column name="sending_site" type="varchar(20)">
+                                <constraints nullable="false"/>
+                        </column>
+                        <column name="event_date" type="timestamp">
+                                <constraints nullable="false"/>
+                        </column>
+                        <column name="recieved_date" type="timestamp"/>
+                        <column name="type" type="varchar(32)">
+                                <constraints nullable="false"/>
+                        </column>
+                        <column name="updated_flag" type="boolean" defaultValue="false"/>
+                        <column name="data" type="text"/>
+                        <column name="lastupdated" type="timestamp"/>
+           </createTable>
+           <createIndex schemaName="clinlims" tableName="report_external_import" indexName="report_import_date">
+                        <column name="event_date"/>
+           </createIndex>
+           <sql>
+           COMMENT ON TABLE clinlims.report_external_import IS 'Table for holding aggregated results sent by an external application';
+           COMMENT ON COLUMN clinlims.report_external_import.id IS 'primary key';
+           COMMENT ON COLUMN clinlims.report_external_import.sending_site IS 'The site which is sending the info';
+           COMMENT ON COLUMN clinlims.report_external_import.event_date IS 'The date for which the information was collected.  Granularity assumed to be one day';
+           COMMENT ON COLUMN clinlims.report_external_import.recieved_date IS 'The date which the data was received';
+           COMMENT ON COLUMN clinlims.report_external_import.type IS 'The type of report this is';
+           COMMENT ON COLUMN clinlims.report_external_import.data IS 'Formated data.  May be either JASON or xml.  Many datapoints per row';
+           COMMENT ON COLUMN clinlims.report_external_import.lastupdated IS 'The last time the row was updated for any reason';
+           </sql>
+           <createSequence schemaName="clinlims" sequenceName="report_external_import_seq"/>
+           <insert schemaName="clinlims" tableName="reference_tables">
+                   <column name="name" value="REPORT_EXTERNAL_IMPORT"/>
+                   <column name="id" valueNumeric=" nextval( 'reference_tables_seq' ) "/>
+                   <column name="keep_history" value="Y"/>
+                   <column name="is_hl7_encoded" value="N"/>
+                   <column name="lastupdated" value=" now() "/>
+           </insert>
+</changeSet>
+<changeSet author="paulsc" id="105">
+           <comment>Add a entry date for analysis and backfill with complete date</comment>
+           <addColumn schemaName="clinlims" tableName="analysis">
+                      <column name="entry_date" type="timestamp"/>
+           </addColumn>
+           <update schemaName="clinlims" tableName="analysis">
+                   <column name="entry_date" valueDate="completed_date"/>
+           </update>
+           <sql>
+                COMMENT ON COLUMN clinlims.analysis.entry_date IS 'Date on which the results for this analysis was first entered';
+           </sql>
+</changeSet>
+<changeSet author="paulsc" id="106">
+           <comment>Drops the recalculate flag column from report_external_export</comment>
+           <dropColumn schemaName="clinlims" tableName="report_external_export" columnName="recalculate_flag"/>
+</changeSet>
+<changeSet author="paulsc" id="107">
+           <comment>Renames the sent_flag to send_flag and changes the default</comment>
+           <dropColumn schemaName="clinlims" tableName="report_external_export" columnName="sent_flag"/>
+           <addColumn schemaName="clinlims" tableName="report_external_export">
+                      <column name="send_flag" type="boolean" defaultValueBoolean="true"/>
+           </addColumn>
+           <sql>
+                COMMENT ON COLUMN clinlims.report_external_export.send_flag IS 'The data is ready to be sent.  It may have already been sent once';
+           </sql>
+</changeSet>
+<changeSet author="paulsc" id="108" >
+	<comment>Make the name of the non-conforming status the same for both analysis and sample</comment>
+	<update schemaName="clinlims" tableName="status_of_sample" >
+		<column name="name" value="NonConforming" />
+		<where>name = 'Non-conforming'</where>
+	</update>
+</changeSet>
+<changeSet author="paulsc" id="109" >
+	<preConditions onFail="MARK_RAN" >
+		<sqlCheck expectedResult="0" >
+			select count(*) from clinlims.status_of_sample where name = 'NonConforming' 
+		</sqlCheck>
+	</preConditions>
+	<comment>Adding NonConforming status to db which don't already have them</comment>
+	<insert schemaName="clinlims" tableName="status_of_sample" >
+		<column name="id" valueNumeric=" nextval( 'status_of_sample_seq' ) " />
+		<column name="description" value="The sample is non-conforming" />
+		<column name="code" value="1" />
+		<column name="status_type" value="SAMPLE" />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="name" value="NonConforming" />
+		<column name="display_key" value="status.sample.nonConforming" />
+	</insert>
+	<insert schemaName="clinlims" tableName="status_of_sample" >
+		<column name="id" valueNumeric=" nextval( 'status_of_sample_seq' ) " />
+		<column name="description" value="Test is for a non-conforming sample-item" />
+		<column name="code" value="1" />
+		<column name="status_type" value="ANALYSIS" />
+		<column name="lastupdated" valueDate=" now() " />
+		<column name="name" value="NonConforming" />
+		<column name="display_key" value="status.analysis.nonConforming" />
+	</insert>
+</changeSet>
+<changeSet author="paulsc" id="110" >
+	<comment>copies entered_date to collection date if collection_date is null for sample</comment>
+	<sql>
+		UPDATE clinlims.sample s1 SET collection_date =  (select entered_date from clinlims.sample s2 where s1.id = s2.id)  WHERE collection_date IS NULL;
+	</sql>
+</changeSet>
+<changeSet author="paulsc" id="111" >
+	<comment>adds an active column to system_roles</comment>
+	<addColumn schemaName="clinlims" tableName="system_role" >
+		<column name="active" type="boolean" defaultValueBoolean="true" />
+		<column name="editable" type="boolean" defaultValueBoolean="false" />
+	</addColumn>
+	<modifyColumn schemaName="clinlims" tableName="system_role" >
+		<column name="description" type="varchar(80)" />
+	</modifyColumn>
+	<sql>
+		COMMENT on COLUMN clinlims.system_role.active IS 'Is this role active for this installation';
+		COMMENT on COLUMN clinlims.system_role.editable IS 'Is this a role that can be de/activated by the user';
+	</sql>
+</changeSet>
+
+<changeSet author="paulsc" id="112" >
+	<comment>Adds a resultUpdater role</comment>
+	<insert schemaName="clinlims" tableName="system_role" >
+		<column name="id" valueNumeric=" nextval( 'system_role_seq' ) "/>
+		<column name="name" value="Results modifier"/>
+		<column name="description" value="Has permission to modify already entered results"/>
+		<column name="is_grouping_role" value="FALSE"/>
+		<column name="grouping_parent" value="NULL"/>
+		<column name="active" valueBoolean="false" />
+		<column name="editable" valueBoolean="true" />
+		<column name="display_key" value="role.result.modifier"/>	
+	</insert>
+</changeSet>
+<include file="BaseupdateFixes.xml"/>
+<include file="Schema.xml" />
+<include file="MetaData.xml" />
+<include file="System_Module.xml"/>
+<include file="HaitiCommon/HaitiCommon.xml"/>
+<include file="HaitiLNSPData.xml"/>
+<include file="HaitiData.xml"/>
+<include file="CDIRetroCIData.xml"/>
+<include file="SystemProperties.xml"/>
+<include file="menus.xml"/>
+<include file="version.xml"/>
+
+<changeSet author="paulsc" id="74" runOnChange="true"  >
+           <preConditions onFail="MARK_RAN">
+           <not>
+           <sqlCheck expectedResult="0">
+                     select count(*) from clinlims.site_information where name = 'patientSearchPassword' and encrypted = false;
+           </sqlCheck>
+           </not>
+           </preConditions>
+           <comment>Sets the iSante patient service password to encrypted.</comment>
+           <update schemaName="clinlims" tableName="site_information">
+                   <column name="encrypted" valueBoolean="true"/>
+                   <where>name = 'patientSearchPassword'</where>
+           </update>
+</changeSet>
+<changeSet author="paulsc" id="85" runAlways="true">
+           <comment>copies the description to the name column</comment>
+           <sql>update clinlims.test set name = description where name is null;</sql>
+</changeSet>
+<changeSet author="paulsc" id="86">
+           <comment>Sets the name column on the test table to non-nullable</comment>
+           <addNotNullConstraint schemaName="clinlims" tableName="test" columnName="name"/>
+</changeSet>
+<changeSet author="paulsc" id="87">
+           <comment>Adds a type column to the analyzer_results table</comment>
+           <addColumn schemaName="clinlims" tableName="analyzer_results">
+                      <column name="test_result_type" type="varchar(1)"/>
+           </addColumn>
+</changeSet>
+<changeSet author="pahill" id="8">
+	<comment>Back fill test_results column, so all tests including test with (nonranged) numeric results have defined results, not just the more complex ones.</comment>
+	<sql>
+		CREATE TABLE new_test_result (
+		    id int,
+		    test_id int,
+		    tst_rslt_type character varying(1),
+		    lastupdated timestamp(6) without time zone
+		);
+		INSERT INTO new_test_result 
+		SELECT
+			-1,
+			t.id,
+			'N',
+			now()
+		FROM 
+		    clinlims.test as t LEFT JOIN clinlims.test_result AS tr ON t.id = tr.test_id
+		WHERE 
+		  tr.id IS NULL
+		;
+		UPDATE new_test_result SET id = nextval( 'test_result_seq' );
+		INSERT INTO test_result (id, test_id, tst_rslt_type, lastupdated )
+			SELECT * FROM new_test_result;
+		DROP TABLE new_test_result;	
+	</sql>
+</changeSet>
+<changeSet author="pahill" id="9" runOnChange="true">
+   <comment>Back fill to link up all result records to their test_results, now that all tests have test_results.</comment>
+   <sql>
+		UPDATE result AS r 
+			SET test_result_id = tr.id,
+			lastupdated = now()
+		FROM analysis AS A, test AS t, test_result AS tr
+		WHERE r.test_result_id IS NULL AND r.analysis_id = a.id AND a.test_id = t.id AND t.id = tr.test_id
+	</sql>
+</changeSet>
+<changeSet author="pahill" id="10" runOnChange="true">
+   <comment>Special Case the back fill results which are 'generated CD4 Count' analytes, so that they point at the 'CD4 absolute count'
+			They currently (after the previous chage), point at the same test_results which went into the calculation, i.e. 'CD4 percentage count' 
+   </comment>
+   <sql>		
+	UPDATE result AS r 
+		SET test_result_id = ( SELECT tr.id from test_result as tr, test as t
+            WHERE t.name = 'CD4 absolute count' AND t.id = tr.test_id)
+	WHERE r.id IN (
+		SELECT  r.id FROM result AS r, analyte AS a WHERE a.name = 'generated CD4 Count' AND a.id = r.analyte_id
+	)		
+	</sql>
+</changeSet>
+
+<include file="CILNSPData.xml"/>
+<include file="OE2.7/Schema.xml"/>
+<include file="OE2.7/MetaData.xml"/>
+<include file="OE2.7/CILNSPData.xml"/>
+<include file="OE2.7/HaitiClinicalData.xml"/>
+<include file="OE2.7/HaitiLNSPData.xml"/>
+<include file="OE2.7/RetroCIData.xml"/>
+<include file="OE2.8/Schema.xml"/>
+<include file="OE2.8/MetaData.xml"/>
+<include file="OE2.8/RetroCIData.xml"/>
+<include file="OE2.8/CILNSPData.xml"/>
+<include file="OE2.8/HaitiClinicalData.xml"/>
+<include file="OE2.8/HaitiLNSPData.xml"/>
+<include file="OE2.8/CI_IPCIData.xml"/>
+<include file="OE2.8/HaitiCommonData.xml"/>
+<include file="OE2.9/Schema.xml"/>
+<include file="OE2.9/MetaData.xml"/>
+<include file="OE2.9/HaitiClinicalData.xml"/>
+<include file="OE2.9/HaitiLNSPData.xml"/>
+<include file="OE3.2/Schema.xml"/>
+<include file="OE3.2/MetaData.xml"/>
+<include file="OE3.2/HaitiLNSPData.xml"/>
+<include file="OE3.2/HaitiClinicalData.xml"/>
+<include file="OE3.2/CDIRegLabData.xml"/>
+<include file="OE3.2/RetroCIData.xml"/>
+<include file="OE3.2/CILNSPData.xml"/>
+<include file="OE3.2/CrosscuttingData.xml"/>
+</databaseChangeLog>
+
+
+
+
+
+
+
+
+
+
+
+
