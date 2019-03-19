@@ -66,7 +66,7 @@
 	src="scripts/ajaxCalls.js?ver=<%=Versioning.getBuildNumber()%>"></script>
 
 
-	
+<%--
 <bean:define id="testList" name='${form.formName}' property="testList"
 	type="java.util.List<IdValuePair>" />
 
@@ -89,7 +89,18 @@
 	type="java.util.List<java.util.List<IdValuePair>>" />
 <bean:define id="testCatBeanList" name='${form.formName}'
 	property="testCatBeanList" type="List<TestCatalogBean>" />
-
+ --%>
+ 
+<c:set var="testList" value="${form.testList}" />
+<c:set var="sampleTypeList" value="${form.sampleTypeList}" />
+<c:set var="panelList" value="${form.panelList}" />
+<c:set var="uomList" value="${form.uomList}" />
+<c:set var="resultTypeList" value="${form.resultTypeList}" />
+<c:set var="testUnitList" value="${form.labUnitList}" />
+<c:set var="ageRangeList" value="${form.ageRangeList}" />
+<c:set var="dictionaryList" value="${form.dictionaryList}" />
+<c:set var="groupedDictionaryList" value="${form.groupedDictionaryList}" />
+<c:set var="testCatBeanList" value="${form.testCatBeanList}" />
 
 <%!int testCount = 0;
 	int columnCount = 0;
@@ -100,7 +111,7 @@
 	columnCount = 0;
 	testCount = 0;
 %>
-<form id="mainForm">
+
 	<script type="text/javascript">
     if (!$jq) {
         var $jq = jQuery.noConflict();
@@ -280,7 +291,7 @@
         });
 
         if (hasError) {
-            alert('<%=StringUtil.getMessageForKey("error.all.required")%>');
+            alert('<%=StringUtil.getContextualMessageForKey("error.all.required")%>');
         } else {
             $jq(".required").each(function () {
                 var element = $jq(this);
@@ -292,7 +303,7 @@
             });
             $jq("#editButtons").hide();
             $jq("#confirmationButtons").show();
-            $jq("#action").text('<%=StringUtil.getMessageForKey("label.confirmation")%>');
+            $jq("#action").text('<%=StringUtil.getContextualMessageForKey("label.confirmation")%>');
         }
     }
 
@@ -308,7 +319,7 @@
 
         $jq("#editButtons").show();
         $jq("#confirmationButtons").hide();
-        $jq("#action").text('<%=StringUtil.getMessageForKey("label.button.edit")%>');
+        $jq("#action").text('<%=StringUtil.getContextualMessageForKey("label.button.edit")%>');
     }
 
     function cancel() {
@@ -330,7 +341,7 @@
     function savePage() {
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         var form = document.getElementById("mainForm");
-        form.action = "TestModifyUpdate.do";
+        form.action = "TestModify.do";
         form.submit();
     }
     
@@ -605,19 +616,19 @@
                 lowAge = $jq("#lowerAge_" + index).text();
                 lowAgeModifier = lowAge.charAt(lowAge.length - 1);
                 lowAgeValue = lowAge.substring(0, lowAge.length - 1);
-                lowAgeValue = lowAgeModifier == "<%=StringUtil.getMessageForKey("abbreviation.year.single")%>" ? lowAgeValue *= 12 : +lowAgeValue;
+                lowAgeValue = lowAgeModifier == "<%=StringUtil.getContextualMessageForKey("abbreviation.year.single")%>" ? lowAgeValue *= 12 : +lowAgeValue;
                 highAgeValue = +element.val();
                 if (highAgeValue != element.val()) {
-                    alert("<%=StringUtil.getMessageForKey("error.age.value")%>");
+                    alert("<%=StringUtil.getContextualMessageForKey("error.age.value")%>");
                     element.addClass("error");
                     return;
                 }
 
-                newMonthValue = monthYear == '<%=StringUtil.getMessageForKey("abbreviation.month.single")%>' ? highAgeValue : 12 * highAgeValue;
+                newMonthValue = monthYear == '<%=StringUtil.getContextualMessageForKey("abbreviation.month.single")%>' ? highAgeValue : 12 * highAgeValue;
 
                 if (newMonthValue <= lowAgeValue) {
                     element.addClass("error");
-                    alert("<%=StringUtil.getMessageForKey("error.age.begining.ending.order")%>");
+                    alert("<%=StringUtil.getContextualMessageForKey("error.age.begining.ending.order")%>");
                     return;
                 }
             }
@@ -667,10 +678,10 @@
             if (ageInMonths == "Infinity") {
                 $jq("#upperAgeSetter_" + index).val(ageInMonths);
             } else if (ageInMonths % 12 == 0) {
-                $jq("input:radio[name=time_" + index + "]").val(["<%=StringUtil.getMessageForKey("abbreviation.year.single")%>"]);
+                $jq("input:radio[name=time_" + index + "]").val(["<%=StringUtil.getContextualMessageForKey("abbreviation.year.single")%>"]);
                 $jq("#upperAgeSetter_" + index).val(ageInMonths / 12);
             } else {
-                $jq("input:radio[name=time_" + index + "]").val(["<%=StringUtil.getMessageForKey("abbreviation.month.single")%>"]);
+                $jq("input:radio[name=time_" + index + "]").val(["<%=StringUtil.getContextualMessageForKey("abbreviation.month.single")%>"]);
                 $jq("#upperAgeSetter_" + index).val(ageInMonths);
             }
             upperAgeRangeChanged(index);
@@ -706,7 +717,7 @@
         if (lowNormalValue != "-Infinity" &&
                 lowNormalValue != lowNormal.val()) {
             lowNormal.addClass("error");
-            alert("<%=StringUtil.getMessageForKey("error.low.normal.value")%>");
+            alert("<%=StringUtil.getContextualMessageForKey("error.low.normal.value")%>");
             return;
         }
 
@@ -715,7 +726,7 @@
         if (highNormalValue != "Infinity" &&
                 highNormalValue != highNormal.val()) {
             highNormal.addClass("error");
-            alert("<%=StringUtil.getMessageForKey("error.high.normal.value")%>");
+            alert("<%=StringUtil.getContextualMessageForKey("error.high.normal.value")%>");
             return;
         }
 
@@ -723,7 +734,7 @@
             if (highNormalValue <= lowNormalValue) {
                 highNormal.addClass("error");
                 lowNormal.addClass("error");
-                alert("<%=StringUtil.getMessageForKey("error.low.normal.high.normal.order")%>");
+                alert("<%=StringUtil.getContextualMessageForKey("error.low.normal.high.normal.order")%>");
                 return;
             }
         }
@@ -736,7 +747,7 @@
             if (lowGenderNormalValue != "-Infinity" &&
                     lowGenderNormalValue != lowGenderNormal.val()) {
                 lowGenderNormal.addClass("error");
-                alert("<%=StringUtil.getMessageForKey("error.low.normal.value")%>");
+                alert("<%=StringUtil.getContextualMessageForKey("error.low.normal.value")%>");
                 return;
             }
 
@@ -745,7 +756,7 @@
             if (highGenderNormalValue != "Infinity" &&
                     highGenderNormalValue != highGenderNormal.val()) {
                 highGenderNormal.addClass("error");
-                alert("<%=StringUtil.getMessageForKey("error.high.gender.value")%>");
+                alert("<%=StringUtil.getContextualMessageForKey("error.high.gender.value")%>");
                 return;
             }
 
@@ -753,7 +764,7 @@
                 if (highGenderNormalValue <= lowGenderNormalValue) {
                     highGenderNormal.addClass("error");
                     lowGenderNormal.addClass("error");
-                    alert("<%=StringUtil.getMessageForKey("error.low.normal.high.normal.order")%>");
+                    alert("<%=StringUtil.getContextualMessageForKey("error.low.normal.high.normal.order")%>");
                     return;
                 }
             }
@@ -779,26 +790,26 @@
 
         if (lowValidValue != "-Infinity" && lowNormalValue < lowValidValue) {
             lowNormal.addClass("error");
-            alert("<%=StringUtil.getMessageForKey("error.low.normal.low.valid.order")%>");
+            alert("<%=StringUtil.getContextualMessageForKey("error.low.normal.low.valid.order")%>");
             return;
         }
 
         if (highValidValue != "Infinity" && highNormalValue > highValidValue) {
             highNormal.addClass("error");
-            alert("<%=StringUtil.getMessageForKey("error.high.normal.high.valid.order")%>");
+            alert("<%=StringUtil.getContextualMessageForKey("error.high.normal.high.valid.order")%>");
             return;
         }
 
         if (checkGenderValues) {
             if (lowValidValue != "-Infinity" && lowGenderNormalValue < lowValidValue) {
                 lowGenderNormal.addClass("error");
-                alert("<%=StringUtil.getMessageForKey("error.low.normal.low.valid.order")%>");
+                alert("<%=StringUtil.getContextualMessageForKey("error.low.normal.low.valid.order")%>");
                 return;
             }
 
             if (highValidValue != "Infinity" && highGenderNormalValue > highValidValue) {
                 highGenderNormal.addClass("error");
-                alert("<%=StringUtil.getMessageForKey("error.high.normal.high.valid.order")%>");
+                alert("<%=StringUtil.getContextualMessageForKey("error.high.normal.high.valid.order")%>");
             }
         }
     }
@@ -813,7 +824,7 @@
         if (lowValidValue != "-Infinity" &&
                 lowValidValue != lowValid.val()) {
             lowValid.addClass("error");
-            alert("<%=StringUtil.getMessageForKey("error.low.valid.value")%>");
+            alert("<%=StringUtil.getContextualMessageForKey("error.low.valid.value")%>");
             return;
         }
 
@@ -822,7 +833,7 @@
         if (highValidValue != "Infinity" &&
                 highValidValue != highValid.val()) {
             highValid.addClass("error");
-            alert("<%=StringUtil.getMessageForKey("error.high.valid.value")%>");
+            alert("<%=StringUtil.getContextualMessageForKey("error.high.valid.value")%>");
             return;
         }
 
@@ -830,7 +841,7 @@
                 lowValidValue >= highValidValue) {
             highValid.addClass("error");
             lowValid.addClass("error");
-            alert("<%=StringUtil.getMessageForKey("error.low.high.valid.order")%>");
+            alert("<%=StringUtil.getContextualMessageForKey("error.low.high.valid.order")%>");
             return;
         }
 
@@ -1419,7 +1430,7 @@
 
             upperAge = defaultResultLimits[rowIndex][1][1];
             if (upperAge != "Infinity") {
-                //limit.highAgeRange = yearMonth == "<%=StringUtil.getMessageForKey("abbreviation.year.single")%>" ? (upperAge * 12).toString() : upperAge;
+                //limit.highAgeRange = yearMonth == "<%=StringUtil.getContextualMessageForKey("abbreviation.year.single")%>" ? (upperAge * 12).toString() : upperAge;
             	limit.highAgeRange = upperAge;
             } else {
                 limit.highAgeRange = "Infinity";
@@ -1464,7 +1475,7 @@
 
             upperAge = $jq("#upperAgeSetter_" + rowIndex).val();
             if (upperAge != "Infinity") {
-                limit.highAgeRange = yearMonth == "<%=StringUtil.getMessageForKey("abbreviation.year.single")%>" ? (upperAge * 12).toString() : upperAge;
+                limit.highAgeRange = yearMonth == "<%=StringUtil.getContextualMessageForKey("abbreviation.year.single")%>" ? (upperAge * 12).toString() : upperAge;
             } else {
                 limit.highAgeRange = upperAge;
             }
@@ -1507,61 +1518,86 @@
 
 </script>
 
+<style>
+table{
+  width: 100%;
+}
+td {
+  width: 25%;
+}
+</style>
+
+<form:form name="${form.formName}" 
+				   action="${form.formAction}" 
+				   modelAttribute="form" 
+				   onSubmit="return submitForm(this);" 
+				   method="${form.formMethod}"
+				   id="mainForm">
+				   
+  <%    List<IdValuePair> testUnitList = (List<IdValuePair>) pageContext.getAttribute("testUnitList"); %>
+  <%    List<IdValuePair> panelList = (List<IdValuePair>) pageContext.getAttribute("panelList"); %>
+  <%    List<IdValuePair> uomList = (List<IdValuePair>) pageContext.getAttribute("uomList"); %>
+  <%    List<IdValuePair> resultTypeList = (List<IdValuePair>) pageContext.getAttribute("resultTypeList"); %>
+  <%    List<IdValuePair> dictionaryList = (List<IdValuePair>) pageContext.getAttribute("dictionaryList"); %>
+  <%    List<IdValuePair> sampleTypeList = (List<IdValuePair>) pageContext.getAttribute("sampleTypeList"); %>
+  <%    List<IdValuePair> ageRangeList = (List<IdValuePair>) pageContext.getAttribute("ageRangeList"); %>
+  <%    List<IdValuePair> testList = (List<IdValuePair>) pageContext.getAttribute("testList"); %>
+
 	<html:hidden id="jsonWad" name='${form.formName}' property="jsonWad" />
 
 	<input type="button"
-		value="<%=StringUtil.getMessageForKey("banner.menu.administration")%>"
+		value="<%=StringUtil.getContextualMessageForKey("banner.menu.administration")%>"
 		onclick="submitAction('MasterListsPage.do');" class="textButton" />
 	&rarr; <input type="button"
-		value="<%=StringUtil.getMessageForKey("configuration.test.management")%>"
+		value="<%=StringUtil.getContextualMessageForKey("configuration.test.management")%>"
 		onclick="submitAction('TestManagementConfigMenu.do');"
 		class="textButton" />&rarr; <span class="step1"> <spring:message code="configuration.test.modify" />
 	</span> <span class="step2 notStep1BreadCrumb" id="step2BreadCrumb"
 		style="display: none"> <input type="button"
-		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
-		onclick="goBackToStep1();" class="textButton" />&rarr; <%=StringUtil.getMessageForKey("label.selectSampleType")%>
+		value="<%=StringUtil.getContextualMessageForKey("configuration.test.modify")%>"
+		onclick="goBackToStep1();" class="textButton" />&rarr; <%=StringUtil.getContextualMessageForKey("label.selectSampleType")%>
 	</span> <span id="step2Confirm notStep1BreadCrumb"
 		class="confirmationBreadCrumb" style="display: none"> <input
 		type="button"
-		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
+		value="<%=StringUtil.getContextualMessageForKey("configuration.test.modify")%>"
 		onclick="goBackToStep1();" class="textButton" />&rarr; <input
 		type="button"
-		value="<%=StringUtil.getMessageForKey("label.selectSampleType")%>"
+		value="<%=StringUtil.getContextualMessageForKey("label.selectSampleType")%>"
 		onclick="goBackToStep2();" class="textButton" />&rarr; <spring:message code="label.confirmation" />
 	</span> <span class="dictionarySelect notStep1BreadCrumb"
 		style="display: none"> <input type="button"
-		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
+		value="<%=StringUtil.getContextualMessageForKey("configuration.test.modify")%>"
 		onclick="goBackToStep1();" class="textButton" />&rarr; <input
 		type="button"
-		value="<%=StringUtil.getMessageForKey("label.selectSampleType")%>"
+		value="<%=StringUtil.getContextualMessageForKey("label.selectSampleType")%>"
 		onclick="goBackToStep2();" class="textButton" />&rarr; <spring:message code="label.select.list.values" />
 	</span> <span class="resultLimits notStep1BreadCrumb" style="display: none">
 		<input type="button"
-		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
+		value="<%=StringUtil.getContextualMessageForKey("configuration.test.modify")%>"
 		onclick="goBackToStep1();" class="textButton" />&rarr; <input
 		type="button"
-		value="<%=StringUtil.getMessageForKey("label.selectSampleType")%>"
+		value="<%=StringUtil.getContextualMessageForKey("label.selectSampleType")%>"
 		onclick="goBackToStep2();" class="textButton" />&rarr; <spring:message code="label.set.result.limits" />
 	</span> <span
 		class="selectListConfirm confirmationBreadCrumb notStep1BreadCrumb"
 		style="display: none"> <input type="button"
-		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
+		value="<%=StringUtil.getContextualMessageForKey("configuration.test.modify")%>"
 		onclick="goBackToStep1();" class="textButton" />&rarr; <input
 		type="button"
-		value="<%=StringUtil.getMessageForKey("label.selectSampleType")%>"
+		value="<%=StringUtil.getContextualMessageForKey("label.selectSampleType")%>"
 		onclick="goBackToStep2();" class="textButton" />&rarr; <input
 		type="button"
-		value="<%=StringUtil.getMessageForKey("label.select.list.values")%>"
+		value="<%=StringUtil.getContextualMessageForKey("label.select.list.values")%>"
 		onclick="goBackToStep3Dictionary();" class="textButton" />&rarr; <spring:message code="label.confirmation" />
 	</span> <span class="resultLimitsConfirm confirmationBreadCrumb"
 		style="display: none"> <input type="button"
-		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
+		value="<%=StringUtil.getContextualMessageForKey("configuration.test.modify")%>"
 		onclick="goBackToStep1();" class="textButton" />&rarr; <input
 		type="button"
-		value="<%=StringUtil.getMessageForKey("label.selectSampleType")%>"
+		value="<%=StringUtil.getContextualMessageForKey("label.selectSampleType")%>"
 		onclick="goBackToStep2();" class="textButton" />&rarr; <input
 		type="button"
-		value="<%=StringUtil.getMessageForKey("label.set.result.limits")%>"
+		value="<%=StringUtil.getContextualMessageForKey("label.set.result.limits")%>"
 		onclick="goBackToResultLimits();" class="textButton" />&rarr; <spring:message code="label.confirmation" />
 	</span>
 
@@ -1572,19 +1608,16 @@
 			<spring:message code="label.button.edit" />
 		</h1>
 
-		<h2><%=StringUtil.getMessageForKey("sample.entry.test")%>:<span
+		<h2><%=StringUtil.getContextualMessageForKey("sample.entry.test")%>:<span
 				id="testName"></span>
 		</h2>
 
-
-		<%
-			// tr section test result from testCatalog.jsp
-		%>
+	    <%    List<TestCatalogBean> testCatBeanList = (List<TestCatalogBean>) pageContext.getAttribute("testCatBeanList"); %>
 		<%
 			for (TestCatalogBean bean : testCatBeanList) {
 		%>
 		<table>
-			<tbody fTestId='<%=bean.getId()%>' 
+			<tbody  fTestId='<%=bean.getId()%>' 
 					fResultType='<%=bean.getResultType()%>'
 					fPanel='<%=bean.getPanel()%>' 
 					fSampleType='<%=bean.getSampleType()%>'
@@ -1683,6 +1716,7 @@
 				<%
 					}
 					%>
+					<%--<input id="fLimit" type="hidden" value='<%=fLimitString%>' />  --%>
 					<input id="fLimit" type="hidden" value='<%=fLimitString%>' />
 					<%
 						}
@@ -1692,61 +1726,59 @@
 		</table>
 
 	</div>
-
+	
 	<%
 		// section testAdd
 	%>
 
-
 	<span class="step2 notStep1BreadCrumb" id="step2BreadCrumb"
 		style="display: none"> <input type="button"
-		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
-		onclick="goBackToStep1();" class="textButton" />&rarr; <%=StringUtil.getMessageForKey("label.selectSampleType")%>
+		value="<%=StringUtil.getContextualMessageForKey("configuration.test.modify")%>"
+		onclick="goBackToStep1();" class="textButton" />&rarr; <%=StringUtil.getContextualMessageForKey("label.selectSampleType")%>
 	</span> <span id="step2Confirm notStep1BreadCrumb"
 		class="confirmationBreadCrumb" style="display: none"> <input
 		type="button"
-		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
+		value="<%=StringUtil.getContextualMessageForKey("configuration.test.modify")%>"
 		onclick="goBackToStep1();" class="textButton" />&rarr; <input
 		type="button"
-		value="<%=StringUtil.getMessageForKey("label.selectSampleType")%>"
+		value="<%=StringUtil.getContextualMessageForKey("label.selectSampleType")%>"
 		onclick="goBackToStep2();" class="textButton" />&rarr; <spring:message code="label.confirmation" />
 	</span> <span class="dictionarySelect notStep1BreadCrumb"
 		style="display: none"> <input type="button"
-		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
+		value="<%=StringUtil.getContextualMessageForKey("configuration.test.modify")%>"
 		onclick="goBackToStep1();" class="textButton" />&rarr; <input
 		type="button"
-		value="<%=StringUtil.getMessageForKey("label.selectSampleType")%>"
+		value="<%=StringUtil.getContextualMessageForKey("label.selectSampleType")%>"
 		onclick="goBackToStep2();" class="textButton" />&rarr; <spring:message code="label.select.list.values" />
 	</span> <span class="resultLimits notStep1BreadCrumb" style="display: none">
 		<input type="button"
-		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
+		value="<%=StringUtil.getContextualMessageForKey("configuration.test.modify")%>"
 		onclick="goBackToStep1();" class="textButton" />&rarr; <input
 		type="button"
-		value="<%=StringUtil.getMessageForKey("label.selectSampleType")%>"
+		value="<%=StringUtil.getContextualMessageForKey("label.selectSampleType")%>"
 		onclick="goBackToStep2();" class="textButton" />&rarr; <spring:message code="label.set.result.limits" />
 	</span> <span
 		class="selectListConfirm confirmationBreadCrumb notStep1BreadCrumb"
 		style="display: none"> <input type="button"
-		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
+		value="<%=StringUtil.getContextualMessageForKey("configuration.test.modify")%>"
 		onclick="goBackToStep1();" class="textButton" />&rarr; <input
 		type="button"
-		value="<%=StringUtil.getMessageForKey("label.selectSampleType")%>"
+		value="<%=StringUtil.getContextualMessageForKey("label.selectSampleType")%>"
 		onclick="goBackToStep2();" class="textButton" />&rarr; <input
 		type="button"
-		value="<%=StringUtil.getMessageForKey("label.select.list.values")%>"
+		value="<%=StringUtil.getContextualMessageForKey("label.select.list.values")%>"
 		onclick="goBackToStep3Dictionary();" class="textButton" />&rarr; <spring:message code="label.confirmation" />
 	</span> <span class="resultLimitsConfirm confirmationBreadCrumb"
 		style="display: none"> <input type="button"
-		value="<%=StringUtil.getMessageForKey("configuration.test.modify")%>"
+		value="<%=StringUtil.getContextualMessageForKey("configuration.test.modify")%>"
 		onclick="goBackToStep1();" class="textButton" />&rarr; <input
 		type="button"
-		value="<%=StringUtil.getMessageForKey("label.selectSampleType")%>"
+		value="<%=StringUtil.getContextualMessageForKey("label.selectSampleType")%>"
 		onclick="goBackToStep2();" class="textButton" />&rarr; <input
 		type="button"
-		value="<%=StringUtil.getMessageForKey("label.set.result.limits")%>"
+		value="<%=StringUtil.getContextualMessageForKey("label.set.result.limits")%>"
 		onclick="goBackToResultLimits();" class="textButton" />&rarr; <spring:message code="label.confirmation" />
 	</span>
-
 
 	<h3>
 		<spring:message code="configuration.test.modify" />
@@ -1769,7 +1801,6 @@
 		</span> <br />
 		<hr />
 	</div>
-
 	<div id="step1Div" class="step1" style="display: none">
 		<table width="80%">
 			<tr>
@@ -1800,7 +1831,7 @@
 							<td></td>
 							<td><input type="button"
 								onclick="copyFromTestName(); checkReadyForNextStep()"
-								value='<%=StringUtil.getMessageForKey("test.add.copy.name")%>'></td>
+								value='<%=StringUtil.getContextualMessageForKey("test.add.copy.name")%>'></td>
 						</tr>
 						<tr>
 							<td width="25%" align="right"><spring:message code="label.english" /></td>
@@ -1816,6 +1847,8 @@
 					</table>
 				</td>
 
+
+  
 				<td width="25%" style="vertical-align: top; padding: 4px"><spring:message code="test.testSectionName" /><span class="requiredlabel">*</span><br />
 					<select id="testUnitSelection" class="required"
 					onchange="checkReadyForNextStep()">
@@ -1839,7 +1872,6 @@
 				<td width="25%" style="vertical-align: top; padding: 4px"
 					id="panelSelectionCell"><spring:message code="typeofsample.panel.panel" /><br /> <select
 					id="panelSelection" name="panelSelection" multiple="multiple" title="Multiple">
-					
 					 <%
 							for (IdValuePair pair : panelList) {
 					 %>
@@ -1946,8 +1978,6 @@
 				</div>
 				<div id="endOrderMarker"></div>
 				
-			
-				
 				<div class="dictionarySelect dictionaryMultiSelect"
 					id="dictionarySelectId"
 					style="padding: 10px; float: left; width: 280px; display: none; overflow: hidden">
@@ -2006,13 +2036,13 @@
 		</div>
 	</div>
 	
-		
 				<div id="dictionaryAskDiv" style="display: none;">
 					<input type="button"
-					value="<%=StringUtil.getMessageForKey("label.button.editSelectValues")%>"
+					value="<%=StringUtil.getContextualMessageForKey("label.button.editSelectValues")%>"
 					onclick="editDictionaryAsk();" id="editDictionaryButton" /> 
 				</div>
-
+				
+	<%    List<IdValuePair> groupedDictionaryList = (List<IdValuePair>) pageContext.getAttribute("groupedDictionaryList"); %>
 	<div id="dictionaryExistingGroups" class="dictionarySelect"
 		style="display: none; width: 100%">
 		<div style="width: 100%; text-align: center;">
@@ -2020,58 +2050,47 @@
 		</div>
 		<hr>
 		<table>
-			<%
-				while (testCount < groupedDictionaryList.size()) {
-			%>
+			<%	while (testCount < groupedDictionaryList.size()) {	%>
 			<tr>
 				<td id='<%="dictionaryGroup_" + testCount%>'
 					style="padding: 5px 10px; vertical-align: top"><input
 					type="button"
-					value="<%=StringUtil.getMessageForKey("label.form.select")%>"
+					value="<%=StringUtil.getContextualMessageForKey("label.form.select")%>"
 					onclick="<%="dictionarySetSelected(" + testCount + ");"%>"
 					class="textButton" />
 					<ul style="padding-left: 0; list-style-type: none">
-						<%
-							for (IdValuePair pair : groupedDictionaryList.get(testCount)) {
-						%>
-						<li value="<%=pair.getId()%>"><%=pair.getValue()%></li>
-						<%
-							}
-						%>
-					</ul> <%
- 	testCount++;
+						<%	
+							for (IdValuePair pair : (Iterable<IdValuePair>) groupedDictionaryList.get(testCount)) {
+						%>	
+							<li value="<%=pair.getId()%>"><%=pair.getValue()%></li> 
+						
+						<% } %>
+					</ul> 
+	<%
+ 		testCount++;
  		columnCount = 1;
- %></td>
-				<%
-					while (testCount < groupedDictionaryList.size() && (columnCount < columns)) {
-				%>
+ 	%>
+ </td>
+				<%	while (testCount < groupedDictionaryList.size() && (columnCount < columns)) {	%>
 				<td id='<%="dictionaryGroup_" + testCount%>'
 					style="padding: 5px 10px; vertical-align: top"><input
 					type="button"
-					value="<%=StringUtil.getMessageForKey("label.form.select")%>"
+					value="<%=StringUtil.getContextualMessageForKey("label.form.select")%>"
 					onclick="<%="dictionarySetSelected(" + testCount + ");"%>"
 					class="textButton" />
 					<ul style="padding-left: 0; list-style-type: none">
-						<%
-							for (IdValuePair pair : groupedDictionaryList.get(testCount)) {
-						%>
+					<%
+						for (IdValuePair pair : (Iterable<IdValuePair>) groupedDictionaryList.get(testCount)) {
+					%>
 						<li value="<%=pair.getId()%>"><%=pair.getValue()%></li>
-						<%
-							}
-						%>
+					<% 	} %>
 					</ul></td>
-				<%
-					testCount++;
-							columnCount++;
-				%>
-				<%
-					}
-				%>
+				<%	testCount++;
+					columnCount++;	%>
+				<%	}	%>
 
 			</tr>
-			<%
-				}
-			%>
+			<% } %>
 		</table>
 	</div>
 	<div id="normalRangeTemplate" style="display: none;">
@@ -2085,11 +2104,11 @@
 				</span></td>
 				<td><input class="yearMonthSelect_index" type="radio"
 					name="time_index"
-					value="<%=StringUtil.getMessageForKey("abbreviation.year.single")%>"
+					value="<%=StringUtil.getContextualMessageForKey("abbreviation.year.single")%>"
 					onchange="upperAgeRangeChanged( 'index' )" checked>
 				<spring:message code="abbreviation.year.single" /> <input
 					class="yearMonthSelect_index" type="radio" name="time_index"
-					value="<%=StringUtil.getMessageForKey("abbreviation.month.single")%>"
+					value="<%=StringUtil.getContextualMessageForKey("abbreviation.month.single")%>"
 					onchange="upperAgeRangeChanged( 'index' )">
 				<spring:message code="abbreviation.month.single" />&nbsp;</td>
 				<td id="lowerAge_index">0</td>
@@ -2121,7 +2140,7 @@
 				<td></td>
 				<td><input id="removeButton_index" type="button"
 					class="textButton" onclick='removeLimitRow( index );'
-					value="<%=StringUtil.getMessageForKey("label.remove")%>" /></td>
+					value="<%=StringUtil.getContextualMessageForKey("label.remove")%>" /></td>
 			</tr>
 			<tr class="sexRange_index row_index createdFromTemplate">
 				<td></td>
@@ -2143,10 +2162,9 @@
 			</tr>
 		</table>
 	</div>
-	
 	<div id="normalRangeAskDiv" style="display: none;">
 	<input type="button"
-			value="<%=StringUtil.getMessageForKey("label.button.editResultLimits")%>"
+			value="<%=StringUtil.getContextualMessageForKey("label.button.editResultLimits")%>"
 			onclick="editRangeAsk();" id="editResultLimitsButton" /> 
 	</div>
 	<div id="normalRangeDiv" style="display: none;">
@@ -2175,11 +2193,11 @@
 				<td><span class="sexRange_0" style="display: none"> <spring:message code="sex.male" />
 				</span></td>
 				<td><input class="yearMonthSelect_0" type="radio" name="time_0"
-					value="<%=StringUtil.getMessageForKey("abbreviation.year.single")%>"
+					value="<%=StringUtil.getContextualMessageForKey("abbreviation.year.single")%>"
 					onchange="upperAgeRangeChanged('0')" checked>
 				<spring:message code="abbreviation.year.single" /> <input
 					class="yearMonthSelect_0" type="radio" name="time_0"
-					value="<%=StringUtil.getMessageForKey("abbreviation.month.single")%>"
+					value="<%=StringUtil.getContextualMessageForKey("abbreviation.month.single")%>"
 					onchange="upperAgeRangeChanged('0')">
 				<spring:message code="abbreviation.month.single" />&nbsp;</td>
 				<td id="lowerAge_0">0&nbsp;</td>
@@ -2234,23 +2252,22 @@
 			max="10" id="significantDigits">
 	</div>
 
-
 	<div class="selectShow"
 		style="margin-left: auto; margin-right: auto; width: 40%;">
 		<input type="button"
-			value="<%=StringUtil.getMessageForKey("label.button.next")%>"
+			value="<%=StringUtil.getContextualMessageForKey("label.button.next")%>"
 			disabled="disabled" onclick="nextStep();" id="nextButton" /> <input
 			type="button"
-			value="<%=StringUtil.getMessageForKey("label.button.back")%>"
+			value="<%=StringUtil.getContextualMessageForKey("label.button.back")%>"
 			onclick="navigateBack()" />
 	</div>
 	<div class="confirmShow"
 		style="margin-left: auto; margin-right: auto; width: 40%; display: none">
 		<input type="button"
-			value="<%=StringUtil.getMessageForKey("label.button.accept")%>"
-			onclick="submitAction('TestModifyUpdate.do');" /> <input
+			value="<%=StringUtil.getContextualMessageForKey("label.button.accept")%>"
+			onclick="submitAction('TestModify.do');" /> <input
 			type="button"
-			value="<%=StringUtil.getMessageForKey("label.button.back")%>"
+			value="<%=StringUtil.getContextualMessageForKey("label.button.back")%>"
 			onclick="navigateBackFromConfirm()" />
 	</div>
 
@@ -2289,6 +2306,6 @@
 	</table>
 
 	<br> <input type="button"
-		value='<%=StringUtil.getMessageForKey("label.button.finished")%>'
+		value='<%=StringUtil.getContextualMessageForKey("label.button.finished")%>'
 		onclick="submitAction('TestManagementConfigMenu.do');" />
-</form>
+</form:form>
