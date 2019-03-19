@@ -414,18 +414,17 @@ public class TestModifyEntryController extends BaseController {
 	    String forward = FWD_SUCCESS_INSERT;
 	    
         String currentUserId = getSysUserId(request);
-        String jsonString = form.getString("jsonWad");
-//        System.out.println(jsonString);
+        String changeList = form.getString("jsonWad");
 
-        JSONParser parser=new JSONParser();
-
-        JSONObject obj=null;
+		JSONParser parser = new JSONParser();
+		JSONObject obj = null;
 		try {
-			obj = (JSONObject)parser.parse(jsonString);
+			obj = (JSONObject) parser.parse(changeList);
 		} catch (ParseException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+       
         TestAddParams testAddParams = extractTestAddParms(obj, parser);
        
         Localization nameLocalization = createNameLocalization(testAddParams);

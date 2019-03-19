@@ -1311,7 +1311,7 @@
         
         $jq(".resultClass").each(function (i,elem) {
         	jsonObj.testId = $jq(elem).attr('fTestId');
-            //console.log("createJSON: " + $jq(elem).attr('fTestId') + ":" + $jq(elem).attr('fResultType'));
+            console.log("createJSON: " + $jq(elem).attr('fTestId') + ":" + $jq(elem).attr('fResultType'));
         });
         
         jsonObj.sampleTypes = [];
@@ -1328,7 +1328,7 @@
         	
             addJsonDictionary(jsonObj);
         
-        	//console.log(JSON.stringify(jsonObj.dictionary));
+        	console.log(JSON.stringify(jsonObj.dictionary));
         	//dictionary from defaults if empty
         	if(JSON.stringify(jsonObj.dictionary == "[]")) {
         		console.log(JSON.stringify(jsonObj.dictionaryReference));
@@ -1543,7 +1543,7 @@ td {
   <%    List<IdValuePair> ageRangeList = (List<IdValuePair>) pageContext.getAttribute("ageRangeList"); %>
   <%    List<IdValuePair> testList = (List<IdValuePair>) pageContext.getAttribute("testList"); %>
 
-	<html:hidden id="jsonWad" name='${form.formName}' property="jsonWad" />
+	<form:hidden id="jsonWad" name='${form.formName}' path="jsonWad" />
 
 	<input type="button"
 		value="<%=StringUtil.getContextualMessageForKey("banner.menu.administration")%>"
