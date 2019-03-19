@@ -2265,7 +2265,7 @@ td {
 		style="margin-left: auto; margin-right: auto; width: 40%; display: none">
 		<input type="button"
 			value="<%=StringUtil.getContextualMessageForKey("label.button.accept")%>"
-			onclick="submitAction('TestModify.do');" /> <input
+			onclick="submitAction('TestModifyEntry.do');" /> <input
 			type="button"
 			value="<%=StringUtil.getContextualMessageForKey("label.button.back")%>"
 			onclick="navigateBackFromConfirm()" />
