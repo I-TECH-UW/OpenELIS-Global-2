@@ -92,7 +92,7 @@ function /*void*/ makeDirty(){
   dirty = true;
   
 	// do other work
-  if( typeof(showSuccessMessage) != 'undefinded' ){
+  if( typeof(showSuccessMessage) === 'function' ){
     showSuccessMessage(false); //refers to last save
   }
 		
@@ -115,7 +115,7 @@ function savePage() {
 
   window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
-	form.action = "ResultValidationSave.do";
+	form.action = "ResultValidation.do";
 	form.submit();
 }
 

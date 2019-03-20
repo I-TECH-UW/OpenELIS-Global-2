@@ -6,6 +6,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
+import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -19,14 +21,8 @@ import spring.mine.common.constants.Constants;
 import spring.mine.common.controller.BaseMenuController;
 import spring.mine.common.form.MenuForm;
 import spring.mine.common.validator.BaseErrors;
-import spring.mine.siteinformation.form.MenuStatementConfigMenuForm;
-import spring.mine.siteinformation.form.NonConformityConfigurationMenuForm;
-import spring.mine.siteinformation.form.PatientConfigurationMenuForm;
-import spring.mine.siteinformation.form.PrintedReportsConfigurationMenuForm;
-import spring.mine.siteinformation.form.ResultConfigurationMenuForm;
-import spring.mine.siteinformation.form.SampleEntryConfigMenuForm;
 import spring.mine.siteinformation.form.SiteInformationMenuForm;
-import spring.mine.siteinformation.form.WorkplanConfigurationMenuForm;
+import spring.mine.siteinformation.validator.SiteInformationMenuFormValidator;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -36,8 +32,11 @@ import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 @Controller
 public class SiteInformationMenuController extends BaseMenuController {
+
+	@Autowired
+	SiteInformationMenuFormValidator formValidator;
+
 	private String titleKey = null;
-	static private String FWD_CLOSE = "close";
 
 	@RequestMapping(value = { "/NonConformityConfigurationMenu", "/WorkplanConfigurationMenu",
 			"/PrintedReportsConfigurationMenu", "/SampleEntryConfigMenu", "/ResultConfigurationMenu",
@@ -45,9 +44,8 @@ public class SiteInformationMenuController extends BaseMenuController {
 			"/SiteInformationMenu" }, method = RequestMethod.GET)
 	public ModelAndView showSiteInformationMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		MenuForm form = findForm(request);
-		form.setFormAction("");
-		form.setFormMethod(RequestMethod.POST);
+		SiteInformationMenuForm form = new SiteInformationMenuForm();
+		setupFormForRequest(form, request);
 
 		String forward = performMenuAction(form, request);
 		if (FWD_FAIL.equals(forward)) {
@@ -61,27 +59,35 @@ public class SiteInformationMenuController extends BaseMenuController {
 		}
 	}
 
-	private MenuForm findForm(HttpServletRequest request) {
-		MenuForm form;
+	private void setupFormForRequest(SiteInformationMenuForm form, HttpServletRequest request) {
 		String path = request.getServletPath();
 		if (path.contains("NonConformityConfiguration")) {
-			form = new NonConformityConfigurationMenuForm();
+			form.setSiteInfoDomainName("non_conformityConfiguration");
+			form.setFormName("NonConformityConfigurationMenuForm");
 		} else if (path.contains("WorkplanConfiguration")) {
-			form = new WorkplanConfigurationMenuForm();
+			form.setSiteInfoDomainName("WorkplanConfiguration");
+			form.setFormName("WorkplanConfigurationMenuForm");
 		} else if (path.contains("PrintedReportsConfiguration")) {
-			form = new PrintedReportsConfigurationMenuForm();
+			form.setSiteInfoDomainName("PrintedReportsConfiguration");
+			form.setFormName("PrintedReportsConfigurationMenuForm");
 		} else if (path.contains("SampleEntryConfig")) {
-			form = new SampleEntryConfigMenuForm();
+			form.setSiteInfoDomainName("sampleEntryConfig");
+			form.setFormName("sampleEntryConfigMenuForm");
 		} else if (path.contains("ResultConfiguration")) {
-			form = new ResultConfigurationMenuForm();
+			form.setSiteInfoDomainName("ResultConfiguration");
+			form.setFormName("resultConfigurationMenuForm");
 		} else if (path.contains("MenuStatementConfig")) {
-			form = new MenuStatementConfigMenuForm();
+			form.setSiteInfoDomainName("MenuStatementConfig");
+			form.setFormName("MenuStatementConfigMenuForm");
 		} else if (path.contains("PatientConfiguration")) {
-			form = new PatientConfigurationMenuForm();
+			form.setSiteInfoDomainName("PatientConfiguration");
+			form.setFormName("PatientConfigurationMenuForm");
 		} else {
-			form = new SiteInformationMenuForm();
+			form.setSiteInfoDomainName("SiteInformation");
+			form.setFormName("siteInformationMenuForm");
 		}
-		return form;
+
+		form.setFormMethod(RequestMethod.POST);
 	}
 
 	@Override
@@ -154,14 +160,20 @@ public class SiteInformationMenuController extends BaseMenuController {
 	@RequestMapping(value = { "/DeleteMenuStatementConfig", "/DeleteWorkplanConfiguration",
 			"/DeletePatientConfiguration", "/DeleteNonConformityConfiguration", "/DeleteResultConfiguration",
 			"/DeletePrintedReportsConfiguration", "/DeleteSiteInformation" }, method = RequestMethod.GET)
-	public ModelAndView showDeleteSiteInformation(HttpServletRequest request, @ModelAttribute("form") MenuForm form,
-			BindingResult result, RedirectAttributes redirectAttributes) {
+	public ModelAndView showDeleteSiteInformation(HttpServletRequest request,
+			@ModelAttribute("form") SiteInformationMenuForm form, BindingResult result,
+			RedirectAttributes redirectAttributes) {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, result);
+			return findForward(FWD_FAIL_DELETE, form);
+		}
 
 		String[] selectedIDs = (String[]) form.get("selectedIDs");
 
 		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
 
-		org.hibernate.Transaction tx = HibernateUtil.getSession().beginTransaction();
+		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
 
 			for (String siteInformationId : selectedIDs) {
@@ -188,6 +200,7 @@ public class SiteInformationMenuController extends BaseMenuController {
 
 		ConfigurationProperties.forceReload();
 
+		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 		return findForward(FWD_SUCCESS_DELETE, form);
 	}
 

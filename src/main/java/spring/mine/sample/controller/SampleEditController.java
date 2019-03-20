@@ -15,20 +15,22 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.apache.struts.Globals;
 import org.hibernate.StaleObjectStateException;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
+import spring.mine.internationalization.MessageUtil;
 import spring.mine.sample.form.SampleEditForm;
+import spring.mine.sample.validator.SampleEditFormValidator;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -105,6 +107,9 @@ import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
 @Controller
 public class SampleEditController extends BaseController {
 
+	@Autowired
+	SampleEditFormValidator formValidator;
+
 	private static final String DEFAULT_ANALYSIS_TYPE = "MANUAL";
 	private static final SampleItemDAO sampleItemDAO = new SampleItemDAOImpl();
 	private static final SampleDAO sampleDAO = new SampleDAOImpl();
@@ -144,29 +149,24 @@ public class SampleEditController extends BaseController {
 	}
 
 	@RequestMapping(value = "/SampleEdit", method = RequestMethod.GET)
-	public ModelAndView showSampleEdit(HttpServletRequest request, @ModelAttribute("form") SampleEditForm form)
+	public ModelAndView showSampleEdit(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new SampleEditForm();
-		}
+		SampleEditForm form = new SampleEditForm();
 		form.setFormAction("SampleEdit.do");
-		Errors errors = new BaseErrors();
 
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
-		String accessionNumber = request.getParameter("accessionNumber");
 		boolean allowedToCancelResults = userModuleDAO.isUserAdmin(request)
 				|| new UserRoleDAOImpl().userInRole(getSysUserId(request), ABLE_TO_CANCEL_ROLE_NAMES);
-
-		if (GenericValidator.isBlankOrNull(accessionNumber)) {
-			accessionNumber = getMostRecentAccessionNumberForPaitient(request.getParameter("patientID"));
-		}
-
 		boolean isEditable = "readwrite"
 				.equals(request.getSession().getAttribute(IActionConstants.SAMPLE_EDIT_WRITABLE))
 				|| "readwrite".equals(request.getParameter("type"));
 		PropertyUtils.setProperty(form, "isEditable", isEditable);
+
+		String accessionNumber = request.getParameter("accessionNumber");
+		if (GenericValidator.isBlankOrNull(accessionNumber)) {
+			accessionNumber = getMostRecentAccessionNumberForPaitient(request.getParameter("patientID"));
+		}
 		if (!GenericValidator.isBlankOrNull(accessionNumber)) {
 			PropertyUtils.setProperty(form, "accessionNumber", accessionNumber);
 			PropertyUtils.setProperty(form, "searchFinished", Boolean.TRUE);
@@ -206,11 +206,12 @@ public class SampleEditController extends BaseController {
 		PropertyUtils.setProperty(form, "currentDate", DateUtil.getCurrentDateAsText());
 		PatientSearch patientSearch = new PatientSearch();
 		patientSearch.setLoadFromServerWithPatient(true);
-		patientSearch.setSelectedPatientActionButtonText(StringUtil.getMessageForKey("label.patient.search.select"));
+		patientSearch.setSelectedPatientActionButtonText(MessageUtil.getMessage("label.patient.search.select"));
 		PropertyUtils.setProperty(form, "patientSearch", patientSearch);
 		PropertyUtils.setProperty(form, "warning", "show");
 
-		return findForward(forward, form);
+		addFlashMsgsToRequest(request);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	private Boolean hasResults(List<SampleEditItem> currentTestList, boolean allowedToCancelResults) {
@@ -393,25 +394,24 @@ public class SampleEditController extends BaseController {
 
 	}
 
-	@RequestMapping(value = "/SampleEditUpdate", method = RequestMethod.POST)
-	public ModelAndView showSampleEditUpdate(HttpServletRequest request, @ModelAttribute("form") SampleEditForm form) {
-		String forward = FWD_SUCCESS_INSERT;
-		if (form == null) {
-			form = new SampleEditForm();
+	@RequestMapping(value = "/SampleEdit", method = RequestMethod.POST)
+	public ModelAndView showSampleEditUpdate(HttpServletRequest request, @ModelAttribute("form") SampleEditForm form,
+			BindingResult result, RedirectAttributes redirectAttributes) {
+
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
 		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
-
 		boolean sampleChanged = accessionNumberChanged(form);
 		Sample updatedSample = null;
 
 		if (sampleChanged) {
-			errors = validateNewAccessionNumber(form.getNewAccessionNumber(), errors);
-			if (errors.hasErrors()) {
-				saveErrors(errors);
-				request.setAttribute(Globals.ERROR_KEY, errors);
+			validateNewAccessionNumber(form.getNewAccessionNumber(), result);
+			if (result.hasErrors()) {
+				saveErrors(result);
 				return findForward(FWD_FAIL_INSERT, form);
 			} else {
 				updatedSample = updateAccessionNumberInSample(form);
@@ -563,15 +563,12 @@ public class SampleEditController extends BaseController {
 		} catch (LIMSRuntimeException lre) {
 			tx.rollback();
 			if (lre.getException() instanceof StaleObjectStateException) {
-				errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
+				result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
 			} else {
 				lre.printStackTrace();
-				errors.reject("errors.UpdateException", "errors.UpdateException");
+				result.reject("errors.UpdateException", "errors.UpdateException");
 			}
-
-			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
-
+			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);
 
 		} finally {
@@ -579,7 +576,9 @@ public class SampleEditController extends BaseController {
 		}
 
 		String sampleEditWritable = (String) request.getSession().getAttribute(IActionConstants.SAMPLE_EDIT_WRITABLE);
-		request.setAttribute(IActionConstants.FWD_SUCCESS, true);
+
+		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+
 		if (GenericValidator.isBlankOrNull(sampleEditWritable)) {
 			return findForward(FWD_SUCCESS_INSERT, form);
 		} else {
@@ -843,7 +842,7 @@ public class SampleEditController extends BaseController {
 		} else if (FWD_FAIL.equals(forward)) {
 			return "homePageDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return "redirect:/SampleEdit.do?forward=success";
+			return "redirect:/SampleEdit.do";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
 			return "sampleEditDefinition";
 		} else {

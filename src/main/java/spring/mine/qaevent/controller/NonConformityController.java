@@ -15,18 +15,18 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.apache.struts.Globals;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.qaevent.form.NonConformityForm;
+import spring.mine.qaevent.validator.NonConformityFormValidator;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSInvalidConfigurationException;
 import us.mn.state.health.lims.common.formfields.FormFields;
@@ -90,6 +90,9 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 @Controller
 public class NonConformityController extends BaseController {
 
+	@Autowired
+	NonConformityFormValidator formValidator;
+
 	private static final String QA_NOTE_SUBJECT = "QaEvent Note";
 
 	private static SampleDAO sampleDAO = new SampleDAOImpl();
@@ -101,78 +104,75 @@ public class NonConformityController extends BaseController {
 	private static OrganizationDAO orgDAO = new OrganizationDAOImpl();
 
 	@RequestMapping(value = "/NonConformity", method = RequestMethod.GET)
-	public ModelAndView showNonConformity(HttpServletRequest request, @ModelAttribute("form") NonConformityForm form)
-			throws LIMSInvalidConfigurationException, IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new NonConformityForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
-		if (getErrors() != null) {
-			errors = getErrors();
-		}
-
-		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
-
+	public ModelAndView showNonConformity(HttpServletRequest request) throws LIMSInvalidConfigurationException,
+			IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		NonConformityForm form = new NonConformityForm();
 		String labNumber = request.getParameter("labNo");
 		if (!GenericValidator.isBlankOrNull(labNumber)) {
-
-			Sample sample = getSampleForLabNumber(labNumber);
-
-			boolean sampleFound = !(sample == null || GenericValidator.isBlankOrNull(sample.getId()));
-
-			PropertyUtils.setProperty(form, "labNo", labNumber);
-			Date today = Calendar.getInstance().getTime();
-			PropertyUtils.setProperty(form, "date", DateUtil.formatDateAsText(today));
-			if (FormFields.getInstance().useField(Field.QATimeWithDate)) {
-				PropertyUtils.setProperty(form, "time", DateUtil.nowTimeAsText());
-			}
-
-			if (sampleFound) {
-				createForExistingSample(form, sample);
-			}
-
-			setProjectList(form);
-
-			PropertyUtils.setProperty(form, "sampleItemsTypeOfSampleIds", getSampleTypeOfSamplesString(sample));
-			PropertyUtils.setProperty(form, "sections", createSectionList());
-			PropertyUtils.setProperty(form, "qaEventTypes", DisplayListService.getList(ListType.QA_EVENTS));
-			PropertyUtils.setProperty(form, "qaEvents", getSampleQaEventItems(sample));
-
-			PropertyUtils.setProperty(form, "typeOfSamples", DisplayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
-
-			PropertyUtils.setProperty(form, "readOnly", false);
-			PropertyUtils.setProperty(form, "siteList",
-					DisplayListService.getFreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
-			Provider provider = getProvider(sample);
-			if (provider != null) {
-				PropertyUtils.setProperty(form, "providerNew", Boolean.FALSE.toString());
-				Person providerPerson = getProviderPerson(provider);
-				if (providerPerson != null && !providerPerson.getId().equals(PatientUtil.getUnknownPerson().getId())) {
-					PersonService personService = new PersonService(providerPerson);
-					PropertyUtils.setProperty(form, "providerFirstName", personService.getFirstName());
-					PropertyUtils.setProperty(form, "providerLastName", personService.getLastName());
-					PropertyUtils.setProperty(form, "providerWorkPhone", personService.getPhone());
-					Map<String, String> addressComponents = personService.getAddressComponents();
-
-					PropertyUtils.setProperty(form, "providerStreetAddress", addressComponents.get("Street"));
-					PropertyUtils.setProperty(form, "providerCity", addressComponents.get("village"));
-					PropertyUtils.setProperty(form, "providerCommune", addressComponents.get("commune"));
-					PropertyUtils.setProperty(form, "providerDepartment", addressComponents.get("department"));
-				}
-			} else {
-				PropertyUtils.setProperty(form, "providerNew", Boolean.TRUE.toString());
-				PropertyUtils.setProperty(form, "requesterSampleID", "");
-				PropertyUtils.setProperty(form, "providerFirstName", "");
-				PropertyUtils.setProperty(form, "providerLastName", "");
-				PropertyUtils.setProperty(form, "providerWorkPhone", "");
-			}
-
-			PropertyUtils.setProperty(form, "departments", DisplayListService.getList(ListType.HAITI_DEPARTMENTS));
+			setupFormForLabNumber(labNumber, form);
 		}
-		return findForward(forward, form);
+		addFlashMsgsToRequest(request);
+		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
+
+		return findForward(FWD_SUCCESS, form);
+	}
+
+	private void setupFormForLabNumber(String labNumber, NonConformityForm form)
+			throws LIMSInvalidConfigurationException, IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException {
+		Sample sample = getSampleForLabNumber(labNumber);
+
+		boolean sampleFound = !(sample == null || GenericValidator.isBlankOrNull(sample.getId()));
+
+		PropertyUtils.setProperty(form, "labNo", labNumber);
+		Date today = Calendar.getInstance().getTime();
+		PropertyUtils.setProperty(form, "date", DateUtil.formatDateAsText(today));
+		if (FormFields.getInstance().useField(Field.QATimeWithDate)) {
+			PropertyUtils.setProperty(form, "time", DateUtil.nowTimeAsText());
+		}
+
+		if (sampleFound) {
+			createForExistingSample(form, sample);
+		}
+
+		setProjectList(form);
+
+		PropertyUtils.setProperty(form, "sampleItemsTypeOfSampleIds", getSampleTypeOfSamplesString(sample));
+		PropertyUtils.setProperty(form, "sections", createSectionList());
+		PropertyUtils.setProperty(form, "qaEventTypes", DisplayListService.getList(ListType.QA_EVENTS));
+		PropertyUtils.setProperty(form, "qaEvents", getSampleQaEventItems(sample));
+
+		PropertyUtils.setProperty(form, "typeOfSamples", DisplayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
+
+		PropertyUtils.setProperty(form, "readOnly", false);
+		PropertyUtils.setProperty(form, "siteList",
+				DisplayListService.getFreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
+		Provider provider = getProvider(sample);
+		if (provider != null) {
+			PropertyUtils.setProperty(form, "providerNew", Boolean.FALSE.toString());
+			Person providerPerson = getProviderPerson(provider);
+			if (providerPerson != null && !providerPerson.getId().equals(PatientUtil.getUnknownPerson().getId())) {
+				PersonService personService = new PersonService(providerPerson);
+				PropertyUtils.setProperty(form, "providerFirstName", personService.getFirstName());
+				PropertyUtils.setProperty(form, "providerLastName", personService.getLastName());
+				PropertyUtils.setProperty(form, "providerWorkPhone", personService.getPhone());
+				Map<String, String> addressComponents = personService.getAddressComponents();
+
+				PropertyUtils.setProperty(form, "providerStreetAddress", addressComponents.get("Street"));
+				PropertyUtils.setProperty(form, "providerCity", addressComponents.get("village"));
+				PropertyUtils.setProperty(form, "providerCommune", addressComponents.get("commune"));
+				PropertyUtils.setProperty(form, "providerDepartment", addressComponents.get("department"));
+			}
+		} else {
+			PropertyUtils.setProperty(form, "providerNew", Boolean.TRUE.toString());
+			PropertyUtils.setProperty(form, "requesterSampleID", "");
+			PropertyUtils.setProperty(form, "providerFirstName", "");
+			PropertyUtils.setProperty(form, "providerLastName", "");
+			PropertyUtils.setProperty(form, "providerWorkPhone", "");
+		}
+
+		PropertyUtils.setProperty(form, "departments", DisplayListService.getList(ListType.HAITI_DEPARTMENTS));
+
 	}
 
 	private void createForExistingSample(NonConformityForm form, Sample sample)
@@ -450,28 +450,20 @@ public class NonConformityController extends BaseController {
 		return sections;
 	}
 
-	@RequestMapping(value = "/NonConformityUpdate", method = RequestMethod.POST)
+	@RequestMapping(value = "/NonConformity", method = RequestMethod.POST)
 	public ModelAndView showNonConformityUpdate(HttpServletRequest request,
-			@ModelAttribute("form") NonConformityForm form) {
-		String forward = FWD_SUCCESS_INSERT;
-		if (form == null) {
-			form = new NonConformityForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
-		if (getErrors() != null) {
-			errors = getErrors();
-		}
+			@ModelAttribute("form") NonConformityForm form, BindingResult result,
+			RedirectAttributes redirectAttributes) {
 
 		NonConformityUpdateData data = new NonConformityUpdateData(form, getSysUserId(request));
 		NonConformityUpdateWorker worker = new NonConformityUpdateWorker(data);
-		String result = worker.update();
+		String forward = worker.update();
 
-		if (IActionConstants.FWD_FAIL_INSERT.equals(result)) {
+		if (IActionConstants.FWD_FAIL_INSERT.equals(forward)) {
 			saveErrors(worker.getErrors());
-			request.setAttribute(Globals.ERROR_KEY, errors);
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 		}
-
 		return findForward(forward, form);
 	}
 
@@ -490,7 +482,7 @@ public class NonConformityController extends BaseController {
 		if (FWD_SUCCESS.equals(forward)) {
 			return "nonConformityDefiniton";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return "redirect:NonConformity.do?forward=success";
+			return "redirect:/NonConformity.do";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
 			return "nonConformityDefiniton";
 		} else {

@@ -6,19 +6,20 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.owasp.encoder.Encode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.patient.form.PatientEntryByProjectForm;
+import spring.mine.patient.validator.PatientEntryByProjectFormValidator;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.login.valueholder.UserSessionData;
 import us.mn.state.health.lims.patient.saving.Accessioner;
 import us.mn.state.health.lims.patient.saving.PatientEditUpdate;
 import us.mn.state.health.lims.patient.saving.PatientEntry;
@@ -30,16 +31,14 @@ import us.mn.state.health.lims.patient.saving.RequestType;
 @Controller
 public class PatientEntryByProjectController extends BasePatientEntryByProject {
 
+	@Autowired
+	PatientEntryByProjectFormValidator formValidator;
+
 	@RequestMapping(value = "/PatientEntryByProject", method = RequestMethod.GET)
-	public ModelAndView showPatientEntryByProject(HttpServletRequest request,
-			@ModelAttribute("form") PatientEntryByProjectForm form)
+	public ModelAndView showPatientEntryByProject(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new PatientEntryByProjectForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+
+		PatientEntryByProjectForm form = new PatientEntryByProjectForm();
 
 		String todayAsText = DateUtil.formatDateAsText(new Date());
 
@@ -59,60 +58,56 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
 		// put the projectFormName back in.
 		setProjectFormName(form, projectFormName);
 
-		return findForward(forward, form);
+		addFlashMsgsToRequest(request);
+
+		return findForward(FWD_SUCCESS, form);
 	}
 
-	@RequestMapping(value = "/PatientEntryByProjectUpdate", method = RequestMethod.POST)
+	@RequestMapping(value = "/PatientEntryByProject", method = RequestMethod.POST)
 	public ModelAndView showPatientEntryByProjectUpdate(HttpServletRequest request,
-			@ModelAttribute("form") PatientEntryByProjectForm form) throws Exception {
-		String forward = FWD_SUCCESS_INSERT;
-		if (form == null) {
-			form = new PatientEntryByProjectForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+			@ModelAttribute("form") PatientEntryByProjectForm form, BindingResult result,
+			RedirectAttributes redirectAttributes) throws Exception {
 
-		UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-		String sysUserId = String.valueOf(usd.getSystemUserId());
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
+
+		String sysUserId = getSysUserId(request);
 		Accessioner accessioner;
 		addAllPatientFormLists(form);
-
 		accessioner = new PatientEditUpdate(form, sysUserId, request);
+		String forward = FWD_FAIL_INSERT;
 		if (accessioner.canAccession()) {
 			forward = handleSave(request, accessioner);
-			return findForward(forward, form);
 		}
 
 		accessioner = new PatientSecondEntry(form, sysUserId, request);
 		if (accessioner.canAccession()) {
 			forward = handleSave(request, accessioner);
-			return findForward(forward, form);
 		}
 
 		accessioner = new PatientEntry(form, sysUserId, request);
 		if (accessioner.canAccession()) {
 			forward = handleSave(request, accessioner);
-			if (forward != null) {
-				return findForward(forward, form);
-			}
 		}
 		accessioner = new PatientEntryAfterSampleEntry(form, sysUserId, request);
 		if (accessioner.canAccession()) {
 			forward = handleSave(request, accessioner);
-			if (forward != null) {
-				return findForward(forward, form);
-			}
 		}
 		accessioner = new PatientEntryAfterAnalyzer(form, sysUserId, request);
 		if (accessioner.canAccession()) {
 			forward = handleSave(request, accessioner);
-			if (forward != null) {
-				return findForward(forward, form);
-			}
 		}
-		logAndAddMessage(request, "performAction", "errors.UpdateException");
+		if (FWD_FAIL_INSERT.equals(forward) || forward == null) {
+			logAndAddMessage(request, "performAction", "errors.UpdateException");
+			forward = FWD_FAIL_INSERT;
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+		}
 
-		return findForward(FWD_FAIL_INSERT, form);
+		return findForward(forward, form);
 	}
 
 	@Override
@@ -122,7 +117,8 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
 		} else if (FWD_FAIL.equals(forward)) {
 			return "homePageDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			String redirectURL = "/PatientEntryByProject.do?forward=success&type=" + request.getParameter("type");
+			String redirectURL = "/PatientEntryByProject.do?type="
+					+ Encode.forUriComponent(request.getParameter("type"));
 			return "redirect:" + redirectURL;
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
 			return "patientEntryByProjectDefinition";

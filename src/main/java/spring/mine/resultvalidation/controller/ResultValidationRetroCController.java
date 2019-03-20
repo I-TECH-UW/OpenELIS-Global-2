@@ -9,14 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.resultvalidation.form.ResultValidationForm;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -30,16 +26,10 @@ import us.mn.state.health.lims.resultvalidation.util.ResultsValidationRetroCIUti
 public class ResultValidationRetroCController extends BaseResultValidationRetroCIController {
 
 	@RequestMapping(value = "/ResultValidationRetroC", method = RequestMethod.GET)
-	public ModelAndView showResultValidationRetroC(HttpServletRequest request,
-			@ModelAttribute("form") ResultValidationForm form)
+	public ModelAndView showResultValidationRetroC(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new ResultValidationForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
-		
+		ResultValidationForm form = new ResultValidationForm();
+
 		request.getSession().setAttribute(SAVE_DISABLED, "true");
 		String testSectionName = (request.getParameter("type"));
 		String testName = (request.getParameter("test"));
@@ -66,6 +56,7 @@ public class ResultValidationRetroCController extends BaseResultValidationRetroC
 			paging.page(request, form, newPage);
 		}
 
+		addFlashMsgsToRequest(request);
 		if (testSectionName.equals("serology")) {
 			return findForward("elisaSuccess", form);
 		} else {

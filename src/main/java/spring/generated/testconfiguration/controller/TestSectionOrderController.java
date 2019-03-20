@@ -22,7 +22,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.forms.TestSectionOrderForm;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -52,13 +51,14 @@ public class TestSectionOrderController extends BaseController {
 		return findForward(forward, form);
 	}
 
-	protected ModelAndView findLocalForward(String forward, BaseForm form) {
+	@Override
+	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
-			return new ModelAndView("testSectionOrderDefinition", "form", form);
+			return "testSectionOrderDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return new ModelAndView("redirect:/TestSectionOrder.do", "form", form);
+			return "redirect:/TestSectionOrder.do";
 		} else {
-			return new ModelAndView("PageNotFound");
+			return "PageNotFound";
 		}
 	}
 

@@ -6,7 +6,7 @@ import java.util.List;
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.IdValuePair;
 
-public class BatchTestReassignment extends BaseForm {
+public class BatchTestReassignmentForm extends BaseForm {
 	private List<IdValuePair> sampleList;
 
 	private String statusChangedSampleType = "";
@@ -21,7 +21,7 @@ public class BatchTestReassignment extends BaseForm {
 
 	private Timestamp lastupdated;
 
-	public BatchTestReassignment() {
+	public BatchTestReassignmentForm() {
 		setFormName("BatchTestReassignment");
 	}
 

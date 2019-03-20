@@ -72,7 +72,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters)
 function /*void*/ addRemoveRequest( checkbox ){
 	checkedCount = Math.max(checkedCount + (checkbox.checked ? 1 : -1), 0 );
 
-	if( typeof(showSuccessMessage) != 'undefinded' ){
+	if( typeof(showSuccessMessage) === 'function' ){
 		showSuccessMessage(false); //refers to last save
 	}
 
@@ -107,7 +107,7 @@ function /*void*/ savePage(){
 	loadSamples();
 	
 	var form = document.getElementById("mainForm");
-	form.action = "SampleEditUpdate.do";
+	form.action = "SampleEdit.do";
 	form.submit();
 }
 
@@ -257,7 +257,7 @@ function checkValidTime(time, blankAllowed)
 var dirty=false;
 function makeDirty(){
     dirty=true;
-    if( typeof(showSuccessMessage) != 'undefinded' ){
+    if( typeof(showSuccessMessage) === 'function' ){
         showSuccessMessage(false); //refers to last save
     }
     // Adds warning when leaving page if content has been entered into makeDirty form fields

@@ -15,17 +15,21 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.struts.Globals;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.result.form.AnalyzerResultsForm;
+import spring.mine.result.validator.AnalyzerResultsFormValidator;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -105,6 +109,9 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 @Controller
 public class AnalyzerResultsController extends BaseController {
 
+	@Autowired
+	AnalyzerResultsFormValidator formValidator;
+
 	private static final boolean IS_RETROCI = ConfigurationProperties.getInstance()
 			.isPropertyValueEqual(ConfigurationProperties.Property.configurationName, "CI_GENERAL");
 	private static final String REJECT_VALUE = "XXXX";
@@ -153,15 +160,9 @@ public class AnalyzerResultsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/AnalyzerResults", method = RequestMethod.GET)
-	public ModelAndView showAnalyzerResults(HttpServletRequest request,
-			@ModelAttribute("form") AnalyzerResultsForm form)
+	public ModelAndView showAnalyzerResults(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new AnalyzerResultsForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+		AnalyzerResultsForm form = new AnalyzerResultsForm();
 
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
@@ -237,7 +238,8 @@ public class AnalyzerResultsController extends BaseController {
 			paging.page(request, form, page);
 		}
 
-		return findForward(forward, form);
+		addFlashMsgsToRequest(request);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	private void setNonConformityStateForResultItem(AnalyzerResultItem resultItem) {
@@ -667,15 +669,15 @@ public class AnalyzerResultsController extends BaseController {
 		return sampleQaEventDAO.getSampleQaEventsBySample(sample);
 	}
 
-	@RequestMapping(value = "/AnalyzerResultsSave", method = RequestMethod.POST)
+	@RequestMapping(value = "/AnalyzerResults", method = RequestMethod.POST)
 	public ModelAndView showAnalyzerResultsSave(HttpServletRequest request,
-			@ModelAttribute("form") AnalyzerResultsForm form) {
-		String forward = FWD_SUCCESS_INSERT;
-		if (form == null) {
-			form = new AnalyzerResultsForm();
+			@ModelAttribute("form") AnalyzerResultsForm form, BindingResult result,
+			RedirectAttributes redirectAttibutes) {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
 		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
 		AnalyzerResultsPaging paging = new AnalyzerResultsPaging();
 		paging.updatePagedResults(request, form);
@@ -684,14 +686,13 @@ public class AnalyzerResultsController extends BaseController {
 		List<AnalyzerResultItem> actionableResults = extractActionableResult(resultItemList);
 
 		if (actionableResults.isEmpty()) {
-			return findForward(forward, form);
+			return findForward(FWD_SUCCESS_INSERT, form);
 		}
 
-		errors = validateSavableItems(actionableResults);
+		validateSavableItems(actionableResults, result);
 
-		if (errors.hasErrors()) {
-			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
+		if (result.hasErrors()) {
+			saveErrors(result);
 
 			return findForward(FWD_VALIDATION_ERROR, form);
 		}
@@ -721,28 +722,24 @@ public class AnalyzerResultsController extends BaseController {
 		} catch (LIMSRuntimeException lre) {
 			tx.rollback();
 			String errorMsg = "errors.UpdateException";
-			errors.reject(errorMsg);
-			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
+			result.reject(errorMsg);
+			saveErrors(result);
 
 			return findForward(FWD_VALIDATION_ERROR, form);
 		}
 
-		setSuccessFlag(request, true);
-
+		redirectAttibutes.addFlashAttribute(FWD_SUCCESS, true);
 		if (GenericValidator.isBlankOrNull(form.getString("analyzerType"))) {
-			return findForward(forward, form);
+			return findForward(FWD_SUCCESS_INSERT, form);
 		} else {
 			Map<String, String> params = new HashMap<>();
 			params.put("type", form.getString("analyzerType"));
-			params.put("forward", forward);
-			return getForwardWithParameters(findForward(forward, form), params);
+			// params.put("forward", FWD_SUCCESS_INSERT);
+			return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
 		}
 	}
 
-	private Errors validateSavableItems(List<AnalyzerResultItem> savableResults) {
-		Errors errors = new BaseErrors();
-
+	private Errors validateSavableItems(List<AnalyzerResultItem> savableResults, Errors errors) {
 		for (AnalyzerResultItem item : savableResults) {
 			if (item.getIsAccepted() && item.isUserChoicePending()) {
 				StringBuilder augmentedAccession = new StringBuilder(item.getAccessionNumber());
@@ -921,13 +918,8 @@ public class AnalyzerResultsController extends BaseController {
 			} else if (statusSet.getSampleRecordStatus() == RecordStatus.NotRegistered) {
 				return createGroupForDemographicsEntered(groupedAnalyzerResultItems, statusSet);
 			} else {
-				return createGroupForSampleAndDemographicsEntered(groupedAnalyzerResultItems, statusSet); // this is
-																											// called
-																											// when just
-																											// sample
-																											// entry has
-																											// been
-																											// done/ fix
+				// this is called when just sample entry has been done/ fix
+				return createGroupForSampleAndDemographicsEntered(groupedAnalyzerResultItems, statusSet);
 			}
 		}
 

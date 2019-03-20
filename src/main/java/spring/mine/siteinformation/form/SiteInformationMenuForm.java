@@ -9,10 +9,10 @@ public class SiteInformationMenuForm extends MenuForm {
 
 	private String[] selectedIDs;
 
-	private String siteInfoDomainName = "SiteInformation";
+	private String siteInfoDomainName;// = "SiteInformation";
 
 	public SiteInformationMenuForm() {
-		setFormName("siteInformationMenuForm");
+		// setFormName("siteInformationMenuForm");
 	}
 
 	@Override

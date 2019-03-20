@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 @Configuration
 @EnableWebSecurity
@@ -69,6 +70,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.logoutSuccessUrl("/LoginPage.do")
 				.invalidateHttpSession(true)
 				.and()
+			.sessionManagement()
+				.invalidSessionUrl("/LoginPage.do")
+				.sessionFixation()
+					.newSession()
+				.and()  
 			.csrf()
 				.and()
 			.exceptionHandling()
@@ -100,5 +106,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		authenticationProvider.setUserDetailsService(userDetailsService);
 		authenticationProvider.setPasswordEncoder(passwordEncoder());
 		return authenticationProvider;
+	}
+	
+	@Bean 
+	public HttpSessionEventPublisher httpSessionEventPublisher() {
+		return new HttpSessionEventPublisher();
 	}
 }

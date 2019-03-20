@@ -9,15 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.result.form.PatientResultsForm;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -38,15 +34,9 @@ import us.mn.state.health.lims.test.beanItems.TestResultItem;
 @Controller
 public class PatientResultsController extends BaseController {
 	@RequestMapping(value = "/PatientResults", method = RequestMethod.GET)
-	public ModelAndView showPatientResults(HttpServletRequest request, @ModelAttribute("form") PatientResultsForm form)
+	public ModelAndView showPatientResults(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new PatientResultsForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
-		
+		PatientResultsForm form = new PatientResultsForm();
 
 		ResultsLoadUtility resultsUtility = new ResultsLoadUtility(getSysUserId(request));
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
@@ -106,7 +96,8 @@ public class PatientResultsController extends BaseController {
 			paging.page(request, form, newPage);
 		}
 
-		return findForward(forward, form);
+		addFlashMsgsToRequest(request);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	private void addInventory(PatientResultsForm form)

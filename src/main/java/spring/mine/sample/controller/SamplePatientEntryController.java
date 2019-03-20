@@ -6,20 +6,21 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.struts.Globals;
 import org.hibernate.StaleObjectStateException;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.sample.form.SamplePatientEntryForm;
+import spring.mine.sample.validator.SamplePatientEntryFormValidator;
 import us.mn.state.health.lims.address.dao.OrganizationAddressDAO;
 import us.mn.state.health.lims.address.daoimpl.OrganizationAddressDAOImpl;
 import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
@@ -83,6 +84,9 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 @Controller
 public class SamplePatientEntryController extends BaseSampleEntryController {
 
+	@Autowired
+	SamplePatientEntryFormValidator formValidator;
+
 	private static final String DEFAULT_ANALYSIS_TYPE = "MANUAL";
 	private OrganizationDAO orgDAO = new OrganizationDAOImpl();
 	private OrganizationAddressDAO orgAddressDAO = new OrganizationAddressDAOImpl();
@@ -93,10 +97,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 	@RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.GET)
 	public ModelAndView showSamplePatientEntry(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
 		SamplePatientEntryForm form = new SamplePatientEntryForm();
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
 		request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.TRUE);
 		SampleOrderService sampleOrderService = new SampleOrderService();
@@ -107,9 +108,9 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 		PropertyUtils.setProperty(form, "testSectionList", DisplayListService.getList(ListType.TEST_SECTION));
 		PropertyUtils.setProperty(form, "currentDate", DateUtil.getCurrentDateAsText());
 
-		for (Object program : form.getSampleOrderItems().getProgramList()) {
-			// System.out.println(((IdValuePair) program).getValue());
-		}
+		// for (Object program : form.getSampleOrderItems().getProgramList()) {
+		// System.out.println(((IdValuePair) program).getValue());
+		// }
 
 		addProjectList(form);
 
@@ -118,16 +119,21 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 					DisplayListService.getList(ListType.INITIAL_SAMPLE_CONDITION));
 		}
 
-		return findForward(forward, form);
+		addFlashMsgsToRequest(request);
+		return findForward(FWD_SUCCESS, form);
 	}
 
-	@RequestMapping(value = "/SamplePatientEntrySave", method = RequestMethod.POST)
-	public @ResponseBody ModelAndView showSamplePatientEntrySave(@ModelAttribute("form") SamplePatientEntryForm form,
-			BindingResult result, HttpServletRequest request)
+	@RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.POST)
+	public @ResponseBody ModelAndView showSamplePatientEntrySave(HttpServletRequest request,
+			@ModelAttribute("form") SamplePatientEntryForm form, BindingResult result,
+			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS_INSERT;
-		Errors errors = new BaseErrors();
 
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 		SamplePatientUpdateData updateData = new SamplePatientUpdateData(getSysUserId(request));
 
 		boolean useInitialSampleCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
@@ -158,9 +164,8 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 		updateData.validateSample(result);
 
 		if (result.hasErrors()) {
-			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, result);
-			setSuccessFlag(request, true);
+			saveErrors(result);
+			// setSuccessFlag(request, true);
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
@@ -205,18 +210,15 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
 			// errors.add(ActionMessages.GLOBAL_MESSAGE, error);
 			saveErrors(result);
-			request.setAttribute(Globals.ERROR_KEY, result);
 			request.setAttribute(ALLOW_EDITS_KEY, "false");
-			setSuccessFlag(request, true);
 			return findForward(FWD_FAIL_INSERT, form);
 
 		} finally {
 			HibernateUtil.closeSession();
 		}
 
-		setSuccessFlag(request, true);
-
-		return findForward(forward, form);
+		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private void persistObservations(SamplePatientUpdateData updateData) {

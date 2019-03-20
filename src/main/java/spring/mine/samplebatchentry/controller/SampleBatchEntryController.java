@@ -8,17 +8,17 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.samplebatchentry.form.SampleBatchEntryForm;
+import spring.mine.samplebatchentry.validator.SampleBatchEntryFormValidator;
 import us.mn.state.health.lims.common.services.SampleOrderService;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -37,12 +37,17 @@ import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
 @Controller
 public class SampleBatchEntryController extends BaseController {
 
+	@Autowired
+	SampleBatchEntryFormValidator formValidator;
+
 	@RequestMapping(value = { "/SampleBatchEntry" }, method = RequestMethod.POST)
 	public ModelAndView showSampleBatchEntry(HttpServletRequest request,
-			@ModelAttribute("form") SampleBatchEntryForm form) throws DocumentException {
-		String forward = FWD_SUCCESS;
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+			@ModelAttribute("form") SampleBatchEntryForm form, BindingResult result) throws DocumentException {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL, form);
+		}
 
 		String sampleXML = form.getSampleXML();
 		SampleOrderService sampleOrderService = new SampleOrderService();
@@ -97,8 +102,7 @@ public class SampleBatchEntryController extends BaseController {
 		request.setAttribute("facilityName", facilityName);
 		form.setPatientSearch(new PatientSearch());
 
-		forward = form.getMethod();
-		return findForward(forward, form);
+		return findForward(form.getMethod(), form);
 	}
 
 	/*
@@ -199,9 +203,9 @@ public class SampleBatchEntryController extends BaseController {
 		} else if ("Pre-Printed".equals(forward)) {
 			return "sampleBatchEntryPrePrintedDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return "/SampleBatchEntrySetup.do";
+			return "sampleBatchEntrySetupDefinition";
 		} else {
-			return "PageNotFound";
+			return "redirect:/SampleBatchEntrySetup.do";
 		}
 	}
 

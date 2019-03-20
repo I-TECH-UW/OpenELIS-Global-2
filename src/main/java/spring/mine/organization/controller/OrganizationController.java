@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -130,7 +131,6 @@ public class OrganizationController extends BaseController {
 			request.getSession().setAttribute("form", form);
 		}
 
-		form.setFormAction("");
 		form.setCancelAction("CancelOrganization.do");
 
 		// The first job is to determine if we are coming to this action with an
@@ -154,7 +154,7 @@ public class OrganizationController extends BaseController {
 
 		// redirect to get organization for next or previous entry
 		if (FWD_NEXT.equals(direction) || FWD_PREVIOUS.equals(direction)) {
-			List organizations;
+			List<Organization> organizations;
 			organizationDAO.getData(organization);
 			if (FWD_NEXT.equals(direction)) {
 				organizations = organizationDAO.getNextOrganizationRecord(organization.getId());
@@ -162,7 +162,7 @@ public class OrganizationController extends BaseController {
 				organizations = organizationDAO.getPreviousOrganizationRecord(organization.getId());
 			}
 			if (organizations != null && !organizations.isEmpty()) {
-				organization = (Organization) organizations.get(organizations.size() - 1);
+				organization = organizations.get(organizations.size() - 1);
 			}
 			String newId = organization.getId();
 			String url = "redirect:/Organization.do?ID=" + newId + "&startingRecNo=" + start;
@@ -182,13 +182,14 @@ public class OrganizationController extends BaseController {
 				organization.setSelectedOrgId(organization.getOrganization().getId());
 			}
 
-			List organizations = organizationDAO.getNextOrganizationRecord(organization.getOrganizationName());
-			if (organizations.size() > 0) {
+			List<Organization> organizations = organizationDAO
+					.getNextOrganizationRecord(organization.getOrganizationName());
+			if (!organizations.isEmpty()) {
 				request.setAttribute(NEXT_DISABLED, "false");
 			}
 
 			organizations = organizationDAO.getPreviousOrganizationRecord(organization.getOrganizationName());
-			if (organizations.size() > 0) {
+			if (!organizations.isEmpty()) {
 				request.setAttribute(PREVIOUS_DISABLED, "false");
 			}
 
@@ -303,22 +304,16 @@ public class OrganizationController extends BaseController {
 			@ModelAttribute("form") OrganizationForm form, BindingResult result, SessionStatus status,
 			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+		setDefaultButtonAttributes(request);
 		validator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
-		String forward = FWD_SUCCESS_INSERT;
-
-		request.setAttribute(ALLOW_EDITS_KEY, "true");
-		request.setAttribute(PREVIOUS_DISABLED, "false");
-		request.setAttribute(NEXT_DISABLED, "false");
-
 		String id = request.getParameter(ID);
-
 		boolean isNew = (StringUtil.isNullorNill(id) || "0".equals(id));
-
 		if (isNew) {
 			request.setAttribute("key", "organization.add.title");
 		} else {
@@ -327,14 +322,12 @@ public class OrganizationController extends BaseController {
 
 		selectedOrgTypes = form.getStrings("selectedTypes");
 
-		String start = request.getParameter("startingRecNo");
-		String direction = request.getParameter("direction");
-
 		Organization organization = new Organization();
 		organization.setSysUserId(getSysUserId(request));
 
-		List states = getPossibleStates(form);
+		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
+		List states = getPossibleStates(form);
 		PropertyUtils.copyProperties(organization, form);
 
 		if (FormFields.getInstance().useField(FormFields.Field.OrganizationParent)) {
@@ -344,12 +337,9 @@ public class OrganizationController extends BaseController {
 			Organization parentOrg = organizationDAO.getOrganizationByName(o, false);
 			organization.setOrganization(parentOrg);
 		}
-
 		createAddressParts(id, form, isNew);
 
-		org.hibernate.Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
-
 			if (!isNew) {
 				organizationDAO.updateData(organization);
 			} else {
@@ -367,11 +357,7 @@ public class OrganizationController extends BaseController {
 			tx.rollback();
 			String errorMsg;
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
-				// how can I get popup instead of struts error at the top of
-				// page?
-				// Errors errors = form.validate(mapping, request);
 				result.reject("errors.OptimisticLockException");
-
 			} else {
 				// bugzilla 1482
 				if (lre.getException() instanceof LIMSDuplicateRecordException) {
@@ -381,24 +367,18 @@ public class OrganizationController extends BaseController {
 					String msg = ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey);
 					result.reject("errors.DuplicateRecord.activeonly", new String[] { msg },
 							"errors.DuplicateRecord.activeonly");
-
 				} else {
 					result.reject("errors.UpdateException");
 				}
 			}
 			saveErrors(result);
-
 			request.setAttribute(PREVIOUS_DISABLED, "true");
 			request.setAttribute(NEXT_DISABLED, "true");
-			forward = FWD_FAIL_INSERT;
+			return findForward(FWD_FAIL_INSERT, form);
 
 		} finally {
 			HibernateUtil.closeSession();
 		}
-		if (forward.equals(FWD_FAIL)) {
-			return findForward(forward, form);
-		}
-
 		PropertyUtils.copyProperties(form, organization);
 
 		if (states != null) {
@@ -409,15 +389,17 @@ public class OrganizationController extends BaseController {
 			request.setAttribute(ID, organization.getId());
 		}
 
-		if (FWD_SUCCESS_INSERT.equals(forward)) {
-			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-			status.setComplete();
-			return findForward(forward, form);
-		}
-
 		DisplayListService.refreshList(DisplayListService.ListType.REFERRAL_ORGANIZATIONS);
 
-		return findForward(forward, form);
+		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+		status.setComplete();
+		return findForward(FWD_SUCCESS_INSERT, form);
+	}
+
+	private void setDefaultButtonAttributes(HttpServletRequest request) {
+		request.setAttribute(ALLOW_EDITS_KEY, "true");
+		request.setAttribute(PREVIOUS_DISABLED, "false");
+		request.setAttribute(NEXT_DISABLED, "false");
 	}
 
 	private void persistAddressParts(Organization organization) {

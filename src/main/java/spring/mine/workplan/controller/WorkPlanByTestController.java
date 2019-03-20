@@ -11,14 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.workplan.form.WorkplanForm;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
@@ -53,15 +49,9 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 	}
 
 	@RequestMapping(value = "/WorkPlanByTest", method = RequestMethod.GET)
-	public ModelAndView showWorkPlanByPanel(HttpServletRequest request, @ModelAttribute("form") WorkplanForm form)
+	public ModelAndView showWorkPlanByPanel(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new WorkplanForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
-		
+		WorkplanForm form = new WorkplanForm();
 
 		request.getSession().setAttribute(SAVE_DISABLED, "true");
 
@@ -98,7 +88,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 		PropertyUtils.setProperty(form, "searchLabel", StringUtil.getMessageForKey("workplan.test.types"));
 		PropertyUtils.setProperty(form, "searchAction", "WorkPlanByTest.do");
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	private List<IdValuePair> getTestDropdownList() {

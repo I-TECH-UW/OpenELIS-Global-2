@@ -78,7 +78,7 @@
 
     function makeDirty() {
         dirty = true;
-        if (typeof(showSuccessMessage) != 'undefinded') {
+        if (typeof(showSuccessMessage) === 'function') {
             showSuccessMessage(false); //refers to last save
         }
         // Adds warning when leaving page if content has been entered into makeDirty form fields
@@ -476,7 +476,7 @@
     </div>
 
     <div align="center">
-        <button onclick='submitAction("BatchTestReassignmentUpdate.do")' ><spring:message code="label.button.accept"/></button>&nbsp;
+        <button onclick='submitAction("BatchTestReassignment.do")' ><spring:message code="label.button.accept"/></button>&nbsp;
         <input type="button" onclick="restoreSelect()"  value='<%=StringUtil.getMessageForKey("label.button.reject")%>'>
     </div>
 </div>

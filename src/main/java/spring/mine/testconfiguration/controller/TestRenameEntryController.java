@@ -4,16 +4,18 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.testconfiguration.form.TestRenameEntryForm;
+import spring.mine.testconfiguration.validator.TestRenameEntryFormValidator;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -23,15 +25,14 @@ import us.mn.state.health.lims.test.valueholder.Test;
 
 @Controller
 public class TestRenameEntryController extends BaseController {
+
+	@Autowired
+	TestRenameEntryFormValidator formValidator;
+
 	@RequestMapping(value = "/TestRenameEntry", method = RequestMethod.GET)
-	public ModelAndView showTestRenameEntry(HttpServletRequest request,
-			@ModelAttribute("form") TestRenameEntryForm form) {
+	public ModelAndView showTestRenameEntry(HttpServletRequest request) {
 		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new TestRenameEntryForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+		TestRenameEntryForm form = new TestRenameEntryForm();
 
 		form.setTestList(DisplayListService.getList(DisplayListService.ListType.ALL_TESTS));
 
@@ -44,23 +45,25 @@ public class TestRenameEntryController extends BaseController {
 			return "testRenameDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/TestRenameEntry.do";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return "testRenameDefinition";
 		} else {
 			return "PageNotFound";
 		}
 	}
 
 	@RequestMapping(value = "/TestRenameEntry", method = RequestMethod.POST)
-
 	public ModelAndView updateTestRenameEntry(HttpServletRequest request,
-			@ModelAttribute("form") TestRenameEntryForm form) {
+			@ModelAttribute("form") TestRenameEntryForm form, BindingResult result,
+			RedirectAttributes redirectAttributes) {
 
-		String forward = FWD_SUCCESS_INSERT;
-		if (form == null) {
-			form = new TestRenameEntryForm();
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
 		}
-		form.setFormAction("");
+
 		form.setCancelAction("CancelDictionary.do");
-		BaseErrors errors = new BaseErrors();
 
 		String testId = form.getTestId();
 		String nameEnglish = form.getNameEnglish();
@@ -71,7 +74,7 @@ public class TestRenameEntryController extends BaseController {
 
 		updateTestNames(testId, nameEnglish, nameFrench, reportNameEnglish, reportNameFrench, userId);
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private void updateTestNames(String testId, String nameEnglish, String nameFrench, String reportNameEnglish,

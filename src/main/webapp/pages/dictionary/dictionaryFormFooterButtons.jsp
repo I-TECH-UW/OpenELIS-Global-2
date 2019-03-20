@@ -153,7 +153,7 @@ function setDirtyFormFields(form) {
 
 function saveIt(form) {
   setDirtyFormFields(form);
-  setAction(form, 'Update', 'yes', '?ID=');
+  setAction(form, '', 'yes', '?ID=');
 }
 
 function previousAction(form, ignoreFields) {

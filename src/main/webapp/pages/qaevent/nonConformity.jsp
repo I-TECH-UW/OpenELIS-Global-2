@@ -526,6 +526,8 @@ function  processPhoneSuccess(xhr){
 						</td>		      
 					</c:if>
 					<c:if test="${not empty form.providerLastName }">
+						<form:hidden path="providerLastName"/>
+						<form:hidden path="providerFirstName"/>
 						<td align="right"><spring:message code="person.name" />:</td>
 						<td><c:out value="${form.providerLastName}" />,&nbsp;<c:out value="${form.providerFirstName}" /></td>
 					</c:if>		      
@@ -541,6 +543,7 @@ function  processPhoneSuccess(xhr){
 					  			  size="70" />
 					</c:if>
 					<c:if test="${not empty providerStreetAddress}">
+						<form:hidden path="providerStreetAddress" />
 						<c:out value="${form.providerStreetAddress}" />
 					</c:if>
 					</td>
@@ -557,6 +560,7 @@ function  processPhoneSuccess(xhr){
 								  size="30" />
 					</c:if>
 					<c:if test="${not empty providerCity}">
+						<form:hidden path="providerCity"/>
 						<c:out value="${form.providerCity}" />
 					</c:if>			  
 					</td>
@@ -574,6 +578,7 @@ function  processPhoneSuccess(xhr){
 							  size="30" />
 				</c:if>
 				<c:if test="${not empty providerCommune}">
+					<form:hidden path="providerCommune" />
 					<c:out value="${form.providerCommune}" />
 				</c:if>
 				</td>
@@ -593,6 +598,7 @@ function  processPhoneSuccess(xhr){
 					</form:select>
 				</c:if>	
 				<c:if test="${not empty providerDepartment}">
+					<form:hidden path="providerDepartment"/>
 					<c:out value="${form.providerDepartment}" />
 				</c:if>
 				</td>
@@ -615,6 +621,7 @@ function  processPhoneSuccess(xhr){
 				    <div id="providerWorkPhoneMessage" class="blank" ></div>
 				</c:if>    
 				<c:if test="${not empty providerWorkPhone}">
+					<form:hidden path="providerWorkPhone"/>
 					<c:out value="${form.providerWorkPhone}" />
 				</c:if>
 				</td>
@@ -630,6 +637,7 @@ function  processPhoneSuccess(xhr){
 				</c:if>
 				<c:if test="${not empty doctor}">
 					<td >
+						<form:hidden path="doctor"/>
 						<c:out value="${form.doctor}" />
 					</td>
 				</c:if>
@@ -780,7 +788,7 @@ function savePage() {
 	var form = document.getElementById("mainForm");
   
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-	form.action = "NonConformityUpdate.do";
+	form.action = "NonConformity.do";
 	form.submit();
 }
 

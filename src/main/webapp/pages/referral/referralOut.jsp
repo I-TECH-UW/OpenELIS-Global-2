@@ -216,7 +216,7 @@ function /*void*/ savePage() {
 
     window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
     var form = document.getElementById("mainForm");
-    form.action = '${form.formName}'.sub('Form', '') + "Update.do";
+    form.action = "ReferredOutTests.do";
     form.submit();
 }
 function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
@@ -542,7 +542,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
 
     function /*void*/ makeDirty() {
         dirty = true;
-        if (typeof(showSuccessMessage) != 'undefinded') {
+        if (typeof(showSuccessMessage) === 'function') {
             showSuccessMessage(false); //refers to last save
         }
         // Adds warning when leaving page if content has been entered into makeDirty form fields

@@ -18,17 +18,21 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.struts.Globals;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.resultvalidation.form.ResultValidationForm;
 import spring.mine.resultvalidation.util.ResultValidationSaveService;
+import spring.mine.resultvalidation.validator.ResultValidationFormValidator;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -85,6 +89,9 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
 @Controller
 public class ResultValidationController extends BaseResultValidationController {
 
+	@Autowired
+	ResultValidationFormValidator formValidator;
+
 	// DAOs
 	private static final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
 	private static final SampleDAO sampleDAO = new SampleDAOImpl();
@@ -104,15 +111,9 @@ public class ResultValidationController extends BaseResultValidationController {
 	}
 
 	@RequestMapping(value = "/ResultValidation", method = RequestMethod.GET)
-	public ModelAndView showResultValidation(HttpServletRequest request,
-			@ModelAttribute("form") ResultValidationForm form)
+	public ModelAndView showResultValidation(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new ResultValidationForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+		ResultValidationForm form = new ResultValidationForm();
 
 		request.getSession().setAttribute(SAVE_DISABLED, "true");
 		String testSectionId = (request.getParameter("testSectionId"));
@@ -150,7 +151,8 @@ public class ResultValidationController extends BaseResultValidationController {
 			paging.page(request, form, newPage);
 		}
 
-		return findForward(forward, form);
+		addFlashMsgsToRequest(request);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	public List<Integer> getValidationStatus() {
@@ -166,15 +168,16 @@ public class ResultValidationController extends BaseResultValidationController {
 		return validationStatus;
 	}
 
-	@RequestMapping(value = "/ResultValidationSave", method = RequestMethod.POST)
+	@RequestMapping(value = "/ResultValidation", method = RequestMethod.POST)
 	public ModelAndView showResultValidationSave(HttpServletRequest request,
-			@ModelAttribute("form") ResultValidationForm form) {
-		String forward = FWD_SUCCESS_INSERT;
-		if (form == null) {
-			form = new ResultValidationForm();
+			@ModelAttribute("form") ResultValidationForm form, BindingResult result,
+			RedirectAttributes redirectAttributes) {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
 		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+		String forward = FWD_SUCCESS_INSERT;
 		List<IResultUpdate> updaters = ValidationUpdateRegister.getRegisteredUpdaters();
 		boolean areListeners = updaters != null && !updaters.isEmpty();
 
@@ -190,7 +193,7 @@ public class ResultValidationController extends BaseResultValidationController {
 		// ----------------------
 		String url = request.getRequestURL().toString();
 
-		errors = validateModifiedItems(resultItemList);
+		Errors errors = validateModifiedItems(resultItemList);
 
 		if (errors.hasErrors()) {
 			saveErrors(errors);
@@ -227,11 +230,11 @@ public class ResultValidationController extends BaseResultValidationController {
 				analysisDAO.updateData(analysis);
 			}
 
-			for (Result result : resultUpdateList) {
-				if (result.getId() != null) {
-					resultDAO.updateData(result);
+			for (Result resultUpdate : resultUpdateList) {
+				if (resultUpdate.getId() != null) {
+					resultDAO.updateData(resultUpdate);
 				} else {
-					resultDAO.insertData(result);
+					resultDAO.insertData(resultUpdate);
 				}
 			}
 
@@ -276,6 +279,7 @@ public class ResultValidationController extends BaseResultValidationController {
 			forward = "successRetroC";
 		}
 
+		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 		if (isBlankOrNull(testSectionName)) {
 			return findForward(forward, form);
 		} else {

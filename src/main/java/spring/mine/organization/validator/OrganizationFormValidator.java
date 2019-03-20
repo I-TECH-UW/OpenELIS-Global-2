@@ -36,7 +36,7 @@ public class OrganizationFormValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		OrganizationForm form = (OrganizationForm) target;
 
-		ValidationHelper.validateField("organizationName", form.getOrganizationName(), errors, true, 80);
+		ValidationHelper.validateField(form.getOrganizationName(), "organizationName", errors, true, 80);
 
 		ValidationHelper.validateYNField(form.getIsActive(), "isActive", errors);
 
@@ -50,7 +50,7 @@ public class OrganizationFormValidator implements Validator {
 	// only some are done here
 	private void validateOptionalFields(OrganizationForm form, Errors errors) {
 
-		ValidationHelper.validateIdField("id", form.getId(), errors, false);
+		ValidationHelper.validateIdField(form.getId(), "id", errors, false);
 
 		if (useParent) {
 

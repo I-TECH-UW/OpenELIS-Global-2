@@ -8,21 +8,20 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.workplan.form.WorkplanForm;
+import spring.mine.workplan.validator.WorkplanFormValidator;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.workplan.reports.ElisaWorkplanReport;
@@ -33,17 +32,21 @@ import us.mn.state.health.lims.workplan.reports.TestWorkplanReport;
 @Controller
 public class PrintWorkplanReportController extends BaseController {
 
-	private static us.mn.state.health.lims.workplan.reports.IWorkplanReport workplanReport;
+	@Autowired
+	WorkplanFormValidator formValidator;
+
+	private static IWorkplanReport workplanReport;
 	private String reportPath;
 
 	@RequestMapping(value = "/PrintWorkplanReport", method = RequestMethod.POST)
 	public void showPrintWorkplanReport(HttpServletRequest request, HttpServletResponse response,
-			@ModelAttribute("form") WorkplanForm form) {
-		if (form == null) {
-			form = new WorkplanForm();
+			@ModelAttribute("form") WorkplanForm form, BindingResult result) {
+
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return;
 		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
 		request.getSession().setAttribute(SAVE_DISABLED, "true");
 
@@ -91,14 +94,14 @@ public class PrintWorkplanReportController extends BaseController {
 
 		} catch (JRException jre) {
 			LogEvent.logError("PringWorkplanReportAction", "processRequest()", jre.toString());
-			errors.reject("error.jasper", "error.jasper");
+			result.reject("error.jasper", "error.jasper");
 		} catch (Exception e) {
 			LogEvent.logError("PrintWorkplanReportAction", "processRequest()", e.toString());
-			errors.reject("error.jasper", "error.jasper");
+			result.reject("error.jasper", "error.jasper");
 		}
 
-		if (errors.hasErrors()) {
-			saveErrors(errors);
+		if (result.hasErrors()) {
+			saveErrors(result);
 		}
 	}
 

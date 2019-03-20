@@ -667,7 +667,7 @@ function  processPhoneSuccess(xhr){
 
 function /*void*/ makeDirty(){
     dirty=true;
-    if( typeof(showSuccessMessage) != 'undefinded' ){
+    if( typeof(showSuccessMessage) === 'function' ){
         showSuccessMessage(false); //refers to last save
     }
     // Adds warning when leaving page if content has been entered into makeDirty form fields
@@ -683,7 +683,7 @@ function  /*void*/ savePage()
 
   window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
     var form = document.getElementById("mainForm");
-    form.action = "SamplePatientEntrySave.do";
+    form.action = "SamplePatientEntry.do";
     form.submit();
 }
 

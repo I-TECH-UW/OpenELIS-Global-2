@@ -5,14 +5,10 @@ import java.lang.reflect.InvocationTargetException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.sample.controller.BaseSampleEntryController;
 import spring.mine.samplebatchentry.form.SampleBatchEntryForm;
 import us.mn.state.health.lims.common.action.IActionConstants;
@@ -29,16 +25,9 @@ import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
 public class SampleBatchEntrySetupController extends BaseSampleEntryController {
 
 	@RequestMapping(value = "/SampleBatchEntrySetup", method = RequestMethod.GET)
-	public ModelAndView showSampleBatchEntrySetup(HttpServletRequest request,
-			@ModelAttribute("form") SampleBatchEntryForm form)
+	public ModelAndView showSampleBatchEntrySetup(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new SampleBatchEntryForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
-		
+		SampleBatchEntryForm form = new SampleBatchEntryForm();
 
 		request.getSession().setAttribute(IActionConstants.NEXT_DISABLED, IActionConstants.TRUE);
 
@@ -63,7 +52,7 @@ public class SampleBatchEntrySetupController extends BaseSampleEntryController {
 			form.setInitialSampleConditionList(DisplayListService.getList(ListType.INITIAL_SAMPLE_CONDITION));
 		}
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	@Override

@@ -18,27 +18,17 @@
 package us.mn.state.health.lims.common.provider.validation;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.validator.GenericValidator;
-import org.apache.commons.validator.routines.DateValidator;
-
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
 
 public class DateValidationProvider extends BaseValidationProvider {
-
-	public static final String PAST = "past";
-	public static final String FUTURE = "future";
 
 	public DateValidationProvider() {
 		super();
@@ -48,7 +38,9 @@ public class DateValidationProvider extends BaseValidationProvider {
 		this.ajaxServlet = ajaxServlet;
 	}
 
-	public void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	@Override
+	public void processRequest(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
 		// get id from request
 		String dateString = request.getParameter("date");
@@ -66,43 +58,11 @@ public class DateValidationProvider extends BaseValidationProvider {
 	}
 
 	public Date getDate(String date) {
-		Locale locale = SystemConfiguration.getInstance().getDateLocale();
-		return DateValidator.getInstance().validate(date, locale);
+		return CustomDateValidator.getInstance().getDate(date);
 	}
 
 	public String validateDate(Date date, String relative) {
-		String result = VALID;
-
-		if (date == null) {
-			result = INVALID;
-		} else if (!GenericValidator.isBlankOrNull(relative)) {
-
-			Calendar calendar = new GregorianCalendar();
-			calendar.set(Calendar.HOUR_OF_DAY, 0);
-			calendar.set(Calendar.MINUTE, 0);
-			calendar.set(Calendar.SECOND, 0);
-			calendar.set(Calendar.MILLISECOND, 0);
-			Date today = calendar.getTime();
-			
-			//time insensitive compare, only year month day
-			Calendar calendarDate = new GregorianCalendar();
-			calendarDate.setTime(date);
-			calendarDate.set(Calendar.HOUR_OF_DAY, 0);
-			calendarDate.set(Calendar.MINUTE, 0);
-			calendarDate.set(Calendar.SECOND, 0);
-			calendarDate.set(Calendar.MILLISECOND, 0);
-			date = calendarDate.getTime();
-			
-			int dateDiff = date.compareTo(today);
-
-			if (relative.equalsIgnoreCase(PAST) && dateDiff > 0) {
-				result = IActionConstants.INVALID_TO_LARGE;
-			} else if (relative.equalsIgnoreCase(FUTURE) && dateDiff < 0) {
-				result = IActionConstants.INVALID_TO_SMALL;
-			}
-		}
-
-		return result;
+		return CustomDateValidator.getInstance().validateDate(date, relative);
 	}
 
 }

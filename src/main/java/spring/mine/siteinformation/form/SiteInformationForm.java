@@ -1,4 +1,4 @@
-package spring.generated.forms;
+package spring.mine.siteinformation.form;
 
 import java.sql.Timestamp;
 import java.util.Collection;

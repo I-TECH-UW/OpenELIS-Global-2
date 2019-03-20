@@ -5,11 +5,12 @@ import java.util.regex.Pattern;
 import org.springframework.validation.Errors;
 
 import us.mn.state.health.lims.common.action.IActionConstants;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 
 public class ValidationHelper {
 
-	// prevents people constructing a helper object
+	// prevents constructing object all methods are static
 	private ValidationHelper() {
 
 	}
@@ -65,6 +66,23 @@ public class ValidationHelper {
 		}
 	}
 
+	public static void validateDateField(String value, String name, String displayName, Errors errors,
+			String relative) {
+		String result = CustomDateValidator.getInstance().validateDate(CustomDateValidator.getInstance().getDate(value),
+				relative);
+		if (!IActionConstants.VALID.equals(result)) {
+			errors.rejectValue(name, "error.field.date.invalid", new Object[] { displayName, result },
+					DEFAULT_PREFIX + displayName + " is not in a valid date format");
+		}
+	}
+
+	public static void validateTimeField(String value, String name, String displayName, Errors errors) {
+		if (!CustomDateValidator.getInstance().validate24HourTime(value)) {
+			errors.rejectValue(name, "error.field.time.invalid", new Object[] { displayName, value },
+					DEFAULT_PREFIX + displayName + " is not in a valid time format");
+		}
+	}
+
 	public static void validateFieldLength(String value, String name, String displayName, Errors errors, int min,
 			int max) {
 		validateFieldLengthMax(value, name, displayName, errors, max);
@@ -92,12 +110,41 @@ public class ValidationHelper {
 	}
 
 	public static void validateIdField(String value, String name, String displayName, Errors errors, boolean required) {
-		validateField(value, name, displayName, errors, required, 10, "[0-9]+");
+		validateField(value, name, displayName, errors, required, 10, "[0-9]*");
 	}
 
 	public static void validateYNField(String value, String name, String displayName, Errors errors) {
 		validateOptionField(value, name, displayName, errors,
 				new String[] { IActionConstants.YES, IActionConstants.NO });
+	}
+
+	public static void validateDateField(String value, String name, String displayName, Errors errors, String relative,
+			boolean required) {
+		if (required) {
+			validateFieldRequired(value, name, displayName, errors);
+			validateDateField(value, name, displayName, errors, relative);
+		} else {
+			if (GenericValidator.isBlankOrNull(value)) {
+				return;
+			}
+			validateDateField(value, name, displayName, errors, relative);
+		}
+	}
+
+	public static void validateTimeField(String value, String name, String displayName, Errors errors,
+			boolean required) {
+		if (required) {
+			validateFieldRequired(value, name, displayName, errors);
+		} else {
+			if (GenericValidator.isBlankOrNull(value)) {
+				return;
+			}
+			validateTimeField(value, name, displayName, errors);
+		}
+	}
+
+	public static void validateGenderField(String value, String name, String displayName, Errors errors) {
+		validateOptionField(value, name, displayName, errors, new Object[] { "M", "F" });
 	}
 
 	// methods for using name = displayName
@@ -146,6 +193,22 @@ public class ValidationHelper {
 
 	public static void validateYNField(String value, String name, Errors errors) {
 		validateYNField(value, name, name, errors);
+	}
+
+	public static void validateDateField(String value, String name, Errors errors, String relative) {
+		validateDateField(value, name, name, errors, relative);
+	}
+
+	public static void validateDateField(String value, String name, Errors errors, String relative, boolean required) {
+		validateDateField(value, name, name, errors, relative, required);
+	}
+
+	public static void validateTimeField(String value, String name, Errors errors, boolean required) {
+		validateTimeField(value, name, name, errors, required);
+	}
+
+	public static void validateGenderField(String value, String name, Errors errors) {
+		validateGenderField(value, name, name, errors);
 	}
 
 	/*
@@ -276,6 +339,7 @@ public class ValidationHelper {
 					match = true;
 				}
 			}
+
 			if (match) {
 				break;
 			}

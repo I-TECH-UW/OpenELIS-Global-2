@@ -14,11 +14,11 @@ import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
-import us.mn.state.health.lims.common.provider.validation.DateValidationProvider;
 import us.mn.state.health.lims.common.services.AnalysisService;
 import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
 import us.mn.state.health.lims.result.dao.ResultDAO;
 import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
@@ -89,14 +89,14 @@ public class ResultsValidation {
 
 	private void validateTestDate(TestResultItem item, Errors errors) {
 
-		DateValidationProvider dateValidator = new DateValidationProvider();
-		Date date = dateValidator.getDate(item.getTestDate());
+		Date date = CustomDateValidator.getInstance().getDate(item.getTestDate());
 
 		if (date == null) {
 			// errors.add(new ActionError("errors.date", new
 			// StringBuilder(item.getTestDate())));
 			errors.reject("errors.date");
-		} else if (!IActionConstants.VALID.equals(dateValidator.validateDate(date, DateValidationProvider.PAST))) {
+		} else if (!IActionConstants.VALID
+				.equals(CustomDateValidator.getInstance().validateDate(date, CustomDateValidator.PAST))) {
 			errors.reject("error.date.inFuture");
 		}
 	}

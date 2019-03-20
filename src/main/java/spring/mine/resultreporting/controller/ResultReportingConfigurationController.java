@@ -10,17 +10,18 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.resultreporting.form.ResultReportingConfigurationForm;
+import spring.mine.resultreporting.validator.ResultReportingConfigurationFormValidator;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.services.ExchangeConfigurationService;
@@ -39,6 +40,9 @@ import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 @Controller
 public class ResultReportingConfigurationController extends BaseController {
 
+	@Autowired
+	ResultReportingConfigurationFormValidator formValidator;
+
 	private SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
 	private CronSchedulerDAO schedulerDAO = new CronSchedulerDAOImpl();
 	private static final String NEVER = "never";
@@ -46,15 +50,9 @@ public class ResultReportingConfigurationController extends BaseController {
 	private static final String CRON_PREFIX = "0 ";
 
 	@RequestMapping(value = "/ResultReportingConfiguration", method = RequestMethod.GET)
-	public ModelAndView showResultReportingConfiguration(HttpServletRequest request,
-			@ModelAttribute("form") ResultReportingConfigurationForm form)
+	public ModelAndView showResultReportingConfiguration(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new ResultReportingConfigurationForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+		ResultReportingConfigurationForm form = new ResultReportingConfigurationForm();
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "true");
@@ -67,19 +65,20 @@ public class ResultReportingConfigurationController extends BaseController {
 		PropertyUtils.setProperty(form, "hourList", DisplayListService.getList(ListType.HOURS));
 		PropertyUtils.setProperty(form, "minList", DisplayListService.getList(ListType.MINS));
 
-		return findForward(forward, form);
+		addFlashMsgsToRequest(request);
+		return findForward(FWD_SUCCESS, form);
 	}
 
-	@RequestMapping(value = "/UpdateResultReportingConfiguration", method = RequestMethod.POST)
+	@RequestMapping(value = "/ResultReportingConfiguration", method = RequestMethod.POST)
 	public ModelAndView showUpdateResultReportingConfiguration(HttpServletRequest request,
-			@ModelAttribute("form") ResultReportingConfigurationForm form) {
-		String forward = FWD_SUCCESS_INSERT;
-		if (form == null) {
-			form = new ResultReportingConfigurationForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+			@ModelAttribute("form") ResultReportingConfigurationForm form, BindingResult result,
+			RedirectAttributes redirectAttributes) {
 
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 		List<SiteInformation> informationList = new ArrayList<>();
 		List<CronScheduler> scheduleList = new ArrayList<>();
 		@SuppressWarnings("unchecked")
@@ -112,12 +111,16 @@ public class ResultReportingConfigurationController extends BaseController {
 			ConfigurationProperties.forceReload();
 		} catch (HibernateException e) {
 			tx.rollback();
+			return findForward(FWD_FAIL_INSERT, form);
+		} finally {
+
 		}
 
 		ConfigurationProperties.forceReload();
 		new LateStartScheduler().restartSchedules();
 
-		return findForward(forward, form);
+		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private CronScheduler setScheduleInformationFor(ReportingConfiguration config) {
@@ -176,6 +179,8 @@ public class ResultReportingConfigurationController extends BaseController {
 			return "resultReportingConfigurationDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/MasterListsPage.do";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return "resultReportingConfigurationDefinition";
 		} else {
 			return "PageNotFound";
 		}

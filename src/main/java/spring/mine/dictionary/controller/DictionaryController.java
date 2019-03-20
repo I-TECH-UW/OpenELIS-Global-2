@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -152,7 +153,7 @@ public class DictionaryController extends BaseController {
 		return dictionary;
 	}
 
-	@RequestMapping(value = "/UpdateDictionary", method = RequestMethod.POST)
+	@RequestMapping(value = "/Dictionary", method = RequestMethod.POST)
 	public ModelAndView showUpdateDictionary(HttpServletRequest request, @ModelAttribute("form") DictionaryForm form,
 			BindingResult result, SessionStatus status, RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -163,12 +164,11 @@ public class DictionaryController extends BaseController {
 			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);
 		}
-		String forward = FWD_SUCCESS;
 		setDefaultButtonAttributes(request);
 
 		Dictionary dictionary = new Dictionary();
 		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-		org.hibernate.Transaction tx = HibernateUtil.getSession().beginTransaction();
+		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		setupDictionary(dictionary, form);
 
 		try {
@@ -190,9 +190,6 @@ public class DictionaryController extends BaseController {
 			java.util.Locale locale = (java.util.Locale) request.getSession()
 					.getAttribute("org.apache.struts.action.LOCALE");
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
-				// how can I get popup instead of struts error at the top of
-				// page?
-				// ActionMessages errors = form.validate(mapping, request);
 				result.reject("errors.OptimisticLockException");
 			} else if (lre.getException() instanceof LIMSDuplicateRecordException) {
 				String messageKey = "dictionary.dictEntryByCategory";
@@ -218,31 +215,15 @@ public class DictionaryController extends BaseController {
 			// disable previous and next
 			request.setAttribute(PREVIOUS_DISABLED, "true");
 			request.setAttribute(NEXT_DISABLED, "true");
-			forward = FWD_FAIL_INSERT;
+			return findForward(FWD_FAIL_INSERT, form);
 
 		} finally {
 			HibernateUtil.closeSession();
 		}
-		if (forward.equals(FWD_FAIL_INSERT)) {
-			return findForward(forward, form);
-		}
-		// repopulate the form from valueholder
-		PropertyUtils.copyProperties(form, dictionary);
-
-		if ("true".equalsIgnoreCase(request.getParameter("close"))) {
-			forward = FWD_CLOSE;
-		}
-
-		if (dictionary.getId() != null && !dictionary.getId().equals("0")) {
-			request.setAttribute(ID, dictionary.getId());
-
-		}
-
-		forward = FWD_SUCCESS_INSERT;
 
 		status.setComplete();
 		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private void setupDictionary(Dictionary dictionary, DictionaryForm form)

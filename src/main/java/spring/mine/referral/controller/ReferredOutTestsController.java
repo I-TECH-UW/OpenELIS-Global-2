@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.apache.struts.Globals;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -23,20 +22,22 @@ import org.hibernate.Transaction;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.referral.form.ReferredOutTestsForm;
+import spring.mine.referral.validator.ReferredOutTestsFormValidator;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.AnalysisService;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -90,6 +91,9 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 @Controller
 public class ReferredOutTestsController extends BaseController {
 
+	@Autowired
+	ReferredOutTestsFormValidator formValidator;
+
 	private final ReferralDAO referralDAO = new ReferralDAOImpl();
 	private final ReferralResultDAO referralResultDAO = new ReferralResultDAOImpl();
 	private final OrganizationDAO organizationDAO = new OrganizationDAOImpl();
@@ -105,16 +109,10 @@ public class ReferredOutTestsController extends BaseController {
 	private static DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
 
 	@RequestMapping(value = "/ReferredOutTests", method = RequestMethod.GET)
-	public ModelAndView showReferredOutTests(HttpServletRequest request,
-			@ModelAttribute("form") ReferredOutTestsForm form)
+	public ModelAndView showReferredOutTests(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new ReferredOutTestsForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
+		ReferredOutTestsForm form = new ReferredOutTestsForm();
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
 		List<ReferralItem> referralItems = getReferralItems();
@@ -126,7 +124,8 @@ public class ReferredOutTestsController extends BaseController {
 
 		fillInDictionaryValuesForReferralItems(referralItems);
 
-		return findForward(forward, form);
+		addFlashMsgsToRequest(request);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	private void fillInDictionaryValuesForReferralItems(List<ReferralItem> referralItems) {
@@ -431,16 +430,17 @@ public class ReferredOutTestsController extends BaseController {
 		return nonNumericTestList;
 	}
 
-	@RequestMapping(value = "/referredOutTestsUpdate", method = RequestMethod.POST)
-	public ModelAndView showreferredOutTestsUpdate(HttpServletRequest request,
-			@ModelAttribute("form") ReferredOutTestsForm form)
+	@RequestMapping(value = "/ReferredOutTests", method = RequestMethod.POST)
+	public ModelAndView showReferredOutTestsUpdate(HttpServletRequest request,
+			@ModelAttribute("form") ReferredOutTestsForm form, BindingResult result,
+			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS_INSERT;
-		if (form == null) {
-			form = new ReferredOutTestsForm();
+
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			findForward(FWD_FAIL_INSERT, form);
 		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
 		List<ReferralSet> referralSetList = new ArrayList<>();
 		List<ReferralResult> removableReferralResults = new ArrayList<>();
@@ -453,22 +453,18 @@ public class ReferredOutTestsController extends BaseController {
 
 		List<ReferralItem> referralItems = (List<ReferralItem>) PropertyUtils.getProperty(form, "referralItems");
 		selectModifiedAndCanceledItems(referralItems, modifiedItems, canceledItems);
-		validateModifedItems(errors, modifiedItems);
+		validateModifedItems(result, modifiedItems);
 
-		if (errors.hasErrors()) {
-			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
-
-			return findForward(IActionConstants.FWD_VALIDATION_ERROR, form);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
 		}
 
 		try {
 			createReferralSets(referralSetList, removableReferralResults, modifiedItems, canceledItems, parentSamples);
 		} catch (LIMSRuntimeException e) {
-			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
-
-			return findForward(IActionConstants.FWD_VALIDATION_ERROR, form);
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
 		}
 
 		Transaction tx = HibernateUtil.getSession().beginTransaction();
@@ -478,13 +474,13 @@ public class ReferredOutTestsController extends BaseController {
 				referralDAO.updateData(referralSet.referral);
 
 				for (ReferralResult referralResult : referralSet.updatableReferralResults) {
-					Result result = referralResult.getResult();
-					if (result != null) {
-						if (result.getId() == null) {
-							resultDAO.insertData(result);
+					Result rResult = referralResult.getResult();
+					if (rResult != null) {
+						if (rResult.getId() == null) {
+							resultDAO.insertData(rResult);
 						} else {
-							result.setSysUserId(getSysUserId(request));
-							resultDAO.updateData(result);
+							rResult.setSysUserId(getSysUserId(request));
+							resultDAO.updateData(rResult);
 						}
 					}
 
@@ -534,17 +530,16 @@ public class ReferredOutTestsController extends BaseController {
 				errorMsg = "error.system";
 			}
 
-			errors.reject(errorMsg);
-			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
+			result.reject(errorMsg);
+			saveErrors(result);
 			request.setAttribute(ALLOW_EDITS_KEY, "false");
 			return findForward(FWD_FAIL_INSERT, form);
 
 		} finally {
 			HibernateUtil.closeSession();
 		}
-
-		return findForward(forward, form);
+		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private void selectModifiedAndCanceledItems(List<ReferralItem> referralItems, List<ReferralItem> modifiedItems,
@@ -949,9 +944,7 @@ public class ReferredOutTestsController extends BaseController {
 		} else if (FWD_FAIL.equals(forward)) {
 			return "homePageDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return "redirect:/ReferredOutTests.do?forward=success";
-		} else if (FWD_VALIDATION_ERROR.equals(forward)) {
-			return "referredOutDefinition";
+			return "redirect:/ReferredOutTests.do";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
 			return "referredOutDefinition";
 		} else {

@@ -17,18 +17,21 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.struts.Globals;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.systemuser.form.UnifiedSystemUserForm;
+import spring.mine.systemuser.validator.UnifiedSystemUserFormValidator;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.provider.validation.PasswordValidationFactory;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -56,6 +59,9 @@ import us.mn.state.health.lims.userrole.valueholder.UserRole;
 @Controller
 public class UnifiedSystemUserController extends BaseController {
 
+	@Autowired
+	UnifiedSystemUserFormValidator formValidator;
+
 	private static LoginDAO loginDAO = new LoginDAOImpl();
 	private static final String RESERVED_ADMIN_NAME = "admin";
 
@@ -74,17 +80,12 @@ public class UnifiedSystemUserController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/UnifiedSystemUser", method = { RequestMethod.POST, RequestMethod.GET })
-	public ModelAndView showUnifiedSystemUser(HttpServletRequest request,
-			@ModelAttribute("form") UnifiedSystemUserForm form)
+	@RequestMapping(value = "/UnifiedSystemUser", method = RequestMethod.GET)
+	public ModelAndView showUnifiedSystemUser(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new UnifiedSystemUserForm();
-		}
-		form.setFormAction("UpdateUnifiedSystemUser.do");
+		UnifiedSystemUserForm form = new UnifiedSystemUserForm();
+		form.setFormAction("UnifiedSystemUser.do");
 		form.setCancelAction("UnifiedSystemUserMenu.do");
-		Errors errors = new BaseErrors();
 
 		String id = request.getParameter(ID);
 		boolean doFiltering = true;
@@ -114,7 +115,8 @@ public class UnifiedSystemUserController extends BaseController {
 
 		PropertyUtils.setProperty(form, "roles", displayRoles);
 
-		return findForward(forward, form);
+		addFlashMsgsToRequest(request);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	private List<DisplayRole> convertToDisplayRoles(List<Role> roles) {
@@ -362,15 +364,15 @@ public class UnifiedSystemUserController extends BaseController {
 		return roleDAO.getAllActiveRoles();
 	}
 
-	@RequestMapping(value = "/UpdateUnifiedSystemUser", method = RequestMethod.POST)
+	@RequestMapping(value = "/UnifiedSystemUser", method = RequestMethod.POST)
 	public ModelAndView showUpdateUnifiedSystemUser(HttpServletRequest request,
-			@ModelAttribute("form") UnifiedSystemUserForm form) {
-		String forward = FWD_SUCCESS_INSERT;
-		if (form == null) {
-			form = new UnifiedSystemUserForm();
+			@ModelAttribute("form") UnifiedSystemUserForm form, BindingResult result,
+			RedirectAttributes redirectAttributes) {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
 		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "false");
@@ -387,11 +389,12 @@ public class UnifiedSystemUserController extends BaseController {
 			form.setUserLoginName("");
 		}
 
-		forward = validateAndUpdateSystemUser(request, form);
+		String forward = validateAndUpdateSystemUser(request, form);
 
 		if (forward.equals(FWD_SUCCESS)) {
 			return getForward(findForward(forward, form), id, start, direction);
 		} else if (forward.equals(FWD_SUCCESS_INSERT)) {
+			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 			Map<String, String> params = new HashMap<>();
 			params.put("forward", FWD_SUCCESS);
 			return getForwardWithParameters(findForward(forward, form), params);

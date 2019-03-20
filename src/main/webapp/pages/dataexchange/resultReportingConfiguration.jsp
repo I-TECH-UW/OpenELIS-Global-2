@@ -38,7 +38,7 @@ function setMyCancelAction(){
 function savePage(){
 	if( formValid() ){
 		var form = document.getElementById("mainForm");
-		form.action = "UpdateResultReportingConfiguration.do";
+		form.action = "ResultReportingConfiguration.do";
 		form.submit();
 		return true;		
 	}

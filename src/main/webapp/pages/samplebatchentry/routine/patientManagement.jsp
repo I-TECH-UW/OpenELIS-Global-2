@@ -574,7 +574,7 @@ function /*void*/ updatePatientEditStatus() {
 
 function /*void*/ makeDirty() {
 	dirty=true;
-	if (typeof(showSuccessMessage) != 'undefinded') {
+	if (typeof(showSuccessMessage) === 'function') {
 		showSuccessMessage(false); //refers to last save
 	}
 	// Adds warning when leaving page if content has been entered into makeDirty form fields

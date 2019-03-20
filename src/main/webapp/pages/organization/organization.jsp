@@ -74,14 +74,18 @@ function validateForm(form) {
 
 		for( var i = 0; i < orgTypeList.length; ++i ){
 			if(orgTypeList[i].checked ){
-				return validateOrganizationForm(form);
+				//TODO add proper javascript validation
+ 				//return validateOrganizationForm(form);
+				return true;
 			}
 		}
 		alert("<%= StringUtil.getMessageForKey("error.organizationType.required")%>");
 		return false;
 	}
 
- return validateOrganizationForm(form);
+	//TODO add proper javascript validation
+	return true;
+ 	//return validateOrganizationForm(form);
 }
 </script>
 

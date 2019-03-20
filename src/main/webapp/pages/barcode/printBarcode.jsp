@@ -17,7 +17,6 @@
 
 <c:set var="formName" value="${form.formName}"/>
 <c:set var="localDBOnly" value='<%=Boolean.toString(ConfigurationProperties.getInstance().getPropertyValueLowerCase(Property.UseExternalPatientInfo).equals("false"))%>'/>
-<c:set var="patientSearch" value="${form.patientSearch}"/>
 
 <%!
 	IAccessionNumberValidator accessionNumberValidator;
@@ -90,7 +89,6 @@ function disablePrint() {
 
 //search patients using labNo
 function searchPatients() {
-    var criteria = $jq("#searchCriteria").val();
     var labNumber = $jq("#searchValue").val();
     var lastName = "";
     var firstName = "";
@@ -275,9 +273,8 @@ function /*void*/ doNothing(){
 
 function enableSearchButton(eventCode){
     var valueElem = $jq("#searchValue");
-    var criteriaElem  = $jq('#searchCriteria');
     var searchButton = $jq("#searchButton");
-    if( valueElem.val() && criteriaElem.val() != "0" && valueElem.val() != '<%=StringUtil.getMessageForKey("label.select.search.here")%>'){
+    if( valueElem.val() && valueElem.val() != '<%=StringUtil.getMessageForKey("label.select.search.here")%>'){
         searchButton.removeAttr("disabled");
         if( eventCode == 13 ){
             searchButton.click();
@@ -285,18 +282,12 @@ function enableSearchButton(eventCode){
     } else {
         searchButton.attr("disabled", "disabled");
     }
-    if(criteriaElem.val() == "5" ){
-        valueElem.attr("maxlength","<%=Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>");
-    } else {
-        valueElem.attr("maxlength","120");
-    }
+    valueElem.attr("maxlength","<%=Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>");
+    
 }
 
 function handleSelectedPatient(){
-    var accessionNumber = "";
-    if($jq("#searchCriteria").val() == 5){//lab number
-        accessionNumber = $jq("#searchValue").val();
-    }
+    var accessionNumber = $jq("#searchValue").val();
 
     $("searchResultsDiv").style.display = "none";
     var form = document.getElementById("mainForm");
@@ -395,10 +386,6 @@ function printBarcode(button) {
     <c:if test="${!empty warning}">
         <h3 class="important-text"><spring:message code="order.modify.search.warning" /></h3>
     </c:if>
-    <input type="hidden" 
-    		id="searchCriteria" 
-    		class="patientSearch" 
-    		value="5" /> 
     		
    	<spring:message code="barcode.print.search.accessionnumber"/>:
 	<spring:message code="sample.search.scanner.instructions"/>
@@ -493,16 +480,16 @@ function printBarcode(button) {
 			</tr>
 			<tr>
 				<td>
-					<c:out value="${form.patientName}"/>&nbsp;
+					<c:out value="${patientName}"/>&nbsp;
 				</td>
 				<td>
-					<c:out value="${form.dob}"/>&nbsp;
+					<c:out value="${dob}"/>&nbsp;
 				</td>
 				<td>
-					<c:out value="${form.gender}"/>				
+					<c:out value="${gender}"/>				
 				</td>
 				<td>
-					<c:out value="${form.nationalId}"/>
+					<c:out value="${nationalId}"/>
 				</td>
 			</tr>
 		</table>
@@ -552,7 +539,7 @@ function printBarcode(button) {
 			        	onclick="printBarcode(this);">
         		</td>
         	</tr>
-        	<c:forEach var="test" items="${form.existingTests }">
+        	<c:forEach var="test" items="${existingTests}">
         		<tr>
         			<td>
         				<spring:message code="barcode.label.type.specimen"/>

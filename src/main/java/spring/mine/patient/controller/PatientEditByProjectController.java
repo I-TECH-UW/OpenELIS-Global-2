@@ -3,20 +3,20 @@ package spring.mine.patient.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.patient.form.PatientEditByProjectForm;
+import spring.mine.patient.validator.PatientEditByProjectFormValidator;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.login.valueholder.UserSessionData;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 import us.mn.state.health.lims.patient.saving.Accessioner;
 import us.mn.state.health.lims.patient.saving.PatientEditUpdate;
@@ -28,15 +28,13 @@ import us.mn.state.health.lims.patient.saving.RequestType;
 
 @Controller
 public class PatientEditByProjectController extends BasePatientEntryByProject {
+
+	@Autowired
+	PatientEditByProjectFormValidator formValidator;
+
 	@RequestMapping(value = "/PatientEditByProject", method = RequestMethod.GET)
-	public ModelAndView showPatientEditByProject(HttpServletRequest request,
-			@ModelAttribute("form") PatientEditByProjectForm form) throws Exception {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new PatientEditByProjectForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+	public ModelAndView showPatientEditByProject(HttpServletRequest request) throws Exception {
+		PatientEditByProjectForm form = new PatientEditByProjectForm();
 
 		request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.TRUE);
 		updateRequestType(request);
@@ -49,60 +47,56 @@ public class PatientEditByProjectController extends BasePatientEntryByProject {
 
 		addAllPatientFormLists(form);
 
-		return findForward(forward, form);
+		addFlashMsgsToRequest(request);
+
+		return findForward(FWD_SUCCESS, form);
 	}
 
-	@RequestMapping(value = "/PatientEditByProjectSave", method = RequestMethod.POST)
+	@RequestMapping(value = "/PatientEditByProject", method = RequestMethod.POST)
 	public ModelAndView showPatientEditByProjectSave(HttpServletRequest request,
-			@ModelAttribute("form") PatientEditByProjectForm form) throws LIMSRuntimeException, Exception {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new PatientEditByProjectForm();
+			@ModelAttribute("form") PatientEditByProjectForm form, BindingResult result,
+			RedirectAttributes redirectAttributes) throws LIMSRuntimeException, Exception {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
 		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
-		UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-		String sysUserId = String.valueOf(usd.getSystemUserId());
+		String forward = FWD_FAIL_INSERT;
+
+		String sysUserId = getSysUserId(request);
 		Accessioner accessioner;
 		addAllPatientFormLists(form);
-
 		accessioner = new PatientEditUpdate(form, sysUserId, request);
 		if (accessioner.canAccession()) {
 			forward = handleSave(request, accessioner);
-			return findForward(forward, form);
 		}
 
 		accessioner = new PatientSecondEntry(form, sysUserId, request);
 		if (accessioner.canAccession()) {
 			forward = handleSave(request, accessioner);
-			return findForward(forward, form);
 		}
 
 		accessioner = new PatientEntry(form, sysUserId, request);
 		if (accessioner.canAccession()) {
 			forward = handleSave(request, accessioner);
-			if (forward != null) {
-				return findForward(forward, form);
-			}
 		}
 		accessioner = new PatientEntryAfterSampleEntry(form, sysUserId, request);
 		if (accessioner.canAccession()) {
 			forward = handleSave(request, accessioner);
-			if (forward != null) {
-				return findForward(forward, form);
-			}
 		}
 		accessioner = new PatientEntryAfterAnalyzer(form, sysUserId, request);
 		if (accessioner.canAccession()) {
 			forward = handleSave(request, accessioner);
-			if (forward != null) {
-				return findForward(forward, form);
-			}
 		}
-		logAndAddMessage(request, "performAction", "errors.UpdateException");
+		if (forward == null || FWD_FAIL_INSERT.equals(forward)) {
+			logAndAddMessage(request, "performAction", "errors.UpdateException");
+			forward = FWD_FAIL_INSERT;
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+		}
 
-		return findForward(FWD_FAIL_INSERT, form);
+		return findForward(forward, form);
 	}
 
 	@Override
@@ -110,7 +104,7 @@ public class PatientEditByProjectController extends BasePatientEntryByProject {
 		if (FWD_SUCCESS.equals(forward)) {
 			return "patientEditByProjectDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return "homePageDefinition";
+			return "redirect:/Dashboard.do";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/PatientEditByProject.do?forward=success";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {

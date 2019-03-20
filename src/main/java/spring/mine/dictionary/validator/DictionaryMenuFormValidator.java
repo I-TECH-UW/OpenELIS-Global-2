@@ -21,10 +21,10 @@ public class DictionaryMenuFormValidator implements Validator {
 
 		for (String id : form.getSelectedIDs()) {
 			ValidationHelper.validateIdField(id, "selectedIDs", errors, true);
-			if (errors.hasErrors()) {
-				break;
-			}
 		}
+
+		// TODO create tighter character set if possible
+		ValidationHelper.validateFieldAndCharset(form.getSearchString(), "searchString", errors, false, 255, "\\s\\S");
 
 	}
 

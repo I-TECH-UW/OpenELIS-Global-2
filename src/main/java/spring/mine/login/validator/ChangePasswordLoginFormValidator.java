@@ -26,6 +26,9 @@ public class ChangePasswordLoginFormValidator implements Validator {
 
 		ILoginPasswordValidation passValidator = PasswordValidationFactory.getPasswordValidator();
 
+		if (form.getPassword().equals(form.getNewPassword())) {
+			errors.reject("login.error.newpassword.required", "New password cannot match old password");
+		}
 		if (!form.getNewPassword().equals(form.getConfirmPassword())) {
 			errors.reject("login.error.password.notmatch");
 		}
