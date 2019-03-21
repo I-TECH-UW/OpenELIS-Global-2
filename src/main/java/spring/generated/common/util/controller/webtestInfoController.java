@@ -14,7 +14,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.forms.WebTestInfoForm;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.login.dao.LoginDAO;
 import us.mn.state.health.lims.login.daoimpl.LoginDAOImpl;

@@ -4,7 +4,7 @@
 				us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
 			    us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
                 us.mn.state.health.lims.common.util.Versioning,
-				us.mn.state.health.lims.common.util.StringUtil,
+				spring.mine.internationalization.MessageUtil,
 				org.owasp.encoder.Encode" %>
 
 
@@ -181,21 +181,21 @@ function /*void*/ markUpdated(){
 	<c:set var="total" value="${form.paging.totalPages}"/>
 	<c:set var="currentPage" value="${form.paging.currentPage}"/>
 
-	<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" onclick="pager.pageBack();" 
+	<input type="button" value='<%=MessageUtil.getMessage("label.button.previous") %>' style="width:100px;" onclick="pager.pageBack();" 
 		<c:if test="${currentPage == '1'}">disabled="disabled"</c:if> />
-	<input type="button" value='<%=StringUtil.getMessageForKey("label.button.next") %>' style="width:100px;" onclick="pager.pageFoward();" 
+	<input type="button" value='<%=MessageUtil.getMessage("label.button.next") %>' style="width:100px;" onclick="pager.pageFoward();" 
 		<c:if test="${total == currentPage}">disabled="disabled"</c:if> />
 
 	&nbsp;
 	<c:out value="${form.paging.currentPage}"/> of
 	<c:out value="${form.paging.totalPages}"/>
 	<div class='textcontent' style="float: right" >
-	<span style="visibility: hidden" id="searchNotFound"><em><%= StringUtil.getMessageForKey("search.term.notFound") %></em></span>
-	<%=StringUtil.getContextualMessageForKey("result.sample.id")%> : &nbsp;
+	<span style="visibility: hidden" id="searchNotFound"><em><%= MessageUtil.getMessage("search.term.notFound") %></em></span>
+	<%=MessageUtil.getContextualMessage("result.sample.id")%> : &nbsp;
 	<input type="text"
 	       id="labnoSearch"
 	       maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>' />
-	<input type="button" onclick="pageSearch.doLabNoSearch($(labnoSearch))" value='<%= StringUtil.getMessageForKey("label.button.search") %>'>
+	<input type="button" onclick="pageSearch.doLabNoSearch($(labnoSearch))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
 	</div>
 </c:if>
 <br/><br/><img src="./images/nonconforming.gif" /> = <spring:message code="result.nonconforming.item"/>
@@ -369,8 +369,8 @@ function /*void*/ markUpdated(){
 	<c:set var="total" value="${form.paging.totalPages}"/>
 	<c:set var="currentPage" value="${form.paging.currentPage}"/>
 
-	<input type="button" value='<%=StringUtil.getMessageForKey("label.button.previous") %>' style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == '1'}">disabled="disabled"</c:if> />
-	<input type="button" value='<%=StringUtil.getMessageForKey("label.button.next") %>' style="width:100px;" onclick="pager.pageFoward();" <c:if test="${total == currentPage}">disabled="disabled"</c:if> />
+	<input type="button" value='<%=MessageUtil.getMessage("label.button.previous") %>' style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == '1'}">disabled="disabled"</c:if> />
+	<input type="button" value='<%=MessageUtil.getMessage("label.button.next") %>' style="width:100px;" onclick="pager.pageFoward();" <c:if test="${total == currentPage}">disabled="disabled"</c:if> />
 
 	&nbsp;
 	<c:out value="${form.paging.currentPage}"/> of

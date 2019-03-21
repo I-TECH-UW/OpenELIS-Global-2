@@ -20,12 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.valueholder.History;
 import us.mn.state.health.lims.common.services.PersonService;
 import us.mn.state.health.lims.common.services.RequesterService;
 import us.mn.state.health.lims.common.services.StatusService;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
 import us.mn.state.health.lims.person.daoimpl.PersonDAOImpl;
 import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
@@ -61,9 +61,9 @@ public class OrderHistoryService extends HistoryService {
 		identifier = sample.getAccessionNumber();
 
         attributeToIdentifierMap = new HashMap<String, String>();
-        attributeToIdentifierMap.put(ORGANIZATION_ATTRIBUTE, StringUtil.getMessageForKey( "organization.organization" ));
-        attributeToIdentifierMap.put(PROVIDER_ATTRIBUTE, StringUtil.getContextualMessageForKey( "nonconformity.provider.label" ));
-        attributeToIdentifierMap.put(ACCESSION_ATTRIBUTE, StringUtil.getContextualMessageForKey( "quick.entry.accession.number" ));
+        attributeToIdentifierMap.put(ORGANIZATION_ATTRIBUTE, MessageUtil.getMessage( "organization.organization" ));
+        attributeToIdentifierMap.put(PROVIDER_ATTRIBUTE, MessageUtil.getContextualMessage( "nonconformity.provider.label" ));
+        attributeToIdentifierMap.put(ACCESSION_ATTRIBUTE, MessageUtil.getContextualMessage( "quick.entry.accession.number" ));
 
         History searchHistory = new History();
 		searchHistory.setReferenceId(sample.getId());
@@ -111,7 +111,7 @@ public class OrderHistoryService extends HistoryService {
                  item.setIdentifier( "Provider" );
                  item.setNewValue( newValueMap.get(PROVIDER_ATTRIBUTE) );
              }else if( history.getReferenceId().equals( currentOrganizationRequesterLinkId )){
-                 item.setIdentifier( StringUtil.getMessageForKey( "organization.organization" ) );
+                 item.setIdentifier( MessageUtil.getMessage( "organization.organization" ) );
                  item.setNewValue( newValueMap.get(ORGANIZATION_ATTRIBUTE) );
              }
         }
@@ -146,7 +146,7 @@ public class OrderHistoryService extends HistoryService {
 
 	@Override
 	protected String getObjectName() {
-		return StringUtil.getMessageForKey("auditTrail.order");
+		return MessageUtil.getMessage("auditTrail.order");
 	}
 
 	@Override

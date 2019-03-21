@@ -3,7 +3,7 @@
 	import="us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
 			us.mn.state.health.lims.common.action.IActionConstants,
 			us.mn.state.health.lims.login.valueholder.UserSessionData,
-			us.mn.state.health.lims.common.util.StringUtil"%>
+			spring.mine.internationalization.MessageUtil"%>
 
 <%!
       String path = "";
@@ -24,8 +24,8 @@
         String key1 = "login.session.timeout.message";  
         String key2 = "login.error.session.message";
         
-        String message1 = StringUtil.getMessageForKey("login.session.timeout.message");
-        String message2 = StringUtil.getMessageForKey("login.error.session.message");
+        String message1 = MessageUtil.getMessage("login.session.timeout.message");
+        String message2 = MessageUtil.getMessage("login.error.session.message");
 %>    
 
 <script>

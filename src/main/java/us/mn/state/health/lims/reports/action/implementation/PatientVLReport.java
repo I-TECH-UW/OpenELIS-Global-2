@@ -9,6 +9,7 @@ import org.apache.commons.validator.GenericValidator;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -17,7 +18,6 @@ import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.VLReportData;
 import us.mn.state.health.lims.result.dao.ResultDAO;
 import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
@@ -28,23 +28,25 @@ import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization
 
 public abstract class PatientVLReport extends RetroCIPatientReport {
 
-
-    protected static final long YEAR = 1000L * 60L * 60L * 24L * 365L;
+	protected static final long YEAR = 1000L * 60L * 60L * 24L * 365L;
 	protected static final long THREE_YEARS = YEAR * 3L;
 	protected static final long WEEK = YEAR / 52L;
 	protected static final long MONTH = YEAR / 12L;
 
 	protected List<VLReportData> reportItems;
-	private String invalidValue = StringUtil.getMessageForKey("report.test.status.inProgress");
+	private String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
 
+	@Override
 	protected void initializeReportItems() {
-		reportItems = new ArrayList<VLReportData>();
+		reportItems = new ArrayList<>();
 	}
 
+	@Override
 	protected String getReportNameForReport() {
-		return StringUtil.getMessageForKey("reports.label.patient.VL");
+		return MessageUtil.getMessage("reports.label.patient.VL");
 	}
 
+	@Override
 	public JRDataSource getReportDataSource() throws IllegalStateException {
 		if (!initialized) {
 			throw new IllegalStateException("initializeReport not called first");
@@ -53,6 +55,7 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 		return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(reportItems);
 	}
 
+	@Override
 	protected void createReportItems() {
 		VLReportData data = new VLReportData();
 
@@ -67,13 +70,14 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
 		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleId(reportSample.getId());
 //		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-		Timestamp lastReport = new ReportTrackingService().getTimeOfLastNamedReport(reportSample, ReportTrackingService.ReportType.PATIENT, requestedReport);
+		Timestamp lastReport = new ReportTrackingService().getTimeOfLastNamedReport(reportSample,
+				ReportTrackingService.ReportType.PATIENT, requestedReport);
 		Boolean mayBeDuplicate = lastReport != null;
 		ResultDAO resultDAO = new ResultDAOImpl();
 
 		Date maxCompleationDate = null;
 		long maxCompleationTime = 0L;
-//		String invalidValue = StringUtil.getMessageForKey("report.test.status.inProgress");
+//		String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
 
 		for (Analysis analysis : analysisList) {
 
@@ -85,49 +89,45 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 
 			}
 
-			String testName = TestService.getUserLocalizedTestName( analysis.getTest() );
+			String testName = TestService.getUserLocalizedTestName(analysis.getTest());
 
 			List<Result> resultList = resultDAO.getResultsByAnalysis(analysis);
-			
 
 			boolean valid = ANALYSIS_FINALIZED_STATUS_ID.equals(analysis.getStatusId());
 			if (!valid) {
 				atLeastOneAnalysisNotValidated = true;
 			}
-			
-			
 
 			if (testName.equals("Viral Load")) {
 				if (valid) {
-				//	data.setShowVirologie(Boolean.TRUE);
+					// data.setShowVirologie(Boolean.TRUE);
 					String resultValue = "";
-					if( resultList.size() > 0){
-						resultValue = resultList.get( resultList.size() - 1).getValue();
+					if (resultList.size() > 0) {
+						resultValue = resultList.get(resultList.size() - 1).getValue();
 					}
-					
+
 					String baseValue = resultValue;
-					if(!GenericValidator.isBlankOrNull(resultValue) && resultValue.contains("(")){
+					if (!GenericValidator.isBlankOrNull(resultValue) && resultValue.contains("(")) {
 						String[] splitValue = resultValue.split("\\(");
 						data.setAmpli2(splitValue[0]);
 						baseValue = splitValue[0];
-					}else{
+					} else {
 						data.setAmpli2(resultValue);
 					}
-					if(!GenericValidator.isBlankOrNull(baseValue) && !"0".equals(baseValue)){
-						try{
+					if (!GenericValidator.isBlankOrNull(baseValue) && !"0".equals(baseValue)) {
+						try {
 							double viralLoad = Double.parseDouble(baseValue);
 							data.setAmpli2lo(String.format("%.3g%n", Math.log10(viralLoad)));
-						}catch(NumberFormatException nfe){
+						} catch (NumberFormatException nfe) {
 							data.setAmpli2lo("");
 						}
 					}
-					
+
 				}
-				
+
 			}
-			if( mayBeDuplicate &&
-					StatusService.getInstance().matches( analysis.getStatusId(), AnalysisStatus.Finalized) &&
-					lastReport.before(analysis.getLastupdated())){
+			if (mayBeDuplicate && StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.Finalized)
+					&& lastReport.before(analysis.getLastupdated())) {
 				mayBeDuplicate = false;
 			}
 
@@ -137,8 +137,8 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 		}
 
 		data.setDuplicateReport(mayBeDuplicate);
-		data.setStatus(atLeastOneAnalysisNotValidated ? StringUtil.getMessageForKey("report.status.partial") : StringUtil
-				.getMessageForKey("report.status.complete"));
+		data.setStatus(atLeastOneAnalysisNotValidated ? MessageUtil.getMessage("report.status.partial")
+				: MessageUtil.getMessage("report.status.complete"));
 	}
 
 	protected void setPatientInfo(VLReportData data) {
@@ -150,14 +150,14 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 		data.setBirth_date(reportPatient.getBirthDateForDisplay());
 		data.setAge(DateUtil.getCurrentAgeForDate(reportPatient.getBirthDate(), reportSample.getCollectionDate()));
 		data.setGender(reportPatient.getGender());
-		data.setCollectiondate( DateUtil.convertTimestampToStringDateAndTime(reportSample.getCollectionDate()));
+		data.setCollectiondate(DateUtil.convertTimestampToStringDateAndTime(reportSample.getCollectionDate()));
 		SampleOrganization sampleOrg = new SampleOrganization();
 		sampleOrg.setSample(reportSample);
 		orgDAO.getDataBySample(sampleOrg);
 		data.setServicename(sampleOrg.getId() == null ? "" : sampleOrg.getOrganization().getOrganizationName());
 		data.setDoctor(getObservationValues(OBSERVATION_DOCTOR_ID));
 		data.setAccession_number(reportSample.getAccessionNumber());
-		data.setReceptiondate( DateUtil.convertTimestampToStringDateAndTime(reportSample.getReceivedTimestamp()));           
+		data.setReceptiondate(DateUtil.convertTimestampToStringDateAndTime(reportSample.getReceivedTimestamp()));
 		Timestamp collectionDate = reportSample.getCollectionDate();
 
 		if (collectionDate != null) {
@@ -173,9 +173,10 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 		data.getSampleQaEventItems(reportSample);
 	}
 
+	@Override
 	protected String getProjectId() {
-		return ANTIRETROVIRAL_STUDY_ID+":"+ANTIRETROVIRAL_FOLLOW_UP_STUDY_ID+":"+VL_STUDY_ID;
-		//return ANTIRETROVIRAL_ID;
+		return ANTIRETROVIRAL_STUDY_ID + ":" + ANTIRETROVIRAL_FOLLOW_UP_STUDY_ID + ":" + VL_STUDY_ID;
+		// return ANTIRETROVIRAL_ID;
 	}
 
 }

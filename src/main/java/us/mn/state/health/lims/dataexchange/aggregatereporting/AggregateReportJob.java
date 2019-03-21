@@ -27,11 +27,11 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportExternalExportDAO;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.daoimpl.ReportExternalExportDAOImpl;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.daoimpl.ReportQueueTypeDAOImpl;
@@ -215,7 +215,7 @@ public class AggregateReportJob implements Job {
 
 				SiteInformation sendInfo = siteInfoDAO.getSiteInformationByName("testUsageSendStatus");
 				if (sendInfo != null) {
-					sendInfo.setValue(StringUtil.getMessageForKey("http.success"));
+					sendInfo.setValue(MessageUtil.getMessage("http.success"));
 					sendInfo.setSysUserId("1");
 					siteInfoDAO.updateData(sendInfo);
 				}
@@ -230,26 +230,26 @@ public class AggregateReportJob implements Job {
 		private void handleUnknownFailure(List<String> errors) {
 			for (String error : errors) {
 				if (error.startsWith("Unable to connect")) {
-					writeSendStatus(StringUtil.getMessageForKey("http.site.unreachable"));
+					writeSendStatus(MessageUtil.getMessage("http.site.unreachable"));
 					return;
 				}
 			}
 
-			writeSendStatus(StringUtil.getMessageForKey("http.unknown.failure"));
+			writeSendStatus(MessageUtil.getMessage("http.unknown.failure"));
 		}
 
 		private void handleUnauthorized() {
-			writeSendStatus(StringUtil.getMessageForKey("http.unauthorized"));
+			writeSendStatus(MessageUtil.getMessage("http.unauthorized"));
 		}
 
 		private void handleNotFound(List<String> errors) {
 			String error = errors.isEmpty() ? "" : errors.get(0);
-			writeSendStatus(StringUtil.getContextualMessageForKey("http.notfound") + ": " + error);
+			writeSendStatus(MessageUtil.getContextualMessage("http.notfound") + ": " + error);
 		}
 
 		private void handleBadRequest(List<String> errors) {
 			String error = errors.isEmpty() ? "" : errors.get(0);
-			writeSendStatus(StringUtil.getContextualMessageForKey("http.badrequest") + ": " + error);
+			writeSendStatus(MessageUtil.getContextualMessage("http.badrequest") + ": " + error);
 		}
 
 		private void retry() {

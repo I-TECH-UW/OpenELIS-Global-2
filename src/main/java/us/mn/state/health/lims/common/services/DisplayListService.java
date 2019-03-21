@@ -25,11 +25,11 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.LocaleChangeListener;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -247,17 +247,17 @@ public class DisplayListService implements LocaleChangeListener {
         for(TypeOfTestResult typeOfTestResult : typeOfTestResultList){
             String description = typeOfTestResult.getDescription();
             if( "Dictionary".equals(description)){
-                typeList.add(new IdValuePair(typeOfTestResult.getId(), StringUtil.getMessageForKey("result.type.select")));
+                typeList.add(new IdValuePair(typeOfTestResult.getId(), MessageUtil.getMessage("result.type.select")));
             }else if( "Numeric".equals(description)){
-                typeList.add(new IdValuePair(typeOfTestResult.getId(), StringUtil.getMessageForKey("result.type.numeric")));
+                typeList.add(new IdValuePair(typeOfTestResult.getId(), MessageUtil.getMessage("result.type.numeric")));
             }else if( "Remark".equals(description)){
-                typeList.add(new IdValuePair(typeOfTestResult.getId(), StringUtil.getMessageForKey("result.type.freeText")));
+                typeList.add(new IdValuePair(typeOfTestResult.getId(), MessageUtil.getMessage("result.type.freeText")));
             }else if( "Alpha,no range check".equals(description)){
-                typeList.add(new IdValuePair(typeOfTestResult.getId(), StringUtil.getMessageForKey("result.type.alpha")));
+                typeList.add(new IdValuePair(typeOfTestResult.getId(), MessageUtil.getMessage("result.type.alpha")));
             }else if( "Multiselect".equals(description)){
-                typeList.add(new IdValuePair(typeOfTestResult.getId(), StringUtil.getMessageForKey("result.type.multiselect")));
+                typeList.add(new IdValuePair(typeOfTestResult.getId(), MessageUtil.getMessage("result.type.multiselect")));
             }else if( "Cascading Multiselect".equals(description)){
-                typeList.add(new IdValuePair(typeOfTestResult.getId(), StringUtil.getMessageForKey("result.type.cascading")));
+                typeList.add(new IdValuePair(typeOfTestResult.getId(), MessageUtil.getMessage("result.type.cascading")));
             }
         }
 
@@ -389,7 +389,7 @@ public class DisplayListService implements LocaleChangeListener {
 		List<Gender> genderList = new GenderDAOImpl().getAllGenders();
 
 		for (Gender gender : genderList) {
-			genders.add(new IdValuePair(gender.getGenderType(), StringUtil.getContextualMessageForKey(gender.getNameKey())));
+			genders.add(new IdValuePair(gender.getGenderType(), MessageUtil.getContextualMessage(gender.getNameKey())));
 		}
 		return genders;
 	}
@@ -639,12 +639,12 @@ public class DisplayListService implements LocaleChangeListener {
         List<IdValuePair> searchCriteria = new ArrayList<IdValuePair>();
 
         //N.B.  If the order is to be changed just change the order but keep the id:value pairing the same
-        searchCriteria.add(new IdValuePair("0", StringUtil.getMessageForKey( "label.select.search.by" )));
-        searchCriteria.add(new IdValuePair("2", "1. " + StringUtil.getMessageForKey( "label.select.last.name" )));
-        searchCriteria.add(new IdValuePair("1", "2. " + StringUtil.getMessageForKey("label.select.first.name")));
-        searchCriteria.add(new IdValuePair("3", "3. " + StringUtil.getMessageForKey("label.select.last.first.name")));
-        searchCriteria.add(new IdValuePair("4", "4. " + StringUtil.getMessageForKey("label.select.patient.ID")));
-        searchCriteria.add(new IdValuePair("5", "5. " + StringUtil.getContextualMessageForKey( "quick.entry.accession.number" )));
+        searchCriteria.add(new IdValuePair("0", MessageUtil.getMessage( "label.select.search.by" )));
+        searchCriteria.add(new IdValuePair("2", "1. " + MessageUtil.getMessage( "label.select.last.name" )));
+        searchCriteria.add(new IdValuePair("1", "2. " + MessageUtil.getMessage("label.select.first.name")));
+        searchCriteria.add(new IdValuePair("3", "3. " + MessageUtil.getMessage("label.select.last.first.name")));
+        searchCriteria.add(new IdValuePair("4", "4. " + MessageUtil.getMessage("label.select.patient.ID")));
+        searchCriteria.add(new IdValuePair("5", "5. " + MessageUtil.getContextualMessage( "quick.entry.accession.number" )));
 
         return searchCriteria;
     }

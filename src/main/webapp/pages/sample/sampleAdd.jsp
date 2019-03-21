@@ -6,7 +6,7 @@
 	        us.mn.state.health.lims.common.util.IdValuePair,
 	        us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
 	        us.mn.state.health.lims.common.util.DateUtil,
-	        us.mn.state.health.lims.common.util.StringUtil,
+	        spring.mine.internationalization.MessageUtil,
 	        us.mn.state.health.lims.common.util.Versioning" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -320,7 +320,7 @@ function processGetTestSuccess(xhr){
     clearTable( panelTable );
 
     if( tests.length == 0){
-        alert("<%= StringUtil.getMessageForKey("sample.entry.noTests") %>" );
+        alert("<%= MessageUtil.getMessage("sample.entry.noTests") %>" );
 		removeRow( selectedTypeRowId );
     }else{
        if( isVariableSampleType){
@@ -763,7 +763,7 @@ function sampleTypeQualifierChanged(element){
 <div id="sampleConditionPrototype" style="display: none" >
 <form:select path="initialSampleConditionList"
 			 multiple="true"
-			 title='<%= StringUtil.getMessageForKey("result.multiple_select")%>'
+			 title='<%= MessageUtil.getMessage("result.multiple_select")%>'
 			 id= 'prototypeID'>
 			<c:forEach var="optionValue" items="${form.initialSampleConditionList}">
 						<option value='${optionValue.id}' >
@@ -866,7 +866,7 @@ function sampleTypeQualifierChanged(element){
 			<tr>
 				<td width=<%=useCollectionDate ? "90%" : "90%" %>>&nbsp;</td>
 				<td style="width:10%">
-                    <input type="button" onclick="removeAllRows();" value="<%=StringUtil.getMessageForKey("sample.entry.removeAllSamples")%>" class="textButton">
+                    <input type="button" onclick="removeAllRows();" value="<%=MessageUtil.getMessage("sample.entry.removeAllSamples")%>" class="textButton">
 				</td>
 			</tr>
 		</table>

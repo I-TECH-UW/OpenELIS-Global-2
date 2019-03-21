@@ -22,9 +22,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.services.PhoneNumberService;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
-import us.mn.state.health.lims.common.util.StringUtil;
 
 /**
  * The QuickEntryAccessionNumberValidationProvider class is used to validate,
@@ -52,7 +52,7 @@ public class PhoneNumberValidationProvider extends BaseValidationProvider {
 
 		String returnData = VALID;
         if( !valid){
-			returnData = StringUtil.getMessageForKey("phone.number.format.error", PhoneNumberService.getPhoneFormat());
+			returnData = MessageUtil.getMessage("phone.number.format.error", PhoneNumberService.getPhoneFormat());
 		}
 
 		response.setCharacterEncoding("UTF-8");

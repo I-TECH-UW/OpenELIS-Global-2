@@ -22,8 +22,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.util.StringUtil;
 
 public class BaseObject implements Serializable, Cloneable {
 
@@ -133,7 +133,7 @@ public class BaseObject implements Serializable, Cloneable {
 	 */
 	public String getLocalizedName() {
 		if (nameKey != null) {
-			String localizedName = StringUtil.getContextualMessageForKey(nameKey.trim());
+			String localizedName = MessageUtil.getContextualMessage(nameKey.trim());
 
 			if (localizedName == null || localizedName.equals(nameKey.trim())) {
 				return getDefaultLocalizedName();

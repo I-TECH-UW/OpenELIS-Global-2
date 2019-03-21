@@ -23,9 +23,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 
 /**
  * The QuickEntryAccessionNumberValidationProvider class is used to validate,
@@ -103,7 +103,7 @@ public class NonConformityRecordNumberValidationProvider extends BaseValidationP
 		}
 
 		String getInvalidMessage() {
-			return StringUtil.getMessageForKey("nonConformity.document.number.format.error", getDocumentNumberFormat());
+			return MessageUtil.getMessage("nonConformity.document.number.format.error", getDocumentNumberFormat());
 		}
 
 	}

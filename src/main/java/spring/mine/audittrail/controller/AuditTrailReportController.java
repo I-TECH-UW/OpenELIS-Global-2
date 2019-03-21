@@ -16,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.audittrail.form.AuditTrailViewForm;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailViewWorker;

@@ -26,6 +26,7 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -111,7 +112,7 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 		if (referredSamples.isEmpty()) {
 			errorFound = true;
 			ErrorMessages msgs = new ErrorMessages();
-			msgs.setMsgLine1(StringUtil.getMessageForKey("report.error.message.noPrintableItems"));
+			msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.noPrintableItems"));
 			errorMsgs.add(msgs);
 			return;
 		}
@@ -217,13 +218,13 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 
         List<ReferringTestResult> referringTestResultList = referringTestResultDAO.getReferringTestResultsForSampleItem(sampleItem.getId());
         if( referringTestResultList.isEmpty()){
-            requestTestList.add(StringUtil.getMessageForKey("test.name.notSpecified") );
+            requestTestList.add(MessageUtil.getMessage("test.name.notSpecified") );
             requestResultList.add( "" );
         }else {
             for (ReferringTestResult result : referringTestResultList) {
                 String name = result.getTestName();
                 String resultValue = result.getResultValue();
-                requestTestList.add(GenericValidator.isBlankOrNull(name) ? StringUtil.getMessageForKey("test.name.notSpecified") : name );
+                requestTestList.add(GenericValidator.isBlankOrNull(name) ? MessageUtil.getMessage("test.name.notSpecified") : name );
                 requestResultList.add(resultValue == null ? "" : resultValue);
             }
         }
@@ -278,12 +279,12 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 
 	@Override
 	protected String getNameForReportRequest() {
-		return StringUtil.getMessageForKey("report.confirmation.request");
+		return MessageUtil.getMessage("report.confirmation.request");
 	}
 
 	@Override
 	protected String getNameForReport() {
-		return StringUtil.getContextualMessageForKey("report.confirmation.title");
+		return MessageUtil.getContextualMessage("report.confirmation.title");
 	}
 
 	@Override

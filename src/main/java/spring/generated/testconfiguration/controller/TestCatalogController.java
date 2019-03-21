@@ -18,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.forms.TestCatalogForm;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.services.LocalizationService;
 import us.mn.state.health.lims.common.services.ResultLimitService;

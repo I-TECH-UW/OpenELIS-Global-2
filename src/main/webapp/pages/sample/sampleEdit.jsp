@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
          import="us.mn.state.health.lims.common.action.IActionConstants,
 				us.mn.state.health.lims.common.formfields.FormFields,
-				us.mn.state.health.lims.common.util.*,
+				us.mn.state.health.lims.common.util.*, spring.mine.internationalization.MessageUtil,
 	            us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
 		        us.mn.state.health.lims.sample.util.AccessionNumberUtil,
 		        us.mn.state.health.lims.sample.bean.SampleEditItem" %>
@@ -94,13 +94,13 @@ window.onbeforeunload = formWarning;
 
 function /*void*/ savePage(){
 	if( samplesHaveBeenAdded() && !sampleAddValid( false )){
-		alert("<%= StringUtil.getMessageForKey("warning.sample.missing.test")%>");
+		alert("<%= MessageUtil.getMessage("warning.sample.missing.test")%>");
 		return;
 	}
 
 
     if( $jq(".testWithResult:checked").size() > 0 &&
-        !confirm("<%= StringUtil.getMessageForKey("test.modify.save.warning")%>") ) {
+        !confirm("<%= MessageUtil.getMessage("test.modify.save.warning")%>") ) {
             return;
     }
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
@@ -126,7 +126,7 @@ function checkEditedAccessionNumber(changeElement){
 	if( changeElement.value.length != ${form.editableAccession}){
 		setFieldErrorDisplay( changeElement );
 		setSaveButton();
-		alert("<%=StringUtil.getMessageForKey("sample.entry.invalid.accession.number.length")%>");
+		alert("<%=MessageUtil.getMessage("sample.entry.invalid.accession.number.length")%>");
 		return;
 	}
 	
@@ -151,7 +151,7 @@ function processEditAccessionSuccess(xhr)
 	if (message == "SAMPLE_FOUND"){
 		setFieldErrorDisplay( $(formField) );
 		setSaveButton();
-		alert("<%=StringUtil.getMessageForKey("errors.may_not_reuse_accession_number")%>");
+		alert("<%=MessageUtil.getMessage("errors.may_not_reuse_accession_number")%>");
 		return;
 	}
 	
@@ -286,10 +286,10 @@ function makeDirty(){
 <form:hidden path="isEditable"/>
 <form:hidden path="maxAccessionNumber" id="maxAccessionNumber"/>
 <c:if test="${form.isEditable}">
-	<h1><%=StringUtil.getContextualMessageForKey("sample.edit.accessionNumber") %></h1>  
+	<h1><%=MessageUtil.getContextualMessage("sample.edit.accessionNumber") %></h1>  
 	<div id="accessionEditDiv" class="TableMatch">
-		<b><%=StringUtil.getContextualMessageForKey("sample.edit.change.from") %>:</b> <c:out value="${form.accessionNumber}"/>  
-		<b><%=StringUtil.getContextualMessageForKey("sample.edit.change.to") %>:</b> <c:out value="${fn:substring(form.accessionNumber, 0, form.nonEditableAccession)}"/>
+		<b><%=MessageUtil.getContextualMessage("sample.edit.change.from") %>:</b> <c:out value="${form.accessionNumber}"/>  
+		<b><%=MessageUtil.getContextualMessage("sample.edit.change.to") %>:</b> <c:out value="${fn:substring(form.accessionNumber, 0, form.nonEditableAccession)}"/>
 		<input type="text"
 				<c:if test="${fn:length(form.newAccessionNumber) == form.maxAccessionLength}">
 		       		value='<c:out value="${fn:substring(newAccessionNumber, nonEditableAccession, maxAccessionLength) }"/>' 
@@ -312,7 +312,7 @@ function makeDirty(){
     </div>
 
 <c:if test="${form.isEditable}">
-	<h1><%=StringUtil.getContextualMessageForKey("sample.edit.tests") %></h1>
+	<h1><%=MessageUtil.getContextualMessage("sample.edit.tests") %></h1>
 </c:if>
 <table style="width:60%">
 <caption>
@@ -325,7 +325,7 @@ function makeDirty(){
     </span>
 </caption>
 <tr>
-<th><%= StringUtil.getContextualMessageForKey("quick.entry.accession.number") %></th>
+<th><%= MessageUtil.getContextualMessage("quick.entry.accession.number") %></th>
 <th><spring:message code="sample.entry.sample.type"/></th>
 <% if( useCollectionDate ){ %>
 <th >
@@ -434,7 +434,7 @@ function makeDirty(){
 <table id="availableTestTable" style="width:80%">
 <caption><spring:message code="sample.edit.available.tests"/></caption>
 <tr>
-<th><%= StringUtil.getContextualMessageForKey("quick.entry.accession.number") %></th>
+<th><%= MessageUtil.getContextualMessage("quick.entry.accession.number") %></th>
 <th><spring:message code="sample.entry.sample.type"/></th>
 <th><spring:message code="sample.entry.assignTests"/></th>
 <th><spring:message code="test.testName"/></th>

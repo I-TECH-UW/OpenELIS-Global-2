@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import spring.mine.internationalization.MessageUtil;
 import spring.mine.workplan.form.WorkplanForm;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
@@ -29,7 +30,6 @@ import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.panel.dao.PanelDAO;
 import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
 import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
@@ -77,7 +77,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
 
 		PropertyUtils.setProperty(form, "workplanType", "panel");
 		PropertyUtils.setProperty(form, "searchTypes", DisplayListService.getList(DisplayListService.ListType.PANELS));
-		PropertyUtils.setProperty(form, "searchLabel", StringUtil.getMessageForKey("workplan.panel.types"));
+		PropertyUtils.setProperty(form, "searchLabel", MessageUtil.getMessage("workplan.panel.types"));
 		PropertyUtils.setProperty(form, "searchAction", "WorkPlanByPanel.do");
 
 		return findForward(FWD_SUCCESS, form);

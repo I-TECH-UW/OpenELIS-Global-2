@@ -106,7 +106,7 @@ public abstract class BaseController implements IActionConstants {
 	 * @param messageKey the message key to look up
 	 */
 	protected String getMessageForKey(String messageKey) throws Exception {
-		String message = StringUtil.getContextualMessageForKey(messageKey);
+		String message = MessageUtil.getContextualMessage(messageKey);
 		return message == null ? getActualMessage(messageKey) : message;
 	}
 

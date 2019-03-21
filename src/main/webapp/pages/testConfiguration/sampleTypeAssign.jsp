@@ -5,7 +5,7 @@
          		java.util.Map,
          		us.mn.state.health.lims.common.action.IActionConstants,
          		us.mn.state.health.lims.common.util.IdValuePair,
-         		us.mn.state.health.lims.common.util.StringUtil,
+         		spring.mine.internationalization.MessageUtil,
          		us.mn.state.health.lims.common.util.Versioning" %>
 
 <%@ page isELIgnored="false" %>
@@ -106,7 +106,7 @@
     function confirmValues() {
         $jq("#editButtons").hide();
         $jq(".confirmation-step").show();
-        $jq("#action").text('<%=StringUtil.getContextualMessageForKey("label.confirmation")%>');
+        $jq("#action").text('<%=MessageUtil.getContextualMessage("label.confirmation")%>');
         if( $jq("#deactivateSampleTypeId").val().length > 0){
             $jq("#deatcitvateWarning").show();
         }else{
@@ -120,7 +120,7 @@
     function rejectConfirmation() {
         $jq("#editButtons").show();
         $jq(".confirmation-step").hide();
-        $jq("#action").text('<%=StringUtil.getContextualMessageForKey("label.button.edit")%>');
+        $jq("#action").text('<%=MessageUtil.getContextualMessage("label.button.edit")%>');
 
         $jq("#sampleTypeSelection").attr("disabled", false);
     }
@@ -155,17 +155,17 @@ td {
     <form:hidden path="sampleTypeId" id="sampleTypeId"/>
     <form:hidden path="deactivateSampleTypeId" id="deactivateSampleTypeId"/>
 
-    <input type="button" value='<%= StringUtil.getContextualMessageForKey("banner.menu.administration") %>'
+    <input type="button" value='<%= MessageUtil.getContextualMessage("banner.menu.administration") %>'
            onclick="submitAction('MasterListsPage.do');"
            class="textButton"/>&rarr;
-    <input type="button" value='<%= StringUtil.getContextualMessageForKey("configuration.test.management") %>'
+    <input type="button" value='<%= MessageUtil.getContextualMessage("configuration.test.management") %>'
            onclick="submitAction('TestManagementConfigMenu.do');"
            class="textButton"/>&rarr;
-    <input type="button" value='<%= StringUtil.getContextualMessageForKey("configuration.sampleType.manage") %>'
+    <input type="button" value='<%= MessageUtil.getContextualMessage("configuration.sampleType.manage") %>'
            onclick="submitAction('SampleTypeManagement.do');"
            class="textButton"/>&rarr;
 
-<%=StringUtil.getContextualMessageForKey( "configuration.sampleType.assign" )%>
+<%=MessageUtil.getContextualMessage( "configuration.sampleType.assign" )%>
 
 <%    List sampleTypeList = (List) pageContext.getAttribute("sampleTypeList"); %>
 
@@ -199,15 +199,15 @@ td {
     </div>
 
     <div style="text-align: center" id="editButtons">
-        <input id="saveButton" type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.next")%>'
+        <input id="saveButton" type="button" value='<%=MessageUtil.getContextualMessage("label.button.next")%>'
                onclick="confirmValues();" disabled="disabled"/>
-        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.previous")%>'
+        <input type="button" value='<%=MessageUtil.getContextualMessage("label.button.previous")%>'
                onclick='window.onbeforeunload = null; submitAction("SampleTypeTestAssign.do")'/>
     </div>
     <div style="text-align: center; display: none;" class="confirmation-step">
-        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.accept")%>'
+        <input type="button" value='<%=MessageUtil.getContextualMessage("label.button.accept")%>'
                onclick="savePage();"/>
-        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.reject")%>'
+        <input type="button" value='<%=MessageUtil.getContextualMessage("label.button.reject")%>'
                onclick='rejectConfirmation();'/>
     </div>
 </div>

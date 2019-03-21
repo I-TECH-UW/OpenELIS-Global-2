@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Transaction;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.externalLinks.ExternalPatientSearch;
@@ -30,7 +31,6 @@ import us.mn.state.health.lims.common.provider.query.PatientDemographicsSearchRe
 import us.mn.state.health.lims.common.provider.query.PatientSearchResults;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.patient.dao.PatientDAO;
@@ -224,7 +224,7 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
 		for (PatientSearchResults result : results) {
 			String messageKey = GenericValidator.isBlankOrNull(result.getGUID()) ? "patient.local.source"
 																				 : "patient.imported.source";
-			result.setDataSourceName(StringUtil.getMessageForKey(messageKey));
+			result.setDataSourceName(MessageUtil.getMessage(messageKey));
 		}
 	}
 

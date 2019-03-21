@@ -2,7 +2,7 @@
 	contentType="application/javascript; charset=utf-8"
 	import="java.util.Iterator,javax.servlet.jsp.JspException,
 			us.mn.state.health.lims.common.action.IActionConstants,
-			us.mn.state.health.lims.common.util.StringUtil,
+			spring.mine.internationalization.MessageUtil,
 			spring.mine.internationalization.MessageUtil"
  %>
 <%!

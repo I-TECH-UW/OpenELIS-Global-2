@@ -12,9 +12,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.analyzer.form.ListPluginForm;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.plugin.PluginLoader;
 
 @Controller
@@ -30,7 +29,7 @@ public class ListPluginsController extends BaseController {
 		List<String> pluginNames = PluginLoader.getCurrentPlugins();
 
 		if (pluginNames.size() == 0) {
-			pluginNames.add(StringUtil.getContextualMessageForKey("plugin.no.plugins"));
+			pluginNames.add(MessageUtil.getContextualMessage("plugin.no.plugins"));
 		}
 		form.setPluginList(pluginNames);
 

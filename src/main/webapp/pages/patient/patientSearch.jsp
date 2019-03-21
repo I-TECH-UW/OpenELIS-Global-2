@@ -5,7 +5,7 @@
 			     us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
 			     us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
 			     us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-			     us.mn.state.health.lims.common.util.*" %>
+			     us.mn.state.health.lims.common.util.*, spring.mine.internationalization.MessageUtil" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -287,7 +287,7 @@ function enableSearchButton(eventCode){
     var valueElem = $jq("#searchValue");
     var criteriaElem  = $jq('#searchCriteria');
     var searchButton = $jq("#searchButton");
-    if( valueElem.val() && criteriaElem.val() != "0" && valueElem.val() != '<%=StringUtil.getMessageForKey("label.select.search.here")%>'){
+    if( valueElem.val() && criteriaElem.val() != "0" && valueElem.val() != '<%=MessageUtil.getMessage("label.select.search.here")%>'){
         searchButton.removeAttr("disabled");
         if( eventCode == 13 ){
             searchButton.click();
@@ -333,7 +333,7 @@ function firstClick(){
 function messageRestore(element ){
     if( !element.value  ){
         element.maxlength = 120;
-        element.value = '<%=StringUtil.getMessageForKey("label.select.search.here")%>';
+        element.value = '<%=MessageUtil.getMessage("label.select.search.here")%>';
         element.onkeydown = firstClick;
         setCaretPosition(element, 0);
     }
@@ -378,7 +378,7 @@ function setCaretPosition(ctrl, pos){
            maxlength="120"
            id="searchValue"
            class="text patientSearch"
-           value='<%=StringUtil.getMessageForKey("label.select.search.here")%>'
+           value='<%=MessageUtil.getMessage("label.select.search.here")%>'
            type="text"
            onclick="cursorAtFront(this)"
            onkeydown='firstClick();'
@@ -388,7 +388,7 @@ function setCaretPosition(ctrl, pos){
     <input type="button"
            name="searchButton"
            class="patientSearch"
-           value="<%= StringUtil.getMessageForKey("label.patient.search")%>"
+           value="<%= MessageUtil.getMessage("label.patient.search")%>"
            id="searchButton"
            onclick="searchPatients()"
            disabled="disabled" >
@@ -442,7 +442,7 @@ function setCaretPosition(ctrl, pos){
 				<% } %>
 				<% if(supportNationalID){ %>
 				<th width="12%">
-                    <%=StringUtil.getContextualMessageForKey("patient.NationalID") %>
+                    <%=MessageUtil.getContextualMessage("patient.NationalID") %>
                 </th>
                 <% } %>
 			</tr>

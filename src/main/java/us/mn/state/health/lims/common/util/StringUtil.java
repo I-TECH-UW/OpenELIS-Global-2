@@ -309,13 +309,12 @@ public class StringUtil {
 		return list;
 	}
 
-	// Call MessageUtil directly
+	// MessageUtil is to be used instead for all things involving fetching messages
 	@Deprecated
 	public static String getMessageForKey(String messageKey) {
 		if (null == messageKey) {
 			return null;
 		}
-		String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
 		return MessageUtil.getMessage(messageKey);
 	}
 
@@ -359,6 +358,7 @@ public class StringUtil {
 		return MessageUtil.getMessage(messageKey, new String[] { arg0, arg1 });
 	}
 
+	@Deprecated
 	public static String getContextualMessageForKey(String messageKey) {
 		if (null == messageKey) {
 			return null;
@@ -379,6 +379,7 @@ public class StringUtil {
 		}
 	}
 
+	@Deprecated
 	private static String getSuffix() {
 		if (STRING_KEY_SUFFIX == null) {
 			STRING_KEY_SUFFIX = ConfigurationProperties.getInstance().getPropertyValue(Property.StringContext);
@@ -390,6 +391,7 @@ public class StringUtil {
 		return STRING_KEY_SUFFIX;
 	}
 
+	@Deprecated
 	public static String getContextualKeyForKey(String key) {
 		if (null == key) {
 			return null;

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import spring.mine.internationalization.MessageUtil;
 import spring.mine.workplan.form.WorkplanForm;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
@@ -30,7 +31,6 @@ import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.result.action.util.ResultsLoadUtility;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
@@ -85,7 +85,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 
 		PropertyUtils.setProperty(form, "searchTypes", getTestDropdownList());
 		PropertyUtils.setProperty(form, "workplanType", request.getParameter("type"));
-		PropertyUtils.setProperty(form, "searchLabel", StringUtil.getMessageForKey("workplan.test.types"));
+		PropertyUtils.setProperty(form, "searchLabel", MessageUtil.getMessage("workplan.test.types"));
 		PropertyUtils.setProperty(form, "searchAction", "WorkPlanByTest.do");
 
 		return findForward(FWD_SUCCESS, form);

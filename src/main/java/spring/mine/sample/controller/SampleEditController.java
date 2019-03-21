@@ -54,7 +54,6 @@ import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.registration.ResultUpdateRegister;
 import us.mn.state.health.lims.common.services.registration.interfaces.IResultUpdate;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dataexchange.orderresult.OrderResponseWorker.Event;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.login.dao.UserModuleDAO;
@@ -852,16 +851,16 @@ public class SampleEditController extends BaseController {
 	protected String getPageTitleKey() {
 		boolean isEditable = "readwrite".equals(request.getSession().getAttribute(SAMPLE_EDIT_WRITABLE))
 				|| "readwrite".equals(request.getParameter("type"));
-		return isEditable ? StringUtil.getContextualKeyForKey("sample.edit.title")
-				: StringUtil.getContextualKeyForKey("sample.view.title");
+		return isEditable ? MessageUtil.getContextualKey("sample.edit.title")
+				: MessageUtil.getContextualKey("sample.view.title");
 	}
 
 	@Override
 	protected String getPageSubtitleKey() {
 		boolean isEditable = "readwrite".equals(request.getSession().getAttribute(SAMPLE_EDIT_WRITABLE))
 				|| "readwrite".equals(request.getParameter("type"));
-		return isEditable ? StringUtil.getContextualKeyForKey("sample.edit.subtitle")
-				: StringUtil.getContextualKeyForKey("sample.view.subtitle");
+		return isEditable ? MessageUtil.getContextualKey("sample.edit.subtitle")
+				: MessageUtil.getContextualKey("sample.view.subtitle");
 	}
 
 	private static class SampleEditItemComparator implements Comparator<SampleEditItem> {

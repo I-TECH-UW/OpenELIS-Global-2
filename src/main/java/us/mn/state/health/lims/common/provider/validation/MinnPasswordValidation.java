@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 
 public class MinnPasswordValidation implements ILoginPasswordValidation {
 	 
@@ -90,7 +90,7 @@ public class MinnPasswordValidation implements ILoginPasswordValidation {
 	}
 
 	public String getInstructions() {
-		return StringUtil.getMessageForKey(getResourceKeyForInstructions());
+		return MessageUtil.getMessage(getResourceKeyForInstructions());
 	}
 
 	public String getResourceKeyForInstructions() {

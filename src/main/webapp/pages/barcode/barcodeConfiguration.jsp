@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" %>
 
 <%@ page import="us.mn.state.health.lims.common.action.IActionConstants,
-				 us.mn.state.health.lims.common.util.*" %>
+				 us.mn.state.health.lims.common.util.*, spring.mine.internationalization.MessageUtil" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>

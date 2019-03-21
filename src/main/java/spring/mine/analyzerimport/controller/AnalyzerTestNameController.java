@@ -175,7 +175,7 @@ public class AnalyzerTestNameController extends BaseController {
 				errorMsg = "errors.UpdateException";
 			}
 
-			persisteError(request, errorMsg);
+			persistError(request, errorMsg);
 
 			disableNavigationButtons(request);
 			forward = FWD_FAIL_INSERT;
@@ -208,7 +208,7 @@ public class AnalyzerTestNameController extends BaseController {
 		return existingMapping;
 	}
 
-	private void persisteError(HttpServletRequest request, String errorMsg) {
+	private void persistError(HttpServletRequest request, String errorMsg) {
 		Errors errors;
 		errors = new BaseErrors();
 

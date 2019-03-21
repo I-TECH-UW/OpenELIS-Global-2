@@ -4,7 +4,7 @@
 			us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
 			us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
 		    us.mn.state.health.lims.common.util.DateUtil,
-			us.mn.state.health.lims.common.util.StringUtil,
+			spring.mine.internationalization.MessageUtil,
 			us.mn.state.health.lims.common.util.Versioning,
 			org.owasp.encoder.Encode" %>
 
@@ -169,7 +169,7 @@ function onPrint(){
 <c:if test="${not form.noRequestSpecifications}">
 
   <c:if test="${form.useAccessionDirect}">
-	  <div><strong><%= StringUtil.getContextualMessageForKey("report.enter.labNumber.headline") %></strong></div>
+	  <div><strong><%= MessageUtil.getContextualMessage("report.enter.labNumber.headline") %></strong></div>
   </c:if>
   
   <div>
@@ -177,7 +177,7 @@ function onPrint(){
 	  <c:if test="${form.useAccessionDirect}">
 		<span style="padding-left: 10px">
 		<c:if test="${form.useAccessionDirect}">
-			<%= StringUtil.getContextualMessageForKey("report.from") %>
+			<%= MessageUtil.getContextualMessage("report.from") %>
 		</c:if>
 		</span>
 		<form:input path="accessionDirect"
@@ -186,7 +186,7 @@ function onPrint(){
 				   />
 	  </c:if>
 	  <c:if test="${form.useHighAccessionDirect}">
-		<span style="padding-left: 10px"><%= StringUtil.getContextualMessageForKey("report.to") %></span>
+		<span style="padding-left: 10px"><%= MessageUtil.getContextualMessage("report.to") %></span>
 			<form:input path="highAccessionDirect"
 			           cssClass="input-medium"
 			           maxlength='<%= Integer.toString(accessionValidator.getMaxAccessionLength())%>'/>
@@ -202,11 +202,11 @@ function onPrint(){
 	  </c:if>
   </div>
   <c:if test="${form.useHighAccessionDirect}">
-    <div><span style="padding-left: 10px"><%= StringUtil.getContextualMessageForKey("report.enter.labNumber.detail") %></span></div>
+    <div><span style="padding-left: 10px"><%= MessageUtil.getContextualMessage("report.enter.labNumber.detail") %></span></div>
   </c:if>
   <c:if test="${form.usePatientNumberDirect}">
   
-	<div><strong><%= StringUtil.getContextualMessageForKey("report.enter.subjectNumber") %></strong></div>
+	<div><strong><%= MessageUtil.getContextualMessage("report.enter.subjectNumber") %></strong></div>
   </c:if>
   <div>
 
@@ -215,7 +215,7 @@ function onPrint(){
 	  </c:if>
 
 	  <c:if test="${form.useUpperPatientNumberDirect}">
-	   <span style="padding-left: 10px"><%= StringUtil.getContextualMessageForKey("report.to") %></span>
+	   <span style="padding-left: 10px"><%= MessageUtil.getContextualMessage("report.to") %></span>
 		<form:input path="patientUpperNumberDirect" cssClass="input-medium"/>
 	  </c:if>
   </div>
@@ -253,11 +253,11 @@ function onPrint(){
    	<div>
 	   <spring:message code="report.select.date.period"/>
 	     <form:select path="datePeriod" cssClass="text" onchange="datePeriodUpdated(this)" id="datePeriod">
-	     	<option value='year'><%= StringUtil.getMessageForKey("report.select.date.period.year") %></option>
-	     	<option value='months3'><%= StringUtil.getMessageForKey("report.select.date.period.months.3") %></option>
-	     	<option value='months6'><%= StringUtil.getMessageForKey("report.select.date.period.months.6") %></option>
-	     	<option value='months12'><%= StringUtil.getMessageForKey("report.select.date.period.months.12") %></option>
-	     	<option value='custom'><%= StringUtil.getMessageForKey("report.selecte.date.period.custom") %></option>
+	     	<option value='year'><%= MessageUtil.getMessage("report.select.date.period.year") %></option>
+	     	<option value='months3'><%= MessageUtil.getMessage("report.select.date.period.months.3") %></option>
+	     	<option value='months6'><%= MessageUtil.getMessage("report.select.date.period.months.6") %></option>
+	     	<option value='months12'><%= MessageUtil.getMessage("report.select.date.period.months.12") %></option>
+	     	<option value='custom'><%= MessageUtil.getMessage("report.selecte.date.period.custom") %></option>
 		 </form:select>
 	</div>
 	<div>
@@ -313,7 +313,7 @@ function onPrint(){
 </c:if>
 </div>
 <div style="margin-left: 50px">
-	<input type="button" class="btn" name="printNew" onclick="onPrint();" value="<%=StringUtil.getMessageForKey("label.button.print.new.window") %>">
+	<input type="button" class="btn" name="printNew" onclick="onPrint();" value="<%=MessageUtil.getMessage("label.button.print.new.window") %>">
 </div>
 
 </div>

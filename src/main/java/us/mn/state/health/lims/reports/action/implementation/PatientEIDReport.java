@@ -9,6 +9,7 @@ import org.apache.commons.validator.GenericValidator;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -17,7 +18,6 @@ import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -31,23 +31,25 @@ import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization
 
 public abstract class PatientEIDReport extends RetroCIPatientReport {
 
-
-    protected static final long YEAR = 1000L * 60L * 60L * 24L * 365L;
+	protected static final long YEAR = 1000L * 60L * 60L * 24L * 365L;
 	protected static final long THREE_YEARS = YEAR * 3L;
 	protected static final long WEEK = YEAR / 52L;
 	protected static final long MONTH = YEAR / 12L;
 
 	protected List<EIDReportData> reportItems;
-	private String invalidValue = StringUtil.getMessageForKey("report.test.status.inProgress");
+	private String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
 
+	@Override
 	protected void initializeReportItems() {
-		reportItems = new ArrayList<EIDReportData>();
+		reportItems = new ArrayList<>();
 	}
 
+	@Override
 	protected String getReportNameForReport() {
-		return StringUtil.getMessageForKey("reports.label.patient.EID");
+		return MessageUtil.getMessage("reports.label.patient.EID");
 	}
 
+	@Override
 	public JRDataSource getReportDataSource() throws IllegalStateException {
 		if (!initialized) {
 			throw new IllegalStateException("initializeReport not called first");
@@ -56,6 +58,7 @@ public abstract class PatientEIDReport extends RetroCIPatientReport {
 		return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(reportItems);
 	}
 
+	@Override
 	protected void createReportItems() {
 		EIDReportData data = new EIDReportData();
 
@@ -70,13 +73,14 @@ public abstract class PatientEIDReport extends RetroCIPatientReport {
 		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
 		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleId(reportSample.getId());
 		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-		Timestamp lastReport = new ReportTrackingService().getTimeOfLastNamedReport(reportSample, ReportTrackingService.ReportType.PATIENT, requestedReport);
+		Timestamp lastReport = new ReportTrackingService().getTimeOfLastNamedReport(reportSample,
+				ReportTrackingService.ReportType.PATIENT, requestedReport);
 		Boolean mayBeDuplicate = lastReport != null;
 		ResultDAO resultDAO = new ResultDAOImpl();
 
 		Date maxCompleationDate = null;
 		long maxCompleationTime = 0L;
-		String invalidValue = StringUtil.getMessageForKey("report.test.status.inProgress");
+		String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
 
 		for (Analysis analysis : analysisList) {
 
@@ -88,10 +92,9 @@ public abstract class PatientEIDReport extends RetroCIPatientReport {
 
 			}
 
-			String testName = TestService.getUserLocalizedTestName( analysis.getTest() );
+			String testName = TestService.getUserLocalizedTestName(analysis.getTest());
 
 			List<Result> resultList = resultDAO.getResultsByAnalysis(analysis);
-			
 
 			boolean valid = ANALYSIS_FINALIZED_STATUS_ID.equals(analysis.getStatusId());
 			if (!valid) {
@@ -101,8 +104,8 @@ public abstract class PatientEIDReport extends RetroCIPatientReport {
 			if (testName.equals("DNA PCR")) {
 				if (valid) {
 					String resultValue = "";
-					if( resultList.size() > 0){
-						resultValue = resultList.get( resultList.size() - 1).getValue();
+					if (resultList.size() > 0) {
+						resultValue = resultList.get(resultList.size() - 1).getValue();
 					}
 					Dictionary dictionary = new Dictionary();
 					dictionary.setId(resultValue);
@@ -112,9 +115,8 @@ public abstract class PatientEIDReport extends RetroCIPatientReport {
 					data.setHiv_status(invalidValue);
 				}
 			}
-			if( mayBeDuplicate &&
-					StatusService.getInstance().matches( analysis.getStatusId(), AnalysisStatus.Finalized) &&
-					lastReport.before(analysis.getLastupdated())){
+			if (mayBeDuplicate && StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.Finalized)
+					&& lastReport.before(analysis.getLastupdated())) {
 				mayBeDuplicate = false;
 			}
 		}
@@ -131,8 +133,8 @@ public abstract class PatientEIDReport extends RetroCIPatientReport {
 			data.setPcr_type(dictionary.getDictEntry());
 		}
 		data.setDuplicateReport(mayBeDuplicate);
-		data.setStatus(atLeastOneAnalysisNotValidated ? StringUtil.getMessageForKey("report.status.partial") : StringUtil
-				.getMessageForKey("report.status.complete"));
+		data.setStatus(atLeastOneAnalysisNotValidated ? MessageUtil.getMessage("report.status.partial")
+				: MessageUtil.getMessage("report.status.complete"));
 	}
 
 	protected void setPatientInfo(EIDReportData data) {
@@ -143,14 +145,14 @@ public abstract class PatientEIDReport extends RetroCIPatientReport {
 		data.setSitesubjectno(reportPatient.getExternalId());
 		data.setBirth_date(reportPatient.getBirthDateForDisplay());
 		data.setGender(reportPatient.getGender());
-		data.setCollectiondate( DateUtil.convertTimestampToStringDateAndTime(reportSample.getCollectionDate()));
+		data.setCollectiondate(DateUtil.convertTimestampToStringDateAndTime(reportSample.getCollectionDate()));
 		SampleOrganization sampleOrg = new SampleOrganization();
 		sampleOrg.setSample(reportSample);
 		orgDAO.getDataBySample(sampleOrg);
 		data.setServicename(sampleOrg.getId() == null ? "" : sampleOrg.getOrganization().getOrganizationName());
 		data.setDoctor(getObservationValues(OBSERVATION_REQUESTOR_ID));
 		data.setAccession_number(reportSample.getAccessionNumber());
-		data.setReceptiondate( DateUtil.convertTimestampToStringDateAndTime(reportSample.getReceivedTimestamp()));           
+		data.setReceptiondate(DateUtil.convertTimestampToStringDateAndTime(reportSample.getReceivedTimestamp()));
 
 		Timestamp collectionDate = reportSample.getCollectionDate();
 
@@ -167,6 +169,7 @@ public abstract class PatientEIDReport extends RetroCIPatientReport {
 		data.getSampleQaEventItems(reportSample);
 	}
 
+	@Override
 	protected String getProjectId() {
 		return EID_STUDY_ID;
 	}

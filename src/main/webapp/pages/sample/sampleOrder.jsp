@@ -5,7 +5,7 @@
                  us.mn.state.health.lims.common.services.PhoneNumberService,
                  us.mn.state.health.lims.common.util.ConfigurationProperties,
                  us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-                 us.mn.state.health.lims.common.util.StringUtil,
+                 spring.mine.internationalization.MessageUtil,
                  us.mn.state.health.lims.common.util.IdValuePair,
                  us.mn.state.health.lims.common.util.Versioning,
                  us.mn.state.health.lims.common.util.DateUtil,
@@ -129,7 +129,7 @@
             $("labNo").value = returnedData;
 
         } else {
-            alert("<%= StringUtil.getMessageForKey("error.accession.no.next") %>");
+            alert("<%= MessageUtil.getMessage("error.accession.no.next") %>");
             $("labNo").value = "";
         }
 
@@ -195,7 +195,7 @@
 <c:if test="${empty form.sampleOrderItems.labNo}" >
     <tr>
         <td style="width:35%">
-            <%=StringUtil.getContextualMessageForKey( "quick.entry.accession.number" )%>
+            <%=MessageUtil.getContextualMessage( "quick.entry.accession.number" )%>
             :
             <span class="requiredlabel">*</span>
         </td>
@@ -207,7 +207,7 @@
                       id="labNo"/>
 
             <spring:message code="sample.entry.scanner.instructions" htmlEscape="false"/>
-            <input type="button" value='<%=StringUtil.getMessageForKey("sample.entry.scanner.generate")%>'
+            <input type="button" value='<%=MessageUtil.getMessage("sample.entry.scanner.generate")%>'
                    onclick="setOrderModified();getNextAccessionNumber(); " class="textButton">
         </td>
     </tr>
@@ -233,7 +233,7 @@
 <% } %>
 <tr>
     <td>
-        <%= StringUtil.getContextualMessageForKey( "quick.entry.received.date" ) %>
+        <%= MessageUtil.getContextualMessage( "quick.entry.received.date" ) %>
         :
         <span class="requiredlabel">*</span>
         <span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%>
@@ -281,7 +281,7 @@
 <% if( FormFields.getInstance().useField( Field.SampleEntryRequestingSiteSampleId ) ){%>
 <tr>
     <td>
-        <%= StringUtil.getContextualMessageForKey( "sample.clientReference" ) %>:
+        <%= MessageUtil.getContextualMessage( "sample.clientReference" ) %>:
     </td>
     <td>
          <form:input path="sampleOrderItems.requesterSampleID"
@@ -296,7 +296,7 @@
 <% if( FormFields.getInstance().useField( Field.SAMPLE_ENTRY_USE_REFFERING_PATIENT_NUMBER ) ){%>
 <tr>
     <td>
-        <%= StringUtil.getContextualMessageForKey( "sample.referring.patientNumber" ) %>:
+        <%= MessageUtil.getContextualMessage( "sample.referring.patientNumber" ) %>:
     </td>
     <td>
         <form:input path="sampleOrderItems.referringPatientNumber"
@@ -312,7 +312,7 @@
 <% if( useReferralSiteList ){ %>
 <tr>
     <td>
-        <%= StringUtil.getContextualMessageForKey( "sample.entry.project.siteName" ) %>:
+        <%= MessageUtil.getContextualMessage( "sample.entry.project.siteName" ) %>:
         <% if( FormFields.getInstance().useField( Field.SampleEntryReferralSiteNameRequired ) ){%>
         <span class="requiredlabel">*</span>
         <% } %>
@@ -352,7 +352,7 @@
 <% if( useReferralSiteCode ){ %>
 <tr>
     <td>
-        <%= StringUtil.getContextualMessageForKey( "sample.entry.referringSite.code" ) %>:
+        <%= MessageUtil.getContextualMessage( "sample.entry.referringSite.code" ) %>:
     </td>
     <td>
         <form:input path="sampleOrderItems.referringSiteCode"
@@ -388,7 +388,7 @@
 <% if( useProviderInfo ){ %>
 <tr>
     <td>
-        <%= StringUtil.getContextualMessageForKey( "sample.entry.provider.name" ) %>:
+        <%= MessageUtil.getContextualMessage( "sample.entry.provider.name" ) %>:
         <% if( requesterLastNameRequired ){ %>
         <span class="requiredlabel">*</span>
         <% } %>
@@ -406,7 +406,7 @@
 </tr>
 <tr>
     <td>
-        <%= StringUtil.getContextualMessageForKey( "humansampleone.provider.workPhone" ) + ": " + PhoneNumberService.getPhoneFormat()%>
+        <%= MessageUtil.getContextualMessage( "humansampleone.provider.workPhone" ) + ": " + PhoneNumberService.getPhoneFormat()%>
     </td>
     <td>
          <form:input path="sampleOrderItems.providerWorkPhone"
@@ -421,7 +421,7 @@
 <% if( FormFields.getInstance().useField( Field.SampleEntryProviderFax ) ){ %>
 <tr>
     <td>
-        <%= StringUtil.getContextualMessageForKey( "sample.entry.project.faxNumber" )%>:
+        <%= MessageUtil.getContextualMessage( "sample.entry.project.faxNumber" )%>:
     </td>
     <td>
         <form:input path="sampleOrderItems.providerFax"
@@ -435,7 +435,7 @@
 <% if( FormFields.getInstance().useField( Field.SampleEntryProviderEmail ) ){ %>
 <tr>
     <td>
-        <%= StringUtil.getContextualMessageForKey( "sample.entry.project.email" )%>:
+        <%= MessageUtil.getContextualMessage( "sample.entry.project.email" )%>:
     </td>
     <td> 
         <form:input path="sampleOrderItems.providerEmail"

@@ -5,7 +5,7 @@
 			     us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
 			     us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
                  us.mn.state.health.lims.common.util.Versioning,
-			     us.mn.state.health.lims.common.util.StringUtil" %>
+			     spring.mine.internationalization.MessageUtil" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -81,7 +81,7 @@ function /*void*/ handleEnterEvent(  ){
 	<table width="40%">
 	<tr >
 		<td width="50%" align="right" >
-			<%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
+			<%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>
 		</td>
 		<td width="50%">
 			<input name="accessionNumber"
@@ -99,7 +99,7 @@ function /*void*/ handleEnterEvent(  ){
 	</table>
 	<br/>
 	<button type="button" name="retrieveTestsButton" id="retrieveTestsID"  onclick="doShowTests();" disabled="disabled" >
-		<%= StringUtil.getContextualMessageForKey("resultsentry.accession.search") %>
+		<%= MessageUtil.getContextualMessage("resultsentry.accession.search") %>
 	</button>
 
 </div>

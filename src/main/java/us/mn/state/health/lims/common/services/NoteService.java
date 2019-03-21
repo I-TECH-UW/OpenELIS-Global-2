@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
@@ -338,13 +339,13 @@ public class NoteService {
 	private String getNotePrefix(Note note, boolean excludeExternPrefix) {
 		if (SUPPORT_INTERNAL_EXTERNAL) {
 			if (Note.INTERNAL.equals(note.getNoteType())) {
-				return StringUtil.getMessageForKey("note.type.internal");
+				return MessageUtil.getMessage("note.type.internal");
 			} else if (Note.EXTERNAL.equals(note.getNoteType())) {
-				return excludeExternPrefix ? "" : StringUtil.getMessageForKey("note.type.external");
+				return excludeExternPrefix ? "" : MessageUtil.getMessage("note.type.external");
 			} else if (Note.REJECT_REASON.equals(note.getNoteType())) {
-				return StringUtil.getMessageForKey("note.type.rejectReason");
+				return MessageUtil.getMessage("note.type.rejectReason");
 			} else if (Note.NON_CONFORMITY.equals(note.getNoteType())) {
-				return StringUtil.getMessageForKey("note.type.nonConformity");
+				return MessageUtil.getMessage("note.type.nonConformity");
 			}
 		}
 

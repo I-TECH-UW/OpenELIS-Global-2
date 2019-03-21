@@ -24,10 +24,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.provider.query.PatientSearchResults;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.sample.daoimpl.SearchResultsDAOImp;
 
 /**
@@ -63,7 +63,7 @@ public class SubjectNumberValidationProvider extends BaseValidationProvider{
 
             boolean allowDuplicates = ConfigurationProperties.getInstance().isPropertyValueEqual( ConfigurationProperties.Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "true" );
             if( !results.isEmpty() ){
-                queryResponse = ( allowDuplicates ? "warning#" + StringUtil.getMessageForKey("alert.warning") : "fail#" + StringUtil.getMessageForKey("alert.error") ) + ": " + StringUtil.getMessageForKey( "error.duplicate.subjectNumber.warning");
+                queryResponse = ( allowDuplicates ? "warning#" + MessageUtil.getMessage("alert.warning") : "fail#" + MessageUtil.getMessage("alert.error") ) + ": " + MessageUtil.getMessage( "error.duplicate.subjectNumber.warning");
             }
         }
         response.setCharacterEncoding( "UTF-8" );

@@ -26,13 +26,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.provider.query.SampleItemTestProvider;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.RecordStatus;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.sample.form.ProjectData;
 import us.mn.state.health.lims.sample.util.CI.BaseProjectFormMapper;
 import us.mn.state.health.lims.sample.util.CI.BaseProjectFormMapper.TypeOfSampleTests;
@@ -253,6 +253,6 @@ public class SampleEntry extends Accessioner {
 
 	@Override
 	protected String getActionLabel() {
-		return StringUtil.getMessageForKey("banner.menu.createSample.Initial");
+		return MessageUtil.getMessage("banner.menu.createSample.Initial");
 	}
 }

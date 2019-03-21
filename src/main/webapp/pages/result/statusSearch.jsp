@@ -3,7 +3,7 @@
 				 us.mn.state.health.lims.common.formfields.FormFields,
 				 us.mn.state.health.lims.common.formfields.FormFields.Field,
 				 us.mn.state.health.lims.common.util.DateUtil,
-				 us.mn.state.health.lims.common.util.StringUtil"  %>
+				 spring.mine.internationalization.MessageUtil"  %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -56,7 +56,7 @@ function /*void*/ dirtySearchInfo(e){
 	<table width="70%">
 	<tr >
 		<td >
-			<% if(useCollectionDate){ %>  <%= StringUtil.getContextualMessageForKey("sample.collectionDate")  %><br><span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span> <% } %>
+			<% if(useCollectionDate){ %>  <%= MessageUtil.getContextualMessage("sample.collectionDate")  %><br><span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span> <% } %>
 		</td>
 		<td >
 			<spring:message code="sample.receivedDate"/><br><span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>
@@ -65,7 +65,7 @@ function /*void*/ dirtySearchInfo(e){
 			<spring:message code="test.testName"/>
 		</td>
 		<td >
-			<%= StringUtil.getContextualMessageForKey("analysis.status") %>
+			<%= MessageUtil.getContextualMessage("analysis.status") %>
 		</td>
 		<% if( useSampleStatus ){ %>
 		<td >

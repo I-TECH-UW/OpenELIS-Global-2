@@ -26,8 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.project.dao.ProjectDAO;
 import us.mn.state.health.lims.project.daoimpl.ProjectDAOImpl;
 import us.mn.state.health.lims.project.valueholder.Project;
@@ -68,17 +68,17 @@ public class ScanGeneratorProvider extends BaseQueryProvider {
 				if (found) {
 					nextNumber = getNextScanNumber(programCode);
 					if (GenericValidator.isBlankOrNull(nextNumber)) {
-						error = StringUtil.getMessageForKey("error.accession.no.next");
+						error = MessageUtil.getMessage("error.accession.no.next");
 					}
 				} else {
-					error = StringUtil.getMessageForKey("errors.invalid", "program.code");
+					error = MessageUtil.getMessage("errors.invalid", "program.code");
 				}
 			}
 		} catch (IllegalStateException e) {
-			error = StringUtil.getMessageForKey("error.accession.no.next");
+			error = MessageUtil.getMessage("error.accession.no.next");
 			Log.error(e.toString());
 		} catch (IllegalArgumentException e) {
-			error = StringUtil.getMessageForKey("error.accession.no.next");
+			error = MessageUtil.getMessage("error.accession.no.next");
 			Log.error(e.toString());
 		}
 		

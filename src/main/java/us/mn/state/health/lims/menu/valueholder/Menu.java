@@ -18,7 +18,7 @@ package us.mn.state.health.lims.menu.valueholder;
 
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
@@ -120,7 +120,7 @@ public class Menu extends BaseObject {
 		if( GenericValidator.isBlankOrNull(getDisplayKey())){
 			return null;
 		}else{
-			return StringUtil.getContextualMessageForKey(getDisplayKey());
+			return MessageUtil.getContextualMessage(getDisplayKey());
 		}
 	}
 	
@@ -128,7 +128,7 @@ public class Menu extends BaseObject {
 		if( GenericValidator.isBlankOrNull(getToolTipKey())){
 			return null;
 		}else{
-			return StringUtil.getContextualMessageForKey(getToolTipKey());
+			return MessageUtil.getContextualMessage(getToolTipKey());
 		}
 	}
 

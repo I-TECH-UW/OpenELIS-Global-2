@@ -24,6 +24,7 @@ import java.util.List;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import spring.mine.qaevent.service.NonConformityHelper;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
@@ -68,11 +69,11 @@ public abstract class NonConformityByDate extends Report implements IReportCreat
 	@Override
 	protected void createReportParameters() throws IllegalStateException {
 		super.createReportParameters();
-		String nonConformity = StringUtil.getContextualMessageForKey("banner.menu.nonconformity");
+		String nonConformity = MessageUtil.getContextualMessage("banner.menu.nonconformity");
 		reportParameters.put("status", nonConformity);
 		reportParameters.put("reportTitle", nonConformity);
 		reportParameters.put("reportPeriod",
-				StringUtil.getContextualMessageForKey("banner.menu.nonconformity") + "  " + dateRange.toString());
+				MessageUtil.getContextualMessage("banner.menu.nonconformity") + "  " + dateRange.toString());
 		reportParameters.put("supervisorSignature", ConfigurationProperties.getInstance()
 				.isPropertyValueEqual(Property.SIGNATURES_ON_NONCONFORMITY_REPORTS, "true"));
 		if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI LNSP")) {

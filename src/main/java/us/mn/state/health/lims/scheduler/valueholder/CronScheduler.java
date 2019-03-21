@@ -18,7 +18,7 @@ package us.mn.state.health.lims.scheduler.valueholder;
 
 import java.sql.Timestamp;
 
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
 public class CronScheduler extends BaseObject{
@@ -91,7 +91,7 @@ public class CronScheduler extends BaseObject{
 	
 	public String getLocalizedName(){
 		if( getDisplayKey() != null){
-			return StringUtil.getMessageForKey(getDisplayKey());
+			return MessageUtil.getMessage(getDisplayKey());
 		}
 		
 		return null;
@@ -99,7 +99,7 @@ public class CronScheduler extends BaseObject{
 	
 	public String getLocalizedDescription(){
 		if( getDescriptionKey() != null){
-			return StringUtil.getMessageForKey(getDescriptionKey());
+			return MessageUtil.getMessage(getDescriptionKey());
 		}
 		
 		return null;

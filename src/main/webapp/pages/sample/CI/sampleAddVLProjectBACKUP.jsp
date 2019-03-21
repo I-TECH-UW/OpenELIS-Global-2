@@ -7,7 +7,7 @@
 	            us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
 	            us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
 	            us.mn.state.health.lims.common.util.Versioning,
-	            us.mn.state.health.lims.common.util.StringUtil,
+	            spring.mine.internationalization.MessageUtil,
 	            us.mn.state.health.lims.sample.bean.SampleOrderItem,
 	            us.mn.state.health.lims.sample.util.AccessionNumberUtil,
 	            org.owasp.encoder.Encode,
@@ -648,14 +648,14 @@ registerSampleChangedForSampleEntry();
 
 <div id=sampleEntryPage >
 <input type="button" name="showHide" value='<%= acceptExternalOrders ? "+" : "-" %>' onclick="showHideSection(this, 'orderDisplay');" id="orderSectionId">
-<%= StringUtil.getContextualMessageForKey("sample.entry.order.label") %>
+<%= MessageUtil.getContextualMessage("sample.entry.order.label") %>
 <span class="requiredlabel">*</span>
 
 <tiles:insert attribute="sampleOrder" />
 
 <hr style="width:100%;height:5px" />
 <input type="button" name="showHide" value="+" onclick="showHideSection(this, 'samplesDisplay');" id="samplesSectionId">
-<%= StringUtil.getContextualMessageForKey("sample.entry.sampleList.label") %>
+<%= MessageUtil.getContextualMessage("sample.entry.sampleList.label") %>
 <span class="requiredlabel">*</span>
 
 <div id="samplesDisplay" class="colorFill">

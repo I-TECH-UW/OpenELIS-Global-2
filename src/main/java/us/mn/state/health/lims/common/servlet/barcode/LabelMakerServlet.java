@@ -13,6 +13,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 
 import spring.mine.common.validator.BaseErrors;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.barcode.BarcodeLabelMaker;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator;
@@ -45,7 +46,7 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
 		if (userModuleDAO.isSessionExpired(request)) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.setContentType("text/html; charset=utf-8");
-			response.getWriter().println(StringUtil.getMessageForKey("message.error.unauthorized"));
+			response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
 			return;
 		}
 		// get parameters
@@ -87,7 +88,7 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
 			response.getWriter().println("<ul>");
 
 			for (ObjectError error : errors.getAllErrors()) {
-				response.getWriter().println("<li>" + StringUtil.getMessageForKey(error.getCode()) + "</li>");
+				response.getWriter().println("<li>" + MessageUtil.getMessage(error.getCode()) + "</li>");
 			}
 			response.getWriter().println("</ul>");
 			return;
@@ -108,7 +109,7 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
 					+ path + "/";
 			String version = Versioning.getBuildNumber();
 			response.setContentType("text/html; charset=utf-8");
-			response.getWriter().println(StringUtil.getMessageForKey("barcode.message.maxreached"));
+			response.getWriter().println(MessageUtil.getMessage("barcode.message.maxreached"));
 			response.getWriter().println("</br>");
 			response.getWriter()
 					.println("<input type='button' id='overrideButton' value='Override' onclick='override();'>");

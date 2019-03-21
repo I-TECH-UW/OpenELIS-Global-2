@@ -18,7 +18,7 @@ package us.mn.state.health.lims.reports.action.implementation;
 
 import java.util.List;
 
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 
 public class PatientARVInitialVersion2Report extends PatientARVReport implements IReportCreator {
@@ -29,7 +29,7 @@ public class PatientARVInitialVersion2Report extends PatientARVReport implements
 
 
 	protected String getReportNameForReport(){
-		return StringUtil.getMessageForKey("sample.entry.project.initialARV.title");
+		return MessageUtil.getMessage("sample.entry.project.initialARV.title");
 	}
 
 	protected boolean allowSample(){

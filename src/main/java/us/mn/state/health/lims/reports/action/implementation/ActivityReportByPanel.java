@@ -22,9 +22,9 @@ import java.util.Comparator;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.ResultService;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ActivityReportBean;
 import us.mn.state.health.lims.result.valueholder.Result;
 
@@ -36,11 +36,11 @@ public class ActivityReportByPanel extends ActivityReport implements IReportCrea
 	@Override
 	public void setRequestParameters(BaseForm form) {
 		new ReportSpecificationParameters(ReportSpecificationParameters.Parameter.DATE_RANGE,
-				StringUtil.getMessageForKey("report.activity.report.base") + " "
-						+ StringUtil.getMessageForKey("report.by.panel"),
-				StringUtil.getMessageForKey("report.instruction.all.fields")).setRequestParameters(form);
+				MessageUtil.getMessage("report.activity.report.base") + " "
+						+ MessageUtil.getMessage("report.by.panel"),
+				MessageUtil.getMessage("report.instruction.all.fields")).setRequestParameters(form);
 		new ReportSpecificationList(DisplayListService.getList(DisplayListService.ListType.PANELS),
-				StringUtil.getMessageForKey("workplan.panel.types")).setRequestParameters(form);
+				MessageUtil.getMessage("workplan.panel.types")).setRequestParameters(form);
 	}
 
 	@Override

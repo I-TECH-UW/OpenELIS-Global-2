@@ -5,8 +5,8 @@
 			     us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
 			     us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
 			     us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-			     us.mn.state.health.lims.common.util.StringUtil,
-			     us.mn.state.health.lims.common.util.*" %>
+			     spring.mine.internationalization.MessageUtil,
+			     us.mn.state.health.lims.common.util.*, spring.mine.internationalization.MessageUtil" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -274,7 +274,7 @@ function /*void*/ doNothing(){
 function enableSearchButton(eventCode){
     var valueElem = $jq("#searchValue");
     var searchButton = $jq("#searchButton");
-    if( valueElem.val() && valueElem.val() != '<%=StringUtil.getMessageForKey("label.select.search.here")%>'){
+    if( valueElem.val() && valueElem.val() != '<%=MessageUtil.getMessage("label.select.search.here")%>'){
         searchButton.removeAttr("disabled");
         if( eventCode == 13 ){
             searchButton.click();
@@ -310,7 +310,7 @@ function firstClick(){
 function messageRestore(element ){
     if( !element.value ){
         element.maxlength = 120;
-        element.value = '<%=StringUtil.getMessageForKey("label.select.search.here")%>';
+        element.value = '<%=MessageUtil.getMessage("label.select.search.here")%>';
         element.onkeydown = firstClick;
         setCaretPosition(element, 0);
     }
@@ -341,7 +341,7 @@ function printBarcode(button) {
 	var patientId = document.getElementsByName('patientId')[0].value;
 	var type = "";
 	var quantity = "";
-	if (confirm("<%=StringUtil.getMessageForKey("barcode.message.reprint.confirmation")%>")) {
+	if (confirm("<%=MessageUtil.getMessage("barcode.message.reprint.confirmation")%>")) {
         if (button.id == "defaultPrintButton") {
         type = "default";
         } else if (button.id == "orderPrintButton") {
@@ -393,7 +393,7 @@ function printBarcode(button) {
            maxlength="120"
            id="searchValue"
            class="patientSearch"
-           value='<%=StringUtil.getMessageForKey("label.select.search.here")%>'
+           value='<%=MessageUtil.getMessage("label.select.search.here")%>'
            type="text"
            onclick="cursorAtFront(this)"
            onkeydown='firstClick();'
@@ -403,7 +403,7 @@ function printBarcode(button) {
     <input type="button"
            name="searchButton"
            class="patientSearch"
-           value="<%= StringUtil.getMessageForKey("label.patient.search")%>"
+           value="<%= MessageUtil.getMessage("label.patient.search")%>"
            id="searchButton"
            onclick="searchPatients()"
            disabled="disabled" >
@@ -455,7 +455,7 @@ function printBarcode(button) {
 				<% } %>
 				<% if(supportNationalID){ %>
 				<th width="12%">
-                    <%=StringUtil.getContextualMessageForKey("patient.NationalID") %>
+                    <%=MessageUtil.getContextualMessage("patient.NationalID") %>
                 </th>
                 <% } %>
 			</tr>

@@ -24,8 +24,8 @@ import java.util.Set;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
 import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
@@ -91,7 +91,7 @@ public class ReportUtil {
 
 	public static String getSampleType(SampleQaEvent event) {
 		SampleItem sampleItem = event.getSampleItem();
-		return (sampleItem == null) ? StringUtil.getContextualMessageForKey("nonConformant.allSampleTypesText")
+		return (sampleItem == null) ? MessageUtil.getContextualMessage("nonConformant.allSampleTypesText")
 				: findTypeOfSample(sampleItem.getTypeOfSampleId());
 
 	}

@@ -18,7 +18,7 @@ package us.mn.state.health.lims.reports.action.implementation;
 
 import java.util.List;
 
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 
 public class PatientARVVersion1Report extends PatientARVReport implements  IReportCreator {
@@ -46,14 +46,14 @@ public class PatientARVVersion1Report extends PatientARVReport implements  IRepo
 		
 		for( ObservationHistory history : historyList){
 			if("FollowUpARV_Id".equals(history.getValue())){
-				reportParameters.put("studyName", StringUtil.getMessageForKey("reports.label.patient.ARV.followup"));
+				reportParameters.put("studyName", MessageUtil.getMessage("reports.label.patient.ARV.followup"));
 				return true;
 			}else if("InitialARV_Id".equals(history.getValue())){
-				reportParameters.put("studyName", StringUtil.getMessageForKey("reports.label.patient.ARV.initial"));	
+				reportParameters.put("studyName", MessageUtil.getMessage("reports.label.patient.ARV.initial"));	
 				return true;
 			}
 			else if("VL_Id".equals(history.getValue())){
-				reportParameters.put("studyName", StringUtil.getMessageForKey("reports.label.patient.VL"));	
+				reportParameters.put("studyName", MessageUtil.getMessage("reports.label.patient.VL"));	
 				return true;
 			}
 		}

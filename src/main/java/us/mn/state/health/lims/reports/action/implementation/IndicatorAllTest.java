@@ -26,12 +26,12 @@ import java.util.Map;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.AnalysisService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.HaitiAggregateReportData;
 import us.mn.state.health.lims.test.daoimpl.TestSectionDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
@@ -339,7 +339,7 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 
     @Override
 	protected String getNameForReportRequest() {
-		return StringUtil.getMessageForKey("openreports.all.tests.aggregate");
+		return MessageUtil.getMessage("openreports.all.tests.aggregate");
 	}
 
 	private void setTestAggregates() {
@@ -370,7 +370,7 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 
 	@Override
 	protected String getNameForReport() {
-		return StringUtil.getContextualMessageForKey("openreports.all.tests.aggregate");
+		return MessageUtil.getContextualMessage("openreports.all.tests.aggregate");
 	}
 
     

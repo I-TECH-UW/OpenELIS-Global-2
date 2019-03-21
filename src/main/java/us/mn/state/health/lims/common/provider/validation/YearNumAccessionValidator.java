@@ -20,8 +20,8 @@ package us.mn.state.health.lims.common.provider.validation;
 import java.util.HashSet;
 import java.util.Set;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.sample.dao.SampleDAO;
 import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 
@@ -34,31 +34,34 @@ public class YearNumAccessionValidator implements IAccessionNumberValidator {
 	private static final int YEAR_END = 2;
 	private int acccessionLength = 8;
 	private static final boolean NEED_PROGRAM_CODE = false;
-	private static Set<String> REQUESTED_NUMBERS = new HashSet<String>();
+	private static Set<String> REQUESTED_NUMBERS = new HashSet<>();
 	private final boolean useSeparator;
 	private final String separator;
 	private final int separatorLength;
 	private String incrementFormat;
 
-	public YearNumAccessionValidator( int length, Character separator){
+	public YearNumAccessionValidator(int length, Character separator) {
 		useSeparator = separator != null;
 		this.separator = useSeparator ? separator.toString() : "";
 		separatorLength = useSeparator ? 1 : 0;
 		incrementFormat = "%0" + String.valueOf(length) + "d";
 		incrementStartingValue = String.format(incrementFormat, 1);
 		String upper = incrementStartingValue.replace("0", "9").replace("1", "9");
-		upperIncrementValue = Integer.parseInt(upper);	
+		upperIncrementValue = Integer.parseInt(upper);
 		acccessionLength = length + YEAR_END + (useSeparator ? 1 : 0);
 	}
-	
+
+	@Override
 	public boolean needProgramCode() {
 		return NEED_PROGRAM_CODE;
 	}
 
+	@Override
 	public String createFirstAccessionNumber(String programCode) {
 		return DateUtil.getTwoDigitYear() + separator + incrementStartingValue;
 	}
 
+	@Override
 	public String incrementAccessionNumber(String currentHighAccessionNumber) {
 
 		int increment = Integer.parseInt(currentHighAccessionNumber.substring(INCREMENT_START + separatorLength));
@@ -77,14 +80,15 @@ public class YearNumAccessionValidator implements IAccessionNumberValidator {
 		return year + separator + incrementAsString;
 	}
 
+	@Override
 	public ValidationResults validFormat(String accessionNumber, boolean checkDate) {
 		// The rule is 2 digit year code and incremented numbers
 		if (accessionNumber.length() != acccessionLength) {
 			return ValidationResults.LENGTH_FAIL;
 		}
 
-		if(checkDate){
-			if( !DateUtil.getTwoDigitYear().equals(accessionNumber.substring(YEAR_START, YEAR_END))){
+		if (checkDate) {
+			if (!DateUtil.getTwoDigitYear().equals(accessionNumber.substring(YEAR_START, YEAR_END))) {
 				return ValidationResults.YEAR_FAIL;
 			}
 		}
@@ -98,23 +102,26 @@ public class YearNumAccessionValidator implements IAccessionNumberValidator {
 		return ValidationResults.SUCCESS;
 	}
 
+	@Override
 	public String getInvalidMessage(ValidationResults results) {
 
 		switch (results) {
-			case LENGTH_FAIL:
-				return StringUtil.getMessageForKey("sample.entry.invalid.accession.number.length");
-			case USED_FAIL:
-				return StringUtil.getMessageForKey("sample.entry.invalid.accession.number.suggestion") + " " + getNextAvailableAccessionNumber(null);
-			case YEAR_FAIL:
-			case FORMAT_FAIL:
-				return getInvalidFormatMessage(results);
-			default:
-				return StringUtil.getMessageForKey("sample.entry.invalid.accession.number");
+		case LENGTH_FAIL:
+			return MessageUtil.getMessage("sample.entry.invalid.accession.number.length");
+		case USED_FAIL:
+			return MessageUtil.getMessage("sample.entry.invalid.accession.number.suggestion") + " "
+					+ getNextAvailableAccessionNumber(null);
+		case YEAR_FAIL:
+		case FORMAT_FAIL:
+			return getInvalidFormatMessage(results);
+		default:
+			return MessageUtil.getMessage("sample.entry.invalid.accession.number");
 
 		}
 
 	}
 
+	@Override
 	public String getNextAvailableAccessionNumber(String prefix) {
 		String nextAccessionNumber;
 
@@ -123,29 +130,31 @@ public class YearNumAccessionValidator implements IAccessionNumberValidator {
 		String curLargestAccessionNumber = accessionNumberDAO.getLargestAccessionNumberWithPrefix(prefix);
 
 		if (curLargestAccessionNumber == null) {
-			if( REQUESTED_NUMBERS.isEmpty()){
+			if (REQUESTED_NUMBERS.isEmpty()) {
 				nextAccessionNumber = createFirstAccessionNumber(prefix);
-			}else{
+			} else {
 				nextAccessionNumber = REQUESTED_NUMBERS.iterator().next();
 			}
 		} else {
 			nextAccessionNumber = incrementAccessionNumber(curLargestAccessionNumber);
 		}
 
-		while( REQUESTED_NUMBERS.contains(nextAccessionNumber) ){
+		while (REQUESTED_NUMBERS.contains(nextAccessionNumber)) {
 			nextAccessionNumber = incrementAccessionNumber(nextAccessionNumber);
 		}
-		
+
 		REQUESTED_NUMBERS.add(nextAccessionNumber);
-		
+
 		return nextAccessionNumber;
 	}
 
+	@Override
 	public int getMaxAccessionLength() {
 		return acccessionLength;
 	}
 
 	// recordType parameter is not used in this case
+	@Override
 	public boolean accessionNumberIsUsed(String accessionNumber, String recordType) {
 
 		SampleDAO sampleDAO = new SampleDAOImpl();
@@ -153,44 +162,51 @@ public class YearNumAccessionValidator implements IAccessionNumberValidator {
 		return sampleDAO.getSampleByAccessionNumber(accessionNumber) != null;
 	}
 
+	@Override
 	public ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType, String isRequired,
 			String projectFormName) {
 
-			ValidationResults results = validFormat(accessionNumber, true);
-			//TODO refactor accessionNumberIsUsed into two methods so the null isn't needed. (Its only used for program accession number)
-			if (results == ValidationResults.SUCCESS && accessionNumberIsUsed(accessionNumber, null)) {
-				results = ValidationResults.USED_FAIL;
-			}
+		ValidationResults results = validFormat(accessionNumber, true);
+		// TODO refactor accessionNumberIsUsed into two methods so the null isn't
+		// needed. (Its only used for program accession number)
+		if (results == ValidationResults.SUCCESS && accessionNumberIsUsed(accessionNumber, null)) {
+			results = ValidationResults.USED_FAIL;
+		}
 
-			return results;
+		return results;
 	}
 
-    @Override
-    public String getInvalidFormatMessage( ValidationResults results ){
-        return StringUtil.getMessageForKey( "sample.entry.invalid.accession.number.format.corrected", getFormatPattern(), getFormatExample() );
-    }
+	@Override
+	public String getInvalidFormatMessage(ValidationResults results) {
+		return MessageUtil.getMessage("sample.entry.invalid.accession.number.format.corrected",
+				new String[] { getFormatPattern(), getFormatExample() });
+	}
 
-    private String getFormatExample(){
-        StringBuilder format = new StringBuilder( DateUtil.getTwoDigitYear() );
-        if( useSeparator){format.append( separator );}
-        for( int i = 0; i < getChangeableLength() - 1; i++){
-            format.append( "0" );
-        }
+	private String getFormatExample() {
+		StringBuilder format = new StringBuilder(DateUtil.getTwoDigitYear());
+		if (useSeparator) {
+			format.append(separator);
+		}
+		for (int i = 0; i < getChangeableLength() - 1; i++) {
+			format.append("0");
+		}
 
-        format.append( "1" );
-        return format.toString();
-    }
+		format.append("1");
+		return format.toString();
+	}
 
-    private String getFormatPattern(){
-        StringBuilder format = new StringBuilder( StringUtil.getMessageForKey( "date.two.digit.year" ) );
-        if( useSeparator){format.append( separator );}
-        for( int i = 0; i < getChangeableLength(); i++){
-            format.append( "#" );
-        }
-        return format.toString();
-    }
+	private String getFormatPattern() {
+		StringBuilder format = new StringBuilder(MessageUtil.getMessage("date.two.digit.year"));
+		if (useSeparator) {
+			format.append(separator);
+		}
+		for (int i = 0; i < getChangeableLength(); i++) {
+			format.append("#");
+		}
+		return format.toString();
+	}
 
-    @Override
+	@Override
 	public int getInvarientLength() {
 		return 0;
 	}
@@ -200,8 +216,8 @@ public class YearNumAccessionValidator implements IAccessionNumberValidator {
 		return getMaxAccessionLength() - getInvarientLength();
 	}
 
-    @Override
-    public String getPrefix(){
-        return null; //no single prefix
-    }
+	@Override
+	public String getPrefix() {
+		return null; // no single prefix
+	}
 }

@@ -3,7 +3,7 @@
          import="java.util.List,
          		us.mn.state.health.lims.common.action.IActionConstants,
           		us.mn.state.health.lims.common.util.IdValuePair,
-          		us.mn.state.health.lims.common.util.StringUtil,
+          		spring.mine.internationalization.MessageUtil,
          		us.mn.state.health.lims.common.util.Versioning,
          		us.mn.state.health.lims.test.action.BatchTestStatusChangeBean" %>
 
@@ -418,7 +418,7 @@
         </div>
     </div>
     <div align="center">
-        <input type="button" id="nextStepButton" onclick="nextStep()" disabled="disabled" value='<%=StringUtil.getMessageForKey("label.button.process")%>'>
+        <input type="button" id="nextStepButton" onclick="nextStep()" disabled="disabled" value='<%=MessageUtil.getMessage("label.button.process")%>'>
     &nbsp;<button onclick='submitAction("MasterListsPage.do")' ><spring:message code="label.button.cancel"/></button>
     </div>
 </div>
@@ -477,7 +477,7 @@
 
     <div align="center">
         <button onclick='submitAction("BatchTestReassignment.do")' ><spring:message code="label.button.accept"/></button>&nbsp;
-        <input type="button" onclick="restoreSelect()"  value='<%=StringUtil.getMessageForKey("label.button.reject")%>'>
+        <input type="button" onclick="restoreSelect()"  value='<%=MessageUtil.getMessage("label.button.reject")%>'>
     </div>
 </div>
 

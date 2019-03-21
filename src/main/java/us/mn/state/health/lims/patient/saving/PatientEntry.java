@@ -28,11 +28,11 @@ import java.sql.Timestamp;
 
 import javax.servlet.http.HttpServletRequest;
 
+import spring.mine.internationalization.MessageUtil;
 import spring.mine.patient.form.PatientEntryByProjectForm;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.StatusService.RecordStatus;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 
 public class PatientEntry extends Accessioner {
 
@@ -75,6 +75,6 @@ public class PatientEntry extends Accessioner {
 
 	@Override
 	protected String getActionLabel() {
-		return StringUtil.getMessageForKey("banner.menu.createPatient.Initial");
+		return MessageUtil.getMessage("banner.menu.createPatient.Initial");
 	}
 }

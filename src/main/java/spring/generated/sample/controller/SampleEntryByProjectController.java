@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.forms.SampleEntryByProjectForm;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.sample.controller.BaseSampleEntryController;
 import us.mn.state.health.lims.common.services.DisplayListService;

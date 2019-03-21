@@ -59,7 +59,6 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dataexchange.orderresult.OrderResponseWorker.Event;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.inventory.action.InventoryUtility;
@@ -489,7 +488,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
 			if (analysisService.hasBeenCorrectedSinceLastPatientReport()) {
 				actionDataSet.addToNoteList(noteService.createSavableNote(NoteType.EXTERNAL,
-						StringUtil.getMessageForKey("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
+						MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
 			}
 
 			// If there is more than one result then each user selected reflex gets mapped

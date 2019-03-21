@@ -13,12 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
+import spring.mine.internationalization.MessageUtil;
 import spring.mine.sample.controller.BaseSampleEntryController;
 import spring.mine.samplebatchentry.form.SampleBatchEntryForm;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dictionary.ObservationHistoryList;
 import us.mn.state.health.lims.organization.util.OrganizationTypeList;
 import us.mn.state.health.lims.patient.valueholder.ObservationData;
@@ -62,18 +61,18 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 	private void setupEID(SampleBatchEntryForm form, HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		ProjectData projectData = form.getProjectDataEID();
-		PropertyUtils.setProperty(form, "programCode", StringUtil.getMessageForKey("sample.entry.project.LDBS"));
+		PropertyUtils.setProperty(form, "programCode", MessageUtil.getMessage("sample.entry.project.LDBS"));
 		String sampleTypes = "";
 		String tests = "";
 		if (projectData.getDryTubeTaken()) {
-			sampleTypes = sampleTypes + StringUtil.getMessageForKey("sample.entry.project.ARV.dryTubeTaken");
+			sampleTypes = sampleTypes + MessageUtil.getMessage("sample.entry.project.ARV.dryTubeTaken");
 		}
 		if (projectData.getDbsTaken()) {
-			sampleTypes = sampleTypes + " " + StringUtil.getMessageForKey("sample.entry.project.title.dryBloodSpot");
+			sampleTypes = sampleTypes + " " + MessageUtil.getMessage("sample.entry.project.title.dryBloodSpot");
 		}
 
 		if (projectData.getDnaPCR()) {
-			tests = tests + StringUtil.getMessageForKey("sample.entry.project.dnaPCR");
+			tests = tests + MessageUtil.getMessage("sample.entry.project.dnaPCR");
 		}
 		request.setAttribute("sampleType", sampleTypes);
 		request.setAttribute("testNames", tests);
@@ -86,18 +85,18 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 	private void setupViralLoad(SampleBatchEntryForm form, HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		ProjectData projectData = form.getProjectDataVL();
-		PropertyUtils.setProperty(form, "programCode", StringUtil.getMessageForKey("sample.entry.project.LART"));
+		PropertyUtils.setProperty(form, "programCode", MessageUtil.getMessage("sample.entry.project.LART"));
 		String sampleTypes = "";
 		String tests = "";
 		if (projectData.getDryTubeTaken()) {
-			sampleTypes = sampleTypes + StringUtil.getMessageForKey("sample.entry.project.ARV.dryTubeTaken");
+			sampleTypes = sampleTypes + MessageUtil.getMessage("sample.entry.project.ARV.dryTubeTaken");
 		}
 		if (projectData.getEdtaTubeTaken()) {
-			sampleTypes = sampleTypes + " " + StringUtil.getMessageForKey("sample.entry.project.ARV.edtaTubeTaken");
+			sampleTypes = sampleTypes + " " + MessageUtil.getMessage("sample.entry.project.ARV.edtaTubeTaken");
 		}
 
 		if (projectData.getViralLoadTest()) {
-			tests = tests + StringUtil.getMessageForKey("sample.entry.project.ARV.viralLoadTest");
+			tests = tests + MessageUtil.getMessage("sample.entry.project.ARV.viralLoadTest");
 		}
 		request.setAttribute("sampleType", sampleTypes);
 		request.setAttribute("testNames", tests);

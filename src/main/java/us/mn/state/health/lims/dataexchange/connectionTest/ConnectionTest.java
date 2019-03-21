@@ -20,7 +20,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.dataexchange.common.ITransmissionResponseHandler;
 import us.mn.state.health.lims.dataexchange.common.ReportTransmission;
 import us.mn.state.health.lims.dataexchange.common.ReportTransmission.HTTP_TYPE;
@@ -44,7 +44,7 @@ public class ConnectionTest {
 		public void handleResponse(int httpReturnStatus, List<String> errors, String msg) {
 
 			if (httpReturnStatus == HttpServletResponse.SC_OK) {
-				response = StringUtil.getMessageForKey("http.success");
+				response = MessageUtil.getMessage("http.success");
 			} else {
 				if( !errors.isEmpty()){
 					response = errors.get(0);

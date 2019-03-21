@@ -5,7 +5,7 @@
 			java.util.Collection,
 			us.mn.state.health.lims.test.beanItems.TestResultItem,
 			us.mn.state.health.lims.common.util.IdValuePair,
-			us.mn.state.health.lims.common.util.StringUtil,
+			spring.mine.internationalization.MessageUtil,
 			us.mn.state.health.lims.common.util.ConfigurationProperties,
 			us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
 			org.owasp.encoder.Encode" %>
@@ -128,11 +128,11 @@ function printWorkplan() {
 			<th width="3%">&nbsp;</th>
 		</c:if>
     	<th width="10%" style="text-align: left;">
-    		<%= StringUtil.getContextualMessageForKey("quick.entry.accession.number") %>
+    		<%= MessageUtil.getContextualMessage("quick.entry.accession.number") %>
 		</th>
 		<% if(ConfigurationProperties.getInstance().isPropertyValueEqual(Property.SUBJECT_ON_WORKPLAN, "true")){ %>
 		<th width="5%" style="text-align: left;">
-			<%= StringUtil.getContextualMessageForKey("patient.subject.number") %>
+			<%= MessageUtil.getContextualMessage("patient.subject.number") %>
 		</th>	
 		<% } %>
 		<% if(ConfigurationProperties.getInstance().isPropertyValueEqual(Property.NEXT_VISIT_DATE_ON_WORKPLAN, "true")){ %>
@@ -233,13 +233,13 @@ function printWorkplan() {
 </c:if>
 <c:if test="${workplanType == 'test' || workplanType == 'panel' }">
 	<c:if test="${testCount == 0}">
-		<h2><%= StringUtil.getContextualMessageForKey("result.noTestsFound") %></h2>
+		<h2><%= MessageUtil.getContextualMessage("result.noTestsFound") %></h2>
 	</c:if>
 </c:if>
 <c:if test="${not (workplanType == 'test') && not (workplanType == 'panel') }">
 	<c:if test="${testCount == 0}">
 		<c:if test="${not empty form.testSectionId}">
-		<h2><%=StringUtil.getContextualMessageForKey("result.noTestsFound") %></h2>
+		<h2><%=MessageUtil.getContextualMessage("result.noTestsFound") %></h2>
 		</c:if>
 	</c:if>
 </c:if>

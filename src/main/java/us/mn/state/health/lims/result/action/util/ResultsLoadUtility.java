@@ -32,6 +32,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -62,7 +63,6 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DAOImplFactory;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -627,9 +627,9 @@ public class ResultsLoadUtility {
 			isCD4Conclusion = result.getAnalyte().getId().equals(ANALYTE_CD4_CNT_CONCLUSION_ID);
 
 			if (isConclusion) {
-				displayTestName = StringUtil.getMessageForKey("result.conclusion");
+				displayTestName = MessageUtil.getMessage("result.conclusion");
 			} else if (isCD4Conclusion) {
-				displayTestName = StringUtil.getMessageForKey("result.conclusion.cd4");
+				displayTestName = MessageUtil.getMessage("result.conclusion.cd4");
 			}
 		}
 

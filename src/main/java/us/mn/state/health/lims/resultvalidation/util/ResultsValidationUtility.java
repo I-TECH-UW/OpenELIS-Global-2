@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -448,7 +449,7 @@ public class ResultsValidationUtility {
         if (result != null && result.getAnalyte() != null
 				&& ANALYTE_CD4_CT_GENERATED_ID.equals(testResultItem.getResult().getAnalyte().getId())) {
 			testUnits = "";
-			testName = StringUtil.getMessageForKey("result.conclusion.cd4");
+			testName = MessageUtil.getMessage("result.conclusion.cd4");
 			analysisResultItem.setShowAcceptReject(false);
 			sortOrder = CD4_COUNT_SORT_NUMBER;
 		} else if (testResultItem.getTestName().equals(totalTestName)) {

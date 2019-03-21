@@ -23,12 +23,12 @@ import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.provider.query.PatientSearchResults;
 import us.mn.state.health.lims.common.services.ObservationHistoryService;
 import us.mn.state.health.lims.common.services.ObservationHistoryService.ObservationType;
 import us.mn.state.health.lims.common.services.PatientService;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.patient.dao.PatientDAO;
 import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
@@ -68,7 +68,7 @@ public class PatientSearchLocalWorker extends PatientSearchWorker {
 
 		if (!results.isEmpty()) {
 			for (PatientSearchResults singleResult : results) {
-				singleResult.setDataSourceName(StringUtil.getMessageForKey("patient.local.source"));
+				singleResult.setDataSourceName(MessageUtil.getMessage("patient.local.source"));
 				appendSearchResultRow(singleResult, xml);
 			}
 		}else{

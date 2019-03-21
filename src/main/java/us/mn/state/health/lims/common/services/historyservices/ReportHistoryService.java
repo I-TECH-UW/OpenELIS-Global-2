@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.valueholder.History;
 import us.mn.state.health.lims.common.services.ReportTrackingService;
 import us.mn.state.health.lims.common.services.ReportTrackingService.ReportType;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
 import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;
 import us.mn.state.health.lims.reports.valueholder.DocumentTrack;
@@ -76,7 +76,7 @@ public class ReportHistoryService extends HistoryService {
 	
 	@Override
 	protected String getObjectName() {
-		return StringUtil.getMessageForKey("banner.menu.reports");
+		return MessageUtil.getMessage("banner.menu.reports");
 	}
 
 }

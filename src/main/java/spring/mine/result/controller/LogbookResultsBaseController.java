@@ -3,7 +3,7 @@ package spring.mine.result.controller;
 import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.common.controller.BaseController;
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 
 public abstract class LogbookResultsBaseController extends BaseController {
 
@@ -21,7 +21,7 @@ public abstract class LogbookResultsBaseController extends BaseController {
 
 	@Override
 	protected String getMessageForKey(String messageKey) throws Exception {
-		return StringUtil.getMessageForKey("results.title", messageKey);
+		return MessageUtil.getMessage("results.title", messageKey);
 	}
 
 	protected void setRequestType(String section) {

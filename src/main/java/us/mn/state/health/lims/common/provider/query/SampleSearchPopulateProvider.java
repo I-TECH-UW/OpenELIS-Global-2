@@ -70,7 +70,7 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
 
         if ( sample == null ) {
             xml.append("empty");
-            // result = StringUtil.getMessageForKey("xxx");
+            // result = MessageUtil.getMessage("xxx");
         } else {
             createReturnXML(sample, patientID, xml);
         }

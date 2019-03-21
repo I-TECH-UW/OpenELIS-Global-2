@@ -7,7 +7,7 @@
                 us.mn.state.health.lims.common.provider.validation.NonConformityRecordNumberValidationProvider,
                 us.mn.state.health.lims.common.services.PhoneNumberService,
                 us.mn.state.health.lims.common.util.DateUtil,
-                us.mn.state.health.lims.common.util.StringUtil, 
+                spring.mine.internationalization.MessageUtil, 
                 us.mn.state.health.lims.common.util.Versioning,
                 us.mn.state.health.lims.qaevent.valueholder.retroCI.QaEventItem,
                 us.mn.state.health.lims.common.util.ConfigurationProperties" %>
@@ -331,14 +331,14 @@ function  processPhoneSuccess(xhr){
 
 
 <div align="center">
-	<%= StringUtil.getContextualMessageForKey("quick.entry.accession.number") %>
+	<%= MessageUtil.getContextualMessage("quick.entry.accession.number") %>
 	:
 	<input type="text" name="labNo"
 		maxlength='<%=Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>'
 		value="" onchange="doNothing()" id="searchId">
 	&nbsp;
 	<input type="button" id="searchButtonId"
-		value='<%=StringUtil.getMessageForKey("label.button.search")%>'
+		value='<%=MessageUtil.getMessage("label.button.search")%>'
 		onclick="loadForm();">
 </div>
 <hr />
@@ -350,7 +350,7 @@ function  processPhoneSuccess(xhr){
 	<table >
 		<tr>
 			<td >
-				<%= StringUtil.getContextualMessageForKey("nonconformity.date") %>&nbsp;
+				<%= MessageUtil.getContextualMessage("nonconformity.date") %>&nbsp;
                 <span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>
 				:
 			</td>
@@ -360,7 +360,7 @@ function  processPhoneSuccess(xhr){
 					       maxlength="10" 
 					       onchange="checkValidDate(this);" />
 			<% if( FormFields.getInstance().useField(Field.QATimeWithDate)){ %>
-				<%= StringUtil.getContextualMessageForKey("nonconformity.time") %>
+				<%= MessageUtil.getContextualMessage("nonconformity.time") %>
 				:
 				<form:input path="time"
 				           id="time"
@@ -436,7 +436,7 @@ function  processPhoneSuccess(xhr){
 		<% if ( useNationalID ) { %>
 		<tr>
 			<td >
-			    <%=StringUtil.getContextualMessageForKey("patient.NationalID") %>
+			    <%=MessageUtil.getContextualMessage("patient.NationalID") %>
 				:
 			</td>
 			<form:hidden path="nationalIdNew" id="nationalIdNew"/>
@@ -455,7 +455,7 @@ function  processPhoneSuccess(xhr){
 		<% } %>
 		<tr>
 			<td >
-				<%=StringUtil.getContextualMessageForKey("sample.id") %>
+				<%=MessageUtil.getContextualMessage("sample.id") %>
 				:
 			</td>
 			<td>
@@ -467,7 +467,7 @@ function  processPhoneSuccess(xhr){
 			<c:if test="${empty form.service}">
 				<% if( useSiteList ){ %>
 					<tr>
-						<td><%= StringUtil.getContextualMessageForKey("sample.entry.project.siteName") %>
+						<td><%= MessageUtil.getContextualMessage("sample.entry.project.siteName") %>
 						<td>
 							<form:select path="service" id="site"
 									     onchange="makeDirty();$('serviceNew').value = true;">
@@ -485,7 +485,7 @@ function  processPhoneSuccess(xhr){
 			</c:if>
 			<c:if test="${not empty form.service}">
 					<tr>
-						<td ><%= StringUtil.getContextualMessageForKey("sample.entry.project.siteName") %>:</td>
+						<td ><%= MessageUtil.getContextualMessage("sample.entry.project.siteName") %>:</td>
 						<td>
 							<c:out value="${form.service}"/>
 						</td>
@@ -508,7 +508,7 @@ function  processPhoneSuccess(xhr){
 				</tr>
         <% } %>
 				<tr>
-					<td><%= StringUtil.getContextualMessageForKey("nonconformity.provider.label") %></td>
+					<td><%= MessageUtil.getContextualMessage("nonconformity.provider.label") %></td>
 				</tr>
 				<tr>
 					<c:if test="${empty form.providerLastName}">
@@ -551,7 +551,7 @@ function  processPhoneSuccess(xhr){
 			<% if( FormFields.getInstance().useField(Field.ADDRESS_VILLAGE )) { %>
 				<tr>
 					<td align="right">
-					    <%= StringUtil.getContextualMessageForKey("person.town") %>:
+					    <%= MessageUtil.getContextualMessage("person.town") %>:
 					</td>
 					<td>
 					<c:if test="${empty providerCity}">
@@ -662,13 +662,13 @@ function  processPhoneSuccess(xhr){
 				<spring:message code="label.sampleType" /><span class="requiredlabel">*</span>
 			</th>
 			<th style="width:11%">
-				<%=StringUtil.getContextualMessageForKey("nonconformity.section") %>
+				<%=MessageUtil.getContextualMessage("nonconformity.section") %>
 			</th>
 			<th style="width:13%">
-				<%=StringUtil.getContextualMessageForKey("label.biologist") %>
+				<%=MessageUtil.getContextualMessage("label.biologist") %>
 			</th>
 			<th >
-				<%= StringUtil.getContextualMessageForKey("nonconformity.note") %>
+				<%= MessageUtil.getContextualMessage("nonconformity.note") %>
 			</th>
 			<th style="width:5%">
 				<spring:message code="label.remove" />
@@ -749,7 +749,7 @@ function  processPhoneSuccess(xhr){
 		</tbody>
 	</table>
 	<input type="button" id="addButtonId"
-		value='<%=StringUtil.getMessageForKey("label.button.add")%>'
+		value='<%=MessageUtil.getMessage("label.button.add")%>'
 		onclick="addRow()" />
 	<hr />
 	

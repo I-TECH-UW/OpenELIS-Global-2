@@ -3,7 +3,7 @@
 				us.mn.state.health.lims.inventory.form.InventoryKitItem,
 				us.mn.state.health.lims.common.util.DateUtil,
 				us.mn.state.health.lims.common.util.IdValuePair,
-				us.mn.state.health.lims.common.util.StringUtil,
+				spring.mine.internationalization.MessageUtil,
 				java.util.List" %>
 
 
@@ -338,7 +338,7 @@ function /*void*/ makeDirty(){
 			</td>
 			<td style="width:10%">
                     <input type="button"
-                           value='<%= StringUtil.getMessageForKey("label.button.reactivate")%>'
+                           value='<%= MessageUtil.getMessage("label.button.reactivate")%>'
                            onclick='<%= "reactivateTestKit(${iter.index});"%>'
                            class="textButton">
 			</td>
@@ -348,18 +348,18 @@ function /*void*/ makeDirty(){
 	</div>
 	<br/>
         <input type="button"
-                   value='<%= StringUtil.getMessageForKey("inventory.testKit.showAll")%>'
+                   value='<%= MessageUtil.getMessage("inventory.testKit.showAll")%>'
                    onclick="showInactiveKits( this );"
                    class="textButton"
                    id="showInactiveButton">
         <input type="button"
-               value='<%= StringUtil.getMessageForKey("inventory.testKit.hideInactive")%>'
+               value='<%= MessageUtil.getMessage("inventory.testKit.hideInactive")%>'
                onclick="hideInactiveKits( this );"
                class="textButton"
                style="display:none"
                id="hideInactiveButton">
         <input type="button"
-               value='<%= StringUtil.getMessageForKey("inventory.testKit.add")%>'
+               value='<%= MessageUtil.getMessage("inventory.testKit.add")%>'
                onclick="addNewTestKit();"
                class="textButton">
 </c:if>

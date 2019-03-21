@@ -25,13 +25,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.address.dao.AddressPartDAO;
 import us.mn.state.health.lims.address.dao.PersonAddressDAO;
 import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
 import us.mn.state.health.lims.address.daoimpl.PersonAddressDAOImpl;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.XMLUtil;
 import us.mn.state.health.lims.patient.dao.PatientDAO;
 import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
@@ -84,7 +84,7 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
             result = createSearchResultXML(getPatientForID(patientKey), xml);
 		}
 		if (!result.equals(VALID)) {
-		    result = StringUtil.getMessageForKey("patient.message.patientNotFound");
+		    result = MessageUtil.getMessage("patient.message.patientNotFound");
 		    xml.append("empty");
 		}
 		ajaxServlet.sendData(xml.toString(), result, request, response);

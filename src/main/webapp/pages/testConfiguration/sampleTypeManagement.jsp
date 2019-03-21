@@ -1,6 +1,6 @@
 <%@ page language="java"
          contentType="text/html; charset=utf-8"
-         import="us.mn.state.health.lims.common.util.StringUtil"
+         import="spring.mine.internationalization.MessageUtil"
         %>
 
 
@@ -32,24 +32,24 @@
 
     </script>
     <br>
-    <input type="button" value="<%= StringUtil.getMessageForKey("banner.menu.administration") %>"
+    <input type="button" value="<%= MessageUtil.getMessage("banner.menu.administration") %>"
            onclick="submitAction('MasterListsPage.do');"
            class="textButton"/>&rarr;
-    <input type="button" value="<%= StringUtil.getMessageForKey("configuration.test.management") %>"
+    <input type="button" value="<%= MessageUtil.getMessage("configuration.test.management") %>"
            onclick="submitAction('TestManagementConfigMenu.do');"
            class="textButton"/>&rarr;
-    <%=StringUtil.getMessageForKey( "configuration.sampleType.manage" )%>
+    <%=MessageUtil.getMessage( "configuration.sampleType.manage" )%>
 
     <ul>
-        <li><input type="button" value="<%= StringUtil.getMessageForKey("configuration.sampleType.create") %>"
+        <li><input type="button" value="<%= MessageUtil.getMessage("configuration.sampleType.create") %>"
                    onclick="submitAction('SampleTypeCreate.do');"
                    class="textButton"/><br>
             </li>       
-        <li><input type="button" value="<%= StringUtil.getMessageForKey("configuration.sampleType.order") %>"
+        <li><input type="button" value="<%= MessageUtil.getMessage("configuration.sampleType.order") %>"
                    onclick="submitAction('SampleTypeOrder.do');"
                    class="textButton"/><br>
             </li>
-        <li><input type="button" value="<%= StringUtil.getMessageForKey("configuration.sampleType.assign") %>"
+        <li><input type="button" value="<%= MessageUtil.getMessage("configuration.sampleType.assign") %>"
                    onclick="submitAction('SampleTypeTestAssign.do');"
                    class="textButton"/><br>
             </li>

@@ -25,11 +25,11 @@ import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.RecordStatus;
 import us.mn.state.health.lims.common.services.StatusSet;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
 import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
@@ -121,19 +121,19 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
 	public String getInvalidMessage(ValidationResults results){
 
 		switch(results){
-			case LENGTH_FAIL: 	return StringUtil.getMessageForKey("sample.entry.invalid.accession.number.length");
-			case USED_FAIL:		return StringUtil.getMessageForKey("sample.entry.invalid.accession.number.used");
-			case PROGRAM_FAIL: 	return StringUtil.getMessageForKey("sample.entry.invalid.accession.number.program");
-			case FORMAT_FAIL:  	return StringUtil.getMessageForKey("sample.entry.invalid.accession.number.format");
-			case REQUIRED_FAIL:	return StringUtil.getMessageForKey("sample.entry.invalid.accession.number.required");
-            case PATIENT_STATUS_FAIL:   return StringUtil.getMessageForKey("sample.entry.invalid.accession.number.patientRecordStatus");
-            case SAMPLE_STATUS_FAIL:   return StringUtil.getMessageForKey("sample.entry.invalid.accession.number.sampleRecordStatus");
-			default: 			return StringUtil.getMessageForKey("sample.entry.invalid.accession.number");
+			case LENGTH_FAIL: 	return MessageUtil.getMessage("sample.entry.invalid.accession.number.length");
+			case USED_FAIL:		return MessageUtil.getMessage("sample.entry.invalid.accession.number.used");
+			case PROGRAM_FAIL: 	return MessageUtil.getMessage("sample.entry.invalid.accession.number.program");
+			case FORMAT_FAIL:  	return MessageUtil.getMessage("sample.entry.invalid.accession.number.format");
+			case REQUIRED_FAIL:	return MessageUtil.getMessage("sample.entry.invalid.accession.number.required");
+            case PATIENT_STATUS_FAIL:   return MessageUtil.getMessage("sample.entry.invalid.accession.number.patientRecordStatus");
+            case SAMPLE_STATUS_FAIL:   return MessageUtil.getMessage("sample.entry.invalid.accession.number.sampleRecordStatus");
+			default: 			return MessageUtil.getMessage("sample.entry.invalid.accession.number");
 		}
 	}
 
     public String getInvalidFormatMessage( ValidationResults results ){
-        return StringUtil.getMessageForKey("sample.entry.invalid.accession.number.format");
+        return MessageUtil.getMessage("sample.entry.invalid.accession.number.format");
     }
 	public String getNextAvailableAccessionNumber(String prefix){
 		String nextAccessionNumber = null;

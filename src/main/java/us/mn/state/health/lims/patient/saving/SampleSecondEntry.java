@@ -23,8 +23,8 @@ import static us.mn.state.health.lims.common.services.StatusService.RecordStatus
 import javax.servlet.http.HttpServletRequest;
 
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.util.StringUtil;
 
 /**
  * @author Paul A. Hill (pahill@uw.edu)
@@ -52,6 +52,6 @@ public class SampleSecondEntry extends SampleEntry implements IActionConstants {
     
     @Override
 	protected String getActionLabel() {
-		return StringUtil.getMessageForKey("banner.menu.createSample.Verify");
+		return MessageUtil.getMessage("banner.menu.createSample.Verify");
 	}
 }

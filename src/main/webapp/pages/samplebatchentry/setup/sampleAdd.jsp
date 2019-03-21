@@ -5,7 +5,7 @@
 	        us.mn.state.health.lims.common.util.IdValuePair,
 	        us.mn.state.health.lims.common.action.IActionConstants,
 	        us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-	        us.mn.state.health.lims.common.util.StringUtil,
+	        spring.mine.internationalization.MessageUtil,
 	        us.mn.state.health.lims.common.util.DateUtil,
 	        us.mn.state.health.lims.common.util.Versioning" %>
 
@@ -301,7 +301,7 @@ function processGetTestSuccess(xhr){
     clearTable( panelTable );
 
     if( tests.length == 0){
-        alert("<%= StringUtil.getMessageForKey("sample.entry.noTests") %>" );
+        alert("<%= MessageUtil.getMessage("sample.entry.noTests") %>" );
 		removeRow( selectedTypeRowId );
     }else{
        if( isVariableSampleType){

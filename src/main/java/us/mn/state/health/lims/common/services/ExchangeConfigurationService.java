@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.daoimpl.ReportExternalExportDAOImpl;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.daoimpl.ReportQueueTypeDAOImpl;
 import us.mn.state.health.lims.dataexchange.connectionTest.ConnectionTest;
@@ -200,7 +200,7 @@ public class ExchangeConfigurationService {
 
 	public String testConnection(String url) {
 		if( GenericValidator.isBlankOrNull(url)){
-			return StringUtil.getMessageForKey("connection.test.error.missingURL");
+			return MessageUtil.getMessage("connection.test.error.missingURL");
 		}
 		
 		ConnectionTest connectionTest = new ConnectionTest();

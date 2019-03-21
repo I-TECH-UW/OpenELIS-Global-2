@@ -8,7 +8,7 @@
                  spring.generated.forms.ResultLimitsForm,
                  us.mn.state.health.lims.common.util.IdValuePair,
                  us.mn.state.health.lims.common.action.IActionConstants,
-                 us.mn.state.health.lims.common.util.StringUtil" %>
+                 spring.mine.internationalization.MessageUtil" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -96,10 +96,10 @@
 %>
 
 <form id="mainForm">
-    <input type="button" value="<%= StringUtil.getContextualMessageForKey("banner.menu.administration") %>"
+    <input type="button" value="<%= MessageUtil.getContextualMessage("banner.menu.administration") %>"
            onclick="submitAction('MasterListsPage.do');"
            class="textButton"/> &rarr;
-    <input type="button" value="<%= StringUtil.getContextualMessageForKey("configuration.test.management") %>"
+    <input type="button" value="<%= MessageUtil.getContextualMessage("configuration.test.management") %>"
            onclick="submitAction('TestManagementConfigMenu.do');"
            class="textButton"/>&rarr;
     <spring:message code="configuration.test.catalog" />

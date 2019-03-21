@@ -29,7 +29,6 @@ import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.result.action.util.ResultsLoadUtility;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
@@ -89,7 +88,7 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
 			addPatientNamesToList(workplanTests);
 		}
 		PropertyUtils.setProperty(form, "workplanType", workplan);
-		PropertyUtils.setProperty(form, "searchLabel", StringUtil.getMessageForKey("workplan.unit.types"));
+		PropertyUtils.setProperty(form, "searchLabel", MessageUtil.getMessage("workplan.unit.types"));
 
 		return findForward(FWD_SUCCESS, form);
 	}

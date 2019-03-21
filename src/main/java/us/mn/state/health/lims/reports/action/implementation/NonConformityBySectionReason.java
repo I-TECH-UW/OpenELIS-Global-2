@@ -20,6 +20,7 @@ package us.mn.state.health.lims.reports.action.implementation;
 import java.util.ArrayList;
 import java.util.List;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -43,7 +44,7 @@ public abstract class NonConformityBySectionReason extends NonConformityBy {
     @Override
     protected void createReportParameters() {
         super.createReportParameters();
-        reportParameters.put("reportTitle", StringUtil.getMessageForKey("reports.nonConformity.bySectionReason.title"));
+        reportParameters.put("reportTitle", MessageUtil.getMessage("reports.nonConformity.bySectionReason.title"));
         reportParameters.put("reportPeriod", dateRange.toString());
         reportParameters.put("supervisorSignature", ConfigurationProperties.getInstance().isPropertyValueEqual(Property.SIGNATURES_ON_NONCONFORMITY_REPORTS, "true"));
         if( ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI LNSP")){
@@ -88,7 +89,7 @@ public abstract class NonConformityBySectionReason extends NonConformityBy {
     private void cleanupReportItems() {
         for (CountReportItem item : reportItems) {
             if (item.getGroup() == "0") {
-                item.setGroup(StringUtil.getMessageForKey("report.section.not.specified"));
+                item.setGroup(MessageUtil.getMessage("report.section.not.specified"));
             }
         }
     }

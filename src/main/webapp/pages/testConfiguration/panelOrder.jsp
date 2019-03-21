@@ -2,7 +2,7 @@
          contentType="text/html; charset=utf-8"
          import="us.mn.state.health.lims.common.action.IActionConstants,
 		         us.mn.state.health.lims.common.util.IdValuePair,
-		         us.mn.state.health.lims.common.util.StringUtil,
+		         spring.mine.internationalization.MessageUtil,
 		         us.mn.state.health.lims.common.util.Versioning,
 		         java.util.List,
 		         us.mn.state.health.lims.panel.valueholder.Panel,
@@ -103,7 +103,7 @@
         $jq("#editButtons").hide();
         $jq("#confirmationButtons").show();
         $jq("#editMessage").hide();
-        $jq("#action").text('<%=StringUtil.getContextualMessageForKey("label.confirmation")%>');
+        $jq("#action").text('<%=MessageUtil.getContextualMessage("label.confirmation")%>');
 
         $jq(".sortable").sortable("disable");
     }
@@ -112,7 +112,7 @@
         $jq("#editButtons").show();
         $jq("#confirmationButtons").hide();
         $jq("#editMessage").show();
-        $jq("#action").text('<%=StringUtil.getContextualMessageForKey("label.button.edit")%>');
+        $jq("#action").text('<%=MessageUtil.getContextualMessage("label.button.edit")%>');
 
         $jq(".sortable").sortable("enable");
     }
@@ -158,17 +158,17 @@ td {
 				   
     <form:hidden path="jsonChangeList" id="jsonChangeList"/>
 
-    <input type="button" value='<%= StringUtil.getContextualMessageForKey("banner.menu.administration") %>'
+    <input type="button" value='<%= MessageUtil.getContextualMessage("banner.menu.administration") %>'
            onclick="submitAction('MasterListsPage.do');"
            class="textButton"/>&rarr;
-    <input type="button" value='<%= StringUtil.getContextualMessageForKey("configuration.test.management") %>'
+    <input type="button" value='<%= MessageUtil.getContextualMessage("configuration.test.management") %>'
            onclick="submitAction('TestManagementConfigMenu.do');"
            class="textButton"/>&rarr;
-    <input type="button" value='<%= StringUtil.getContextualMessageForKey("configuration.panel.manage") %>'
+    <input type="button" value='<%= MessageUtil.getContextualMessage("configuration.panel.manage") %>'
            onclick="submitAction('PanelManagement.do');"
            class="textButton"/>&rarr;
 
-<%=StringUtil.getContextualMessageForKey( "configuration.panel.order" )%>
+<%=MessageUtil.getContextualMessage( "configuration.panel.order" )%>
 
 <%    List panelList = (List) pageContext.getAttribute("panelList"); %>
 <%    List existingPanels = (List) pageContext.getAttribute("existingPanels"); %>
@@ -194,15 +194,15 @@ td {
     </UL>
 
     <div style="text-align: center" id="editButtons">
-        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.next")%>'
+        <input type="button" value='<%=MessageUtil.getContextualMessage("label.button.next")%>'
                onclick="confirmValues();"/>
-        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.previous")%>'
+        <input type="button" value='<%=MessageUtil.getContextualMessage("label.button.previous")%>'
                onclick='submitAction("PanelManagement.do")'/>
     </div>
     <div style="text-align: center; display: none;" id="confirmationButtons">
-        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.accept")%>'
+        <input type="button" value='<%=MessageUtil.getContextualMessage("label.button.accept")%>'
                onclick="savePage();"/>
-        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.reject")%>'
+        <input type="button" value='<%=MessageUtil.getContextualMessage("label.button.reject")%>'
                onclick='rejectConfirmation();'/>
     </div>
 </div>

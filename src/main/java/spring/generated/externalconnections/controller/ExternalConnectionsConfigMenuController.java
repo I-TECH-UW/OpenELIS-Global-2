@@ -16,9 +16,9 @@ import spring.mine.common.constants.Constants;
 import spring.mine.common.controller.BaseMenuController;
 import spring.mine.common.form.MenuForm;
 import spring.mine.common.validator.BaseErrors;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.formfields.AdminFormFields;
 import us.mn.state.health.lims.common.formfields.AdminFormFields.Field;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.display.URLForDisplay;
 
 @Controller
@@ -59,12 +59,12 @@ public class ExternalConnectionsConfigMenuController extends BaseMenuController 
 
 	@Override
 	protected String getPageTitleKey() {
-		return StringUtil.getMessageForKey("externalconnect.browse.title");
+		return MessageUtil.getMessage("externalconnect.browse.title");
 	}
 
 	@Override
 	protected String getPageSubtitleKey() {
-		return StringUtil.getMessageForKey("externalconnect.browse.title");
+		return MessageUtil.getMessage("externalconnect.browse.title");
 	}
 
 	@Override

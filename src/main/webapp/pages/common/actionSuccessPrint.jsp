@@ -1,6 +1,6 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.util.StringUtil"
+	import="spring.mine.internationalization.MessageUtil"
 %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -30,7 +30,7 @@ function printBarcode(success, failure) {
 	<spring:message code="save.success"/>
 	<div>
 		<input type="button"
-        	value="<%= StringUtil.getMessageForKey("barcode.common.button.print")%>"
+        	value="<%= MessageUtil.getMessage("barcode.common.button.print")%>"
         	id="printBarcodeButton"
         	onclick="printBarcode();">
         <a href="" id="getBarcodePDF" target="_blank"></a>

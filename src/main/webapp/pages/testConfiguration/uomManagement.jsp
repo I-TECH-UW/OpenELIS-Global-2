@@ -1,6 +1,6 @@
 <%@ page language="java"
          contentType="text/html; charset=utf-8"
-         import="us.mn.state.health.lims.common.util.StringUtil"
+         import="spring.mine.internationalization.MessageUtil"
         %>
 
 
@@ -32,16 +32,16 @@
 
     </script>
     <br>
-    <input type="button" value="<%= StringUtil.getMessageForKey("banner.menu.administration") %>"
+    <input type="button" value="<%= MessageUtil.getMessage("banner.menu.administration") %>"
            onclick="submitAction('MasterListsPage.do');"
            class="textButton"/>&rarr;
-    <input type="button" value="<%= StringUtil.getMessageForKey("configuration.test.management") %>"
+    <input type="button" value="<%= MessageUtil.getMessage("configuration.test.management") %>"
            onclick="submitAction('TestManagementConfigMenu.do');"
            class="textButton"/>&rarr;
-    <%=StringUtil.getMessageForKey( "configuration.uom.manage" )%>
+    <%=MessageUtil.getMessage( "configuration.uom.manage" )%>
 
     <ul>
-        <li><input type="button" value="<%= StringUtil.getMessageForKey("configuration.uom.create") %>"
+        <li><input type="button" value="<%= MessageUtil.getMessage("configuration.uom.create") %>"
                    onclick="submitAction('UomCreate.do');"
                    class="textButton"/><br>
             </li>       

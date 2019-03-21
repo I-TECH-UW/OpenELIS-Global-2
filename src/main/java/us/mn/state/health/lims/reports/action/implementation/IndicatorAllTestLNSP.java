@@ -16,17 +16,17 @@
 */
 package us.mn.state.health.lims.reports.action.implementation;
 
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 
 public class IndicatorAllTestLNSP extends IndicatorAllTest implements IReportCreator, IReportParameterSetter {
 
 	@Override
 	protected String getLabNameLine1() {
-		return StringUtil.getContextualMessageForKey("report.labName.one");
+		return MessageUtil.getContextualMessage("report.labName.one");
 	}
 
 	@Override
 	protected String getLabNameLine2() {
-	return StringUtil.getContextualMessageForKey("report.labName.two");
+	return MessageUtil.getContextualMessage("report.labName.two");
 	}
 }

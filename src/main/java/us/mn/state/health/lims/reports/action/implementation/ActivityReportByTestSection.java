@@ -22,9 +22,9 @@ import java.util.Comparator;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.ResultService;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ActivityReportBean;
 import us.mn.state.health.lims.result.valueholder.Result;
 
@@ -36,15 +36,15 @@ public class ActivityReportByTestSection extends ActivityReport implements IRepo
     @Override
     public void setRequestParameters( BaseForm form ){
         new ReportSpecificationParameters( ReportSpecificationParameters.Parameter.DATE_RANGE,
-                StringUtil.getMessageForKey( "report.activity.report.base" ) + " " + StringUtil.getMessageForKey( "report.by.unit" ),
-                StringUtil.getMessageForKey( "report.instruction.all.fields" ) ).setRequestParameters( form );
+                MessageUtil.getMessage( "report.activity.report.base" ) + " " + MessageUtil.getMessage( "report.by.unit" ),
+                MessageUtil.getMessage( "report.instruction.all.fields" ) ).setRequestParameters( form );
         new ReportSpecificationList( DisplayListService.getList( DisplayListService.ListType.TEST_SECTION ),
-                                     StringUtil.getMessageForKey( "workplan.unit.types" ) ).setRequestParameters( form );
+                                     MessageUtil.getMessage( "workplan.unit.types" ) ).setRequestParameters( form );
     }
 
     @Override
     protected String getActivityLabel(){
-        return StringUtil.getMessageForKey( "report.unit" ) + ": " + unitName;
+        return MessageUtil.getMessage( "report.unit" ) + ": " + unitName;
     }
 
     @Override

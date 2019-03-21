@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
          import="us.mn.state.health.lims.common.action.IActionConstants,
-	            us.mn.state.health.lims.common.util.*,
+	            us.mn.state.health.lims.common.util.*, spring.mine.internationalization.MessageUtil,
 	            us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
 	            us.mn.state.health.lims.login.dao.UserModuleDAO,
 	            us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl,
@@ -450,7 +450,7 @@ function /*void*/ setSaveButton() {
         <tr>
             <td class="required">*</td>
             <td>
-                <%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
+                <%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>
             </td>
             <td>
                 <div class="blank"><spring:message code="sample.entry.project.LART"/></div>
@@ -803,7 +803,7 @@ function /*void*/ setSaveButton() {
         <tr>
             <td class="required">*</td>
             <td>
-                <%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
+                <%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>
 
             </td>
             <td>
@@ -1160,7 +1160,7 @@ function /*void*/ setSaveButton() {
         <tr>
             <td class="required">*</td>
             <td>
-                <%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
+                <%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>
             </td>
             <td>
                 <div class="blank"><spring:message code="sample.entry.project.LRTN"/></div>
@@ -1355,7 +1355,7 @@ function /*void*/ setSaveButton() {
     <tr>
         <td class="required">*</td>
         <td>
-            <%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
+            <%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>
         </td>
         <td>
             <div class="blank"><spring:message code="sample.entry.project.LDBS"/></div>
@@ -1899,7 +1899,7 @@ function /*void*/ setSaveButton() {
         <tr>
             <td class="required">*</td>
             <td>
-                <%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
+                <%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>
             </td>
             <td>
                 <div class="blank"><spring:message code="sample.entry.project.LIND"/></div>
@@ -2241,7 +2241,7 @@ function /*void*/ setSaveButton() {
         <tr>
             <td class="required">*</td>
             <td>
-                <%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
+                <%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>
             </td>
             <td>
                 <div class="blank"><spring:message code="sample.entry.project.LSPE"/></div>
@@ -2773,7 +2773,7 @@ function /*void*/ setSaveButton() {
         <tr>
             <td class="required">*</td>
             <td>
-                <%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
+                <%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>
             </td>
             <td>
                 <div class="blank"><spring:message code="sample.entry.project.LVL"/></div>

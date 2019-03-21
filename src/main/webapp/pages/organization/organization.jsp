@@ -3,7 +3,7 @@
 	import="us.mn.state.health.lims.common.action.IActionConstants,
 			us.mn.state.health.lims.common.formfields.FormFields,
 			us.mn.state.health.lims.common.formfields.FormFields.Field,
-			us.mn.state.health.lims.common.util.StringUtil" %>
+			spring.mine.internationalization.MessageUtil" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -79,7 +79,7 @@ function validateForm(form) {
 				return true;
 			}
 		}
-		alert("<%= StringUtil.getMessageForKey("error.organizationType.required")%>");
+		alert("<%= MessageUtil.getMessage("error.organizationType.required")%>");
 		return false;
 	}
 
@@ -147,7 +147,7 @@ function validateForm(form) {
 		<% if(useShortName){ %>
 		<tr>
 						<td class="label">
-						    <%= StringUtil.getContextualMessageForKey("organization.short") %>
+						    <%= MessageUtil.getContextualMessage("organization.short") %>
 						</td>
 						<td>
 						 	<form:input path="shortName" />
@@ -299,7 +299,7 @@ function validateForm(form) {
 </table>
 <% if( useInlineOrganizationTypes ){ %>
 
-<h3><%=StringUtil.getContextualMessageForKey("organization.type")%><span class="requiredlabel">*</span></h3><br/>
+<h3><%=MessageUtil.getContextualMessage("organization.type")%><span class="requiredlabel">*</span></h3><br/>
 
 <table >
 	<tr>

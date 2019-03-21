@@ -11,7 +11,7 @@
 				 us.mn.state.health.lims.common.services.LocalizationService,
 				 us.mn.state.health.lims.common.util.ConfigurationProperties,
 				 us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-				 us.mn.state.health.lims.common.util.StringUtil,
+				 spring.mine.internationalization.MessageUtil,
 				 us.mn.state.health.lims.common.util.Versioning,
                  us.mn.state.health.lims.login.valueholder.UserSessionData,
 				 us.mn.state.health.lims.menu.util.MenuUtil,
@@ -52,7 +52,7 @@ function /*void*/ setLanguage( language ){
 //Note this is hardcoded for haiti clinical.  Message resources would be a good way to get both language and context
 function displayHelp(){
 
-    var url = '<%=basePath%>' + 'documentation/' + '<%= StringUtil.getContextualMessageForKey("documentation") %>';
+    var url = '<%=basePath%>' + 'documentation/' + '<%= MessageUtil.getContextualMessage("documentation") %>';
 
 	var	newwindow=window.open( url,'name','height=1000,width=850, menuBar=yes');
 

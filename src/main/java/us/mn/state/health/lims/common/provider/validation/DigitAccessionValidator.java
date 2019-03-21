@@ -20,7 +20,7 @@ package us.mn.state.health.lims.common.provider.validation;
 import java.util.HashSet;
 import java.util.Set;
 
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.sample.dao.SampleDAO;
 import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 
@@ -30,26 +30,29 @@ public class DigitAccessionValidator implements IAccessionNumberValidator {
 	private int upperIncRange = 9999999;
 	private int maxLength = 7;
 	private static final boolean NEED_PROGRAM_CODE = false;
-	private static Set<String> REQUESTED_NUMBERS = new HashSet<String>();
+	private static Set<String> REQUESTED_NUMBERS = new HashSet<>();
 	private String format;
-	
-	public DigitAccessionValidator( int length){
+
+	public DigitAccessionValidator(int length) {
 		format = "%0" + String.valueOf(length) + "d";
 		incrementStartingValue = String.format(format, 1);
 		String upper = incrementStartingValue.replace("0", "9").replace("1", "9");
 		upperIncRange = Integer.parseInt(upper);
 		maxLength = length;
 	}
-	
+
+	@Override
 	public boolean needProgramCode() {
 		return NEED_PROGRAM_CODE;
 	}
 
+	@Override
 	public String createFirstAccessionNumber(String programCode) {
 		return incrementStartingValue;
 	}
 
-	public String incrementAccessionNumber(String currentHighAccessionNumber) throws IllegalStateException{
+	@Override
+	public String incrementAccessionNumber(String currentHighAccessionNumber) throws IllegalStateException {
 
 		int increment = Integer.parseInt(currentHighAccessionNumber);
 
@@ -62,6 +65,7 @@ public class DigitAccessionValidator implements IAccessionNumberValidator {
 		return String.format(format, increment);
 	}
 
+	@Override
 	public ValidationResults validFormat(String accessionNumber, boolean checkDate) {
 
 		if (accessionNumber.length() != maxLength) {
@@ -77,32 +81,37 @@ public class DigitAccessionValidator implements IAccessionNumberValidator {
 		return ValidationResults.SUCCESS;
 	}
 
+	@Override
 	public String getInvalidMessage(ValidationResults results) {
 		switch (results) {
-			case LENGTH_FAIL:
-				return StringUtil.getMessageForKey("sample.entry.invalid.accession.number.length");
-			case USED_FAIL:
-				return StringUtil.getMessageForKey("sample.entry.invalid.accession.number.suggestion") + " " + getNextAvailableAccessionNumber(null);
-			case FORMAT_FAIL:
-				return getInvalidFormatMessage(results);
-			default:
-				return StringUtil.getMessageForKey("sample.entry.invalid.accession.number");
+		case LENGTH_FAIL:
+			return MessageUtil.getMessage("sample.entry.invalid.accession.number.length");
+		case USED_FAIL:
+			return MessageUtil.getMessage("sample.entry.invalid.accession.number.suggestion") + " "
+					+ getNextAvailableAccessionNumber(null);
+		case FORMAT_FAIL:
+			return getInvalidFormatMessage(results);
+		default:
+			return MessageUtil.getMessage("sample.entry.invalid.accession.number");
 		}
 	}
 
-    @Override
-    public String getInvalidFormatMessage( ValidationResults results ){
-        return StringUtil.getMessageForKey("sample.entry.invalid.accession.number.format.corrected", getFormatPattern(), getFormatExample());
-    }
+	@Override
+	public String getInvalidFormatMessage(ValidationResults results) {
+		return MessageUtil.getMessage("sample.entry.invalid.accession.number.format.corrected",
+				new String[] { getFormatPattern(), getFormatExample() });
+	}
 
-    private String getFormatPattern(){
-        return "#######";
-    }
+	private String getFormatPattern() {
+		return "#######";
+	}
 
-    private String getFormatExample(){
-        return "0000012";
-    }
-    public String getNextAvailableAccessionNumber(String prefix)throws IllegalStateException {
+	private String getFormatExample() {
+		return "0000012";
+	}
+
+	@Override
+	public String getNextAvailableAccessionNumber(String prefix) throws IllegalStateException {
 		String nextAccessionNumber;
 
 		SampleDAO accessionNumberDAO = new SampleDAOImpl();
@@ -124,11 +133,13 @@ public class DigitAccessionValidator implements IAccessionNumberValidator {
 		return nextAccessionNumber;
 	}
 
+	@Override
 	public int getMaxAccessionLength() {
 		return maxLength;
 	}
 
 	// recordType parameter is not used in this case
+	@Override
 	public boolean accessionNumberIsUsed(String accessionNumber, String recordType) {
 
 		SampleDAO sampleDAO = new SampleDAOImpl();
@@ -136,6 +147,7 @@ public class DigitAccessionValidator implements IAccessionNumberValidator {
 		return sampleDAO.getSampleByAccessionNumber(accessionNumber) != null;
 	}
 
+	@Override
 	public ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType, String isRequired,
 			String projectFormName) {
 
@@ -159,8 +171,8 @@ public class DigitAccessionValidator implements IAccessionNumberValidator {
 		return maxLength;
 	}
 
-    @Override
-    public String getPrefix(){
-        return null;   //no fixed prefix
-    }
+	@Override
+	public String getPrefix() {
+		return null; // no fixed prefix
+	}
 }

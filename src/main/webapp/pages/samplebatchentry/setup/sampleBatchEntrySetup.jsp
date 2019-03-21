@@ -3,7 +3,7 @@
                  us.mn.state.health.lims.common.util.ConfigurationProperties,
                  us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
                  us.mn.state.health.lims.common.util.Versioning,
-                 us.mn.state.health.lims.common.util.StringUtil" %>
+                 spring.mine.internationalization.MessageUtil" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -155,19 +155,19 @@ function /*void*/ setNext(valid) {
 
 <!-- Order -->    
 <div id=orderEntryPage >
-	<h2><%= StringUtil.getContextualMessageForKey("sample.entry.order.label") %></h2>	
+	<h2><%= MessageUtil.getContextualMessage("sample.entry.order.label") %></h2>	
 	<tiles:insertAttribute name="sampleOrder"/>
 </div>
 
 <!-- Sample -->  
 <div id=sampleEntryPage >
-	<h2><%= StringUtil.getContextualMessageForKey("sample.entry.sampleList.label") %></h2>
+	<h2><%= MessageUtil.getContextualMessage("sample.entry.sampleList.label") %></h2>
 	<tiles:insertAttribute name="addSample"/>
 </div>
 
 <!-- Barcode Configuration -->
 <div id=configureBarcodePage >
-	<h2><%= StringUtil.getContextualMessageForKey("sample.batchentry.configureBarcode") %></h2>
+	<h2><%= MessageUtil.getContextualMessage("sample.batchentry.configureBarcode") %></h2>
 	<tiles:insertAttribute name="configureLabels" />
 </div>
 

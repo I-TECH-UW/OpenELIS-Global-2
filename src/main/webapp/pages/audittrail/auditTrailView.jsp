@@ -1,7 +1,7 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants,
-	us.mn.state.health.lims.common.util.StringUtil,
+	spring.mine.internationalization.MessageUtil,
 	us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
     us.mn.state.health.lims.common.util.Versioning,
 	us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator"
@@ -56,11 +56,11 @@ function submit(){
 	<div class="row-fluid">
 	    <div class="span12">
 	
-		<%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>: 
+		<%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>: 
 		<form:input path="accessionNumberSearch"
 				   cssClass="input-medium" 
 	        	   maxlength="<%= Integer.toString(accessionValidator.getMaxAccessionLength()) %>" />
-		<input class="btn" type="button" onclick="submit();" value='<%=StringUtil.getMessageForKey("label.button.view") %>'>
+		<input class="btn" type="button" onclick="submit();" value='<%=MessageUtil.getMessage("label.button.view") %>'>
 		</div>
 	</div>
 

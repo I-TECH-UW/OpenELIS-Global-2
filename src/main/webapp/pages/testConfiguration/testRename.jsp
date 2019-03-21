@@ -2,7 +2,7 @@
          contentType="text/html; charset=utf-8"
          import="us.mn.state.health.lims.common.action.IActionConstants,
          		us.mn.state.health.lims.common.util.IdValuePair,
-         		us.mn.state.health.lims.common.util.*,
+         		us.mn.state.health.lims.common.util.*, spring.mine.internationalization.MessageUtil,
          		us.mn.state.health.lims.common.util.Versioning,
          		java.util.List,
          		java.util.ArrayList,
@@ -101,7 +101,7 @@
         });
 
         if (hasError) {
-            alert('<%=StringUtil.getContextualMessageForKey("error.all.required")%>');
+            alert('<%=MessageUtil.getContextualMessage("error.all.required")%>');
         } else {
             $jq(".required").each(function () {
                 var element = $jq(this);
@@ -113,7 +113,7 @@
             });
             $jq("#editButtons").hide();
             $jq("#confirmationButtons").show();
-            $jq("#action").text('<%=StringUtil.getContextualMessageForKey("label.confirmation")%>');
+            $jq("#action").text('<%=MessageUtil.getContextualMessage("label.confirmation")%>');
         }
     }
 
@@ -129,7 +129,7 @@
 
         $jq("#editButtons").show();
         $jq("#confirmationButtons").hide();
-        $jq("#action").text('<%=StringUtil.getContextualMessageForKey("label.button.edit")%>');
+        $jq("#action").text('<%=MessageUtil.getContextualMessage("label.button.edit")%>');
     }
 
     function cancel() {
@@ -183,22 +183,22 @@
 
 <input 	type="button"
 		class="textButton" 
-		value="<%= StringUtil.getContextualMessageForKey("banner.menu.administration")%>"
+		value="<%= MessageUtil.getContextualMessage("banner.menu.administration")%>"
 		onclick="submitAction('MasterListsPage.do');" >&rarr;
 
 <input  type="button" 
 		class="textButton"
-		value="<%= StringUtil.getContextualMessageForKey("configuration.test.management") %>"
+		value="<%= MessageUtil.getContextualMessage("configuration.test.management") %>"
        	onclick="submitAction('TestManagementConfigMenu.do');" >&rarr;
         
 
-<%=StringUtil.getContextualMessageForKey( "label.testName" ) %>
+<%=MessageUtil.getContextualMessage( "label.testName" ) %>
 <br><br>
 
 
 <div id="editDiv" style="display:none;">
     <h1 id="action"><spring:message code="label.button.edit"/></h1>
-    <h2><%=StringUtil.getContextualMessageForKey( "sample.entry.test" )%>:<span id="testName"></span></h2>
+    <h2><%=MessageUtil.getContextualMessage( "sample.entry.test" )%>:<span id="testName"></span></h2>
     <br>
     <table>
         <tr>
@@ -256,16 +256,16 @@
   
 
      <div style="text-align: center" id="editButtons">
-        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.save")%>'
+        <input type="button" value='<%=MessageUtil.getContextualMessage("label.button.save")%>'
                onclick="confirmValues();"/>
-        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.cancel")%>'
+        <input type="button" value='<%=MessageUtil.getContextualMessage("label.button.cancel")%>'
                onclick='cancel()'/>
     </div>
 
     <div style="text-align: center; display: none;" id="confirmationButtons">
-        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.accept")%>'
+        <input type="button" value='<%=MessageUtil.getContextualMessage("label.button.accept")%>'
                onclick="savePage();"/>
-        <input type="button" value='<%=StringUtil.getContextualMessageForKey("label.button.reject")%>'
+        <input type="button" value='<%=MessageUtil.getContextualMessage("label.button.reject")%>'
                onclick='rejectConfirmation();'/>
     </div>
     <br><br>
@@ -298,6 +298,6 @@
 </table>
 
 <br>
-<input type="button" value='<%= StringUtil.getContextualMessageForKey("label.button.finished") %>'
+<input type="button" value='<%= MessageUtil.getContextualMessage("label.button.finished") %>'
        onclick="submitAction('TestManagementConfigMenu.do');"/>
 

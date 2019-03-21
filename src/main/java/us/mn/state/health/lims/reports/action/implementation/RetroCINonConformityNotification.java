@@ -29,12 +29,12 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import spring.mine.qaevent.service.NonConformityHelper;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.project.valueholder.Project;
@@ -68,12 +68,12 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 	public void setRequestParameters(BaseForm form) {
 		try {
 			PropertyUtils.setProperty(form, "reportName",
-					StringUtil.getMessageForKey("reports.nonConformity.notification.report"));
+					MessageUtil.getMessage("reports.nonConformity.notification.report"));
 			PropertyUtils.setProperty(form, "selectList",
-					new ReportSpecificationList(getSiteList(), StringUtil.getMessageForKey("report.select.site")));
+					new ReportSpecificationList(getSiteList(), MessageUtil.getMessage("report.select.site")));
 			PropertyUtils.setProperty(form, "useAccessionDirect", Boolean.TRUE);
 			PropertyUtils.setProperty(form, "instructions",
-					StringUtil.getMessageForKey("reports.nonConformity.notification.report.instructions"));
+					MessageUtil.getMessage("reports.nonConformity.notification.report.instructions"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

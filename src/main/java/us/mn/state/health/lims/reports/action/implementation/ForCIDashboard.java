@@ -31,7 +31,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
 
 import spring.mine.common.form.BaseForm;
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.project.dao.ProjectDAO;
 import us.mn.state.health.lims.project.daoimpl.ProjectDAOImpl;
 import us.mn.state.health.lims.project.valueholder.Project;
@@ -70,8 +70,8 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
 	}
 
 	protected String getReportNameForParameterPage() {
-		return StringUtil.getMessageForKey("reports.label.project.export") + " "
-				+ "Date d'impression du rapport";//StringUtil.getContextualMessageForKey("sample.collectionDate");
+		return MessageUtil.getMessage("reports.label.project.export") + " "
+				+ "Date d'impression du rapport";//MessageUtil.getContextualMessage("sample.collectionDate");
 	}
 
 	protected void createReportParameters() {

@@ -2,8 +2,8 @@ package us.mn.state.health.lims.barcode.labeltype;
 
 import java.util.ArrayList;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.barcode.LabelField;
-import us.mn.state.health.lims.common.util.StringUtil;
 
 /**
  * Stores Formatting for a Blank Order label
@@ -17,19 +17,19 @@ public class BlankLabel extends Label {
     aboveFields = new ArrayList<LabelField>();
     LabelField field;
     
-    field = new LabelField(StringUtil.getMessageForKey("barcode.label.info.patientname"), "", 6);
+    field = new LabelField(MessageUtil.getMessage("barcode.label.info.patientname"), "", 6);
     field.setDisplayFieldName(true);
     field.setUnderline(true);
     aboveFields.add(field);
-    field = new LabelField(StringUtil.getMessageForKey("barcode.label.info.patientdob"), "", 4);
+    field = new LabelField(MessageUtil.getMessage("barcode.label.info.patientdob"), "", 4);
     field.setDisplayFieldName(true);
     field.setUnderline(true);
     aboveFields.add(field);
-    field = new LabelField(StringUtil.getMessageForKey("barcode.label.info.patientid"), "", 5);
+    field = new LabelField(MessageUtil.getMessage("barcode.label.info.patientid"), "", 5);
     field.setDisplayFieldName(true);
     field.setUnderline(true);
     aboveFields.add(field);
-    field = new LabelField(StringUtil.getMessageForKey("barcode.label.info.site"), "", 5);
+    field = new LabelField(MessageUtil.getMessage("barcode.label.info.site"), "", 5);
     field.setDisplayFieldName(true);
     field.setUnderline(true);
     aboveFields.add(field);

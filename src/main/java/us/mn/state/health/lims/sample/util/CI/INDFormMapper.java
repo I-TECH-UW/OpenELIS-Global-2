@@ -23,12 +23,12 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 
 import spring.mine.common.form.BaseForm;
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 public class INDFormMapper extends BaseProjectFormMapper implements IProjectFormMapper {
 
-	private String projectCode = StringUtil.getMessageForKey("sample.entry.project.LIND");
+	private String projectCode = MessageUtil.getMessage("sample.entry.project.LIND");
 	private final String projectName = "Indeterminate Results";
 
 	public INDFormMapper(String projectFormId, BaseForm form) {

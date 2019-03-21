@@ -1,9 +1,9 @@
 package us.mn.state.health.lims.test.valueholder;
 
 import java.util.List;
-import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
-import us.mn.state.health.lims.testconfiguration.beans.ResultLimitBean;
+
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
+import us.mn.state.health.lims.testconfiguration.beans.ResultLimitBean;
 
 public class TestCatalog {
 	private String id;

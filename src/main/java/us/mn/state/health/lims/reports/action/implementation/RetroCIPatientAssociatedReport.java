@@ -23,8 +23,8 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.services.QAService;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
 import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
@@ -41,7 +41,7 @@ public class RetroCIPatientAssociatedReport extends CollectionReport implements 
 	@Override
 	public void setRequestParameters(BaseForm form) {
 		try {
-			PropertyUtils.setProperty(form, "reportName", StringUtil.getMessageForKey("patient.report.associated.name"));
+			PropertyUtils.setProperty(form, "reportName", MessageUtil.getMessage("patient.report.associated.name"));
 			PropertyUtils.setProperty(form, "usePatientNumberDirect", Boolean.TRUE);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();

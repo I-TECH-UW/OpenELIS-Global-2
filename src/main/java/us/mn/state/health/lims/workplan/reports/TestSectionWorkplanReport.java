@@ -22,9 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.sample.util.AccessionNumberUtil;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
@@ -39,7 +39,7 @@ public class TestSectionWorkplanReport implements IWorkplanReport {
 
 	public TestSectionWorkplanReport(String testSection) {
 		messageKey = messageKey + testSection;
-		this.testSection = StringUtil.getContextualMessageForKey(messageKey);
+		this.testSection = MessageUtil.getContextualMessage(messageKey);
 
 		if (this.testSection == null) {
 			this.testSection = testSection;
@@ -61,22 +61,22 @@ public class TestSectionWorkplanReport implements IWorkplanReport {
 				ConfigurationProperties.getInstance().isPropertyValueEqual(Property.SUBJECT_ON_WORKPLAN, "true"));
 		parameterMap.put("printNextVisit", ConfigurationProperties.getInstance()
 				.isPropertyValueEqual(Property.NEXT_VISIT_DATE_ON_WORKPLAN, "true"));
-		parameterMap.put("labNumberTitle", StringUtil.getContextualMessageForKey("quick.entry.accession.number"));
-		parameterMap.put("subjectNoTitle", StringUtil.getContextualMessageForKey("patient.subject.number"));
+		parameterMap.put("labNumberTitle", MessageUtil.getContextualMessage("quick.entry.accession.number"));
+		parameterMap.put("subjectNoTitle", MessageUtil.getContextualMessage("patient.subject.number"));
 		parameterMap.put("nameOfTest", getNameOfTest());
 		parameterMap.put("nameOfPatient", getNameOfPatient());
 		parameterMap.put("labName", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName));
 		parameterMap.put("accessionPrefix", AccessionNumberUtil.getAccessionNumberValidator().getPrefix());
 		parameterMap.put("prefixLength", PREFIX_LENGTH);
 		parameterMap.put("SUBREPORT_DIR", reportPath);
-		parameterMap.put("receptionDate", StringUtil.getMessageForKey("report.receptionDate"));
-		parameterMap.put("workPlan", StringUtil.getMessageForKey("report.workPlan"));
-		parameterMap.put("appointmentDate", StringUtil.getMessageForKey("report.appointmentDate"));
-		parameterMap.put("testName", StringUtil.getMessageForKey("report.testName"));
-		parameterMap.put("date", StringUtil.getMessageForKey("report.date"));
-		parameterMap.put("from", StringUtil.getMessageForKey("report.from"));
-		parameterMap.put("appointment", StringUtil.getMessageForKey("report.appointment"));
-		parameterMap.put("about", StringUtil.getMessageForKey("report.about"));
+		parameterMap.put("receptionDate", MessageUtil.getMessage("report.receptionDate"));
+		parameterMap.put("workPlan", MessageUtil.getMessage("report.workPlan"));
+		parameterMap.put("appointmentDate", MessageUtil.getMessage("report.appointmentDate"));
+		parameterMap.put("testName", MessageUtil.getMessage("report.testName"));
+		parameterMap.put("date", MessageUtil.getMessage("report.date"));
+		parameterMap.put("from", MessageUtil.getMessage("report.from"));
+		parameterMap.put("appointment", MessageUtil.getMessage("report.appointment"));
+		parameterMap.put("about", MessageUtil.getMessage("report.about"));
 
 		return parameterMap;
 
@@ -109,15 +109,15 @@ public class TestSectionWorkplanReport implements IWorkplanReport {
 
 	protected String getNameOfTest() {
 		if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "Haiti LNSP")) {
-			return StringUtil.getContextualMessageForKey("sample.entry.project.patientName.testName");
+			return MessageUtil.getContextualMessage("sample.entry.project.patientName.testName");
 		} else {
-			return StringUtil.getContextualMessageForKey("sample.entry.project.testName");
+			return MessageUtil.getContextualMessage("sample.entry.project.testName");
 		}
 	}
 
 	protected String getNameOfPatient() {
 		if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "Haiti LNSP")) {
-			return StringUtil.getContextualMessageForKey("patient.name");
+			return MessageUtil.getContextualMessage("patient.name");
 		} else {
 			return null;
 		}

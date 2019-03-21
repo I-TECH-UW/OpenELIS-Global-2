@@ -58,7 +58,6 @@ import us.mn.state.health.lims.common.services.TypeOfSampleService;
 import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -744,7 +743,7 @@ public class AnalyzerResultsController extends BaseController {
 				augmentedAccession.append(" : ");
 				augmentedAccession.append(item.getTestName());
 				augmentedAccession.append(" - ");
-				augmentedAccession.append(StringUtil.getMessageForKey("error.reflexStep.notChosen"));
+				augmentedAccession.append(MessageUtil.getMessage("error.reflexStep.notChosen"));
 				String errorMsg = "errors.followingAccession";
 				errors.reject(errorMsg, new String[] { augmentedAccession.toString() }, errorMsg);
 			}

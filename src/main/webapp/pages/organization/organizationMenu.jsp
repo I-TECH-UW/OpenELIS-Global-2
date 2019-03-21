@@ -3,7 +3,7 @@
 	import="us.mn.state.health.lims.organization.valueholder.Organization,
 			us.mn.state.health.lims.common.action.IActionConstants,
 			us.mn.state.health.lims.common.formfields.FormFields,
-			us.mn.state.health.lims.common.util.StringUtil" %>
+			spring.mine.internationalization.MessageUtil" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -46,7 +46,7 @@
 	   	  <spring:message code="organization.parent"/>
 	   </th>
 	   <th>
-	   	  <%= StringUtil.getContextualMessageForKey("organization.short") %>
+	   	  <%= MessageUtil.getContextualMessage("organization.short") %>
 	   </th>
 	   <th>
 	      <spring:message code="organization.isActive"/>
