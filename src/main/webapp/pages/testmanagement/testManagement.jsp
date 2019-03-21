@@ -141,7 +141,7 @@ function resultsEntryHistoryBySamplePopup () {
 		 sessionid = form.action.substring(sessionIndex,length);
 	 }
  
-    var param = '?' + '<%=accessionNumberParm%>' + '=' + accessionNumber;
+    <%-- var param = '?' + '<%=accessionNumberParm%>' + '=' + accessionNumber; --%>
  	var href = context + "/ResultsEntryHistoryBySamplePopup.do" + param + sessionid;
     //alert("href "+ href);
 	

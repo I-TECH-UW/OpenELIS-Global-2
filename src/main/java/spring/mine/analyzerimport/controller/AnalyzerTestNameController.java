@@ -214,7 +214,6 @@ public class AnalyzerTestNameController extends BaseController {
 
 		errors.reject(errorMsg);
 		saveErrors(errors);
-		// request.setAttribute(Globals.ERROR_KEY, errors);
 	}
 
 	private void disableNavigationButtons(HttpServletRequest request) {

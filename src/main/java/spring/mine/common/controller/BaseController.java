@@ -145,9 +145,6 @@ public abstract class BaseController implements IActionConstants {
 		String pageTitleKeyParameter = getPageTitleKeyParameter(request, form);
 		String pageSubtitleKeyParameter = getPageSubtitleKeyParameter(request, form);
 
-		// request.getSession().setAttribute(Globals.LOCALE_KEY,
-		// SystemConfiguration.getInstance().getDefaultLocale());
-
 		try {
 			if (StringUtil.isNullorNill(pageTitleKeyParameter)) {
 				pageTitle = getMessageForKey(request, pageTitleKey);

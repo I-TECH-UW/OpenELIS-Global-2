@@ -4,10 +4,9 @@
 		javax.servlet.jsp.JspException,
 		us.mn.state.health.lims.common.action.IActionConstants,
 		us.mn.state.health.lims.common.util.resources.ResourceLocator,
-		us.mn.state.health.lims.common.util.validator.ActionError,
 		us.mn.state.health.lims.common.util.SystemConfiguration,
-		org.owasp.encoder.Encode"%>
-<%@ page import="spring.mine.common.constants.Constants" %>
+		org.owasp.encoder.Encode,
+		spring.mine.common.constants.Constants" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>

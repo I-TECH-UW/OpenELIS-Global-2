@@ -35,15 +35,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.validation.Errors;
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionMessages;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.util.JRLoader;
-import spring.mine.common.constants.Constants;
-import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -55,6 +54,7 @@ import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
+import us.mn.state.health.lims.common.util.validator.ActionError;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -122,7 +122,7 @@ public class ResultsReportProvider extends BaseReportsProvider {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see us.mn.state.health.lims.common.provider.reports.BaseReportsProvider#
 	 * processRequest(java.util.Map, javax.servlet.http.HttpServletRequest,
 	 * javax.servlet.http.HttpServletResponse)
@@ -183,8 +183,8 @@ public class ResultsReportProvider extends BaseReportsProvider {
 		dateAsText = DateUtil.formatDateAsText(today);
 
 		org.hibernate.Transaction tx = HibernateUtil.getSession().beginTransaction();
-		Errors errors = new BaseErrors();
-
+		ActionMessages errors = new ActionMessages();
+		ActionError error = null;
 		try {
 
 			parameters.put(JRParameter.REPORT_LOCALE, locale);
@@ -565,30 +565,31 @@ public class ResultsReportProvider extends BaseReportsProvider {
 			tx.rollback();
 
 			if (e instanceof JRException) {
-				errors.reject("errors.jasperreport.general");
+				error = new ActionError("errors.jasperreport.general", null, null);
 				// bugzilla 2154
 				LogEvent.logError("ResultsReportProvider", "processRequest()", e.toString());
 				// bugzilla 1900
 			} else if (e instanceof LIMSResultsReportHasNoDataException) {
 				if (accessionNumbers.size() > 1) {
 					// message if report is for several samples
-					errors.reject("errors.jasperreport.resultsreports.nodata");
+					error = new ActionError("errors.jasperreport.resultsreports.nodata", null, null);
 				} else {
 					// message if report is for one sample
-					errors.reject("errors.jasperreport.resultsreport.nodata");
+					error = new ActionError("errors.jasperreport.resultsreport.nodata", null, null);
 				}
 			} else if (e instanceof org.hibernate.StaleObjectStateException) {
-				errors.reject("errors.OptimisticLockException");
+				error = new ActionError("errors.OptimisticLockException", null, null);
 			} else {
-				errors.reject("errors.jasperreport.general");
+				error = new ActionError("errors.jasperreport.general", null, null);
 			}
-			request.setAttribute(Constants.REQUEST_ERRORS, errors);
+			errors.add(ActionMessages.GLOBAL_MESSAGE, error);
+			request.setAttribute(Globals.ERROR_KEY, errors);
 
 		} finally {
 			HibernateUtil.closeSession();
 		}
 
-		if (errors.hasErrors()) {
+		if (error != null) {
 			return false;
 		} else {
 			return true;

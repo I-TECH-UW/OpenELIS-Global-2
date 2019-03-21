@@ -58,10 +58,7 @@ function confirmSaveForwardPopup(direction)
       
       out.println("var message = null;");
    
-      String message =
-					MessageUtil.getMessage(
-					locale,
-                    "message.popup.confirm.saveandforward");
+      String message = MessageUtil.getMessage("message.popup.confirm.saveandforward");
         
      out.println("message = '" + message +"';");
      
