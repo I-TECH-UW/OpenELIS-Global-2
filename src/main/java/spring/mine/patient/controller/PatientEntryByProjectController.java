@@ -18,7 +18,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.patient.form.PatientEntryByProjectForm;
 import spring.mine.patient.validator.PatientEntryByProjectFormValidator;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.patient.saving.Accessioner;
 import us.mn.state.health.lims.patient.saving.PatientEditUpdate;
@@ -42,7 +41,7 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
 
 		String todayAsText = DateUtil.formatDateAsText(new Date());
 
-		request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.TRUE);
+		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
 		// retrieve the current project, before clearing, so that we can set it on
 		// later.

@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.apache.struts.Globals;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -47,7 +46,6 @@ import us.mn.state.health.lims.role.action.bean.DisplayRole;
 import us.mn.state.health.lims.role.dao.RoleDAO;
 import us.mn.state.health.lims.role.daoimpl.RoleDAOImpl;
 import us.mn.state.health.lims.role.valueholder.Role;
-import us.mn.state.health.lims.systemuser.action.UnifiedSystemUserAction;
 import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
 import us.mn.state.health.lims.systemuser.daoimpl.SystemUserDAOImpl;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
@@ -419,7 +417,6 @@ public class UnifiedSystemUserController extends BaseController {
 
 		if (errors.hasErrors()) {
 			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
 			return FWD_FAIL_INSERT;
 		}
 
@@ -508,7 +505,7 @@ public class UnifiedSystemUserController extends BaseController {
 
 		String password = form.getUserPassword1();
 
-		return !StringUtil.containsOnly(password, UnifiedSystemUserAction.DEFAULT_PASSWORD_FILLER);
+		return !StringUtil.containsOnly(password, DEFAULT_PASSWORD_FILLER);
 	}
 
 	private void validateUser(UnifiedSystemUserForm form, Errors errors, boolean loginUserIsNew,
@@ -633,7 +630,6 @@ public class UnifiedSystemUserController extends BaseController {
 
 		errors.reject(error.getCode(), error.getCode());
 		saveErrors(errors);
-		request.setAttribute(Globals.ERROR_KEY, errors);
 	}
 
 	private void disableNavigationButtons(HttpServletRequest request) {

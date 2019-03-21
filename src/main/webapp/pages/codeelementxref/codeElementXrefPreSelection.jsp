@@ -1,6 +1,7 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.action.IActionConstants" %>
+	import="us.mn.state.health.lims.common.action.IActionConstants, 
+			spring.mine.internationalization.MessageUtil" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -15,21 +16,13 @@
 <%!
 
 String allowEdits = "true";
-String errorMakeSelection = "";
 
 %>
 
 <%
 if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
  allowEdits = (String)request.getAttribute(IActionConstants.ALLOW_EDITS_KEY);
-}
-
-java.util.Locale locale = (java.util.Locale)request.getSession().getAttribute(org.apache.struts.Globals.LOCALE_KEY);
-errorMakeSelection =
-					us.mn.state.health.lims.common.util.resources.ResourceLocator.getInstance().getMessageResources().getMessage(
-					locale,
-                    "codeelementxref.validation.makeselection");
-                    
+}                    
 
 %>
 
@@ -57,7 +50,7 @@ function getCodes() {
         if (moId.value != '' && cetId.value != '') {
             setAction(document.getElementById("mainForm"), 'View', 'no', '');
         } else {
-            alert('<%=errorMakeSelection%>');
+            alert('<spring:message javaScriptEscape="true" code="codeelementxref.validation.makeselection"/>');
         }
 }
 

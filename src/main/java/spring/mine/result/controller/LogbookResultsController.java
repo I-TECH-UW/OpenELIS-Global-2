@@ -37,7 +37,6 @@ import spring.mine.result.validator.LogbookResultsFormValidator;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -672,7 +671,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
 		// This needs to be refactored -- part of the logic is in
 		// getStatusForTestResult. RetroCI over rides to whatever was set before
-		if (statusRuleSet.equals(IActionConstants.STATUS_RULES_RETROCI)) {
+		if (statusRuleSet.equals(STATUS_RULES_RETROCI)) {
 			if (!StatusService.getInstance().getStatusID(AnalysisStatus.Canceled).equals(analysis.getStatusId())) {
 				analysis.setCompletedDate(DateUtil.convertStringDateToSqlDate(testDate));
 				analysis.setStatusId(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance));

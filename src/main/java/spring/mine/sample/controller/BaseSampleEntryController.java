@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.apache.struts.Globals;
 import org.springframework.validation.Errors;
 
 import spring.mine.common.controller.BaseController;
@@ -158,7 +157,6 @@ public abstract class BaseSampleEntryController extends BaseController {
 			Errors errors = accessioner.getMessages();
 			if (errors.hasErrors()) {
 				saveErrors(errors);
-				request.setAttribute(Globals.ERROR_KEY, errors);
 			}
 			return forward;
 		}
@@ -182,8 +180,7 @@ public abstract class BaseSampleEntryController extends BaseController {
 	}
 
 	private void addErrors(HttpServletRequest request, Errors errors) {
-		request.setAttribute(Globals.ERROR_KEY, errors);
-
+		saveErrors(errors);
 	}
 
 }

@@ -26,14 +26,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.qaevent.form.NonConformityForm;
+import spring.mine.qaevent.service.NonConformityHelper;
 import spring.mine.qaevent.validator.NonConformityFormValidator;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSInvalidConfigurationException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
-import us.mn.state.health.lims.common.services.NoteService;
 import us.mn.state.health.lims.common.services.PatientService;
 import us.mn.state.health.lims.common.services.PersonService;
 import us.mn.state.health.lims.common.services.QAService;
@@ -42,7 +41,6 @@ import us.mn.state.health.lims.common.services.TableIdService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.note.valueholder.Note;
 import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
 import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
@@ -92,8 +90,6 @@ public class NonConformityController extends BaseController {
 
 	@Autowired
 	NonConformityFormValidator formValidator;
-
-	private static final String QA_NOTE_SUBJECT = "QaEvent Note";
 
 	private static SampleDAO sampleDAO = new SampleDAOImpl();
 	private static SampleItemDAO sampleItemDAO = new SampleItemDAOImpl();
@@ -223,7 +219,7 @@ public class NonConformityController extends BaseController {
 			}
 		}
 
-		PropertyUtils.setProperty(form, "comment", getNoteForSample(sample));
+		PropertyUtils.setProperty(form, "comment", NonConformityHelper.getNoteForSample(sample));
 
 		PropertyUtils.setProperty(form, "requesterSampleID", sample.getReferringId());
 	}
@@ -312,7 +308,7 @@ public class NonConformityController extends BaseController {
 				item.setAuthorizer(qa.getObservationValue(QAObservationType.AUTHORIZER));
 				item.setRecordNumber(qa.getObservationValue(QAObservationType.DOC_NUMBER));
 				item.setRemove(false);
-				item.setNote(getNoteForSampleQaEvent(event));
+				item.setNote(NonConformityHelper.getNoteForSampleQaEvent(event));
 
 				qaEventItems.add(item);
 			}
@@ -347,20 +343,6 @@ public class NonConformityController extends BaseController {
 			str.append(typeOfSample.getId()).append(",");
 		}
 		return str.toString();
-	}
-
-	public static String getNoteForSample(Sample sample) {
-		Note note = new NoteService(sample).getMostRecentNoteFilteredBySubject(QA_NOTE_SUBJECT);
-		return note != null ? note.getText() : null;
-	}
-
-	public static String getNoteForSampleQaEvent(SampleQaEvent sampleQaEvent) {
-		if (sampleQaEvent == null || GenericValidator.isBlankOrNull(sampleQaEvent.getId())) {
-			return null;
-		} else {
-			Note note = new NoteService(sampleQaEvent).getMostRecentNoteFilteredBySubject(null);
-			return note != null ? note.getText() : null;
-		}
 	}
 
 	private List<SampleQaEvent> getSampleQaEvents(Sample sample) {
@@ -459,7 +441,7 @@ public class NonConformityController extends BaseController {
 		NonConformityUpdateWorker worker = new NonConformityUpdateWorker(data);
 		String forward = worker.update();
 
-		if (IActionConstants.FWD_FAIL_INSERT.equals(forward)) {
+		if (FWD_FAIL_INSERT.equals(forward)) {
 			saveErrors(worker.getErrors());
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);

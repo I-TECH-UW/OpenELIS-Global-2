@@ -6,7 +6,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.struts.Globals;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -215,7 +214,7 @@ public class AnalyzerTestNameController extends BaseController {
 
 		errors.reject(errorMsg);
 		saveErrors(errors);
-		request.setAttribute(Globals.ERROR_KEY, errors);
+		// request.setAttribute(Globals.ERROR_KEY, errors);
 	}
 
 	private void disableNavigationButtons(HttpServletRequest request) {

@@ -1,9 +1,9 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants,
-	        org.apache.struts.Globals,
             us.mn.state.health.lims.common.util.Versioning,
-	        us.mn.state.health.lims.common.util.SystemConfiguration"
+	        us.mn.state.health.lims.common.util.SystemConfiguration,
+	        spring.mine.internationalization.MessageUtil"
 %>
 
 <%@ page isELIgnored="false" %>
@@ -58,27 +58,18 @@ function confirmSaveForwardPopup(direction)
       
       out.println("var message = null;");
    
-      java.util.Locale locale = (java.util.Locale)request.getSession().getAttribute(Globals.LOCALE_KEY);
       String message =
-					us.mn.state.health.lims.common.util.resources.ResourceLocator.getInstance().getMessageResources().getMessage(
+					MessageUtil.getMessage(
 					locale,
                     "message.popup.confirm.saveandforward");
         
      out.println("message = '" + message +"';");
      
-     String button1 = 	us.mn.state.health.lims.common.util.resources.ResourceLocator.getInstance().getMessageResources().getMessage(
-					    locale,
-                       "label.button.yes");
-     String button2 = 	us.mn.state.health.lims.common.util.resources.ResourceLocator.getInstance().getMessageResources().getMessage(
-					    locale,
-                       "label.button.no");
-     String button3 = 	us.mn.state.health.lims.common.util.resources.ResourceLocator.getInstance().getMessageResources().getMessage(
-					    locale,
-                       "label.button.cancel");
+     String button1 = 	MessageUtil.getMessage("label.button.yes");
+     String button2 = 	MessageUtil.getMessage("label.button.no");
+     String button3 = 	MessageUtil.getMessage("label.button.cancel");
                        
-     String title = 	us.mn.state.health.lims.common.util.resources.ResourceLocator.getInstance().getMessageResources().getMessage(
-					    locale,
-                       "title.popup.confirm.saveandforward");
+     String title = 	MessageUtil.getMessage("title.popup.confirm.saveandforward");
                        
      String space = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
        		

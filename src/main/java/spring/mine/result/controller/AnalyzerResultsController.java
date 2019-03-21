@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.apache.struts.Globals;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -40,7 +39,6 @@ import us.mn.state.health.lims.analyzerresults.action.beanitems.AnalyzerResultIt
 import us.mn.state.health.lims.analyzerresults.dao.AnalyzerResultsDAO;
 import us.mn.state.health.lims.analyzerresults.daoimpl.AnalyzerResultsDAOImpl;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -761,15 +759,10 @@ public class AnalyzerResultsController extends BaseController {
 				try {
 					sampleDAO.insertDataWithAccessionNumber(grouping.sample);
 				} catch (LIMSRuntimeException lre) {
-
 					Errors errors = new BaseErrors();
 					String errorMsg = "warning.duplicate.accession";
-					// ActionError error = new ActionError("warning.duplicate.accession",
-					// grouping.sample.getAccessionNumber(), null);
-
 					errors.reject(errorMsg, new String[] { grouping.sample.getAccessionNumber() }, errorMsg);
 					saveErrors(errors);
-					request.setAttribute(Globals.ERROR_KEY, errors);
 					return false;
 				}
 			} else if (grouping.updateSample) {
@@ -1370,8 +1363,7 @@ public class AnalyzerResultsController extends BaseController {
 			String statusId = StatusService.getInstance().getStatusID(
 					resultItem.getIsAccepted() ? AnalysisStatus.TechnicalAcceptance : AnalysisStatus.TechnicalRejected);
 			analysis.setStatusId(statusId);
-			analysis.setAnalysisType(resultItem.getManual() ? IActionConstants.ANALYSIS_TYPE_MANUAL
-					: IActionConstants.ANALYSIS_TYPE_AUTO);
+			analysis.setAnalysisType(resultItem.getManual() ? ANALYSIS_TYPE_MANUAL : ANALYSIS_TYPE_AUTO);
 			analysis.setCompletedDateForDisplay(resultItem.getCompleteDate());
 			analysis.setTest(test);
 			analysis.setTestSection(test.getTestSection());

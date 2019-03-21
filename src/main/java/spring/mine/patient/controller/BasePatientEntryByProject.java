@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.struts.Globals;
 import org.springframework.validation.Errors;
 
 import spring.mine.common.controller.BaseController;
@@ -86,7 +85,6 @@ public abstract class BasePatientEntryByProject extends BaseController {
 			Errors errors = accessioner.getMessages();
 			if (errors.hasErrors()) {
 				saveErrors(errors);
-				request.setAttribute(Globals.ERROR_KEY, errors);
 			}
 			return forward;
 		}

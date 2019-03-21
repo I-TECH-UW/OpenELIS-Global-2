@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import spring.mine.organization.form.OrganizationForm;
 import spring.mine.organization.validator.OrganizationFormValidator;
 import us.mn.state.health.lims.address.dao.AddressPartDAO;
@@ -38,7 +39,6 @@ import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.resources.ResourceLocator;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -361,10 +361,8 @@ public class OrganizationController extends BaseController {
 			} else {
 				// bugzilla 1482
 				if (lre.getException() instanceof LIMSDuplicateRecordException) {
-					java.util.Locale locale = (java.util.Locale) request.getSession()
-							.getAttribute("org.apache.struts.action.LOCALE");
 					String messageKey = "organization.organization";
-					String msg = ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey);
+					String msg = MessageUtil.getMessage(messageKey);
 					result.reject("errors.DuplicateRecord.activeonly", new String[] { msg },
 							"errors.DuplicateRecord.activeonly");
 				} else {

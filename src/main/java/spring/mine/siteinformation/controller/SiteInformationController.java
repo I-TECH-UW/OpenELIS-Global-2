@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.apache.struts.Globals;
 import org.hibernate.StaleObjectStateException;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -181,8 +180,8 @@ public class SiteInformationController extends BaseController {
 			form.setFormAction("PatientConfiguration");
 
 		} else {
-			form.setSiteInfoDomainName("PaitientConfiguration");
-			form.setFormName("PatientConfigurationForm");
+			form.setSiteInfoDomainName("SiteInformation");
+			form.setFormName("siteInformationForm");
 			form.setFormAction("SiteInformation");
 		}
 
@@ -277,8 +276,6 @@ public class SiteInformationController extends BaseController {
 				errors = new BaseErrors();
 				errors.reject("errors.UpdateException");
 				saveErrors(errors);
-				request.setAttribute(Globals.ERROR_KEY, errors);
-
 				forward = FWD_FAIL_INSERT;
 
 			} finally {
@@ -352,7 +349,6 @@ public class SiteInformationController extends BaseController {
 
 			errors.reject(errorMsg);
 			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
 
 			// disable previous and next
 			request.setAttribute(PREVIOUS_DISABLED, TRUE);
@@ -369,7 +365,6 @@ public class SiteInformationController extends BaseController {
 	private boolean isValid(HttpServletRequest request, String name, String value, Errors errors) {
 		if (GenericValidator.isBlankOrNull(name)) {
 			errors.reject("error.SiteInformation.name.required");
-			request.setAttribute(Globals.ERROR_KEY, errors);
 			saveErrors(errors);
 
 			return false;
@@ -377,7 +372,6 @@ public class SiteInformationController extends BaseController {
 
 		if ("phone format".equals(name) && !PhoneNumberService.validatePhoneFormat(value)) {
 			errors.reject("error.SiteInformation.phone.format");
-			request.setAttribute(Globals.ERROR_KEY, errors);
 			saveErrors(errors);
 
 			return false;

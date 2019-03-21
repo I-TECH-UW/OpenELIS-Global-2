@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.struts.Globals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -122,9 +121,6 @@ public abstract class BaseController implements IActionConstants {
 		if (null == messageKey) {
 			return null;
 		}
-		java.util.Locale locale = (java.util.Locale) request.getSession()
-				.getAttribute("org.apache.struts.action.LOCALE");
-		// Return the message for the user's locale.
 		return MessageUtil.getMessage(messageKey);
 		// return ResourceLocator.getInstance().getMessageResources().getMessage(locale,
 		// messageKey);
@@ -134,9 +130,6 @@ public abstract class BaseController implements IActionConstants {
 		if (null == messageKey) {
 			return null;
 		}
-		java.util.Locale locale = (java.util.Locale) request.getSession()
-				.getAttribute("org.apache.struts.action.LOCALE");
-		// Return the message for the user's locale.
 		return MessageUtil.getMessage(messageKey);
 		// return ResourceLocator.getInstance().getMessageResources().getMessage(locale,
 		// messageKey, arg0);
@@ -152,7 +145,8 @@ public abstract class BaseController implements IActionConstants {
 		String pageTitleKeyParameter = getPageTitleKeyParameter(request, form);
 		String pageSubtitleKeyParameter = getPageSubtitleKeyParameter(request, form);
 
-		request.getSession().setAttribute(Globals.LOCALE_KEY, SystemConfiguration.getInstance().getDefaultLocale());
+		// request.getSession().setAttribute(Globals.LOCALE_KEY,
+		// SystemConfiguration.getInstance().getDefaultLocale());
 
 		try {
 			if (StringUtil.isNullorNill(pageTitleKeyParameter)) {

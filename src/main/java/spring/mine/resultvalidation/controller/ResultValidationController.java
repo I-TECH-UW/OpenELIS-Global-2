@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.apache.struts.Globals;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -197,7 +196,6 @@ public class ResultValidationController extends BaseResultValidationController {
 
 		if (errors.hasErrors()) {
 			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
 			return findForward(FWD_VALIDATION_ERROR, form);
 		}
 
@@ -616,9 +614,9 @@ public class ResultValidationController extends BaseResultValidationController {
 		} else if (FWD_FAIL.equals(forward)) {
 			return "homePageDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return "redirect:/ResultValidation.do?forward=success";
+			return "redirect:/ResultValidation.do";
 		} else if ("successRetroC".equals(forward)) {
-			return "redirect:/ResultValidationRetroC.do?forward=success";
+			return "redirect:/ResultValidationRetroC.do";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
 			return "homePageDefinition";
 		} else if (FWD_VALIDATION_ERROR.equals(forward)) {

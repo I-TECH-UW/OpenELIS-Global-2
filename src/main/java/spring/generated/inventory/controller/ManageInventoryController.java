@@ -14,6 +14,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,12 +22,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.generated.forms.InventoryForm;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
-import us.mn.state.health.lims.common.action.BaseActionForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -75,13 +77,10 @@ public class ManageInventoryController extends BaseController {
 	@RequestMapping(value = "/ManageInventory", method = RequestMethod.GET)
 	public ModelAndView showManageInventory(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
 		if (form.getClass() != InventoryForm.class) {
 			form = new InventoryForm();
 			request.getSession().setAttribute("form", form);
 		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "true");
@@ -98,7 +97,8 @@ public class ManageInventoryController extends BaseController {
 		List<IdValuePair> sources = getSources();
 		PropertyUtils.setProperty(form, "sources", sources);
 
-		return findForward(forward, form);
+		addFlashMsgsToRequest(request);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	private List<String> getTestKitTypes() {
@@ -125,13 +125,8 @@ public class ManageInventoryController extends BaseController {
 
 	@RequestMapping(value = "/ManageInventoryUpdate", method = RequestMethod.POST)
 	public ModelAndView showManageInventoryUpdate(HttpServletRequest request,
-			@ModelAttribute("form") InventoryForm form, SessionStatus status) {
-		String forward = FWD_SUCCESS_INSERT;
-		if (form == null) {
-			form = new InventoryForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+			@ModelAttribute("form") InventoryForm form, BindingResult result, RedirectAttributes redirectAttributes,
+			SessionStatus status) {
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "true");
 		request.setAttribute(NEXT_DISABLED, "true");
@@ -142,7 +137,7 @@ public class ManageInventoryController extends BaseController {
 
 		InventoryItemDAO itemDAO = new InventoryItemDAOImpl();
 
-		errors = validateNewInventory(itemDAO);
+		Errors errors = validateNewInventory(itemDAO);
 
 		if (errors.hasErrors()) {
 			saveErrors(errors);
@@ -177,11 +172,12 @@ public class ManageInventoryController extends BaseController {
 			tx.commit();
 		} catch (LIMSRuntimeException lre) {
 			tx.rollback();
-			forward = FWD_FAIL_INSERT;
+			return findForward(FWD_FAIL_INSERT, form);
 		}
 
 		status.setComplete();
-		return findForward(forward, form);
+		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private Errors validateNewInventory(InventoryItemDAO itemDAO) {
@@ -320,7 +316,7 @@ public class ManageInventoryController extends BaseController {
 		}
 	}
 
-	protected Errors validateAll(HttpServletRequest request, Errors errors, BaseActionForm form) throws Exception {
+	protected Errors validateAll(HttpServletRequest request, Errors errors, BaseForm form) throws Exception {
 
 		// test validation against database
 		String testNameSelected = (String) form.get("testName");
@@ -334,11 +330,7 @@ public class ManageInventoryController extends BaseController {
 			String messageKey = "testresult.testName";
 
 			if (test == null) {
-				// the test is not in database - not valid
-				// testName
-				// ActionError error = new ActionError("errors.invalid",
-				// getMessageForKey(messageKey), null);
-				errors.reject("errors.invalid");
+				errors.reject("errors.invalid", new Object[] { MessageUtil.getMessage(messageKey) }, "errors.invalid");
 			}
 		}
 
@@ -354,11 +346,7 @@ public class ManageInventoryController extends BaseController {
 			String messageKey = "testresult.scriptletName";
 
 			if (scriptlet == null) {
-				// the scriptlet is not in database - not valid
-				// parentScriptlet
-				// ActionError error = new ActionError("errors.invalid",
-				// getMessageForKey(messageKey), null);
-				errors.reject("errors.invalid");
+				errors.reject("errors.invalid", new Object[] { MessageUtil.getMessage(messageKey) }, "errors.invalid");
 			}
 		}
 
@@ -385,16 +373,13 @@ public class ManageInventoryController extends BaseController {
 				}
 
 				if (!found) {
-					// ActionError error = new ActionError("errors.invalid",
-					// getMessageForKey(messageKey), null);
-					errors.reject("errors.invalid");
+					errors.reject("errors.invalid", new Object[] { MessageUtil.getMessage(messageKey) },
+							"errors.invalid");
 				}
 			} catch (NumberFormatException nfe) {
 				// bugzilla 2154
 				LogEvent.logError("TestResultUpdateAction", "validateAll()", nfe.toString());
-				// ActionError error = new ActionError("errors.invalid",
-				// getMessageForKey(messageKey), null);
-				errors.reject("errors.invalid");
+				errors.reject("errors.invalid", new Object[] { MessageUtil.getMessage(messageKey) }, "errors.invalid");
 			}
 		}
 
@@ -406,7 +391,7 @@ public class ManageInventoryController extends BaseController {
 		if (FWD_SUCCESS.equals(forward)) {
 			return "manageInventoryDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return "redirect:/ManageInventory.do?forward=success";
+			return "redirect:/ManageInventory.do";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
 			return "manageInventoryDefinition";
 		} else {

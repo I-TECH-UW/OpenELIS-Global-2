@@ -1,9 +1,6 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="org.apache.struts.taglib.TagUtils,
-		org.apache.struts.action.*,
-		org.apache.struts.Globals,
-		java.util.Iterator,
+	import="java.util.Iterator,
 		javax.servlet.jsp.JspException,
 		us.mn.state.health.lims.common.action.IActionConstants,
 		us.mn.state.health.lims.common.util.resources.ResourceLocator,
@@ -18,11 +15,6 @@
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <!DOCTYPE html>
-
-<%-- removed deprecated calls to methods in org.apache.struts.util.RequestUtils--%>
-<%--html:errors/--%>
-<%--html:messages/--%>
-
 
 <%!
 String path = "";

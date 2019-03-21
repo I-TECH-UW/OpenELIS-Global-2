@@ -91,6 +91,7 @@
   		<put-attribute name="patientInfo" value="patientManagementCore"/>
   </definition>
 
+  <!-- possibly a candidate for deletion -->
   <definition name="sampleConfirmationEntryDefinition" extends="baseDefinition">
          <put-attribute name="preSelectionHeader" value="/pages/common/actionSuccess.jsp" />
          <put-attribute name="body" value="sampleConfirmationCore"/>
@@ -364,6 +365,7 @@
         <put-attribute name="body" value="/pages/siteinformation/siteInformation.jsp"/>
     </definition>
 
+  <!-- possibly a candidate for deletion -->
     <definition name="testManagementConfigDefinition" extends="baseMenuDefinition">
         <put-attribute name="body" value="/pages/testConfiguration/testManagement.jsp"/>
     </definition>

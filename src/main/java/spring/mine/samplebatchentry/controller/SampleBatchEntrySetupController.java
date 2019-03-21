@@ -11,7 +11,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.sample.controller.BaseSampleEntryController;
 import spring.mine.samplebatchentry.form.SampleBatchEntryForm;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
@@ -29,7 +28,7 @@ public class SampleBatchEntrySetupController extends BaseSampleEntryController {
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		SampleBatchEntryForm form = new SampleBatchEntryForm();
 
-		request.getSession().setAttribute(IActionConstants.NEXT_DISABLED, IActionConstants.TRUE);
+		request.getSession().setAttribute(NEXT_DISABLED, TRUE);
 
 		SampleOrderService sampleOrderService = new SampleOrderService();
 		form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());

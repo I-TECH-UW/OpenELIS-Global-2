@@ -15,7 +15,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.result.form.PatientResultsForm;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -64,11 +63,10 @@ public class PatientResultsController extends BaseController {
 
 				String statusRules = ConfigurationProperties.getInstance()
 						.getPropertyValueUpperCase(Property.StatusRules);
-				if (statusRules.equals(IActionConstants.STATUS_RULES_RETROCI)) {
+				if (statusRules.equals(STATUS_RULES_RETROCI)) {
 					resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.TechnicalRejected);
 					resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
-				} else if (statusRules.equals(IActionConstants.STATUS_RULES_HAITI)
-						|| statusRules.equals(IActionConstants.STATUS_RULES_HAITI_LNSP)) {
+				} else if (statusRules.equals(STATUS_RULES_HAITI) || statusRules.equals(STATUS_RULES_HAITI_LNSP)) {
 					resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
 				}
 

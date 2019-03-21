@@ -23,13 +23,13 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.dictionary.form.DictionaryForm;
 import spring.mine.dictionary.validator.DictionaryFormValidator;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSFrozenRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.common.util.resources.ResourceLocator;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -187,18 +187,16 @@ public class DictionaryController extends BaseController {
 			LogEvent.logError("DictionaryUpdateAction", "performAction()", lre.toString());
 			tx.rollback();
 			// 1482
-			java.util.Locale locale = (java.util.Locale) request.getSession()
-					.getAttribute("org.apache.struts.action.LOCALE");
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
 				result.reject("errors.OptimisticLockException");
 			} else if (lre.getException() instanceof LIMSDuplicateRecordException) {
 				String messageKey = "dictionary.dictEntryByCategory";
-				String msg = ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey);
+				String msg = MessageUtil.getMessage(messageKey);
 				result.reject("errors.DuplicateRecord.activate", new String[] { msg },
 						"errors.DuplicateRecord.activate");
 			} else if (lre.getException() instanceof LIMSFrozenRecordException) {
 				String messageKey = "dictionary.dictEntry";
-				String msg = ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey);
+				String msg = MessageUtil.getMessage(messageKey);
 				result.reject("errors.FrozenRecord", new String[] { msg }, "errors.FrozenRecord");
 				// Now disallow further edits RECORD_FROZEN_EDIT_DISABLED_KEY
 				// in this case User needs to Exit and come back to refresh form

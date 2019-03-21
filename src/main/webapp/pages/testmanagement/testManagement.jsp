@@ -1,7 +1,8 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants, 
-			us.mn.state.health.lims.common.util.SystemConfiguration" %>  
+			us.mn.state.health.lims.common.util.SystemConfiguration,
+			spring.mine.internationalization.MessageUtil" %>  
 	
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -35,22 +36,12 @@
 
 			request.setAttribute(IActionConstants.ALLOW_EDITS_KEY, allowEdits);
 
-			java.util.Locale locale = (java.util.Locale) request.getSession()
-					.getAttribute(org.apache.struts.Globals.LOCALE_KEY);
-			accnNumb = us.mn.state.health.lims.common.util.resources.ResourceLocator
-					.getInstance().getMessageResources().getMessage(locale,
-							"quick.entry.accession.number");
-			quickEntry = us.mn.state.health.lims.common.util.resources.ResourceLocator
-					.getInstance().getMessageResources().getMessage(locale,
-							"quick.entry.title");				
+			accnNumb = MessageUtil.getMessage("quick.entry.accession.number");
+			quickEntry = MessageUtil.getMessage("quick.entry.title");				
 							
-			errorMessageAccessionNumber = us.mn.state.health.lims.common.util.resources.ResourceLocator
-					.getInstance().getMessageResources().getMessage(locale,
-							"errors.invalid", accnNumb);
+			errorMessageAccessionNumber = MessageUtil.getMessage("errors.invalid", accnNumb);
 							
-			errorMessageLabelPrinted = us.mn.state.health.lims.common.util.resources.ResourceLocator
-					.getInstance().getMessageResources().getMessage(locale,
-							"error.testmanagement.entrystatus", quickEntry);
+			errorMessageLabelPrinted = MessageUtil.getMessage("error.testmanagement.entrystatus", quickEntry);
 
 			%>
 

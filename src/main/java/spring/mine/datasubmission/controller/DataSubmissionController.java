@@ -6,21 +6,18 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.struts.Globals;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.datasubmission.form.DataSubmissionForm;
 import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -40,14 +37,8 @@ import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 @Controller
 public class DataSubmissionController extends BaseController {
 	@RequestMapping(value = "/DataSubmission", method = RequestMethod.GET)
-	public ModelAndView showDataSubmission(HttpServletRequest request,
-			@ModelAttribute("form") DataSubmissionForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new DataSubmissionForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+	public ModelAndView showDataSubmission(HttpServletRequest request) {
+		DataSubmissionForm form = new DataSubmissionForm();
 
 		int month = GenericValidator.isBlankOrNull(request.getParameter("month")) ? DateUtil.getCurrentMonth() + 1
 				: Integer.parseInt(request.getParameter("month"));
@@ -75,16 +66,14 @@ public class DataSubmissionController extends BaseController {
 		form.setYear(year);
 		form.setSiteId(ConfigurationProperties.getInstance().getPropertyValue(Property.SiteCode));
 
-		return findForward(forward, form);
+		addFlashMsgsToRequest(request);
+		return findForward(FWD_SUCCESS, form);
 	}
 
-	@RequestMapping(value = "/DataSubmissionSave", method = RequestMethod.POST)
+	@RequestMapping(value = "/DataSubmission", method = RequestMethod.POST)
 	public ModelAndView showDataSubmissionSave(HttpServletRequest request,
-			@ModelAttribute("form") DataSubmissionForm form) throws IOException, ParseException {
-		String forward = FWD_SUCCESS_INSERT;
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
-
+			@ModelAttribute("form") DataSubmissionForm form, BindingResult result,
+			RedirectAttributes redirectAttributes) throws IOException, ParseException {
 		int month = GenericValidator.isBlankOrNull(request.getParameter("month")) ? DateUtil.getCurrentMonth()
 				: Integer.parseInt(request.getParameter("month"));
 		int year = GenericValidator.isBlankOrNull(request.getParameter("year")) ? DateUtil.getCurrentYear()
@@ -97,18 +86,15 @@ public class DataSubmissionController extends BaseController {
 		SiteInformationDAO siteInfoDAO = new SiteInformationDAOImpl();
 		siteInfoDAO.updateData(dataSubUrl);
 		DataIndicatorDAO indicatorDAO = new DataIndicatorDAOImpl();
-		boolean allSuccess = true;
 		for (DataIndicator indicator : indicators) {
 			if (submit && indicator.isSendIndicator()) {
-				boolean success;
-				success = DataSubmitter.sendDataIndicator(indicator);
+				boolean success = DataSubmitter.sendDataIndicator(indicator);
 				indicator.setStatus(DataIndicator.SENT);
 				if (success) {
 					indicator.setStatus(DataIndicator.RECEIVED);
 				} else {
-					allSuccess = false;
 					indicator.setStatus(DataIndicator.FAILED);
-					errors.reject("errors.IndicatorCommunicationException",
+					result.reject("errors.IndicatorCommunicationException",
 							new String[] { MessageUtil.getMessage(indicator.getTypeOfIndicator().getNameKey()) },
 							"errors.IndicatorCommunicationException");
 				}
@@ -124,13 +110,12 @@ public class DataSubmissionController extends BaseController {
 			}
 		}
 
-		if (!allSuccess) {
-			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
 		}
-		request.setAttribute(IActionConstants.FWD_SUCCESS, allSuccess);
-
-		return findForward(forward, form);
+		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	@Override
@@ -139,6 +124,8 @@ public class DataSubmissionController extends BaseController {
 			return "dataSubmissionDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/DataSubmission.do";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return "dataSubmissionDefinition";
 		} else {
 			return "PageNotFound";
 		}

@@ -14,7 +14,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.patient.form.PatientEditByProjectForm;
 import spring.mine.patient.validator.PatientEditByProjectFormValidator;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
@@ -36,7 +35,7 @@ public class PatientEditByProjectController extends BasePatientEntryByProject {
 	public ModelAndView showPatientEditByProject(HttpServletRequest request) throws Exception {
 		PatientEditByProjectForm form = new PatientEditByProjectForm();
 
-		request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.TRUE);
+		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 		updateRequestType(request);
 
 		// Set current date and entered date to today's date
@@ -48,7 +47,6 @@ public class PatientEditByProjectController extends BasePatientEntryByProject {
 		addAllPatientFormLists(form);
 
 		addFlashMsgsToRequest(request);
-
 		return findForward(FWD_SUCCESS, form);
 	}
 
@@ -106,7 +104,7 @@ public class PatientEditByProjectController extends BasePatientEntryByProject {
 		} else if (FWD_FAIL.equals(forward)) {
 			return "redirect:/Dashboard.do";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return "redirect:/PatientEditByProject.do?forward=success";
+			return "redirect:/PatientEditByProject.do";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
 			return "patientEditByProjectDefinition";
 		} else {

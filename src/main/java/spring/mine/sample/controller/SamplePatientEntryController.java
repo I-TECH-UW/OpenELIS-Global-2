@@ -27,7 +27,6 @@ import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -56,7 +55,7 @@ import us.mn.state.health.lims.organization.daoimpl.OrganizationOrganizationType
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.patient.action.IPatientUpdate;
-import us.mn.state.health.lims.patient.action.PatientManagementUpdateAction;
+import us.mn.state.health.lims.patient.action.IPatientUpdate.PatientUpdateStatus;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 import us.mn.state.health.lims.person.dao.PersonDAO;
@@ -99,7 +98,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		SamplePatientEntryForm form = new SamplePatientEntryForm();
 
-		request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.TRUE);
+		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 		SampleOrderService sampleOrderService = new SampleOrderService();
 		PropertyUtils.setProperty(form, "sampleOrderItems", sampleOrderService.getSampleOrderItem());
 		PropertyUtils.setProperty(form, "patientProperties", new PatientManagementInfo());
@@ -155,7 +154,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 		updateData.setCollectionDateFromRecieveDateIfNeeded(receivedDateForDisplay);
 		updateData.initializeRequester(sampleOrder);
 
-		IPatientUpdate patientUpdate = new PatientManagementUpdateAction();
+		IPatientUpdate patientUpdate = new PatientManagementUpdate();
 		testAndInitializePatientForSaving(request, patientInfo, patientUpdate, updateData);
 
 		updateData.setAccessionNumber(sampleOrder.getLabNo());
@@ -236,8 +235,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		patientUpdate.setPatientUpdateStatus(patientInfo);
-		updateData.setSavePatient(
-				patientUpdate.getPatientUpdateStatus() != PatientManagementUpdateAction.PatientUpdateStatus.NO_ACTION);
+		updateData.setSavePatient(patientUpdate.getPatientUpdateStatus() != PatientUpdateStatus.NO_ACTION);
 
 		if (updateData.isSavePatient()) {
 			updateData.setPatientErrors(patientUpdate.preparePatientData(request, patientInfo));
@@ -402,7 +400,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 		} else if (FWD_FAIL.equals(forward)) {
 			return "homePageDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return "redirect:/SamplePatientEntry.do?forward=success";
+			return "redirect:/SamplePatientEntry.do";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {
 			return "samplePatientEntryDefinition";
 		} else {

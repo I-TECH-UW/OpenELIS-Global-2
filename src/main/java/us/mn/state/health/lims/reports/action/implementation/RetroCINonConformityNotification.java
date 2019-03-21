@@ -29,6 +29,7 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
+import spring.mine.qaevent.service.NonConformityHelper;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -37,7 +38,6 @@ import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.project.valueholder.Project;
-import us.mn.state.health.lims.qaevent.action.retroCI.NonConformityAction;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.NonConformityReportData;
 import us.mn.state.health.lims.reports.action.util.ReportUtil;
 import us.mn.state.health.lims.sample.dao.SampleDAO;
@@ -59,7 +59,7 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 	private String requestedAccessionNumber;
 	private List<String> sampleQaEventIds;
 	private Set<String> checkIdsForPriorPrintRecord;
-	
+
 	public RetroCINonConformityNotification() {
 		super();
 	}
@@ -67,8 +67,10 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 	@Override
 	public void setRequestParameters(BaseForm form) {
 		try {
-			PropertyUtils.setProperty(form, "reportName", StringUtil.getMessageForKey("reports.nonConformity.notification.report"));
-            PropertyUtils.setProperty(form, "selectList", new ReportSpecificationList( getSiteList(), StringUtil.getMessageForKey( "report.select.site" )));
+			PropertyUtils.setProperty(form, "reportName",
+					StringUtil.getMessageForKey("reports.nonConformity.notification.report"));
+			PropertyUtils.setProperty(form, "selectList",
+					new ReportSpecificationList(getSiteList(), StringUtil.getMessageForKey("report.select.site")));
 			PropertyUtils.setProperty(form, "useAccessionDirect", Boolean.TRUE);
 			PropertyUtils.setProperty(form, "instructions",
 					StringUtil.getMessageForKey("reports.nonConformity.notification.report.instructions"));
@@ -78,10 +80,10 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 	}
 
 	private List<IdValuePair> getSiteList() {
-		List<IdValuePair> sites = new ArrayList<IdValuePair>();
+		List<IdValuePair> sites = new ArrayList<>();
 
-		Set<String> orgIds = new HashSet<String>();
-		List<Organization> services = new ArrayList<Organization>();
+		Set<String> orgIds = new HashSet<>();
+		List<Organization> services = new ArrayList<>();
 		List<SampleQaEvent> events = sampleQADAO.getAllUncompleatedEvents();
 
 		events = filterReportedEvents(events);
@@ -111,10 +113,11 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 	}
 
 	private List<SampleQaEvent> filterReportedEvents(List<SampleQaEvent> events) {
-		List<SampleQaEvent> filteredList = new ArrayList<SampleQaEvent>();
+		List<SampleQaEvent> filteredList = new ArrayList<>();
 
 		for (SampleQaEvent event : events) {
-			if (!ReportUtil.documentHasBeenPrinted(ReportUtil.DocumentTypes.NON_CONFORMITY_NOTIFCATION, event.getId())) {
+			if (!ReportUtil.documentHasBeenPrinted(ReportUtil.DocumentTypes.NON_CONFORMITY_NOTIFCATION,
+					event.getId())) {
 				filteredList.add(event);
 			}
 		}
@@ -125,11 +128,11 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 	@Override
 	public void initializeReport(BaseForm form) {
 		super.initializeReport();
-		sampleQaEventIds = new ArrayList<String>();
-		checkIdsForPriorPrintRecord = new HashSet<String>();
+		sampleQaEventIds = new ArrayList<>();
+		checkIdsForPriorPrintRecord = new HashSet<>();
 		errorFound = false;
 		requestedAccessionNumber = form.getString("accessionDirect");
-        ReportSpecificationList specificationList = (ReportSpecificationList)form.get("selectList");
+		ReportSpecificationList specificationList = (ReportSpecificationList) form.get("selectList");
 
 		createReportParameters();
 
@@ -138,13 +141,14 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 			return;
 		}
 		createReportItems(specificationList.getSelection());
-		if (this.reportItems.size() == 0) {
+		if (reportItems.size() == 0) {
 			add1LineErrorMessage("report.error.message.noPrintableItems");
 		}
 	}
 
 	private boolean validateSubmitParameters(String serviceId) {
-		if (GenericValidator.isBlankOrNull(requestedAccessionNumber) && (GenericValidator.isBlankOrNull(serviceId) || "0".equals(serviceId))) {
+		if (GenericValidator.isBlankOrNull(requestedAccessionNumber)
+				&& (GenericValidator.isBlankOrNull(serviceId) || "0".equals(serviceId))) {
 			add1LineErrorMessage("report.error.message.noParameters");
 			return false;
 		}
@@ -161,7 +165,7 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 	}
 
 	private void createReportItems(String serviceId) {
-		reportItems = new ArrayList<NonConformityReportData>();
+		reportItems = new ArrayList<>();
 		List<Sample> samples = getNonConformingSamples(serviceId);
 
 		samples = sortAndFilterSamples(samples);
@@ -173,14 +177,14 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 	}
 
 	private List<Sample> getNonConformingSamples(String serviceId) {
-		List<Sample> samples = new ArrayList<Sample>();
+		List<Sample> samples = new ArrayList<>();
 
 		if (!GenericValidator.isBlankOrNull(requestedAccessionNumber)) {
 			// we've already checked to make sure there is a sample for the accessionNumber
 			samples.add(sampleDAO.getSampleByAccessionNumber(requestedAccessionNumber));
-		} 
-		
-		if( !GenericValidator.isBlankOrNull(serviceId)){
+		}
+
+		if (!GenericValidator.isBlankOrNull(serviceId)) {
 			List<Sample> sampleList = sampleDAO.getSamplesWithPendingQaEventsByService(serviceId);
 			samples.addAll(sampleList);
 		}
@@ -196,7 +200,7 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 			}
 		});
 
-		List<Sample> filteredSamples = new ArrayList<Sample>();
+		List<Sample> filteredSamples = new ArrayList<>();
 
 		String previousAccessionNumber = "";
 
@@ -212,22 +216,22 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 
 	private List<NonConformityReportData> createNonconformityItem(Sample sample) {
 
-		List<NonConformityReportData> items = new ArrayList<NonConformityReportData>();
+		List<NonConformityReportData> items = new ArrayList<>();
 
 		Patient patient = ReportUtil.findPatient(sample);
 		Project project = ReportUtil.findProject(sample);
 
 		String sampleAccessionNumber = sample.getAccessionNumber();
 		String receivedDate = sample.getReceivedDateForDisplay();
-		String receivedHour = sample.getReceivedTimeForDisplay( );
+		String receivedHour = sample.getReceivedTimeForDisplay();
 		String doctor = ReportUtil.findDoctorForSample(sample);
 
 		String orgName = "";
 		SampleOrganization sampleOrg = sampleOrgDAO.getDataBySample(sample);
-		if( sampleOrg != null && sampleOrg.getOrganization() != null){
+		if (sampleOrg != null && sampleOrg.getOrganization() != null) {
 			orgName = sampleOrg.getOrganization().getOrganizationName();
 		}
-		
+
 		List<SampleQaEvent> sampleQaEvents = sampleQADAO.getSampleQaEventsBySample(sample);
 
 		for (SampleQaEvent event : sampleQaEvents) {
@@ -239,22 +243,22 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 				item.setReceivedHour(receivedHour);
 				item.setService(orgName);
 
-				item.setBiologist(qa.getObservationForDisplay( QAObservationType.AUTHORIZER ));
+				item.setBiologist(qa.getObservationForDisplay(QAObservationType.AUTHORIZER));
 				item.setNonConformityDate(DateUtil.convertTimestampToStringDate(qa.getLastupdated()));
-				item.setSection(qa.getObservationForDisplay( QAObservationType.SECTION ));
+				item.setSection(qa.getObservationForDisplay(QAObservationType.SECTION));
 				item.setSubjectNumber(patient.getNationalId());
 				item.setSiteSubjectNumber(patient.getExternalId());
 				item.setStudy((project != null) ? project.getLocalizedName() : "");
 
 				item.setSampleType(ReportUtil.getSampleType(event));
-				item.setQaNote(NonConformityAction.getNoteForSampleQaEvent(event));
-				item.setSampleNote(NonConformityAction.getNoteForSample(sample));
+				item.setQaNote(NonConformityHelper.getNoteForSampleQaEvent(event));
+				item.setSampleNote(NonConformityHelper.getNoteForSample(sample));
 				item.setNonConformityReason(qa.getQAEvent().getLocalizedName());
 				item.setDoctor(doctor);
 				items.add(item);
 
 				sampleQaEventIds.add(qa.getEventId());
-				if( sampleAccessionNumber.equals(requestedAccessionNumber)){
+				if (sampleAccessionNumber.equals(requestedAccessionNumber)) {
 					checkIdsForPriorPrintRecord.add(qa.getEventId());
 				}
 			}
@@ -264,10 +268,10 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 	}
 
 	private boolean eventPrintable(String sampleAccessionNumber, SampleQaEvent event) {
-		if( sampleAccessionNumber.equals(requestedAccessionNumber)){
+		if (sampleAccessionNumber.equals(requestedAccessionNumber)) {
 			return true;
 		}
-		
+
 		return !ReportUtil.documentHasBeenPrinted(ReportUtil.DocumentTypes.NON_CONFORMITY_NOTIFCATION, event.getId());
 	}
 
@@ -276,7 +280,8 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 		if (errorFound) {
 			return new JRBeanCollectionDataSource(errorMsgs);
 		} else {
-			ReportUtil.markDocumentsAsPrinted(ReportUtil.DocumentTypes.NON_CONFORMITY_NOTIFCATION, sampleQaEventIds, "1", checkIdsForPriorPrintRecord);
+			ReportUtil.markDocumentsAsPrinted(ReportUtil.DocumentTypes.NON_CONFORMITY_NOTIFCATION, sampleQaEventIds,
+					"1", checkIdsForPriorPrintRecord);
 			return new JRBeanCollectionDataSource(reportItems);
 		}
 	}

@@ -34,7 +34,6 @@ import spring.mine.sample.validator.SampleEditFormValidator;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -158,8 +157,7 @@ public class SampleEditController extends BaseController {
 
 		boolean allowedToCancelResults = userModuleDAO.isUserAdmin(request)
 				|| new UserRoleDAOImpl().userInRole(getSysUserId(request), ABLE_TO_CANCEL_ROLE_NAMES);
-		boolean isEditable = "readwrite"
-				.equals(request.getSession().getAttribute(IActionConstants.SAMPLE_EDIT_WRITABLE))
+		boolean isEditable = "readwrite".equals(request.getSession().getAttribute(SAMPLE_EDIT_WRITABLE))
 				|| "readwrite".equals(request.getParameter("type"));
 		PropertyUtils.setProperty(form, "isEditable", isEditable);
 
@@ -195,7 +193,7 @@ public class SampleEditController extends BaseController {
 			}
 		} else {
 			PropertyUtils.setProperty(form, "searchFinished", Boolean.FALSE);
-			request.getSession().setAttribute(IActionConstants.SAMPLE_EDIT_WRITABLE, request.getParameter("type"));
+			request.getSession().setAttribute(SAMPLE_EDIT_WRITABLE, request.getParameter("type"));
 		}
 
 		if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
@@ -575,7 +573,7 @@ public class SampleEditController extends BaseController {
 			HibernateUtil.closeSession();
 		}
 
-		String sampleEditWritable = (String) request.getSession().getAttribute(IActionConstants.SAMPLE_EDIT_WRITABLE);
+		String sampleEditWritable = (String) request.getSession().getAttribute(SAMPLE_EDIT_WRITABLE);
 
 		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 
@@ -852,8 +850,7 @@ public class SampleEditController extends BaseController {
 
 	@Override
 	protected String getPageTitleKey() {
-		boolean isEditable = "readwrite"
-				.equals(request.getSession().getAttribute(IActionConstants.SAMPLE_EDIT_WRITABLE))
+		boolean isEditable = "readwrite".equals(request.getSession().getAttribute(SAMPLE_EDIT_WRITABLE))
 				|| "readwrite".equals(request.getParameter("type"));
 		return isEditable ? StringUtil.getContextualKeyForKey("sample.edit.title")
 				: StringUtil.getContextualKeyForKey("sample.view.title");
@@ -861,8 +858,7 @@ public class SampleEditController extends BaseController {
 
 	@Override
 	protected String getPageSubtitleKey() {
-		boolean isEditable = "readwrite"
-				.equals(request.getSession().getAttribute(IActionConstants.SAMPLE_EDIT_WRITABLE))
+		boolean isEditable = "readwrite".equals(request.getSession().getAttribute(SAMPLE_EDIT_WRITABLE))
 				|| "readwrite".equals(request.getParameter("type"));
 		return isEditable ? StringUtil.getContextualKeyForKey("sample.edit.subtitle")
 				: StringUtil.getContextualKeyForKey("sample.view.subtitle");

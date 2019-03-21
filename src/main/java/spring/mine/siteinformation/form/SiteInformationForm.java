@@ -6,137 +6,137 @@ import java.util.Collection;
 import spring.mine.common.form.BaseForm;
 
 public class SiteInformationForm extends BaseForm {
-  private String paramName = "";
+	private String paramName = "";
 
-  private String description = "";
+	private String description = "";
 
-  private String value = "";
+	private String value = "";
 
-  private boolean encrypted;
+	private boolean encrypted;
 
-  private String valueType = "text";
+	private String valueType = "text";
 
-  private Timestamp lastupdated;
+	private Timestamp lastupdated;
 
-  private String siteInfoDomainName = "SiteInformation";
+	private String siteInfoDomainName;
 
-  private Collection dictionaryValues;
+	private Collection dictionaryValues;
 
-  private Boolean editable = Boolean.TRUE;
+	private Boolean editable = Boolean.TRUE;
 
-  private String tag = "";
+	private String tag = "";
 
-  private String descriptionKey = "";
+	private String descriptionKey = "";
 
-  private String englishValue = "";
+	private String englishValue = "";
 
-  private String frenchValue = "";
+	private String frenchValue = "";
 
-  public SiteInformationForm() {
-    setFormName("siteInformationForm");
-  }
+	public SiteInformationForm() {
+		// setFormName("siteInformationForm");
+	}
 
-  public String getParamName() {
-    return this.paramName;
-  }
+	public String getParamName() {
+		return paramName;
+	}
 
-  public void setParamName(String paramName) {
-    this.paramName = paramName;
-  }
+	public void setParamName(String paramName) {
+		this.paramName = paramName;
+	}
 
-  public String getDescription() {
-    return this.description;
-  }
+	public String getDescription() {
+		return description;
+	}
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-  public String getValue() {
-    return this.value;
-  }
+	public String getValue() {
+		return value;
+	}
 
-  public void setValue(String value) {
-    this.value = value;
-  }
+	public void setValue(String value) {
+		this.value = value;
+	}
 
-  public boolean isEncrypted() {
-    return this.encrypted;
-  }
+	public boolean isEncrypted() {
+		return encrypted;
+	}
 
-  public void setEncrypted(boolean encrypted) {
-    this.encrypted = encrypted;
-  }
+	public void setEncrypted(boolean encrypted) {
+		this.encrypted = encrypted;
+	}
 
-  public String getValueType() {
-    return this.valueType;
-  }
+	public String getValueType() {
+		return valueType;
+	}
 
-  public void setValueType(String valueType) {
-    this.valueType = valueType;
-  }
+	public void setValueType(String valueType) {
+		this.valueType = valueType;
+	}
 
-  public Timestamp getLastupdated() {
-    return this.lastupdated;
-  }
+	public Timestamp getLastupdated() {
+		return lastupdated;
+	}
 
-  public void setLastupdated(Timestamp lastupdated) {
-    this.lastupdated = lastupdated;
-  }
+	public void setLastupdated(Timestamp lastupdated) {
+		this.lastupdated = lastupdated;
+	}
 
-  public String getSiteInfoDomainName() {
-    return this.siteInfoDomainName;
-  }
+	public String getSiteInfoDomainName() {
+		return siteInfoDomainName;
+	}
 
-  public void setSiteInfoDomainName(String siteInfoDomainName) {
-    this.siteInfoDomainName = siteInfoDomainName;
-  }
+	public void setSiteInfoDomainName(String siteInfoDomainName) {
+		this.siteInfoDomainName = siteInfoDomainName;
+	}
 
-  public Collection getDictionaryValues() {
-    return this.dictionaryValues;
-  }
+	public Collection getDictionaryValues() {
+		return dictionaryValues;
+	}
 
-  public void setDictionaryValues(Collection dictionaryValues) {
-    this.dictionaryValues = dictionaryValues;
-  }
+	public void setDictionaryValues(Collection dictionaryValues) {
+		this.dictionaryValues = dictionaryValues;
+	}
 
-  public Boolean getEditable() {
-    return this.editable;
-  }
+	public Boolean getEditable() {
+		return editable;
+	}
 
-  public void setEditable(Boolean editable) {
-    this.editable = editable;
-  }
+	public void setEditable(Boolean editable) {
+		this.editable = editable;
+	}
 
-  public String getTag() {
-    return this.tag;
-  }
+	public String getTag() {
+		return tag;
+	}
 
-  public void setTag(String tag) {
-    this.tag = tag;
-  }
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
 
-  public String getDescriptionKey() {
-    return this.descriptionKey;
-  }
+	public String getDescriptionKey() {
+		return descriptionKey;
+	}
 
-  public void setDescriptionKey(String descriptionKey) {
-    this.descriptionKey = descriptionKey;
-  }
+	public void setDescriptionKey(String descriptionKey) {
+		this.descriptionKey = descriptionKey;
+	}
 
-  public String getEnglishValue() {
-    return this.englishValue;
-  }
+	public String getEnglishValue() {
+		return englishValue;
+	}
 
-  public void setEnglishValue(String englishValue) {
-    this.englishValue = englishValue;
-  }
+	public void setEnglishValue(String englishValue) {
+		this.englishValue = englishValue;
+	}
 
-  public String getFrenchValue() {
-    return this.frenchValue;
-  }
+	public String getFrenchValue() {
+		return frenchValue;
+	}
 
-  public void setFrenchValue(String frenchValue) {
-    this.frenchValue = frenchValue;
-  }
+	public void setFrenchValue(String frenchValue) {
+		this.frenchValue = frenchValue;
+	}
 }

@@ -1,13 +1,12 @@
 <%@ page language="java"
 	contentType="application/javascript; charset=utf-8"
-	import="org.apache.struts.util.RequestUtils,org.apache.struts.action.*,org.apache.struts.Globals,java.util.Iterator,javax.servlet.jsp.JspException"
-	import="us.mn.state.health.lims.common.action.IActionConstants"
-	import="us.mn.state.health.lims.common.util.StringUtil"
-	import="us.mn.state.health.lims.common.util.resources.ResourceLocator"
+	import="java.util.Iterator,javax.servlet.jsp.JspException,
+			us.mn.state.health.lims.common.action.IActionConstants,
+			us.mn.state.health.lims.common.util.StringUtil,
+			spring.mine.internationalization.MessageUtil"
  %>
 <%!
 
-//bugzilla 1494
 String errorMessagePhone = "";
 String errorMessagePicklist = "";
 
@@ -19,16 +18,8 @@ String basePath = "";
 path = request.getContextPath();
 basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 
-//bugzilla 1494
-java.util.Locale locale = (java.util.Locale)request.getSession().getAttribute(org.apache.struts.Globals.LOCALE_KEY);
-errorMessagePhone =
-					us.mn.state.health.lims.common.util.resources.ResourceLocator.getInstance().getMessageResources().getMessage(
-					locale,
-                    "error.phone");
-errorMessagePicklist =
-					us.mn.state.health.lims.common.util.resources.ResourceLocator.getInstance().getMessageResources().getMessage(
-					locale,
-                    "error.picklist");
+errorMessagePhone = MessageUtil.getMessage("error.phone");
+errorMessagePicklist = MessageUtil.getMessage("error.picklist");
 %>
 
 var myFormName = '<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>';
