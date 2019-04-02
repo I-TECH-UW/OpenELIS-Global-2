@@ -236,12 +236,10 @@ public class SiteInformationController extends BaseController {
 		String id = request.getParameter(ID);
 		boolean isNew = id == null || id.equals("0");
 
-		String tag = form.getString("tag");
-
 		// N.B. The reason for this branch is that localization does not actually update
 		// site information, it updates the
 		// localization table
-		if ("localization".equals(tag)) {
+		if ("localization".equals(form.getString("tag"))) {
 			String localizationId = form.getString("value");
 			forward = validateAndUpdateLocalization(request, localizationId, form.getString("englishValue"),
 					form.getString("frenchValue"));

@@ -70,12 +70,11 @@ public class DictionaryController extends BaseController {
 		Dictionary dictionary = new Dictionary();
 		dictionary.setId(id);
 
-		if ((id != null) && (!"0".equals(id))) { // this is an existing
-			// dictionary
+		if ((id != null) && (!"0".equals(id))) {
+			// this is an existing dictionary
 			dictionaryDAO.getData(dictionary);
-			PropertyUtils.setProperty(form, "newDictionary", false);
 
-			// do we need to enable next or previous?
+			// do we need to enable next or previous button
 			List<Dictionary> dictionaries = dictionaryDAO.getNextDictionaryRecord(dictionary.getId());
 			if (!dictionaries.isEmpty()) {
 				// enable next button
@@ -87,9 +86,7 @@ public class DictionaryController extends BaseController {
 				request.setAttribute(PREVIOUS_DISABLED, "false");
 			}
 		} else { // this is a new dictionary
-			// default isActive to 'Y'
 			dictionary.setIsActive(YES);
-			PropertyUtils.setProperty(form, "newDictionary", true);
 		}
 
 		if (dictionary.getId() != null && !dictionary.getId().equals("0")) {
@@ -159,11 +156,11 @@ public class DictionaryController extends BaseController {
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		formValidator.validate(form, result);
-
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);
 		}
+
 		setDefaultButtonAttributes(request);
 
 		Dictionary dictionary = new Dictionary();
@@ -172,7 +169,8 @@ public class DictionaryController extends BaseController {
 		setupDictionary(dictionary, form);
 
 		try {
-			if (!form.isNewDictionary()) {
+			String id = form.getId();
+			if (!(id == null || "0".equals(id))) {
 				// UPDATE
 				// bugzilla 2062
 				boolean isDictionaryFrozenCheckRequired = checkForDictionaryFrozenCheck(form);
@@ -255,8 +253,8 @@ public class DictionaryController extends BaseController {
 		// OR
 		// bugzilla 1847: also the local abbreviation can be deleted/updated/inserted at
 		// anytime
-		String dirtyFormFields = (String) form.get("dirtyFormFields");
-		String isActiveValue = (String) form.get("isActive");
+		String dirtyFormFields = form.getString("dirtyFormFields");
+		String isActiveValue = form.getString("isActive");
 
 		String[] dirtyFields = dirtyFormFields.split(SystemConfiguration.getInstance().getDefaultIdSeparator(), -1);
 		List<String> listOfDirtyFields = new ArrayList<>();

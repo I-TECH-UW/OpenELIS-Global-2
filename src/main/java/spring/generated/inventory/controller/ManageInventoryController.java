@@ -193,9 +193,9 @@ public class ManageInventoryController extends BaseController {
 		for (InventorySet kitItem : newInventory) {
 			for (String name : names) {
 				if (name.equals(kitItem.getItem().getName())) {
-					// ActionError error = new ActionError("errors.DuplicateRecord",
-					// MessageUtil.getMessage("inventory.testKit.name"), null);
-					errors.reject("errors.DuplicateRecord");
+					errors.reject("errors.DuplicateRecord",
+							new String[] { MessageUtil.getMessage("inventory.testKit.name") },
+							"errors.DuplicateRecord");
 					return errors;
 				}
 			}

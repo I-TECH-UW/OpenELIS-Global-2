@@ -92,7 +92,7 @@ function  /*void*/ savePage()
 {
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
-	form.action = "AnalyzerResults.do"  + ' ${(analyzerType == "") ? '': '?type=<spring:escapeBody javaScriptEscape="true">analyzerType</spring:escapeBody>'}';
+	form.action = "AnalyzerResults.do"  + '<spring:escapeBody javaScriptEscape="true">${(analyzerType == "") ? "": "?type=" += analyzerType}</spring:escapeBody>';
 	form.submit();
 
 }
@@ -161,10 +161,10 @@ function /*void*/ markUpdated(){
 
 </script>
 <form:hidden path="analyzerType"/>
-<c:if test="${not empty form.notFoundMsg}">
-	 <div class="indented-important-message"><c:out value="${form.notFoundMsg}"/></div>
+<c:if test="${form.displayNotFoundMsg}">
+	 <div class="indented-important-message"><spring:message code="result.noResultsFound"/></div>
 </c:if>
-<c:if test="${form.missingTestMsg}">
+<c:if test="${form.displayMissingTestMsg}">
      <h2><spring:message code="error.missing.test.mapping" /></h2><br/><br/>
 </c:if>
 

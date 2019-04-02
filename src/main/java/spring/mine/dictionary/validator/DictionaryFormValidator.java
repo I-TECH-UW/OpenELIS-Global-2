@@ -6,6 +6,7 @@ import org.springframework.validation.Validator;
 
 import spring.mine.common.validator.ValidationHelper;
 import spring.mine.dictionary.form.DictionaryForm;
+import us.mn.state.health.lims.common.util.SystemConfiguration;
 
 @Component
 public class DictionaryFormValidator implements Validator {
@@ -25,20 +26,24 @@ public class DictionaryFormValidator implements Validator {
 
 		// dictionaryCategory doesn't need to be validated as it is used for display
 
-		// categories doesn't need to be validated as it is used for select options
-		// display
+		// categories doesn't need to be validated as it is used for display
 
 		ValidationHelper.validateYNField(form.getIsActive(), "isActive", errors);
 
-		// TODO make a charset that is tight to this input
-		// right now all chars are permitted
-		ValidationHelper.validateFieldAndCharset(form.getDictEntry(), "dictEntry", errors, true, 4000, "\\s\\S");
+		// right now all chars are permitted UNSECURE VARIABLE
+		ValidationHelper.validateField(form.getDictEntry(), "dictEntry", errors, true, 4000);
 
-		// TODO validate localAbbreviation
+		// right now all chars are permitted UNSECURE VARIABLE
+		ValidationHelper.validateField(form.getLocalAbbreviation(), "localAbbreviation", errors, false, 60);
 
-		// TODO validate dirtyFormFields
-
-		// newDictionary doesn't need to be validated as it is not saved
+		String[] dirtyFields = form.getDirtyFormFields()
+				.split(SystemConfiguration.getInstance().getDefaultIdSeparator(), -1);
+		for (String dirtyField : dirtyFields) {
+			ValidationHelper.validateFieldAndCharset(dirtyField, "dirtyFormField", errors, false, 255, "a-zA-Z0-9_");
+			if (errors.hasErrors()) {
+				break;
+			}
+		}
 
 	}
 

@@ -1,7 +1,6 @@
 package spring.mine.siteinformation.form;
 
-import java.sql.Timestamp;
-import java.util.Collection;
+import java.util.List;
 
 import spring.mine.common.form.BaseForm;
 
@@ -16,11 +15,9 @@ public class SiteInformationForm extends BaseForm {
 
 	private String valueType = "text";
 
-	private Timestamp lastupdated;
-
 	private String siteInfoDomainName;
 
-	private Collection dictionaryValues;
+	private List<String> dictionaryValues;
 
 	private Boolean editable = Boolean.TRUE;
 
@@ -76,14 +73,6 @@ public class SiteInformationForm extends BaseForm {
 		this.valueType = valueType;
 	}
 
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
-	}
-
 	public String getSiteInfoDomainName() {
 		return siteInfoDomainName;
 	}
@@ -92,11 +81,11 @@ public class SiteInformationForm extends BaseForm {
 		this.siteInfoDomainName = siteInfoDomainName;
 	}
 
-	public Collection getDictionaryValues() {
+	public List<String> getDictionaryValues() {
 		return dictionaryValues;
 	}
 
-	public void setDictionaryValues(Collection dictionaryValues) {
+	public void setDictionaryValues(List<String> dictionaryValues) {
 		this.dictionaryValues = dictionaryValues;
 	}
 

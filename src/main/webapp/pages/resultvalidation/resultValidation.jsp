@@ -25,8 +25,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 
-<c:set var="testSection"	value='${param.type}' />
-<c:set var="testName"	value='${param.test}' />
 <c:set var="results" value="${form.resultList}" />
 <c:set var="pagingSearch" value='${form.paging.searchTermToPage}'/>
 <c:set var="testSectionsByName" value='${form.testSectionsByName}' />
@@ -360,8 +358,8 @@ function /*boolean*/ handleEnterEvent(){
 	</span>
 </div>
 </c:if>
-<form:hidden path="testSection" value="${testSection}"/>
-<form:hidden path="testName" value="${testName}"/>
+<form:hidden path="testSection" value="${param.type}"/>
+<form:hidden path="testName" value="${param.test}"/>
 <c:if test="${resultCount != 0}">
 <Table style="width:80%" >
     <tr>

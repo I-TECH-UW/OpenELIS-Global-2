@@ -57,7 +57,7 @@ import us.mn.state.health.lims.organization.valueholder.OrganizationType;
 public class OrganizationController extends BaseController {
 
 	@Autowired
-	OrganizationFormValidator validator;
+	OrganizationFormValidator formValidator;
 
 	@ModelAttribute("form")
 	public BaseForm form() {
@@ -125,7 +125,6 @@ public class OrganizationController extends BaseController {
 	@RequestMapping(value = { "/Organization", "/NextPreviousOrganization" }, method = RequestMethod.GET)
 	public ModelAndView showOrganization(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
 		if (form.getClass() != OrganizationForm.class) {
 			form = new OrganizationForm();
 			request.getSession().setAttribute("form", form);
@@ -255,7 +254,7 @@ public class OrganizationController extends BaseController {
 			PropertyUtils.setProperty(form, "selectedTypes", selectedList);
 		}
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	private void setParentOrganiztionName(BaseForm form, Organization organization, OrganizationDAO organizationDAO)
@@ -306,7 +305,7 @@ public class OrganizationController extends BaseController {
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		setDefaultButtonAttributes(request);
-		validator.validate(form, result);
+		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);
@@ -355,7 +354,6 @@ public class OrganizationController extends BaseController {
 			// bugzilla 2154
 			LogEvent.logError("OrganizationUpdateAction", "performAction()", lre.toString());
 			tx.rollback();
-			String errorMsg;
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
 				result.reject("errors.OptimisticLockException");
 			} else {

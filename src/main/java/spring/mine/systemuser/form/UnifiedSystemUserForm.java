@@ -13,9 +13,9 @@ public class UnifiedSystemUserForm extends BaseForm {
 
 	private String userLoginName = "";
 
-	private String userPassword1 = "";
+	private String userPassword = "";
 
-	private String userPassword2 = "";
+	private String confirmPassword = "";
 
 	private String userFirstName = "";
 
@@ -34,8 +34,6 @@ public class UnifiedSystemUserForm extends BaseForm {
 	private String accountActive = "Y";
 
 	private String timeout;
-
-	private Timestamp lastupdated;
 
 	private Timestamp systemUserLastupdated;
 
@@ -67,20 +65,20 @@ public class UnifiedSystemUserForm extends BaseForm {
 		this.userLoginName = userLoginName;
 	}
 
-	public String getUserPassword1() {
-		return userPassword1;
+	public String getUserPassword() {
+		return userPassword;
 	}
 
-	public void setUserPassword1(String userPassword1) {
-		this.userPassword1 = userPassword1;
+	public void setUserPassword(String userPassword) {
+		this.userPassword = userPassword;
 	}
 
-	public String getUserPassword2() {
-		return userPassword2;
+	public String getConfirmPassword() {
+		return confirmPassword;
 	}
 
-	public void setUserPassword2(String userPassword2) {
-		this.userPassword2 = userPassword2;
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
 	}
 
 	public String getUserFirstName() {
@@ -153,14 +151,6 @@ public class UnifiedSystemUserForm extends BaseForm {
 
 	public void setTimeout(String timeout) {
 		this.timeout = timeout;
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public Timestamp getSystemUserLastupdated() {

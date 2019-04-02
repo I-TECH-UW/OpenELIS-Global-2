@@ -336,7 +336,7 @@ function setCaretPosition(ctrl, pos) {
 <div id="PatientPage" class="colorFill patientSearch" style="display:inline;" >
 
 	<h3><spring:message code="sample.entry.search"/></h3>
-	<c:if test="${not empty form.warning}" >
+	<c:if test="${form.warning}" >
         <h3 class="important-text"><spring:message code="order.modify.search.warning" /></h3>
     </c:if>
     <select id="searchCriteria"  style="float:left" onchange="checkIndex(this)" tabindex="1" class="patientSearch">

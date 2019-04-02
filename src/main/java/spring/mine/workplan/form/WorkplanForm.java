@@ -1,19 +1,13 @@
 package spring.mine.workplan.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
-import us.mn.state.health.lims.common.paging.PagingBean;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.resultvalidation.bean.AnalysisItem;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
 public class WorkplanForm extends BaseForm {
-	private PagingBean paging;
-
-	private Timestamp lastupdated;
-
 	private String currentDate = "";
 
 	private String searchLabel;
@@ -44,22 +38,6 @@ public class WorkplanForm extends BaseForm {
 
 	public WorkplanForm() {
 		setFormName("WorkplanForm");
-	}
-
-	public PagingBean getPaging() {
-		return paging;
-	}
-
-	public void setPaging(PagingBean paging) {
-		this.paging = paging;
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public String getCurrentDate() {

@@ -175,8 +175,7 @@ public class AnalyzerResultsController extends BaseController {
 
 			if (analyzerResultsList.isEmpty()) {
 				PropertyUtils.setProperty(form, "resultList", new ArrayList<AnalyzerResultItem>());
-				String msg = MessageUtil.getMessage("result.noResultsFound");
-				PropertyUtils.setProperty(form, "notFoundMsg", msg);
+				PropertyUtils.setProperty(form, "displayNotFoundMsg", true);
 				paging.setEmptyPageBean(request, form);
 
 			} else {
@@ -227,7 +226,7 @@ public class AnalyzerResultsController extends BaseController {
 					}
 				}
 
-				PropertyUtils.setProperty(form, "missingTestMsg", new Boolean(missingTest));
+				PropertyUtils.setProperty(form, "displayMissingTestMsg", new Boolean(missingTest));
 
 				paging.setDatabaseResults(request, form, analyzerResultItemList);
 			}

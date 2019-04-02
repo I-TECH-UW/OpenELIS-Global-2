@@ -19,12 +19,10 @@ public class ElectronicOrderViewFormValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		ElectronicOrderViewForm form = (ElectronicOrderViewForm) target;
 
-		ValidationHelper.validateOptionField(form.getSortOrder(), "sortOrder", errors,
+		ValidationHelper.validateOptionFieldIgnoreCase(form.getSortOrder(), "sortOrder", errors,
 				new String[] { "lastupdated", "externalId", "statusId" });
 
-		if (form.getPage() <= 0) {
-			errors.rejectValue("page", "error.page.invalid");
-		}
+		ValidationHelper.validateFieldMin(form.getPage(), "page", errors, 0);
 
 		// eOrders doesn't need to be validated as it is purely used for display
 	}

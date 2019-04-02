@@ -22,8 +22,6 @@ public class DictionaryForm extends BaseForm {
 
 	private String dirtyFormFields = "";
 
-	private boolean newDictionary;
-
 	public DictionaryForm() {
 		setFormName("dictionaryForm");
 	}
@@ -92,11 +90,4 @@ public class DictionaryForm extends BaseForm {
 		this.dirtyFormFields = dirtyFormFields;
 	}
 
-	public boolean isNewDictionary() {
-		return newDictionary;
-	}
-
-	public void setNewDictionary(boolean newDictionary) {
-		this.newDictionary = newDictionary;
-	}
 }

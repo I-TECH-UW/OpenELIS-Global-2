@@ -5,6 +5,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import spring.mine.referral.form.ReferredOutTestsForm;
+import us.mn.state.health.lims.referral.action.beanitems.ReferralItem;
 
 @Component
 public class ReferredOutTestsFormValidator implements Validator {
@@ -18,11 +19,10 @@ public class ReferredOutTestsFormValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		ReferredOutTestsForm form = (ReferredOutTestsForm) target;
 
-		/// TODO validate referralItems
+		// TODO validate referralItem
+		for (ReferralItem refItem : form.getReferralItems()) {
 
-		/// TODO validate referralOrganizations
-
-		/// TODO validate referralReasons
+		}
 
 	}
 

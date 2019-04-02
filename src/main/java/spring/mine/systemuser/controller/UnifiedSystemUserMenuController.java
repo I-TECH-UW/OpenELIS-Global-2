@@ -53,7 +53,6 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 
 		form.setFormAction("UnifiedSystemUserMenu.do");
 		forward = performMenuAction(form, request);
-		request.setAttribute("menuDefinition", "RoleMenuDefinition");
 		if (FWD_FAIL.equals(forward)) {
 			Errors errors = new BaseErrors();
 			errors.reject("error.generic");

@@ -45,8 +45,7 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
 
 		// retrieve the current project, before clearing, so that we can set it on
 		// later.
-		String projectFormName;
-		projectFormName = Accessioner.findProjectFormName(form);
+		String projectFormName = Accessioner.findProjectFormName(form);
 		updateRequestType(request);
 
 		addAllPatientFormLists(form);

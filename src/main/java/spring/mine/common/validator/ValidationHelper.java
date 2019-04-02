@@ -12,8 +12,13 @@ public class ValidationHelper {
 
 	// prevents constructing object all methods are static
 	private ValidationHelper() {
-
 	}
+
+	public static final String NAME_REGEX = "(?i)^[ a-zàâçéèêëîïôûùüÿñæœ'.-]*$";
+	public static final String USERNAME_REGEX = "(?i)^[a-z0-9àâçéèêëîïôûùüÿñæœ._@-]*$";
+	public static final String MESSAGE_KEY_REGEX = "(?i)^[a-z0-9_]+(\\.[a-z0-9_]+)*$";
+	public static final String PATIENT_ID_REGEX = "(?i)^[a-z0-9/]*$";
+	public static final String PHONE_REGEX = "^[-+()0-9 ]*$";
 
 	private static final String DEFAULT_PREFIX = "Field ";
 
@@ -60,7 +65,7 @@ public class ValidationHelper {
 
 	public static void validateFieldCharSet(String value, String name, String displayName, Errors errors,
 			String charSet) {
-		if (!Pattern.matches("[" + charSet + "]*", value)) {
+		if (!Pattern.matches("^[" + charSet + "]*$", value)) {
 			errors.rejectValue(name, "error.field.charset.invalid", new Object[] { displayName },
 					DEFAULT_PREFIX + displayName + " has an invalid character");
 		}
@@ -80,6 +85,31 @@ public class ValidationHelper {
 		if (!CustomDateValidator.getInstance().validate24HourTime(value)) {
 			errors.rejectValue(name, "error.field.time.invalid", new Object[] { displayName, value },
 					DEFAULT_PREFIX + displayName + " is not in a valid time format");
+		}
+	}
+
+	public static void validateOptionFieldIgnoreCase(String value, String name, String displayName, Errors errors,
+			String[] possibleValues) {
+		boolean match = false;
+		for (String possibleValue : possibleValues) {
+			// null safety
+			if (possibleValue == null) {
+				if (value == null) {
+					match = true;
+				}
+			} else {
+				if (possibleValue.equalsIgnoreCase(value)) {
+					match = true;
+				}
+			}
+
+			if (match) {
+				break;
+			}
+		}
+		if (!match) {
+			errors.rejectValue(name, "error.field.option.invalid", new Object[] { displayName },
+					DEFAULT_PREFIX + displayName + " is not a valid option");
 		}
 	}
 
@@ -122,6 +152,9 @@ public class ValidationHelper {
 			boolean required) {
 		if (required) {
 			validateFieldRequired(value, name, displayName, errors);
+			if (errors.hasErrors()) {
+				return;
+			}
 			validateDateField(value, name, displayName, errors, relative);
 		} else {
 			if (GenericValidator.isBlankOrNull(value)) {
@@ -143,8 +176,13 @@ public class ValidationHelper {
 		}
 	}
 
-	public static void validateGenderField(String value, String name, String displayName, Errors errors) {
-		validateOptionField(value, name, displayName, errors, new Object[] { "M", "F" });
+	public static void validateGenderField(String value, String name, String displayName, Errors errors,
+			boolean required) {
+		if (required) {
+			validateOptionField(value, name, displayName, errors, new Object[] { "M", "F" });
+		} else {
+			validateOptionField(value, name, displayName, errors, new Object[] { "M", "F", "", null });
+		}
 	}
 
 	// methods for using name = displayName
@@ -208,7 +246,16 @@ public class ValidationHelper {
 	}
 
 	public static void validateGenderField(String value, String name, Errors errors) {
-		validateGenderField(value, name, name, errors);
+		validateGenderField(value, name, name, errors, true);
+	}
+
+	public static void validateGenderField(String value, String name, Errors errors, boolean required) {
+		validateGenderField(value, name, name, errors, required);
+	}
+
+	public static void validateOptionFieldIgnoreCase(String value, String name, Errors errors,
+			String[] possibleValues) {
+		validateOptionFieldIgnoreCase(value, name, name, errors, possibleValues);
 	}
 
 	/*

@@ -21,11 +21,10 @@ public class ChangePasswordLoginFormValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		ChangePasswordLoginForm form = (ChangePasswordLoginForm) target;
 
-		ValidationHelper.validateFieldAndCharset(form.getLoginName(), "loginName", errors, true, 20,
-				"a-zA-Z0-9_@àâäèéêëîïôœùûüÿçÀÂÄÈÉÊËÎÏÔŒÙÛÜŸÇ");
+		ValidationHelper.validateField(form.getLoginName(), "loginName", errors, true, 20,
+				ValidationHelper.USERNAME_REGEX);
 
 		ILoginPasswordValidation passValidator = PasswordValidationFactory.getPasswordValidator();
-
 		if (form.getPassword().equals(form.getNewPassword())) {
 			errors.reject("login.error.newpassword.required", "New password cannot match old password");
 		}

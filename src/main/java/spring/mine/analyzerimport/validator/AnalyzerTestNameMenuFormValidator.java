@@ -5,6 +5,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import spring.mine.analyzerimport.form.AnalyzerTestNameMenuForm;
+import spring.mine.common.validator.ValidationHelper;
 
 @Component
 public class AnalyzerTestNameMenuFormValidator implements Validator {
@@ -17,11 +18,12 @@ public class AnalyzerTestNameMenuFormValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		AnalyzerTestNameMenuForm form = (AnalyzerTestNameMenuForm) target;
+
 		// menuList does not need validation as is it only used in display
 
 		for (String id : form.getSelectedIDs()) {
-			// TODO selected ids not actually id values. This should probably be fixed
-			// ValidationHelper.validateIdField(id, "selectedIDs", errors, true);
+			ValidationHelper.validateFieldAndCharset(id, "selectedIDs", errors, false, 255,
+					" a-zA-Z0-9^%()_\\-#\\\\àâäèéêëîïôœùûüÿçÀÂÄÈÉÊËÎÏÔŒÙÛÜŸÇ");
 			if (errors.hasErrors()) {
 				break;
 			}

@@ -4,7 +4,8 @@
 			us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl,
 			us.mn.state.health.lims.localization.valueholder.Localization,
 			us.mn.state.health.lims.siteinformation.valueholder.SiteInformation,
-			us.mn.state.health.lims.localization.dao.LocalizationDAO" %>
+			us.mn.state.health.lims.localization.dao.LocalizationDAO,
+			org.owasp.encoder.Encode" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -67,7 +68,7 @@
 	   		<% 
 	   		SiteInformation site = (SiteInformation) pageContext.getAttribute("site");
 	   		Localization localization = localizationDAO.getLocalizationById( site.getValue() ); %>
-	   			<td class='textcontent'> <%=localization.getEnglish()%>/<%=localization.getFrench()%> </td>
+	   			<td class='textcontent'> <%=Encode.forHtmlContent(localization.getEnglish())%>/<%=Encode.forHtmlContent(localization.getFrench())%> </td>
             </c:when><c:otherwise>
 	   		<td class="textcontent">
 	   	  		<c:out value="${site.value}"/>

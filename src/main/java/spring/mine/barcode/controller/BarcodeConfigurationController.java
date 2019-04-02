@@ -31,7 +31,7 @@ import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 public class BarcodeConfigurationController extends BaseController {
 
 	@Autowired
-	BarcodeConfigurationFormValidator validator;
+	BarcodeConfigurationFormValidator formValidator;
 
 	@RequestMapping(value = "/BarcodeConfiguration", method = RequestMethod.GET)
 	public ModelAndView showBarcodeConfiguration(HttpServletRequest request)
@@ -99,7 +99,7 @@ public class BarcodeConfigurationController extends BaseController {
 	public ModelAndView barcodeConfigurationSave(HttpServletRequest request,
 			@ModelAttribute("form") BarcodeConfigurationForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) {
-		validator.validate(form, result);
+		formValidator.validate(form, result);
 		form.setCancelAction("MasterListsPage.do");
 		if (result.hasErrors()) {
 			saveErrors(result);

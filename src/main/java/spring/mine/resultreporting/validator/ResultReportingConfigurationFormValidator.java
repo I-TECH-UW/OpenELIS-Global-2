@@ -17,6 +17,8 @@ public class ResultReportingConfigurationFormValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		ResultReportingConfigurationForm form = (ResultReportingConfigurationForm) target;
+
+		// TODO reports
 	}
 
 }

@@ -82,6 +82,11 @@ public class PatientManagementUpdate implements IPatientUpdate {
 		return String.valueOf(usd.getSystemUserId());
 	}
 
+	public void setSysUserIdFromRequest(HttpServletRequest request) {
+		UserSessionData usd = (UserSessionData) request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA);
+		currentUserId = String.valueOf(usd.getSystemUserId());
+	}
+
 	private Errors validatePatientInfo(PatientManagementInfo patientInfo) {
 		Errors errors = new BaseErrors();
 		if (ConfigurationProperties.getInstance()

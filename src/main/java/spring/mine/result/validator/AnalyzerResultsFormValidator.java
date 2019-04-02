@@ -17,6 +17,11 @@ public class AnalyzerResultsFormValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		AnalyzerResultsForm form = (AnalyzerResultsForm) target;
+
+		// TODO resultList
+
+		// analyzerType doesn't appear to need validation
+
 	}
 
 }

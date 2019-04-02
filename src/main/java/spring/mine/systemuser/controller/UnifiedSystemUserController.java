@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,6 +30,7 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.systemuser.form.UnifiedSystemUserForm;
 import spring.mine.systemuser.validator.UnifiedSystemUserFormValidator;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.provider.validation.PasswordValidationFactory;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -65,7 +65,7 @@ public class UnifiedSystemUserController extends BaseController {
 
 	private static final String MAINTENANCE_ADMIN = "Maintenance Admin";
 	private static String MAINTENANCE_ADMIN_ID;
-	public static final char DEFAULT_PASSWORD_FILLER = '?';
+	public static final char DEFAULT_PASSWORD_FILLER = '@';
 
 	{
 		RoleDAO roleDAO = new RoleDAOImpl();
@@ -93,14 +93,18 @@ public class UnifiedSystemUserController extends BaseController {
 
 		boolean isNew = GenericValidator.isBlankOrNull(id) || "0".equals(id);
 
-		List<Role> roles = getAllRoles();
-
 		setDefaultProperties(form);
-
 		if (!isNew) {
 			setPropertiesForExistingUser(form, id, doFiltering);
 		}
+		setupRoles(form, request, doFiltering);
 
+		addFlashMsgsToRequest(request);
+		return findForward(FWD_SUCCESS, form);
+	}
+
+	private void setupRoles(UnifiedSystemUserForm form, HttpServletRequest request, boolean doFiltering) {
+		List<Role> roles = getAllRoles();
 		UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
 		doFiltering &= !userModuleDAO.isUserAdmin(request);
 
@@ -111,10 +115,11 @@ public class UnifiedSystemUserController extends BaseController {
 		List<DisplayRole> displayRoles = convertToDisplayRoles(roles);
 		displayRoles = sortAndGroupRoles(displayRoles);
 
-		PropertyUtils.setProperty(form, "roles", displayRoles);
-
-		addFlashMsgsToRequest(request);
-		return findForward(FWD_SUCCESS, form);
+		try {
+			PropertyUtils.setProperty(form, "roles", displayRoles);
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private List<DisplayRole> convertToDisplayRoles(List<Role> roles) {
@@ -289,8 +294,8 @@ public class UnifiedSystemUserController extends BaseController {
 			PropertyUtils.setProperty(form, "accountDisabled", login.getAccountDisabled());
 			PropertyUtils.setProperty(form, "accountLocked", login.getAccountLocked());
 			PropertyUtils.setProperty(form, "userLoginName", login.getLoginName());
-			PropertyUtils.setProperty(form, "userPassword1", proxyPassword);
-			PropertyUtils.setProperty(form, "userPassword2", proxyPassword);
+			PropertyUtils.setProperty(form, "userPassword", proxyPassword);
+			PropertyUtils.setProperty(form, "confirmPassword", proxyPassword);
 			PropertyUtils.setProperty(form, "expirationDate", login.getPasswordExpiredDateForDisplay());
 			PropertyUtils.setProperty(form, "timeout", login.getUserTimeOut());
 		}
@@ -366,9 +371,11 @@ public class UnifiedSystemUserController extends BaseController {
 	public ModelAndView showUpdateUnifiedSystemUser(HttpServletRequest request,
 			@ModelAttribute("form") UnifiedSystemUserForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) {
+		boolean doFiltering = true;
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
+			setupRoles(form, request, doFiltering);
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
@@ -397,6 +404,7 @@ public class UnifiedSystemUserController extends BaseController {
 			params.put("forward", FWD_SUCCESS);
 			return getForwardWithParameters(findForward(forward, form), params);
 		} else {
+			setupRoles(form, request, doFiltering);
 			return findForward(forward, form);
 		}
 	}
@@ -474,16 +482,15 @@ public class UnifiedSystemUserController extends BaseController {
 			}
 		} catch (LIMSRuntimeException lre) {
 			tx.rollback();
-
-			ObjectError error = null;
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
-				error = new ObjectError("errors.OptimisticLockException", null);
+				errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
+			} else if (lre.getException() instanceof LIMSDuplicateRecordException) {
+				errors.reject("errors.DuplicateRecordException", "errors.DuplicateRecordException");
 			} else {
-				error = new ObjectError("errors.UpdateException", null);
+				errors.reject("errors.UpdateException", "errors.UpdateException");
 			}
 
-			persisteError(request, error);
-
+			saveErrors(errors);
 			disableNavigationButtons(request);
 			forward = FWD_FAIL_INSERT;
 		} finally {
@@ -503,7 +510,7 @@ public class UnifiedSystemUserController extends BaseController {
 			return true;
 		}
 
-		String password = form.getUserPassword1();
+		String password = form.getUserPassword();
 
 		return !StringUtil.containsOnly(password, DEFAULT_PASSWORD_FILLER);
 	}
@@ -530,10 +537,10 @@ public class UnifiedSystemUserController extends BaseController {
 
 		if (passwordUpdated) {
 			// check passwords match
-			if (GenericValidator.isBlankOrNull(form.getUserPassword1())
-					|| !form.getUserPassword1().equals(form.getUserPassword2())) {
+			if (GenericValidator.isBlankOrNull(form.getUserPassword())
+					|| !form.getUserPassword().equals(form.getConfirmPassword())) {
 				errors.reject("errors.password.match", "errors.password.match");
-			} else if (!passwordValid(form.getUserPassword1())) { // validity
+			} else if (!passwordValid(form.getUserPassword())) { // validity
 				errors.reject("login.error.password.requirement");
 			}
 		}
@@ -587,7 +594,7 @@ public class UnifiedSystemUserController extends BaseController {
 		login.setAccountLocked(form.getAccountLocked());
 		login.setLoginName(form.getUserLoginName());
 		if (passwordUpdated) {
-			login.setPassword(form.getUserPassword1());
+			login.setPassword(form.getUserPassword());
 		}
 		login.setPasswordExpiredDateForDisplay(form.getExpirationDate());
 		if (RESERVED_ADMIN_NAME.equals(form.getUserLoginName())) {
@@ -622,14 +629,6 @@ public class UnifiedSystemUserController extends BaseController {
 		systemUser.setLastupdated(form.getSystemUserLastupdated());
 
 		return systemUser;
-	}
-
-	private void persisteError(HttpServletRequest request, ObjectError error) {
-		Errors errors;
-		errors = new BaseErrors();
-
-		errors.reject(error.getCode(), error.getCode());
-		saveErrors(errors);
 	}
 
 	private void disableNavigationButtons(HttpServletRequest request) {

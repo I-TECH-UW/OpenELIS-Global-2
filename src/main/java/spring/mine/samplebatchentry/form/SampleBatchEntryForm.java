@@ -1,6 +1,5 @@
 package spring.mine.samplebatchentry.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +14,6 @@ import us.mn.state.health.lims.sample.bean.SampleOrderItem;
 import us.mn.state.health.lims.sample.form.ProjectData;
 
 public class SampleBatchEntryForm extends BaseForm {
-	private Timestamp lastupdated;
 
 	private String currentDate = "";
 
@@ -63,26 +61,12 @@ public class SampleBatchEntryForm extends BaseForm {
 
 	private Map<String, OrganizationTypeList> organizationTypeLists;
 
-	private String receivedDateForDisplay;
-
-	private String receivedTimeForDisplay;
-
 	private String sampleTypeSelect;
 
 	private boolean localDBOnly;
 
-	private String warning;
-
 	public SampleBatchEntryForm() {
 		setFormName("sampleBatchEntryForm");
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public String getCurrentDate() {
@@ -269,22 +253,6 @@ public class SampleBatchEntryForm extends BaseForm {
 		this.organizationTypeLists = organizationTypeLists;
 	}
 
-	public String getReceivedDateForDisplay() {
-		return receivedDateForDisplay;
-	}
-
-	public void setReceivedDateForDisplay(String receivedDateForDisplay) {
-		this.receivedDateForDisplay = receivedDateForDisplay;
-	}
-
-	public String getReceivedTimeForDisplay() {
-		return receivedTimeForDisplay;
-	}
-
-	public void setReceivedTimeForDisplay(String receivedTimeForDisplay) {
-		this.receivedTimeForDisplay = receivedTimeForDisplay;
-	}
-
 	public String getSampleTypeSelect() {
 		return sampleTypeSelect;
 	}
@@ -301,11 +269,4 @@ public class SampleBatchEntryForm extends BaseForm {
 		this.localDBOnly = localDBOnly;
 	}
 
-	public String getWarning() {
-		return warning;
-	}
-
-	public void setWarning(String warning) {
-		this.warning = warning;
-	}
 }

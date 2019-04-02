@@ -33,9 +33,7 @@ public class ElectronicOrdersController extends BaseController {
 	@RequestMapping(value = "/ElectronicOrders", method = RequestMethod.GET)
 	public ModelAndView showElectronicOrders(HttpServletRequest request,
 			@ModelAttribute("form") ElectronicOrderViewForm form, BindingResult result) {
-		String forward = FWD_SUCCESS;
 		formValidator.validate(form, result);
-
 		// if invalid request, default to basic values
 		if (result.hasErrors()) {
 			saveErrors(result);
@@ -71,7 +69,7 @@ public class ElectronicOrdersController extends BaseController {
 		tx.commit();
 		form.setEOrders(eOrders);
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	@Override

@@ -6,7 +6,7 @@ public class PatientEditByProjectForm extends PatientEntryByProjectForm {
 
 	private PatientSearch patientSearch;
 
-	private String warning;
+	private Boolean warning;
 
 	public PatientEditByProjectForm() {
 		setFormName("PatientEditByProjectForm");
@@ -20,11 +20,11 @@ public class PatientEditByProjectForm extends PatientEntryByProjectForm {
 		this.patientSearch = patientSearch;
 	}
 
-	public String getWarning() {
+	public Boolean getWarning() {
 		return warning;
 	}
 
-	public void setWarning(String warning) {
+	public void setWarning(Boolean warning) {
 		this.warning = warning;
 	}
 }

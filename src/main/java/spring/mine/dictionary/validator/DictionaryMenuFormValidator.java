@@ -23,8 +23,7 @@ public class DictionaryMenuFormValidator implements Validator {
 			ValidationHelper.validateIdField(id, "selectedIDs", errors, true);
 		}
 
-		// TODO create tighter character set if possible
-		ValidationHelper.validateFieldAndCharset(form.getSearchString(), "searchString", errors, false, 255, "\\s\\S");
+		// searchString does not require validation, not preserved
 
 	}
 

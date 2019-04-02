@@ -32,8 +32,11 @@ import us.mn.state.health.lims.common.util.SystemConfiguration;
 
 public class CustomDateValidator extends DateValidator {
 
+	private static final long serialVersionUID = 8623867024483764609L;
+
 	public static final String PAST = "past";
 	public static final String FUTURE = "future";
+	public static final String TODAY = "today";
 
 	private static class SingletonHelper {
 		private static final CustomDateValidator INSTANCE = new CustomDateValidator();
@@ -66,7 +69,6 @@ public class CustomDateValidator extends DateValidator {
 		if (value == null || datePattern == null || datePattern.length() <= 0) {
 			return false;
 		}
-		// System.out.println("value & datePattern " + value + " " + datePattern);
 		SimpleDateFormat formatter = new SimpleDateFormat(datePattern);
 		formatter.setLenient(false);
 		try {
@@ -97,7 +99,6 @@ public class CustomDateValidator extends DateValidator {
 		if (value == null) {
 			return false;
 		}
-		// System.out.println("value & locale " + value + " " + locale);
 
 		DateFormat formatter = null;
 		if (locale != null) {
@@ -149,6 +150,10 @@ public class CustomDateValidator extends DateValidator {
 			if (relative.equalsIgnoreCase(PAST) && dateDiff > 0) {
 				result = IActionConstants.INVALID_TO_LARGE;
 			} else if (relative.equalsIgnoreCase(FUTURE) && dateDiff < 0) {
+				result = IActionConstants.INVALID_TO_SMALL;
+			} else if (relative.equalsIgnoreCase(TODAY) && dateDiff > 0) {
+				result = IActionConstants.INVALID_TO_SMALL;
+			} else if (relative.equalsIgnoreCase(TODAY) && dateDiff < 0) {
 				result = IActionConstants.INVALID_TO_SMALL;
 			}
 		}

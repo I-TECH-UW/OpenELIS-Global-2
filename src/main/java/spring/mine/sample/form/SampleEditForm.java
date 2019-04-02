@@ -58,7 +58,7 @@ public class SampleEditForm extends BaseForm {
 
 	private Boolean ableToCancelResults = false;
 
-	private String warning = "";
+	private Boolean warning;
 
 	private String idSeparator = SystemConfiguration.getInstance().getDefaultIdSeparator();
 
@@ -250,11 +250,11 @@ public class SampleEditForm extends BaseForm {
 		this.ableToCancelResults = ableToCancelResults;
 	}
 
-	public String getWarning() {
+	public Boolean getWarning() {
 		return warning;
 	}
 
-	public void setWarning(String warning) {
+	public void setWarning(Boolean warning) {
 		this.warning = warning;
 	}
 

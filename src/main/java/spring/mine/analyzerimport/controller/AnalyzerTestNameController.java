@@ -57,12 +57,10 @@ public class AnalyzerTestNameController extends BaseController {
 	public ModelAndView showAnalyzerTestName(HttpServletRequest request, @ModelAttribute("form") BaseForm form,
 			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
 		if (form.getClass() != AnalyzerTestNameForm.class) {
 			form = new AnalyzerTestNameForm();
 			request.getSession().setAttribute("form", form);
 		}
-		form.setFormAction("");
 		form.setCancelAction("CancelAnalyzerTestName.do");
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
@@ -90,7 +88,7 @@ public class AnalyzerTestNameController extends BaseController {
 			PropertyUtils.setProperty(form, "newMapping", false);
 		}
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	private List<Analyzer> getAllAnalyzers() {

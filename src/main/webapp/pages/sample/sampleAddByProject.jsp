@@ -303,7 +303,7 @@ function /*void*/ setSaveButton() {
 <form:hidden path="project" id="project"/>
 <form:hidden path="patientLastUpdated" id="patientLastUpdated" />
 <form:hidden path="personLastUpdated" id="personLastUpdated"/>
-<form:hidden path="patientProcessingStatus" id="processingStatus" value="add" />
+<form:hidden path="patientProcessingStatus" id="processingStatus"/>
 <form:hidden path="patientPK" id="patientPK" />
 <form:hidden path="samplePK" id="samplePK" />
 <form:hidden path="observations.projectFormName" id="projectFormName"/>
@@ -337,7 +337,7 @@ function /*void*/ setSaveButton() {
             				 id="iarv.centerName"
                              onchange="iarv.checkCenterName(true)">
                              <option value="">&nbsp;</option>
-            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS_BY_NAME']}" itemLabel="organizationName" /> 
+            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS_BY_NAME']}" itemLabel="organizationName" itemValue="id" /> 
                 </form:select>
             </td>
         </tr>
@@ -351,7 +351,7 @@ function /*void*/ setSaveButton() {
             				 id="iarv.centerCode"
                              onchange="iarv.checkCenterCode(true)">
                              <form:option value="">&nbsp;</form:option>
-            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS']}" itemLabel="doubleName" />
+            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS']}" itemLabel="doubleName"  itemValue="id"/>
                 </form:select>
             </td>
         </tr>
@@ -682,7 +682,7 @@ function /*void*/ setSaveButton() {
                              id="farv.centerName"
                              onchange="farv.checkCenterName(true)">
                     		 <form:option value="">&nbsp;</form:option>
-            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS_BY_NAME']}" itemLabel="organizationName" /> 
+            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS_BY_NAME']}" itemLabel="organizationName"  itemValue="id"/> 
                 </form:select>
             </td>
         </tr>
@@ -697,7 +697,7 @@ function /*void*/ setSaveButton() {
                              id="farv.centerCode"
                              onchange="farv.checkCenterCode(true)">
                     		 <form:option value="">&nbsp;</form:option>
-            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS']}" itemLabel="doubleName" />
+            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS']}" itemLabel="doubleName"  itemValue="id"/>
                 </form:select>
             </td>
         </tr>
@@ -1302,7 +1302,7 @@ function /*void*/ setSaveButton() {
                  id="eid.centerName"
                  onchange="eid.checkCenterName(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items="${form.organizationTypeLists['EID_ORGS_BY_NAME']}" itemLabel="organizationName" /> 
+            	 <form:options items="${form.organizationTypeLists['EID_ORGS_BY_NAME']}" itemLabel="organizationName" itemValue="id"/> 
 	    	</form:select>
         </td>
     </tr>
@@ -1318,7 +1318,7 @@ function /*void*/ setSaveButton() {
                  id="eid.centerCode"
                  onchange="eid.checkCenterCode(true)">
                  <form:option value="">&nbsp;</form:option>
-             	 <form:options items="${form.organizationTypeLists['EID_ORGS']}" itemLabel="doubleName" /> 
+             	 <form:options items="${form.organizationTypeLists['EID_ORGS']}" itemLabel="doubleName" itemValue="id" /> 
 	    	</form:select>
         </td>
     </tr>
@@ -1819,7 +1819,7 @@ function /*void*/ setSaveButton() {
                 <form:select  path="ProjectData.INDsiteName" cssClass="text" id="ind.centerCode"
                         onchange="ind.checkCenterCode(true)" >
                     <form:option value="">&nbsp;</form:option>
-            	    <form:options items= "${form.organizationTypeLists['EID_ORGS']}" itemLabel="doubleName" />
+            	    <form:options items= "${form.organizationTypeLists['EID_ORGS']}" itemLabel="doubleName" itemValue="id" />
                 </form:select>
                 <div id="ind.centerCodeMessage" class="blank"/>
             </td>
@@ -2643,7 +2643,7 @@ function /*void*/ setSaveButton() {
             				 id="vl.centerName"
                              onchange="vl.checkCenterName(true)">
                              <form:option value="">&nbsp;</form:option>
-            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS_BY_NAME']}" itemLabel="organizationName" /> 
+            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS_BY_NAME']}" itemLabel="organizationName" itemValue="id" /> 
                 </form:select>
             </td>
         </tr>
@@ -2657,7 +2657,7 @@ function /*void*/ setSaveButton() {
             				 id="vl.centerCode"
                              onchange="vl.checkCenterCode(true)">
                              <form:option value="">&nbsp;</form:option>
-            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS']}" itemLabel="doubleName" />
+            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS']}" itemLabel="doubleName" itemValue="id" />
                 </form:select>
             </td>
         </tr>

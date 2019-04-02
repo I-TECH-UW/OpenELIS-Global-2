@@ -53,7 +53,6 @@ public class SampleBatchEntryController extends BaseController {
 		SampleOrderService sampleOrderService = new SampleOrderService();
 		SampleOrderItem soi = sampleOrderService.getSampleOrderItem();
 		// preserve fields that are already in form in refreshed object
-		// (SPRING doesn't preserve objects between controllers)
 		soi.setReceivedTime(form.getSampleOrderItems().getReceivedTime());
 		soi.setReceivedDateForDisplay(form.getSampleOrderItems().getReceivedDateForDisplay());
 		soi.setNewRequesterName(form.getSampleOrderItems().getNewRequesterName());
@@ -104,97 +103,6 @@ public class SampleBatchEntryController extends BaseController {
 
 		return findForward(form.getMethod(), form);
 	}
-
-	/*
-	 * private BaseErrors validate(HttpServletRequest request) { ActionMessages
-	 * errors = new ActionMessages(); DateValidationProvider dateValidationProvider
-	 * = new DateValidationProvider(); String curDateValid = dateValidationProvider
-	 * .validateDate(dateValidationProvider.getDate(request.getParameter(
-	 * "currentDate")), "past"); String recDateValid =
-	 * dateValidationProvider.validateDate(
-	 * dateValidationProvider.getDate(request.getParameter(
-	 * "sampleOrderItems.receivedDateForDisplay")), "past");
-	 *
-	 * // validate date and times if
-	 * (!(curDateValid.equals(IActionConstants.VALID))) { ActionError error = new
-	 * ActionError("batchentry.error.curdate.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); } if
-	 * (!GenericValidator.is24HourTime(request.getParameter("currentTime"))) {
-	 * ActionError error = new ActionError("batchentry.error.curtime.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); } if
-	 * (!(recDateValid.equals(IActionConstants.VALID))) { ActionError error = new
-	 * ActionError("batchentry.error.recdate.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); } if
-	 * (!GenericValidator.is24HourTime(request.getParameter(
-	 * "sampleOrderItems.receivedTime"))) { ActionError error = new
-	 * ActionError("batchentry.error.rectime.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); }
-	 *
-	 * // validate check boxes if
-	 * (!GenericValidator.isBool(request.getParameter("facilityIDCheck")) &&
-	 * !StringUtil.isNullorNill(request.getParameter("facilityIDCheck"))) {
-	 * ActionError error = new
-	 * ActionError("batchentry.error.facilitycheck.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); } if
-	 * (!GenericValidator.isBool(request.getParameter("patientInfoCheck")) &&
-	 * !StringUtil.isNullorNill(request.getParameter("patientInfoCheck"))) {
-	 * ActionError error = new ActionError("batchentry.error.patientcheck.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); }
-	 *
-	 * // validate ID if
-	 * (!GenericValidator.isInt(request.getParameter("facilityID")) &&
-	 * !StringUtil.isNullorNill(request.getParameter("facilityID"))) { ActionError
-	 * error = new ActionError("batchentry.error.facilityid.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); }
-	 *
-	 * // TO DO: (Caleb) validate sampleOrderItems.newRequesterName
-	 *
-	 * // validate sampleXML validateSampleXML(errors,
-	 * request.getParameter("sampleXML"));
-	 *
-	 * return errors; }
-	 */
-
-	/*
-	 * @SuppressWarnings("rawtypes") private void validateSampleXML(ActionMessages
-	 * errors, String sampleXML) { DateValidationProvider dateValidationProvider =
-	 * new DateValidationProvider(); try { Document sampleDom =
-	 * DocumentHelper.parseText(sampleXML); for (Iterator i =
-	 * sampleDom.getRootElement().elementIterator("sample"); i.hasNext();) { Element
-	 * sampleItem = (Element) i.next();
-	 *
-	 * // validate test ids String[] testIDs =
-	 * sampleItem.attributeValue("tests").split(","); for (int j = 0; j <
-	 * testIDs.length; ++j) { if (!GenericValidator.isInt(testIDs[j]) &&
-	 * !GenericValidator.isBlankOrNull(testIDs[j])) { ActionError error = new
-	 * ActionError("batchentry.error.sampleXML.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); return; } } // validate
-	 * panel ids String[] panelIDs = sampleItem.attributeValue("panels").split(",");
-	 * for (int j = 0; j < panelIDs.length; ++j) { if
-	 * (!GenericValidator.isInt(panelIDs[j]) &&
-	 * !GenericValidator.isBlankOrNull(panelIDs[j])) { ActionError error = new
-	 * ActionError("batchentry.error.sampleXML.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); return; } } // validate
-	 * date String collectionDate = sampleItem.attributeValue("date").trim(); if
-	 * (!GenericValidator.isBlankOrNull(collectionDate)) { String colDateValid =
-	 * dateValidationProvider
-	 * .validateDate(dateValidationProvider.getDate(collectionDate), "past"); if
-	 * (!(colDateValid.equals(IActionConstants.VALID))) { ActionError error = new
-	 * ActionError("batchentry.error.sampleXML.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); return; } } // validate
-	 * time String collectionTime = sampleItem.attributeValue("time").trim(); if
-	 * (!GenericValidator.isBlankOrNull(collectionTime) &&
-	 * !GenericValidator.is24HourTime(collectionTime)) { ActionError error = new
-	 * ActionError("batchentry.error.sampleXML.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); return; } // validate
-	 * sample id String sampleId = sampleItem.attributeValue("sampleID"); if
-	 * (!GenericValidator.isInt(sampleId)) { ActionError error = new
-	 * ActionError("batchentry.error.sampleXML.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); return; } } } catch
-	 * (DocumentException e) { ActionError error = new
-	 * ActionError("batchentry.error.sampleXML.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); } }
-	 */
 
 	@Override
 	protected String findLocalForward(String forward) {

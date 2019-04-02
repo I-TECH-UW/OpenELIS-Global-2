@@ -14,7 +14,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.barcode.form.PrintBarcodeForm;
-import spring.mine.barcode.validator.PrintBarcodeFormValidator;
 import spring.mine.common.controller.BaseController;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
@@ -73,26 +71,14 @@ public class PrintBarcodeController extends BaseController {
 		ABLE_TO_CANCEL_ROLE_NAMES.add("Biologist");
 	}
 
-	@Autowired
-	PrintBarcodeFormValidator formValidator;
-
 	@RequestMapping(value = "/PrintBarcode", method = RequestMethod.GET)
 	public ModelAndView setupPrintBarcode(HttpServletRequest request, @ModelAttribute("form") PrintBarcodeForm form,
 			BindingResult result) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
-		if (form == null) {
-			form = new PrintBarcodeForm();
-		}
 		form.setFormAction("PrintBarcode");
 		form.setFormMethod(RequestMethod.GET);
 		Map<String, Object> displayObjects = new HashMap<>();
 		addPatientSearch(displayObjects);
-
-		formValidator.validate(form, result);
-		if (result.hasErrors()) {
-			saveErrors(result);
-			return findForward(FWD_FAIL, form);
-		}
 
 		if (GenericValidator.isBlankOrNull(request.getParameter("accessionNumber"))) {
 			return findForward(FWD_SUCCESS, displayObjects, form);

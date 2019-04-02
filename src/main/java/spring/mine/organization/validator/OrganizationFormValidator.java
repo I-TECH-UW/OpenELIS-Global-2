@@ -1,5 +1,6 @@
 package spring.mine.organization.validator;
 
+import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -40,7 +41,11 @@ public class OrganizationFormValidator implements Validator {
 
 		ValidationHelper.validateYNField(form.getIsActive(), "isActive", errors);
 
-		// TO DO validate internetaddress here
+		// TO DO confirm this should be url (http, https, or ftp)
+		UrlValidator urlValidator = new UrlValidator();
+		if (!urlValidator.isValid(form.getInternetAddress())) {
+			errors.reject("errors.field.url.invalid", "Field value for internet address is an invalid url");
+		}
 
 		validateOptionalFields(form, errors);
 

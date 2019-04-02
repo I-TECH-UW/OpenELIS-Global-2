@@ -205,7 +205,7 @@ public class SampleEditController extends BaseController {
 		patientSearch.setLoadFromServerWithPatient(true);
 		patientSearch.setSelectedPatientActionButtonText(MessageUtil.getMessage("label.patient.search.select"));
 		PropertyUtils.setProperty(form, "patientSearch", patientSearch);
-		PropertyUtils.setProperty(form, "warning", "show");
+		PropertyUtils.setProperty(form, "warning", true);
 
 		addFlashMsgsToRequest(request);
 		return findForward(FWD_SUCCESS, form);

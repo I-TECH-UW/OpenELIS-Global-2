@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import spring.mine.common.validator.ValidationHelper;
 import spring.mine.systemuser.form.UnifiedSystemUserMenuForm;
 
 @Component
@@ -17,6 +18,21 @@ public class UnifiedSystemUserMenuFormValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		UnifiedSystemUserMenuForm form = (UnifiedSystemUserMenuForm) target;
+
+		// menu list does not need to be validated as it is used solely for display
+
+		for (String combinedId : form.getSelectedIDs()) {
+			String[] ids = combinedId.split("-");
+			for (String id : ids) {
+				ValidationHelper.validateIdField(id, "selectedIDs", errors, true);
+				if (errors.hasErrors()) {
+					break;
+				}
+			}
+			if (errors.hasErrors()) {
+				break;
+			}
+		}
 	}
 
 }

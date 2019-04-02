@@ -154,7 +154,8 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 		updateData.setCollectionDateFromRecieveDateIfNeeded(receivedDateForDisplay);
 		updateData.initializeRequester(sampleOrder);
 
-		IPatientUpdate patientUpdate = new PatientManagementUpdate();
+		PatientManagementUpdate patientUpdate = new PatientManagementUpdate();
+		patientUpdate.setSysUserIdFromRequest(request);
 		testAndInitializePatientForSaving(request, patientInfo, patientUpdate, updateData);
 
 		updateData.setAccessionNumber(sampleOrder.getLabNo());
@@ -203,7 +204,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 			} else {
 				lre.printStackTrace();
 				// error = new ActionError("errors.UpdateException", null, null);
-				result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
+				result.reject("errors.UpdateException", "errors.UpdateException");
 			}
 			System.out.println(result);
 

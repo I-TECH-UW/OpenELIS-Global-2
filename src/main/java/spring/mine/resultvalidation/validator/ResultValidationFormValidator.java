@@ -4,7 +4,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import spring.mine.common.validator.ValidationHelper;
 import spring.mine.resultvalidation.form.ResultValidationForm;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
 
 @Component
 public class ResultValidationFormValidator implements Validator {
@@ -17,6 +19,17 @@ public class ResultValidationFormValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		ResultValidationForm form = (ResultValidationForm) target;
+
+		// currentDate
+		ValidationHelper.validateDateField(form.getCurrentDate(), "currentDate", errors, CustomDateValidator.PAST);
+
+		// TODO resultList
+
+		// testSection seems to be mostly for navigation purposes
+
+		// testName seems to be mostly for navigation purposes
+
+		ValidationHelper.validateIdField(form.getTestSectionId(), "testSectionId", errors, true);
 	}
 
 }

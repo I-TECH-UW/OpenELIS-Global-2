@@ -1,6 +1,5 @@
 package spring.mine.resultreporting.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
@@ -8,7 +7,6 @@ import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.dataexchange.resultreporting.beans.ReportingConfiguration;
 
 public class ResultReportingConfigurationForm extends BaseForm {
-	private Timestamp lastupdated;
 
 	private List<ReportingConfiguration> reports;
 
@@ -18,14 +16,6 @@ public class ResultReportingConfigurationForm extends BaseForm {
 
 	public ResultReportingConfigurationForm() {
 		setFormName("ResultReportingConfigurationForm");
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public List<ReportingConfiguration> getReports() {

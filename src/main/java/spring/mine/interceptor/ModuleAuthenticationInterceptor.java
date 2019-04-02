@@ -15,7 +15,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import spring.mine.common.validator.BaseErrors;
-import spring.mine.security.SecurityConfig;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
@@ -30,6 +29,9 @@ import us.mn.state.health.lims.systemmodule.valueholder.SystemModuleUrl;
 public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
 	private static final boolean USE_PARAMETERS = true;
+
+	// whether to reject access to protected pages if no modules are assigned
+	public static final boolean REQUIRE_MODULE = true;
 
 	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
@@ -82,7 +84,7 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
 		if (useParameters) {
 			sysModsByUrl = filterParamMatches(request, sysModsByUrl);
 		}
-		if (sysModsByUrl.isEmpty() && SecurityConfig.REQUIRE_MODULE) {
+		if (sysModsByUrl.isEmpty() && REQUIRE_MODULE) {
 			LogEvent.logError("ModuleAuthenticationInterceptor", "hasPermissionForUrl()",
 					"This page has no modules assigned to it");
 			return false;

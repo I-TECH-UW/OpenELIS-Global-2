@@ -32,14 +32,7 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 	@RequestMapping(value = "/SampleBatchEntryByProject", method = RequestMethod.POST)
 	public ModelAndView showSampleBatchEntryByProject(HttpServletRequest request,
 			@ModelAttribute("form") SampleBatchEntryForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new SampleBatchEntryForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
-		
-
+		String forward;
 		String study = request.getParameter("study");
 		try {
 			if ("viralLoad".equals(study)) {
@@ -110,9 +103,6 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 			throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		PropertyUtils.setProperty(form, "currentDate", request.getParameter("currentDate"));
 		PropertyUtils.setProperty(form, "currentTime", request.getParameter("currentTime"));
-		PropertyUtils.setProperty(form, "receivedDateForDisplay",
-				request.getParameter("sampleOrderItem.receivedDateForDisplay"));
-		PropertyUtils.setProperty(form, "receivedTimeForDisplay", request.getParameter("sampleOrderItem.receivedTime"));
 		addOrganizationLists(form);
 	}
 
@@ -162,6 +152,7 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 		}
 	}
 
+	@Override
 	protected String findLocalForward(String forward) {
 		if (ON_DEMAND.equals(forward)) {
 			return "sampleStudyBatchEntryOnDemandDefinition";

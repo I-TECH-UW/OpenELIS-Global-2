@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
@@ -18,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.result.form.AccessionResultsForm;
-import spring.mine.result.validator.AccessionResultsFormValidator;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -43,9 +41,6 @@ import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
 
 @Controller
 public class AccessionResultsController extends BaseController {
-
-	@Autowired
-	AccessionResultsFormValidator formValidator;
 
 	private String accessionNumber;
 	private Sample sample;
@@ -187,7 +182,8 @@ public class AccessionResultsController extends BaseController {
 		if (sample == null) {
 			// ActionError error = new ActionError("sample.edit.sample.notFound",
 			// accessionNumber, null, null);
-			errors.reject("sample.edit.sample.notFound");
+			errors.reject("sample.edit.sample.notFound", new String[] { accessionNumber },
+					"sample.edit.sample.notFound");
 		}
 
 		return errors;

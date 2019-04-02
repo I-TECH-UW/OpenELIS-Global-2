@@ -150,7 +150,7 @@ function mySaveAction() {
 							<spring:message code="login.password"/> <span class="requiredlabel">*</span>
 						</td>
 						<td>
-							<form:password path="userPassword1" 
+							<form:password path="userPassword" 
 										   id="password1" 
 										   cssClass='required'
 										   showPassword="true"
@@ -162,7 +162,7 @@ function mySaveAction() {
 							<spring:message code="login.repeat.password" /> <span class="requiredlabel">*</span>
 						</td>
 						<td>
-							<form:password path="userPassword2"  
+							<form:password path="confirmPassword"  
 							               id="password2" 
 							               cssClass='required'
 							               showPassword="true"

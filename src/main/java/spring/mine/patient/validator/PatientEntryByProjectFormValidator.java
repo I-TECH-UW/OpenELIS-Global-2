@@ -31,8 +31,8 @@ public class PatientEntryByProjectFormValidator implements Validator {
 
 		ValidationHelper.validateField(form.getString("personLastUpdated"), "personLastUpdated", errors, false, 255);
 
-		ValidationHelper.validateField(form.getString("patientProcessingStatus"), "patientProcessingStatus", errors,
-				false, 255);
+		ValidationHelper.validateOptionFieldIgnoreCase(form.getString("patientProcessingStatus"),
+				"patientProcessingStatus", errors, new String[] { "Add", "update", "noAction" });
 
 		if ("InitialARV_Id".equals(form.getObservations().getProjectFormName())) {
 			validateInitialARVForm(form, errors);
@@ -70,19 +70,25 @@ public class PatientEntryByProjectFormValidator implements Validator {
 		// validate format
 
 		ValidationHelper.validateDateField(form.getString("interviewDate"), "interviewDate", errors,
-				CustomDateValidator.FUTURE);// TODO confirm if future
+				CustomDateValidator.PAST);
 
 		ValidationHelper.validateField(form.getString("interviewTime"), "interviewTime", errors, false, 5);
 
-		ValidationHelper.validateField(form.getString("subjectNumber"), "subjectNumber", errors, true, 7);
+		ValidationHelper.validateField(form.getString("subjectNumber"), "subjectNumber", errors, true, 7,
+				ValidationHelper.PATIENT_ID_REGEX);
 
-		ValidationHelper.validateField(form.getString("siteSubjectNumber"), "siteSubjectNumber", errors, true, 255);
+		ValidationHelper.validateField(form.getString("siteSubjectNumber"), "siteSubjectNumber", errors, true, 255,
+				ValidationHelper.PATIENT_ID_REGEX);
 
-		ValidationHelper.validateField(form.getString("labNo"), "labNo", errors, true, 255);
+		if (!ValidationResults.SUCCESS
+				.equals((new ProgramAccessionValidator()).validFormat(form.getString("labNo"), true))) {
+			errors.rejectValue("labNo", "error.field.accession.invalid", new Object[] { form.getString("labNo") },
+					"Field invalid accession number used: " + form.getString("labNo"));
+		}
 
 		ValidationHelper.validateField(form.getString("birthDateForDisplay"), "birthDateForDisplay", errors, true, 10);
 
-		ValidationHelper.validateField(form.getString("gender"), "gender", errors, true, 255);
+		ValidationHelper.validateGenderField(form.getString("gender"), "gender", errors);
 
 	}
 
@@ -92,13 +98,13 @@ public class PatientEntryByProjectFormValidator implements Validator {
 				CustomDateValidator.PAST);
 
 		ValidationHelper.validateDateField(form.getString("interviewDate"), "interviewDate", errors,
-				CustomDateValidator.FUTURE);// TODO confirm if future
+				CustomDateValidator.PAST);
 
-		// TODO validate Center code
+		ValidationHelper.validateField(form.getString("lastName"), "lastName", errors, false, 40,
+				ValidationHelper.NAME_REGEX);
 
-		ValidationHelper.validateField(form.getString("lastName"), "lastName", errors, false, 40);
-
-		ValidationHelper.validateField(form.getString("firstName"), "firstName", errors, false, 40);
+		ValidationHelper.validateField(form.getString("firstName"), "firstName", errors, false, 40,
+				ValidationHelper.NAME_REGEX);
 
 		ValidationHelper.validateDateField(form.getString("birthDateForDisplay"), "birthDateForDisplay", errors,
 				CustomDateValidator.PAST);
@@ -116,11 +122,13 @@ public class PatientEntryByProjectFormValidator implements Validator {
 				CustomDateValidator.PAST);
 
 		ValidationHelper.validateDateField(form.getString("interviewDate"), "interviewDate", errors,
-				CustomDateValidator.FUTURE);// TODO confirm if future
+				CustomDateValidator.PAST);
 
-		ValidationHelper.validateField(form.getString("subjectNumber"), "subjectNumber", errors, true, 255);
+		ValidationHelper.validateField(form.getString("subjectNumber"), "subjectNumber", errors, true, 255,
+				ValidationHelper.PATIENT_ID_REGEX);
 
-		ValidationHelper.validateField(form.getString("siteSubjectNumber"), "siteSubjectNumber", errors, true, 255);
+		ValidationHelper.validateField(form.getString("siteSubjectNumber"), "siteSubjectNumber", errors, true, 255,
+				ValidationHelper.PATIENT_ID_REGEX);
 
 		if (!ValidationResults.SUCCESS
 				.equals((new ProgramAccessionValidator()).validFormat(form.getString("labNo"), true))) {
@@ -130,20 +138,20 @@ public class PatientEntryByProjectFormValidator implements Validator {
 
 		ValidationHelper.validateField(form.getString("centerName"), "centerName", errors, true, 255);
 
-		// TODO validate Center code
+		ValidationHelper.validateField(form.getString("lastName"), "lastName", errors, false, 40,
+				ValidationHelper.NAME_REGEX);
 
-		ValidationHelper.validateField(form.getString("lastName"), "lastName", errors, false, 40);
-
-		ValidationHelper.validateField(form.getString("firstName"), "firstName", errors, false, 40);
+		ValidationHelper.validateField(form.getString("firstName"), "firstName", errors, false, 40,
+				ValidationHelper.NAME_REGEX);
 
 		ValidationHelper.validateGenderField(form.getString("gender"), "gender", errors);
 
 		ValidationHelper.validateDateField(form.getString("birthDateForDisplay"), "birthDateForDisplay", errors,
 				CustomDateValidator.PAST);
 
-		// validate ObservationData
+		// TODO validate ObservationData
 
-		// validate ProjectData
+		// TODO validate ProjectData
 	}
 
 	private void validateInitialARVForm(PatientEntryByProjectForm form, Errors errors) {
@@ -152,11 +160,13 @@ public class PatientEntryByProjectFormValidator implements Validator {
 				CustomDateValidator.PAST);
 
 		ValidationHelper.validateDateField(form.getString("interviewDate"), "interviewDate", errors,
-				CustomDateValidator.FUTURE);// TODO confirm if future
+				CustomDateValidator.PAST);
 
-		ValidationHelper.validateField(form.getString("subjectNumber"), "subjectNumber", errors, true, 255);
+		ValidationHelper.validateField(form.getString("subjectNumber"), "subjectNumber", errors, true, 255,
+				ValidationHelper.PATIENT_ID_REGEX);
 
-		ValidationHelper.validateField(form.getString("siteSubjectNumber"), "siteSubjectNumber", errors, true, 255);
+		ValidationHelper.validateField(form.getString("siteSubjectNumber"), "siteSubjectNumber", errors, true, 255,
+				ValidationHelper.PATIENT_ID_REGEX);
 
 		if (!ValidationResults.SUCCESS
 				.equals((new ProgramAccessionValidator()).validFormat(form.getString("labNo"), true))) {
@@ -166,22 +176,20 @@ public class PatientEntryByProjectFormValidator implements Validator {
 
 		ValidationHelper.validateField(form.getString("centerName"), "centerName", errors, true, 255);
 
-		// TODO validate Center code
+		ValidationHelper.validateField(form.getString("lastName"), "lastName", errors, false, 40,
+				ValidationHelper.NAME_REGEX);
 
-		ValidationHelper.validateField(form.getString("lastName"), "lastName", errors, false, 40);
-
-		ValidationHelper.validateField(form.getString("firstName"), "firstName", errors, false, 40);
+		ValidationHelper.validateField(form.getString("firstName"), "firstName", errors, false, 40,
+				ValidationHelper.NAME_REGEX);
 
 		ValidationHelper.validateDateField(form.getString("birthDateForDisplay"), "birthDateForDisplay", errors,
 				CustomDateValidator.PAST);
 
 		ValidationHelper.validateGenderField(form.getString("gender"), "gender", errors);
 
-		// TODO
+		// TODO validate ProjectData
 
-		// validate ProjectData
-
-		// validate ObservationData
+		// TODO validate ObservationData
 	}
 
 }

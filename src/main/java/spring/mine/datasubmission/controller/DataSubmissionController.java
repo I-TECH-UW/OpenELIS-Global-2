@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.datasubmission.form.DataSubmissionForm;
+import spring.mine.datasubmission.validator.DataSubmissionFormValidator;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
@@ -36,6 +38,10 @@ import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 @Controller
 public class DataSubmissionController extends BaseController {
+
+	@Autowired
+	DataSubmissionFormValidator formValidator;
+
 	@RequestMapping(value = "/DataSubmission", method = RequestMethod.GET)
 	public ModelAndView showDataSubmission(HttpServletRequest request) {
 		DataSubmissionForm form = new DataSubmissionForm();
@@ -74,16 +80,22 @@ public class DataSubmissionController extends BaseController {
 	public ModelAndView showDataSubmissionSave(HttpServletRequest request,
 			@ModelAttribute("form") DataSubmissionForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) throws IOException, ParseException {
-		int month = GenericValidator.isBlankOrNull(request.getParameter("month")) ? DateUtil.getCurrentMonth()
-				: Integer.parseInt(request.getParameter("month"));
-		int year = GenericValidator.isBlankOrNull(request.getParameter("year")) ? DateUtil.getCurrentYear()
-				: Integer.parseInt(request.getParameter("year"));
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
+
+		int month = form.getMonth();
+		int year = form.getYear();
 		@SuppressWarnings("unchecked")
 		List<DataIndicator> indicators = (List<DataIndicator>) form.get("indicators");
 		boolean submit = "true".equalsIgnoreCase(request.getParameter("submit"));
 		SiteInformation dataSubUrl = (SiteInformation) form.get("dataSubUrl");
-		dataSubUrl.setSysUserId(getSysUserId(request));
 		SiteInformationDAO siteInfoDAO = new SiteInformationDAOImpl();
+		dataSubUrl = (SiteInformation) siteInfoDAO.getSiteInformationByDomainName("Data Sub URL");
+		dataSubUrl.setValue(form.getDataSubUrl().getValue());
+		dataSubUrl.setSysUserId(getSysUserId(request));
 		siteInfoDAO.updateData(dataSubUrl);
 		DataIndicatorDAO indicatorDAO = new DataIndicatorDAOImpl();
 		for (DataIndicator indicator : indicators) {

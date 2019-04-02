@@ -32,9 +32,9 @@ import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
 
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler, IActionConstants {
 
-	private static final int DEFAULT_SESSION_TIMEOUT_IN_MINUTES = 20;
-
 	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+
+	public static final int DEFAULT_SESSION_TIMEOUT_IN_MINUTES = 20;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,

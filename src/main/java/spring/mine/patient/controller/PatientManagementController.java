@@ -104,13 +104,13 @@ public class PatientManagementController extends PatientManagementBaseController
 			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
+		form.setPatientSearch(new PatientSearch());
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
-			findForward(FWD_FAIL_INSERT);
+			return findForward(FWD_FAIL_INSERT, form);
 		}
 
-		form.setPatientSearch(new PatientSearch());
 		PatientManagementInfo patientInfo = form.getPatientProperties();
 
 		Patient patient = new Patient();

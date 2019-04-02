@@ -1,35 +1,25 @@
 package spring.mine.datasubmission.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
+import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.datasubmission.valueholder.DataIndicator;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 public class DataSubmissionForm extends BaseForm {
-	private Timestamp lastupdated;
-
 	private SiteInformation dataSubUrl;
 
 	private List<DataIndicator> indicators;
 
-	private Integer month;
+	private int month = DateUtil.getCurrentMonth();
 
-	private Integer year;
+	private int year = DateUtil.getCurrentYear();
 
 	private String siteId;
 
 	public DataSubmissionForm() {
 		setFormName("DataSubmissionForm");
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public SiteInformation getDataSubUrl() {
@@ -48,19 +38,19 @@ public class DataSubmissionForm extends BaseForm {
 		this.indicators = indicators;
 	}
 
-	public Integer getMonth() {
+	public int getMonth() {
 		return month;
 	}
 
-	public void setMonth(Integer month) {
+	public void setMonth(int month) {
 		this.month = month;
 	}
 
-	public Integer getYear() {
+	public int getYear() {
 		return year;
 	}
 
-	public void setYear(Integer year) {
+	public void setYear(int year) {
 		this.year = year;
 	}
 

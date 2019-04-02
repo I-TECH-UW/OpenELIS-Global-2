@@ -16,8 +16,6 @@ public class SamplePatientEntryForm extends BaseForm {
 
 	private String currentDate = "";
 
-	private String project = "";
-
 	private List<Project> projects;
 
 	private String patientProcessingStatus = "Add";
@@ -38,7 +36,7 @@ public class SamplePatientEntryForm extends BaseForm {
 
 	private List<IdValuePair> testSectionList;
 
-	private String warning;
+	private Boolean warning;
 
 	public SamplePatientEntryForm() {
 		setFormName("samplePatientEntryForm");
@@ -58,14 +56,6 @@ public class SamplePatientEntryForm extends BaseForm {
 
 	public void setCurrentDate(String currentDate) {
 		this.currentDate = currentDate;
-	}
-
-	public String getProject() {
-		return project;
-	}
-
-	public void setProject(String project) {
-		this.project = project;
 	}
 
 	public List<Project> getProjects() {
@@ -148,11 +138,11 @@ public class SamplePatientEntryForm extends BaseForm {
 		this.testSectionList = testSectionList;
 	}
 
-	public String getWarning() {
+	public Boolean getWarning() {
 		return warning;
 	}
 
-	public void setWarning(String warning) {
+	public void setWarning(Boolean warning) {
 		this.warning = warning;
 	}
 }
