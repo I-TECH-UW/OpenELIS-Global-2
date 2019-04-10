@@ -6,6 +6,7 @@ import org.springframework.validation.Errors;
 
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 
 public class ValidationHelper {
@@ -65,14 +66,18 @@ public class ValidationHelper {
 
 	public static void validateFieldCharSet(String value, String name, String displayName, Errors errors,
 			String charSet) {
-		if (!Pattern.matches("^[" + charSet + "]*$", value)) {
-			errors.rejectValue(name, "error.field.charset.invalid", new Object[] { displayName },
-					DEFAULT_PREFIX + displayName + " has an invalid character");
+		if (value != null) {
+			if (!Pattern.matches("^[" + charSet + "]*$", value)) {
+				String charsetForDisplay = charSet.replaceAll("\\\\(?!\\\\)", "");
+				errors.rejectValue(name, "error.field.charset.invalid", new Object[] { displayName, charsetForDisplay },
+						DEFAULT_PREFIX + displayName + " has an invalid character. Allowed characters are '"
+								+ charsetForDisplay + "'");
+			}
 		}
 	}
 
 	public static void validateDateField(String value, String name, String displayName, Errors errors,
-			String relative) {
+			DateRelation relative) {
 		String result = CustomDateValidator.getInstance().validateDate(CustomDateValidator.getInstance().getDate(value),
 				relative);
 		if (!IActionConstants.VALID.equals(result)) {
@@ -148,8 +153,8 @@ public class ValidationHelper {
 				new String[] { IActionConstants.YES, IActionConstants.NO });
 	}
 
-	public static void validateDateField(String value, String name, String displayName, Errors errors, String relative,
-			boolean required) {
+	public static void validateDateField(String value, String name, String displayName, Errors errors,
+			DateRelation relative, boolean required) {
 		if (required) {
 			validateFieldRequired(value, name, displayName, errors);
 			if (errors.hasErrors()) {
@@ -233,11 +238,12 @@ public class ValidationHelper {
 		validateYNField(value, name, name, errors);
 	}
 
-	public static void validateDateField(String value, String name, Errors errors, String relative) {
+	public static void validateDateField(String value, String name, Errors errors, DateRelation relative) {
 		validateDateField(value, name, name, errors, relative);
 	}
 
-	public static void validateDateField(String value, String name, Errors errors, String relative, boolean required) {
+	public static void validateDateField(String value, String name, Errors errors, DateRelation relative,
+			boolean required) {
 		validateDateField(value, name, name, errors, relative, required);
 	}
 

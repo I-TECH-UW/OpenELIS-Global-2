@@ -1,11 +1,9 @@
 <%@ page language="java"
          contentType="text/html; charset=utf-8"
          import="java.util.List,
-                 spring.generated.forms.TestCatalogForm,
                  us.mn.state.health.lims.test.valueholder.TestSection,
                  us.mn.state.health.lims.test.valueholder.TestCatalog,
                  us.mn.state.health.lims.testconfiguration.beans.ResultLimitBean,
-                 spring.generated.forms.ResultLimitsForm,
                  us.mn.state.health.lims.common.util.IdValuePair,
                  us.mn.state.health.lims.common.action.IActionConstants,
                  spring.mine.internationalization.MessageUtil" %>
@@ -90,9 +88,9 @@
 
 <%
     List<String> testSectionList;
-    testSectionList =  ((TestCatalogForm) request.getAttribute("form")).getTestSectionList();
+    testSectionList =  (List<String>) pageContext.getAttribute("testSectionList");
     List<TestCatalog> testCatalogList;
-    testCatalogList =  ((TestCatalogForm) request.getAttribute("form")).getTestCatalogList();
+    testCatalogList =  (List<TestCatalog>) pageContext.getAttribute("testCatalogList");
 %>
 
 <form id="mainForm">

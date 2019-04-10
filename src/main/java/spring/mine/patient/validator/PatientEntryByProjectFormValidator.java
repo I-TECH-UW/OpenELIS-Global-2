@@ -8,7 +8,7 @@ import spring.mine.common.validator.ValidationHelper;
 import spring.mine.patient.form.PatientEntryByProjectForm;
 import us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator.ValidationResults;
 import us.mn.state.health.lims.common.provider.validation.ProgramAccessionValidator;
-import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 
 @Component
 public class PatientEntryByProjectFormValidator implements Validator {
@@ -63,14 +63,13 @@ public class PatientEntryByProjectFormValidator implements Validator {
 		// validate ObservationData
 
 		ValidationHelper.validateDateField(form.getString("receivedDateForDisplay"), "receivedDateForDisplay", errors,
-				CustomDateValidator.PAST);
+				DateRelation.PAST);
 
 		ValidationHelper.validateField(form.getString("receivedTimeForDisplay"), "receivedTimeForDisplay", errors,
 				false, 5);
 		// validate format
 
-		ValidationHelper.validateDateField(form.getString("interviewDate"), "interviewDate", errors,
-				CustomDateValidator.PAST);
+		ValidationHelper.validateDateField(form.getString("interviewDate"), "interviewDate", errors, DateRelation.PAST);
 
 		ValidationHelper.validateField(form.getString("interviewTime"), "interviewTime", errors, false, 5);
 
@@ -95,10 +94,9 @@ public class PatientEntryByProjectFormValidator implements Validator {
 	private void validateRTNForm(PatientEntryByProjectForm form, Errors errors) {
 
 		ValidationHelper.validateDateField(form.getString("receivedDateForDisplay"), "receivedDateForDisplay", errors,
-				CustomDateValidator.PAST);
+				DateRelation.PAST);
 
-		ValidationHelper.validateDateField(form.getString("interviewDate"), "interviewDate", errors,
-				CustomDateValidator.PAST);
+		ValidationHelper.validateDateField(form.getString("interviewDate"), "interviewDate", errors, DateRelation.PAST);
 
 		ValidationHelper.validateField(form.getString("lastName"), "lastName", errors, false, 40,
 				ValidationHelper.NAME_REGEX);
@@ -107,7 +105,7 @@ public class PatientEntryByProjectFormValidator implements Validator {
 				ValidationHelper.NAME_REGEX);
 
 		ValidationHelper.validateDateField(form.getString("birthDateForDisplay"), "birthDateForDisplay", errors,
-				CustomDateValidator.PAST);
+				DateRelation.PAST);
 
 		if (!ValidationResults.SUCCESS
 				.equals((new ProgramAccessionValidator()).validFormat(form.getString("labNo"), true))) {
@@ -119,10 +117,9 @@ public class PatientEntryByProjectFormValidator implements Validator {
 	private void validateFollowUpARVForm(PatientEntryByProjectForm form, Errors errors) {
 
 		ValidationHelper.validateDateField(form.getString("receivedDateForDisplay"), "receivedDateForDisplay", errors,
-				CustomDateValidator.PAST);
+				DateRelation.PAST);
 
-		ValidationHelper.validateDateField(form.getString("interviewDate"), "interviewDate", errors,
-				CustomDateValidator.PAST);
+		ValidationHelper.validateDateField(form.getString("interviewDate"), "interviewDate", errors, DateRelation.PAST);
 
 		ValidationHelper.validateField(form.getString("subjectNumber"), "subjectNumber", errors, true, 255,
 				ValidationHelper.PATIENT_ID_REGEX);
@@ -147,7 +144,7 @@ public class PatientEntryByProjectFormValidator implements Validator {
 		ValidationHelper.validateGenderField(form.getString("gender"), "gender", errors);
 
 		ValidationHelper.validateDateField(form.getString("birthDateForDisplay"), "birthDateForDisplay", errors,
-				CustomDateValidator.PAST);
+				DateRelation.PAST);
 
 		// TODO validate ObservationData
 
@@ -157,10 +154,9 @@ public class PatientEntryByProjectFormValidator implements Validator {
 	private void validateInitialARVForm(PatientEntryByProjectForm form, Errors errors) {
 
 		ValidationHelper.validateDateField(form.getString("receivedDateForDisplay"), "receivedDateForDisplay", errors,
-				CustomDateValidator.PAST);
+				DateRelation.PAST);
 
-		ValidationHelper.validateDateField(form.getString("interviewDate"), "interviewDate", errors,
-				CustomDateValidator.PAST);
+		ValidationHelper.validateDateField(form.getString("interviewDate"), "interviewDate", errors, DateRelation.PAST);
 
 		ValidationHelper.validateField(form.getString("subjectNumber"), "subjectNumber", errors, true, 255,
 				ValidationHelper.PATIENT_ID_REGEX);
@@ -183,7 +179,7 @@ public class PatientEntryByProjectFormValidator implements Validator {
 				ValidationHelper.NAME_REGEX);
 
 		ValidationHelper.validateDateField(form.getString("birthDateForDisplay"), "birthDateForDisplay", errors,
-				CustomDateValidator.PAST);
+				DateRelation.PAST);
 
 		ValidationHelper.validateGenderField(form.getString("gender"), "gender", errors);
 

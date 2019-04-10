@@ -181,18 +181,9 @@ td {
     <spring:message code="save.success"/>
 </div>
 
-    <%-- <bean:define id="selectedPanel" name='${form.formName}' property="selectedPanel" type="us.mn.state.health.lims.testconfiguration.action.PanelTests"/> --%>
-<%--    
-    <form:hidden path="panelId" id="panelId" value="<%=(selectedPanel.getPanelIdValuePair() != null ? selectedPanel.getPanelIdValuePair().getId() : new String()) %>"/>
-    <form:hidden path="deactivatePanelId" id="deactivatePanelId"/>
-        
-        
-     <form:hidden path="panelId" id="panelId" value="<%=(selectedPanel.getPanelIdValuePair()%>"/>
-     <form:hidden path="panelId" id="panelId" value="<%=(selectedPanel.getPanelIdValuePair() %>"/>
-     --%>
      
      <%    PanelTests selectedPanel = (PanelTests) pageContext.getAttribute("selectedPanel"); %>
-     <form:hidden path="panelId" id="panelId" value="<%=(selectedPanel.getPanelIdValuePair() != null ? selectedPanel.getPanelIdValuePair().getId() : new String()) %>"/>
+     <form:hidden path="panelId" id="panelId" />
      <form:hidden path="deactivatePanelId" id="deactivatePanelId"/>
 
     <input type="button" value='<%= MessageUtil.getContextualMessage("banner.menu.administration") %>'
@@ -216,13 +207,13 @@ td {
     
     <%    List panelList = (List) pageContext.getAttribute("panelList"); %>
     
-    Panel:<form:select cssClass="required" path="panelId" onchange="panelSelected(this.value);">
+    Panel:<select class="required" onchange="panelSelected(this.value);">
             			<option value="">
         				<% for(int i = 0; i < panelList.size(); i++){
             				IdValuePair panel = (IdValuePair)panelList.get(i);	%>
         					<option id='<%="option_" + panel.getId()%>' value="<%=panel.getId()%>"><%=panel.getValue()%></option>
         				<% } %>
-    				</form:select>
+    				</select>
 <br> 
                 
     </div>

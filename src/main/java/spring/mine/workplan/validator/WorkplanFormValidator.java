@@ -6,7 +6,7 @@ import org.springframework.validation.Validator;
 
 import spring.mine.common.validator.ValidationHelper;
 import spring.mine.workplan.form.WorkplanForm;
-import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 
 @Component
 public class WorkplanFormValidator implements Validator {
@@ -20,7 +20,7 @@ public class WorkplanFormValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		WorkplanForm form = (WorkplanForm) target;
 
-		ValidationHelper.validateDateField(form.getCurrentDate(), "currentDate", errors, CustomDateValidator.PAST);
+		ValidationHelper.validateDateField(form.getCurrentDate(), "currentDate", errors, DateRelation.PAST);
 
 		// searchLabel does not need validation as it is used or display
 

@@ -14,16 +14,17 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.generated.forms.TestOrderabilityForm;
+import spring.generated.testconfiguration.form.TestOrderabilityForm;
+import spring.generated.testconfiguration.validator.TestOrderabilityFormValidator;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.TypeOfSampleService;
@@ -36,19 +37,20 @@ import us.mn.state.health.lims.test.valueholder.Test;
 
 @Controller
 public class TestOrderabilityController extends BaseController {
+
+	@Autowired
+	TestOrderabilityFormValidator formValidator;
+
 	@RequestMapping(value = "/TestOrderability", method = RequestMethod.GET)
-	public ModelAndView showTestOrderability(HttpServletRequest request,
-			@ModelAttribute("form") TestOrderabilityForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new TestOrderabilityForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+	public ModelAndView showTestOrderability(HttpServletRequest request) {
+		TestOrderabilityForm form = new TestOrderabilityForm();
+		setupDisplayItems(form);
+		return findForward(FWD_SUCCESS, form);
+	}
+
+	private void setupDisplayItems(TestOrderabilityForm form) {
 		List<TestActivationBean> orderableTestList = createTestList(false);
 		form.setOrderableTestList(orderableTestList);
-
-		return findForward(forward, form);
 	}
 
 	private List<TestActivationBean> createTestList(boolean refresh) {
@@ -113,6 +115,10 @@ public class TestOrderabilityController extends BaseController {
 	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
 			return "testOrderabilityDefinition";
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return "testOrderabilityDefinition";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return "testOrderabilityDefinition";
 		} else {
 			return "PageNotFound";
 		}
@@ -120,11 +126,13 @@ public class TestOrderabilityController extends BaseController {
 
 	@RequestMapping(value = "/TestOrderability", method = RequestMethod.POST)
 	public ModelAndView postTestOrderability(HttpServletRequest request,
-			@ModelAttribute("form") TestOrderabilityForm form) throws Exception {
-
-		String forward = FWD_SUCCESS;
-
-		BaseErrors errors = new BaseErrors();
+			@ModelAttribute("form") TestOrderabilityForm form, BindingResult result) throws Exception {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			setupDisplayItems(form);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 
 		String changeList = form.getJsonChangeList();
 
@@ -159,7 +167,7 @@ public class TestOrderabilityController extends BaseController {
 		List<TestActivationBean> orderableTestList = createTestList(true);
 		form.setOrderableTestList(orderableTestList);
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private List<Test> getTests(List<String> testIds, boolean orderable) {

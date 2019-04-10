@@ -10,16 +10,17 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.generated.forms.SampleTypeTestAssignForm;
+import spring.generated.testconfiguration.form.SampleTypeTestAssignForm;
+import spring.generated.testconfiguration.validator.SampleTypeTestAssignFormValidator;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.TypeOfSampleService;
@@ -34,16 +35,20 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 @Controller
 public class SampleTypeTestAssignController extends BaseController {
-	@RequestMapping(value = "/SampleTypeTestAssign", method = RequestMethod.GET)
-	public ModelAndView showSampleTypeTestAssign(HttpServletRequest request,
-			@ModelAttribute("form") SampleTypeTestAssignForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new SampleTypeTestAssignForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
+	@Autowired
+	SampleTypeTestAssignFormValidator formValidator;
+
+	@RequestMapping(value = "/SampleTypeTestAssign", method = RequestMethod.GET)
+	public ModelAndView showSampleTypeTestAssign(HttpServletRequest request) {
+		SampleTypeTestAssignForm form = new SampleTypeTestAssignForm();
+
+		setupDisplayItems(form);
+
+		return findForward(FWD_SUCCESS, form);
+	}
+
+	private void setupDisplayItems(SampleTypeTestAssignForm form) {
 		List<IdValuePair> typeOfSamples = DisplayListService
 				.getListWithLeadingBlank(DisplayListService.ListType.SAMPLE_TYPE);
 		LinkedHashMap<IdValuePair, List<IdValuePair>> sampleTypesTestsMap = new LinkedHashMap<>(typeOfSamples.size());
@@ -70,8 +75,6 @@ public class SampleTypeTestAssignController extends BaseController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		return findForward(forward, form);
 	}
 
 	@Override
@@ -80,6 +83,8 @@ public class SampleTypeTestAssignController extends BaseController {
 			return "sampleTypeAssignDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/SampleTypeTestAssign.do";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return "sampleTypeAssignDefinition";
 		} else {
 			return "PageNotFound";
 		}
@@ -97,14 +102,13 @@ public class SampleTypeTestAssignController extends BaseController {
 
 	@RequestMapping(value = "/SampleTypeTestAssign", method = RequestMethod.POST)
 	public ModelAndView postSampleTypeTestAssign(HttpServletRequest request,
-			@ModelAttribute("form") SampleTypeTestAssignForm form) {
-		String forward = FWD_SUCCESS_INSERT;
-		if (form == null) {
-			form = new SampleTypeTestAssignForm();
+			@ModelAttribute("form") SampleTypeTestAssignForm form, BindingResult result) {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			setupDisplayItems(form);
+			return findForward(FWD_FAIL_INSERT, form);
 		}
-		form.setFormAction("");
-		BaseErrors errors = new BaseErrors();
-
 		String testId = form.getString("testId");
 		String sampleTypeId = form.getString("sampleTypeId");
 		String deactivateSampleTypeId = form.getString("deactivateSampleTypeId");
@@ -181,6 +185,6 @@ public class SampleTypeTestAssignController extends BaseController {
 		DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE);
 		DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 }

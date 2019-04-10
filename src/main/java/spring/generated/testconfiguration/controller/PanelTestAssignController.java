@@ -11,18 +11,18 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import spring.generated.forms.PanelTestAssignForm;
+import spring.generated.testconfiguration.form.PanelTestAssignForm;
+import spring.generated.testconfiguration.validator.PanelTestAssignFormValidator;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.TestService;
@@ -42,30 +42,38 @@ import us.mn.state.health.lims.testconfiguration.action.PanelTests;
 
 @Controller
 public class PanelTestAssignController extends BaseController {
-	@RequestMapping(value = "/PanelTestAssign", method = RequestMethod.GET)
-	public ModelAndView showPanelTestAssign(HttpServletRequest request,
-			@ModelAttribute("form") PanelTestAssignForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new PanelTestAssignForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
-		String panelId = form.getString("panelId");
+	@Autowired
+	PanelTestAssignFormValidator formValidator;
+
+	@RequestMapping(value = "/PanelTestAssign", method = RequestMethod.GET)
+	public ModelAndView showPanelTestAssign(HttpServletRequest request) {
+		PanelTestAssignForm form = new PanelTestAssignForm();
+
+		String panelId = request.getParameter("panelId");
 		if (panelId == null) {
 			panelId = "";
 		}
-		List<IdValuePair> panels = DisplayListService.getList(DisplayListService.ListType.PANELS);
+		form.setPanelId(panelId);
 
-		if (!GenericValidator.isBlankOrNull(panelId)) {
+		setupDisplayItems(form);
+
+		addFlashMsgsToRequest(request);
+
+		return findForward(FWD_SUCCESS, form);
+	}
+
+	private void setupDisplayItems(PanelTestAssignForm form) {
+		if (!GenericValidator.isBlankOrNull(form.getPanelId())) {
+			List<IdValuePair> panels = DisplayListService.getList(DisplayListService.ListType.PANELS);
+
 			PanelDAO panelDAO = new PanelDAOImpl();
-			Panel panel = panelDAO.getPanelById(panelId);
-			IdValuePair panelPair = new IdValuePair(panelId, panel.getLocalizedName());
+			Panel panel = panelDAO.getPanelById(form.getPanelId());
+			IdValuePair panelPair = new IdValuePair(panel.getId(), panel.getLocalizedName());
 
 			List<IdValuePair> tests = new ArrayList<>();
 
-			List<Test> testList = getAllTestsByPanelId(panelId);
+			List<Test> testList = getAllTestsByPanelId(panel.getId());
 
 			PanelTests panelTests = new PanelTests(panelPair);
 			HashSet<String> testIdSet = new HashSet<>();
@@ -76,32 +84,16 @@ public class PanelTestAssignController extends BaseController {
 					testIdSet.add(test.getId());
 				}
 			}
-
 			panelTests.setTests(tests, testIdSet);
+
 			try {
+				PropertyUtils.setProperty(form, "panelList", panels);
 				PropertyUtils.setProperty(form, "selectedPanel", panelTests);
 			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else {
-			try {
-				PropertyUtils.setProperty(form, "selectedPanel", new PanelTests());
-			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
-
-		try {
-			PropertyUtils.setProperty(form, "panelList", panels);
-		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		addFlashMsgsToRequest(request);
-
-		return findForward(forward, form);
 	}
 
 	public static List<Test> getAllTestsByPanelId(String panelId) {
@@ -123,12 +115,14 @@ public class PanelTestAssignController extends BaseController {
 	public ModelAndView postPanelTestAssign(HttpServletRequest request,
 			@ModelAttribute("form") PanelTestAssignForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) throws Exception {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			setupDisplayItems(form);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 
-		String forward = FWD_SUCCESS_INSERT;
-
-		BaseErrors errors = new BaseErrors();
-
-		String panelId = removeComma(form.getString("panelId"));
+		String panelId = form.getString("panelId");
 		String currentUser = getSysUserId(request);
 		boolean updatepanel = false;
 
@@ -187,10 +181,8 @@ public class PanelTestAssignController extends BaseController {
 		DisplayListService.refreshList(DisplayListService.ListType.PANELS);
 		DisplayListService.refreshList(DisplayListService.ListType.PANELS_INACTIVE);
 
-		if (FWD_SUCCESS_INSERT.equals(forward)) {
-			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-		}
-		return findForward(forward, form);
+		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	@Override
@@ -200,17 +192,10 @@ public class PanelTestAssignController extends BaseController {
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			String url = "/PanelTestAssign.do?panelId=" + request.getParameter("panelId");
 			return "redirect:" + url;
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return "panelAssignDefinition";
 		} else {
 			return "PageNotFound";
-		}
-	}
-
-	protected String removeComma(String str) {
-		if (str.charAt(str.length() - 1) == ',') {
-			str = str.replace(str.substring(str.length() - 1), "");
-			return str;
-		} else {
-			return str;
 		}
 	}
 

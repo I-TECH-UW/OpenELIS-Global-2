@@ -9,7 +9,7 @@ import spring.mine.systemuser.controller.UnifiedSystemUserController;
 import spring.mine.systemuser.form.UnifiedSystemUserForm;
 import us.mn.state.health.lims.common.provider.validation.ILoginPasswordValidation;
 import us.mn.state.health.lims.common.provider.validation.PasswordValidationFactory;
-import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 
 @Component
 public class UnifiedSystemUserFormValidator implements Validator {
@@ -53,8 +53,8 @@ public class UnifiedSystemUserFormValidator implements Validator {
 			}
 		}
 
-		ValidationHelper.validateDateField(form.getExpirationDate(), "expirationDate", errors,
-				CustomDateValidator.FUTURE, false);
+		ValidationHelper.validateDateField(form.getExpirationDate(), "expirationDate", errors, DateRelation.FUTURE,
+				false);
 
 		ValidationHelper.validateYNField(form.getAccountLocked(), "accountLocked", errors);
 

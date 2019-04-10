@@ -6,7 +6,7 @@ import org.springframework.validation.Validator;
 
 import spring.mine.common.validator.ValidationHelper;
 import spring.mine.result.form.LogbookResultsForm;
-import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 
 @Component
 public class LogbookResultsFormValidator implements Validator {
@@ -22,7 +22,7 @@ public class LogbookResultsFormValidator implements Validator {
 		LogbookResultsForm form = (LogbookResultsForm) target;
 
 		// currentDate
-		ValidationHelper.validateDateField(form.getCurrentDate(), "currentDate", errors, CustomDateValidator.PAST);
+		ValidationHelper.validateDateField(form.getCurrentDate(), "currentDate", errors, DateRelation.PAST);
 
 		// TODO List<TestResultItem> testResult;
 

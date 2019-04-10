@@ -7,16 +7,17 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.generated.forms.TestSectionCreateForm;
+import spring.generated.testconfiguration.form.TestSectionCreateForm;
+import spring.generated.testconfiguration.validator.TestSectionCreateFormValidator;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.LocalizationService;
@@ -38,19 +39,22 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 
 @Controller
 public class TestSectionCreateController extends BaseController {
+
+	@Autowired
+	TestSectionCreateFormValidator formValidator;
+
 	public static final String NAME_SEPARATOR = "$";
 
 	@RequestMapping(value = "/TestSectionCreate", method = RequestMethod.GET)
+	public ModelAndView showTestSectionCreate(HttpServletRequest request) {
+		TestSectionCreateForm form = new TestSectionCreateForm();
 
-	public ModelAndView showTestSectionCreate(HttpServletRequest request,
-			@ModelAttribute("form") TestSectionCreateForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new TestSectionCreateForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+		setupDisplayItems(form);
 
+		return findForward(FWD_SUCCESS, form);
+	}
+
+	private void setupDisplayItems(TestSectionCreateForm form) {
 		try {
 			PropertyUtils.setProperty(form, "existingTestUnitList",
 					DisplayListService.getList(DisplayListService.ListType.TEST_SECTION));
@@ -59,17 +63,12 @@ public class TestSectionCreateController extends BaseController {
 			List<TestSection> testSections = TestSectionService.getAllTestSections();
 			PropertyUtils.setProperty(form, "existingEnglishNames",
 					getExistingTestNames(testSections, ConfigurationProperties.LOCALE.ENGLISH));
+
 			PropertyUtils.setProperty(form, "existingFrenchNames",
 					getExistingTestNames(testSections, ConfigurationProperties.LOCALE.FRENCH));
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
-
-		return findForward(forward, form);
 	}
 
 	private String getExistingTestNames(List<TestSection> testSections, ConfigurationProperties.LOCALE locale) {
@@ -85,11 +84,13 @@ public class TestSectionCreateController extends BaseController {
 
 	@RequestMapping(value = "/TestSectionCreate", method = RequestMethod.POST)
 	public ModelAndView postTestSectionCreate(HttpServletRequest request,
-			@ModelAttribute("form") TestSectionCreateForm form) throws Exception {
-
-		String forward = FWD_SUCCESS_INSERT;
-
-		BaseErrors errors = new BaseErrors();
+			@ModelAttribute("form") TestSectionCreateForm form, BindingResult result) throws Exception {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			setupDisplayItems(form);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 
 		RoleDAO roleDAO = new RoleDAOImpl();
 		RoleModuleDAOImpl roleModuleDAO = new RoleModuleDAOImpl();
@@ -137,7 +138,7 @@ public class TestSectionCreateController extends BaseController {
 		DisplayListService.refreshList(DisplayListService.ListType.TEST_SECTION);
 		DisplayListService.refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private Localization createLocalization(String french, String english, String currentUserId) {
@@ -192,6 +193,8 @@ public class TestSectionCreateController extends BaseController {
 			return "testSectionCreateDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/TestSectionCreate.do";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return "testSectionCreateDefinition";
 		} else {
 			return "PageNotFound";
 		}

@@ -13,16 +13,17 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.generated.forms.SampleTypeOrderForm;
+import spring.generated.testconfiguration.form.SampleTypeOrderForm;
+import spring.generated.testconfiguration.validator.SampleTypeOrderFormValidator;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
@@ -31,24 +32,26 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Controller
 public class SampleTypeOrderController extends BaseController {
-	@RequestMapping(value = "/SampleTypeOrder", method = RequestMethod.GET)
-	public ModelAndView showSampleTypeOrder(HttpServletRequest request,
-			@ModelAttribute("form") SampleTypeOrderForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new SampleTypeOrderForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
+	@Autowired
+	SampleTypeOrderFormValidator formValidator;
+
+	@RequestMapping(value = "/SampleTypeOrder", method = RequestMethod.GET)
+	public ModelAndView showSampleTypeOrder(HttpServletRequest request) {
+		SampleTypeOrderForm form = new SampleTypeOrderForm();
+
+		setupDisplayItems(form);
+
+		return findForward(FWD_SUCCESS, form);
+	}
+
+	private void setupDisplayItems(SampleTypeOrderForm form) {
 		try {
 			PropertyUtils.setProperty(form, "sampleTypeList",
 					DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE));
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
-
-		return findForward(forward, form);
 	}
 
 	private class ActivateSet {
@@ -58,11 +61,13 @@ public class SampleTypeOrderController extends BaseController {
 
 	@RequestMapping(value = "/SampleTypeOrder", method = RequestMethod.POST)
 	public ModelAndView postSampleTypeOrder(HttpServletRequest request,
-			@ModelAttribute("form") SampleTypeOrderForm form) throws Exception {
-
-		String forward = FWD_SUCCESS_INSERT;
-
-		BaseErrors errors = new BaseErrors();
+			@ModelAttribute("form") SampleTypeOrderForm form, BindingResult result) throws Exception {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			setupDisplayItems(form);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 
 		String changeList = form.getJsonChangeList();
 
@@ -95,7 +100,7 @@ public class SampleTypeOrderController extends BaseController {
 		DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE);
 		DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private List<ActivateSet> getActivateSetForActions(String key, JSONObject root, JSONParser parser) {
@@ -126,6 +131,8 @@ public class SampleTypeOrderController extends BaseController {
 			return "sampleTypeOrderDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/SampleTypeOrder.do";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return "sampleTypeOrderDefinition";
 		} else {
 			return "PageNotFound";
 		}

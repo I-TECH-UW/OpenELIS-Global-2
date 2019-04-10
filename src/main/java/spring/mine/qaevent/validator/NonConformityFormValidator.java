@@ -7,7 +7,7 @@ import org.springframework.validation.Validator;
 
 import spring.mine.common.validator.ValidationHelper;
 import spring.mine.qaevent.form.NonConformityForm;
-import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.qaevent.valueholder.retroCI.QaEventItem;
 
 @Component
@@ -41,7 +41,7 @@ public class NonConformityFormValidator implements Validator {
 		}
 
 		// date
-		ValidationHelper.validateDateField(form.getString("date"), "date", errors, CustomDateValidator.PAST, false);
+		ValidationHelper.validateDateField(form.getString("date"), "date", errors, DateRelation.PAST, false);
 
 		// time
 		ValidationHelper.validateIdField(form.getString("time"), "time", errors, false);

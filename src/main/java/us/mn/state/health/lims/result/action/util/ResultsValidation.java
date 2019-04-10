@@ -19,6 +19,7 @@ import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.result.dao.ResultDAO;
 import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
@@ -96,7 +97,7 @@ public class ResultsValidation {
 			// StringBuilder(item.getTestDate())));
 			errors.reject("errors.date");
 		} else if (!IActionConstants.VALID
-				.equals(CustomDateValidator.getInstance().validateDate(date, CustomDateValidator.PAST))) {
+				.equals(CustomDateValidator.getInstance().validateDate(date, DateRelation.PAST))) {
 			errors.reject("error.date.inFuture");
 		}
 	}

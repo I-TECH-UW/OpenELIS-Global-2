@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-import org.apache.commons.validator.GenericValidator;
 import org.apache.commons.validator.routines.DateValidator;
 
 import us.mn.state.health.lims.common.action.IActionConstants;
@@ -34,9 +33,9 @@ public class CustomDateValidator extends DateValidator {
 
 	private static final long serialVersionUID = 8623867024483764609L;
 
-	public static final String PAST = "past";
-	public static final String FUTURE = "future";
-	public static final String TODAY = "today";
+	public enum DateRelation {
+		PAST, FUTURE, TODAY, ANY
+	}
 
 	private static class SingletonHelper {
 		private static final CustomDateValidator INSTANCE = new CustomDateValidator();
@@ -122,40 +121,39 @@ public class CustomDateValidator extends DateValidator {
 		return validate(date, locale);
 	}
 
-	public String validateDate(Date date, String relative) {
+	public String validateDate(Date date, DateRelation relative) {
 		String result = IActionConstants.VALID;
 
 		if (date == null) {
 			result = IActionConstants.INVALID;
-		} else if (!GenericValidator.isBlankOrNull(relative)) {
+		}
 
-			Calendar calendar = new GregorianCalendar();
-			calendar.set(Calendar.HOUR_OF_DAY, 0);
-			calendar.set(Calendar.MINUTE, 0);
-			calendar.set(Calendar.SECOND, 0);
-			calendar.set(Calendar.MILLISECOND, 0);
-			Date today = calendar.getTime();
+		Calendar calendar = new GregorianCalendar();
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		Date today = calendar.getTime();
 
-			// time insensitive compare, only year month day
-			Calendar calendarDate = new GregorianCalendar();
-			calendarDate.setTime(date);
-			calendarDate.set(Calendar.HOUR_OF_DAY, 0);
-			calendarDate.set(Calendar.MINUTE, 0);
-			calendarDate.set(Calendar.SECOND, 0);
-			calendarDate.set(Calendar.MILLISECOND, 0);
-			date = calendarDate.getTime();
+		// time insensitive compare, only year month day
+		Calendar calendarDate = new GregorianCalendar();
+		calendarDate.setTime(date);
+		calendarDate.set(Calendar.HOUR_OF_DAY, 0);
+		calendarDate.set(Calendar.MINUTE, 0);
+		calendarDate.set(Calendar.SECOND, 0);
+		calendarDate.set(Calendar.MILLISECOND, 0);
+		date = calendarDate.getTime();
 
-			int dateDiff = date.compareTo(today);
+		int dateDiff = date.compareTo(today);
 
-			if (relative.equalsIgnoreCase(PAST) && dateDiff > 0) {
-				result = IActionConstants.INVALID_TO_LARGE;
-			} else if (relative.equalsIgnoreCase(FUTURE) && dateDiff < 0) {
-				result = IActionConstants.INVALID_TO_SMALL;
-			} else if (relative.equalsIgnoreCase(TODAY) && dateDiff > 0) {
-				result = IActionConstants.INVALID_TO_SMALL;
-			} else if (relative.equalsIgnoreCase(TODAY) && dateDiff < 0) {
-				result = IActionConstants.INVALID_TO_SMALL;
-			}
+		if (relative.equals(DateRelation.PAST) && dateDiff > 0) {
+			result = IActionConstants.INVALID_TO_LARGE;
+		} else if (relative.equals(DateRelation.FUTURE) && dateDiff < 0) {
+			result = IActionConstants.INVALID_TO_SMALL;
+		} else if (relative.equals(DateRelation.TODAY) && dateDiff > 0) {
+			result = IActionConstants.INVALID_TO_SMALL;
+		} else if (relative.equals(DateRelation.TODAY) && dateDiff < 0) {
+			result = IActionConstants.INVALID_TO_SMALL;
 		}
 
 		return result;

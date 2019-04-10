@@ -12,7 +12,7 @@ import org.springframework.validation.Validator;
 
 import spring.mine.common.validator.ValidationHelper;
 import spring.mine.sample.form.SamplePatientEntryForm;
-import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 
 @Component
@@ -29,7 +29,7 @@ public class SamplePatientEntryFormValidator implements Validator {
 
 		// currentDate
 		if (!GenericValidator.isBlankOrNull(form.getCurrentDate())) {
-			ValidationHelper.validateDateField(form.getCurrentDate(), "currentDate", errors, CustomDateValidator.PAST);
+			ValidationHelper.validateDateField(form.getCurrentDate(), "currentDate", errors, DateRelation.PAST);
 		}
 		// TODO projects
 
@@ -85,8 +85,8 @@ public class SamplePatientEntryFormValidator implements Validator {
 		}
 		// validate date not required
 		String collectionDate = sampleItem.attributeValue("date").trim();
-		ValidationHelper.validateDateField(collectionDate, "sampleXML", "sampleXML date", errors,
-				CustomDateValidator.PAST, false);
+		ValidationHelper.validateDateField(collectionDate, "sampleXML", "sampleXML date", errors, DateRelation.PAST,
+				false);
 		if (errors.hasErrors()) {
 			return;
 		}

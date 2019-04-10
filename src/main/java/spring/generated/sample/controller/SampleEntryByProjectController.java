@@ -9,15 +9,18 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.owasp.encoder.Encode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import spring.generated.forms.SampleEntryByProjectForm;
-import spring.mine.common.validator.BaseErrors;
+import spring.generated.sample.form.SampleEntryByProjectForm;
+import spring.generated.sample.validator.SampleEntryByProjectFormValidator;
 import spring.mine.sample.controller.BaseSampleEntryController;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
@@ -37,143 +40,85 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
-
 @Controller
 public class SampleEntryByProjectController extends BaseSampleEntryController {
-  @RequestMapping(
-      value = "/SampleEntryByProject",
-      method = RequestMethod.GET
-  )
-  public ModelAndView showSampleEntryByProject(HttpServletRequest request,
-      @ModelAttribute("form") SampleEntryByProjectForm form) {
-    String forward = FWD_SUCCESS;
-    if (form == null) {
-    	form = new SampleEntryByProjectForm();
-    }
-    form.setFormAction("");
-    
-    Date today = Calendar.getInstance().getTime();
-    String dateAsText = DateUtil.formatDateAsText(today);
-    form.setReceivedDateForDisplay(dateAsText);
-    form.setInterviewDate(dateAsText);
 
-    Map<String, List<Dictionary>> formListsMapOfLists = new HashMap<String, List<Dictionary>>();
-    List<Dictionary> listOfDictionary = new ArrayList<Dictionary>();
-    List<IdValuePair> genders = DisplayListService.getList(ListType.GENDERS);
-    
-    for (IdValuePair i : genders)  {
-    	Dictionary dictionary = new Dictionary();
-    	dictionary.setId(i.getId());
-    	dictionary.setDictEntry(i.getValue());
-    	listOfDictionary.add( dictionary);
-    }
-    
-    formListsMapOfLists.put("GENDERS", listOfDictionary);
-    form.setFormLists(formListsMapOfLists);
-    
-    //Get Lists
-    Map<String, List<Dictionary>> observationHistoryMapOfLists = new HashMap<String, List<Dictionary>>();
-    observationHistoryMapOfLists.put("EID_WHICH_PCR", ObservationHistoryList.EID_WHICH_PCR.getList());
-    observationHistoryMapOfLists.put("EID_SECOND_PCR_REASON", ObservationHistoryList.EID_SECOND_PCR_REASON.getList());
-    observationHistoryMapOfLists.put("EID_TYPE_OF_CLINIC", ObservationHistoryList.EID_TYPE_OF_CLINIC.getList());
-    observationHistoryMapOfLists.put("EID_HOW_CHILD_FED", ObservationHistoryList.EID_HOW_CHILD_FED.getList());
-    observationHistoryMapOfLists.put("EID_STOPPED_BREASTFEEDING", ObservationHistoryList.EID_STOPPED_BREASTFEEDING.getList());
-    observationHistoryMapOfLists.put("YES_NO", ObservationHistoryList.YES_NO.getList());
-    observationHistoryMapOfLists.put("EID_INFANT_PROPHYLAXIS_ARV", ObservationHistoryList.EID_INFANT_PROPHYLAXIS_ARV.getList());
-    observationHistoryMapOfLists.put("YES_NO_UNKNOWN", ObservationHistoryList.YES_NO_UNKNOWN.getList());
-    observationHistoryMapOfLists.put("EID_MOTHERS_HIV_STATUS", ObservationHistoryList.EID_MOTHERS_HIV_STATUS.getList());
-    observationHistoryMapOfLists.put("EID_MOTHERS_ARV_TREATMENT", ObservationHistoryList.EID_MOTHERS_ARV_TREATMENT.getList());
-    observationHistoryMapOfLists.put("HIV_STATUSES", ObservationHistoryList.HIV_STATUSES.getList());
-    observationHistoryMapOfLists.put("SPECIAL_REQUEST_REASONS", ObservationHistoryList.SPECIAL_REQUEST_REASONS.getList());
-    observationHistoryMapOfLists.put("ARV_REGIME", ObservationHistoryList.ARV_REGIME.getList());
-    observationHistoryMapOfLists.put("ARV_REASON_FOR_VL_DEMAND", ObservationHistoryList.ARV_REASON_FOR_VL_DEMAND.getList());
-    
-	form.setDictionaryLists(observationHistoryMapOfLists);
-	
-	//Get EID Sites
-	Map<String, List<Organization>> organizationTypeMapOfLists = new HashMap<String, List<Organization>>();
-	organizationTypeMapOfLists.put("ARV_ORGS", OrganizationTypeList.ARV_ORGS.getList());
-	organizationTypeMapOfLists.put("ARV_ORGS_BY_NAME", OrganizationTypeList.ARV_ORGS_BY_NAME.getList());
-	organizationTypeMapOfLists.put("EID_ORGS_BY_NAME", OrganizationTypeList.EID_ORGS_BY_NAME.getList());
-	organizationTypeMapOfLists.put("EID_ORGS", OrganizationTypeList.EID_ORGS.getList());
-	form.setOrganizationTypeLists(organizationTypeMapOfLists);
-	    
-    Errors errors = new BaseErrors();
-    
+	@Autowired
+	SampleEntryByProjectFormValidator formValidator;
 
-    return findForward(forward, form);}
-  
-  @RequestMapping(
-	      value = "/SampleEntryByProject",
-	      method = RequestMethod.POST
-	  )
-	  public ModelAndView postSampleEntryByProject(HttpServletRequest request,
-	      @ModelAttribute("form") SampleEntryByProjectForm form) throws Exception {
-	    
-	  // bean to form conversion side effect 
-	  if(form.getGender().indexOf("id=M") != -1)
-		  	form.setGender("M");
-	  else if (form.getGender().indexOf("id=F") != -1)
-	  		form.setGender("F");
-	  
-	  //System.out.println("Gender:" + form.getGender());
-	  
-	    String forward = FWD_SUCCESS;
+	@RequestMapping(value = "/SampleEntryByProject", method = RequestMethod.GET)
+	public ModelAndView showSampleEntryByProject(HttpServletRequest request) {
+		SampleEntryByProjectForm form = new SampleEntryByProjectForm();
 
-	    Accessioner accessioner;
-	    accessioner = new SampleSecondEntry(form, getSysUserId(request), request);
-	    if (accessioner.canAccession()) {
-	        forward = handleSave(request, accessioner, form);
-	        if (forward != null) {
-	            return findForward(forward, form);
-	        }
-	    }
-	    accessioner = new SampleEntry(form, getSysUserId(request), request);
-	    if (accessioner.canAccession()) {
-	        forward = handleSave(request, accessioner, form);
-	        if (forward != null) {
-	            return findForward(forward, form);
-	        }
-	    }
-	    accessioner = new SampleEntryAfterPatientEntry(form, getSysUserId(request), request);
-	    if (accessioner.canAccession()) {
-	        forward = handleSave(request, accessioner, form);
-	        if (forward != null) {
-	            return findForward(forward, form);
-	        }
-	    }
-	    logAndAddMessage(request, "performAction", "errors.UpdateException");
-	    
-	    form.setFormName("sampleEntryByProjectForm");
-	    form.setFormAction("");
-	    
-	    // TODO: gnr: will need all 
-	    Map<String, List<Dictionary>> formListsMapOfLists = new HashMap<String, List<Dictionary>>();
-	    List<Dictionary> listOfDictionary = new ArrayList<Dictionary>();
-	    List<IdValuePair> genders = DisplayListService.getList(ListType.GENDERS);
-	    
-	    for (IdValuePair i : genders)  {
-	    	Dictionary dictionary = new Dictionary();
-	    	dictionary.setId(i.getId());
-	    	dictionary.setDictEntry(i.getValue());
-	    	listOfDictionary.add( dictionary);
-	    }
-	    
-	    formListsMapOfLists.put("GENDERS", listOfDictionary);
-	    form.setFormLists(formListsMapOfLists);
-		
-	    Map<String, List<Dictionary>> observationHistoryMapOfLists = new HashMap<String, List<Dictionary>>();
-	    observationHistoryMapOfLists.put("YES_NO", ObservationHistoryList.YES_NO.getList());
-	    form.setDictionaryLists(observationHistoryMapOfLists);
+		Date today = Calendar.getInstance().getTime();
+		String dateAsText = DateUtil.formatDateAsText(today);
+		form.setReceivedDateForDisplay(dateAsText);
+		form.setInterviewDate(dateAsText);
 
-	    Errors errors = new BaseErrors();
-	    
-	    
-	    // return findForward(FWD_FAIL, form);
-	    return findForward(forward, form);
+		setDisplayLists(form);
+		addFlashMsgsToRequest(request);
+
+		return findForward(FWD_SUCCESS, form);
 	}
 
-	public SampleItem getSampleItem(Sample sample, TypeOfSample typeofsample){
+	@RequestMapping(value = "/SampleEntryByProject", method = RequestMethod.POST)
+	public ModelAndView postSampleEntryByProject(HttpServletRequest request,
+			@ModelAttribute("form") SampleEntryByProjectForm form, BindingResult result,
+			RedirectAttributes redirectAttributes) throws Exception {
+
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			setDisplayLists(form);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
+
+		String forward;
+
+		Accessioner accessioner;
+		accessioner = new SampleSecondEntry(form, getSysUserId(request), request);
+		if (accessioner.canAccession()) {
+			forward = handleSave(request, accessioner, form);
+			if (forward != null) {
+				if (FWD_SUCCESS_INSERT.equals(forward)) {
+					redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+				} else {
+					setDisplayLists(form);
+				}
+				return findForward(forward, form);
+			}
+		}
+		accessioner = new SampleEntry(form, getSysUserId(request), request);
+		if (accessioner.canAccession()) {
+			forward = handleSave(request, accessioner, form);
+			if (forward != null) {
+				if (FWD_SUCCESS_INSERT.equals(forward)) {
+					redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+				} else {
+					setDisplayLists(form);
+				}
+				return findForward(forward, form);
+			}
+		}
+		accessioner = new SampleEntryAfterPatientEntry(form, getSysUserId(request), request);
+		if (accessioner.canAccession()) {
+			forward = handleSave(request, accessioner, form);
+			if (forward != null) {
+				if (FWD_SUCCESS_INSERT.equals(forward)) {
+					redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+				} else {
+					setDisplayLists(form);
+				}
+				return findForward(forward, form);
+			}
+		}
+		logAndAddMessage(request, "postSampleEntryByProject", "errors.UpdateException");
+
+		setDisplayLists(form);
+		return findForward(FWD_FAIL_INSERT, form);
+	}
+
+	public SampleItem getSampleItem(Sample sample, TypeOfSample typeofsample) {
 		SampleItem item = new SampleItem();
 		item.setSample(sample);
 		item.setTypeOfSample(typeofsample);
@@ -183,25 +128,78 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 		return item;
 	}
 
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "sampleEntryByProjectDefinition";
-    } else if ("eid_entry".equals(forward)) {
-      return "sampleEntryEIDDefinition";
-    } else if ("vl_entry".equals(forward)) {
-      return "sampleEntryVLDefinition";
-    } else if (FWD_FAIL.equals(forward)) {
-      return "homePageDefinition";
-    } else {
-      return "PageNotFound";
-    }
-  }
+	private void setDisplayLists(SampleEntryByProjectForm form) {
+		Map<String, List<Dictionary>> formListsMapOfLists = new HashMap<>();
+		List<Dictionary> listOfDictionary = new ArrayList<>();
+		List<IdValuePair> genders = DisplayListService.getList(ListType.GENDERS);
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+		for (IdValuePair i : genders) {
+			Dictionary dictionary = new Dictionary();
+			dictionary.setId(i.getId());
+			dictionary.setDictEntry(i.getValue());
+			listOfDictionary.add(dictionary);
+		}
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+		formListsMapOfLists.put("GENDERS", listOfDictionary);
+		form.setFormLists(formListsMapOfLists);
+
+		// Get Lists
+		Map<String, List<Dictionary>> observationHistoryMapOfLists = new HashMap<>();
+		observationHistoryMapOfLists.put("EID_WHICH_PCR", ObservationHistoryList.EID_WHICH_PCR.getList());
+		observationHistoryMapOfLists.put("EID_SECOND_PCR_REASON",
+				ObservationHistoryList.EID_SECOND_PCR_REASON.getList());
+		observationHistoryMapOfLists.put("EID_TYPE_OF_CLINIC", ObservationHistoryList.EID_TYPE_OF_CLINIC.getList());
+		observationHistoryMapOfLists.put("EID_HOW_CHILD_FED", ObservationHistoryList.EID_HOW_CHILD_FED.getList());
+		observationHistoryMapOfLists.put("EID_STOPPED_BREASTFEEDING",
+				ObservationHistoryList.EID_STOPPED_BREASTFEEDING.getList());
+		observationHistoryMapOfLists.put("YES_NO", ObservationHistoryList.YES_NO.getList());
+		observationHistoryMapOfLists.put("EID_INFANT_PROPHYLAXIS_ARV",
+				ObservationHistoryList.EID_INFANT_PROPHYLAXIS_ARV.getList());
+		observationHistoryMapOfLists.put("YES_NO_UNKNOWN", ObservationHistoryList.YES_NO_UNKNOWN.getList());
+		observationHistoryMapOfLists.put("EID_MOTHERS_HIV_STATUS",
+				ObservationHistoryList.EID_MOTHERS_HIV_STATUS.getList());
+		observationHistoryMapOfLists.put("EID_MOTHERS_ARV_TREATMENT",
+				ObservationHistoryList.EID_MOTHERS_ARV_TREATMENT.getList());
+		observationHistoryMapOfLists.put("HIV_STATUSES", ObservationHistoryList.HIV_STATUSES.getList());
+		observationHistoryMapOfLists.put("SPECIAL_REQUEST_REASONS",
+				ObservationHistoryList.SPECIAL_REQUEST_REASONS.getList());
+		observationHistoryMapOfLists.put("ARV_REGIME", ObservationHistoryList.ARV_REGIME.getList());
+		observationHistoryMapOfLists.put("ARV_REASON_FOR_VL_DEMAND",
+				ObservationHistoryList.ARV_REASON_FOR_VL_DEMAND.getList());
+
+		form.setDictionaryLists(observationHistoryMapOfLists);
+
+		// Get EID Sites
+		Map<String, List<Organization>> organizationTypeMapOfLists = new HashMap<>();
+		organizationTypeMapOfLists.put("ARV_ORGS", OrganizationTypeList.ARV_ORGS.getList());
+		organizationTypeMapOfLists.put("ARV_ORGS_BY_NAME", OrganizationTypeList.ARV_ORGS_BY_NAME.getList());
+		organizationTypeMapOfLists.put("EID_ORGS_BY_NAME", OrganizationTypeList.EID_ORGS_BY_NAME.getList());
+		organizationTypeMapOfLists.put("EID_ORGS", OrganizationTypeList.EID_ORGS.getList());
+		form.setOrganizationTypeLists(organizationTypeMapOfLists);
+	}
+
+	@Override
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "sampleEntryByProjectDefinition";
+		} else if (FWD_FAIL.equals(forward)) {
+			return "homePageDefinition";
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return "redirect:/SampleEntryByProject.do?type=" + Encode.forUriComponent(request.getParameter("type"));
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return "sampleEntryByProjectDefinition";
+		} else {
+			return "PageNotFound";
+		}
+	}
+
+	@Override
+	protected String getPageTitleKey() {
+		return null;
+	}
+
+	@Override
+	protected String getPageSubtitleKey() {
+		return null;
+	}
 }

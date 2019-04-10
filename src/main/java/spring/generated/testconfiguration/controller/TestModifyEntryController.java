@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.generated.forms.TestModifyEntryForm;
+import spring.generated.testconfiguration.form.TestModifyEntryForm;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.validator.BaseErrors;
 

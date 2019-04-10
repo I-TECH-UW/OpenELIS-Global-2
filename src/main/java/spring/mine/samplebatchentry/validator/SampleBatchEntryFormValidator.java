@@ -15,7 +15,7 @@ import spring.mine.common.validator.ValidationHelper;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.samplebatchentry.form.SampleBatchEntryForm;
 import us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator.ValidationResults;
-import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.sample.util.AccessionNumberUtil;
 
 @Component
@@ -30,8 +30,7 @@ public class SampleBatchEntryFormValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		SampleBatchEntryForm form = (SampleBatchEntryForm) target;
 
-		ValidationHelper.validateDateField(form.getCurrentDate(), "currentDate", errors, CustomDateValidator.PAST,
-				true);
+		ValidationHelper.validateDateField(form.getCurrentDate(), "currentDate", errors, DateRelation.PAST, true);
 
 		ValidationHelper.validateTimeField(form.getCurrentTime(), "currentTime", errors, false);
 
@@ -130,8 +129,8 @@ public class SampleBatchEntryFormValidator implements Validator {
 		}
 		// validate date not required
 		String collectionDate = sampleItem.attributeValue("date").trim();
-		ValidationHelper.validateDateField(collectionDate, "sampleXML", "sampleXML date", errors,
-				CustomDateValidator.PAST, false);
+		ValidationHelper.validateDateField(collectionDate, "sampleXML", "sampleXML date", errors, DateRelation.PAST,
+				false);
 		if (errors.hasErrors()) {
 			return;
 		}

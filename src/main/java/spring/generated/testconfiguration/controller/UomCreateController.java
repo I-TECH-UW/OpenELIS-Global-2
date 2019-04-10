@@ -7,16 +7,17 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.generated.forms.UomCreateForm;
+import spring.generated.testconfiguration.form.UomCreateForm;
+import spring.generated.testconfiguration.validator.UomCreateFormValidator;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.LocalizationService;
@@ -28,17 +29,22 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 @Controller
 public class UomCreateController extends BaseController {
+
+	@Autowired
+	UomCreateFormValidator formValidator;
+
 	public static final String NAME_SEPARATOR = "$";
 
 	@RequestMapping(value = "/UomCreate", method = RequestMethod.GET)
-	public ModelAndView showUomCreate(HttpServletRequest request, @ModelAttribute("form") UomCreateForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new UomCreateForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+	public ModelAndView showUomCreate(HttpServletRequest request) {
+		UomCreateForm form = new UomCreateForm();
 
+		setupDisplayItems(form);
+
+		return findForward(FWD_SUCCESS, form);
+	}
+
+	private void setupDisplayItems(UomCreateForm form) {
 		try {
 			PropertyUtils.setProperty(form, "existingUomList",
 					DisplayListService.getList(DisplayListService.ListType.UNIT_OF_MEASURE));
@@ -58,8 +64,6 @@ public class UomCreateController extends BaseController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		return findForward(forward, form);
 	}
 
 	private String getExistingUomNames(List<UnitOfMeasure> uoms, ConfigurationProperties.LOCALE locale) {
@@ -74,12 +78,14 @@ public class UomCreateController extends BaseController {
 	}
 
 	@RequestMapping(value = "/UomCreate", method = RequestMethod.POST)
-	public ModelAndView postUomCreate(HttpServletRequest request, @ModelAttribute("form") UomCreateForm form)
-			throws Exception {
-
-		String forward = FWD_SUCCESS_INSERT;
-
-		BaseErrors errors = new BaseErrors();
+	public ModelAndView postUomCreate(HttpServletRequest request, @ModelAttribute("form") UomCreateForm form,
+			BindingResult result) throws Exception {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			setupDisplayItems(form);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 
 		String identifyingName = form.getUomEnglishName();
 		String userId = getSysUserId(request);
@@ -106,7 +112,7 @@ public class UomCreateController extends BaseController {
 		DisplayListService.refreshList(DisplayListService.ListType.UNIT_OF_MEASURE);
 		DisplayListService.refreshList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE);
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private UnitOfMeasure createUnitOfMeasure(String identifyingName, String userId) {
@@ -122,6 +128,8 @@ public class UomCreateController extends BaseController {
 			return "uomCreateDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/UomCreate.do";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return "uomCreateDefinition";
 		} else {
 			return "PageNotFound";
 		}

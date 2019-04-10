@@ -6,8 +6,7 @@
          		us.mn.state.health.lims.common.util.Versioning,
          		java.util.List,
          		java.util.ArrayList,
-         		us.mn.state.health.lims.common.provider.query.EntityNamesProvider,
-         		spring.generated.forms.PanelRenameEntryForm" %>
+         		us.mn.state.health.lims.common.provider.query.EntityNamesProvider" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -166,7 +165,7 @@
     columnCount = 0;
 	itemCount = 0;
     List panelList;
-    panelList =  ((PanelRenameEntryForm) request.getAttribute("form")).getPanelList();
+    panelList =  (List) pageContext.getAttribute("panelList");
 %>
 
 

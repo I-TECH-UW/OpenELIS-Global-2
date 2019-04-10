@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 
 public class DateValidationProvider extends BaseValidationProvider {
 
@@ -62,7 +63,7 @@ public class DateValidationProvider extends BaseValidationProvider {
 	}
 
 	public String validateDate(Date date, String relative) {
-		return CustomDateValidator.getInstance().validateDate(date, relative);
+		return CustomDateValidator.getInstance().validateDate(date, DateRelation.valueOf(relative.toUpperCase()));
 	}
 
 }

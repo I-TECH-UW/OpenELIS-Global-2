@@ -17,7 +17,7 @@ import us.mn.state.health.lims.common.provider.validation.IAccessionNumberValida
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.sample.util.AccessionNumberUtil;
 
 @Component
@@ -35,7 +35,7 @@ public class SampleEditFormValidator implements Validator {
 		ValidationHelper.validateField(form.getPatientName(), "patientName", errors, false, 255,
 				ValidationHelper.NAME_REGEX);
 
-		ValidationHelper.validateDateField(form.getDob(), "dob", errors, CustomDateValidator.PAST);
+		ValidationHelper.validateDateField(form.getDob(), "dob", errors, DateRelation.PAST);
 
 		ValidationHelper.validateGenderField(form.getGender(), "gender", errors);
 
@@ -64,7 +64,7 @@ public class SampleEditFormValidator implements Validator {
 
 		validateSampleXML(form.getSampleXML(), errors);
 
-		ValidationHelper.validateDateField(form.getCurrentDate(), "cuurentDate", errors, CustomDateValidator.PAST);
+		ValidationHelper.validateDateField(form.getCurrentDate(), "cuurentDate", errors, DateRelation.PAST);
 
 		// TODO sampleOrderItems
 
@@ -124,8 +124,8 @@ public class SampleEditFormValidator implements Validator {
 		}
 		// validate date not required
 		String collectionDate = sampleItem.attributeValue("date").trim();
-		ValidationHelper.validateDateField(collectionDate, "sampleXML", "sampleXML date", errors,
-				CustomDateValidator.PAST, false);
+		ValidationHelper.validateDateField(collectionDate, "sampleXML", "sampleXML date", errors, DateRelation.PAST,
+				false);
 		if (errors.hasErrors()) {
 			return;
 		}

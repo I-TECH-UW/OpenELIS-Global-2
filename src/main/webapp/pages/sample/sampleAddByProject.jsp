@@ -32,7 +32,7 @@
     String requestType;
 %>
 <%
-	requestType = (String) request.getAttribute("type");
+	requestType = (String) request.getParameter("type");
     String path = request.getContextPath();
     basePath = request.getScheme() + "://" + request.getServerName() + ":"  + request.getServerPort() + path + "/";
     HashSet accessMap = (HashSet)request.getSession().getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
@@ -283,7 +283,7 @@ function  /*void*/ savePage__(action) {
     window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
     var form = document.getElementById("mainForm");
     if (action == null) {
-        action = "SampleEntryByProjectSave.do?type=" + type
+        action = "SampleEntryByProject.do?type=" + type
     }
     form.action = action;
     form.submit();
@@ -474,7 +474,7 @@ function /*void*/ setSaveButton() {
                          id="iarv.gender"
                          onchange="iarv.checkGender(true)">
                         <form:option value="">&nbsp;</form:option>
-            			<form:options items="${form.formLists['GENDERS']}" itemLabel="localizedName" />
+            			<form:options items="${form.formLists['GENDERS']}" itemLabel="localizedName" itemValue="id"/>
             </form:select>
                 <div id="iarv.genderMessage" class="blank" />
             </td>
@@ -828,7 +828,7 @@ function /*void*/ setSaveButton() {
                          id="farv.gender"
                          onchange="farv.checkGender(false)" >
                     	<form:option value="">&nbsp;</form:option>
-            			<form:options items="${form.formLists['GENDERS']}" itemLabel="localizedName" />
+            			<form:options items="${form.formLists['GENDERS']}" itemLabel="localizedName" itemValue="id"/>
                 </form:select>
                 <div id="farv.genderIDMessage" class="blank" />
             </td>
@@ -1152,7 +1152,7 @@ function /*void*/ setSaveButton() {
                          id="rtn.gender"
                          onchange="rtn.checkGender(true)" >
                 		<form:option value="">&nbsp;</form:option>
-            			<form:options items="${form.formLists['GENDERS']}" itemLabel="localizedName" />
+            			<form:options items="${form.formLists['GENDERS']}" itemLabel="localizedName" itemValue="id"/>
                 </form:select>
                 <div id="rtn.genderMessage" class="blank" ></div>
             </td>
@@ -1482,7 +1482,7 @@ function /*void*/ setSaveButton() {
                  id="eid.gender"
                  onchange="eid.checkGender(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.formLists['GENDERS']}" itemLabel="localizedName" /> 
+            	 <form:options items= "${form.formLists['GENDERS']}" itemLabel="localizedName" itemValue="id"/> 
 	    	</form:select>
 	    	<div id="eid.genderMessage" class="blank" > </div>
         </td>
@@ -1923,7 +1923,7 @@ function /*void*/ setSaveButton() {
                          id="ind.gender"
                          onchange="ind.checkGender(false);" >
                 		<form:option value="">&nbsp;</form:option>
-            	 		<form:options items= "${form.formLists['GENDERS']}" itemLabel="localizedName" />
+            	 		<form:options items= "${form.formLists['GENDERS']}" itemLabel="localizedName" itemValue="id"/>
                 </form:select>
                 <div id="ind.genderMessage" class="blank" ></div>
             </td>
@@ -2832,7 +2832,7 @@ function /*void*/ setSaveButton() {
                  id="vl.gender"
                  onchange="vl.checkGender(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.formLists['GENDERS']}" itemLabel="localizedName" /> 
+            	 <form:options items= "${form.formLists['GENDERS']}" itemLabel="localizedName" itemValue="id"/> 
 	    	</form:select>
 	    	<div id="vl.genderMessage" class="blank" > </div>
         </td>

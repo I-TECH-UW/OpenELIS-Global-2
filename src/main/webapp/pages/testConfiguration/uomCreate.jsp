@@ -5,7 +5,7 @@
          		us.mn.state.health.lims.common.util.IdValuePair,
          		spring.mine.internationalization.MessageUtil,
          		us.mn.state.health.lims.common.util.Versioning,
-         		us.mn.state.health.lims.testconfiguration.action.TestSectionCreateAction" %>
+         		spring.generated.testconfiguration.controller.TestSectionCreateController" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -119,9 +119,9 @@
         var frenchNames = "${form.existingFrenchNames}".toLowerCase();
         var duplicate = false;
         if( locale == 'english'){
-            duplicate = englishNames.indexOf( '<%=TestSectionCreateAction.NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=TestSectionCreateAction.NAME_SEPARATOR%>') != -1;
+            duplicate = englishNames.indexOf( '<%=TestSectionCreateController.NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=TestSectionCreateController.NAME_SEPARATOR%>') != -1;
         }else{
-            duplicate = frenchNames.indexOf( '<%=TestSectionCreateAction.NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=TestSectionCreateAction.NAME_SEPARATOR%>') != -1;
+            duplicate = frenchNames.indexOf( '<%=TestSectionCreateController.NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=TestSectionCreateController.NAME_SEPARATOR%>') != -1;
         }
 
         if(duplicate){
