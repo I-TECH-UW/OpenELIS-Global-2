@@ -11,8 +11,8 @@
             </generator>   
         </id>
         <property name="urlPath" type="java.lang.String" column="url_path" not-null="true" />
-        <many-to-one name="systemModule" column="system_module_id" class="SystemModule" fetch="select" not-null="true"/>
-        <many-to-one name="param" column="system_module_param_id" class="SystemModuleParam" cascade="save-update" fetch="select"/>
+        <many-to-one name="systemModule" column="system_module_id" class="SystemModule" fetch="select" not-null="true" lazy="false"/>
+        <many-to-one name="param" column="system_module_param_id" class="SystemModuleParam" cascade="save-update" fetch="select" lazy="false"/>
 
      </class>
 </hibernate-mapping>

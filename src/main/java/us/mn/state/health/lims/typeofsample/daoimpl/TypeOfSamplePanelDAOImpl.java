@@ -232,6 +232,10 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl implements TypeOfSampl
 			String sql = "from TypeOfSamplePanel tp where tp.typeOfSampleId = :sampleId order by tp.panelId";
 
 			try {
+				if (sampleType.equals("null")) {
+					// so parseInt doesn't throw
+					sampleType = "0";
+				}
 				Query query = HibernateUtil.getSession().createQuery(sql);
 				query.setInteger("sampleId", Integer.parseInt(sampleType));
 				list = query.list();

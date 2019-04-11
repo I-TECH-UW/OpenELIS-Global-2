@@ -23,6 +23,7 @@ import java.util.Map;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.LocaleChangeListener;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
+import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.localization.valueholder.Localization;
 import us.mn.state.health.lims.test.daoimpl.TestSectionDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;

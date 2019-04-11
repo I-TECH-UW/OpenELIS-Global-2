@@ -17,13 +17,13 @@
         <many-to-one name="label" class="us.mn.state.health.lims.label.valueholder.Label" fetch="select">
             <column name="LABEL_ID" precision="10" scale="0" />
         </many-to-one>
-        <many-to-one name="localizedTestName" class="us.mn.state.health.lims.localization.valueholder.Localization" fetch="select">
+        <many-to-one name="localizedTestName" class="us.mn.state.health.lims.localization.valueholder.Localization" fetch="select" lazy="false">
             <column name="name_localization_id" precision="10" scale="0" />
         </many-to-one>
-        <many-to-one name="localizedReportingName" class="us.mn.state.health.lims.localization.valueholder.Localization" fetch="select">
+        <many-to-one name="localizedReportingName" class="us.mn.state.health.lims.localization.valueholder.Localization" fetch="select" lazy="false">
             <column name="reporting_name_localization_id" precision="10" scale="0" />
         </many-to-one>
-        <many-to-one name="unitOfMeasure" class="us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure" fetch="select">
+        <many-to-one name="unitOfMeasure" class="us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure" fetch="select" lazy="false">
             <column name="UOM_ID" precision="10" scale="0" />
         </many-to-one>
         <many-to-one name="scriptlet" class="us.mn.state.health.lims.scriptlet.valueholder.Scriptlet" fetch="select">

@@ -38,13 +38,14 @@ public class BaseObject implements Serializable, Cloneable {
 	public BaseObject() {
 	}
 
+	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}
 
 	/**
 	 * Returns the lastupdated.
-	 * 
+	 *
 	 * @return Date
 	 */
 	public Timestamp getLastupdated() {
@@ -53,9 +54,8 @@ public class BaseObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the lastupdated.
-	 * 
-	 * @param lastupdated
-	 *            The lastupdated to set
+	 *
+	 * @param lastupdated The lastupdated to set
 	 */
 	public void setLastupdated(Timestamp lastupdated) {
 		setOriginalLastupdated(lastupdated);
@@ -86,7 +86,7 @@ public class BaseObject implements Serializable, Cloneable {
 
 	/**
 	 * Returns the originalLastupdated.
-	 * 
+	 *
 	 * @return Timestamp
 	 */
 	public Timestamp getOriginalLastupdated() {
@@ -95,9 +95,8 @@ public class BaseObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the originalLastupdated.
-	 * 
-	 * @param originalLastupdated
-	 *            The originalLastupdated to set
+	 *
+	 * @param originalLastupdated The originalLastupdated to set
 	 */
 	private void setOriginalLastupdated(Timestamp originalLastupdated) {
 		if (this.originalLastupdated == null) {
@@ -126,10 +125,10 @@ public class BaseObject implements Serializable, Cloneable {
 	}
 
 	/*
-	 * Gets a localized version of a name. The key is from a database column so
-	 * not all tables will have them. If the localized name is not found then
-	 * the derived class will be asked to supply the name via the protected
-	 * method getDefaultLocaledName()
+	 * Gets a localized version of a name. The key is from a database column so not
+	 * all tables will have them. If the localized name is not found then the
+	 * derived class will be asked to supply the name via the protected method
+	 * getDefaultLocaledName()
 	 */
 	public String getLocalizedName() {
 		if (nameKey != null) {
@@ -137,18 +136,19 @@ public class BaseObject implements Serializable, Cloneable {
 
 			if (localizedName == null || localizedName.equals(nameKey.trim())) {
 				return getDefaultLocalizedName();
+				// return "bo:gln:143:name:" + nameKey;
 			} else {
 				return localizedName;
 			}
 		} else {
 			return getDefaultLocalizedName();
+			// return "bo:gln:149:name:" + nameKey;
 		}
 
 	}
 
 	/*
-	 * Override if there is a name key column in the database for this
-	 * table/object
+	 * Override if there is a name key column in the database for this table/object
 	 */
 	protected String getDefaultLocalizedName() {
 		return "unknown";
@@ -158,9 +158,9 @@ public class BaseObject implements Serializable, Cloneable {
 	 * A useful routine for sorting any (DB) entity object in Global OpenELIS by
 	 * it's localized name. If it starts with a number, sort by that ("2" comes
 	 * after "1", not after "10". Try not to do this too often, since your are
-	 * looking at strings from the resource file, but if you need a list for a
-	 * UI or a report in local Alphabetical order, this is just the thing to do.
-	 * 
+	 * looking at strings from the resource file, but if you need a list for a UI or
+	 * a report in local Alphabetical order, this is just the thing to do.
+	 *
 	 * @param list
 	 */
 	public static void sortByLocalizedName(List<? extends BaseObject> list) {
@@ -170,6 +170,7 @@ public class BaseObject implements Serializable, Cloneable {
 	private static class ComparatorByLocalizedName implements Comparator<BaseObject> {
 		// if the string starts with a number, sort by that, otherwise sort
 		// using the string.
+		@Override
 		public int compare(BaseObject o0, BaseObject o1) {
 			String ln0 = o0.getLocalizedName();
 			String ln1 = o1.getLocalizedName();
