@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -184,7 +185,7 @@ public class ResultsValidationRetroCIUtility {
 							testSectionName.equals("Immunology")) {
 						sw.setMark("Immuno time");
 						// add Hematology tests to list
-						totalTestName = StringUtil.getMessageForKey("test.validation.total.percent");
+						totalTestName = MessageUtil.getMessage("test.validation.total.percent");
 						List<ResultValidationItem> hematologyResults = getUnValidatedTestResultItemsInTestSection(getTestSectionId("Hematology"), statusList);
 						addPrecentageResultsTotal(hematologyResults);
 						testList.addAll(hematologyResults);
@@ -781,7 +782,7 @@ public class ResultsValidationRetroCIUtility {
         if (result != null && result.getAnalyte() != null
 				&& ANALYTE_CD4_CT_GENERATED_ID.equals(testResultItem.getResult().getAnalyte().getId())) {
 			testUnits = "";
-			testName = StringUtil.getMessageForKey("result.conclusion.cd4");
+			testName = MessageUtil.getMessage("result.conclusion.cd4");
 			analysisResultItem.setShowAcceptReject(false);
 			analysisResultItem.setReadOnly(true);
 			sortOrder = CD4_COUNT_SORT_NUMBER;

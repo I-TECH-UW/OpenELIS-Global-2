@@ -3,7 +3,7 @@
                  us.mn.state.health.lims.common.formfields.FormFields,
                  us.mn.state.health.lims.common.formfields.FormFields.Field,
                  us.mn.state.health.lims.patient.action.bean.PatientManagementInfo,
-                 us.mn.state.health.lims.common.util.*" %>
+                 us.mn.state.health.lims.common.util.*, spring.mine.internationalization.MessageUtil" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -666,7 +666,7 @@ function  /*void*/ setPatientInfo(nationalID, ST_ID, subjectNumber, lastName, fi
 			$("departmentID").value = 0;
 		}else if( isNaN( addressDept) ){
 			$("departmentID").value = 0;
-			deptMessage.textContent = "<%= StringUtil.getMessageForKey("patient.address.dept.entry.msg") %>" + " " + addressDept;
+			deptMessage.textContent = "<%= MessageUtil.getMessage("patient.address.dept.entry.msg") %>" + " " + addressDept;
 		}else{
 			$("departmentID").value = addressDept;
 		}
@@ -715,7 +715,7 @@ function  /*void*/ updatePatientEditStatus() {
 
 function /*void*/ makeDirty(){
 	dirty=true;
-	if( typeof(showSuccessMessage) != 'undefinded' ){
+	if( typeof(showSuccessMessage) === 'function' ){
 		showSuccessMessage(false); //refers to last save
 	}
 	// Adds warning when leaving page if content has been entered into makeDirty form fields
@@ -742,7 +742,7 @@ function  /*void*/ savePage()
 {
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
-	form.action = "PatientManagementUpdate.do";
+	form.action = "PatientManagement.do";
 	form.submit();
 }
 
@@ -860,7 +860,7 @@ function  processSubjectNumberSuccess(xhr){
 	<br/>
 	<div class="patientSearch">
 		<hr style="width:100%" />
-        <input type="button" value='<%= StringUtil.getMessageForKey("patient.new")%>' onclick="addPatient()">
+        <input type="button" value='<%= MessageUtil.getMessage("patient.new")%>' onclick="addPatient()">
 	</div>
     <%-- </logic:equal> --%>
     </c:if>
@@ -922,7 +922,7 @@ function  processSubjectNumberSuccess(xhr){
         <% } %>
         <% if( supportNationalID ){ %>
         <td style="text-align:right;">
-            <%=StringUtil.getContextualMessageForKey("patient.NationalID") %>:
+            <%=MessageUtil.getContextualMessage("patient.NationalID") %>:
 
         </td>
         <td >
@@ -1070,7 +1070,7 @@ function  processSubjectNumberSuccess(xhr){
 	<tr>
 		<td></td>
 		<td style="text-align:right;">
-		    <%= StringUtil.getContextualMessageForKey("person.town") %>:
+		    <%= MessageUtil.getContextualMessage("person.town") %>:
 		</td>
 		<td>
 			<%-- <nested:text name='${form.formName}'
@@ -1119,7 +1119,7 @@ function  processSubjectNumberSuccess(xhr){
 	<% if( FormFields.getInstance().useField(Field.PatientPhone)){ %>
 		<tr>
 			<td>&nbsp;</td>
-			<td style="text-align:right;"><%= StringUtil.getContextualMessageForKey("person.phone") %>:</td>
+			<td style="text-align:right;"><%= MessageUtil.getContextualMessage("person.phone") %>:</td>
 			<td>
 				<form:input path="patientProperties.phone" onchange="validatePhoneNumber( this );" maxLength="35"/>
 <%-- 				<html:text id="patientPhone" name='${form.formName}' property="patientProperties.phone" maxlength="35" onchange="validatePhoneNumber( this );" />

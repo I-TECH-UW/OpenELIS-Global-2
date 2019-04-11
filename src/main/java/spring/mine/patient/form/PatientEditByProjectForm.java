@@ -3,10 +3,11 @@ package spring.mine.patient.form;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 
 public class PatientEditByProjectForm extends PatientEntryByProjectForm {
-
+	// for display
 	private PatientSearch patientSearch;
 
-	private String warning;
+	// for display
+	private Boolean warning;
 
 	public PatientEditByProjectForm() {
 		setFormName("PatientEditByProjectForm");
@@ -20,11 +21,11 @@ public class PatientEditByProjectForm extends PatientEntryByProjectForm {
 		this.patientSearch = patientSearch;
 	}
 
-	public String getWarning() {
+	public Boolean getWarning() {
 		return warning;
 	}
 
-	public void setWarning(String warning) {
+	public void setWarning(Boolean warning) {
 		this.warning = warning;
 	}
 }

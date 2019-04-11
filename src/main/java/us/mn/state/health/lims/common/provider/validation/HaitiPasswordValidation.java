@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 
 public class HaitiPasswordValidation implements ILoginPasswordValidation {
 
@@ -48,6 +48,6 @@ public class HaitiPasswordValidation implements ILoginPasswordValidation {
 	}
 
 	public String getInstructions() {
-		return StringUtil.getMessageForKey("login.complexity.message");
+		return MessageUtil.getMessage("login.complexity.message");
 	}
 }

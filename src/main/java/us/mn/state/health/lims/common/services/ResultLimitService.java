@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.util.DAOImplFactory;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -201,7 +202,7 @@ public class ResultLimitService{
     public static String getDisplayNormalRange( double low, double high, String significantDigits, String separator){
 
         if( low == Float.NEGATIVE_INFINITY && high == Float.POSITIVE_INFINITY ){
-            return StringUtil.getMessageForKey("result.anyValue");
+            return MessageUtil.getMessage("result.anyValue");
         }
 
         if( low == high){
@@ -250,7 +251,7 @@ public class ResultLimitService{
 
     public static String getDisplayAgeRange( ResultLimit resultLimit, String separator){
         if( resultLimit.getMinAge() == 0 && resultLimit.getMaxAge() == Float.POSITIVE_INFINITY ){
-            return StringUtil.getMessageForKey("age.anyAge");
+            return MessageUtil.getMessage("age.anyAge");
         }
 
         if( resultLimit.getMaxAge() == Float.POSITIVE_INFINITY ){

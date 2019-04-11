@@ -9,6 +9,7 @@ import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.project.valueholder.Project;
 import us.mn.state.health.lims.reports.action.implementation.ReportSpecificationList;
 
+//TODO validation
 public class ReportForm extends BaseForm {
 	private Timestamp lastupdated;
 

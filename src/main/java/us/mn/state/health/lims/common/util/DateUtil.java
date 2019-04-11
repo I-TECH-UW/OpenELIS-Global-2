@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
@@ -54,15 +55,14 @@ public class DateUtil {
 		AMBIGUOUS_DATE_SEGMENT = AMBIGUOUS_DATE_CHAR + AMBIGUOUS_DATE_CHAR;
 	}
 
-    public static String formatDateTimeAsText(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat(getDateTimeFormat());
-        return format.format(date);
-    }
-	
-	
+	public static String formatDateTimeAsText(Date date) {
+		SimpleDateFormat format = new SimpleDateFormat(getDateTimeFormat());
+		return format.format(date);
+	}
+
 	public static String formatDateAsText(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat(getDateFormat());
-        return format.format(date);
+		SimpleDateFormat format = new SimpleDateFormat(getDateFormat());
+		return format.format(date);
 
 	}
 
@@ -72,7 +72,8 @@ public class DateUtil {
 		return convertStringDateToSqlDate(date, stringLocale);
 	}
 
-	public static java.sql.Date convertStringDateToSqlDate(String date, String stringLocale) throws LIMSRuntimeException {
+	public static java.sql.Date convertStringDateToSqlDate(String date, String stringLocale)
+			throws LIMSRuntimeException {
 		SimpleDateFormat format = new SimpleDateFormat(getDateFormat());
 		format.setLenient(false);
 		java.sql.Date returnDate = null;
@@ -119,7 +120,7 @@ public class DateUtil {
 		return returnTimestamp;
 
 	}
-	
+
 	public static Timestamp convertStringDateToTimestamp(String date) throws LIMSRuntimeException {
 		SimpleDateFormat format = new SimpleDateFormat(getDateTimeFormat());
 		Timestamp returnTimestamp = null;
@@ -136,7 +137,8 @@ public class DateUtil {
 
 	}
 
-	public static Timestamp convertStringDateToTimestampWithPatternNoLocale(String date, String pattern) throws LIMSRuntimeException {
+	public static Timestamp convertStringDateToTimestampWithPatternNoLocale(String date, String pattern)
+			throws LIMSRuntimeException {
 		SimpleDateFormat format = new SimpleDateFormat(pattern);
 
 		Timestamp returnTimestamp = null;
@@ -144,7 +146,8 @@ public class DateUtil {
 			try {
 				returnTimestamp = new Timestamp(format.parse(date).getTime());
 			} catch (ParseException e) {
-				LogEvent.logError("DateUtil", "convertStringDateToTimestampWithPattern()\nPattern: " + pattern + "\nDate: " + date,
+				LogEvent.logError("DateUtil",
+						"convertStringDateToTimestampWithPattern()\nPattern: " + pattern + "\nDate: " + date,
 						e.toString());
 				throw new LIMSRuntimeException("Error parsing date", e);
 			}
@@ -153,7 +156,8 @@ public class DateUtil {
 
 	}
 
-	public static Timestamp convertStringDateToTimestampWithPattern(String date, String pattern) throws LIMSRuntimeException {
+	public static Timestamp convertStringDateToTimestampWithPattern(String date, String pattern)
+			throws LIMSRuntimeException {
 		Locale locale = SystemConfiguration.getInstance().getDefaultLocale();
 		SimpleDateFormat format = new SimpleDateFormat(pattern, locale);
 
@@ -162,8 +166,8 @@ public class DateUtil {
 			try {
 				returnTimestamp = new Timestamp(format.parse(date).getTime());
 			} catch (ParseException e) {
-				LogEvent.logError("DateUtil", "convertStringDateToTimestampWithPattern()\nlocale: " + locale + "\nPattern: " + pattern
-						+ "\nDate: " + date, e.toString());
+				LogEvent.logError("DateUtil", "convertStringDateToTimestampWithPattern()\nlocale: " + locale
+						+ "\nPattern: " + pattern + "\nDate: " + date, e.toString());
 				throw new LIMSRuntimeException("Error parsing date", e);
 			}
 		}
@@ -176,8 +180,8 @@ public class DateUtil {
 		if (!StringUtil.isNullorNill(time) && date != null) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(date);
-			cal.set(Calendar.HOUR_OF_DAY, Integer.valueOf( time.substring( 0, 2 ) ) );
-			cal.set(Calendar.MINUTE, Integer.valueOf( time.substring( 3, 5 ) ) );
+			cal.set(Calendar.HOUR_OF_DAY, Integer.valueOf(time.substring(0, 2)));
+			cal.set(Calendar.MINUTE, Integer.valueOf(time.substring(3, 5)));
 			date = new Timestamp(cal.getTimeInMillis());
 		}
 		return date;
@@ -198,40 +202,41 @@ public class DateUtil {
 		return returnDate;
 	}
 
+	public static String convertTimestampToStringDate(Timestamp date) throws LIMSRuntimeException {
+		return convertTimestampToStringDate(date, false);
+	}
 
-    public static String convertTimestampToStringDate(Timestamp date) throws LIMSRuntimeException {
-        return convertTimestampToStringDate(date, false);
-    }
+	public static String convertTimestampToTwoYearStringDate(Timestamp date) throws LIMSRuntimeException {
+		return convertTimestampToStringDate(date, true);
+	}
 
-    public static String convertTimestampToTwoYearStringDate(Timestamp date) throws LIMSRuntimeException {
-        return convertTimestampToStringDate(date, true);
-    }
-    private static String convertTimestampToStringDate( Timestamp date, boolean twoYearDate) throws LIMSRuntimeException {
-        if( date == null){
-            return "";
-        }
+	private static String convertTimestampToStringDate(Timestamp date, boolean twoYearDate)
+			throws LIMSRuntimeException {
+		if (date == null) {
+			return "";
+		}
 
-        String pattern =  getDateFormat();
-        if( twoYearDate){
-            pattern = pattern.replace( "yyyy", "yy" );
-        }
+		String pattern = getDateFormat();
+		if (twoYearDate) {
+			pattern = pattern.replace("yyyy", "yy");
+		}
 
-        SimpleDateFormat format = new SimpleDateFormat(pattern);
-        String returnDate;
+		SimpleDateFormat format = new SimpleDateFormat(pattern);
+		String returnDate;
 
-        try {
-            returnDate = format.format(date);
-        } catch (Exception e) {
+		try {
+			returnDate = format.format(date);
+		} catch (Exception e) {
 
-            LogEvent.logError("DateUtil", "convertTimestampToStringDate()", e.toString());
-            throw new LIMSRuntimeException("Error converting date", e);
-        }
+			LogEvent.logError("DateUtil", "convertTimestampToStringDate()", e.toString());
+			throw new LIMSRuntimeException("Error converting date", e);
+		}
 
-        return returnDate;
-    }
+		return returnDate;
+	}
 
 	public static String convertTimestampToStringTime(Timestamp date) throws LIMSRuntimeException {
-	
+
 		String returnTime = null;
 		String hours;
 		String minutes;
@@ -328,45 +333,46 @@ public class DateUtil {
 	}
 
 	public static String normalizeAmbiguousDate(String date) {
-		if( VALID_DATE.matcher(date).find()){
+		if (VALID_DATE.matcher(date).find()) {
 			return date;
 		}
 
 		String replaceValue = ConfigurationProperties.getInstance().getPropertyValue(Property.AmbiguousDateValue);
-		//N.B.  This is suppose to clean-up historical data in the database.  We will do the best we can
-		if( date.length() != 10){
+		// N.B. This is suppose to clean-up historical data in the database. We will do
+		// the best we can
+		if (date.length() != 10) {
 			String[] dateParts = date.split("/");
-			if( dateParts.length != 3 || !FOUR_DIGITS.matcher(dateParts[2]).find()){
+			if (dateParts.length != 3 || !FOUR_DIGITS.matcher(dateParts[2]).find()) {
 				return null;
 			}
-			if( date.length() > 10){
+			if (date.length() > 10) {
 				return replaceValue + "/" + replaceValue + "/" + date.split("/")[2];
 			}
 
-			for(int i = 0; i < 2; i++) {
+			for (int i = 0; i < 2; i++) {
 				if (dateParts[i].length() == 1 && DIGIT.matcher(dateParts[i]).find()) {
 					dateParts[i] = "0" + dateParts[i];
-				}else if (dateParts[i].length() == 1 || !TWO_DIGITS.matcher(dateParts[i]).find()) {
-					//if there is a single 'x' or 'X' then replacing it with 01 is what we want
+				} else if (dateParts[i].length() == 1 || !TWO_DIGITS.matcher(dateParts[i]).find()) {
+					// if there is a single 'x' or 'X' then replacing it with 01 is what we want
 					return replaceValue + "/" + replaceValue + "/" + date.split("/")[2];
 				}
 			}
 
-			//if we made it here we have corrected what we can
+			// if we made it here we have corrected what we can
 			return dateParts[0] + "/" + dateParts[1] + "/" + dateParts[2];
-		}else {
+		} else {
 			date = StringUtil.replaceCharAtIndex(date, '/', 2);
 			date = StringUtil.replaceCharAtIndex(date, '/', 5);
-			if( !yearSpecified(date)){
+			if (!yearSpecified(date)) {
 				return null;
 			}
 			date = date.replaceAll(AMBIGUOUS_DATE_REGEX, replaceValue);
 
-			if(VALID_DATE.matcher(date).find()) {
+			if (VALID_DATE.matcher(date).find()) {
 				return date;
-			}else{
+			} else {
 				return replaceValue + "/" + replaceValue + "/" + date.split("/")[2];
-				}
+			}
 
 		}
 	}
@@ -409,9 +415,9 @@ public class DateUtil {
 		return format.format(new Date());
 
 	}
-	
+
 	public static String getCurrentTimeAsText() {
-		int hour =  getCurrentHour();
+		int hour = getCurrentHour();
 		int minute = getCurrentMinute();
 		return String.format("%02d:%02d", hour, minute);
 	}
@@ -420,7 +426,7 @@ public class DateUtil {
 		long duration = endDate.getTime() - startDate.getTime();
 		return (int) Math.floor(duration / WEEK_MS);
 	}
-	
+
 	public static int getAgeInDays(Date startDate, Date endDate) {
 		long duration = endDate.getTime() - startDate.getTime();
 		return (int) Math.floor(duration / DAY_IN_MILLSEC);
@@ -453,9 +459,8 @@ public class DateUtil {
 		Calendar end = new GregorianCalendar();
 		end.setTime(endDate);
 		int year = end.get(Calendar.YEAR) - start.get(Calendar.YEAR);
-		if (start.get(Calendar.MONTH) > end.get(Calendar.MONTH)
-				|| (start.get(Calendar.MONTH) == end.get(Calendar.MONTH) && 
-					start.get(Calendar.DAY_OF_MONTH) > end.get(Calendar.DAY_OF_MONTH))) {
+		if (start.get(Calendar.MONTH) > end.get(Calendar.MONTH) || (start.get(Calendar.MONTH) == end.get(Calendar.MONTH)
+				&& start.get(Calendar.DAY_OF_MONTH) > end.get(Calendar.DAY_OF_MONTH))) {
 			--year;
 		}
 		return year;
@@ -503,7 +508,7 @@ public class DateUtil {
 		return new GregorianCalendar().get(Calendar.MONTH);
 	}
 
-	public static Timestamp getTimestampForBeginningOfMonthAgo( int months ) {
+	public static Timestamp getTimestampForBeginningOfMonthAgo(int months) {
 		Calendar now = new GregorianCalendar();
 		now.add(Calendar.MONTH, -months);
 		now.set(Calendar.DAY_OF_MONTH, 1);
@@ -521,7 +526,7 @@ public class DateUtil {
 	public static int getCurrentHour() {
 		return new GregorianCalendar().get(Calendar.HOUR_OF_DAY);
 	}
-	
+
 	public static int getCurrentMinute() {
 		return new GregorianCalendar().get(Calendar.MINUTE);
 	}
@@ -530,134 +535,140 @@ public class DateUtil {
 		return new Timestamp(new Date().getTime());
 	}
 
-    public static String convertTimestampToStringDateAndConfiguredHourTime( Timestamp timestamp ) {
-        if( ConfigurationProperties.getInstance().isPropertyValueEqual( Property.CLOCK_24, "true" )){
-            return convertTimestampToStringDateAndTime( timestamp );
-        }else{
-            return convertTimestampToStringDateAnd12HourTime( timestamp );
-        }
-    }
-
-    public static String convertTimestampToStringDateAndTime(Timestamp timestamp) {
-		if( timestamp == null){
-			return null;
+	public static String convertTimestampToStringDateAndConfiguredHourTime(Timestamp timestamp) {
+		if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.CLOCK_24, "true")) {
+			return convertTimestampToStringDateAndTime(timestamp);
+		} else {
+			return convertTimestampToStringDateAnd12HourTime(timestamp);
 		}
-		return new SimpleDateFormat( getDateTimeFormat()).format(timestamp);
 	}
 
-    public static String convertTimestampToStringDateAnd12HourTime(Timestamp timestamp) {
-        if( timestamp == null){
-            return null;
-        }
-        return new SimpleDateFormat( getDateTime12HourFormat()).format(timestamp);
-    }
+	public static String convertTimestampToStringDateAndTime(Timestamp timestamp) {
+		if (timestamp == null) {
+			return null;
+		}
+		return new SimpleDateFormat(getDateTimeFormat()).format(timestamp);
+	}
 
-    public static String convertTimestampToStringConfiguredHourTime(Timestamp timestamp) {
-        if( ConfigurationProperties.getInstance().isPropertyValueEqual( Property.CLOCK_24, "true" )){
-            return convertTimestampToStringHourTime( timestamp );
-        }else{
-            return convertTimestampToString12HourTime( timestamp );
-        }
-    }
+	public static String convertTimestampToStringDateAnd12HourTime(Timestamp timestamp) {
+		if (timestamp == null) {
+			return null;
+		}
+		return new SimpleDateFormat(getDateTime12HourFormat()).format(timestamp);
+	}
 
-    public static String convertTimestampToString12HourTime(Timestamp timestamp) {
-        if( timestamp == null){
-            return null;
-        }
-        return new SimpleDateFormat( "KK:mm a").format(timestamp);
-    }
+	public static String convertTimestampToStringConfiguredHourTime(Timestamp timestamp) {
+		if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.CLOCK_24, "true")) {
+			return convertTimestampToStringHourTime(timestamp);
+		} else {
+			return convertTimestampToString12HourTime(timestamp);
+		}
+	}
 
-    public static String convertTimestampToStringHourTime(Timestamp timestamp) {
-        if( timestamp == null){
-            return null;
-        }
-        return new SimpleDateFormat( "HH:mm").format(timestamp);
-    }
-	public static java.sql.Date convertTimestampToSqlDate( Timestamp timestamp){
+	public static String convertTimestampToString12HourTime(Timestamp timestamp) {
+		if (timestamp == null) {
+			return null;
+		}
+		return new SimpleDateFormat("KK:mm a").format(timestamp);
+	}
+
+	public static String convertTimestampToStringHourTime(Timestamp timestamp) {
+		if (timestamp == null) {
+			return null;
+		}
+		return new SimpleDateFormat("HH:mm").format(timestamp);
+	}
+
+	public static java.sql.Date convertTimestampToSqlDate(Timestamp timestamp) {
 		return new java.sql.Date(timestamp.getTime());
 	}
 
 	public static Timestamp convertSqlDateToTimestamp(java.sql.Date date) {
-		return new Timestamp( date.getTime());
+		return new Timestamp(date.getTime());
 	}
 
 	public static Object nowTimeAsText() {
 		return convertTimestampToStringTime(getNowAsTimestamp());
 	}
-	
+
 	public static Timestamp convertStringDateStringTimeToTimestamp(String date, String time) {
-        if (!GenericValidator.isBlankOrNull(date) && !GenericValidator.isBlankOrNull(time))
-            date = date + " " + time;
-        else if (!GenericValidator.isBlankOrNull(date) && GenericValidator.isBlankOrNull(time))
-            date = date + " 00:00";
-        else
-            return null;
-        return convertStringDateToTimestamp(date);
+		if (!GenericValidator.isBlankOrNull(date) && !GenericValidator.isBlankOrNull(time)) {
+			date = date + " " + time;
+		} else if (!GenericValidator.isBlankOrNull(date) && GenericValidator.isBlankOrNull(time)) {
+			date = date + " 00:00";
+		} else {
+			return null;
+		}
+		return convertStringDateToTimestamp(date);
 
 	}
 
 	/**
-	 * The purpose of this is to not overwrite an old value with a less specified new value
-	 * If the new time is empty but the dates are the same then return the timestamp of the old date/time
-	 * If the dates differ use the new date/time
+	 * The purpose of this is to not overwrite an old value with a less specified
+	 * new value If the new time is empty but the dates are the same then return the
+	 * timestamp of the old date/time If the dates differ use the new date/time
+	 * 
 	 * @param oldDate
 	 * @param oldTime
 	 * @param newDate
 	 * @param newTime
 	 * @return
 	 */
-	public static Timestamp convertStringDatePreserveStringTimeToTimestamp(String oldDate, String oldTime,	String newDate, String newTime){
-		if(!GenericValidator.isBlankOrNull(newTime)){
+	public static Timestamp convertStringDatePreserveStringTimeToTimestamp(String oldDate, String oldTime,
+			String newDate, String newTime) {
+		if (!GenericValidator.isBlankOrNull(newTime)) {
 			return convertStringDateStringTimeToTimestamp(newDate, newTime);
 		}
-		
-		if(newDate != null && newDate.equals(oldDate)){
+
+		if (newDate != null && newDate.equals(oldDate)) {
 			return convertStringDateStringTimeToTimestamp(oldDate, oldTime);
 		}
-		
+
 		return convertStringDateStringTimeToTimestamp(newDate, newTime);
 	}
 
-    public static java.sql.Date addDaysToSQLDate( java.sql.Date date, int days){
-        return new java.sql.Date( date.getTime() + (days*DAY_IN_MILLSEC));
-    }
+	public static java.sql.Date addDaysToSQLDate(java.sql.Date date, int days) {
+		return new java.sql.Date(date.getTime() + (days * DAY_IN_MILLSEC));
+	}
 
-    public static String getDateUserPrompt(){
-        Locale locale = getDateFormatLocale();
-        String yearRepresentation = StringUtil.getMessageForKey( "date.format.display.year" );
-        String dayRepresentation = StringUtil.getMessageForKey( "date.format.display.day" );
-        return StringUtil.getMessageForKeyAndLocale( "sample.date.format", dayRepresentation, yearRepresentation, locale );
+	public static String getDateUserPrompt() {
+		Locale locale = getDateFormatLocale();
+		String yearRepresentation = MessageUtil.getMessage("date.format.display.year");
+		String dayRepresentation = MessageUtil.getMessage("date.format.display.day");
+		return MessageUtil.getMessage("sample.date.format", new String[] { dayRepresentation, yearRepresentation },
+				locale);
 
-    }
+	}
 
-    public static String getDateFormat(){
-        Locale locale = getDateFormatLocale();
-        return StringUtil.getMessageForKeyAndLocale( "date.format.formatKey", locale );
-    }
+	public static String getDateFormat() {
+		Locale locale = getDateFormatLocale();
+		return MessageUtil.getMessage("date.format.formatKey", locale);
+	}
 
-    public static String getDateTimeFormat(){
-        Locale locale = getDateFormatLocale();
-        return StringUtil.getMessageForKeyAndLocale( "timestamp.format.formatKey", locale );
-    }
+	public static String getDateTimeFormat() {
+		Locale locale = getDateFormatLocale();
+		return MessageUtil.getMessage("timestamp.format.formatKey", locale);
+	}
 
-    public static String getDateTime12HourFormat(){
-        Locale locale = getDateFormatLocale();
-        return StringUtil.getMessageForKeyAndLocale( "timestamp.format.formatKey.12", locale );
-    }
+	public static String getDateTime12HourFormat() {
+		Locale locale = getDateFormatLocale();
+		return MessageUtil.getMessage("timestamp.format.formatKey.12", locale);
+	}
 
-    public static Locale getDateFormatLocale(){
-        return SystemConfiguration.getInstance().getLocaleByLocalString( ConfigurationProperties.getInstance().getPropertyValue( Property.DEFAULT_DATE_LOCALE ) );
-    }
-    
-    public static String getTimeUserPrompt(){
-    	return "(hh:mm)";
-    }
-    
-    public static String getMonthFromInt(int month, boolean zeroIndexed) {
-    	if (zeroIndexed) {
-    		return new DateFormatSymbols().getMonths()[month];
-    	} else {
-    		return new DateFormatSymbols().getMonths()[month-1];
-    	}
-    }
+	public static Locale getDateFormatLocale() {
+		return SystemConfiguration.getInstance().getLocaleByLocalString(
+				ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_DATE_LOCALE));
+	}
+
+	public static String getTimeUserPrompt() {
+		return "(hh:mm)";
+	}
+
+	public static String getMonthFromInt(int month, boolean zeroIndexed) {
+		if (zeroIndexed) {
+			return new DateFormatSymbols().getMonths()[month];
+		} else {
+			return new DateFormatSymbols().getMonths()[month - 1];
+		}
+	}
 }

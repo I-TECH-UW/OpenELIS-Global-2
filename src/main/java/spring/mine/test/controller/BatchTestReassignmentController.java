@@ -12,18 +12,19 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
-import spring.mine.test.form.BatchTestReassignment;
+import spring.mine.test.form.BatchTestReassignmentForm;
+import spring.mine.test.validator.BatchTestReassignmentFormValidator;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -39,36 +40,35 @@ import us.mn.state.health.lims.test.valueholder.Test;
 @Controller
 public class BatchTestReassignmentController extends BaseController {
 
+	@Autowired
+	BatchTestReassignmentFormValidator formValidator;
+
 	private AnalysisDAO analysisDAO = new AnalysisDAOImpl();
 
 	@RequestMapping(value = "/BatchTestReassignment", method = RequestMethod.GET)
-	public ModelAndView showBatchTestReassignment(HttpServletRequest request,
-			@ModelAttribute("form") BatchTestReassignment form)
+	public ModelAndView showBatchTestReassignment(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new BatchTestReassignment();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+		BatchTestReassignmentForm form = new BatchTestReassignmentForm();
 
 		PropertyUtils.setProperty(form, "sampleList",
 				DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
-		return findForward(forward, form);
+
+		addFlashMsgsToRequest(request);
+		return findForward(FWD_SUCCESS, form);
 	}
 
-	@RequestMapping(value = "/BatchTestReassignmentUpdate", method = RequestMethod.POST)
+	@RequestMapping(value = "/BatchTestReassignment", method = RequestMethod.POST)
 	public ModelAndView showBatchTestReassignmentUpdate(HttpServletRequest request,
-			@ModelAttribute("form") BatchTestReassignment form)
+			@ModelAttribute("form") BatchTestReassignmentForm form, BindingResult result,
+			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS_INSERT;
-		if (form == null) {
-			form = new BatchTestReassignment();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
-		String currentUserId = getSysUserId(request);
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
+
+		}
 		String jsonString = form.getString("jsonWad");
 		// System.out.println(jsonString);
 
@@ -99,7 +99,8 @@ public class BatchTestReassignmentController extends BaseController {
 		}
 
 		if (changeBeans.isEmpty()) {
-			return findForward(forward, form);
+			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+			return findForward(FWD_SUCCESS_INSERT, form);
 		} else {
 			PropertyUtils.setProperty(form, "sampleList",
 					DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
@@ -286,7 +287,9 @@ public class BatchTestReassignmentController extends BaseController {
 		if (FWD_SUCCESS.equals(forward)) {
 			return "BatchTestReassignmentDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return "redirect:/BatchTestReassignment.do?forward=success";
+			return "redirect:/BatchTestReassignment.do";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return "BatchTestReassignmentDefinition";
 		} else if ("resubmit".equals(forward)) {
 			return "BatchTestReassignmentDefinition";
 		} else {

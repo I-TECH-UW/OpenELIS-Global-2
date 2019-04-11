@@ -7,7 +7,7 @@
                  us.mn.state.health.lims.common.formfields.FormFields,
                  us.mn.state.health.lims.common.formfields.FormFields.Field,
                  us.mn.state.health.lims.common.util.Versioning,
-                 us.mn.state.health.lims.common.util.StringUtil,
+                 spring.mine.internationalization.MessageUtil,
                  us.mn.state.health.lims.sample.bean.SampleOrderItem,
                  us.mn.state.health.lims.sample.util.AccessionNumberUtil" %>
 
@@ -591,25 +591,25 @@ function  processPhoneSuccess(xhr){
 
 
 <% if( acceptExternalOrders){ %>
-<%= StringUtil.getContextualMessageForKey( "referring.order.number" ) %>:
+<%= MessageUtil.getContextualMessage( "referring.order.number" ) %>:
 <form:input path="sampleOrderItems.externalOrderNumber" onchange="checkOrderReferral(this.value);makeDirty();"/>
-<input type="button" name="searchExternalButton" value='<%= StringUtil.getMessageForKey("label.button.search")%>'
+<input type="button" name="searchExternalButton" value='<%= MessageUtil.getMessage("label.button.search")%>'
        onclick="checkOrderReferral($(externalOrderNumber).value);makeDirty();">
-<%= StringUtil.getContextualMessageForKey( "referring.order.not.found" ) %>
+<%= MessageUtil.getContextualMessage( "referring.order.not.found" ) %>
 <hr style="width:100%;height:5px"/>
 
 <% } %>
             
 <div id=sampleEntryPage >
 <input type="button" name="showHide" value='<%= acceptExternalOrders ? "+" : "-" %>' onclick="showHideSection(this, 'orderDisplay');" id="orderSectionId">
-<%= StringUtil.getContextualMessageForKey("sample.entry.order.label") %>
+<%= MessageUtil.getContextualMessage("sample.entry.order.label") %>
 <span class="requiredlabel">*</span>
 
 <tiles:insertAttribute name="sampleOrder" />
 
 <hr style="width:100%;height:5px" />
 <input type="button" name="showHide" value="+" onclick="showHideSection(this, 'samplesDisplay');" id="samplesSectionId">
-<%= StringUtil.getContextualMessageForKey("sample.entry.sampleList.label") %>
+<%= MessageUtil.getContextualMessage("sample.entry.sampleList.label") %>
 <span class="requiredlabel">*</span>
 
 <div id="samplesDisplay" class="colorFill" style="display:none;" >
@@ -645,7 +645,7 @@ function  processPhoneSuccess(xhr){
         </td>
         <td id="dob"><b>&nbsp;</b></td>
         <td>
-            <%=StringUtil.getContextualMessageForKey("patient.NationalID") %>:
+            <%=MessageUtil.getContextualMessage("patient.NationalID") %>:
         </td>
         <td id="national"><b>&nbsp;</b></td>
         <td>
@@ -667,7 +667,7 @@ function  processPhoneSuccess(xhr){
 
 function /*void*/ makeDirty(){
     dirty=true;
-    if( typeof(showSuccessMessage) != 'undefinded' ){
+    if( typeof(showSuccessMessage) === 'function' ){
         showSuccessMessage(false); //refers to last save
     }
     // Adds warning when leaving page if content has been entered into makeDirty form fields
@@ -683,7 +683,7 @@ function  /*void*/ savePage()
 
   window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
     var form = document.getElementById("mainForm");
-    form.action = "SamplePatientEntrySave.do";
+    form.action = "SamplePatientEntry.do";
     form.submit();
 }
 

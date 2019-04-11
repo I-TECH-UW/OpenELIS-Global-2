@@ -31,9 +31,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.provider.reports.BaseReportsProvider;
 import us.mn.state.health.lims.common.provider.reports.ReportsProviderFactory;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.login.dao.UserModuleDAO;
 import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
 
@@ -56,7 +56,7 @@ public class ReportsServlet extends HttpServlet {
 		if (userModuleDAO.isSessionExpired(request)) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.setContentType("text/html; charset=utf-8");
-			response.getWriter().println(StringUtil.getMessageForKey("message.error.unauthorized"));
+			response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
 			return;
 		}
 		String reportsProvider = request.getParameter("provider");

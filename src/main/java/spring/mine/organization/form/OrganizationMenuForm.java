@@ -2,13 +2,18 @@ package spring.mine.organization.form;
 
 import java.util.List;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 import spring.mine.common.form.MenuForm;
 
 public class OrganizationMenuForm extends MenuForm {
+	// for display
 	private List menuList;
 
+	// in validator
 	private String[] selectedIDs;
 
+	@SafeHtml
 	private String searchString = "";
 
 	public OrganizationMenuForm() {

@@ -23,12 +23,12 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 
 import spring.mine.common.form.BaseForm;
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 public class ARVFormMapper extends BaseProjectFormMapper implements IProjectFormMapper {
 
-	private final String projectCode = StringUtil.getMessageForKey("sample.entry.project.LART");
+	private final String projectCode = MessageUtil.getMessage("sample.entry.project.LART");
 
 	public ARVFormMapper(String projectFormId, BaseForm form) {
 		super(projectFormId, form);
@@ -48,10 +48,10 @@ public class ARVFormMapper extends BaseProjectFormMapper implements IProjectForm
 			CollectionUtils.addIgnoreNull(testList, createTest("Integral", true));
 		}
 		if (projectData.getCreatinineTest()) {
-			CollectionUtils.addIgnoreNull(testList, createTest("CrÃ©atininÃ©mie", true));
+			CollectionUtils.addIgnoreNull(testList, createTest("Créatininémie", true));
 		}
 		if (projectData.getGlycemiaTest()) {
-			CollectionUtils.addIgnoreNull(testList, createTest("GlycÃ©mie", true));
+			CollectionUtils.addIgnoreNull(testList, createTest("Glycémie", true));
 		}
 
 		if (projectData.getTransaminaseTest()) {
@@ -88,7 +88,7 @@ public class ARVFormMapper extends BaseProjectFormMapper implements IProjectForm
 		}
 
 		if (projectData.getGenotypingTest()) {
-			CollectionUtils.addIgnoreNull(testList, createTest("GÃ©notypage", true));
+			CollectionUtils.addIgnoreNull(testList, createTest("Génotypage", true));
 		}
 
 		return testList;

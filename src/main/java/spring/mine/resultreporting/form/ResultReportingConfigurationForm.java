@@ -1,31 +1,27 @@
 package spring.mine.resultreporting.form;
 
-import java.sql.Timestamp;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.dataexchange.resultreporting.beans.ReportingConfiguration;
 
 public class ResultReportingConfigurationForm extends BaseForm {
-	private Timestamp lastupdated;
 
+	// TODO
+	@Valid
 	private List<ReportingConfiguration> reports;
 
+	// for display
 	private List<IdValuePair> hourList;
 
+	// for display
 	private List<IdValuePair> minList;
 
 	public ResultReportingConfigurationForm() {
 		setFormName("ResultReportingConfigurationForm");
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public List<ReportingConfiguration> getReports() {

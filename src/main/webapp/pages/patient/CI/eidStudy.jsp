@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     import="us.mn.state.health.lims.common.action.IActionConstants,
             us.mn.state.health.lims.common.util.DateUtil,
-            us.mn.state.health.lims.common.util.StringUtil"%>
+            spring.mine.internationalization.MessageUtil"%>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -182,7 +182,7 @@ eid = new EidProjectChecker();
     <tr>
         <td class="required">*</td>
         <td>
-            <%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
+            <%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>
         </td>
         <td>
             <div class="blank"><spring:message code="sample.entry.project.LDBS"/></div>

@@ -1,16 +1,12 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="org.apache.struts.taglib.TagUtils,
-		org.apache.struts.action.*,
-		org.apache.struts.Globals,
-		java.util.Iterator,
+	import="java.util.Iterator,
 		javax.servlet.jsp.JspException,
 		us.mn.state.health.lims.common.action.IActionConstants,
 		us.mn.state.health.lims.common.util.resources.ResourceLocator,
-		us.mn.state.health.lims.common.util.validator.ActionError,
 		us.mn.state.health.lims.common.util.SystemConfiguration,
-		org.owasp.encoder.Encode"%>
-<%@ page import="spring.mine.common.constants.Constants" %>
+		org.owasp.encoder.Encode,
+		spring.mine.common.constants.Constants" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -18,11 +14,6 @@
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <!DOCTYPE html>
-
-<%-- removed deprecated calls to methods in org.apache.struts.util.RequestUtils--%>
-<%--html:errors/--%>
-<%--html:messages/--%>
-
 
 <%!
 String path = "";
@@ -63,10 +54,17 @@ myActionForm = document.forms["<%= (String)request.getAttribute(IActionConstants
 
 
 </script>
-<c:if test="${not empty requestScope[Constants.REQUEST_ERRORS].allErrors}">
+<c:if test="${not empty requestScope[Constants.REQUEST_ERRORS].globalErrors}">
 <center><h1>
-<c:forEach items="${requestScope[Constants.REQUEST_ERRORS].allErrors}" var="error">
+<c:forEach items="${requestScope[Constants.REQUEST_ERRORS].globalErrors}" var="error">
 	<spring:message code="${error.code}" arguments="${error.arguments}" text="${error.defaultMessage}" /><br>
+</c:forEach>
+</h1></center>
+</c:if>
+<c:if test="${not empty requestScope[Constants.REQUEST_ERRORS].fieldErrors}">
+<center><h1>
+<c:forEach items="${requestScope[Constants.REQUEST_ERRORS].fieldErrors}" var="error">
+	<c:out value="${error.field}"/>: <spring:message code="${error.code}" arguments="${error.arguments}" text="${error.defaultMessage}" /><br>
 </c:forEach>
 </h1></center>
 </c:if>

@@ -5,14 +5,17 @@ import java.util.List;
 import spring.mine.common.form.MenuForm;
 
 public class SiteInformationMenuForm extends MenuForm {
+	// for display
 	private List menuList;
 
+	// in validator
 	private String[] selectedIDs;
 
-	private String siteInfoDomainName = "SiteInformation";
+	// in validator
+	private String siteInfoDomainName;// = "SiteInformation";
 
 	public SiteInformationMenuForm() {
-		setFormName("siteInformationMenuForm");
+		// setFormName("siteInformationMenuForm");
 	}
 
 	@Override

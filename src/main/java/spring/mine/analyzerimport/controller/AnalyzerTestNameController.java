@@ -4,9 +4,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.struts.Globals;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,7 +22,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.analyzerimport.form.AnalyzerTestNameForm;
 import spring.mine.analyzerimport.validator.AnalyzerTestMappingValidator;
-import spring.mine.analyzerimport.validator.AnalyzerTestNameFormValidator;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
@@ -45,8 +44,6 @@ import us.mn.state.health.lims.test.valueholder.Test;
 public class AnalyzerTestNameController extends BaseController {
 
 	@Autowired
-	AnalyzerTestNameFormValidator formValidator;
-	@Autowired
 	AnalyzerTestMappingValidator analyzerTestMappingValidator;
 
 	@ModelAttribute("form")
@@ -58,12 +55,10 @@ public class AnalyzerTestNameController extends BaseController {
 	public ModelAndView showAnalyzerTestName(HttpServletRequest request, @ModelAttribute("form") BaseForm form,
 			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
 		if (form.getClass() != AnalyzerTestNameForm.class) {
 			form = new AnalyzerTestNameForm();
 			request.getSession().setAttribute("form", form);
 		}
-		form.setFormAction("");
 		form.setCancelAction("CancelAnalyzerTestName.do");
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
@@ -91,7 +86,7 @@ public class AnalyzerTestNameController extends BaseController {
 			PropertyUtils.setProperty(form, "newMapping", false);
 		}
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	private List<Analyzer> getAllAnalyzers() {
@@ -106,10 +101,9 @@ public class AnalyzerTestNameController extends BaseController {
 
 	@RequestMapping(value = "/AnalyzerTestName", method = RequestMethod.POST)
 	public ModelAndView showUpdateAnalyzerTestName(HttpServletRequest request,
-			@ModelAttribute("form") AnalyzerTestNameForm form, BindingResult result, SessionStatus status,
+			@ModelAttribute("form") @Valid AnalyzerTestNameForm form, BindingResult result, SessionStatus status,
 			RedirectAttributes redirectAttributes) {
 
-		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);
@@ -176,7 +170,7 @@ public class AnalyzerTestNameController extends BaseController {
 				errorMsg = "errors.UpdateException";
 			}
 
-			persisteError(request, errorMsg);
+			persistError(request, errorMsg);
 
 			disableNavigationButtons(request);
 			forward = FWD_FAIL_INSERT;
@@ -209,13 +203,12 @@ public class AnalyzerTestNameController extends BaseController {
 		return existingMapping;
 	}
 
-	private void persisteError(HttpServletRequest request, String errorMsg) {
+	private void persistError(HttpServletRequest request, String errorMsg) {
 		Errors errors;
 		errors = new BaseErrors();
 
 		errors.reject(errorMsg);
 		saveErrors(errors);
-		request.setAttribute(Globals.ERROR_KEY, errors);
 	}
 
 	private void disableNavigationButtons(HttpServletRequest request) {

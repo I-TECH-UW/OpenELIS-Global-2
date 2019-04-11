@@ -13,7 +13,7 @@
 	
 
 <div id="PatientPage" class="colorFill" style="display:inline" >
-	<logic:present name="${form.formName}" property="inventoryItems" >
+	<c:if test="${not empty form.inventoryItems}" >
 	<table width="40%" >
 	<tr >
 		<th width="10%">
@@ -35,35 +35,35 @@
 			<spring:message code="inventory.testKit.source"/>		
 		</th>
 	</tr>
-	<logic:iterate id="inventoryItems"  name="${form.formName}" property="inventoryItems" indexId="index" type="InventoryKitItem" >
-		<logic:equal name="inventoryItems" property="isActive" value="true">
+	<c:forEach var="inventoryItem"  items="${form.inventoryItems}" varStatus="iter">
+		<c:if test="${inventoryItem.isActive}">
 			<tr >
 				<td >
-					<bean:write name="inventoryItems" property="inventoryLocationId"/>
+					<c:out value="${inventoryItem.inventoryLocationId}"/>
 				</td>
 				<td >
-					<bean:write name="inventoryItems" property="kitName"/>
+					<c:out value="${inventoryItem.kitName}"/>
 				</td>
 				<td >
-					<bean:write name="inventoryItems" property="receiveDate"/>
+					<c:out value="${inventoryItem.receiveDate}"/>
 				</td>
 				<td >
-					<bean:write name="inventoryItems" property="expirationDate"/>
+					<c:out value="${inventoryItem.expirationDate}"/>
 				</td>
 				<td >
-					<bean:write name="inventoryItems" property="lotNumber"/>
+					<c:out value="${inventoryItem.lotNumber}"/>
 				</td>
 				<td >
-					<bean:write name="inventoryItems" property="source"/>
+					<c:out value="${inventoryItem.source}"/>
 				</td>
 			</tr>
-		</logic:equal>
-	</logic:iterate>
+		</c:if>
+	</c:forEach>
 	</table>
-</logic:present>
-<logic:notPresent name="${form.formName}" property="inventoryItems" >
+</c:if>
+<c:if test="${empty form.inventoryItems}">
 	<spring:message code="inventory.testKit.none"/>
-</logic:notPresent>	
+</c:if>	
 
 	
 </div>

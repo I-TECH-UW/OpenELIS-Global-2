@@ -28,11 +28,11 @@ import org.jfree.util.Log;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.services.NoteService;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -101,7 +101,7 @@ public class RetroCIFollowupRequiredByLocation extends RetroCIReport implements 
 	 * @return
 	 */
 	private Object getReportNameForParameterPage() {
-		return StringUtil.getMessageForKey("reports.label.followupRequired.title");
+		return MessageUtil.getMessage("reports.label.followupRequired.title");
 	}
 
 	/**
@@ -180,7 +180,7 @@ public class RetroCIFollowupRequiredByLocation extends RetroCIReport implements 
 	private String getNonConformingNotes(Sample sample) {
 		StringBuilder allNotes = new StringBuilder();
 
-        String notes = new NoteService( sample ).getNotesAsString( StringUtil.getMessageForKey("report.followup.general.comment") + ": ","<br/>" );
+        String notes = new NoteService( sample ).getNotesAsString( MessageUtil.getMessage("report.followup.general.comment") + ": ","<br/>" );
         if( notes != null){
             allNotes.append( notes );
             allNotes.append( "<br/>" );
@@ -191,21 +191,21 @@ public class RetroCIFollowupRequiredByLocation extends RetroCIReport implements 
 		for( SampleQaEvent event : qaEventList){
 			QAService qa = new QAService(event);
 			if( qa.getSampleItem() == null){
-				allNotes.append(StringUtil.getMessageForKey("report.followup.no.sampleType"));
+				allNotes.append(MessageUtil.getMessage("report.followup.no.sampleType"));
 			}else{	
 				allNotes.append(qa.getSampleItem().getTypeOfSample().getLocalizedName());
 			}
 			allNotes.append(" : ");
 			
 			if( "0".equals(qa.getObservationValue( QAObservationType.SECTION ))){
-				allNotes.append(StringUtil.getMessageForKey("report.followup.no.section"));
+				allNotes.append(MessageUtil.getMessage("report.followup.no.section"));
 			}else{
 				allNotes.append(qa.getObservationForDisplay( QAObservationType.SECTION ));
 			}
 			allNotes.append(" : ");
 			
 			if( GenericValidator.isBlankOrNull(qa.getObservationValue( QAObservationType.AUTHORIZER ))){
-				allNotes.append(StringUtil.getMessageForKey("report.followup.no.authorizer"));
+				allNotes.append(MessageUtil.getMessage("report.followup.no.authorizer"));
 			}else{
 				allNotes.append(qa.getObservationForDisplay( QAObservationType.AUTHORIZER ));
 			}
@@ -214,7 +214,7 @@ public class RetroCIFollowupRequiredByLocation extends RetroCIReport implements 
 			List<Note> qaNotes = noteDAO.getNoteByRefIAndRefTableAndSubject(qa.getEventId(), SAMPLE_QA_EVENT_TABLE_ID, NonConformityUpdateWorker.NOTE_SUBJECT);
 			
 			if( qaNotes.isEmpty()){
-				allNotes.append(StringUtil.getMessageForKey("report.followup.no.note"));
+				allNotes.append(MessageUtil.getMessage("report.followup.no.note"));
 			}else{
 				allNotes.append(qaNotes.get(0).getText());
 			}

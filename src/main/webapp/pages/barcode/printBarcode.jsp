@@ -5,8 +5,8 @@
 			     us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
 			     us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
 			     us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-			     us.mn.state.health.lims.common.util.StringUtil,
-			     us.mn.state.health.lims.common.util.*" %>
+			     spring.mine.internationalization.MessageUtil,
+			     us.mn.state.health.lims.common.util.*, spring.mine.internationalization.MessageUtil" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -17,7 +17,6 @@
 
 <c:set var="formName" value="${form.formName}"/>
 <c:set var="localDBOnly" value='<%=Boolean.toString(ConfigurationProperties.getInstance().getPropertyValueLowerCase(Property.UseExternalPatientInfo).equals("false"))%>'/>
-<c:set var="patientSearch" value="${form.patientSearch}"/>
 
 <%!
 	IAccessionNumberValidator accessionNumberValidator;
@@ -90,7 +89,6 @@ function disablePrint() {
 
 //search patients using labNo
 function searchPatients() {
-    var criteria = $jq("#searchCriteria").val();
     var labNumber = $jq("#searchValue").val();
     var lastName = "";
     var firstName = "";
@@ -275,9 +273,8 @@ function /*void*/ doNothing(){
 
 function enableSearchButton(eventCode){
     var valueElem = $jq("#searchValue");
-    var criteriaElem  = $jq('#searchCriteria');
     var searchButton = $jq("#searchButton");
-    if( valueElem.val() && criteriaElem.val() != "0" && valueElem.val() != '<%=StringUtil.getMessageForKey("label.select.search.here")%>'){
+    if( valueElem.val() && valueElem.val() != '<%=MessageUtil.getMessage("label.select.search.here")%>'){
         searchButton.removeAttr("disabled");
         if( eventCode == 13 ){
             searchButton.click();
@@ -285,18 +282,12 @@ function enableSearchButton(eventCode){
     } else {
         searchButton.attr("disabled", "disabled");
     }
-    if(criteriaElem.val() == "5" ){
-        valueElem.attr("maxlength","<%=Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>");
-    } else {
-        valueElem.attr("maxlength","120");
-    }
+    valueElem.attr("maxlength","<%=Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>");
+    
 }
 
 function handleSelectedPatient(){
-    var accessionNumber = "";
-    if($jq("#searchCriteria").val() == 5){//lab number
-        accessionNumber = $jq("#searchValue").val();
-    }
+    var accessionNumber = $jq("#searchValue").val();
 
     $("searchResultsDiv").style.display = "none";
     var form = document.getElementById("mainForm");
@@ -319,7 +310,7 @@ function firstClick(){
 function messageRestore(element ){
     if( !element.value ){
         element.maxlength = 120;
-        element.value = '<%=StringUtil.getMessageForKey("label.select.search.here")%>';
+        element.value = '<%=MessageUtil.getMessage("label.select.search.here")%>';
         element.onkeydown = firstClick;
         setCaretPosition(element, 0);
     }
@@ -350,7 +341,7 @@ function printBarcode(button) {
 	var patientId = document.getElementsByName('patientId')[0].value;
 	var type = "";
 	var quantity = "";
-	if (confirm("<%=StringUtil.getMessageForKey("barcode.message.reprint.confirmation")%>")) {
+	if (confirm("<%=MessageUtil.getMessage("barcode.message.reprint.confirmation")%>")) {
         if (button.id == "defaultPrintButton") {
         type = "default";
         } else if (button.id == "orderPrintButton") {
@@ -395,10 +386,6 @@ function printBarcode(button) {
     <c:if test="${!empty warning}">
         <h3 class="important-text"><spring:message code="order.modify.search.warning" /></h3>
     </c:if>
-    <input type="hidden" 
-    		id="searchCriteria" 
-    		class="patientSearch" 
-    		value="5" /> 
     		
    	<spring:message code="barcode.print.search.accessionnumber"/>:
 	<spring:message code="sample.search.scanner.instructions"/>
@@ -406,7 +393,7 @@ function printBarcode(button) {
            maxlength="120"
            id="searchValue"
            class="patientSearch"
-           value='<%=StringUtil.getMessageForKey("label.select.search.here")%>'
+           value='<%=MessageUtil.getMessage("label.select.search.here")%>'
            type="text"
            onclick="cursorAtFront(this)"
            onkeydown='firstClick();'
@@ -416,7 +403,7 @@ function printBarcode(button) {
     <input type="button"
            name="searchButton"
            class="patientSearch"
-           value="<%= StringUtil.getMessageForKey("label.patient.search")%>"
+           value="<%= MessageUtil.getMessage("label.patient.search")%>"
            id="searchButton"
            onclick="searchPatients()"
            disabled="disabled" >
@@ -468,7 +455,7 @@ function printBarcode(button) {
 				<% } %>
 				<% if(supportNationalID){ %>
 				<th width="12%">
-                    <%=StringUtil.getContextualMessageForKey("patient.NationalID") %>
+                    <%=MessageUtil.getContextualMessage("patient.NationalID") %>
                 </th>
                 <% } %>
 			</tr>
@@ -493,16 +480,16 @@ function printBarcode(button) {
 			</tr>
 			<tr>
 				<td>
-					<c:out value="${form.patientName}"/>&nbsp;
+					<c:out value="${patientName}"/>&nbsp;
 				</td>
 				<td>
-					<c:out value="${form.dob}"/>&nbsp;
+					<c:out value="${dob}"/>&nbsp;
 				</td>
 				<td>
-					<c:out value="${form.gender}"/>				
+					<c:out value="${gender}"/>				
 				</td>
 				<td>
-					<c:out value="${form.nationalId}"/>
+					<c:out value="${nationalId}"/>
 				</td>
 			</tr>
 		</table>
@@ -552,7 +539,7 @@ function printBarcode(button) {
 			        	onclick="printBarcode(this);">
         		</td>
         	</tr>
-        	<c:forEach var="test" items="${form.existingTests }">
+        	<c:forEach var="test" items="${existingTests}">
         		<tr>
         			<td>
         				<spring:message code="barcode.label.type.specimen"/>

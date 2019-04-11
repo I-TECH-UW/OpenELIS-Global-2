@@ -16,7 +16,7 @@
  */
 package us.mn.state.health.lims.reports.action.implementation;
 
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 //Note both Clinical and LNSP should extend common subclass
 public class IndicatorHIVLNSP extends IndicatorHIV implements IReportCreator, IReportParameterSetter {
 
@@ -28,11 +28,11 @@ public class IndicatorHIVLNSP extends IndicatorHIV implements IReportCreator, IR
 	
 	@Override
 	protected String getLabNameLine1() {
-		return StringUtil.getContextualMessageForKey("report.labName.one");
+		return MessageUtil.getContextualMessage("report.labName.one");
 	}
 
 	@Override
 	protected String getLabNameLine2() {
-		return StringUtil.getContextualMessageForKey("report.labName.two");
+		return MessageUtil.getContextualMessage("report.labName.two");
 	}
 }

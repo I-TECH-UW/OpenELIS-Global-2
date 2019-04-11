@@ -5,9 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
-import org.apache.struts.Globals;
+import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,12 +23,12 @@ import spring.mine.common.controller.BaseMenuController;
 import spring.mine.common.form.MenuForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.organization.form.OrganizationMenuForm;
+import spring.mine.organization.validator.OrganizationMenuFormValidator;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.login.valueholder.UserSessionData;
 import us.mn.state.health.lims.organization.dao.OrganizationDAO;
 import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
 import us.mn.state.health.lims.organization.valueholder.Organization;
@@ -33,10 +36,13 @@ import us.mn.state.health.lims.organization.valueholder.Organization;
 @Controller
 public class OrganizationMenuController extends BaseMenuController {
 
+	@Autowired
+	OrganizationMenuFormValidator formValidator;
+
 	@RequestMapping(value = { "/OrganizationMenu", "/SearchOrganizationMenu" }, method = RequestMethod.GET)
 	public ModelAndView showOrganizationMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
+		String forward;
 		OrganizationMenuForm form = new OrganizationMenuForm();
 
 		forward = performMenuAction(form, request);
@@ -46,16 +52,18 @@ public class OrganizationMenuController extends BaseMenuController {
 			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, errors);
 			return findForward(forward, form);
 		} else {
+			request.setAttribute("menuDefinition", "OrganizationMenuDefinition");
+			addFlashMsgsToRequest(request);
 			return findForward(forward, form);
 		}
 	}
 
 	@Override
-	protected List createMenuList(MenuForm form, HttpServletRequest request) throws Exception {
+	protected List<Organization> createMenuList(MenuForm form, HttpServletRequest request) throws Exception {
 
 		// System.out.println("I am in OrganizationMenuAction createMenuList()");
 
-		List organizations = new ArrayList();
+		List<Organization> organizations = new ArrayList<>();
 
 		String stringStartingRecNo = (String) request.getAttribute("startingRecNo");
 		int startingRecNo = Integer.parseInt(stringStartingRecNo);
@@ -126,39 +134,30 @@ public class OrganizationMenuController extends BaseMenuController {
 
 	@RequestMapping(value = "/DeleteOrganization", method = RequestMethod.POST)
 	public ModelAndView showDeleteOrganization(HttpServletRequest request,
-			@ModelAttribute("form") OrganizationMenuForm form) {
-		String forward = FWD_SUCCESS_DELETE;
-		if (form == null) {
-			form = new OrganizationMenuForm();
+			@ModelAttribute("form") @Valid OrganizationMenuForm form, BindingResult result,
+			RedirectAttributes redirectAttributes) {
+
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, result);
+			findForward(FWD_FAIL_DELETE, form);
 		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
 		String[] selectedIDs = (String[]) form.get("selectedIDs");
-
-		// Vector organizations = new Vector();
-		// get sysUserId from login module
-		UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-		String sysUserId = String.valueOf(usd.getSystemUserId());
-
-		List organizations = new ArrayList();
-
+		List<Organization> organizations = new ArrayList<>();
 		for (int i = 0; i < selectedIDs.length; i++) {
 			Organization organization = new Organization();
 			organization.setId(selectedIDs[i]);
-			organization.setSysUserId(sysUserId);
+			organization.setSysUserId(getSysUserId(request));
 			organizations.add(organization);
 		}
 
-		org.hibernate.Transaction tx = HibernateUtil.getSession().beginTransaction();
+		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
-			// selectedIDs = (List)PropertyUtils.getProperty(dynaForm,
-			// "selectedIDs");
 			// System.out.println("Going to delete Organization");
 			OrganizationDAO organizationDAO = new OrganizationDAOImpl();
 			organizationDAO.deleteData(organizations);
 			// System.out.println("Just deleted Organization");
-			// initialize the form
 			tx.commit();
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
@@ -171,26 +170,15 @@ public class OrganizationMenuController extends BaseMenuController {
 			} else {
 				errorMsg = "errors.DeleteException";
 			}
-			errors.reject(errorMsg);
-			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
-			forward = FWD_FAIL_DELETE;
+			result.reject(errorMsg);
+			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, result);
+			return findForward(FWD_FAIL_DELETE, form);
 
 		} finally {
 			HibernateUtil.closeSession();
 		}
-		if (forward.equals(FWD_FAIL_DELETE)) {
-			return findForward(forward, form);
-		}
-
-		if ("true".equalsIgnoreCase(request.getParameter("close"))) {
-			forward = FWD_CLOSE;
-		}
-		// System.out
-		// .println("I am in OrganizationMenuDeleteAction setting menuDefinition");
-		request.setAttribute("menuDefinition", "OrganizationMenuDefinition");
-
-		return findForward(forward, form);
+		redirectAttributes.addAttribute(FWD_SUCCESS, true);
+		return findForward(FWD_SUCCESS_DELETE, form);
 	}
 
 	@Override

@@ -14,7 +14,7 @@
 			us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
 			us.mn.state.health.lims.common.util.ConfigurationProperties,
 			us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-			us.mn.state.health.lims.common.util.StringUtil,
+			spring.mine.internationalization.MessageUtil,
 		    us.mn.state.health.lims.common.util.Versioning,
 		    us.mn.state.health.lims.common.exception.LIMSInvalidConfigurationException,
 		    us.mn.state.health.lims.common.util.DateUtil,
@@ -112,7 +112,7 @@
 <script type="text/javascript" >
 
 <%if( ConfigurationProperties.getInstance().isPropertyValueEqual(Property.ALERT_FOR_INVALID_RESULTS, "true")){%>
-       outOfValidRangeMsg = '<%= StringUtil.getMessageForKey("result.outOfValidRange.msg") %>';
+       outOfValidRangeMsg = '<%= MessageUtil.getMessage("result.outOfValidRange.msg") %>';
 <% }else{ %>
        outOfValidRangeMsg = null;
 <% } %>
@@ -148,12 +148,12 @@ $jq(document).ready( function() {
 			}
 			
             $jq('#modal_ok').on('click',function(e){
-                addReflexToTests( '<%= StringUtil.getMessageForKey("button.label.edit")%>' );
+                addReflexToTests( '<%= MessageUtil.getMessage("button.label.edit")%>' );
                 e.preventDefault();
                 $jq('#reflexSelect').modal('hide');
 			});
 
-            loadPagedReflexSelections('<%= StringUtil.getMessageForKey("button.label.edit")%>');
+            loadPagedReflexSelections('<%= MessageUtil.getMessage("button.label.edit")%>');
             $jq(".asmContainer").css("display","inline-block");
             disableRejectedResults();
             showCachedRejectionReasonRows();
@@ -162,7 +162,7 @@ $jq(document).ready( function() {
 
 function /*void*/ makeDirty(){
 	dirty=true;
-	if( typeof(showSuccessMessage) != 'undefinded' ){
+	if( typeof(showSuccessMessage) === 'function' ){
 		showSuccessMessage(false); //refers to last save
 	}
 	// Adds warning when leaving page if content has been entered into makeDirty form fields
@@ -256,7 +256,7 @@ function  /*void*/ savePage()
 	$jq( "#saveButtonId" ).prop("disabled",true);
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
-	form.action = '${form.formName}'.sub('Form','') + "Update.do"  + '?type=<c:out value="logbookType"/>';
+	form.action = '${form.formName}'.sub('Form','') + ".do"  + '?type=<c:out value="logbookType"/>';
 	form.submit();
 }
 
@@ -325,7 +325,7 @@ var showForceWarning = true;
 function forceTechApproval(checkbox, index ){
 	if( $jq(checkbox).attr('checked')){
 		if( showForceWarning){
-			alert( "<%= StringUtil.getContextualMessageForKey("result.forceAccept.warning")%>" );
+			alert( "<%= MessageUtil.getContextualMessage("result.forceAccept.warning")%>" );
 			showForceWarning = false;
 		}
 		showNote( index );
@@ -372,7 +372,7 @@ function setField(id, value) {
 	<table width="30%">
 		<tr bgcolor="white">
 			<td width="50%" align="right" >
-				<%= StringUtil.getMessageForKey("workplan.unit.types") %>
+				<%= MessageUtil.getMessage("workplan.unit.types") %>
 			</td>
 			<td>
 			<form:select path="testSectionId" 
@@ -449,7 +449,7 @@ function setField(id, value) {
 		<% } %>
 		<% if(useNationalID){ %>
 		<th style="width:20%">
-			<%= StringUtil.getContextualMessageForKey("patient.NationalID") %>
+			<%= MessageUtil.getContextualMessage("patient.NationalID") %>
 		</th>
 		<% } %>
 		<% if(useSubjectNumber){ %>
@@ -507,13 +507,13 @@ function setField(id, value) {
 	<c:out value="${form.paging.currentPage}"/> <spring:message code="report.pageNumberOf" />
 	<c:out value="${form.paging.totalPages}"/>
 	<div class='textcontent' style="float: right" >
-	<span style="visibility: hidden" id="searchNotFound"><em><%= StringUtil.getMessageForKey("search.term.notFound") %></em></span>
-	<%=StringUtil.getContextualMessageForKey("result.sample.id")%> : &nbsp;
+	<span style="visibility: hidden" id="searchNotFound"><em><%= MessageUtil.getMessage("search.term.notFound") %></em></span>
+	<%=MessageUtil.getContextualMessage("result.sample.id")%> : &nbsp;
 	<input type="text"
 	       id="labnoSearch"
 	       placeholder='<spring:message code="sample.search.scanner.instructions"/>'
 	       maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>' />
-	<input type="button" onclick="pageSearch.doLabNoSearch($(labnoSearch))" value='<%= StringUtil.getMessageForKey("label.button.search") %>'>
+	<input type="button" onclick="pageSearch.doLabNoSearch($(labnoSearch))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
 	</div>
 </c:if>
 
@@ -531,7 +531,7 @@ function setField(id, value) {
 	<tr >
 		<% if( !compactHozSpace ){ %>
 		<th style="text-align: left">
-			<%=StringUtil.getContextualMessageForKey("result.sample.id")%>
+			<%=MessageUtil.getContextualMessage("result.sample.id")%>
 		</th>
 		<c:if test="${not form.singlePatient}">
 			<th style="text-align: left">
@@ -553,7 +553,7 @@ function setField(id, value) {
 			<spring:message code="result.test"/>
 		</th>
 		<th style="width:16px">&nbsp;</th>
-		<th style="width: 56px; padding-right: 10px; text-align: center"><%= StringUtil.getContextualMessageForKey("result.forceAccept.header") %></th>
+		<th style="width: 56px; padding-right: 10px; text-align: center"><%= MessageUtil.getContextualMessage("result.forceAccept.header") %></th>
 		<th style="width:165px; text-align: left">
 			<spring:message code="result.result"/>
 		</th>
@@ -593,7 +593,7 @@ function setField(id, value) {
 			<c:out value="${testResult.receivedDate}"/>
 		</th>
 		<th >
-			<%=StringUtil.getContextualMessageForKey("resultsentry.accessionNumber")%><br/>
+			<%=MessageUtil.getContextualMessage("resultsentry.accessionNumber")%><br/>
 			<c:out value="${testResult.accessionNumber}"/>
 		</th>
 		<th colspan="8" ></th>
@@ -614,7 +614,7 @@ function setField(id, value) {
    <c:if test="${testResult.showSampleDetails}">
 		<tr class='${rowColor}Head ${accessionNumber}' >
 			<td colspan="10" class='InterstitialHead' >
-			    <%=StringUtil.getContextualMessageForKey("result.sample.id")%> : &nbsp;
+			    <%=MessageUtil.getContextualMessage("result.sample.id")%> : &nbsp;
 				<b><c:out value="${testResult.accessionNumber}"/> -
 				<c:out value="${testResult.sequenceNumber}"/></b>
 				<% if(useInitialCondition){ %>
@@ -1001,13 +1001,13 @@ function setField(id, value) {
 <c:if test="${form.displayTestSections}">
 	<c:if test="${testCount == 0}">
 		<c:if test="${not empty form.testSectionId}">
-		<h2><%= StringUtil.getContextualMessageForKey("result.noTestsFound") %></h2>
+		<h2><%= MessageUtil.getContextualMessage("result.noTestsFound") %></h2>
 		</c:if>
 	</c:if>
 </c:if>
 
 <c:if test="${not form.displayTestSections}">
 	<c:if test="${testCount == 0}">
-	<h2><%= StringUtil.getContextualMessageForKey("result.noTestsFound") %></h2>
+	<h2><%= MessageUtil.getContextualMessage("result.noTestsFound") %></h2>
 	</c:if>
 </c:if>

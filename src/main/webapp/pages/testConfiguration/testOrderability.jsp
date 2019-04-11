@@ -3,7 +3,7 @@
          import="java.util.List,
          		us.mn.state.health.lims.common.action.IActionConstants,
          		us.mn.state.health.lims.common.util.IdValuePair,
-         		us.mn.state.health.lims.common.util.StringUtil,
+         		spring.mine.internationalization.MessageUtil,
          		us.mn.state.health.lims.test.beanItems.TestActivationBean,
          		us.mn.state.health.lims.common.util.Versioning" %>
 
@@ -185,7 +185,7 @@
            configureForSelect();
     }
     function configureForSelect() {
-        $jq("#step").text("<%=StringUtil.getContextualMessageForKey("configuration.test.orderable")%>");
+        $jq("#step").text("<%=MessageUtil.getContextualMessage("configuration.test.orderable")%>");
         $jq("#instructions").text("<spring:message code="instructions.test.order"/>");
         $jq("#activateSection input").prop("disabled", false);
         $jq(".selectHide").hide();
@@ -196,8 +196,8 @@
 
 
     function configureForConfirmation() {
-        $jq("#step").text("<%=StringUtil.getContextualMessageForKey("label.test.order.confirm")%>");
-        $jq("#instructions").text("<%=StringUtil.getContextualMessageForKey("instructions.test.activation.confirm")%>");
+        $jq("#step").text("<%=MessageUtil.getContextualMessage("label.test.order.confirm")%>");
+        $jq("#instructions").text("<%=MessageUtil.getContextualMessage("instructions.test.activation.confirm")%>");
         $jq(".confirmHide").hide();
         $jq(".confirmShow").show();
 
@@ -230,19 +230,19 @@
   				   method="${form.formMethod}"
    				   id="mainForm">
 <br>
-<input type="button" value="<%= StringUtil.getContextualMessageForKey("banner.menu.administration") %>"
+<input type="button" value="<%= MessageUtil.getContextualMessage("banner.menu.administration") %>"
        onclick="submitAction('MasterListsPage.do');"
        class="textButton"/> &rarr;
-<input type="button" value="<%= StringUtil.getContextualMessageForKey("configuration.test.management") %>"
+<input type="button" value="<%= MessageUtil.getContextualMessage("configuration.test.management") %>"
        onclick="submitAction('TestManagementConfigMenu.do');"
        class="textButton"/>&rarr;
 <span id="testActivationSelectionButton" class="selectHide confirmShow" style="display:none" >
-<input type="button" value="<%=StringUtil.getContextualMessageForKey("configuration.test.orderable")%>"
+<input type="button" value="<%=MessageUtil.getContextualMessage("configuration.test.orderable")%>"
        onclick="configureForSelect();"
        class="textButton"/>&rarr;
 </span>
 
-<span id="testActivationConfirmation" class="selectHide confirmShow" style="display:none" ><%=StringUtil.getContextualMessageForKey("label.confirmation")%></span>
+<span id="testActivationConfirmation" class="selectHide confirmShow" style="display:none" ><%=MessageUtil.getContextualMessage("label.confirmation")%></span>
 <span id="testActivationSelection" class="selectShow confirmHide"><spring:message code="configuration.test.orderable"/></span>
 <br><br>
 
@@ -252,13 +252,13 @@
 <br>
 
 <div id="testActivate" class="selectHide" >
-    <h4><%=StringUtil.getContextualMessageForKey("label.test.orderable")%></h4>
+    <h4><%=MessageUtil.getContextualMessage("label.test.orderable")%></h4>
 
     <div id="testActivateList" class="selectClear"></div>
     <br>
 </div>
 <div id="testDeactivate" class="selectHide">
-    <h4><%=StringUtil.getContextualMessageForKey("label.test.unorderable")%></h4>
+    <h4><%=MessageUtil.getContextualMessage("label.test.unorderable")%></h4>
 
     <div id="testDeactivateList" class="selectClear"></div>
     <br>
@@ -267,12 +267,12 @@
 <div class="selectHide confirmShow" style="margin-left:auto; margin-right:auto;width: 40%;">
     <input type="button"
            class="confirmShow "
-           value="<%=StringUtil.getContextualMessageForKey("label.button.accept")%>"
+           value="<%=MessageUtil.getContextualMessage("label.button.accept")%>"
            onclick="savePage();"
            id="acceptButton"
            style="display: none"/>
 
-    <input type="button" value="<%=StringUtil.getContextualMessageForKey("label.button.back")%>" onclick="navigateBack()" />
+    <input type="button" value="<%=MessageUtil.getContextualMessage("label.button.back")%>" onclick="navigateBack()" />
 </div>
 
 <hr/>
@@ -366,12 +366,12 @@
 
 <div class="selectShow confirmHide" style="margin-left:auto; margin-right:auto;width: 40%;">
     <input type="button"
-           value="<%= StringUtil.getContextualMessageForKey("label.button.next") %>"
+           value="<%= MessageUtil.getContextualMessage("label.button.next") %>"
            disabled="disabled"
            onclick="nextStepToConfirmation();"
            id="nextButtonSelect"/>
 
-    <input type="button" value="<%=StringUtil.getContextualMessageForKey("label.button.cancel")%>" onclick="navigateBack()" />
+    <input type="button" value="<%=MessageUtil.getContextualMessage("label.button.cancel")%>" onclick="navigateBack()" />
 
 </div>
 </form:form>

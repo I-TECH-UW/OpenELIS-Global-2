@@ -1,7 +1,6 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="org.apache.struts.action.*,
-			us.mn.state.health.lims.common.action.IActionConstants"
+	import="us.mn.state.health.lims.common.action.IActionConstants"
  %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>

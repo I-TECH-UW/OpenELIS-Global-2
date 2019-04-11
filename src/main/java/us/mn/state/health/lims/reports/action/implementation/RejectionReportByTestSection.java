@@ -22,11 +22,11 @@ import java.util.Comparator;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.AnalysisService;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.NoteService;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.note.valueholder.Note;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.RejectionReportBean;
 
@@ -38,15 +38,15 @@ public class RejectionReportByTestSection extends RejectionReport implements IRe
     @Override
     public void setRequestParameters( BaseForm form ){
         new ReportSpecificationParameters( ReportSpecificationParameters.Parameter.DATE_RANGE,
-                StringUtil.getMessageForKey( "report.rejection.report.base" ) + " " + StringUtil.getMessageForKey( "report.by.unit" ),
-                StringUtil.getMessageForKey( "report.instruction.all.fields" ) ).setRequestParameters( form );
+                MessageUtil.getMessage( "report.rejection.report.base" ) + " " + MessageUtil.getMessage( "report.by.unit" ),
+                MessageUtil.getMessage( "report.instruction.all.fields" ) ).setRequestParameters( form );
         new ReportSpecificationList( DisplayListService.getList( DisplayListService.ListType.TEST_SECTION ),
-                                     StringUtil.getMessageForKey( "workplan.unit.types" ) ).setRequestParameters( form );
+                                     MessageUtil.getMessage( "workplan.unit.types" ) ).setRequestParameters( form );
     }
 
     @Override
     protected String getActivityLabel(){
-        return StringUtil.getMessageForKey( "report.unit" ) + ": "+ unitName;
+        return MessageUtil.getMessage( "report.unit" ) + ": "+ unitName;
     }
 
     @Override

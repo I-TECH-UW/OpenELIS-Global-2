@@ -3,45 +3,72 @@ package spring.mine.result.form;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
+import spring.mine.validation.annotations.ValidDate;
 import us.mn.state.health.lims.common.paging.PagingBean;
 import us.mn.state.health.lims.common.util.IdValuePair;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.inventory.form.InventoryKitItem;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
 public class LogbookResultsForm extends BaseForm {
+	// for display
 	private PagingBean paging;
 
+	@NotNull
 	private Boolean singlePatient = false;
 
+	@ValidDate(relative = DateRelation.TODAY)
 	private String currentDate = "";
 
 	private Timestamp lastupdated;
 
+	@NotNull
 	private Boolean displayTestMethod = true;
 
+	@NotNull
 	private Boolean displayTestKit = true;
 
+	// TODO
+	@Valid
 	private List<TestResultItem> testResult;
 
+	// TODO
+	@Valid
 	private List<InventoryKitItem> inventoryItems;
 
+	// for display
 	private List<String> hivKits;
 
+	// for display
 	private List<String> syphilisKits;
 
+	// for display
 	private String logbookType = "";
 
+	// for display
 	private List<IdValuePair> referralReasons;
 
+	// for display
 	private List<IdValuePair> rejectReasons;
 
+	// for display
 	private List<IdValuePair> testSections;
 
+	// for display
 	private List<IdValuePair> testSectionsByName;
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String testSectionId;
 
+	@NotNull
 	private Boolean displayTestSections = true;
 
 	public LogbookResultsForm() {

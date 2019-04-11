@@ -25,6 +25,7 @@ import org.apache.commons.validator.GenericValidator;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -33,7 +34,6 @@ import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -45,19 +45,21 @@ import us.mn.state.health.lims.sampleorganization.dao.SampleOrganizationDAO;
 import us.mn.state.health.lims.sampleorganization.daoimpl.SampleOrganizationDAOImpl;
 import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization;
 
-public abstract class PatientARVReport extends RetroCIPatientReport{
+public abstract class PatientARVReport extends RetroCIPatientReport {
 	private List<ARVReportData> reportItems;
-	private String invalidValue = StringUtil.getMessageForKey("report.test.status.inProgress");
-	protected void initializeReportItems(){
-		reportItems = new ArrayList<ARVReportData>();
+	private String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
+
+	@Override
+	protected void initializeReportItems() {
+		reportItems = new ArrayList<>();
 	}
 
-	protected void setPatientInfo(ARVReportData data){
+	protected void setPatientInfo(ARVReportData data) {
 
 		SampleOrganizationDAO orgDAO = new SampleOrganizationDAOImpl();
 
 		String subjectNumber = reportPatient.getNationalId();
-		if(GenericValidator.isBlankOrNull(subjectNumber)){
+		if (GenericValidator.isBlankOrNull(subjectNumber)) {
 			subjectNumber = reportPatient.getExternalId();
 		}
 
@@ -65,7 +67,8 @@ public abstract class PatientARVReport extends RetroCIPatientReport{
 		data.setBirth_date(reportPatient.getBirthDateForDisplay());
 		data.setAge(DateUtil.getCurrentAgeForDate(reportPatient.getBirthDate(), reportSample.getCollectionDate()));
 		data.setGender(reportPatient.getGender());
-		data.setCollectiondate(reportSample.getCollectionDateForDisplay() + " " + reportSample.getCollectionTimeForDisplay());
+		data.setCollectiondate(
+				reportSample.getCollectionDateForDisplay() + " " + reportSample.getCollectionTimeForDisplay());
 		data.setReceptiondate(DateUtil.convertTimestampToStringDate(reportSample.getReceivedTimestamp()));
 
 		SampleOrganization sampleOrg = new SampleOrganization();
@@ -75,168 +78,173 @@ public abstract class PatientARVReport extends RetroCIPatientReport{
 
 		data.setDoctor(getObservationValues(OBSERVATION_DOCTOR_ID));
 		data.setLabNo(reportSample.getAccessionNumber());
-		
+
 		data.getSampleQaEventItems(reportSample);
 
 	}
 
-	public JRDataSource getReportDataSource() throws IllegalStateException{
-		if(!initialized){
+	@Override
+	public JRDataSource getReportDataSource() throws IllegalStateException {
+		if (!initialized) {
 			throw new IllegalStateException("initializeReport not called first");
 		}
 
 		return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(reportItems);
 	}
 
-	protected void createReportItems(){
+	@Override
+	protected void createReportItems() {
 		ARVReportData data = new ARVReportData();
-		
+
 		setPatientInfo(data);
 		setTestInfo(data);
 		reportItems.add(data);
 
 	}
-	protected void setTestInfo(ARVReportData data){
+
+	protected void setTestInfo(ARVReportData data) {
 		boolean atLeastOneAnalysisNotValidated = false;
 		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
 		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleId(reportSample.getId());
 		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-		Timestamp lastReport = new ReportTrackingService().getTimeOfLastNamedReport(reportSample, ReportTrackingService.ReportType.PATIENT, requestedReport);
+		Timestamp lastReport = new ReportTrackingService().getTimeOfLastNamedReport(reportSample,
+				ReportTrackingService.ReportType.PATIENT, requestedReport);
 		Boolean mayBeDuplicate = lastReport != null;
 		ResultDAO resultDAO = new ResultDAOImpl();
 		Date maxCompleationDate = null;
 		long maxCompleationTime = 0L;
 
-		for(Analysis analysis : analysisList){
+		for (Analysis analysis : analysisList) {
 			if (analysis.getCompletedDate() != null) {
 				if (analysis.getCompletedDate().getTime() > maxCompleationTime) {
 					maxCompleationDate = analysis.getCompletedDate();
 					maxCompleationTime = maxCompleationDate.getTime();
 				}
-				
+
 			}
-					
-			if(!analysis.getStatusId().equals(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled))){
-				String testName = TestService.getUserLocalizedTestName( analysis.getTest() );
+
+			if (!analysis.getStatusId().equals(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled))) {
+				String testName = TestService.getUserLocalizedTestName(analysis.getTest());
 				List<Result> resultList = resultDAO.getResultsByAnalysis(analysis);
 				String resultValue = null;
 
 				boolean valid = ANALYSIS_FINALIZED_STATUS_ID.equals(analysis.getStatusId());
-				if(!valid){
+				if (!valid) {
 					atLeastOneAnalysisNotValidated = true;
 				}
 				// there may be more than one result for an analysis if one of
 				// them
 				// is a conclusion
-				if(resultList.size() > 1){
-					for(Result result : resultList){
-						if(result.getAnalyte() != null && result.getAnalyte().getId().equals(CONCLUSION_ID)){
+				if (resultList.size() > 1) {
+					for (Result result : resultList) {
+						if (result.getAnalyte() != null && result.getAnalyte().getId().equals(CONCLUSION_ID)) {
 							Dictionary dictionary = new Dictionary();
 							dictionary.setId(result.getValue());
 							dictionaryDAO.getData(dictionary);
 							data.setVih(valid ? dictionary.getDictEntry() : invalidValue);
 							data.setShowSerologie(Boolean.TRUE);
-						}else if(result.getAnalyte() != null && result.getAnalyte().getId().equals(CD4_CNT_CONCLUSION)){
+						} else if (result.getAnalyte() != null
+								&& result.getAnalyte().getId().equals(CD4_CNT_CONCLUSION)) {
 							data.setCd4(valid ? result.getValue() : invalidValue);
-						}else{
+						} else {
 							resultValue = result.getValue();
 						}
 					}
 				}
 
-				if(resultList.size() > 0){
-					if(resultValue == null){
+				if (resultList.size() > 0) {
+					if (resultValue == null) {
 						resultValue = resultList.get(resultList.size() - 1).getValue();
 					}
 				}
 
-				if(resultValue != null || !valid){
+				if (resultValue != null || !valid) {
 					assignResultsToAVRReportData(data, testName, valid ? resultValue : invalidValue);
 				}
 			}
 
-			if( mayBeDuplicate &&
-					StatusService.getInstance().matches( analysis.getStatusId(), AnalysisStatus.Finalized) &&
-					lastReport.before(analysis.getLastupdated())){
+			if (mayBeDuplicate && StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.Finalized)
+					&& lastReport.before(analysis.getLastupdated())) {
 				mayBeDuplicate = false;
 			}
 
 		}
-	
+
 		if (maxCompleationDate != null) {
 			data.setCompleationdate(DateUtil.convertSqlDateToStringDate(maxCompleationDate));
 		}
 		data.setDuplicateReport(mayBeDuplicate);
-		data.setStatus(atLeastOneAnalysisNotValidated ? StringUtil.getMessageForKey("report.status.partial") : StringUtil
-				.getMessageForKey("report.status.complete"));
+		data.setStatus(atLeastOneAnalysisNotValidated ? MessageUtil.getMessage("report.status.partial")
+				: MessageUtil.getMessage("report.status.complete"));
 	}
 
-	private void assignResultsToAVRReportData(ARVReportData data, String testName, String resultValue){
+	private void assignResultsToAVRReportData(ARVReportData data, String testName, String resultValue) {
 
-		if(testName.equals("Glycémie")){
+		if (testName.equals("Glycémie")) {
 			data.setGlyc(resultValue);
-		}else if(testName.equals("Créatininémie")){
+		} else if (testName.equals("Créatininémie")) {
 			data.setCreatininemie(resultValue);
-		}else if(testName.equals("Transaminases ALTL")){
+		} else if (testName.equals("Transaminases ALTL")) {
 			data.setSgpt(resultValue);
-		}else if(testName.equals("Transaminases ASTL")){
+		} else if (testName.equals("Transaminases ASTL")) {
 			data.setSgot(resultValue);
-		}else if(testName.equals("GB")){
+		} else if (testName.equals("GB")) {
 			data.setGb(resultValue);
-		}else if(testName.equals("GR")){
+		} else if (testName.equals("GR")) {
 			data.setGr(resultValue);
-		}else if(testName.equals("Hb")){
+		} else if (testName.equals("Hb")) {
 			data.setHb(resultValue);
-		}else if(testName.equals("HCT")){
+		} else if (testName.equals("HCT")) {
 			data.setHct(resultValue);
-		}else if(testName.equals("VGM")){
+		} else if (testName.equals("VGM")) {
 			data.setVgm(resultValue);
-		}else if(testName.equals("PLQ")){
+		} else if (testName.equals("PLQ")) {
 			data.setPlq(resultValue);
-		}else if(testName.equals("Neut %")){
+		} else if (testName.equals("Neut %")) {
 			data.setNper(resultValue);
-		}else if(testName.equals("Lymph %")){
+		} else if (testName.equals("Lymph %")) {
 			data.setLper(resultValue);
-		}else if(testName.equals("Mono %")){
+		} else if (testName.equals("Mono %")) {
 			data.setMper(resultValue);
-		}else if(testName.equals("Eo %")){
+		} else if (testName.equals("Eo %")) {
 			data.setEoper(resultValue);
-		}else if(testName.equals("Baso %")){
+		} else if (testName.equals("Baso %")) {
 			data.setBper(resultValue);
-		}else if(testName.equals("CD4 absolute count")){
+		} else if (testName.equals("CD4 absolute count")) {
 			data.setCd4(resultValue);
-		}else if(testName.equals("CD4 percentage count")){
+		} else if (testName.equals("CD4 percentage count")) {
 			data.setCd4per(resultValue);
-		}else if(testName.equals("TCMH")){
+		} else if (testName.equals("TCMH")) {
 			data.setTcmh(resultValue);
-		}else if(testName.equals("CCMH")){
+		} else if (testName.equals("CCMH")) {
 			data.setCcmh(resultValue);
-		}else if(testName.equals("DNA PCR")){
+		} else if (testName.equals("DNA PCR")) {
 			data.setPcr(resultValue);
-		}else if(testName.equals("Viral Load")){
+		} else if (testName.equals("Viral Load")) {
 			data.setShowVirologie(Boolean.TRUE);
 			// Results entered via analyzer have log value, results entered
 			// manually may not
 			String baseValue = resultValue;
-			if(!GenericValidator.isBlankOrNull(resultValue) && resultValue.contains("(")){
+			if (!GenericValidator.isBlankOrNull(resultValue) && resultValue.contains("(")) {
 				String[] splitValue = resultValue.split("\\(");
 				data.setAmpli2(splitValue[0]);
 				baseValue = splitValue[0];
-			}else{
+			} else {
 				data.setAmpli2(resultValue);
 			}
-			if(!GenericValidator.isBlankOrNull(baseValue) && !"0".equals(baseValue)){
-				try{
+			if (!GenericValidator.isBlankOrNull(baseValue) && !"0".equals(baseValue)) {
+				try {
 					double viralLoad = Double.parseDouble(baseValue);
 					data.setAmpli2lo(String.format("%.3g%n", Math.log10(viralLoad)));
-				}catch(NumberFormatException nfe){
+				} catch (NumberFormatException nfe) {
 					data.setAmpli2lo("");
 				}
 			}
 
-		}else if(testName.equals("Murex") || testName.equals("Intgral")){ //Serology must have one of these but not necessarily both
+		} else if (testName.equals("Murex") || testName.equals("Intgral")) { // Serology must have one of these but not
+																				// necessarily both
 			data.setShowSerologie(Boolean.TRUE);
-			if(GenericValidator.isBlankOrNull(data.getVih())){
+			if (GenericValidator.isBlankOrNull(data.getVih())) {
 				data.setVih(invalidValue);
 			}
 		}

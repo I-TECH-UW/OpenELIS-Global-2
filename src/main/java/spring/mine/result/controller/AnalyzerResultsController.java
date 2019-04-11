@@ -10,17 +10,19 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.apache.struts.Globals;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.validator.BaseErrors;
@@ -36,7 +38,6 @@ import us.mn.state.health.lims.analyzerresults.action.beanitems.AnalyzerResultIt
 import us.mn.state.health.lims.analyzerresults.dao.AnalyzerResultsDAO;
 import us.mn.state.health.lims.analyzerresults.daoimpl.AnalyzerResultsDAOImpl;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -56,7 +57,6 @@ import us.mn.state.health.lims.common.services.TypeOfSampleService;
 import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -153,15 +153,9 @@ public class AnalyzerResultsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/AnalyzerResults", method = RequestMethod.GET)
-	public ModelAndView showAnalyzerResults(HttpServletRequest request,
-			@ModelAttribute("form") AnalyzerResultsForm form)
+	public ModelAndView showAnalyzerResults(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new AnalyzerResultsForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+		AnalyzerResultsForm form = new AnalyzerResultsForm();
 
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
@@ -177,8 +171,7 @@ public class AnalyzerResultsController extends BaseController {
 
 			if (analyzerResultsList.isEmpty()) {
 				PropertyUtils.setProperty(form, "resultList", new ArrayList<AnalyzerResultItem>());
-				String msg = MessageUtil.getMessage("result.noResultsFound");
-				PropertyUtils.setProperty(form, "notFoundMsg", msg);
+				PropertyUtils.setProperty(form, "displayNotFoundMsg", true);
 				paging.setEmptyPageBean(request, form);
 
 			} else {
@@ -229,7 +222,7 @@ public class AnalyzerResultsController extends BaseController {
 					}
 				}
 
-				PropertyUtils.setProperty(form, "missingTestMsg", new Boolean(missingTest));
+				PropertyUtils.setProperty(form, "displayMissingTestMsg", new Boolean(missingTest));
 
 				paging.setDatabaseResults(request, form, analyzerResultItemList);
 			}
@@ -237,7 +230,8 @@ public class AnalyzerResultsController extends BaseController {
 			paging.page(request, form, page);
 		}
 
-		return findForward(forward, form);
+		addFlashMsgsToRequest(request);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	private void setNonConformityStateForResultItem(AnalyzerResultItem resultItem) {
@@ -667,15 +661,14 @@ public class AnalyzerResultsController extends BaseController {
 		return sampleQaEventDAO.getSampleQaEventsBySample(sample);
 	}
 
-	@RequestMapping(value = "/AnalyzerResultsSave", method = RequestMethod.POST)
+	@RequestMapping(value = "/AnalyzerResults", method = RequestMethod.POST)
 	public ModelAndView showAnalyzerResultsSave(HttpServletRequest request,
-			@ModelAttribute("form") AnalyzerResultsForm form) {
-		String forward = FWD_SUCCESS_INSERT;
-		if (form == null) {
-			form = new AnalyzerResultsForm();
+			@ModelAttribute("form") @Valid AnalyzerResultsForm form, BindingResult result,
+			RedirectAttributes redirectAttibutes) {
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
 		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
 		AnalyzerResultsPaging paging = new AnalyzerResultsPaging();
 		paging.updatePagedResults(request, form);
@@ -684,14 +677,13 @@ public class AnalyzerResultsController extends BaseController {
 		List<AnalyzerResultItem> actionableResults = extractActionableResult(resultItemList);
 
 		if (actionableResults.isEmpty()) {
-			return findForward(forward, form);
+			return findForward(FWD_SUCCESS_INSERT, form);
 		}
 
-		errors = validateSavableItems(actionableResults);
+		validateSavableItems(actionableResults, result);
 
-		if (errors.hasErrors()) {
-			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
+		if (result.hasErrors()) {
+			saveErrors(result);
 
 			return findForward(FWD_VALIDATION_ERROR, form);
 		}
@@ -721,35 +713,31 @@ public class AnalyzerResultsController extends BaseController {
 		} catch (LIMSRuntimeException lre) {
 			tx.rollback();
 			String errorMsg = "errors.UpdateException";
-			errors.reject(errorMsg);
-			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
+			result.reject(errorMsg);
+			saveErrors(result);
 
 			return findForward(FWD_VALIDATION_ERROR, form);
 		}
 
-		setSuccessFlag(request, true);
-
+		redirectAttibutes.addFlashAttribute(FWD_SUCCESS, true);
 		if (GenericValidator.isBlankOrNull(form.getString("analyzerType"))) {
-			return findForward(forward, form);
+			return findForward(FWD_SUCCESS_INSERT, form);
 		} else {
 			Map<String, String> params = new HashMap<>();
 			params.put("type", form.getString("analyzerType"));
-			params.put("forward", forward);
-			return getForwardWithParameters(findForward(forward, form), params);
+			// params.put("forward", FWD_SUCCESS_INSERT);
+			return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
 		}
 	}
 
-	private Errors validateSavableItems(List<AnalyzerResultItem> savableResults) {
-		Errors errors = new BaseErrors();
-
+	private Errors validateSavableItems(List<AnalyzerResultItem> savableResults, Errors errors) {
 		for (AnalyzerResultItem item : savableResults) {
 			if (item.getIsAccepted() && item.isUserChoicePending()) {
 				StringBuilder augmentedAccession = new StringBuilder(item.getAccessionNumber());
 				augmentedAccession.append(" : ");
 				augmentedAccession.append(item.getTestName());
 				augmentedAccession.append(" - ");
-				augmentedAccession.append(StringUtil.getMessageForKey("error.reflexStep.notChosen"));
+				augmentedAccession.append(MessageUtil.getMessage("error.reflexStep.notChosen"));
 				String errorMsg = "errors.followingAccession";
 				errors.reject(errorMsg, new String[] { augmentedAccession.toString() }, errorMsg);
 			}
@@ -764,15 +752,10 @@ public class AnalyzerResultsController extends BaseController {
 				try {
 					sampleDAO.insertDataWithAccessionNumber(grouping.sample);
 				} catch (LIMSRuntimeException lre) {
-
 					Errors errors = new BaseErrors();
 					String errorMsg = "warning.duplicate.accession";
-					// ActionError error = new ActionError("warning.duplicate.accession",
-					// grouping.sample.getAccessionNumber(), null);
-
 					errors.reject(errorMsg, new String[] { grouping.sample.getAccessionNumber() }, errorMsg);
 					saveErrors(errors);
-					request.setAttribute(Globals.ERROR_KEY, errors);
 					return false;
 				}
 			} else if (grouping.updateSample) {
@@ -921,13 +904,8 @@ public class AnalyzerResultsController extends BaseController {
 			} else if (statusSet.getSampleRecordStatus() == RecordStatus.NotRegistered) {
 				return createGroupForDemographicsEntered(groupedAnalyzerResultItems, statusSet);
 			} else {
-				return createGroupForSampleAndDemographicsEntered(groupedAnalyzerResultItems, statusSet); // this is
-																											// called
-																											// when just
-																											// sample
-																											// entry has
-																											// been
-																											// done/ fix
+				// this is called when just sample entry has been done/ fix
+				return createGroupForSampleAndDemographicsEntered(groupedAnalyzerResultItems, statusSet);
 			}
 		}
 
@@ -1378,8 +1356,7 @@ public class AnalyzerResultsController extends BaseController {
 			String statusId = StatusService.getInstance().getStatusID(
 					resultItem.getIsAccepted() ? AnalysisStatus.TechnicalAcceptance : AnalysisStatus.TechnicalRejected);
 			analysis.setStatusId(statusId);
-			analysis.setAnalysisType(resultItem.getManual() ? IActionConstants.ANALYSIS_TYPE_MANUAL
-					: IActionConstants.ANALYSIS_TYPE_AUTO);
+			analysis.setAnalysisType(resultItem.getManual() ? ANALYSIS_TYPE_MANUAL : ANALYSIS_TYPE_AUTO);
 			analysis.setCompletedDateForDisplay(resultItem.getCompleteDate());
 			analysis.setTest(test);
 			analysis.setTestSection(test.getTestSection());

@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -40,7 +41,6 @@ import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.services.SampleService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 
@@ -60,7 +60,7 @@ public class Cobas6800VLAnalyzerImplementation extends AnalyzerLineInserter
 
   private static final String DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";
   static String ANALYZER_ID ;
-  private final String projectCode = StringUtil.getMessageForKey("sample.entry.project.LART");
+  private final String projectCode = MessageUtil.getMessage("sample.entry.project.LART");
 
   static HashMap<String, Test> testHeaderNameMap = new HashMap<String, Test>();
   HashMap<String, String> indexTestMap = new HashMap<String, String>();

@@ -28,8 +28,7 @@
 <script type="text/javascript">
 
 function doShowTests(element){
-	window.location.href = '${responseAction}?type=<c:out value="${workplanType}"/>&selectedSearchID=' + element.value;
-	
+	window.location.href = '<c:url value="${responseAction}?type=${workplanType}&selectedSearchID="/>' + element.value;
 }
 
 function validateTest(){

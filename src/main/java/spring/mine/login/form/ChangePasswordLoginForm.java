@@ -1,14 +1,24 @@
 package spring.mine.login.form;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
 
 public class ChangePasswordLoginForm extends BaseForm {
+
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.USERNAME_REGEX)
 	private String loginName = "";
 
+	// in validator
 	private String password = "";
 
+	// in validator
 	private String newPassword = "";
 
+	// in validator
 	private String confirmPassword = "";
 
 	public ChangePasswordLoginForm() {

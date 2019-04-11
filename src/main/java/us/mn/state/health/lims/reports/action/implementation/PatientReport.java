@@ -34,6 +34,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Transaction;
 
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.address.dao.PersonAddressDAO;
 import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
 import us.mn.state.health.lims.address.daoimpl.PersonAddressDAOImpl;
@@ -64,7 +65,6 @@ import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -462,14 +462,14 @@ public abstract class PatientReport extends Report {
 		data.setSectionSortOrder(test.getTestSection().getSortOrderInt());
 
 		if (StatusService.getInstance().matches(currentAnalysisService.getStatusId(), AnalysisStatus.Canceled)) {
-			data.setResult(StringUtil.getMessageForKey("report.test.status.canceled"));
+			data.setResult(MessageUtil.getMessage("report.test.status.canceled"));
 		} else if (currentAnalysisService.getAnalysis().isReferredOut()) {
 			setReferredOutResult(data);
 			return;
 			/*
 			 * Not sure which rules this would support -- above statement was
 			 * conditional on no patient alerts if( noResults( resultList ) ){
-			 * data.setResult( StringUtil.getMessageForKey(
+			 * data.setResult( MessageUtil.getMessage(
 			 * "report.test.status.referredOut" ) ); }else{
 			 * setAppropriateResults( resultList, data ); setReferredResult(
 			 * data, resultList.get( 0 ) ); setNormalRange( data, test,
@@ -498,11 +498,11 @@ public abstract class PatientReport extends Report {
 	}
 
 	protected void setReferredOutResult(ClinicalPatientData data) {
-		data.setResult(StringUtil.getMessageForKey("report.test.status.inProgress"));
+		data.setResult(MessageUtil.getMessage("report.test.status.inProgress"));
 	}
 
 	protected void setEmptyResult(ClinicalPatientData data) {
-		data.setResult(StringUtil.getMessageForKey("report.test.status.inProgress"));
+		data.setResult(MessageUtil.getMessage("report.test.status.inProgress"));
 	}
 
 	private void setCorrectedStatus(Result result, ClinicalPatientData data) {
@@ -726,7 +726,7 @@ public abstract class PatientReport extends Report {
 			}
 			if (sampleItem.getCollectionDate() == null) {
 				buffer.append(" -- ");
-				buffer.append(StringUtil.getMessageForKey("label.not.available"));
+				buffer.append(MessageUtil.getMessage("label.not.available"));
 			} else {
 				buffer.append(" ");
 				buffer.append(
@@ -921,12 +921,12 @@ public abstract class PatientReport extends Report {
 		Date dobDate = DateUtil.convertStringDateToSqlDate(dob);
 		int months = DateUtil.getAgeInMonths(dobDate, DateUtil.getNowAsSqlDate());
 		if (months > 35) {
-			return (months / 12) + " " + StringUtil.getMessageForKey("abbreviation.year.single");
+			return (months / 12) + " " + MessageUtil.getMessage("abbreviation.year.single");
 		} else if (months > 0) {
-			return months + " " + StringUtil.getMessageForKey("abbreviation.month.single");
+			return months + " " + MessageUtil.getMessage("abbreviation.month.single");
 		} else {
 			int days = DateUtil.getAgeInDays(dobDate, DateUtil.getNowAsSqlDate());
-			return days + " " + StringUtil.getMessageForKey("abbreviation.day.single");
+			return days + " " + MessageUtil.getMessage("abbreviation.day.single");
 		}
 
 	}

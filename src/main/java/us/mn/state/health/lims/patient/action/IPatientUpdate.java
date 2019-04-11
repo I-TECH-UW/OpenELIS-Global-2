@@ -25,10 +25,12 @@ import org.springframework.validation.Errors;
 
 import spring.mine.sample.form.SamplePatientEntryForm;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.patient.action.PatientManagementUpdateAction.PatientUpdateStatus;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 
 public interface IPatientUpdate {
+	public static enum PatientUpdateStatus {
+		NO_ACTION, UPDATE, ADD
+	}
 
 	public abstract Errors preparePatientData(HttpServletRequest request, PatientManagementInfo patientInfo)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;

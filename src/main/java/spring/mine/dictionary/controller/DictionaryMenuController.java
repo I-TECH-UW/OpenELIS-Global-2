@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -30,7 +32,6 @@ import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.login.valueholder.UserSessionData;
 
 @Controller
 public class DictionaryMenuController extends BaseMenuController {
@@ -41,16 +42,16 @@ public class DictionaryMenuController extends BaseMenuController {
 	@RequestMapping(value = { "/DictionaryMenu", "/SearchDictionaryMenu" }, method = RequestMethod.GET)
 	public ModelAndView showDictionaryMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
 		DictionaryMenuForm form = new DictionaryMenuForm();
 
-		forward = performMenuAction(form, request);
+		String forward = performMenuAction(form, request);
 		if (FWD_FAIL.equals(forward)) {
 			Errors errors = new BaseErrors();
 			errors.reject("error.generic");
 			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, errors);
 			return findForward(forward, form);
 		} else {
+			request.setAttribute("menuDefinition", "DictionaryMenuDefinition");
 			addFlashMsgsToRequest(request);
 			return findForward(forward, form);
 		}
@@ -129,26 +130,25 @@ public class DictionaryMenuController extends BaseMenuController {
 
 	@RequestMapping(value = "/DeleteDictionary", method = RequestMethod.POST)
 	public ModelAndView showDeleteDictionary(HttpServletRequest request,
-			@ModelAttribute("form") DictionaryMenuForm form, BindingResult result,
+			@ModelAttribute("form") @Valid DictionaryMenuForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) {
-		String forward = FWD_SUCCESS_DELETE;
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 
 		String[] selectedIDs = (String[]) form.get("selectedIDs");
 
-		// get sysUserId from login module
-		UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-		String sysUserId = String.valueOf(usd.getSystemUserId());
-
-		List dictionarys = new ArrayList();
-
+		List<Dictionary> dictionarys = new ArrayList<>();
 		for (int i = 0; i < selectedIDs.length; i++) {
 			Dictionary dictionary = new Dictionary();
 			dictionary.setId(selectedIDs[i]);
-			dictionary.setSysUserId(sysUserId);
+			dictionary.setSysUserId(getSysUserId(request));
 			dictionarys.add(dictionary);
 		}
 
-		org.hibernate.Transaction tx = HibernateUtil.getSession().beginTransaction();
+		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
 			// selectedIDs = (List)PropertyUtils.getProperty(form,
 			// "selectedIDs");
@@ -166,28 +166,15 @@ public class DictionaryMenuController extends BaseMenuController {
 			} else {
 				result.reject("errors.DeleteException");
 			}
-			forward = FWD_FAIL_DELETE;
+			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, result);
+			return findForward(FWD_FAIL_DELETE, form);
 
 		} finally {
 			HibernateUtil.closeSession();
 		}
-		if (forward.equals(FWD_FAIL_DELETE)) {
-			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, result);
-			return findForward(forward, form);
-		}
 
-		if ("true".equalsIgnoreCase(request.getParameter("close"))) {
-			forward = FWD_CLOSE;
-		}
-		// System.out.println("I am in DictionaryMenuDeleteAction setting
-		// menuDefinition");
-		request.setAttribute("menuDefinition", "DictionaryMenuDefinition");
-
-		if (FWD_SUCCESS_DELETE.equals(forward)) {
-			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-			return findForward(forward, form);
-		}
-		return findForward(forward, form);
+		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+		return findForward(FWD_SUCCESS_DELETE, form);
 	}
 
 	@Override

@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.apache.struts.Globals;
 import org.hibernate.StaleObjectStateException;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -22,18 +23,12 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import spring.generated.forms.MenuStatementConfigForm;
-import spring.generated.forms.NonConformityConfigurationForm;
-import spring.generated.forms.PatientConfigurationForm;
-import spring.generated.forms.PrintedReportsConfigurationForm;
-import spring.generated.forms.ResultConfigurationForm;
-import spring.generated.forms.SampleEntryConfigForm;
-import spring.generated.forms.SiteInformationForm;
-import spring.generated.forms.WorkplanConfigurationForm;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
+import spring.mine.siteinformation.form.SiteInformationForm;
+import spring.mine.siteinformation.validator.SiteInformationFormValidator;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.LocalizationService;
 import us.mn.state.health.lims.common.services.PhoneNumberService;
@@ -56,9 +51,14 @@ import us.mn.state.health.lims.siteinformation.valueholder.SiteInformationDomain
 @SessionAttributes("form")
 public class SiteInformationController extends BaseController {
 
+	@Autowired
+	SiteInformationFormValidator formValidator;
+
 	@ModelAttribute("form")
-	public BaseForm form(HttpServletRequest request) {
-		return findForm(request);
+	public SiteInformationForm form(HttpServletRequest request) {
+		SiteInformationForm form = new SiteInformationForm();
+		setupFormForRequest(form, request);
+		return form;
 	}
 
 	private static final String ACCESSION_NUMBER_PREFIX = "Accession number prefix";
@@ -79,13 +79,11 @@ public class SiteInformationController extends BaseController {
 	// TODO decide if still needing NextPrevious (functionality is not implemented)
 	public ModelAndView showSiteInformation(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		BaseForm newForm = findForm(request);
-		if (form.getClass() != newForm.getClass()) {
-			form = newForm;
+		if (form.getClass() != SiteInformationForm.class) {
+			form = new SiteInformationForm();
+			setupFormForRequest((SiteInformationForm) form, request);
 			request.getSession().setAttribute("form", form);
 		}
-		form.setCancelAction("Cancel" + form.getFormAction() + ".do");
 
 		String id = request.getParameter(ID);
 
@@ -142,45 +140,53 @@ public class SiteInformationController extends BaseController {
 			}
 		}
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS, form);
 	}
 
-	private BaseForm findForm(HttpServletRequest request) {
-		BaseForm form;
+	private void setupFormForRequest(SiteInformationForm form, HttpServletRequest request) {
 		String path = request.getServletPath();
 		if (path.contains("NonConformityConfiguration")) {
-			form = new NonConformityConfigurationForm();
+			form.setSiteInfoDomainName("non_conformityConfiguration");
+			form.setFormName("NonConformityConfigurationForm");
 			form.setFormAction("NonConformityConfiguration");
 
 		} else if (path.contains("WorkplanConfiguration")) {
-			form = new WorkplanConfigurationForm();
+			form.setSiteInfoDomainName("WorkplanConfiguration");
+			form.setFormName("WorkplanConfigurationForm");
 			form.setFormAction("WorkplanConfiguration");
 
 		} else if (path.contains("PrintedReportsConfiguration")) {
-			form = new PrintedReportsConfigurationForm();
+			form.setSiteInfoDomainName("PrintedReportsConfiguration");
+			form.setFormName("PrintedReportsConfigurationForm");
 			form.setFormAction("PrintedReportsConfiguration");
 
 		} else if (path.contains("SampleEntryConfig")) {
-			form = new SampleEntryConfigForm();
+			form.setSiteInfoDomainName("sampleEntryConfig");
+			form.setFormName("sampleEntryConfigForm");
 			form.setFormAction("SampleEntryConfig");
 
 		} else if (path.contains("ResultConfiguration")) {
-			form = new ResultConfigurationForm();
+			form.setSiteInfoDomainName("ResultConfiguration");
+			form.setFormName("resultConfigurationForm");
 			form.setFormAction("ResultConfiguration");
 
 		} else if (path.contains("MenuStatementConfig")) {
-			form = new MenuStatementConfigForm();
+			form.setSiteInfoDomainName("MenuStatementConfig");
+			form.setFormName("MenuStatementConfigForm");
 			form.setFormAction("MenuStatementConfig");
 
 		} else if (path.contains("PatientConfiguration")) {
-			form = new PatientConfigurationForm();
+			form.setSiteInfoDomainName("PaitientConfiguration");
+			form.setFormName("PatientConfigurationForm");
 			form.setFormAction("PatientConfiguration");
 
 		} else {
-			form = new SiteInformationForm();
+			form.setSiteInfoDomainName("SiteInformation");
+			form.setFormName("siteInformationForm");
 			form.setFormAction("SiteInformation");
 		}
-		return form;
+
+		form.setCancelAction("Cancel" + form.getFormAction() + ".do");
 	}
 
 	private String getInstruction(SiteInformation siteInformation) {
@@ -213,8 +219,14 @@ public class SiteInformationController extends BaseController {
 	@RequestMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration", "/PrintedReportsConfiguration",
 			"/SampleEntryConfig", "/ResultConfiguration", "/MenuStatementConfig", "/PatientConfiguration",
 			"/SiteInformation" }, method = RequestMethod.POST)
-	public ModelAndView showUpdateSiteInformation(HttpServletRequest request, @ModelAttribute("form") BaseForm form,
-			BindingResult result, SessionStatus status, RedirectAttributes redirectAttributes) {
+	public ModelAndView showUpdateSiteInformation(HttpServletRequest request,
+			@ModelAttribute("form") @Valid SiteInformationForm form, BindingResult result, SessionStatus status,
+			RedirectAttributes redirectAttributes) {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 		String forward;
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
@@ -224,12 +236,10 @@ public class SiteInformationController extends BaseController {
 		String id = request.getParameter(ID);
 		boolean isNew = id == null || id.equals("0");
 
-		String tag = form.getString("tag");
-
 		// N.B. The reason for this branch is that localization does not actually update
 		// site information, it updates the
 		// localization table
-		if ("localization".equals(tag)) {
+		if ("localization".equals(form.getString("tag"))) {
 			String localizationId = form.getString("value");
 			forward = validateAndUpdateLocalization(request, localizationId, form.getString("englishValue"),
 					form.getString("frenchValue"));
@@ -238,9 +248,9 @@ public class SiteInformationController extends BaseController {
 		}
 		// makes the changes take effect immediately
 		ConfigurationProperties.forceReload();
-		// signal to remove from from session
 		if (FWD_SUCCESS_INSERT.equals(forward)) {
 			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+			// signal to remove form from session
 			status.setComplete();
 		}
 		return findForward(forward, form);
@@ -264,8 +274,6 @@ public class SiteInformationController extends BaseController {
 				errors = new BaseErrors();
 				errors.reject("errors.UpdateException");
 				saveErrors(errors);
-				request.setAttribute(Globals.ERROR_KEY, errors);
-
 				forward = FWD_FAIL_INSERT;
 
 			} finally {
@@ -339,7 +347,6 @@ public class SiteInformationController extends BaseController {
 
 			errors.reject(errorMsg);
 			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
 
 			// disable previous and next
 			request.setAttribute(PREVIOUS_DISABLED, TRUE);
@@ -356,7 +363,6 @@ public class SiteInformationController extends BaseController {
 	private boolean isValid(HttpServletRequest request, String name, String value, Errors errors) {
 		if (GenericValidator.isBlankOrNull(name)) {
 			errors.reject("error.SiteInformation.name.required");
-			request.setAttribute(Globals.ERROR_KEY, errors);
 			saveErrors(errors);
 
 			return false;
@@ -364,7 +370,6 @@ public class SiteInformationController extends BaseController {
 
 		if ("phone format".equals(name) && !PhoneNumberService.validatePhoneFormat(value)) {
 			errors.reject("error.SiteInformation.phone.format");
-			request.setAttribute(Globals.ERROR_KEY, errors);
 			saveErrors(errors);
 
 			return false;

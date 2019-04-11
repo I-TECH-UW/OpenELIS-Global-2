@@ -2,19 +2,34 @@ package spring.mine.analyzerimport.form;
 
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
 import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 public class AnalyzerTestNameForm extends BaseForm {
+
+	// for display
 	private List<Analyzer> analyzerList;
 
-	private String analyzerId;
-
+	// for display
 	private List<Test> testList;
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
+	private String analyzerId;
+
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String testId;
 
+	@NotBlank
+	@SafeHtml
 	private String analyzerTestName;
 
 	private boolean newMapping = true;

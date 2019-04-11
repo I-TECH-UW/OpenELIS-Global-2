@@ -21,11 +21,11 @@ import java.sql.Date;
 import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ErrorMessages;
 
 public abstract class IndicatorReport extends Report {
@@ -64,7 +64,7 @@ public abstract class IndicatorReport extends Report {
 		if (GenericValidator.isBlankOrNull(lowerDateRange)) {
 			errorFound = true;
 			ErrorMessages msgs = new ErrorMessages();
-			msgs.setMsgLine1(StringUtil.getMessageForKey("report.error.message.noPrintableItems"));
+			msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.noPrintableItems"));
 			errorMsgs.add(msgs);
 		}
 
@@ -78,7 +78,7 @@ public abstract class IndicatorReport extends Report {
 		} catch (LIMSRuntimeException re) {
 			errorFound = true;
 			ErrorMessages msgs = new ErrorMessages();
-			msgs.setMsgLine1(StringUtil.getMessageForKey("report.error.message.date.format"));
+			msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.date.format"));
 			errorMsgs.add(msgs);
 		}
 	}

@@ -7,7 +7,7 @@
                  us.mn.state.health.lims.common.action.IActionConstants,
                  us.mn.state.health.lims.common.formfields.FormFields,
                  us.mn.state.health.lims.common.util.DateUtil,
-                 us.mn.state.health.lims.common.util.StringUtil,
+                 spring.mine.internationalization.MessageUtil,
                  us.mn.state.health.lims.common.util.Versioning" %>
 
 <%@ page isELIgnored="false" %>
@@ -93,7 +93,7 @@
 
         if (!success) {
             if (messageValue == "SAMPLE_FOUND") {
-                alert("<%= StringUtil.getMessageForKey("sample.entry.invalid.accession.number.used") %>");
+                alert("<%= MessageUtil.getMessage("sample.entry.invalid.accession.number.used") %>");
             } else {
                 alert(message.firstChild.nodeValue);
             }
@@ -140,7 +140,7 @@
             $jq("#newRequesterName").val(textValue);
             requesterList = $("personRequesterId");
             requesterList.options.length = 0;
-            addOptionToSelect(requesterList, '<%=StringUtil.getMessageForKey("sample.entry.requester.new")%>', "0");
+            addOptionToSelect(requesterList, '<%=MessageUtil.getMessage("sample.entry.requester.new")%>', "0");
         } else {
             getProvidersForOrg( orgKey, processRequestersSuccess);
         }
@@ -154,14 +154,14 @@
         requesterList.options.length = 0;
 
         if (requesters.length == 0) {
-            addOptionToSelect(requesterList, '<%=StringUtil.getMessageForKey("sample.entry.requester.new")%>', "0");
+            addOptionToSelect(requesterList, '<%=MessageUtil.getMessage("sample.entry.requester.new")%>', "0");
         } else {
             requesterInfoHash = {};
             addOptionToSelect(requesterList, '', '');
             for (var i = 0; i < requesters.length; ++i) {
                 addRequester(requesterList, requesters[i]);
             }
-            addOptionToSelect(requesterList, '<%=StringUtil.getMessageForKey("sample.entry.requester.new")%>', "0");
+            addOptionToSelect(requesterList, '<%=MessageUtil.getMessage("sample.entry.requester.new")%>', "0");
         }
     }
 
@@ -278,7 +278,7 @@
     <logic:empty name="${form.formName}" property="sampleOrderItems.labNo">
         <tr>
             <td>
-                <%=StringUtil.getContextualMessageForKey( "quick.entry.accession.number" )%>:
+                <%=MessageUtil.getContextualMessage( "quick.entry.accession.number" )%>:
                 <span class="requiredlabel">*</span>
             </td>
             <td style="width:15%">
@@ -290,7 +290,7 @@
             <td id="generate">
                 <spring:message code="sample.entry.scanner.instructions"/>
                 <input type="button"
-                       value='<%=StringUtil.getMessageForKey("sample.entry.scanner.generate")%>'
+                       value='<%=MessageUtil.getMessage("sample.entry.scanner.generate")%>'
                        onclick="getNextAccessionNumber(); makeDirty();" class="textButton">
             </td>
         </tr>

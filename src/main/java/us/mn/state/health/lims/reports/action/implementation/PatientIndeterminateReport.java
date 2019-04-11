@@ -23,12 +23,12 @@ import org.apache.commons.validator.GenericValidator;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -42,13 +42,14 @@ import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization
 
 public abstract class PatientIndeterminateReport extends RetroCIPatientReport {
 
-    protected List<IndeterminateReportData> reportItems;
+	protected List<IndeterminateReportData> reportItems;
 
-
+	@Override
 	protected String getReportNameForReport() {
-		return StringUtil.getMessageForKey("reports.label.patient.indeterminate");
+		return MessageUtil.getMessage("reports.label.patient.indeterminate");
 	}
 
+	@Override
 	public JRDataSource getReportDataSource() throws IllegalStateException {
 		if (!initialized) {
 			throw new IllegalStateException("initializeReport not called first");
@@ -57,6 +58,7 @@ public abstract class PatientIndeterminateReport extends RetroCIPatientReport {
 		return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(reportItems);
 	}
 
+	@Override
 	protected void createReportItems() {
 		IndeterminateReportData data = new IndeterminateReportData();
 
@@ -79,8 +81,9 @@ public abstract class PatientIndeterminateReport extends RetroCIPatientReport {
 		data.setBirth_date(reportPatient.getBirthDateForDisplay());
 		data.setAge(DateUtil.getCurrentAgeForDate(reportPatient.getBirthDate(), reportSample.getCollectionDate()));
 		data.setGender(reportPatient.getGender());
-		data.setCollectiondate(reportSample.getCollectionDateForDisplay() + " " + reportSample.getCollectionTimeForDisplay());
-		data.setReceivedDate(reportSample.getReceivedDateForDisplay() + " " + reportSample.getReceivedTimeForDisplay( ));
+		data.setCollectiondate(
+				reportSample.getCollectionDateForDisplay() + " " + reportSample.getCollectionTimeForDisplay());
+		data.setReceivedDate(reportSample.getReceivedDateForDisplay() + " " + reportSample.getReceivedTimeForDisplay());
 
 		SampleOrganization sampleOrg = new SampleOrganization();
 		sampleOrg.setSample(reportSample);
@@ -92,15 +95,15 @@ public abstract class PatientIndeterminateReport extends RetroCIPatientReport {
 	}
 
 	protected void setTestInfo(IndeterminateReportData data) {
-	    boolean atLeastOneAnalysisNotValidated = false;
+		boolean atLeastOneAnalysisNotValidated = false;
 		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-        List<Analysis> analysisList = analysisDAO.getAnalysesBySampleId(reportSample.getId());
+		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleId(reportSample.getId());
 		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-		String invalidValue = StringUtil.getMessageForKey("report.test.status.inProgress");
+		String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
 		ResultDAO resultDAO = new ResultDAOImpl();
 
 		for (Analysis analysis : analysisList) {
-			String testName = TestService.getUserLocalizedTestName( analysis.getTest() );
+			String testName = TestService.getUserLocalizedTestName(analysis.getTest());
 
 			List<Result> resultList = resultDAO.getResultsByAnalysis(analysis);
 			String resultValue = null;
@@ -127,7 +130,7 @@ public abstract class PatientIndeterminateReport extends RetroCIPatientReport {
 						resultValue = valid ? dictionary.getDictEntry() : invalidValue;
 					}
 				}
-			} else if ( valid && resultList.size() > 0) {
+			} else if (valid && resultList.size() > 0) {
 				Dictionary dictionary = new Dictionary();
 				dictionary.setId(resultList.get(0).getValue());
 				dictionaryDAO.getData(dictionary);
@@ -138,8 +141,8 @@ public abstract class PatientIndeterminateReport extends RetroCIPatientReport {
 
 		}
 
-		data.setStatus(atLeastOneAnalysisNotValidated ? StringUtil.getMessageForKey("report.status.partial") : StringUtil
-				.getMessageForKey("report.status.complete"));
+		data.setStatus(atLeastOneAnalysisNotValidated ? MessageUtil.getMessage("report.status.partial")
+				: MessageUtil.getMessage("report.status.complete"));
 
 	}
 
@@ -171,7 +174,7 @@ public abstract class PatientIndeterminateReport extends RetroCIPatientReport {
 
 	@Override
 	protected void initializeReportItems() {
-		reportItems = new ArrayList<IndeterminateReportData>();
+		reportItems = new ArrayList<>();
 	}
 
 	@Override

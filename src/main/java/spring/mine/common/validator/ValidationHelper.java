@@ -5,14 +5,24 @@ import java.util.regex.Pattern;
 import org.springframework.validation.Errors;
 
 import us.mn.state.health.lims.common.action.IActionConstants;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 
 public class ValidationHelper {
 
-	// prevents people constructing a helper object
+	// prevents constructing object all methods are static
 	private ValidationHelper() {
-
 	}
+
+	public static final String NAME_REGEX = "(?i)^[ a-zàâçéèêëîïôûùüÿñæœ'.-]*$";
+	public static final String USERNAME_REGEX = "(?i)^[a-z0-9àâçéèêëîïôûùüÿñæœ._@-]*$";
+	public static final String MESSAGE_KEY_REGEX = "(?i)^$|^[a-z0-9_]+(\\.[a-z0-9_]+)*$";
+	public static final String PATIENT_ID_REGEX = "(?i)^[a-z0-9/]*$";
+	public static final String ID_REGEX = "^[0-9]*$";
+	public static final String PHONE_REGEX = "^[-+()0-9 ]*$";
+	public static final String GENDER_REGEX = "^$|^M$|^F$";
+	public static final String YES_NO_REGEX = "^$|^" + IActionConstants.YES + "$|^" + IActionConstants.NO + "$";
 
 	private static final String DEFAULT_PREFIX = "Field ";
 
@@ -59,9 +69,55 @@ public class ValidationHelper {
 
 	public static void validateFieldCharSet(String value, String name, String displayName, Errors errors,
 			String charSet) {
-		if (!Pattern.matches("[" + charSet + "]*", value)) {
-			errors.rejectValue(name, "error.field.charset.invalid", new Object[] { displayName },
-					DEFAULT_PREFIX + displayName + " has an invalid character");
+		if (value != null) {
+			if (!Pattern.matches("^[" + charSet + "]*$", value)) {
+				String charsetForDisplay = charSet.replaceAll("\\\\(?!\\\\)", "");
+				errors.rejectValue(name, "error.field.charset.invalid", new Object[] { displayName, charsetForDisplay },
+						DEFAULT_PREFIX + displayName + " has an invalid character. Allowed characters are '"
+								+ charsetForDisplay + "'");
+			}
+		}
+	}
+
+	public static void validateDateField(String value, String name, String displayName, Errors errors,
+			DateRelation relative) {
+		String result = CustomDateValidator.getInstance().validateDate(CustomDateValidator.getInstance().getDate(value),
+				relative);
+		if (!IActionConstants.VALID.equals(result)) {
+			errors.rejectValue(name, "error.field.date.invalid", new Object[] { displayName, result },
+					DEFAULT_PREFIX + displayName + " is not in a valid date format");
+		}
+	}
+
+	public static void validateTimeField(String value, String name, String displayName, Errors errors) {
+		if (!CustomDateValidator.getInstance().validate24HourTime(value)) {
+			errors.rejectValue(name, "error.field.time.invalid", new Object[] { displayName, value },
+					DEFAULT_PREFIX + displayName + " is not in a valid time format");
+		}
+	}
+
+	public static void validateOptionFieldIgnoreCase(String value, String name, String displayName, Errors errors,
+			String[] possibleValues) {
+		boolean match = false;
+		for (String possibleValue : possibleValues) {
+			// null safety
+			if (possibleValue == null) {
+				if (value == null) {
+					match = true;
+				}
+			} else {
+				if (possibleValue.equalsIgnoreCase(value)) {
+					match = true;
+				}
+			}
+
+			if (match) {
+				break;
+			}
+		}
+		if (!match) {
+			errors.rejectValue(name, "error.field.option.invalid", new Object[] { displayName },
+					DEFAULT_PREFIX + displayName + " is not a valid option");
 		}
 	}
 
@@ -92,12 +148,49 @@ public class ValidationHelper {
 	}
 
 	public static void validateIdField(String value, String name, String displayName, Errors errors, boolean required) {
-		validateField(value, name, displayName, errors, required, 10, "[0-9]+");
+		validateField(value, name, displayName, errors, required, 10, "[0-9]*");
 	}
 
 	public static void validateYNField(String value, String name, String displayName, Errors errors) {
 		validateOptionField(value, name, displayName, errors,
 				new String[] { IActionConstants.YES, IActionConstants.NO });
+	}
+
+	public static void validateDateField(String value, String name, String displayName, Errors errors,
+			DateRelation relative, boolean required) {
+		if (required) {
+			validateFieldRequired(value, name, displayName, errors);
+			if (errors.hasErrors()) {
+				return;
+			}
+			validateDateField(value, name, displayName, errors, relative);
+		} else {
+			if (GenericValidator.isBlankOrNull(value)) {
+				return;
+			}
+			validateDateField(value, name, displayName, errors, relative);
+		}
+	}
+
+	public static void validateTimeField(String value, String name, String displayName, Errors errors,
+			boolean required) {
+		if (required) {
+			validateFieldRequired(value, name, displayName, errors);
+		} else {
+			if (GenericValidator.isBlankOrNull(value)) {
+				return;
+			}
+			validateTimeField(value, name, displayName, errors);
+		}
+	}
+
+	public static void validateGenderField(String value, String name, String displayName, Errors errors,
+			boolean required) {
+		if (required) {
+			validateOptionField(value, name, displayName, errors, new Object[] { "M", "F" });
+		} else {
+			validateOptionField(value, name, displayName, errors, new Object[] { "M", "F", "", null });
+		}
 	}
 
 	// methods for using name = displayName
@@ -146,6 +239,32 @@ public class ValidationHelper {
 
 	public static void validateYNField(String value, String name, Errors errors) {
 		validateYNField(value, name, name, errors);
+	}
+
+	public static void validateDateField(String value, String name, Errors errors, DateRelation relative) {
+		validateDateField(value, name, name, errors, relative);
+	}
+
+	public static void validateDateField(String value, String name, Errors errors, DateRelation relative,
+			boolean required) {
+		validateDateField(value, name, name, errors, relative, required);
+	}
+
+	public static void validateTimeField(String value, String name, Errors errors, boolean required) {
+		validateTimeField(value, name, name, errors, required);
+	}
+
+	public static void validateGenderField(String value, String name, Errors errors) {
+		validateGenderField(value, name, name, errors, true);
+	}
+
+	public static void validateGenderField(String value, String name, Errors errors, boolean required) {
+		validateGenderField(value, name, name, errors, required);
+	}
+
+	public static void validateOptionFieldIgnoreCase(String value, String name, Errors errors,
+			String[] possibleValues) {
+		validateOptionFieldIgnoreCase(value, name, name, errors, possibleValues);
 	}
 
 	/*
@@ -276,6 +395,7 @@ public class ValidationHelper {
 					match = true;
 				}
 			}
+
 			if (match) {
 				break;
 			}

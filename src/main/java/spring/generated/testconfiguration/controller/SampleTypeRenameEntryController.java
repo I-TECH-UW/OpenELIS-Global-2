@@ -1,19 +1,19 @@
 package spring.generated.testconfiguration.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.generated.forms.SampleTypeRenameEntryForm;
+import spring.generated.testconfiguration.form.SampleTypeRenameEntryForm;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
@@ -23,19 +23,14 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Controller
 public class SampleTypeRenameEntryController extends BaseController {
+
 	@RequestMapping(value = "/SampleTypeRenameEntry", method = RequestMethod.GET)
-	public ModelAndView showSampleTypeRenameEntry(HttpServletRequest request,
-			@ModelAttribute("form") SampleTypeRenameEntryForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new SampleTypeRenameEntryForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+	public ModelAndView showSampleTypeRenameEntry(HttpServletRequest request) {
+		SampleTypeRenameEntryForm form = new SampleTypeRenameEntryForm();
 
 		form.setSampleTypeList(DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	@Override
@@ -44,6 +39,8 @@ public class SampleTypeRenameEntryController extends BaseController {
 			return "sampleTypeRenameDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/SampleTypeRenameEntry.do";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return "sampleTypeRenameDefinition";
 		} else {
 			return "PageNotFound";
 		}
@@ -51,9 +48,12 @@ public class SampleTypeRenameEntryController extends BaseController {
 
 	@RequestMapping(value = "/SampleTypeRenameEntry", method = RequestMethod.POST)
 	public ModelAndView updateSampleTypeRenameEntry(HttpServletRequest request,
-			@ModelAttribute("form") SampleTypeRenameEntryForm form) {
-
-		String forward = FWD_SUCCESS_INSERT;
+			@ModelAttribute("form") @Valid SampleTypeRenameEntryForm form, BindingResult result) {
+		if (result.hasErrors()) {
+			saveErrors(result);
+			form.setSampleTypeList(DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 
 		String sampleTypeId = form.getSampleTypeId();
 		String nameEnglish = form.getNameEnglish();
@@ -62,12 +62,9 @@ public class SampleTypeRenameEntryController extends BaseController {
 
 		updateSampleTypeNames(sampleTypeId, nameEnglish, nameFrench, userId);
 
-		form = new SampleTypeRenameEntryForm();
-		form.setFormAction("");
-
 		form.setSampleTypeList(DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private void updateSampleTypeNames(String sampleTypeId, String nameEnglish, String nameFrench, String userId) {

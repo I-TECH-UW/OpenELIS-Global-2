@@ -24,10 +24,10 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
 import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
@@ -81,7 +81,7 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
 			if (reportSampleList.isEmpty()) {
 				errorFound = true;
 				ErrorMessages msgs = new ErrorMessages();
-				msgs.setMsgLine1(StringUtil.getMessageForKey("report.error.message.noPrintableItems"));
+				msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.noPrintableItems"));
 				errorMsgs.add(msgs);
 			}
 

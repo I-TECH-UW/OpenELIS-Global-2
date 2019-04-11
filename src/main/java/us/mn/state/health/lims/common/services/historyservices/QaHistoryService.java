@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.valueholder.History;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.SampleService;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
 import us.mn.state.health.lims.sampleqaevent.daoimpl.SampleQaEventDAOImpl;
@@ -47,7 +47,7 @@ public class QaHistoryService extends HistoryService {
 
 	@Override
 	protected String getObjectName() {
-		return StringUtil.getMessageForKey("qaevent.browse.title");
+		return MessageUtil.getMessage("qaevent.browse.title");
 	}
 
 	@Override

@@ -5,14 +5,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.barcode.form.PrintBarcodeForm;
-import spring.mine.barcode.validator.PrintBarcodeFormValidator;
 import spring.mine.common.controller.BaseController;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
@@ -71,52 +71,39 @@ public class PrintBarcodeController extends BaseController {
 		ABLE_TO_CANCEL_ROLE_NAMES.add("Biologist");
 	}
 
-	@Autowired
-	PrintBarcodeFormValidator formValidator;
-
-	// TODO make only get
-	@RequestMapping(value = "/PrintBarcode", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/PrintBarcode", method = RequestMethod.GET)
 	public ModelAndView setupPrintBarcode(HttpServletRequest request, @ModelAttribute("form") PrintBarcodeForm form,
 			BindingResult result) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new PrintBarcodeForm();
-		}
+
 		form.setFormAction("PrintBarcode");
-		addPatientSearch(form);
+		form.setFormMethod(RequestMethod.GET);
+		Map<String, Object> displayObjects = new HashMap<>();
+		addPatientSearch(displayObjects);
 
 		if (GenericValidator.isBlankOrNull(request.getParameter("accessionNumber"))) {
-			return findForward(forward, form);
+			return findForward(FWD_SUCCESS, displayObjects, form);
 		}
-
-		formValidator.validate(form, result);
-		if (result.hasErrors()) {
-			saveErrors(result);
-			return findForward(FWD_FAIL, form);
-		}
-
-		form.setFormAction("PrintBarcode");
-		addPatientSearch(form);
 
 		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		String accessionNumber = form.getAccessionNumber();
 		Sample sample = getSample(accessionNumber);
 		if (sample != null && !GenericValidator.isBlankOrNull(sample.getId())) {
 			List<SampleItem> sampleItemList = getSampleItems(sample);
-			setPatientInfo(form, sample);
+			setPatientInfo(displayObjects, sample);
 			List<SampleEditItem> currentTestList = getCurrentTestInfo(sampleItemList, accessionNumber, false);
-			form.setExistingTests(currentTestList);
+			displayObjects.put("existingTests", currentTestList);
 		}
 		tx.commit();
 
-		return findForward(forward, form);
+		addPatientSearch(displayObjects);
+		return findForward(FWD_SUCCESS, displayObjects, form);
 	}
 
-	private void addPatientSearch(PrintBarcodeForm form) {
+	private void addPatientSearch(Map<String, Object> displayObjects) {
 		PatientSearch patientSearch = new PatientSearch();
 		patientSearch.setLoadFromServerWithPatient(true);
 		patientSearch.setSelectedPatientActionButtonText(MessageUtil.getMessage("label.patient.search.select"));
-		form.setPatientSearch(patientSearch);
+		displayObjects.put("patientSearch", patientSearch);
 
 	}
 
@@ -236,16 +223,16 @@ public class PrintBarcodeController extends BaseController {
 		}
 	}
 
-	private void setPatientInfo(PrintBarcodeForm form, Sample sample)
+	private void setPatientInfo(Map<String, Object> displayObjects, Sample sample)
 			throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
 		Patient patient = new SampleHumanDAOImpl().getPatientForSample(sample);
 		IPatientService patientService = new PatientService(patient);
 
-		form.setPatientName(patientService.getLastFirstName());
-		form.setDob(patientService.getEnteredDOB());
-		form.setGender(patientService.getGender());
-		form.setNationalId(patientService.getNationalId());
+		displayObjects.put("patientName", patientService.getLastFirstName());
+		displayObjects.put("dob", patientService.getEnteredDOB());
+		displayObjects.put("gender", patientService.getGender());
+		displayObjects.put("nationalId", patientService.getNationalId());
 	}
 
 	private static class SampleEditItemComparator implements Comparator<SampleEditItem> {

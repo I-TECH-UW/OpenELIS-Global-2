@@ -25,6 +25,7 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.services.ObservationHistoryService;
 import us.mn.state.health.lims.common.services.ObservationHistoryService.ObservationType;
 import us.mn.state.health.lims.common.services.PatientService;
@@ -53,7 +54,7 @@ public abstract class ActivityReport extends Report implements IReportCreator{
     protected void createReportParameters() {
         reportParameters.put( "activityLabel", getActivityLabel() );
         reportParameters.put( "accessionPrefix", AccessionNumberUtil.getAccessionNumberValidator().getPrefix() );
-        reportParameters.put( "labNumberTitle", StringUtil.getContextualMessageForKey( "quick.entry.accession.number" ) );
+        reportParameters.put( "labNumberTitle", MessageUtil.getContextualMessage( "quick.entry.accession.number" ) );
         reportParameters.put( "labName", ConfigurationProperties.getInstance().getPropertyValue( Property.SiteName ) );
         reportParameters.put( "SUBREPORT_DIR", reportPath );
         reportParameters.put( "startDate", dateRange.getLowDateStr() );

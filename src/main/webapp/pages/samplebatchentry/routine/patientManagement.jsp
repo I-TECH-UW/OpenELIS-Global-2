@@ -3,7 +3,7 @@
                  us.mn.state.health.lims.common.formfields.FormFields,
                  us.mn.state.health.lims.common.formfields.FormFields.Field,
                  us.mn.state.health.lims.patient.action.bean.PatientManagementInfo,
-                 us.mn.state.health.lims.common.util.*" %>
+                 us.mn.state.health.lims.common.util.*, spring.mine.internationalization.MessageUtil" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -574,7 +574,7 @@ function /*void*/ updatePatientEditStatus() {
 
 function /*void*/ makeDirty() {
 	dirty=true;
-	if (typeof(showSuccessMessage) != 'undefinded') {
+	if (typeof(showSuccessMessage) === 'function') {
 		showSuccessMessage(false); //refers to last save
 	}
 	// Adds warning when leaving page if content has been entered into makeDirty form fields
@@ -696,7 +696,7 @@ function hasIdentifyingInfo() {
 	<br/>
 	<div class="patientSearch">
 		<hr style="width:100%" />
-        <input type="button" value='<%= StringUtil.getMessageForKey("patient.new")%>' onclick="addPatient();">
+        <input type="button" value='<%= MessageUtil.getMessage("patient.new")%>' onclick="addPatient();">
 	</div>
     </c:if>
 	<div id="PatientDetail"   >
@@ -753,7 +753,7 @@ function hasIdentifyingInfo() {
         <% } %>
         <% if (supportNationalID) { %>
         <td style="text-align:right;">
-            <%=StringUtil.getContextualMessageForKey("patient.NationalID") %>:
+            <%=MessageUtil.getContextualMessage("patient.NationalID") %>:
 
         </td>
         <td >

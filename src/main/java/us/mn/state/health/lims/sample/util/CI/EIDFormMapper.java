@@ -23,12 +23,12 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 
 import spring.mine.common.form.BaseForm;
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 public class EIDFormMapper extends BaseProjectFormMapper implements IProjectFormMapper {
 
-	private String projectCode = StringUtil.getMessageForKey("sample.entry.project.LDBS");
+	private String projectCode = MessageUtil.getMessage("sample.entry.project.LDBS");
 	private final String projectName = "Early Infant Diagnosis for HIV Study";
 
 	public EIDFormMapper(String projectFormId, BaseForm form) {

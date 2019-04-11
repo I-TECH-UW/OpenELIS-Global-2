@@ -27,6 +27,7 @@ import java.util.Set;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -36,7 +37,6 @@ import us.mn.state.health.lims.analyte.valueholder.Analyte;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -369,12 +369,12 @@ public class IndicatorHIV extends IndicatorReport implements IReportCreator, IRe
 
 	@Override
 	protected String getNameForReportRequest() {
-		return StringUtil.getContextualMessageForKey("openreports.hiv.aggregate");
+		return MessageUtil.getContextualMessage("openreports.hiv.aggregate");
 	}
 
 	@Override
 	protected String getNameForReport() {
-		return StringUtil.getMessageForKey("openreports.hiv.aggregate");
+		return MessageUtil.getMessage("openreports.hiv.aggregate");
 	}
 
 	@Override

@@ -24,10 +24,10 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import spring.mine.internationalization.MessageUtil;
 import spring.mine.patient.form.PatientEntryByProjectForm;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.util.StringUtil;
 
 /**
  * @author Paul A. Hill (pahill@uw.edu)
@@ -60,7 +60,7 @@ public class PatientSecondEntry extends PatientEntry implements IActionConstants
 
 	@Override
 	protected String getActionLabel() {
-		return StringUtil.getMessageForKey("banner.menu.createPatient.Verify");
+		return MessageUtil.getMessage("banner.menu.createPatient.Verify");
 	}
 
 }

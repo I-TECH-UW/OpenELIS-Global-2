@@ -6,19 +6,19 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.generated.forms.PanelCreateForm;
+import spring.generated.testconfiguration.form.PanelCreateForm;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.LocalizationService;
@@ -44,18 +44,19 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSamplePanel;
 
 @Controller
 public class PanelCreateController extends BaseController {
+
 	public static final String NAME_SEPARATOR = "$";
 
 	@RequestMapping(value = "/PanelCreate", method = RequestMethod.GET)
-	public ModelAndView showPanelCreate(HttpServletRequest request, @ModelAttribute("form") PanelCreateForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new PanelCreateForm();
-		}
-		form.setFormAction("");
+	public ModelAndView showPanelCreate(HttpServletRequest request) {
+		PanelCreateForm form = new PanelCreateForm();
 
-		Errors errors = new BaseErrors();
+		setupDisplayItems(form);
 
+		return findForward(FWD_SUCCESS, form);
+	}
+
+	private void setupDisplayItems(PanelCreateForm form) {
 		HashMap<String, List<Panel>> existingSampleTypePanelMap = PanelTestConfigurationUtil
 				.createTypeOfSamplePanelMap(true);
 		HashMap<String, List<Panel>> inactiveSampleTypePanelMap = PanelTestConfigurationUtil
@@ -96,8 +97,6 @@ public class PanelCreateController extends BaseController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		return findForward(forward, form);
 	}
 
 	private String getExistingTestNames(List<Panel> panels, ConfigurationProperties.LOCALE locale) {
@@ -112,12 +111,12 @@ public class PanelCreateController extends BaseController {
 	}
 
 	@RequestMapping(value = "/PanelCreate", method = RequestMethod.POST)
-	public ModelAndView postPanelCreate(HttpServletRequest request, @ModelAttribute("form") PanelCreateForm form)
-			throws Exception {
-
-		String forward = FWD_SUCCESS_INSERT;
-
-		BaseErrors errors = new BaseErrors();
+	public ModelAndView postPanelCreate(HttpServletRequest request, @ModelAttribute("form") @Valid PanelCreateForm form,
+			BindingResult result) throws Exception {
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 
 		RoleDAO roleDAO = new RoleDAOImpl();
 		RoleModuleDAOImpl roleModuleDAO = new RoleModuleDAOImpl();
@@ -169,7 +168,7 @@ public class PanelCreateController extends BaseController {
 		DisplayListService.refreshList(DisplayListService.ListType.PANELS);
 		DisplayListService.refreshList(DisplayListService.ListType.PANELS_INACTIVE);
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private Localization createLocalization(String french, String english, String currentUserId) {
@@ -229,6 +228,8 @@ public class PanelCreateController extends BaseController {
 			return "panelCreateDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/PanelCreate.do";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return "panelCreateDefinition";
 		} else {
 			return "PageNotFound";
 		}

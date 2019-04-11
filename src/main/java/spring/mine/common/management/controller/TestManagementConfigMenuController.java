@@ -3,44 +3,38 @@ package spring.mine.common.management.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.management.form.TestManagementConfigForm;
-import spring.mine.common.validator.BaseErrors;
 
 @Controller
 public class TestManagementConfigMenuController extends BaseController {
-  @RequestMapping(
-      value = "/TestManagementConfigMenu",
-      method = { RequestMethod.GET, RequestMethod.POST }
-  )
-  public ModelAndView showTestManagementConfigMenu(HttpServletRequest request) {
-    String forward = FWD_SUCCESS;
-    TestManagementConfigForm form = new TestManagementConfigForm();
-        form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+	@RequestMapping(value = "/TestManagementConfigMenu", method = RequestMethod.GET)
+	public ModelAndView showTestManagementConfigMenu(HttpServletRequest request) {
+		TestManagementConfigForm form = new TestManagementConfigForm();
 
-    return findForward(forward, form);}
+		return findForward(FWD_SUCCESS, form);
+	}
 
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "testManagementConfigDefinition";
-    } else {
-      return "PageNotFound";
-    }
-  }
+	@Override
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "testManagementConfigDefinition";
+		} else {
+			return "PageNotFound";
+		}
+	}
 
-  protected String getPageTitleKey() {
-    return null;
-  }
+	@Override
+	protected String getPageTitleKey() {
+		return null;
+	}
 
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+	@Override
+	protected String getPageSubtitleKey() {
+		return null;
+	}
 }

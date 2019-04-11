@@ -18,7 +18,7 @@ package us.mn.state.health.lims.reports.action.implementation;
 
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.reports.action.implementation.ReportSpecificationParameters.Parameter;
 
 public class ReportImplementationFactory{
@@ -27,31 +27,31 @@ public class ReportImplementationFactory{
 	public static IReportParameterSetter getParameterSetter(String report){
 		if(!GenericValidator.isBlankOrNull(report)){
 			if(report.equals("patientARV1")){
-				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE, StringUtil.getMessageForKey("reports.label.patient.ARV.all"),null);
+				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE, MessageUtil.getMessage("reports.label.patient.ARV.all"),null);
 			}else if(report.equals("retroCINonConformityByLabno")){
-				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE, StringUtil.getMessageForKey("reports.label.patient.ARV.all"),null);
+				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE, MessageUtil.getMessage("reports.label.patient.ARV.all"),null);
 			}else if(report.equals("patientARVInitial1")){
-				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE, StringUtil.getMessageForKey("reports.label.patient.ARV.initial"), null);
+				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE, MessageUtil.getMessage("reports.label.patient.ARV.initial"), null);
 			}else if(report.equals("patientARVInitial2")){
-				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,StringUtil.getMessageForKey("reports.label.patient.ARV.initial"), null);
+				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,MessageUtil.getMessage("reports.label.patient.ARV.initial"), null);
 			}else if(report.equals("patientARVFollowup1")){
-				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,StringUtil.getMessageForKey("reports.label.patient.ARV.followup"), null);
+				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,MessageUtil.getMessage("reports.label.patient.ARV.followup"), null);
 			}else if(report.equals("patientARVFollowup2")){
-				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,StringUtil.getMessageForKey("reports.label.patient.ARV.followup"), null);
+				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,MessageUtil.getMessage("reports.label.patient.ARV.followup"), null);
 			}else if(report.equals("patientEID1")){
-				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,StringUtil.getMessageForKey("reports.label.patient.EID"), null);
+				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,MessageUtil.getMessage("reports.label.patient.EID"), null);
 			}else if(report.equals("patientEID2")){
-				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,StringUtil.getMessageForKey("reports.label.patient.EID"), null);
+				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,MessageUtil.getMessage("reports.label.patient.EID"), null);
 			}else if(report.equals("patientVL1")){
-				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,StringUtil.getMessageForKey("reports.label.patient.VL"), null);
+				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,MessageUtil.getMessage("reports.label.patient.VL"), null);
 			}else if(report.equals("patientIndeterminate1")){
-				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,StringUtil.getMessageForKey("reports.label.patient.indeterminate"), null);
+				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,MessageUtil.getMessage("reports.label.patient.indeterminate"), null);
 			}else if(report.equals("patientIndeterminate2")){
-				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,StringUtil.getMessageForKey("reports.label.patient.indeterminate"), null);
+				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,MessageUtil.getMessage("reports.label.patient.indeterminate"), null);
 			}else if(report.equals("patientIndeterminateByLocation")){
 				return new PatientIndeterminateByLocationReport();
 			}else if(report.equals("indicatorSectionPerformance")){
-				return new ReportSpecificationParameters( Parameter.NO_SPECIFICATION, StringUtil.getMessageForKey("reports.label.indicator.performance"), null );
+				return new ReportSpecificationParameters( Parameter.NO_SPECIFICATION, MessageUtil.getMessage("reports.label.indicator.performance"), null );
 			}else if(report.equals("patientHaitiClinical") || report.equals("patientHaitiLNSP") || report.equals("patientCILNSP")|| report.equals("patientCILNSP_vreduit")){
 				return new PatientClinicalReport();
 			}else if(report.equals("indicatorHaitiClinicalHIV")){
@@ -74,15 +74,15 @@ public class ReportImplementationFactory{
 				return new ReferredOutReport();
 			}else if(report.equals("HaitiExportReport") || report.equals("HaitiLNSPExportReport")){
 				return new ReportSpecificationParameters( Parameter.DATE_RANGE,
-                        StringUtil.getMessageForKey("reports.label.project.export") + " " + StringUtil.getContextualMessageForKey("sample.collectionDate"), null);
+                        MessageUtil.getMessage("reports.label.project.export") + " " + MessageUtil.getContextualMessage("sample.collectionDate"), null);
 			}else if(report.equals("indicatorConfirmation")){
 				return new ConfirmationReport();
 			}else if(isNonConformityByDateReport(report)){
-				return new ReportSpecificationParameters( Parameter.DATE_RANGE, StringUtil.getMessageForKey("openreports.nonConformityReport"), null);
+				return new ReportSpecificationParameters( Parameter.DATE_RANGE, MessageUtil.getMessage("openreports.nonConformityReport"), null);
 			}else if(isNonConformityBySectionReport(report)){
-				return new ReportSpecificationParameters( Parameter.DATE_RANGE, StringUtil.getMessageForKey("reports.nonConformity.bySectionReason.title"), null);
+				return new ReportSpecificationParameters( Parameter.DATE_RANGE, MessageUtil.getMessage("reports.nonConformity.bySectionReason.title"), null);
 			}else if(report.equals("patientSpecialReport")){
-				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,StringUtil.getMessageForKey("reports.specialRequest.title"), null);
+				return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,MessageUtil.getMessage("reports.specialRequest.title"), null);
 			}else if(report.equals("indicatorHaitiLNSPSiteTestCount")){
 				return new IndicatorHaitiSiteTestCountReport();
 			}else if(report.equals("retroCIFollowupRequiredByLocation")){
@@ -94,9 +94,9 @@ public class ReportImplementationFactory{
 			}else if(report.equals("patientAssociated")){
 				return new RetroCIPatientAssociatedReport();
 			}else if (report.equals("indicatorRealisation") ){
-				    return new ReportSpecificationParameters( Parameter.DATE_RANGE, StringUtil.getMessageForKey("report.realisation"), null);
+				    return new ReportSpecificationParameters( Parameter.DATE_RANGE, MessageUtil.getMessage("report.realisation"), null);
 			}else if (report.equals("epiSurveillanceExport") ){
-                return new ReportSpecificationParameters( Parameter.DATE_RANGE, StringUtil.getMessageForKey("banner.menu.report.epi.surveillance.export"), null);
+                return new ReportSpecificationParameters( Parameter.DATE_RANGE, MessageUtil.getMessage("banner.menu.report.epi.surveillance.export"), null);
             }else if (report.equals( "activityReportByPanel" )){
                 return new ActivityReportByPanel();
             }else if (report.equals( "activityReportByTest" )){

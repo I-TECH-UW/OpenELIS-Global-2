@@ -3,9 +3,9 @@ package spring.mine.dataexchange.order.controller;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.dataexchange.order.form.ElectronicOrderViewForm;
-import spring.mine.dataexchange.order.validator.ElectronicOrderViewFormValidator;
 import us.mn.state.health.lims.dataexchange.order.dao.ElectronicOrderDAO;
 import us.mn.state.health.lims.dataexchange.order.daoimpl.ElectronicOrderDAOImpl;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
@@ -28,15 +26,9 @@ import us.mn.state.health.lims.statusofsample.valueholder.StatusOfSample;
 @Controller
 public class ElectronicOrdersController extends BaseController {
 
-	@Autowired
-	ElectronicOrderViewFormValidator formValidator;
-
 	@RequestMapping(value = "/ElectronicOrders", method = RequestMethod.GET)
 	public ModelAndView showElectronicOrders(HttpServletRequest request,
-			@ModelAttribute("form") ElectronicOrderViewForm form, BindingResult result) {
-		String forward = FWD_SUCCESS;
-		formValidator.validate(form, result);
-
+			@ModelAttribute("form") @Valid ElectronicOrderViewForm form, BindingResult result) {
 		// if invalid request, default to basic values
 		if (result.hasErrors()) {
 			saveErrors(result);
@@ -72,7 +64,7 @@ public class ElectronicOrdersController extends BaseController {
 		tx.commit();
 		form.setEOrders(eOrders);
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	@Override

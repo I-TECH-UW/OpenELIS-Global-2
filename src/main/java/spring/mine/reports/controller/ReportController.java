@@ -8,12 +8,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,7 +24,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.reports.form.ReportForm;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.ReportTrackingService;
@@ -50,13 +50,11 @@ public class ReportController extends BaseController {
 	@RequestMapping(value = "/Report", method = RequestMethod.GET)
 	public ModelAndView showReport(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
 		if (form.getClass() != ReportForm.class) {
 			form = new ReportForm();
 			request.getSession().setAttribute("form", form);
 		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+		form.setFormMethod(RequestMethod.GET);
 
 		PropertyUtils.setProperty(form, "type", request.getParameter("type"));
 		PropertyUtils.setProperty(form, "report", request.getParameter("report"));
@@ -66,26 +64,21 @@ public class ReportController extends BaseController {
 			setter.setRequestParameters(form);
 		}
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	@RequestMapping(value = "/ReportPrint", method = RequestMethod.GET)
-	public void showReportPrint(HttpServletRequest request, HttpServletResponse response,
-			@ModelAttribute("form") ReportForm form, SessionStatus status)
+	public ModelAndView showReportPrint(HttpServletRequest request, HttpServletResponse response,
+			@ModelAttribute("form") @Valid ReportForm form, BindingResult result, SessionStatus status)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new ReportForm();
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL, form);
 		}
-		form.setFormAction("");
-		form.setFormMethod(RequestMethod.GET);
-		Errors errors = new BaseErrors();
 
 		PropertyUtils.setProperty(form, "type", request.getParameter("type"));
 
 		IReportCreator reportCreator = ReportImplementationFactory.getReportCreator(request.getParameter("report"));
-
-		forward = FWD_FAIL;
 
 		if (reportCreator != null) {
 			reportCreator.setRequestedReport(request.getParameter("report"));
@@ -126,6 +119,7 @@ public class ReportController extends BaseController {
 
 		// signal to remove from from session
 		status.setComplete();
+		return null;
 	}
 
 	private void trackReports(IReportCreator reportCreator, String reportName, ReportType type) {
@@ -151,6 +145,8 @@ public class ReportController extends BaseController {
 	@Override
 	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
+			return "commonReportDefiniton";
+		} else if (FWD_FAIL.equals(forward)) {
 			return "commonReportDefiniton";
 		} else {
 			return "PageNotFound";

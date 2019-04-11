@@ -21,6 +21,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.provider.validation.BaseValidationProvider;
 import us.mn.state.health.lims.common.provider.validation.ValidationProviderFactory;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -51,7 +52,7 @@ public class AjaxTextServlet extends AjaxServlet {
 		if (userModuleDAO.isSessionExpired(request)) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.setContentType("text/html; charset=utf-8");
-			response.getWriter().println(StringUtil.getMessageForKey("message.error.unauthorized"));
+			response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
 			return;
 		}
 

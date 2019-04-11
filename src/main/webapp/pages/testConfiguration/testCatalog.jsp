@@ -1,14 +1,12 @@
 <%@ page language="java"
          contentType="text/html; charset=utf-8"
          import="java.util.List,
-                 spring.generated.forms.TestCatalogForm,
                  us.mn.state.health.lims.test.valueholder.TestSection,
                  us.mn.state.health.lims.test.valueholder.TestCatalog,
                  us.mn.state.health.lims.testconfiguration.beans.ResultLimitBean,
-                 spring.generated.forms.ResultLimitsForm,
                  us.mn.state.health.lims.common.util.IdValuePair,
                  us.mn.state.health.lims.common.action.IActionConstants,
-                 us.mn.state.health.lims.common.util.StringUtil" %>
+                 spring.mine.internationalization.MessageUtil" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -90,16 +88,16 @@
 
 <%
     List<String> testSectionList;
-    testSectionList =  ((TestCatalogForm) request.getAttribute("form")).getTestSectionList();
+    testSectionList =  (List<String>) pageContext.getAttribute("testSectionList");
     List<TestCatalog> testCatalogList;
-    testCatalogList =  ((TestCatalogForm) request.getAttribute("form")).getTestCatalogList();
+    testCatalogList =  (List<TestCatalog>) pageContext.getAttribute("testCatalogList");
 %>
 
 <form id="mainForm">
-    <input type="button" value="<%= StringUtil.getContextualMessageForKey("banner.menu.administration") %>"
+    <input type="button" value="<%= MessageUtil.getContextualMessage("banner.menu.administration") %>"
            onclick="submitAction('MasterListsPage.do');"
            class="textButton"/> &rarr;
-    <input type="button" value="<%= StringUtil.getContextualMessageForKey("configuration.test.management") %>"
+    <input type="button" value="<%= MessageUtil.getContextualMessage("configuration.test.management") %>"
            onclick="submitAction('TestManagementConfigMenu.do');"
            class="textButton"/>&rarr;
     <spring:message code="configuration.test.catalog" />

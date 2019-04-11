@@ -33,9 +33,9 @@ import com.lowagie.text.pdf.PdfReader;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.patient.util.PatientUtil;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ErrorMessages;
@@ -86,7 +86,7 @@ public abstract class CollectionReport implements IReportCreator {
 			parameterMap.put("directorName", ConfigurationProperties.getInstance().getPropertyValue(Property.labDirectorName));
 			List<ErrorMessages> errorMsgs = new ArrayList<ErrorMessages>();
 			ErrorMessages msgs = new ErrorMessages();
-			msgs.setMsgLine1(StringUtil.getMessageForKey("report.error.message.noPrintableItems"));
+			msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.noPrintableItems"));
 			errorMsgs.add(msgs);
 			return JasperRunManager.runReportToPdf(reportPath + "NoticeOfReportError.jasper", parameterMap, new JRBeanCollectionDataSource(
 					errorMsgs));

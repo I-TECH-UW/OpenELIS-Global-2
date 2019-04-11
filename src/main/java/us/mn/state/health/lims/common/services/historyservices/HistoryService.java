@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -36,7 +37,6 @@ import us.mn.state.health.lims.audittrail.valueholder.History;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -113,7 +113,7 @@ public abstract class HistoryService {
 		for (String key : changeMaps.keySet()) {
 			setIdentifierForKey(key);
 			AuditTrailItem item = getCoreTrail(history);
-            item.setAttribute(showAttribute() && !GenericValidator.isBlankOrNull( key ) ? key : StringUtil.getMessageForKey( "auditTrail.action.update" ));
+            item.setAttribute(showAttribute() && !GenericValidator.isBlankOrNull( key ) ? key : MessageUtil.getMessage( "auditTrail.action.update" ));
 			item.setOldValue(changeMaps.get(key));
 			item.setNewValue(newValueMap.get(key));
 			newValueMap.put(key, item.getOldValue());
@@ -203,7 +203,7 @@ public abstract class HistoryService {
 	protected String getViewableValue(String value, Result result) {
 		if ( TypeOfTestResultService.ResultType.isDictionaryVariant(result.getResultType()) && !GenericValidator.isBlankOrNull(value) && org.apache.commons.lang.StringUtils.isNumeric(value)) {
 			Dictionary dictionaryValue = dictDAO.getDictionaryById(value);
-			value = dictionaryValue != null ? dictionaryValue.getDictEntry() : StringUtil.getMessageForKey("result.undefined");
+			value = dictionaryValue != null ? dictionaryValue.getDictEntry() : MessageUtil.getMessage("result.undefined");
 		}
 
 		return value;

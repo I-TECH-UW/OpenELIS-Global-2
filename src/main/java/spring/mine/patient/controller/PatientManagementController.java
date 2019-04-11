@@ -10,8 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.StaleObjectStateException;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.sample.form.SamplePatientEntryForm;
+import spring.mine.sample.validator.SamplePatientEntryFormValidator;
 import us.mn.state.health.lims.address.dao.AddressPartDAO;
 import us.mn.state.health.lims.address.dao.PersonAddressDAO;
 import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
@@ -54,6 +55,9 @@ import us.mn.state.health.lims.sample.daoimpl.SearchResultsDAOImp;
 @Controller
 public class PatientManagementController extends PatientManagementBaseController {
 
+	@Autowired
+	SamplePatientEntryFormValidator formValidator;
+
 	private static PatientIdentityDAO identityDAO = new PatientIdentityDAOImpl();
 	private static PatientDAO patientDAO = new PatientDAOImpl();
 	private static PersonAddressDAO personAddressDAO = new PersonAddressDAOImpl();
@@ -86,24 +90,27 @@ public class PatientManagementController extends PatientManagementBaseController
 
 	@RequestMapping(value = "/PatientManagement", method = RequestMethod.GET)
 	public ModelAndView showPatientManagement(HttpServletRequest request) {
-		String forward = FWD_SUCCESS;
 		SamplePatientEntryForm form = new SamplePatientEntryForm();
-		form.setFormAction("");
 
-		addFlashMsgsToRequest(request);
 		cleanAndSetupRequestForm(form, request);
+		addFlashMsgsToRequest(request);
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS, form);
 	}
 
-	@RequestMapping(value = "/PatientManagementUpdate", method = RequestMethod.POST)
-	public ModelAndView showPatientManagementUpdate(@ModelAttribute("form") SamplePatientEntryForm form, ModelMap model,
-			HttpServletRequest request, RedirectAttributes redirectAttributes)
+	@RequestMapping(value = "/PatientManagement", method = RequestMethod.POST)
+	public ModelAndView showPatientManagementUpdate(HttpServletRequest request,
+			@ModelAttribute("form") SamplePatientEntryForm form, BindingResult result,
+			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS_INSERT;
-		Errors errors = new BaseErrors();
 
 		form.setPatientSearch(new PatientSearch());
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
+
 		PatientManagementInfo patientInfo = form.getPatientProperties();
 
 		Patient patient = new Patient();
@@ -111,9 +118,9 @@ public class PatientManagementController extends PatientManagementBaseController
 
 		if (patientInfo.getPatientUpdateStatus() != PatientUpdateStatus.NO_ACTION) {
 
-			preparePatientData(errors, request, patientInfo, patient);
-			if (errors.hasErrors()) {
-				saveErrors(errors);
+			preparePatientData(result, request, patientInfo, patient);
+			if (result.hasErrors()) {
+				saveErrors(result);
 				return findForward(FWD_FAIL_INSERT, form);
 			}
 
@@ -126,15 +133,14 @@ public class PatientManagementController extends PatientManagementBaseController
 				tx.rollback();
 
 				if (lre.getException() instanceof StaleObjectStateException) {
-					errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
+					result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
 				} else {
 					lre.printStackTrace();
-					errors.reject("errors.UpdateException", "errors.UpdateException");
+					result.reject("errors.UpdateException", "errors.UpdateException");
 				}
-				saveErrors(errors);
 				request.setAttribute(ALLOW_EDITS_KEY, "false");
-				if (errors.hasErrors()) {
-					saveErrors(errors);
+				if (result.hasErrors()) {
+					saveErrors(result);
 					return findForward(FWD_FAIL_INSERT, form);
 				}
 
@@ -144,9 +150,7 @@ public class PatientManagementController extends PatientManagementBaseController
 
 		}
 		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-
-		// don't need to attach form, as we are doing a redirect
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	public void preparePatientData(Errors errors, HttpServletRequest request, PatientManagementInfo patientInfo,

@@ -3,10 +3,10 @@ package spring.mine.barcode.controller;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.barcode.form.BarcodeConfigurationForm;
-import spring.mine.barcode.validator.BarcodeConfigurationFormValidator;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -29,9 +28,6 @@ import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 @Controller
 public class BarcodeConfigurationController extends BaseController {
-
-	@Autowired
-	BarcodeConfigurationFormValidator validator;
 
 	@RequestMapping(value = "/BarcodeConfiguration", method = RequestMethod.GET)
 	public ModelAndView showBarcodeConfiguration(HttpServletRequest request)
@@ -97,12 +93,11 @@ public class BarcodeConfigurationController extends BaseController {
 
 	@RequestMapping(value = "/BarcodeConfiguration", method = RequestMethod.POST)
 	public ModelAndView barcodeConfigurationSave(HttpServletRequest request,
-			@ModelAttribute("form") BarcodeConfigurationForm form, BindingResult result,
+			@ModelAttribute("form") @Valid BarcodeConfigurationForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) {
-		validator.validate(form, result);
-		form.setCancelAction("MasterListsPage.do");
 		if (result.hasErrors()) {
 			saveErrors(result);
+			form.setCancelAction("MasterListsPage.do");
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 

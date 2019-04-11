@@ -9,17 +9,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.apache.struts.Globals;
 import org.springframework.validation.Errors;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dictionary.ObservationHistoryList;
 import us.mn.state.health.lims.gender.dao.GenderDAO;
 import us.mn.state.health.lims.gender.daoimpl.GenderDAOImpl;
@@ -45,12 +44,12 @@ public abstract class BaseSampleEntryController extends BaseController {
 
 	@Override
 	protected String getPageTitleKey() {
-		return StringUtil.getContextualKeyForKey("sample.entry.title");
+		return MessageUtil.getContextualKey("sample.entry.title");
 	}
 
 	@Override
 	protected String getPageSubtitleKey() {
-		return StringUtil.getContextualKeyForKey("sample.entry.title");
+		return MessageUtil.getContextualKey("sample.entry.title");
 	}
 
 	protected void addGenderList(BaseForm form)
@@ -158,7 +157,6 @@ public abstract class BaseSampleEntryController extends BaseController {
 			Errors errors = accessioner.getMessages();
 			if (errors.hasErrors()) {
 				saveErrors(errors);
-				request.setAttribute(Globals.ERROR_KEY, errors);
 			}
 			return forward;
 		}
@@ -182,8 +180,7 @@ public abstract class BaseSampleEntryController extends BaseController {
 	}
 
 	private void addErrors(HttpServletRequest request, Errors errors) {
-		request.setAttribute(Globals.ERROR_KEY, errors);
-
+		saveErrors(errors);
 	}
 
 }

@@ -24,7 +24,7 @@ function saveAndSubmit() {
 		if (confirmSentWarning()) {
 			showsubmitting();
 			var form = document.getElementById("mainForm");
-			form.action = "DataSubmissionSave.do?submit=true";
+			form.action = "DataSubmission.do?submit=true";
 			form.submit();
 		}
 	} else {
@@ -34,7 +34,7 @@ function saveAndSubmit() {
 
 function saveAndExit() {
 	var form = document.getElementById("mainForm");
-	form.action = "DataSubmissionSave.do";
+	form.action = "DataSubmission.do";
 	form.submit();
 }
 

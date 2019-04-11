@@ -5,8 +5,10 @@ import java.util.List;
 import spring.mine.common.form.MenuForm;
 
 public class UnifiedSystemUserMenuForm extends MenuForm {
+	// for display
 	private List menuList;
 
+	// in validator
 	private String[] selectedIDs;
 
 	public UnifiedSystemUserMenuForm() {

@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
-import org.apache.struts.action.ActionMessage;
 import org.hibernate.StaleObjectStateException;
 import org.hibernate.Transaction;
 import org.springframework.validation.Errors;
@@ -298,8 +297,6 @@ public class NonConformityUpdateWorker {
 			tx.commit();
 		} catch (LIMSRuntimeException lre) {
 			tx.rollback();
-
-			ActionMessage error;
 			if (lre.getException() instanceof StaleObjectStateException) {
 				errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
 			} else {

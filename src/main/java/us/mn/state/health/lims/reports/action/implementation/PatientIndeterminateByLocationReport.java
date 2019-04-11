@@ -24,7 +24,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import spring.mine.common.form.BaseForm;
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.organization.util.OrganizationTypeList;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.IndeterminateReportData;
@@ -47,7 +47,7 @@ public class PatientIndeterminateByLocationReport extends PatientIndeterminateRe
 
 	public void setRequestParameters(BaseForm form) {
         try {
-            PropertyUtils.setProperty(form, "reportName", StringUtil.getMessageForKey("reports.label.patient.indeterminate"));
+            PropertyUtils.setProperty(form, "reportName", MessageUtil.getMessage("reports.label.patient.indeterminate"));
 
             PropertyUtils.setProperty(form, "useLowerDateRange", Boolean.TRUE);
             PropertyUtils.setProperty(form, "useUpperDateRange", Boolean.TRUE);

@@ -22,12 +22,12 @@ import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
 import us.mn.state.health.lims.common.util.DAOImplFactory;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.qaevent.dao.QaEventDAO;
@@ -139,7 +139,7 @@ public class QAService {
 
         if (observation != null) {
             if( "K".equals( observation.getValueType() )){
-                return StringUtil.getContextualMessageForKey(observation.getValue()) ;
+                return MessageUtil.getContextualMessage(observation.getValue()) ;
             }else if ("L".equals(observation.getValueType())) {
                 return observation.getValue();
             } else if ("D".equals(observation.getValueType())) {

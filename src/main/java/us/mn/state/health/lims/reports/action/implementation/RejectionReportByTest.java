@@ -22,11 +22,11 @@ import java.util.Comparator;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.AnalysisService;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.NoteService;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.note.valueholder.Note;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.RejectionReportBean;
 
@@ -38,10 +38,10 @@ public class RejectionReportByTest extends RejectionReport implements IReportCre
     @Override
     public void setRequestParameters( BaseForm form ){
         new ReportSpecificationParameters( ReportSpecificationParameters.Parameter.DATE_RANGE,
-                StringUtil.getMessageForKey( "report.rejection.report.base" ) + " " + StringUtil.getMessageForKey( "report.by.test" ),
-                StringUtil.getMessageForKey( "report.instruction.all.fields" ) ).setRequestParameters( form );
+                MessageUtil.getMessage( "report.rejection.report.base" ) + " " + MessageUtil.getMessage( "report.by.test" ),
+                MessageUtil.getMessage( "report.instruction.all.fields" ) ).setRequestParameters( form );
         new ReportSpecificationList( DisplayListService.getList( DisplayListService.ListType.ALL_TESTS ),
-                                     StringUtil.getMessageForKey( "workplan.test.types" ) ).setRequestParameters( form );
+                                     MessageUtil.getMessage( "workplan.test.types" ) ).setRequestParameters( form );
     }
 
     @Override

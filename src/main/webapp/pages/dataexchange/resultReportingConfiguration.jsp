@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants,
-			us.mn.state.health.lims.common.util.StringUtil,
+			spring.mine.internationalization.MessageUtil,
 			us.mn.state.health.lims.dataexchange.resultreporting.beans.ReportingConfiguration,
 			us.mn.state.health.lims.common.util.Versioning"%>
 
@@ -38,7 +38,7 @@ function setMyCancelAction(){
 function savePage(){
 	if( formValid() ){
 		var form = document.getElementById("mainForm");
-		form.action = "UpdateResultReportingConfiguration.do";
+		form.action = "ResultReportingConfiguration.do";
 		form.submit();
 		return true;		
 	}
@@ -55,7 +55,7 @@ function /*boolean*/ hasRequriedValues(){
 
 	//if( document.getElementById("mainForm").enabled[0].checked && url.value.blank() ){
 	//	url.style.borderColor = "red";
-	//	alert("<%= StringUtil.getMessageForKey("resultreporting.config.missing.url")%>");
+	//	alert("<%= MessageUtil.getMessage("resultreporting.config.missing.url")%>");
 	//	return false;
 	//}
 	

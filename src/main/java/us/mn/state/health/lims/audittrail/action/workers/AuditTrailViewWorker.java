@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -39,7 +40,6 @@ import us.mn.state.health.lims.common.services.historyservices.QaHistoryService;
 import us.mn.state.health.lims.common.services.historyservices.ReportHistoryService;
 import us.mn.state.health.lims.common.services.historyservices.ResultHistoryService;
 import us.mn.state.health.lims.common.services.historyservices.SampleHistoryService;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementBridge;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.util.PatientUtil;
@@ -188,7 +188,7 @@ public class AuditTrailViewWorker {
 
 	private void setAttributeNewIfInsert(AuditTrailItem auditTrailItem) {
 		if( auditTrailItem.getAction().equals("I")){
-			auditTrailItem.setAttribute(StringUtil.getMessageForKey("auditTrail.action.new"));
+			auditTrailItem.setAttribute(MessageUtil.getMessage("auditTrail.action.new"));
 		}
 	}
 

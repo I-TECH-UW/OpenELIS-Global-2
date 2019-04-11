@@ -22,9 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.sample.util.AccessionNumberUtil;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
@@ -55,16 +55,16 @@ public class TestWorkplanReport implements IWorkplanReport {
 				ConfigurationProperties.getInstance().isPropertyValueEqual(Property.SUBJECT_ON_WORKPLAN, "true"));
 		parameterMap.put("printNextVisit", ConfigurationProperties.getInstance()
 				.isPropertyValueEqual(Property.NEXT_VISIT_DATE_ON_WORKPLAN, "true"));
-		parameterMap.put("labNumberTitle", StringUtil.getContextualMessageForKey("quick.entry.accession.number"));
-		parameterMap.put("subjectNoTitle", StringUtil.getContextualMessageForKey("patient.subject.number"));
+		parameterMap.put("labNumberTitle", MessageUtil.getContextualMessage("quick.entry.accession.number"));
+		parameterMap.put("subjectNoTitle", MessageUtil.getContextualMessage("patient.subject.number"));
 		parameterMap.put("nameOfPatient", getNameOfPatient());
 		parameterMap.put("labName", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName));
 		parameterMap.put("accessionPrefix", AccessionNumberUtil.getAccessionNumberValidator().getPrefix());
 		parameterMap.put("prefixLength", PREFIX_LENGTH);
 		parameterMap.put("SUBREPORT_DIR", reportPath);
-		parameterMap.put("receptionDate", StringUtil.getMessageForKey("report.receptionDate"));
-		parameterMap.put("workPlan", StringUtil.getMessageForKey("report.workPlan"));
-		parameterMap.put("appointmentDate", StringUtil.getMessageForKey("report.appointmentDate"));
+		parameterMap.put("receptionDate", MessageUtil.getMessage("report.receptionDate"));
+		parameterMap.put("workPlan", MessageUtil.getMessage("report.workPlan"));
+		parameterMap.put("appointmentDate", MessageUtil.getMessage("report.appointmentDate"));
 
 		return parameterMap;
 
@@ -72,7 +72,7 @@ public class TestWorkplanReport implements IWorkplanReport {
 
 	protected String getNameOfPatient() {
 		if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "Haiti LNSP")) {
-			return StringUtil.getContextualMessageForKey("sample.entry.project.patientName.code");
+			return MessageUtil.getContextualMessage("sample.entry.project.patientName.code");
 		} else {
 			return null;
 		}

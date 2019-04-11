@@ -3,9 +3,9 @@
          import="java.util.List,
          		us.mn.state.health.lims.common.action.IActionConstants,
          		us.mn.state.health.lims.common.util.IdValuePair,
-         		us.mn.state.health.lims.common.util.StringUtil,
+         		spring.mine.internationalization.MessageUtil,
          		us.mn.state.health.lims.common.util.Versioning,
-         		us.mn.state.health.lims.testconfiguration.action.TestSectionCreateAction" %>
+         		spring.generated.testconfiguration.controller.TestSectionCreateController" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -81,7 +81,7 @@
         });
 
         if (hasError) {
-            alert("<%=StringUtil.getContextualMessageForKey("error.all.required")%>");
+            alert("<%=MessageUtil.getContextualMessage("error.all.required")%>");
         } else {
             $jq(".required").each(function () {
                 var element = $jq(this);
@@ -94,7 +94,7 @@
             $jq("#editButtons").hide();
             $jq("#confirmationButtons").show();
             $jq("#confirmationMessage").show();
-            $jq("#action").text("<%=StringUtil.getContextualMessageForKey("label.confirmation")%>");
+            $jq("#action").text("<%=MessageUtil.getContextualMessage("label.confirmation")%>");
         }
     }
 
@@ -111,7 +111,7 @@
         $jq("#editButtons").show();
         $jq("#confirmationButtons").hide();
         $jq("#confirmationMessage").hide();
-        $jq("#action").text("<%=StringUtil.getContextualMessageForKey("label.button.edit")%>");
+        $jq("#action").text("<%=MessageUtil.getContextualMessage("label.button.edit")%>");
     }
 
     function handleInput(element, locale) {
@@ -119,9 +119,9 @@
         var frenchNames = "${form.existingFrenchNames}".toLowerCase();
         var duplicate = false;
         if( locale == 'english'){
-            duplicate = englishNames.indexOf( '<%=TestSectionCreateAction.NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=TestSectionCreateAction.NAME_SEPARATOR%>') != -1;
+            duplicate = englishNames.indexOf( '<%=TestSectionCreateController.NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=TestSectionCreateController.NAME_SEPARATOR%>') != -1;
         }else{
-            duplicate = frenchNames.indexOf( '<%=TestSectionCreateAction.NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=TestSectionCreateAction.NAME_SEPARATOR%>') != -1;
+            duplicate = frenchNames.indexOf( '<%=TestSectionCreateController.NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=TestSectionCreateController.NAME_SEPARATOR%>') != -1;
         }
 
         if(duplicate){
@@ -158,17 +158,17 @@ td {
 				   method="${form.formMethod}"
 				   id="mainForm">
 
-    <input type="button" value="<%= StringUtil.getContextualMessageForKey("banner.menu.administration") %>"
+    <input type="button" value="<%= MessageUtil.getContextualMessage("banner.menu.administration") %>"
            onclick="submitAction('MasterListsPage.do');"
            class="textButton"/>&rarr;
-    <input type="button" value="<%= StringUtil.getContextualMessageForKey("configuration.test.management") %>"
+    <input type="button" value="<%= MessageUtil.getContextualMessage("configuration.test.management") %>"
            onclick="submitAction('TestManagementConfigMenu.do');"
            class="textButton"/>&rarr;
-    <input type="button" value="<%= StringUtil.getContextualMessageForKey("configuration.uom.manage") %>"
+    <input type="button" value="<%= MessageUtil.getContextualMessage("configuration.uom.manage") %>"
            onclick="submitAction('UomManagement.do');"
            class="textButton"/>&rarr;
 
-<%=StringUtil.getContextualMessageForKey( "configuration.uom.create" )%>
+<%=MessageUtil.getContextualMessage( "configuration.uom.create" )%>
 <br><br>
 
 <%  
@@ -202,15 +202,15 @@ td {
         <h4><spring:message code="configuration.uom.confirmation.explain" /></h4>
     </div>
     <div style="text-align: center" id="editButtons">
-        <input type="button" value="<%=StringUtil.getContextualMessageForKey("label.button.next")%>"
+        <input type="button" value="<%=MessageUtil.getContextualMessage("label.button.next")%>"
                onclick="confirmValues();"/>
-        <input type="button" value="<%=StringUtil.getContextualMessageForKey("label.button.previous")%>"
+        <input type="button" value="<%=MessageUtil.getContextualMessage("label.button.previous")%>"
                onclick="submitAction('UomManagement.do');"/>
     </div>
     <div style="text-align: center; display: none;" id="confirmationButtons">
-        <input type="button" value="<%=StringUtil.getContextualMessageForKey("label.button.accept")%>"
+        <input type="button" value="<%=MessageUtil.getContextualMessage("label.button.accept")%>"
                onclick="savePage();"/>
-        <input type="button" value="<%=StringUtil.getContextualMessageForKey("label.button.reject")%>"
+        <input type="button" value="<%=MessageUtil.getContextualMessage("label.button.reject")%>"
                onclick='rejectConfirmation();'/>
     </div>
 </div>

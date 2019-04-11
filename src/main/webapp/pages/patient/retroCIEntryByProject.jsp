@@ -282,7 +282,7 @@ function hideAllDivs(){
 
 function /*void*/ makeDirty(){
 	dirty=true;
-	if( typeof(showSuccessMessage) != 'undefinded' ){
+	if( typeof(showSuccessMessage) === 'function' ){ 
 		showSuccessMessage(false); //refers to last save
 	}
 	// Adds warning when leaving page if content has been entered into makeDirty form fields
@@ -296,9 +296,9 @@ function savePage__() {
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
 	if ( requestType == "readwrite" ) {
-		form.action = "PatientEditByProjectSave.do?type=" + requestType;
+		form.action = "PatientEditByProject.do?type=" + requestType;
 	} else {
-		form.action = "PatientEntryByProjectUpdate.do?type=" + requestType;
+		form.action = "PatientEntryByProject.do?type=" + requestType;
 	}
 	form.submit();
 }

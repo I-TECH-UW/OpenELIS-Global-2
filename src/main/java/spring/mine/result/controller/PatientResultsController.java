@@ -9,22 +9,17 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
+import spring.mine.internationalization.MessageUtil;
 import spring.mine.result.form.PatientResultsForm;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.inventory.action.InventoryUtility;
 import us.mn.state.health.lims.inventory.form.InventoryKitItem;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
@@ -38,15 +33,9 @@ import us.mn.state.health.lims.test.beanItems.TestResultItem;
 @Controller
 public class PatientResultsController extends BaseController {
 	@RequestMapping(value = "/PatientResults", method = RequestMethod.GET)
-	public ModelAndView showPatientResults(HttpServletRequest request, @ModelAttribute("form") PatientResultsForm form)
+	public ModelAndView showPatientResults(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new PatientResultsForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
-		
+		PatientResultsForm form = new PatientResultsForm();
 
 		ResultsLoadUtility resultsUtility = new ResultsLoadUtility(getSysUserId(request));
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
@@ -58,7 +47,7 @@ public class PatientResultsController extends BaseController {
 				DisplayListService.getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 		PatientSearch patientSearch = new PatientSearch();
 		patientSearch.setLoadFromServerWithPatient(true);
-		patientSearch.setSelectedPatientActionButtonText(StringUtil.getMessageForKey("resultsentry.patient.search"));
+		patientSearch.setSelectedPatientActionButtonText(MessageUtil.getMessage("resultsentry.patient.search"));
 		PropertyUtils.setProperty(form, "patientSearch", patientSearch);
 
 		ResultsPaging paging = new ResultsPaging();
@@ -74,11 +63,10 @@ public class PatientResultsController extends BaseController {
 
 				String statusRules = ConfigurationProperties.getInstance()
 						.getPropertyValueUpperCase(Property.StatusRules);
-				if (statusRules.equals(IActionConstants.STATUS_RULES_RETROCI)) {
+				if (statusRules.equals(STATUS_RULES_RETROCI)) {
 					resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.TechnicalRejected);
 					resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
-				} else if (statusRules.equals(IActionConstants.STATUS_RULES_HAITI)
-						|| statusRules.equals(IActionConstants.STATUS_RULES_HAITI_LNSP)) {
+				} else if (statusRules.equals(STATUS_RULES_HAITI) || statusRules.equals(STATUS_RULES_HAITI_LNSP)) {
 					resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
 				}
 
@@ -106,7 +94,8 @@ public class PatientResultsController extends BaseController {
 			paging.page(request, form, newPage);
 		}
 
-		return findForward(forward, form);
+		addFlashMsgsToRequest(request);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	private void addInventory(PatientResultsForm form)

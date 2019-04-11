@@ -6,7 +6,7 @@
 			us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
 			us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
 			us.mn.state.health.lims.common.util.DateUtil,
-			us.mn.state.health.lims.common.util.StringUtil,
+			spring.mine.internationalization.MessageUtil,
 			us.mn.state.health.lims.common.util.Versioning,
 			us.mn.state.health.lims.common.util.IdValuePair"%>
 
@@ -203,7 +203,7 @@ function addNewRequesterTestResult(addButtonElement, sampleIndex){  //request fo
 
 	cell = newRow.insertCell( clonedCells.length );
 	cell.innerHTML = "<input type=\'button\' value=\'" +
-	                 "<%= StringUtil.getMessageForKey("label.button.remove") %>" +
+	                 "<%= MessageUtil.getMessage("label.button.remove") %>" +
 	                 "\' class=\'textButton\'  onclick=\'removeRequestedTest( this, \"" + sampleIndex + "\" );\' >";
 
 	newRow.className = "extraTest_" + sampleIndex;
@@ -231,7 +231,7 @@ function addNewRequesterSample( ){ // a new sample which came in with the reques
 	clone.find("#showHideButton_0").attr("src", "./images/note-add.gif");
     clone.find("#showHideButton_0").attr("onclick", "showHideNotes( '"+ sampleIndex + "' )");
 	clone.find("tr:first").append("<td><input type=\"button\" value=\"" +
-				                  "<%= StringUtil.getMessageForKey("label.button.remove") %>" +
+				                  "<%= MessageUtil.getMessage("label.button.remove") %>" +
 	                              "\" class=\"textButton\"  onclick=\"removeRequesterTest( this, \'" + sampleIndex +  "\' );\" ></td>");
 	
 	if( clone.find("div")){
@@ -435,7 +435,7 @@ function /*string*/ getNote( sampleIndex ){
 </script>
 <% if(useInitialSampleCondition){ %>
 <div id="sampleConditionPrototype" style="display: none" >
-			<select id="prototypeID" title='<%= StringUtil.getMessageForKey("result.multiple_select")%>' > 
+			<select id="prototypeID" title='<%= MessageUtil.getMessage("result.multiple_select")%>' > 
 			<logic:iterate id="optionValue" name='${form.formName}' property="initialSampleConditionList" type="IdValuePair" >
 						<option value='<%=optionValue.getId()%>' >
 							<bean:write name="optionValue" property="value"/>
@@ -496,7 +496,7 @@ function /*string*/ getNote( sampleIndex ){
 					<spring:message code="sample.entry.sample.condition"/>
 				</td>
 				<td>
-				<select id="initialCondition_0"  multiple="multiple" title='<%= StringUtil.getMessageForKey("result.multiple_select")%>' >
+				<select id="initialCondition_0"  multiple="multiple" title='<%= MessageUtil.getMessage("result.multiple_select")%>' >
 					<logic:iterate id="optionValue" name='${form.formName}' property="initialSampleConditionList" type="IdValuePair" >
 								<option value='<%=optionValue.getId()%>' >
 									<bean:write name="optionValue" property="value"/>
@@ -548,7 +548,7 @@ function /*string*/ getNote( sampleIndex ){
 			<td>
 				<input type="button"
 				       class=textButton
-				       value='<%= StringUtil.getMessageForKey("sampletracking.requester.test.result.add") %>'
+				       value='<%= MessageUtil.getMessage("sampletracking.requester.test.result.add") %>'
 				       onclick="addNewRequesterTestResult(this, '0');" />
 			</td>
 		</tr>
@@ -566,7 +566,7 @@ function /*string*/ getNote( sampleIndex ){
 
 <input type="button"
 	   class=textButton
-	   value="<%= StringUtil.getMessageForKey("sampletracking.requester.sample.add") %>"
+	   value="<%= MessageUtil.getMessage("sampletracking.requester.sample.add") %>"
 	   onclick="addNewRequesterSample( )" />
 
 <hr/>
@@ -598,7 +598,7 @@ function /*string*/ getNote( sampleIndex ){
 		</td>
 		<td id="dob"><b>&nbsp;</b></td>
 		<td>
-			<%=StringUtil.getContextualMessageForKey("patient.NationalID") %>:
+			<%=MessageUtil.getContextualMessage("patient.NationalID") %>:
 		</td>
 		<td id="national"><b>&nbsp;</b></td>
 		<td>
@@ -626,7 +626,7 @@ function /*void*/ setSave(){
 var dirty=false;
 function makeDirty(){
 	dirty=true;
-	if( typeof(showSuccessMessage) != 'undefinded' ){
+	if( typeof(showSuccessMessage) === 'function' ){
 		showSuccessMessage(false); //refers to last save
 	}
 	// Adds warning when leaving page if content has been entered into makeDirty form fields

@@ -15,16 +15,17 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.generated.forms.PanelOrderForm;
+import spring.generated.testconfiguration.form.PanelOrderForm;
+import spring.generated.testconfiguration.validator.PanelOrderFormValidator;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -37,18 +38,25 @@ import us.mn.state.health.lims.testconfiguration.action.SampleTypePanel;
 
 @Controller
 public class PanelOrderController extends BaseController {
-	@RequestMapping(value = "/PanelOrder", method = RequestMethod.GET)
-	public ModelAndView showPanelOrder(HttpServletRequest request, @ModelAttribute("form") PanelOrderForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new PanelOrderForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
+	@Autowired
+	PanelOrderFormValidator formValidator;
+
+	@RequestMapping(value = "/PanelOrder", method = RequestMethod.GET)
+	public ModelAndView showPanelOrder(HttpServletRequest request) {
+		PanelOrderForm form = new PanelOrderForm();
+
+		setupDisplayItems(form);
+
+		return findForward(FWD_SUCCESS, form);
+	}
+
+	protected void setupDisplayItems(PanelOrderForm form) {
 		try {
 			PropertyUtils.setProperty(form, "panelList",
 					DisplayListService.getList(DisplayListService.ListType.PANELS));
+			PropertyUtils.setProperty(form, "existingSampleTypeList",
+					DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -58,15 +66,7 @@ public class PanelOrderController extends BaseController {
 				.createTypeOfSamplePanelMap(true);
 		HashMap<String, List<Panel>> inactiveSampleTypePanelMap = PanelTestConfigurationUtil
 				.createTypeOfSamplePanelMap(false);
-		try {
-			PropertyUtils.setProperty(form, "existingSampleTypeList",
-					DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
-		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		// List<Panel> panels = new PanelDAOImpl().getAllPanels();
-
 		List<SampleTypePanel> sampleTypePanelsExists = new ArrayList<>();
 		List<SampleTypePanel> sampleTypePanelsInactive = new ArrayList<>();
 
@@ -94,17 +94,17 @@ public class PanelOrderController extends BaseController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		return findForward(forward, form);
 	}
 
 	@RequestMapping(value = "/PanelOrder", method = RequestMethod.POST)
-	public ModelAndView postPanelOrder(HttpServletRequest request, @ModelAttribute("form") PanelOrderForm form)
-			throws Exception {
-
-		String forward = FWD_SUCCESS_INSERT;
-
-		BaseErrors errors = new BaseErrors();
+	public ModelAndView postPanelOrder(HttpServletRequest request, @ModelAttribute("form") PanelOrderForm form,
+			BindingResult result) throws Exception {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			setupDisplayItems(form);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 
 		String changeList = form.getString("jsonChangeList");
 
@@ -138,7 +138,7 @@ public class PanelOrderController extends BaseController {
 		DisplayListService.refreshList(DisplayListService.ListType.PANELS_INACTIVE);
 		DisplayListService.refreshList(DisplayListService.ListType.PANELS_ACTIVE);
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private class ActivateSet {
@@ -174,6 +174,8 @@ public class PanelOrderController extends BaseController {
 			return "panelOrderDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/PanelOrder.do";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return "panelOrderDefinition";
 		} else {
 			return "PageNotFound";
 		}

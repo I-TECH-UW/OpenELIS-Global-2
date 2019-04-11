@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.barcode.LabelField;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.PatientService;
@@ -53,12 +54,12 @@ public class OrderLabel extends Label {
 
     // adding fields above bar code
     aboveFields = new ArrayList<LabelField>();
-    aboveFields.add(new LabelField(StringUtil.getMessageForKey("barcode.label.info.patientname"),
+    aboveFields.add(new LabelField(MessageUtil.getMessage("barcode.label.info.patientname"),
             patientName, 6));
     aboveFields.add(
-            new LabelField(StringUtil.getMessageForKey("barcode.label.info.patientdob"), dob, 4));
+            new LabelField(MessageUtil.getMessage("barcode.label.info.patientdob"), dob, 4));
     aboveFields.add(getAvailableIdField(patient));
-    LabelField siteField = new LabelField(StringUtil.getMessageForKey("barcode.label.info.site"),
+    LabelField siteField = new LabelField(MessageUtil.getMessage("barcode.label.info.site"),
             StringUtils.substring(referringFacility, 0, 20), 4);
     siteField.setDisplayFieldName(true);
     aboveFields.add(siteField);
@@ -76,15 +77,15 @@ public class OrderLabel extends Label {
     PatientService service = new PatientService(patient);
     String patientId = service.getSubjectNumber();
     if (!StringUtil.isNullorNill(patientId)) {
-      return new LabelField(StringUtil.getMessageForKey("barcode.label.info.patientid"),
+      return new LabelField(MessageUtil.getMessage("barcode.label.info.patientid"),
               StringUtils.substring(patientId, 0, 25), 6);
     }
     patientId = service.getNationalId();
     if (!StringUtil.isNullorNill(patientId)) {
-      return new LabelField(StringUtil.getMessageForKey("barcode.label.info.patientid"),
+      return new LabelField(MessageUtil.getMessage("barcode.label.info.patientid"),
               StringUtils.substring(patientId, 0, 25), 6);
     }
-    return new LabelField(StringUtil.getMessageForKey("barcode.label.info.patientid"), "", 6);
+    return new LabelField(MessageUtil.getMessage("barcode.label.info.patientid"), "", 6);
   }
   
   /* (non-Javadoc)

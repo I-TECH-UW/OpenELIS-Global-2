@@ -1,6 +1,7 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
-	import="us.mn.state.health.lims.common.action.IActionConstants" %>
+	import="us.mn.state.health.lims.common.action.IActionConstants, 
+			spring.mine.internationalization.MessageUtil" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -28,11 +29,7 @@ if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
  allowEdits = (String)request.getAttribute(IActionConstants.ALLOW_EDITS_KEY);
 }
 //bugzilla 1494
-java.util.Locale locale = (java.util.Locale)request.getSession().getAttribute(org.apache.struts.Globals.LOCALE_KEY);
-errorNewLine =
-					us.mn.state.health.lims.common.util.resources.ResourceLocator.getInstance().getMessageResources().getMessage(
-					locale,
-                    "error.dictionary.newlinecharacter");
+errorNewLine = MessageUtil.getMessage("error.dictionary.newlinecharacter");
                     
 %>
 

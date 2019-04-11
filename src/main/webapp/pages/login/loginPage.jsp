@@ -1,7 +1,7 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants,
-			us.mn.state.health.lims.common.util.StringUtil" %>
+			spring.mine.internationalization.MessageUtil" %>
 <%@ page import="spring.mine.common.constants.Constants" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -46,7 +46,7 @@ function submitOnClick(button){
         <tr>
             <td width="20%">&nbsp;<br/><br/></td>
             <td colspan="2">
-                <%= StringUtil.getContextualMessageForKey("login.notice.notification") %>
+                <%= MessageUtil.getContextualMessage("login.notice.notification") %>
             </td>
             <td width="20%">&nbsp;</td>
         </tr>

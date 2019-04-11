@@ -2,27 +2,43 @@ package spring.mine.dictionary.form;
 
 import java.util.Collection;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
 import us.mn.state.health.lims.dictionarycategory.valueholder.DictionaryCategory;
 
 public class DictionaryForm extends BaseForm {
+
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String id = "";
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String selectedDictionaryCategoryId = "";
 
+	// for display
 	private DictionaryCategory dictionaryCategory;
 
+	// for display
 	private Collection categories;
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.YES_NO_REGEX)
 	private String isActive = "";
 
+	@NotBlank
+	@SafeHtml
 	private String dictEntry = "";
 
+	@SafeHtml
 	private String localAbbreviation = "";
 
+	// in validator
 	private String dirtyFormFields = "";
-
-	private boolean newDictionary;
 
 	public DictionaryForm() {
 		setFormName("dictionaryForm");
@@ -92,11 +108,4 @@ public class DictionaryForm extends BaseForm {
 		this.dirtyFormFields = dirtyFormFields;
 	}
 
-	public boolean isNewDictionary() {
-		return newDictionary;
-	}
-
-	public void setNewDictionary(boolean newDictionary) {
-		this.newDictionary = newDictionary;
-	}
 }

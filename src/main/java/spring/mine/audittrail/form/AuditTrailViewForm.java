@@ -1,6 +1,5 @@
 package spring.mine.audittrail.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
@@ -9,7 +8,6 @@ import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.sample.bean.SampleOrderItem;
 
 public class AuditTrailViewForm extends BaseForm {
-	private Timestamp lastupdated;
 
 	private String accessionNumberSearch = "";
 
@@ -23,14 +21,6 @@ public class AuditTrailViewForm extends BaseForm {
 
 	public AuditTrailViewForm() {
 		setFormName("AuditTrailViewForm");
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public String getAccessionNumberSearch() {

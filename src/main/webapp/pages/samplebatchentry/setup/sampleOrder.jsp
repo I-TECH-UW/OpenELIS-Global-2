@@ -2,7 +2,7 @@
 <%@ page import="us.mn.state.health.lims.common.action.IActionConstants,
           	     us.mn.state.health.lims.common.util.ConfigurationProperties,
                  us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-                 us.mn.state.health.lims.common.util.StringUtil,
+                 spring.mine.internationalization.MessageUtil,
                  us.mn.state.health.lims.common.util.Versioning,
                  us.mn.state.health.lims.common.util.DateUtil" %>
 <%@ page isELIgnored="false" %>
@@ -116,21 +116,21 @@ function studyChanged(studyElement) {
 <td>
 <table>
 	<tr>
-    	<td><%= StringUtil.getContextualMessageForKey("sample.batchentry.order.currentdate") %>
+    	<td><%= MessageUtil.getContextualMessage("sample.batchentry.order.currentdate") %>
     		:
 	        <span class="requiredlabel">*</span>
 	        <span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>
    	 	</td>
     	<td colspan="2">
 	        <form:input path="currentDate" id="currentDate" cssClass="required" readonly="true" maxlength="10"/>
-	     	<%= StringUtil.getContextualMessageForKey("sample.batchentry.order.currenttime") %>
+	     	<%= MessageUtil.getContextualMessage("sample.batchentry.order.currenttime") %>
 	     	:
 	        <span style="font-size: xx-small; "><%=DateUtil.getTimeUserPrompt()%></span> 
 	        <form:input path="currentTime" onkeyup="filterTimeKeys(this, event);" id="currentTime" maxlength="5"/>
    		</td>
 	</tr>
 	<tr>
-    	<td><%= StringUtil.getContextualMessageForKey( "quick.entry.received.date" ) %>
+    	<td><%= MessageUtil.getContextualMessage( "quick.entry.received.date" ) %>
         	:
 	        <span class="requiredlabel">*</span>
 	        <span style="font-size: xx-small; "><%=DateUtil.getDateUserPrompt()%></span>

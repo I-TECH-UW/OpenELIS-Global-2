@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.HibernateException;
@@ -15,15 +16,14 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.generated.forms.TestActivationForm;
+import spring.generated.testconfiguration.form.TestActivationForm;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.TypeOfSampleService;
@@ -39,22 +39,21 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Controller
 public class TestActivationController extends BaseController {
-	@RequestMapping(value = "/TestActivation", method = RequestMethod.GET)
-	public ModelAndView showTestActivation(HttpServletRequest request,
-			@ModelAttribute("form") TestActivationForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new TestActivationForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
+	@RequestMapping(value = "/TestActivation", method = RequestMethod.GET)
+	public ModelAndView showTestActivation(HttpServletRequest request) {
+		TestActivationForm form = new TestActivationForm();
+
+		setupDisplayItems(form);
+
+		return findForward(FWD_SUCCESS, form);
+	}
+
+	private void setupDisplayItems(TestActivationForm form) {
 		List<TestActivationBean> activeTestList = createTestList(true, false);
 		List<TestActivationBean> inactiveTestList = createTestList(false, false);
 		form.setActiveTestList(activeTestList);
 		form.setInactiveTestList(inactiveTestList);
-
-		return findForward(forward, form);
 	}
 
 	private List<TestActivationBean> createTestList(boolean active, boolean refresh) {
@@ -124,12 +123,13 @@ public class TestActivationController extends BaseController {
 	}
 
 	@RequestMapping(value = "/TestActivation", method = RequestMethod.POST)
-	public ModelAndView postTestActivation(HttpServletRequest request, @ModelAttribute("form") TestActivationForm form)
-			throws Exception {
-
-		String forward = FWD_SUCCESS;
-
-		Errors errors = new BaseErrors();
+	public ModelAndView postTestActivation(HttpServletRequest request,
+			@ModelAttribute("form") @Valid TestActivationForm form, BindingResult result) throws Exception {
+		if (result.hasErrors()) {
+			saveErrors(result);
+			setupDisplayItems(form);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 
 		String changeList = form.getJsonChangeList();
 
@@ -185,7 +185,7 @@ public class TestActivationController extends BaseController {
 		form.setActiveTestList(activeTestList);
 		form.setInactiveTestList(inactiveTestList);
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private List<Test> getDeactivatedTests(List<String> testIds) {
@@ -285,6 +285,10 @@ public class TestActivationController extends BaseController {
 	@Override
 	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
+			return "testActivationDefinition";
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return "testActivationDefinition";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
 			return "testActivationDefinition";
 		} else {
 			return "PageNotFound";

@@ -5,7 +5,7 @@
 			us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory,
 			us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator,
 			us.mn.state.health.lims.common.util.IdValuePair,
-			us.mn.state.health.lims.common.util.StringUtil,
+			spring.mine.internationalization.MessageUtil,
 			us.mn.state.health.lims.common.util.Versioning,
 			us.mn.state.health.lims.common.services.TypeOfTestResultService.ResultType,
 		    java.text.DecimalFormat,
@@ -25,8 +25,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 
-<c:set var="testSection"	value='${param.type}' />
-<c:set var="testName"	value='${param.test}' />
 <c:set var="results" value="${form.resultList}" />
 <c:set var="pagingSearch" value='${form.paging.searchTermToPage}'/>
 <c:set var="testSectionsByName" value='${form.testSectionsByName}' />
@@ -160,7 +158,7 @@ function /*void*/ markUpdated(){
 
 function /*void*/ makeDirty(){
 	dirty=true;
-	if( typeof(showSuccessMessage) != 'undefinded' ){
+	if( typeof(showSuccessMessage) === 'function' ){
 		showSuccessMessage(false); //refers to last save
 	}
 	// Adds warning when leaving page if content has been entered into makeDirty form fields
@@ -171,13 +169,13 @@ function /*void*/ makeDirty(){
 }
 
 function savePage() {
-    if( !confirm("<%=StringUtil.getMessageForKey("validation.save.message")%>")){
+    if( !confirm("<%=MessageUtil.getMessage("validation.save.message")%>")){
         return;
     }
 
   window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
-	form.action = "ResultValidationSave.do" + '?type=<spring:escapeBody javaScriptEscape="true">${testSection}</spring:escapeBody>&test=<spring:escapeBody javaScriptEscape="true">${testName}</spring:escapeBody>&';
+	form.action = "ResultValidation.do" + '?type=<spring:escapeBody javaScriptEscape="true">${testSection}</spring:escapeBody>&test=<spring:escapeBody javaScriptEscape="true">${testName}</spring:escapeBody>&';
 	form.submit();
 }
 
@@ -315,7 +313,7 @@ function /*boolean*/ handleEnterEvent(){
 	<table width="30%">
 		<tr>
 			<td width="50%" align="right" >
-				<%= StringUtil.getMessageForKey("workplan.unit.types") %>
+				<%= MessageUtil.getMessage("workplan.unit.types") %>
 			</td>
 			<td>			
 				<form:select path="testSectionId" 
@@ -350,23 +348,23 @@ function /*boolean*/ handleEnterEvent(){
 	<c:out value="${form.paging.currentPage}"/> <spring:message code="report.pageNumberOf" />
 	<c:out value="${form.paging.totalPages}"/>
 	<span style="float : right" >
-	<span style="visibility: hidden" id="searchNotFound"><em><%= StringUtil.getMessageForKey("search.term.notFound") %></em></span>
-	<%=StringUtil.getContextualMessageForKey("result.sample.id")%> : &nbsp;
+	<span style="visibility: hidden" id="searchNotFound"><em><%= MessageUtil.getMessage("search.term.notFound") %></em></span>
+	<%=MessageUtil.getContextualMessage("result.sample.id")%> : &nbsp;
 	<input type="text"
 	       id="labnoSearch"
 	       placeholder='<spring:message code="sample.search.scanner.instructions"/>'
 	       maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>' />
-	<input type="button" onclick="pageSearch.doLabNoSearch($(labnoSearch))" value='<%= StringUtil.getMessageForKey("label.button.search") %>'>
+	<input type="button" onclick="pageSearch.doLabNoSearch($(labnoSearch))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
 	</span>
 </div>
 </c:if>
-<form:hidden path="testSection" value="${testSection}"/>
-<form:hidden path="testName" value="${testName}"/>
+<form:hidden path="testSection" value="${param.type}"/>
+<form:hidden path="testName" value="${param.test}"/>
 <c:if test="${resultCount != 0}">
 <Table style="width:80%" >
     <tr>
 		<th colspan="3" style="background-color: white;width:15%;">
-			<img src="./images/nonconforming.gif" /> = <%= StringUtil.getContextualMessageForKey("result.nonconforming.item")%>
+			<img src="./images/nonconforming.gif" /> = <%= MessageUtil.getContextualMessage("result.nonconforming.item")%>
 		</th>
 		<th style="text-align:center;width:3%;" style="background-color: white">&nbsp;
 				<spring:message code="validation.accept.all" />
@@ -645,11 +643,11 @@ function /*boolean*/ handleEnterEvent(){
 	<c:if test="${resultCount == 0}">
 		<c:if test="${form.displayTestSections}">
 			<c:if test="${not empty form.testSectionId}">
-			<h2><%= StringUtil.getContextualMessageForKey("result.noTestsFound") %></h2>
+			<h2><%= MessageUtil.getContextualMessage("result.noTestsFound") %></h2>
 			</c:if>
 		</c:if>
 		<c:if test="${not form.displayTestSections}">
-			<h2><%= StringUtil.getContextualMessageForKey("result.noTestsFound") %></h2>
+			<h2><%= MessageUtil.getContextualMessage("result.noTestsFound") %></h2>
 		</c:if>
 	</c:if>
 

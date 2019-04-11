@@ -22,8 +22,8 @@ public class LoginValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		Login login = (Login) target;
 
-		ValidationHelper.validateFieldAndCharset(login.getLoginName(), "loginName", errors, true, 20,
-				"a-zA-Z0-9_@àâäèéêëîïôœùûüÿçÀÂÄÈÉÊËÎÏÔŒÙÛÜŸÇ");
+		ValidationHelper.validateField(login.getLoginName(), "loginName", errors, true, 20,
+				ValidationHelper.USERNAME_REGEX);
 
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "login.password.error");
 	}

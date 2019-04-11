@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
          import="us.mn.state.health.lims.common.action.IActionConstants,
-	            us.mn.state.health.lims.common.util.*,
+	            us.mn.state.health.lims.common.util.*, spring.mine.internationalization.MessageUtil,
 	            us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
 	            us.mn.state.health.lims.login.dao.UserModuleDAO,
 	            us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl,
@@ -32,7 +32,7 @@
     String requestType;
 %>
 <%
-	requestType = (String) request.getAttribute("type");
+	requestType = (String) request.getParameter("type");
     String path = request.getContextPath();
     basePath = request.getScheme() + "://" + request.getServerName() + ":"  + request.getServerPort() + path + "/";
     HashSet accessMap = (HashSet)request.getSession().getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
@@ -157,7 +157,7 @@ projectChecker = null;
 
 function /*void*/ makeDirty(){
     dirty=true;
-    if( typeof(showSuccessMessage) != 'undefinded' ){
+    if( typeof(showSuccessMessage) === 'function' ){
         showSuccessMessage(false); //refers to last save
     }
     // Adds warning when leaving page if content has been entered into makeDirty form fields
@@ -283,7 +283,7 @@ function  /*void*/ savePage__(action) {
     window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
     var form = document.getElementById("mainForm");
     if (action == null) {
-        action = "SampleEntryByProjectSave.do?type=" + type
+        action = "SampleEntryByProject.do?type=" + type
     }
     form.action = action;
     form.submit();
@@ -303,7 +303,7 @@ function /*void*/ setSaveButton() {
 <form:hidden path="project" id="project"/>
 <form:hidden path="patientLastUpdated" id="patientLastUpdated" />
 <form:hidden path="personLastUpdated" id="personLastUpdated"/>
-<form:hidden path="patientProcessingStatus" id="processingStatus" value="add" />
+<form:hidden path="patientProcessingStatus" id="processingStatus"/>
 <form:hidden path="patientPK" id="patientPK" />
 <form:hidden path="samplePK" id="samplePK" />
 <form:hidden path="observations.projectFormName" id="projectFormName"/>
@@ -337,7 +337,7 @@ function /*void*/ setSaveButton() {
             				 id="iarv.centerName"
                              onchange="iarv.checkCenterName(true)">
                              <option value="">&nbsp;</option>
-            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS_BY_NAME']}" itemLabel="organizationName" /> 
+            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS_BY_NAME']}" itemLabel="organizationName" itemValue="id" /> 
                 </form:select>
             </td>
         </tr>
@@ -351,7 +351,7 @@ function /*void*/ setSaveButton() {
             				 id="iarv.centerCode"
                              onchange="iarv.checkCenterCode(true)">
                              <form:option value="">&nbsp;</form:option>
-            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS']}" itemLabel="doubleName" />
+            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS']}" itemLabel="doubleName"  itemValue="id"/>
                 </form:select>
             </td>
         </tr>
@@ -450,7 +450,7 @@ function /*void*/ setSaveButton() {
         <tr>
             <td class="required">*</td>
             <td>
-                <%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
+                <%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>
             </td>
             <td>
                 <div class="blank"><spring:message code="sample.entry.project.LART"/></div>
@@ -474,7 +474,7 @@ function /*void*/ setSaveButton() {
                          id="iarv.gender"
                          onchange="iarv.checkGender(true)">
                         <form:option value="">&nbsp;</form:option>
-            			<form:options items="${form.formLists['GENDERS']}" itemLabel="localizedName" />
+            			<form:options items="${form.formLists['GENDERS']}" itemLabel="localizedName" itemValue="id"/>
             </form:select>
                 <div id="iarv.genderMessage" class="blank" />
             </td>
@@ -682,7 +682,7 @@ function /*void*/ setSaveButton() {
                              id="farv.centerName"
                              onchange="farv.checkCenterName(true)">
                     		 <form:option value="">&nbsp;</form:option>
-            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS_BY_NAME']}" itemLabel="organizationName" /> 
+            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS_BY_NAME']}" itemLabel="organizationName"  itemValue="id"/> 
                 </form:select>
             </td>
         </tr>
@@ -697,7 +697,7 @@ function /*void*/ setSaveButton() {
                              id="farv.centerCode"
                              onchange="farv.checkCenterCode(true)">
                     		 <form:option value="">&nbsp;</form:option>
-            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS']}" itemLabel="doubleName" />
+            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS']}" itemLabel="doubleName"  itemValue="id"/>
                 </form:select>
             </td>
         </tr>
@@ -803,7 +803,7 @@ function /*void*/ setSaveButton() {
         <tr>
             <td class="required">*</td>
             <td>
-                <%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
+                <%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>
 
             </td>
             <td>
@@ -828,7 +828,7 @@ function /*void*/ setSaveButton() {
                          id="farv.gender"
                          onchange="farv.checkGender(false)" >
                     	<form:option value="">&nbsp;</form:option>
-            			<form:options items="${form.formLists['GENDERS']}" itemLabel="localizedName" />
+            			<form:options items="${form.formLists['GENDERS']}" itemLabel="localizedName" itemValue="id"/>
                 </form:select>
                 <div id="farv.genderIDMessage" class="blank" />
             </td>
@@ -1152,7 +1152,7 @@ function /*void*/ setSaveButton() {
                          id="rtn.gender"
                          onchange="rtn.checkGender(true)" >
                 		<form:option value="">&nbsp;</form:option>
-            			<form:options items="${form.formLists['GENDERS']}" itemLabel="localizedName" />
+            			<form:options items="${form.formLists['GENDERS']}" itemLabel="localizedName" itemValue="id"/>
                 </form:select>
                 <div id="rtn.genderMessage" class="blank" ></div>
             </td>
@@ -1160,7 +1160,7 @@ function /*void*/ setSaveButton() {
         <tr>
             <td class="required">*</td>
             <td>
-                <%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
+                <%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>
             </td>
             <td>
                 <div class="blank"><spring:message code="sample.entry.project.LRTN"/></div>
@@ -1302,7 +1302,7 @@ function /*void*/ setSaveButton() {
                  id="eid.centerName"
                  onchange="eid.checkCenterName(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items="${form.organizationTypeLists['EID_ORGS_BY_NAME']}" itemLabel="organizationName" /> 
+            	 <form:options items="${form.organizationTypeLists['EID_ORGS_BY_NAME']}" itemLabel="organizationName" itemValue="id"/> 
 	    	</form:select>
         </td>
     </tr>
@@ -1318,7 +1318,7 @@ function /*void*/ setSaveButton() {
                  id="eid.centerCode"
                  onchange="eid.checkCenterCode(true)">
                  <form:option value="">&nbsp;</form:option>
-             	 <form:options items="${form.organizationTypeLists['EID_ORGS']}" itemLabel="doubleName" /> 
+             	 <form:options items="${form.organizationTypeLists['EID_ORGS']}" itemLabel="doubleName" itemValue="id" /> 
 	    	</form:select>
         </td>
     </tr>
@@ -1355,7 +1355,7 @@ function /*void*/ setSaveButton() {
     <tr>
         <td class="required">*</td>
         <td>
-            <%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
+            <%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>
         </td>
         <td>
             <div class="blank"><spring:message code="sample.entry.project.LDBS"/></div>
@@ -1482,7 +1482,7 @@ function /*void*/ setSaveButton() {
                  id="eid.gender"
                  onchange="eid.checkGender(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.formLists['GENDERS']}" itemLabel="localizedName" /> 
+            	 <form:options items= "${form.formLists['GENDERS']}" itemLabel="localizedName" itemValue="id"/> 
 	    	</form:select>
 	    	<div id="eid.genderMessage" class="blank" > </div>
         </td>
@@ -1819,7 +1819,7 @@ function /*void*/ setSaveButton() {
                 <form:select  path="ProjectData.INDsiteName" cssClass="text" id="ind.centerCode"
                         onchange="ind.checkCenterCode(true)" >
                     <form:option value="">&nbsp;</form:option>
-            	    <form:options items= "${form.organizationTypeLists['EID_ORGS']}" itemLabel="doubleName" />
+            	    <form:options items= "${form.organizationTypeLists['EID_ORGS']}" itemLabel="doubleName" itemValue="id" />
                 </form:select>
                 <div id="ind.centerCodeMessage" class="blank"/>
             </td>
@@ -1899,7 +1899,7 @@ function /*void*/ setSaveButton() {
         <tr>
             <td class="required">*</td>
             <td>
-                <%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
+                <%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>
             </td>
             <td>
                 <div class="blank"><spring:message code="sample.entry.project.LIND"/></div>
@@ -1923,7 +1923,7 @@ function /*void*/ setSaveButton() {
                          id="ind.gender"
                          onchange="ind.checkGender(false);" >
                 		<form:option value="">&nbsp;</form:option>
-            	 		<form:options items= "${form.formLists['GENDERS']}" itemLabel="localizedName" />
+            	 		<form:options items= "${form.formLists['GENDERS']}" itemLabel="localizedName" itemValue="id"/>
                 </form:select>
                 <div id="ind.genderMessage" class="blank" ></div>
             </td>
@@ -2241,7 +2241,7 @@ function /*void*/ setSaveButton() {
         <tr>
             <td class="required">*</td>
             <td>
-                <%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
+                <%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>
             </td>
             <td>
                 <div class="blank"><spring:message code="sample.entry.project.LSPE"/></div>
@@ -2643,7 +2643,7 @@ function /*void*/ setSaveButton() {
             				 id="vl.centerName"
                              onchange="vl.checkCenterName(true)">
                              <form:option value="">&nbsp;</form:option>
-            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS_BY_NAME']}" itemLabel="organizationName" /> 
+            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS_BY_NAME']}" itemLabel="organizationName" itemValue="id" /> 
                 </form:select>
             </td>
         </tr>
@@ -2657,7 +2657,7 @@ function /*void*/ setSaveButton() {
             				 id="vl.centerCode"
                              onchange="vl.checkCenterCode(true)">
                              <form:option value="">&nbsp;</form:option>
-            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS']}" itemLabel="doubleName" />
+            	 			 <form:options items="${form.organizationTypeLists['ARV_ORGS']}" itemLabel="doubleName" itemValue="id" />
                 </form:select>
             </td>
         </tr>
@@ -2773,7 +2773,7 @@ function /*void*/ setSaveButton() {
         <tr>
             <td class="required">*</td>
             <td>
-                <%=StringUtil.getContextualMessageForKey("quick.entry.accession.number")%>
+                <%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>
             </td>
             <td>
                 <div class="blank"><spring:message code="sample.entry.project.LVL"/></div>
@@ -2832,7 +2832,7 @@ function /*void*/ setSaveButton() {
                  id="vl.gender"
                  onchange="vl.checkGender(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.formLists['GENDERS']}" itemLabel="localizedName" /> 
+            	 <form:options items= "${form.formLists['GENDERS']}" itemLabel="localizedName" itemValue="id"/> 
 	    	</form:select>
 	    	<div id="vl.genderMessage" class="blank" > </div>
         </td>

@@ -21,11 +21,11 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator.ValidationResults;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.sample.dao.SampleDAO;
 import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 
@@ -41,7 +41,7 @@ public abstract class BaseSiteYearAccessionValidator {
 	protected int INCREMENT_END = getMaxAccessionLength();
 	protected int LENGTH = getMaxAccessionLength();
 	protected static final boolean NEED_PROGRAM_CODE = false;
-	private static Set<String> REQUESTED_NUMBERS = new HashSet<String>();
+	private static Set<String> REQUESTED_NUMBERS = new HashSet<>();
 
 	public boolean needProgramCode() {
 		return NEED_PROGRAM_CODE;
@@ -55,7 +55,8 @@ public abstract class BaseSiteYearAccessionValidator {
 	public String getInvalidMessage(ValidationResults results) {
 		String suggestedAccessionNumber = getNextAvailableAccessionNumber(null);
 
-		return StringUtil.getMessageForKey("sample.entry.invalid.accession.number.suggestion") + " " + suggestedAccessionNumber;
+		return MessageUtil.getMessage("sample.entry.invalid.accession.number.suggestion") + " "
+				+ suggestedAccessionNumber;
 
 	}
 
@@ -66,26 +67,26 @@ public abstract class BaseSiteYearAccessionValidator {
 
 		SampleDAO sampleDAO = new SampleDAOImpl();
 
-		String curLargestAccessionNumber = sampleDAO.getLargestAccessionNumberMatchingPattern(ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_PREFIX),
-				                                                                               getMaxAccessionLength());
-
+		String curLargestAccessionNumber = sampleDAO.getLargestAccessionNumberMatchingPattern(
+				ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_PREFIX),
+				getMaxAccessionLength());
 
 		if (curLargestAccessionNumber == null) {
-			if( REQUESTED_NUMBERS.isEmpty()){
+			if (REQUESTED_NUMBERS.isEmpty()) {
 				nextAccessionNumber = createFirstAccessionNumber(null);
-			}else{
+			} else {
 				nextAccessionNumber = REQUESTED_NUMBERS.iterator().next();
 			}
 		} else {
 			nextAccessionNumber = incrementAccessionNumber(curLargestAccessionNumber);
 		}
-		
-		while( REQUESTED_NUMBERS.contains(nextAccessionNumber) ){
+
+		while (REQUESTED_NUMBERS.contains(nextAccessionNumber)) {
 			nextAccessionNumber = incrementAccessionNumber(nextAccessionNumber);
 		}
-		
+
 		REQUESTED_NUMBERS.add(nextAccessionNumber);
-		
+
 		return nextAccessionNumber;
 	}
 
@@ -126,13 +127,14 @@ public abstract class BaseSiteYearAccessionValidator {
 	public ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType, String isRequired,
 			String projectFormName) {
 
-			ValidationResults results = validFormat(accessionNumber, true);
-			//TODO refactor accessionNumberIsUsed into two methods so the null isn't needed. (Its only used for program accession number)
-			if (results == ValidationResults.SUCCESS && accessionNumberIsUsed(accessionNumber, null)) {
-				results = ValidationResults.USED_FAIL;
-			}
+		ValidationResults results = validFormat(accessionNumber, true);
+		// TODO refactor accessionNumberIsUsed into two methods so the null isn't
+		// needed. (Its only used for program accession number)
+		if (results == ValidationResults.SUCCESS && accessionNumberIsUsed(accessionNumber, null)) {
+			results = ValidationResults.USED_FAIL;
+		}
 
-			return results;
+		return results;
 	}
 
 	public ValidationResults validFormat(String accessionNumber, boolean checkDate) {
@@ -140,11 +142,9 @@ public abstract class BaseSiteYearAccessionValidator {
 			return ValidationResults.LENGTH_FAIL;
 		}
 
-		if (!accessionNumber.substring(SITE_START, SITE_END).equals( getPrefix())) {
+		if (!accessionNumber.substring(SITE_START, SITE_END).equals(getPrefix())) {
 			return ValidationResults.SITE_FAIL;
 		}
-
-		
 
 		if (checkDate) {
 			int year = new GregorianCalendar().get(Calendar.YEAR);
@@ -155,8 +155,8 @@ public abstract class BaseSiteYearAccessionValidator {
 			} catch (NumberFormatException nfe) {
 				return ValidationResults.YEAR_FAIL;
 			}
-		}else{
-			try { //quick and dirty to make sure they are digits
+		} else {
+			try { // quick and dirty to make sure they are digits
 				Integer.parseInt(accessionNumber.substring(YEAR_START, YEAR_END));
 			} catch (NumberFormatException nfe) {
 				return ValidationResults.YEAR_FAIL;
@@ -172,32 +172,33 @@ public abstract class BaseSiteYearAccessionValidator {
 		return ValidationResults.SUCCESS;
 	}
 
+	public String getInvalidFormatMessage(ValidationResults results) {
+		return MessageUtil.getMessage("sample.entry.invalid.accession.number.format.corrected",
+				new String[] { getFormatPattern(), getFormatExample() });
+	}
 
-    public String getInvalidFormatMessage( ValidationResults results ){
-        return StringUtil.getMessageForKey( "sample.entry.invalid.accession.number.format.corrected", getFormatPattern(), getFormatExample() );
-    }
+	private String getFormatPattern() {
+		StringBuilder format = new StringBuilder(getPrefix());
+		format.append(MessageUtil.getMessage("date.two.digit.year"));
+		for (int i = 0; i < getChangeableLength(); i++) {
+			format.append("#");
+		}
+		return format.toString();
+	}
 
-    private String getFormatPattern(){
-        StringBuilder format = new StringBuilder( getPrefix() );
-        format.append( StringUtil.getMessageForKey( "date.two.digit.year" ) );
-        for( int i = 0; i < getChangeableLength(); i++){
-            format.append( "#" );
-        }
-        return format.toString();
-    }
+	private String getFormatExample() {
+		StringBuilder format = new StringBuilder(getPrefix());
+		format.append(DateUtil.getTwoDigitYear());
+		for (int i = 0; i < getChangeableLength() - 1; i++) {
+			format.append("0");
+		}
 
-    private String getFormatExample(){
-        StringBuilder format = new StringBuilder( getPrefix() );
-        format.append( DateUtil.getTwoDigitYear() );
-        for( int i = 0; i < getChangeableLength() - 1; i++){
-            format.append( "0" );
-        }
+		format.append("1");
 
-        format.append( "1" );
+		return format.toString();
+	}
 
-        return format.toString();
-    }
-    protected abstract String getPrefix();
+	protected abstract String getPrefix();
 
 	protected abstract int getIncrementStartIndex();
 
@@ -209,5 +210,5 @@ public abstract class BaseSiteYearAccessionValidator {
 
 	protected abstract int getMaxAccessionLength();
 
-    protected abstract int getChangeableLength();
+	protected abstract int getChangeableLength();
 }

@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
-import us.mn.state.health.lims.common.util.StringUtil;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.resultvalidation.bean.AnalysisItem;
 
 public class ElisaWorkplanReport implements IWorkplanReport {
@@ -34,7 +34,7 @@ public class ElisaWorkplanReport implements IWorkplanReport {
 
 	public ElisaWorkplanReport(String testSection) {
 		messageKey = messageKey + testSection;
-		testSection = StringUtil.getContextualMessageForKey(messageKey);
+		testSection = MessageUtil.getContextualMessage(messageKey);
 		this.testSection = testSection;
 	}
 

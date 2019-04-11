@@ -308,7 +308,7 @@ function getPendingAnalysisForTest( testId, success, failure){
 function postBatchSample(success, failure){
     if( !failure){failure = defaultFailure;	}
 	new Ajax.Request(
-		'SamplePatientEntrySave.do',  //url
+		'SamplePatientEntry.do',  //url
 		{//options
 			method: 'POST', //http method
 			parameters: jQuery(document.getElementById("mainForm")).serialize().replace(/\+/g,'%20'),

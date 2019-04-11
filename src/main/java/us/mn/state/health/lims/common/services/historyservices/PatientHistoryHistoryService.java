@@ -23,9 +23,9 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.valueholder.History;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
 import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
@@ -62,7 +62,7 @@ public class PatientHistoryHistoryService extends HistoryService {
 	private void setUpForPatientHistory(Sample sample) {
 		attributeToIdentifierMap = new HashMap<String, String>();
 		attributeToIdentifierMap.put(ORGANIZATION_ATTRIBUTE, "Referring Organization");
-        attributeToIdentifierMap.put(REFERRING_PATIENT_ID_ATTRIBUTE, StringUtil.getMessageForKey( "sample.referring.patientNumber" ));
+        attributeToIdentifierMap.put(REFERRING_PATIENT_ID_ATTRIBUTE, MessageUtil.getMessage( "sample.referring.patientNumber" ));
 
 		newValueMap = new HashMap<String, String>();
         historyList = new ArrayList<History>();
@@ -142,7 +142,7 @@ public class PatientHistoryHistoryService extends HistoryService {
 
 	@Override
 	protected String getObjectName() {
-		return StringUtil.getMessageForKey("patient.history");
+		return MessageUtil.getMessage("patient.history");
 	}
 
 	protected void addItemsForKeys(List<AuditTrailItem> items, History history, Map<String, String> changeMaps) {
@@ -163,7 +163,7 @@ public class PatientHistoryHistoryService extends HistoryService {
 			item.setOldValue( changeMaps.get(key));
 			item.setNewValue( newValueMap.get(observationKey));
 			newValueMap.put(observationKey, item.getOldValue());
-            item.setAttribute(showAttribute() && !GenericValidator.isBlankOrNull( key ) ? key : StringUtil.getMessageForKey( "auditTrail.action.update" ));
+            item.setAttribute(showAttribute() && !GenericValidator.isBlankOrNull( key ) ? key : MessageUtil.getMessage( "auditTrail.action.update" ));
 			if (item.newOldDiffer()) {
 				items.add(item);
 			}

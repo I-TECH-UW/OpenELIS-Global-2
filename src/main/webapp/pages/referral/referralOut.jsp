@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" %>
 <%@ page import="us.mn.state.health.lims.common.action.IActionConstants,
                  us.mn.state.health.lims.common.util.DateUtil,
-                 us.mn.state.health.lims.common.util.StringUtil,
+                 spring.mine.internationalization.MessageUtil,
                  java.util.List,
                  us.mn.state.health.lims.common.util.Versioning,
                  us.mn.state.health.lims.referral.action.beanitems.ReferralItem,
@@ -110,7 +110,7 @@ function insertNewTestRequest(button, index) {
     cell.innerHTML = '<input type="hidden"  name="addedTest"  value="' + index + '" id="' + newRowMarker + '"  >';
     cell.innerHTML += '<input type="hidden"  value="N" id="referredType_' + newRowMarker + '"  >';
 
-    newRow.insertCell(1).innerHTML = "<input type=\"button\"  name=\"remove\"  value=\"" + '<%= StringUtil.getMessageForKey("label.button.remove")%>' + "\" onclick=\"removeRow('" + newRowMarker + "');\" class=\"textButton\"  >";
+    newRow.insertCell(1).innerHTML = "<input type=\"button\"  name=\"remove\"  value=\"" + '<%= MessageUtil.getMessage("label.button.remove")%>' + "\" onclick=\"removeRow('" + newRowMarker + "');\" class=\"textButton\"  >";
 
     cell = newRow.appendChild($("testSelection_" + index).parentNode.cloneNode(true));
     var selectionNode = cell.getElementsByTagName("select")[0];
@@ -216,7 +216,7 @@ function /*void*/ savePage() {
 
     window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
     var form = document.getElementById("mainForm");
-    form.action = '${form.formName}'.sub('Form', '') + "Update.do";
+    form.action = "ReferredOutTests.do";
     form.submit();
 }
 function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
@@ -257,7 +257,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
 
 <tr class='${rowColour}>Head' id='referralRow_${iter.index}'>
     <td colspan="2" class="HeadSeperator">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= StringUtil.getContextualMessageForKey( "resultsentry.accessionNumber" ) %>:
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= MessageUtil.getContextualMessage( "resultsentry.accessionNumber" ) %>:
         <b><c:out value="${referralItems.accessionNumber}"/></b>
     </td>
     <td colspan="4" class="HeadSeperator">
@@ -542,7 +542,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
 
     function /*void*/ makeDirty() {
         dirty = true;
-        if (typeof(showSuccessMessage) != 'undefinded') {
+        if (typeof(showSuccessMessage) === 'function') {
             showSuccessMessage(false); //refers to last save
         }
         // Adds warning when leaving page if content has been entered into makeDirty form fields

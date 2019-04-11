@@ -4,19 +4,19 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.generated.forms.SampleTypeCreateForm;
+import spring.generated.testconfiguration.form.SampleTypeCreateForm;
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.LocalizationService;
@@ -38,18 +38,20 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Controller
 public class SampleTypeCreateController extends BaseController {
+
 	public static final String NAME_SEPARATOR = "$";
 
 	@RequestMapping(value = "/SampleTypeCreate", method = RequestMethod.GET)
-	public ModelAndView showSampleTypeCreate(HttpServletRequest request,
-			@ModelAttribute("form") SampleTypeCreateForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new SampleTypeCreateForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+	public ModelAndView showSampleTypeCreate(HttpServletRequest request) {
 
+		SampleTypeCreateForm form = new SampleTypeCreateForm();
+
+		setupDisplayItems(form);
+
+		return findForward(FWD_SUCCESS, form);
+	}
+
+	private void setupDisplayItems(SampleTypeCreateForm form) {
 		try {
 			PropertyUtils.setProperty(form, "existingSampleTypeList",
 					DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
@@ -60,15 +62,9 @@ public class SampleTypeCreateController extends BaseController {
 					getExistingTestNames(typeOfSamples, ConfigurationProperties.LOCALE.ENGLISH));
 			PropertyUtils.setProperty(form, "existingFrenchNames",
 					getExistingTestNames(typeOfSamples, ConfigurationProperties.LOCALE.FRENCH));
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
-
-		return findForward(forward, form);
 	}
 
 	private String getExistingTestNames(List<TypeOfSample> typeOfSamples, ConfigurationProperties.LOCALE locale) {
@@ -84,12 +80,12 @@ public class SampleTypeCreateController extends BaseController {
 
 	@RequestMapping(value = "/SampleTypeCreate", method = RequestMethod.POST)
 	public ModelAndView postSampleTypeCreate(HttpServletRequest request,
-			@ModelAttribute("form") SampleTypeCreateForm form) throws Exception {
-
-		String forward = FWD_SUCCESS_INSERT;
-
-		BaseErrors errors = new BaseErrors();
-
+			@ModelAttribute("form") @Valid SampleTypeCreateForm form, BindingResult result) throws Exception {
+		if (result.hasErrors()) {
+			saveErrors(result);
+			setupDisplayItems(form);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 		RoleDAO roleDAO = new RoleDAOImpl();
 		RoleModuleDAOImpl roleModuleDAO = new RoleModuleDAOImpl();
 		SystemModuleDAO systemModuleDAO = new SystemModuleDAOImpl();
@@ -137,7 +133,7 @@ public class SampleTypeCreateController extends BaseController {
 		DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE);
 		DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private Localization createLocalization(String french, String english, String currentUserId) {
@@ -193,6 +189,8 @@ public class SampleTypeCreateController extends BaseController {
 			return "sampleTypeCreateDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/SampleTypeCreate.do";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return "sampleTypeCreateDefinition";
 		} else {
 			return "PageNotFound";
 		}

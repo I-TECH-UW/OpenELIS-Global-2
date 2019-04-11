@@ -21,10 +21,9 @@ public class DictionaryMenuFormValidator implements Validator {
 
 		for (String id : form.getSelectedIDs()) {
 			ValidationHelper.validateIdField(id, "selectedIDs", errors, true);
-			if (errors.hasErrors()) {
-				break;
-			}
 		}
+
+		// searchString does not require validation, not preserved
 
 	}
 

@@ -3,39 +3,64 @@ package spring.mine.systemuser.form;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
+import spring.mine.validation.annotations.ValidDate;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.role.action.bean.DisplayRole;
 
 public class UnifiedSystemUserForm extends BaseForm {
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String loginUserId = "";
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String systemUserId = "";
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.USERNAME_REGEX)
 	private String userLoginName = "";
 
-	private String userPassword1 = "";
+	// in validator
+	private String userPassword = "";
 
-	private String userPassword2 = "";
+	// in validator
+	private String confirmPassword = "";
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.NAME_REGEX)
 	private String userFirstName = "";
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.NAME_REGEX)
 	private String userLastName = "";
 
+	// for display
 	private List<DisplayRole> roles;
 
+	// in validator
 	private String[] selectedRoles;
 
+	@ValidDate(relative = DateRelation.FUTURE)
 	private String expirationDate;
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.YES_NO_REGEX)
 	private String accountLocked = "N";
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.YES_NO_REGEX)
 	private String accountDisabled = "N";
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.YES_NO_REGEX)
 	private String accountActive = "Y";
 
+	@NotBlank
+	@Pattern(regexp = "^[0-9]*$")
 	private String timeout;
-
-	private Timestamp lastupdated;
 
 	private Timestamp systemUserLastupdated;
 
@@ -67,20 +92,20 @@ public class UnifiedSystemUserForm extends BaseForm {
 		this.userLoginName = userLoginName;
 	}
 
-	public String getUserPassword1() {
-		return userPassword1;
+	public String getUserPassword() {
+		return userPassword;
 	}
 
-	public void setUserPassword1(String userPassword1) {
-		this.userPassword1 = userPassword1;
+	public void setUserPassword(String userPassword) {
+		this.userPassword = userPassword;
 	}
 
-	public String getUserPassword2() {
-		return userPassword2;
+	public String getConfirmPassword() {
+		return confirmPassword;
 	}
 
-	public void setUserPassword2(String userPassword2) {
-		this.userPassword2 = userPassword2;
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
 	}
 
 	public String getUserFirstName() {
@@ -153,14 +178,6 @@ public class UnifiedSystemUserForm extends BaseForm {
 
 	public void setTimeout(String timeout) {
 		this.timeout = timeout;
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public Timestamp getSystemUserLastupdated() {

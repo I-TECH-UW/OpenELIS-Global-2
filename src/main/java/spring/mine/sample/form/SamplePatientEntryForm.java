@@ -3,8 +3,14 @@ package spring.mine.sample.form;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.validation.annotations.ValidDate;
 import us.mn.state.health.lims.common.util.IdValuePair;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.patient.action.bean.PatientClinicalInfo;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
@@ -14,31 +20,45 @@ import us.mn.state.health.lims.sample.bean.SampleOrderItem;
 public class SamplePatientEntryForm extends BaseForm {
 	private Timestamp lastupdated;
 
+	@ValidDate(relative = DateRelation.TODAY)
 	private String currentDate = "";
 
-	private String project = "";
-
+	// TODO
+	@Valid
 	private List<Project> projects;
 
+	@Pattern(regexp = "^Add$|^update$|^noAction$")
 	private String patientProcessingStatus = "Add";
 
+	// for display
 	private List<IdValuePair> sampleTypes;
 
+	// in validator
 	private String sampleXML = "";
 
+	// TODO
+	@Valid
 	private PatientManagementInfo patientProperties;
 
+	// for display
 	private PatientSearch patientSearch;
 
+	// TODO
+	@Valid
 	private PatientClinicalInfo patientClinicalProperties;
 
+	// TODO
+	@Valid
 	private SampleOrderItem sampleOrderItems;
 
+	// for display
 	private List<IdValuePair> initialSampleConditionList;
 
+	// for display
 	private List<IdValuePair> testSectionList;
 
-	private String warning;
+	@NotNull
+	private Boolean warning = false;
 
 	public SamplePatientEntryForm() {
 		setFormName("samplePatientEntryForm");
@@ -58,14 +78,6 @@ public class SamplePatientEntryForm extends BaseForm {
 
 	public void setCurrentDate(String currentDate) {
 		this.currentDate = currentDate;
-	}
-
-	public String getProject() {
-		return project;
-	}
-
-	public void setProject(String project) {
-		this.project = project;
 	}
 
 	public List<Project> getProjects() {
@@ -148,11 +160,11 @@ public class SamplePatientEntryForm extends BaseForm {
 		this.testSectionList = testSectionList;
 	}
 
-	public String getWarning() {
+	public Boolean getWarning() {
 		return warning;
 	}
 
-	public void setWarning(String warning) {
+	public void setWarning(Boolean warning) {
 		this.warning = warning;
 	}
 }

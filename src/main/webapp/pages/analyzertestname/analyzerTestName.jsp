@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants,
-	us.mn.state.health.lims.common.util.StringUtil,
+	spring.mine.internationalization.MessageUtil,
 	us.mn.state.health.lims.analyzer.valueholder.Analyzer,
 	us.mn.state.health.lims.test.valueholder.Test" %>
 
@@ -40,7 +40,7 @@ function validateForm(form) {
 	if( $("analyzerId").selectedIndex == 0 ||
 	    $("analyzerTestNameId").value == null ||
 	    $("testId").selectedIndex == 0 ){
-	    		alert('<%=StringUtil.getMessageForKey("error.all.required") %>');
+	    		alert('<%=MessageUtil.getMessage("error.all.required") %>');
 	    		return false;
 	    }
 

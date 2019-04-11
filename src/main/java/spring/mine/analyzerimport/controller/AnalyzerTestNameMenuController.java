@@ -6,8 +6,9 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
-import org.apache.struts.Globals;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -140,7 +141,7 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 
 	@RequestMapping(value = "/DeleteAnalyzerTestName", method = RequestMethod.POST)
 	public ModelAndView showDeleteAnalyzerTestName(HttpServletRequest request,
-			@ModelAttribute("form") AnalyzerTestNameMenuForm form, BindingResult result,
+			@ModelAttribute("form") @Valid AnalyzerTestNameMenuForm form, BindingResult result,
 			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
@@ -149,8 +150,6 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 			saveErrors(result);
 			return findForward(performMenuAction(form, request), form);
 		}
-
-		String forward = FWD_SUCCESS_DELETE;
 
 		String[] selectedIDs = (String[]) form.get("selectedIDs");
 
@@ -165,7 +164,7 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 			testMappingList.add(testMapping);
 		}
 
-		org.hibernate.Transaction tx = HibernateUtil.getSession().beginTransaction();
+		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
 
 			AnalyzerTestMappingDAO testMappingDAO = new AnalyzerTestMappingDAOImpl();
@@ -180,24 +179,16 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 				result.reject("errors.DeleteException");
 			}
 			saveErrors(result);
-			request.setAttribute(Globals.ERROR_KEY, result);
-			forward = FWD_FAIL_DELETE;
+			return findForward(performMenuAction(form, request), form);
 
 		} finally {
 			HibernateUtil.closeSession();
-		}
-		if (forward.equals(FWD_FAIL_DELETE)) {
-			return findForward(performMenuAction(form, request), form);
-		}
-
-		if (TRUE.equalsIgnoreCase(request.getParameter("close"))) {
-			forward = FWD_CLOSE;
 		}
 
 		AnalyzerTestNameCache.instance().reloadCache();
 		request.setAttribute("menuDefinition", "AnalyzerTestNameDefinition");
 		redirectAttributes.addFlashAttribute(Constants.SUCCESS_MSG, MessageUtil.getMessage("message.success.delete"));
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_DELETE, form);
 	}
 
 	@Override

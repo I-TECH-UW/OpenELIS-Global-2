@@ -8,14 +8,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import spring.mine.common.form.MenuForm;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 
-public abstract class BaseMenuController extends BaseController implements IActionConstants {
+public abstract class BaseMenuController extends BaseController {
 
 	protected static final int PREVIOUS = 1;
 

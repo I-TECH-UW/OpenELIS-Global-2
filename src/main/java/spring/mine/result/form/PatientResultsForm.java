@@ -57,7 +57,7 @@ public class PatientResultsForm extends BaseForm {
 
 	private String testSectionId;
 
-	private String warning;
+	private Boolean warning;
 
 	public PatientResultsForm() {
 		setFormName("PatientResultsForm");
@@ -247,11 +247,11 @@ public class PatientResultsForm extends BaseForm {
 		this.testSectionId = testSectionId;
 	}
 
-	public String getWarning() {
+	public Boolean getWarning() {
 		return warning;
 	}
 
-	public void setWarning(String warning) {
+	public void setWarning(Boolean warning) {
 		this.warning = warning;
 	}
 }

@@ -9,14 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.workplan.form.WorkplanForm;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
@@ -33,7 +29,6 @@ import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.result.action.util.ResultsLoadUtility;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
@@ -50,15 +45,10 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
 	private final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
 
 	@RequestMapping(value = "/WorkPlanByTestSection", method = RequestMethod.GET)
-	public ModelAndView showWorkPlanByTestSection(HttpServletRequest request, @ModelAttribute("form") WorkplanForm form)
+	public ModelAndView showWorkPlanByTestSection(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new WorkplanForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
-		
+		WorkplanForm form = new WorkplanForm();
+
 		request.getSession().setAttribute(SAVE_DISABLED, "true");
 
 		String testSectionId = (request.getParameter("testSectionId"));
@@ -98,9 +88,9 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
 			addPatientNamesToList(workplanTests);
 		}
 		PropertyUtils.setProperty(form, "workplanType", workplan);
-		PropertyUtils.setProperty(form, "searchLabel", StringUtil.getMessageForKey("workplan.unit.types"));
+		PropertyUtils.setProperty(form, "searchLabel", MessageUtil.getMessage("workplan.unit.types"));
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	@SuppressWarnings("unchecked")

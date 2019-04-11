@@ -27,6 +27,7 @@ import org.apache.commons.validator.GenericValidator;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -39,7 +40,6 @@ import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.referral.valueholder.Referral;
 import us.mn.state.health.lims.referral.valueholder.ReferralResult;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ClinicalPatientData;
@@ -143,12 +143,12 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 
     @Override
     protected void setEmptyResult( ClinicalPatientData data ){
-        data.setAnalysisStatus( StringUtil.getMessageForKey( "report.test.status.inProgress" )  );
+        data.setAnalysisStatus( MessageUtil.getMessage( "report.test.status.inProgress" )  );
     }
 
     protected void setReferredOutResult(ClinicalPatientData data){
         data.setAlerts( "R" );
-        data.setAnalysisStatus( StringUtil.getMessageForKey( "report.test.status.inProgress" ) );
+        data.setAnalysisStatus( MessageUtil.getMessage( "report.test.status.inProgress" ) );
     }
 	
     // addReferredTests method in both PatientClinical and PatientCILNSPClinical are nearly identical and 
@@ -208,7 +208,7 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 
 				if(GenericValidator.isBlankOrNull(reportReferralResultValue)){
 					sampleCompleteMap.put(currentSampleService.getAccessionNumber(), Boolean.FALSE);
-					data.setAnalysisStatus(StringUtil.getMessageForKey("report.test.status.inProgress"));
+					data.setAnalysisStatus(MessageUtil.getMessage("report.test.status.inProgress"));
 				}else{
 					data.setResult( reportReferralResultValue );
 				}
@@ -249,7 +249,7 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 	protected void postSampleBuild(){
 		if(reportItems.isEmpty()){
 			ClinicalPatientData reportItem = buildClinicalPatientData( false );
-			reportItem.setTestSection( StringUtil.getMessageForKey( "report.no.results" ) );
+			reportItem.setTestSection( MessageUtil.getMessage( "report.no.results" ) );
 			clinicalReportItems.add(reportItem);
 		}else{
 			buildReport();
@@ -328,12 +328,12 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 
             int dividerIndex = reportItem.getAccessionNumber().lastIndexOf( "-" );
             reportItem.setAccessionNumber( reportItem.getAccessionNumber().substring( 0, dividerIndex ) );
-            reportItem.setCompleteFlag( StringUtil.getMessageForKey( sampleCompleteMap.get( reportItem.getAccessionNumber() ) ? "report.status.complete" : "report.status.partial" ) );
+            reportItem.setCompleteFlag( MessageUtil.getMessage( sampleCompleteMap.get( reportItem.getAccessionNumber() ) ? "report.status.complete" : "report.status.partial" ) );
             if( reportItem.isCorrectedResult() ){
                 if( reportItem.getNote() != null && reportItem.getNote().length() > 0 ){
-                    reportItem.setNote( StringUtil.getMessageForKey( "result.corrected" ) + "<br/>" + reportItem.getNote() );
+                    reportItem.setNote( MessageUtil.getMessage( "result.corrected" ) + "<br/>" + reportItem.getNote() );
                 }else{
-                    reportItem.setNote( StringUtil.getMessageForKey( "result.corrected" ) );
+                    reportItem.setNote( MessageUtil.getMessage( "result.corrected" ) );
                 }
 
             }
@@ -344,7 +344,7 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 
 	@Override
 	protected String getReportNameForParameterPage(){
-		return StringUtil.getMessageForKey("openreports.patientTestStatus");
+		return MessageUtil.getMessage("openreports.patientTestStatus");
 	}
 
 	public JRDataSource getReportDataSource() throws IllegalStateException{

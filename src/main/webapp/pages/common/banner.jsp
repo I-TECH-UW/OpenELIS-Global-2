@@ -11,11 +11,12 @@
 				 us.mn.state.health.lims.common.services.LocalizationService,
 				 us.mn.state.health.lims.common.util.ConfigurationProperties,
 				 us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
-				 us.mn.state.health.lims.common.util.StringUtil,
+				 spring.mine.internationalization.MessageUtil,
 				 us.mn.state.health.lims.common.util.Versioning,
                  us.mn.state.health.lims.login.valueholder.UserSessionData,
 				 us.mn.state.health.lims.menu.util.MenuUtil,
-				 spring.mine.common.form.BaseForm"%>
+				 spring.mine.common.form.BaseForm,
+				 org.owasp.encoder.Encode"%>
 
 <%!String path = "";
 	String basePath = "";
@@ -52,7 +53,7 @@ function /*void*/ setLanguage( language ){
 //Note this is hardcoded for haiti clinical.  Message resources would be a good way to get both language and context
 function displayHelp(){
 
-    var url = '<%=basePath%>' + 'documentation/' + '<%= StringUtil.getContextualMessageForKey("documentation") %>';
+    var url = '<%=basePath%>' + 'documentation/' + '<%= MessageUtil.getContextualMessage("documentation") %>';
 
 	var	newwindow=window.open( url,'name','height=1000,width=850, menuBar=yes');
 
@@ -83,9 +84,6 @@ function displayHelp(){
 		}).supposition();
 	});
 </script>
-<!--[if ie]-->
-<link rel="stylesheet" type="text/css" href="<%=basePath%>css/menu-ie7.css?ver=<%= Versioning.getBuildNumber() %>" />
-<!--[endif]-->
 
 <div id="header">
   	<div id="oe-logo" style="width: 89px" onclick="navigateToHomePage();"><img src="images/openelis_logo.png" title="OpenELIS" alt="OpenELIS" /></div>
@@ -105,7 +103,7 @@ function displayHelp(){
 			<%
 				}
 			%>
-  	  		<div id="oe-title" onclick="navigateToHomePage();"><%= LocalizationService.getLocalizedValueById( ConfigurationProperties.getInstance().getPropertyValue( Property.BANNER_TEXT ) )%></div>
+  	  		<div id="oe-title" onclick="navigateToHomePage();"><%= Encode.forHtmlContent(LocalizationService.getLocalizedValueById( ConfigurationProperties.getInstance().getPropertyValue( Property.BANNER_TEXT ) )) %></div>
   		</div>  
   		<div id="oe-version" style="display: block">
     		<div id="appVersion">

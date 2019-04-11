@@ -26,11 +26,11 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.services.TableIdService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
 import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
@@ -80,10 +80,10 @@ public abstract class NonConformityByLabno extends Report implements IReportCrea
 	@Override
 	protected void createReportParameters() throws IllegalStateException {
 		super.createReportParameters();
-		String nonConformity = StringUtil.getContextualMessageForKey("banner.menu.nonconformity");
+		String nonConformity = MessageUtil.getContextualMessage("banner.menu.nonconformity");
 		reportParameters.put("status", nonConformity);
 		reportParameters.put("reportTitle", nonConformity);
-	//	reportParameters.put("reportPeriod", StringUtil.getContextualMessageForKey("banner.menu.nonconformity") + "  " + dateRange.toString());
+	//	reportParameters.put("reportPeriod", MessageUtil.getContextualMessage("banner.menu.nonconformity") + "  " + dateRange.toString());
 	 //   reportParameters.put("supervisorSignature", ConfigurationProperties.getInstance().isPropertyValueEqual(Property.SIGNATURES_ON_NONCONFORMITY_REPORTS, "true"));
 		if( ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI_GENERAL")){
 			reportParameters.put("headerName", "CILNSPHeader.jasper");	

@@ -3,22 +3,23 @@ package spring.mine.samplebatchentry.controller;
 import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.samplebatchentry.form.SampleBatchEntryForm;
+import spring.mine.samplebatchentry.validator.SampleBatchEntryFormValidator;
 import us.mn.state.health.lims.common.services.SampleOrderService;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -37,18 +38,22 @@ import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
 @Controller
 public class SampleBatchEntryController extends BaseController {
 
+	@Autowired
+	SampleBatchEntryFormValidator formValidator;
+
 	@RequestMapping(value = { "/SampleBatchEntry" }, method = RequestMethod.POST)
 	public ModelAndView showSampleBatchEntry(HttpServletRequest request,
-			@ModelAttribute("form") SampleBatchEntryForm form) throws DocumentException {
-		String forward = FWD_SUCCESS;
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
+			@ModelAttribute("form") @Valid SampleBatchEntryForm form, BindingResult result) throws DocumentException {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL, form);
+		}
 
 		String sampleXML = form.getSampleXML();
 		SampleOrderService sampleOrderService = new SampleOrderService();
 		SampleOrderItem soi = sampleOrderService.getSampleOrderItem();
 		// preserve fields that are already in form in refreshed object
-		// (SPRING doesn't preserve objects between controllers)
 		soi.setReceivedTime(form.getSampleOrderItems().getReceivedTime());
 		soi.setReceivedDateForDisplay(form.getSampleOrderItems().getReceivedDateForDisplay());
 		soi.setNewRequesterName(form.getSampleOrderItems().getNewRequesterName());
@@ -97,100 +102,8 @@ public class SampleBatchEntryController extends BaseController {
 		request.setAttribute("facilityName", facilityName);
 		form.setPatientSearch(new PatientSearch());
 
-		forward = form.getMethod();
-		return findForward(forward, form);
+		return findForward(form.getMethod(), form);
 	}
-
-	/*
-	 * private BaseErrors validate(HttpServletRequest request) { ActionMessages
-	 * errors = new ActionMessages(); DateValidationProvider dateValidationProvider
-	 * = new DateValidationProvider(); String curDateValid = dateValidationProvider
-	 * .validateDate(dateValidationProvider.getDate(request.getParameter(
-	 * "currentDate")), "past"); String recDateValid =
-	 * dateValidationProvider.validateDate(
-	 * dateValidationProvider.getDate(request.getParameter(
-	 * "sampleOrderItems.receivedDateForDisplay")), "past");
-	 *
-	 * // validate date and times if
-	 * (!(curDateValid.equals(IActionConstants.VALID))) { ActionError error = new
-	 * ActionError("batchentry.error.curdate.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); } if
-	 * (!GenericValidator.is24HourTime(request.getParameter("currentTime"))) {
-	 * ActionError error = new ActionError("batchentry.error.curtime.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); } if
-	 * (!(recDateValid.equals(IActionConstants.VALID))) { ActionError error = new
-	 * ActionError("batchentry.error.recdate.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); } if
-	 * (!GenericValidator.is24HourTime(request.getParameter(
-	 * "sampleOrderItems.receivedTime"))) { ActionError error = new
-	 * ActionError("batchentry.error.rectime.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); }
-	 *
-	 * // validate check boxes if
-	 * (!GenericValidator.isBool(request.getParameter("facilityIDCheck")) &&
-	 * !StringUtil.isNullorNill(request.getParameter("facilityIDCheck"))) {
-	 * ActionError error = new
-	 * ActionError("batchentry.error.facilitycheck.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); } if
-	 * (!GenericValidator.isBool(request.getParameter("patientInfoCheck")) &&
-	 * !StringUtil.isNullorNill(request.getParameter("patientInfoCheck"))) {
-	 * ActionError error = new ActionError("batchentry.error.patientcheck.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); }
-	 *
-	 * // validate ID if
-	 * (!GenericValidator.isInt(request.getParameter("facilityID")) &&
-	 * !StringUtil.isNullorNill(request.getParameter("facilityID"))) { ActionError
-	 * error = new ActionError("batchentry.error.facilityid.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); }
-	 *
-	 * // TO DO: (Caleb) validate sampleOrderItems.newRequesterName
-	 *
-	 * // validate sampleXML validateSampleXML(errors,
-	 * request.getParameter("sampleXML"));
-	 *
-	 * return errors; }
-	 */
-
-	/*
-	 * @SuppressWarnings("rawtypes") private void validateSampleXML(ActionMessages
-	 * errors, String sampleXML) { DateValidationProvider dateValidationProvider =
-	 * new DateValidationProvider(); try { Document sampleDom =
-	 * DocumentHelper.parseText(sampleXML); for (Iterator i =
-	 * sampleDom.getRootElement().elementIterator("sample"); i.hasNext();) { Element
-	 * sampleItem = (Element) i.next();
-	 *
-	 * // validate test ids String[] testIDs =
-	 * sampleItem.attributeValue("tests").split(","); for (int j = 0; j <
-	 * testIDs.length; ++j) { if (!GenericValidator.isInt(testIDs[j]) &&
-	 * !GenericValidator.isBlankOrNull(testIDs[j])) { ActionError error = new
-	 * ActionError("batchentry.error.sampleXML.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); return; } } // validate
-	 * panel ids String[] panelIDs = sampleItem.attributeValue("panels").split(",");
-	 * for (int j = 0; j < panelIDs.length; ++j) { if
-	 * (!GenericValidator.isInt(panelIDs[j]) &&
-	 * !GenericValidator.isBlankOrNull(panelIDs[j])) { ActionError error = new
-	 * ActionError("batchentry.error.sampleXML.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); return; } } // validate
-	 * date String collectionDate = sampleItem.attributeValue("date").trim(); if
-	 * (!GenericValidator.isBlankOrNull(collectionDate)) { String colDateValid =
-	 * dateValidationProvider
-	 * .validateDate(dateValidationProvider.getDate(collectionDate), "past"); if
-	 * (!(colDateValid.equals(IActionConstants.VALID))) { ActionError error = new
-	 * ActionError("batchentry.error.sampleXML.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); return; } } // validate
-	 * time String collectionTime = sampleItem.attributeValue("time").trim(); if
-	 * (!GenericValidator.isBlankOrNull(collectionTime) &&
-	 * !GenericValidator.is24HourTime(collectionTime)) { ActionError error = new
-	 * ActionError("batchentry.error.sampleXML.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); return; } // validate
-	 * sample id String sampleId = sampleItem.attributeValue("sampleID"); if
-	 * (!GenericValidator.isInt(sampleId)) { ActionError error = new
-	 * ActionError("batchentry.error.sampleXML.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); return; } } } catch
-	 * (DocumentException e) { ActionError error = new
-	 * ActionError("batchentry.error.sampleXML.invalid");
-	 * errors.add(ActionMessages.GLOBAL_MESSAGE, error); } }
-	 */
 
 	@Override
 	protected String findLocalForward(String forward) {
@@ -199,9 +112,9 @@ public class SampleBatchEntryController extends BaseController {
 		} else if ("Pre-Printed".equals(forward)) {
 			return "sampleBatchEntryPrePrintedDefinition";
 		} else if (FWD_FAIL.equals(forward)) {
-			return "/SampleBatchEntrySetup.do";
+			return "sampleBatchEntrySetupDefinition";
 		} else {
-			return "PageNotFound";
+			return "redirect:/SampleBatchEntrySetup.do";
 		}
 	}
 

@@ -3,22 +3,25 @@ package spring.mine.samplebatchentry.controller;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.jfree.util.Log;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
+import spring.mine.internationalization.MessageUtil;
 import spring.mine.sample.controller.BaseSampleEntryController;
 import spring.mine.samplebatchentry.form.SampleBatchEntryForm;
+import spring.mine.samplebatchentry.validator.SampleBatchEntryFormValidator;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dictionary.ObservationHistoryList;
 import us.mn.state.health.lims.organization.util.OrganizationTypeList;
 import us.mn.state.health.lims.patient.valueholder.ObservationData;
@@ -27,20 +30,20 @@ import us.mn.state.health.lims.sample.form.ProjectData;
 @Controller
 public class SampleBatchEntryByProjectController extends BaseSampleEntryController {
 
+	@Autowired
+	SampleBatchEntryFormValidator formValidator;
+
 	private static final String ON_DEMAND = "ondemand";
 	private static final String PRE_PRINTED = "preprinted";
 
 	@RequestMapping(value = "/SampleBatchEntryByProject", method = RequestMethod.POST)
 	public ModelAndView showSampleBatchEntryByProject(HttpServletRequest request,
-			@ModelAttribute("form") SampleBatchEntryForm form) {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new SampleBatchEntryForm();
+			@ModelAttribute("form") @Valid SampleBatchEntryForm form, BindingResult result) {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL, form);
 		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
-		
-
 		String study = request.getParameter("study");
 		try {
 			if ("viralLoad".equals(study)) {
@@ -49,31 +52,30 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 				setupEID(form, request);
 			}
 			setupCommonFields(form, request);
-			forward = setForward(form);
+			return findForward(setForward(form), form);
 		} catch (Exception e) {
 			Log.error(e.toString());
 			e.printStackTrace();
-			forward = FWD_FAIL;
+			return findForward(FWD_FAIL, form);
 		}
 
-		return findForward(forward, form);
 	}
 
 	private void setupEID(SampleBatchEntryForm form, HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		ProjectData projectData = form.getProjectDataEID();
-		PropertyUtils.setProperty(form, "programCode", StringUtil.getMessageForKey("sample.entry.project.LDBS"));
+		PropertyUtils.setProperty(form, "programCode", MessageUtil.getMessage("sample.entry.project.LDBS"));
 		String sampleTypes = "";
 		String tests = "";
 		if (projectData.getDryTubeTaken()) {
-			sampleTypes = sampleTypes + StringUtil.getMessageForKey("sample.entry.project.ARV.dryTubeTaken");
+			sampleTypes = sampleTypes + MessageUtil.getMessage("sample.entry.project.ARV.dryTubeTaken");
 		}
 		if (projectData.getDbsTaken()) {
-			sampleTypes = sampleTypes + " " + StringUtil.getMessageForKey("sample.entry.project.title.dryBloodSpot");
+			sampleTypes = sampleTypes + " " + MessageUtil.getMessage("sample.entry.project.title.dryBloodSpot");
 		}
 
 		if (projectData.getDnaPCR()) {
-			tests = tests + StringUtil.getMessageForKey("sample.entry.project.dnaPCR");
+			tests = tests + MessageUtil.getMessage("sample.entry.project.dnaPCR");
 		}
 		request.setAttribute("sampleType", sampleTypes);
 		request.setAttribute("testNames", tests);
@@ -86,18 +88,18 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 	private void setupViralLoad(SampleBatchEntryForm form, HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		ProjectData projectData = form.getProjectDataVL();
-		PropertyUtils.setProperty(form, "programCode", StringUtil.getMessageForKey("sample.entry.project.LART"));
+		PropertyUtils.setProperty(form, "programCode", MessageUtil.getMessage("sample.entry.project.LART"));
 		String sampleTypes = "";
 		String tests = "";
 		if (projectData.getDryTubeTaken()) {
-			sampleTypes = sampleTypes + StringUtil.getMessageForKey("sample.entry.project.ARV.dryTubeTaken");
+			sampleTypes = sampleTypes + MessageUtil.getMessage("sample.entry.project.ARV.dryTubeTaken");
 		}
 		if (projectData.getEdtaTubeTaken()) {
-			sampleTypes = sampleTypes + " " + StringUtil.getMessageForKey("sample.entry.project.ARV.edtaTubeTaken");
+			sampleTypes = sampleTypes + " " + MessageUtil.getMessage("sample.entry.project.ARV.edtaTubeTaken");
 		}
 
 		if (projectData.getViralLoadTest()) {
-			tests = tests + StringUtil.getMessageForKey("sample.entry.project.ARV.viralLoadTest");
+			tests = tests + MessageUtil.getMessage("sample.entry.project.ARV.viralLoadTest");
 		}
 		request.setAttribute("sampleType", sampleTypes);
 		request.setAttribute("testNames", tests);
@@ -111,9 +113,6 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 			throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		PropertyUtils.setProperty(form, "currentDate", request.getParameter("currentDate"));
 		PropertyUtils.setProperty(form, "currentTime", request.getParameter("currentTime"));
-		PropertyUtils.setProperty(form, "receivedDateForDisplay",
-				request.getParameter("sampleOrderItem.receivedDateForDisplay"));
-		PropertyUtils.setProperty(form, "receivedTimeForDisplay", request.getParameter("sampleOrderItem.receivedTime"));
 		addOrganizationLists(form);
 	}
 
@@ -163,6 +162,7 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 		}
 	}
 
+	@Override
 	protected String findLocalForward(String forward) {
 		if (ON_DEMAND.equals(forward)) {
 			return "sampleStudyBatchEntryOnDemandDefinition";

@@ -20,9 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.valueholder.History;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
 import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;
@@ -57,11 +57,11 @@ public class PatientHistoryService extends HistoryService {
 		historyList = auditTrailDAO.getHistoryByRefIdAndRefTableId(patient.getId(),PATIENT_TABLE_ID);
 
 		attributeToIdentifierMap = new HashMap<String, String>();
-		attributeToIdentifierMap.put(DOB_ATTRIBUTE, StringUtil.getMessageForKey("patient.birthDate"));
-		attributeToIdentifierMap.put(GENDER_ATTRIBUTE, StringUtil.getMessageForKey("patient.gender"));
-		attributeToIdentifierMap.put(NATIONAL_ID_ATTRIBUTE, StringUtil.getMessageForKey("sample.entry.project.subjectNumber"));
-		attributeToIdentifierMap.put(FIRST_NAME_ATTRIBUTE, StringUtil.getMessageForKey("person.firstName"));
-		attributeToIdentifierMap.put(LAST_NAME_ATTRIBUTE, StringUtil.getMessageForKey("person.lastName"));
+		attributeToIdentifierMap.put(DOB_ATTRIBUTE, MessageUtil.getMessage("patient.birthDate"));
+		attributeToIdentifierMap.put(GENDER_ATTRIBUTE, MessageUtil.getMessage("patient.gender"));
+		attributeToIdentifierMap.put(NATIONAL_ID_ATTRIBUTE, MessageUtil.getMessage("sample.entry.project.subjectNumber"));
+		attributeToIdentifierMap.put(FIRST_NAME_ATTRIBUTE, MessageUtil.getMessage("person.firstName"));
+		attributeToIdentifierMap.put(LAST_NAME_ATTRIBUTE, MessageUtil.getMessage("person.lastName"));
 
 		newValueMap = new HashMap<String, String>();
 		newValueMap.put(GENDER_ATTRIBUTE, patient.getGender());
@@ -107,7 +107,7 @@ public class PatientHistoryService extends HistoryService {
 
 	@Override
 	protected String getObjectName() {
-		return StringUtil.getMessageForKey("sample.entry.patient");
+		return MessageUtil.getMessage("sample.entry.patient");
 	}
 
 }

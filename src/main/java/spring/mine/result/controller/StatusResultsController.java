@@ -13,15 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.result.form.StatusResultsForm;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
@@ -66,15 +62,9 @@ public class StatusResultsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/StatusResults", method = RequestMethod.GET)
-	public ModelAndView showStatusResults(HttpServletRequest request, @ModelAttribute("form") StatusResultsForm form)
+	public ModelAndView showStatusResults(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new StatusResultsForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
-		
+		StatusResultsForm form = new StatusResultsForm();
 
 		resultsUtility = new ResultsLoadUtility(getSysUserId(request));
 
@@ -111,7 +101,8 @@ public class StatusResultsController extends BaseController {
 		} else {
 			paging.page(request, form, newPage);
 		}
-		return findForward(forward, form);
+		addFlashMsgsToRequest(request);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	private List<TestResultItem> setSearchResults(StatusResultsForm form)

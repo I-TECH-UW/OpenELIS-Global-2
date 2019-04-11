@@ -4,7 +4,7 @@
 			us.mn.state.health.lims.common.provider.validation.PasswordValidationFactory,
 		    us.mn.state.health.lims.common.util.Versioning,
 			us.mn.state.health.lims.role.action.bean.DisplayRole,
-			us.mn.state.health.lims.common.util.StringUtil" %>
+			spring.mine.internationalization.MessageUtil" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -85,7 +85,7 @@ function handlePassword2( password2 ){
  	if( !password1.value.blank() && !password2.value.blank() && password1.value != password2.value ){
  		password2.style.borderColor = "red";
 		password1.style.borderColor = "red";
- 		alert( '<%= StringUtil.getMessageForKey("errors.password.match")%>');
+ 		alert( '<%= MessageUtil.getMessage("errors.password.match")%>');
  	}else{
  		password2.style.borderColor = "";
 		password1.style.borderColor = "";
@@ -107,7 +107,7 @@ function /*void*/ selectChildren(selection, childList ){
 
 function /*void*/ makeDirty(){
 	dirty=true;
-	if( typeof(showSuccessMessage) != 'undefinded' ){
+	if( typeof(showSuccessMessage) === 'function' ){
 		showSuccessMessage(false); //refers to last save
 	}
 
@@ -150,7 +150,7 @@ function mySaveAction() {
 							<spring:message code="login.password"/> <span class="requiredlabel">*</span>
 						</td>
 						<td>
-							<form:password path="userPassword1" 
+							<form:password path="userPassword" 
 										   id="password1" 
 										   cssClass='required'
 										   showPassword="true"
@@ -162,7 +162,7 @@ function mySaveAction() {
 							<spring:message code="login.repeat.password" /> <span class="requiredlabel">*</span>
 						</td>
 						<td>
-							<form:password path="userPassword2"  
+							<form:password path="confirmPassword"  
 							               id="password2" 
 							               cssClass='required'
 							               showPassword="true"

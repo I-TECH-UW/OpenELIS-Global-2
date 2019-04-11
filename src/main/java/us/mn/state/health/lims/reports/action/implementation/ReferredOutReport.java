@@ -27,13 +27,13 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.services.AnalysisService;
 import us.mn.state.health.lims.common.services.SampleService;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.organization.dao.OrganizationDAO;
 import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
 import us.mn.state.health.lims.organization.valueholder.Organization;
@@ -75,7 +75,7 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
             PropertyUtils.setProperty(form, "locationCodeList", list);
             PropertyUtils.setProperty(form, "useLowerDateRange", true);
             PropertyUtils.setProperty(form, "useUpperDateRange", true);
-            PropertyUtils.setProperty(form, "instructions", StringUtil.getMessageForKey("instructions.report.referral"));
+            PropertyUtils.setProperty(form, "instructions", MessageUtil.getMessage("instructions.report.referral"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -139,13 +139,13 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
 
     protected void createReportParameters() {
         super.createReportParameters();
-        reportParameters.put("reportPeriod", StringUtil.getMessageForKey("reports.label.referral.title")
+        reportParameters.put("reportPeriod", MessageUtil.getMessage("reports.label.referral.title")
              + " " + lowDateStr + " - " + highDateStr);
-        reportParameters.put("reportTitle", reportLocation == null ? "" : StringUtil.getMessageForKey("report.test.status.referredOut") + ": " + reportLocation.getOrganizationName());
+        reportParameters.put("reportTitle", reportLocation == null ? "" : MessageUtil.getMessage("report.test.status.referredOut") + ": " + reportLocation.getOrganizationName());
         reportParameters.put("referralSiteName", reportLocation == null ? "" : reportLocation.getOrganizationName());
     	reportParameters.put("directorName", ConfigurationProperties.getInstance().getPropertyValue(Property.labDirectorName));
-		reportParameters.put("labName1", StringUtil.getContextualMessageForKey("report.labName.one"));
-		reportParameters.put("labName2", StringUtil.getContextualMessageForKey("report.labName.two"));
+		reportParameters.put("labName1", MessageUtil.getContextualMessage("report.labName.one"));
+		reportParameters.put("labName2", MessageUtil.getContextualMessage("report.labName.two"));
     }
 
     @Override
@@ -218,7 +218,7 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
      */
     @Override
     protected String getReportNameForParameterPage() {
-        return StringUtil.getMessageForKey("openreports.referredOutHaitiReport");
+        return MessageUtil.getMessage("openreports.referredOutHaitiReport");
     }
 
     public JRDataSource getReportDataSource() throws IllegalStateException {

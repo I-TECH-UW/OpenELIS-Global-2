@@ -5,12 +5,15 @@ import java.sql.Date;
 import java.util.Calendar;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,14 +44,13 @@ public class ChangePasswordLoginController extends BaseController {
 
 	@RequestMapping(value = "/ChangePasswordLogin", method = RequestMethod.GET)
 	public ModelAndView showChangePasswordLogin(HttpServletRequest request) {
-		String forward = FWD_SUCCESS;
 		ChangePasswordLoginForm form = new ChangePasswordLoginForm();
 		form.setFormAction("ChangePasswordLogin.do");
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	@RequestMapping(value = "/ChangePasswordLogin", method = RequestMethod.POST)
-	public ModelAndView showUpdateLoginChangePassword(@ModelAttribute("form") ChangePasswordLoginForm form,
+	public ModelAndView showUpdateLoginChangePassword(@ModelAttribute("form") @Valid ChangePasswordLoginForm form,
 			BindingResult result, RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		formValidator.validate(form, result);
@@ -56,8 +58,6 @@ public class ChangePasswordLoginController extends BaseController {
 			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);
 		}
-
-		String forward = FWD_SUCCESS_INSERT;
 
 		Login login = new Login();
 		Transaction tx = HibernateUtil.getSession().beginTransaction();
@@ -78,14 +78,15 @@ public class ChangePasswordLoginController extends BaseController {
 				loginInfo.setPasswordExpiredDate(new Date(passwordExpiredDate.getTimeInMillis()));
 				loginInfo.setSysUserId(String.valueOf(loginInfo.getSystemUserId())); // there is no loggedin user when
 
-				// TODO change result so it is bound to loginInfo instead of form
-				loginValidator.unauthenticatedPasswordUpdateValidate(loginInfo, result);
+				Errors loginResult = new BeanPropertyBindingResult(loginInfo, "loginInfo");
+				loginValidator.unauthenticatedPasswordUpdateValidate(loginInfo, loginResult);
+
+				if (loginResult.hasErrors()) {
+					saveErrors(loginResult);
+					return findForward(FWD_FAIL_INSERT, form);
+				}
 			}
 
-			if (result.hasErrors()) {
-				saveErrors(result);
-				return findForward(FWD_FAIL_INSERT, form);
-			}
 			loginDAO.updatePassword(loginInfo);
 			tx.commit();
 
@@ -101,19 +102,16 @@ public class ChangePasswordLoginController extends BaseController {
 			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);
 		}
-		if (FWD_SUCCESS_INSERT.equals(forward)) {
-			redirectAttributes.addFlashAttribute(Constants.SUCCESS_MSG,
-					MessageUtil.getMessage("login.success.changePass.message"));
-		}
-		return findForward(forward, form);
+
+		redirectAttributes.addFlashAttribute(Constants.SUCCESS_MSG,
+				MessageUtil.getMessage("login.success.changePass.message"));
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	@Override
 	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
 			return "loginChangePasswordDefinition";
-		} else if (FWD_FAIL.equals(forward)) {
-			return "redirect:/LoginPage.do";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/LoginPage.do";
 		} else if (FWD_FAIL_INSERT.equals(forward)) {

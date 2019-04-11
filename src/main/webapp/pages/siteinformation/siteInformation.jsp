@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
          import="us.mn.state.health.lims.common.action.IActionConstants,
-                 us.mn.state.health.lims.common.util.StringUtil" %>
+                 spring.mine.internationalization.MessageUtil" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -36,7 +36,7 @@
         if (uploader.value.search("\.jpg") == -1 &&
                 uploader.value.search("\.png") == -1 &&
                 uploader.value.search("\.gif") == -1) {
-            alert("<%= StringUtil.getMessageForKey("siteInformation.logo.warning") %>");
+            alert("<%= MessageUtil.getMessage("siteInformation.logo.warning") %>");
             $jq('input[name="save"]').attr('disabled', '');
         } else {
             $jq('input[name="save"]').removeAttr('disabled');

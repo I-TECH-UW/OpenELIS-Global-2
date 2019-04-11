@@ -27,6 +27,7 @@ import org.apache.commons.validator.GenericValidator;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -36,7 +37,6 @@ import us.mn.state.health.lims.common.services.ResultService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.referral.valueholder.Referral;
 import us.mn.state.health.lims.referral.valueholder.ReferralResult;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ClinicalPatientData;
@@ -165,7 +165,7 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
 
 				if(GenericValidator.isBlankOrNull(reportReferralResultValue)){
 					sampleCompleteMap.put(currentSampleService.getAccessionNumber(), Boolean.FALSE);
-					data.setResult(StringUtil.getMessageForKey("report.test.status.inProgress"));
+					data.setResult(MessageUtil.getMessage("report.test.status.inProgress"));
 				}else{
 					data.setResult( reportReferralResultValue );
 				}
@@ -201,7 +201,7 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
 	protected void postSampleBuild(){
 		if(reportItems.isEmpty()){
 			ClinicalPatientData reportItem = buildClinicalPatientData( false );
-			reportItem.setTestSection(StringUtil.getMessageForKey("report.no.results"));
+			reportItem.setTestSection(MessageUtil.getMessage("report.no.results"));
 			clinicalReportItems.add(reportItem);
 		}else{
 			buildReport();
@@ -285,7 +285,7 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
 			}
 
 			reportItem.setAccessionNumber(reportItem.getAccessionNumber().split("-")[0]);
-			reportItem.setCompleteFlag(StringUtil.getMessageForKey(sampleCompleteMap.get(reportItem.getAccessionNumber()) ? "report.status.complete" : "report.status.partial"));
+			reportItem.setCompleteFlag(MessageUtil.getMessage(sampleCompleteMap.get(reportItem.getAccessionNumber()) ? "report.status.complete" : "report.status.partial"));
             if( reportItem.isCorrectedResult()){
                 //The report is French only
                 if( reportItem.getNote() != null && reportItem.getNote().length() > 0 ){
@@ -301,7 +301,7 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
 
 	@Override
 	protected String getReportNameForParameterPage(){
-		return StringUtil.getMessageForKey("openreports.patientTestStatus");
+		return MessageUtil.getMessage("openreports.patientTestStatus");
 	}
 
 	public JRDataSource getReportDataSource() throws IllegalStateException{

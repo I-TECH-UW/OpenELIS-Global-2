@@ -32,6 +32,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -62,18 +63,18 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport implement
 	static {
 		MONTH_LIST = new ArrayList<IdValuePair>();
 
-		MONTH_LIST.add(new IdValuePair("0", StringUtil.getMessageForKey("month.january.abbrev")));
-		MONTH_LIST.add(new IdValuePair("1", StringUtil.getMessageForKey("month.february.abbrev")));
-		MONTH_LIST.add(new IdValuePair("2", StringUtil.getMessageForKey("month.march.abbrev")));
-		MONTH_LIST.add(new IdValuePair("3", StringUtil.getMessageForKey("month.april.abbrev")));
-		MONTH_LIST.add(new IdValuePair("4", StringUtil.getMessageForKey("month.may.abbrev")));
-		MONTH_LIST.add(new IdValuePair("5", StringUtil.getMessageForKey("month.june.abbrev")));
-		MONTH_LIST.add(new IdValuePair("6", StringUtil.getMessageForKey("month.july.abbrev")));
-		MONTH_LIST.add(new IdValuePair("7", StringUtil.getMessageForKey("month.august.abbrev")));
-		MONTH_LIST.add(new IdValuePair("8", StringUtil.getMessageForKey("month.september.abbrev")));
-		MONTH_LIST.add(new IdValuePair("9", StringUtil.getMessageForKey("month.october.abbrev")));
-		MONTH_LIST.add(new IdValuePair("10", StringUtil.getMessageForKey("month.november.abbrev")));
-		MONTH_LIST.add(new IdValuePair("11", StringUtil.getMessageForKey("month.december.abbrev")));
+		MONTH_LIST.add(new IdValuePair("0", MessageUtil.getMessage("month.january.abbrev")));
+		MONTH_LIST.add(new IdValuePair("1", MessageUtil.getMessage("month.february.abbrev")));
+		MONTH_LIST.add(new IdValuePair("2", MessageUtil.getMessage("month.march.abbrev")));
+		MONTH_LIST.add(new IdValuePair("3", MessageUtil.getMessage("month.april.abbrev")));
+		MONTH_LIST.add(new IdValuePair("4", MessageUtil.getMessage("month.may.abbrev")));
+		MONTH_LIST.add(new IdValuePair("5", MessageUtil.getMessage("month.june.abbrev")));
+		MONTH_LIST.add(new IdValuePair("6", MessageUtil.getMessage("month.july.abbrev")));
+		MONTH_LIST.add(new IdValuePair("7", MessageUtil.getMessage("month.august.abbrev")));
+		MONTH_LIST.add(new IdValuePair("8", MessageUtil.getMessage("month.september.abbrev")));
+		MONTH_LIST.add(new IdValuePair("9", MessageUtil.getMessage("month.october.abbrev")));
+		MONTH_LIST.add(new IdValuePair("10", MessageUtil.getMessage("month.november.abbrev")));
+		MONTH_LIST.add(new IdValuePair("11", MessageUtil.getMessage("month.december.abbrev")));
 	}
 	
 	protected String reportFileName(){
@@ -84,8 +85,8 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport implement
 	public void setRequestParameters(BaseForm form) {
 		try {
 			PropertyUtils.setProperty(form, "usePredefinedDateRanges", Boolean.TRUE);
-            new ReportSpecificationList( getSiteList(), StringUtil.getMessageForKey( "report.select.site" )).setRequestParameters( form );
-			PropertyUtils.setProperty(form, "instructions", StringUtil.getMessageForKey("report.instruction.inventory.test.count"));
+            new ReportSpecificationList( getSiteList(), MessageUtil.getMessage( "report.select.site" )).setRequestParameters( form );
+			PropertyUtils.setProperty(form, "instructions", MessageUtil.getMessage("report.instruction.inventory.test.count"));
 			PropertyUtils.setProperty(form, "monthList", MONTH_LIST);
 			PropertyUtils.setProperty(form, "yearList", getYearList());
 		} catch (Exception e) {
@@ -299,15 +300,15 @@ public class IndicatorHaitiSiteTestCountReport extends CSVExportReport implement
 	private String getColumnNamesLine() {
 		StringBuilder line = new StringBuilder();
 
-		line.append(StringUtil.getMessageForKey("report.column.test"));
+		line.append(MessageUtil.getMessage("report.column.test"));
 		line.append(",");
-		line.append(StringUtil.getMessageForKey("report.column.site"));
+		line.append(MessageUtil.getMessage("report.column.site"));
 		line.append(",");
 		for (IdValuePair month : MONTH_LIST) {
 			line.append(month.getValue());
 			line.append(",");
 		}
-		line.append(StringUtil.getMessageForKey("report.column.total"));
+		line.append(MessageUtil.getMessage("report.column.total"));
 		line.append(EOL);
 		return line.toString();
 	}

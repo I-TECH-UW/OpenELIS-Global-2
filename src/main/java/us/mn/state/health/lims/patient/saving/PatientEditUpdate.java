@@ -21,9 +21,9 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import spring.mine.internationalization.MessageUtil;
 import spring.mine.patient.form.PatientEntryByProjectForm;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.util.StringUtil;
 
 /**
  * @author Paul A. Hill (pahill@uw.edu)
@@ -61,6 +61,6 @@ public class PatientEditUpdate extends PatientEntry {
 
 	@Override
 	protected String getActionLabel() {
-		return StringUtil.getMessageForKey("banner.menu.editPatient.ReadWrite");
+		return MessageUtil.getMessage("banner.menu.editPatient.ReadWrite");
 	}
 }

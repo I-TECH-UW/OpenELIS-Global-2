@@ -3,6 +3,8 @@ package spring.mine.referral.form;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.referral.action.beanitems.ReferralItem;
@@ -10,10 +12,14 @@ import us.mn.state.health.lims.referral.action.beanitems.ReferralItem;
 public class ReferredOutTestsForm extends BaseForm {
 	private Timestamp lastupdated;
 
+	// TODO
+	@Valid
 	private List<ReferralItem> referralItems;
 
+	// for display
 	private List<IdValuePair> referralOrganizations;
 
+	// for display
 	private List<IdValuePair> referralReasons;
 
 	public ReferredOutTestsForm() {

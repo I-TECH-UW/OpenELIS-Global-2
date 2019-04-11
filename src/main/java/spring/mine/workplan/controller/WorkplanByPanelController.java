@@ -11,14 +11,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
+import spring.mine.internationalization.MessageUtil;
 import spring.mine.workplan.form.WorkplanForm;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
@@ -33,7 +30,6 @@ import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.panel.dao.PanelDAO;
 import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
 import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
@@ -53,15 +49,9 @@ public class WorkplanByPanelController extends BaseWorkplanController {
 	private final PanelItemDAO panelItemDAO = new PanelItemDAOImpl();
 
 	@RequestMapping(value = "/WorkPlanByPanel", method = RequestMethod.GET)
-	public ModelAndView showWorkPlanByTest(HttpServletRequest request, @ModelAttribute("form") WorkplanForm form)
+	public ModelAndView showWorkPlanByTest(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new WorkplanForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
-		
+		WorkplanForm form = new WorkplanForm();
 
 		request.getSession().setAttribute(SAVE_DISABLED, "true");
 
@@ -87,10 +77,10 @@ public class WorkplanByPanelController extends BaseWorkplanController {
 
 		PropertyUtils.setProperty(form, "workplanType", "panel");
 		PropertyUtils.setProperty(form, "searchTypes", DisplayListService.getList(DisplayListService.ListType.PANELS));
-		PropertyUtils.setProperty(form, "searchLabel", StringUtil.getMessageForKey("workplan.panel.types"));
+		PropertyUtils.setProperty(form, "searchLabel", MessageUtil.getMessage("workplan.panel.types"));
 		PropertyUtils.setProperty(form, "searchAction", "WorkPlanByPanel.do");
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	@SuppressWarnings("unchecked")

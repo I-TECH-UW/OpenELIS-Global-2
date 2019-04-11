@@ -9,15 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.result.form.AccessionResultsForm;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -60,16 +58,10 @@ public class AccessionResultsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/AccessionResults", method = RequestMethod.GET)
-	public ModelAndView showAccessionResults(HttpServletRequest request,
-			@ModelAttribute("form") AccessionResultsForm form)
+	public ModelAndView showAccessionResults(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new AccessionResultsForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
-		
+		AccessionResultsForm form = new AccessionResultsForm();
 
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 		PropertyUtils.setProperty(form, "referralReasons",
@@ -85,6 +77,7 @@ public class AccessionResultsController extends BaseController {
 			PropertyUtils.setProperty(form, "displayTestKit", false);
 
 			if (!GenericValidator.isBlankOrNull(accessionNumber)) {
+				Errors errors = new BeanPropertyBindingResult(form, "form");
 				ResultsLoadUtility resultsUtility = new ResultsLoadUtility(getSysUserId(request));
 				// This is for Haiti_LNSP if it gets more complicated use the status set stuff
 				resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
@@ -189,7 +182,8 @@ public class AccessionResultsController extends BaseController {
 		if (sample == null) {
 			// ActionError error = new ActionError("sample.edit.sample.notFound",
 			// accessionNumber, null, null);
-			errors.reject("sample.edit.sample.notFound");
+			errors.reject("sample.edit.sample.notFound", new String[] { accessionNumber },
+					"sample.edit.sample.notFound");
 		}
 
 		return errors;

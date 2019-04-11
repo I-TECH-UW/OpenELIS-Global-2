@@ -3,44 +3,37 @@ package spring.mine.common.management.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.form.BaseForm;
 import spring.mine.common.management.form.SampleTypeManagementForm;
-import spring.mine.common.validator.BaseErrors;
 
 @Controller
 public class SampleTypeManagementController extends BaseController {
-  @RequestMapping(
-      value = "/SampleTypeManagement",
-      method = { RequestMethod.GET, RequestMethod.POST }
-  )
-  public ModelAndView showSampleTypeManagement(HttpServletRequest request) {
-    String forward = FWD_SUCCESS;
-    SampleTypeManagementForm form = new SampleTypeManagementForm();
-        form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
+	@RequestMapping(value = "/SampleTypeManagement", method = RequestMethod.GET)
+	public ModelAndView showSampleTypeManagement(HttpServletRequest request) {
+		SampleTypeManagementForm form = new SampleTypeManagementForm();
+		return findForward(FWD_SUCCESS, form);
+	}
 
-    return findForward(forward, form);}
+	@Override
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "sampleTypeManagementDefinition";
+		} else {
+			return "PageNotFound";
+		}
+	}
 
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "sampleTypeManagementDefinition";
-    } else {
-      return "PageNotFound";
-    }
-  }
+	@Override
+	protected String getPageTitleKey() {
+		return null;
+	}
 
-  protected String getPageTitleKey() {
-    return null;
-  }
-
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+	@Override
+	protected String getPageSubtitleKey() {
+		return null;
+	}
 }

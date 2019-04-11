@@ -4,7 +4,14 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.SafeHtml;
+import org.hibernate.validator.constraints.URL;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.organization.valueholder.OrganizationType;
@@ -14,6 +21,8 @@ public class OrganizationForm extends BaseForm {
 
 	private String organizationLocalAbbreviation = "";
 
+	@NotBlank
+	@SafeHtml
 	private String organizationName = "";
 
 	private String city = "";
@@ -22,6 +31,8 @@ public class OrganizationForm extends BaseForm {
 
 	private String mlsSentinelLabFlag = "";
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.YES_NO_REGEX)
 	private String isActive = "";
 
 	private String orgMltOrgMltId = "";
@@ -42,6 +53,7 @@ public class OrganizationForm extends BaseForm {
 
 	private Collection states;
 
+	@URL
 	private String internetAddress = "";
 
 	private String mlsLabFlag = "";

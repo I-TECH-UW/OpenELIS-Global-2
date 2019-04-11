@@ -3,93 +3,148 @@ package spring.mine.qaevent.form;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
+import spring.mine.validation.annotations.ValidDate;
+import spring.mine.validation.annotations.ValidTime;
 import us.mn.state.health.lims.common.util.IdValuePair;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.project.valueholder.Project;
 import us.mn.state.health.lims.qaevent.valueholder.retroCI.QaEventItem;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 
 public class NonConformityForm extends BaseForm {
+	@NotNull
 	private Boolean readOnly = Boolean.TRUE;
 
 	private Timestamp lastupdated;
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String sampleId = "";
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String patientId = "";
 
+	// in validator
 	private String sampleItemsTypeOfSampleIds = "";
 
+	@ValidDate(relative = DateRelation.PAST)
 	private String date = "";
 
+	@ValidTime
 	private String time = "";
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String projectId = "";
 
+	@SafeHtml
 	private String project = "";
 
+	// TODO
+	@Valid
 	private List<Project> projects;
 
+	@NotNull
 	private Boolean subjectNew = Boolean.TRUE;
 
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
 	private String subjectNo = "";
 
+	@NotNull
 	private Boolean newSTNumber = Boolean.TRUE;
 
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
 	private String STNumber = "";
 
+	@NotNull
 	private Boolean nationalIdNew = Boolean.TRUE;
 
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
 	private String nationalId = "";
 
+	// TODO
 	private String labNo = "";
 
+	@NotNull
 	private Boolean doctorNew = Boolean.TRUE;
 
+	@SafeHtml
 	private String doctor = "";
 
+	@NotNull
 	private Boolean serviceNew = Boolean.TRUE;
 
+	@SafeHtml
 	private String service = "";
 
+	@SafeHtml
 	private String newServiceName = "";
 
+	// TODO
+	@Valid
 	private List<QaEventItem> qaEvents;
 
+	@SafeHtml
 	private String section = "";
 
+	// for display
 	private List<TestSection> sections;
 
+	// for display
 	private List<IdValuePair> qaEventTypes;
 
+	// for display
 	private List<IdValuePair> typeOfSamples;
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String commentId = "";
 
+	@NotNull
 	private Boolean commentNew;
 
+	@SafeHtml
 	private String comment = "";
 
+	@SafeHtml
 	private String biologest = "";
 
+	// for display
 	private List<IdValuePair> siteList;
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String requesterSampleID = "";
 
+	@NotNull
 	private String providerNew = "";
 
+	@Pattern(regexp = ValidationHelper.NAME_REGEX)
 	private String providerLastName = "";
 
+	@Pattern(regexp = ValidationHelper.NAME_REGEX)
 	private String providerFirstName = "";
 
+	@Pattern(regexp = ValidationHelper.PHONE_REGEX)
 	private String providerWorkPhone = "";
 
+	@SafeHtml
 	private String providerStreetAddress = "";
 
+	@SafeHtml
 	private String providerCity = "";
 
+	@SafeHtml
 	private String providerCommune = "";
 
+	@SafeHtml
 	private String providerDepartment = "";
 
 	private List<IdValuePair> departments;

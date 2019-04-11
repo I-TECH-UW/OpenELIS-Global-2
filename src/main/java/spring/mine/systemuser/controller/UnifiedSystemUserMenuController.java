@@ -8,8 +8,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
-import org.apache.struts.Globals;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import spring.mine.common.controller.BaseMenuController;
 import spring.mine.common.form.MenuForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.systemuser.form.UnifiedSystemUserMenuForm;
+import spring.mine.systemuser.validator.UnifiedSystemUserMenuFormValidator;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
@@ -40,6 +42,9 @@ import us.mn.state.health.lims.userrole.valueholder.UserRole;
 @Controller
 public class UnifiedSystemUserMenuController extends BaseMenuController {
 
+	@Autowired
+	UnifiedSystemUserMenuFormValidator formValidator;
+
 	@RequestMapping(value = "/UnifiedSystemUserMenu", method = RequestMethod.GET)
 	public ModelAndView showUnifiedSystemUserMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -52,7 +57,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 			Errors errors = new BaseErrors();
 			errors.reject("error.generic");
 			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, errors);
-			return findForward(forward, form);
+			return findForward(FWD_FAIL, form);
 		} else {
 			return findForward(forward, form);
 		}
@@ -138,14 +143,13 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 
 	@RequestMapping(value = "/DeleteUnifiedSystemUser", method = RequestMethod.POST)
 	public ModelAndView showDeleteUnifiedSystemUser(HttpServletRequest request,
-			@ModelAttribute("form") UnifiedSystemUserMenuForm form) {
-		String forward = FWD_SUCCESS_DELETE;
-		if (form == null) {
-			form = new UnifiedSystemUserMenuForm();
+			@ModelAttribute("form") UnifiedSystemUserMenuForm form, BindingResult result,
+			RedirectAttributes redirectAttributes) {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_DELETE, form);
 		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
-
 		String[] selectedIDs = form.getSelectedIDs();
 		List<Login> loginUsers = new ArrayList<>();
 		List<SystemUser> systemUsers = new ArrayList<>();
@@ -210,28 +214,18 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 			tx.rollback();
 
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
-				errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
+				result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
 			} else {
-				errors.reject("errors.DeleteException", "errors.DeleteException");
+				result.reject("errors.DeleteException", "errors.DeleteException");
 			}
-			saveErrors(errors);
-			request.setAttribute(Globals.ERROR_KEY, errors);
-			forward = FWD_FAIL_DELETE;
+			saveErrors(result);
+			return findForward(FWD_FAIL_DELETE, form);
 
 		} finally {
 			HibernateUtil.closeSession();
 		}
-		if (forward.equals(FWD_FAIL_DELETE)) {
-			return findForward(forward, form);
-		}
 
-		if (TRUE.equalsIgnoreCase(request.getParameter("close"))) {
-			forward = FWD_CLOSE;
-		}
-
-		request.setAttribute("menuDefinition", "RoleMenuDefinition");
-
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_DELETE, form);
 	}
 
 	@Override

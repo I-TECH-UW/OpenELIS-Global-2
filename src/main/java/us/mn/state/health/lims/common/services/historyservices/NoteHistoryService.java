@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.valueholder.History;
@@ -28,7 +29,6 @@ import us.mn.state.health.lims.common.services.AnalysisService;
 import us.mn.state.health.lims.common.services.NoteService;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.SampleService;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.note.dao.NoteDAO;
 import us.mn.state.health.lims.note.daoimpl.NoteDAOImpl;
 import us.mn.state.health.lims.note.valueholder.Note;
@@ -87,7 +87,7 @@ public class NoteHistoryService extends HistoryService {
 
         for(Note note : notes){
             searchHistory.setReferenceId(note.getId());
-            noteIdToIndicatorMap.put(note.getId(), StringUtil.getMessageForKey( "auditTrail.order" ) );
+            noteIdToIndicatorMap.put(note.getId(), MessageUtil.getMessage( "auditTrail.order" ) );
             historyList.addAll(auditTrailDAO.getHistoryByRefIdAndRefTableId(searchHistory));
         }
     }
@@ -130,6 +130,6 @@ public class NoteHistoryService extends HistoryService {
 
 	@Override
 	protected String getObjectName() {
-		return StringUtil.getMessageForKey("note.note");
+		return MessageUtil.getMessage("note.note");
 	}
 }

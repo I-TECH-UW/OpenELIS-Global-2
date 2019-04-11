@@ -37,11 +37,11 @@ import ca.uhn.hl7v2.model.v251.message.OML_O21;
 import ca.uhn.hl7v2.model.v251.segment.OBX;
 import ca.uhn.hl7v2.model.v251.segment.ORC;
 import ca.uhn.hl7v2.parser.Parser;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.services.PatientService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.ExternalOrderStatus;
 import us.mn.state.health.lims.common.services.TypeOfSampleService;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.XMLUtil;
 import us.mn.state.health.lims.dataexchange.order.daoimpl.ElectronicOrderDAOImpl;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
@@ -86,13 +86,13 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 
 		if(!result.equals(VALID)){
 			if(result.equals(NOT_FOUND)){
-				result = StringUtil.getMessageForKey("electronic.order.message.orderNotFound");
+				result = MessageUtil.getMessage("electronic.order.message.orderNotFound");
 			}else if(result.equals(CANCELED)){
-				result = StringUtil.getMessageForKey("electronic.order.message.canceled");
+				result = MessageUtil.getMessage("electronic.order.message.canceled");
 			}else if(result.equals(REALIZED)){
-				result = StringUtil.getMessageForKey("electronic.order.message.realized");
+				result = MessageUtil.getMessage("electronic.order.message.realized");
 			}
-			result += "\n\n" + StringUtil.getMessageForKey("electronic.order.message.suggestion");
+			result += "\n\n" + MessageUtil.getMessage("electronic.order.message.suggestion");
 			xml.append("empty");
 		}
 
@@ -416,7 +416,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 	private void addAlerts(StringBuilder xml, String patientGuid){
 		PatientService patientService = new PatientService( patientGuid);
 		if( GenericValidator.isBlankOrNull(patientService.getEnteredDOB()) || GenericValidator.isBlankOrNull(patientService.getGender())){
-			XMLUtil.appendKeyValue("user_alert", StringUtil.getMessageForKey("electroinic.order.warning.missingPatientInfo"), xml);
+			XMLUtil.appendKeyValue("user_alert", MessageUtil.getMessage("electroinic.order.warning.missingPatientInfo"), xml);
 		}
 	}
 	

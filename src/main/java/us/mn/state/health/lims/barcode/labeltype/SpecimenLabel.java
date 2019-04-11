@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -62,12 +63,12 @@ public class SpecimenLabel extends Label {
     
     // adding fields above bar code
     aboveFields = new ArrayList<LabelField>();
-    aboveFields.add(new LabelField(StringUtil.getMessageForKey("barcode.label.info.patientname"),
+    aboveFields.add(new LabelField(MessageUtil.getMessage("barcode.label.info.patientname"),
             patientName, 6));
     aboveFields.add(
-            new LabelField(StringUtil.getMessageForKey("barcode.label.info.patientdob"), dob, 4));
+            new LabelField(MessageUtil.getMessage("barcode.label.info.patientdob"), dob, 4));
     aboveFields.add(getAvailableIdField(patient));
-    LabelField siteField = new LabelField(StringUtil.getMessageForKey("barcode.label.info.site"),
+    LabelField siteField = new LabelField(MessageUtil.getMessage("barcode.label.info.site"),
             StringUtils.substring(referringFacility, 0, 20), 4);
     siteField.setDisplayFieldName(true);
     aboveFields.add(siteField);
@@ -97,28 +98,28 @@ public class SpecimenLabel extends Label {
             .getPropertyValue(Property.SPECIMEN_FIELD_TESTS);
     if ("true".equals(useSex)) {
       LabelField sexField = new LabelField(
-              StringUtil.getMessageForKey("barcode.label.info.patientsex"),
+              MessageUtil.getMessage("barcode.label.info.patientsex"),
               StringUtil.replaceNullWithEmptyString(patient.getGender()), 2);
       sexField.setDisplayFieldName(true);
       belowFields.add(sexField);
     }
     if ("true".equals(useDateTime)) {
       LabelField dateField = new LabelField(
-              StringUtil.getMessageForKey("barcode.label.info.collectiondate"), collectionDate, 3);
+              MessageUtil.getMessage("barcode.label.info.collectiondate"), collectionDate, 3);
       dateField.setDisplayFieldName(true);
       belowFields.add(dateField);
-      dateField = new LabelField(StringUtil.getMessageForKey("barcode.label.info.collectiontime"),
+      dateField = new LabelField(MessageUtil.getMessage("barcode.label.info.collectiontime"),
               StringUtil.replaceNullWithEmptyString(collectionTime), 2);
       belowFields.add(dateField);
     }
     LabelField collectorField = new LabelField(
-            StringUtil.getMessageForKey("barcode.label.info.collectorid"),
+            MessageUtil.getMessage("barcode.label.info.collectorid"),
             StringUtils.substring(StringUtil.replaceNullWithEmptyString(collector), 0, 15), 3);
     collectorField.setDisplayFieldName(true);
     belowFields.add(collectorField);
     if ("true".equals(useTests)) {
       LabelField testsField = new LabelField(
-              StringUtil.getMessageForKey("barcode.label.info.tests"),
+              MessageUtil.getMessage("barcode.label.info.tests"),
               StringUtil.replaceNullWithEmptyString(tests.toString()), 10);
       testsField.setStartNewline(true);
       belowFields.add(testsField);
@@ -138,13 +139,13 @@ public class SpecimenLabel extends Label {
     PatientService service = new PatientService(patient);
     String patientId = service.getSubjectNumber();
     if (!StringUtil.isNullorNill(patientId))
-      return new LabelField(StringUtil.getMessageForKey("barcode.label.info.patientid"),
+      return new LabelField(MessageUtil.getMessage("barcode.label.info.patientid"),
               StringUtils.substring(patientId, 0, 25), 6);
     patientId = service.getNationalId();
     if (!StringUtil.isNullorNill(patientId))
-      return new LabelField(StringUtil.getMessageForKey("barcode.label.info.patientid"),
+      return new LabelField(MessageUtil.getMessage("barcode.label.info.patientid"),
               StringUtils.substring(patientId, 0, 25), 6);
-    return new LabelField(StringUtil.getMessageForKey("barcode.label.info.patientid"), "", 6);
+    return new LabelField(MessageUtil.getMessage("barcode.label.info.patientid"), "", 6);
   }
 
   /* (non-Javadoc)

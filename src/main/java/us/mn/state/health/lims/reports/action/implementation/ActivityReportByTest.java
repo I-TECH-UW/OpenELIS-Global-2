@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.ResultService;
-import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ActivityReportBean;
 import us.mn.state.health.lims.result.valueholder.Result;
 
@@ -39,10 +39,10 @@ public class ActivityReportByTest extends ActivityReport implements IReportCreat
     @Override
     public void setRequestParameters( BaseForm form ){
         new ReportSpecificationParameters( ReportSpecificationParameters.Parameter.DATE_RANGE,
-                StringUtil.getMessageForKey( "report.activity.report.base" ) + " " + StringUtil.getMessageForKey( "report.by.test" ),
-                StringUtil.getMessageForKey( "report.instruction.all.fields" ) ).setRequestParameters( form );
+                MessageUtil.getMessage( "report.activity.report.base" ) + " " + MessageUtil.getMessage( "report.by.test" ),
+                MessageUtil.getMessage( "report.instruction.all.fields" ) ).setRequestParameters( form );
         new ReportSpecificationList( DisplayListService.getList( DisplayListService.ListType.ALL_TESTS ),
-                                     StringUtil.getMessageForKey( "workplan.test.types" ) ).setRequestParameters( form );
+                                     MessageUtil.getMessage( "workplan.test.types" ) ).setRequestParameters( form );
     }
 
     @Override

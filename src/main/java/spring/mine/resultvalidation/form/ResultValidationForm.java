@@ -3,28 +3,45 @@ package spring.mine.resultvalidation.form;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
+import spring.mine.validation.annotations.ValidDate;
 import us.mn.state.health.lims.common.paging.PagingBean;
 import us.mn.state.health.lims.common.util.IdValuePair;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.resultvalidation.bean.AnalysisItem;
 
 public class ResultValidationForm extends BaseForm {
+	// for display
 	private PagingBean paging;
 
 	private Timestamp lastupdated;
 
+	@ValidDate(relative = DateRelation.TODAY)
 	private String currentDate = "";
 
+	// TODO
+	@Valid
 	private List<AnalysisItem> resultList;
 
+	// for display
 	private String testSection = "";
 
+	// for display
 	private String testName = "";
 
+	// for display
 	private List<IdValuePair> testSections;
 
+	// for display
 	private List<IdValuePair> testSectionsByName;
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String testSectionId;
 
 	private Boolean displayTestSections = true;

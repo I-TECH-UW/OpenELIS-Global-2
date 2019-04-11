@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -22,13 +24,13 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.dictionary.form.DictionaryForm;
 import spring.mine.dictionary.validator.DictionaryFormValidator;
+import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSFrozenRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.common.util.resources.ResourceLocator;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -69,12 +71,11 @@ public class DictionaryController extends BaseController {
 		Dictionary dictionary = new Dictionary();
 		dictionary.setId(id);
 
-		if ((id != null) && (!"0".equals(id))) { // this is an existing
-			// dictionary
+		if ((id != null) && (!"0".equals(id))) {
+			// this is an existing dictionary
 			dictionaryDAO.getData(dictionary);
-			PropertyUtils.setProperty(form, "newDictionary", false);
 
-			// do we need to enable next or previous?
+			// do we need to enable next or previous button
 			List<Dictionary> dictionaries = dictionaryDAO.getNextDictionaryRecord(dictionary.getId());
 			if (!dictionaries.isEmpty()) {
 				// enable next button
@@ -86,9 +87,7 @@ public class DictionaryController extends BaseController {
 				request.setAttribute(PREVIOUS_DISABLED, "false");
 			}
 		} else { // this is a new dictionary
-			// default isActive to 'Y'
 			dictionary.setIsActive(YES);
-			PropertyUtils.setProperty(form, "newDictionary", true);
 		}
 
 		if (dictionary.getId() != null && !dictionary.getId().equals("0")) {
@@ -152,27 +151,28 @@ public class DictionaryController extends BaseController {
 		return dictionary;
 	}
 
-	@RequestMapping(value = "/UpdateDictionary", method = RequestMethod.POST)
-	public ModelAndView showUpdateDictionary(HttpServletRequest request, @ModelAttribute("form") DictionaryForm form,
-			BindingResult result, SessionStatus status, RedirectAttributes redirectAttributes)
+	@RequestMapping(value = "/Dictionary", method = RequestMethod.POST)
+	public ModelAndView showUpdateDictionary(HttpServletRequest request,
+			@ModelAttribute("form") @Valid DictionaryForm form, BindingResult result, SessionStatus status,
+			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		formValidator.validate(form, result);
-
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);
 		}
-		String forward = FWD_SUCCESS;
+
 		setDefaultButtonAttributes(request);
 
 		Dictionary dictionary = new Dictionary();
 		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-		org.hibernate.Transaction tx = HibernateUtil.getSession().beginTransaction();
+		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		setupDictionary(dictionary, form);
 
 		try {
-			if (!form.isNewDictionary()) {
+			String id = form.getId();
+			if (!(id == null || "0".equals(id))) {
 				// UPDATE
 				// bugzilla 2062
 				boolean isDictionaryFrozenCheckRequired = checkForDictionaryFrozenCheck(form);
@@ -187,21 +187,16 @@ public class DictionaryController extends BaseController {
 			LogEvent.logError("DictionaryUpdateAction", "performAction()", lre.toString());
 			tx.rollback();
 			// 1482
-			java.util.Locale locale = (java.util.Locale) request.getSession()
-					.getAttribute("org.apache.struts.action.LOCALE");
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
-				// how can I get popup instead of struts error at the top of
-				// page?
-				// ActionMessages errors = form.validate(mapping, request);
 				result.reject("errors.OptimisticLockException");
 			} else if (lre.getException() instanceof LIMSDuplicateRecordException) {
 				String messageKey = "dictionary.dictEntryByCategory";
-				String msg = ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey);
+				String msg = MessageUtil.getMessage(messageKey);
 				result.reject("errors.DuplicateRecord.activate", new String[] { msg },
 						"errors.DuplicateRecord.activate");
 			} else if (lre.getException() instanceof LIMSFrozenRecordException) {
 				String messageKey = "dictionary.dictEntry";
-				String msg = ResourceLocator.getInstance().getMessageResources().getMessage(locale, messageKey);
+				String msg = MessageUtil.getMessage(messageKey);
 				result.reject("errors.FrozenRecord", new String[] { msg }, "errors.FrozenRecord");
 				// Now disallow further edits RECORD_FROZEN_EDIT_DISABLED_KEY
 				// in this case User needs to Exit and come back to refresh form
@@ -218,31 +213,15 @@ public class DictionaryController extends BaseController {
 			// disable previous and next
 			request.setAttribute(PREVIOUS_DISABLED, "true");
 			request.setAttribute(NEXT_DISABLED, "true");
-			forward = FWD_FAIL_INSERT;
+			return findForward(FWD_FAIL_INSERT, form);
 
 		} finally {
 			HibernateUtil.closeSession();
 		}
-		if (forward.equals(FWD_FAIL_INSERT)) {
-			return findForward(forward, form);
-		}
-		// repopulate the form from valueholder
-		PropertyUtils.copyProperties(form, dictionary);
-
-		if ("true".equalsIgnoreCase(request.getParameter("close"))) {
-			forward = FWD_CLOSE;
-		}
-
-		if (dictionary.getId() != null && !dictionary.getId().equals("0")) {
-			request.setAttribute(ID, dictionary.getId());
-
-		}
-
-		forward = FWD_SUCCESS_INSERT;
 
 		status.setComplete();
 		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private void setupDictionary(Dictionary dictionary, DictionaryForm form)
@@ -276,8 +255,8 @@ public class DictionaryController extends BaseController {
 		// OR
 		// bugzilla 1847: also the local abbreviation can be deleted/updated/inserted at
 		// anytime
-		String dirtyFormFields = (String) form.get("dirtyFormFields");
-		String isActiveValue = (String) form.get("isActive");
+		String dirtyFormFields = form.getString("dirtyFormFields");
+		String isActiveValue = form.getString("isActive");
 
 		String[] dirtyFields = dirtyFormFields.split(SystemConfiguration.getInstance().getDefaultIdSeparator(), -1);
 		List<String> listOfDirtyFields = new ArrayList<>();
