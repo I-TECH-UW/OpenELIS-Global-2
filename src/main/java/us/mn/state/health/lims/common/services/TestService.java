@@ -273,10 +273,15 @@ public class TestService implements LocaleChangeListener{
     private static String buildTestName( Test test ){
         Localization localization = test.getLocalizedTestName();
 
+        try {
         if( LANGUAGE_LOCALE.equals( ConfigurationProperties.LOCALE.FRENCH.getRepresentation() )){
             return localization.getFrench();
         }else{
             return localization.getEnglish();
+        }
+        } catch (Exception ex){
+        	System.out.println("buildTestName caught LAZY");
+        	return "ts:btn:284:name";
         }
     }
     private static Map<String, String> createTestIdToAugmentedNameMap() {
@@ -306,10 +311,15 @@ public class TestService implements LocaleChangeListener{
     private static String buildReportingTestName( Test test ){
         Localization localization = test.getLocalizedReportingName();
 
+        try {
         if( LANGUAGE_LOCALE.equals( ConfigurationProperties.LOCALE.FRENCH.getRepresentation() )){
             return localization.getFrench();
         }else{
             return localization.getEnglish();
+        }
+        } catch (Exception ex) {
+        	System.out.println("reporting caught LAZY");
+        	return "ts:brtn:322:name";
         }
     }
     private static String buildAugmentedTestName( Test test ){
@@ -324,10 +334,16 @@ public class TestService implements LocaleChangeListener{
             }
         }
 
+        try {
         if( LANGUAGE_LOCALE.equals( ConfigurationProperties.LOCALE.FRENCH.getRepresentation() )){
             return localization.getFrench() + sampleName;
         }else{
             return localization.getEnglish()  + sampleName;
+            //return "ts:batn:342:name:" + test.getDescription();
+        }
+        } catch (Exception ex) {
+        	System.out.println("augmented caught LAZY");
+        	return "ts:batn:345:name:" + test.getDescription();
         }
     }
 

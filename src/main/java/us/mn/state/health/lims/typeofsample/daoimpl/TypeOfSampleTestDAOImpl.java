@@ -227,6 +227,10 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl implements TypeOfSample
 		String sql = "from TypeOfSampleTest tt where tt.typeOfSampleId = :sampleId";
 
 		try {
+			if (sampleTypeId.equals("null")) {
+				// so parseInt doesn't throw
+				sampleTypeId = "0";
+			}
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sampleTypeId));
 			List<TypeOfSampleTest> list = query.list();

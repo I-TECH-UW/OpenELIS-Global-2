@@ -458,12 +458,12 @@ public class TestModifyUpdate extends BaseAction {
         return null;
     }
 
-    private class TestAddParams{
+    public class TestAddParams{
     	String testId;
-        String testNameEnglish;
-        String testNameFrench;
-        String testReportNameEnglish;
-        String testReportNameFrench;
+        public String testNameEnglish;
+        public String testNameFrench;
+        public String testReportNameEnglish;
+        public String testReportNameFrench;
         String testSectionId;
         ArrayList<String> panelList = new ArrayList<String>();
         String uomId;
@@ -474,18 +474,18 @@ public class TestModifyUpdate extends BaseAction {
         String orderable;
         String lowValid;
         String highValid;
-        String significantDigits;
+        public String significantDigits;
         String dictionaryReferenceId;
         ArrayList<ResultLimitParams> limits = new ArrayList<ResultLimitParams>();
-        ArrayList<DictionaryParams> dictionaryParamList = new ArrayList<DictionaryParams>();
+        public ArrayList<DictionaryParams> dictionaryParamList = new ArrayList<DictionaryParams>();
     }
 
-    private class SampleTypeListAndTestOrder{
+    public class SampleTypeListAndTestOrder{
         String sampleTypeId;
         ArrayList<String> orderedTests = new ArrayList<String>();
     }
 
-    private class ResultLimitParams{
+    public class ResultLimitParams{
         String gender;
         String lowAge;
         String highAge;
@@ -493,7 +493,7 @@ public class TestModifyUpdate extends BaseAction {
         String highLimit;
         String displayRange;
     }
-    private class TestSet{
+    public class TestSet{
         Test test;
         TypeOfSampleTest sampleTypeTest;
         ArrayList<Test> sortedTests = new ArrayList<Test>();
@@ -502,8 +502,8 @@ public class TestModifyUpdate extends BaseAction {
         ArrayList<ResultLimit> resultLimits = new ArrayList<ResultLimit>();
     }
 
-    private class DictionaryParams{
-        String dictionaryId;
-        boolean isQuantifiable = false;
+    public class DictionaryParams{
+        public String dictionaryId;
+        public boolean isQuantifiable = false;
     }
 }

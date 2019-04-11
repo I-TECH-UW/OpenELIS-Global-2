@@ -55,8 +55,6 @@
     columnCount = 0;
     testCount = 0;
     success = (Boolean)request.getAttribute("success");
-    
-
 %>
 
 <link rel="stylesheet" media="screen" type="text/css"
@@ -161,7 +159,7 @@
 
 <style>
 table{
-  width: 80%;
+  width: 100%;
 }
 td {
   width: 25%;
@@ -181,16 +179,6 @@ td {
     <spring:message code="save.success"/>
 </div>
 
-    <%-- <bean:define id="selectedPanel" name='${form.formName}' property="selectedPanel" type="us.mn.state.health.lims.testconfiguration.action.PanelTests"/> --%>
-<%--    
-    <form:hidden path="panelId" id="panelId" value="<%=(selectedPanel.getPanelIdValuePair() != null ? selectedPanel.getPanelIdValuePair().getId() : new String()) %>"/>
-    <form:hidden path="deactivatePanelId" id="deactivatePanelId"/>
-        
-        
-     <form:hidden path="panelId" id="panelId" value="<%=(selectedPanel.getPanelIdValuePair()%>"/>
-     <form:hidden path="panelId" id="panelId" value="<%=(selectedPanel.getPanelIdValuePair() %>"/>
-     --%>
-     
      <%    PanelTests selectedPanel = (PanelTests) pageContext.getAttribute("selectedPanel"); %>
      <form:hidden path="panelId" id="panelId" value="<%=(selectedPanel.getPanelIdValuePair() != null ? selectedPanel.getPanelIdValuePair().getId() : new String()) %>"/>
      <form:hidden path="deactivatePanelId" id="deactivatePanelId"/>

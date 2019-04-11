@@ -75,7 +75,6 @@ public class TestAddUpdate extends BaseAction {
     protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String currentUserId = getSysUserId(request);
         String jsonString = ((DynaValidatorForm)form).getString("jsonWad");
-        System.out.println(jsonString);
 
         JSONParser parser=new JSONParser();
 
@@ -396,7 +395,7 @@ public class TestAddUpdate extends BaseAction {
         return null;
     }
 
-    private class TestAddParams{
+    public class TestAddParams{
         String testNameEnglish;
         String testNameFrench;
         String testReportNameEnglish;
@@ -430,7 +429,7 @@ public class TestAddUpdate extends BaseAction {
         String highLimit;
         String displayRange;
     }
-    private class TestSet{
+    public class TestSet{
         Test test;
         TypeOfSampleTest sampleTypeTest;
         ArrayList<Test> sortedTests = new ArrayList<Test>();

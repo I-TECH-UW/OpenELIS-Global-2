@@ -13,11 +13,11 @@
 
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
 
-        <many-to-one name="panel" class="us.mn.state.health.lims.panel.valueholder.Panel" fetch="select">
+        <many-to-one name="panel" class="us.mn.state.health.lims.panel.valueholder.Panel" fetch="select" lazy="false">
             <column name="PANEL_ID" precision="10" scale="0" not-null="true" />
         </many-to-one>
         
-         <many-to-one name="test" class="us.mn.state.health.lims.test.valueholder.Test" fetch="select">
+         <many-to-one name="test" class="us.mn.state.health.lims.test.valueholder.Test" fetch="select" lazy="false">
             <column name="TEST_ID" precision="10" scale="0" not-null="true" />
         </many-to-one>
         

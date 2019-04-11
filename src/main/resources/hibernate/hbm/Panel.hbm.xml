@@ -18,7 +18,7 @@
         <property name="description" type="java.lang.String">
             <column name="DESCRIPTION" length="60" not-null="true" />
         </property>
-        <many-to-one name="localization" class="us.mn.state.health.lims.localization.valueholder.Localization" fetch="select" >
+        <many-to-one name="localization" class="us.mn.state.health.lims.localization.valueholder.Localization" fetch="select" lazy="false">
             <column name="name_localization_id" precision="10" scale="0" />
         </many-to-one>
         <property name="sortOrderInt" column="sort_order" type="integer" />

@@ -136,7 +136,7 @@
 
 <style>
 table{
-  width: 80%;
+  width: 100%;
 }
 td {
   width: 25%;
