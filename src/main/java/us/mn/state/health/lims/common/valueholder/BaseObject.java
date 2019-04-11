@@ -22,6 +22,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
+import org.hibernate.Hibernate;
+import org.springframework.transaction.annotation.Transactional;
+
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 
@@ -137,11 +140,13 @@ public class BaseObject implements Serializable, Cloneable {
 
 			if (localizedName == null || localizedName.equals(nameKey.trim())) {
 				return getDefaultLocalizedName();
+				//return "bo:gln:143:name:" + nameKey;
 			} else {
 				return localizedName;
 			}
 		} else {
 			return getDefaultLocalizedName();
+			//return "bo:gln:149:name:" + nameKey;
 		}
 
 	}

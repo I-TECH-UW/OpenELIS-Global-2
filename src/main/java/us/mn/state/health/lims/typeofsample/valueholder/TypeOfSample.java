@@ -75,7 +75,14 @@ public class TypeOfSample extends BaseObject {
 
 	@Override
 	protected String getDefaultLocalizedName() {
-		return LocalizationService.getLocalizedValue(getLocalization());
+		String msg="";
+		try {
+		msg= LocalizationService.getLocalizedValue(getLocalization());
+		return msg;
+		} catch (Exception ex) {
+			//throw away
+			return "TypeOfSample:getDefaultLocalizedName:84:";
+		}
 	}
 
 	public boolean isActive() {

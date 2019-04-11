@@ -51,9 +51,6 @@ public class TestCatalogController extends BaseController {
     	form = new TestCatalogForm();
     }
         form.setFormAction("");
-    Errors errors = new BaseErrors();
-    
-    
     
     List<TestCatalog> testCatalogList = createTestList();
     form.setTestCatalogList(testCatalogList);

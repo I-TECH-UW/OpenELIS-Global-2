@@ -12,7 +12,7 @@
         </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
 
-        <many-to-one name="organization" class="us.mn.state.health.lims.organization.valueholder.Organization" fetch="select">
+        <many-to-one name="organization" class="us.mn.state.health.lims.organization.valueholder.Organization" fetch="select" >
             <column name="ORG_ID" precision="10" scale="0" />
         </many-to-one>
         <property name="testSectionName" type="java.lang.String">
@@ -34,7 +34,7 @@
         </property>
 
   		<property name="isActive" column="is_active"  type="java.lang.String"/>      
-        <many-to-one name="localization" class="us.mn.state.health.lims.localization.valueholder.Localization" fetch="select" >
+        <many-to-one name="localization" class="us.mn.state.health.lims.localization.valueholder.Localization" fetch="select" lazy="false" >
             <column name="name_localization_id" precision="10" scale="0" />
         </many-to-one>
         
