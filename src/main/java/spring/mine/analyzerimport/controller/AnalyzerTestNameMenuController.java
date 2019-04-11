@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,7 +141,7 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 
 	@RequestMapping(value = "/DeleteAnalyzerTestName", method = RequestMethod.POST)
 	public ModelAndView showDeleteAnalyzerTestName(HttpServletRequest request,
-			@ModelAttribute("form") AnalyzerTestNameMenuForm form, BindingResult result,
+			@ModelAttribute("form") @Valid AnalyzerTestNameMenuForm form, BindingResult result,
 			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 

@@ -17,9 +17,12 @@ public class ValidationHelper {
 
 	public static final String NAME_REGEX = "(?i)^[ a-zавзйиклопфыщьясжњ'.-]*$";
 	public static final String USERNAME_REGEX = "(?i)^[a-z0-9авзйиклопфыщьясжњ._@-]*$";
-	public static final String MESSAGE_KEY_REGEX = "(?i)^[a-z0-9_]+(\\.[a-z0-9_]+)*$";
+	public static final String MESSAGE_KEY_REGEX = "(?i)^$|^[a-z0-9_]+(\\.[a-z0-9_]+)*$";
 	public static final String PATIENT_ID_REGEX = "(?i)^[a-z0-9/]*$";
+	public static final String ID_REGEX = "^[0-9]*$";
 	public static final String PHONE_REGEX = "^[-+()0-9 ]*$";
+	public static final String GENDER_REGEX = "^$|^M$|^F$";
+	public static final String YES_NO_REGEX = "^$|^" + IActionConstants.YES + "$|^" + IActionConstants.NO + "$";
 
 	private static final String DEFAULT_PREFIX = "Field ";
 

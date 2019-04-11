@@ -3,27 +3,45 @@ package spring.generated.testconfiguration.form;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
 
 public class PanelCreateForm extends BaseForm {
+	// for display
 	private List existingPanelList;
 
+	// for display
 	private List inactivePanelList;
 
+	// for display
 	private Map existingPanelMap;
 
+	// for display
 	private Map inactivePanelMap;
 
+	// for display
 	private List existingSampleTypeList;
 
+	// for display
 	private String existingEnglishNames;
 
+	// for display
 	private String existingFrenchNames;
 
+	@NotBlank
+	@SafeHtml
 	private String panelEnglishName;
 
+	@SafeHtml
 	private String panelFrenchName;
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String sampleTypeId;
 
 	public PanelCreateForm() {

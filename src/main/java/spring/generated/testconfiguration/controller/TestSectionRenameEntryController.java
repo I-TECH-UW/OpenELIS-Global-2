@@ -1,10 +1,10 @@
 package spring.generated.testconfiguration.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.TestSectionRenameEntryForm;
-import spring.generated.testconfiguration.validator.TestSectionRenameEntryFormValidator;
 import spring.mine.common.controller.BaseController;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -24,9 +23,6 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 
 @Controller
 public class TestSectionRenameEntryController extends BaseController {
-
-	@Autowired
-	TestSectionRenameEntryFormValidator formValidator;
 
 	@RequestMapping(value = "/TestSectionRenameEntry", method = RequestMethod.GET)
 	public ModelAndView showTestSectionRenameEntry(HttpServletRequest request) {
@@ -52,8 +48,7 @@ public class TestSectionRenameEntryController extends BaseController {
 
 	@RequestMapping(value = "/TestSectionRenameEntry", method = RequestMethod.POST)
 	public ModelAndView updateTestSectionRenameEntry(HttpServletRequest request,
-			@ModelAttribute("form") TestSectionRenameEntryForm form, BindingResult result) {
-		formValidator.validate(form, result);
+			@ModelAttribute("form") @Valid TestSectionRenameEntryForm form, BindingResult result) {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			form.setTestSectionList(DisplayListService.getList(DisplayListService.ListType.TEST_SECTION));

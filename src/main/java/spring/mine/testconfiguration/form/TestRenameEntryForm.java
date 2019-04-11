@@ -2,15 +2,37 @@ package spring.mine.testconfiguration.form;
 
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
 import us.mn.state.health.lims.common.util.IdValuePair;
 
 public class TestRenameEntryForm extends BaseForm {
+	// for display
 	private List<IdValuePair> testList;
+
+	@NotBlank
+	@SafeHtml
 	private String nameEnglish = "";
+
+	@NotBlank
+	@SafeHtml
 	private String nameFrench = "";
+
+	@NotBlank
+	@SafeHtml
 	private String reportNameEnglish = "";
+
+	@NotBlank
+	@SafeHtml
 	private String reportNameFrench = "";
+
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String testId = "";
 
 	public TestRenameEntryForm() {

@@ -2,19 +2,31 @@ package spring.generated.testconfiguration.form;
 
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
 import spring.mine.common.form.BaseForm;
 
 public class SampleTypeCreateForm extends BaseForm {
+	// for display
 	private List existingSampleTypeList;
 
+	// for display
 	private List inactiveSampleTypeList;
 
+	// for display
 	private String existingEnglishNames;
 
+	// for display
 	private String existingFrenchNames;
 
+	@NotBlank
+	@SafeHtml
 	private String sampleTypeEnglishName;
 
+	@NotBlank
+	@SafeHtml
 	private String sampleTypeFrenchName;
 
 	public SampleTypeCreateForm() {

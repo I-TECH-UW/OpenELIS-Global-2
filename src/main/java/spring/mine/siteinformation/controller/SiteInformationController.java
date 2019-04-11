@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -219,9 +220,8 @@ public class SiteInformationController extends BaseController {
 			"/SampleEntryConfig", "/ResultConfiguration", "/MenuStatementConfig", "/PatientConfiguration",
 			"/SiteInformation" }, method = RequestMethod.POST)
 	public ModelAndView showUpdateSiteInformation(HttpServletRequest request,
-			@ModelAttribute("form") SiteInformationForm form, BindingResult result, SessionStatus status,
+			@ModelAttribute("form") @Valid SiteInformationForm form, BindingResult result, SessionStatus status,
 			RedirectAttributes redirectAttributes) {
-
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);

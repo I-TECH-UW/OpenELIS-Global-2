@@ -6,10 +6,13 @@ import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.test.beanItems.TestActivationBean;
 
 public class TestActivationForm extends BaseForm {
+	// for display
 	private List<TestActivationBean> activeTestList;
 
+	// for display
 	private List<TestActivationBean> inactiveTestList;
 
+	// TODO
 	private String jsonChangeList = "";
 
 	public TestActivationForm() {

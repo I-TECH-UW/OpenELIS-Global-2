@@ -27,26 +27,10 @@ public class SamplePatientEntryFormValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		SamplePatientEntryForm form = (SamplePatientEntryForm) target;
 
-		// currentDate
-		if (!GenericValidator.isBlankOrNull(form.getCurrentDate())) {
-			ValidationHelper.validateDateField(form.getCurrentDate(), "currentDate", errors, DateRelation.PAST);
-		}
-		// TODO projects
-
-		// patientProcessingStatus
-		ValidationHelper.validateOptionFieldIgnoreCase(form.getPatientProcessingStatus(), "patientProcessingStatus",
-				errors, new String[] { "Add", "update", "noAction" });
-
 		// sampleXML
 		if (!GenericValidator.isBlankOrNull(form.getSampleXML())) {
 			validateSampleXML(form.getSampleXML(), errors);
 		}
-
-		// TODO patientProperties
-
-		// TODO patientClinicalProperties
-
-		// TODO sampleOrderItems
 
 	}
 

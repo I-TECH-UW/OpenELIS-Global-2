@@ -13,9 +13,11 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.generated.inventory.form.InventoryForm;
+import spring.generated.inventory.validation.InventoryFormValidator;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
@@ -61,7 +64,10 @@ import us.mn.state.health.lims.test.valueholder.Test;
 
 @Controller
 @SessionAttributes("form")
-public class ManageInventoryController extends BaseController {
+public class InventoryController extends BaseController {
+
+	@Autowired
+	InventoryFormValidator formValidator;
 
 	private List<InventoryKitItem> modifiedItems;
 	private List<InventorySet> newInventory;
@@ -75,13 +81,18 @@ public class ManageInventoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/ManageInventory", method = RequestMethod.GET)
-	public ModelAndView showManageInventory(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public ModelAndView showManageInventory(HttpServletRequest request, @ModelAttribute("form") BaseForm form) {
 		if (form.getClass() != InventoryForm.class) {
 			form = new InventoryForm();
 			request.getSession().setAttribute("form", form);
 		}
+		setupDisplayItems(form);
 
+		addFlashMsgsToRequest(request);
+		return findForward(FWD_SUCCESS, form);
+	}
+
+	private void setupDisplayItems(BaseForm form) {
 		request.setAttribute(ALLOW_EDITS_KEY, "true");
 		request.setAttribute(PREVIOUS_DISABLED, "true");
 		request.setAttribute(NEXT_DISABLED, "true");
@@ -89,16 +100,17 @@ public class ManageInventoryController extends BaseController {
 
 		InventoryUtility utility = new InventoryUtility();
 		List<InventoryKitItem> list = utility.getExistingInventory();
-		PropertyUtils.setProperty(form, "inventoryItems", list);
-
 		List<String> kitTypes = getTestKitTypes();
-		PropertyUtils.setProperty(form, "kitTypes", kitTypes);
-
 		List<IdValuePair> sources = getSources();
-		PropertyUtils.setProperty(form, "sources", sources);
 
-		addFlashMsgsToRequest(request);
-		return findForward(FWD_SUCCESS, form);
+		try {
+			PropertyUtils.setProperty(form, "inventoryItems", list);
+			PropertyUtils.setProperty(form, "kitTypes", kitTypes);
+			PropertyUtils.setProperty(form, "sources", sources);
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private List<String> getTestKitTypes() {
@@ -123,14 +135,16 @@ public class ManageInventoryController extends BaseController {
 		return sources;
 	}
 
-	@RequestMapping(value = "/ManageInventoryUpdate", method = RequestMethod.POST)
+	@RequestMapping(value = "/ManageInventory", method = RequestMethod.POST)
 	public ModelAndView showManageInventoryUpdate(HttpServletRequest request,
-			@ModelAttribute("form") InventoryForm form, BindingResult result, RedirectAttributes redirectAttributes,
-			SessionStatus status) {
-		request.setAttribute(ALLOW_EDITS_KEY, "true");
-		request.setAttribute(PREVIOUS_DISABLED, "true");
-		request.setAttribute(NEXT_DISABLED, "true");
-
+			@ModelAttribute("form") @Validated(InventoryForm.ManageInventory.class) InventoryForm form,
+			BindingResult result, RedirectAttributes redirectAttributes, SessionStatus status) {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			setupDisplayItems(form);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 		setModifiedItems(form);
 		createInventoryFromModifiedItems();
 		createNewInventory(form);
@@ -141,6 +155,7 @@ public class ManageInventoryController extends BaseController {
 
 		if (errors.hasErrors()) {
 			saveErrors(errors);
+			setupDisplayItems(form);
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
@@ -172,6 +187,7 @@ public class ManageInventoryController extends BaseController {
 			tx.commit();
 		} catch (LIMSRuntimeException lre) {
 			tx.rollback();
+			setupDisplayItems(form);
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 

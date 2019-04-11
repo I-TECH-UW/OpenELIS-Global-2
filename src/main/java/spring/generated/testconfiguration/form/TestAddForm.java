@@ -5,22 +5,32 @@ import java.util.List;
 import spring.mine.common.form.BaseForm;
 
 public class TestAddForm extends BaseForm {
+
+	// TODO
 	private String jsonWad = "";
 
+	// TODO
 	private List sampleTypeList;
 
+	// TODO
 	private List panelList;
 
+	// TODO
 	private List uomList;
 
+	// TODO
 	private List resultTypeList;
 
+	// TODO
 	private List ageRangeList;
 
+	// TODO
 	private List labUnitList;
 
+	// TODO
 	private List dictionaryList;
 
+	// TODO
 	private List groupedDictionaryList;
 
 	public TestAddForm() {

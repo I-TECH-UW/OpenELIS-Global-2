@@ -3,10 +3,13 @@ package spring.mine.samplebatchentry.controller;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.jfree.util.Log;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +20,7 @@ import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.sample.controller.BaseSampleEntryController;
 import spring.mine.samplebatchentry.form.SampleBatchEntryForm;
+import spring.mine.samplebatchentry.validator.SampleBatchEntryFormValidator;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.dictionary.ObservationHistoryList;
 import us.mn.state.health.lims.organization.util.OrganizationTypeList;
@@ -26,13 +30,20 @@ import us.mn.state.health.lims.sample.form.ProjectData;
 @Controller
 public class SampleBatchEntryByProjectController extends BaseSampleEntryController {
 
+	@Autowired
+	SampleBatchEntryFormValidator formValidator;
+
 	private static final String ON_DEMAND = "ondemand";
 	private static final String PRE_PRINTED = "preprinted";
 
 	@RequestMapping(value = "/SampleBatchEntryByProject", method = RequestMethod.POST)
 	public ModelAndView showSampleBatchEntryByProject(HttpServletRequest request,
-			@ModelAttribute("form") SampleBatchEntryForm form) {
-		String forward;
+			@ModelAttribute("form") @Valid SampleBatchEntryForm form, BindingResult result) {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL, form);
+		}
 		String study = request.getParameter("study");
 		try {
 			if ("viralLoad".equals(study)) {
@@ -41,14 +52,13 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 				setupEID(form, request);
 			}
 			setupCommonFields(form, request);
-			forward = setForward(form);
+			return findForward(setForward(form), form);
 		} catch (Exception e) {
 			Log.error(e.toString());
 			e.printStackTrace();
-			forward = FWD_FAIL;
+			return findForward(FWD_FAIL, form);
 		}
 
-		return findForward(forward, form);
 	}
 
 	private void setupEID(SampleBatchEntryForm form, HttpServletRequest request)

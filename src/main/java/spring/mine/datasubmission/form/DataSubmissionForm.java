@@ -2,20 +2,32 @@ package spring.mine.datasubmission.form;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
+import org.hibernate.validator.constraints.Range;
+import org.hibernate.validator.constraints.URL;
+
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.datasubmission.valueholder.DataIndicator;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 public class DataSubmissionForm extends BaseForm {
+
+	@URL
 	private SiteInformation dataSubUrl;
 
+	// TODO
+	@Valid
 	private List<DataIndicator> indicators;
 
+	@Range(min = 1, max = 12)
 	private int month = DateUtil.getCurrentMonth();
 
+	// in validator
 	private int year = DateUtil.getCurrentYear();
 
+	// in validator
 	private String siteId;
 
 	public DataSubmissionForm() {

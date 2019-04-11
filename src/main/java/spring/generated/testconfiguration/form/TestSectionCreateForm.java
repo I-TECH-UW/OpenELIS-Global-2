@@ -2,20 +2,32 @@ package spring.generated.testconfiguration.form;
 
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.IdValuePair;
 
 public class TestSectionCreateForm extends BaseForm {
+	// for display
 	private List existingTestUnitList;
 
+	// for display
 	private List inactiveTestUnitList;
 
+	// for display
 	private String existingEnglishNames;
 
+	// for display
 	private String existingFrenchNames;
 
+	@NotBlank
+	@SafeHtml
 	private String testUnitEnglishName;
 
+	@NotBlank
+	@SafeHtml
 	private String testUnitFrenchName;
 
 	public TestSectionCreateForm() {

@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -392,9 +393,9 @@ public class SampleEditController extends BaseController {
 	}
 
 	@RequestMapping(value = "/SampleEdit", method = RequestMethod.POST)
-	public ModelAndView showSampleEditUpdate(HttpServletRequest request, @ModelAttribute("form") SampleEditForm form,
-			BindingResult result, RedirectAttributes redirectAttributes) {
-
+	public ModelAndView showSampleEditUpdate(HttpServletRequest request,
+			@ModelAttribute("form") @Valid SampleEditForm form, BindingResult result,
+			RedirectAttributes redirectAttributes) {
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);

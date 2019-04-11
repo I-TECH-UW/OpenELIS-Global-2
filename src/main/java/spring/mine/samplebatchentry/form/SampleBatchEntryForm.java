@@ -3,8 +3,16 @@ package spring.mine.samplebatchentry.form;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
+import spring.mine.validation.annotations.ValidAccessionNumber;
+import spring.mine.validation.annotations.ValidDate;
+import spring.mine.validation.annotations.ValidTime;
 import us.mn.state.health.lims.common.util.IdValuePair;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.organization.util.OrganizationTypeList;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
@@ -15,50 +23,76 @@ import us.mn.state.health.lims.sample.form.ProjectData;
 
 public class SampleBatchEntryForm extends BaseForm {
 
+	@ValidDate(relative = DateRelation.TODAY)
 	private String currentDate = "";
 
+	@ValidTime
 	private String currentTime = "";
 
+	// for display
 	private String project = "";
 
+	// for display
 	private List<Project> projects;
 
+	// for display
 	private List<IdValuePair> sampleTypes;
 
 	private String sampleXML = "";
 
+	// TODO
+	@Valid
 	private SampleOrderItem sampleOrderItems;
 
+	// for display
 	private List<IdValuePair> initialSampleConditionList;
 
+	// for display
 	private List<IdValuePair> testSectionList;
 
 	private boolean patientInfoCheck = false;
 
 	private boolean facilityIDCheck = false;
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String facilityID;
 
+	@Pattern(regexp = "On Demand|Pre-Printed")
 	private String method;
 
+	@Pattern(regexp = "routine|viralLoad|EID")
 	private String study;
 
+	@ValidAccessionNumber
 	private String labNo;
 
+	// TODO
+	@Valid
 	private PatientManagementInfo patientProperties;
 
+	/// for display
 	private PatientSearch patientSearch;
 
+	// in validator
 	private String programCode;
 
+	// TODO
+	@Valid
 	private ProjectData projectDataVL;
 
+	// TODO
+	@Valid
 	private ProjectData projectDataEID;
 
+	// TODO
+	@Valid
 	private ProjectData projectData;
 
+	// TODO
+	@Valid
 	private ObservationData observations;
 
+	// for display
 	private Map<String, OrganizationTypeList> organizationTypeLists;
 
 	private String sampleTypeSelect;

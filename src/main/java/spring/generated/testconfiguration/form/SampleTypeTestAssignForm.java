@@ -3,60 +3,71 @@ package spring.generated.testconfiguration.form;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
 
 public class SampleTypeTestAssignForm extends BaseForm {
-  private List sampleTypeList;
+	// for display
+	private List sampleTypeList;
 
-  private LinkedHashMap sampleTypeTestList;
+	// for display
+	private LinkedHashMap sampleTypeTestList;
 
-  private String testId = "";
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
+	private String testId = "";
 
-  private String sampleTypeId = "";
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
+	private String sampleTypeId = "";
 
-  private String deactivateSampleTypeId = "";
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
+	private String deactivateSampleTypeId = "";
 
-  public SampleTypeTestAssignForm() {
-    setFormName("sampleTypeTestAssignForm");
-  }
+	public SampleTypeTestAssignForm() {
+		setFormName("sampleTypeTestAssignForm");
+	}
 
-  public List getSampleTypeList() {
-    return this.sampleTypeList;
-  }
+	public List getSampleTypeList() {
+		return sampleTypeList;
+	}
 
-  public void setSampleTypeList(List sampleTypeList) {
-    this.sampleTypeList = sampleTypeList;
-  }
+	public void setSampleTypeList(List sampleTypeList) {
+		this.sampleTypeList = sampleTypeList;
+	}
 
-  public LinkedHashMap getSampleTypeTestList() {
-    return this.sampleTypeTestList;
-  }
+	public LinkedHashMap getSampleTypeTestList() {
+		return sampleTypeTestList;
+	}
 
-  public void setSampleTypeTestList(LinkedHashMap sampleTypeTestList) {
-    this.sampleTypeTestList = sampleTypeTestList;
-  }
+	public void setSampleTypeTestList(LinkedHashMap sampleTypeTestList) {
+		this.sampleTypeTestList = sampleTypeTestList;
+	}
 
-  public String getTestId() {
-    return this.testId;
-  }
+	public String getTestId() {
+		return testId;
+	}
 
-  public void setTestId(String testId) {
-    this.testId = testId;
-  }
+	public void setTestId(String testId) {
+		this.testId = testId;
+	}
 
-  public String getSampleTypeId() {
-    return this.sampleTypeId;
-  }
+	public String getSampleTypeId() {
+		return sampleTypeId;
+	}
 
-  public void setSampleTypeId(String sampleTypeId) {
-    this.sampleTypeId = sampleTypeId;
-  }
+	public void setSampleTypeId(String sampleTypeId) {
+		this.sampleTypeId = sampleTypeId;
+	}
 
-  public String getDeactivateSampleTypeId() {
-    return this.deactivateSampleTypeId;
-  }
+	public String getDeactivateSampleTypeId() {
+		return deactivateSampleTypeId;
+	}
 
-  public void setDeactivateSampleTypeId(String deactivateSampleTypeId) {
-    this.deactivateSampleTypeId = deactivateSampleTypeId;
-  }
+	public void setDeactivateSampleTypeId(String deactivateSampleTypeId) {
+		this.deactivateSampleTypeId = deactivateSampleTypeId;
+	}
 }

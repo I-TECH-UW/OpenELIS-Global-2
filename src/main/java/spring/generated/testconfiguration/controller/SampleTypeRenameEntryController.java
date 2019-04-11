@@ -1,10 +1,10 @@
 package spring.generated.testconfiguration.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.SampleTypeRenameEntryForm;
-import spring.generated.testconfiguration.validator.SampleTypeRenameEntryFormValidator;
 import spring.mine.common.controller.BaseController;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -24,9 +23,6 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Controller
 public class SampleTypeRenameEntryController extends BaseController {
-
-	@Autowired
-	SampleTypeRenameEntryFormValidator formValidator;
 
 	@RequestMapping(value = "/SampleTypeRenameEntry", method = RequestMethod.GET)
 	public ModelAndView showSampleTypeRenameEntry(HttpServletRequest request) {
@@ -52,8 +48,7 @@ public class SampleTypeRenameEntryController extends BaseController {
 
 	@RequestMapping(value = "/SampleTypeRenameEntry", method = RequestMethod.POST)
 	public ModelAndView updateSampleTypeRenameEntry(HttpServletRequest request,
-			@ModelAttribute("form") SampleTypeRenameEntryForm form, BindingResult result) {
-		formValidator.validate(form, result);
+			@ModelAttribute("form") @Valid SampleTypeRenameEntryForm form, BindingResult result) {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			form.setSampleTypeList(DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));

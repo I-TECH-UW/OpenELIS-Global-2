@@ -2,22 +2,34 @@ package spring.generated.testconfiguration.form;
 
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
 import us.mn.state.health.lims.testconfiguration.action.PanelTests;
 
 public class PanelTestAssignForm extends BaseForm {
+	// for display
 	private List panelList;
 
+	// for display
 	private PanelTests selectedPanel = new PanelTests();
 
+	// for display
 	private List panelTestList;
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String panelId = "";
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String deactivatePanelId = "";
 
+	// in validator
 	private String[] currentTests;
 
+	// in validator
 	private String[] availableTests;
 
 	public PanelTestAssignForm() {

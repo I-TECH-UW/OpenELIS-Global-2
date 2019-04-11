@@ -1,10 +1,10 @@
 package spring.generated.testconfiguration.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.PanelRenameEntryForm;
-import spring.generated.testconfiguration.validator.PanelRenameEntryFormValidator;
 import spring.mine.common.controller.BaseController;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -25,9 +24,6 @@ import us.mn.state.health.lims.panel.valueholder.Panel;
 
 @Controller
 public class PanelRenameEntryController extends BaseController {
-
-	@Autowired
-	PanelRenameEntryFormValidator formValidator;
 
 	@RequestMapping(value = "/PanelRenameEntry", method = RequestMethod.GET)
 	public ModelAndView showPanelRenameEntry(HttpServletRequest request) {
@@ -52,8 +48,7 @@ public class PanelRenameEntryController extends BaseController {
 
 	@RequestMapping(value = "/PanelRenameEntry", method = RequestMethod.POST)
 	public ModelAndView updatePanelRenameEntry(HttpServletRequest request,
-			@ModelAttribute("form") PanelRenameEntryForm form, BindingResult result) {
-		formValidator.validate(form, result);
+			@ModelAttribute("form") @Valid PanelRenameEntryForm form, BindingResult result) {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			form.setPanelList(DisplayListService.getList(DisplayListService.ListType.PANELS));

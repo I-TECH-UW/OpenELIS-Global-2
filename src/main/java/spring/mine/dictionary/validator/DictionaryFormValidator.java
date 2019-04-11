@@ -20,22 +20,6 @@ public class DictionaryFormValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		DictionaryForm form = (DictionaryForm) target;
 
-		ValidationHelper.validateIdField(form.getId(), "id", errors, false);
-
-		ValidationHelper.validateIdField(form.getSelectedDictionaryCategoryId(), "id", errors, true);
-
-		// dictionaryCategory doesn't need to be validated as it is used for display
-
-		// categories doesn't need to be validated as it is used for display
-
-		ValidationHelper.validateYNField(form.getIsActive(), "isActive", errors);
-
-		// right now all chars are permitted UNSECURE VARIABLE
-		ValidationHelper.validateField(form.getDictEntry(), "dictEntry", errors, true, 4000);
-
-		// right now all chars are permitted UNSECURE VARIABLE
-		ValidationHelper.validateField(form.getLocalAbbreviation(), "localAbbreviation", errors, false, 60);
-
 		String[] dirtyFields = form.getDirtyFormFields()
 				.split(SystemConfiguration.getInstance().getDefaultIdSeparator(), -1);
 		for (String dirtyField : dirtyFields) {

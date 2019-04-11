@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Transaction;
@@ -300,7 +301,7 @@ public class OrganizationController extends BaseController {
 
 	@RequestMapping(value = "/Organization", method = RequestMethod.POST)
 	public ModelAndView showUpdateOrganization(HttpServletRequest request,
-			@ModelAttribute("form") OrganizationForm form, BindingResult result, SessionStatus status,
+			@ModelAttribute("form") @Valid OrganizationForm form, BindingResult result, SessionStatus status,
 			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,8 +130,13 @@ public class DictionaryMenuController extends BaseMenuController {
 
 	@RequestMapping(value = "/DeleteDictionary", method = RequestMethod.POST)
 	public ModelAndView showDeleteDictionary(HttpServletRequest request,
-			@ModelAttribute("form") DictionaryMenuForm form, BindingResult result,
+			@ModelAttribute("form") @Valid DictionaryMenuForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 
 		String[] selectedIDs = (String[]) form.get("selectedIDs");
 

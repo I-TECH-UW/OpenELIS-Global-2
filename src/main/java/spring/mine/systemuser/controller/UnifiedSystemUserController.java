@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -369,7 +370,7 @@ public class UnifiedSystemUserController extends BaseController {
 
 	@RequestMapping(value = "/UnifiedSystemUser", method = RequestMethod.POST)
 	public ModelAndView showUpdateUnifiedSystemUser(HttpServletRequest request,
-			@ModelAttribute("form") UnifiedSystemUserForm form, BindingResult result,
+			@ModelAttribute("form") @Valid UnifiedSystemUserForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) {
 		boolean doFiltering = true;
 		formValidator.validate(form, result);

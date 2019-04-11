@@ -4,10 +4,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.UomCreateForm;
-import spring.generated.testconfiguration.validator.UomCreateFormValidator;
 import spring.mine.common.controller.BaseController;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -29,9 +28,6 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 @Controller
 public class UomCreateController extends BaseController {
-
-	@Autowired
-	UomCreateFormValidator formValidator;
 
 	public static final String NAME_SEPARATOR = "$";
 
@@ -78,9 +74,8 @@ public class UomCreateController extends BaseController {
 	}
 
 	@RequestMapping(value = "/UomCreate", method = RequestMethod.POST)
-	public ModelAndView postUomCreate(HttpServletRequest request, @ModelAttribute("form") UomCreateForm form,
+	public ModelAndView postUomCreate(HttpServletRequest request, @ModelAttribute("form") @Valid UomCreateForm form,
 			BindingResult result) throws Exception {
-		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
 			setupDisplayItems(form);

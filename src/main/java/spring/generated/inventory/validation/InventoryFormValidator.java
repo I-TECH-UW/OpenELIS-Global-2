@@ -6,15 +6,15 @@ import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import spring.generated.inventory.form.InventoryForm;
-import spring.mine.common.validator.ValidationHelper;
-import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 
+@Component
 public class InventoryFormValidator implements Validator {
 
 	@Override
@@ -26,10 +26,7 @@ public class InventoryFormValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		InventoryForm form = (InventoryForm) target;
 
-		ValidationHelper.validateDateField(form.getCurrentDate(), "currentDate", errors, DateRelation.TODAY);
-
-		// TODO inventoryItems
-
+		// TODO validate input, not just that it is json
 		try {
 			DocumentBuilderFactory.newInstance().newDocumentBuilder()
 					.parse(new InputSource(new StringReader(form.getNewKitsXML())));

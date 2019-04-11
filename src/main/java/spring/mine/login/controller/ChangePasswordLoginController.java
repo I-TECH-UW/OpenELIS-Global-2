@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.util.Calendar;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Transaction;
@@ -49,7 +50,7 @@ public class ChangePasswordLoginController extends BaseController {
 	}
 
 	@RequestMapping(value = "/ChangePasswordLogin", method = RequestMethod.POST)
-	public ModelAndView showUpdateLoginChangePassword(@ModelAttribute("form") ChangePasswordLoginForm form,
+	public ModelAndView showUpdateLoginChangePassword(@ModelAttribute("form") @Valid ChangePasswordLoginForm form,
 			BindingResult result, RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		formValidator.validate(form, result);

@@ -2,21 +2,33 @@ package spring.generated.testconfiguration.form;
 
 import java.util.List;
 
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
 
 public class TestModifyEntryForm extends BaseForm {
+	// for display
 	private List testList;
 
+	@SafeHtml
 	private String nameEnglish = "";
 
+	@SafeHtml
 	private String nameFrench = "";
 
+	@SafeHtml
 	private String reportNameEnglish = "";
 
+	@SafeHtml
 	private String reportNameFrench = "";
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String testId = "";
 
+	@Pattern(regexp = "^[0-9-]$")
 	private String loinc = "";
 
 	private String jsonWad = "";

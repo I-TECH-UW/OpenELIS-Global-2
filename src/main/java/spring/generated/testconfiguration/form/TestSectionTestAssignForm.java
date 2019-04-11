@@ -3,17 +3,28 @@ package spring.generated.testconfiguration.form;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
 
 public class TestSectionTestAssignForm extends BaseForm {
+	// for display
 	private List testSectionList;
 
+	// for display
 	private LinkedHashMap sectionTestList;
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String testId = "";
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String testSectionId = "";
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String deactivateTestSectionId = "";
 
 	public TestSectionTestAssignForm() {

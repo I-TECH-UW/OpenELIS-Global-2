@@ -7,8 +7,8 @@ import java.util.List;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,7 +21,6 @@ import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.controller.BaseController;
 import spring.mine.workplan.form.WorkplanForm;
-import spring.mine.workplan.validator.WorkplanFormValidator;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.workplan.reports.ElisaWorkplanReport;
@@ -32,17 +31,12 @@ import us.mn.state.health.lims.workplan.reports.TestWorkplanReport;
 @Controller
 public class PrintWorkplanReportController extends BaseController {
 
-	@Autowired
-	WorkplanFormValidator formValidator;
-
 	private static IWorkplanReport workplanReport;
 	private String reportPath;
 
 	@RequestMapping(value = "/PrintWorkplanReport", method = RequestMethod.POST)
 	public void showPrintWorkplanReport(HttpServletRequest request, HttpServletResponse response,
-			@ModelAttribute("form") WorkplanForm form, BindingResult result) {
-
-		formValidator.validate(form, result);
+			@ModelAttribute("form") @Valid WorkplanForm form, BindingResult result) {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return;

@@ -5,14 +5,19 @@ import java.util.List;
 import spring.mine.common.form.BaseForm;
 
 public class PanelOrderForm extends BaseForm {
+	// for display
 	private List panelList;
 
+	// in validator
 	private String jsonChangeList = "";
 
+	// for display
 	private List existingPanelList;
 
+	// for display
 	private List inactivePanelList;
 
+	// for display
 	private List existingSampleTypeList;
 
 	public PanelOrderForm() {

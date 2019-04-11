@@ -2,16 +2,22 @@ package spring.mine.resultreporting.form;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.dataexchange.resultreporting.beans.ReportingConfiguration;
 
 public class ResultReportingConfigurationForm extends BaseForm {
 
+	// TODO
+	@Valid
 	private List<ReportingConfiguration> reports;
 
+	// for display
 	private List<IdValuePair> hourList;
 
+	// for display
 	private List<IdValuePair> minList;
 
 	public ResultReportingConfigurationForm() {

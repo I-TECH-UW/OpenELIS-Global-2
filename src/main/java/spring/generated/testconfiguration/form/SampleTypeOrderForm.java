@@ -5,8 +5,10 @@ import java.util.List;
 import spring.mine.common.form.BaseForm;
 
 public class SampleTypeOrderForm extends BaseForm {
+	// for display
 	private List sampleTypeList;
 
+	// in validator
 	private String jsonChangeList = "";
 
 	public SampleTypeOrderForm() {

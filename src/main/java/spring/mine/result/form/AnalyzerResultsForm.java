@@ -3,22 +3,31 @@ package spring.mine.result.form;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.analyzerresults.action.beanitems.AnalyzerResultItem;
 import us.mn.state.health.lims.common.paging.PagingBean;
 
 public class AnalyzerResultsForm extends BaseForm {
+	// for display
 	private PagingBean paging;
 
 	private Timestamp lastupdated;
 
+	// TODO
+	@Valid
 	private List<AnalyzerResultItem> resultList;
 
+	// for display
 	private String analyzerType = "";
 
-	private Boolean displayNotFoundMsg;
+	@NotNull
+	private Boolean displayNotFoundMsg = false;
 
-	private Boolean displayMissingTestMsg;
+	@NotNull
+	private Boolean displayMissingTestMsg = false;
 
 	public AnalyzerResultsForm() {
 		setFormName("AnalyzerResultsForm");

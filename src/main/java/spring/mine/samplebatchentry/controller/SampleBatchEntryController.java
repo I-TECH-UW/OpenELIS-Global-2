@@ -3,6 +3,7 @@ package spring.mine.samplebatchentry.controller;
 import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -42,7 +43,7 @@ public class SampleBatchEntryController extends BaseController {
 
 	@RequestMapping(value = { "/SampleBatchEntry" }, method = RequestMethod.POST)
 	public ModelAndView showSampleBatchEntry(HttpServletRequest request,
-			@ModelAttribute("form") SampleBatchEntryForm form, BindingResult result) throws DocumentException {
+			@ModelAttribute("form") @Valid SampleBatchEntryForm form, BindingResult result) throws DocumentException {
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);

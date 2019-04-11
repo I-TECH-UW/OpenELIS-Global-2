@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,7 +134,7 @@ public class OrganizationMenuController extends BaseMenuController {
 
 	@RequestMapping(value = "/DeleteOrganization", method = RequestMethod.POST)
 	public ModelAndView showDeleteOrganization(HttpServletRequest request,
-			@ModelAttribute("form") OrganizationMenuForm form, BindingResult result,
+			@ModelAttribute("form") @Valid OrganizationMenuForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) {
 
 		formValidator.validate(form, result);

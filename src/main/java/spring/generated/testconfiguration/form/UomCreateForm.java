@@ -2,19 +2,30 @@ package spring.generated.testconfiguration.form;
 
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
 import spring.mine.common.form.BaseForm;
 
 public class UomCreateForm extends BaseForm {
+	// for display
 	private List existingUomList;
 
+	// for display
 	private List inactiveUomList;
 
+	// for display
 	private String existingEnglishNames;
 
+	// for display
 	private String existingFrenchNames;
 
+	@NotBlank
+	@SafeHtml
 	private String uomEnglishName;
 
+	@SafeHtml
 	private String uomFrenchName;
 
 	public UomCreateForm() {

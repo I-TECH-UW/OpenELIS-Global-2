@@ -23,17 +23,6 @@ public class PatientEntryByProjectFormValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		PatientEntryByProjectForm form = (PatientEntryByProjectForm) target;
 
-		ValidationHelper.validateIdField(form.getPatientPK(), "patientPK", errors, false);
-
-		ValidationHelper.validateIdField(form.getSamplePK(), "samplePK", errors, false);
-
-		ValidationHelper.validateField(form.getString("patientLastUpdated"), "patientLastUpdated", errors, false, 255);
-
-		ValidationHelper.validateField(form.getString("personLastUpdated"), "personLastUpdated", errors, false, 255);
-
-		ValidationHelper.validateOptionFieldIgnoreCase(form.getString("patientProcessingStatus"),
-				"patientProcessingStatus", errors, new String[] { "Add", "update", "noAction" });
-
 		if ("InitialARV_Id".equals(form.getObservations().getProjectFormName())) {
 			validateInitialARVForm(form, errors);
 		} else if ("FollowUpARV_Id".equals(form.getObservations().getProjectFormName())) {

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +79,7 @@ public class DataSubmissionController extends BaseController {
 
 	@RequestMapping(value = "/DataSubmission", method = RequestMethod.POST)
 	public ModelAndView showDataSubmissionSave(HttpServletRequest request,
-			@ModelAttribute("form") DataSubmissionForm form, BindingResult result,
+			@ModelAttribute("form") @Valid DataSubmissionForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) throws IOException, ParseException {
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {

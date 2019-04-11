@@ -54,10 +54,17 @@ myActionForm = document.forms["<%= (String)request.getAttribute(IActionConstants
 
 
 </script>
-<c:if test="${not empty requestScope[Constants.REQUEST_ERRORS].allErrors}">
+<c:if test="${not empty requestScope[Constants.REQUEST_ERRORS].globalErrors}">
 <center><h1>
-<c:forEach items="${requestScope[Constants.REQUEST_ERRORS].allErrors}" var="error">
+<c:forEach items="${requestScope[Constants.REQUEST_ERRORS].globalErrors}" var="error">
 	<spring:message code="${error.code}" arguments="${error.arguments}" text="${error.defaultMessage}" /><br>
+</c:forEach>
+</h1></center>
+</c:if>
+<c:if test="${not empty requestScope[Constants.REQUEST_ERRORS].fieldErrors}">
+<center><h1>
+<c:forEach items="${requestScope[Constants.REQUEST_ERRORS].fieldErrors}" var="error">
+	<c:out value="${error.field}"/>: <spring:message code="${error.code}" arguments="${error.arguments}" text="${error.defaultMessage}" /><br>
 </c:forEach>
 </h1></center>
 </c:if>

@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.owasp.encoder.Encode;
@@ -61,9 +62,12 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
 		return findForward(FWD_SUCCESS, form);
 	}
 
+	// TODO consider making a separate method for each type of form entry so we can
+	// use
+	// @Validated(VL.class, EID.class, etc..) to access seperate logic
 	@RequestMapping(value = "/PatientEntryByProject", method = RequestMethod.POST)
 	public ModelAndView showPatientEntryByProjectUpdate(HttpServletRequest request,
-			@ModelAttribute("form") PatientEntryByProjectForm form, BindingResult result,
+			@ModelAttribute("form") @Valid PatientEntryByProjectForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) throws Exception {
 
 		formValidator.validate(form, result);

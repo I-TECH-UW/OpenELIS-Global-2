@@ -3,7 +3,10 @@ package spring.mine.patient.form;
 import java.sql.Timestamp;
 import java.util.Map;
 
+import javax.validation.constraints.Pattern;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
 import us.mn.state.health.lims.dictionary.ObservationHistoryList;
 import us.mn.state.health.lims.organization.util.OrganizationTypeList;
 import us.mn.state.health.lims.patient.valueholder.ObservationData;
@@ -16,14 +19,18 @@ public class PatientEntryByProjectForm extends BaseForm {
 
 	private Map<String, OrganizationTypeList> organizationTypeLists;
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String patientPK = "";
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String samplePK = "";
 
 	private Timestamp lastupdated;
 
+	// TODO
 	private String patientLastUpdated = "";
 
+	// TODO
 	private String personLastUpdated = "";
 
 	private String interviewDate = "";
@@ -36,6 +43,7 @@ public class PatientEntryByProjectForm extends BaseForm {
 
 	private String currentDate = "";
 
+	@Pattern(regexp = "^Add$|^update$|^noAction$")
 	private String patientProcessingStatus = "Add";
 
 	private String subjectNumber = "";

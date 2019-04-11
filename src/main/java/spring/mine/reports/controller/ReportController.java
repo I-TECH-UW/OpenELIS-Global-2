@@ -8,6 +8,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -24,7 +25,6 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.reports.form.ReportForm;
-import spring.mine.reports.validator.ReportFormValidator;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.ReportTrackingService;
 import us.mn.state.health.lims.common.services.ReportTrackingService.ReportType;
@@ -38,8 +38,6 @@ public class ReportController extends BaseController {
 
 	@Autowired
 	ServletContext context;
-	@Autowired
-	ReportFormValidator formValidator;
 
 	private static String reportPath = null;
 	private static String imagesPath = null;
@@ -71,9 +69,8 @@ public class ReportController extends BaseController {
 
 	@RequestMapping(value = "/ReportPrint", method = RequestMethod.GET)
 	public ModelAndView showReportPrint(HttpServletRequest request, HttpServletResponse response,
-			@ModelAttribute("form") ReportForm form, BindingResult result, SessionStatus status)
+			@ModelAttribute("form") @Valid ReportForm form, BindingResult result, SessionStatus status)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL, form);

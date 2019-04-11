@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Transaction;
@@ -151,8 +152,9 @@ public class DictionaryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/Dictionary", method = RequestMethod.POST)
-	public ModelAndView showUpdateDictionary(HttpServletRequest request, @ModelAttribute("form") DictionaryForm form,
-			BindingResult result, SessionStatus status, RedirectAttributes redirectAttributes)
+	public ModelAndView showUpdateDictionary(HttpServletRequest request,
+			@ModelAttribute("form") @Valid DictionaryForm form, BindingResult result, SessionStatus status,
+			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		formValidator.validate(form, result);

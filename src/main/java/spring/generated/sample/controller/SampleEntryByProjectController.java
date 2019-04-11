@@ -10,9 +10,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.owasp.encoder.Encode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.generated.sample.form.SampleEntryByProjectForm;
-import spring.generated.sample.validator.SampleEntryByProjectFormValidator;
 import spring.mine.sample.controller.BaseSampleEntryController;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
@@ -43,9 +42,6 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 @Controller
 public class SampleEntryByProjectController extends BaseSampleEntryController {
 
-	@Autowired
-	SampleEntryByProjectFormValidator formValidator;
-
 	@RequestMapping(value = "/SampleEntryByProject", method = RequestMethod.GET)
 	public ModelAndView showSampleEntryByProject(HttpServletRequest request) {
 		SampleEntryByProjectForm form = new SampleEntryByProjectForm();
@@ -63,10 +59,8 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 
 	@RequestMapping(value = "/SampleEntryByProject", method = RequestMethod.POST)
 	public ModelAndView postSampleEntryByProject(HttpServletRequest request,
-			@ModelAttribute("form") SampleEntryByProjectForm form, BindingResult result,
-			RedirectAttributes redirectAttributes) throws Exception {
-
-		formValidator.validate(form, result);
+			@ModelAttribute("form") @Validated(SampleEntryByProjectForm.SampleEntryByProject.class) SampleEntryByProjectForm form,
+			BindingResult result, RedirectAttributes redirectAttributes) throws Exception {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			setDisplayLists(form);

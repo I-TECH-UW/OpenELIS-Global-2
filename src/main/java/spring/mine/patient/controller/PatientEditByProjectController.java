@@ -1,6 +1,7 @@
 package spring.mine.patient.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,7 @@ public class PatientEditByProjectController extends BasePatientEntryByProject {
 
 	@RequestMapping(value = "/PatientEditByProject", method = RequestMethod.POST)
 	public ModelAndView showPatientEditByProjectSave(HttpServletRequest request,
-			@ModelAttribute("form") PatientEditByProjectForm form, BindingResult result,
+			@ModelAttribute("form") @Valid PatientEditByProjectForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) throws LIMSRuntimeException, Exception {
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {

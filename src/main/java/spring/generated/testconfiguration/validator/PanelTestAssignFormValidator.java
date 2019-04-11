@@ -25,9 +25,9 @@ public class PanelTestAssignFormValidator implements Validator {
 
 		// removable? panelTestList;
 
-		ValidationHelper.validateIdField(form.getPanelId(), "panelId", errors, true);
+		// done in annotation panelId
 
-		ValidationHelper.validateIdField(form.getDeactivatePanelId(), "deactivatePanelId", errors, false);
+		// done in annotation deactivatePanelId
 
 		for (String currentTest : form.getCurrentTests()) {
 			ValidationHelper.validateIdField(currentTest, "currentTests", "currentTests test", errors, true);

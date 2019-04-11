@@ -126,6 +126,7 @@ public class CustomDateValidator extends DateValidator {
 
 		if (date == null) {
 			result = IActionConstants.INVALID;
+			return result;
 		}
 
 		Calendar calendar = new GregorianCalendar();

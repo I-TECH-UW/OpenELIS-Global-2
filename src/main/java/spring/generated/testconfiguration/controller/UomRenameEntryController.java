@@ -1,10 +1,10 @@
 package spring.generated.testconfiguration.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.UomRenameEntryForm;
-import spring.generated.testconfiguration.validator.UomRenameEntryFormValidator;
 import spring.mine.common.controller.BaseController;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -23,9 +22,6 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 @Controller
 public class UomRenameEntryController extends BaseController {
-
-	@Autowired
-	UomRenameEntryFormValidator formValidator;
 
 	@RequestMapping(value = "/UomRenameEntry", method = RequestMethod.GET)
 	public ModelAndView showUomRenameEntry(HttpServletRequest request) {
@@ -50,8 +46,7 @@ public class UomRenameEntryController extends BaseController {
 
 	@RequestMapping(value = "/UomRenameEntry", method = RequestMethod.POST)
 	public ModelAndView updateUomRenameEntry(HttpServletRequest request,
-			@ModelAttribute("form") UomRenameEntryForm form, BindingResult result) {
-		formValidator.validate(form, result);
+			@ModelAttribute("form") @Valid UomRenameEntryForm form, BindingResult result) {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			form.setUomList(DisplayListService.getList(DisplayListService.ListType.UNIT_OF_MEASURE));

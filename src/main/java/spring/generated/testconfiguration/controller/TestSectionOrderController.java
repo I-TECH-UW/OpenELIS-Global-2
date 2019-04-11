@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
@@ -84,7 +85,7 @@ public class TestSectionOrderController extends BaseController {
 
 	@RequestMapping(value = "/TestSectionOrder", method = RequestMethod.POST)
 	public ModelAndView postTestSectionOrder(HttpServletRequest request,
-			@ModelAttribute("form") TestSectionOrderForm form, BindingResult result) throws Exception {
+			@ModelAttribute("form") @Valid TestSectionOrderForm form, BindingResult result) throws Exception {
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);

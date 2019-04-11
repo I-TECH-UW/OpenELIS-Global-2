@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.HibernateException;
@@ -14,7 +15,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.TestActivationForm;
-import spring.generated.testconfiguration.validator.TestActivationFormValidator;
 import spring.mine.common.controller.BaseController;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.TestService;
@@ -40,9 +39,6 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Controller
 public class TestActivationController extends BaseController {
-
-	@Autowired
-	TestActivationFormValidator formValidator;
 
 	@RequestMapping(value = "/TestActivation", method = RequestMethod.GET)
 	public ModelAndView showTestActivation(HttpServletRequest request) {
@@ -127,9 +123,8 @@ public class TestActivationController extends BaseController {
 	}
 
 	@RequestMapping(value = "/TestActivation", method = RequestMethod.POST)
-	public ModelAndView postTestActivation(HttpServletRequest request, @ModelAttribute("form") TestActivationForm form,
-			BindingResult result) throws Exception {
-		formValidator.validate(form, result);
+	public ModelAndView postTestActivation(HttpServletRequest request,
+			@ModelAttribute("form") @Valid TestActivationForm form, BindingResult result) throws Exception {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			setupDisplayItems(form);

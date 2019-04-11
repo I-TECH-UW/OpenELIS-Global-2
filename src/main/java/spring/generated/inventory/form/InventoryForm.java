@@ -3,21 +3,36 @@ package spring.generated.inventory.form;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.validation.annotations.ValidDate;
 import us.mn.state.health.lims.common.util.IdValuePair;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.inventory.form.InventoryKitItem;
 
 public class InventoryForm extends BaseForm {
+
+	public interface ManageInventory {
+	}
+
+	@ValidDate(relative = DateRelation.TODAY)
 	private String currentDate = "";
 
 	private Timestamp lastupdated;
 
+	@NotNull(groups = { ManageInventory.class })
+	@Valid
 	private List<InventoryKitItem> inventoryItems;
 
+	// for display
 	private List<IdValuePair> sources;
 
+	// for display
 	private List<IdValuePair> kitTypes;
 
+	// in display
 	private String newKitsXML = "";
 
 	public InventoryForm() {

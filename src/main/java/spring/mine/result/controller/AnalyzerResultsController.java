@@ -10,11 +10,11 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -28,7 +28,6 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.result.form.AnalyzerResultsForm;
-import spring.mine.result.validator.AnalyzerResultsFormValidator;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -105,9 +104,6 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 @Controller
 public class AnalyzerResultsController extends BaseController {
-
-	@Autowired
-	AnalyzerResultsFormValidator formValidator;
 
 	private static final boolean IS_RETROCI = ConfigurationProperties.getInstance()
 			.isPropertyValueEqual(ConfigurationProperties.Property.configurationName, "CI_GENERAL");
@@ -667,9 +663,8 @@ public class AnalyzerResultsController extends BaseController {
 
 	@RequestMapping(value = "/AnalyzerResults", method = RequestMethod.POST)
 	public ModelAndView showAnalyzerResultsSave(HttpServletRequest request,
-			@ModelAttribute("form") AnalyzerResultsForm form, BindingResult result,
+			@ModelAttribute("form") @Valid AnalyzerResultsForm form, BindingResult result,
 			RedirectAttributes redirectAttibutes) {
-		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);

@@ -32,28 +32,6 @@ public class SampleEditFormValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		SampleEditForm form = (SampleEditForm) target;
 
-		ValidationHelper.validateField(form.getPatientName(), "patientName", errors, false, 255,
-				ValidationHelper.NAME_REGEX);
-
-		ValidationHelper.validateDateField(form.getDob(), "dob", errors, DateRelation.PAST);
-
-		ValidationHelper.validateGenderField(form.getGender(), "gender", errors);
-
-		ValidationHelper.validateField(form.getNationalId(), "nationalId", errors, false, 255,
-				ValidationHelper.PATIENT_ID_REGEX);
-
-		if (!ValidationResults.SUCCESS.equals(AccessionNumberUtil.correctFormat(form.getAccessionNumber(), false))) {
-			errors.rejectValue("accessionNumber", "error.field.accession.format");
-		}
-
-		if (!ValidationResults.SUCCESS.equals(AccessionNumberUtil.correctFormat(form.getNewAccessionNumber(), false))) {
-			errors.rejectValue("newccessionNumber", "error.field.accession.format");
-		}
-
-		// TODO existingTests
-
-		// TODO possibleTests
-
 		// maxAccessionNumber
 		String[] maxAccessionNumberArray = form.getMaxAccessionNumber().split("-");
 		if (!ValidationResults.SUCCESS.equals(AccessionNumberUtil.correctFormat(maxAccessionNumberArray[0], false))) {
@@ -65,8 +43,6 @@ public class SampleEditFormValidator implements Validator {
 		validateSampleXML(form.getSampleXML(), errors);
 
 		ValidationHelper.validateDateField(form.getCurrentDate(), "cuurentDate", errors, DateRelation.PAST);
-
-		// TODO sampleOrderItems
 
 		ValidationHelper.validateOptionField(form.getIdSeparator(), "idSeperator", errors,
 				new String[] { SystemConfiguration.getInstance().getDefaultIdSeparator() });

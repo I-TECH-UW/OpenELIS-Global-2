@@ -25,8 +25,5 @@ public class OrganizationMenuFormValidator implements Validator {
 				break;
 			}
 		}
-
-		// search string should not need validation
 	}
-
 }

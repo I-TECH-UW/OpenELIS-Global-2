@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.StaleObjectStateException;
@@ -124,7 +125,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
 	@RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.POST)
 	public @ResponseBody ModelAndView showSamplePatientEntrySave(HttpServletRequest request,
-			@ModelAttribute("form") SamplePatientEntryForm form, BindingResult result,
+			@ModelAttribute("form") @Valid SamplePatientEntryForm form, BindingResult result,
 			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 

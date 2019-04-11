@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -434,8 +435,13 @@ public class NonConformityController extends BaseController {
 
 	@RequestMapping(value = "/NonConformity", method = RequestMethod.POST)
 	public ModelAndView showNonConformityUpdate(HttpServletRequest request,
-			@ModelAttribute("form") NonConformityForm form, BindingResult result,
+			@ModelAttribute("form") @Valid NonConformityForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 
 		NonConformityUpdateData data = new NonConformityUpdateData(form, getSysUserId(request));
 		NonConformityUpdateWorker worker = new NonConformityUpdateWorker(data);

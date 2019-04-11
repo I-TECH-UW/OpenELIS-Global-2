@@ -13,11 +13,11 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -31,7 +31,6 @@ import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.resultvalidation.form.ResultValidationForm;
 import spring.mine.resultvalidation.util.ResultValidationSaveService;
-import spring.mine.resultvalidation.validator.ResultValidationFormValidator;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -87,9 +86,6 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
 @Controller
 public class ResultValidationController extends BaseResultValidationController {
-
-	@Autowired
-	ResultValidationFormValidator formValidator;
 
 	// DAOs
 	private static final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
@@ -169,9 +165,8 @@ public class ResultValidationController extends BaseResultValidationController {
 
 	@RequestMapping(value = "/ResultValidation", method = RequestMethod.POST)
 	public ModelAndView showResultValidationSave(HttpServletRequest request,
-			@ModelAttribute("form") ResultValidationForm form, BindingResult result,
+			@ModelAttribute("form") @Valid ResultValidationForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) {
-		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);

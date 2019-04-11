@@ -3,9 +3,10 @@ package spring.mine.patient.form;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 
 public class PatientEditByProjectForm extends PatientEntryByProjectForm {
-
+	// for display
 	private PatientSearch patientSearch;
 
+	// for display
 	private Boolean warning;
 
 	public PatientEditByProjectForm() {

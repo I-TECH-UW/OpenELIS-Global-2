@@ -19,15 +19,6 @@ public class SiteInformationFormValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		SiteInformationForm form = (SiteInformationForm) target;
 
-		ValidationHelper.validateFieldAndCharset(form.getParamName(), "paramName", errors, true, 32,
-				"a-zA-Z0-9_\\-/ ()");
-
-		// UNSECURE VARIABLE
-		ValidationHelper.validateField(form.getDescription(), "description", errors, true, 120);
-
-		// UNSECURE VARIABLE
-		ValidationHelper.validateField(form.getValue(), "value", errors, true, 200);
-
 		// check what encrypted means in this context (is it just masked from view
 		// like in the current method
 		// or should it be completely unaccessible client side)
@@ -41,10 +32,6 @@ public class SiteInformationFormValidator implements Validator {
 						"sampleEntryConfig", "ResultConfiguration", "MenuStatementConfig", "PaitientConfiguration",
 						"SiteInformation" });
 
-		// dictionaryValues doesn't require validation
-
-		// editable doesn't need validation
-
 		ValidationHelper.validateOptionField(form.getTag(), "tag", errors,
 				new String[] { "enable", "url", "numericOnly", "programConfiguration", "localization", "", null });
 
@@ -52,10 +39,8 @@ public class SiteInformationFormValidator implements Validator {
 				ValidationHelper.MESSAGE_KEY_REGEX);
 
 		if ("localization".equals(form.getTag())) {
-			// UNSECURE VARIABLE
 			ValidationHelper.validateField(form.getEnglishValue(), "englishValue", errors, true, 255);
 
-			// UNSECURE VARIABLE
 			ValidationHelper.validateField(form.getFrenchValue(), "frenchValue", errors, true, 255);
 		}
 	}

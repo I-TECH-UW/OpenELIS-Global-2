@@ -2,31 +2,51 @@ package spring.mine.siteinformation.form;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
 
 public class SiteInformationForm extends BaseForm {
+	@NotNull
+	@SafeHtml
 	private String paramName = "";
 
+	@NotNull
+	@SafeHtml
 	private String description = "";
 
+	@NotNull
+	@SafeHtml
 	private String value = "";
 
+	// what about this is encrypted?
 	private boolean encrypted;
 
+	// in validator
 	private String valueType = "text";
 
+	// in validator
 	private String siteInfoDomainName;
 
+	// for display
 	private List<String> dictionaryValues;
 
+	@NotNull
 	private Boolean editable = Boolean.TRUE;
 
 	private String tag = "";
 
+	@Pattern(regexp = ValidationHelper.MESSAGE_KEY_REGEX)
 	private String descriptionKey = "";
 
+	@SafeHtml
 	private String englishValue = "";
 
+	@SafeHtml
 	private String frenchValue = "";
 
 	public SiteInformationForm() {

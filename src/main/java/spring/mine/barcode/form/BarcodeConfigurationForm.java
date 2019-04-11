@@ -1,20 +1,30 @@
 package spring.mine.barcode.form;
 
+import org.hibernate.validator.constraints.Range;
+
 import spring.mine.common.form.BaseForm;
 
 public class BarcodeConfigurationForm extends BaseForm {
+
+	@Range(min = 0, max = 2000)
 	private int numOrderLabels;
 
+	@Range(min = 0, max = 2000)
 	private int numSpecimenLabels;
 
+	@Range(min = 0, max = 2000)
 	private int numAliquotLabels;
 
+	@Range(min = 0, max = 1000)
 	private float heightOrderLabels;
 
+	@Range(min = 0, max = 1000)
 	private float widthOrderLabels;
 
+	@Range(min = 0, max = 1000)
 	private float heightSpecimenLabels;
 
+	@Range(min = 0, max = 1000)
 	private float widthSpecimenLabels;
 
 	private boolean collectionDateCheck;

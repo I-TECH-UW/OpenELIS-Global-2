@@ -2,38 +2,65 @@ package spring.mine.workplan.form;
 
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
+import spring.mine.validation.annotations.ValidDate;
 import us.mn.state.health.lims.common.util.IdValuePair;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.resultvalidation.bean.AnalysisItem;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
 public class WorkplanForm extends BaseForm {
+	@ValidDate(relative = DateRelation.TODAY)
 	private String currentDate = "";
 
+	// for display
 	private String searchLabel;
 
+	// for display
 	private List<IdValuePair> searchTypes;
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String selectedSearchID = "";
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String testTypeID = "";
 
+	@SafeHtml
 	private String testName = "";
 
+	@NotNull
 	private Boolean searchFinished = false;
 
+	// TODO
+	@Valid
 	private List<TestResultItem> workplanTests;
 
+	// TODO
+	@Valid
 	private List<AnalysisItem> resultList;
 
+	@Pattern(regexp = "^$|^test$|^panel$")
 	private String workplanType = "";
 
+	@NotBlank
+	@Pattern(regexp = "^$|^WorkPlanByPanel.do$|^WorkPlanByTest.do$")
 	private String searchAction = "";
 
+	// for display
 	private List<IdValuePair> testSections;
 
+	// for display
 	private List<IdValuePair> testSectionsByName;
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String testSectionId;
 
 	public WorkplanForm() {

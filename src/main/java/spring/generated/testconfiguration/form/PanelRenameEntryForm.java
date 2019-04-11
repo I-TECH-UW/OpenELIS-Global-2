@@ -2,15 +2,28 @@ package spring.generated.testconfiguration.form;
 
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
 
 public class PanelRenameEntryForm extends BaseForm {
+	// for display
 	private List panelList;
 
+	@NotBlank
+	@SafeHtml
 	private String nameEnglish = "";
 
+	@NotBlank
+	@SafeHtml
 	private String nameFrench = "";
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String panelId = "";
 
 	public PanelRenameEntryForm() {

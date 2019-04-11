@@ -7,37 +7,41 @@ import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestCatalog;
 
 public class TestCatalogForm extends BaseForm {
-	
 
-    private List<Test> testList;
-    private List<String> testSectionList;
-    private List<TestCatalog> testCatalogList;
+	// for display
+	private List<Test> testList;
 
-  public TestCatalogForm() {
-    setFormName("testCatalogForm");
-  }
+	// for display
+	private List<String> testSectionList;
 
-  public List<Test> getTestList() {
-    return this.testList;
-  }
+	// for display
+	private List<TestCatalog> testCatalogList;
 
-  public void setTestList(List<Test> testList) {
-    this.testList = testList;
-  }
+	public TestCatalogForm() {
+		setFormName("testCatalogForm");
+	}
 
-  public List<String> getTestSectionList() {
-    return this.testSectionList;
-  }
+	public List<Test> getTestList() {
+		return testList;
+	}
 
-  public void setTestSectionList(List<String> testSectionList) {
-    this.testSectionList = testSectionList;
-  }
-  
-  public List<TestCatalog> getTestCatalogList() {
-	    return this.testCatalogList;
-	  }
+	public void setTestList(List<Test> testList) {
+		this.testList = testList;
+	}
 
-  public void setTestCatalogList(List<TestCatalog> testCatalogList) {
-	    this.testCatalogList = testCatalogList;
-	  }
+	public List<String> getTestSectionList() {
+		return testSectionList;
+	}
+
+	public void setTestSectionList(List<String> testSectionList) {
+		this.testSectionList = testSectionList;
+	}
+
+	public List<TestCatalog> getTestCatalogList() {
+		return testCatalogList;
+	}
+
+	public void setTestCatalogList(List<TestCatalog> testCatalogList) {
+		this.testCatalogList = testCatalogList;
+	}
 }

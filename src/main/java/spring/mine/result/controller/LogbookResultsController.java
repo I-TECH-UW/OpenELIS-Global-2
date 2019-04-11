@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -21,7 +22,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -33,7 +33,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.result.form.LogbookResultsForm;
-import spring.mine.result.validator.LogbookResultsFormValidator;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -106,9 +105,6 @@ import us.mn.state.health.lims.testreflex.action.util.TestReflexUtil;
 
 @Controller
 public class LogbookResultsController extends LogbookResultsBaseController {
-
-	@Autowired
-	LogbookResultsFormValidator formValidator;
 
 	private AnalysisDAO analysisDAO = new AnalysisDAOImpl();
 	private ResultDAO resultDAO = new ResultDAOImpl();
@@ -241,9 +237,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 	@RequestMapping(value = { "/LogbookResults", "/PatientResults", "/AccessionResults",
 			"/StatusResults" }, method = RequestMethod.POST)
 	public ModelAndView showLogbookResultsUpdate(HttpServletRequest request,
-			@ModelAttribute("form") LogbookResultsForm form, BindingResult result,
+			@ModelAttribute("form") @Valid LogbookResultsForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) {
-		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
 			findForward(FWD_FAIL_INSERT, form);

@@ -7,16 +7,22 @@ import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.IdValuePair;
 
 public class BatchTestReassignmentForm extends BaseForm {
+	// for display
 	private List<IdValuePair> sampleList;
 
+	// for display
 	private String statusChangedSampleType = "";
 
+	// for display
 	private String statusChangedCurrentTest = "";
 
+	// for display
 	private String statusChangedNextTest = "";
 
+	// for display
 	private List statusChangedList;
 
+	// in validator
 	private String jsonWad = "";
 
 	private Timestamp lastupdated;

@@ -4,10 +4,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.TestSectionCreateForm;
-import spring.generated.testconfiguration.validator.TestSectionCreateFormValidator;
 import spring.mine.common.controller.BaseController;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -39,9 +38,6 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 
 @Controller
 public class TestSectionCreateController extends BaseController {
-
-	@Autowired
-	TestSectionCreateFormValidator formValidator;
 
 	public static final String NAME_SEPARATOR = "$";
 
@@ -84,8 +80,7 @@ public class TestSectionCreateController extends BaseController {
 
 	@RequestMapping(value = "/TestSectionCreate", method = RequestMethod.POST)
 	public ModelAndView postTestSectionCreate(HttpServletRequest request,
-			@ModelAttribute("form") TestSectionCreateForm form, BindingResult result) throws Exception {
-		formValidator.validate(form, result);
+			@ModelAttribute("form") @Valid TestSectionCreateForm form, BindingResult result) throws Exception {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			setupDisplayItems(form);

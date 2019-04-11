@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Transaction;
@@ -21,7 +22,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.analyzerimport.form.AnalyzerTestNameForm;
 import spring.mine.analyzerimport.validator.AnalyzerTestMappingValidator;
-import spring.mine.analyzerimport.validator.AnalyzerTestNameFormValidator;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
@@ -43,8 +43,6 @@ import us.mn.state.health.lims.test.valueholder.Test;
 @SessionAttributes("form")
 public class AnalyzerTestNameController extends BaseController {
 
-	@Autowired
-	AnalyzerTestNameFormValidator formValidator;
 	@Autowired
 	AnalyzerTestMappingValidator analyzerTestMappingValidator;
 
@@ -103,10 +101,9 @@ public class AnalyzerTestNameController extends BaseController {
 
 	@RequestMapping(value = "/AnalyzerTestName", method = RequestMethod.POST)
 	public ModelAndView showUpdateAnalyzerTestName(HttpServletRequest request,
-			@ModelAttribute("form") AnalyzerTestNameForm form, BindingResult result, SessionStatus status,
+			@ModelAttribute("form") @Valid AnalyzerTestNameForm form, BindingResult result, SessionStatus status,
 			RedirectAttributes redirectAttributes) {
 
-		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);

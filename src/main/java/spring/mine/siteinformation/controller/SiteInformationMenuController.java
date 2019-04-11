@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Transaction;
@@ -161,7 +162,7 @@ public class SiteInformationMenuController extends BaseMenuController {
 			"/DeletePatientConfiguration", "/DeleteNonConformityConfiguration", "/DeleteResultConfiguration",
 			"/DeletePrintedReportsConfiguration", "/DeleteSiteInformation" }, method = RequestMethod.GET)
 	public ModelAndView showDeleteSiteInformation(HttpServletRequest request,
-			@ModelAttribute("form") SiteInformationMenuForm form, BindingResult result,
+			@ModelAttribute("form") @Valid SiteInformationMenuForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) {
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {

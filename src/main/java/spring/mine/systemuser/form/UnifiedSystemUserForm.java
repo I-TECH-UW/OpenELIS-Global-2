@@ -3,36 +3,63 @@ package spring.mine.systemuser.form;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
+import spring.mine.validation.annotations.ValidDate;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.role.action.bean.DisplayRole;
 
 public class UnifiedSystemUserForm extends BaseForm {
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String loginUserId = "";
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String systemUserId = "";
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.USERNAME_REGEX)
 	private String userLoginName = "";
 
+	// in validator
 	private String userPassword = "";
 
+	// in validator
 	private String confirmPassword = "";
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.NAME_REGEX)
 	private String userFirstName = "";
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.NAME_REGEX)
 	private String userLastName = "";
 
+	// for display
 	private List<DisplayRole> roles;
 
+	// in validator
 	private String[] selectedRoles;
 
+	@ValidDate(relative = DateRelation.FUTURE)
 	private String expirationDate;
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.YES_NO_REGEX)
 	private String accountLocked = "N";
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.YES_NO_REGEX)
 	private String accountDisabled = "N";
 
+	@NotBlank
+	@Pattern(regexp = ValidationHelper.YES_NO_REGEX)
 	private String accountActive = "Y";
 
+	@NotBlank
+	@Pattern(regexp = "^[0-9]*$")
 	private String timeout;
 
 	private Timestamp systemUserLastupdated;

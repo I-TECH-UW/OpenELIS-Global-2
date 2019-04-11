@@ -19,8 +19,6 @@ public class UnifiedSystemUserMenuFormValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		UnifiedSystemUserMenuForm form = (UnifiedSystemUserMenuForm) target;
 
-		// menu list does not need to be validated as it is used solely for display
-
 		for (String combinedId : form.getSelectedIDs()) {
 			String[] ids = combinedId.split("-");
 			for (String id : ids) {
