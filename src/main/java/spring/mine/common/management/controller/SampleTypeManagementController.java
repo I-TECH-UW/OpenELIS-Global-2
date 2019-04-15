@@ -12,7 +12,7 @@ import spring.mine.common.management.form.SampleTypeManagementForm;
 
 @Controller
 public class SampleTypeManagementController extends BaseController {
-	@RequestMapping(value = "/SampleTypeManagement", method = RequestMethod.GET)
+	@RequestMapping(value = "/SampleTypeManagement", method = { RequestMethod.GET, RequestMethod.POST })
 	public ModelAndView showSampleTypeManagement(HttpServletRequest request) {
 		SampleTypeManagementForm form = new SampleTypeManagementForm();
 		return findForward(FWD_SUCCESS, form);

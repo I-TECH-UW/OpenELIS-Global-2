@@ -12,7 +12,7 @@ import spring.mine.common.management.form.UomManagementForm;
 
 @Controller
 public class UomManagementController extends BaseController {
-	@RequestMapping(value = "/UomManagement", method = RequestMethod.GET)
+	@RequestMapping(value = "/UomManagement", method = { RequestMethod.GET, RequestMethod.POST })
 	public ModelAndView showUomManagement(HttpServletRequest request) {
 		UomManagementForm form = new UomManagementForm();
 

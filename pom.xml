@@ -182,11 +182,20 @@
 		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
 		<dependency>
 		    <groupId>org.hibernate</groupId>
-		    <artifactId>hibernate</artifactId>
+		    <artifactId>hibernate-core</artifactId>
 		<!-- <version>3.3.0.GA</version> -->
-		<!-- <version>3.6.3.Final</version> -->
-			<version>3.2.6.ga</version>
+		<version>3.6.3.Final</version>
+		<!-- <version>3.2.6.ga</version> -->
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.javassist/javassist -->
+<dependency>
+    <groupId>org.javassist</groupId>
+    <artifactId>javassist</artifactId>
+    <version>3.24.1-GA</version>
+</dependency>
+		
+		
         <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
