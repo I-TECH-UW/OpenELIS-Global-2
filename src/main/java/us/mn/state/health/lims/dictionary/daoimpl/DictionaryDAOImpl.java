@@ -694,7 +694,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl implements DictionaryDAO {
 
 			if (results != null && results.get(0) != null) {
 				if (results.get(0) != null) {
-					count = (Integer) results.get(0);
+					count = ((Long) results.get(0)).intValue();
 				}
 			}
 

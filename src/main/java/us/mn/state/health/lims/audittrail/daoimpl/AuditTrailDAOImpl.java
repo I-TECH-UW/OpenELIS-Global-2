@@ -293,6 +293,7 @@ public class AuditTrailDAOImpl extends BaseDAOImpl implements AuditTrailDAO {
 				} catch (Exception e) {
 					// buzilla 2154
 					LogEvent.logError("AuditTrailDAOImpl", "getChanges()", e.toString());
+					e.printStackTrace();
 					propertyNewState = "";
 				}
 
@@ -308,6 +309,7 @@ public class AuditTrailDAOImpl extends BaseDAOImpl implements AuditTrailDAO {
 				} catch (Exception e) {
 					// buzilla 2154
 					LogEvent.logError("AuditTrailDAOImpl", "getChanges()", e.toString());
+					e.printStackTrace();
 					propertyPreUpdateState = "";
 				}
 
