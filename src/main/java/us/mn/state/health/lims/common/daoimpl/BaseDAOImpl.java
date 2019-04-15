@@ -25,7 +25,7 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
-public class BaseDAOImpl implements BaseDAO, IActionConstants{
+public class BaseDAOImpl implements BaseDAO, IActionConstants {
 
 	public static int DEFAULT_PAGE_SIZE;
 
@@ -40,12 +40,13 @@ public class BaseDAOImpl implements BaseDAO, IActionConstants{
 	 *      java.lang.String, java.lang.Class) passing in id of current record ->
 	 *      get next and check if there will be more (next button enabled?)
 	 */
+	@Override
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int start = (Integer.valueOf(id)).intValue();
 
 		List list = new Vector();
 		try {
-			String sql = "from "+table+" t where id >= "+start+" order by t.id";
+			String sql = "from " + table + " t where id >= " + start + " order by t.id";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
@@ -53,38 +54,40 @@ public class BaseDAOImpl implements BaseDAO, IActionConstants{
 			list = query.list();
 
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("BaseDAOImpl","getNextRecord()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("BaseDAOImpl", "getNextRecord()", e.toString());
 			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
 		}
 
 		return list;
 	}
 
+	@Override
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int start = (Integer.valueOf(id)).intValue();
 
 		List list = new Vector();
 		try {
-			String sql = "from "+table+" t order by t.id desc where id <= "+start;
+			String sql = "from " + table + " t order by t.id desc where id <= " + start;
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
 			list = query.list();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("BaseDAOImpl","getPreviousRecord()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("BaseDAOImpl", "getPreviousRecord()", e.toString());
 			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
 		}
 
 		return list;
 	}
 
-	//bugzilla 1411
+	// bugzilla 1411
+	@Override
 	public Integer getTotalCount(String table, Class clazz) throws LIMSRuntimeException {
 		Integer count = null;
-		 try {
+		try {
 			String sql = "select count(*) from " + table;
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 
@@ -92,44 +95,42 @@ public class BaseDAOImpl implements BaseDAO, IActionConstants{
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 
-
 			if (results != null && results.get(0) != null) {
 				if (results.get(0) != null) {
-					count = (Integer)results.get(0);
+					count = ((Long) results.get(0)).intValue();
 				}
 			}
 
-        } catch (Exception e) {
-        	//bugzilla 2154
-			LogEvent.logError("BaseDAOImpl","getTotalCount()",e.toString());
+		} catch (Exception e) {
+			// bugzilla 2154
+			LogEvent.logError("BaseDAOImpl", "getTotalCount()", e.toString());
 			throw new LIMSRuntimeException("Error in getTotalCount() for " + table, e);
-        }
+		}
 
 		return count;
 	}
 
-	//bugzilla 1427
+	// bugzilla 1427
 	public String enquote(String sql) {
 
-      //bugzilla 2316, take care of ' symbol in the sql
-		if (sql.indexOf("'")!= -1 )
-	    {
-		   sql = sql.replaceAll ("'", "''");
+		// bugzilla 2316, take care of ' symbol in the sql
+		if (sql.indexOf("'") != -1) {
+			sql = sql.replaceAll("'", "''");
 		}
 		return "'" + sql + "'";
 	}
 
-	//bugzilla 1427
+	// bugzilla 1427
 	public String getTablePrefix(String table) {
 		return table.toLowerCase() + ".";
 	}
 
-	protected void handleException( Exception e, String method) throws LIMSRuntimeException {
-		LogEvent.logError( this.getClass().getSimpleName(), method, e.toString());
+	protected void handleException(Exception e, String method) throws LIMSRuntimeException {
+		LogEvent.logError(this.getClass().getSimpleName(), method, e.toString());
 		throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + method, e);
 	}
 
-	protected void closeSession(){
+	protected void closeSession() {
 		HibernateUtil.getSession().flush();
 		HibernateUtil.getSession().clear();
 	}

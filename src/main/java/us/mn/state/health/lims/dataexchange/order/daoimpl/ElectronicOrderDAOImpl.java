@@ -2,15 +2,15 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
@@ -32,20 +32,20 @@ import us.mn.state.health.lims.dataexchange.order.dao.ElectronicOrderDAO;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
-public class ElectronicOrderDAOImpl extends BaseDAOImpl implements ElectronicOrderDAO{
+public class ElectronicOrderDAOImpl extends BaseDAOImpl implements ElectronicOrderDAO {
 
 	@Override
-	public List<ElectronicOrder> getElectronicOrdersByExternalId(String id) throws LIMSRuntimeException{
+	public List<ElectronicOrder> getElectronicOrdersByExternalId(String id) throws LIMSRuntimeException {
 		String sql = "from ElectronicOrder eo where eo.externalId = :externalid order by id";
 
-		try{
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("externalid", id);
 			@SuppressWarnings("unchecked")
 			List<ElectronicOrder> eOrders = query.list();
 			closeSession();
 			return eOrders;
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getElectronicOrderByExternalId");
 		}
 		return null;
@@ -53,10 +53,10 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl implements ElectronicOrd
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ElectronicOrder> getElectronicOrdersByPatientId(String id) throws LIMSRuntimeException{
+	public List<ElectronicOrder> getElectronicOrdersByPatientId(String id) throws LIMSRuntimeException {
 		String sql = "from ElectronicOrder eo where eo.patient.id = :patientid";
 
-		try{
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 
 			query.setString("patientid", id);
@@ -64,22 +64,22 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl implements ElectronicOrd
 			closeSession();
 
 			return eorders;
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getElectronicOrdersByPatientId");
 		}
 		return null;
 	}
 
 	@Override
-	public void insertData(ElectronicOrder eOrder) throws LIMSRuntimeException{
-		try{
-			String id = (String)HibernateUtil.getSession().save(eOrder);
+	public void insertData(ElectronicOrder eOrder) throws LIMSRuntimeException {
+		try {
+			String id = (String) HibernateUtil.getSession().save(eOrder);
 			eOrder.setId(id);
 
 			new AuditTrailDAOImpl().saveNewHistory(eOrder, eOrder.getSysUserId(), "ELECTROINIC_ORDER");
 
 			closeSession();
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "insertData");
 		}
 	}
@@ -91,7 +91,8 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl implements ElectronicOrd
 
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			auditDAO.saveHistory(eOrder, oldOrder, eOrder.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE, "ELECTROINIC_ORDER");
+			auditDAO.saveHistory(eOrder, oldOrder, eOrder.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
+					"ELECTROINIC_ORDER");
 
 			HibernateUtil.getSession().merge(eOrder);
 			HibernateUtil.getSession().flush();
@@ -102,7 +103,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl implements ElectronicOrd
 			handleException(e, "updateData");
 		}
 	}
-	
+
 	public ElectronicOrder readOrder(String idString) {
 		try {
 			ElectronicOrder eOrder = (ElectronicOrder) HibernateUtil.getSession().get(ElectronicOrder.class, idString);
@@ -111,14 +112,14 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl implements ElectronicOrd
 		} catch (HibernateException e) {
 			handleException(e, "readOrder");
 		}
-		
+
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ElectronicOrder> getAllElectronicOrders() {
-		List<ElectronicOrder> list = new Vector<ElectronicOrder>();
+		List<ElectronicOrder> list = new Vector<>();
 		try {
 			String sql = "from ElectronicOrder";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
@@ -130,21 +131,22 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl implements ElectronicOrd
 		}
 
 		return list;
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ElectronicOrder> getAllElectronicOrdersOrderedBy(String order) {
-		List<ElectronicOrder> list = new Vector<ElectronicOrder>();
+	public List<ElectronicOrder> getAllElectronicOrdersOrderedBy(ElectronicOrder.SortOrder order) {
+		List<ElectronicOrder> list = new Vector<>();
 		try {
-			if (order.equals("lastupdated")) {
+			if (order.equals(ElectronicOrder.SortOrder.LAST_UPDATED)) {
 				list = HibernateUtil.getSession().createCriteria(ElectronicOrder.class)
 						.addOrder(Order.desc("lastupdated"))
 						.list();
 			} else {
+
 				list = HibernateUtil.getSession().createCriteria(ElectronicOrder.class)
-						.addOrder(Order.asc(order))
+						.addOrder(Order.asc(order.getValue()))
 						.addOrder(Order.desc("lastupdated"))
 						.list();
 			}
