@@ -184,7 +184,7 @@
 		    <groupId>org.hibernate</groupId>
 		    <artifactId>hibernate-core</artifactId>
 		<!-- <version>3.3.0.GA</version> -->
-		<version>3.6.3.Final</version>
+		<version>3.6.10.Final</version>
 		<!-- <version>3.2.6.ga</version> -->
 		</dependency>
 		
