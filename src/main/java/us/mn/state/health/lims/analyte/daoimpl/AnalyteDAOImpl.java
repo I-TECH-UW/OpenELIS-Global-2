@@ -2,17 +2,17 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-* 
+*
 * Contributor(s): CIRG, University of Washington, Seattle WA.
 */
 package us.mn.state.health.lims.analyte.daoimpl;
@@ -41,6 +41,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  */
 public class AnalyteDAOImpl extends BaseDAOImpl implements AnalyteDAO {
 
+	@Override
 	public void deleteData(List analytes) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
@@ -48,26 +49,24 @@ public class AnalyteDAOImpl extends BaseDAOImpl implements AnalyteDAO {
 			for (int i = 0; i < analytes.size(); i++) {
 				Analyte data = (Analyte) analytes.get(i);
 
-				Analyte oldData = (Analyte) readAnalyte(data.getId());
+				Analyte oldData = readAnalyte(data.getId());
 				Analyte newData = new Analyte();
 
 				String sysUserId = data.getSysUserId();
 				String event = IActionConstants.AUDIT_TRAIL_DELETE;
 				String tableName = "ANALYTE";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event,
-						tableName);
+				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 			}
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("AnalyteDAOImpl","AuditTrail deleteData()",e.toString());			
-			throw new LIMSRuntimeException(
-					"Error in Analyte AuditTrail deleteData()", e);
+			// buzilla 2154
+			LogEvent.logError("AnalyteDAOImpl", "AuditTrail deleteData()", e.toString());
+			throw new LIMSRuntimeException("Error in Analyte AuditTrail deleteData()", e);
 		}
 
 		try {
 			for (int i = 0; i < analytes.size(); i++) {
 				Analyte data = (Analyte) analytes.get(i);
-				Analyte cloneData = (Analyte) readAnalyte(data.getId());
+				Analyte cloneData = readAnalyte(data.getId());
 
 				cloneData.setIsActive(IActionConstants.NO);
 				HibernateUtil.getSession().merge(cloneData);
@@ -77,55 +76,55 @@ public class AnalyteDAOImpl extends BaseDAOImpl implements AnalyteDAO {
 				HibernateUtil.getSession().refresh(cloneData);
 			}
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("AnalyteDAOImpl","deleteData()",e.toString());			
+			// buzilla 2154
+			LogEvent.logError("AnalyteDAOImpl", "deleteData()", e.toString());
 			throw new LIMSRuntimeException("Error in Analyte deleteData()", e);
 		}
 	}
 
+	@Override
 	public boolean insertData(Analyte analyte) throws LIMSRuntimeException {
 
 		try {
-			
+
 			// bugzilla 1482 throw Exception if record already exists
 			if (duplicateAnalyteExists(analyte)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + analyte.getAnalyteName());
+				throw new LIMSDuplicateRecordException("Duplicate record exists for " + analyte.getAnalyteName());
 			}
 			String id = (String) HibernateUtil.getSession().save(analyte);
 			analyte.setId(id);
-			
-			//bugzilla 1824 inserts will be logged in history table
+
+			// bugzilla 1824 inserts will be logged in history table
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = analyte.getSysUserId();
 			String tableName = "ANALYTE";
-			auditDAO.saveNewHistory(analyte,sysUserId,tableName);
-			
+			auditDAO.saveNewHistory(analyte, sysUserId, tableName);
+
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("AnalyteDAOImpl","insertData()",e.toString());
+			// buzilla 2154
+			LogEvent.logError("AnalyteDAOImpl", "insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in Analyte insertData()", e);
 		}
 
 		return true;
 	}
 
+	@Override
 	public void updateData(Analyte analyte) throws LIMSRuntimeException {
 		// bugzilla 1482 throw Exception if record already exists
 		try {
-			if ( duplicateAnalyteExists(analyte)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + analyte.getAnalyteName());
+			if (duplicateAnalyteExists(analyte)) {
+				throw new LIMSDuplicateRecordException("Duplicate record exists for " + analyte.getAnalyteName());
 			}
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("AnalyteDAOImpl","updateData()",e.toString());
+			// buzilla 2154
+			LogEvent.logError("AnalyteDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in Analyte updateData()", e);
 		}
-		Analyte oldData = (Analyte) readAnalyte(analyte.getId());
+		Analyte oldData = readAnalyte(analyte.getId());
 		Analyte newData = analyte;
 
 		// add to audit trail
@@ -136,10 +135,9 @@ public class AnalyteDAOImpl extends BaseDAOImpl implements AnalyteDAO {
 			String tableName = "ANALYTE";
 			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("AnalyteDAOImpl","updateData()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in Analyte AuditTrail updateData()", e);
+			// buzilla 2154
+			LogEvent.logError("AnalyteDAOImpl", "updateData()", e.toString());
+			throw new LIMSRuntimeException("Error in Analyte AuditTrail updateData()", e);
 		}
 
 		try {
@@ -149,16 +147,16 @@ public class AnalyteDAOImpl extends BaseDAOImpl implements AnalyteDAO {
 			HibernateUtil.getSession().evict(analyte);
 			HibernateUtil.getSession().refresh(analyte);
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("AnalyteDAOImpl","updateData()",e.toString());
+			// buzilla 2154
+			LogEvent.logError("AnalyteDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in Analyte updateData()", e);
 		}
 	}
 
+	@Override
 	public void getData(Analyte analyte) throws LIMSRuntimeException {
 		try {
-			Analyte anal = (Analyte) HibernateUtil.getSession().get(
-					Analyte.class, analyte.getId());
+			Analyte anal = (Analyte) HibernateUtil.getSession().get(Analyte.class, analyte.getId());
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			if (anal != null) {
@@ -167,44 +165,41 @@ public class AnalyteDAOImpl extends BaseDAOImpl implements AnalyteDAO {
 				analyte.setId(null);
 			}
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("AnalyteDAOImpl","getData()",e.toString());
+			// buzilla 2154
+			LogEvent.logError("AnalyteDAOImpl", "getData()", e.toString());
 			throw new LIMSRuntimeException("Error in Analyte getData()", e);
 		}
 	}
 
+	@Override
 	public List getAllAnalytes() throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
 			String sql = "from Analyte";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(
-					sql);
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 
 			list = query.list();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("AnalyteDAOImpl","getAllAnalytes()",e.toString());
-			throw new LIMSRuntimeException("Error in Analyte getAllAnalytes()",
-					e);
+			// buzilla 2154
+			LogEvent.logError("AnalyteDAOImpl", "getAllAnalytes()", e.toString());
+			throw new LIMSRuntimeException("Error in Analyte getAllAnalytes()", e);
 		}
 
 		return list;
 	}
 
-	public List getPageOfAnalytes(int startingRecNo)
-			throws LIMSRuntimeException {
+	@Override
+	public List getPageOfAnalytes(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
 			// calculate maxRow to be one more than the page size
-			int endingRecNo = startingRecNo
-					+ (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			// bugzilla 1399
 			String sql = "from Analyte a order by a.analyteName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(
-					sql);
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
@@ -212,66 +207,60 @@ public class AnalyteDAOImpl extends BaseDAOImpl implements AnalyteDAO {
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("AnalyteDAOImpl","getPageOfAnalytes()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in Analyte getPageOfAnalytes()", e);
+			// buzilla 2154
+			LogEvent.logError("AnalyteDAOImpl", "getPageOfAnalytes()", e.toString());
+			throw new LIMSRuntimeException("Error in Analyte getPageOfAnalytes()", e);
 		}
 
 		return list;
 	}
-	
-   //	 bugzilla 2370
-	public List getPagesOfSearchedAnalytes(int startingRecNo, String searchString)
-	throws LIMSRuntimeException {
-         List list = new Vector();
-         String wildCard = "*";
-         String newSearchStr;
-         String sql;
-         
-         try {  
-        	  int endingRecNo = startingRecNo
-  			                    + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
-        	  int wCdPosition = searchString.indexOf (wildCard);
-       
-              if (wCdPosition == -1)  // no wild card looking for exact match
-              {
-            	  newSearchStr = searchString.toLowerCase().trim();
-                  sql = "from Analyte a where trim(lower (a.analyteName)) = :param  order by a.analyteName ";
-              }
-	          else
-	          {
-	             newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
-	             sql = "from Analyte a where trim(lower (a.analyteName)) like :param  order by a.analyteName";
-	          }
-	          org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
-	          query.setParameter("param", newSearchStr);
-	          query.setFirstResult(startingRecNo - 1);
-	          query.setMaxResults(endingRecNo - 1);
 
-	          list = query.list();
-	          HibernateUtil.getSession().flush();
-	          HibernateUtil.getSession().clear();
-             }       catch (Exception e) {
-	                 e.printStackTrace();
-	                 throw new LIMSRuntimeException(
-			             "Error in AnalyteDAOImpl getPagesOfSearchedAnalytes()", e);
-       }
+	// bugzilla 2370
+	@Override
+	public List getPagesOfSearchedAnalytes(int startingRecNo, String searchString) throws LIMSRuntimeException {
+		List list = new Vector();
+		String wildCard = "*";
+		String newSearchStr;
+		String sql;
 
-        return list;
-    }
-	//end bugzilla 2370
+		try {
+			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+			int wCdPosition = searchString.indexOf(wildCard);
+
+			if (wCdPosition == -1) // no wild card looking for exact match
+			{
+				newSearchStr = searchString.toLowerCase().trim();
+				sql = "from Analyte a where trim(lower (a.analyteName)) = :param  order by a.analyteName ";
+			} else {
+				newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
+				sql = "from Analyte a where trim(lower (a.analyteName)) like :param  order by a.analyteName";
+			}
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			query.setParameter("param", newSearchStr);
+			query.setFirstResult(startingRecNo - 1);
+			query.setMaxResults(endingRecNo - 1);
+
+			list = query.list();
+			HibernateUtil.getSession().flush();
+			HibernateUtil.getSession().clear();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new LIMSRuntimeException("Error in AnalyteDAOImpl getPagesOfSearchedAnalytes()", e);
+		}
+
+		return list;
+	}
+	// end bugzilla 2370
 
 	public Analyte readAnalyte(String idString) {
 		Analyte analyte = null;
 		try {
-			analyte = (Analyte) HibernateUtil.getSession().get(Analyte.class,
-					idString);
+			analyte = (Analyte) HibernateUtil.getSession().get(Analyte.class, idString);
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("AnalyteDAOImpl","readAnalyte()",e.toString());
+			// buzilla 2154
+			LogEvent.logError("AnalyteDAOImpl", "readAnalyte()", e.toString());
 			throw new LIMSRuntimeException("Error in Analyte readAnalyte()", e);
 		}
 
@@ -279,41 +268,41 @@ public class AnalyteDAOImpl extends BaseDAOImpl implements AnalyteDAO {
 	}
 
 	// this is for autocomplete
+	@Override
 	public List getAnalytes(String filter) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
 			String sql = "from Analyte a where upper(a.analyteName) like upper(:param) and a.isActive='Y' order by upper(a.analyteName)";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(
-					sql);
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("param", filter + "%");
 			list = query.list();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("AnalyteDAOImpl","getAnalytes()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in Analyte getAnalytes(String filter)", e);
+			// buzilla 2154
+			LogEvent.logError("AnalyteDAOImpl", "getAnalytes()", e.toString());
+			throw new LIMSRuntimeException("Error in Analyte getAnalytes(String filter)", e);
 		}
 
 		return list;
 	}
 
+	@Override
 	public List getNextAnalyteRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "Analyte", Analyte.class);
 
 	}
 
+	@Override
 	public List getPreviousAnalyteRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "Analyte", Analyte.class);
 	}
 
- 
-     //bugzilla 1367 added ignoreCase
-	public Analyte getAnalyteByName(Analyte analyte, boolean ignoreCase)
-			throws LIMSRuntimeException {
+	// bugzilla 1367 added ignoreCase
+	@Override
+	public Analyte getAnalyteByName(Analyte analyte, boolean ignoreCase) throws LIMSRuntimeException {
 		try {
 
 			String sql = null;
@@ -323,12 +312,10 @@ public class AnalyteDAOImpl extends BaseDAOImpl implements AnalyteDAO {
 			} else {
 				sql = "from Analyte a where a.analyteName = :param and a.isActive='Y'";
 			}
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(
-					sql);
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 
 			if (ignoreCase) {
-				query.setString("param", analyte.getAnalyteName().trim()
-						.toLowerCase());
+				query.setString("param", analyte.getAnalyteName().trim().toLowerCase());
 			} else {
 				query.setString("param", analyte.getAnalyteName());
 			}
@@ -338,97 +325,91 @@ public class AnalyteDAOImpl extends BaseDAOImpl implements AnalyteDAO {
 			HibernateUtil.getSession().clear();
 
 			Analyte ana = null;
-			if (list.size() > 0)
+			if (list.size() > 0) {
 				ana = (Analyte) list.get(0);
+			}
 
 			return ana;
 
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("AnalyteDAOImpl","getAnalyteByName()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in Analyte getAnalyteByName()", e);
+			// buzilla 2154
+			LogEvent.logError("AnalyteDAOImpl", "getAnalyteByName()", e.toString());
+			throw new LIMSRuntimeException("Error in Analyte getAnalyteByName()", e);
 		}
 	}
 
 	// bugzilla 1411
+	@Override
 	public Integer getTotalAnalyteCount() throws LIMSRuntimeException {
 		return getTotalCount("Analyte", Analyte.class);
 	}
 
 	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
-	public List getNextRecord(String id, String table, Class clazz)
-			throws LIMSRuntimeException {
+	@Override
+	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		List list = new Vector();
 		try {
-			String sql = "from " + table + " t where name >= " + enquote(id)
-					+ " order by t.analyteName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(
-					sql);
+			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.analyteName";
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
 			list = query.list();
 
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("AnalyteDAOImpl","getNextRecord()",e.toString());
-			throw new LIMSRuntimeException("Error in getNextRecord() for "
-					+ table, e);
+			// buzilla 2154
+			LogEvent.logError("AnalyteDAOImpl", "getNextRecord()", e.toString());
+			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
 		}
 
 		return list;
 	}
 
 	// overriding BaseDAOImpl bugzilla 1427 pass in name not id
-	public List getPreviousRecord(String id, String table, Class clazz)
-			throws LIMSRuntimeException {
+	@Override
+	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 
 		List list = new Vector();
 		try {
-			String sql = "from " + table
-					+ " t order by t.analyteName desc where name <= "
-					+ enquote(id);
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(
-					sql);
+			String sql = "from " + table + " t order by t.analyteName desc where name <= " + enquote(id);
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
 			list = query.list();
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("AnalyteDAOImpl","getPreviousRecord()",e.toString());
-			throw new LIMSRuntimeException("Error in getPreviousRecord() for "
-					+ table, e);
+			// buzilla 2154
+			LogEvent.logError("AnalyteDAOImpl", "getPreviousRecord()", e.toString());
+			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
 		}
 
 		return list;
 	}
-	
-	//bugzilla 1482
+
+	// bugzilla 1482
 	private boolean duplicateAnalyteExists(Analyte analyte) throws LIMSRuntimeException {
 		try {
-			
+
 			List list = new ArrayList();
-			
+
 			// not case sensitive hemolysis and Hemolysis are considered
 			// duplicates
-			
-			// bugzilla 2432 add check for local abbreviation 
+
+			// bugzilla 2432 add check for local abbreviation
 			String sql = "";
 			if (analyte.getLocalAbbreviation() != null) {
-			  sql = "from Analyte a where (trim(lower(a.analyteName)) = :name and a.id != :id)" +
-					" or (trim(lower(a.localAbbreviation)) = :abbreviation and a.id != :id)";
+				sql = "from Analyte a where (trim(lower(a.analyteName)) = :name and a.id != :id)"
+						+ " or (trim(lower(a.localAbbreviation)) = :abbreviation and a.id != :id)";
 			} else {
-			  sql = "from Analyte a where trim(lower(a.analyteName)) = :name and a.id != :id";
+				sql = "from Analyte a where trim(lower(a.analyteName)) = :name and a.id != :id";
 			}
-			
+
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", analyte.getAnalyteName().toLowerCase().trim());
-			//bugzilla 2432
+			// bugzilla 2432
 			if (analyte.getLocalAbbreviation() != null) {
-			   query.setString("abbreviation", analyte.getLocalAbbreviation().toLowerCase().trim());
+				query.setString("abbreviation", analyte.getLocalAbbreviation().toLowerCase().trim());
 			}
 
 			String analyteId = !StringUtil.isNullorNill(analyte.getId()) ? analyte.getId() : "0";
@@ -438,61 +419,58 @@ public class AnalyteDAOImpl extends BaseDAOImpl implements AnalyteDAO {
 			list = query.list();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
-				
+
 			return list.size() > 0;
-			
+
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("AnalyteDAOImpl","duplicateAnalyteExists()",e.toString());
+			// buzilla 2154
+			LogEvent.logError("AnalyteDAOImpl", "duplicateAnalyteExists()", e.toString());
 			throw new LIMSRuntimeException("Error in duplicateAnalyteExists()", e);
 		}
 	}
-	
-	// bugzilla 2370 get total searched results
-	public Integer getTotalSearchedAnalyteCount( String searchString ) 
-	  throws LIMSRuntimeException{
-		
-        String wildCard = "*";
-        String newSearchStr;
-        String sql;
-        Integer count = null;
-        
-        try {  
-       	
-       	  int wCdPosition = searchString.indexOf (wildCard);
-      
-             if (wCdPosition == -1)  // no wild card looking for exact match
-             {
-           	  newSearchStr = searchString.toLowerCase().trim();
-                 sql = "select count (*) from Analyte a where trim(lower (a.analyteName)) = :param ";
-             }
-	          else
-	          {
-		         newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
-	             sql = "select count (*) from Analyte a where trim(lower (a.analyteName)) like :param ";
-	          }
-	          org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
-	          query.setParameter("param", newSearchStr);
-	     
-	          List results  = query.list();
-	          HibernateUtil.getSession().flush();
-	          HibernateUtil.getSession().clear();
-	          
-	      	if (results != null && results.get(0) != null) {
-				if (results.get(0) != null) {
-					count = (Integer)results.get(0);
-				}
-			 }
-	          
-            }       catch (Exception e) {
-	                 e.printStackTrace();
-	                 throw new LIMSRuntimeException(
-			             "Error in AnalyteDAOImpl getTotalSearchedAnalyteCount()", e);
-                       }
 
-       return count;
-       
-   }
- //end bugzilla 2370
-		
+	// bugzilla 2370 get total searched results
+	@Override
+	public Integer getTotalSearchedAnalyteCount(String searchString) throws LIMSRuntimeException {
+
+		String wildCard = "*";
+		String newSearchStr;
+		String sql;
+		Integer count = null;
+
+		try {
+
+			int wCdPosition = searchString.indexOf(wildCard);
+
+			if (wCdPosition == -1) // no wild card looking for exact match
+			{
+				newSearchStr = searchString.toLowerCase().trim();
+				sql = "select count (*) from Analyte a where trim(lower (a.analyteName)) = :param ";
+			} else {
+				newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
+				sql = "select count (*) from Analyte a where trim(lower (a.analyteName)) like :param ";
+			}
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			query.setParameter("param", newSearchStr);
+
+			List results = query.list();
+			HibernateUtil.getSession().flush();
+			HibernateUtil.getSession().clear();
+
+			if (results != null && results.get(0) != null) {
+				if (results.get(0) != null) {
+					count = ((Long) results.get(0)).intValue();
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new LIMSRuntimeException("Error in AnalyteDAOImpl getTotalSearchedAnalyteCount()", e);
+		}
+
+		return count;
+
+	}
+	// end bugzilla 2370
+
 }
