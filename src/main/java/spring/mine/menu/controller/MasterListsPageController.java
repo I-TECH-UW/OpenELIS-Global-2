@@ -12,7 +12,7 @@ import spring.mine.common.form.MainForm;
 
 @Controller
 public class MasterListsPageController extends BaseController {
-	@RequestMapping(value = "/MasterListsPage", method = RequestMethod.GET)
+	@RequestMapping(value = "/MasterListsPage", method = { RequestMethod.GET, RequestMethod.POST} )
 	public ModelAndView showMasterListsPage(HttpServletRequest request) {
 
 		MainForm form = new MainForm();
