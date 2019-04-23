@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.usertype.UserType;
 
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -118,6 +119,33 @@ public class LIMSStringNumberUserType implements UserType {
 	public Object replace(Object arg0, Object arg1, Object arg2)
 			throws HibernateException {
 		return deepCopy(arg0);
+	}
+
+	@Override
+	public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner)
+			throws HibernateException, SQLException {
+		int value = rs.getInt(names[0]);
+		return rs.wasNull() ? null : String.valueOf(value);
+	}
+
+	@Override
+	public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session)
+			throws HibernateException, SQLException {
+		if (value == null) {
+			st.setNull(index, Types.NUMERIC);
+		} else { 
+			if (value instanceof String) {
+			  if (value.equals("")) {
+            	  st.setNull(index, Types.NUMERIC);
+              } else {
+			     st.setInt(index, Integer.parseInt((String)value));
+              }
+			} else {
+				throw new LIMSRuntimeException("Incorrect Mapping using this UserType LIMSStringNumberUserType");
+			}
+			
+		}
+		
 	}
 
 }
