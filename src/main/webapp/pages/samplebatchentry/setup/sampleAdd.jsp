@@ -934,7 +934,7 @@ function sampleTypeQualifierChanged(element){
 				<spring:message code="sample.entry.project.title.dryBloodSpot" />
 			</td>
 			<td>
-				<form:checkbox path="ProjectData.dbsTaken" id="vl_dbsTaken" onchange="vl.checkSampleItem($('vl.dbsTaken'));checkValidSubPages();" />
+				<form:checkbox path="ProjectDataVL.dbsTaken" id="vl_dbsTaken" onchange="vl.checkSampleItem($('vl.dbsTaken'));checkValidSubPages();" />
 			</td>
 		</tr>	
 		<tr>

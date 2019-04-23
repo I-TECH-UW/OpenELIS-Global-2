@@ -4,20 +4,27 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
+import spring.mine.common.validator.ValidationHelper;
 import us.mn.state.health.lims.dictionary.ObservationHistoryList;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 
 public class ProjectData implements Serializable {
-    
-    public ProjectData() {
-        
-    }
+
+	public ProjectData() {
+
+	}
 
 	private static final long serialVersionUID = -6470190207790723782L;
-	//ALL
+	// ALL
+	@SafeHtml
 	private String underInvestigationNote;
-	
+
 	// TESTS
 	private boolean dryTubeTaken;
 	private boolean serologyHIVTest;
@@ -62,40 +69,54 @@ public class ProjectData implements Serializable {
 
 	// ARV
 	private String doctor;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String ARVcenterName;
 	private List ARVCenters;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String ARVcenterCode;
 
 	// EID
 	private List EIDSites;
 	private List<Organization> EIDSitesByName;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String EIDsiteName;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String EIDsiteCode;
+	@SafeHtml
 	private String dbsInfantNumber;
+	@SafeHtml
 	private String dbsSiteInfantNumber;
+	@SafeHtml
 	private String eidWhichPCR;
+	@SafeHtml
 	private String eidSecondPCRReason;
+	@SafeHtml
 	private String requester;
 	private List eidWhichPCRList = new ArrayList();
 	private List eidSecondPCRReasonList = new ArrayList();
 	private List isUnderInvestigationList = new ArrayList();
 
-
-    // IND - Indeterminate Results
+	// IND - Indeterminate Results
 	private List INDSites;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String INDsiteName;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String INDsiteCode;
+	@SafeHtml
 	private String address;
+	@Pattern(regexp = ValidationHelper.PHONE_REGEX)
 	private String phoneNumber;
+	@Pattern(regexp = ValidationHelper.PHONE_REGEX)
 	private String faxNumber;
+	@Email
 	private String email;
-
 
 	// SPE - Special Request
 	private List requestReasons;
+	@SafeHtml
 	private String reasonForRequest;
 
-	//TESTS
+	// TESTS
 	public void setDbsTaken(boolean dbsTaken) {
 		this.dbsTaken = dbsTaken;
 	}
@@ -103,6 +124,7 @@ public class ProjectData implements Serializable {
 	public boolean getDbsTaken() {
 		return dbsTaken;
 	}
+
 	public boolean getDryTubeTaken() {
 		return dryTubeTaken;
 	}
@@ -190,7 +212,7 @@ public class ProjectData implements Serializable {
 	public void setP24AgTest(boolean p24AgTest) {
 		this.p24AgTest = p24AgTest;
 	}
-	
+
 	public boolean getGlycemiaTest() {
 		return glycemiaTest;
 	}
@@ -214,7 +236,7 @@ public class ProjectData implements Serializable {
 	public void setTransaminaseTest(boolean transaminaseTest) {
 		this.transaminaseTest = transaminaseTest;
 	}
-	
+
 	public boolean getTransaminaseALTLTest() {
 		return transaminaseALTLTest;
 	}
@@ -350,7 +372,7 @@ public class ProjectData implements Serializable {
 	public void setPlqTest(boolean plqTest) {
 		this.plqTest = plqTest;
 	}
-	
+
 	public boolean getCd4cd8Test() {
 		return cd4cd8Test;
 	}
@@ -358,7 +380,7 @@ public class ProjectData implements Serializable {
 	public void setCd4cd8Test(boolean cd4cd8Test) {
 		this.cd4cd8Test = cd4cd8Test;
 	}
-	
+
 	public boolean getCd4CountTest() {
 		return cd4CountTest;
 	}
@@ -391,8 +413,8 @@ public class ProjectData implements Serializable {
 	public void setdbsvlTaken(boolean dbsvlTaken) {
 		this.dbsvlTaken = dbsvlTaken;
 	}
-	
-	//------
+
+	// ------
 	public boolean getGenotypingTest() {
 		return genotypingTest;
 	}
@@ -409,14 +431,14 @@ public class ProjectData implements Serializable {
 		this.dnaPCR = dnaPCR;
 	}
 
-	//ARV
+	// ARV
 
 	public List getARVCenters() {
 		return ARVCenters;
 	}
 
 	public void setARVCenters(List arvCenters) {
-		this.ARVCenters = arvCenters;
+		ARVCenters = arvCenters;
 	}
 
 	public String getARVcenterName() {
@@ -435,7 +457,7 @@ public class ProjectData implements Serializable {
 		ARVcenterCode = aRVcenterCode;
 	}
 
-	public String getDoctor(){
+	public String getDoctor() {
 		return doctor;
 	}
 
@@ -444,12 +466,12 @@ public class ProjectData implements Serializable {
 	}
 
 	// EID
-	public String getEIDSiteName(){
+	public String getEIDSiteName() {
 		return EIDsiteName;
 	}
 
 	public void setEIDSiteName(String siteName) {
-		this.EIDsiteName = siteName;
+		EIDsiteName = siteName;
 	}
 
 	public List getEIDSites() {
@@ -476,7 +498,7 @@ public class ProjectData implements Serializable {
 		EIDsiteCode = eIDsiteCode;
 	}
 
-	public String getDbsInfantNumber(){
+	public String getDbsInfantNumber() {
 		return dbsInfantNumber;
 	}
 
@@ -484,7 +506,7 @@ public class ProjectData implements Serializable {
 		this.dbsInfantNumber = dbsInfantNumber;
 	}
 
-	public String getDbsSiteInfantNumber(){
+	public String getDbsSiteInfantNumber() {
 		return dbsSiteInfantNumber;
 	}
 
@@ -507,7 +529,6 @@ public class ProjectData implements Serializable {
 	public void setEidSecondPCRReason(String eidSecondPCRReason) {
 		this.eidSecondPCRReason = eidSecondPCRReason;
 	}
-
 
 	public void setEidWhichPCRList(List eidWhichPCRList) {
 		this.eidWhichPCRList = eidWhichPCRList;
@@ -533,7 +554,7 @@ public class ProjectData implements Serializable {
 		this.requester = requester;
 	}
 
-	//IND
+	// IND
 	public List getINDSites() {
 		return INDSites;
 	}
@@ -566,7 +587,7 @@ public class ProjectData implements Serializable {
 		this.address = address;
 	}
 
-	public String getPhoneNumber(){
+	public String getPhoneNumber() {
 		return phoneNumber;
 	}
 
@@ -574,7 +595,7 @@ public class ProjectData implements Serializable {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public String getFaxNumber(){
+	public String getFaxNumber() {
 		return faxNumber;
 	}
 
@@ -582,7 +603,7 @@ public class ProjectData implements Serializable {
 		this.faxNumber = faxNumber;
 	}
 
-	public String getEmail(){
+	public String getEmail() {
 		return email;
 	}
 
@@ -607,13 +628,13 @@ public class ProjectData implements Serializable {
 		this.reasonForRequest = reasonForRequest;
 	}
 
-    public void setIsUnderInvestigationList(List isUnderInvestigationList) {
-        this.isUnderInvestigationList = isUnderInvestigationList;
-    }
+	public void setIsUnderInvestigationList(List isUnderInvestigationList) {
+		this.isUnderInvestigationList = isUnderInvestigationList;
+	}
 
-    public List getIsUnderInvestigationList() {
-        return isUnderInvestigationList;
-    }
+	public List getIsUnderInvestigationList() {
+		return isUnderInvestigationList;
+	}
 
 	public void setEIDSitesByName(List<Organization> eIDSitesByName) {
 		EIDSitesByName = eIDSitesByName;
@@ -622,9 +643,9 @@ public class ProjectData implements Serializable {
 	public List<Organization> getEIDSitesByName() {
 		return EIDSitesByName;
 	}
-	
+
 	public List<Dictionary> getHivStatusList() {
-	    return ObservationHistoryList.HIV_STATUSES.getList();	    
+		return ObservationHistoryList.HIV_STATUSES.getList();
 	}
 
 	public void setUnderInvestigationNote(String underInvestigationNote) {

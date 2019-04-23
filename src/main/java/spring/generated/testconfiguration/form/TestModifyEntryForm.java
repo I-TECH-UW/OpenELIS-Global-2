@@ -28,27 +28,37 @@ public class TestModifyEntryForm extends BaseForm {
 	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String testId = "";
 
-	@Pattern(regexp = "^[0-9-]$")
-	private String loinc = "";
+	@Pattern(regexp = "^[0-9-]*$")
+	private String loinc;
 
+	// in validator
 	private String jsonWad = "";
 
+	// for display
 	private List sampleTypeList;
 
+	// for display
 	private List panelList;
 
+	// for display
 	private List uomList;
 
+	// for display
 	private List resultTypeList;
 
+	// for display
 	private List ageRangeList;
 
+	// for display
 	private List labUnitList;
 
+	// for display
 	private List dictionaryList;
 
+	// for display
 	private List groupedDictionaryList;
 
+	// for display
 	private List testCatBeanList;
 
 	public TestModifyEntryForm() {

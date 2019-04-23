@@ -1,6 +1,5 @@
 package spring.mine.result.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -18,29 +17,29 @@ import us.mn.state.health.lims.inventory.form.InventoryKitItem;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
 public class LogbookResultsForm extends BaseForm {
+
+	public interface LogbookResults {
+	}
+
 	// for display
 	private PagingBean paging;
 
-	@NotNull
+	@NotNull(groups = { LogbookResults.class })
 	private Boolean singlePatient = false;
 
-	@ValidDate(relative = DateRelation.TODAY)
+	@ValidDate(relative = DateRelation.TODAY, groups = { LogbookResults.class })
 	private String currentDate = "";
 
-	private Timestamp lastupdated;
-
-	@NotNull
+	@NotNull(groups = { LogbookResults.class })
 	private Boolean displayTestMethod = true;
 
-	@NotNull
+	@NotNull(groups = { LogbookResults.class })
 	private Boolean displayTestKit = true;
 
-	// TODO
 	@Valid
 	private List<TestResultItem> testResult;
 
-	// TODO
-	@Valid
+	// for display
 	private List<InventoryKitItem> inventoryItems;
 
 	// for display
@@ -64,11 +63,11 @@ public class LogbookResultsForm extends BaseForm {
 	// for display
 	private List<IdValuePair> testSectionsByName;
 
-	@NotBlank
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
+	@NotBlank(groups = { LogbookResults.class })
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResults.class })
 	private String testSectionId;
 
-	@NotNull
+	@NotNull(groups = { LogbookResults.class })
 	private Boolean displayTestSections = true;
 
 	public LogbookResultsForm() {
@@ -97,14 +96,6 @@ public class LogbookResultsForm extends BaseForm {
 
 	public void setCurrentDate(String currentDate) {
 		this.currentDate = currentDate;
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public Boolean getDisplayTestMethod() {

@@ -21,8 +21,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.httpclient.NameValuePair;
+import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 
+import org.apache.commons.httpclient.NameValuePair;
+import org.hibernate.validator.constraints.SafeHtml;
+
+import spring.mine.common.validator.ValidationHelper;
+import spring.mine.validation.annotations.ValidDate;
 import us.mn.state.health.lims.dictionary.ObservationHistoryList;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 
@@ -30,7 +36,7 @@ import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
  * Value object for transfer of observation history (demographic survey
  * questions) from the study (project) based patient entry form. This is one
  * object for all studies.
- * 
+ *
  * @author pahill
  * @since 2010-04-16
  */
@@ -45,15 +51,24 @@ public class ObservationData implements Serializable {
 	 * General tag which identifies which set of questions have been answered to
 	 * enter/accession this person and sample into the system.
 	 */
+	@SafeHtml
 	private String projectFormName;
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String educationLevel;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String maritalStatus;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String nationality;
+	@SafeHtml
 	private String nationalityOther;
+	@SafeHtml
 	private String legalResidence;
+	@Pattern(regexp = ValidationHelper.NAME_REGEX)
 	private String nameOfDoctor;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String arvProphylaxisBenefit;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String arvProphylaxis;
 
 	/**
@@ -61,18 +76,29 @@ public class ObservationData implements Serializable {
 	 * slightly different question Follow-up ARV SUI 20 "... on going ARV treatment
 	 * ..."
 	 */
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String currentARVTreatment;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String priorARVTreatment;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String interruptedARVTreatment;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String aidsStage;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String hivStatus;
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String anyPriorDiseases;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String priorDiseases; // drop down value yes, no
+	@SafeHtml
 	private String priorDiseasesValue; // actual string containing other Diseases which is answer to "please specify"
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String anyCurrentDiseases;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String currentDiseases;
+	@SafeHtml
 	private String currentDiseasesValue; // actual string containing other Diseases which is answer to "please specify"
 
 	private List<NameValuePair> priorDiseasesList;
@@ -81,146 +107,248 @@ public class ObservationData implements Serializable {
 	private List<NameValuePair> rtnPriorDiseasesList;
 	private List<NameValuePair> rtnCurrentDiseasesList;
 
-	private List<String> priorARVTreatmentINNs = Arrays.asList(new String[] { null, null, null, null });
-	private List<String> futureARVTreatmentINNs = Arrays.asList(new String[] { null, null, null, null });
-	private List<String> currentARVTreatmentINNs = Arrays.asList(new String[] { null, null, null, null });
+	private List<@SafeHtml String> priorARVTreatmentINNs = Arrays.asList(new String[] { null, null, null, null });
+	private List<@SafeHtml String> futureARVTreatmentINNs = Arrays.asList(new String[] { null, null, null, null });
+	private List<@SafeHtml String> currentARVTreatmentINNs = Arrays.asList(new String[] { null, null, null, null });
 	// private List<String> initialSampleConditionINNs= Arrays.asList(new String[]
 	// {null, null, null, null});
 
 	/**
 	 * OI = opportunistic infection
 	 */
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String currentOITreatment;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String cotrimoxazoleTreatment;
+	@Pattern(regexp = "^[0-9]*$")
 	private String patientWeight;
+	@SafeHtml
 	private String karnofskyScore;
 
+	@SafeHtml
 	private String cd4Count;
+	@SafeHtml
 	private String cd4Percent;
+	@SafeHtml
 	private String initcd4Count;
+	@SafeHtml
 	private String initcd4Percent;
+	@SafeHtml
 	private String demandcd4Count;
+	@SafeHtml
 	private String demandcd4Percent;
+	@SafeHtml
 	private String priorCd4Date;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String antiTbTreatment;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String arvTreatmentAnyAdverseEffects;
 
+	@Valid
 	private List<AdverseEffect> arvTreatmentAdverseEffects = Arrays.asList(
 			new AdverseEffect[] { new AdverseEffect(), new AdverseEffect(), new AdverseEffect(), new AdverseEffect() });
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String arvTreatmentChange;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String arvTreatmentNew;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String arvTreatmentRegime;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String cotrimoxazoleTreatmentAnyAdverseEffects;
-
+	@Valid
 	private List<AdverseEffect> cotrimoxazoleTreatmentAdverseEffects = Arrays.asList(
 			new AdverseEffect[] { new AdverseEffect(), new AdverseEffect(), new AdverseEffect(), new AdverseEffect() });
 
 	private String hospital;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String service;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String hospitalPatient;
 
 	// Sample Forms
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String whichPCR;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String reasonForSecondPCRTest;
+	@SafeHtml
 	private String indFirstTestName;
+	@SafeHtml
 	private String indSecondTestName;
+	@ValidDate
 	private String indFirstTestDate;
+	@ValidDate
 	private String indSecondTestDate;
+	@SafeHtml
 	private String indFirstTestResult;
+	@SafeHtml
 	private String indSecondTestResult;
+	@SafeHtml
 	private String indSiteFinalResult;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String reasonForRequest;
 
 	// VL Patient form
+	@ValidDate
 	private String arvTreatmentInitDate;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String vlReasonForRequest;
+	@SafeHtml
 	private String vlOtherReasonForRequest;
+	@ValidDate
 	private String initcd4Date;
+	@ValidDate
 	private String demandcd4Date;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String vlBenefit;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String vlPregnancy;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String vlSuckle;
+	@SafeHtml
 	private String priorVLLab;
+	@Pattern(regexp = "^[0-9]*$")
 	private String priorVLValue;
+	@ValidDate
 	private String priorVLDate;
 
 	// EID Patient form
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String eidInfantPTME;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String eidTypeOfClinic;
+	@SafeHtml
 	private String eidTypeOfClinicOther;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String eidHowChildFed;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String eidStoppedBreastfeeding;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String eidInfantSymptomatic;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String eidMothersHIVStatus;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String eidMothersARV;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String eidInfantsARV;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String eidInfantCotrimoxazole;
 
+	@Pattern(regexp = ValidationHelper.NAME_REGEX)
 	private String nameOfRequestor;
 
+	@Pattern(regexp = ValidationHelper.NAME_REGEX)
 	private String nameOfSampler;
 
 	/**
 	 * Yes/No
 	 */
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String anySecondaryTreatment;
 
 	/**
 	 * Actual treatment
 	 */
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String secondaryTreatment;
 
+	@SafeHtml
 	private String clinicVisits;
 	/**
 	 * Reason for test submital
 	 */
+	@SafeHtml
 	private String reason;
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String underInvestigation;
 
+	// diseases
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String CTBPul;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String CTBExpul;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String CCrblToxo;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String CCryptoMen;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String CGenPrurigo;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String CIST;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String CCervCancer;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String COpharCand;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String CKaposiSarc;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String CShingles;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String CDiarrheaC;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String PTBPul;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String PTBExpul;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String PCrblToxo;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String PCryptoMen;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String PGenPrurigo;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String PIST;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String PCervCancer;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String POpharCand;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String PKaposiSarc;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String PShingles;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String PDiarrheaC;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String weightLoss;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String diarrhea;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String fever;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String cough;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String pulTB;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String expulTB;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String swallPaint;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String cryptoMen;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String recPneumon;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String sespis;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String recInfect;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String curvixC;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String matHIV;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String cachexie;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String thrush;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String dermPruip;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String herpes;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String zona;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String sarcKapo;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String xIngPadenp;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String HIVDement;
 
 	public String getEducationLevel() {
@@ -498,10 +626,10 @@ public class ObservationData implements Serializable {
 	/*
 	 * public String getInitialSampleConditionINNs(int index) { return
 	 * initialSampleConditionINNs.get(index); }
-	 * 
+	 *
 	 * public void setInitialSampleConditionINNs(int index, String value) {
 	 * initialSampleConditionINNs.set(index, value); }
-	 * 
+	 *
 	 * public List<String> getInitialSampleConditionINNsList() { return
 	 * initialSampleConditionINNs; }
 	 */
@@ -1230,7 +1358,7 @@ public class ObservationData implements Serializable {
 	public void setVlSuckle(String vlSuckle) {
 		this.vlSuckle = vlSuckle;
 	}
-//-------------    
+//-------------
 
 	public String getPriorVLLab() {
 		return priorVLLab;

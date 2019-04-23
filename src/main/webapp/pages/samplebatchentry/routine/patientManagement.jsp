@@ -91,7 +91,7 @@ if (patientIDRequired) {
 	}
 }
 
-var updateStatus = "add";
+var updateStatus = "ADD";
 var patientInfoChangeListeners = [];
 var dirty = false;
 
@@ -425,7 +425,7 @@ function /*void*/ setUpdateStatus(newStatus) {
 }
 
 function /*void*/ processSearchPopulateSuccess(xhr) {
-	setUpdateStatus("noAction");
+	setUpdateStatus("NO_ACTION");
     //alert(xhr.responseText);
 	var response = xhr.responseXML.getElementsByTagName("formfield").item(0);
 
@@ -550,8 +550,8 @@ function /*void*/ setPatientInfo(nationalID, ST_ID, subjectNumber, lastName, fir
 }
 
 function /*void*/ updatePatientEditStatus() {
-	if (updateStatus == "noAction") {
-		setUpdateStatus("update");
+	if (updateStatus == "NO_ACTION") {
+		setUpdateStatus("UPDATE");
 	}
 
 	for (var i = 0; i < patientInfoChangeListeners.length; i++) {
@@ -591,7 +591,7 @@ function /*void*/  addPatient() {
 	if (supportSTNumber) {$("ST_ID").disabled = false;}
 	if (supportSubjectNumber) {$("subjectNumberID").disabled = false;}
 	if (supportNationalID) {$("nationalID").disabled = false;}
-	setUpdateStatus("add");
+	setUpdateStatus("ADD");
 	
 	for(var i = 0; i < patientInfoChangeListeners.length; i++) {
 			patientInfoChangeListeners[i]("", "", "", "", "", "", "", "", "");
@@ -689,7 +689,7 @@ function hasIdentifyingInfo() {
 
 	<tiles:insertAttribute name="patientSearch" />
 
-	<form:hidden path="patientProperties.patientProcessingStatus" id="processingStatus" value="add" />
+	<form:hidden path="patientProperties.patientUpdateStatus" id="processingStatus" value="ADD" />
 	<form:hidden path="patientProperties.patientPK" id="patientPK_ID" />
 	<form:hidden path="patientProperties.guid" id="patientGUID_ID" />
 	<c:if test="${not form.patientProperties.readOnly}" >
@@ -883,7 +883,7 @@ function selectedPatientChangedForManagement(firstName, lastName, gender, DOB, s
 		$("patientPK_ID").value = pk;
 	} else {
 		clearPatientInfo();
-		setUpdateStatus("add");
+		setUpdateStatus("ADD");
 	}
 }
 

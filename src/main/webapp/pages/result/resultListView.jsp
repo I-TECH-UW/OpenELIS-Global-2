@@ -760,7 +760,7 @@ function setField(id, value) {
 		<!-- result cell -->
 		<td id="cell_${iter.index}" class="ruled" >
 			<c:if test="${testResult.resultType == 'N'}">
-			    <form:input path='testResult[${iter.index}].resultValue' 
+			    <form:input path="testResult[${iter.index}].resultValue" 
 			           size="6" 
 			           id="results_${iter.index}"
 			           style="background: ${testResult.valid ? testResult.normal ? '#ffffff' : '#ffffa0' : '#ffa0a0' }"

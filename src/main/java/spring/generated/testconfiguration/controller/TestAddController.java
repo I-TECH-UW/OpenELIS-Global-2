@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
@@ -17,13 +18,16 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.TestAddForm;
+import spring.generated.testconfiguration.validator.TestAddFormValidator;
 import spring.mine.common.controller.BaseController;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
@@ -68,18 +72,18 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 @Controller
 public class TestAddController extends BaseController {
+
+	@Autowired
+	TestAddFormValidator formValidator;
+
 	private TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
 
 	@RequestMapping(value = "/TestAdd", method = RequestMethod.GET)
-	public ModelAndView showTestAdd(HttpServletRequest request, @ModelAttribute("form") TestAddForm form) {
+	public ModelAndView showTestAdd(HttpServletRequest request) {
 
 		System.out.println("Hibernate Version: " + org.hibernate.cfg.Environment.VERSION);
 
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new TestAddForm();
-		}
-		form.setFormAction("");
+		TestAddForm form = new TestAddForm();
 
 		List<IdValuePair> allSampleTypesList = new ArrayList<>();
 		allSampleTypesList.addAll(DisplayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
@@ -100,12 +104,17 @@ public class TestAddController extends BaseController {
 			e.printStackTrace();
 		}
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	@RequestMapping(value = "/TestAdd", method = RequestMethod.POST)
-	public ModelAndView postTestAdd(HttpServletRequest request, @ModelAttribute("form") TestAddForm form) {
-		String forward = FWD_SUCCESS_INSERT;
+	public ModelAndView postTestAdd(HttpServletRequest request, @ModelAttribute("form") @Valid TestAddForm form,
+			BindingResult result) {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 
 		String currentUserId = getSysUserId(request);
 		String jsonString = (form.getString("jsonWad"));
@@ -183,7 +192,7 @@ public class TestAddController extends BaseController {
 		TestService.refreshTestNames();
 		TypeOfSampleService.clearCache();
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private Localization createNameLocalization(TestAddParams testAddParams) {
@@ -513,6 +522,8 @@ public class TestAddController extends BaseController {
 			return "testAddDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/TestAdd.do";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return "testAddDefinition";
 		} else {
 			return "PageNotFound";
 		}

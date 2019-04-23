@@ -2,14 +2,15 @@ package spring.mine.analyzerimport.form;
 
 import java.util.List;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 import spring.mine.common.form.MenuForm;
 
 public class AnalyzerTestNameMenuForm extends MenuForm {
 	// for display
 	private List menuList;
 
-	// in validator
-	private String[] selectedIDs;
+	private List<@SafeHtml String> selectedIDs;
 
 	public AnalyzerTestNameMenuForm() {
 		setFormName("analyzerTestNameMenuForm");
@@ -26,12 +27,12 @@ public class AnalyzerTestNameMenuForm extends MenuForm {
 	}
 
 	@Override
-	public String[] getSelectedIDs() {
+	public List<String> getSelectedIDs() {
 		return selectedIDs;
 	}
 
 	@Override
-	public void setSelectedIDs(String[] selectedIDs) {
+	public void setSelectedIDs(List<String> selectedIDs) {
 		this.selectedIDs = selectedIDs;
 	}
 }

@@ -15,7 +15,7 @@ public class PatientEditByProjectFormValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return PatientEditByProjectForm.class.equals(clazz);
+		return PatientEditByProjectForm.class.isAssignableFrom(clazz);
 	}
 
 	@Override

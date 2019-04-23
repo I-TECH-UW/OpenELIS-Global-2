@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
@@ -12,68 +13,95 @@ import org.hibernate.validator.constraints.URL;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.ValidationHelper;
+import spring.mine.validation.annotations.OptionalNotBlank;
+import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.organization.valueholder.OrganizationType;
 
 public class OrganizationForm extends BaseForm {
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String id = "";
 
+	@OptionalNotBlank(formFields = { Field.OrgLocalAbrev })
 	private String organizationLocalAbbreviation = "";
 
 	@NotBlank
 	@SafeHtml
 	private String organizationName = "";
 
+	@SafeHtml
 	private String city = "";
 
+	@OptionalNotBlank(formFields = { Field.OrganizationAddressInfo, Field.ZipCode })
+	@Pattern(regexp = "^[a-zA-Z0-9 ]*$")
 	private String zipCode = "";
 
+	@OptionalNotBlank(formFields = { Field.MLS })
+	@SafeHtml
 	private String mlsSentinelLabFlag = "";
 
 	@NotBlank
 	@Pattern(regexp = ValidationHelper.YES_NO_REGEX)
 	private String isActive = "";
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String orgMltOrgMltId = "";
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String selectedOrgId = "";
 
+	@SafeHtml
 	private String parentOrgName = "";
 
+	@Valid
 	private Organization organization;
 
+	@SafeHtml
 	private String shortName = "";
 
+	@SafeHtml
 	private String multipleUnit = "";
 
+	@SafeHtml
 	private String streetAddress = "";
 
+	@OptionalNotBlank(formFields = { Field.OrganizationAddressInfo, Field.OrgState })
+	@SafeHtml
 	private String state = "";
-
+	// for display
 	private Collection states;
 
 	@URL
 	private String internetAddress = "";
 
+	@OptionalNotBlank(formFields = { Field.MLS })
+	@SafeHtml
 	private String mlsLabFlag = "";
 
+	@SafeHtml
 	private String cliaNum = "";
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String pwsId = "";
 
+	// for display
 	private List<OrganizationType> orgTypes;
 
-	private String[] selectedTypes;
+	private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> selectedTypes;
 
 	private Timestamp lastupdated;
 
+	@SafeHtml
 	private String commune = "";
 
+	@SafeHtml
 	private String village = "";
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String department = "";
 
+	// for display
 	private List<Dictionary> departmentList;
 
 	public OrganizationForm() {
@@ -248,11 +276,11 @@ public class OrganizationForm extends BaseForm {
 		this.orgTypes = orgTypes;
 	}
 
-	public String[] getSelectedTypes() {
+	public List<String> getSelectedTypes() {
 		return selectedTypes;
 	}
 
-	public void setSelectedTypes(String[] selectedTypes) {
+	public void setSelectedTypes(List<String> selectedTypes) {
 		this.selectedTypes = selectedTypes;
 	}
 

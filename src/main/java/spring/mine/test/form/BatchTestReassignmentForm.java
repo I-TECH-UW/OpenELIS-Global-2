@@ -1,6 +1,5 @@
 package spring.mine.test.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
@@ -24,8 +23,6 @@ public class BatchTestReassignmentForm extends BaseForm {
 
 	// in validator
 	private String jsonWad = "";
-
-	private Timestamp lastupdated;
 
 	public BatchTestReassignmentForm() {
 		setFormName("BatchTestReassignment");
@@ -77,13 +74,5 @@ public class BatchTestReassignmentForm extends BaseForm {
 
 	public void setJsonWad(String jsonWad) {
 		this.jsonWad = jsonWad;
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 }

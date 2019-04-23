@@ -48,19 +48,14 @@ public class DictionaryController extends BaseController {
 	DictionaryFormValidator formValidator;
 
 	@ModelAttribute("form")
-	public BaseForm form() {
+	public DictionaryForm form() {
 		return new DictionaryForm();
 	}
 
 	@RequestMapping(value = "/Dictionary", method = RequestMethod.GET)
 	public ModelAndView showDictionary(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form.getClass() != DictionaryForm.class) {
-			form = new DictionaryForm();
-			request.getSession().setAttribute("form", form);
-		}
-		form.setFormAction("");
+		form = resetFormToType(form, DictionaryForm.class);
 		form.setCancelAction("CancelDictionary.do");
 
 		String id = request.getParameter(ID);
@@ -106,7 +101,7 @@ public class DictionaryController extends BaseController {
 
 		PropertyUtils.setProperty(form, "categories", dictCats);
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	private void setDefaultButtonAttributes(HttpServletRequest request) {

@@ -680,7 +680,7 @@ function  processPhoneSuccess(xhr){
 			<tr id="qaEvent_${iter.index}" style="display: none" class="qaEventRow">
 			<% if( FormFields.getInstance().useField(Field.QA_DOCUMENT_NUMBER)){ %>
 				<td>
-					<form:input path='qaEvents[${iter.index}].recordNumber'
+					<form:input path="qaEvents[${iter.index}].recordNumber"
 						id='record${iter.index }'
 						cssClass="readOnly qaEventElement" 
 						name='qaEvents'

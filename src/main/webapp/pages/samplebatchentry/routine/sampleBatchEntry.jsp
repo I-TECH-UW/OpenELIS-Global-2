@@ -160,7 +160,7 @@ $jq(document).ready(function () {
 	<c:if test="${not form.patientInfoCheck}">
 	<tr>
 			<td>
-				<form:hidden path="patientProperties.patientProcessingStatus" value=""/>
+				<form:hidden path="patientProperties.patientUpdateStatus" id="processingStatus"/>
 			</td>
 	</tr>
 	</c:if>

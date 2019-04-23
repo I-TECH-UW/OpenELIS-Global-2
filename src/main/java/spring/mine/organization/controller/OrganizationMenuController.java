@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -23,7 +22,6 @@ import spring.mine.common.controller.BaseMenuController;
 import spring.mine.common.form.MenuForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.organization.form.OrganizationMenuForm;
-import spring.mine.organization.validator.OrganizationMenuFormValidator;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -35,9 +33,6 @@ import us.mn.state.health.lims.organization.valueholder.Organization;
 
 @Controller
 public class OrganizationMenuController extends BaseMenuController {
-
-	@Autowired
-	OrganizationMenuFormValidator formValidator;
 
 	@RequestMapping(value = { "/OrganizationMenu", "/SearchOrganizationMenu" }, method = RequestMethod.GET)
 	public ModelAndView showOrganizationMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
@@ -136,18 +131,16 @@ public class OrganizationMenuController extends BaseMenuController {
 	public ModelAndView showDeleteOrganization(HttpServletRequest request,
 			@ModelAttribute("form") @Valid OrganizationMenuForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) {
-
-		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, result);
 			findForward(FWD_FAIL_DELETE, form);
 		}
 
-		String[] selectedIDs = (String[]) form.get("selectedIDs");
+		List<String> selectedIDs = (List<String>) form.get("selectedIDs");
 		List<Organization> organizations = new ArrayList<>();
-		for (int i = 0; i < selectedIDs.length; i++) {
+		for (int i = 0; i < selectedIDs.size(); i++) {
 			Organization organization = new Organization();
-			organization.setId(selectedIDs[i]);
+			organization.setId(selectedIDs.get(i));
 			organization.setSysUserId(getSysUserId(request));
 			organizations.add(organization);
 		}

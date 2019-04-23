@@ -20,7 +20,7 @@ public class SampleBatchEntryFormValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return SampleBatchEntryForm.class.equals(clazz);
+		return SampleBatchEntryForm.class.isAssignableFrom(clazz);
 	}
 
 	@Override

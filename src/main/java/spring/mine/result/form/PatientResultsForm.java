@@ -1,6 +1,5 @@
 package spring.mine.result.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
@@ -10,12 +9,12 @@ import us.mn.state.health.lims.inventory.form.InventoryKitItem;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
+// communication from server to client, not vice versa
+// validation not needed
 public class PatientResultsForm extends BaseForm {
 	private PagingBean paging;
 
 	private Boolean singlePatient = true;
-
-	private Timestamp lastupdated;
 
 	private String firstName = "";
 
@@ -77,14 +76,6 @@ public class PatientResultsForm extends BaseForm {
 
 	public void setSinglePatient(Boolean singlePatient) {
 		this.singlePatient = singlePatient;
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public String getFirstName() {

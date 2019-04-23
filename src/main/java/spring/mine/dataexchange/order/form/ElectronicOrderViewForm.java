@@ -3,16 +3,15 @@ package spring.mine.dataexchange.order.form;
 import java.util.List;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.NotNull;
 
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
+import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder.SortOrder;
 
 public class ElectronicOrderViewForm extends BaseForm {
-	@NotBlank
-	@Pattern(regexp = "^$|^lastupdated$|^externalId$|^statusId$")
-	private String sortOrder = "lastupdated";
+	@NotNull
+	private ElectronicOrder.SortOrder sortOrder = ElectronicOrder.SortOrder.LAST_UPDATED;
 
 	@Min(1)
 	private int page = 1;
@@ -20,15 +19,18 @@ public class ElectronicOrderViewForm extends BaseForm {
 	// for display
 	private List<ElectronicOrder> eOrders;
 
+	// for display
+	private SortOrder[] sortOrderOptions = ElectronicOrder.SortOrder.values();
+
 	public ElectronicOrderViewForm() {
 		setFormName("ElectronicOrderViewForm");
 	}
 
-	public String getSortOrder() {
+	public ElectronicOrder.SortOrder getSortOrder() {
 		return sortOrder;
 	}
 
-	public void setSortOrder(String sortBy) {
+	public void setSortOrder(ElectronicOrder.SortOrder sortBy) {
 		sortOrder = sortBy;
 	}
 
@@ -46,5 +48,13 @@ public class ElectronicOrderViewForm extends BaseForm {
 
 	public void setEOrders(List<ElectronicOrder> eOrders) {
 		this.eOrders = eOrders;
+	}
+
+	public SortOrder[] getSortOrderOptions() {
+		return sortOrderOptions;
+	}
+
+	public void setSortOrderOptions(SortOrder[] sortOrderOptions) {
+		this.sortOrderOptions = sortOrderOptions;
 	}
 }

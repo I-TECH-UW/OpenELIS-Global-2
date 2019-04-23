@@ -135,9 +135,7 @@ function confirmSentWarning() {
 	<c:set var="descriptionKey" value="${indicator.typeOfIndicator.descriptionKey}"/>
 <tr class="border_top">
 	<td>
-		<!--  checkbox-hidden combo trick to make struts send true when checked, false when unchecked as opposed to default checkbox (true when checked, false when unchecked)-->
 		<form:checkbox path="indicators[${iter.index}].sendIndicator" value="true" />
-		<form:hidden path="indicators[${iter.index}].sendIndicator" value="false" />
 	</td>
 	<td colspan="3">
 		<span id="<spring:message code="${nameKey} }>" />" class="<c:out value="${indicator.status}" />">

@@ -3,15 +3,21 @@ package spring.mine.common.form;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import us.mn.state.health.lims.common.log.LogEvent;
 
 //a bean object to hold all objects to be passed between the server and the client and vice versa
 public class BaseForm {
 
+	@SafeHtml
 	private String formName;
+	@SafeHtml
 	private String formAction;
 	private RequestMethod formMethod = RequestMethod.POST;
 
+	@SafeHtml
 	private String cancelAction = "Home.do";
 	private boolean submitOnCancel = false;
 	private RequestMethod cancelMethod = RequestMethod.POST;
@@ -69,7 +75,7 @@ public class BaseForm {
 		try {
 			obj = PropertyUtils.getProperty(this, propertyName);
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-			// TODO Auto-generated catch block
+			LogEvent.logError("BaseForm", "get()", e.getMessage());
 			e.printStackTrace();
 		}
 		return obj;
@@ -80,7 +86,7 @@ public class BaseForm {
 		try {
 			obj = (String) PropertyUtils.getProperty(this, propertyName);
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-			// TODO Auto-generated catch block
+			LogEvent.logError("BaseForm", "getString()", e.getMessage());
 			e.printStackTrace();
 		}
 		return obj;
@@ -92,7 +98,7 @@ public class BaseForm {
 			obj = (String[]) PropertyUtils.getProperty(this, propertyName);
 
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-			// TODO Auto-generated catch block
+			LogEvent.logError("BaseForm", "getStrings()", e.getMessage());
 			e.printStackTrace();
 		}
 		return obj;

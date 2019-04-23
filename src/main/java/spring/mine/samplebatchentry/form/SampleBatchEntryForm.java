@@ -23,10 +23,13 @@ import us.mn.state.health.lims.sample.form.ProjectData;
 
 public class SampleBatchEntryForm extends BaseForm {
 
-	@ValidDate(relative = DateRelation.TODAY)
+	public interface SampleBatchEntrySetup {
+	}
+
+	@ValidDate(relative = DateRelation.TODAY, groups = { SampleBatchEntrySetup.class })
 	private String currentDate = "";
 
-	@ValidTime
+	@ValidTime(groups = { SampleBatchEntrySetup.class })
 	private String currentTime = "";
 
 	// for display
@@ -38,9 +41,9 @@ public class SampleBatchEntryForm extends BaseForm {
 	// for display
 	private List<IdValuePair> sampleTypes;
 
+	// in validator
 	private String sampleXML = "";
 
-	// TODO
 	@Valid
 	private SampleOrderItem sampleOrderItems;
 
@@ -54,19 +57,20 @@ public class SampleBatchEntryForm extends BaseForm {
 
 	private boolean facilityIDCheck = false;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SampleBatchEntrySetup.class })
 	private String facilityID;
 
-	@Pattern(regexp = "On Demand|Pre-Printed")
+	// TODO switch to enums
+	@Pattern(regexp = "^On Demand$|^Pre-Printed$", groups = { SampleBatchEntrySetup.class })
 	private String method;
 
-	@Pattern(regexp = "routine|viralLoad|EID")
+	// TODO switch to enums
+	@Pattern(regexp = "^routine$|^viralLoad$|^EID$", groups = { SampleBatchEntrySetup.class })
 	private String study;
 
 	@ValidAccessionNumber
 	private String labNo;
 
-	// TODO
 	@Valid
 	private PatientManagementInfo patientProperties;
 
@@ -76,25 +80,22 @@ public class SampleBatchEntryForm extends BaseForm {
 	// in validator
 	private String programCode;
 
-	// TODO
 	@Valid
 	private ProjectData projectDataVL;
 
-	// TODO
 	@Valid
 	private ProjectData projectDataEID;
 
-	// TODO
 	@Valid
 	private ProjectData projectData;
 
-	// TODO
 	@Valid
 	private ObservationData observations;
 
 	// for display
 	private Map<String, OrganizationTypeList> organizationTypeLists;
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SampleBatchEntrySetup.class })
 	private String sampleTypeSelect;
 
 	private boolean localDBOnly;

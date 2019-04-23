@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.owasp.encoder.Encode;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -59,8 +59,8 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 
 	@RequestMapping(value = "/SampleEntryByProject", method = RequestMethod.POST)
 	public ModelAndView postSampleEntryByProject(HttpServletRequest request,
-			@ModelAttribute("form") @Validated(SampleEntryByProjectForm.SampleEntryByProject.class) SampleEntryByProjectForm form,
-			BindingResult result, RedirectAttributes redirectAttributes) throws Exception {
+			@ModelAttribute("form") @Valid SampleEntryByProjectForm form, BindingResult result,
+			RedirectAttributes redirectAttributes) throws Exception {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			setDisplayLists(form);

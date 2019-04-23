@@ -18,80 +18,163 @@ package us.mn.state.health.lims.resultvalidation.bean;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
+import spring.mine.common.validator.ValidationHelper;
+import spring.mine.resultvalidation.form.ResultValidationForm;
+import spring.mine.validation.annotations.ValidAccessionNumber;
 import us.mn.state.health.lims.common.util.IdValuePair;
 
 public class AnalysisItem {
 
 	private String id;
+
 	private String units;
+
 	private String testName;
+
+	@ValidAccessionNumber(groups = { ResultValidationForm.ResultValidation.class })
 	private String accessionNumber;
+
+	@SafeHtml(groups = { ResultValidationForm.ResultValidation.class })
 	private String result;
+
 	private String receivedDate;
+
 	private boolean isAccepted = false;
+
 	private boolean isRejected = false;
+
 	private boolean sampleIsAccepted = false;
+
 	private boolean sampleIsRejected = false;
+
 	private boolean isManual = false;
+
 	private String errorMessage;
+
+	@SafeHtml(groups = { ResultValidationForm.ResultValidation.class })
 	private String note;
+
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ResultValidationForm.ResultValidation.class })
 	private String noteId;
+
 	private String statusId;
+
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ResultValidationForm.ResultValidation.class })
 	private String sampleId;
+
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ResultValidationForm.ResultValidation.class })
 	private String analysisId;
+
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ResultValidationForm.ResultValidation.class })
 	private String testId;
+
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ResultValidationForm.ResultValidation.class })
 	private String resultId;
+
+	@SafeHtml(groups = { ResultValidationForm.ResultValidation.class })
 	private String resultType;
+
 	private String completeDate;
+
 	private boolean isPositive = false;
+
 	private boolean isHighlighted = false;
+
 	private Timestamp lastUpdated;
+
 	private int sampleGroupingNumber = 0;
+
 	private String testSortNumber;
+
 	private String integralResult;
+
 	private String integralAnalysisId;
+
 	private String murexResult;
+
 	private String murexAnalysisId;
+
 	private String vironostikaResult;
+
 	private String vironostikaAnalysisId;
+
 	private String genieIIResult;
+
 	private String genieIIAnalysisId;
+
 	private String genieII100Result;
+
 	private String genieII100AnalysisId;
+
 	private String genieII10Result;
+
 	private String genieII10AnalysisId;
+
 	private String westernBlot1Result;
+
 	private String westernBlot1AnalysisId;
+
 	private String westernBlot2Result;
+
 	private String westernBlot2AnalysisId;
+
 	private String p24AgResult;
+
 	private String p24AgAnalysisId;
+
 	private String biolineResult;
+
 	private String biolineAnalysisId;
+
 	private String innoliaResult;
+
 	private String innoliaAnalysisId;
+
 	private String finalResult;
+
 	private String nextTest;
 	/*
 	 * this is very specific to showing calculated results, generalize if there are
 	 * more than just log calculations
 	 */
 	private boolean displayResultAsLog = false;
+
 	private boolean showAcceptReject = true;
+
 	private List<IdValuePair> dictionaryResults;
+
 	private boolean isMultipleResultForSample = false;
+
+	@SafeHtml(groups = { ResultValidationForm.ResultValidation.class })
 	private String multiSelectResultValues = "{}";
+
 	private boolean readOnly = false;
+
 	private boolean isReflexGroup = false;
+
 	private boolean isChildReflex = false;
+
 	private boolean nonconforming = false;
+
 	private String pastNotes;
+
 	private String qualifiedDictionaryId;
+
+	@SafeHtml(groups = { ResultValidationForm.ResultValidation.class })
 	private String qualifiedResultValue = "";
+
 	private String qualifiedResultId;
+
 	private boolean hasQualifiedResult = false;
+
 	private int significantDigits = 0;
+
 	private String rejectReasonId;
+
 	private boolean valid = true;
 
 	public String getRejectReasonId() {

@@ -76,10 +76,12 @@ function  /*void*/ processTestSuccess(xhr){
 </script>
 
 <c:forEach items="${form.reports}" var="reports" varStatus="iter">
+
 <h2><c:out value="${reports.title}"/></h2>
 <table >
 	<tr >
 		<td width="180px">
+			<form:hidden path="reports[${iter.index}].enabledId" />
 			<spring:message code="testusage.config.enable" var="enableMsg"/>
 			<spring:message code="testusage.config.disable" var="disableMsg"/>
 			<form:radiobutton path="reports[${iter.index}].enabled" 
@@ -94,6 +96,7 @@ function  /*void*/ processTestSuccess(xhr){
   <tr>
   <td>&nbsp;</td>
   <td>
+  		<form:hidden path="reports[${iter.index}].urlId" />
     	<form:input path="reports[${iter.index}].url"
     			   id = "${reports.connectionTestIdentifier}"
     			   size="80" />

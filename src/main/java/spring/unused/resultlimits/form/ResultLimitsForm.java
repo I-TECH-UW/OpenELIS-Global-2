@@ -1,6 +1,5 @@
 package spring.unused.resultlimits.form;
 
-import java.sql.Timestamp;
 import java.util.Collection;
 
 import spring.mine.common.form.BaseForm;
@@ -16,8 +15,6 @@ public class ResultLimitsForm extends BaseForm {
 	private Collection genders;
 
 	private Collection units;
-
-	private Timestamp lastupdated;
 
 	public ResultLimitsForm() {
 		setFormName("resultLimitsForm");
@@ -61,13 +58,5 @@ public class ResultLimitsForm extends BaseForm {
 
 	public void setUnits(Collection units) {
 		this.units = units;
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 }

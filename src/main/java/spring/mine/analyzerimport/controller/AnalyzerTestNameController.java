@@ -47,7 +47,7 @@ public class AnalyzerTestNameController extends BaseController {
 	AnalyzerTestMappingValidator analyzerTestMappingValidator;
 
 	@ModelAttribute("form")
-	public BaseForm initForm() {
+	public AnalyzerTestNameForm initForm() {
 		return new AnalyzerTestNameForm();
 	}
 
@@ -55,10 +55,7 @@ public class AnalyzerTestNameController extends BaseController {
 	public ModelAndView showAnalyzerTestName(HttpServletRequest request, @ModelAttribute("form") BaseForm form,
 			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		if (form.getClass() != AnalyzerTestNameForm.class) {
-			form = new AnalyzerTestNameForm();
-			request.getSession().setAttribute("form", form);
-		}
+		form = resetFormToType(form, AnalyzerTestNameForm.class);
 		form.setCancelAction("CancelAnalyzerTestName.do");
 
 		request.setAttribute(ALLOW_EDITS_KEY, "true");

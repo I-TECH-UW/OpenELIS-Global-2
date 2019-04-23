@@ -19,12 +19,24 @@ package us.mn.state.health.lims.patient.action.bean;
 import java.io.Serializable;
 import java.util.List;
 
-import spring.mine.patient.controller.PatientManagementController.PatientUpdateStatus;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
+import spring.mine.common.validator.ValidationHelper;
+import spring.mine.sample.form.SamplePatientEntryForm;
+import spring.mine.validation.annotations.OptionalNotBlank;
+import spring.mine.validation.annotations.ValidDate;
+import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.util.IdValuePair;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
+import us.mn.state.health.lims.patient.action.IPatientUpdate.PatientUpdateStatus;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 import us.mn.state.health.lims.patienttype.dao.PatientTypeDAO;
 import us.mn.state.health.lims.patienttype.daoimpl.PatientTypeDAOImpl;
@@ -33,46 +45,98 @@ import us.mn.state.health.lims.patienttype.valueholder.PatientType;
 public class PatientManagementInfo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	@ValidDate(relative = DateRelation.TODAY, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String currentDate;
+
+	// TODO removable?
 	private String patientLastUpdated;
+	// TODO removable?
 	private String personLastUpdated;
-	private String patientProcessingStatus;
+
+	private PatientUpdateStatus patientUpdateStatus;
+
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String patientPK;
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String STnumber;
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String subjectNumber;
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String nationalId;
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String guid;
+
+	@OptionalNotBlank(formFields = { Field.PatientNameRequired }, groups = {
+			SamplePatientEntryForm.SamplePatientEntry.class })
+	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String lastName;
+	@OptionalNotBlank(formFields = { Field.PatientNameRequired }, groups = {
+			SamplePatientEntryForm.SamplePatientEntry.class })
+	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String firstName;
+	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String aka;
+
+	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String mothersName;
+	@Size(max = 1)
 	private String mothersInitial;
+
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String streetAddress;
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String city;
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String commune;
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String addressDepartment;
-	private String birthDateForDisplay = "";
+
+	@NotBlank(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@Pattern(regexp = ValidationHelper.GENDER_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String gender;
+	@NotBlank(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@Size(max = 3, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@Pattern(regexp = "^[0-9]*$", groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	private String age;
+	@ValidDate(relative = DateRelation.PAST, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	private String birthDateForDisplay = "";
+
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String patientType = "";
+
+	// for display
 	private static List<PatientType> patientTypes;
+
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String insuranceNumber;
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String occupation;
+	@Pattern(regexp = ValidationHelper.PHONE_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String phone;
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String healthRegion;
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String education;
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String maritialStatus;
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String nationality;
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String healthDistrict;
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
 	private String otherNationality;
+
+	// for display
 	private static List<IdValuePair> genders;
 	private static List<Dictionary> addressDepartments;
 	private static List<IdValuePair> healthRegions;
 	private static List<IdValuePair> educationList;
 	private static List<IdValuePair> maritialList;
 	private static List<IdValuePair> nationalityList;
+
 	private boolean readOnly = false;
-	private String age;
-	private PatientUpdateStatus patientUpdateStatus;
+
 	private List<PatientIdentity> patientIdentities;
 
 	public String getCurrentDate() {
@@ -97,14 +161,6 @@ public class PatientManagementInfo implements Serializable {
 
 	public void setPersonLastUpdated(String personLastUpdated) {
 		this.personLastUpdated = personLastUpdated;
-	}
-
-	public String getPatientProcessingStatus() {
-		return patientProcessingStatus;
-	}
-
-	public void setPatientProcessingStatus(String patientProcessingStatus) {
-		this.patientProcessingStatus = patientProcessingStatus;
 	}
 
 	public String getPatientPK() {

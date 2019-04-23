@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -18,13 +19,16 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.TestModifyEntryForm;
+import spring.generated.testconfiguration.validator.TestModifyEntryFormValidator;
 import spring.mine.common.controller.BaseController;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
@@ -71,18 +75,23 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 @Controller
 public class TestModifyEntryController extends BaseController {
+
+	@Autowired
+	TestModifyEntryFormValidator formValidator;
+
 	private DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
 	private TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
 
 	@RequestMapping(value = "/TestModifyEntry", method = RequestMethod.GET)
-	public ModelAndView showTestModifyEntry(HttpServletRequest request,
-			@ModelAttribute("form") TestModifyEntryForm form) {
+	public ModelAndView showTestModifyEntry(HttpServletRequest request) {
 
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new TestModifyEntryForm();
-		}
-		form.setFormAction("");
+		TestModifyEntryForm form = new TestModifyEntryForm();
+		setupDisaplyItems(form);
+
+		return findForward(FWD_SUCCESS, form);
+	}
+
+	private void setupDisaplyItems(TestModifyEntryForm form) {
 
 		List<IdValuePair> allSampleTypesList = new ArrayList<>();
 		allSampleTypesList.addAll(DisplayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
@@ -119,8 +128,6 @@ public class TestModifyEntryController extends BaseController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		return findForward(forward, form);
 	}
 
 	private List<TestCatalogBean> createTestCatBeanList() {
@@ -409,10 +416,13 @@ public class TestModifyEntryController extends BaseController {
 
 	@RequestMapping(value = "/TestModifyEntry", method = RequestMethod.POST)
 	public ModelAndView postTestModifyEntry(HttpServletRequest request,
-			@ModelAttribute("form") TestModifyEntryForm form) {
-
-		String forward = FWD_SUCCESS_INSERT;
-
+			@ModelAttribute("form") @Valid TestModifyEntryForm form, BindingResult result) {
+		formValidator.validate(form, result);
+		if (result.hasErrors()) {
+			saveErrors(result);
+			setupDisaplyItems(form);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 		String currentUserId = getSysUserId(request);
 		String changeList = form.getString("jsonWad");
 
@@ -508,6 +518,9 @@ public class TestModifyEntryController extends BaseController {
 			tx.commit();
 		} catch (HibernateException e) {
 			tx.rollback();
+			result.reject("error.hibernate.exception");
+			setupDisaplyItems(form);
+			return findForward(FWD_FAIL_INSERT, form);
 		} finally {
 			HibernateUtil.closeSession();
 		}
@@ -515,7 +528,7 @@ public class TestModifyEntryController extends BaseController {
 		TestService.refreshTestNames();
 		TypeOfSampleService.clearCache();
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private void updateTestEntities(String testId, String loinc, String userId) {
@@ -802,6 +815,8 @@ public class TestModifyEntryController extends BaseController {
 	@Override
 	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
+			return "testModifyDefinition";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
 			return "testModifyDefinition";
 		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
 			return "redirect:/TestModifyEntry.do";

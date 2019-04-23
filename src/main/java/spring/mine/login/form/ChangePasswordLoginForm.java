@@ -5,6 +5,7 @@ import javax.validation.constraints.Pattern;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.ValidationHelper;
+import spring.mine.validation.annotations.Password;
 
 public class ChangePasswordLoginForm extends BaseForm {
 
@@ -13,12 +14,15 @@ public class ChangePasswordLoginForm extends BaseForm {
 	private String loginName = "";
 
 	// in validator
+	@Password
 	private String password = "";
 
 	// in validator
+	@Password
 	private String newPassword = "";
 
 	// in validator
+	@Password
 	private String confirmPassword = "";
 
 	public ChangePasswordLoginForm() {

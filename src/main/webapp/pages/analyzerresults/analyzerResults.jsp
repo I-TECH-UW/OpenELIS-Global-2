@@ -295,12 +295,12 @@ function /*void*/ markUpdated(){
 			</td>
 			<td >
 			    <c:if test="${groupReadOnly || itemReadOnly}">
-				<form:input path="resultList${iter.index}.completeDate"
+				<form:input path="resultList[${iter.index}].completeDate"
 						   readonly="true"
 						   size="10"
 						   style="border-style:hidden;text-align:right;background-color:transparent" />
 				</c:if><c:if test="${not (groupReadOnly || itemReadOnly)}">
-				<form:input path="resultList${iter.index}.completeDate"
+				<form:input path="resultList[${iter.index}].completeDate"
 						   onchange="markUpdated();"
 						   size="10"
 						   style="text-align:right" />

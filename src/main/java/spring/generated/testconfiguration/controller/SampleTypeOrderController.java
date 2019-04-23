@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
@@ -61,7 +62,7 @@ public class SampleTypeOrderController extends BaseController {
 
 	@RequestMapping(value = "/SampleTypeOrder", method = RequestMethod.POST)
 	public ModelAndView postSampleTypeOrder(HttpServletRequest request,
-			@ModelAttribute("form") SampleTypeOrderForm form, BindingResult result) throws Exception {
+			@ModelAttribute("form") @Valid SampleTypeOrderForm form, BindingResult result) throws Exception {
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);

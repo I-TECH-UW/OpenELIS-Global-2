@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -23,7 +24,7 @@ public class AuditTrailReportController extends BaseController {
 
 	@RequestMapping(value = "/AuditTrailReport", method = RequestMethod.GET)
 	public ModelAndView showAuditTrailReport(HttpServletRequest request,
-			@ModelAttribute("form") AuditTrailViewForm form)
+			@ModelAttribute("form") @Valid AuditTrailViewForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		form.setFormMethod(RequestMethod.GET);
 

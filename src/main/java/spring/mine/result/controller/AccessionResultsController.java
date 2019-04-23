@@ -60,7 +60,6 @@ public class AccessionResultsController extends BaseController {
 	@RequestMapping(value = "/AccessionResults", method = RequestMethod.GET)
 	public ModelAndView showAccessionResults(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
 		AccessionResultsForm form = new AccessionResultsForm();
 
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
@@ -123,7 +122,7 @@ public class AccessionResultsController extends BaseController {
 			paging.page(request, form, newPage);
 		}
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	private boolean modifyResultsRoleBased() {

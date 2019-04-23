@@ -1,6 +1,5 @@
 package spring.generated.sample.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -21,17 +20,12 @@ import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.organization.valueholder.Organization;
-import us.mn.state.health.lims.patient.action.bean.PatientClinicalInfo;
-import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
+import us.mn.state.health.lims.patient.action.IPatientUpdate.PatientUpdateStatus;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 import us.mn.state.health.lims.patient.valueholder.ObservationData;
-import us.mn.state.health.lims.sample.bean.SampleOrderItem;
 import us.mn.state.health.lims.sample.form.ProjectData;
 
 public class SampleEntryByProjectForm extends BaseForm {
-
-	public interface SampleEntryByProject {
-	}
 
 	@ValidDate(relative = DateRelation.TODAY)
 	private String currentDate = "";
@@ -53,8 +47,6 @@ public class SampleEntryByProjectForm extends BaseForm {
 
 	@ValidAccessionNumber(format = AccessionFormat.PROGRAM, dateValidate = true)
 	private String labNo = "";
-
-	private Timestamp lastupdated;
 
 	@SafeHtml
 	private String doctor = "";
@@ -81,8 +73,7 @@ public class SampleEntryByProjectForm extends BaseForm {
 	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String patientPK = "";
 
-	@Pattern(regexp = "^Add$|^update$|^noAction$")
-	private String patientProcessingStatus = "Add";
+	private PatientUpdateStatus patientUpdateStatus = PatientUpdateStatus.ADD;
 
 	@SafeHtml
 	private String patientLastUpdated = "";
@@ -90,11 +81,9 @@ public class SampleEntryByProjectForm extends BaseForm {
 	@SafeHtml
 	private String personLastUpdated = "";
 
-	// TODO
 	@Valid
 	private ProjectData ProjectData;
 
-	// TODO
 	@Valid
 	private ObservationData observations;
 
@@ -110,20 +99,8 @@ public class SampleEntryByProjectForm extends BaseForm {
 	// for display
 	private List<IdValuePair> genders;
 
-	// TODO
-	@Valid
-	private PatientManagementInfo patientProperties;
-
 	// for display
 	private PatientSearch patientSearch;
-
-	// TODO
-	@Valid
-	private PatientClinicalInfo patientClinicalProperties;
-
-	// TODO
-	@Valid
-	private SampleOrderItem sampleOrderItems;
 
 	@SafeHtml
 	private String domain = "";
@@ -196,14 +173,6 @@ public class SampleEntryByProjectForm extends BaseForm {
 		this.labNo = labNo;
 	}
 
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
-	}
-
 	public String getDoctor() {
 		return doctor;
 	}
@@ -268,12 +237,12 @@ public class SampleEntryByProjectForm extends BaseForm {
 		this.patientPK = patientPK;
 	}
 
-	public String getPatientProcessingStatus() {
-		return patientProcessingStatus;
+	public PatientUpdateStatus getPatientUpdateStatus() {
+		return patientUpdateStatus;
 	}
 
-	public void setPatientProcessingStatus(String patientProcessingStatus) {
-		this.patientProcessingStatus = patientProcessingStatus;
+	public void setPatientUpdateStatus(PatientUpdateStatus patientUpdateStatus) {
+		this.patientUpdateStatus = patientUpdateStatus;
 	}
 
 	public String getPatientLastUpdated() {
@@ -332,14 +301,6 @@ public class SampleEntryByProjectForm extends BaseForm {
 		this.formLists = formLists;
 	}
 
-	public PatientManagementInfo getPatientProperties() {
-		return patientProperties;
-	}
-
-	public void setPatientProperties(PatientManagementInfo patientProperties) {
-		this.patientProperties = patientProperties;
-	}
-
 	public PatientSearch getPatientSearch() {
 		return patientSearch;
 	}
@@ -348,19 +309,4 @@ public class SampleEntryByProjectForm extends BaseForm {
 		this.patientSearch = patientSearch;
 	}
 
-	public PatientClinicalInfo getPatientClinicalProperties() {
-		return patientClinicalProperties;
-	}
-
-	public void setPatientClinicalProperties(PatientClinicalInfo patientClinicalProperties) {
-		this.patientClinicalProperties = patientClinicalProperties;
-	}
-
-	public SampleOrderItem getSampleOrderItems() {
-		return sampleOrderItems;
-	}
-
-	public void setSampleOrderItems(SampleOrderItem sampleOrderItems) {
-		this.sampleOrderItems = sampleOrderItems;
-	}
 }

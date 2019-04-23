@@ -1,6 +1,5 @@
 package spring.generated.inventory.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -19,8 +18,6 @@ public class InventoryForm extends BaseForm {
 
 	@ValidDate(relative = DateRelation.TODAY)
 	private String currentDate = "";
-
-	private Timestamp lastupdated;
 
 	@NotNull(groups = { ManageInventory.class })
 	@Valid
@@ -45,14 +42,6 @@ public class InventoryForm extends BaseForm {
 
 	public void setCurrentDate(String currentDate) {
 		this.currentDate = currentDate;
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public List<InventoryKitItem> getInventoryItems() {

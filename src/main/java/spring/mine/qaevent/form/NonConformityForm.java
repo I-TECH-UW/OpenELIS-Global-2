@@ -1,6 +1,5 @@
 package spring.mine.qaevent.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -12,6 +11,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.ValidationHelper;
+import spring.mine.validation.annotations.ValidAccessionNumber;
 import spring.mine.validation.annotations.ValidDate;
 import spring.mine.validation.annotations.ValidTime;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -21,79 +21,80 @@ import us.mn.state.health.lims.qaevent.valueholder.retroCI.QaEventItem;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 
 public class NonConformityForm extends BaseForm {
-	@NotNull
+
+	public interface NonConformity {
+	}
+
+	@NotNull(groups = { NonConformity.class })
 	private Boolean readOnly = Boolean.TRUE;
 
-	private Timestamp lastupdated;
-
-	@NotBlank
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
+	@NotBlank(groups = { NonConformity.class })
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { NonConformity.class })
 	private String sampleId = "";
 
-	@NotBlank
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
+	@NotBlank(groups = { NonConformity.class })
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { NonConformity.class })
 	private String patientId = "";
 
 	// in validator
 	private String sampleItemsTypeOfSampleIds = "";
 
-	@ValidDate(relative = DateRelation.PAST)
+	@ValidDate(relative = DateRelation.PAST, groups = { NonConformity.class })
 	private String date = "";
 
-	@ValidTime
+	@ValidTime(groups = { NonConformity.class })
 	private String time = "";
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { NonConformity.class })
 	private String projectId = "";
 
-	@SafeHtml
+	@SafeHtml(groups = { NonConformity.class })
 	private String project = "";
 
-	// TODO
+	// unused?
 	@Valid
 	private List<Project> projects;
 
-	@NotNull
+	@NotNull(groups = { NonConformity.class })
 	private Boolean subjectNew = Boolean.TRUE;
 
-	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { NonConformity.class })
 	private String subjectNo = "";
 
-	@NotNull
+	@NotNull(groups = { NonConformity.class })
 	private Boolean newSTNumber = Boolean.TRUE;
 
-	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { NonConformity.class })
 	private String STNumber = "";
 
-	@NotNull
+	@NotNull(groups = { NonConformity.class })
 	private Boolean nationalIdNew = Boolean.TRUE;
 
-	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { NonConformity.class })
 	private String nationalId = "";
 
-	// TODO
+	@ValidAccessionNumber(groups = { NonConformity.class })
 	private String labNo = "";
 
-	@NotNull
+	@NotNull(groups = { NonConformity.class })
 	private Boolean doctorNew = Boolean.TRUE;
 
-	@SafeHtml
+	@SafeHtml(groups = { NonConformity.class })
 	private String doctor = "";
 
-	@NotNull
+	@NotNull(groups = { NonConformity.class })
 	private Boolean serviceNew = Boolean.TRUE;
 
-	@SafeHtml
+	@SafeHtml(groups = { NonConformity.class })
 	private String service = "";
 
-	@SafeHtml
+	@SafeHtml(groups = { NonConformity.class })
 	private String newServiceName = "";
 
-	// TODO
 	@Valid
 	private List<QaEventItem> qaEvents;
 
-	@SafeHtml
+	@SafeHtml(groups = { NonConformity.class })
 	private String section = "";
 
 	// for display
@@ -105,48 +106,49 @@ public class NonConformityForm extends BaseForm {
 	// for display
 	private List<IdValuePair> typeOfSamples;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { NonConformity.class })
 	private String commentId = "";
 
-	@NotNull
+	@NotNull(groups = { NonConformity.class })
 	private Boolean commentNew;
 
-	@SafeHtml
+	@SafeHtml(groups = { NonConformity.class })
 	private String comment = "";
 
-	@SafeHtml
+	@SafeHtml(groups = { NonConformity.class })
 	private String biologest = "";
 
 	// for display
 	private List<IdValuePair> siteList;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { NonConformity.class })
 	private String requesterSampleID = "";
 
-	@NotNull
+	@NotNull(groups = { NonConformity.class })
 	private String providerNew = "";
 
-	@Pattern(regexp = ValidationHelper.NAME_REGEX)
+	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { NonConformity.class })
 	private String providerLastName = "";
 
-	@Pattern(regexp = ValidationHelper.NAME_REGEX)
+	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { NonConformity.class })
 	private String providerFirstName = "";
 
-	@Pattern(regexp = ValidationHelper.PHONE_REGEX)
+	@Pattern(regexp = ValidationHelper.PHONE_REGEX, groups = { NonConformity.class })
 	private String providerWorkPhone = "";
 
-	@SafeHtml
+	@SafeHtml(groups = { NonConformity.class })
 	private String providerStreetAddress = "";
 
-	@SafeHtml
+	@SafeHtml(groups = { NonConformity.class })
 	private String providerCity = "";
 
-	@SafeHtml
+	@SafeHtml(groups = { NonConformity.class })
 	private String providerCommune = "";
 
-	@SafeHtml
+	@SafeHtml(groups = { NonConformity.class })
 	private String providerDepartment = "";
 
+	// for display
 	private List<IdValuePair> departments;
 
 	public NonConformityForm() {
@@ -159,14 +161,6 @@ public class NonConformityForm extends BaseForm {
 
 	public void setReadOnly(Boolean readOnly) {
 		this.readOnly = readOnly;
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public String getSampleId() {

@@ -1,10 +1,10 @@
 package spring.mine.resultvalidation.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import spring.mine.common.form.BaseForm;
@@ -16,15 +16,15 @@ import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRel
 import us.mn.state.health.lims.resultvalidation.bean.AnalysisItem;
 
 public class ResultValidationForm extends BaseForm {
+	public interface ResultValidation {
+	}
+
 	// for display
 	private PagingBean paging;
 
-	private Timestamp lastupdated;
-
-	@ValidDate(relative = DateRelation.TODAY)
+	@ValidDate(relative = DateRelation.TODAY, groups = { ResultValidation.class })
 	private String currentDate = "";
 
-	// TODO
 	@Valid
 	private List<AnalysisItem> resultList;
 
@@ -40,10 +40,11 @@ public class ResultValidationForm extends BaseForm {
 	// for display
 	private List<IdValuePair> testSectionsByName;
 
-	@NotBlank
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
+	@NotBlank(groups = { ResultValidation.class })
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ResultValidation.class })
 	private String testSectionId;
 
+	@NotNull(groups = { ResultValidation.class })
 	private Boolean displayTestSections = true;
 
 	public ResultValidationForm() {
@@ -56,14 +57,6 @@ public class ResultValidationForm extends BaseForm {
 
 	public void setPaging(PagingBean paging) {
 		this.paging = paging;
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public String getCurrentDate() {

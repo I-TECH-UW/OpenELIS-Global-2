@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
@@ -72,8 +73,9 @@ public class PrintBarcodeController extends BaseController {
 	}
 
 	@RequestMapping(value = "/PrintBarcode", method = RequestMethod.GET)
-	public ModelAndView setupPrintBarcode(HttpServletRequest request, @ModelAttribute("form") PrintBarcodeForm form,
-			BindingResult result) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+	public ModelAndView setupPrintBarcode(HttpServletRequest request,
+			@Valid @ModelAttribute("form") PrintBarcodeForm form, BindingResult result)
+			throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
 		form.setFormAction("PrintBarcode");
 		form.setFormMethod(RequestMethod.GET);

@@ -1,6 +1,7 @@
 package spring.mine.common.controller;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,7 +50,7 @@ public abstract class BaseMenuController extends BaseController {
 				menuList = doNone(form, request);
 			}
 		} catch (Exception e) {
-			LogEvent.logError("BaseMenuAction", "performAction()", e.toString());
+			LogEvent.logError("BaseMenuController", "performMenuAction()", e.toString());
 			forward = FWD_FAIL;
 		}
 
@@ -59,7 +60,7 @@ public abstract class BaseMenuController extends BaseController {
 		request.setAttribute(ADD_DISABLED, getAddDisabled());
 		request.setAttribute(EDIT_DISABLED, getEditDisabled());
 
-		String[] selectedIDs = new String[5];
+		List<String> selectedIDs = new ArrayList<>();
 
 		PropertyUtils.setProperty(form, "selectedIDs", selectedIDs);
 

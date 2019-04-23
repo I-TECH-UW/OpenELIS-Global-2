@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.StaleObjectStateException;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import spring.mine.common.controller.BaseController;
 import spring.mine.sample.form.SamplePatientEntryForm;
 import spring.mine.sample.validator.SamplePatientEntryFormValidator;
 import us.mn.state.health.lims.address.dao.AddressPartDAO;
@@ -33,6 +35,7 @@ import us.mn.state.health.lims.common.provider.query.PatientSearchResults;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
+import us.mn.state.health.lims.patient.action.IPatientUpdate.PatientUpdateStatus;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 import us.mn.state.health.lims.patient.dao.PatientDAO;
@@ -53,7 +56,7 @@ import us.mn.state.health.lims.sample.dao.SearchResultsDAO;
 import us.mn.state.health.lims.sample.daoimpl.SearchResultsDAOImp;
 
 @Controller
-public class PatientManagementController extends PatientManagementBaseController {
+public class PatientManagementController extends BaseController {
 
 	@Autowired
 	SamplePatientEntryFormValidator formValidator;
@@ -68,10 +71,6 @@ public class PatientManagementController extends PatientManagementBaseController
 	private static String ADDRESS_PART_VILLAGE_ID;
 	private static String ADDRESS_PART_COMMUNE_ID;
 	private static String ADDRESS_PART_DEPT_ID;
-
-	public enum PatientUpdateStatus {
-		NO_ACTION, UPDATE, ADD
-	}
 
 	static {
 		AddressPartDAO addressPartDAO = new AddressPartDAOImpl();
@@ -100,7 +99,7 @@ public class PatientManagementController extends PatientManagementBaseController
 
 	@RequestMapping(value = "/PatientManagement", method = RequestMethod.POST)
 	public ModelAndView showPatientManagementUpdate(HttpServletRequest request,
-			@ModelAttribute("form") SamplePatientEntryForm form, BindingResult result,
+			@ModelAttribute("form") @Valid SamplePatientEntryForm form, BindingResult result,
 			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
@@ -151,6 +150,13 @@ public class PatientManagementController extends PatientManagementBaseController
 		}
 		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 		return findForward(FWD_SUCCESS_INSERT, form);
+	}
+
+	public void cleanAndSetupRequestForm(SamplePatientEntryForm form, HttpServletRequest request) {
+		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
+		form.setPatientProperties(new PatientManagementInfo());
+		form.setPatientSearch(new PatientSearch());
+		form.getPatientProperties().setPatientUpdateStatus(PatientUpdateStatus.ADD);
 	}
 
 	public void preparePatientData(Errors errors, HttpServletRequest request, PatientManagementInfo patientInfo,
@@ -257,15 +263,15 @@ public class PatientManagementController extends PatientManagementBaseController
 
 	public void setPatientUpdateStatus(PatientManagementInfo patientInfo) {
 
-		String status = patientInfo.getPatientProcessingStatus();
-
-		if ("noAction".equals(status)) {
-			patientInfo.setPatientUpdateStatus(PatientUpdateStatus.NO_ACTION);
-		} else if ("update".equals(status)) {
-			patientInfo.setPatientUpdateStatus(PatientUpdateStatus.UPDATE);
-		} else {
-			patientInfo.setPatientUpdateStatus(PatientUpdateStatus.ADD);
-		}
+		/*
+		 * String status = patientInfo.getPatientProcessingStatus();
+		 *
+		 * if ("noAction".equals(status)) {
+		 * patientInfo.setPatientUpdateStatus(PatientUpdateStatus.NO_ACTION); } else if
+		 * ("update".equals(status)) {
+		 * patientInfo.setPatientUpdateStatus(PatientUpdateStatus.UPDATE); } else {
+		 * patientInfo.setPatientUpdateStatus(PatientUpdateStatus.ADD); }
+		 */
 	}
 
 	private void copyFormBeanToValueHolders(PatientManagementInfo patientInfo, Patient patient)

@@ -3,7 +3,6 @@ package spring.mine.samplebatchentry.controller;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.jfree.util.Log;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,7 +38,8 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
 
 	@RequestMapping(value = "/SampleBatchEntryByProject", method = RequestMethod.POST)
 	public ModelAndView showSampleBatchEntryByProject(HttpServletRequest request,
-			@ModelAttribute("form") @Valid SampleBatchEntryForm form, BindingResult result) {
+			@ModelAttribute("form") @Validated(SampleBatchEntryForm.SampleBatchEntrySetup.class) SampleBatchEntryForm form,
+			BindingResult result) {
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);

@@ -6,20 +6,17 @@ import org.springframework.validation.Validator;
 
 import spring.mine.common.validator.ValidationHelper;
 import spring.mine.patient.form.PatientEntryByProjectForm;
-import us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator.ValidationResults;
-import us.mn.state.health.lims.common.provider.validation.ProgramAccessionValidator;
-import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
+import us.mn.state.health.lims.common.util.validator.GenericValidator;
 
 @Component
 public class PatientEntryByProjectFormValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return PatientEntryByProjectForm.class.equals(clazz);
+		return PatientEntryByProjectForm.class.isAssignableFrom(clazz);
 	}
 
 	@Override
-	// TODO tighten all validation
 	public void validate(Object target, Errors errors) {
 		PatientEntryByProjectForm form = (PatientEntryByProjectForm) target;
 
@@ -40,141 +37,127 @@ public class PatientEntryByProjectFormValidator implements Validator {
 	}
 
 	private void validateEIDForm(PatientEntryByProjectForm form, Errors errors) {
-		// TODO Auto-generated method stub
+		ValidationHelper.validateFieldRequired(form.getReceivedDateForDisplay(), "receivedDateForDisplay", errors);
+
+		ValidationHelper.validateFieldRequired(form.getInterviewDate(), "interviewDate", errors);
+
+		ValidationHelper.validateFieldRequired(form.getProjectData().getEIDSiteName(), "ProjectData.EIDSiteName",
+				errors);
+
+		ValidationHelper.validateFieldRequired(form.getProjectData().getEIDsiteCode(), "ProjectData.EIDSiteCode",
+				errors);
+
+		if (GenericValidator.isBlankOrNull(form.getSubjectNumber())
+				&& GenericValidator.isBlankOrNull(form.getSiteSubjectNumber())) {
+			ValidationHelper.validateFieldRequired(form.getSubjectNumber(), "subjectNumber", errors);
+
+			ValidationHelper.validateFieldRequired(form.getSiteSubjectNumber(), "siteSubjectNumber", errors);
+		}
+
+		ValidationHelper.validateFieldRequired(form.getLabNo(), "labNo", errors);
+
+		ValidationHelper.validateFieldRequired(form.getGender(), "gender", errors);
+
+		ValidationHelper.validateFieldRequired(form.getBirthDateForDisplay(), "birthDateForDisplay", errors);
 
 	}
 
 	private void validateVLForm(PatientEntryByProjectForm form, Errors errors) {
-		// TODO
+		ValidationHelper.validateFieldRequired(form.getCenterName(), "centerName", errors);
 
-		// validate ProjectData
-
-		// validate ObservationData
-
-		ValidationHelper.validateDateField(form.getString("receivedDateForDisplay"), "receivedDateForDisplay", errors,
-				DateRelation.PAST);
-
-		ValidationHelper.validateField(form.getString("receivedTimeForDisplay"), "receivedTimeForDisplay", errors,
-				false, 5);
-		// validate format
-
-		ValidationHelper.validateDateField(form.getString("interviewDate"), "interviewDate", errors, DateRelation.PAST);
-
-		ValidationHelper.validateField(form.getString("interviewTime"), "interviewTime", errors, false, 5);
-
-		ValidationHelper.validateField(form.getString("subjectNumber"), "subjectNumber", errors, true, 7,
-				ValidationHelper.PATIENT_ID_REGEX);
-
-		ValidationHelper.validateField(form.getString("siteSubjectNumber"), "siteSubjectNumber", errors, true, 255,
-				ValidationHelper.PATIENT_ID_REGEX);
-
-		if (!ValidationResults.SUCCESS
-				.equals((new ProgramAccessionValidator()).validFormat(form.getString("labNo"), true))) {
-			errors.rejectValue("labNo", "error.field.accession.invalid", new Object[] { form.getString("labNo") },
-					"Field invalid accession number used: " + form.getString("labNo"));
+		if (form.getCenterCode() == null) {
+			errors.rejectValue("centerCode", "field.error.required");
 		}
 
-		ValidationHelper.validateField(form.getString("birthDateForDisplay"), "birthDateForDisplay", errors, true, 10);
+		ValidationHelper.validateFieldRequired(form.getReceivedDateForDisplay(), "receivedDateForDisplay", errors);
 
-		ValidationHelper.validateGenderField(form.getString("gender"), "gender", errors);
+		ValidationHelper.validateFieldRequired(form.getInterviewDate(), "interviewDate", errors);
+
+		if (GenericValidator.isBlankOrNull(form.getSubjectNumber())
+				&& GenericValidator.isBlankOrNull(form.getSiteSubjectNumber())) {
+			ValidationHelper.validateFieldRequired(form.getSubjectNumber(), "subjectNumber", errors);
+
+			ValidationHelper.validateFieldRequired(form.getSiteSubjectNumber(), "siteSubjectNumber", errors);
+		}
+
+		ValidationHelper.validateFieldRequired(form.getLabNo(), "labNo", errors);
+
+		ValidationHelper.validateFieldRequired(form.getBirthDateForDisplay(), "birthDateForDisplay", errors);
+
+		ValidationHelper.validateFieldRequired(form.getGender(), "gender", errors);
 
 	}
 
 	private void validateRTNForm(PatientEntryByProjectForm form, Errors errors) {
+		ValidationHelper.validateFieldRequired(form.getReceivedDateForDisplay(), "receivedDateForDisplay", errors);
 
-		ValidationHelper.validateDateField(form.getString("receivedDateForDisplay"), "receivedDateForDisplay", errors,
-				DateRelation.PAST);
+		ValidationHelper.validateFieldRequired(form.getInterviewDate(), "interviewDate", errors);
 
-		ValidationHelper.validateDateField(form.getString("interviewDate"), "interviewDate", errors, DateRelation.PAST);
+		ValidationHelper.validateFieldRequired(form.getObservations().getNameOfDoctor(), "observations.nameOfDoctor",
+				errors);
 
-		ValidationHelper.validateField(form.getString("lastName"), "lastName", errors, false, 40,
-				ValidationHelper.NAME_REGEX);
-
-		ValidationHelper.validateField(form.getString("firstName"), "firstName", errors, false, 40,
-				ValidationHelper.NAME_REGEX);
-
-		ValidationHelper.validateDateField(form.getString("birthDateForDisplay"), "birthDateForDisplay", errors,
-				DateRelation.PAST);
-
-		if (!ValidationResults.SUCCESS
-				.equals((new ProgramAccessionValidator()).validFormat(form.getString("labNo"), true))) {
-			errors.rejectValue("labNo", "error.field.accession.invalid", new Object[] { form.getString("labNo") },
-					"Field invalid accession number used: " + form.getString("labNo"));
+		if (form.getCenterCode() == null) {
+			errors.rejectValue("centerCode", "field.error.required");
 		}
+
+		ValidationHelper.validateFieldRequired(form.getObservations().getService(), "observations.service", errors);
+
+		ValidationHelper.validateFieldRequired(form.getGender(), "gender", errors);
+
+		ValidationHelper.validateFieldRequired(form.getBirthDateForDisplay(), "birthDateForDisplay", errors);
+
+		ValidationHelper.validateFieldRequired(form.getLabNo(), "labNo", errors);
+
 	}
 
 	private void validateFollowUpARVForm(PatientEntryByProjectForm form, Errors errors) {
+		ValidationHelper.validateFieldRequired(form.getReceivedDateForDisplay(), "receivedDateForDisplay", errors);
 
-		ValidationHelper.validateDateField(form.getString("receivedDateForDisplay"), "receivedDateForDisplay", errors,
-				DateRelation.PAST);
+		ValidationHelper.validateFieldRequired(form.getInterviewDate(), "interviewDate", errors);
 
-		ValidationHelper.validateDateField(form.getString("interviewDate"), "interviewDate", errors, DateRelation.PAST);
+		if (GenericValidator.isBlankOrNull(form.getSubjectNumber())
+				&& GenericValidator.isBlankOrNull(form.getSiteSubjectNumber())) {
+			ValidationHelper.validateFieldRequired(form.getSubjectNumber(), "subjectNumber", errors);
 
-		ValidationHelper.validateField(form.getString("subjectNumber"), "subjectNumber", errors, true, 255,
-				ValidationHelper.PATIENT_ID_REGEX);
-
-		ValidationHelper.validateField(form.getString("siteSubjectNumber"), "siteSubjectNumber", errors, true, 255,
-				ValidationHelper.PATIENT_ID_REGEX);
-
-		if (!ValidationResults.SUCCESS
-				.equals((new ProgramAccessionValidator()).validFormat(form.getString("labNo"), true))) {
-			errors.rejectValue("labNo", "error.field.accession.invalid", new Object[] { form.getString("labNo") },
-					"Field invalid accession number used: " + form.getString("labNo"));
+			ValidationHelper.validateFieldRequired(form.getSiteSubjectNumber(), "siteSubjectNumber", errors);
 		}
 
-		ValidationHelper.validateField(form.getString("centerName"), "centerName", errors, true, 255);
+		ValidationHelper.validateFieldRequired(form.getLabNo(), "labNo", errors);
 
-		ValidationHelper.validateField(form.getString("lastName"), "lastName", errors, false, 40,
-				ValidationHelper.NAME_REGEX);
+		if (form.getCenterCode() == null) {
+			errors.rejectValue("centerCode", "field.error.required");
+		}
 
-		ValidationHelper.validateField(form.getString("firstName"), "firstName", errors, false, 40,
-				ValidationHelper.NAME_REGEX);
+		ValidationHelper.validateFieldRequired(form.getGender(), "gender", errors);
 
-		ValidationHelper.validateGenderField(form.getString("gender"), "gender", errors);
+		ValidationHelper.validateFieldRequired(form.getBirthDateForDisplay(), "birthDateForDisplay", errors);
 
-		ValidationHelper.validateDateField(form.getString("birthDateForDisplay"), "birthDateForDisplay", errors,
-				DateRelation.PAST);
-
-		// TODO validate ObservationData
-
-		// TODO validate ProjectData
 	}
 
 	private void validateInitialARVForm(PatientEntryByProjectForm form, Errors errors) {
+		ValidationHelper.validateFieldRequired(form.getReceivedDateForDisplay(), "receivedDateForDisplay", errors);
 
-		ValidationHelper.validateDateField(form.getString("receivedDateForDisplay"), "receivedDateForDisplay", errors,
-				DateRelation.PAST);
+		ValidationHelper.validateFieldRequired(form.getInterviewDate(), "interviewDate", errors);
 
-		ValidationHelper.validateDateField(form.getString("interviewDate"), "interviewDate", errors, DateRelation.PAST);
+		if (GenericValidator.isBlankOrNull(form.getSubjectNumber())
+				&& GenericValidator.isBlankOrNull(form.getSiteSubjectNumber())) {
+			ValidationHelper.validateFieldRequired(form.getSubjectNumber(), "subjectNumber", errors);
 
-		ValidationHelper.validateField(form.getString("subjectNumber"), "subjectNumber", errors, true, 255,
-				ValidationHelper.PATIENT_ID_REGEX);
-
-		ValidationHelper.validateField(form.getString("siteSubjectNumber"), "siteSubjectNumber", errors, true, 255,
-				ValidationHelper.PATIENT_ID_REGEX);
-
-		if (!ValidationResults.SUCCESS
-				.equals((new ProgramAccessionValidator()).validFormat(form.getString("labNo"), true))) {
-			errors.rejectValue("labNo", "error.field.accession.invalid", new Object[] { form.getString("labNo") },
-					"Field invalid accession number used: " + form.getString("labNo"));
+			ValidationHelper.validateFieldRequired(form.getSiteSubjectNumber(), "siteSubjectNumber", errors);
 		}
 
-		ValidationHelper.validateField(form.getString("centerName"), "centerName", errors, true, 255);
+		ValidationHelper.validateFieldRequired(form.getLabNo(), "labNo", errors);
 
-		ValidationHelper.validateField(form.getString("lastName"), "lastName", errors, false, 40,
-				ValidationHelper.NAME_REGEX);
+		ValidationHelper.validateFieldRequired(form.getCenterName(), "centerName", errors);
 
-		ValidationHelper.validateField(form.getString("firstName"), "firstName", errors, false, 40,
-				ValidationHelper.NAME_REGEX);
+		if (form.getCenterCode() == null) {
+			errors.rejectValue("centerCode", "field.error.required");
+		}
 
-		ValidationHelper.validateDateField(form.getString("birthDateForDisplay"), "birthDateForDisplay", errors,
-				DateRelation.PAST);
+		ValidationHelper.validateFieldRequired(form.getGender(), "gender", errors);
 
-		ValidationHelper.validateGenderField(form.getString("gender"), "gender", errors);
+		ValidationHelper.validateFieldRequired(form.getBirthDateForDisplay(), "birthDateForDisplay", errors);
 
-		// TODO validate ProjectData
-
-		// TODO validate ObservationData
 	}
 
 }

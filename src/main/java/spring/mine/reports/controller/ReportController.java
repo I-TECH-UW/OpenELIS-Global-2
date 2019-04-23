@@ -50,10 +50,7 @@ public class ReportController extends BaseController {
 	@RequestMapping(value = "/Report", method = RequestMethod.GET)
 	public ModelAndView showReport(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		if (form.getClass() != ReportForm.class) {
-			form = new ReportForm();
-			request.getSession().setAttribute("form", form);
-		}
+		form = resetFormToType(form, ReportForm.class);
 		form.setFormMethod(RequestMethod.GET);
 
 		PropertyUtils.setProperty(form, "type", request.getParameter("type"));

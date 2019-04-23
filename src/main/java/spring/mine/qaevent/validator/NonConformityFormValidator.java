@@ -12,7 +12,7 @@ public class NonConformityFormValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return NonConformityForm.class.equals(clazz);
+		return NonConformityForm.class.isAssignableFrom(clazz);
 	}
 
 	@Override

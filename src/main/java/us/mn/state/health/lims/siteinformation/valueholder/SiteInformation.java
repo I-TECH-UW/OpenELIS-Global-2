@@ -17,6 +17,9 @@
 */
 package us.mn.state.health.lims.siteinformation.valueholder;
 
+import org.hibernate.validator.constraints.URL;
+
+import spring.mine.datasubmission.form.DataSubmissionForm;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
@@ -28,6 +31,8 @@ public class SiteInformation extends BaseObject {
 	private String id;
 	private String name;
 	private String description;
+
+	@URL(groups = DataSubmissionForm.DataSubmission.class)
 	private String value;
 	private boolean encrypted;
 	private String valueType;

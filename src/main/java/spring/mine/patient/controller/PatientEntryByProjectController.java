@@ -51,7 +51,7 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
 
 		addAllPatientFormLists(form);
 
-		PropertyUtils.setProperty(form, "currentDate", todayAsText); // TODO Needed?
+		PropertyUtils.setProperty(form, "currentDate", todayAsText);
 		PropertyUtils.setProperty(form, "receivedDateForDisplay", todayAsText);
 		PropertyUtils.setProperty(form, "interviewDate", todayAsText);
 		// put the projectFormName back in.
@@ -62,14 +62,12 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
 		return findForward(FWD_SUCCESS, form);
 	}
 
-	// TODO consider making a separate method for each type of form entry so we can
-	// use
+	// TODO consider making separate method for each type of form entry so can use
 	// @Validated(VL.class, EID.class, etc..) to access seperate logic
 	@RequestMapping(value = "/PatientEntryByProject", method = RequestMethod.POST)
 	public ModelAndView showPatientEntryByProjectUpdate(HttpServletRequest request,
 			@ModelAttribute("form") @Valid PatientEntryByProjectForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) throws Exception {
-
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);

@@ -30,6 +30,7 @@ import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 public interface IPatientUpdate {
 	public static enum PatientUpdateStatus {
 		NO_ACTION, UPDATE, ADD
+
 	}
 
 	public abstract Errors preparePatientData(HttpServletRequest request, PatientManagementInfo patientInfo)

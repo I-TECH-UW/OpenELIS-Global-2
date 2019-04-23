@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -20,7 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.analyzerimport.form.AnalyzerTestNameMenuForm;
-import spring.mine.analyzerimport.validator.AnalyzerTestNameMenuFormValidator;
 import spring.mine.common.constants.Constants;
 import spring.mine.common.controller.BaseMenuController;
 import spring.mine.common.form.MenuForm;
@@ -40,9 +38,6 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Controller
 public class AnalyzerTestNameMenuController extends BaseMenuController {
-
-	@Autowired
-	AnalyzerTestNameMenuFormValidator formValidator;
 
 	private static final int ANALYZER_NAME = 0;
 	private static final int ANALYZER_TEST = 1;
@@ -144,20 +139,18 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 			@ModelAttribute("form") @Valid AnalyzerTestNameMenuForm form, BindingResult result,
 			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(performMenuAction(form, request), form);
 		}
 
-		String[] selectedIDs = (String[]) form.get("selectedIDs");
+		List<String> selectedIDs = (List<String>) form.get("selectedIDs");
 
 		// String sysUserId = getSysUserId(request);
 		List<AnalyzerTestMapping> testMappingList = new ArrayList<>();
 
-		for (int i = 0; i < selectedIDs.length; i++) {
-			String[] ids = selectedIDs[i].split(NamedAnalyzerTestMapping.getUniqueIdSeperator());
+		for (int i = 0; i < selectedIDs.size(); i++) {
+			String[] ids = selectedIDs.get(i).split(NamedAnalyzerTestMapping.getUniqueIdSeperator());
 			AnalyzerTestMapping testMapping = new AnalyzerTestMapping();
 			testMapping.setAnalyzerId(AnalyzerTestNameCache.instance().getAnalyzerIdForName(ids[ANALYZER_NAME]));
 			testMapping.setAnalyzerTestName(ids[ANALYZER_TEST]);

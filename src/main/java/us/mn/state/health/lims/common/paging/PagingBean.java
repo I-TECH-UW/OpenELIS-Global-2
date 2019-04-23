@@ -19,30 +19,47 @@ package us.mn.state.health.lims.common.paging;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.validation.constraints.Pattern;
+import javax.validation.groups.Default;
+
 import us.mn.state.health.lims.common.util.IdValuePair;
 
+public class PagingBean implements Serializable {
 
-public class PagingBean implements Serializable{
+	public interface Paging {
+	}
+
 	static final long serialVersionUID = 1L;
+
+	@Pattern(regexp = "^[0-9]*$", groups = { Default.class, Paging.class })
 	private String totalPages;
+
+	@Pattern(regexp = "^[0-9]*$", groups = { Default.class, Paging.class })
 	private String currentPage;
+
+	// for display
 	private List<IdValuePair> searchTermToPage;
 
 	public String getCurrentPage() {
 		return currentPage;
 	}
+
 	public void setCurrentPage(String currentPage) {
 		this.currentPage = currentPage;
 	}
+
 	public void setTotalPages(String totalPages) {
 		this.totalPages = totalPages;
 	}
+
 	public String getTotalPages() {
 		return totalPages;
 	}
+
 	public void setSearchTermToPage(List<IdValuePair> searchTermToPage) {
 		this.searchTermToPage = searchTermToPage;
 	}
+
 	public List<IdValuePair> getSearchTermToPage() {
 		return searchTermToPage;
 	}

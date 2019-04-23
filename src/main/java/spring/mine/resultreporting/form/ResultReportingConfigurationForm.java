@@ -10,7 +10,9 @@ import us.mn.state.health.lims.dataexchange.resultreporting.beans.ReportingConfi
 
 public class ResultReportingConfigurationForm extends BaseForm {
 
-	// TODO
+	public interface ResultReportConfig {
+	}
+
 	@Valid
 	private List<ReportingConfiguration> reports;
 

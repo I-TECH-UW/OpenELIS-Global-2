@@ -15,6 +15,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.TestActivationForm;
+import spring.generated.testconfiguration.validator.TestActivationFormValidator;
 import spring.mine.common.controller.BaseController;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.TestService;
@@ -39,6 +41,9 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Controller
 public class TestActivationController extends BaseController {
+
+	@Autowired
+	TestActivationFormValidator formValidator;
 
 	@RequestMapping(value = "/TestActivation", method = RequestMethod.GET)
 	public ModelAndView showTestActivation(HttpServletRequest request) {
@@ -125,6 +130,7 @@ public class TestActivationController extends BaseController {
 	@RequestMapping(value = "/TestActivation", method = RequestMethod.POST)
 	public ModelAndView postTestActivation(HttpServletRequest request,
 			@ModelAttribute("form") @Valid TestActivationForm form, BindingResult result) throws Exception {
+		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
 			setupDisplayItems(form);

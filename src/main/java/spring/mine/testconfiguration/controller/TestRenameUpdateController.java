@@ -25,7 +25,7 @@ import us.mn.state.health.lims.test.valueholder.Test;
 @Controller
 public class TestRenameUpdateController extends BaseController {
 	@RequestMapping(value = "/TestRenameUpdate", method = RequestMethod.POST)
-	public ModelAndView showTestRenameUpdate(@Valid @ModelAttribute("form") TestRenameEntryForm form,
+	public ModelAndView showTestRenameUpdate(@ModelAttribute("form") @Valid TestRenameEntryForm form,
 			BindingResult result, ModelMap model, HttpServletRequest request) {
 		String forward = FWD_SUCCESS;
 

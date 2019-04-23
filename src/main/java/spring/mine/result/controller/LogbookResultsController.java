@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -25,6 +24,7 @@ import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -237,8 +237,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 	@RequestMapping(value = { "/LogbookResults", "/PatientResults", "/AccessionResults",
 			"/StatusResults" }, method = RequestMethod.POST)
 	public ModelAndView showLogbookResultsUpdate(HttpServletRequest request,
-			@ModelAttribute("form") @Valid LogbookResultsForm form, BindingResult result,
-			RedirectAttributes redirectAttributes) {
+			@ModelAttribute("form") @Validated(LogbookResultsForm.LogbookResults.class) LogbookResultsForm form,
+			BindingResult result, RedirectAttributes redirectAttributes) {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			findForward(FWD_FAIL_INSERT, form);

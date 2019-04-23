@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -23,7 +22,6 @@ import spring.mine.common.controller.BaseMenuController;
 import spring.mine.common.form.MenuForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.dictionary.form.DictionaryMenuForm;
-import spring.mine.dictionary.validator.DictionaryMenuFormValidator;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -35,9 +33,6 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Controller
 public class DictionaryMenuController extends BaseMenuController {
-
-	@Autowired
-	DictionaryMenuFormValidator formValidator;
 
 	@RequestMapping(value = { "/DictionaryMenu", "/SearchDictionaryMenu" }, method = RequestMethod.GET)
 	public ModelAndView showDictionaryMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
@@ -132,18 +127,17 @@ public class DictionaryMenuController extends BaseMenuController {
 	public ModelAndView showDeleteDictionary(HttpServletRequest request,
 			@ModelAttribute("form") @Valid DictionaryMenuForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) {
-		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
-		String[] selectedIDs = (String[]) form.get("selectedIDs");
+		List<String> selectedIDs = (List<String>) form.get("selectedIDs");
 
 		List<Dictionary> dictionarys = new ArrayList<>();
-		for (int i = 0; i < selectedIDs.length; i++) {
+		for (int i = 0; i < selectedIDs.size(); i++) {
 			Dictionary dictionary = new Dictionary();
-			dictionary.setId(selectedIDs[i]);
+			dictionary.setId(selectedIDs.get(i));
 			dictionary.setSysUserId(getSysUserId(request));
 			dictionarys.add(dictionary);
 		}

@@ -32,6 +32,7 @@ import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
 @Controller
 public class PatientResultsController extends BaseController {
+
 	@RequestMapping(value = "/PatientResults", method = RequestMethod.GET)
 	public ModelAndView showPatientResults(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {

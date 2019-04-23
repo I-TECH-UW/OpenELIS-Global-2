@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.HibernateException;
@@ -126,7 +127,7 @@ public class TestOrderabilityController extends BaseController {
 
 	@RequestMapping(value = "/TestOrderability", method = RequestMethod.POST)
 	public ModelAndView postTestOrderability(HttpServletRequest request,
-			@ModelAttribute("form") TestOrderabilityForm form, BindingResult result) throws Exception {
+			@ModelAttribute("form") @Valid TestOrderabilityForm form, BindingResult result) throws Exception {
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);

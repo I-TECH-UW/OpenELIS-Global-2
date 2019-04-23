@@ -79,11 +79,10 @@ public class SiteInformationController extends BaseController {
 	// TODO decide if still needing NextPrevious (functionality is not implemented)
 	public ModelAndView showSiteInformation(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		if (form.getClass() != SiteInformationForm.class) {
-			form = new SiteInformationForm();
-			setupFormForRequest((SiteInformationForm) form, request);
-			request.getSession().setAttribute("form", form);
-		}
+		// protect form from injection arbitrary values on the get step (since csrf is
+		// not checked at this stage)
+		form = resetFormToType(form, SiteInformationForm.class);
+		setupFormForRequest((SiteInformationForm) form, request);
 
 		String id = request.getParameter(ID);
 
@@ -182,7 +181,7 @@ public class SiteInformationController extends BaseController {
 
 		} else {
 			form.setSiteInfoDomainName("SiteInformation");
-			form.setFormName("siteInformationForm");
+			form.setFormName("form");
 			form.setFormAction("SiteInformation");
 		}
 

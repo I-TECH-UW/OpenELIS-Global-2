@@ -8,7 +8,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -23,7 +22,6 @@ import spring.mine.common.controller.BaseMenuController;
 import spring.mine.common.form.MenuForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.systemuser.form.UnifiedSystemUserMenuForm;
-import spring.mine.systemuser.validator.UnifiedSystemUserMenuFormValidator;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
@@ -41,9 +39,6 @@ import us.mn.state.health.lims.userrole.valueholder.UserRole;
 
 @Controller
 public class UnifiedSystemUserMenuController extends BaseMenuController {
-
-	@Autowired
-	UnifiedSystemUserMenuFormValidator formValidator;
 
 	@RequestMapping(value = "/UnifiedSystemUserMenu", method = RequestMethod.GET)
 	public ModelAndView showUnifiedSystemUserMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
@@ -145,20 +140,19 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 	public ModelAndView showDeleteUnifiedSystemUser(HttpServletRequest request,
 			@ModelAttribute("form") UnifiedSystemUserMenuForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) {
-		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL_DELETE, form);
 		}
-		String[] selectedIDs = form.getSelectedIDs();
+		List<String> selectedIDs = form.getSelectedIDs();
 		List<Login> loginUsers = new ArrayList<>();
 		List<SystemUser> systemUsers = new ArrayList<>();
 		List<UserRole> userRoles = new ArrayList<>();
 
 		String sysUserId = getSysUserId(request);
 
-		for (int i = 0; i < selectedIDs.length; i++) {
-			String systemUserId = UnifiedSystemUser.getSystemUserIDFromCombinedID(selectedIDs[i]);
+		for (int i = 0; i < selectedIDs.size(); i++) {
+			String systemUserId = UnifiedSystemUser.getSystemUserIDFromCombinedID(selectedIDs.get(i));
 
 			if (!GenericValidator.isBlankOrNull(systemUserId)) {
 				SystemUser systemUser = new SystemUser();
@@ -167,7 +161,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 				systemUsers.add(systemUser);
 			}
 
-			String loginUserId = UnifiedSystemUser.getLoginUserIDFromCombinedID(selectedIDs[i]);
+			String loginUserId = UnifiedSystemUser.getLoginUserIDFromCombinedID(selectedIDs.get(i));
 
 			if (!GenericValidator.isBlankOrNull(loginUserId)) {
 				Login loginUser = new Login();

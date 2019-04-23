@@ -170,7 +170,7 @@ public class SiteInformationMenuController extends BaseMenuController {
 			return findForward(FWD_FAIL_DELETE, form);
 		}
 
-		String[] selectedIDs = (String[]) form.get("selectedIDs");
+		List<String> selectedIDs = (List<String>) form.get("selectedIDs");
 
 		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
 

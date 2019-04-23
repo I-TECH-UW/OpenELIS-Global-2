@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -18,6 +17,7 @@ import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,6 +41,7 @@ import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
+import us.mn.state.health.lims.common.paging.PagingBean.Paging;
 import us.mn.state.health.lims.common.services.LocalizationService;
 import us.mn.state.health.lims.common.services.NoteService;
 import us.mn.state.health.lims.common.services.PluginMenuService;
@@ -663,8 +664,9 @@ public class AnalyzerResultsController extends BaseController {
 
 	@RequestMapping(value = "/AnalyzerResults", method = RequestMethod.POST)
 	public ModelAndView showAnalyzerResultsSave(HttpServletRequest request,
-			@ModelAttribute("form") @Valid AnalyzerResultsForm form, BindingResult result,
-			RedirectAttributes redirectAttibutes) {
+			@ModelAttribute("form") @Validated({ Paging.class,
+					AnalyzerResultsForm.AnalyzerResuts.class }) AnalyzerResultsForm form,
+			BindingResult result, RedirectAttributes redirectAttibutes) {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);
