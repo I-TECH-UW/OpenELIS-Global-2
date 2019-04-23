@@ -291,4 +291,29 @@ public abstract class BaseController implements IActionConstants {
 		}
 	}
 
+	// re-initialize form object in the request
+	protected <T extends BaseForm> T resetFormSessionObject(String objectName, T form) {
+		try {
+			@SuppressWarnings("unchecked")
+			T newForm = (T) form.getClass().newInstance();
+			request.getSession().setAttribute(objectName, newForm);
+			return newForm;
+		} catch (InstantiationException | IllegalAccessException e) {
+			LogEvent.logError("BaseController", "resetFormSessionObject", e.getMessage());
+			return form;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends BaseForm> T resetFormToType(BaseForm form, Class<T> classType) {
+		try {
+			T newForm = classType.newInstance();
+			request.getSession().setAttribute("form", newForm);
+			return newForm;
+		} catch (InstantiationException | IllegalAccessException e) {
+			LogEvent.logError("BaseController", "resetFormToType", e.getMessage());
+			return null;
+		}
+	}
+
 }

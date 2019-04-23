@@ -303,7 +303,7 @@ function /*void*/ setSaveButton() {
 <form:hidden path="project" id="project"/>
 <form:hidden path="patientLastUpdated" id="patientLastUpdated" />
 <form:hidden path="personLastUpdated" id="personLastUpdated"/>
-<form:hidden path="patientProcessingStatus" id="processingStatus"/>
+<form:hidden path="patientUpdateStatus" id="processingStatus"/>
 <form:hidden path="patientPK" id="patientPK" />
 <form:hidden path="samplePK" id="samplePK" />
 <form:hidden path="observations.projectFormName" id="projectFormName"/>

@@ -7,10 +7,10 @@ import java.util.List;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +21,7 @@ import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.controller.BaseController;
 import spring.mine.workplan.form.WorkplanForm;
+import spring.mine.workplan.form.WorkplanForm.PrintWorkplan;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.workplan.reports.ElisaWorkplanReport;
@@ -36,7 +37,7 @@ public class PrintWorkplanReportController extends BaseController {
 
 	@RequestMapping(value = "/PrintWorkplanReport", method = RequestMethod.POST)
 	public void showPrintWorkplanReport(HttpServletRequest request, HttpServletResponse response,
-			@ModelAttribute("form") @Valid WorkplanForm form, BindingResult result) {
+			@ModelAttribute("form") @Validated(PrintWorkplan.class) WorkplanForm form, BindingResult result) {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return;

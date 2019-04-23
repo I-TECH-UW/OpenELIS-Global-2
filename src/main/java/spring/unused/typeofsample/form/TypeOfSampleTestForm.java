@@ -1,6 +1,5 @@
 package spring.unused.typeofsample.form;
 
-import java.sql.Timestamp;
 import java.util.Collection;
 
 import spring.mine.common.form.BaseForm;
@@ -15,8 +14,6 @@ public class TypeOfSampleTestForm extends BaseForm {
 	private Collection samples;
 
 	private Collection tests;
-
-	private Timestamp lastupdated;
 
 	public TypeOfSampleTestForm() {
 		setFormName("typeOfSampleTestForm");
@@ -60,13 +57,5 @@ public class TypeOfSampleTestForm extends BaseForm {
 
 	public void setTests(Collection tests) {
 		this.tests = tests;
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 }

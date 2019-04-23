@@ -38,9 +38,7 @@ $jq(window).load(function(){
 
 <spring:message code="eorder.sort"/>: 
 <form:select path="sortOrder" id="sortSelect" onchange="sortBy(this.value)">
-	<option value="lastupdated"><spring:message code="eorder.lastupdated"/></option>
-	<option value="externalId"><spring:message code="eorder.externalid"/></option>
-	<option value="statusId"><spring:message code="eorder.status"/></option>
+	<form:options items="${form.sortOrderOptions}" itemValue="value" itemLabel="label" />
 </form:select>
 <form:hidden path="page"/>
 

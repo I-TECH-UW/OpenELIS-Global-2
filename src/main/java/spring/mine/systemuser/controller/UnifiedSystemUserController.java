@@ -310,7 +310,7 @@ public class UnifiedSystemUserController extends BaseController {
 
 			UserRoleDAO userRoleDAO = new UserRoleDAOImpl();
 			List<String> roleIds = userRoleDAO.getRoleIdsForUser(systemUser.getId());
-			PropertyUtils.setProperty(form, "selectedRoles", roleIds.toArray(new String[0]));
+			PropertyUtils.setProperty(form, "selectedRoles", roleIds);
 
 			doFiltering = !roleIds.contains(MAINTENANCE_ADMIN_ID);
 		}
@@ -434,7 +434,7 @@ public class UnifiedSystemUserController extends BaseController {
 		Login loginUser = createLoginUser(form, loginUserId, loginUserNew, passwordUpdated, loggedOnUserId);
 		SystemUser systemUser = createSystemUser(form, systemUserId, systemUserNew, loggedOnUserId);
 
-		String[] selectedRoles = form.getSelectedRoles();
+		List<String> selectedRoles = form.getSelectedRoles();
 
 		UserRoleDAO usrRoleDAO = new UserRoleDAOImpl();
 		SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
@@ -458,15 +458,15 @@ public class UnifiedSystemUserController extends BaseController {
 			List<String> currentUserRoles = usrRoleDAO.getRoleIdsForUser(systemUser.getId());
 			List<UserRole> deletedUserRoles = new ArrayList<>();
 
-			for (int i = 0; i < selectedRoles.length; i++) {
-				if (!currentUserRoles.contains(selectedRoles[i])) {
+			for (int i = 0; i < selectedRoles.size(); i++) {
+				if (!currentUserRoles.contains(selectedRoles.get(i))) {
 					UserRole userRole = new UserRole();
 					userRole.setSystemUserId(systemUser.getId());
-					userRole.setRoleId(selectedRoles[i]);
+					userRole.setRoleId(selectedRoles.get(i));
 					userRole.setSysUserId(loggedOnUserId);
 					usrRoleDAO.insertData(userRole);
 				} else {
-					currentUserRoles.remove(selectedRoles[i]);
+					currentUserRoles.remove(selectedRoles.get(i));
 				}
 			}
 
@@ -501,7 +501,7 @@ public class UnifiedSystemUserController extends BaseController {
 			HibernateUtil.closeSession();
 		}
 
-		selectedRoles = new String[0];
+		selectedRoles = new ArrayList<>();
 
 		return forward;
 	}

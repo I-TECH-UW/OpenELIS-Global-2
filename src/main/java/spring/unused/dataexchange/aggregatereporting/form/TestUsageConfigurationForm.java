@@ -1,12 +1,10 @@
 package spring.unused.dataexchange.aggregatereporting.form;
 
-import java.sql.Timestamp;
 import java.util.Collection;
 
 import spring.mine.common.form.BaseForm;
 
 public class TestUsageConfigurationForm extends BaseForm {
-	private Timestamp lastupdated;
 
 	private String enableSending = "enable";
 
@@ -32,14 +30,6 @@ public class TestUsageConfigurationForm extends BaseForm {
 
 	public TestUsageConfigurationForm() {
 		setFormName("TestUsageConfigurationForm");
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public String getEnableSending() {

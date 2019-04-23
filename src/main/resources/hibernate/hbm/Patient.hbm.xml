@@ -12,7 +12,7 @@
         </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
 
-        <many-to-one name="person" class="us.mn.state.health.lims.person.valueholder.Person" fetch="select">
+        <many-to-one name="person" class="us.mn.state.health.lims.person.valueholder.Person" fetch="select" lazy="false">
             <column name="PERSON_ID" precision="10" scale="0" not-null="true" />
         </many-to-one>
         <property name="race" type="java.lang.String">

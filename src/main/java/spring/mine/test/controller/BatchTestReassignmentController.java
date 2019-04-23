@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Transaction;
@@ -59,7 +60,7 @@ public class BatchTestReassignmentController extends BaseController {
 
 	@RequestMapping(value = "/BatchTestReassignment", method = RequestMethod.POST)
 	public ModelAndView showBatchTestReassignmentUpdate(HttpServletRequest request,
-			@ModelAttribute("form") BatchTestReassignmentForm form, BindingResult result,
+			@ModelAttribute("form") @Valid BatchTestReassignmentForm form, BindingResult result,
 			RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 

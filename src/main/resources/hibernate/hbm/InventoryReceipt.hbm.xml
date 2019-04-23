@@ -11,7 +11,7 @@
             </generator> 
         </id>
        
-        <many-to-one name="organization" class="us.mn.state.health.lims.organization.valueholder.Organization" fetch="select">
+        <many-to-one name="organization" class="us.mn.state.health.lims.organization.valueholder.Organization" fetch="select" lazy="false">
             <column name="ORG_ID" precision="10" scale="0" />
         </many-to-one>
 

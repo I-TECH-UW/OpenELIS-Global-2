@@ -1,6 +1,5 @@
 package spring.unused.role.form;
 
-import java.sql.Timestamp;
 import java.util.Collection;
 
 import spring.mine.common.form.BaseForm;
@@ -17,8 +16,6 @@ public class RoleForm extends BaseForm {
 	private Collection parentRoles;
 
 	private String[] isParentRole;
-
-	private Timestamp lastupdated;
 
 	public RoleForm() {
 		setFormName("roleForm");
@@ -70,13 +67,5 @@ public class RoleForm extends BaseForm {
 
 	public void setIsParentRole(String[] isParentRole) {
 		this.isParentRole = isParentRole;
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 }

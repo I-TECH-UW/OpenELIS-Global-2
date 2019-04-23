@@ -32,7 +32,7 @@ public class ExternalConnectionsConfigMenuController extends BaseMenuController 
 		String forward = FWD_SUCCESS;
 		ExternalConnectionsConfigForm form = new ExternalConnectionsConfigForm();
 
-		forward = performMenuAction(form, request);
+		// forward = performMenuAction(form, request);
 		if (FWD_FAIL.equals(forward)) {
 			Errors errors = new BaseErrors();
 			errors.reject("error.generic");

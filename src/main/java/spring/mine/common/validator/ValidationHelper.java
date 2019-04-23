@@ -23,6 +23,7 @@ public class ValidationHelper {
 	public static final String PHONE_REGEX = "^[-+()0-9 ]*$";
 	public static final String GENDER_REGEX = "^$|^M$|^F$";
 	public static final String YES_NO_REGEX = "^$|^" + IActionConstants.YES + "$|^" + IActionConstants.NO + "$";
+	public static final String FLOAT_REGEX = "^[+-]?Infinity$|^([+-]?\\d*\\.?\\d*)$";
 
 	private static final String DEFAULT_PREFIX = "Field ";
 
@@ -31,7 +32,7 @@ public class ValidationHelper {
 	 */
 
 	public static void validateFieldRequired(String value, String name, String displayName, Errors errors) {
-		if (GenericValidator.isBlankOrNull(value)) {
+		if (GenericValidator.isBlankOrNull(value) || value.equals("null")) {
 			errors.rejectValue(name, "error.field.required", new Object[] { displayName },
 					DEFAULT_PREFIX + displayName + " is required");
 		}

@@ -11,7 +11,7 @@
             </generator> 
         </id>
        
-        <many-to-one name="inventoryItem" class="us.mn.state.health.lims.inventory.valueholder.InventoryItem" fetch="select">
+        <many-to-one name="inventoryItem" class="us.mn.state.health.lims.inventory.valueholder.InventoryItem" fetch="select" lazy="false">
             <column name="INV_ITEM_ID" precision="10" scale="0" />
         </many-to-one>
 

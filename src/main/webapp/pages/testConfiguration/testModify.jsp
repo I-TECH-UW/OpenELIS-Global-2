@@ -341,7 +341,7 @@
     function savePage() {
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         var form = document.getElementById("mainForm");
-        form.action = "TestModify.do";
+        form.action = "TestModifyEntry.do";
         form.submit();
     }
     
@@ -1121,7 +1121,7 @@
         $jq(".confirmShow").hide();
         $jq(".selectShow").show();
         if (step == 'step1') {
-            submitAction('TestManagementConfigMenu.do');
+        	window.location.href = "TestManagementConfigMenu.do";
         } else if (step == 'step2') {
             goBackToStep1();
         } else if ( step == 'step3Dictionary' || step == 'step3Numeric' || step == 'step3NumericAsk' || step == 'step3DictionaryAsk'){
@@ -1793,11 +1793,11 @@ td {
 		<span class="requiredlabel">*</span>
 		<spring:message code="label.required.field" />
 		<br />
-		<br /> <span class="step1"> <spring:message code="configuration.test.modify.guide.test" />
-		</span> <span class="step2" id="step2Guide" style="display: none"> <spring:message code="configuration.test.modify.guide.sample.type" />
-		</span> <span class="dictionarySelect" style="display: none"> <spring:message code="configuration.test.modify.guide.select.list" />
-		</span> <span class="resultLimits" style="display: none;"> <spring:message code="configuration.test.modify.guide.result.limits" />
-		</span> <span class="confirmShow" style="display: none"> <spring:message code="configuration.test.modify.guide.verify" />
+		<br /> <span class="step1"> <spring:message htmlEscape="false" code="configuration.test.modify.guide.test" />
+		</span> <span class="step2" id="step2Guide" style="display: none"> <spring:message htmlEscape="false" code="configuration.test.modify.guide.sample.type" />
+		</span> <span class="dictionarySelect" style="display: none"> <spring:message htmlEscape="false" code="configuration.test.modify.guide.select.list" />
+		</span> <span class="resultLimits" style="display: none;"> <spring:message htmlEscape="false" code="configuration.test.modify.guide.result.limits" />
+		</span> <span class="confirmShow" style="display: none"> <spring:message htmlEscape="false" code="configuration.test.modify.guide.verify" />
 		</span> <br />
 		<hr />
 	</div>
@@ -1866,7 +1866,7 @@ td {
 				<br />
 				<br />
 				<br /> <spring:message code="label.loinc" /><br />
-					<input type="text" id="loinc"
+					<form:input path="loinc" type="text" id="loinc"
 					onchange="checkReadyForNextStep()" /></td>
 
 				<td width="25%" style="vertical-align: top; padding: 4px"
@@ -2265,7 +2265,7 @@ td {
 		style="margin-left: auto; margin-right: auto; width: 40%; display: none">
 		<input type="button"
 			value="<%=MessageUtil.getContextualMessage("label.button.accept")%>"
-			onclick="submitAction('TestModifyUpdate.do');" /> <input
+			onclick="submitAction('TestModifyEntry.do');" /> <input
 			type="button"
 			value="<%=MessageUtil.getContextualMessage("label.button.back")%>"
 			onclick="navigateBackFromConfirm()" />

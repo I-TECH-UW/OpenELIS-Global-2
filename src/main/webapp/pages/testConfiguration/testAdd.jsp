@@ -1392,7 +1392,7 @@ td {
     <div class="confirmShow" style="margin-left:auto; margin-right:auto;width: 40%; display: none">
         <input type="button"
                value="<%= MessageUtil.getContextualMessage("label.button.accept") %>"
-               onclick="submitAction('TestAddUpdate.do');"/>
+               onclick="submitAction('TestAdd.do');"/>
         <input type="button" value="<%=MessageUtil.getContextualMessage("label.button.back")%>"
                onclick="navigateBackFromConfirm()"/>
     </div>

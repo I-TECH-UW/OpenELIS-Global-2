@@ -1,10 +1,15 @@
 package spring.mine.barcode.form;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 import spring.mine.common.form.BaseForm;
 
+//values used for fetching, tight validation not needed
 public class PrintBarcodeForm extends BaseForm {
+	@SafeHtml
 	private String accessionNumber;
 
+	@SafeHtml
 	private String patientId;
 
 	public PrintBarcodeForm() {

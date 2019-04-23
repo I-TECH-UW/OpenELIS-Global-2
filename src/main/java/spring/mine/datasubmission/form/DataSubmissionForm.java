@@ -5,7 +5,6 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.hibernate.validator.constraints.Range;
-import org.hibernate.validator.constraints.URL;
 
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -14,14 +13,16 @@ import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 public class DataSubmissionForm extends BaseForm {
 
-	@URL
+	public interface DataSubmission {
+	}
+
+	@Valid
 	private SiteInformation dataSubUrl;
 
-	// TODO
 	@Valid
 	private List<DataIndicator> indicators;
 
-	@Range(min = 1, max = 12)
+	@Range(min = 1, max = 12, groups = { DataSubmission.class })
 	private int month = DateUtil.getCurrentMonth();
 
 	// in validator

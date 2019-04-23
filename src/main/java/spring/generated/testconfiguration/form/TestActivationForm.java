@@ -12,7 +12,7 @@ public class TestActivationForm extends BaseForm {
 	// for display
 	private List<TestActivationBean> inactiveTestList;
 
-	// TODO
+	// in validator
 	private String jsonChangeList = "";
 
 	public TestActivationForm() {

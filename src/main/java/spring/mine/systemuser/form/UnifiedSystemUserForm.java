@@ -40,8 +40,7 @@ public class UnifiedSystemUserForm extends BaseForm {
 	// for display
 	private List<DisplayRole> roles;
 
-	// in validator
-	private String[] selectedRoles;
+	private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> selectedRoles;
 
 	@ValidDate(relative = DateRelation.FUTURE)
 	private String expirationDate;
@@ -132,11 +131,11 @@ public class UnifiedSystemUserForm extends BaseForm {
 		this.roles = roles;
 	}
 
-	public String[] getSelectedRoles() {
+	public List<String> getSelectedRoles() {
 		return selectedRoles;
 	}
 
-	public void setSelectedRoles(String[] selectedRoles) {
+	public void setSelectedRoles(List<String> selectedRoles) {
 		this.selectedRoles = selectedRoles;
 	}
 

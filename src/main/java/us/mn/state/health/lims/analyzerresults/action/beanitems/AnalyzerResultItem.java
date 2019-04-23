@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
 *
 */
@@ -20,6 +20,14 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
+import spring.mine.common.validator.ValidationHelper;
+import spring.mine.result.form.AnalyzerResultsForm;
+import spring.mine.validation.annotations.ValidAccessionNumber;
+import spring.mine.validation.annotations.ValidDate;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 
 public class AnalyzerResultItem implements Serializable {
@@ -30,30 +38,53 @@ public class AnalyzerResultItem implements Serializable {
 	private String analysisId;
 	private String units;
 	private String testName;
+
+	@ValidAccessionNumber(groups = { AnalyzerResultsForm.AnalyzerResuts.class })
 	private String accessionNumber;
+
+	@SafeHtml(groups = { AnalyzerResultsForm.AnalyzerResuts.class })
 	private String result;
+
 	private boolean isControl = false;
+
 	private boolean isAccepted = false;
+
 	private boolean isRejected = false;
+
 	private boolean isDeleted = false;
+
 	private boolean isManual = false;
+
 	private String errorMessage;
+
+	@SafeHtml(groups = { AnalyzerResultsForm.AnalyzerResuts.class })
 	private String note;
 	private String statusId;
 	private String sampleId;
+
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
 	private String testId;
+
+	@ValidDate(groups = { AnalyzerResultsForm.AnalyzerResuts.class })
 	private String completeDate;
 	private boolean isPositive = false;
 	private String duplicateAnalyzerResultId;
 	private boolean isHighlighted = false;
 	private Timestamp lastUpdated;
+
 	private int sampleGroupingNumber = 0;
+
 	private boolean groupIsReadOnly = false;
+
 	private boolean readOnly = false;
+
+	@SafeHtml(groups = { AnalyzerResultsForm.AnalyzerResuts.class })
 	private String testResultType = "N";
 	private boolean userChoiceReflex;
 	private boolean userChoicePending;
 	private String siblingReflexKey;
+
+	@SafeHtml(groups = { AnalyzerResultsForm.AnalyzerResuts.class })
 	private String reflexSelectionId;
 	private String selectionOneText = "";
 	private String selectionOneValue = "";
@@ -61,8 +92,7 @@ public class AnalyzerResultItem implements Serializable {
 	private String selectionTwoValue = "";
 	private boolean nonconforming = false;
 	private String significantDigits = "";
-	
-	
+
 	public String getSignificantDigits() {
 		return significantDigits;
 	}
@@ -86,7 +116,7 @@ public class AnalyzerResultItem implements Serializable {
 	}
 
 	public String getTestName() {
-		return this.testName;
+		return testName;
 	}
 
 	public void setTestName(String testName) {
@@ -194,7 +224,7 @@ public class AnalyzerResultItem implements Serializable {
 	}
 
 	public String getTestId() {
-		return this.testId;
+		return testId;
 	}
 
 	public void setCompleteDate(String completeDate) {
@@ -202,7 +232,7 @@ public class AnalyzerResultItem implements Serializable {
 	}
 
 	public String getCompleteDate() {
-		return this.completeDate;
+		return completeDate;
 	}
 
 	public void setPositive(boolean isPositive) {
@@ -226,16 +256,16 @@ public class AnalyzerResultItem implements Serializable {
 	}
 
 	public boolean getIsHighlighted() {
-		return isHighlighted  && readOnly;
+		return isHighlighted && readOnly;
 	}
 
 	public void setLastUpdated(Timestamp lastupdated) {
-		this.lastUpdated = lastupdated;
+		lastUpdated = lastupdated;
 
 	}
 
 	public Timestamp getLastUpdated() {
-		return this.lastUpdated;
+		return lastUpdated;
 	}
 
 	public void setSampleGroupingNumber(int sampleGroupingNumber) {

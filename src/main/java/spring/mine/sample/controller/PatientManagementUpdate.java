@@ -360,15 +360,15 @@ public class PatientManagementUpdate implements IPatientUpdate {
 
 	@Override
 	public void setPatientUpdateStatus(PatientManagementInfo patientInfo) {
-		String status = patientInfo.getPatientProcessingStatus();
-
-		if ("noAction".equals(status)) {
-			patientUpdateStatus = PatientUpdateStatus.NO_ACTION;
-		} else if ("update".equals(status)) {
-			patientUpdateStatus = PatientUpdateStatus.UPDATE;
-		} else {
-			patientUpdateStatus = PatientUpdateStatus.ADD;
-		}
+		patientUpdateStatus = patientInfo.getPatientUpdateStatus();
+		/*
+		 * String status = patientInfo.getPatientProcessingStatus();
+		 * 
+		 * if ("noAction".equals(status)) { patientUpdateStatus =
+		 * PatientUpdateStatus.NO_ACTION; } else if ("update".equals(status)) {
+		 * patientUpdateStatus = PatientUpdateStatus.UPDATE; } else {
+		 * patientUpdateStatus = PatientUpdateStatus.ADD; }
+		 */
 	}
 
 	@Override

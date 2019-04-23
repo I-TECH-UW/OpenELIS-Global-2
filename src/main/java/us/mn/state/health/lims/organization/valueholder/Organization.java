@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package us.mn.state.health.lims.organization.valueholder;
@@ -18,106 +18,132 @@ package us.mn.state.health.lims.organization.valueholder;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.SafeHtml;
+import org.hibernate.validator.constraints.URL;
+
+import spring.mine.common.validator.ValidationHelper;
 import us.mn.state.health.lims.common.valueholder.EnumValueItemImpl;
 import us.mn.state.health.lims.common.valueholder.SimpleBaseEntity;
 import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
 
-public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<String>{
-    private static final long serialVersionUID = 1L;
+public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<String> {
+	private static final long serialVersionUID = 1L;
 
-    private String city;
+	@SafeHtml
+	private String city;
+	@SafeHtml
 	private String cliaNum;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String id;
+	@URL
 	private String internetAddress;
+	@Pattern(regexp = ValidationHelper.YES_NO_REGEX)
 	private String isActive;
+	@SafeHtml
 	private String mlsLabFlag;
+	@Pattern(regexp = ValidationHelper.YES_NO_REGEX)
 	private String mlsSentinelLabFlag;
+	@SafeHtml
 	private String multipleUnit;
 	private ValueHolderInterface organization;
+	@SafeHtml
 	private String organizationName;
+	@SafeHtml
 	private String orgMltOrgMltId;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String pwsId;
+	@SafeHtml
 	private String shortName;
+	@SafeHtml
 	private String state;
+	@SafeHtml
 	private String streetAddress;
+	@SafeHtml
 	private String zipCode;
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String selectedOrgId;
+	@SafeHtml
 	private String organizationLocalAbbreviation;
+	@SafeHtml
 	private String code;
 	private Set<OrganizationType> organizationTypes;
-	
+
 	public Organization() {
 		super();
-		this.organization = new ValueHolder();
+		organization = new ValueHolder();
 	}
 
 	public String getCity() {
-		return this.city;
+		return city;
 	}
 
 	public String getCliaNum() {
-		return this.cliaNum;
+		return cliaNum;
 	}
 
+	@Override
 	public String getId() {
-		return this.id;
+		return id;
 	}
 
-	public String getConcatOrganizationLocalAbbreviationName() {		
-		return this.organizationLocalAbbreviation +"-" +this.organizationName;
-	}	
+	public String getConcatOrganizationLocalAbbreviationName() {
+		return organizationLocalAbbreviation + "-" + organizationName;
+	}
 
 	public String getInternetAddress() {
-		return this.internetAddress;
+		return internetAddress;
 	}
 
+	@Override
 	public String getIsActive() {
-		return this.isActive;
+		return isActive;
 	}
 
 	public String getMlsLabFlag() {
-		return this.mlsLabFlag;
+		return mlsLabFlag;
 	}
 
 	public String getMlsSentinelLabFlag() {
-		return this.mlsSentinelLabFlag;
+		return mlsSentinelLabFlag;
 	}
 
 	public String getMultipleUnit() {
-		return this.multipleUnit;
+		return multipleUnit;
 	}
 
 	public String getOrgMltOrgMltId() {
-		return this.orgMltOrgMltId;
+		return orgMltOrgMltId;
 	}
 
 	public Organization getOrganization() {
-		return (Organization) this.organization.getValue();
+		return (Organization) organization.getValue();
 	}
 
 	public String getOrganizationName() {
-		return this.organizationName;
+		return organizationName;
 	}
 
 	public String getPwsId() {
-		return this.pwsId;
+		return pwsId;
 	}
 
 	public String getShortName() {
-		return this.shortName;
+		return shortName;
 	}
 
 	public String getState() {
-		return this.state;
+		return state;
 	}
 
 	public String getStreetAddress() {
-		return this.streetAddress;
+		return streetAddress;
 	}
 
 	public String getZipCode() {
-		return this.zipCode;
+		return zipCode;
 	}
 
 	public void setCity(String city) {
@@ -128,6 +154,7 @@ public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<
 		this.cliaNum = cliaNum;
 	}
 
+	@Override
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -136,6 +163,7 @@ public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<
 		this.internetAddress = internetAddress;
 	}
 
+	@Override
 	public void setIsActive(String isActive) {
 		this.isActive = isActive;
 	}
@@ -189,59 +217,58 @@ public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<
 	}
 
 	public String getSelectedOrgId() {
-		return this.selectedOrgId;
+		return selectedOrgId;
 	}
 
 	private Set testSections = new HashSet(0);
 
-    public Set getTestSections() {
-        return this.testSections;
-    }
-    
-    public void setTestSections(Set testSections) {
-        this.testSections = testSections;
-    }
+	public Set getTestSections() {
+		return testSections;
+	}
+
+	public void setTestSections(Set testSections) {
+		this.testSections = testSections;
+	}
 
 	public String getOrganizationLocalAbbreviation() {
 		return organizationLocalAbbreviation;
 	}
 
-	public void setOrganizationLocalAbbreviation(
-			String organizationLocalAbbreviation) {
+	public void setOrganizationLocalAbbreviation(String organizationLocalAbbreviation) {
 		this.organizationLocalAbbreviation = organizationLocalAbbreviation;
 	}
-	
+
 	public String getDoubleName() {
-	    return this.shortName + " = " + this.organizationName;
+		return shortName + " = " + organizationName;
 	}
 
-    @Override
-    public String toString() {
-        return "Organization [id=" + id + ", isActive=" + isActive + ", organizationName=" + organizationName
-                        + ", organizationLocalAbbreviation=" + organizationLocalAbbreviation + ", shortName="
-                        + shortName + "]";
-    }
+	@Override
+	public String toString() {
+		return "Organization [id=" + id + ", isActive=" + isActive + ", organizationName=" + organizationName
+				+ ", organizationLocalAbbreviation=" + organizationLocalAbbreviation + ", shortName=" + shortName + "]";
+	}
 
-    /**
-     *
-     * @param organizationTypes
-     *
-     * @deprecated this seem to be bogus and will cause a null pointer exception in session flush.  Use the Organization_organization_type link method
-     */
-    @Deprecated
-    public void setOrganizationTypes(Set<OrganizationType> organizationTypes) {
-        this.organizationTypes = organizationTypes;
-    }
+	/**
+	 *
+	 * @param organizationTypes
+	 *
+	 * @deprecated this seem to be bogus and will cause a null pointer exception in
+	 *             session flush. Use the Organization_organization_type link method
+	 */
+	@Deprecated
+	public void setOrganizationTypes(Set<OrganizationType> organizationTypes) {
+		this.organizationTypes = organizationTypes;
+	}
 
-    public Set<OrganizationType> getOrganizationTypes() {
-        return organizationTypes;
-    }
+	public Set<OrganizationType> getOrganizationTypes() {
+		return organizationTypes;
+	}
 
-	public String getCode(){
+	public String getCode() {
 		return code;
 	}
 
-	public void setCode(String code){
+	public void setCode(String code) {
 		this.code = code;
 	}
 }

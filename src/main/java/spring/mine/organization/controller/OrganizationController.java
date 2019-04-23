@@ -9,7 +9,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,7 +23,6 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.organization.form.OrganizationForm;
-import spring.mine.organization.validator.OrganizationFormValidator;
 import us.mn.state.health.lims.address.dao.AddressPartDAO;
 import us.mn.state.health.lims.address.dao.OrganizationAddressDAO;
 import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
@@ -57,11 +55,8 @@ import us.mn.state.health.lims.organization.valueholder.OrganizationType;
 @SessionAttributes("form")
 public class OrganizationController extends BaseController {
 
-	@Autowired
-	OrganizationFormValidator formValidator;
-
 	@ModelAttribute("form")
-	public BaseForm form() {
+	public OrganizationForm form() {
 		return new OrganizationForm();
 	}
 
@@ -71,7 +66,7 @@ public class OrganizationController extends BaseController {
 	private static boolean useCommune = FormFields.getInstance().useField(Field.ADDRESS_COMMUNE);
 	private static boolean useVillage = FormFields.getInstance().useField(Field.ADDRESS_VILLAGE);
 
-	private String[] selectedOrgTypes;
+	private List<String> selectedOrgTypes;
 
 	private static String DEPARTMENT_ID;
 	private static String COMMUNE_ID;
@@ -126,10 +121,7 @@ public class OrganizationController extends BaseController {
 	@RequestMapping(value = { "/Organization", "/NextPreviousOrganization" }, method = RequestMethod.GET)
 	public ModelAndView showOrganization(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		if (form.getClass() != OrganizationForm.class) {
-			form = new OrganizationForm();
-			request.getSession().setAttribute("form", form);
-		}
+		form = resetFormToType(form, OrganizationForm.class);
 
 		form.setCancelAction("CancelOrganization.do");
 
@@ -236,7 +228,7 @@ public class OrganizationController extends BaseController {
 
 		if (useOrganizationTypeList) {
 			List<OrganizationType> orgTypeList = getOrganizationTypeList();
-			String[] selectedList = new String[orgTypeList.size()];
+			List<String> selectedList = new ArrayList<>();
 			PropertyUtils.setProperty(form, "orgTypes", orgTypeList);
 
 			if (organization.getId() != null && orgTypeList != null) {
@@ -245,10 +237,8 @@ public class OrganizationController extends BaseController {
 					OrganizationOrganizationTypeDAO ootDAO = new OrganizationOrganizationTypeDAOImpl();
 					List<String> selectedOrgTypeList = ootDAO.getTypeIdsForOrganizationId(organization.getId());
 
-					int index = 0;
 					for (String orgTypeId : selectedOrgTypeList) {
-						selectedList[index] = orgTypeId;
-						index++;
+						selectedList.add(orgTypeId);
 					}
 				}
 			}
@@ -306,7 +296,6 @@ public class OrganizationController extends BaseController {
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		setDefaultButtonAttributes(request);
-		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);
@@ -320,7 +309,7 @@ public class OrganizationController extends BaseController {
 			request.setAttribute("key", "organization.edit.title");
 		}
 
-		selectedOrgTypes = form.getStrings("selectedTypes");
+		selectedOrgTypes = (List<String>) form.get("selectedTypes");
 
 		Organization organization = new Organization();
 		organization.setSysUserId(getSysUserId(request));

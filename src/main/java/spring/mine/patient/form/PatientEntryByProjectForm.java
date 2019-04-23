@@ -1,22 +1,32 @@
 package spring.mine.patient.form;
 
-import java.sql.Timestamp;
 import java.util.Map;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.ValidationHelper;
+import spring.mine.validation.annotations.ValidAccessionNumber;
+import spring.mine.validation.annotations.ValidDate;
+import spring.mine.validation.annotations.ValidTime;
+import us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
+import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.dictionary.ObservationHistoryList;
 import us.mn.state.health.lims.organization.util.OrganizationTypeList;
+import us.mn.state.health.lims.patient.action.IPatientUpdate.PatientUpdateStatus;
 import us.mn.state.health.lims.patient.valueholder.ObservationData;
 import us.mn.state.health.lims.sample.form.ProjectData;
 
 public class PatientEntryByProjectForm extends BaseForm {
+	// for display
 	private Map<String, Object> formLists;
 
+	// for display
 	private Map<String, ObservationHistoryList> dictionaryLists;
 
+	// for display
 	private Map<String, OrganizationTypeList> organizationTypeLists;
 
 	@Pattern(regexp = ValidationHelper.ID_REGEX)
@@ -25,47 +35,54 @@ public class PatientEntryByProjectForm extends BaseForm {
 	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String samplePK = "";
 
-	private Timestamp lastupdated;
-
-	// TODO
-	private String patientLastUpdated = "";
-
-	// TODO
-	private String personLastUpdated = "";
-
+	@ValidDate(relative = DateRelation.PAST)
 	private String interviewDate = "";
 
+	@ValidTime
 	private String interviewTime = "";
 
+	@ValidDate(relative = DateRelation.PAST)
 	private String receivedDateForDisplay = "";
 
+	@ValidTime
 	private String receivedTimeForDisplay = "";
 
+	@ValidDate(relative = DateRelation.TODAY)
 	private String currentDate = "";
 
-	@Pattern(regexp = "^Add$|^update$|^noAction$")
-	private String patientProcessingStatus = "Add";
+	private PatientUpdateStatus patientUpdateStatus = PatientUpdateStatus.ADD;
 
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
 	private String subjectNumber = "";
 
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
 	private String siteSubjectNumber = "";
 
+	@ValidAccessionNumber(format = AccessionFormat.PROGRAM)
 	private String labNo = "";
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String centerName = "";
 
+	@Min(0)
 	private Integer centerCode;
 
+	@Pattern(regexp = ValidationHelper.NAME_REGEX)
 	private String firstName = "";
 
+	@Pattern(regexp = ValidationHelper.NAME_REGEX)
 	private String lastName = "";
 
+	@Pattern(regexp = ValidationHelper.GENDER_REGEX)
 	private String gender = "";
 
+	@ValidDate(relative = DateRelation.PAST)
 	private String birthDateForDisplay = "";
 
+	@Valid
 	private ObservationData observations;
 
+	@Valid
 	private ProjectData projectData;
 
 	public PatientEntryByProjectForm() {
@@ -112,30 +129,6 @@ public class PatientEntryByProjectForm extends BaseForm {
 		this.samplePK = samplePK;
 	}
 
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
-	}
-
-	public String getPatientLastUpdated() {
-		return patientLastUpdated;
-	}
-
-	public void setPatientLastUpdated(String patientLastUpdated) {
-		this.patientLastUpdated = patientLastUpdated;
-	}
-
-	public String getPersonLastUpdated() {
-		return personLastUpdated;
-	}
-
-	public void setPersonLastUpdated(String personLastUpdated) {
-		this.personLastUpdated = personLastUpdated;
-	}
-
 	public String getInterviewDate() {
 		return interviewDate;
 	}
@@ -176,12 +169,12 @@ public class PatientEntryByProjectForm extends BaseForm {
 		this.currentDate = currentDate;
 	}
 
-	public String getPatientProcessingStatus() {
-		return patientProcessingStatus;
+	public PatientUpdateStatus getPatientUpdateStatus() {
+		return patientUpdateStatus;
 	}
 
-	public void setPatientProcessingStatus(String patientProcessingStatus) {
-		this.patientProcessingStatus = patientProcessingStatus;
+	public void setPatientUpdateStatus(PatientUpdateStatus patientUpdateStatus) {
+		this.patientUpdateStatus = patientUpdateStatus;
 	}
 
 	public String getSubjectNumber() {

@@ -91,7 +91,7 @@
 		</tr>
 		<tr>
 			<td align="right"><spring:message code="patient.clinical.tb.prurigo" /></td>
-			<td><input type="radio" name="patientClinicalProperties.tbPrurigol" value=>
+			<td><input type="radio" name="patientClinicalProperties.tbPrurigol" value="yes">
 			    <input type="radio" name="patientClinicalProperties.tbPrurigol" value="no" >
 			    <input type="radio" name="patientClinicalProperties.tbPrurigol" value="unknown" checked="checked">
 			</td>
@@ -176,7 +176,7 @@
 			<td colspan="4" align="right"><spring:message code="patient.clinical.cotrimoxazole.stage"/></td>
 			<td>
 				<form:select path="patientClinicalProperties.cotrimoxazoleType">
-					<form:options items="patientClinicalProperties.arvStages"/>
+					<form:options items="${form.patientClinicalProperties.arvStages}" itemValue="id" itemLabel="value"/>
 				</form:select>
 			</td>
 		</tr>

@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -22,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -394,8 +394,8 @@ public class SampleEditController extends BaseController {
 
 	@RequestMapping(value = "/SampleEdit", method = RequestMethod.POST)
 	public ModelAndView showSampleEditUpdate(HttpServletRequest request,
-			@ModelAttribute("form") @Valid SampleEditForm form, BindingResult result,
-			RedirectAttributes redirectAttributes) {
+			@ModelAttribute("form") @Validated(SampleEditForm.SampleEdit.class) SampleEditForm form,
+			BindingResult result, RedirectAttributes redirectAttributes) {
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);

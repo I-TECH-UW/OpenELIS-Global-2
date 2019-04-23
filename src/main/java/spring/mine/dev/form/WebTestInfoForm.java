@@ -3,6 +3,8 @@ package spring.mine.dev.form;
 import spring.mine.common.form.BaseForm;
 
 public class WebTestInfoForm extends BaseForm {
+	// used to communicate to client from server, not other way
+	// no validation needed
 	private String xmlWad = "";
 
 	public WebTestInfoForm() {

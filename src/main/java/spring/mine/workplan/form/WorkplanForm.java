@@ -18,7 +18,10 @@ import us.mn.state.health.lims.resultvalidation.bean.AnalysisItem;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
 public class WorkplanForm extends BaseForm {
-	@ValidDate(relative = DateRelation.TODAY)
+	public interface PrintWorkplan {
+	}
+
+	@ValidDate(relative = DateRelation.TODAY, groups = { PrintWorkplan.class })
 	private String currentDate = "";
 
 	// for display
@@ -27,31 +30,30 @@ public class WorkplanForm extends BaseForm {
 	// for display
 	private List<IdValuePair> searchTypes;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { PrintWorkplan.class })
 	private String selectedSearchID = "";
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { PrintWorkplan.class })
 	private String testTypeID = "";
 
-	@SafeHtml
+	@SafeHtml(groups = { PrintWorkplan.class })
 	private String testName = "";
 
-	@NotNull
+	@NotNull(groups = { PrintWorkplan.class })
 	private Boolean searchFinished = false;
 
-	// TODO
 	@Valid
 	private List<TestResultItem> workplanTests;
 
-	// TODO
 	@Valid
 	private List<AnalysisItem> resultList;
 
-	@Pattern(regexp = "^$|^test$|^panel$")
+	// TODO switch to an enum?
+	@Pattern(regexp = "^$|^test$|^panel$", groups = { PrintWorkplan.class })
 	private String workplanType = "";
 
-	@NotBlank
-	@Pattern(regexp = "^$|^WorkPlanByPanel.do$|^WorkPlanByTest.do$")
+	@NotBlank(groups = { PrintWorkplan.class })
+	@Pattern(regexp = "^$|^WorkPlanByPanel.do$|^WorkPlanByTest.do$", groups = { PrintWorkplan.class })
 	private String searchAction = "";
 
 	// for display
@@ -60,7 +62,7 @@ public class WorkplanForm extends BaseForm {
 	// for display
 	private List<IdValuePair> testSectionsByName;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { PrintWorkplan.class })
 	private String testSectionId;
 
 	public WorkplanForm() {

@@ -20,7 +20,7 @@ public class SamplePatientEntryFormValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return SamplePatientEntryForm.class.equals(clazz);
+		return SamplePatientEntryForm.class.isAssignableFrom(clazz);
 	}
 
 	@Override

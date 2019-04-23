@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -13,6 +12,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -67,8 +67,8 @@ public class ResultReportingConfigurationController extends BaseController {
 
 	@RequestMapping(value = "/ResultReportingConfiguration", method = RequestMethod.POST)
 	public ModelAndView showUpdateResultReportingConfiguration(HttpServletRequest request,
-			@ModelAttribute("form") @Valid ResultReportingConfigurationForm form, BindingResult result,
-			RedirectAttributes redirectAttributes) {
+			@ModelAttribute("form") @Validated(ResultReportingConfigurationForm.ResultReportConfig.class) ResultReportingConfigurationForm form,
+			BindingResult result, RedirectAttributes redirectAttributes) {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);

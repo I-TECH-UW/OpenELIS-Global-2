@@ -27,9 +27,11 @@ public class SiteInformationForm extends BaseForm {
 	private boolean encrypted;
 
 	// in validator
+	@SafeHtml
 	private String valueType = "text";
 
 	// in validator
+	@SafeHtml
 	private String siteInfoDomainName;
 
 	// for display
@@ -38,6 +40,8 @@ public class SiteInformationForm extends BaseForm {
 	@NotNull
 	private Boolean editable = Boolean.TRUE;
 
+	// in validator
+	@SafeHtml
 	private String tag = "";
 
 	@Pattern(regexp = ValidationHelper.MESSAGE_KEY_REGEX)
@@ -50,7 +54,7 @@ public class SiteInformationForm extends BaseForm {
 	private String frenchValue = "";
 
 	public SiteInformationForm() {
-		// setFormName("siteInformationForm");
+		setFormName("siteInformationForm");
 	}
 
 	public String getParamName() {

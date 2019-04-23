@@ -1,16 +1,15 @@
 package spring.mine.sample.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.validation.annotations.ValidDate;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
+import us.mn.state.health.lims.patient.action.IPatientUpdate.PatientUpdateStatus;
 import us.mn.state.health.lims.patient.action.bean.PatientClinicalInfo;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
@@ -18,17 +17,17 @@ import us.mn.state.health.lims.project.valueholder.Project;
 import us.mn.state.health.lims.sample.bean.SampleOrderItem;
 
 public class SamplePatientEntryForm extends BaseForm {
-	private Timestamp lastupdated;
 
-	@ValidDate(relative = DateRelation.TODAY)
+	public interface SamplePatientEntry {
+	}
+
+	@ValidDate(relative = DateRelation.TODAY, groups = { SamplePatientEntry.class })
 	private String currentDate = "";
 
-	// TODO
 	@Valid
 	private List<Project> projects;
 
-	@Pattern(regexp = "^Add$|^update$|^noAction$")
-	private String patientProcessingStatus = "Add";
+	private PatientUpdateStatus patientUpdateStatus = PatientUpdateStatus.ADD;
 
 	// for display
 	private List<IdValuePair> sampleTypes;
@@ -36,18 +35,15 @@ public class SamplePatientEntryForm extends BaseForm {
 	// in validator
 	private String sampleXML = "";
 
-	// TODO
 	@Valid
 	private PatientManagementInfo patientProperties;
 
 	// for display
 	private PatientSearch patientSearch;
 
-	// TODO
 	@Valid
 	private PatientClinicalInfo patientClinicalProperties;
 
-	// TODO
 	@Valid
 	private SampleOrderItem sampleOrderItems;
 
@@ -57,19 +53,11 @@ public class SamplePatientEntryForm extends BaseForm {
 	// for display
 	private List<IdValuePair> testSectionList;
 
-	@NotNull
+	@NotNull(groups = { SamplePatientEntry.class })
 	private Boolean warning = false;
 
 	public SamplePatientEntryForm() {
 		setFormName("samplePatientEntryForm");
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public String getCurrentDate() {
@@ -88,12 +76,12 @@ public class SamplePatientEntryForm extends BaseForm {
 		this.projects = projects;
 	}
 
-	public String getPatientProcessingStatus() {
-		return patientProcessingStatus;
+	public PatientUpdateStatus getPatientUpdateStatus() {
+		return patientUpdateStatus;
 	}
 
-	public void setPatientProcessingStatus(String patientProcessingStatus) {
-		this.patientProcessingStatus = patientProcessingStatus;
+	public void setPatientUpdateStatus(PatientUpdateStatus patientUpdateStatus) {
+		this.patientUpdateStatus = patientUpdateStatus;
 	}
 
 	public List<IdValuePair> getSampleTypes() {

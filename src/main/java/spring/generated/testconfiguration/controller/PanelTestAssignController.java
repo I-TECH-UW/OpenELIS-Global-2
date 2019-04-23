@@ -7,12 +7,12 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Transaction;
 import org.owasp.encoder.Encode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -22,7 +22,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.generated.testconfiguration.form.PanelTestAssignForm;
-import spring.generated.testconfiguration.validator.PanelTestAssignFormValidator;
 import spring.mine.common.controller.BaseController;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -44,9 +43,6 @@ import us.mn.state.health.lims.testconfiguration.action.PanelTests;
 @Controller
 public class PanelTestAssignController extends BaseController {
 
-	@Autowired
-	PanelTestAssignFormValidator formValidator;
-
 	@RequestMapping(value = "/PanelTestAssign", method = RequestMethod.GET)
 	public ModelAndView showPanelTestAssign(HttpServletRequest request) {
 		PanelTestAssignForm form = new PanelTestAssignForm();
@@ -65,8 +61,16 @@ public class PanelTestAssignController extends BaseController {
 	}
 
 	private void setupDisplayItems(PanelTestAssignForm form) {
+		List<IdValuePair> panels = DisplayListService.getList(DisplayListService.ListType.PANELS);
+
+		try {
+			PropertyUtils.setProperty(form, "panelList", panels);
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		if (!GenericValidator.isBlankOrNull(form.getPanelId())) {
-			List<IdValuePair> panels = DisplayListService.getList(DisplayListService.ListType.PANELS);
 
 			PanelDAO panelDAO = new PanelDAOImpl();
 			Panel panel = panelDAO.getPanelById(form.getPanelId());
@@ -88,7 +92,7 @@ public class PanelTestAssignController extends BaseController {
 			panelTests.setTests(tests, testIdSet);
 
 			try {
-				PropertyUtils.setProperty(form, "panelList", panels);
+
 				PropertyUtils.setProperty(form, "selectedPanel", panelTests);
 			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 				// TODO Auto-generated catch block
@@ -114,9 +118,8 @@ public class PanelTestAssignController extends BaseController {
 
 	@RequestMapping(value = "/PanelTestAssign", method = RequestMethod.POST)
 	public ModelAndView postPanelTestAssign(HttpServletRequest request,
-			@ModelAttribute("form") PanelTestAssignForm form, BindingResult result,
+			@ModelAttribute("form") @Valid PanelTestAssignForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) throws Exception {
-		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
 			setupDisplayItems(form);
@@ -134,7 +137,7 @@ public class PanelTestAssignController extends BaseController {
 			@SuppressWarnings("unchecked")
 			List<PanelItem> panelItems = panelItemDAO.getPanelItemsForPanel(panelId);
 
-			String[] newTests = (String[]) form.get("currentTests");
+			List<String> newTests = (List<String>) form.get("currentTests");
 
 			Transaction tx = HibernateUtil.getSession().beginTransaction();
 			try {

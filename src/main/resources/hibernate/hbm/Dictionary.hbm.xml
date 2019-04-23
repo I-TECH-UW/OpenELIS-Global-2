@@ -11,7 +11,7 @@
             </generator> 
         </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
-        <many-to-one name="dictionaryCategory" class="us.mn.state.health.lims.dictionarycategory.valueholder.DictionaryCategory" fetch="select">
+        <many-to-one name="dictionaryCategory" class="us.mn.state.health.lims.dictionarycategory.valueholder.DictionaryCategory" fetch="select" lazy="false">
             <column name="DICTIONARY_CATEGORY_ID" precision="10" scale="0" />
         </many-to-one>
         <property name="isActive" type="java.lang.String">

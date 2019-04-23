@@ -1,6 +1,5 @@
 package spring.mine.result.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
@@ -10,14 +9,14 @@ import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.inventory.form.InventoryKitItem;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
+//only used to communicate from server to client
+//does not require validation
 public class StatusResultsForm extends BaseForm {
 	private PagingBean paging;
 
 	private Boolean singlePatient = false;
 
 	private String currentDate = "";
-
-	private Timestamp lastupdated;
 
 	private String collectionDate = "";
 
@@ -85,14 +84,6 @@ public class StatusResultsForm extends BaseForm {
 
 	public void setCurrentDate(String currentDate) {
 		this.currentDate = currentDate;
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public String getCollectionDate() {

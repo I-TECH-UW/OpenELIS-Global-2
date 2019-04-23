@@ -19,7 +19,7 @@
             <column name="SAMPITEM_ID" precision="10" scale="0" />
         </property>
 		
-        <many-to-one name="sample" class="us.mn.state.health.lims.sample.valueholder.Sample" fetch="select">
+        <many-to-one name="sample" class="us.mn.state.health.lims.sample.valueholder.Sample" fetch="select" lazy="false">
             <column name="SAMP_ID" precision="10" scale="0" />
         </many-to-one>
         <property name="sourceOfSampleId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">

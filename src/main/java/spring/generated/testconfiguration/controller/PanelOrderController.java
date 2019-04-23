@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
@@ -97,7 +98,7 @@ public class PanelOrderController extends BaseController {
 	}
 
 	@RequestMapping(value = "/PanelOrder", method = RequestMethod.POST)
-	public ModelAndView postPanelOrder(HttpServletRequest request, @ModelAttribute("form") PanelOrderForm form,
+	public ModelAndView postPanelOrder(HttpServletRequest request, @ModelAttribute("form") @Valid PanelOrderForm form,
 			BindingResult result) throws Exception {
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {

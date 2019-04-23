@@ -26,11 +26,9 @@ public class PanelTestAssignForm extends BaseForm {
 	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String deactivatePanelId = "";
 
-	// in validator
-	private String[] currentTests;
+	private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> currentTests;
 
-	// in validator
-	private String[] availableTests;
+	private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> availableTests;
 
 	public PanelTestAssignForm() {
 		setFormName("panelTestAssignForm");
@@ -76,19 +74,19 @@ public class PanelTestAssignForm extends BaseForm {
 		this.deactivatePanelId = deactivatePanelId;
 	}
 
-	public String[] getCurrentTests() {
+	public List<String> getCurrentTests() {
 		return currentTests;
 	}
 
-	public void setCurrentTests(String[] currentTests) {
+	public void setCurrentTests(List<String> currentTests) {
 		this.currentTests = currentTests;
 	}
 
-	public String[] getAvailableTests() {
+	public List<String> getAvailableTests() {
 		return availableTests;
 	}
 
-	public void setAvailableTests(String[] availableTests) {
+	public void setAvailableTests(List<String> availableTests) {
 		this.availableTests = availableTests;
 	}
 }

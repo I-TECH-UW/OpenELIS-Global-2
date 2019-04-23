@@ -12,7 +12,7 @@ public class SiteInformationFormValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return SiteInformationForm.class.equals(clazz);
+		return SiteInformationForm.class.isAssignableFrom(clazz);
 	}
 
 	@Override
@@ -35,14 +35,6 @@ public class SiteInformationFormValidator implements Validator {
 		ValidationHelper.validateOptionField(form.getTag(), "tag", errors,
 				new String[] { "enable", "url", "numericOnly", "programConfiguration", "localization", "", null });
 
-		ValidationHelper.validateField(form.getDescriptionKey(), "descriptionKey", errors, false, 255,
-				ValidationHelper.MESSAGE_KEY_REGEX);
-
-		if ("localization".equals(form.getTag())) {
-			ValidationHelper.validateField(form.getEnglishValue(), "englishValue", errors, true, 255);
-
-			ValidationHelper.validateField(form.getFrenchValue(), "frenchValue", errors, true, 255);
-		}
 	}
 
 }

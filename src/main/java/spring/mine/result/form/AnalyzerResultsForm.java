@@ -1,26 +1,28 @@
 package spring.mine.result.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.SafeHtml;
 
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.analyzerresults.action.beanitems.AnalyzerResultItem;
 import us.mn.state.health.lims.common.paging.PagingBean;
 
 public class AnalyzerResultsForm extends BaseForm {
-	// for display
+
+	public interface AnalyzerResuts {
+	}
+
+	@Valid
 	private PagingBean paging;
 
-	private Timestamp lastupdated;
-
-	// TODO
 	@Valid
 	private List<AnalyzerResultItem> resultList;
 
-	// for display
+	@SafeHtml
 	private String analyzerType = "";
 
 	@NotNull
@@ -28,6 +30,8 @@ public class AnalyzerResultsForm extends BaseForm {
 
 	@NotNull
 	private Boolean displayMissingTestMsg = false;
+
+	private boolean hideShowFlag = false;
 
 	public AnalyzerResultsForm() {
 		setFormName("AnalyzerResultsForm");
@@ -39,14 +43,6 @@ public class AnalyzerResultsForm extends BaseForm {
 
 	public void setPaging(PagingBean paging) {
 		this.paging = paging;
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public List<AnalyzerResultItem> getResultList() {
@@ -79,6 +75,14 @@ public class AnalyzerResultsForm extends BaseForm {
 
 	public void setDisplayMissingTestMsg(Boolean displayMissingTestMsg) {
 		this.displayMissingTestMsg = displayMissingTestMsg;
+	}
+
+	public boolean isHideShowFlag() {
+		return hideShowFlag;
+	}
+
+	public void setHideShowFlag(boolean hideShowFlag) {
+		this.hideShowFlag = hideShowFlag;
 	}
 
 }

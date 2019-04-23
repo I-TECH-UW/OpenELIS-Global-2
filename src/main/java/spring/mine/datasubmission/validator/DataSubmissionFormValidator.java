@@ -16,7 +16,7 @@ public class DataSubmissionFormValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return DataSubmissionForm.class.equals(clazz);
+		return DataSubmissionForm.class.isAssignableFrom(clazz);
 	}
 
 	@Override

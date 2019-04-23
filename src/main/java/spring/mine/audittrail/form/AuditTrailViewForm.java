@@ -2,21 +2,31 @@ package spring.mine.audittrail.form;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
 import spring.mine.common.form.BaseForm;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.sample.bean.SampleOrderItem;
 
+// used for viewing only, does not need validation
 public class AuditTrailViewForm extends BaseForm {
 
+	@SafeHtml
 	private String accessionNumberSearch = "";
 
+	@Valid
 	private List<AuditTrailItem> log;
 
+	@SafeHtml
 	private String accessionNumber = "";
 
+	@Valid
 	private SampleOrderItem sampleOrderItems;
 
+	@Valid
 	private PatientManagementInfo patientProperties;
 
 	public AuditTrailViewForm() {

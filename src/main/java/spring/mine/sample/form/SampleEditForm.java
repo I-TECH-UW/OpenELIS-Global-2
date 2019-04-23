@@ -1,6 +1,5 @@
 package spring.mine.sample.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -23,46 +22,46 @@ import us.mn.state.health.lims.sample.bean.SampleOrderItem;
 import us.mn.state.health.lims.sample.util.AccessionNumberUtil;
 
 public class SampleEditForm extends BaseForm {
-	@NotNull
+
+	public interface SampleEdit {
+	}
+
+	@NotNull(groups = { SampleEdit.class })
 	private Boolean noSampleFound = Boolean.FALSE;
 
-	@NotNull
+	@NotNull(groups = { SampleEdit.class })
 	private Boolean isConfirmationSample = Boolean.FALSE;
 
-	@NotNull
+	@NotNull(groups = { SampleEdit.class })
 	private Boolean isEditable = Boolean.TRUE;
 
-	@Pattern(regexp = ValidationHelper.NAME_REGEX)
+	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SampleEdit.class })
 	private String patientName = "";
 
-	@NotBlank
+	@NotBlank(groups = { SampleEdit.class })
 	@ValidDate(relative = DateRelation.PAST)
 	private String dob = "";
 
-	@NotBlank
-	@Pattern(regexp = ValidationHelper.GENDER_REGEX)
+	@NotBlank(groups = { SampleEdit.class })
+	@Pattern(regexp = ValidationHelper.GENDER_REGEX, groups = { SampleEdit.class })
 	private String gender = "";
 
-	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SampleEdit.class })
 	private String nationalId = "";
 
-	@ValidAccessionNumber
+	@ValidAccessionNumber(groups = { SampleEdit.class })
 	private String accessionNumber;
 
-	@ValidAccessionNumber
+	@ValidAccessionNumber(groups = { SampleEdit.class })
 	private String newAccessionNumber = "";
 
-	private Timestamp lastupdated;
-
-	// TODO
 	@Valid
 	private List<SampleEditItem> existingTests;
 
-	// TODO
 	@Valid
 	private List<SampleEditItem> possibleTests;
 
-	@NotNull
+	@NotNull(groups = { SampleEdit.class })
 	private Boolean searchFinished = false;
 
 	// for display
@@ -77,23 +76,22 @@ public class SampleEditForm extends BaseForm {
 	// for display
 	private List<IdValuePair> initialSampleConditionList;
 
-	@ValidDate(relative = DateRelation.TODAY)
+	@ValidDate(relative = DateRelation.TODAY, groups = { SampleEdit.class })
 	private String currentDate = "";
 
 	// for display
 	private List<IdValuePair> testSectionList;
 
-	// TODO
 	@Valid
 	private SampleOrderItem sampleOrderItems;
 
 	// for display
 	private PatientSearch patientSearch;
 
-	@NotNull
+	@NotNull(groups = { SampleEdit.class })
 	private Boolean ableToCancelResults = false;
 
-	@NotNull
+	@NotNull(groups = { SampleEdit.class })
 	private Boolean warning = false;
 
 	// in validator
@@ -185,14 +183,6 @@ public class SampleEditForm extends BaseForm {
 
 	public void setNewAccessionNumber(String newAccessionNumber) {
 		this.newAccessionNumber = newAccessionNumber;
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public List<SampleEditItem> getExistingTests() {

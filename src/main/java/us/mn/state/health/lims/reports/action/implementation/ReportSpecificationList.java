@@ -21,9 +21,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.Pattern;
+
 import org.apache.commons.beanutils.PropertyUtils;
 
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
 import us.mn.state.health.lims.common.util.IdValuePair;
 
 /**
@@ -33,6 +36,8 @@ public class ReportSpecificationList implements Serializable {
 
 	private final String label;
 	private final List<IdValuePair> list;
+
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String selection;
 
 	public ReportSpecificationList() {

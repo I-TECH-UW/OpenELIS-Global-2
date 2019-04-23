@@ -13,7 +13,7 @@ public class DictionaryFormValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return DictionaryForm.class.equals(clazz);
+		return DictionaryForm.class.isAssignableFrom(clazz);
 	}
 
 	@Override

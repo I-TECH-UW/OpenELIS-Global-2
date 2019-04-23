@@ -24,32 +24,37 @@ import java.io.Serializable;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import javax.validation.groups.Default;
 
 import org.hibernate.validator.constraints.SafeHtml;
+
+import spring.mine.common.validator.ValidationHelper;
+import spring.mine.qaevent.form.NonConformityForm;
 
 public class QaEventItem implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { NonConformityForm.NonConformity.class })
 	private String id;
 
-	@NotBlank
-	@Pattern(regexp = "^[0-9]*$")
+	@NotBlank(groups = { NonConformityForm.NonConformity.class, Default.class })
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { NonConformityForm.NonConformity.class, Default.class })
 	private String qaEvent;
 
-	@NotBlank
-	@Pattern(regexp = "^[0-9]*$")
+	@NotBlank(groups = { NonConformityForm.NonConformity.class, Default.class })
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { NonConformityForm.NonConformity.class, Default.class })
 	private String sampleType;
 
-	@SafeHtml
+	@SafeHtml(groups = { NonConformityForm.NonConformity.class, Default.class })
 	private String section;
 
-	@SafeHtml
+	@SafeHtml(groups = { NonConformityForm.NonConformity.class, Default.class })
 	private String authorizer;
 
-	@SafeHtml
+	@SafeHtml(groups = { NonConformityForm.NonConformity.class, Default.class })
 	private String note;
 
-	@SafeHtml
+	@SafeHtml(groups = { NonConformityForm.NonConformity.class, Default.class })
 	private String recordNumber;
 
 	private boolean remove;

@@ -1,19 +1,22 @@
 package spring.mine.reports.form;
 
-import java.sql.Timestamp;
 import java.util.List;
 
+import javax.validation.constraints.Pattern;
+
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.ValidationHelper;
+import spring.mine.validation.annotations.ValidDate;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.project.valueholder.Project;
 import us.mn.state.health.lims.reports.action.implementation.ReportSpecificationList;
 
-//TODO validation
+//values not preserved, so security validation not a large concern
+//values used in jasperreports
 public class ReportForm extends BaseForm {
-	private Timestamp lastupdated;
 
-	private Boolean noRequestSpecifications = Boolean.FALSE;
+	private boolean noRequestSpecifications = false;
 
 	private String type = "";
 
@@ -21,60 +24,71 @@ public class ReportForm extends BaseForm {
 
 	private String report = "glen";
 
-	private Boolean useAccessionDirect = Boolean.FALSE;
+	private boolean useAccessionDirect = false;
 
 	private String accessionDirect = "";
 
 	// private Collection selectedHighAccession;
 
-	private Boolean useHighAccessionDirect = Boolean.FALSE;
+	private boolean useHighAccessionDirect = false;
 
 	private String highAccessionDirect = "";
 
 	// private Collection patientNumberList;
 
-	private Boolean usePatientNumberDirect = Boolean.FALSE;
+	private boolean usePatientNumberDirect = false;
 
 	private String patientNumberDirect = "";
 
-	private Boolean useUpperPatientNumberDirect = Boolean.FALSE;
+	private boolean useUpperPatientNumberDirect = false;
 
 	private String patientUpperNumberDirect = "";
 
-	private Boolean useLowerDateRange = Boolean.FALSE;
+	private boolean useLowerDateRange = false;
 
+	@ValidDate
 	private String lowerDateRange = "";
 
-	private Boolean useUpperDateRange = Boolean.FALSE;
+	private boolean useUpperDateRange = false;
 
+	@ValidDate
 	private String upperDateRange = "";
 
-	private Boolean useLocationCode = Boolean.FALSE;
+	private boolean useLocationCode = false;
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String locationCode = "";
 
 	private List<Organization> locationCodeList;
 
-	private Boolean useProjectCode = Boolean.FALSE;
+	private boolean useProjectCode = false;
 
-	private Boolean useDashboard = Boolean.FALSE;
+	private boolean useDashboard = false;
 
+	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String projectCode = "";
 
-	private Boolean usePredefinedDateRanges = Boolean.FALSE;
+	private boolean usePredefinedDateRanges = false;
 
+	@Pattern(regexp = "^$|^year$|^months3$|^months6$|^months12$|^custom$")
 	private String datePeriod = "";
 
+	// for display
 	private List<IdValuePair> monthList;
 
+	// for display
 	private List<IdValuePair> yearList;
 
+	@Pattern(regexp = "^[0-9]*$")
 	private String lowerMonth = "";
 
+	@Pattern(regexp = "^[0-9]*$")
 	private String lowerYear = "";
 
+	@Pattern(regexp = "^[0-9]*$")
 	private String upperMonth = "";
 
+	@Pattern(regexp = "^[0-9]*$")
 	private String upperYear = "";
 
 	private ReportSpecificationList selectList;
@@ -87,19 +101,11 @@ public class ReportForm extends BaseForm {
 		setFormName("ReportForm");
 	}
 
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
-	}
-
-	public Boolean getNoRequestSpecifications() {
+	public boolean getNoRequestSpecifications() {
 		return noRequestSpecifications;
 	}
 
-	public void setNoRequestSpecifications(Boolean noRequestSpecifications) {
+	public void setNoRequestSpecifications(boolean noRequestSpecifications) {
 		this.noRequestSpecifications = noRequestSpecifications;
 	}
 
@@ -127,11 +133,11 @@ public class ReportForm extends BaseForm {
 		this.report = report;
 	}
 
-	public Boolean getUseAccessionDirect() {
+	public boolean getUseAccessionDirect() {
 		return useAccessionDirect;
 	}
 
-	public void setUseAccessionDirect(Boolean useAccessionDirect) {
+	public void setUseAccessionDirect(boolean useAccessionDirect) {
 		this.useAccessionDirect = useAccessionDirect;
 	}
 
@@ -151,11 +157,11 @@ public class ReportForm extends BaseForm {
 	 * this.selectedHighAccession = selectedHighAccession; }
 	 */
 
-	public Boolean getUseHighAccessionDirect() {
+	public boolean getUseHighAccessionDirect() {
 		return useHighAccessionDirect;
 	}
 
-	public void setUseHighAccessionDirect(Boolean useHighAccessionDirect) {
+	public void setUseHighAccessionDirect(boolean useHighAccessionDirect) {
 		this.useHighAccessionDirect = useHighAccessionDirect;
 	}
 
@@ -174,11 +180,11 @@ public class ReportForm extends BaseForm {
 	 * this.patientNumberList = patientNumberList; }
 	 */
 
-	public Boolean getUsePatientNumberDirect() {
+	public boolean getUsePatientNumberDirect() {
 		return usePatientNumberDirect;
 	}
 
-	public void setUsePatientNumberDirect(Boolean usePatientNumberDirect) {
+	public void setUsePatientNumberDirect(boolean usePatientNumberDirect) {
 		this.usePatientNumberDirect = usePatientNumberDirect;
 	}
 
@@ -190,11 +196,11 @@ public class ReportForm extends BaseForm {
 		this.patientNumberDirect = patientNumberDirect;
 	}
 
-	public Boolean getUseUpperPatientNumberDirect() {
+	public boolean getUseUpperPatientNumberDirect() {
 		return useUpperPatientNumberDirect;
 	}
 
-	public void setUseUpperPatientNumberDirect(Boolean useUpperPatientNumberDirect) {
+	public void setUseUpperPatientNumberDirect(boolean useUpperPatientNumberDirect) {
 		this.useUpperPatientNumberDirect = useUpperPatientNumberDirect;
 	}
 
@@ -206,11 +212,11 @@ public class ReportForm extends BaseForm {
 		this.patientUpperNumberDirect = patientUpperNumberDirect;
 	}
 
-	public Boolean getUseLowerDateRange() {
+	public boolean getUseLowerDateRange() {
 		return useLowerDateRange;
 	}
 
-	public void setUseLowerDateRange(Boolean useLowerDateRange) {
+	public void setUseLowerDateRange(boolean useLowerDateRange) {
 		this.useLowerDateRange = useLowerDateRange;
 	}
 
@@ -222,11 +228,11 @@ public class ReportForm extends BaseForm {
 		this.lowerDateRange = lowerDateRange;
 	}
 
-	public Boolean getUseUpperDateRange() {
+	public boolean getUseUpperDateRange() {
 		return useUpperDateRange;
 	}
 
-	public void setUseUpperDateRange(Boolean useUpperDateRange) {
+	public void setUseUpperDateRange(boolean useUpperDateRange) {
 		this.useUpperDateRange = useUpperDateRange;
 	}
 
@@ -238,11 +244,11 @@ public class ReportForm extends BaseForm {
 		this.upperDateRange = upperDateRange;
 	}
 
-	public Boolean getUseLocationCode() {
+	public boolean getUseLocationCode() {
 		return useLocationCode;
 	}
 
-	public void setUseLocationCode(Boolean useLocationCode) {
+	public void setUseLocationCode(boolean useLocationCode) {
 		this.useLocationCode = useLocationCode;
 	}
 
@@ -262,19 +268,19 @@ public class ReportForm extends BaseForm {
 		this.locationCodeList = locationCodeList;
 	}
 
-	public Boolean getUseProjectCode() {
+	public boolean getUseProjectCode() {
 		return useProjectCode;
 	}
 
-	public void setUseProjectCode(Boolean useProjectCode) {
+	public void setUseProjectCode(boolean useProjectCode) {
 		this.useProjectCode = useProjectCode;
 	}
 
-	public Boolean getUseDashboard() {
+	public boolean getUseDashboard() {
 		return useDashboard;
 	}
 
-	public void setUseDashboard(Boolean useDashboard) {
+	public void setUseDashboard(boolean useDashboard) {
 		this.useDashboard = useDashboard;
 	}
 
@@ -286,11 +292,11 @@ public class ReportForm extends BaseForm {
 		this.projectCode = projectCode;
 	}
 
-	public Boolean getUsePredefinedDateRanges() {
+	public boolean getUsePredefinedDateRanges() {
 		return usePredefinedDateRanges;
 	}
 
-	public void setUsePredefinedDateRanges(Boolean usePredefinedDateRanges) {
+	public void setUsePredefinedDateRanges(boolean usePredefinedDateRanges) {
 		this.usePredefinedDateRanges = usePredefinedDateRanges;
 	}
 

@@ -2,14 +2,16 @@ package spring.mine.siteinformation.form;
 
 import java.util.List;
 
+import javax.validation.constraints.Pattern;
+
 import spring.mine.common.form.MenuForm;
+import spring.mine.common.validator.ValidationHelper;
 
 public class SiteInformationMenuForm extends MenuForm {
 	// for display
 	private List menuList;
 
-	// in validator
-	private String[] selectedIDs;
+	private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> selectedIDs;
 
 	// in validator
 	private String siteInfoDomainName;// = "SiteInformation";
@@ -29,12 +31,12 @@ public class SiteInformationMenuForm extends MenuForm {
 	}
 
 	@Override
-	public String[] getSelectedIDs() {
+	public List<String> getSelectedIDs() {
 		return selectedIDs;
 	}
 
 	@Override
-	public void setSelectedIDs(String[] selectedIDs) {
+	public void setSelectedIDs(List<String> selectedIDs) {
 		this.selectedIDs = selectedIDs;
 	}
 

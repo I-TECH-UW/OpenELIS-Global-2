@@ -8,6 +8,8 @@ import javax.validation.Valid;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.dataexchange.order.form.ElectronicOrderViewForm;
+import us.mn.state.health.lims.dataexchange.order.ElectronicOrderSortOrderCategoryConvertor;
 import us.mn.state.health.lims.dataexchange.order.dao.ElectronicOrderDAO;
 import us.mn.state.health.lims.dataexchange.order.daoimpl.ElectronicOrderDAOImpl;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
@@ -26,13 +29,19 @@ import us.mn.state.health.lims.statusofsample.valueholder.StatusOfSample;
 @Controller
 public class ElectronicOrdersController extends BaseController {
 
+	@InitBinder
+	public void initBinder(final WebDataBinder webdataBinder) {
+		webdataBinder.registerCustomEditor(ElectronicOrder.SortOrder.class,
+				new ElectronicOrderSortOrderCategoryConvertor());
+	}
+
 	@RequestMapping(value = "/ElectronicOrders", method = RequestMethod.GET)
 	public ModelAndView showElectronicOrders(HttpServletRequest request,
 			@ModelAttribute("form") @Valid ElectronicOrderViewForm form, BindingResult result) {
 		// if invalid request, default to basic values
 		if (result.hasErrors()) {
 			saveErrors(result);
-			form.setSortOrder("lastupdated");
+			form.setSortOrder(ElectronicOrder.SortOrder.LAST_UPDATED);
 			form.setPage(1);
 		}
 

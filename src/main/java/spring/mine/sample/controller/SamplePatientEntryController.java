@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.StaleObjectStateException;
@@ -12,6 +11,7 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -125,8 +125,8 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
 	@RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.POST)
 	public @ResponseBody ModelAndView showSamplePatientEntrySave(HttpServletRequest request,
-			@ModelAttribute("form") @Valid SamplePatientEntryForm form, BindingResult result,
-			RedirectAttributes redirectAttributes)
+			@ModelAttribute("form") @Validated(SamplePatientEntryForm.SamplePatientEntry.class) SamplePatientEntryForm form,
+			BindingResult result, RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		formValidator.validate(form, result);

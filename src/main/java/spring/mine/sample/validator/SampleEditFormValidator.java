@@ -25,7 +25,7 @@ public class SampleEditFormValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return SampleEditForm.class.equals(clazz);
+		return SampleEditForm.class.isAssignableFrom(clazz);
 	}
 
 	@Override
@@ -42,16 +42,11 @@ public class SampleEditFormValidator implements Validator {
 
 		validateSampleXML(form.getSampleXML(), errors);
 
-		ValidationHelper.validateDateField(form.getCurrentDate(), "cuurentDate", errors, DateRelation.PAST);
-
 		ValidationHelper.validateOptionField(form.getIdSeparator(), "idSeperator", errors,
 				new String[] { SystemConfiguration.getInstance().getDefaultIdSeparator() });
 
 		ValidationHelper.validateOptionField(form.getAccessionFormat(), "accessionFormat", errors,
 				new String[] { ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat) });
-
-		ValidationHelper.validateFieldMinMax(form.getEditableAccession(), "editableAccession", errors,
-				AccessionNumberUtil.getChangeableLength(), AccessionNumberUtil.getChangeableLength());
 
 		int changeableLength = AccessionNumberUtil.getChangeableLength();
 		ValidationHelper.validateFieldMinMax(form.getEditableAccession(), "editableAccession", errors, changeableLength,
@@ -63,6 +58,7 @@ public class SampleEditFormValidator implements Validator {
 
 		ValidationHelper.validateFieldMinMax(form.getMaxAccessionLength(), "maxAccessionLength", errors,
 				changeableLength + invariantLength, changeableLength + invariantLength);
+
 	}
 
 	@SuppressWarnings("unchecked")

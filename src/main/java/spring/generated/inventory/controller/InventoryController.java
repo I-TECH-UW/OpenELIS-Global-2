@@ -76,16 +76,14 @@ public class InventoryController extends BaseController {
 	private OrganizationDAO organizationDAO = new OrganizationDAOImpl();
 
 	@ModelAttribute("form")
-	public BaseForm initForm() {
+	public InventoryForm initForm() {
 		return new InventoryForm();
 	}
 
 	@RequestMapping(value = "/ManageInventory", method = RequestMethod.GET)
 	public ModelAndView showManageInventory(HttpServletRequest request, @ModelAttribute("form") BaseForm form) {
-		if (form.getClass() != InventoryForm.class) {
-			form = new InventoryForm();
-			request.getSession().setAttribute("form", form);
-		}
+		form = resetFormToType(form, InventoryForm.class);
+
 		setupDisplayItems(form);
 
 		addFlashMsgsToRequest(request);

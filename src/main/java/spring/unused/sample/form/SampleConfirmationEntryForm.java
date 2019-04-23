@@ -1,6 +1,5 @@
 package spring.unused.sample.form;
 
-import java.sql.Timestamp;
 import java.util.Collection;
 
 import spring.mine.common.form.BaseForm;
@@ -9,7 +8,6 @@ import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 import us.mn.state.health.lims.sample.bean.SampleOrderItem;
 
 public class SampleConfirmationEntryForm extends BaseForm {
-	private Timestamp lastupdated;
 
 	private String interviewDate = "";
 
@@ -41,14 +39,6 @@ public class SampleConfirmationEntryForm extends BaseForm {
 
 	public SampleConfirmationEntryForm() {
 		setFormName("SampleConfirmationEntryForm");
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 
 	public String getInterviewDate() {

@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -21,6 +20,7 @@ import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -165,8 +165,8 @@ public class ResultValidationController extends BaseResultValidationController {
 
 	@RequestMapping(value = "/ResultValidation", method = RequestMethod.POST)
 	public ModelAndView showResultValidationSave(HttpServletRequest request,
-			@ModelAttribute("form") @Valid ResultValidationForm form, BindingResult result,
-			RedirectAttributes redirectAttributes) {
+			@ModelAttribute("form") @Validated(ResultValidationForm.ResultValidation.class) ResultValidationForm form,
+			BindingResult result, RedirectAttributes redirectAttributes) {
 		if (result.hasErrors()) {
 			saveErrors(result);
 			return findForward(FWD_FAIL_INSERT, form);

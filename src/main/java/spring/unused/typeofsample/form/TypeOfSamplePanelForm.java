@@ -1,6 +1,5 @@
 package spring.unused.typeofsample.form;
 
-import java.sql.Timestamp;
 import java.util.Collection;
 
 import spring.mine.common.form.BaseForm;
@@ -15,8 +14,6 @@ public class TypeOfSamplePanelForm extends BaseForm {
 	private Collection samples;
 
 	private Collection panels;
-
-	private Timestamp lastupdated;
 
 	public TypeOfSamplePanelForm() {
 		setFormName("typeOfSamplePanelForm");
@@ -60,13 +57,5 @@ public class TypeOfSamplePanelForm extends BaseForm {
 
 	public void setPanels(Collection panels) {
 		this.panels = panels;
-	}
-
-	public Timestamp getLastupdated() {
-		return lastupdated;
-	}
-
-	public void setLastupdated(Timestamp lastupdated) {
-		this.lastupdated = lastupdated;
 	}
 }

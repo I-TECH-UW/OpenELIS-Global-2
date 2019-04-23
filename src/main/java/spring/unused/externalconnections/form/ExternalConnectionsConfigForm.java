@@ -2,9 +2,9 @@ package spring.unused.externalconnections.form;
 
 import java.util.List;
 
-import spring.mine.common.form.MenuForm;
+import spring.mine.common.form.BaseForm;
 
-public class ExternalConnectionsConfigForm extends MenuForm {
+public class ExternalConnectionsConfigForm extends BaseForm {
 	private String lastupdated;
 
 	private List menuList;

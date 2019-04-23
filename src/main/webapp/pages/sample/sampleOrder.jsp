@@ -216,6 +216,7 @@
     <tr><td style="width:35%"></td><td style="width:65%"></td></tr>
 </logic:notEmpty> --%>
 <c:if test="${!empty form.sampleOrderItems.labNo }" >
+	<form:hidden path="sampleOrderItems.labNo"/>
     <tr><td style="width:35%"></td><td style="width:65%"></td></tr>
 </c:if>
 <% if( FormFields.getInstance().useField( Field.SampleEntryUseRequestDate ) ){ %>

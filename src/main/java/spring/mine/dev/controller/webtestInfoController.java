@@ -6,14 +6,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.dev.form.WebTestInfoForm;
 import us.mn.state.health.lims.login.dao.LoginDAO;
 import us.mn.state.health.lims.login.daoimpl.LoginDAOImpl;
@@ -24,21 +21,16 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 
 @Controller
 public class webtestInfoController extends BaseController {
-	@RequestMapping(value = "/webtestInfo", method = RequestMethod.GET)
-	public ModelAndView showwebtestInfo(HttpServletRequest request, @ModelAttribute("form") WebTestInfoForm form)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String forward = FWD_SUCCESS;
-		if (form == null) {
-			form = new WebTestInfoForm();
-		}
-		form.setFormAction("");
-		Errors errors = new BaseErrors();
 
+	@RequestMapping(value = "/webtestInfo", method = RequestMethod.GET)
+	public ModelAndView showwebtestInfo(HttpServletRequest request)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		WebTestInfoForm form = new WebTestInfoForm();
 		String xmlWad = getWebTestXmlWad();
 
 		PropertyUtils.setProperty(form, "xmlWad", xmlWad);
 
-		return findForward(forward, form);
+		return findForward(FWD_SUCCESS, form);
 	}
 
 	private String getWebTestXmlWad() {
