@@ -12,7 +12,7 @@ import spring.mine.common.management.form.TestSectionManagementForm;
 
 @Controller
 public class TestSectionManagementController extends BaseController {
-	@RequestMapping(value = "/TestSectionManagement", method = RequestMethod.GET)
+	@RequestMapping(value = "/TestSectionManagement", method = { RequestMethod.GET, RequestMethod.POST })
 	public ModelAndView showTestSectionManagement(HttpServletRequest request) {
 		TestSectionManagementForm form = new TestSectionManagementForm();
 

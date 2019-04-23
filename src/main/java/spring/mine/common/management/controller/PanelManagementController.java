@@ -12,7 +12,7 @@ import spring.mine.common.management.form.PanelManagementForm;
 
 @Controller
 public class PanelManagementController extends BaseController {
-	@RequestMapping(value = "/PanelManagement", method = RequestMethod.GET)
+	@RequestMapping(value = "/PanelManagement", method = { RequestMethod.GET, RequestMethod.POST })
 	public ModelAndView showPanelManagement(HttpServletRequest request) {
 		PanelManagementForm form = new PanelManagementForm();
 

@@ -12,7 +12,7 @@ import spring.mine.common.management.form.TestManagementConfigForm;
 
 @Controller
 public class TestManagementConfigMenuController extends BaseController {
-	@RequestMapping(value = "/TestManagementConfigMenu", method = RequestMethod.GET)
+	@RequestMapping(value = "/TestManagementConfigMenu", method = { RequestMethod.GET, RequestMethod.POST })
 	public ModelAndView showTestManagementConfigMenu(HttpServletRequest request) {
 		TestManagementConfigForm form = new TestManagementConfigForm();
 
