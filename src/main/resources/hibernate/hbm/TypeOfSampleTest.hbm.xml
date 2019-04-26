@@ -6,8 +6,8 @@
     <class name="TypeOfSampleTest" table="SAMPLETYPE_TEST" optimistic-lock="version" dynamic-update="true">
         <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-             <generator class="sequence">
-               <param name="sequence">SAMPLE_TYPE_TEST_SEQ</param>
+             <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+               <param name="sequence_name">SAMPLE_TYPE_TEST_SEQ</param>
             </generator>   
         </id>
 

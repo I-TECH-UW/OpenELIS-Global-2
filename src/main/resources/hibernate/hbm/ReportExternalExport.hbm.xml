@@ -6,8 +6,8 @@
   name="us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalExport" table="report_external_export">
   <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
    <column name="ID" precision="10" scale="0"/>
-   <generator class="sequence">
-    <param name="sequence">report_queue_seq</param>
+   <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+    <param name="sequence_name">report_queue_seq</param>
    </generator>
   </id>
   <version access="field" column="lastupdated" generated="never"

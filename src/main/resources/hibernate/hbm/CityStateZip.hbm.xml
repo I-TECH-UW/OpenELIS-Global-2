@@ -7,7 +7,7 @@
         <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
             <!--generator class="sequence">
-            	<param name="sequence">city_state_zip_seq</param>
+            	<param name="sequence_name">city_state_zip_seq</param>
             </generator--> 
         </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>

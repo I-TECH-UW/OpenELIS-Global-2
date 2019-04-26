@@ -6,9 +6,9 @@
     <class name="us.mn.state.health.lims.analysisqaeventaction.valueholder.AnalysisQaEventAction" table="ANALYSIS_QAEVENT_ACTION" optimistic-lock="version" dynamic-update="true" >
         <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="sequence">
+            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
                 <!--bugzilla 2076 fixed typo-->
-            	<param name="sequence">analysis_qaevent_action_seq</param>
+            	<param name="sequence_name">analysis_qaevent_action_seq</param>
             </generator>   
         </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>

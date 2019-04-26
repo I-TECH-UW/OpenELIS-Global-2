@@ -6,8 +6,8 @@
   name="us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportQueueType" table="report_queue_type">
   <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
    <column name="ID" precision="10" scale="0"/>
-   <generator class="sequence">
-    <param name="sequence">report_queue_type_seq</param>
+   <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+    <param name="sequence_name">report_queue_type_seq</param>
    </generator>
   </id>
   <property column="name" generated="never" lazy="false" name="name" type="string"/>

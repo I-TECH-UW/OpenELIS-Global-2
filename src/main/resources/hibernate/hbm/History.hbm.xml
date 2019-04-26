@@ -6,8 +6,8 @@
     <class name="us.mn.state.health.lims.audittrail.valueholder.History" table="HISTORY" >
         <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="sequence">
-               <param name="sequence">history_seq</param>
+            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+               <param name="sequence_name">history_seq</param>
             </generator> 
         </id>
         <property name="sysUserId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">

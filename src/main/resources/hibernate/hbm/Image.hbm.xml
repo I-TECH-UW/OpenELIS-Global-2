@@ -22,8 +22,8 @@
     <class name="Image" table="Image" optimistic-lock="version" dynamic-update="true">
         <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID"  />
-            <generator class="sequence">
-               <param name="sequence">image_seq</param>
+            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+               <param name="sequence_name">image_seq</param>
             </generator>   
         </id>                                            
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field" />
