@@ -3,7 +3,6 @@ package spring.mine.workplan.form;
 import java.util.List;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -52,7 +51,6 @@ public class WorkplanForm extends BaseForm {
 	@Pattern(regexp = "^$|^test$|^panel$", groups = { PrintWorkplan.class })
 	private String workplanType = "";
 
-	@NotBlank(groups = { PrintWorkplan.class })
 	@Pattern(regexp = "^$|^WorkPlanByPanel.do$|^WorkPlanByTest.do$", groups = { PrintWorkplan.class })
 	private String searchAction = "";
 

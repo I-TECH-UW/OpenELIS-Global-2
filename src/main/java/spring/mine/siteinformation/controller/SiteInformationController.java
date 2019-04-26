@@ -181,7 +181,7 @@ public class SiteInformationController extends BaseController {
 
 		} else {
 			form.setSiteInfoDomainName("SiteInformation");
-			form.setFormName("form");
+			form.setFormName("SiteInformationForm");
 			form.setFormAction("SiteInformation");
 		}
 

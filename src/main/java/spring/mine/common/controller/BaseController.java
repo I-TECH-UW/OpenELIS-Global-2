@@ -1,14 +1,20 @@
 package spring.mine.common.controller;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -264,6 +270,34 @@ public abstract class BaseController implements IActionConstants {
 				request.setAttribute(Constants.REQUEST_ERRORS, errors);
 			}
 		}
+	}
+
+	public void writeErrorsToResponse(BindingResult result, HttpServletResponse response) {
+		ServletOutputStream servletOutputStream;
+		try {
+			servletOutputStream = response.getOutputStream();
+			StringBuilder errorMsgBuilder = new StringBuilder();
+			for (ObjectError error : result.getGlobalErrors()) {
+				errorMsgBuilder.append(MessageUtil.getMessageOrDefault(error.getCode(), error.getArguments(),
+						error.getDefaultMessage()));
+				errorMsgBuilder.append(System.lineSeparator());
+			}
+			for (FieldError error : result.getFieldErrors()) {
+				errorMsgBuilder.append(error.getField() + ": ");
+				errorMsgBuilder.append(MessageUtil.getMessageOrDefault(error.getCode(), error.getArguments(),
+						error.getDefaultMessage()));
+				errorMsgBuilder.append(System.lineSeparator());
+			}
+
+			byte[] errorMsg = errorMsgBuilder.toString().getBytes();
+			response.setContentType("text/plain");
+			response.setContentLength(errorMsg.length);
+			servletOutputStream.write(errorMsg);
+
+		} catch (IOException e) {
+			LogEvent.logError("PrintWorkplanReportController", "writeErrorsToResponse", e.getMessage());
+		}
+
 	}
 
 	protected Errors getErrors() {

@@ -20,6 +20,8 @@ public @interface ValidDate {
 
 	String message() default "Invalid date format";
 
+	boolean acceptTime() default false;
+
 	DateRelation relative() default DateRelation.ANY;
 
 	Class<?>[] groups() default {};

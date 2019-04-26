@@ -342,7 +342,7 @@ function handleSelectedPatient(){
            class="text patientSearch"
            placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>'
            type="text"
-           onkeyup="enableSearchButton(event.which);"
+           oninput="enableSearchButton(event.which);"
            tabindex="2"/>
 
     <input type="button"
