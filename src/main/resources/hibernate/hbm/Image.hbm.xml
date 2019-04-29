@@ -31,6 +31,6 @@
         <property name="description" type="java.lang.String">
             <column name="DESCRIPTION"  />
         </property>
-        <property name="image" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSRawDataUserType" column="image" />
+        <property name="image" type="org.hibernate.type.BinaryType" column="image" />
      </class>
 </hibernate-mapping>
