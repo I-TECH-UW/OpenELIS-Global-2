@@ -25,7 +25,7 @@
         <property name="activity" type="java.lang.String">
             <column name="ACTIVITY" length="1" not-null="true" />
         </property>
-        <property name="changes" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSRawDataUserType">
+        <property name="changes" type="org.hibernate.type.BinaryType">
             <!--bugzilla 1930-->
             <column name="CHANGES" not-null="false" />
         </property>
