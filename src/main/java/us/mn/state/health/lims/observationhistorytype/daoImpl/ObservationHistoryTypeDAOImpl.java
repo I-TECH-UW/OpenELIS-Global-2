@@ -4,23 +4,21 @@ import java.util.List;
 
 import org.hibernate.Query;
 
-import us.mn.state.health.lims.common.daoimpl.GenericDAOImpl;
+import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.observationhistorytype.dao.ObservationHistoryTypeDAO;
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
 
-public class ObservationHistoryTypeDAOImpl extends GenericDAOImpl<String, ObservationHistoryType> implements ObservationHistoryTypeDAO {
+public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistoryType>
+		implements ObservationHistoryTypeDAO {
 
 	public ObservationHistoryTypeDAOImpl() {
-		super(ObservationHistoryType.class, "OBSERVATION_HISTORY_TYPE");
+		super(ObservationHistoryType.class);
 	}
 
-	public void delete(List<ObservationHistoryType> entities) throws LIMSRuntimeException {
-		super.delete(entities, new ObservationHistoryType());
-	}
-
+	@Override
 	@SuppressWarnings("unchecked")
 	public ObservationHistoryType getByName(String name) throws LIMSRuntimeException {
 		List<ObservationHistoryType> historyTypeList;

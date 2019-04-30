@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package us.mn.state.health.lims.panel.dao;
@@ -23,12 +23,13 @@ import us.mn.state.health.lims.panel.valueholder.Panel;
 
 /**
  * @author diane benz
- * 
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates. To enable and disable the creation of type
- * comments go to Window>Preferences>Java>Code Generation.
+ *
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
-public interface PanelDAO extends BaseDAO {
+public interface PanelDAO extends BaseDAO<Panel> {
 
 	public boolean insertData(Panel panel) throws LIMSRuntimeException;
 
@@ -45,23 +46,26 @@ public interface PanelDAO extends BaseDAO {
 	public List getActivePanels(String filter) throws LIMSRuntimeException;
 
 	public List<Panel> getAllPanels() throws LIMSRuntimeException;
-	
+
 	public List getNextPanelRecord(String id) throws LIMSRuntimeException;
 
 	public List getPreviousPanelRecord(String id) throws LIMSRuntimeException;
 
 	public Panel getPanelByName(Panel panel) throws LIMSRuntimeException;
 
-
 	public Integer getTotalPanelCount() throws LIMSRuntimeException;
 
-	public String getNameForPanelId(String panelId); 
+	public String getNameForPanelId(String panelId);
+
 	public String getDescriptionForPanelId(String id);
+
 	public String getIdForPanelName(String name);
-	public Panel getPanelByName( String panelName) throws LIMSRuntimeException;
+
+	public Panel getPanelByName(String panelName) throws LIMSRuntimeException;
 
 	public Panel getPanelById(String id) throws LIMSRuntimeException;
 
-	void insert(Panel panel) throws LIMSRuntimeException;
+	@Override
+	String insert(Panel panel) throws LIMSRuntimeException;
 
 }

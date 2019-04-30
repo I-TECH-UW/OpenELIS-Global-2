@@ -27,36 +27,30 @@ import us.mn.state.health.lims.dictionarycategory.valueholder.DictionaryCategory
 /**
  * @author diane benz
  *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates. To enable and disable the creation of type
- * comments go to Window>Preferences>Java>Code Generation.
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
-public interface DictionaryCategoryDAO extends BaseDAO {
+public interface DictionaryCategoryDAO extends BaseDAO<DictionaryCategory> {
 
-	public boolean insertData(DictionaryCategory dictionaryCategory)
-			throws LIMSRuntimeException;
+	public boolean insertData(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException;
 
-	public void deleteData(List dictionaryCategorys)
-			throws LIMSRuntimeException;
+	public void deleteData(List dictionaryCategorys) throws LIMSRuntimeException;
 
 	public List getAllDictionaryCategorys() throws LIMSRuntimeException;
 
-	public List getPageOfDictionaryCategorys(int startingRecNo)
-			throws LIMSRuntimeException;
+	public List getPageOfDictionaryCategorys(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(DictionaryCategory dictionaryCategory)
-			throws LIMSRuntimeException;
+	public void getData(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException;
 
-	public void updateData(DictionaryCategory dictionaryCategory)
-			throws LIMSRuntimeException;
+	public void updateData(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException;
 
-	public List getNextDictionaryCategoryRecord(String id)
-			throws LIMSRuntimeException;
+	public List getNextDictionaryCategoryRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousDictionaryCategoryRecord(String id)
-			throws LIMSRuntimeException;
+	public List getPreviousDictionaryCategoryRecord(String id) throws LIMSRuntimeException;
 
-	//bugzilla 1411
+	// bugzilla 1411
 	public Integer getTotalDictionaryCategoryCount() throws LIMSRuntimeException;
 
 	public DictionaryCategory getDictionaryCategoryByName(String name) throws LIMSRuntimeException;

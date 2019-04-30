@@ -23,13 +23,13 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization;
 
 /**
- *  $Header$
+ * $Header$
  *
- *  @author         Hung Nguyen
- *  @date created   08/04/2006
- *  @version        $Revision$
+ * @author Hung Nguyen
+ * @date created 08/04/2006
+ * @version $Revision$
  */
-public interface SampleOrganizationDAO extends BaseDAO {
+public interface SampleOrganizationDAO extends BaseDAO<SampleOrganization> {
 
 	public boolean insertData(SampleOrganization sampleOrg) throws LIMSRuntimeException;
 

@@ -29,69 +29,75 @@ import us.mn.state.health.lims.localization.valueholder.Localization;
 
 /**
  */
-public class LocalizationDAOImpl extends BaseDAOImpl implements LocalizationDAO{
-    @Override
-    public Localization getLocalizationById( String id ) throws LIMSRuntimeException{
-        try {
-            Localization localization = (Localization) HibernateUtil.getSession().get( Localization.class, id );
-            closeSession();
-            return localization;
-        } catch (HibernateException e) {
-            handleException( e, "getLocalizationById" );
-        }
-        return null;
-    }
+public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements LocalizationDAO {
 
-    @Override
-    public void updateData( Localization localization ) throws LIMSRuntimeException{
-        Localization oldData = readLocalization( localization.getId() );
+	public LocalizationDAOImpl() {
+		super(Localization.class);
+	}
 
-        try {
-            AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-            auditDAO.saveHistory(localization,oldData,localization.getSysUserId(),IActionConstants.AUDIT_TRAIL_UPDATE,"LOCALIZATION");
-        }  catch (Exception e) {
-            handleException( e, "Error in Localization AuditTrail updateData()" );
-        }
+	@Override
+	public Localization getLocalizationById(String id) throws LIMSRuntimeException {
+		try {
+			Localization localization = (Localization) HibernateUtil.getSession().get(Localization.class, id);
+			closeSession();
+			return localization;
+		} catch (HibernateException e) {
+			handleException(e, "getLocalizationById");
+		}
+		return null;
+	}
 
+	@Override
+	public void updateData(Localization localization) throws LIMSRuntimeException {
+		Localization oldData = readLocalization(localization.getId());
 
-        try {
-            HibernateUtil.getSession().merge(localization);
-            HibernateUtil.getSession().flush();
-            HibernateUtil.getSession().clear();
-            HibernateUtil.getSession().evict(localization);
-            HibernateUtil.getSession().refresh(localization);
-        } catch (HibernateException e) {
-            handleException( e, "updateData" );
-        }
-    }
+		try {
+			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+			auditDAO.saveHistory(localization, oldData, localization.getSysUserId(),
+					IActionConstants.AUDIT_TRAIL_UPDATE, "LOCALIZATION");
+		} catch (Exception e) {
+			handleException(e, "Error in Localization AuditTrail updateData()");
+		}
 
-    @Override
-    public void insert(Localization localization) throws LIMSRuntimeException {
-        try {
-            String id = (String) HibernateUtil.getSession().save(localization);
-            localization.setId(id);
+		try {
+			HibernateUtil.getSession().merge(localization);
+			HibernateUtil.getSession().flush();
+			HibernateUtil.getSession().clear();
+			HibernateUtil.getSession().evict(localization);
+			HibernateUtil.getSession().refresh(localization);
+		} catch (HibernateException e) {
+			handleException(e, "updateData");
+		}
+	}
 
-            new AuditTrailDAOImpl().saveNewHistory(localization, localization.getSysUserId(), "LOCALIZATION");
+	@Override
+	public String insert(Localization localization) throws LIMSRuntimeException {
+		try {
+			String id = (String) HibernateUtil.getSession().save(localization);
+			localization.setId(id);
 
-            HibernateUtil.getSession().flush();
-            HibernateUtil.getSession().clear();
-        } catch (Exception e) {
-            handleException(e, "insert");
-        }
-    }
+			new AuditTrailDAOImpl().saveNewHistory(localization, localization.getSysUserId(), "LOCALIZATION");
 
+			HibernateUtil.getSession().flush();
+			HibernateUtil.getSession().clear();
+			return id;
+		} catch (Exception e) {
+			handleException(e, "insert");
+		}
+		return null;
+	}
 
-    public Localization readLocalization(String idString) {
-        try {
-            Localization localization = (Localization) HibernateUtil.getSession().get(Localization.class,  idString);
-            HibernateUtil.getSession().flush();
-            HibernateUtil.getSession().clear();
-            return localization;
-        } catch (Exception e) {
-            handleException( e, "readLocalization" );
-        }
+	public Localization readLocalization(String idString) {
+		try {
+			Localization localization = (Localization) HibernateUtil.getSession().get(Localization.class, idString);
+			HibernateUtil.getSession().flush();
+			HibernateUtil.getSession().clear();
+			return localization;
+		} catch (Exception e) {
+			handleException(e, "readLocalization");
+		}
 
-        return null;
-    }
+		return null;
+	}
 
 }

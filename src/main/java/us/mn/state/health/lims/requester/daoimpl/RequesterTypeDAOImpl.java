@@ -27,25 +27,33 @@ import us.mn.state.health.lims.requester.valueholder.RequesterType;
 
 /*
  */
-public class RequesterTypeDAOImpl extends BaseDAOImpl implements RequesterTypeDAO {
+public class RequesterTypeDAOImpl extends BaseDAOImpl<RequesterType> implements RequesterTypeDAO {
+
+	public RequesterTypeDAOImpl() {
+		super(RequesterType.class);
+	}
 
 	@Override
 	public RequesterType getRequesterTypeByName(String typeName) throws LIMSRuntimeException {
 		String sql = "from RequesterType rt where rt.requesterType = :typeName";
 
-		try{
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("typeName", typeName);
 			RequesterType type = (RequesterType) query.uniqueResult();
-			closeSession();
+			HibernateUtil.getSession().flush();
+			HibernateUtil.getSession().close();
 			return type;
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getRequesterTypeByName");
 		}
-
 
 		return null;
 	}
 
+	private void handleException(HibernateException e, String string) {
+		// TODO Auto-generated method stub
+		e.printStackTrace();
+	}
 
 }

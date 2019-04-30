@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
 *
 */
@@ -29,18 +29,22 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.qaevent.dao.QaObservationDAO;
 import us.mn.state.health.lims.qaevent.valueholder.QaObservation;
 
-public class QaObservationDAOImpl extends BaseDAOImpl implements QaObservationDAO {
+public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation> implements QaObservationDAO {
+
+	public QaObservationDAOImpl() {
+		super(QaObservation.class);
+	}
 
 	@Override
 	public void insertData(QaObservation qaObservation) throws LIMSRuntimeException {
 		try {
-			
+
 			String id = (String) HibernateUtil.getSession().save(qaObservation);
 			qaObservation.setId(id);
-			
+
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			auditDAO.saveNewHistory(qaObservation,qaObservation.getSysUserId(),"QA_OBSERVATION");
-			
+			auditDAO.saveNewHistory(qaObservation, qaObservation.getSysUserId(), "QA_OBSERVATION");
+
 			closeSession();
 		} catch (HibernateException e) {
 			handleException(e, "insertData");
@@ -53,12 +57,13 @@ public class QaObservationDAOImpl extends BaseDAOImpl implements QaObservationDA
 
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			auditDAO.saveHistory(qaObservation,oldData,qaObservation.getSysUserId(),IActionConstants.AUDIT_TRAIL_UPDATE,"QA_OBSERVATION");
-		}  catch (HibernateException e) {
-			LogEvent.logError("QaEventDAOImpl","AuditTrail updateData()",e.toString());
+			auditDAO.saveHistory(qaObservation, oldData, qaObservation.getSysUserId(),
+					IActionConstants.AUDIT_TRAIL_UPDATE, "QA_OBSERVATION");
+		} catch (HibernateException e) {
+			LogEvent.logError("QaEventDAOImpl", "AuditTrail updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in QaObservation AuditTrail updateData()", e);
-		}  
-					
+		}
+
 		try {
 			HibernateUtil.getSession().merge(qaObservation);
 			HibernateUtil.getSession().flush();
@@ -74,13 +79,13 @@ public class QaObservationDAOImpl extends BaseDAOImpl implements QaObservationDA
 	public QaObservation getQaObservationByTypeAndObserved(String typeName, String observedType, String observedId)
 			throws LIMSRuntimeException {
 		String sql = "FROM QaObservation o where o.observationType.name = :observationName and o.observedType = :observedType and o.observedId = :observedId ";
-		
+
 		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("observationName", typeName);
 			query.setString("observedType", observedType);
-			query.setInteger("observedId", Integer.parseInt(observedId) );
-			QaObservation observation = (QaObservation)query.uniqueResult();
+			query.setInteger("observedId", Integer.parseInt(observedId));
+			QaObservation observation = (QaObservation) query.uniqueResult();
 			closeSession();
 			return observation;
 		} catch (HibernateException e) {
@@ -92,7 +97,7 @@ public class QaObservationDAOImpl extends BaseDAOImpl implements QaObservationDA
 	public QaObservation readQaObservation(String idString) {
 		QaObservation qaObservation = null;
 		try {
-			qaObservation = (QaObservation) HibernateUtil.getSession().get(QaObservation.class,	idString);
+			qaObservation = (QaObservation) HibernateUtil.getSession().get(QaObservation.class, idString);
 			closeSession();
 		} catch (Exception e) {
 			handleException(e, "readQaObservation");

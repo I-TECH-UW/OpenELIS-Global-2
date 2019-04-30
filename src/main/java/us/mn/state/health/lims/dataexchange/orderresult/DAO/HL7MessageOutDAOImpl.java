@@ -1,6 +1,7 @@
 package us.mn.state.health.lims.dataexchange.orderresult.DAO;
 
 import java.math.BigInteger;
+import java.util.Optional;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -10,8 +11,12 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.dataexchange.orderresult.valueholder.HL7MessageOut;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
-public class HL7MessageOutDAOImpl extends BaseDAOImpl {
-	
+public class HL7MessageOutDAOImpl extends BaseDAOImpl<HL7MessageOut> implements Hl7MessageOutDAO {
+
+	public HL7MessageOutDAOImpl() {
+		super(HL7MessageOut.class);
+	}
+
 	public int getNextIdNoIncrement() {
 		try {
 			String sql = "select is_called from clinlims.hl7_message_out_seq";
@@ -20,7 +25,7 @@ public class HL7MessageOutDAOImpl extends BaseDAOImpl {
 			if (!isCalled) {// first time called
 				return 1;
 			}
-			
+
 			sql = "select last_value from clinlims.hl7_message_out_seq";
 			query = HibernateUtil.getSession().createSQLQuery(sql);
 			BigInteger id = (BigInteger) query.uniqueResult();
@@ -31,7 +36,7 @@ public class HL7MessageOutDAOImpl extends BaseDAOImpl {
 		}
 		return 0;
 	}
-	
+
 	public int getNextIdIncrement() {
 		try {
 			String sql = "select nextval('clinlims.hl7_message_out_seq')";
@@ -44,38 +49,41 @@ public class HL7MessageOutDAOImpl extends BaseDAOImpl {
 		}
 		return 0;
 	}
-	
+
 	public void insertData(HL7MessageOut messageOut) throws LIMSRuntimeException {
-		try{
-			String id = (String)HibernateUtil.getSession().save(messageOut);
+		try {
+			String id = (String) HibernateUtil.getSession().save(messageOut);
 			messageOut.setId(id);
-			//new AuditTrailDAOImpl().saveNewHistory(messageOut, messageOut.getSysUserId(), "HL7_MESSAGE_OUT");
+			// new AuditTrailDAOImpl().saveNewHistory(messageOut, messageOut.getSysUserId(),
+			// "HL7_MESSAGE_OUT");
 			closeSession();
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "insertData");
 		}
 	}
-	
+
 	public HL7MessageOut getByData(String data) throws LIMSRuntimeException {
-		try{
+		try {
 			String sql = "from HL7MessageOut message where data = :data";
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("data", data);
 			HL7MessageOut message = (HL7MessageOut) query.uniqueResult();
 			closeSession();
 			return message;
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getByData");
 		}
 		return null;
 	}
 
-	public void update(HL7MessageOut hl7Message) throws LIMSRuntimeException {
-		try{
+	@Override
+	public Optional<HL7MessageOut> update(HL7MessageOut hl7Message) throws LIMSRuntimeException {
+		try {
 			HibernateUtil.getSession().merge(hl7Message);
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "update");
 		}
+		return Optional.ofNullable(hl7Message);
 	}
 
 }

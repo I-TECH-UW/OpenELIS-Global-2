@@ -27,7 +27,11 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.image.dao.ImageDAO;
 import us.mn.state.health.lims.image.valueholder.Image;
 
-public class ImageDAOImpl extends BaseDAOImpl implements ImageDAO {
+public class ImageDAOImpl extends BaseDAOImpl<Image> implements ImageDAO {
+
+	public ImageDAOImpl() {
+		super(Image.class);
+	}
 
 	@Override
 	public String saveImage(Image image) throws LIMSRuntimeException {

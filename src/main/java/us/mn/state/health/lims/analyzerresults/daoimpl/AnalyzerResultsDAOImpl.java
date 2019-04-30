@@ -33,9 +33,13 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
-public class AnalyzerResultsDAOImpl extends BaseDAOImpl implements AnalyzerResultsDAO {
+public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> implements AnalyzerResultsDAO {
 
+	public AnalyzerResultsDAOImpl() {
+		super(AnalyzerResults.class);
+	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<AnalyzerResults> getResultsbyAnalyzer(String analyzerId) throws LIMSRuntimeException {
 
@@ -60,39 +64,41 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl implements AnalyzerResul
 
 	}
 
+	@Override
 	public void insertAnalyzerResults(List<AnalyzerResults> results, String sysUserId) throws LIMSRuntimeException {
-		//most of this should be moved out of this method, these are business rules, not save ops
+		// most of this should be moved out of this method, these are business rules,
+		// not save ops
 		try {
 			for (AnalyzerResults result : results) {
 				boolean duplicateByAccessionAndTestOnly = false;
 				List<AnalyzerResults> previousResults = getDuplicateResultByAccessionAndTest(result);
 				AnalyzerResults previousResult = null;
 
-				//This next block may seem more complicated then it need be but it covers the case where there may be a third duplicate
+				// This next block may seem more complicated then it need be but it covers the
+				// case where there may be a third duplicate
 				// and it covers rereading the same file
-				if( previousResults != null){
+				if (previousResults != null) {
 					duplicateByAccessionAndTestOnly = true;
-					for( AnalyzerResults foundResult : previousResults ){
+					for (AnalyzerResults foundResult : previousResults) {
 						previousResult = foundResult;
-						if( foundResult.getCompleteDate().equals(result.getCompleteDate())){
+						if (foundResult.getCompleteDate().equals(result.getCompleteDate())) {
 							duplicateByAccessionAndTestOnly = false;
 							break;
 						}
 					}
 				}
 
-
-				if( duplicateByAccessionAndTestOnly){
+				if (duplicateByAccessionAndTestOnly) {
 					result.setDuplicateAnalyzerResultId(previousResult.getId());
 					result.setReadOnly(true);
 				}
 
-				if ( previousResults == null || duplicateByAccessionAndTestOnly) {
+				if (previousResults == null || duplicateByAccessionAndTestOnly) {
 
 					String id = (String) HibernateUtil.getSession().save(result);
 					result.setId(id);
 
-					if(duplicateByAccessionAndTestOnly){
+					if (duplicateByAccessionAndTestOnly) {
 						previousResult.setDuplicateAnalyzerResultId(id);
 						previousResult.setSysUserId(sysUserId);
 					}
@@ -100,7 +106,7 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl implements AnalyzerResul
 					AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 					auditDAO.saveNewHistory(result, sysUserId, "analyzer_results");
 
-					if( duplicateByAccessionAndTestOnly){
+					if (duplicateByAccessionAndTestOnly) {
 						updateData(previousResult);
 					}
 				}
@@ -119,11 +125,10 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl implements AnalyzerResul
 	private List<AnalyzerResults> getDuplicateResultByAccessionAndTest(AnalyzerResults result) {
 		try {
 
-			List<AnalyzerResults> list = new ArrayList<AnalyzerResults>();
+			List<AnalyzerResults> list = new ArrayList<>();
 
-			String sql = "from AnalyzerResults a where a.analyzerId = :analyzerId and " +
-					                                  "a.accessionNumber = :assessionNumber and " +
-					                                  "a.testName = :testName";
+			String sql = "from AnalyzerResults a where a.analyzerId = :analyzerId and "
+					+ "a.accessionNumber = :assessionNumber and " + "a.testName = :testName";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("analyzerId", Integer.parseInt(result.getAnalyzerId()));
 			query.setString("assessionNumber", result.getAccessionNumber());
@@ -133,23 +138,24 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl implements AnalyzerResul
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 
-			return list.size() > 0 ?  list : null;
+			return list.size() > 0 ? list : null;
 
 		} catch (Exception e) {
-			LogEvent.logError("AnalyzerResultsDAOImpl","duplicateAnalyzerResultsExists()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in duplicateAnalyzerResultsExists()", e);
+			LogEvent.logError("AnalyzerResultsDAOImpl", "duplicateAnalyzerResultsExists()", e.toString());
+			throw new LIMSRuntimeException("Error in duplicateAnalyzerResultsExists()", e);
 		}
 	}
 
+	@Override
 	public void updateData(AnalyzerResults results) throws LIMSRuntimeException {
 
-		AnalyzerResults oldData = (AnalyzerResults) readAnalyzerResults(results.getId());
+		AnalyzerResults oldData = readAnalyzerResults(results.getId());
 		AnalyzerResults newData = results;
 
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			auditDAO.saveHistory(newData, oldData, results.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE, "ANALYZER_RESULTS");
+			auditDAO.saveHistory(newData, oldData, results.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
+					"ANALYZER_RESULTS");
 
 			HibernateUtil.getSession().merge(results);
 			HibernateUtil.getSession().flush();
@@ -157,28 +163,31 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl implements AnalyzerResul
 			HibernateUtil.getSession().evict(results);
 			HibernateUtil.getSession().refresh(results);
 		} catch (Exception e) {
-			LogEvent.logError("AnalyzerResultsImpl","updateData()",e.toString());
+			LogEvent.logError("AnalyzerResultsImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in AnalyzerResults updateData()", e);
 		}
 	}
 
-	public AnalyzerResults readAnalyzerResults(String idString)throws LIMSRuntimeException {
+	@Override
+	public AnalyzerResults readAnalyzerResults(String idString) throws LIMSRuntimeException {
 		AnalyzerResults data = null;
 		try {
 			data = (AnalyzerResults) HibernateUtil.getSession().get(AnalyzerResults.class, idString);
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			LogEvent.logError("AnalyzerResultsDAOImpl","readAnalyzerResults()",e.toString());
+			LogEvent.logError("AnalyzerResultsDAOImpl", "readAnalyzerResults()", e.toString());
 			throw new LIMSRuntimeException("Error in AnalyzerResults readAnalyzerResults()", e);
 		}
 		return data;
 	}
 
+	@Override
 	public void getData(AnalyzerResults analyzerResults) throws LIMSRuntimeException {
 
 		try {
-			AnalyzerResults analyzerResultsClone = (AnalyzerResults)HibernateUtil.getSession().get(AnalyzerResults.class, analyzerResults.getId());
+			AnalyzerResults analyzerResultsClone = (AnalyzerResults) HibernateUtil.getSession()
+					.get(AnalyzerResults.class, analyzerResults.getId());
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			if (analyzerResultsClone != null) {
@@ -187,14 +196,15 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl implements AnalyzerResul
 				analyzerResults.setId(null);
 			}
 		} catch (Exception e) {
-			LogEvent.logError("AnalyzerResultsDAOImpl","getData()",e.toString());
+			LogEvent.logError("AnalyzerResultsDAOImpl", "getData()", e.toString());
 			throw new LIMSRuntimeException("Error in AnalyzerResults getData()", e);
 		}
 	}
 
-	public void delete(List<AnalyzerResults> analyzerResults ) throws LIMSRuntimeException {
-		try{
-			for( AnalyzerResults result : analyzerResults ){
+	@Override
+	public void delete(List<AnalyzerResults> analyzerResults) throws LIMSRuntimeException {
+		try {
+			for (AnalyzerResults result : analyzerResults) {
 				result = readAnalyzerResults(result.getId());
 
 				HibernateUtil.getSession().delete(result);
@@ -202,8 +212,8 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl implements AnalyzerResul
 				HibernateUtil.getSession().clear();
 
 			}
-		}catch( HibernateException se){
-			LogEvent.logError("AnalyzerResultsDAOImpl","delete()",se.toString());
+		} catch (HibernateException se) {
+			LogEvent.logError("AnalyzerResultsDAOImpl", "delete()", se.toString());
 			throw new LIMSRuntimeException("Error in AnalyzerResults delete()", se);
 		}
 

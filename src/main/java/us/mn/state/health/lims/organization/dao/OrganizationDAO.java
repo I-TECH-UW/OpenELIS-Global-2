@@ -25,34 +25,30 @@ import us.mn.state.health.lims.organization.valueholder.Organization;
 /**
  * @author diane benz
  *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates. To enable and disable the creation of type
- * comments go to Window>Preferences>Java>Code Generation.
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
-public interface OrganizationDAO extends BaseDAO {
+public interface OrganizationDAO extends BaseDAO<Organization> {
 
-	public boolean insertData(Organization organization)
-			throws LIMSRuntimeException;
+	public boolean insertData(Organization organization) throws LIMSRuntimeException;
 
 	public void deleteData(List organizations) throws LIMSRuntimeException;
 
 	public List getAllOrganizations() throws LIMSRuntimeException;
 
-	public List getPageOfOrganizations(int startingRecNo)
-			throws LIMSRuntimeException;
+	public List getPageOfOrganizations(int startingRecNo) throws LIMSRuntimeException;
 
 	public void getData(Organization organization) throws LIMSRuntimeException;
 
-	public void updateData(Organization organization)
-			throws LIMSRuntimeException;
+	public void updateData(Organization organization) throws LIMSRuntimeException;
 
 	public List getOrganizations(String filter) throws LIMSRuntimeException;
 
-	public List getNextOrganizationRecord(String id)
-			throws LIMSRuntimeException;
+	public List getNextOrganizationRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousOrganizationRecord(String id)
-			throws LIMSRuntimeException;
+	public List getPreviousOrganizationRecord(String id) throws LIMSRuntimeException;
 
 	public Organization getOrganizationByName(Organization organization, boolean ignoreCase)
 			throws LIMSRuntimeException;
@@ -60,29 +56,33 @@ public interface OrganizationDAO extends BaseDAO {
 	public Integer getTotalOrganizationCount() throws LIMSRuntimeException;
 
 	public Organization getOrganizationByLocalAbbreviation(Organization organization, boolean ignoreCase)
-	throws LIMSRuntimeException;
+			throws LIMSRuntimeException;
 
-	public List getPagesOfSearchedOrganizations (int startRecNo, String searchString)
-                          throws LIMSRuntimeException;
+	public List getPagesOfSearchedOrganizations(int startRecNo, String searchString) throws LIMSRuntimeException;
+
 	public Integer getTotalSearchedOrganizationCount(String searchString) throws LIMSRuntimeException;
 
 	/**
 	 * Find all organizations which are associated with a particular project.
-	 * @param projectName  project.projectName to match
+	 * 
+	 * @param projectName project.projectName to match
 	 * @return a Set of organizations.
 	 */
 	public Set<Organization> getOrganizationsByProjectName(String projectName);
 
 	/**
-	 * Find all organzations which are of the given organization type (matching the types name).
+	 * Find all organzations which are of the given organization type (matching the
+	 * types name).
 	 */
 	public List<Organization> getOrganizationsByTypeName(String orderByProperty, String... typeName);
 
-	public List<Organization> getOrganizationsByTypeNameAndLeadingChars(String partialName, String typeName) throws LIMSRuntimeException;
+	public List<Organization> getOrganizationsByTypeNameAndLeadingChars(String partialName, String typeName)
+			throws LIMSRuntimeException;
 
 	public Organization getOrganizationById(String organizationId) throws LIMSRuntimeException;
-    public void insertOrUpdateData( Organization organization ) throws LIMSRuntimeException;
-	public List<Organization> getOrganizationsByParentId( String parentId) throws LIMSRuntimeException;
 
+	public void insertOrUpdateData(Organization organization) throws LIMSRuntimeException;
+
+	public List<Organization> getOrganizationsByParentId(String parentId) throws LIMSRuntimeException;
 
 }

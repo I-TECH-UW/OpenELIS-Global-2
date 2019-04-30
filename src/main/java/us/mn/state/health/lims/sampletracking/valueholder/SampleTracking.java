@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package us.mn.state.health.lims.sampletracking.valueholder;
@@ -20,124 +20,125 @@ import java.io.Serializable;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
 /**
- * @author AIS view sampletracking is mapped to this valueholder
- * bug 1920 - standards
+ * @author AIS view sampletracking is mapped to this valueholder bug 1920 -
+ *         standards
  *
  */
+//TODO delete unused class
 public class SampleTracking extends BaseObject implements Serializable {
-	
-	private SampleTracking id;
-	
+
+	private SampleTracking sampleTrackingId;
+
 	private String accNum;
-	
+
 	private String patientId;
-	
+
 	private String cliRef;
-	
+
 	private String patientLastName;
-	
+
 	private String patientFirstName;
-	
-	//bugzilla 2069
+
+	// bugzilla 2069
 	private String organizationLocalAbbreviation;
-	
+
 	private String orgName;
-	
+
 	private String recdDate;
-	
-	private String tosId;	
-	
+
+	private String tosId;
+
 	private String tosDesc;
-	
+
 	private String sosId;
-	
+
 	private String sosDesc;
-	
+
 	private String collDate;
-	
+
 	private String dateofBirth;
 
-	//bugzilla 2455
+	// bugzilla 2455
 	private String specOrIsolate;
-		
+
 	public SampleTracking() {
 		super();
 	}
 
-	//bugzilla 2455
+	// bugzilla 2455
 	public String getSpecOrIsolate() {
 		return specOrIsolate;
 	}
+
 	public void setSpecOrIsolate(String specOrIsolate) {
 		this.specOrIsolate = specOrIsolate;
 	}
-	
-	
-	public void setId(SampleTracking id) {
-		this.id = id;
+
+	public void setSampleTrackingId(SampleTracking sampleTrackingId) {
+		this.sampleTrackingId = sampleTrackingId;
 	}
-	
-	public SampleTracking getId() {
-		return this.id;
-	}	
-	
+
+	public SampleTracking getSampleTrackingId() {
+		return sampleTrackingId;
+	}
+
 	public String getAccNum() {
-		return this.accNum;
+		return accNum;
 	}
 
 	public String getPatientId() {
-		return this.patientId;
+		return patientId;
 	}
 
 	public String getCliRef() {
-		return this.cliRef;
+		return cliRef;
 	}
 
 	public String getPatientLastName() {
-		return this.patientLastName;
+		return patientLastName;
 	}
 
 	public String getPatientFirstName() {
-		return this.patientFirstName;
+		return patientFirstName;
 	}
 
 	public String getOrgName() {
-		return this.orgName;
+		return orgName;
 	}
-	
-	//bugzilla 2069
+
+	// bugzilla 2069
 	public String getOrganizationLocalAbbreviation() {
-		return this.organizationLocalAbbreviation;
+		return organizationLocalAbbreviation;
 	}
 
 	public String getRecdDate() {
-		return this.recdDate;
+		return recdDate;
 	}
-	
+
 	public String getTosId() {
-		return this.tosId;
+		return tosId;
 	}
 
 	public String getTosDesc() {
-		return this.tosDesc;
+		return tosDesc;
 	}
-	
+
 	public String getSosId() {
-		return this.sosId;
+		return sosId;
 	}
 
 	public String getSosDesc() {
-		return this.sosDesc;
+		return sosDesc;
 	}
 
 	public String getCollDate() {
-		return this.collDate;
-	}	
-	
+		return collDate;
+	}
+
 	public String getDateofBirth() {
-		return this.dateofBirth;
-	}	
-	
+		return dateofBirth;
+	}
+
 	public void setAccNum(String accNum) {
 		this.accNum = accNum;
 	}
@@ -161,8 +162,8 @@ public class SampleTracking extends BaseObject implements Serializable {
 	public void setOrgName(String orgName) {
 		this.orgName = orgName;
 	}
-	
-	//bugzilla 2069
+
+	// bugzilla 2069
 	public void setOrganizationLocalAbbreviation(String organizationLocalAbbreviation) {
 		this.organizationLocalAbbreviation = organizationLocalAbbreviation;
 	}
@@ -170,7 +171,7 @@ public class SampleTracking extends BaseObject implements Serializable {
 	public void setRecdDate(String recdDate) {
 		this.recdDate = recdDate;
 	}
-	
+
 	public void setTosId(String tosId) {
 		this.tosId = tosId;
 	}
@@ -178,7 +179,7 @@ public class SampleTracking extends BaseObject implements Serializable {
 	public void setTosDesc(String tosDesc) {
 		this.tosDesc = tosDesc;
 	}
-	
+
 	public void setSosId(String sosId) {
 		this.sosId = sosId;
 	}
@@ -189,8 +190,8 @@ public class SampleTracking extends BaseObject implements Serializable {
 
 	public void setCollDate(String collDate) {
 		this.collDate = collDate;
-	}	
-	
+	}
+
 	public void setDateofBirth(String dateofBirth) {
 		this.dateofBirth = dateofBirth;
 	}

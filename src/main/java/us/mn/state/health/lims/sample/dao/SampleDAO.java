@@ -22,14 +22,14 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 
-public interface SampleDAO extends BaseDAO {
+public interface SampleDAO extends BaseDAO<Sample> {
 
 	public boolean insertData(Sample sample) throws LIMSRuntimeException;
 
 	public void deleteData(List samples) throws LIMSRuntimeException;
 
 	public List getPageOfSamples(int startingRecNo) throws LIMSRuntimeException;
-	   
+
 	public void getData(Sample sample) throws LIMSRuntimeException;
 
 	public void updateData(Sample sample) throws LIMSRuntimeException;
@@ -46,32 +46,38 @@ public interface SampleDAO extends BaseDAO {
 
 	public List getSamplesByStatusAndDomain(List statuses, String domain) throws LIMSRuntimeException;
 
-	public List<Sample> getSamplesWithPendingQaEvents(Sample sample, boolean filterByCategory, String qaEventCategoryId, boolean filterByDomain) throws LIMSRuntimeException;
+	public List<Sample> getSamplesWithPendingQaEvents(Sample sample, boolean filterByCategory, String qaEventCategoryId,
+			boolean filterByDomain) throws LIMSRuntimeException;
 
 	public List<Sample> getSamplesReceivedOn(String recievedDate) throws LIMSRuntimeException;
-	
+
 	public Sample getSampleByReferringId(String referringId) throws LIMSRuntimeException;
 
 	/**
 	 * Find a range of samples INCLUSIVE of the given dates.
 	 */
-    public List<Sample> getSamplesReceivedInDateRange(String receivedDateStart, String receivedDateEnd) throws LIMSRuntimeException;
+	public List<Sample> getSamplesReceivedInDateRange(String receivedDateStart, String receivedDateEnd)
+			throws LIMSRuntimeException;
 
 	public List<Sample> getSamplesCollectedOn(String collectionDate) throws LIMSRuntimeException;
 
-	public List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(String projectId,  List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession) throws LIMSRuntimeException;
+	public List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(String projectId,
+			List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession) throws LIMSRuntimeException;
 
-	public List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(List<Integer> inclusiveProjectIdList,  List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession) throws LIMSRuntimeException;
+	public List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(List<Integer> inclusiveProjectIdList,
+			List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession) throws LIMSRuntimeException;
 
-	public List<Sample> getSamplesByAccessionRange(String minAccession, String maxAccession) throws LIMSRuntimeException;
+	public List<Sample> getSamplesByAccessionRange(String minAccession, String maxAccession)
+			throws LIMSRuntimeException;
 
 	public String getLargestAccessionNumber();
 
-    public String getLargestAccessionNumberWithPrefix(String prefix);
+	public String getLargestAccessionNumberWithPrefix(String prefix);
 
-    public String  getLargestAccessionNumberMatchingPattern(String startingWith, int size) throws LIMSRuntimeException;
+	public String getLargestAccessionNumberMatchingPattern(String startingWith, int size) throws LIMSRuntimeException;
 
 	public List<Sample> getSamplesWithPendingQaEventsByService(String serviceId) throws LIMSRuntimeException;
 
-    public List<Sample> getConfirmationSamplesReceivedInDateRange(Date receivedDateStart, Date receivedDateEnd) throws LIMSRuntimeException;
+	public List<Sample> getConfirmationSamplesReceivedInDateRange(Date receivedDateStart, Date receivedDateEnd)
+			throws LIMSRuntimeException;
 }

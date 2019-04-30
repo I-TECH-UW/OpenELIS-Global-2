@@ -17,6 +17,7 @@
 package us.mn.state.health.lims.address.daoimpl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -30,7 +31,11 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
-public class PersonAddressDAOImpl extends BaseDAOImpl implements PersonAddressDAO {
+public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements PersonAddressDAO {
+
+	public PersonAddressDAOImpl() {
+		super(PersonAddress.class);
+	}
 
 	private static AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 
@@ -39,13 +44,13 @@ public class PersonAddressDAOImpl extends BaseDAOImpl implements PersonAddressDA
 	public List<PersonAddress> getAddressPartsByPersonId(String personId) throws LIMSRuntimeException {
 		String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId";
 
-		try{
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("personId", Integer.parseInt(personId));
 			List<PersonAddress> addressPartList = query.list();
 			closeSession();
 			return addressPartList;
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getAddressPartsByPersonId");
 		}
 
@@ -53,23 +58,26 @@ public class PersonAddressDAOImpl extends BaseDAOImpl implements PersonAddressDA
 	}
 
 	@Override
-	public void insert(PersonAddress personAddress) throws LIMSRuntimeException {
-	try {
-			HibernateUtil.getSession().save(personAddress);
-			auditDAO.saveNewHistory(personAddress,personAddress.getSysUserId(),"person_address");
+	public String insert(PersonAddress personAddress) throws LIMSRuntimeException {
+		try {
+			String id = (String) HibernateUtil.getSession().save(personAddress);
+			auditDAO.saveNewHistory(personAddress, personAddress.getSysUserId(), "person_address");
 			closeSession();
+			return id;
 		} catch (HibernateException e) {
 			handleException(e, "insert");
 		}
+		return null;
 	}
 
 	@Override
-	public void update(PersonAddress personAddress) throws LIMSRuntimeException {
+	public Optional<PersonAddress> update(PersonAddress personAddress) throws LIMSRuntimeException {
 
 		PersonAddress oldData = readPersonAddress(personAddress);
 
 		try {
-			auditDAO.saveHistory(personAddress, oldData, personAddress.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE, "person_address");
+			auditDAO.saveHistory(personAddress, oldData, personAddress.getSysUserId(),
+					IActionConstants.AUDIT_TRAIL_UPDATE, "person_address");
 
 			HibernateUtil.getSession().merge(personAddress);
 			closeSession();
@@ -78,16 +86,18 @@ public class PersonAddressDAOImpl extends BaseDAOImpl implements PersonAddressDA
 		} catch (HibernateException e) {
 			handleException(e, "update");
 		}
+		return Optional.ofNullable(personAddress);
 	}
 
 	public PersonAddress readPersonAddress(PersonAddress personAddress) {
 		try {
-			PersonAddress oldPersonAddress = (PersonAddress) HibernateUtil.getSession().get(PersonAddress.class, personAddress.getCompoundId());
+			PersonAddress oldPersonAddress = (PersonAddress) HibernateUtil.getSession().get(PersonAddress.class,
+					personAddress.getCompoundId());
 			closeSession();
 
 			return oldPersonAddress;
 		} catch (HibernateException e) {
-			handleException(e,"readPersonAddress");
+			handleException(e, "readPersonAddress");
 		}
 
 		return null;
@@ -97,14 +107,14 @@ public class PersonAddressDAOImpl extends BaseDAOImpl implements PersonAddressDA
 	public PersonAddress getByPersonIdAndPartId(String personId, String addressPartId) throws LIMSRuntimeException {
 		String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId and pa.compoundId.addressPartId = :partId";
 
-		try{
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("personId", Integer.parseInt(personId));
 			query.setInteger("partId", Integer.parseInt(addressPartId));
-			PersonAddress addressPart = (PersonAddress)query.uniqueResult();
+			PersonAddress addressPart = (PersonAddress) query.uniqueResult();
 			closeSession();
 			return addressPart;
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getByPersonIdAndPartId");
 		}
 

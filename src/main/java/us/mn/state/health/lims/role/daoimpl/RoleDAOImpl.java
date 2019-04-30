@@ -36,15 +36,19 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.role.dao.RoleDAO;
 import us.mn.state.health.lims.role.valueholder.Role;
 
-public class RoleDAOImpl extends BaseDAOImpl implements RoleDAO {
+public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 
+	public RoleDAOImpl() {
+		super(Role.class);
+	}
+
+	@Override
 	public void deleteData(List<Role> roles) throws LIMSRuntimeException {
-		//add to audit trail
+		// add to audit trail
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 
-			for( Role data: roles){
-
+			for (Role data : roles) {
 
 				Role oldData = readRole(data.getId());
 				Role newData = new Role();
@@ -52,48 +56,50 @@ public class RoleDAOImpl extends BaseDAOImpl implements RoleDAO {
 				String sysUserId = data.getSysUserId();
 				String event = IActionConstants.AUDIT_TRAIL_DELETE;
 				String tableName = "SYSTEM_ROLE";
-				auditDAO.saveHistory(newData,oldData,sysUserId,event,tableName);
+				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 			}
-		}  catch (Exception e) {
-			LogEvent.logError("RolesDAOImpl","AuditTrail deleteData()",e.toString());
+		} catch (Exception e) {
+			LogEvent.logError("RolesDAOImpl", "AuditTrail deleteData()", e.toString());
 			throw new LIMSRuntimeException("Error in Role AuditTrail deleteData()", e);
 		}
 
 		try {
-			for (Role data: roles) {
-				data = (Role)readRole(data.getId());
+			for (Role data : roles) {
+				data = readRole(data.getId());
 				HibernateUtil.getSession().delete(data);
 				HibernateUtil.getSession().flush();
 				HibernateUtil.getSession().clear();
 			}
 		} catch (Exception e) {
-			LogEvent.logError("RolesDAOImpl","deleteData()",e.toString());
-			throw new LIMSRuntimeException("Error in Role deleteData()",e);
+			LogEvent.logError("RolesDAOImpl", "deleteData()", e.toString());
+			throw new LIMSRuntimeException("Error in Role deleteData()", e);
 		}
 	}
 
+	@Override
 	public boolean insertData(Role role) throws LIMSRuntimeException {
 
 		try {
-			String id = (String)HibernateUtil.getSession().save(role);
+			String id = (String) HibernateUtil.getSession().save(role);
 			role.setId(id);
 
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = role.getSysUserId();
 			String tableName = "SYSTEM_ROLE";
-			auditDAO.saveNewHistory(role,sysUserId,tableName);
+			auditDAO.saveNewHistory(role, sysUserId, tableName);
 
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 
 		} catch (Exception e) {
-			LogEvent.logError("RoleDAOImpl","insertData()",e.toString());
-			throw new LIMSRuntimeException("Error in Role insertData()",e);
+			LogEvent.logError("RoleDAOImpl", "insertData()", e.toString());
+			throw new LIMSRuntimeException("Error in Role insertData()", e);
 		}
 
 		return true;
 	}
 
+	@Override
 	public void updateData(Role role) throws LIMSRuntimeException {
 
 		Role oldData = readRole(role.getId());
@@ -104,9 +110,9 @@ public class RoleDAOImpl extends BaseDAOImpl implements RoleDAO {
 			String sysUserId = role.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "SYSTEM_ROLE";
-			auditDAO.saveHistory(newData,oldData,sysUserId,event,tableName);
-		}  catch (Exception e) {
-			LogEvent.logError("RolesDAOImpl","AuditTrail updateData()",e.toString());
+			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+		} catch (Exception e) {
+			LogEvent.logError("RolesDAOImpl", "AuditTrail updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in Role AuditTrail updateData()", e);
 		}
 
@@ -117,14 +123,15 @@ public class RoleDAOImpl extends BaseDAOImpl implements RoleDAO {
 			HibernateUtil.getSession().evict(role);
 			HibernateUtil.getSession().refresh(role);
 		} catch (Exception e) {
-			LogEvent.logError("RolesDAOImpl","updateData()",e.toString());
-			throw new LIMSRuntimeException("Error in Role updateData()",e);
+			LogEvent.logError("RolesDAOImpl", "updateData()", e.toString());
+			throw new LIMSRuntimeException("Error in Role updateData()", e);
 		}
 	}
 
+	@Override
 	public void getData(Role role) throws LIMSRuntimeException {
 		try {
-			Role tmpRole = (Role)HibernateUtil.getSession().get(Role.class, role.getId());
+			Role tmpRole = (Role) HibernateUtil.getSession().get(Role.class, role.getId());
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			if (tmpRole != null) {
@@ -133,11 +140,12 @@ public class RoleDAOImpl extends BaseDAOImpl implements RoleDAO {
 				role.setId(null);
 			}
 		} catch (Exception e) {
-			LogEvent.logError("RolesDAOImpl","getData()",e.toString());
+			LogEvent.logError("RolesDAOImpl", "getData()", e.toString());
 			throw new LIMSRuntimeException("Error in Role getData()", e);
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Role> getAllRoles() throws LIMSRuntimeException {
 		List<Role> list = null;
@@ -153,6 +161,7 @@ public class RoleDAOImpl extends BaseDAOImpl implements RoleDAO {
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Role> getAllActiveRoles() throws LIMSRuntimeException {
 		List<Role> list = null;
@@ -168,6 +177,7 @@ public class RoleDAOImpl extends BaseDAOImpl implements RoleDAO {
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Role> getPageOfRoles(int startingRecNo) throws LIMSRuntimeException {
 		List<Role> list = null;
@@ -177,14 +187,14 @@ public class RoleDAOImpl extends BaseDAOImpl implements RoleDAO {
 
 			String sql = "from Role r order by r.id";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
-			query.setFirstResult(startingRecNo-1);
-			query.setMaxResults(endingRecNo-1);
+			query.setFirstResult(startingRecNo - 1);
+			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			LogEvent.logError("RolesDAOImpl","getPageOfRoles()",e.toString());
+			LogEvent.logError("RolesDAOImpl", "getPageOfRoles()", e.toString());
 			throw new LIMSRuntimeException("Error in Role getPageOfRoles()", e);
 		}
 
@@ -194,32 +204,34 @@ public class RoleDAOImpl extends BaseDAOImpl implements RoleDAO {
 	public Role readRole(String idString) {
 		Role recoveredRole = null;
 		try {
-			recoveredRole = (Role)HibernateUtil.getSession().get(Role.class, idString);
+			recoveredRole = (Role) HibernateUtil.getSession().get(Role.class, idString);
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			LogEvent.logError("RoleDAOImpl","readRole()",e.toString());
+			LogEvent.logError("RoleDAOImpl", "readRole()", e.toString());
 			throw new LIMSRuntimeException("Error in Role readRole()", e);
 		}
 
 		return recoveredRole;
 	}
 
-
+	@Override
 	@SuppressWarnings("rawtypes")
 	public List getNextRoleRecord(String id) throws LIMSRuntimeException {
 		return getNextRecord(id, "Role", Role.class);
 	}
 
-	@SuppressWarnings( "rawtypes")
+	@Override
+	@SuppressWarnings("rawtypes")
 	public List getPreviousRoleRecord(String id) throws LIMSRuntimeException {
 		return getPreviousRecord(id, "Role", Role.class);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Role> getReferencingRoles(Role role) throws LIMSRuntimeException {
-		if( GenericValidator.isBlankOrNull(role.getId())){
-			return new ArrayList<Role>();
+		if (GenericValidator.isBlankOrNull(role.getId())) {
+			return new ArrayList<>();
 		}
 
 		List<Role> list = null;
@@ -232,13 +244,14 @@ public class RoleDAOImpl extends BaseDAOImpl implements RoleDAO {
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			LogEvent.logError("RolesDAOImpl","getReferencingRoles()",e.toString());
+			LogEvent.logError("RolesDAOImpl", "getReferencingRoles()", e.toString());
 			throw new LIMSRuntimeException("Error in Role getReferencingRoles()", e);
 		}
 
 		return list;
 	}
 
+	@Override
 	public Role getRoleByName(String name) throws LIMSRuntimeException {
 		String sql = "from Role r where trim(r.name) = :name";
 

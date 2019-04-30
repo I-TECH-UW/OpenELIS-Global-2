@@ -43,8 +43,13 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
 /**
  * @author diane benz 11/17/2007 instead of printing StackTrace log error
  */
-public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
+public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestReflexDAO {
 
+	public TestReflexDAOImpl() {
+		super(TestReflex.class);
+	}
+
+	@Override
 	public void deleteData(List testReflexs) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
@@ -52,7 +57,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 			for (int i = 0; i < testReflexs.size(); i++) {
 				TestReflex data = (TestReflex) testReflexs.get(i);
 
-				TestReflex oldData = (TestReflex) readTestReflex(data.getId());
+				TestReflex oldData = readTestReflex(data.getId());
 				TestReflex newData = new TestReflex();
 
 				String sysUserId = data.getSysUserId();
@@ -70,7 +75,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 			for (int i = 0; i < testReflexs.size(); i++) {
 				TestReflex data = (TestReflex) testReflexs.get(i);
 				// bugzilla 2206
-				data = (TestReflex) readTestReflex(data.getId());
+				data = readTestReflex(data.getId());
 				HibernateUtil.getSession().delete(data);
 				HibernateUtil.getSession().flush();
 				HibernateUtil.getSession().clear();
@@ -82,13 +87,16 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 		}
 	}
 
+	@Override
 	public boolean insertData(TestReflex testReflex) throws LIMSRuntimeException {
 		try {
 			// bugzilla 1482 throw Exception if record already exists
 			if (duplicateTestReflexExists(testReflex)) {
-				throw new LIMSDuplicateRecordException("Duplicate record exists for " + TestService.getUserLocalizedTestName( testReflex.getTest() ) + BLANK
-						+ testReflex.getTestAnalyte().getAnalyte().getAnalyteName() + BLANK + testReflex.getTestResult().getValue() + BLANK
-						+ TestService.getUserLocalizedTestName( testReflex.getAddedTest() ));
+				throw new LIMSDuplicateRecordException(
+						"Duplicate record exists for " + TestService.getUserLocalizedTestName(testReflex.getTest())
+								+ BLANK + testReflex.getTestAnalyte().getAnalyte().getAnalyteName() + BLANK
+								+ testReflex.getTestResult().getValue() + BLANK
+								+ TestService.getUserLocalizedTestName(testReflex.getAddedTest()));
 			}
 
 			String id = (String) HibernateUtil.getSession().save(testReflex);
@@ -111,16 +119,16 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 		return true;
 	}
 
+	@Override
 	public void updateData(TestReflex testReflex) throws LIMSRuntimeException {
 		// bugzilla 1482 throw Exception if record already exists
 		try {
 			if (duplicateTestReflexExists(testReflex)) {
 				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for "
-						+ TestService.getUserLocalizedTestName( testReflex.getTest() ) + BLANK
-						+ testReflex.getTestAnalyte().getAnalyte().getAnalyteName() +BLANK
-						+ testReflex.getTestResult().getValue() + BLANK
-						+ TestService.getUserLocalizedTestName( testReflex.getAddedTest() ));
+						"Duplicate record exists for " + TestService.getUserLocalizedTestName(testReflex.getTest())
+								+ BLANK + testReflex.getTestAnalyte().getAnalyte().getAnalyteName() + BLANK
+								+ testReflex.getTestResult().getValue() + BLANK
+								+ TestService.getUserLocalizedTestName(testReflex.getAddedTest()));
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -128,7 +136,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 			throw new LIMSRuntimeException("Error in TestReflex updateData()", e);
 		}
 
-		TestReflex oldData = (TestReflex) readTestReflex(testReflex.getId());
+		TestReflex oldData = readTestReflex(testReflex.getId());
 		TestReflex newData = testReflex;
 
 		// add to audit trail
@@ -157,6 +165,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 		}
 	}
 
+	@Override
 	public void getData(TestReflex testReflex) throws LIMSRuntimeException {
 		try {
 			TestReflex tr = (TestReflex) HibernateUtil.getSession().get(TestReflex.class, testReflex.getId());
@@ -174,6 +183,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 		}
 	}
 
+	@Override
 	public List getAllTestReflexs() throws LIMSRuntimeException {
 		List list = null;
 		try {
@@ -193,6 +203,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 		return list;
 	}
 
+	@Override
 	public List getPageOfTestReflexs(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -227,6 +238,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 	 * (us.mn.state.health.lims.testreflex.valueholder.TestReflex,
 	 * us.mn.state.health.lims.testresult.valueholder.TestResult)
 	 */
+	@Override
 	public List getTestReflexesByTestResult(TestResult testResult) throws LIMSRuntimeException {
 		try {
 			String sql = "from TestReflex t where t.testResult.id = :testResultId";
@@ -254,7 +266,9 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 	 * (us.mn.state.health.lims.testreflex.valueholder.TestReflex,
 	 * us.mn.state.health.lims.testresult.valueholder.TestResult)
 	 */
-	public List getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte) throws LIMSRuntimeException {
+	@Override
+	public List getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte)
+			throws LIMSRuntimeException {
 		try {
 			// bugzilla 1404 testResultId is mapped as testResult.id now
 			String sql = "from TestReflex t where t.testResult.id = :param and t.testAnalyte.id = :param2";
@@ -281,9 +295,10 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 	 * @seeus.mn.state.health.lims.testreflex.dao.TestReflexDAO#
 	 * getTestReflexesByTestResult
 	 * (us.mn.state.health.lims.testreflex.valueholder.TestReflex,
-	 * us.mn.state.health.lims.testresult.valueholder.TestResult) bugzilla 1798
-	 * find out if a test with a parent was reflexed or linked
+	 * us.mn.state.health.lims.testresult.valueholder.TestResult) bugzilla 1798 find
+	 * out if a test with a parent was reflexed or linked
 	 */
+	@Override
 	public boolean isReflexedTest(Analysis analysis) throws LIMSRuntimeException {
 		try {
 			List list = null;
@@ -310,11 +325,12 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
-	public List<TestReflex> getTestReflexsByTestResultAnalyteTest(String testResultId, String analyteId, String testId) throws LIMSRuntimeException {
-		if (!GenericValidator.isBlankOrNull(testResultId) &&
-			!GenericValidator.isBlankOrNull(analyteId) &&
-			!GenericValidator.isBlankOrNull(testId)){
+	public List<TestReflex> getTestReflexsByTestResultAnalyteTest(String testResultId, String analyteId, String testId)
+			throws LIMSRuntimeException {
+		if (!GenericValidator.isBlankOrNull(testResultId) && !GenericValidator.isBlankOrNull(analyteId)
+				&& !GenericValidator.isBlankOrNull(testId)) {
 			try {
 				List<TestReflex> list = null;
 
@@ -331,10 +347,12 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 				return list;
 			} catch (Exception e) {
 				LogEvent.logError("TestReflexDAOImpl", "getTestReflexByTestResultAnalyteTest", e.toString());
-				throw new LIMSRuntimeException("Error in TestReflex getTestReflexByTestResultAnalyteTest(String testResultId, String analyteId, String testId)", e);
+				throw new LIMSRuntimeException(
+						"Error in TestReflex getTestReflexByTestResultAnalyteTest(String testResultId, String analyteId, String testId)",
+						e);
 			}
 		}
-		return new ArrayList<TestReflex>();
+		return new ArrayList<>();
 	}
 
 	public TestReflex readTestReflex(String idString) {
@@ -351,23 +369,27 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 		return tr;
 	}
 
+	@Override
 	public List getNextTestReflexRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "TestReflex", TestReflex.class);
 
 	}
 
+	@Override
 	public List getPreviousTestReflexRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "TestReflex", TestReflex.class);
 	}
 
 	// bugzilla 1411
+	@Override
 	public Integer getTotalTestReflexCount() throws LIMSRuntimeException {
 		return getTotalCount("TestReflex", TestReflex.class);
 	}
 
 	// bugzilla 1427
+	@Override
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
@@ -376,10 +398,11 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 		// bugzilla 1908
 		int rrn = 0;
 		try {
-			//bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
-			//instead get the list in this sortorder and determine the index of record with id = currentId
-    		String sql = "select tr.id from TestReflex tr " +
-					" order by tr.test.testName, tr.testAnalyte.analyte.analyteName";
+			// bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
+			// instead get the list in this sortorder and determine the index of record with
+			// id = currentId
+			String sql = "select tr.id from TestReflex tr "
+					+ " order by tr.test.testName, tr.testAnalyte.analyte.analyteName";
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
@@ -387,7 +410,8 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 			HibernateUtil.getSession().clear();
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1).setMaxResults(2).list();
+			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+					.setMaxResults(2).list();
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -399,6 +423,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 	}
 
 	// bugzilla 1427
+	@Override
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
@@ -407,10 +432,11 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 		// bugzilla 1908
 		int rrn = 0;
 		try {
-			//bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
-			//instead get the list in this sortorder and determine the index of record with id = currentId
-    		String sql = "select tr.id from TestReflex tr " +
-					" order by tr.test.testName desc, tr.testAnalyte.analyte.analyteName desc";
+			// bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
+			// instead get the list in this sortorder and determine the index of record with
+			// id = currentId
+			String sql = "select tr.id from TestReflex tr "
+					+ " order by tr.test.testName desc, tr.testAnalyte.analyte.analyteName desc";
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
@@ -418,11 +444,8 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 			HibernateUtil.getSession().clear();
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious")
-			.setFirstResult(rrn + 1)
-			.setMaxResults(2)
-			.list();
-
+			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+					.setMaxResults(2).list();
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -441,19 +464,20 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 
 			// not case sensitive hemolysis and Hemolysis are considered
 			// duplicates
-			String sql = "from TestReflex t where t.test.localizedTestName = :localizedTestNameId and " +
-			             "trim(lower(t.testAnalyte.analyte.analyteName)) = :analyteName and " +
-			             "t.testResult.id = :resultId and " +
-			             "t.addedTest.localizedTestName = :addedTestNameId or " +
-			             "trim(lower(t.actionScriptlet.scriptletName)) = :scriptletName  ) and " +
-			             " t.id != :testId";
-			Query query = HibernateUtil.getSession().createQuery(
-					sql);
-			query.setInteger( "localizedTestName", Integer.parseInt( testReflex.getTest().getLocalizedTestName().getId() ));
-			query.setString("analyteName", testReflex.getTestAnalyte().getAnalyte().getAnalyteName().toLowerCase().trim());
+			String sql = "from TestReflex t where t.test.localizedTestName = :localizedTestNameId and "
+					+ "trim(lower(t.testAnalyte.analyte.analyteName)) = :analyteName and "
+					+ "t.testResult.id = :resultId and " + "t.addedTest.localizedTestName = :addedTestNameId or "
+					+ "trim(lower(t.actionScriptlet.scriptletName)) = :scriptletName  ) and " + " t.id != :testId";
+			Query query = HibernateUtil.getSession().createQuery(sql);
+			query.setInteger("localizedTestName",
+					Integer.parseInt(testReflex.getTest().getLocalizedTestName().getId()));
+			query.setString("analyteName",
+					testReflex.getTestAnalyte().getAnalyte().getAnalyteName().toLowerCase().trim());
 			query.setInteger("resultId", Integer.parseInt(testReflex.getTestResult().getId()));
-			query.setInteger( "addedTestNameId", testReflex.getAddedTest() == null ? -1 : Integer.parseInt( testReflex.getAddedTest().getLocalizedTestName().getId() ) );
-			query.setString("scriptletName", testReflex.getActionScriptlet() == null ? null : testReflex.getActionScriptlet().getScriptletName().toLowerCase().trim());
+			query.setInteger("addedTestNameId", testReflex.getAddedTest() == null ? -1
+					: Integer.parseInt(testReflex.getAddedTest().getLocalizedTestName().getId()));
+			query.setString("scriptletName", testReflex.getActionScriptlet() == null ? null
+					: testReflex.getActionScriptlet().getScriptletName().toLowerCase().trim());
 
 			String testReflexId = StringUtil.isNullorNill(testReflex.getId()) ? "0" : testReflex.getId();
 
@@ -475,32 +499,33 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<TestReflex> getTestReflexsByTestAndFlag(String testId, String flag) throws LIMSRuntimeException {
-		if( GenericValidator.isBlankOrNull(testId)){
-			return new ArrayList<TestReflex>();
+		if (GenericValidator.isBlankOrNull(testId)) {
+			return new ArrayList<>();
 		}
 
 		List<TestReflex> reflexList = null;
 
-		try{
-		Query query = null;
-		if( GenericValidator.isBlankOrNull(flag)){
-			String sql = "from TestReflex tr where tr.testResult.test.id = :id";
-			query = HibernateUtil.getSession().createQuery(sql);
-			query.setInteger("id", Integer.parseInt(testId));
-		}else{
-			String sql = "from TestReflex tr where tr.testResult.test.id = :id and tr.flags = :flag";
-			query = HibernateUtil.getSession().createQuery(sql);
-			query.setInteger("id", Integer.parseInt(testId));
-			query.setString("flag", flag);
-		}
-		reflexList = query.list();
+		try {
+			Query query = null;
+			if (GenericValidator.isBlankOrNull(flag)) {
+				String sql = "from TestReflex tr where tr.testResult.test.id = :id";
+				query = HibernateUtil.getSession().createQuery(sql);
+				query.setInteger("id", Integer.parseInt(testId));
+			} else {
+				String sql = "from TestReflex tr where tr.testResult.test.id = :id and tr.flags = :flag";
+				query = HibernateUtil.getSession().createQuery(sql);
+				query.setInteger("id", Integer.parseInt(testId));
+				query.setString("flag", flag);
+			}
+			reflexList = query.list();
 
-		HibernateUtil.getSession().flush();
-		HibernateUtil.getSession().clear();
+			HibernateUtil.getSession().flush();
+			HibernateUtil.getSession().clear();
 
-		}catch( Exception e){
+		} catch (Exception e) {
 			handleException(e, "getTestReflexsByTestAndFlag()");
 		}
 
@@ -509,11 +534,12 @@ public class TestReflexDAOImpl extends BaseDAOImpl implements TestReflexDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<TestReflex> getFlaggedTestReflexesByTestResult(TestResult testResult, String flag) throws LIMSRuntimeException {
-		if( GenericValidator.isBlankOrNull(flag)){
-			return new ArrayList<TestReflex>();
+	public List<TestReflex> getFlaggedTestReflexesByTestResult(TestResult testResult, String flag)
+			throws LIMSRuntimeException {
+		if (GenericValidator.isBlankOrNull(flag)) {
+			return new ArrayList<>();
 		}
-		
+
 		try {
 			String sql = "from TestReflex t where t.testResult.id = :testResultId and t.flags = :flag";
 			Query query = HibernateUtil.getSession().createQuery(sql);

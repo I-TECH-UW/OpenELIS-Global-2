@@ -25,20 +25,24 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.testdictionary.dao.TestDictionaryDAO;
 import us.mn.state.health.lims.testdictionary.valueholder.TestDictionary;
 
-public class TestDictionaryDAOImpl extends BaseDAOImpl implements TestDictionaryDAO{
+public class TestDictionaryDAOImpl extends BaseDAOImpl<TestDictionary> implements TestDictionaryDAO {
 
-    @Override
-    public TestDictionary getTestDictionaryForTestId( String testId ) throws LIMSRuntimeException{
-        String sql = "FROM TestDictionary td where td.testId = :testId";
-        try{
-            Query query = HibernateUtil.getSession().createQuery( sql );
-            query.setInteger( "testId", Integer.parseInt( testId ) );
-            TestDictionary testDictionary = ( TestDictionary )query.uniqueResult();
-            closeSession();
-            return testDictionary;
-        }catch( HibernateException e ){
-            handleException( e, "getTestDictionaryForTestId" );
-        }
-        return null;
-    }
+	public TestDictionaryDAOImpl() {
+		super(TestDictionary.class);
+	}
+
+	@Override
+	public TestDictionary getTestDictionaryForTestId(String testId) throws LIMSRuntimeException {
+		String sql = "FROM TestDictionary td where td.testId = :testId";
+		try {
+			Query query = HibernateUtil.getSession().createQuery(sql);
+			query.setInteger("testId", Integer.parseInt(testId));
+			TestDictionary testDictionary = (TestDictionary) query.uniqueResult();
+			closeSession();
+			return testDictionary;
+		} catch (HibernateException e) {
+			handleException(e, "getTestDictionaryForTestId");
+		}
+		return null;
+	}
 }

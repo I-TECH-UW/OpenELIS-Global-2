@@ -17,6 +17,8 @@ package us.mn.state.health.lims.organization.daoimpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Vector;
 
@@ -29,7 +31,7 @@ import org.hibernate.Session;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.daoimpl.GenericDAOImpl;
+import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -45,10 +47,10 @@ import us.mn.state.health.lims.project.valueholder.Project;
 /**
  * @author diane benz
  */
-public class OrganizationDAOImpl extends GenericDAOImpl<String, Organization> implements OrganizationDAO {
+public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements OrganizationDAO {
 
 	public OrganizationDAOImpl() {
-		super(Organization.class, "organization");
+		super(Organization.class);
 	}
 
 	@Override
@@ -633,6 +635,91 @@ public class OrganizationDAOImpl extends GenericDAOImpl<String, Organization> im
 			handleException(e, "getOrganizationsByParentId");
 		}
 
+		return null;
+	}
+
+	@Override
+	public Optional<Organization> get(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Organization> getAllWhereMatch(Map<String, Object> columnValues) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Organization> getAllOrderedBy(String orderByColumn, boolean descending) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Organization> getAllOrderedBy(List<String> orderByColumns, boolean descending) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Organization> getAllWhereMatchOrderedBy(Map<String, Object> columnValues, String orderByColumn,
+			boolean descending) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String insert(Organization object) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Optional<Organization> update(Organization object) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(Organization object) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void delete(String id) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void delete(String[] objectIds) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Integer getCount() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Organization> getNext(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Organization> getPrevious(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer getTotalCount(String table, Class clazz) throws LIMSRuntimeException {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

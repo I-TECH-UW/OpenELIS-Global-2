@@ -23,18 +23,18 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.image.valueholder.Image;
 
 /**
- *  @author         Hung Nguyen
- *  @date created   09/12/2006
+ * @author Hung Nguyen
+ * @date created 09/12/2006
  */
-public interface ImageDAO extends BaseDAO {
-	
-	public String saveImage( Image image ) throws LIMSRuntimeException;
-		
-	public Image getImage( String imageId ) throws LIMSRuntimeException;
+public interface ImageDAO extends BaseDAO<Image> {
 
-    public void deleteImage( Image image) throws LIMSRuntimeException;
+	public String saveImage(Image image) throws LIMSRuntimeException;
 
-    public ByteArrayOutputStream retrieveImageOutputStream( String id ) throws LIMSRuntimeException;
+	public Image getImage(String imageId) throws LIMSRuntimeException;
 
-    public ByteArrayInputStream retrieveImageInputStream( String id ) throws LIMSRuntimeException;
+	public void deleteImage(Image image) throws LIMSRuntimeException;
+
+	public ByteArrayOutputStream retrieveImageOutputStream(String id) throws LIMSRuntimeException;
+
+	public ByteArrayInputStream retrieveImageInputStream(String id) throws LIMSRuntimeException;
 }

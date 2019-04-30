@@ -29,69 +29,77 @@ import us.mn.state.health.lims.organization.dao.OrganizationTypeDAO;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.organization.valueholder.OrganizationType;
 
-public class OrganizationTypeDAOImpl extends BaseDAOImpl implements OrganizationTypeDAO {
+public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType> implements OrganizationTypeDAO {
 
-    @SuppressWarnings("unchecked")
-    public List<OrganizationType> getAllOrganizationTypes() throws LIMSRuntimeException {
-        List<OrganizationType> list = null;
-        try {
-            String sql = "from OrganizationType";
-            org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
-            list = query.list();
-            HibernateUtil.getSession().flush();
-            HibernateUtil.getSession().clear();
-        } catch (Exception e) {
-            LogEvent.logError("OrganizationTypeDAOImpl", "getAllOrganizationTypess()", e.toString());
-            throw new LIMSRuntimeException("Error in Organization getAllOrganizationTypes()", e);
-        }
+	public OrganizationTypeDAOImpl() {
+		super(OrganizationType.class);
+	}
 
-        return list;
-    }
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<OrganizationType> getAllOrganizationTypes() throws LIMSRuntimeException {
+		List<OrganizationType> list = null;
+		try {
+			String sql = "from OrganizationType";
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			list = query.list();
+			HibernateUtil.getSession().flush();
+			HibernateUtil.getSession().clear();
+		} catch (Exception e) {
+			LogEvent.logError("OrganizationTypeDAOImpl", "getAllOrganizationTypess()", e.toString());
+			throw new LIMSRuntimeException("Error in Organization getAllOrganizationTypes()", e);
+		}
 
-    public OrganizationType getOrganizationTypeByName(String name) throws LIMSRuntimeException {
-        String sql = null;
-        try {
-            sql = "from OrganizationType o where o.name = :name";
-            org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+		return list;
+	}
 
-            query.setString("name", name);
+	@Override
+	public OrganizationType getOrganizationTypeByName(String name) throws LIMSRuntimeException {
+		String sql = null;
+		try {
+			sql = "from OrganizationType o where o.name = :name";
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 
-            @SuppressWarnings("unchecked")
-            List<OrganizationType> list = query.list();
-            HibernateUtil.getSession().flush();
-            HibernateUtil.getSession().clear();
+			query.setString("name", name);
 
-            return list.size() > 0 ? list.get(0) : null;
+			@SuppressWarnings("unchecked")
+			List<OrganizationType> list = query.list();
+			HibernateUtil.getSession().flush();
+			HibernateUtil.getSession().clear();
 
-        } catch (Exception e) {
-            LogEvent.logError("OrganizationTypeDAOImpl", "getOrganizationTypeByName()", e.toString());
-            throw new LIMSRuntimeException("Error in OrganizationType getOrganizationTypeByName()", e);
-        }
-    }
+			return list.size() > 0 ? list.get(0) : null;
 
-    public List<Organization> getOrganizationsByTypeName(String orderByCol, String... names) throws LIMSRuntimeException {
-        String sql = null;
-        try {
-            sql = "from OrganizationType ot WHERE ot.name IN (:names) ";
-            Session session = HibernateUtil.getSession();
-            org.hibernate.Query query = session.createQuery(sql).setParameterList("names", names);
-            @SuppressWarnings("unchecked")
-            OrganizationType ot = ((List<OrganizationType>) query.list()).get(0);
-            sql = "where this.isActive = 'Y' ";
-            if (null != orderByCol) {
-                sql += " order by " + orderByCol;
-            }
-            @SuppressWarnings("unchecked")
-            List<Organization> orgs2 = session.createFilter(ot.getOrganizations(), sql).list();
+		} catch (Exception e) {
+			LogEvent.logError("OrganizationTypeDAOImpl", "getOrganizationTypeByName()", e.toString());
+			throw new LIMSRuntimeException("Error in OrganizationType getOrganizationTypeByName()", e);
+		}
+	}
 
-            session.flush();
-            session.clear();
+	@Override
+	public List<Organization> getOrganizationsByTypeName(String orderByCol, String... names)
+			throws LIMSRuntimeException {
+		String sql = null;
+		try {
+			sql = "from OrganizationType ot WHERE ot.name IN (:names) ";
+			Session session = HibernateUtil.getSession();
+			org.hibernate.Query query = session.createQuery(sql).setParameterList("names", names);
+			@SuppressWarnings("unchecked")
+			OrganizationType ot = ((List<OrganizationType>) query.list()).get(0);
+			sql = "where this.isActive = 'Y' ";
+			if (null != orderByCol) {
+				sql += " order by " + orderByCol;
+			}
+			@SuppressWarnings("unchecked")
+			List<Organization> orgs2 = session.createFilter(ot.getOrganizations(), sql).list();
 
-            return orgs2;
+			session.flush();
+			session.clear();
 
-        } catch (Exception e) {
-            LogEvent.logError("OrganizationTypeDAOImpl", "getOrganizationsByTypeName()", e.toString());
-            throw new LIMSRuntimeException("Error in OrganizationType getOrganizationTypeByName()", e);
-        }
-    }
+			return orgs2;
+
+		} catch (Exception e) {
+			LogEvent.logError("OrganizationTypeDAOImpl", "getOrganizationsByTypeName()", e.toString());
+			throw new LIMSRuntimeException("Error in OrganizationType getOrganizationTypeByName()", e);
+		}
+	}
 }

@@ -29,11 +29,12 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
 /**
  * @author diane benz
  *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates. To enable and disable the creation of type
- * comments go to Window>Preferences>Java>Code Generation.
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
-public interface ResultDAO extends BaseDAO {
+public interface ResultDAO extends BaseDAO<Result> {
 
 	public boolean insertData(Result result) throws LIMSRuntimeException;
 
@@ -53,7 +54,8 @@ public interface ResultDAO extends BaseDAO {
 
 	public Result getResultById(Result result) throws LIMSRuntimeException;
 
-	public void getResultByAnalysisAndAnalyte(Result result, Analysis analysis,	TestAnalyte ta) throws LIMSRuntimeException;
+	public void getResultByAnalysisAndAnalyte(Result result, Analysis analysis, TestAnalyte ta)
+			throws LIMSRuntimeException;
 
 	public void getResultByTestResult(Result result, TestResult testResult) throws LIMSRuntimeException;
 
@@ -61,27 +63,29 @@ public interface ResultDAO extends BaseDAO {
 
 	public List<Result> getReportableResultsByAnalysis(Analysis analysis) throws LIMSRuntimeException;
 
+	public Result getResultForAnalyteInAnalysisSet(String analyteId, List<Integer> analysisIDList)
+			throws LIMSRuntimeException;
 
-	public Result getResultForAnalyteInAnalysisSet(String analyteId, List<Integer> analysisIDList) throws LIMSRuntimeException;
-
-    public Result getResultForAnalyteAndSampleItem(String analyteId, String sampleItemId) throws LIMSRuntimeException;
+	public Result getResultForAnalyteAndSampleItem(String analyteId, String sampleItemId) throws LIMSRuntimeException;
 
 	public Result getResultById(String resultId) throws LIMSRuntimeException;
-
 
 	public void deleteData(Result result) throws LIMSRuntimeException;
 
 	public List<Result> getResultsForAnalysisIdList(List<Integer> analysisIdList) throws LIMSRuntimeException;
-	
+
 	public List<Result> getResultsForTestAndSample(String sampleId, String testId);
 
 	public List<Result> getResultsForSample(Sample sample) throws LIMSRuntimeException;
 
 	public List<Result> getChildResults(String resultId) throws LIMSRuntimeException;
 
-    public List<Result> getResultsForTestInDateRange( String testId, Date startDate, Date endDate )throws LIMSRuntimeException;
+	public List<Result> getResultsForTestInDateRange(String testId, Date startDate, Date endDate)
+			throws LIMSRuntimeException;
 
-    public List<Result> getResultsForPanelInDateRange( String panelId, Date lowDate, Date highDate )throws LIMSRuntimeException;
+	public List<Result> getResultsForPanelInDateRange(String panelId, Date lowDate, Date highDate)
+			throws LIMSRuntimeException;
 
-    public List<Result> getResultsForTestSectionInDateRange( String testSectionId, Date lowDate, Date highDate ) throws LIMSRuntimeException;
+	public List<Result> getResultsForTestSectionInDateRange(String testSectionId, Date lowDate, Date highDate)
+			throws LIMSRuntimeException;
 }

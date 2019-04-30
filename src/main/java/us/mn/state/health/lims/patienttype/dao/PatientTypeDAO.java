@@ -1,7 +1,7 @@
 /**
  * Project : LIS<br>
  * File name : PatientTypeDAO.java<br>
- * Description : 
+ * Description :
  * @author TienDH
  * @date Aug 20, 2007
  */
@@ -13,8 +13,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.patienttype.valueholder.PatientType;
 
-
-public interface PatientTypeDAO extends BaseDAO {
+public interface PatientTypeDAO extends BaseDAO<PatientType> {
 
 	public boolean insertData(PatientType patientType) throws LIMSRuntimeException;
 
@@ -35,6 +34,6 @@ public interface PatientTypeDAO extends BaseDAO {
 	public List getPreviousPatientTypeRecord(String id) throws LIMSRuntimeException;
 
 	public PatientType getPatientTypeByName(PatientType patientType) throws LIMSRuntimeException;
-	
-	public Integer getTotalPatientTypeCount() throws LIMSRuntimeException; 
+
+	public Integer getTotalPatientTypeCount() throws LIMSRuntimeException;
 }

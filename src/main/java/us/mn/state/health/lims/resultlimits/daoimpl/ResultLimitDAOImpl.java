@@ -2,17 +2,17 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
- *  
+ *
  * Contributor(s): CIRG, University of Washington, Seattle WA.
  */
 package us.mn.state.health.lims.resultlimits.daoimpl;
@@ -34,8 +34,13 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.resultlimits.dao.ResultLimitDAO;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
 
-public class ResultLimitDAOImpl extends BaseDAOImpl implements ResultLimitDAO {
+public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit> implements ResultLimitDAO {
 
+	public ResultLimitDAOImpl() {
+		super(ResultLimit.class);
+	}
+
+	@Override
 	public void deleteData(List resultLimits) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
@@ -57,19 +62,20 @@ public class ResultLimitDAOImpl extends BaseDAOImpl implements ResultLimitDAO {
 		}
 
 		try {
-            for( Object resultLimit : resultLimits ){
-                ResultLimit data = ( ResultLimit ) resultLimit;
-                data = readResultLimit( data.getId() );
-                HibernateUtil.getSession().delete( data );
-                HibernateUtil.getSession().flush();
-                HibernateUtil.getSession().clear();
-            }
+			for (Object resultLimit : resultLimits) {
+				ResultLimit data = (ResultLimit) resultLimit;
+				data = readResultLimit(data.getId());
+				HibernateUtil.getSession().delete(data);
+				HibernateUtil.getSession().flush();
+				HibernateUtil.getSession().clear();
+			}
 		} catch (Exception e) {
 			LogEvent.logError("ResultLimitsDAOImpl", "deleteData()", e.toString());
 			throw new LIMSRuntimeException("Error in ResultLimit deleteData()", e);
 		}
 	}
 
+	@Override
 	public boolean insertData(ResultLimit resultLimit) throws LIMSRuntimeException {
 
 		try {
@@ -92,6 +98,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl implements ResultLimitDAO {
 		return true;
 	}
 
+	@Override
 	public void updateData(ResultLimit resultLimit) throws LIMSRuntimeException {
 
 		ResultLimit oldData = readResultLimit(resultLimit.getId());
@@ -119,6 +126,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl implements ResultLimitDAO {
 		}
 	}
 
+	@Override
 	public void getData(ResultLimit resultLimit) throws LIMSRuntimeException {
 		try {
 			ResultLimit tmpLimit = (ResultLimit) HibernateUtil.getSession().get(ResultLimit.class, resultLimit.getId());
@@ -135,6 +143,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl implements ResultLimitDAO {
 		}
 	}
 
+	@Override
 	public List getAllResultLimits() throws LIMSRuntimeException {
 		List list;
 		try {
@@ -151,6 +160,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl implements ResultLimitDAO {
 		return list;
 	}
 
+	@Override
 	public List getPageOfResultLimits(int startingRecNo) throws LIMSRuntimeException {
 		List list;
 		try {
@@ -187,19 +197,22 @@ public class ResultLimitDAOImpl extends BaseDAOImpl implements ResultLimitDAO {
 		return recoveredLimit;
 	}
 
+	@Override
 	public List getNextResultLimitRecord(String id) throws LIMSRuntimeException {
 		return getNextRecord(id, "ResultLimit", ResultLimit.class);
 	}
 
+	@Override
 	public List getPreviousResultLimitRecord(String id) throws LIMSRuntimeException {
 		return getPreviousRecord(id, "ResultLimit", ResultLimit.class);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<ResultLimit> getAllResultLimitsForTest(String testId) throws LIMSRuntimeException {
 
-		if (GenericValidator.isBlankOrNull(testId)){
-			return new ArrayList<ResultLimit>();
+		if (GenericValidator.isBlankOrNull(testId)) {
+			return new ArrayList<>();
 		}
 
 		try {
@@ -226,7 +239,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl implements ResultLimitDAO {
 		} catch (Exception e) {
 			handleException(e, "getResultLimitById");
 		}
-		
+
 		return null;
 	}
 }

@@ -16,20 +16,27 @@
 */
 package us.mn.state.health.lims.requester.valueholder;
 
-public class RequesterType {
+import us.mn.state.health.lims.common.valueholder.BaseObject;
+
+public class RequesterType extends BaseObject {
 
 	private String id;
 	private String requesterType;
 
+	@Override
 	public String getId() {
 		return id;
 	}
+
+	@Override
 	public void setId(String id) {
 		this.id = id;
 	}
+
 	public String getRequesterType() {
 		return requesterType;
 	}
+
 	public void setRequesterType(String requesterType) {
 		this.requesterType = requesterType;
 	}

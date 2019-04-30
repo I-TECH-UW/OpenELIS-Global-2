@@ -2,17 +2,17 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
- *  
+ *
 * Contributor(s): CIRG, University of Washington, Seattle WA.
  */
 package us.mn.state.health.lims.typeofsample.daoimpl;
@@ -35,16 +35,22 @@ import us.mn.state.health.lims.typeofsample.dao.TypeOfSamplePanelDAO;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSamplePanel;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
-public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl implements TypeOfSamplePanelDAO {
+public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel> implements TypeOfSamplePanelDAO {
 
+	public TypeOfSamplePanelDAOImpl() {
+		super(TypeOfSamplePanel.class);
+	}
+
+	@Override
 	public void deleteData(String[] typeOfSamplesPanelIDs, String currentUserId) throws LIMSRuntimeException {
 
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			for (String id : typeOfSamplesPanelIDs) {
-				TypeOfSamplePanel data = (TypeOfSamplePanel) readTypeOfSamplePanel(id);
-				
-				auditDAO.saveHistory(new TypeOfSamplePanel(), data, currentUserId, IActionConstants.AUDIT_TRAIL_DELETE, "SAMPLETYPE_PANEL");
+				TypeOfSamplePanel data = readTypeOfSamplePanel(id);
+
+				auditDAO.saveHistory(new TypeOfSamplePanel(), data, currentUserId, IActionConstants.AUDIT_TRAIL_DELETE,
+						"SAMPLETYPE_PANEL");
 				HibernateUtil.getSession().delete(data);
 				HibernateUtil.getSession().flush();
 				HibernateUtil.getSession().clear();
@@ -56,11 +62,12 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl implements TypeOfSampl
 		}
 	}
 
+	@Override
 	public boolean insertData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException {
 
 		try {
 
-			String id = (String)HibernateUtil.getSession().save(typeOfSamplePanel);
+			String id = (String) HibernateUtil.getSession().save(typeOfSamplePanel);
 
 			typeOfSamplePanel.setId(id);
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
@@ -75,6 +82,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl implements TypeOfSampl
 		return true;
 	}
 
+	@Override
 	public void getData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException {
 
 		try {
@@ -93,6 +101,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl implements TypeOfSampl
 		}
 	}
 
+	@Override
 	public List getAllTypeOfSamplePanels() throws LIMSRuntimeException {
 
 		List list = new Vector();
@@ -113,6 +122,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl implements TypeOfSampl
 		return list;
 	}
 
+	@Override
 	public List getPageOfTypeOfSamplePanel(int startingRecNo) throws LIMSRuntimeException {
 
 		List list = new Vector();
@@ -150,20 +160,24 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl implements TypeOfSampl
 		return tos;
 	}
 
+	@Override
 	public List getNextTypeOfSamplePanelRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "TypeOfSamplePanel", TypeOfSamplePanel.class);
 	}
 
+	@Override
 	public List getPreviousTypeOfSamplePanelRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "TypeOfSamplePanel", TypeOfSampleTest.class);
 	}
 
+	@Override
 	public Integer getTotalTypeOfSamplePanelCount() throws LIMSRuntimeException {
 		return getTotalCount("TypeOfSamplePanel", TypeOfSamplePanel.class);
 	}
 
+	@Override
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
@@ -194,6 +208,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl implements TypeOfSampl
 		return list;
 	}
 
+	@Override
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
@@ -225,45 +240,46 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl implements TypeOfSampl
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<TypeOfSamplePanel> getTypeOfSamplePanelsForSampleType(String sampleType) {
-			List<TypeOfSamplePanel> list;
+		List<TypeOfSamplePanel> list;
 
-			String sql = "from TypeOfSamplePanel tp where tp.typeOfSampleId = :sampleId order by tp.panelId";
+		String sql = "from TypeOfSamplePanel tp where tp.typeOfSampleId = :sampleId order by tp.panelId";
 
-			try {
-				if (sampleType.equals("null")) {
-					// so parseInt doesn't throw
-					sampleType = "0";
-				}
-				Query query = HibernateUtil.getSession().createQuery(sql);
-				query.setInteger("sampleId", Integer.parseInt(sampleType));
-				list = query.list();
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
-			} catch (Exception e) {
-				LogEvent.logError("TypeOfSamplePanelDAOImpl", "getTypeOfSamplePanelsForSampleType", e.toString());
-				throw new LIMSRuntimeException("Error in TypeOfSamplePanelDAOImpl getTypeOfSamplePanelsForSampleType", e);
+		try {
+			if (sampleType.equals("null")) {
+				// so parseInt doesn't throw
+				sampleType = "0";
 			}
-
-			return list;
+			Query query = HibernateUtil.getSession().createQuery(sql);
+			query.setInteger("sampleId", Integer.parseInt(sampleType));
+			list = query.list();
+			HibernateUtil.getSession().flush();
+			HibernateUtil.getSession().clear();
+		} catch (Exception e) {
+			LogEvent.logError("TypeOfSamplePanelDAOImpl", "getTypeOfSamplePanelsForSampleType", e.toString());
+			throw new LIMSRuntimeException("Error in TypeOfSamplePanelDAOImpl getTypeOfSamplePanelsForSampleType", e);
 		}
+
+		return list;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<TypeOfSamplePanel> getTypeOfSamplePanelsForPanel(String panelId) throws LIMSRuntimeException{
+	public List<TypeOfSamplePanel> getTypeOfSamplePanelsForPanel(String panelId) throws LIMSRuntimeException {
 		String sql = "from TypeOfSamplePanel tosp where tosp.panelId = :panelId";
-		
-		try{
+
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("panelId", Integer.parseInt(panelId));
 			List<TypeOfSamplePanel> typeOfSamplePanels = query.list();
 			closeSession();
 			return typeOfSamplePanels;
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getTypeOfSamplePanelsForPanel");
 		}
-		
+
 		return null;
 	}
 

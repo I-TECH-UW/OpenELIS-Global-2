@@ -37,7 +37,11 @@ import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 /**
  * @author diane benz
  */
-public class SystemUserDAOImpl extends BaseDAOImpl implements SystemUserDAO {
+public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser> implements SystemUserDAO {
+
+	public SystemUserDAOImpl() {
+		super(SystemUser.class);
+	}
 
 	@Override
 	public void deleteData(List systemUsers) throws LIMSRuntimeException {

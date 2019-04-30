@@ -2,21 +2,22 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
 *
 */
 package us.mn.state.health.lims.scheduler.daoimpl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -30,62 +31,69 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.scheduler.dao.CronSchedulerDAO;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
 
-public class CronSchedulerDAOImpl extends BaseDAOImpl implements CronSchedulerDAO {
+public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements CronSchedulerDAO {
+
+	public CronSchedulerDAOImpl() {
+		super(CronScheduler.class);
+	}
 
 	@Override
 	public List<CronScheduler> getAllCronSchedules() throws LIMSRuntimeException {
 		String sql = "from CronScheduler";
-		
-		try{
+
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			@SuppressWarnings("unchecked")
 			List<CronScheduler> schedulers = query.list();
 			closeSession();
 			return schedulers;
- 		}catch( HibernateException e){
- 			handleException(e, "getAllCronSchedules");
- 		}
-		
+		} catch (HibernateException e) {
+			handleException(e, "getAllCronSchedules");
+		}
+
 		return null;
 	}
 
 	@Override
 	public CronScheduler getCronScheduleByJobName(String jobName) throws LIMSRuntimeException {
 		String sql = "from CronScheduler cs where cs.jobName = :jobName";
-		
-		try{
+
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("jobName", jobName);
-			CronScheduler scheduler = (CronScheduler)query.uniqueResult();
+			CronScheduler scheduler = (CronScheduler) query.uniqueResult();
 			closeSession();
 			return scheduler;
- 		}catch( HibernateException e){
- 			handleException(e, "getCronScheduleByJobName");
- 		}
-		
-		return null;	
+		} catch (HibernateException e) {
+			handleException(e, "getCronScheduleByJobName");
+		}
+
+		return null;
 	}
 
 	@Override
-	public void insert(CronScheduler cronSchedule) throws LIMSRuntimeException {
+	public String insert(CronScheduler cronSchedule) throws LIMSRuntimeException {
 		try {
 			String id = (String) HibernateUtil.getSession().save(cronSchedule);
 			cronSchedule.setId(id);
 			new AuditTrailDAOImpl().saveNewHistory(cronSchedule, cronSchedule.getSysUserId(), "QUARTZ_CRON_SCHEDULER");
 			closeSession();
+			return id;
 		} catch (HibernateException e) {
 			handleException(e, "insert");
 		}
+		return null;
 	}
 
 	@Override
-	public void update(CronScheduler cronSchedule) throws LIMSRuntimeException {
+	public Optional<CronScheduler> update(CronScheduler cronSchedule) throws LIMSRuntimeException {
 		CronScheduler oldData = readCronScheduler(cronSchedule.getId());
 
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 
-			auditDAO.saveHistory(cronSchedule, oldData, cronSchedule.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE, "QUARTZ_CRON_SCHEDULER");
+			auditDAO.saveHistory(cronSchedule, oldData, cronSchedule.getSysUserId(),
+					IActionConstants.AUDIT_TRAIL_UPDATE, "QUARTZ_CRON_SCHEDULER");
 
 			HibernateUtil.getSession().merge(cronSchedule);
 			HibernateUtil.getSession().flush();
@@ -95,6 +103,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl implements CronSchedulerDA
 		} catch (Exception e) {
 			handleException(e, "update");
 		}
+		return Optional.ofNullable(cronSchedule);
 	}
 
 	public CronScheduler readCronScheduler(String idString) throws LIMSRuntimeException {
@@ -112,17 +121,17 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl implements CronSchedulerDA
 	@Override
 	public CronScheduler getCronScheduleById(String schedulerId) throws LIMSRuntimeException {
 		String sql = "from CronScheduler cs where cs.id = :id";
-		
-		try{
+
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("id", Integer.parseInt(schedulerId));
-			CronScheduler scheduler = (CronScheduler)query.uniqueResult();
+			CronScheduler scheduler = (CronScheduler) query.uniqueResult();
 			closeSession();
 			return scheduler;
- 		}catch( HibernateException e){
- 			handleException(e, "getCronScheduleById");
- 		}
-		
-		return null;	
+		} catch (HibernateException e) {
+			handleException(e, "getCronScheduleById");
+		}
+
+		return null;
 	}
 }

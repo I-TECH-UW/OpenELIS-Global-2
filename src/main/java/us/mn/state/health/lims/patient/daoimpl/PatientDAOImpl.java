@@ -39,7 +39,11 @@ import us.mn.state.health.lims.person.valueholder.Person;
 /**
  * @author diane benz
  */
-public class PatientDAOImpl extends BaseDAOImpl implements PatientDAO {
+public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
+
+	public PatientDAOImpl() {
+		super(Patient.class);
+	}
 
 	@Override
 	public void deleteData(List patients) throws LIMSRuntimeException {

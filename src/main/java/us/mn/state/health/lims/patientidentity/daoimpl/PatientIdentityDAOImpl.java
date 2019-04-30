@@ -16,8 +16,13 @@ import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.patientidentity.dao.PatientIdentityDAO;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 
-public class PatientIdentityDAOImpl extends BaseDAOImpl implements PatientIdentityDAO {
+public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> implements PatientIdentityDAO {
 
+	public PatientIdentityDAOImpl() {
+		super(PatientIdentity.class);
+	}
+
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<PatientIdentity> getPatientIdentitiesForPatient(String id) {
 
@@ -41,6 +46,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl implements PatientIdenti
 		return identities;
 	}
 
+	@Override
 	public boolean insertData(PatientIdentity patientIdentity) throws LIMSRuntimeException {
 		try {
 			String id = (String) HibernateUtil.getSession().save(patientIdentity);
@@ -62,6 +68,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl implements PatientIdenti
 		return true;
 	}
 
+	@Override
 	public void updateData(PatientIdentity patientIdentity) throws LIMSRuntimeException {
 		PatientIdentity oldData = getCurrentPatientIdentity(patientIdentity.getId());
 
@@ -103,6 +110,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl implements PatientIdenti
 		return current;
 	}
 
+	@Override
 	public void delete(String patientIdentityId, String activeUserId) throws LIMSRuntimeException {
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
@@ -140,11 +148,13 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl implements PatientIdenti
 		return patientIdentity;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
-	public List<PatientIdentity> getPatientIdentitiesByValueAndType(String value, String identityType) throws LIMSRuntimeException {
+	public List<PatientIdentity> getPatientIdentitiesByValueAndType(String value, String identityType)
+			throws LIMSRuntimeException {
 		String sql = "From PatientIdentity pi where pi.identityData = :value and pi.identityTypeId = :identityType";
 
-		try{
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("value", value);
 			query.setInteger("identityType", Integer.parseInt(identityType));
@@ -166,21 +176,21 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl implements PatientIdenti
 			throws LIMSRuntimeException {
 
 		String sql = "from PatientIdentity pi where pi.patientId = :patientId and pi.identityTypeId = :typeId";
-		
-		try{
+
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("patientId", Integer.parseInt(patientId));
 			query.setInteger("typeId", Integer.parseInt(identityTypeId));
-			
-			PatientIdentity pi = (PatientIdentity)query.uniqueResult();
-			
+
+			PatientIdentity pi = (PatientIdentity) query.uniqueResult();
+
 			closeSession();
-			
+
 			return pi;
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getPatitentIdentityForPatientAndType");
 		}
-		
+
 		return null;
 	}
 }

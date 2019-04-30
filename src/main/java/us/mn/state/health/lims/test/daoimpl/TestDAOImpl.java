@@ -55,7 +55,11 @@ import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
 /**
  * @author diane benz
  */
-public class TestDAOImpl extends BaseDAOImpl implements TestDAO {
+public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
+
+	public TestDAOImpl() {
+		super(Test.class);
+	}
 
 	@Override
 	public void deleteData(List tests) throws LIMSRuntimeException {

@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
 *
 */
@@ -32,16 +32,20 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.patientidentitytype.dao.PatientIdentityTypeDAO;
 import us.mn.state.health.lims.patientidentitytype.valueholder.PatientIdentityType;
 
+public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType> implements PatientIdentityTypeDAO {
 
-public class PatientIdentityTypeDAOImpl extends BaseDAOImpl implements PatientIdentityTypeDAO {
+	public PatientIdentityTypeDAOImpl() {
+		super(PatientIdentityType.class);
+	}
+
 	@SuppressWarnings("unused")
 	private static Log log = LogFactory.getLog(PatientIdentityTypeDAOImpl.class);
 
-	
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<PatientIdentityType> getAllPatientIdenityTypes() throws LIMSRuntimeException {
 		List<PatientIdentityType> list = null;
-		try {			
+		try {
 			String sql = "from PatientIdentityType";
 			Query query = HibernateUtil.getSession().createQuery(sql);
 
@@ -50,38 +54,38 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl implements PatientId
 			HibernateUtil.getSession().clear();
 		} catch (HibernateException e) {
 			handleException(e, "getAllPatientIdenityTypes");
-		} 
+		}
 
 		return list;
 	}
 
-
+	@Override
 	public void insertData(PatientIdentityType patientIdentityType) throws LIMSRuntimeException {
-		try {	
-			
+		try {
+
 			if (duplicatePatientIdentityTypeExists(patientIdentityType)) {
 				throw new LIMSDuplicateRecordException(
 						"Duplicate record exists for " + patientIdentityType.getIdentityType());
 			}
-			
-			String id = (String)HibernateUtil.getSession().save(patientIdentityType);
+
+			String id = (String) HibernateUtil.getSession().save(patientIdentityType);
 			patientIdentityType.setId(id);
-			
+
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveNewHistory(patientIdentityType, patientIdentityType.getSysUserId(), "PATIENT_IDENTITY_TYPE");
-			
+
 			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();					
+			HibernateUtil.getSession().clear();
 		} catch (HibernateException e) {
 			handleException(e, "insertData");
-		}catch ( LIMSDuplicateRecordException e){
+		} catch (LIMSDuplicateRecordException e) {
 			handleException(e, "insertData");
 		}
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
-	private boolean duplicatePatientIdentityTypeExists(PatientIdentityType patientIdentityType) throws LIMSRuntimeException {
+	private boolean duplicatePatientIdentityTypeExists(PatientIdentityType patientIdentityType)
+			throws LIMSRuntimeException {
 		try {
 			String sql = "from PatientIdentityType t where upper(t.identityType) = :identityType";
 			Query query = HibernateUtil.getSession().createQuery(sql);
@@ -90,30 +94,30 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl implements PatientId
 
 			List<PatientIdentityType> list = query.list();
 			closeSession();
-			
+
 			return list.size() > 0;
 
-		} catch( HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "duplicatePatientIdentityTypeExists");
-		}		
-		
+		}
+
 		return false;
 	}
 
-
+	@Override
 	public PatientIdentityType getNamedIdentityType(String name) throws LIMSRuntimeException {
 		String sql = "from PatientIdentityType t where t.identityType = :identityType";
-		
-		try{
+
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("identityType", name);
-			PatientIdentityType pit = (PatientIdentityType)query.uniqueResult();
+			PatientIdentityType pit = (PatientIdentityType) query.uniqueResult();
 			closeSession();
 			return pit;
-		}catch( HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getNamedIdentityType");
 		}
-		
+
 		return null;
 	}
 }

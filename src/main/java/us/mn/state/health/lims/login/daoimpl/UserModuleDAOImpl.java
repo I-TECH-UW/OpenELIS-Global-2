@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
+import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.security.PageIdentityUtil;
@@ -40,7 +40,8 @@ import us.mn.state.health.lims.systemusermodule.valueholder.SystemUserModule;
 /*
  * N.B. This class has nothing to do with database access
  */
-public class UserModuleDAOImpl extends BaseDAOImpl implements UserModuleDAO {
+//TODO move to service layer
+public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 
 	@Override
 	public boolean isSessionExpired(HttpServletRequest request) throws LIMSRuntimeException {
@@ -53,7 +54,7 @@ public class UserModuleDAOImpl extends BaseDAOImpl implements UserModuleDAO {
 
 	/**
 	 * Check if the user has any module assign to him/her
-	 * 
+	 *
 	 * @param request is HttpServletRequest
 	 * @return true if found, false otherwise
 	 */
@@ -76,7 +77,7 @@ public class UserModuleDAOImpl extends BaseDAOImpl implements UserModuleDAO {
 	/**
 	 * TODO: Setup the user accessible buttons in the user object Preparing and
 	 * setting the user module select/add/update/delete disable/enable buttons
-	 * 
+	 *
 	 * @param request is HttpServletRequest
 	 * @return true if success, false otherwise
 	 */
@@ -141,7 +142,7 @@ public class UserModuleDAOImpl extends BaseDAOImpl implements UserModuleDAO {
 
 	/**
 	 * Get the user login information bases on the user login name
-	 * 
+	 *
 	 * @param request is HttpServletRequest
 	 * @return user information
 	 */
@@ -161,7 +162,7 @@ public class UserModuleDAOImpl extends BaseDAOImpl implements UserModuleDAO {
 
 	/**
 	 * Check if the user account in locked
-	 * 
+	 *
 	 * @param request is HttpServletRequest
 	 * @return true if locked, false otherwise
 	 */
@@ -182,7 +183,7 @@ public class UserModuleDAOImpl extends BaseDAOImpl implements UserModuleDAO {
 
 	/**
 	 * Check if the user account in disabled
-	 * 
+	 *
 	 * @param request is HttpServletRequest
 	 * @return true if disabled, false otherwise
 	 */
@@ -203,7 +204,7 @@ public class UserModuleDAOImpl extends BaseDAOImpl implements UserModuleDAO {
 
 	/**
 	 * Check if the user password is expired
-	 * 
+	 *
 	 * @param request is HttpServletRequest
 	 * @return true if expired, false otherwise
 	 */
@@ -224,7 +225,7 @@ public class UserModuleDAOImpl extends BaseDAOImpl implements UserModuleDAO {
 
 	/**
 	 * Check if the user is admin role
-	 * 
+	 *
 	 * @param request is HttpServletRequest
 	 * @return true if admin, false otherwise
 	 */
@@ -248,7 +249,7 @@ public class UserModuleDAOImpl extends BaseDAOImpl implements UserModuleDAO {
 	 * <table>
 	 * LOGIN_USER
 	 * </table>
-	 * 
+	 *
 	 * @param request is HttpServletRequest
 	 */
 	@Override
@@ -270,7 +271,7 @@ public class UserModuleDAOImpl extends BaseDAOImpl implements UserModuleDAO {
 
 	/**
 	 * TOD): will move hardcoded action names to the property file
-	 * 
+	 *
 	 * @param request
 	 * @param userAssignedModule
 	 * @return actionName the name of the action form
@@ -328,7 +329,7 @@ public class UserModuleDAOImpl extends BaseDAOImpl implements UserModuleDAO {
 	/**
 	 * TODO: Setup the user accessible buttons in the user object Enabled the
 	 * buttons for user type admin
-	 * 
+	 *
 	 * @param request
 	 *
 	 *                N.B. It is not clear why business rules are in a DAO object.
@@ -368,7 +369,7 @@ public class UserModuleDAOImpl extends BaseDAOImpl implements UserModuleDAO {
 
 	/**
 	 * Setup the user buttons
-	 * 
+	 *
 	 * @param request
 	 * @param systemUserModule
 	 * @param actionName

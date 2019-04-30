@@ -46,7 +46,11 @@ import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
 import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;
 import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 
-public class AuditTrailDAOImpl extends BaseDAOImpl implements AuditTrailDAO {
+public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrailDAO {
+
+	public AuditTrailDAOImpl() {
+		super(History.class);
+	}
 
 	// For an insert log the id, sys_user_id, ref id, reftable, timestamp, activity
 	// (='I'). The change column would be blank, since the
