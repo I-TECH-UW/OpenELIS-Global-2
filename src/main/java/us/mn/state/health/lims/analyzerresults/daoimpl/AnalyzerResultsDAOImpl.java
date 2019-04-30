@@ -202,7 +202,7 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> impleme
 	}
 
 	@Override
-	public void delete(List<AnalyzerResults> analyzerResults) throws LIMSRuntimeException {
+	public void deleteAll(List<AnalyzerResults> analyzerResults) throws LIMSRuntimeException {
 		try {
 			for (AnalyzerResults result : analyzerResults) {
 				result = readAnalyzerResults(result.getId());

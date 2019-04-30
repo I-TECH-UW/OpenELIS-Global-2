@@ -187,7 +187,7 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 	// could be optimized by using single transaction, and calling session.flush
 	// session.clear every 20 records before final call to transaction.commit
 	@Override
-	public List<String> insert(List<T> objects) {
+	public List<String> insertAll(List<T> objects) {
 		List<String> ids = new ArrayList<>();
 
 		for (T object : objects) {
@@ -226,7 +226,7 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 	// could be optimized by using single transaction, and calling session.flush
 	// session.clear every 20 records
 	@Override
-	public List<Optional<T>> update(List<T> objects) {
+	public List<Optional<T>> updateAll(List<T> objects) {
 		List<Optional<T>> updatedObjects = new ArrayList<>();
 
 		for (T object : objects) {
@@ -280,7 +280,7 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 	// could be optimized by using single transaction, and calling session.flush
 	// session.clear every 20 records
 	@Override
-	public void delete(List<T> objects) {
+	public void deleteAll(List<T> objects) {
 		for (T object : objects) {
 			delete(object);
 		}
@@ -289,7 +289,7 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 	// could be optimized by using single transaction, and calling session.flush
 	// session.clear every 20 records
 	@Override
-	public void delete(String[] objectIds) {
+	public void deleteAll(String[] objectIds) {
 		for (String object : objectIds) {
 			delete(object);
 		}
@@ -412,14 +412,8 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 
 	// end of new methods, below this point are legacy methods
 
-	/**
-	 * (non-Javadoc)
-	 *
-	 * @see us.mn.state.health.lims.common.dao.BaseDAO#getNextRecord(java.lang.String,
-	 *      java.lang.String, java.lang.Class) passing in id of current record ->
-	 *      get next and check if there will be more (next button enabled?)
-	 */
 	@Override
+	@Deprecated
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int start = (Integer.valueOf(id)).intValue();
 
@@ -442,6 +436,7 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 	}
 
 	@Override
+	@Deprecated
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int start = (Integer.valueOf(id)).intValue();
 
@@ -464,6 +459,7 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 
 	// bugzilla 1411
 	@Override
+	@Deprecated
 	public Integer getTotalCount(String table, Class clazz) throws LIMSRuntimeException {
 		Integer count = null;
 		try {

@@ -694,7 +694,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 	}
 
 	@Override
-	public void delete(String[] objectIds) {
+	public void deleteAll(String[] objectIds) {
 		// TODO Auto-generated method stub
 
 	}

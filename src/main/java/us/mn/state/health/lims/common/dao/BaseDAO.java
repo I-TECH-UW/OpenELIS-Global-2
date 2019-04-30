@@ -88,7 +88,7 @@ public interface BaseDAO<T extends BaseObject> {
 	 * @param objects the data to insert
 	 * @return the ids of the inserted objects
 	 */
-	List<String> insert(List<T> objects);
+	List<String> insertAll(List<T> objects);
 
 	/**
 	 * @param object the new data to update the database with. Must have an id
@@ -102,7 +102,7 @@ public interface BaseDAO<T extends BaseObject> {
 	 *                parameter
 	 * @return the objects as they were saved to the database
 	 */
-	List<Optional<T>> update(List<T> objects);
+	List<Optional<T>> updateAll(List<T> objects);
 
 	/**
 	 * @param object the data to delete from the database. Must have primary key
@@ -119,12 +119,12 @@ public interface BaseDAO<T extends BaseObject> {
 	 * @param objects List of all objects to delete from the database. Must have
 	 *                primary key fields filled in
 	 */
-	void delete(List<T> objects);
+	void deleteAll(List<T> objects);
 
 	/**
 	 * @param objectIds of the values to delete
 	 */
-	void delete(String[] objectIds);
+	void deleteAll(String[] objectIds);
 
 	/**
 	 * @return the number of rows
@@ -144,12 +144,21 @@ public interface BaseDAO<T extends BaseObject> {
 	 */
 	public List<T> getPrevious(String id);
 
+	/**
+	 * @deprecated (simpler method replacing this one, call getNext(id) instead
+	 */
 	@Deprecated
 	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException;
 
+	/**
+	 * @deprecated (simpler method replacing this one, call getPrevious(id) instead
+	 */
 	@Deprecated
 	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException;
 
+	/**
+	 * @deprecated (simpler method replacing this one, call getCount() instead
+	 */
 	@Deprecated
 	// bugzilla 1411
 	public Integer getTotalCount(String table, Class clazz) throws LIMSRuntimeException;

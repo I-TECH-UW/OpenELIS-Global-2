@@ -1145,7 +1145,7 @@ public abstract class Accessioner {
 				}
 			}
 			if (deleteTypeOHes.size() > 0) {
-				observationHistoryDAO.delete(deleteTypeOHes);
+				observationHistoryDAO.deleteAll(deleteTypeOHes);
 			}
 
 			newOh.setSampleId(sample.getId());
@@ -1210,7 +1210,7 @@ public abstract class Accessioner {
 			for (ObservationHistory oh : oldOHes.values()) {
 				oh.setSysUserId(sysUserId);
 			}
-			observationHistoryDAO.delete(new ArrayList<>(oldOHes.values()));
+			observationHistoryDAO.deleteAll(new ArrayList<>(oldOHes.values()));
 
 			// insert the new
 			List<ObservationHistory> newOHes = observationHistoryLists.get(listType);

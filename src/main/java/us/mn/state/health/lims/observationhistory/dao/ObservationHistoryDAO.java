@@ -54,7 +54,7 @@ public interface ObservationHistoryDAO extends BaseDAO<ObservationHistory> {
 	public List<ObservationHistory> getAll(Patient patient, Sample sample, String observationHistoryTypeId);
 
 	@Override
-	public void delete(List<ObservationHistory> entities) throws LIMSRuntimeException;
+	public void deleteAll(List<ObservationHistory> entities) throws LIMSRuntimeException;
 
 	public List<ObservationHistory> getObservationHistoryByDictonaryValues(String dictionaryValue)
 			throws LIMSRuntimeException;

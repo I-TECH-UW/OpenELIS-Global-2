@@ -1371,7 +1371,7 @@ public class AnalyzerResultsController extends BaseController {
 	private void removeHandledResultsFromAnalyzerResults(List<AnalyzerResults> deletableAnalyzerResults) {
 
 		AnalyzerResultsDAO analyzerResultsDAO = new AnalyzerResultsDAOImpl();
-		analyzerResultsDAO.delete(deletableAnalyzerResults);
+		analyzerResultsDAO.deleteAll(deletableAnalyzerResults);
 
 	}
 

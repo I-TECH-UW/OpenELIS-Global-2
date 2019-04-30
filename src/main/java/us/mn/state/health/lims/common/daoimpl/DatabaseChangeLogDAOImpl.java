@@ -123,13 +123,13 @@ public class DatabaseChangeLogDAOImpl extends BaseDAOImpl<DatabaseChangeLog> imp
 	}
 
 	@Override
-	public void delete(List<DatabaseChangeLog> objects) {
+	public void deleteAll(List<DatabaseChangeLog> objects) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void delete(String[] objectIds) {
+	public void deleteAll(String[] objectIds) {
 		// TODO Auto-generated method stub
 
 	}
