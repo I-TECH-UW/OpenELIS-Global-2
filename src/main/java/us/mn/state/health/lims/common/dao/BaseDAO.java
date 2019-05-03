@@ -22,6 +22,11 @@ import java.util.Optional;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
+/**
+ * @author caleb
+ *
+ * @param <T> the type of data object that this returns
+ */
 public interface BaseDAO<T extends BaseObject> {
 
 	/**
@@ -36,47 +41,178 @@ public interface BaseDAO<T extends BaseObject> {
 	List<T> getAll();
 
 	/**
-	 * @param columnValues Key Value pairs where key is the column name and value is
-	 *                     the value it must match
+	 * @param propertyName  the property that must match
+	 * @param propertyValue the value the property must equal
 	 * @return List of all matching entries
 	 */
-	List<T> getAllWhereMatch(Map<String, Object> columnValues);
+	List<T> getAllMatching(String propertyName, Object propertyValue);
 
 	/**
-	 * @param orderByColumn the column to order by
+	 * @param propertyValues Key Value pairs where key is the property name and
+	 *                       value is the value it must match
+	 * @return List of all matching entries
+	 */
+	List<T> getAllMatching(Map<String, Object> propertyValues);
+
+	/**
+	 * @param orderProperty the property to order by
 	 * @param descending    Set to true to order by descending, false for order by
 	 *                      ascending
 	 * @return List of all ordered entries
 	 */
-	List<T> getAllOrderedBy(String orderByColumn, boolean descending);
+	List<T> getAllOrdered(String orderProperty, boolean descending);
 
 	/**
-	 * @param orderByColumns the columns to order by starting with the first entry
-	 * @param descending     Set to true to order by descending, false for order by
-	 *                       ascending
+	 * @param orderProperties the properties to order by starting with the first
+	 *                        entry
+	 * @param descending      Set to true to order by descending, false for order by
+	 *                        ascending
 	 * @return List of all ordered entries
 	 */
-	List<T> getAllOrderedBy(List<String> orderByColumns, boolean descending);
+	List<T> getAllOrdered(List<String> orderProperties, boolean descending);
 
 	/**
-	 * @param columnValues  Key Value pairs where key is the column name and value
-	 *                      is the value it must match
-	 * @param orderByColumn the column to order by
+	 * @param propertyName  the property that must match
+	 * @param propertyValue the value the property must equal
+	 * @param orderProperty the property to order by
 	 * @param descending    Set to true to order by descending, false for order by
 	 *                      ascending
 	 * @return List of all ordered matching entries
 	 */
-	List<T> getAllWhereMatchOrderedBy(Map<String, Object> columnValues, String orderByColumn, boolean descending);
+	List<T> getAllMatchingOrdered(String propertyName, Object propertyValue, String orderProperty, boolean descending);
 
 	/**
-	 * @param columnValues   Key Value pairs where key is the column name and value
-	 *                       is the value it must match
-	 * @param orderByColumns the columns to order by, starting with the first entry
+	 * @param propertyName    the property that must match
+	 * @param propertyValue   the value the property must equal
+	 * @param orderProperties the properties to order by, starting with the first
+	 *                        entry
+	 * @param descending      Set to true to order by descending, false for order by
+	 *                        ascending
+	 * @return List of all ordered matching entries
+	 */
+	List<T> getAllMatchingOrdered(String propertyName, Object propertyValue, List<String> orderProperties,
+			boolean descending);
+
+	/**
+	 * @param propertyValues Key Value pairs where key is the property name and
+	 *                       value is the value it must match
+	 * @param orderProperty  the property to order by
 	 * @param descending     Set to true to order by descending, false for order by
 	 *                       ascending
 	 * @return List of all ordered matching entries
 	 */
-	List<T> getAllWhereMatchOrderedBy(Map<String, Object> columnValues, List<String> orderColumns, boolean descending);
+	List<T> getAllMatchingOrdered(Map<String, Object> propertyValues, String orderProperty, boolean descending);
+
+	/**
+	 * @param propertyValues  Key Value pairs where key is the property name and
+	 *                        value is the value it must match
+	 * @param orderProperties the properties to order by, starting with the first
+	 *                        entry
+	 * @param descending      Set to true to order by descending, false for order by
+	 *                        ascending
+	 * @return List of all ordered matching entries
+	 */
+	List<T> getAllMatchingOrdered(Map<String, Object> propertyValues, List<String> orderProperties, boolean descending);
+
+	/**
+	 * @param pageNumber 0 indexed page number to get results from
+	 * @return A page of results sorted by id. If length is 1 more than page size,
+	 *         this signifies there is a next page
+	 */
+	List<T> getPage(int pageNumber);
+
+	/**
+	 * @param propertyName  the property that must match
+	 * @param propertyValue the value the property must equal
+	 * @param pageNumber    0 indexed page number to get results from
+	 * @return A page of results. If length is 1 more than page size, this signifies
+	 *         there is a next page
+	 */
+	List<T> getMatchingPage(String propertyName, Object propertyValue, int pageNumber);
+
+	/**
+	 * @param propertyValues Key Value pairs where key is the property name and
+	 *                       value is the value it must match
+	 * @param pageNumber     0 indexed page number to get results from
+	 * @return A page of results. If length is 1 more than page size, this signifies
+	 *         there is a next page
+	 */
+	List<T> getMatchingPage(Map<String, Object> propertyValues, int pageNumber);
+
+	/**
+	 * @param orderProperty the property to order by
+	 * @param descending    Set to true to order by descending, false for order by
+	 *                      ascending
+	 * @param pageNumber    0 indexed page number to get results from
+	 * @return A page of results. If length is 1 more than page size, this signifies
+	 *         there is a next page
+	 */
+	List<T> getOrderedPage(String orderProperty, boolean descending, int pageNumber);
+
+	/**
+	 * @param orderProperties the properties to order by, starting with the first
+	 *                        entry
+	 * @param descending      Set to true to order by descending, false for order by
+	 *                        ascending
+	 * @param pageNumber      0 indexed page number to get results from
+	 * @return A page of results. If length is 1 more than page size, this signifies
+	 *         there is a next page
+	 */
+	List<T> getOrderedPage(List<String> orderProperties, boolean descending, int pageNumber);
+
+	/**
+	 * @param propertyName  the property that must match
+	 * @param propertyValue the value the property must equal
+	 * @param orderProperty the property to order by
+	 * @param descending    Set to true to order by descending, false for order by
+	 *                      ascending
+	 * @param pageNumber    0 indexed page number to get results from
+	 * @return A page of results. If length is 1 more than page size, this signifies
+	 *         there is a next page
+	 */
+	List<T> getMatchingOrderedPage(String propertyName, Object propertyValue, String orderProperty, boolean descending,
+			int pageNumber);
+
+	/**
+	 * @param propertyName    the property that must match
+	 * @param propertyValue   the value the property must equal
+	 * @param orderProperties the properties to order by, starting with the first
+	 *                        entry
+	 * @param descending      Set to true to order by descending, false for order by
+	 *                        ascending
+	 * @param pageNumber      0 indexed page number to get results from
+	 * @return A page of results. If length is 1 more than page size, this signifies
+	 *         there is a next page
+	 */
+	List<T> getMatchingOrderedPage(String propertyName, Object propertyValue, List<String> orderProperties,
+			boolean descending, int pageNumber);
+
+	/**
+	 * @param propertyValues Key Value pairs where key is the property name and
+	 *                       value is the value it must match
+	 * @param orderProperty  the property to order by
+	 * @param descending     Set to true to order by descending, false for order by
+	 *                       ascending
+	 * @param pageNumber     0 indexed page number to get results from
+	 * @return A page of results. If length is 1 more than page size, this signifies
+	 *         there is a next page
+	 */
+	List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, String orderProperty, boolean descending,
+			int pageNumber);
+
+	/**
+	 * @param propertyValues  Key Value pairs where key is the property name and
+	 *                        value is the value it must match
+	 * @param orderProperties the properties to order by, starting with the first
+	 *                        entry
+	 * @param descending      Set to true to order by descending, false for order by
+	 *                        ascending
+	 * @param pageNumber      0 indexed page number to get results from
+	 * @return A page of results. If length is 1 more than page size, this signifies
+	 *         there is a next page
+	 */
+	List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, List<String> orderProperties, boolean descending,
+			int pageNumber);
 
 	/**
 	 * @param object the data to insert

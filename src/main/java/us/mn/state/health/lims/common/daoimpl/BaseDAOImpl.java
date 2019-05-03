@@ -16,12 +16,14 @@
 package us.mn.state.health.lims.common.daoimpl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Vector;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -42,19 +44,16 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 /**
- * @author caleb
+ * @author Caleb
  *
  * @param <T>
  */
 public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionConstants {
 
-	public static int DEFAULT_PAGE_SIZE;
-
-	{
-		DEFAULT_PAGE_SIZE = SystemConfiguration.getInstance().getDefaultPageSize();
-	}
+	static final int DEFAULT_PAGE_SIZE = SystemConfiguration.getInstance().getDefaultPageSize();
 
 	private final Class<T> classType;
+
 	private boolean logAuditTrail = true;
 
 	public BaseDAOImpl(Class<T> clazz) {
@@ -70,103 +69,179 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 		return Optional.ofNullable(object);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<T> getAll() {
-		Session session = startSession();
-		List<T> resultList = session.createCriteria(classType).list();
-		commitAndCloseSession(session);
+		return getAllOrdered("id", false);
+	}
 
-		return resultList;
+	@Override
+	public List<T> getAllMatching(String propertyName, Object propertyValue) {
+		Map<String, Object> propertyValues = new HashMap<>();
+		propertyValues.put(propertyName, propertyValue);
+
+		return getAllMatching(propertyValues);
+	}
+
+	@Override
+	public List<T> getAllMatching(Map<String, Object> propertyValues) {
+		return getAllMatchingOrdered(propertyValues, "id", false);
+	}
+
+	@Override
+	public List<T> getAllOrdered(String orderProperty, boolean descending) {
+		List<String> orderProperties = new ArrayList<>();
+		orderProperties.add(orderProperty);
+
+		return getAllOrdered(orderProperties, descending);
+	}
+
+	@Override
+	public List<T> getAllOrdered(List<String> orderProperties, boolean descending) {
+		return getAllMatchingOrdered(new HashMap<>(), orderProperties, descending);
+	}
+
+	@Override
+	public List<T> getAllMatchingOrdered(String propertyName, Object propertyValue, String orderProperty,
+			boolean descending) {
+		Map<String, Object> propertyValues = new HashMap<>();
+		propertyValues.put(propertyName, propertyValue);
+		List<String> orderProperties = new ArrayList<>();
+		orderProperties.add(orderProperty);
+
+		return getAllMatchingOrdered(propertyValues, orderProperties, descending);
+	}
+
+	@Override
+	public List<T> getAllMatchingOrdered(String propertyName, Object propertyValue, List<String> orderProperties,
+			boolean descending) {
+		Map<String, Object> propertyValues = new HashMap<>();
+		propertyValues.put(propertyName, propertyValue);
+
+		return getAllMatchingOrdered(propertyValues, orderProperties, descending);
+	}
+
+	@Override
+	public List<T> getAllMatchingOrdered(Map<String, Object> propertyValues, String orderProperty, boolean descending) {
+		List<String> orderProperties = new ArrayList<>();
+
+		return getAllMatchingOrdered(propertyValues, orderProperties, descending);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<T> getAllWhereMatch(Map<String, Object> columnValues) {
-		Session session = startSession();
-		Criteria criteria = session.createCriteria(classType);
-		for (Entry<String, Object> entrySet : columnValues.entrySet()) {
-			criteria.add(Restrictions.eq(entrySet.getKey(), entrySet.getValue()));
-		}
-		List<T> resultList = criteria.list();
-		commitAndCloseSession(session);
-
-		return resultList;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<T> getAllOrderedBy(String orderColumn, boolean descending) {
-		Session session = startSession();
-		Criteria criteria = session.createCriteria(classType);
-		if (descending) {
-			criteria.addOrder(Order.desc(orderColumn));
-		} else {
-			criteria.addOrder(Order.asc(orderColumn));
-		}
-		List<T> resultList = criteria.list();
-		commitAndCloseSession(session);
-
-		return resultList;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<T> getAllOrderedBy(List<String> orderColumns, boolean descending) {
-		Session session = startSession();
-		Criteria criteria = session.createCriteria(classType);
-		for (String orderColumn : orderColumns) {
-			if (descending) {
-				criteria.addOrder(Order.desc(orderColumn));
-			} else {
-				criteria.addOrder(Order.asc(orderColumn));
-			}
-		}
-		List<T> resultList = criteria.list();
-		commitAndCloseSession(session);
-
-		return resultList;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<T> getAllWhereMatchOrderedBy(Map<String, Object> columnValues, String orderColumn, boolean descending) {
-		Session session = startSession();
-		Criteria criteria = session.createCriteria(classType);
-		for (Entry<String, Object> entrySet : columnValues.entrySet()) {
-			criteria.add(Restrictions.eq(entrySet.getKey(), entrySet.getValue()));
-		}
-		if (descending) {
-			criteria.addOrder(Order.desc(orderColumn));
-		} else {
-			criteria.addOrder(Order.asc(orderColumn));
-		}
-		List<T> resultList = criteria.list();
-		commitAndCloseSession(session);
-
-		return resultList;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<T> getAllWhereMatchOrderedBy(Map<String, Object> columnValues, List<String> orderColumns,
+	public List<T> getAllMatchingOrdered(Map<String, Object> propertyValues, List<String> orderProperties,
 			boolean descending) {
 		Session session = startSession();
 		Criteria criteria = session.createCriteria(classType);
-		for (Entry<String, Object> entrySet : columnValues.entrySet()) {
+		for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
 			criteria.add(Restrictions.eq(entrySet.getKey(), entrySet.getValue()));
 		}
-		for (String orderColumn : orderColumns) {
-			if (descending) {
-				criteria.addOrder(Order.desc(orderColumn));
-			} else {
-				criteria.addOrder(Order.asc(orderColumn));
-			}
+		for (String orderProperty : orderProperties) {
+			addOrder(criteria, orderProperty, descending);
 		}
 		List<T> resultList = criteria.list();
 		commitAndCloseSession(session);
 
 		return resultList;
+	}
+
+	@Override
+	public List<T> getPage(int pageNumber) {
+		return getOrderedPage("id", false, pageNumber);
+	}
+
+	@Override
+	public List<T> getMatchingPage(String propertyName, Object propertyValue, int pageNumber) {
+		Map<String, Object> propertyValues = new HashMap<>();
+		propertyValues.put(propertyName, propertyValue);
+		return getMatchingPage(propertyValues, pageNumber);
+	}
+
+	@Override
+	public List<T> getMatchingPage(Map<String, Object> propertyValues, int pageNumber) {
+		return getMatchingOrderedPage(propertyValues, "id", false, pageNumber);
+	}
+
+	@Override
+	public List<T> getOrderedPage(String orderProperty, boolean descending, int pageNumber) {
+		List<String> orderProperties = new ArrayList<>();
+		orderProperties.add(orderProperty);
+
+		return getOrderedPage(orderProperties, descending, pageNumber);
+	}
+
+	@Override
+	public List<T> getOrderedPage(List<String> orderProperties, boolean descending, int pageNumber) {
+		return getMatchingOrderedPage(new HashMap<>(), orderProperties, descending, pageNumber);
+	}
+
+	@Override
+	public List<T> getMatchingOrderedPage(String propertyName, Object propertyValue, String orderProperty,
+			boolean descending, int pageNumber) {
+		List<String> orderProperties = new ArrayList<>();
+		orderProperties.add(orderProperty);
+		Map<String, Object> propertyValues = new HashMap<>();
+		propertyValues.put(propertyName, propertyValue);
+
+		return getMatchingOrderedPage(propertyValues, orderProperties, descending, pageNumber);
+	}
+
+	@Override
+	public List<T> getMatchingOrderedPage(String propertyName, Object propertyValue, List<String> orderProperties,
+			boolean descending, int pageNumber) {
+		Map<String, Object> propertyValues = new HashMap<>();
+		propertyValues.put(propertyName, propertyValue);
+
+		return getMatchingOrderedPage(propertyValues, orderProperties, descending, pageNumber);
+	}
+
+	@Override
+	public List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, String orderProperty, boolean descending,
+			int pageNumber) {
+		List<String> orderProperties = new ArrayList<>();
+		orderProperties.add(orderProperty);
+
+		return getMatchingOrderedPage(propertyValues, orderProperties, descending, pageNumber);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, List<String> orderProperties,
+			boolean descending, int pageNumber) {
+		Session session = startSession();
+		Criteria criteria = session.createCriteria(classType);
+		for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
+			criteria.add(Restrictions.eq(entrySet.getKey(), entrySet.getValue()));
+		}
+		for (String orderProperty : orderProperties) {
+			addOrder(criteria, orderProperty, descending);
+		}
+		criteria.setFirstResult(pageNumber * DEFAULT_PAGE_SIZE);
+		criteria.setMaxResults(DEFAULT_PAGE_SIZE + 1);
+		List<T> resultList = criteria.list();
+		commitAndCloseSession(session);
+
+		return resultList;
+	}
+
+	// TODO can only have one alias with the same name, find way to avoid collision
+	// TODO only supports one level of nesting, expand to multi-level if needed
+	private void addOrder(Criteria criteria, String orderProperty, boolean descending) {
+		// nested property detection
+		int dotCount = StringUtils.countMatches(orderProperty, '.');
+		if (dotCount > 1) {
+			throw new UnsupportedOperationException(
+					"BaseDAOImpl addOrder() does not support orders using multi-nested \".\" properties");
+		} else if (dotCount == 1) {
+			String nestedPropertyAlias = orderProperty.substring(0, orderProperty.indexOf('.'));
+			criteria.createAlias(nestedPropertyAlias, nestedPropertyAlias);
+		}
+		if (descending) {
+			criteria.addOrder(Order.desc(orderProperty));
+		} else {
+			criteria.addOrder(Order.asc(orderProperty));
+		}
+
 	}
 
 	@Override
@@ -176,7 +251,7 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 
 		if (logAuditTrail) {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			auditDAO.saveNewHistory(object, object.getSysUserId(), getTableNameAlias());
+			auditDAO.saveNewHistory(object, object.getSysUserId(), getTableName());
 		}
 
 		commitAndCloseSession(session);
@@ -210,7 +285,7 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 				if (logAuditTrail) {
 					AuditTrailDAO auditDao = new AuditTrailDAOImpl();
 					auditDao.saveHistory(newObject.get(), oldObject.get(), object.getSysUserId(), AUDIT_TRAIL_UPDATE,
-							getTableNameAlias());
+							getTableName());
 				}
 				commitAndCloseSession(session);
 
@@ -249,7 +324,7 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 			try {
 				T newObject = (T) object.getClass().newInstance();
 				auditDao.saveHistory(newObject, oldObject.get(), object.getSysUserId(), AUDIT_TRAIL_DELETE,
-						getTableNameAlias());
+						getTableName());
 			} catch (InstantiationException | IllegalAccessException e) {
 				LogEvent.logErrorStack(this.getClass().getSimpleName(), "delete", e);
 				throw new LIMSRuntimeException(e);
@@ -290,8 +365,8 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 	// session.clear every 20 records
 	@Override
 	public void deleteAll(String[] objectIds) {
-		for (String object : objectIds) {
-			delete(object);
+		for (String objectid : objectIds) {
+			delete(objectid);
 		}
 	}
 
@@ -319,7 +394,7 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 	@Override
 	public List<T> getNext(String id) {
 		int start = (Integer.valueOf(id)).intValue();
-		String table = getTableNameAlias();
+		String table = getObjectName();
 
 		List<T> list = new ArrayList<>();
 		try {
@@ -343,7 +418,7 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 	@Override
 	public List<T> getPrevious(String id) {
 		int start = (Integer.valueOf(id)).intValue();
-		String table = getTableNameAlias();
+		String table = getObjectName();
 
 		List<T> list = new ArrayList<>();
 		try {
@@ -363,12 +438,10 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 	}
 
 	/**
-	 * @return table name alias that Hibernate uses
+	 * @return object name that Hibernate uses
 	 */
-	protected String getTableNameAlias() {
-		AbstractEntityPersister persister = (AbstractEntityPersister) HibernateUtil.getSessionFactory()
-				.getClassMetadata(classType);
-		return persister.getEntityName();
+	protected String getObjectName() {
+		return classType.getSimpleName();
 	}
 
 	/**
@@ -377,7 +450,8 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 	protected String getTableName() {
 		AbstractEntityPersister persister = (AbstractEntityPersister) HibernateUtil.getSessionFactory()
 				.getClassMetadata(classType);
-		return persister.getTableName();
+		String tableName = persister.getTableName();
+		return tableName.substring(tableName.indexOf('.') + 1);
 	}
 
 	/**
@@ -408,6 +482,10 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 		} finally {
 			session.close();
 		}
+	}
+
+	protected void disableLogging() {
+		logAuditTrail = false;
 	}
 
 	// end of new methods, below this point are legacy methods

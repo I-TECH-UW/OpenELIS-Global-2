@@ -74,25 +74,25 @@ public class DatabaseChangeLogDAOImpl extends BaseDAOImpl<DatabaseChangeLog> imp
 	}
 
 	@Override
-	public List<DatabaseChangeLog> getAllWhereMatch(Map<String, Object> columnValues) {
+	public List<DatabaseChangeLog> getAllMatching(Map<String, Object> columnValues) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<DatabaseChangeLog> getAllOrderedBy(String orderByColumn, boolean descending) {
+	public List<DatabaseChangeLog> getAllOrdered(String orderByColumn, boolean descending) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<DatabaseChangeLog> getAllOrderedBy(List<String> orderByColumns, boolean descending) {
+	public List<DatabaseChangeLog> getAllOrdered(List<String> orderByColumns, boolean descending) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<DatabaseChangeLog> getAllWhereMatchOrderedBy(Map<String, Object> columnValues, String orderByColumn,
+	public List<DatabaseChangeLog> getAllMatchingOrdered(Map<String, Object> columnValues, String orderByColumn,
 			boolean descending) {
 		// TODO Auto-generated method stub
 		return null;

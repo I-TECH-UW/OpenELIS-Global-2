@@ -447,7 +447,7 @@ abstract public class CSVRoutineColumnBuilder {
 
 	protected void defineAllObservationHistoryTypes() {
 		ObservationHistoryTypeDAO ohtDao = new ObservationHistoryTypeDAOImpl();
-		allObHistoryTypes = ohtDao.getAllOrderedBy("type_name", false);
+		allObHistoryTypes = ohtDao.getAllOrdered("type_name", false);
 	}
 
 	/**

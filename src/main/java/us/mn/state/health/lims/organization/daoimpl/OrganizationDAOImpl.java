@@ -645,25 +645,25 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 	}
 
 	@Override
-	public List<Organization> getAllWhereMatch(Map<String, Object> columnValues) {
+	public List<Organization> getAllMatching(Map<String, Object> columnValues) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Organization> getAllOrderedBy(String orderByColumn, boolean descending) {
+	public List<Organization> getAllOrdered(String orderByColumn, boolean descending) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Organization> getAllOrderedBy(List<String> orderByColumns, boolean descending) {
+	public List<Organization> getAllOrdered(List<String> orderByColumns, boolean descending) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Organization> getAllWhereMatchOrderedBy(Map<String, Object> columnValues, String orderByColumn,
+	public List<Organization> getAllMatchingOrdered(Map<String, Object> columnValues, String orderByColumn,
 			boolean descending) {
 		// TODO Auto-generated method stub
 		return null;
