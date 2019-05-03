@@ -27,6 +27,7 @@
 	<parameter name="leftHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="rightHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="localization" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="imagesPath" class="java.lang.String"/>
 	<field name="accessionNumber" class="java.lang.String"/>
 	<field name="receivedDate" class="java.lang.String"/>
 	<field name="testDate" class="java.lang.String"/>
@@ -181,6 +182,9 @@
 				</subreportParameter>
 				<subreportParameter name="directorName">
 					<subreportParameterExpression><![CDATA[$P{directorName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="imagesPath">
+					<subreportParameterExpression><![CDATA[$P{imagesPath}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + $P{headerName}]]></subreportExpression>
