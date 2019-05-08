@@ -23,7 +23,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.role.valueholder.Role;
 
-public interface RoleDAO extends BaseDAO {
+public interface RoleDAO extends BaseDAO<Role> {
 
 	public boolean insertData(Role role) throws LIMSRuntimeException;
 
@@ -41,7 +41,7 @@ public interface RoleDAO extends BaseDAO {
 	public List getNextRoleRecord(String id) throws LIMSRuntimeException;
 
 	@SuppressWarnings("rawtypes")
-	public List getPreviousRoleRecord(String id)throws LIMSRuntimeException;
+	public List getPreviousRoleRecord(String id) throws LIMSRuntimeException;
 
 	public List<Role> getReferencingRoles(Role role) throws LIMSRuntimeException;
 

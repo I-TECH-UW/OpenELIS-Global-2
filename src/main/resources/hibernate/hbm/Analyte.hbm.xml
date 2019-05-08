@@ -6,8 +6,8 @@
     <class name="us.mn.state.health.lims.analyte.valueholder.Analyte" table="ANALYTE" optimistic-lock="version" dynamic-update="true" >
         <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-			<generator class="sequence">
-            	<param name="sequence">analyte_seq</param>
+			<generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            	<param name="sequence_name">analyte_seq</param>
             </generator> 			
         </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>

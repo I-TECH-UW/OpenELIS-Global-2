@@ -6,8 +6,8 @@
     <class name="us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity" table="PATIENT_IDENTITY" optimistic-lock="version" dynamic-update="true" >
         <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="sequence">
-            	<param name="sequence">patient_identity_seq</param>
+            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            	<param name="sequence_name">patient_identity_seq</param>
             </generator>
         </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>

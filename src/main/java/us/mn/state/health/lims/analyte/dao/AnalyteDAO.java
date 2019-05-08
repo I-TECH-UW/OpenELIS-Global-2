@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package us.mn.state.health.lims.analyte.dao;
@@ -23,12 +23,13 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
 /**
  * @author diane benz
- * 
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates. To enable and disable the creation of type
- * comments go to Window>Preferences>Java>Code Generation.
+ *
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
-public interface AnalyteDAO extends BaseDAO {
+public interface AnalyteDAO extends BaseDAO<Analyte> {
 
 	public boolean insertData(Analyte analyte) throws LIMSRuntimeException;
 
@@ -36,8 +37,7 @@ public interface AnalyteDAO extends BaseDAO {
 
 	public List getAllAnalytes() throws LIMSRuntimeException;
 
-	public List getPageOfAnalytes(int startingRecNo)
-			throws LIMSRuntimeException;
+	public List getPageOfAnalytes(int startingRecNo) throws LIMSRuntimeException;
 
 	public void getData(Analyte analyte) throws LIMSRuntimeException;
 
@@ -49,16 +49,16 @@ public interface AnalyteDAO extends BaseDAO {
 
 	public List getPreviousAnalyteRecord(String id) throws LIMSRuntimeException;
 
-	//bugzilla 1367 added boolean param
-	public Analyte getAnalyteByName(Analyte analyte, boolean ignoreCase)
-			throws LIMSRuntimeException;
-	//bugzilla 1411
-	public Integer getTotalAnalyteCount() throws LIMSRuntimeException; 
-	
-	//bugzilla 2370
-	public List getPagesOfSearchedAnalytes (int startRecNo, String searchString)
-                          throws LIMSRuntimeException;
-	//bugzilla 2370
-	public Integer getTotalSearchedAnalyteCount(String searchString) throws LIMSRuntimeException; 
-	
+	// bugzilla 1367 added boolean param
+	public Analyte getAnalyteByName(Analyte analyte, boolean ignoreCase) throws LIMSRuntimeException;
+
+	// bugzilla 1411
+	public Integer getTotalAnalyteCount() throws LIMSRuntimeException;
+
+	// bugzilla 2370
+	public List getPagesOfSearchedAnalytes(int startRecNo, String searchString) throws LIMSRuntimeException;
+
+	// bugzilla 2370
+	public Integer getTotalSearchedAnalyteCount(String searchString) throws LIMSRuntimeException;
+
 }

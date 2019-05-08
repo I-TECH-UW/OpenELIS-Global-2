@@ -39,7 +39,11 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 /**
  * @author diane benz
  */
-public class AnalyteDAOImpl extends BaseDAOImpl implements AnalyteDAO {
+public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
+
+	public AnalyteDAOImpl() {
+		super(Analyte.class);
+	}
 
 	@Override
 	public void deleteData(List analytes) throws LIMSRuntimeException {

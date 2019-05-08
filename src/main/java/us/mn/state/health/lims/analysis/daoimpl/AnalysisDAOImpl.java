@@ -56,8 +56,13 @@ import us.mn.state.health.lims.test.valueholder.Test;
 /**
  * @author diane benz
  */
-public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
+public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDAO {
 
+	public AnalysisDAOImpl() {
+		super(Analysis.class);
+	}
+
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void deleteData(List analyses) throws LIMSRuntimeException {
 		// add to audit trail
@@ -66,7 +71,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 			for (int i = 0; i < analyses.size(); i++) {
 				Analysis data = (Analysis) analyses.get(i);
 
-				Analysis oldData = (Analysis) readAnalysis(data.getId());
+				Analysis oldData = readAnalysis(data.getId());
 				Analysis newData = new Analysis();
 
 				String sysUserId = data.getSysUserId();
@@ -84,7 +89,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 			for (int i = 0; i < analyses.size(); i++) {
 				Analysis data = (Analysis) analyses.get(i);
 				// bugzilla 2206
-				data = (Analysis) readAnalysis(data.getId());
+				data = readAnalysis(data.getId());
 				HibernateUtil.getSession().delete(data);
 				HibernateUtil.getSession().flush();
 				HibernateUtil.getSession().clear();
@@ -97,13 +102,13 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 	}
 
 	/*
-	 * Warning: duplicateCheck uses SystemConfiguration setting for excluding
-	 * status (non-Javadoc)
-	 * 
-	 * @see
-	 * us.mn.state.health.lims.analysis.dao.AnalysisDAO#insertData(us.mn.state
+	 * Warning: duplicateCheck uses SystemConfiguration setting for excluding status
+	 * (non-Javadoc)
+	 *
+	 * @see us.mn.state.health.lims.analysis.dao.AnalysisDAO#insertData(us.mn.state
 	 * .health.lims.analysis.valueholder.Analysis, boolean)
 	 */
+	@Override
 	public boolean insertData(Analysis analysis, boolean duplicateCheck) throws LIMSRuntimeException {
 
 		try {
@@ -135,25 +140,27 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return true;
 	}
 
-    public void updateData( Analysis analysis){
-        updateData( analysis, false );
-    }
+	@Override
+	public void updateData(Analysis analysis) {
+		updateData(analysis, false);
+	}
 
+	@Override
 	public void updateData(Analysis analysis, boolean skipAuditTrail) throws LIMSRuntimeException {
 		Analysis oldData = readAnalysis(analysis.getId());
 
-        if( !skipAuditTrail){
-            try{
-                AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-                String sysUserId = analysis.getSysUserId();
-                String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-                String tableName = "ANALYSIS";
-                auditDAO.saveHistory( analysis, oldData, sysUserId, event, tableName );
-            }catch( Exception e ){
-                LogEvent.logError( "AnalysisDAOImpl", "AuditTrail updateData()", e.toString() );
-                throw new LIMSRuntimeException( "Error in Analysis AuditTrail updateData()", e );
-            }
-        }
+		if (!skipAuditTrail) {
+			try {
+				AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+				String sysUserId = analysis.getSysUserId();
+				String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+				String tableName = "ANALYSIS";
+				auditDAO.saveHistory(analysis, oldData, sysUserId, event, tableName);
+			} catch (Exception e) {
+				LogEvent.logError("AnalysisDAOImpl", "AuditTrail updateData()", e.toString());
+				throw new LIMSRuntimeException("Error in Analysis AuditTrail updateData()", e);
+			}
+		}
 
 		try {
 			HibernateUtil.getSession().merge(analysis);
@@ -167,6 +174,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		}
 	}
 
+	@Override
 	public void getData(Analysis analysis) throws LIMSRuntimeException {
 
 		try {
@@ -185,6 +193,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		}
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public List getAllAnalyses() throws LIMSRuntimeException {
 		List list = new Vector();
@@ -203,6 +212,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public List getPageOfAnalyses(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
@@ -243,6 +253,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return analysis;
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public List getAnalyses(String filter) throws LIMSRuntimeException {
 		List list = new Vector();
@@ -263,6 +274,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public List getNextAnalysisRecord(String id) throws LIMSRuntimeException {
 
@@ -270,12 +282,14 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public List getPreviousAnalysisRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "Analysis", Analysis.class);
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List getAllAnalysesPerTest(Test test) throws LIMSRuntimeException {
 		List list = new Vector();
@@ -298,6 +312,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public List getAllAnalysisByTestAndStatus(String testId, List<Integer> statusIdList) throws LIMSRuntimeException {
 		List list = new Vector();
@@ -319,10 +334,12 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
-	public List getAllAnalysisByTestsAndStatus(List<String> testIdList, List<Integer> statusIdList) throws LIMSRuntimeException {
+	public List getAllAnalysisByTestsAndStatus(List<String> testIdList, List<Integer> statusIdList)
+			throws LIMSRuntimeException {
 		List list = new Vector();
-		List<Integer> testList = new ArrayList<Integer>();
+		List<Integer> testList = new ArrayList<>();
 		try {
 			String sql = "from Analysis a where a.test.id IN (:testList) and a.statusId IN (:statusIdList) order by a.sampleItem.sample.accessionNumber";
 
@@ -345,8 +362,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
-	public List getAllAnalysisByTestAndExcludedStatus(String testId, List<Integer> statusIdList) throws LIMSRuntimeException {
+	public List getAllAnalysisByTestAndExcludedStatus(String testId, List<Integer> statusIdList)
+			throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
 			String sql = "from Analysis a where a.test = :testId and a.statusId not IN (:statusIdList) order by a.sampleItem.sample.accessionNumber";
@@ -366,15 +385,17 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
-	public List getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> statusIdList, boolean sortedByDateAndAccession)
-			throws LIMSRuntimeException {
+	public List getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> statusIdList,
+			boolean sortedByDateAndAccession) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
 			String sql = "from Analysis a where a.testSection.id = :testSectionId and a.statusId IN (:statusIdList) order by a.id";
 
 			if (sortedByDateAndAccession) {
-				//sql += " order by a.sampleItem.sample.receivedTimestamp  asc, a.sampleItem.sample.accessionNumber";
+				// sql += " order by a.sampleItem.sample.receivedTimestamp asc,
+				// a.sampleItem.sample.accessionNumber";
 			}
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
@@ -392,8 +413,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
-	public List getAllAnalysisByTestSectionAndExcludedStatus(String testSectionId, List<Integer> statusIdList) throws LIMSRuntimeException {
+	public List getAllAnalysisByTestSectionAndExcludedStatus(String testSectionId, List<Integer> statusIdList)
+			throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
 			String sql = "from Analysis a where a.testSection.id = :testSectionId and a.statusId NOT IN (:statusIdList) order by a.sampleItem.sample.receivedTimestamp asc, a.sampleItem.sample.accessionNumber ";
@@ -413,6 +436,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Analysis> getAnalysesBySampleItem(SampleItem sampleItem) throws LIMSRuntimeException {
 		List<Analysis> list = null;
@@ -435,6 +459,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Analysis> getAnalysesBySampleItemsExcludingByStatusIds(SampleItem sampleItem, Set<Integer> statusIds)
 			throws LIMSRuntimeException {
@@ -489,6 +514,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return null;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Analysis> getAnalysesBySampleStatusId(String statusId) throws LIMSRuntimeException {
 		List<Analysis> analysisList = null;
@@ -513,7 +539,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Analysis> getAnalysesBySampleIdExcludedByStatusId(String id, Set<Integer> statusIds) throws LIMSRuntimeException {
+	public List<Analysis> getAnalysesBySampleIdExcludedByStatusId(String id, Set<Integer> statusIds)
+			throws LIMSRuntimeException {
 		if (statusIds == null || statusIds.isEmpty()) {
 			return getAnalysesBySampleId(id);
 		}
@@ -536,7 +563,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Analysis> getAnalysesBySampleIdAndStatusId(String id, Set<Integer> statusIds) throws LIMSRuntimeException {
+	public List<Analysis> getAnalysesBySampleIdAndStatusId(String id, Set<Integer> statusIds)
+			throws LIMSRuntimeException {
 		if (statusIds == null || statusIds.isEmpty()) {
 			return getAnalysesBySampleId(id);
 		}
@@ -562,8 +590,9 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 	 * bugzilla 1993 (part of 1942) getAnalysesReadyToBeReported() - returns the
 	 * tests that should be updated with a printed date of today's date (see
 	 * ResultsReport)
-	 * 
+	 *
 	 */
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List getAnalysesReadyToBeReported() throws LIMSRuntimeException {
 
@@ -596,6 +625,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List getAllChildAnalysesByResult(Result result) throws LIMSRuntimeException {
 		List list = new Vector();
@@ -619,15 +649,16 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List getMaxRevisionAnalysesBySample(SampleItem sampleItem) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
 
 			String sql = "from Analysis a where (a.sampleItem.id, a.test.id, a.revision) IN "
-					+ "(select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b " + "group by b.sampleItem.id, b.test.id) "
-					+ "and a.sampleItem.id = :param " +
-					"and a.status NOT IN (:param2) " + "order by a.test.id, a.revision desc";
+					+ "(select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b "
+					+ "group by b.sampleItem.id, b.test.id) " + "and a.sampleItem.id = :param "
+					+ "and a.status NOT IN (:param2) " + "order by a.test.id, a.revision desc";
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("param", sampleItem.getId());
@@ -647,6 +678,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 	}
 
 	// bugzilla 2300 (separate method for sample tracking)
+	@Override
 	@SuppressWarnings("rawtypes")
 	public List getMaxRevisionAnalysesBySampleIncludeCanceled(SampleItem sampleItem) throws LIMSRuntimeException {
 
@@ -654,8 +686,9 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		try {
 
 			String sql = "from Analysis a where (a.sampleItem.id, a.test.id, a.revision) IN "
-					+ "(select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b " + "group by b.sampleItem.id, b.test.id) "
-					+ "and a.sampleItem.id = :param " + "order by a.test.id, a.revision desc";
+					+ "(select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b "
+					+ "group by b.sampleItem.id, b.test.id) " + "and a.sampleItem.id = :param "
+					+ "order by a.test.id, a.revision desc";
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("param", sampleItem.getId());
@@ -671,15 +704,16 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List getRevisionHistoryOfAnalysesBySample(SampleItem sampleItem) throws LIMSRuntimeException {
 		List list = new Vector();
 
 		try {
 			String sql = "from Analysis a where (a.sampleItem.id, a.test.id, a.revision) NOT IN "
-					+ "(select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b " + "group by b.sampleItem.id, b.test.id) "
-					+ "and a.sampleItem.id = :param " +
-					"and a.status NOT IN (:param2) " + "order by a.test.id, a.revision desc";
+					+ "(select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b "
+					+ "group by b.sampleItem.id, b.test.id) " + "and a.sampleItem.id = :param "
+					+ "and a.status NOT IN (:param2) " + "order by a.test.id, a.revision desc";
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("param", sampleItem.getId());
@@ -698,21 +732,23 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List getRevisionHistoryOfAnalysesBySampleAndTest(SampleItem sampleItem, Test test, boolean includeLatestRevision)
-			throws LIMSRuntimeException {
+	public List getRevisionHistoryOfAnalysesBySampleAndTest(SampleItem sampleItem, Test test,
+			boolean includeLatestRevision) throws LIMSRuntimeException {
 		List list = new Vector();
 
 		try {
 			String sql = "";
 			if (includeLatestRevision) {
-				sql = "from Analysis a " + "where a.sampleItem.id = :param " +
-						"and a.status NOT IN (:param3) " + "and a.test.id = :param2 " + "order by a.test.id, a.revision desc";
+				sql = "from Analysis a " + "where a.sampleItem.id = :param " + "and a.status NOT IN (:param3) "
+						+ "and a.test.id = :param2 " + "order by a.test.id, a.revision desc";
 			} else {
 				sql = "from Analysis a where (a.sampleItem.id, a.test.id, a.revision) NOT IN "
-						+ "(select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b " + "group by b.sampleItem.id, b.test.id) "
-						+ "and a.sampleItem.id = :param " +
-						"and a.status NOT IN (:param3) " + "and a.test.id = :param2 " + "order by a.test.id, a.revision desc";
+						+ "(select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b "
+						+ "group by b.sampleItem.id, b.test.id) " + "and a.sampleItem.id = :param "
+						+ "and a.status NOT IN (:param3) " + "and a.test.id = :param2 "
+						+ "order by a.test.id, a.revision desc";
 			}
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
@@ -734,13 +770,15 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List getAllMaxRevisionAnalysesPerTest(Test test) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
 			String sql = "from Analysis a where (a.sampleItem.id, a.revision) IN "
-					+ "(select b.sampleItem.id, max(b.revision) from Analysis b " + "group by b.sampleItem.id) " + "and a.test = :param " +
-					"and a.status NOT IN (:param2) " + "order by a.sampleItem.sample.accessionNumber";
+					+ "(select b.sampleItem.id, max(b.revision) from Analysis b " + "group by b.sampleItem.id) "
+					+ "and a.test = :param " + "and a.status NOT IN (:param2) "
+					+ "order by a.sampleItem.sample.accessionNumber";
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("param", test.getId());
@@ -762,6 +800,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 	}
 
 	// bugzilla 2227, 2258
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List getMaxRevisionAnalysesReadyToBeReported() throws LIMSRuntimeException {
 		List list = new Vector();
@@ -793,6 +832,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 	}
 
 	// bugzilla 1900
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List getMaxRevisionAnalysesReadyForReportPreviewBySample(List accessionNumbers) throws LIMSRuntimeException {
 		List list = new Vector();
@@ -811,7 +851,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 			sampleStatusesToInclude.add(SystemConfiguration.getInstance().getSampleStatusReleased());
 
 			if (accessionNumbers != null && accessionNumbers.size() > 0) {
-				list = HibernateUtil.getSession().getNamedQuery("analysis.getMaxRevisionAnalysesReadyForPreviewBySample")
+				list = HibernateUtil.getSession()
+						.getNamedQuery("analysis.getMaxRevisionAnalysesReadyForPreviewBySample")
 						.setParameterList("analysisStatusesToInclude", analysisStatusesToInclude)
 						.setParameterList("sampleStatusesToInclude", sampleStatusesToInclude)
 						.setParameterList("samplesToInclude", accessionNumbers).list();
@@ -831,6 +872,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 	}
 
 	// bugzilla 1856
+	@Override
 	@SuppressWarnings("rawtypes")
 	public List getAnalysesAlreadyReportedBySample(Sample sample) throws LIMSRuntimeException {
 		List list = new Vector();
@@ -854,6 +896,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 	}
 
 	// bugzilla 2264
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List getMaxRevisionPendingAnalysesReadyToBeReportedBySample(Sample sample) throws LIMSRuntimeException {
 		List list = new Vector();
@@ -866,14 +909,17 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 			// tests
 			analysisStatusesToInclude.add(SystemConfiguration.getInstance().getAnalysisStatusResultCompleted());
 
-			list = HibernateUtil.getSession().getNamedQuery("analysis.getMaxRevisionPendingAnalysesReadyToBeReportedBySample")
-					.setParameter("sampleId", sample.getId()).setParameterList("analysisStatusesToInclude", analysisStatusesToInclude)
-					.list();
+			list = HibernateUtil.getSession()
+					.getNamedQuery("analysis.getMaxRevisionPendingAnalysesReadyToBeReportedBySample")
+					.setParameter("sampleId", sample.getId())
+					.setParameterList("analysisStatusesToInclude", analysisStatusesToInclude).list();
 
 		} catch (Exception e) {
 
-			LogEvent.logError("AnalysisDAOImpl", "getMaxRevisionPendingAnalysesReadyToBeReportedBySample()", e.toString());
-			throw new LIMSRuntimeException("Error in Analysis getMaxRevisionPendingAnalysesReadyToBeReportedBySample()", e);
+			LogEvent.logError("AnalysisDAOImpl", "getMaxRevisionPendingAnalysesReadyToBeReportedBySample()",
+					e.toString());
+			throw new LIMSRuntimeException("Error in Analysis getMaxRevisionPendingAnalysesReadyToBeReportedBySample()",
+					e);
 		} finally {
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
@@ -883,6 +929,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 	}
 
 	// bugzilla 1900
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List getMaxRevisionPendingAnalysesReadyForReportPreviewBySample(Sample sample) throws LIMSRuntimeException {
 		List list = new Vector();
@@ -895,13 +942,15 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 			// Answer NO
 			// analysisStatusesToInclude.add(SystemConfiguration.getInstance().getAnalysisStatusResultCompleted());
 
-			list = HibernateUtil.getSession().getNamedQuery("analysis.getMaxRevisionPendingAnalysesReadyToBeReportedBySample")
-					.setParameter("sampleId", sample.getId()).setParameterList("analysisStatusesToInclude", analysisStatusesToInclude)
-					.list();
+			list = HibernateUtil.getSession()
+					.getNamedQuery("analysis.getMaxRevisionPendingAnalysesReadyToBeReportedBySample")
+					.setParameter("sampleId", sample.getId())
+					.setParameterList("analysisStatusesToInclude", analysisStatusesToInclude).list();
 
 		} catch (Exception e) {
 
-			LogEvent.logError("AnalysisDAOImpl", "getMaxRevisionPendingAnalysesReadyForReportPreviewBySample()", e.toString());
+			LogEvent.logError("AnalysisDAOImpl", "getMaxRevisionPendingAnalysesReadyForReportPreviewBySample()",
+					e.toString());
 			throw new LIMSRuntimeException("Error in getMaxRevisionPendingAnalysesReadyForReportPreviewBySample()", e);
 		} finally {
 			HibernateUtil.getSession().flush();
@@ -911,6 +960,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Analysis getPreviousAnalysisForAmendedAnalysis(Analysis analysis) throws LIMSRuntimeException {
 		Analysis previousAnalysis = null;
@@ -985,15 +1035,16 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		}
 	}
 
+	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void getMaxRevisionAnalysisBySampleAndTest(Analysis analysis) throws LIMSRuntimeException {
 
 		try {
 			Analysis anal = null;
 			String sql = "from Analysis a where (a.sampleItem.id, a.test.id, a.revision) IN "
-					+ "(select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b " + "group by b.sampleItem.id, b.test.id) "
-					+ "and a.sampleItem = :param " +
-					"and a.status NOT IN (:param3) " + "and a.test = :param2";
+					+ "(select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b "
+					+ "group by b.sampleItem.id, b.test.id) " + "and a.sampleItem = :param "
+					+ "and a.status NOT IN (:param3) " + "and a.test = :param2";
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("param", analysis.getSampleItem().getId());
@@ -1019,6 +1070,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List getMaxRevisionParentTestAnalysesBySample(SampleItem sampleItem) throws LIMSRuntimeException {
 
@@ -1026,10 +1078,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		try {
 
 			String sql = "from Analysis a where (a.sampleItem.id, a.test.id, a.revision) IN "
-					+ "(select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b " + "group by b.sampleItem.id, b.test.id) "
-					+ "and a.sampleItem.id = :param " +
-					"and a.status NOT IN (:param2) " +
-					"and a.parentAnalysis is null " + "order by a.test.id, a.revision desc";
+					+ "(select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b "
+					+ "group by b.sampleItem.id, b.test.id) " + "and a.sampleItem.id = :param "
+					+ "and a.status NOT IN (:param2) " + "and a.parentAnalysis is null "
+					+ "order by a.test.id, a.revision desc";
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("param", sampleItem.getId());
@@ -1047,6 +1099,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Analysis> getAnalysesForStatusId(String statusId) throws LIMSRuntimeException {
 
@@ -1069,7 +1122,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Analysis> getAnalysisStartedOnExcludedByStatusId(Date collectionDate, Set<Integer> statusIds) throws LIMSRuntimeException {
+	public List<Analysis> getAnalysisStartedOnExcludedByStatusId(Date collectionDate, Set<Integer> statusIds)
+			throws LIMSRuntimeException {
 		if (statusIds == null || statusIds.isEmpty()) {
 			return getAnalysisStartedOn(collectionDate);
 		}
@@ -1091,6 +1145,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return null;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Analysis> getAnalysisStartedOn(Date collectionDate) throws LIMSRuntimeException {
 
@@ -1112,7 +1167,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Analysis> getAnalysisCollectedOnExcludedByStatusId(Date collectionDate, Set<Integer> statusIds) throws LIMSRuntimeException {
+	public List<Analysis> getAnalysisCollectedOnExcludedByStatusId(Date collectionDate, Set<Integer> statusIds)
+			throws LIMSRuntimeException {
 		if (statusIds == null || statusIds.isEmpty()) {
 			return getAnalysisStartedOn(collectionDate);
 		}
@@ -1134,6 +1190,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return null;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Analysis> getAnalysisCollectedOn(Date collectionDate) throws LIMSRuntimeException {
 
@@ -1153,17 +1210,17 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return null;
 	}
 
-	
 	/**
 	 * @see us.mn.state.health.lims.analysis.dao.AnalysisDAO#getAnalysisBySampleAndTestIds(java.lang.String,
 	 *      java.util.List)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Analysis> getAnalysisBySampleAndTestIds(String sampleId, List<Integer> testIds) {
 		List<Analysis> list = null;
 		try {
 			if (testIds == null || testIds.size() == 0) {
-				return new ArrayList<Analysis>();
+				return new ArrayList<>();
 			}
 			String sql = "from Analysis a WHERE a.sampleItem.sample.id = :sampleId AND a.test.id IN ( :testIds )";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
@@ -1182,6 +1239,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Analysis> getAnalysisByTestSectionAndCompletedDateRange(String sectionID, Date lowDate, Date highDate)
 			throws LIMSRuntimeException {
@@ -1204,8 +1262,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return null;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
-	public List<Analysis> getAnalysisStartedOrCompletedInDateRange(Date lowDate, Date highDate) throws LIMSRuntimeException {
+	public List<Analysis> getAnalysisStartedOrCompletedInDateRange(Date lowDate, Date highDate)
+			throws LIMSRuntimeException {
 		String sql = "From Analysis a where a.startedDate BETWEEN :lowDate AND :highDate or a.completedDate BETWEEN :lowDate AND :highDate";
 
 		try {
@@ -1224,7 +1284,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 
 	}
 
-
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Analysis> getAnalysesBySampleId(String id) throws LIMSRuntimeException {
 		List<Analysis> list = null;
@@ -1244,6 +1304,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList,
 			List<Integer> sampleStatusList) throws LIMSRuntimeException {
@@ -1271,7 +1332,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Analysis> getAnalysisStartedOnRangeByStatusId(Date lowDate, Date highDate, String statusID) throws LIMSRuntimeException {
+	public List<Analysis> getAnalysisStartedOnRangeByStatusId(Date lowDate, Date highDate, String statusID)
+			throws LIMSRuntimeException {
 		String sql = "From Analysis a where a.statusId = :statusID and a.startedDate BETWEEN :lowDate AND :highDate";
 
 		try {
@@ -1293,7 +1355,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Analysis> getAnalysisCompleteInRange(Timestamp lowDate, Timestamp highDate) throws LIMSRuntimeException {
+	public List<Analysis> getAnalysisCompleteInRange(Timestamp lowDate, Timestamp highDate)
+			throws LIMSRuntimeException {
 		String sql = "From Analysis a where a.completedDate >= :lowDate AND a.completedDate < :highDate";
 
 		try {
@@ -1334,9 +1397,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Analysis> getAnalysisByAccessionAndTestId(String accessionNumber, String testId) throws LIMSRuntimeException {
+	public List<Analysis> getAnalysisByAccessionAndTestId(String accessionNumber, String testId)
+			throws LIMSRuntimeException {
 		if (GenericValidator.isBlankOrNull(accessionNumber) || GenericValidator.isBlankOrNull(testId)) {
-			return new ArrayList<Analysis>();
+			return new ArrayList<>();
 		}
 
 		String sql = "From Analysis a where a.sampleItem.sample.accessionNumber = :accessionNumber and a.test.id = :testId";
@@ -1356,10 +1420,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 	}
 
 	@Override
-	public List<Analysis> getAnalysisByTestNamesAndCompletedDateRange(List<String> testNames, Date lowDate, Date highDate)
-			throws LIMSRuntimeException {
+	public List<Analysis> getAnalysisByTestNamesAndCompletedDateRange(List<String> testNames, Date lowDate,
+			Date highDate) throws LIMSRuntimeException {
 		if (testNames.isEmpty()) {
-			return new ArrayList<Analysis>();
+			return new ArrayList<>();
 		}
 
 		String sql = "From Analysis a where a.test.testName in (:testNames) and a.completedDate BETWEEN :lowDate AND :highDate";
@@ -1382,10 +1446,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 	}
 
 	@Override
-	public List<Analysis> getAnalysisByTestDescriptionAndCompletedDateRange(List<String> descriptions, Date lowDate, Date highDate)
-			throws LIMSRuntimeException {
+	public List<Analysis> getAnalysisByTestDescriptionAndCompletedDateRange(List<String> descriptions, Date lowDate,
+			Date highDate) throws LIMSRuntimeException {
 		if (descriptions.isEmpty()) {
-			return new ArrayList<Analysis>();
+			return new ArrayList<>();
 		}
 
 		String sql = "From Analysis a where a.test.description in (:descriptions) and a.completedDate BETWEEN :lowDate AND :highDate";
@@ -1406,8 +1470,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 
 		return null;
 	}
+
 	@Override
-	public List<Analysis> getAnalysesBySampleItemIdAndStatusId(String sampleItemId, String statusId) throws LIMSRuntimeException {
+	public List<Analysis> getAnalysesBySampleItemIdAndStatusId(String sampleItemId, String statusId)
+			throws LIMSRuntimeException {
 		try {
 			String sql = "from Analysis a where a.sampleItem.id = :sampleItemId and a.statusId = :statusId";
 
@@ -1423,12 +1489,14 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 			handleException(e, "getAnalysesBySampleItemIdAndStatusId");
 		}
 
-		return null; //will never get here
+		return null; // will never get here
 	}
 
 	@Override
 	public Analysis getAnalysisById(String analysisId) throws LIMSRuntimeException {
-		if(analysisId==null) return null;
+		if (analysisId == null) {
+			return null;
+		}
 		try {
 			Analysis analysis = (Analysis) HibernateUtil.getSession().get(Analysis.class, analysisId);
 			closeSession();
@@ -1436,19 +1504,20 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		} catch (Exception e) {
 			handleException(e, "getAnalysisById");
 		}
-		
+
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Analysis> getAnalysesBySampleIdTestIdAndStatusId(List<Integer> sampleIdList, List<Integer> testIdList, List<Integer> statusIdList) throws LIMSRuntimeException {
-	
+	public List<Analysis> getAnalysesBySampleIdTestIdAndStatusId(List<Integer> sampleIdList, List<Integer> testIdList,
+			List<Integer> statusIdList) throws LIMSRuntimeException {
+
 		if (sampleIdList.isEmpty() || testIdList.isEmpty() || statusIdList.isEmpty()) {
-			return new ArrayList<Analysis>();
+			return new ArrayList<>();
 		}
 		String sql = "from Analysis a where a.sampleItem.sample.id in (:sampleIdList) and a.test.id in (:testIdList) and a.statusId in (:statusIdList) order by a.releasedDate desc";
-	
+
 		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameterList("sampleIdList", sampleIdList);
@@ -1460,45 +1529,52 @@ public class AnalysisDAOImpl extends BaseDAOImpl implements AnalysisDAO {
 		} catch (HibernateException e) {
 			handleException(e, "getAnalysesBySampleIdTestIdAndStatusId");
 		}
-	
+
 		return null;
-	
+
 	}
 
-	public Analysis getPatientPreviousAnalysisForTestName(Patient patient,Sample currentSample, String testName){
-		Analysis previousAnalysis=null;
-		List<Integer> sampIDList= new ArrayList<Integer>();
-		List<Integer> testIDList= new ArrayList<Integer>();
-		TestDAO testDAO=new TestDAOImpl();
+	@Override
+	public Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName) {
+		Analysis previousAnalysis = null;
+		List<Integer> sampIDList = new ArrayList<>();
+		List<Integer> testIDList = new ArrayList<>();
+		TestDAO testDAO = new TestDAOImpl();
 		SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
-		
-		List<Sample> sampList=sampleHumanDAO.getSamplesForPatient(patient.getId());		
-		
-		if(sampList.isEmpty() || testDAO.getTestByName(testName)==null) return previousAnalysis;
-		
-		testIDList.add(Integer.parseInt(testDAO.getTestByName(testName).getId()));
-		
-		for(Sample sample : sampList){
-			sampIDList.add(Integer.parseInt(sample.getId()));
-		}	
-		
-		List<Integer> statusList = new ArrayList<Integer>();
-		statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Finalized)));
-	
-		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleIdTestIdAndStatusId(sampIDList,testIDList, statusList);
-		
-		if (analysisList==null || analysisList.isEmpty()) return previousAnalysis;
-		
-		for(int i=0;i<analysisList.size();i++){
-		  if(i<analysisList.size()-1 && currentSample.getAccessionNumber().equals(analysisList.get(i).getSampleItem().getSample().getAccessionNumber())){
-			previousAnalysis=analysisList.get(i+1);
+
+		List<Sample> sampList = sampleHumanDAO.getSamplesForPatient(patient.getId());
+
+		if (sampList.isEmpty() || testDAO.getTestByName(testName) == null) {
 			return previousAnalysis;
-		  }
-		
+		}
+
+		testIDList.add(Integer.parseInt(testDAO.getTestByName(testName).getId()));
+
+		for (Sample sample : sampList) {
+			sampIDList.add(Integer.parseInt(sample.getId()));
+		}
+
+		List<Integer> statusList = new ArrayList<>();
+		statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Finalized)));
+
+		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
+		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleIdTestIdAndStatusId(sampIDList, testIDList,
+				statusList);
+
+		if (analysisList == null || analysisList.isEmpty()) {
+			return previousAnalysis;
+		}
+
+		for (int i = 0; i < analysisList.size(); i++) {
+			if (i < analysisList.size() - 1 && currentSample.getAccessionNumber()
+					.equals(analysisList.get(i).getSampleItem().getSample().getAccessionNumber())) {
+				previousAnalysis = analysisList.get(i + 1);
+				return previousAnalysis;
+			}
+
 		}
 		return previousAnalysis;
-		
+
 	}
 
 }

@@ -35,10 +35,15 @@ import us.mn.state.health.lims.referral.valueholder.Referral;
 
 /*
  */
-public class ReferralDAOImpl extends BaseDAOImpl implements ReferralDAO {
+public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDAO {
+
+	public ReferralDAOImpl() {
+		super(Referral.class);
+	}
 
 	private AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 
+	@Override
 	public boolean insertData(Referral referral) throws LIMSRuntimeException {
 		try {
 			String id = (String) HibernateUtil.getSession().save(referral);
@@ -53,6 +58,7 @@ public class ReferralDAOImpl extends BaseDAOImpl implements ReferralDAO {
 		return true;
 	}
 
+	@Override
 	public Referral getReferralById(String referralId) throws LIMSRuntimeException {
 		try {
 			Referral referral = (Referral) HibernateUtil.getSession().get(Referral.class, referralId);
@@ -65,7 +71,8 @@ public class ReferralDAOImpl extends BaseDAOImpl implements ReferralDAO {
 		return null;
 	}
 
-    @SuppressWarnings("unchecked")
+	@Override
+	@SuppressWarnings("unchecked")
 	public Referral getReferralByAnalysisId(String analysisId) throws LIMSRuntimeException {
 
 		if (!GenericValidator.isBlankOrNull(analysisId)) {
@@ -76,7 +83,7 @@ public class ReferralDAOImpl extends BaseDAOImpl implements ReferralDAO {
 				query.setInteger("analysisId", Integer.parseInt(analysisId));
 				List<Referral> referralList = query.list();
 				closeSession();
-				return referralList.isEmpty() ? null : referralList.get( referralList.size() - 1);
+				return referralList.isEmpty() ? null : referralList.get(referralList.size() - 1);
 			} catch (HibernateException e) {
 				handleException(e, "getReferralByAnalysisId");
 			}
@@ -85,6 +92,7 @@ public class ReferralDAOImpl extends BaseDAOImpl implements ReferralDAO {
 		return null;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Referral> getAllUncanceledOpenReferrals() throws LIMSRuntimeException {
 		String sql = "From Referral r where r.resultRecievedDate is NULL and r.canceled = 'false' order by r.id";
@@ -102,7 +110,7 @@ public class ReferralDAOImpl extends BaseDAOImpl implements ReferralDAO {
 
 	private Referral readResult(String referralId) {
 		try {
-			Referral referral = (Referral)HibernateUtil.getSession().get(Referral.class, referralId);
+			Referral referral = (Referral) HibernateUtil.getSession().get(Referral.class, referralId);
 			closeSession();
 			return referral;
 		} catch (HibernateException e) {
@@ -112,12 +120,14 @@ public class ReferralDAOImpl extends BaseDAOImpl implements ReferralDAO {
 		return null;
 	}
 
+	@Override
 	public void updateData(Referral referral) throws LIMSRuntimeException {
 		Referral oldData = readResult(referral.getId());
 
 		try {
-			auditDAO.saveHistory(referral,oldData,referral.getSysUserId(),IActionConstants.AUDIT_TRAIL_UPDATE,"referral");
-		}  catch (HibernateException e) {
+			auditDAO.saveHistory(referral, oldData, referral.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
+					"referral");
+		} catch (HibernateException e) {
 			handleException(e, "updateData");
 		}
 
@@ -133,47 +143,49 @@ public class ReferralDAOImpl extends BaseDAOImpl implements ReferralDAO {
 
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Referral> getAllReferralsBySampleId(String id) throws LIMSRuntimeException {
-		if( !GenericValidator.isBlankOrNull(id)){
+		if (!GenericValidator.isBlankOrNull(id)) {
 			String sql = "FROM Referral r WHERE r.analysis.sampleItem.sample.id = :sampleId";
 
-			try{
+			try {
 				Query query = HibernateUtil.getSession().createQuery(sql);
 				query.setInteger("sampleId", Integer.parseInt(id));
 				List<Referral> referralList = query.list();
 				closeSession();
 				return referralList;
 
-			}catch( HibernateException e){
+			} catch (HibernateException e) {
 				handleException(e, "getAllReferralsBySampleId");
 			}
 
 		}
 
-		return new ArrayList<Referral>();
+		return new ArrayList<>();
 	}
 
-    /**
-     * @see us.mn.state.health.lims.referral.dao.ReferralDAO#getAllReferralsByOrganization(java.lang.String, java.sql.Date, java.sql.Date)
-     */
-    @SuppressWarnings("unchecked")
+	/**
+	 * @see us.mn.state.health.lims.referral.dao.ReferralDAO#getAllReferralsByOrganization(java.lang.String,
+	 *      java.sql.Date, java.sql.Date)
+	 */
+	@SuppressWarnings("unchecked")
 	@Override
-    public List<Referral> getAllReferralsByOrganization(String organizationId, Date lowDate, Date highDate) {
-        String sql = "FROM Referral r WHERE r.organization.id = :organizationId AND r.requestDate >= :lowDate AND r.requestDate <= :highDate";
+	public List<Referral> getAllReferralsByOrganization(String organizationId, Date lowDate, Date highDate) {
+		String sql = "FROM Referral r WHERE r.organization.id = :organizationId AND r.requestDate >= :lowDate AND r.requestDate <= :highDate";
 
-        try{
-            Query query = HibernateUtil.getSession().createQuery(sql);
-            query.setInteger("organizationId", Integer.parseInt(organizationId));
-            query.setDate("lowDate", lowDate);
-            query.setDate("highDate", highDate);
-            List<Referral> referralList = query.list();
-            closeSession();
-            return referralList;
-        }catch( HibernateException e){
-            handleException(e, "getAllReferralsByOrganization");
-        }
-        return new ArrayList<Referral>();
-    }
+		try {
+			Query query = HibernateUtil.getSession().createQuery(sql);
+			query.setInteger("organizationId", Integer.parseInt(organizationId));
+			query.setDate("lowDate", lowDate);
+			query.setDate("highDate", highDate);
+			List<Referral> referralList = query.list();
+			closeSession();
+			return referralList;
+		} catch (HibernateException e) {
+			handleException(e, "getAllReferralsByOrganization");
+		}
+		return new ArrayList<>();
+	}
 
 }

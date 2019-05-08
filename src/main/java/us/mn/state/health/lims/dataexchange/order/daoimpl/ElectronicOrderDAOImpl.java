@@ -32,7 +32,11 @@ import us.mn.state.health.lims.dataexchange.order.dao.ElectronicOrderDAO;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
-public class ElectronicOrderDAOImpl extends BaseDAOImpl implements ElectronicOrderDAO {
+public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder> implements ElectronicOrderDAO {
+
+	public ElectronicOrderDAOImpl() {
+		super(ElectronicOrder.class);
+	}
 
 	@Override
 	public List<ElectronicOrder> getElectronicOrdersByExternalId(String id) throws LIMSRuntimeException {
@@ -141,14 +145,11 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl implements ElectronicOrd
 		try {
 			if (order.equals(ElectronicOrder.SortOrder.LAST_UPDATED)) {
 				list = HibernateUtil.getSession().createCriteria(ElectronicOrder.class)
-						.addOrder(Order.desc("lastupdated"))
-						.list();
+						.addOrder(Order.desc("lastupdated")).list();
 			} else {
 
 				list = HibernateUtil.getSession().createCriteria(ElectronicOrder.class)
-						.addOrder(Order.asc(order.getValue()))
-						.addOrder(Order.desc("lastupdated"))
-						.list();
+						.addOrder(Order.asc(order.getValue())).addOrder(Order.desc("lastupdated")).list();
 			}
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();

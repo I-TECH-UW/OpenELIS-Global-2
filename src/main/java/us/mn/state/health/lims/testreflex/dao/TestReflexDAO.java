@@ -27,19 +27,19 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
 /**
  * @author diane benz
  *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates. To enable and disable the creation of type
- * comments go to Window>Preferences>Java>Code Generation.
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
-public interface TestReflexDAO extends BaseDAO {
+public interface TestReflexDAO extends BaseDAO<TestReflex> {
 
 	/**
 	 * @param testReflex
 	 * @return
 	 * @throws LIMSRuntimeException
 	 */
-	public boolean insertData(TestReflex testReflex)
-			throws LIMSRuntimeException;
+	public boolean insertData(TestReflex testReflex) throws LIMSRuntimeException;
 
 	/**
 	 * @param testReflexs
@@ -58,8 +58,7 @@ public interface TestReflexDAO extends BaseDAO {
 	 * @return
 	 * @throws LIMSRuntimeException
 	 */
-	public List getPageOfTestReflexs(int startingRecNo)
-			throws LIMSRuntimeException;
+	public List getPageOfTestReflexs(int startingRecNo) throws LIMSRuntimeException;
 
 	/**
 	 * @param testReflex
@@ -85,8 +84,7 @@ public interface TestReflexDAO extends BaseDAO {
 	 * @return
 	 * @throws LIMSRuntimeException
 	 */
-	public List getPreviousTestReflexRecord(String id)
-			throws LIMSRuntimeException;
+	public List getPreviousTestReflexRecord(String id) throws LIMSRuntimeException;
 
 	/**
 	 * @param testReflex
@@ -101,9 +99,10 @@ public interface TestReflexDAO extends BaseDAO {
 	 * @param testAnalyte
 	 * @throws LIMSRuntimeException
 	 */
-	public List getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte) throws LIMSRuntimeException;
+	public List getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte)
+			throws LIMSRuntimeException;
 
-	//bugzilla 1411
+	// bugzilla 1411
 	/**
 	 * @return
 	 * @throws LIMSRuntimeException
@@ -111,7 +110,8 @@ public interface TestReflexDAO extends BaseDAO {
 	public Integer getTotalTestReflexCount() throws LIMSRuntimeException;
 
 	/**
-     * bugzilla 1798
+	 * bugzilla 1798
+	 * 
 	 * @param analysis
 	 * @throws LIMSRuntimeException
 	 */
@@ -119,19 +119,24 @@ public interface TestReflexDAO extends BaseDAO {
 
 	/**
 	 * Gets the ReflexTest for the analysis if there is one, otherwise returns null.
+	 * 
 	 * @param analysis
 	 * @throws LIMSRuntimeException
 	 */
-	public List<TestReflex> getTestReflexsByTestResultAnalyteTest(String testResultId, String analyteId, String testId) throws LIMSRuntimeException;
+	public List<TestReflex> getTestReflexsByTestResultAnalyteTest(String testResultId, String analyteId, String testId)
+			throws LIMSRuntimeException;
 
 	/*
 	 * Gets all test reflexs which may be triggered by this test and have this flag.
-	 * Intended use was to get testReflexs which the user decides what the action is.
+	 * Intended use was to get testReflexs which the user decides what the action
+	 * is.
 	 *
 	 * @param testId The testId for which we want the reflexes
-	 * @param flag The value of the flag field.  May be null
+	 * 
+	 * @param flag The value of the flag field. May be null
 	 */
-	public List<TestReflex>  getTestReflexsByTestAndFlag(String testId, String flag)  throws LIMSRuntimeException;
+	public List<TestReflex> getTestReflexsByTestAndFlag(String testId, String flag) throws LIMSRuntimeException;
 
-	public List<TestReflex> getFlaggedTestReflexesByTestResult(TestResult testResult, String flag)  throws LIMSRuntimeException;
+	public List<TestReflex> getFlaggedTestReflexesByTestResult(TestResult testResult, String flag)
+			throws LIMSRuntimeException;
 }

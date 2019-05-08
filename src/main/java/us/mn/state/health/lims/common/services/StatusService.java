@@ -320,7 +320,7 @@ public class StatusService{
 			}
 		}
 
-		observationHistoryDAO.delete(records);
+		observationHistoryDAO.deleteAll(records);
 	}
 
 	public String getStatusNameFromId(String id){

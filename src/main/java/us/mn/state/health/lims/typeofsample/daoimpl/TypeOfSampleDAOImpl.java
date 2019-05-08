@@ -44,7 +44,11 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 /**
  * @author diane benz
  */
-public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO {
+public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements TypeOfSampleDAO {
+
+	public TypeOfSampleDAOImpl() {
+		super(TypeOfSample.class);
+	}
 
 	private static Map<String, String> ID_NAME_MAP = null;
 
@@ -56,70 +60,62 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 			for (int i = 0; i < typeOfSamples.size(); i++) {
 				TypeOfSample data = (TypeOfSample) typeOfSamples.get(i);
 
-				TypeOfSample oldData = readTypeOfSample(data
-						.getId());
+				TypeOfSample oldData = readTypeOfSample(data.getId());
 				TypeOfSample newData = new TypeOfSample();
 
 				String sysUserId = data.getSysUserId();
 				String event = IActionConstants.AUDIT_TRAIL_DELETE;
 				String tableName = "TYPE_OF_SAMPLE";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event,
-						tableName);
+				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 			}
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TypeOfSampleDAOImpl","AuditTrail deleteData()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in TypeOfSample AuditTrail deleteData()", e);
+			// bugzilla 2154
+			LogEvent.logError("TypeOfSampleDAOImpl", "AuditTrail deleteData()", e.toString());
+			throw new LIMSRuntimeException("Error in TypeOfSample AuditTrail deleteData()", e);
 		}
 
 		try {
 			for (int i = 0; i < typeOfSamples.size(); i++) {
 				TypeOfSample data = (TypeOfSample) typeOfSamples.get(i);
-				//bugzilla 2206
+				// bugzilla 2206
 				data = readTypeOfSample(data.getId());
 				HibernateUtil.getSession().delete(data);
 				HibernateUtil.getSession().flush();
 				HibernateUtil.getSession().clear();
 			}
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TypeOfSampleDAOImpl","deleteData()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in TypeOfSample deleteData()", e);
+			// bugzilla 2154
+			LogEvent.logError("TypeOfSampleDAOImpl", "deleteData()", e.toString());
+			throw new LIMSRuntimeException("Error in TypeOfSample deleteData()", e);
 		}
 
 		ID_NAME_MAP = null;
 	}
 
 	@Override
-	public boolean insertData(TypeOfSample typeOfSample)
-			throws LIMSRuntimeException {
+	public boolean insertData(TypeOfSample typeOfSample) throws LIMSRuntimeException {
 
 		try {
 			// bugzilla 1482 throw Exception if record already exists
 			if (duplicateTypeOfSampleExists(typeOfSample)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for "
-								+ typeOfSample.getDescription());
+				throw new LIMSDuplicateRecordException("Duplicate record exists for " + typeOfSample.getDescription());
 			}
 
 			String id = (String) HibernateUtil.getSession().save(typeOfSample);
 			typeOfSample.setId(id);
 
-			//bugzilla 1824 inserts will be logged in history table
+			// bugzilla 1824 inserts will be logged in history table
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = typeOfSample.getSysUserId();
 			String tableName = "TYPE_OF_SAMPLE";
-			auditDAO.saveNewHistory(typeOfSample,sysUserId,tableName);
+			auditDAO.saveNewHistory(typeOfSample, sysUserId, tableName);
 
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TypeOfSampleDAOImpl","insertData()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in TypeOfSample insertData()", e);
+			// bugzilla 2154
+			LogEvent.logError("TypeOfSampleDAOImpl", "insertData()", e.toString());
+			throw new LIMSRuntimeException("Error in TypeOfSample insertData()", e);
 		}
 
 		ID_NAME_MAP = null;
@@ -128,18 +124,17 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 	}
 
 	@Override
-	public void updateData(TypeOfSample typeOfSample)
-			throws LIMSRuntimeException {
+	public void updateData(TypeOfSample typeOfSample) throws LIMSRuntimeException {
 
 		TypeOfSample oldData = readTypeOfSample(typeOfSample.getId());
 
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			auditDAO.saveHistory(typeOfSample, oldData, typeOfSample.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE, "TYPE_OF_SAMPLE");
+			auditDAO.saveHistory(typeOfSample, oldData, typeOfSample.getSysUserId(),
+					IActionConstants.AUDIT_TRAIL_UPDATE, "TYPE_OF_SAMPLE");
 		} catch (Exception e) {
-			LogEvent.logError("TypeOfSampleDAOImpl","AuditTrail updateData()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in TypeOfSample AuditTrail updateData()", e);
+			LogEvent.logError("TypeOfSampleDAOImpl", "AuditTrail updateData()", e.toString());
+			throw new LIMSRuntimeException("Error in TypeOfSample AuditTrail updateData()", e);
 		}
 
 		try {
@@ -150,9 +145,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 			HibernateUtil.getSession().refresh(typeOfSample);
 		} catch (Exception e) {
 
-			LogEvent.logError("TypeOfSampleDAOImpl","updateData()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in TypeOfSample updateData()", e);
+			LogEvent.logError("TypeOfSampleDAOImpl", "updateData()", e.toString());
+			throw new LIMSRuntimeException("Error in TypeOfSample updateData()", e);
 		}
 
 		ID_NAME_MAP = null;
@@ -161,8 +155,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 	@Override
 	public void getData(TypeOfSample typeOfSample) throws LIMSRuntimeException {
 		try {
-			TypeOfSample tos = (TypeOfSample) HibernateUtil.getSession().get(
-					TypeOfSample.class, typeOfSample.getId());
+			TypeOfSample tos = (TypeOfSample) HibernateUtil.getSession().get(TypeOfSample.class, typeOfSample.getId());
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			if (tos != null) {
@@ -171,8 +164,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 				typeOfSample.setId(null);
 			}
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TypeOfSampleDAOImpl","getData()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("TypeOfSampleDAOImpl", "getData()", e.toString());
 			throw new LIMSRuntimeException("Error in TypeOfSample getData()", e);
 		}
 	}
@@ -182,18 +175,16 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 		List list = new Vector();
 		try {
 			String sql = "from TypeOfSample order by description";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(
-					sql);
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TypeOfSampleDAOImpl","getAllTypeOfSamples()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in TypeOfSample getAllTypeOfSamples()", e);
+			// bugzilla 2154
+			LogEvent.logError("TypeOfSampleDAOImpl", "getAllTypeOfSamples()", e.toString());
+			throw new LIMSRuntimeException("Error in TypeOfSample getAllTypeOfSamples()", e);
 		}
 		return list;
 	}
@@ -201,36 +192,31 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<TypeOfSample> getAllTypeOfSamplesSortOrdered() throws LIMSRuntimeException {
-		List<TypeOfSample> list = new ArrayList<TypeOfSample>();
+		List<TypeOfSample> list = new ArrayList<>();
 		try {
 			String sql = "from TypeOfSample order by sort_order";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(
-					sql);
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			LogEvent.logError("TypeOfSampleDAOImpl","getAllTypeOfSamplesSortOrdered()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in TypeOfSample getAllTypeOfSamplesSortOrdered()", e);
-		}		
-	
+			LogEvent.logError("TypeOfSampleDAOImpl", "getAllTypeOfSamplesSortOrdered()", e.toString());
+			throw new LIMSRuntimeException("Error in TypeOfSample getAllTypeOfSamplesSortOrdered()", e);
+		}
+
 		return list;
 	}
 
 	@Override
-	public List getPageOfTypeOfSamples(int startingRecNo)
-			throws LIMSRuntimeException {
+	public List getPageOfTypeOfSamples(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
 			// calculate maxRow to be one more than the page size
-			int endingRecNo = startingRecNo
-					+ (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			// bugzilla 1399
 			String sql = "from TypeOfSample t order by t.domain, t.description";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(
-					sql);
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
@@ -238,10 +224,9 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TypeOfSampleDAOImpl","getPageOfTypeOfSamples()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in TypeOfSample getPageOfTypeOfSamples()", e);
+			// bugzilla 2154
+			LogEvent.logError("TypeOfSampleDAOImpl", "getPageOfTypeOfSamples()", e.toString());
+			throw new LIMSRuntimeException("Error in TypeOfSample getPageOfTypeOfSamples()", e);
 		}
 
 		return list;
@@ -250,15 +235,13 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 	public TypeOfSample readTypeOfSample(String idString) {
 		TypeOfSample tos = null;
 		try {
-			tos = (TypeOfSample) HibernateUtil.getSession().get(
-					TypeOfSample.class, idString);
+			tos = (TypeOfSample) HibernateUtil.getSession().get(TypeOfSample.class, idString);
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TypeOfSampleDAOImpl","readTypeOfSample()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in TypeOfSample readTypeOfSample()", e);
+			// bugzilla 2154
+			LogEvent.logError("TypeOfSampleDAOImpl", "readTypeOfSample()", e.toString());
+			throw new LIMSRuntimeException("Error in TypeOfSample readTypeOfSample()", e);
 		}
 
 		return tos;
@@ -267,8 +250,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 	// this is for autocomplete
 	// bugzilla 1387 added domain parm
 	@Override
-	public List getTypes(String filter, String domain)
-			throws LIMSRuntimeException {
+	public List getTypes(String filter, String domain) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
 
@@ -280,8 +262,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 				sql = "from TypeOfSample t where upper(t.description) like upper(:param) order by upper(t.description)";
 
 			}
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(
-					sql);
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("param", filter + "%");
 			// bugzilla 1387 added domain parm
 			if (!StringUtil.isNullorNill(domain)) {
@@ -292,10 +273,9 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TypeOfSampleDAOImpl","getTypes()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in TypeOfSample getTypes(String filter)", e);
+			// bugzilla 2154
+			LogEvent.logError("TypeOfSampleDAOImpl", "getTypes()", e.toString());
+			throw new LIMSRuntimeException("Error in TypeOfSample getTypes(String filter)", e);
 		}
 		return list;
 
@@ -344,28 +324,29 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 		} catch (Exception e) {
 			handleException(e, "getTypesForDomainBySortOrder");
 		}
-		
+
 		return list;
-	
+
 	}
 
-    @Override
-    public TypeOfSample getTypeOfSampleByLocalAbbrevAndDomain( String localAbbrev, String domain ) throws LIMSRuntimeException{
-        String sql = "From TypeOfSample tos where tos.localAbbreviation = :localAbbrev and tos.domain = :domain";
-        try{
-            Query query = HibernateUtil.getSession().createQuery( sql );
-            query.setString( "localAbbrev", localAbbrev );
-            query.setString( "domain", domain );
-            TypeOfSample typeOfSample = (TypeOfSample)query.uniqueResult();
-            closeSession();
-            return typeOfSample;
-        }catch( HibernateException he ){
-            handleException( he, "getTypeOfSampeByLocalAbbreviationAndDomain" );
-        }
-        return null;
-    }
+	@Override
+	public TypeOfSample getTypeOfSampleByLocalAbbrevAndDomain(String localAbbrev, String domain)
+			throws LIMSRuntimeException {
+		String sql = "From TypeOfSample tos where tos.localAbbreviation = :localAbbrev and tos.domain = :domain";
+		try {
+			Query query = HibernateUtil.getSession().createQuery(sql);
+			query.setString("localAbbrev", localAbbrev);
+			query.setString("domain", domain);
+			TypeOfSample typeOfSample = (TypeOfSample) query.uniqueResult();
+			closeSession();
+			return typeOfSample;
+		} catch (HibernateException he) {
+			handleException(he, "getTypeOfSampeByLocalAbbreviationAndDomain");
+		}
+		return null;
+	}
 
-    private String getKeyForDomain(SampleDomain domain) {
+	private String getKeyForDomain(SampleDomain domain) {
 		String domainKey = "H";
 		switch (domain) {
 		case ANIMAL: {
@@ -390,16 +371,14 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 	}
 
 	@Override
-	public List getNextTypeOfSampleRecord(String id)
-			throws LIMSRuntimeException {
+	public List getNextTypeOfSampleRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "TypeOfSample", TypeOfSample.class);
 
 	}
 
 	@Override
-	public List getPreviousTypeOfSampleRecord(String id)
-			throws LIMSRuntimeException {
+	public List getPreviousTypeOfSampleRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "TypeOfSample", TypeOfSample.class);
 	}
@@ -412,35 +391,32 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 
 	// bugzilla 1427
 	@Override
-	public List getNextRecord(String id, String table, Class clazz)
-			throws LIMSRuntimeException {
+	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
 
 		List list = new Vector();
-		//bugzilla 1908
+		// bugzilla 1908
 		int rrn = 0;
 		try {
-			//bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
-			//instead get the list in this sortorder and determine the index of record with id = currentId
-    		String sql = "select tos.id from TypeOfSample tos " +
-					" order by tos.domain, tos.description";
+			// bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
+			// instead get the list in this sortorder and determine the index of record with
+			// id = currentId
+			String sql = "select tos.id from TypeOfSample tos " + " order by tos.domain, tos.description";
 
-  			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(
-					tablePrefix + "getNext").setFirstResult(
-					rrn + 1).setMaxResults(2).list();
+			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+					.setMaxResults(2).list();
 
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TypeOfSampleDAOImpl","getNextRecord()",e.toString());
-			throw new LIMSRuntimeException("Error in getNextRecord() for "
-					+ table, e);
+			// bugzilla 2154
+			LogEvent.logError("TypeOfSampleDAOImpl", "getNextRecord()", e.toString());
+			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
 		}
 
 		return list;
@@ -448,35 +424,32 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 
 	// bugzilla 1427
 	@Override
-	public List getPreviousRecord(String id, String table, Class clazz)
-			throws LIMSRuntimeException {
+	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
 		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
 
 		List list = new Vector();
-		//bugzilla 1908
+		// bugzilla 1908
 		int rrn = 0;
 		try {
-			//bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
-			//instead get the list in this sortorder and determine the index of record with id = currentId
-    		String sql = "select tos.id from TypeOfSample tos " +
-					" order by tos.domain desc, tos.description desc";
+			// bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
+			// instead get the list in this sortorder and determine the index of record with
+			// id = currentId
+			String sql = "select tos.id from TypeOfSample tos " + " order by tos.domain desc, tos.description desc";
 
-  			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(
-					tablePrefix + "getPrevious").setFirstResult(
-					rrn + 1).setMaxResults(2).list();
+			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+					.setMaxResults(2).list();
 
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TypeOfSampleDAOImpl","getPreviousRecord()",e.toString());
-			throw new LIMSRuntimeException("Error in getPreviousRecord() for "
-					+ table, e);
+			// bugzilla 2154
+			LogEvent.logError("TypeOfSampleDAOImpl", "getPreviousRecord()", e.toString());
+			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
 		}
 
 		return list;
@@ -484,8 +457,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 
 	// bugzilla 1367 also handles NO domain (then all domains are retrieved)
 	@Override
-	public TypeOfSample getTypeOfSampleByDescriptionAndDomain(TypeOfSample tos,
-			boolean ignoreCase) throws LIMSRuntimeException {
+	public TypeOfSample getTypeOfSampleByDescriptionAndDomain(TypeOfSample tos, boolean ignoreCase)
+			throws LIMSRuntimeException {
 		try {
 			String sql = null;
 
@@ -502,12 +475,10 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 					sql = "from TypeOfSample tos where trim(tos.description) = :param";
 				}
 			}
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(
-					sql);
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 
 			if (ignoreCase) {
-				query.setParameter("param", tos.getDescription().toLowerCase()
-						.trim());
+				query.setParameter("param", tos.getDescription().toLowerCase().trim());
 			} else {
 				query.setParameter("param", tos.getDescription().trim());
 			}
@@ -520,16 +491,16 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			TypeOfSample typeOfSample = null;
-			if (list.size() > 0)
+			if (list.size() > 0) {
 				typeOfSample = (TypeOfSample) list.get(0);
+			}
 
 			return typeOfSample;
 
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TypeOfSampleDAOImpl","getTypeOfSampleByDescriptionAndDomain()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in Test getTypeOfSampleByDescriptionAndDomain()", e);
+			// bugzilla 2154
+			LogEvent.logError("TypeOfSampleDAOImpl", "getTypeOfSampleByDescriptionAndDomain()", e.toString());
+			throw new LIMSRuntimeException("Error in Test getTypeOfSampleByDescriptionAndDomain()", e);
 		}
 	}
 
@@ -543,13 +514,12 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 			// duplicates
 
 			// bugzilla 2432 add check for local abbreviation
-			String sql = "from TypeOfSample t where (trim(lower(t.description)) = :description and trim(lower(t.domain)) = :domain and t.id != :id)" +
-					" or (trim(lower(t.localAbbreviation)) = :abbrev and trim(lower(t.domain)) = :domain and t.id != :id)";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(
-					sql);
+			String sql = "from TypeOfSample t where (trim(lower(t.description)) = :description and trim(lower(t.domain)) = :domain and t.id != :id)"
+					+ " or (trim(lower(t.localAbbreviation)) = :abbrev and trim(lower(t.domain)) = :domain and t.id != :id)";
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("description", typeOfSample.getDescription().toLowerCase().trim());
 			query.setParameter("domain", typeOfSample.getDomain().toLowerCase().trim());
-			//bugzila 2432
+			// bugzila 2432
 			query.setParameter("abbrev", typeOfSample.getLocalAbbreviation().toLowerCase().trim());
 
 			// initialize with 0 (for new records where no id has been generated
@@ -571,25 +541,24 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 			}
 
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TypeOfSampleDAOImpl","duplicateTypeOfSampleExists()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in duplicateTypeOfSampleExists()", e);
+			// bugzilla 2154
+			LogEvent.logError("TypeOfSampleDAOImpl", "duplicateTypeOfSampleExists()", e.toString());
+			throw new LIMSRuntimeException("Error in duplicateTypeOfSampleExists()", e);
 		}
 	}
 
 	@Override
 	public String getNameForTypeOfSampleId(String id) {
-		if( ID_NAME_MAP == null){
+		if (ID_NAME_MAP == null) {
 			List allTypes = getAllTypeOfSamples();
 
-			if( allTypes != null){
-				ID_NAME_MAP = new HashMap<String, String>();
+			if (allTypes != null) {
+				ID_NAME_MAP = new HashMap<>();
 
-				for( Object typeOfSample : allTypes){
-					TypeOfSample sample = (TypeOfSample)typeOfSample;
+				for (Object typeOfSample : allTypes) {
+					TypeOfSample sample = (TypeOfSample) typeOfSample;
 
-					ID_NAME_MAP.put( sample.getId(), sample.getDescription());
+					ID_NAME_MAP.put(sample.getId(), sample.getDescription());
 				}
 			}
 		}
@@ -600,7 +569,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 	@Override
 	public TypeOfSample getTypeOfSampleById(String typeOfSampleId) throws LIMSRuntimeException {
 		try {
-			TypeOfSample tos = (TypeOfSample) HibernateUtil.getSession().get( TypeOfSample.class, typeOfSampleId);
+			TypeOfSample tos = (TypeOfSample) HibernateUtil.getSession().get(TypeOfSample.class, typeOfSampleId);
 			closeSession();
 			return tos;
 		} catch (Exception e) {
@@ -609,19 +578,18 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl implements TypeOfSampleDAO 
 
 		return null;
 	}
-	
+
 	@Override
 	public TypeOfSample getSampleTypeFromTest(Test test) {
-		String sql = "select tos from TypeOfSample tos, Test test, TypeOfSampleTest tost "
-				+ "where tost.testId = :id "
+		String sql = "select tos from TypeOfSample tos, Test test, TypeOfSampleTest tost " + "where tost.testId = :id "
 				+ "AND tos.id = tost.typeOfSampleId";
 		try {
-    		Query query = HibernateUtil.getSession().createQuery(sql);
-    		query.setInteger("id", Integer.parseInt(test.getId()));
-    		
-    		TypeOfSample tos = (TypeOfSample) query.uniqueResult();
-    		closeSession();
-    		return tos;
+			Query query = HibernateUtil.getSession().createQuery(sql);
+			query.setInteger("id", Integer.parseInt(test.getId()));
+
+			TypeOfSample tos = (TypeOfSample) query.uniqueResult();
+			closeSession();
+			return tos;
 		} catch (Exception e) {
 			handleException(e, "getSampleTypeFromTest");
 		}

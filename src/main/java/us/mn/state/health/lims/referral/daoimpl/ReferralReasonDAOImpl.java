@@ -21,7 +21,7 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 
-import us.mn.state.health.lims.common.daoimpl.GenericDAOImpl;
+import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.referral.dao.ReferralReasonDAO;
@@ -29,24 +29,31 @@ import us.mn.state.health.lims.referral.valueholder.ReferralReason;
 
 /*
  */
-public class ReferralReasonDAOImpl extends GenericDAOImpl<String, ReferralReason> implements ReferralReasonDAO {
-    public ReferralReasonDAOImpl() {
-        super(ReferralReason.class, "referral_reason");
-    }
+public class ReferralReasonDAOImpl extends BaseDAOImpl<ReferralReason> implements ReferralReasonDAO {
+	public ReferralReasonDAOImpl() {
+		super(ReferralReason.class);
+	}
 
-    @SuppressWarnings("unchecked")
+	@Override
+	@SuppressWarnings("unchecked")
 	public List<ReferralReason> getAllReferralReasons() throws LIMSRuntimeException {
 		String sql = "from ReferralReason";
 
-		try{
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			List<ReferralReason> reasons = query.list();
 			closeSession();
 			return reasons;
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getAllReferralReasons");
 		}
 
 		return null;
+	}
+
+	@Override
+	public void getData(ReferralReason entity) {
+		// TODO Auto-generated method stub
+
 	}
 }

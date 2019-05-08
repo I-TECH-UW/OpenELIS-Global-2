@@ -13,7 +13,11 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.systemmodule.dao.SystemModuleUrlDAO;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModuleUrl;
 
-public class SystemModuleUrlDAOImpl extends BaseDAOImpl implements SystemModuleUrlDAO {
+public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl> implements SystemModuleUrlDAO {
+
+	public SystemModuleUrlDAOImpl() {
+		super(SystemModuleUrl.class);
+	}
 
 	@Override
 	public List<SystemModuleUrl> getByRequest(HttpServletRequest request) {

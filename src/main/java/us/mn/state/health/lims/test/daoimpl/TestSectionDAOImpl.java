@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package us.mn.state.health.lims.test.daoimpl;
@@ -41,102 +41,106 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 /**
  * @author diane benz
  */
-public class TestSectionDAOImpl extends BaseDAOImpl implements TestSectionDAO {
+public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements TestSectionDAO {
 
+	public TestSectionDAOImpl() {
+		super(TestSection.class);
+	}
+
+	@Override
 	public void deleteData(List testSections) throws LIMSRuntimeException {
-		//add to audit trail
+		// add to audit trail
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			for (int i = 0; i < testSections.size(); i++) {
-				TestSection data = (TestSection)testSections.get(i);
-			
-				TestSection oldData = (TestSection)readTestSection(data.getId());
+				TestSection data = (TestSection) testSections.get(i);
+
+				TestSection oldData = readTestSection(data.getId());
 				TestSection newData = new TestSection();
 
 				String sysUserId = data.getSysUserId();
 				String event = IActionConstants.AUDIT_TRAIL_DELETE;
 				String tableName = "TEST_SECTION";
-				auditDAO.saveHistory(newData,oldData,sysUserId,event,tableName);
+				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 			}
-		}  catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl","AuditTrail deleteData()",e.toString());
+		} catch (Exception e) {
+			// bugzilla 2154
+			LogEvent.logError("TestSectionDAOImpl", "AuditTrail deleteData()", e.toString());
 			throw new LIMSRuntimeException("Error in TestSection AuditTrail deleteData()", e);
-		}  
-		
-		try {		
+		}
+
+		try {
 			for (int i = 0; i < testSections.size(); i++) {
 				TestSection data = (TestSection) testSections.get(i);
-				//bugzilla 2206
-				data = (TestSection)readTestSection(data.getId());
-    			HibernateUtil.getSession().delete(data);
+				// bugzilla 2206
+				data = readTestSection(data.getId());
+				HibernateUtil.getSession().delete(data);
 				HibernateUtil.getSession().flush();
 				HibernateUtil.getSession().clear();
-			}			
+			}
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl","deleteData()",e.toString());
-			throw new LIMSRuntimeException("Error in TestSection deleteData()",	e);
-		} 
+			// bugzilla 2154
+			LogEvent.logError("TestSectionDAOImpl", "deleteData()", e.toString());
+			throw new LIMSRuntimeException("Error in TestSection deleteData()", e);
+		}
 	}
 
+	@Override
 	public boolean insertData(TestSection testSection) throws LIMSRuntimeException {
-		
+
 		try {
 			if (duplicateTestSectionExists(testSection)) {
 				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for "
-								+ testSection.getTestSectionName());
+						"Duplicate record exists for " + testSection.getTestSectionName());
 			}
-			
-			String id = (String)HibernateUtil.getSession().save(testSection);
+
+			String id = (String) HibernateUtil.getSession().save(testSection);
 			testSection.setId(id);
 
-            new AuditTrailDAOImpl().saveNewHistory(testSection,testSection.getSysUserId(),"TEST_SECTION");
-			
+			new AuditTrailDAOImpl().saveNewHistory(testSection, testSection.getSysUserId(), "TEST_SECTION");
+
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
-								
+
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl","insertData()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("TestSectionDAOImpl", "insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in TestSection insertData()", e);
 		}
-		
+
 		return true;
 	}
 
+	@Override
 	public void updateData(TestSection testSection) throws LIMSRuntimeException {
 		// bugzilla 1482 throw Exception if record already exists
 		try {
 			if (duplicateTestSectionExists(testSection)) {
 				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for "
-								+ testSection.getTestSectionName());
+						"Duplicate record exists for " + testSection.getTestSectionName());
 			}
 		} catch (Exception e) {
-    		//bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl","updateData()",e.toString());
-			throw new LIMSRuntimeException("Error in TestSection updateData()",
-					e);
+			// bugzilla 2154
+			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
+			throw new LIMSRuntimeException("Error in TestSection updateData()", e);
 		}
-		
-		TestSection oldData = (TestSection)readTestSection(testSection.getId());
+
+		TestSection oldData = readTestSection(testSection.getId());
 		TestSection newData = testSection;
 
-		//add to audit trail
+		// add to audit trail
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = testSection.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "TEST_SECTION";
-			auditDAO.saveHistory(newData,oldData,sysUserId,event,tableName);
-		}  catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl","AuditTrail updateData()",e.toString());
+			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+		} catch (Exception e) {
+			// bugzilla 2154
+			LogEvent.logError("TestSectionDAOImpl", "AuditTrail updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in TestSection AuditTrail updateData()", e);
-		}  
-							
+		}
+
 		try {
 			HibernateUtil.getSession().merge(testSection);
 			HibernateUtil.getSession().flush();
@@ -144,15 +148,16 @@ public class TestSectionDAOImpl extends BaseDAOImpl implements TestSectionDAO {
 			HibernateUtil.getSession().evict(testSection);
 			HibernateUtil.getSession().refresh(testSection);
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl","updateData()",e.toString());
-			throw new LIMSRuntimeException("Error in TestSection updateData()",	e);
+			// bugzilla 2154
+			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
+			throw new LIMSRuntimeException("Error in TestSection updateData()", e);
 		}
 	}
 
+	@Override
 	public void getData(TestSection testSection) throws LIMSRuntimeException {
 		try {
-			TestSection testSec = (TestSection)HibernateUtil.getSession().get(TestSection.class, testSection.getId());
+			TestSection testSec = (TestSection) HibernateUtil.getSession().get(TestSection.class, testSection.getId());
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			if (testSec != null) {
@@ -161,11 +166,12 @@ public class TestSectionDAOImpl extends BaseDAOImpl implements TestSectionDAO {
 				testSection.setId(null);
 			}
 		} catch (Exception e) {
-			LogEvent.logError("TestSectionDAOImpl","getData()",e.toString());
+			LogEvent.logError("TestSectionDAOImpl", "getData()", e.toString());
 			throw new LIMSRuntimeException("Error in TestSection getData()", e);
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<TestSection> getAllTestSections() throws LIMSRuntimeException {
 		List<TestSection> list = null;
@@ -176,7 +182,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl implements TestSectionDAO {
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			LogEvent.logError("TestSectionDAOImpl","getAllTestSections()",e.toString());
+			LogEvent.logError("TestSectionDAOImpl", "getAllTestSections()", e.toString());
 			throw new LIMSRuntimeException("Error in TestSection getAllTestSections()", e);
 		}
 		return list;
@@ -184,59 +190,62 @@ public class TestSectionDAOImpl extends BaseDAOImpl implements TestSectionDAO {
 
 	/**
 	 * Get all the test sections assigned to this specific user
+	 * 
 	 * @param sysUserId the user system id
 	 * @return list of tests
 	 */
+	@Override
 	public List getAllTestSectionsBySysUserId(int sysUserId) throws LIMSRuntimeException {
 		List list = new Vector();
-		
+
 		String sectionIdList = "";
 		String sql = "";
-		
+
 		try {
 			SystemUserSectionDAO systemUserSectionDao = new SystemUserSectionDAOImpl();
-			List userTestSectionList= systemUserSectionDao.getAllSystemUserSectionsBySystemUserId(sysUserId);
-			for ( int i=0; i<userTestSectionList.size(); i++ ) {
-				SystemUserSection sus = (SystemUserSection)userTestSectionList.get(i);	
-				sectionIdList += sus.getTestSection().getId() + ",";			
-			}				
-			if ( !(sectionIdList.equals("")) && (sectionIdList.length() > 0) ) {
-				sectionIdList = sectionIdList.substring(0,sectionIdList.length()-1);
-				sql = "from TestSection where id in ("+sectionIdList+")";
+			List userTestSectionList = systemUserSectionDao.getAllSystemUserSectionsBySystemUserId(sysUserId);
+			for (int i = 0; i < userTestSectionList.size(); i++) {
+				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
+				sectionIdList += sus.getTestSection().getId() + ",";
+			}
+			if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
+				sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
+				sql = "from TestSection where id in (" + sectionIdList + ")";
 			} else {
 				return list;
-			}				
-		
+			}
+
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl","getAllTestSectionsBySysUserId()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("TestSectionDAOImpl", "getAllTestSectionsBySysUserId()", e.toString());
 			throw new LIMSRuntimeException("Error in TestSection getAllTestSectionsBySysUserId()", e);
 		}
 		return list;
 	}
-	
+
+	@Override
 	public List getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
 			// calculate maxRow to be one more than the page size
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
-			
-			//bugzilla 1399
+
+			// bugzilla 1399
 			String sql = "from TestSection t order by t.organization.organizationName, t.testSectionName";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
-			query.setFirstResult(startingRecNo-1);
-			query.setMaxResults(endingRecNo-1); 					
-			
+			query.setFirstResult(startingRecNo - 1);
+			query.setMaxResults(endingRecNo - 1);
+
 			list = query.list();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl","getPageOfTestSections()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("TestSectionDAOImpl", "getPageOfTestSections()", e.toString());
 			throw new LIMSRuntimeException("Error in TestSection getPageOfTestSections()", e);
 		}
 
@@ -246,82 +255,88 @@ public class TestSectionDAOImpl extends BaseDAOImpl implements TestSectionDAO {
 	public TestSection readTestSection(String idString) {
 		TestSection ts = null;
 		try {
-			ts = (TestSection)HibernateUtil.getSession().get(TestSection.class, idString);
+			ts = (TestSection) HibernateUtil.getSession().get(TestSection.class, idString);
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl","readCity()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("TestSectionDAOImpl", "readCity()", e.toString());
 			throw new LIMSRuntimeException("Error in TestSection readCity()", e);
-		}			
-		
+		}
+
 		return ts;
 	}
 
 	// this is for autocomplete
+	@Override
 	public List getTestSections(String filter) throws LIMSRuntimeException {
-		List list = new Vector(); 	
+		List list = new Vector();
 		try {
 			String sql = "from TestSection t where upper(t.testSectionName) like upper(:param) order by upper(t.testSectionName)";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
-			query.setParameter("param", filter+"%");		
+			query.setParameter("param", filter + "%");
 			list = query.list();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl","getTestSections()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("TestSectionDAOImpl", "getTestSections()", e.toString());
 			throw new LIMSRuntimeException("Error in TestSection getTestSections(String filter)", e);
 		}
-		
+
 		return list;
 	}
 
 	// this is for autocomplete
+	@Override
 	public List getTestSectionsBySysUserId(String filter, int sysUserId) throws LIMSRuntimeException {
-		List list = new Vector(); 	
+		List list = new Vector();
 		String sectionIdList = "";
 		String sql = "";
-		
+
 		try {
 			SystemUserSectionDAO systemUserSectionDao = new SystemUserSectionDAOImpl();
-			List userTestSectionList= systemUserSectionDao.getAllSystemUserSectionsBySystemUserId(sysUserId);
-			for ( int i=0; i<userTestSectionList.size(); i++ ) {
-				SystemUserSection sus = (SystemUserSection)userTestSectionList.get(i);	
-				sectionIdList += sus.getTestSection().getId() + ",";			
-			}	
-			if ( !(sectionIdList.equals("")) && (sectionIdList.length() > 0) ) {
-				sectionIdList = sectionIdList.substring(0,sectionIdList.length()-1);
-				sql = "from TestSection t where upper(t.testSectionName) like upper(:param) and t.id in ("+sectionIdList+") order by upper(t.testSectionName)";
+			List userTestSectionList = systemUserSectionDao.getAllSystemUserSectionsBySystemUserId(sysUserId);
+			for (int i = 0; i < userTestSectionList.size(); i++) {
+				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
+				sectionIdList += sus.getTestSection().getId() + ",";
+			}
+			if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
+				sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
+				sql = "from TestSection t where upper(t.testSectionName) like upper(:param) and t.id in ("
+						+ sectionIdList + ") order by upper(t.testSectionName)";
 			} else {
 				return list;
-			}						
-		
+			}
+
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
-			query.setParameter("param", filter+"%");		
+			query.setParameter("param", filter + "%");
 			list = query.list();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl","getTestSectionsBySysUserId()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("TestSectionDAOImpl", "getTestSectionsBySysUserId()", e.toString());
 			throw new LIMSRuntimeException("Error in TestSection getTestSectionsBySysUserId(String filter)", e);
 		}
-		
+
 		return list;
 	}
-	
+
+	@Override
 	public List getNextTestSectionRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "TestSection", TestSection.class);
 
 	}
 
+	@Override
 	public List getPreviousTestSectionRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "TestSection", TestSection.class);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public TestSection getTestSectionByName(TestSection testSection) throws LIMSRuntimeException {
 		try {
@@ -332,96 +347,95 @@ public class TestSectionDAOImpl extends BaseDAOImpl implements TestSectionDAO {
 			List<TestSection> list = query.list();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
-			
-			if ( !list.isEmpty() ){
+
+			if (!list.isEmpty()) {
 				return list.get(0);
 			}
-			
+
 			return null;
 
 		} catch (Exception e) {
-			LogEvent.logError("TestSectionDAOImpl","getTestSectionByName()",e.toString());
+			LogEvent.logError("TestSectionDAOImpl", "getTestSectionByName()", e.toString());
 			throw new LIMSRuntimeException("Error in TestSection getTestSectionByName()", e);
 		}
 	}
-	
-	//bugzilla 1411
+
+	// bugzilla 1411
+	@Override
 	public Integer getTotalTestSectionCount() throws LIMSRuntimeException {
 		return getTotalCount("TestSection", TestSection.class);
 	}
-	
+
 //	bugzilla 1427
-	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {	
-		int currentId= (Integer.valueOf(id)).intValue();
+	@Override
+	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+		int currentId = (Integer.valueOf(id)).intValue();
 		String tablePrefix = getTablePrefix(table);
-		
+
 		List list = new Vector();
-		//bugzilla 1908
+		// bugzilla 1908
 		int rrn = 0;
 		try {
-			//bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
-			//instead get the list in this sortorder and determine the index of record with id = currentId
-    		String sql = "select ts.id from TestSection ts " +
-					" order by ts.organization.organizationName, ts.testSectionName";
+			// bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
+			// instead get the list in this sortorder and determine the index of record with
+			// id = currentId
+			String sql = "select ts.id from TestSection ts "
+					+ " order by ts.organization.organizationName, ts.testSectionName";
 
-  			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(
-					tablePrefix + "getNext").setFirstResult(
-					rrn + 1).setMaxResults(2).list();
+			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+					.setMaxResults(2).list();
 
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl","getNextRecord()",e.toString());
-			throw new LIMSRuntimeException("Error in getNextRecord() for "
-					+ table, e);
+			// bugzilla 2154
+			LogEvent.logError("TestSectionDAOImpl", "getNextRecord()", e.toString());
+			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
 		}
-
-		return list;		
-	}
-
-	//bugzilla 1427
-	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {		
-		int currentId= (Integer.valueOf(id)).intValue();
-		String tablePrefix = getTablePrefix(table);
-		
-		List list = new Vector();
-		//bugzilla 1908
-		int rrn = 0;
-		try {
-			//bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
-			//instead get the list in this sortorder and determine the index of record with id = currentId
-    		String sql = "select ts.id from TestSection ts " +
-					" order by ts.organization.organizationName desc, ts.testSectionName desc";
-
-  			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
-			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			rrn = list.indexOf(String.valueOf(currentId));
-
-			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious")
-			.setFirstResult(rrn + 1)
-			.setMaxResults(2)
-			.list(); 		
-			
-							
-		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestSectionDAOImpl","getPreviousRecord()",e.toString());
-			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-		} 
 
 		return list;
 	}
-	
+
+	// bugzilla 1427
+	@Override
+	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+		int currentId = (Integer.valueOf(id)).intValue();
+		String tablePrefix = getTablePrefix(table);
+
+		List list = new Vector();
+		// bugzilla 1908
+		int rrn = 0;
+		try {
+			// bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
+			// instead get the list in this sortorder and determine the index of record with
+			// id = currentId
+			String sql = "select ts.id from TestSection ts "
+					+ " order by ts.organization.organizationName desc, ts.testSectionName desc";
+
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			list = query.list();
+			HibernateUtil.getSession().flush();
+			HibernateUtil.getSession().clear();
+			rrn = list.indexOf(String.valueOf(currentId));
+
+			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+					.setMaxResults(2).list();
+
+		} catch (Exception e) {
+			// bugzilla 2154
+			LogEvent.logError("TestSectionDAOImpl", "getPreviousRecord()", e.toString());
+			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
+		}
+
+		return list;
+	}
+
 	private boolean duplicateTestSectionExists(TestSection testSection) throws LIMSRuntimeException {
 		try {
-
 
 			String sql = "from TestSection t where trim(lower(t.testSectionName)) = :name and t.id != :id";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
@@ -438,18 +452,18 @@ public class TestSectionDAOImpl extends BaseDAOImpl implements TestSectionDAO {
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 
-            return !list.isEmpty();
+			return !list.isEmpty();
 
 		} catch (Exception e) {
-			LogEvent.logError("TestSectionDAOImpl","duplicateTestSectionExists()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in duplicateTestSectionExists()", e);
+			LogEvent.logError("TestSectionDAOImpl", "duplicateTestSectionExists()", e.toString());
+			throw new LIMSRuntimeException("Error in duplicateTestSectionExists()", e);
 		}
 	}
 
+	@Override
 	public List<TestSection> getAllActiveTestSections() {
 		String sql = "from TestSection t where t.isActive = 'Y' order by t.sortOrderInt";
-		
+
 		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			@SuppressWarnings("unchecked")
@@ -462,21 +476,22 @@ public class TestSectionDAOImpl extends BaseDAOImpl implements TestSectionDAO {
 		return null;
 	}
 
-    public List<TestSection> getAllInActiveTestSections() {
-        String sql = "from TestSection t where t.isActive = 'N' order by t.sortOrderInt";
+	@Override
+	public List<TestSection> getAllInActiveTestSections() {
+		String sql = "from TestSection t where t.isActive = 'N' order by t.sortOrderInt";
 
-        try {
-            Query query = HibernateUtil.getSession().createQuery(sql);
-            List<TestSection> sections = query.list();
-            closeSession();
-            return sections;
-        } catch (HibernateException e) {
-            handleException(e, "getAllInActiveTestSections");
-        }
-        return null;
-    }
+		try {
+			Query query = HibernateUtil.getSession().createQuery(sql);
+			List<TestSection> sections = query.list();
+			closeSession();
+			return sections;
+		} catch (HibernateException e) {
+			handleException(e, "getAllInActiveTestSections");
+		}
+		return null;
+	}
 
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	@Override
 	public TestSection getTestSectionByName(String testSection) throws LIMSRuntimeException {
 		try {
@@ -485,24 +500,24 @@ public class TestSectionDAOImpl extends BaseDAOImpl implements TestSectionDAO {
 			query.setParameter("name", testSection);
 
 			List<TestSection> list = query.list();
-			
+
 			closeSession();
-			
-			if ( !list.isEmpty() ){
+
+			if (!list.isEmpty()) {
 				return list.get(0);
 			}
 
 		} catch (Exception e) {
 			handleException(e, "getTestSectionByName");
 		}
-		
+
 		return null;
 	}
 
 	@Override
 	public TestSection getTestSectionById(String testSectionId) {
 		try {
-			TestSection testSection = (TestSection)HibernateUtil.getSession().get(TestSection.class, testSectionId);
+			TestSection testSection = (TestSection) HibernateUtil.getSession().get(TestSection.class, testSectionId);
 			closeSession();
 			return testSection;
 		} catch (HibernateException e) {
@@ -510,5 +525,5 @@ public class TestSectionDAOImpl extends BaseDAOImpl implements TestSectionDAO {
 		}
 		return null;
 	}
-	
+
 }

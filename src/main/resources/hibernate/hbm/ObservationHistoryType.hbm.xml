@@ -9,8 +9,8 @@
         <comment>defines the possible classes of values allowed in the demo. history table.</comment>
         <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="sequence">
-            	<param name="sequence">observation_history_type_seq</param>
+            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            	<param name="sequence_name">observation_history_type_seq</param>
             </generator>
         </id>
         <property name="typeName" type="java.lang.String">

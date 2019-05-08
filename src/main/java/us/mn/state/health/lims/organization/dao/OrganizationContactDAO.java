@@ -22,7 +22,9 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.organization.valueholder.OrganizationContact;
 
-public interface OrganizationContactDAO extends BaseDAO {
-	public List<OrganizationContact> getListForOrganizationId( String orgId) throws LIMSRuntimeException;
-	public void insert( OrganizationContact contact) throws LIMSRuntimeException;
+public interface OrganizationContactDAO extends BaseDAO<OrganizationContact> {
+	public List<OrganizationContact> getListForOrganizationId(String orgId) throws LIMSRuntimeException;
+
+	@Override
+	public String insert(OrganizationContact contact) throws LIMSRuntimeException;
 }

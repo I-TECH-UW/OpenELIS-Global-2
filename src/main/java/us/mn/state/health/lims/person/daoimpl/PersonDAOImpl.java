@@ -38,84 +38,90 @@ import us.mn.state.health.lims.person.valueholder.Person;
 /**
  * @author diane benz
  */
-public class PersonDAOImpl extends BaseDAOImpl implements PersonDAO {
+public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 
+	public PersonDAOImpl() {
+		super(Person.class);
+	}
+
+	@Override
 	public void deleteData(List persons) throws LIMSRuntimeException {
-		//add to audit trail
+		// add to audit trail
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			for (int i = 0; i < persons.size(); i++) {
-				Person data = (Person)persons.get(i);
+				Person data = (Person) persons.get(i);
 
-				Person oldData = (Person)readPerson(data.getId());
+				Person oldData = readPerson(data.getId());
 				Person newData = new Person();
 
 				String sysUserId = data.getSysUserId();
 				String event = IActionConstants.AUDIT_TRAIL_DELETE;
 				String tableName = "PERSON";
-				auditDAO.saveHistory(newData,oldData,sysUserId,event,tableName);
+				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 			}
-		}  catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("PersonDAOImpl","AuditTrail deleteData()",e.toString());
+		} catch (Exception e) {
+			// bugzilla 2154
+			LogEvent.logError("PersonDAOImpl", "AuditTrail deleteData()", e.toString());
 			throw new LIMSRuntimeException("Error in Person AuditTrail deleteData()", e);
 		}
 
 		try {
 			for (int i = 0; i < persons.size(); i++) {
 				Person data = (Person) persons.get(i);
-				//bugzilla 2206
-     			data = (Person)readPerson(data.getId());
+				// bugzilla 2206
+				data = readPerson(data.getId());
 				HibernateUtil.getSession().delete(data);
 				HibernateUtil.getSession().flush();
 				HibernateUtil.getSession().clear();
 			}
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("PersonDAOImpl","deleteData()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("PersonDAOImpl", "deleteData()", e.toString());
 			throw new LIMSRuntimeException("Error in Person deleteData()", e);
 		}
 	}
 
+	@Override
 	public boolean insertData(Person person) throws LIMSRuntimeException {
 
 		try {
-			String id = (String)HibernateUtil.getSession().save(person);
+			String id = (String) HibernateUtil.getSession().save(person);
 			person.setId(id);
 
-			//bugzilla 1824 inserts will be logged in history table
+			// bugzilla 1824 inserts will be logged in history table
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = person.getSysUserId();
 			String tableName = "PERSON";
-			auditDAO.saveNewHistory(person,sysUserId,tableName);
+			auditDAO.saveNewHistory(person, sysUserId, tableName);
 
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("PersonDAOImpl","insertData()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("PersonDAOImpl", "insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in Person insertData()", e);
 		}
 
 		return true;
 	}
 
-
+	@Override
 	public void updateData(Person person) throws LIMSRuntimeException {
 
-		Person oldData = (Person)readPerson(person.getId());
+		Person oldData = readPerson(person.getId());
 		Person newData = person;
 
-		//add to audit trail
+		// add to audit trail
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = person.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "PERSON";
-			auditDAO.saveHistory(newData,oldData,sysUserId,event,tableName);
-		}  catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("PersonDAOImpl","AuditTrail updateData()",e.toString());
+			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+		} catch (Exception e) {
+			// bugzilla 2154
+			LogEvent.logError("PersonDAOImpl", "AuditTrail updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in Person AuditTrail updateData()", e);
 		}
 
@@ -126,30 +132,32 @@ public class PersonDAOImpl extends BaseDAOImpl implements PersonDAO {
 			HibernateUtil.getSession().evict(person);
 			HibernateUtil.getSession().refresh(person);
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("PersonDAOImpl","updateData()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("PersonDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in Person updateData()", e);
 		}
 	}
 
+	@Override
 	public void getData(Person person) throws LIMSRuntimeException {
 		try {
-			Person pers = (Person)HibernateUtil.getSession().get(Person.class, person.getId());
+			Person pers = (Person) HibernateUtil.getSession().get(Person.class, person.getId());
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			if (pers != null) {
-			  PropertyUtils.copyProperties(person, pers);
+				PropertyUtils.copyProperties(person, pers);
 			} else {
 				person.setId(null);
 			}
 
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("PersonDAOImpl","getData()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("PersonDAOImpl", "getData()", e.toString());
 			throw new LIMSRuntimeException("Error in Person getData()", e);
 		}
 	}
 
+	@Override
 	public List getAllPersons() throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -159,14 +167,15 @@ public class PersonDAOImpl extends BaseDAOImpl implements PersonDAO {
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("PersonDAOImpl","getAllPersons()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("PersonDAOImpl", "getAllPersons()", e.toString());
 			throw new LIMSRuntimeException("Error in Person getAllPersons()", e);
 		}
 
 		return list;
 	}
 
+	@Override
 	public List getPageOfPersons(int startingRecNo) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
@@ -175,15 +184,15 @@ public class PersonDAOImpl extends BaseDAOImpl implements PersonDAO {
 
 			String sql = "from Person t order by t.id";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
-			query.setFirstResult(startingRecNo-1);
-			query.setMaxResults(endingRecNo-1);
+			query.setFirstResult(startingRecNo - 1);
+			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("PersonDAOImpl","getPageOfPersons()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("PersonDAOImpl", "getPageOfPersons()", e.toString());
 			throw new LIMSRuntimeException("Error in Person getPageOfPersons()", e);
 		}
 
@@ -193,29 +202,32 @@ public class PersonDAOImpl extends BaseDAOImpl implements PersonDAO {
 	public Person readPerson(String idString) {
 		Person person = null;
 		try {
-			person = (Person)HibernateUtil.getSession().get(Person.class, idString);
+			person = (Person) HibernateUtil.getSession().get(Person.class, idString);
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("PersonDAOImpl","readPerson()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("PersonDAOImpl", "readPerson()", e.toString());
 			throw new LIMSRuntimeException("Error in Person readPerson()", e);
 		}
 
 		return person;
 	}
 
+	@Override
 	public List getNextPersonRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "Person", Person.class);
 
 	}
 
+	@Override
 	public List getPreviousPersonRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "Person", Person.class);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public Person getPersonByLastName(String lastName) throws LIMSRuntimeException {
 		List<Person> list = null;
@@ -228,11 +240,11 @@ public class PersonDAOImpl extends BaseDAOImpl implements PersonDAO {
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			LogEvent.logError("PersonDAOImpl","getPersonByLastName()",e.toString());
+			LogEvent.logError("PersonDAOImpl", "getPersonByLastName()", e.toString());
 			throw new LIMSRuntimeException("Error in Person getPersonByLastName()", e);
 		}
 
-		if( list.size() > 0){
+		if (list.size() > 0) {
 			return list.get(0);
 		}
 
@@ -242,13 +254,13 @@ public class PersonDAOImpl extends BaseDAOImpl implements PersonDAO {
 	@Override
 	public Person getPersonById(String personId) throws LIMSRuntimeException {
 		String sql = "From Person p where id = :personId";
-		try{
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("personId", Integer.parseInt(personId));
-			Person person = (Person)query.uniqueResult();
+			Person person = (Person) query.uniqueResult();
 			closeSession();
 			return person;
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getPersonById");
 		}
 		return null;

@@ -8,8 +8,8 @@
     <class name="PatientType" table="PATIENT_TYPE" schema="CLINLIMS" optimistic-lock="version" dynamic-update="true">        
          <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="sequence">
-            	<param name="sequence">patient_type_seq</param>
+            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            	<param name="sequence_name">patient_type_seq</param>
             </generator> 
         </id>
         <property name="type" type="java.lang.String">

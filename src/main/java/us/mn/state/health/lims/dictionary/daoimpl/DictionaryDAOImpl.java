@@ -43,7 +43,11 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 /**
  * @author diane benz
  */
-public class DictionaryDAOImpl extends BaseDAOImpl implements DictionaryDAO {
+public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements DictionaryDAO {
+
+	public DictionaryDAOImpl() {
+		super(Dictionary.class);
+	}
 
 	@Override
 	public void deleteData(List dictionarys) throws LIMSRuntimeException {

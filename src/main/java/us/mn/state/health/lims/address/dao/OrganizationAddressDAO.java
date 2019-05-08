@@ -17,12 +17,18 @@
 package us.mn.state.health.lims.address.dao;
 
 import java.util.List;
+import java.util.Optional;
 
 import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
+import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
-public interface OrganizationAddressDAO {
+public interface OrganizationAddressDAO extends BaseDAO<OrganizationAddress> {
 	public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId) throws LIMSRuntimeException;
-	public void insert(OrganizationAddress organizationAddress) throws LIMSRuntimeException;
-	public void update(OrganizationAddress organizationAddress) throws LIMSRuntimeException;
+
+	@Override
+	public String insert(OrganizationAddress organizationAddress) throws LIMSRuntimeException;
+
+	@Override
+	public Optional<OrganizationAddress> update(OrganizationAddress organizationAddress) throws LIMSRuntimeException;
 }

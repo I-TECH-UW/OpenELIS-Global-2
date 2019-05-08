@@ -19,41 +19,52 @@ package us.mn.state.health.lims.common.valueholder;
 
 import java.sql.Timestamp;
 
-public class DatabaseChangeLog {
+public class DatabaseChangeLog extends BaseObject {
 
-	private int id;
+	private String id;
 	private String author;
 	private Timestamp executed;
 	private String fileName;
 	private String comment;
 
-	public int getId() {
+	@Override
+	public String getId() {
 		return id;
 	}
-	public void setId(int id) {
+
+	@Override
+	public void setId(String id) {
 		this.id = id;
 	}
+
 	public String getAuthor() {
 		return author;
 	}
+
 	public void setAuthor(String author) {
 		this.author = author;
 	}
+
 	public void setExecuted(Timestamp executed) {
 		this.executed = executed;
 	}
+
 	public Timestamp getExecuted() {
 		return executed;
 	}
+
 	public String getFileName() {
 		return fileName;
 	}
+
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
+
 	public String getComment() {
 		return comment;
 	}
+
 	public void setComment(String comment) {
 		this.comment = comment;
 	}

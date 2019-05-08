@@ -29,6 +29,7 @@ public class BaseObject implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 
+	private String id;
 	private Timestamp lastupdated;
 
 	private Timestamp originalLastupdated;
@@ -41,6 +42,14 @@ public class BaseObject implements Serializable, Cloneable {
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	/**

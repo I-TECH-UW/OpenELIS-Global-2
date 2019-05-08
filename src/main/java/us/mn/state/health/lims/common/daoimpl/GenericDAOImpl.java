@@ -25,15 +25,16 @@ import org.hibernate.criterion.Example;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
-import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.dao.GenericDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.valueholder.SimpleBaseEntity;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
+//TODO unused delete
 // actually BaseDOAImpl assumes keys can be represented as Strings
-public abstract class GenericDAOImpl<Key extends Serializable, Entity extends SimpleBaseEntity<Key>> extends BaseDAOImpl implements BaseDAO, GenericDAO<Key, Entity> {
+public abstract class GenericDAOImpl<Key extends Serializable, Entity extends SimpleBaseEntity<Key>>
+		implements GenericDAO<Key, Entity> {
 
 	/**
 	 * This is the class of the rows being saved in the database
@@ -46,21 +47,26 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 	protected String entityName;
 
 	/**
-	 * The name of the table in the database (with underscores, not camel case).  Actually this is the name as is it spelled in the reference_tables DB table activity log.
-	 * In this table older tables from the original OpenElis (MN) are capitalized while newer ones are not.  Both have underscores in their names.
+	 * The name of the table in the database (with underscores, not camel case).
+	 * Actually this is the name as is it spelled in the reference_tables DB table
+	 * activity log. In this table older tables from the original OpenElis (MN) are
+	 * capitalized while newer ones are not. Both have underscores in their names.
 	 */
 	protected String tableName;
 
 	/**
-	 * This is basic (simple) name of the DAO class which is used in logging/audit messages.
+	 * This is basic (simple) name of the DAO class which is used in logging/audit
+	 * messages.
 	 */
 	protected String daoName;
 
-
 	/**
-	 * Given classes to save and the name of the table (for logging and audit records).
+	 * Given classes to save and the name of the table (for logging and audit
+	 * records).
+	 *
 	 * @param entityClass objects of the rows to save using this DAO
-	 * @param tableName table name in DB.  There is probably aw way to ask hibernate for this answer, but we can leave this for now.
+	 * @param tableName   table name in DB. There is probably aw way to ask
+	 *                    hibernate for this answer, but we can leave this for now.
 	 */
 	public GenericDAOImpl(Class<Entity> entityClass, String tableName) {
 		this.entityClass = entityClass;
@@ -69,30 +75,33 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 		this.entityName = entityClass.getSimpleName();
 	}
 
-    public void delete(List<Entity> entities) throws LIMSRuntimeException {
-        throw new UnsupportedOperationException(daoName + ".delete(list) not supported");
-        // If you want to be able to delete entites override this method and cCall the other delete method with delete(entities, new MyEntity());
-        // delete(entities, new ObservationHistory());
-    }
-
+	@Override
+	public void delete(List<Entity> entities) throws LIMSRuntimeException {
+		throw new UnsupportedOperationException(daoName + ".delete(list) not supported");
+		// If you want to be able to delete entites override this method and cCall the
+		// other delete method with delete(entities, new MyEntity());
+		// delete(entities, new ObservationHistory());
+	}
 
 	/***
 	 * Delete all the entities in the list and record the auditing information.
+	 *
 	 * @param entities all the entities to delete.
-	 * @param oneNew - pass a new empty object for use in the history audit logging processing
+	 * @param oneNew   - pass a new empty object for use in the history audit
+	 *                 logging processing
 	 */
 	public void delete(List<Entity> entities, Entity oneNewData) throws LIMSRuntimeException {
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			for (Entity data: entities) {
+			for (Entity data : entities) {
 				Entity oldData = readEntity(data.getId());
 
 				String sysUserId = data.getSysUserId();
 				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				auditDAO.saveHistory(oneNewData,oldData,sysUserId,event,tableName);
+				auditDAO.saveHistory(oneNewData, oldData, sysUserId, event, tableName);
 			}
 
-			for (Entity data: entities) {
+			for (Entity data : entities) {
 				data = readEntity(data.getId());
 				HibernateUtil.getSession().delete(data);
 				flushAndClear();
@@ -113,6 +122,7 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 	/**
 	 * Read all entities from the database.
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Entity> getAll() throws LIMSRuntimeException {
 		List<Entity> entities;
@@ -127,32 +137,34 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 
 		return entities;
 	}
-	
-    /**
-     * Read all entities from the database sorted by an appropriate column
-     */
-    @SuppressWarnings("unchecked")
-    public List<Entity> getAllOrderBy(String columnName) throws LIMSRuntimeException {
-        List<Entity> entities;
-        try {
-            String sql = "from " + this.entityName + " ORDER BY " + columnName;
-            org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
-            entities = query.list();
-            flushAndClear();
-        } catch (Exception e) {
-            throw createAndLogException("getAllOrderBy()", e);
-        }
 
-        return entities;
-    }	
+	/**
+	 * Read all entities from the database sorted by an appropriate column
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Entity> getAllOrderBy(String columnName) throws LIMSRuntimeException {
+		List<Entity> entities;
+		try {
+			String sql = "from " + this.entityName + " ORDER BY " + columnName;
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			entities = query.list();
+			flushAndClear();
+		} catch (Exception e) {
+			throw createAndLogException("getAllOrderBy()", e);
+		}
+
+		return entities;
+	}
 
 	/**
 	 * Find one entity given an ID
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public Entity getById(Entity entity) throws LIMSRuntimeException {
 		try {
-			Entity re = (Entity)HibernateUtil.getSession().get(entityClass, entity.getId());
+			Entity re = (Entity) HibernateUtil.getSession().get(entityClass, entity.getId());
 			flushAndClear();
 			return re;
 		} catch (Exception e) {
@@ -161,10 +173,12 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 	}
 
 	/***
-	 *  get one entity, by the ID contained in the given Entity, filling in the given entity with the values.
+	 * get one entity, by the ID contained in the given Entity, filling in the given
+	 * entity with the values.
 	 */
+	@Override
 	public void getData(Entity entity) throws LIMSRuntimeException {
-		Entity tmpEntity = readEntity(entity.getId());  // PAH reused readEntity instead of doing the code again.
+		Entity tmpEntity = readEntity(entity.getId()); // PAH reused readEntity instead of doing the code again.
 		if (tmpEntity != null) {
 			try {
 				PropertyUtils.copyProperties(entity, tmpEntity);
@@ -179,6 +193,7 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 	/***
 	 * save the given entity into the database
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public boolean insertData(Entity entity) throws LIMSRuntimeException {
 		try {
@@ -187,7 +202,7 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = entity.getSysUserId();
-			auditDAO.saveNewHistory(entity,sysUserId,tableName);
+			auditDAO.saveNewHistory(entity, sysUserId, tableName);
 
 			flushAndClear();
 		} catch (Exception e) {
@@ -200,16 +215,17 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 	/***
 	 * update the given existing entity in the database
 	 */
+	@Override
 	public void updateData(Entity entity) throws LIMSRuntimeException {
 		Entity oldData = readEntity(entity.getId());
 		Entity newData = entity;
 
-		//add to audit trail
+		// add to audit trail
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = entity.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			auditDAO.saveHistory(newData,oldData,sysUserId,event,tableName);
+			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 
 			HibernateUtil.getSession().merge(entity);
 			flushAndClear();
@@ -223,11 +239,12 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 	/**
 	 * Read one entity
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
-	public Entity readEntity(Key id) throws LIMSRuntimeException{
+	public Entity readEntity(Key id) throws LIMSRuntimeException {
 		Entity data = null;
 		try {
-			data = (Entity)HibernateUtil.getSession().get(entityClass, id);
+			data = (Entity) HibernateUtil.getSession().get(entityClass, id);
 			flushAndClear();
 		} catch (Exception e) {
 			throw createAndLogException("readEntity()", e);
@@ -236,56 +253,74 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 	}
 
 	/**
-	 * Read a list of entities which match those fields(members) in the entity which are filled in.
+	 * Read a list of entities which match those fields(members) in the entity which
+	 * are filled in.
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Entity> readByExample(Entity entity) throws LIMSRuntimeException {
 		List<Entity> results;
 		try {
-			results = (List<Entity>)HibernateUtil.getSession().createCriteria(entityClass).add(Example.create(entity)).list();
+			results = HibernateUtil.getSession().createCriteria(entityClass).add(Example.create(entity)).list();
 		} catch (Exception e) {
 			throw createAndLogException("readByExample()", e);
 		}
 		return results;
 	}
 
-    /**
-     * Given a bit of HQL and few other bits find a bunch of the right types of Entities
-     * @param the whole HQL with one or more params in the some statement " id = param1 AND title = :param2" etc. in it.
-     * @param fieldValue one value to match with
-     * @param orderByClause more HQL to finish the entire statement (aka the order by clause).
-     * @return a list of
-     * @throws LIMSRuntimeException
-     */
-    protected List<Entity> readByHQL(String hql, String[] fieldValues) throws LIMSRuntimeException {
-        try {
-            org.hibernate.Query query = HibernateUtil.getSession().createQuery(hql);
-            for (int i = 0; i <= fieldValues.length; i++) {
-                query.setParameter("param1", fieldValues[i]);
-            }
+	/**
+	 * Given a bit of HQL and few other bits find a bunch of the right types of
+	 * Entities
+	 *
+	 * @param the           whole HQL with one or more params in the some statement
+	 *                      " id = param1 AND title = :param2" etc. in it.
+	 * @param fieldValue    one value to match with
+	 * @param orderByClause more HQL to finish the entire statement (aka the order
+	 *                      by clause).
+	 * @return a list of
+	 * @throws LIMSRuntimeException
+	 */
+	protected List<Entity> readByHQL(String hql, String[] fieldValues) throws LIMSRuntimeException {
+		try {
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(hql);
+			for (int i = 0; i <= fieldValues.length; i++) {
+				query.setParameter("param1", fieldValues[i]);
+			}
 
-            @SuppressWarnings("unchecked")
-            List<Entity> list = query.list();
-            HibernateUtil.getSession().flush();
-            HibernateUtil.getSession().clear();
+			@SuppressWarnings("unchecked")
+			List<Entity> list = query.list();
+			HibernateUtil.getSession().flush();
+			HibernateUtil.getSession().clear();
 
-            return list;
+			return list;
 
-        } catch (Exception e) {
-            throw createAndLogException("findByHQL( \"" + hql + "\")", e);
-        }
-    }
-
+		} catch (Exception e) {
+			throw createAndLogException("findByHQL( \"" + hql + "\")", e);
+		}
+	}
 
 	/**
-	 * Utility routine for (1) logging an error and (2) creating a new RuntimeException
+	 * Utility routine for (1) logging an error and (2) creating a new
+	 * RuntimeException
+	 *
 	 * @param methodName
 	 * @param e
 	 * @return new RuntimeException
 	 */
 	protected LIMSRuntimeException createAndLogException(String methodName, Exception e) {
 		LogEvent.logError(daoName, methodName, e.toString());
-		// PAHill original code said " Error in " + entityName , but that isn't actually correct.
+		// PAHill original code said " Error in " + entityName , but that isn't actually
+		// correct.
 		return new LIMSRuntimeException("Error in " + daoName + " " + methodName, e);
+	}
+
+	protected void closeSession() {
+		HibernateUtil.getSession().flush();
+		HibernateUtil.getSession().clear();
+	}
+
+	protected void handleException(Exception e, String method) throws LIMSRuntimeException {
+		LogEvent.logError(this.getClass().getSimpleName(), method, e.toString());
+		throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + method, e);
 	}
 }

@@ -46,7 +46,11 @@ import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
 import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;
 import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 
-public class AuditTrailDAOImpl extends BaseDAOImpl implements AuditTrailDAO {
+public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrailDAO {
+
+	public AuditTrailDAOImpl() {
+		super(History.class);
+	}
 
 	// For an insert log the id, sys_user_id, ref id, reftable, timestamp, activity
 	// (='I'). The change column would be blank, since the
@@ -161,7 +165,7 @@ public class AuditTrailDAOImpl extends BaseDAOImpl implements AuditTrailDAO {
 				hist.setSysUserId(sysUserId);
 
 				byte[] bytes = xml.getBytes();
-				hist.setChanges(Hibernate.createBlob(bytes));
+				hist.setChanges(bytes);
 
 				Method m3 = existingObject.getClass().getMethod("getLastupdated", new Class[0]);
 				// java.sql.Timestamp ts = (java.sql.Timestamp)m3.invoke(existingObject,
@@ -1391,24 +1395,18 @@ public class AuditTrailDAOImpl extends BaseDAOImpl implements AuditTrailDAO {
 	 */
 	@Override
 	public String retrieveBlobData(String id) throws LIMSRuntimeException {
-		java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream(1024);
+		byte[] bindata = new byte[1024];
 		try {
 			History history = (History) HibernateUtil.getSession().get(History.class, id);
 			if (history != null) {
-				byte[] bindata = new byte[1024];
-				int bytesread;
-				java.io.BufferedInputStream bis = new java.io.BufferedInputStream(
-						history.getChanges().getBinaryStream());
-				if ((bytesread = bis.read(bindata, 0, bindata.length)) != -1) {
-					baos.write(bindata, 0, bytesread);
-				}
+				bindata = history.getChanges();
 			}
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("AuditTrailDAOImpl", "retrieveBlobData()", e.toString());
 			throw new LIMSRuntimeException("Error in AuditTrail retrieveBlobData()", e);
 		}
-		return baos.toString();
+		return new String(bindata);
 	}
 
 	/**

@@ -33,90 +33,97 @@ import us.mn.state.health.lims.sampleorganization.dao.SampleOrganizationDAO;
 import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization;
 
 /**
- *  $Header$
+ * $Header$
  *
- *  @author         Hung Nguyen
- *  @date created   08/04/2006
- *  @version        $Revision$
+ * @author Hung Nguyen
+ * @date created 08/04/2006
+ * @version $Revision$
  */
-public class SampleOrganizationDAOImpl extends BaseDAOImpl implements SampleOrganizationDAO {
+public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization> implements SampleOrganizationDAO {
 
+	public SampleOrganizationDAOImpl() {
+		super(SampleOrganization.class);
+	}
+
+	@Override
 	public void deleteData(List sampleOrgss) throws LIMSRuntimeException {
-		//add to audit trail
+		// add to audit trail
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			for (int i = 0; i < sampleOrgss.size(); i++) {
-				SampleOrganization data = (SampleOrganization)sampleOrgss.get(i);
+				SampleOrganization data = (SampleOrganization) sampleOrgss.get(i);
 
-				SampleOrganization oldData = (SampleOrganization)readSampleOrganization(data.getId());
+				SampleOrganization oldData = readSampleOrganization(data.getId());
 				SampleOrganization newData = new SampleOrganization();
 
 				String sysUserId = data.getSysUserId();
 				String event = IActionConstants.AUDIT_TRAIL_DELETE;
 				String tableName = "SAMPLE_ORGANIZATION";
-				auditDAO.saveHistory(newData,oldData,sysUserId,event,tableName);
+				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 			}
-		}  catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("SampleOrganizationDAOImpl","AuditTrail deleteData()",e.toString());
+		} catch (Exception e) {
+			// bugzilla 2154
+			LogEvent.logError("SampleOrganizationDAOImpl", "AuditTrail deleteData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleOrganization AuditTrail deleteData()", e);
 		}
 
 		try {
 			for (int i = 0; i < sampleOrgss.size(); i++) {
 				SampleOrganization data = (SampleOrganization) sampleOrgss.get(i);
-				//bugzilla 2206
-				data = (SampleOrganization)readSampleOrganization(data.getId());
+				// bugzilla 2206
+				data = readSampleOrganization(data.getId());
 				HibernateUtil.getSession().delete(data);
 				HibernateUtil.getSession().flush();
 				HibernateUtil.getSession().clear();
 			}
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("SampleOrganizationDAOImpl","deleteData()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("SampleOrganizationDAOImpl", "deleteData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleHuman deleteData()", e);
 		}
 	}
 
+	@Override
 	public boolean insertData(SampleOrganization sampleOrg) throws LIMSRuntimeException {
 
 		try {
-			String id = (String)HibernateUtil.getSession().save(sampleOrg);
+			String id = (String) HibernateUtil.getSession().save(sampleOrg);
 			sampleOrg.setId(id);
 
-			//bugzilla 1824 inserts will be logged in history table
+			// bugzilla 1824 inserts will be logged in history table
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = sampleOrg.getSysUserId();
 			String tableName = "SAMPLE_ORGANIZATION";
-			auditDAO.saveNewHistory(sampleOrg,sysUserId,tableName);
+			auditDAO.saveNewHistory(sampleOrg, sysUserId, tableName);
 
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("SampleOrganizationDAOImpl","insertData()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("SampleOrganizationDAOImpl", "insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleOrganization insertData()", e);
 		}
 
 		return true;
 	}
 
+	@Override
 	public void updateData(SampleOrganization sampleOrg) throws LIMSRuntimeException {
 
-		SampleOrganization oldData = (SampleOrganization)readSampleOrganization(sampleOrg.getId());
+		SampleOrganization oldData = readSampleOrganization(sampleOrg.getId());
 		SampleOrganization newData = sampleOrg;
 
-		//add to audit trail
+		// add to audit trail
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = sampleOrg.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "SAMPLE_ORGANIZATION";
-			auditDAO.saveHistory(newData,oldData,sysUserId,event,tableName);
-		}  catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("SampleOrganizationDAOImpl","AuditTrail updateData()",e.toString());
+			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+		} catch (Exception e) {
+			// bugzilla 2154
+			LogEvent.logError("SampleOrganizationDAOImpl", "AuditTrail updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleOrganization AuditTrail updateData()", e);
 		}
 
@@ -127,15 +134,17 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl implements SampleOrga
 			HibernateUtil.getSession().evict(sampleOrg);
 			HibernateUtil.getSession().refresh(sampleOrg);
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("SampleOrganizationDAOImpl","updateData()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("SampleOrganizationDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleOrganization updateData()", e);
 		}
 	}
 
+	@Override
 	public void getData(SampleOrganization sampleOrg) throws LIMSRuntimeException {
 		try {
-			SampleOrganization data = (SampleOrganization)HibernateUtil.getSession().get(SampleOrganization.class, sampleOrg.getId());
+			SampleOrganization data = (SampleOrganization) HibernateUtil.getSession().get(SampleOrganization.class,
+					sampleOrg.getId());
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			if (data != null) {
@@ -144,8 +153,8 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl implements SampleOrga
 				sampleOrg.setId(null);
 			}
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("SampleOrganizationDAOImpl","getData()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("SampleOrganizationDAOImpl", "getData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleOrganization getData()", e);
 		}
 	}
@@ -153,35 +162,36 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl implements SampleOrga
 	public SampleOrganization readSampleOrganization(String idString) {
 		SampleOrganization so = null;
 		try {
-			so = (SampleOrganization)HibernateUtil.getSession().get(SampleOrganization.class, idString);
+			so = (SampleOrganization) HibernateUtil.getSession().get(SampleOrganization.class, idString);
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("SampleOrganizationDAOImpl","readSampleOrganization()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("SampleOrganizationDAOImpl", "readSampleOrganization()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleOrganization readSampleOrganization()", e);
 		}
 
 		return so;
 	}
 
+	@Override
 	public void getDataBySample(SampleOrganization sampleOrganization) throws LIMSRuntimeException {
 
 		try {
-		String sql = "from SampleOrganization so where samp_id = :param";
-		Query query = HibernateUtil.getSession().createQuery(sql);
-		query.setInteger("param", Integer.valueOf(sampleOrganization.getSample().getId()));
-		List list = query.list();
-		HibernateUtil.getSession().flush();
-		HibernateUtil.getSession().clear();
-		SampleOrganization so = null;
-		if ( list.size()> 0 ) {
-			so = (SampleOrganization)list.get(0);
-			PropertyUtils.copyProperties(sampleOrganization, so);
-		}
-		}catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("SampleOrganizationDAOImpl","getData()",e.toString());
+			String sql = "from SampleOrganization so where samp_id = :param";
+			Query query = HibernateUtil.getSession().createQuery(sql);
+			query.setInteger("param", Integer.valueOf(sampleOrganization.getSample().getId()));
+			List list = query.list();
+			HibernateUtil.getSession().flush();
+			HibernateUtil.getSession().clear();
+			SampleOrganization so = null;
+			if (list.size() > 0) {
+				so = (SampleOrganization) list.get(0);
+				PropertyUtils.copyProperties(sampleOrganization, so);
+			}
+		} catch (Exception e) {
+			// bugzilla 2154
+			LogEvent.logError("SampleOrganizationDAOImpl", "getData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleOrganization getData()", e);
 		}
 
@@ -190,15 +200,16 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl implements SampleOrga
 	@Override
 	public SampleOrganization getDataBySample(Sample sample) throws LIMSRuntimeException {
 		String sql = "From SampleOrganization so where so.sample.id = :sampleId";
-		try{
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sample.getId()));
 			List<SampleOrganization> sampleOrg = query.list();
 			closeSession();
-			//There was a bug that allowed the same sample id / organization id to be entered twice
+			// There was a bug that allowed the same sample id / organization id to be
+			// entered twice
 			return sampleOrg.isEmpty() ? null : sampleOrg.get(0);
 
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getDataBySample");
 		}
 		return null;

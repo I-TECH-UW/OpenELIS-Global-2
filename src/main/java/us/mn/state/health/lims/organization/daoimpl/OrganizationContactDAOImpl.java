@@ -29,7 +29,11 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.organization.dao.OrganizationContactDAO;
 import us.mn.state.health.lims.organization.valueholder.OrganizationContact;
 
-public class OrganizationContactDAOImpl extends BaseDAOImpl implements OrganizationContactDAO {
+public class OrganizationContactDAOImpl extends BaseDAOImpl<OrganizationContact> implements OrganizationContactDAO {
+
+	public OrganizationContactDAOImpl() {
+		super(OrganizationContact.class);
+	}
 
 	private static AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 
@@ -37,13 +41,13 @@ public class OrganizationContactDAOImpl extends BaseDAOImpl implements Organizat
 	@Override
 	public List<OrganizationContact> getListForOrganizationId(String orgId) throws LIMSRuntimeException {
 		String sql = "From OrganizationContact oc where oc.organizationId = :orgId";
-		try{
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("orgId", Integer.parseInt(orgId));
 			List<OrganizationContact> contactList = query.list();
 			closeSession();
 			return contactList;
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getListForOrganizationId");
 		}
 
@@ -51,15 +55,17 @@ public class OrganizationContactDAOImpl extends BaseDAOImpl implements Organizat
 	}
 
 	@Override
-	public void insert(OrganizationContact contact) throws LIMSRuntimeException {
+	public String insert(OrganizationContact contact) throws LIMSRuntimeException {
+		String id = null;
 		try {
-			String id = (String)HibernateUtil.getSession().save(contact);
+			id = (String) HibernateUtil.getSession().save(contact);
 			contact.setId(id);
-			auditDAO.saveNewHistory(contact,contact.getSysUserId(),"organization_contact");
+			auditDAO.saveNewHistory(contact, contact.getSysUserId(), "organization_contact");
 			closeSession();
 		} catch (HibernateException e) {
 			handleException(e, "insert");
 		}
+		return id;
 	}
 
 }

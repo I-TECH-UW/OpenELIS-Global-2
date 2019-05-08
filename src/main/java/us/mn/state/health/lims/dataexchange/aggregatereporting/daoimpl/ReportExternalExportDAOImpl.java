@@ -2,15 +2,15 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
@@ -28,12 +28,17 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportExterna
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalExport;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
-public class ReportExternalExportDAOImpl extends BaseDAOImpl implements ReportExternalExportDAO {
+public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExport> implements ReportExternalExportDAO {
+	public ReportExternalExportDAOImpl() {
+		super(ReportExternalExport.class);
+	}
+
 	private static final long DAY_IN_MILLSEC = 1000L * 60L * 60L * 24L;
 	private final String TYPE_PARAM = "typeId";
 
 	@Override
-	public List<ReportExternalExport> getRecalculateReportExports(String reportQueueTypeId) throws LIMSRuntimeException {
+	public List<ReportExternalExport> getRecalculateReportExports(String reportQueueTypeId)
+			throws LIMSRuntimeException {
 		String sql = "from ReportExternalExport rq where rq.recalculate = true and rq.typeId = :" + TYPE_PARAM;
 
 		return handleListResultWithTypeId(sql, reportQueueTypeId);
@@ -49,7 +54,8 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl implements ReportEx
 
 	@Override
 	public ReportExternalExport getLatestSentReportExport(String reportQueueTypeId) throws LIMSRuntimeException {
-		String sql = "from ReportExternalExport rq where rq.send = false and rq.typeId = :" + TYPE_PARAM + " order by rq.sentDate desc";
+		String sql = "from ReportExternalExport rq where rq.send = false and rq.typeId = :" + TYPE_PARAM
+				+ " order by rq.sentDate desc";
 
 		return handleMaxResultWithTypeId(reportQueueTypeId, sql);
 	}
@@ -109,10 +115,12 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl implements ReportEx
 		}
 	}
 
+	@Override
 	public ReportExternalExport readReportExternalExport(String idString) throws LIMSRuntimeException {
 
 		try {
-			ReportExternalExport data = (ReportExternalExport) HibernateUtil.getSession().get(ReportExternalExport.class, idString);
+			ReportExternalExport data = (ReportExternalExport) HibernateUtil.getSession()
+					.get(ReportExternalExport.class, idString);
 			closeSession();
 			return data;
 		} catch (HibernateException e) {
@@ -212,6 +220,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl implements ReportEx
 		return readReportExternalExport(report.getId());
 	}
 
+	@Override
 	public void delete(ReportExternalExport report) throws LIMSRuntimeException {
 		try {
 			HibernateUtil.getSession().delete(readReportExternalExport(report.getId()));

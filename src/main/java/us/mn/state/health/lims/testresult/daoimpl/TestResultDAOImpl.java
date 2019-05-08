@@ -39,69 +39,76 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
 /**
  * @author diane benz
  */
-public class TestResultDAOImpl extends BaseDAOImpl implements TestResultDAO {
+public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestResultDAO {
 
+	public TestResultDAOImpl() {
+		super(TestResult.class);
+	}
+
+	@Override
 	public void deleteData(List testResults) throws LIMSRuntimeException {
-		//add to audit trail
+		// add to audit trail
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-            for( Object testResult : testResults ){
-                TestResult data = ( TestResult ) testResult;
+			for (Object testResult : testResults) {
+				TestResult data = (TestResult) testResult;
 
-                TestResult oldData = readTestResult( data.getId() );
-                TestResult newData = new TestResult();
+				TestResult oldData = readTestResult(data.getId());
+				TestResult newData = new TestResult();
 
-                String sysUserId = data.getSysUserId();
-                String event = IActionConstants.AUDIT_TRAIL_DELETE;
-                String tableName = "TEST_RESULT";
-                auditDAO.saveHistory( newData, oldData, sysUserId, event, tableName );
-            }
-		}  catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestResultDAOImpl","AuditTrail deleteData()",e.toString());
+				String sysUserId = data.getSysUserId();
+				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+				String tableName = "TEST_RESULT";
+				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+			}
+		} catch (Exception e) {
+			// bugzilla 2154
+			LogEvent.logError("TestResultDAOImpl", "AuditTrail deleteData()", e.toString());
 			throw new LIMSRuntimeException("Error in TestResult AuditTrail deleteData()", e);
 		}
 
 		try {
-            for( Object testResult : testResults ){
-                TestResult data = ( TestResult ) testResult;
-                //bugzilla 2206
-                data = readTestResult( data.getId() );
-                HibernateUtil.getSession().delete( data );
-                HibernateUtil.getSession().flush();
-                HibernateUtil.getSession().clear();
-            }
+			for (Object testResult : testResults) {
+				TestResult data = (TestResult) testResult;
+				// bugzilla 2206
+				data = readTestResult(data.getId());
+				HibernateUtil.getSession().delete(data);
+				HibernateUtil.getSession().flush();
+				HibernateUtil.getSession().clear();
+			}
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestResultDAOImpl","deleteData()",e.toString());
-			throw new LIMSRuntimeException("Error in TestResult deleteData()",e);
+			// bugzilla 2154
+			LogEvent.logError("TestResultDAOImpl", "deleteData()", e.toString());
+			throw new LIMSRuntimeException("Error in TestResult deleteData()", e);
 		}
 	}
 
+	@Override
 	public boolean insertData(TestResult testResult) throws LIMSRuntimeException {
 
 		try {
-			String id = (String)HibernateUtil.getSession().save(testResult);
+			String id = (String) HibernateUtil.getSession().save(testResult);
 			testResult.setId(id);
 
-			//bugzilla 1824 inserts will be logged in history table
+			// bugzilla 1824 inserts will be logged in history table
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = testResult.getSysUserId();
 			String tableName = "TEST_RESULT";
-			auditDAO.saveNewHistory(testResult,sysUserId,tableName);
+			auditDAO.saveNewHistory(testResult, sysUserId, tableName);
 
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestResultDAOImpl","insertData()",e.toString());
-			throw new LIMSRuntimeException("Error in TestResult insertData()",e);
+			// bugzilla 2154
+			LogEvent.logError("TestResultDAOImpl", "insertData()", e.toString());
+			throw new LIMSRuntimeException("Error in TestResult insertData()", e);
 		}
 
 		return true;
 	}
 
+	@Override
 	public void updateData(TestResult testResult) throws LIMSRuntimeException {
 
 		TestResult oldData = readTestResult(testResult.getId());
@@ -111,10 +118,10 @@ public class TestResultDAOImpl extends BaseDAOImpl implements TestResultDAO {
 			String sysUserId = testResult.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "TEST_RESULT";
-			auditDAO.saveHistory( testResult,oldData,sysUserId,event,tableName);
-		}  catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestResultDAOImpl","AuditTrail updateData()",e.toString());
+			auditDAO.saveHistory(testResult, oldData, sysUserId, event, tableName);
+		} catch (Exception e) {
+			// bugzilla 2154
+			LogEvent.logError("TestResultDAOImpl", "AuditTrail updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in TestResult AuditTrail updateData()", e);
 		}
 
@@ -125,15 +132,16 @@ public class TestResultDAOImpl extends BaseDAOImpl implements TestResultDAO {
 			HibernateUtil.getSession().evict(testResult);
 			HibernateUtil.getSession().refresh(testResult);
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestResultDAOImpl","updateData()",e.toString());
-			throw new LIMSRuntimeException("Error in TestResult updateData()",e);
+			// bugzilla 2154
+			LogEvent.logError("TestResultDAOImpl", "updateData()", e.toString());
+			throw new LIMSRuntimeException("Error in TestResult updateData()", e);
 		}
 	}
 
+	@Override
 	public void getData(TestResult testResult) throws LIMSRuntimeException {
 		try {
-			TestResult tr = (TestResult)HibernateUtil.getSession().get(TestResult.class, testResult.getId());
+			TestResult tr = (TestResult) HibernateUtil.getSession().get(TestResult.class, testResult.getId());
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			if (tr != null) {
@@ -142,12 +150,13 @@ public class TestResultDAOImpl extends BaseDAOImpl implements TestResultDAO {
 				testResult.setId(null);
 			}
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestResultDAOImpl","getData()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("TestResultDAOImpl", "getData()", e.toString());
 			throw new LIMSRuntimeException("Error in TestResult getData()", e);
 		}
 	}
 
+	@Override
 	public List getAllTestResults() throws LIMSRuntimeException {
 		List list;
 		try {
@@ -157,14 +166,15 @@ public class TestResultDAOImpl extends BaseDAOImpl implements TestResultDAO {
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestResultDAOImpl","getAllTestResults()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("TestResultDAOImpl", "getAllTestResults()", e.toString());
 			throw new LIMSRuntimeException("Error in TestResult getAllTestResults()", e);
 		}
 
 		return list;
 	}
 
+	@Override
 	public List getPageOfTestResults(int startingRecNo) throws LIMSRuntimeException {
 		List list;
 		try {
@@ -172,15 +182,15 @@ public class TestResultDAOImpl extends BaseDAOImpl implements TestResultDAO {
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 			String sql = "from TestResult t order by t.test.description";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
-			query.setFirstResult(startingRecNo-1);
-			query.setMaxResults(endingRecNo-1);
+			query.setFirstResult(startingRecNo - 1);
+			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestResultDAOImpl","getPageOfTestResults()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("TestResultDAOImpl", "getPageOfTestResults()", e.toString());
 			throw new LIMSRuntimeException("Error in TestResult getPageOfTestResults()", e);
 		}
 
@@ -190,12 +200,12 @@ public class TestResultDAOImpl extends BaseDAOImpl implements TestResultDAO {
 	public TestResult readTestResult(String idString) {
 		TestResult tr;
 		try {
-			tr = (TestResult)HibernateUtil.getSession().get(TestResult.class, idString);
+			tr = (TestResult) HibernateUtil.getSession().get(TestResult.class, idString);
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestResultDAOImpl","readTestResult()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("TestResultDAOImpl", "readTestResult()", e.toString());
 			throw new LIMSRuntimeException("Error in TestResult readTestResult()", e);
 		}
 
@@ -203,44 +213,46 @@ public class TestResultDAOImpl extends BaseDAOImpl implements TestResultDAO {
 
 	}
 
-
+	@Override
 	public List getNextTestResultRecord(String id) throws LIMSRuntimeException {
 
 		return getNextRecord(id, "TestResult", TestResult.class);
 
 	}
 
-	public List getPreviousTestResultRecord(String id)
-			throws LIMSRuntimeException {
+	@Override
+	public List getPreviousTestResultRecord(String id) throws LIMSRuntimeException {
 
 		return getPreviousRecord(id, "TestResult", TestResult.class);
 	}
 
+	@Override
 	public TestResult getTestResultById(TestResult testResult) throws LIMSRuntimeException {
 		TestResult newTestResult;
 		try {
-			newTestResult = (TestResult)HibernateUtil.getSession().get(TestResult.class, testResult.getId());
+			newTestResult = (TestResult) HibernateUtil.getSession().get(TestResult.class, testResult.getId());
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestResultDAOImpl","getTestResultById()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("TestResultDAOImpl", "getTestResultById()", e.toString());
 			throw new LIMSRuntimeException("Error in TestResult getTestResultById()", e);
 		}
 
 		return newTestResult;
 	}
 
+	@Override
 	public List getTestResultsByTestAndResultGroup(TestAnalyte testAnalyte) throws LIMSRuntimeException {
 		List list = new Vector();
 		try {
-			if ( testAnalyte.getId()!=null && testAnalyte.getResultGroup()!=null ) {
-				//bugzilla 1845 added testResult sortOrder
+			if (testAnalyte.getId() != null && testAnalyte.getResultGroup() != null) {
+				// bugzilla 1845 added testResult sortOrder
 				String sql = "from TestResult t where t.test = :testId and t.resultGroup = :resultGroup order by t.sortOrder";
 				org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 
 				query.setInteger("testId", Integer.parseInt(testAnalyte.getTest().getId()));
-				query.setInteger("resultGroup", Integer.parseInt( testAnalyte.getResultGroup()));
+				query.setInteger("resultGroup", Integer.parseInt(testAnalyte.getResultGroup()));
 
 				list = query.list();
 				HibernateUtil.getSession().flush();
@@ -248,18 +260,20 @@ public class TestResultDAOImpl extends BaseDAOImpl implements TestResultDAO {
 			}
 
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("TestResultDAOImpl","getTestResultByTestAndResultGroup()",e.toString());
-			throw new LIMSRuntimeException("Error in TestResult getTestResultByTestAndResultGroup()",e);
+			// bugzilla 2154
+			LogEvent.logError("TestResultDAOImpl", "getTestResultByTestAndResultGroup()", e.toString());
+			throw new LIMSRuntimeException("Error in TestResult getTestResultByTestAndResultGroup()", e);
 		}
 
 		return list;
 
 	}
 
-	public List getAllActiveTestResultsPerTest( Test test ) throws LIMSRuntimeException {
-		if ( test == null || (test.getId()==null) || (test.getId().length()==0))
+	@Override
+	public List getAllActiveTestResultsPerTest(Test test) throws LIMSRuntimeException {
+		if (test == null || (test.getId() == null) || (test.getId().length() == 0)) {
 			return null;
+		}
 
 		List list;
 		try {
@@ -271,16 +285,17 @@ public class TestResultDAOImpl extends BaseDAOImpl implements TestResultDAO {
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			LogEvent.logError("TestResultDAOImpl","getAllActiveTestResultsPerTest()",e.toString());
-			throw new LIMSRuntimeException("Error in TestResult getAllActiveTestResultsPerTest()",e);
+			LogEvent.logError("TestResultDAOImpl", "getAllActiveTestResultsPerTest()", e.toString());
+			throw new LIMSRuntimeException("Error in TestResult getAllActiveTestResultsPerTest()", e);
 		}
 
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public TestResult getTestResultsByTestAndDictonaryResult(String testId, String result) throws LIMSRuntimeException {
-		if( StringUtil.isInteger( result )){
+		if (StringUtil.isInteger(result)) {
 			List<TestResult> list;
 			try {
 				String sql = "from TestResult t where  t.testResultType in ('D','M','Q') and t.test = :testId and t.value = :testValue";
@@ -292,21 +307,23 @@ public class TestResultDAOImpl extends BaseDAOImpl implements TestResultDAO {
 
 				closeSession();
 
-				if( list != null && !list.isEmpty()){
+				if (list != null && !list.isEmpty()) {
 					return list.get(0);
 				}
 
 			} catch (Exception e) {
-				LogEvent.logError("TestResultDAOImpl","getTestResultsByTestAndDictonaryResult",e.toString());
-				throw new LIMSRuntimeException("Error in TestResult getTestResultsByTestAndDictonaryResult(String testId, String result)",e);
+				LogEvent.logError("TestResultDAOImpl", "getTestResultsByTestAndDictonaryResult", e.toString());
+				throw new LIMSRuntimeException(
+						"Error in TestResult getTestResultsByTestAndDictonaryResult(String testId, String result)", e);
 			}
 		}
 
 		return null;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
-	public List<TestResult> getActiveTestResultsByTest( String testId ) throws LIMSRuntimeException {
+	public List<TestResult> getActiveTestResultsByTest(String testId) throws LIMSRuntimeException {
 		List<TestResult> list;
 		try {
 			String sql = "from TestResult t where  t.test = :testId and t.isActive = true";
@@ -322,7 +339,7 @@ public class TestResultDAOImpl extends BaseDAOImpl implements TestResultDAO {
 			handleException(e, "getActiveTestResultsByTest");
 		}
 
-	return null;
+		return null;
 	}
 
 }

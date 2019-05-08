@@ -33,17 +33,23 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
-public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl implements AnalyzerTestMappingDAO {
+public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping> implements AnalyzerTestMappingDAO {
 
-	public void deleteData(List<AnalyzerTestMapping> analyzerTestMappingList, String currentUserId) throws LIMSRuntimeException {
+	public AnalyzerTestMappingDAOImpl() {
+		super(AnalyzerTestMapping.class);
+	}
+
+	@Override
+	public void deleteData(List<AnalyzerTestMapping> analyzerTestMappingList, String currentUserId)
+			throws LIMSRuntimeException {
 
 		try {
 			for (AnalyzerTestMapping analyzerTestMapping : analyzerTestMappingList) {
 				analyzerTestMapping = readAnalyzerTestMapping(analyzerTestMapping.getCompoundId());
 
 				AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-				auditDAO.saveHistory(new Analysis(), analyzerTestMapping, currentUserId, IActionConstants.AUDIT_TRAIL_DELETE,
-						"ANALYZER_TEST_MAP");
+				auditDAO.saveHistory(new Analysis(), analyzerTestMapping, currentUserId,
+						IActionConstants.AUDIT_TRAIL_DELETE, "ANALYZER_TEST_MAP");
 
 				HibernateUtil.getSession().delete(analyzerTestMapping);
 				HibernateUtil.getSession().flush();
@@ -71,6 +77,7 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl implements AnalyzerT
 		return mapping;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<AnalyzerTestMapping> getAllAnalyzerTestMappings() throws LIMSRuntimeException {
 		List<AnalyzerTestMapping> list = null;
@@ -88,6 +95,7 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl implements AnalyzerT
 		return list;
 	}
 
+	@Override
 	public void insertData(AnalyzerTestMapping analyzerTestMapping, String currentUserId) throws LIMSRuntimeException {
 		try {
 			HibernateUtil.getSession().save(analyzerTestMapping);
@@ -103,7 +111,8 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl implements AnalyzerT
 	}
 
 	@Override
-	public void updateMapping(AnalyzerTestMapping analyzerTestNameMapping, String currentUserId) throws LIMSRuntimeException {
+	public void updateMapping(AnalyzerTestMapping analyzerTestNameMapping, String currentUserId)
+			throws LIMSRuntimeException {
 
 		try {
 			HibernateUtil.getSession().merge(analyzerTestNameMapping);
@@ -112,7 +121,7 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl implements AnalyzerT
 			HibernateUtil.getSession().evict(analyzerTestNameMapping);
 			HibernateUtil.getSession().refresh(analyzerTestNameMapping);
 		} catch (Exception e) {
-			LogEvent.logError("AnalyzerTestMappingDAOImpl","updateData()",e.toString());
+			LogEvent.logError("AnalyzerTestMappingDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in AnalyzerTestMapping updateData()", e);
 		}
 	}

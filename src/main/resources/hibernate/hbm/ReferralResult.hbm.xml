@@ -7,8 +7,8 @@
     <class name="us.mn.state.health.lims.referral.valueholder.ReferralResult" table="referral_result" optimistic-lock="version" dynamic-update="true" >
         <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="sequence">
-            	<param name="sequence">referral_result_seq</param>
+            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+            	<param name="sequence_name">referral_result_seq</param>
             </generator>
         </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>

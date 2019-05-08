@@ -25,15 +25,13 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
 
 /**
- *  $Header$
+ * $Header$
  *
- *  @author         Hung Nguyen
- *  @date created   08/04/2006
- *  @version        $Revision$
- *	// AIS - bugzilla 1851
- *  //bugzilla 1920 standards
+ * @author Hung Nguyen
+ * @date created 08/04/2006
+ * @version $Revision$ // AIS - bugzilla 1851 //bugzilla 1920 standards
  */
-public interface SampleProjectDAO extends BaseDAO {
+public interface SampleProjectDAO extends BaseDAO<SampleProject> {
 
 	public boolean insertData(SampleProject sampleProj) throws LIMSRuntimeException;
 
@@ -47,12 +45,13 @@ public interface SampleProjectDAO extends BaseDAO {
 
 	public SampleProject getSampleProjectBySampleId(String id) throws LIMSRuntimeException;
 
-    /**
-     * @param locationId
-     * @param projectName
-     * @param lowDate
-     * @param highDate
-     * @return
-     */
-    public List<SampleProject> getByOrganizationProjectAndReceivedOnRange(String organizationId, String projectName, Date lowDate, Date highDate);
+	/**
+	 * @param locationId
+	 * @param projectName
+	 * @param lowDate
+	 * @param highDate
+	 * @return
+	 */
+	public List<SampleProject> getByOrganizationProjectAndReceivedOnRange(String organizationId, String projectName,
+			Date lowDate, Date highDate);
 }

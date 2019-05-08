@@ -12,7 +12,7 @@
 * The Original Code is OpenELIS code.
 *
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-* 
+*
 * Contributor(s): ITECH, University of Washington, Seattle WA.
 */
 package us.mn.state.health.lims.sampleqaevent.daoimpl;
@@ -37,90 +37,96 @@ import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 
 /**
- *  $Header$
+ * $Header$
  *
- *  @author         Diane Benz
- *  @date created   06/12/2008
- *  @version        $Revision$
- *  bugzilla 2510
+ * @author Diane Benz
+ * @date created 06/12/2008
+ * @version $Revision$ bugzilla 2510
  */
-public class SampleQaEventDAOImpl extends BaseDAOImpl implements SampleQaEventDAO {
+public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements SampleQaEventDAO {
 
+	public SampleQaEventDAOImpl() {
+		super(SampleQaEvent.class);
+	}
+
+	@Override
 	public void deleteData(List sampleQaEvents) throws LIMSRuntimeException {
-		//add to audit trail
+		// add to audit trail
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			for (int i = 0; i < sampleQaEvents.size(); i++) {
-				SampleQaEvent data = (SampleQaEvent)sampleQaEvents.get(i);
+				SampleQaEvent data = (SampleQaEvent) sampleQaEvents.get(i);
 
-				SampleQaEvent oldData = (SampleQaEvent)readSampleQaEvent(data.getId());
+				SampleQaEvent oldData = readSampleQaEvent(data.getId());
 				SampleQaEvent newData = new SampleQaEvent();
 
 				String sysUserId = data.getSysUserId();
 				String event = IActionConstants.AUDIT_TRAIL_DELETE;
 				String tableName = "SAMPLE_QAEVENT";
-				auditDAO.saveHistory(newData,oldData,sysUserId,event,tableName);
+				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 			}
-		}  catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("SampleQaEventDAOImpl","AuditTrail deleteData()",e.toString());
+		} catch (Exception e) {
+			// buzilla 2154
+			LogEvent.logError("SampleQaEventDAOImpl", "AuditTrail deleteData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleQaEvent AuditTrail deleteData()", e);
 		}
 
 		try {
 			for (int i = 0; i < sampleQaEvents.size(); i++) {
 				SampleQaEvent data = (SampleQaEvent) sampleQaEvents.get(i);
-				//bugzilla 2206
-				data = (SampleQaEvent)readSampleQaEvent(data.getId());
+				// bugzilla 2206
+				data = readSampleQaEvent(data.getId());
 				HibernateUtil.getSession().delete(data);
 				HibernateUtil.getSession().flush();
 				HibernateUtil.getSession().clear();
 			}
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("SampleQaEventDAOImpl","deleteData()",e.toString());
+			// buzilla 2154
+			LogEvent.logError("SampleQaEventDAOImpl", "deleteData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleQaEvent deleteData()", e);
 		}
 	}
 
+	@Override
 	public boolean insertData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException {
 
 		try {
-			String id = (String)HibernateUtil.getSession().save(sampleQaEvent);
+			String id = (String) HibernateUtil.getSession().save(sampleQaEvent);
 			sampleQaEvent.setId(id);
 
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = sampleQaEvent.getSysUserId();
 			String tableName = "SAMPLE_QAEVENT";
-			auditDAO.saveNewHistory(sampleQaEvent,sysUserId,tableName);
+			auditDAO.saveNewHistory(sampleQaEvent, sysUserId, tableName);
 
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("SampleQaEventDAOImpl","insertData()",e.toString());
+			// buzilla 2154
+			LogEvent.logError("SampleQaEventDAOImpl", "insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleQaEvent insertData()", e);
 		}
 
 		return true;
 	}
 
+	@Override
 	public void updateData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException {
 
-		SampleQaEvent oldData = (SampleQaEvent)readSampleQaEvent(sampleQaEvent.getId());
+		SampleQaEvent oldData = readSampleQaEvent(sampleQaEvent.getId());
 		SampleQaEvent newData = sampleQaEvent;
 
-		//add to audit trail
+		// add to audit trail
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = sampleQaEvent.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "SAMPLE_QAEVENT";
-			auditDAO.saveHistory(newData,oldData,sysUserId,event,tableName);
-		}  catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("SampleQaEventDAOImpl","AuditTrail insertData()",e.toString());
+			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+		} catch (Exception e) {
+			// buzilla 2154
+			LogEvent.logError("SampleQaEventDAOImpl", "AuditTrail insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleQaEvent AuditTrail updateData()", e);
 		}
 
@@ -131,27 +137,29 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl implements SampleQaEventDA
 			HibernateUtil.getSession().evict(sampleQaEvent);
 			HibernateUtil.getSession().refresh(sampleQaEvent);
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("SampleQaEventDAOImpl","updateData()",e.toString());
+			// buzilla 2154
+			LogEvent.logError("SampleQaEventDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleQaEvent updateData()", e);
 		}
 	}
 
 	@Override
 	public SampleQaEvent getData(String sampleQaEventId) throws LIMSRuntimeException {
-		try{
-			SampleQaEvent data = (SampleQaEvent)HibernateUtil.getSession().get(SampleQaEvent.class, sampleQaEventId);
+		try {
+			SampleQaEvent data = (SampleQaEvent) HibernateUtil.getSession().get(SampleQaEvent.class, sampleQaEventId);
 			closeSession();
 			return data;
 		} catch (Exception e) {
 			handleException(e, "getData");
 		}
-			return null;
+		return null;
 	}
-	
+
+	@Override
 	public void getData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException {
 		try {
-			SampleQaEvent data = (SampleQaEvent)HibernateUtil.getSession().get(SampleQaEvent.class, sampleQaEvent.getId());
+			SampleQaEvent data = (SampleQaEvent) HibernateUtil.getSession().get(SampleQaEvent.class,
+					sampleQaEvent.getId());
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			if (data != null) {
@@ -160,8 +168,8 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl implements SampleQaEventDA
 				sampleQaEvent.setId(null);
 			}
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("SampleQaEventDAOImpl","getData()",e.toString());
+			// buzilla 2154
+			LogEvent.logError("SampleQaEventDAOImpl", "getData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleQaEvent getData()", e);
 		}
 	}
@@ -169,18 +177,19 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl implements SampleQaEventDA
 	public SampleQaEvent readSampleQaEvent(String idString) {
 		SampleQaEvent sp = null;
 		try {
-			sp = (SampleQaEvent)HibernateUtil.getSession().get(SampleQaEvent.class, idString);
+			sp = (SampleQaEvent) HibernateUtil.getSession().get(SampleQaEvent.class, idString);
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("SampleQaEventDAOImpl","readSampleQaEvent()",e.toString());
+			// buzilla 2154
+			LogEvent.logError("SampleQaEventDAOImpl", "readSampleQaEvent()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleQaEvent readSampleQaEvent()", e);
 		}
 
 		return sp;
 	}
 
+	@Override
 	public List getSampleQaEventsBySample(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException {
 		List sampleQaEvents = new ArrayList();
 
@@ -195,15 +204,14 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl implements SampleQaEventDA
 
 			return sampleQaEvents;
 
-
 		} catch (Exception e) {
-			//buzilla 2154
-			LogEvent.logError("SampleQaEventDAOImpl","getSampleQaEventsBySample(SampleQaEvent)",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in SampleQaEventDAO getSampleQaEventsBySample(SampleQaEvent)", e);
+			// buzilla 2154
+			LogEvent.logError("SampleQaEventDAOImpl", "getSampleQaEventsBySample(SampleQaEvent)", e.toString());
+			throw new LIMSRuntimeException("Error in SampleQaEventDAO getSampleQaEventsBySample(SampleQaEvent)", e);
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<SampleQaEvent> getSampleQaEventsBySample(Sample sample) throws LIMSRuntimeException {
 		List<SampleQaEvent> sampleQaEvents;
@@ -221,13 +229,13 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl implements SampleQaEventDA
 			handleException(e, "getSampleQaEventsBySample(Sample sample)");
 		}
 
-		return new ArrayList<SampleQaEvent>();
+		return new ArrayList<>();
 	}
 
+	@Override
 	public SampleQaEvent getSampleQaEventBySampleAndQaEvent(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException {
 		SampleQaEvent analQaEvent = null;
-		try
-		{
+		try {
 			// Use an expression to read in the SampleQaEvent whose
 			// sample and qaevent is given
 			String sql = "from SampleQaEvent aqe where aqe.sample = :param and aqe.qaEvent = :param2";
@@ -235,65 +243,60 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl implements SampleQaEventDA
 			query.setParameter("param", sampleQaEvent.getSample().getId());
 			query.setParameter("param2", sampleQaEvent.getQaEvent().getId());
 			List list = query.list();
-			if ((list != null) &&
-				!list.isEmpty())
-			{
-				analQaEvent = (SampleQaEvent)list.get(0);
+			if ((list != null) && !list.isEmpty()) {
+				analQaEvent = (SampleQaEvent) list.get(0);
 			}
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 
-		}
-		catch (Exception e)
-		{
-			//buzilla 2154
-			LogEvent.logError("SampleQaEventDAOImpl","getSampleQaEventBySampleAndQaEvent()",e.toString());
+		} catch (Exception e) {
+			// buzilla 2154
+			LogEvent.logError("SampleQaEventDAOImpl", "getSampleQaEventBySampleAndQaEvent()", e.toString());
 			throw new LIMSRuntimeException("Exception occurred in getSampleQaEventBySampleAndQaEvent", e);
 		}
 		return analQaEvent;
 
-
 	}
 
-    /**
-     * @see us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO#getSampleQaEventsByUpdatedDate(java.sql.Date, java.sql.Date)
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<SampleQaEvent> getSampleQaEventsByUpdatedDate(Date lowDate, Date highDate) throws LIMSRuntimeException {
-        List<SampleQaEvent> sampleQaEvents = null;
+	/**
+	 * @see us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO#getSampleQaEventsByUpdatedDate(java.sql.Date,
+	 *      java.sql.Date)
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<SampleQaEvent> getSampleQaEventsByUpdatedDate(Date lowDate, Date highDate) throws LIMSRuntimeException {
+		List<SampleQaEvent> sampleQaEvents = null;
 
-        try {
-            String sql = "FROM SampleQaEvent sqe WHERE sqe.lastupdated >= :lowDate AND sqe.lastupdated <= :highDate";
-            Query query = HibernateUtil.getSession().createQuery(sql);
-            query.setDate("lowDate", lowDate);
-            query.setDate("highDate", highDate);
+		try {
+			String sql = "FROM SampleQaEvent sqe WHERE sqe.lastupdated >= :lowDate AND sqe.lastupdated <= :highDate";
+			Query query = HibernateUtil.getSession().createQuery(sql);
+			query.setDate("lowDate", lowDate);
+			query.setDate("highDate", highDate);
 
-            sampleQaEvents = query.list();
-            closeSession();
-        } catch (Exception e) {
-            handleException(e, "getSampleQaEventsByDate");
-        }
+			sampleQaEvents = query.list();
+			closeSession();
+		} catch (Exception e) {
+			handleException(e, "getSampleQaEventsByDate");
+		}
 
-        return sampleQaEvents;
-    }
+		return sampleQaEvents;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<SampleQaEvent> getAllUncompleatedEvents() throws LIMSRuntimeException {
 		String sql = "From SampleQaEvent sqa where sqa.completedDate is null";
-		
-		try{
+
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			List<SampleQaEvent> events = query.list();
 			closeSession();
 			return events;
-		}catch( HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getAllUncompleatedEvents");
 		}
-		
+
 		return null;
 	}
 
-	
 }

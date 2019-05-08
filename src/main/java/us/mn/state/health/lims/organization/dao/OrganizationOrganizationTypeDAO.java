@@ -19,12 +19,11 @@ package us.mn.state.health.lims.organization.dao;
 
 import java.util.List;
 
-import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 
-
-public interface OrganizationOrganizationTypeDAO extends BaseDAO {
+//should be service layer
+public interface OrganizationOrganizationTypeDAO {
 
 	public void deleteAllLinksForOrganization(String id) throws LIMSRuntimeException;
 

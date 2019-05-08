@@ -23,7 +23,7 @@ import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
-public interface AnalyzerResultsDAO extends BaseDAO {
+public interface AnalyzerResultsDAO extends BaseDAO<AnalyzerResults> {
 
 	public List<AnalyzerResults> getResultsbyAnalyzer(String analyzerId) throws LIMSRuntimeException;
 
@@ -35,5 +35,6 @@ public interface AnalyzerResultsDAO extends BaseDAO {
 
 	public AnalyzerResults readAnalyzerResults(String idString);
 
-	public void delete(List<AnalyzerResults> deletableAnalyzerResults) throws LIMSRuntimeException;
+	@Override
+	public void deleteAll(List<AnalyzerResults> deletableAnalyzerResults) throws LIMSRuntimeException;
 }

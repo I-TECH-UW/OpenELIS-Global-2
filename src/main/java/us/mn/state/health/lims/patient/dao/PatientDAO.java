@@ -25,11 +25,12 @@ import us.mn.state.health.lims.person.valueholder.Person;
 /**
  * @author diane benz
  *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates. To enable and disable the creation of type
- * comments go to Window>Preferences>Java>Code Generation.
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
-public interface PatientDAO extends BaseDAO {
+public interface PatientDAO extends BaseDAO<Patient> {
 
 	public boolean insertData(Patient patient) throws LIMSRuntimeException;
 
@@ -37,8 +38,7 @@ public interface PatientDAO extends BaseDAO {
 
 	public List getAllPatients() throws LIMSRuntimeException;
 
-	public List getPageOfPatients(int startingRecNo)
-			throws LIMSRuntimeException;
+	public List getPageOfPatients(int startingRecNo) throws LIMSRuntimeException;
 
 	public void getData(Patient patient) throws LIMSRuntimeException;
 
@@ -52,15 +52,16 @@ public interface PatientDAO extends BaseDAO {
 
 	public Patient readPatient(String idString);
 
-	public Patient getPatientByPerson( Person person) throws LIMSRuntimeException;
+	public Patient getPatientByPerson(Person person) throws LIMSRuntimeException;
 
-    public Patient getPatientByNationalId(String subjectNumber);
-    
-    public List<Patient> getPatientsByNationalId(String nationalId) throws LIMSRuntimeException;
+	public Patient getPatientByNationalId(String subjectNumber);
 
-    public Patient getPatientByExternalId(String externalId);
+	public List<Patient> getPatientsByNationalId(String nationalId) throws LIMSRuntimeException;
 
-	public List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList, String study)throws LIMSRuntimeException;
+	public Patient getPatientByExternalId(String externalId);
+
+	public List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList, String study)
+			throws LIMSRuntimeException;
 
 	public Patient getData(String patientId) throws LIMSRuntimeException;
 }

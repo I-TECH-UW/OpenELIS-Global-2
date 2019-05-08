@@ -2,17 +2,17 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*  
+*
 * Contributor(s): CIRG, University of Washington, Seattle WA.
 */
 package us.mn.state.health.lims.result.daoimpl;
@@ -35,79 +35,85 @@ import us.mn.state.health.lims.result.dao.ResultSignatureDAO;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultSignature;
 
+public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature> implements ResultSignatureDAO {
 
-public class ResultSignatureDAOImpl extends BaseDAOImpl implements ResultSignatureDAO {
+	public ResultSignatureDAOImpl() {
+		super(ResultSignature.class);
+	}
 
+	@Override
 	public void deleteData(List<ResultSignature> resultSignatures) throws LIMSRuntimeException {
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			for (ResultSignature resultSig : resultSignatures) {
-			
-				ResultSignature oldData = (ResultSignature)readResultSignature(resultSig.getId());
+
+				ResultSignature oldData = readResultSignature(resultSig.getId());
 
 				String sysUserId = resultSig.getSysUserId();
 				String event = IActionConstants.AUDIT_TRAIL_DELETE;
 				String tableName = "RESULT_SIGNATURE";
-				auditDAO.saveHistory(resultSig,oldData,sysUserId,event,tableName);
+				auditDAO.saveHistory(resultSig, oldData, sysUserId, event, tableName);
 			}
-		}  catch (Exception e) {
+		} catch (Exception e) {
 
-			LogEvent.logError("ResultSignatureDAOImpl","AuditTrail deleteData()",e.toString());
-		    throw new LIMSRuntimeException("Error in ResultSignature AuditTrail deleteData()", e);
-		}  
-		
-		try {		
+			LogEvent.logError("ResultSignatureDAOImpl", "AuditTrail deleteData()", e.toString());
+			throw new LIMSRuntimeException("Error in ResultSignature AuditTrail deleteData()", e);
+		}
+
+		try {
 			for (int i = 0; i < resultSignatures.size(); i++) {
-				ResultSignature data = (ResultSignature) resultSignatures.get(i);	
+				ResultSignature data = resultSignatures.get(i);
 
-				data = (ResultSignature)readResultSignature(data.getId());
+				data = readResultSignature(data.getId());
 				HibernateUtil.getSession().delete(data);
 				HibernateUtil.getSession().flush();
 				HibernateUtil.getSession().clear();
-			}			
+			}
 		} catch (Exception e) {
-			LogEvent.logError("ResultSignatureDAOImpl","deleteData()",e.toString());
-			   throw new LIMSRuntimeException("Error in ResultSignature deleteData()", e);
+			LogEvent.logError("ResultSignatureDAOImpl", "deleteData()", e.toString());
+			throw new LIMSRuntimeException("Error in ResultSignature deleteData()", e);
 		}
 	}
 
-	public boolean insertData(ResultSignature resultSignature) throws LIMSRuntimeException {	
+	@Override
+	public boolean insertData(ResultSignature resultSignature) throws LIMSRuntimeException {
 		try {
-			String id = (String)HibernateUtil.getSession().save(resultSignature);
+			String id = (String) HibernateUtil.getSession().save(resultSignature);
 			resultSignature.setId(id);
-			
+
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = resultSignature.getSysUserId();
 			String tableName = "RESULT_SIGNATURE";
-			auditDAO.saveNewHistory(resultSignature,sysUserId,tableName);
-			
+			auditDAO.saveNewHistory(resultSignature, sysUserId, tableName);
+
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
-							
+
 		} catch (Exception e) {
-			LogEvent.logError("ResultSignatureDAOImpl","insertData()",e.toString());
+			LogEvent.logError("ResultSignatureDAOImpl", "insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in ResultSignature insertData()", e);
 		}
-		
+
 		return true;
 	}
 
-	public void updateData(ResultSignature resultSignature) throws LIMSRuntimeException {		
-		ResultSignature oldData = (ResultSignature)readResultSignature(resultSignature.getId());
+	@Override
+	public void updateData(ResultSignature resultSignature) throws LIMSRuntimeException {
+		ResultSignature oldData = readResultSignature(resultSignature.getId());
 		ResultSignature newData = resultSignature;
 
-		//add to audit trail
+		// add to audit trail
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = resultSignature.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "RESULT_SIGNATURE";
-			auditDAO.saveHistory(newData,oldData,sysUserId,event,tableName);
-		}  catch (Exception e) {
-			LogEvent.logError("ResultSignatureDAOImpl","AuditTrail insertData()",e.toString());
+			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+		} catch (Exception e) {
+			LogEvent.logError("ResultSignatureDAOImpl", "AuditTrail insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in ResultSignature AuditTrail updateData()", e);
-		}  
-							
+		}
+
 		try {
 			HibernateUtil.getSession().merge(resultSignature);
 			HibernateUtil.getSession().flush();
@@ -115,14 +121,16 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl implements ResultSignatu
 			HibernateUtil.getSession().evict(resultSignature);
 			HibernateUtil.getSession().refresh(resultSignature);
 		} catch (Exception e) {
-			LogEvent.logError("ResultSignatureDAOImpl","updateData()",e.toString());
+			LogEvent.logError("ResultSignatureDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in ResultSignature updateData()", e);
 		}
 	}
 
+	@Override
 	public void getData(ResultSignature resultSignature) throws LIMSRuntimeException {
 		try {
-			ResultSignature tmpResultSignature = (ResultSignature)HibernateUtil.getSession().get(ResultSignature.class, resultSignature.getId());
+			ResultSignature tmpResultSignature = (ResultSignature) HibernateUtil.getSession().get(ResultSignature.class,
+					resultSignature.getId());
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			if (tmpResultSignature != null) {
@@ -131,54 +139,57 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl implements ResultSignatu
 				resultSignature.setId(null);
 			}
 		} catch (Exception e) {
-			LogEvent.logError("ResultSignatureDAOImpl","getData()",e.toString());
+			LogEvent.logError("ResultSignatureDAOImpl", "getData()", e.toString());
 			throw new LIMSRuntimeException("Error in ResultSignature getData()", e);
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<ResultSignature> getResultSignaturesByResult(Result result) throws LIMSRuntimeException {
 		List<ResultSignature> resultSignatures = null;
 		try {
-		
+
 			String sql = "from ResultSignature r where r.resultId = :resultId";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("resultId", Integer.parseInt(result.getId()));
 
-			resultSignatures = query.list();		
+			resultSignatures = query.list();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
-			
-            return resultSignatures;
+
+			return resultSignatures;
 
 		} catch (Exception e) {
-			LogEvent.logError("ResultSignatureDAOImpl","getResultSignatureByResult()",e.toString());
+			LogEvent.logError("ResultSignatureDAOImpl", "getResultSignatureByResult()", e.toString());
 			throw new LIMSRuntimeException("Error in ResultSignature getResultSignatureResult()", e);
-		}						
+		}
 	}
 
 	public ResultSignature readResultSignature(String idString) {
 		ResultSignature data = null;
 		try {
-			data = (ResultSignature)HibernateUtil.getSession().get(ResultSignature.class, idString);
+			data = (ResultSignature) HibernateUtil.getSession().get(ResultSignature.class, idString);
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			LogEvent.logError("ResultSignatureDAOImpl","readResultSignature()",e.toString());
+			LogEvent.logError("ResultSignatureDAOImpl", "readResultSignature()", e.toString());
 			throw new LIMSRuntimeException("Error in ResultSignature readResultSignature()", e);
-		}		
-		
+		}
+
 		return data;
 	}
 
+	@Override
 	public ResultSignature getResultSignatureById(ResultSignature resultSignature) throws LIMSRuntimeException {
 		try {
-			ResultSignature re = (ResultSignature)HibernateUtil.getSession().get(ResultSignature.class, resultSignature.getId());
+			ResultSignature re = (ResultSignature) HibernateUtil.getSession().get(ResultSignature.class,
+					resultSignature.getId());
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			return re;
 		} catch (Exception e) {
-			LogEvent.logError("ResultSignatureDAOImpl","getResultSignatureById()",e.toString());
+			LogEvent.logError("ResultSignatureDAOImpl", "getResultSignatureById()", e.toString());
 			throw new LIMSRuntimeException("Error in ResultSignature getResultSignatureById()", e);
 		}
 	}
@@ -186,28 +197,28 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl implements ResultSignatu
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ResultSignature> getResultSignaturesByResults(List<Result> resultList) throws LIMSRuntimeException {
-		if( resultList.isEmpty()){
-			return new ArrayList<ResultSignature>();
+		if (resultList.isEmpty()) {
+			return new ArrayList<>();
 		}
-		
-		List<Integer> resultIds = new ArrayList<Integer>();
-		for( Result result: resultList){
+
+		List<Integer> resultIds = new ArrayList<>();
+		for (Result result : resultList) {
 			resultIds.add(Integer.parseInt(result.getId()));
 		}
-		
+
 		String sql = "From ResultSignature rs where rs.resultId in (:resultIdList)";
-		
+
 		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
-			query.setParameterList("resultIdList", resultIds );
+			query.setParameterList("resultIdList", resultIds);
 			List<ResultSignature> sigs = query.list();
 			closeSession();
 			return sigs;
-			
+
 		} catch (HibernateException e) {
 			handleException(e, "getResultSignaturesByResults");
 		}
 		return null;
 	}
-	
+
 }

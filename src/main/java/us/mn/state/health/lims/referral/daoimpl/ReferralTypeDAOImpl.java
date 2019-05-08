@@ -27,24 +27,27 @@ import us.mn.state.health.lims.referral.valueholder.ReferralType;
 
 /*
  */
-public class ReferralTypeDAOImpl extends BaseDAOImpl implements ReferralTypeDAO {
+public class ReferralTypeDAOImpl extends BaseDAOImpl<ReferralType> implements ReferralTypeDAO {
 
+	public ReferralTypeDAOImpl() {
+		super(ReferralType.class);
+	}
 
+	@Override
 	public ReferralType getReferralTypeByName(String name) throws LIMSRuntimeException {
 		String sql = "From ReferralType rt where rt.name = :name";
 
-		try{
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("name", name);
-			ReferralType referralType = (ReferralType)query.uniqueResult();
+			ReferralType referralType = (ReferralType) query.uniqueResult();
 			closeSession();
 			return referralType;
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getReferralTypeByName");
 		}
 
 		return null;
 	}
-
 
 }

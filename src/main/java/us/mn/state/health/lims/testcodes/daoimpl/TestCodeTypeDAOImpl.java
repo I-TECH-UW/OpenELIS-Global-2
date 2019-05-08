@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
 *
 */
@@ -25,20 +25,23 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.testcodes.dao.TestCodeTypeDAO;
 import us.mn.state.health.lims.testcodes.valueholder.TestCodeType;
 
+public class TestCodeTypeDAOImpl extends BaseDAOImpl<TestCodeType> implements TestCodeTypeDAO {
 
-public class TestCodeTypeDAOImpl extends BaseDAOImpl implements TestCodeTypeDAO {
+	public TestCodeTypeDAOImpl() {
+		super(TestCodeType.class);
+	}
 
 	@Override
 	public TestCodeType getTestCodeTypeByName(String name) throws LIMSRuntimeException {
 		String sql = "from TestCodeType et where et.schemaName = :name";
-		
-		try{
+
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", name);
-			TestCodeType et = (TestCodeType)query.uniqueResult();
+			TestCodeType et = (TestCodeType) query.uniqueResult();
 			closeSession();
 			return et;
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getTestCodeTypeByName");
 		}
 		return null;
@@ -47,18 +50,17 @@ public class TestCodeTypeDAOImpl extends BaseDAOImpl implements TestCodeTypeDAO 
 	@Override
 	public TestCodeType getTestCodeTypeById(String id) throws LIMSRuntimeException {
 		String sql = "from TestCodeType et where et.id = :id";
-		
-		try{
+
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("id", id);
-			TestCodeType et = (TestCodeType)query.uniqueResult();
+			TestCodeType et = (TestCodeType) query.uniqueResult();
 			closeSession();
 			return et;
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getTestCodeTypeByName");
 		}
 		return null;
 	}
 
-	
 }

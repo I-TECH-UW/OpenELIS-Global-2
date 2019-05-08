@@ -17,6 +17,7 @@
 package us.mn.state.health.lims.address.daoimpl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -30,22 +31,27 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
-public class OrganizationAddressDAOImpl extends BaseDAOImpl implements OrganizationAddressDAO {
+public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress> implements OrganizationAddressDAO {
+
+	public OrganizationAddressDAOImpl() {
+		super(OrganizationAddress.class);
+	}
 
 	private static AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId) throws LIMSRuntimeException {
+	public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId)
+			throws LIMSRuntimeException {
 		String sql = "from OrganizationAddress pa where pa.compoundId.targetId = :organizationId";
 
-		try{
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("organizationId", Integer.parseInt(organizationId));
 			List<OrganizationAddress> addressPartList = query.list();
 			closeSession();
 			return addressPartList;
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getAddressPartsByOrganizationId");
 		}
 
@@ -53,23 +59,26 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl implements Organizat
 	}
 
 	@Override
-	public void insert(OrganizationAddress organizationAddress) throws LIMSRuntimeException {
-	try {
-			HibernateUtil.getSession().save(organizationAddress);
-			auditDAO.saveNewHistory(organizationAddress,organizationAddress.getSysUserId(),"organization_address");
+	public String insert(OrganizationAddress organizationAddress) throws LIMSRuntimeException {
+		try {
+			String id = (String) HibernateUtil.getSession().save(organizationAddress);
+			auditDAO.saveNewHistory(organizationAddress, organizationAddress.getSysUserId(), "organization_address");
 			closeSession();
+			return id;
 		} catch (HibernateException e) {
 			handleException(e, "insert");
 		}
+		return null;
 	}
 
 	@Override
-	public void update(OrganizationAddress organizationAddress) throws LIMSRuntimeException {
+	public Optional<OrganizationAddress> update(OrganizationAddress organizationAddress) throws LIMSRuntimeException {
 
 		OrganizationAddress oldData = readOrganizationAddress(organizationAddress);
 
 		try {
-			auditDAO.saveHistory(organizationAddress, oldData, organizationAddress.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE, "organization_address");
+			auditDAO.saveHistory(organizationAddress, oldData, organizationAddress.getSysUserId(),
+					IActionConstants.AUDIT_TRAIL_UPDATE, "organization_address");
 
 			HibernateUtil.getSession().merge(organizationAddress);
 			closeSession();
@@ -78,16 +87,18 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl implements Organizat
 		} catch (HibernateException e) {
 			handleException(e, "update");
 		}
+		return Optional.ofNullable(organizationAddress);
 	}
 
 	public OrganizationAddress readOrganizationAddress(OrganizationAddress organizationAddress) {
 		try {
-			OrganizationAddress oldOrganizationAddress = (OrganizationAddress) HibernateUtil.getSession().get(OrganizationAddress.class, organizationAddress.getCompoundId());
+			OrganizationAddress oldOrganizationAddress = (OrganizationAddress) HibernateUtil.getSession()
+					.get(OrganizationAddress.class, organizationAddress.getCompoundId());
 			closeSession();
 
 			return oldOrganizationAddress;
 		} catch (HibernateException e) {
-			handleException(e,"readOrganizationAddress");
+			handleException(e, "readOrganizationAddress");
 		}
 
 		return null;

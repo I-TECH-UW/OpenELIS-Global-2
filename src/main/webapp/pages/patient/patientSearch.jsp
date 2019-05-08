@@ -276,10 +276,13 @@ function /*void*/ doNothing(){
 
 function checkIndex(select) {
 	var indexVal = select.options[select.selectedIndex].value;
+    var valueElem = $jq("#searchValue");
 	if (indexVal == "5") {
 		$jq("#scanInstruction").show();
+        valueElem.attr("maxlength","<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength()) %>");
 	} else {
 		$jq("#scanInstruction").hide();
+        valueElem.attr("maxlength","120");
 	}
 }
 
@@ -287,19 +290,13 @@ function enableSearchButton(eventCode){
     var valueElem = $jq("#searchValue");
     var criteriaElem  = $jq('#searchCriteria');
     var searchButton = $jq("#searchButton");
-    if( valueElem.val() && criteriaElem.val() != "0" && valueElem.val() != '<%=MessageUtil.getMessage("label.select.search.here")%>'){
+    if( valueElem.val() && criteriaElem.val() != "0"){
         searchButton.removeAttr("disabled");
         if( eventCode == 13 ){
             searchButton.click();
         }
     }else{
         searchButton.attr("disabled", "disabled");
-    }
-
-    if(criteriaElem.val() == "5" ){
-        valueElem.attr("maxlength","<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength()) %>");
-    }else{
-        valueElem.attr("maxlength","120");
     }
 }
 
@@ -323,41 +320,6 @@ function handleSelectedPatient(){
     }
     window.location = searchUrl;
 }
-
-function firstClick(){
-    var searchValue = $jq("#searchValue");
-    searchValue.val("");
-    searchValue.removeAttr("onkeydown");
-}
-
-function messageRestore(element ){
-    if( !element.value  ){
-        element.maxlength = 120;
-        element.value = '<%=MessageUtil.getMessage("label.select.search.here")%>';
-        element.onkeydown = firstClick;
-        setCaretPosition(element, 0);
-    }
-}
-
-function cursorAtFront(element){
-
-    if( element.onkeydown){
-        setCaretPosition( element, 0);
-    }
-}
-
-function setCaretPosition(ctrl, pos){
-    if(ctrl.setSelectionRange){
-        ctrl.focus();
-        ctrl.setSelectionRange(pos,pos);
-    } else if (ctrl.createTextRange) {
-        var range = ctrl.createTextRange();
-        range.collapse(true);
-        range.moveEnd('character', pos);
-        range.moveStart('character', pos);
-        range.select();
-    }
-}
 </script>
 
 <input type="hidden" id="searchLabNumber">
@@ -378,12 +340,10 @@ function setCaretPosition(ctrl, pos){
            maxlength="120"
            id="searchValue"
            class="text patientSearch"
-           value='<%=MessageUtil.getMessage("label.select.search.here")%>'
+           placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>'
            type="text"
-           onclick="cursorAtFront(this)"
-           onkeydown='firstClick();'
-           onkeyup="messageRestore(this);enableSearchButton(event.which);"
-            tabindex="2"/>
+           oninput="enableSearchButton(event.which);"
+           tabindex="2"/>
 
     <input type="button"
            name="searchButton"

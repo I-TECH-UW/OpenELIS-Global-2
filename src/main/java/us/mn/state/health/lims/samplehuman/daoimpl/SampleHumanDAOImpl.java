@@ -43,8 +43,13 @@ import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
  * @date created 08/04/2006
  * @version $Revision$
  */
-public class SampleHumanDAOImpl extends BaseDAOImpl implements SampleHumanDAO {
+public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements SampleHumanDAO {
 
+	public SampleHumanDAOImpl() {
+		super(SampleHuman.class);
+	}
+
+	@Override
 	public void deleteData(List sampleHumans) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
@@ -52,7 +57,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl implements SampleHumanDAO {
 			for (int i = 0; i < sampleHumans.size(); i++) {
 				SampleHuman data = (SampleHuman) sampleHumans.get(i);
 
-				SampleHuman oldData = (SampleHuman) readSampleHuman(data.getId());
+				SampleHuman oldData = readSampleHuman(data.getId());
 				SampleHuman newData = new SampleHuman();
 
 				String sysUserId = data.getSysUserId();
@@ -70,7 +75,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl implements SampleHumanDAO {
 			for (int i = 0; i < sampleHumans.size(); i++) {
 				SampleHuman data = (SampleHuman) sampleHumans.get(i);
 				// bugzilla 2206
-				data = (SampleHuman) readSampleHuman(data.getId());
+				data = readSampleHuman(data.getId());
 				HibernateUtil.getSession().delete(data);
 				HibernateUtil.getSession().flush();
 				HibernateUtil.getSession().clear();
@@ -82,6 +87,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl implements SampleHumanDAO {
 		}
 	}
 
+	@Override
 	public boolean insertData(SampleHuman sampleHuman) throws LIMSRuntimeException {
 
 		try {
@@ -106,6 +112,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl implements SampleHumanDAO {
 		return true;
 	}
 
+	@Override
 	public void updateData(SampleHuman sampleHuman) throws LIMSRuntimeException {
 
 		SampleHuman oldData = readSampleHuman(sampleHuman.getId());
@@ -137,9 +144,11 @@ public class SampleHumanDAOImpl extends BaseDAOImpl implements SampleHumanDAO {
 		}
 	}
 
+	@Override
 	public void getData(SampleHuman sampleHuman) throws LIMSRuntimeException {
 		try {
-			SampleHuman sampHuman = (SampleHuman)HibernateUtil.getSession().get(SampleHuman.class, sampleHuman.getId());
+			SampleHuman sampHuman = (SampleHuman) HibernateUtil.getSession().get(SampleHuman.class,
+					sampleHuman.getId());
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			if (sampHuman != null) {
@@ -169,6 +178,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl implements SampleHumanDAO {
 		return sh;
 	}
 
+	@Override
 	public void getDataBySample(SampleHuman sampleHuman) throws LIMSRuntimeException {
 
 		try {
@@ -190,17 +200,17 @@ public class SampleHumanDAOImpl extends BaseDAOImpl implements SampleHumanDAO {
 
 	}
 
-	public Patient getPatientForSample(Sample sample) throws LIMSRuntimeException{
+	@Override
+	public Patient getPatientForSample(Sample sample) throws LIMSRuntimeException {
 		Patient patient = null;
 		try {
 			String sql = "select patient from Patient as patient, SampleHuman as sampleHuman where sampleHuman.patientId = patient.id and sampleHuman.sampleId = :sId";
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("sId", Integer.parseInt(sample.getId()));
-			patient = (Patient)query.uniqueResult();
+			patient = (Patient) query.uniqueResult();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 
-			
 		} catch (HibernateException he) {
 			LogEvent.logError("SampleHumanDAOImpl", "getPatientForSample()", he.toString());
 			throw new LIMSRuntimeException("Error in SampleHuman getPatientForSample()", he);
@@ -209,13 +219,13 @@ public class SampleHumanDAOImpl extends BaseDAOImpl implements SampleHumanDAO {
 		return patient;
 	}
 
-
-	public Provider getProviderForSample(Sample sample) throws LIMSRuntimeException{
+	@Override
+	public Provider getProviderForSample(Sample sample) throws LIMSRuntimeException {
 		try {
 			String sql = "select provider from Provider as provider, SampleHuman as sampleHuman where sampleHuman.providerId = provider.id and sampleHuman.sampleId = :sId";
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("sId", Integer.parseInt(sample.getId()));
-			Provider provider = (Provider)query.uniqueResult();
+			Provider provider = (Provider) query.uniqueResult();
 			closeSession();
 
 			return provider;
@@ -225,7 +235,8 @@ public class SampleHumanDAOImpl extends BaseDAOImpl implements SampleHumanDAO {
 
 		return null;
 	}
-	
+
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Sample> getSamplesForPatient(String patientID) throws LIMSRuntimeException {
 

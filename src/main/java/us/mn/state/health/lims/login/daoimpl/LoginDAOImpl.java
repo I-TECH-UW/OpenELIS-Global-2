@@ -40,7 +40,11 @@ import us.mn.state.health.lims.security.PasswordUtil;
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
-public class LoginDAOImpl extends BaseDAOImpl implements LoginDAO {
+public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
+
+	public LoginDAOImpl() {
+		super(Login.class);
+	}
 
 	@Override
 	public void deleteData(List logins) throws LIMSRuntimeException {

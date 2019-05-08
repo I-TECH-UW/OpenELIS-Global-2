@@ -2,22 +2,20 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
 package us.mn.state.health.lims.common.services.historyservices;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -74,7 +72,6 @@ public abstract class HistoryService {
 		return false;
 	}
 
-	
 	private void reverseSortByTime(List<History> list) {
 		Collections.sort(list, new Comparator<History>() {
 			@Override
@@ -86,7 +83,7 @@ public abstract class HistoryService {
 
 	public List<AuditTrailItem> getAuditTrailItems() {
 		reverseSortByTime(historyList);
-		List<AuditTrailItem> items = new ArrayList<AuditTrailItem>();
+		List<AuditTrailItem> items = new ArrayList<>();
 
 		for (History history : historyList) {
 			try {
@@ -113,7 +110,8 @@ public abstract class HistoryService {
 		for (String key : changeMaps.keySet()) {
 			setIdentifierForKey(key);
 			AuditTrailItem item = getCoreTrail(history);
-            item.setAttribute(showAttribute() && !GenericValidator.isBlankOrNull( key ) ? key : MessageUtil.getMessage( "auditTrail.action.update" ));
+			item.setAttribute(showAttribute() && !GenericValidator.isBlankOrNull(key) ? key
+					: MessageUtil.getMessage("auditTrail.action.update"));
 			item.setOldValue(changeMaps.get(key));
 			item.setNewValue(newValueMap.get(key));
 			newValueMap.put(key, item.getOldValue());
@@ -155,19 +153,13 @@ public abstract class HistoryService {
 	}
 
 	private Map<String, String> getChangeMap(History history) throws SQLException, IOException {
-		Map<String, String> changeMap = new HashMap<String, String>();
-	    //System.out.println( history.getId() + " : " + history.getActivity() );
+		Map<String, String> changeMap = new HashMap<>();
+		// System.out.println( history.getId() + " : " + history.getActivity() );
 		if ("U".equals(history.getActivity()) || "D".equals(history.getActivity())) {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
 
-			byte[] bindata = new byte[1024];
-			int bytesread;
-			BufferedInputStream bis = new BufferedInputStream(history.getChanges().getBinaryStream());
-			if ((bytesread = bis.read(bindata, 0, bindata.length)) != -1) {
-				baos.write(bindata, 0, bytesread);
-			}
+			byte[] bindata = history.getChanges();
 
-			String changes = baos.toString();
+			String changes = bindata.toString();
 			// System.out.println(history.getActivity() + " : "+ changes);
 			getObservableChanges(history, changeMap, changes);
 
@@ -201,9 +193,11 @@ public abstract class HistoryService {
 	}
 
 	protected String getViewableValue(String value, Result result) {
-		if ( TypeOfTestResultService.ResultType.isDictionaryVariant(result.getResultType()) && !GenericValidator.isBlankOrNull(value) && org.apache.commons.lang.StringUtils.isNumeric(value)) {
+		if (TypeOfTestResultService.ResultType.isDictionaryVariant(result.getResultType())
+				&& !GenericValidator.isBlankOrNull(value) && org.apache.commons.lang.StringUtils.isNumeric(value)) {
 			Dictionary dictionaryValue = dictDAO.getDictionaryById(value);
-			value = dictionaryValue != null ? dictionaryValue.getDictEntry() : MessageUtil.getMessage("result.undefined");
+			value = dictionaryValue != null ? dictionaryValue.getDictEntry()
+					: MessageUtil.getMessage("result.undefined");
 		}
 
 		return value;

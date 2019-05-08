@@ -7,7 +7,6 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +34,7 @@ public class MessageUtil {
 	 * @return - message for key in current locale
 	 */
 	public static String getMessage(String key) {
-		return getMessage(key, null, LocaleContextHolder.getLocale());
+		return getMessage(key, null, key, LocaleContextHolder.getLocale());
 	}
 
 	/**
@@ -44,7 +43,7 @@ public class MessageUtil {
 	 * @return - message for key in locale
 	 */
 	public static String getMessage(String key, Locale locale) {
-		return getMessage(key, null, locale);
+		return getMessage(key, null, key, locale);
 	}
 
 	/**
@@ -52,8 +51,8 @@ public class MessageUtil {
 	 * @param args - args to pass into message
 	 * @return - message for key in current locale
 	 */
-	public static String getMessage(String key, String[] args) {
-		return getMessage(key, args, LocaleContextHolder.getLocale());
+	public static String getMessage(String key, Object[] args) {
+		return getMessage(key, args, key, LocaleContextHolder.getLocale());
 	}
 
 	/**
@@ -62,7 +61,15 @@ public class MessageUtil {
 	 * @return - message for key in current locale
 	 */
 	public static String getMessage(String key, String arg) {
-		return getMessage(key, new String[] { arg }, LocaleContextHolder.getLocale());
+		return getMessage(key, new String[] { arg }, key, LocaleContextHolder.getLocale());
+	}
+
+	public static String getMessageOrDefault(String key, Object[] args, String defaultMsg) {
+		return getMessage(key, args, defaultMsg, LocaleContextHolder.getLocale());
+	}
+
+	public static String getMessage(String key, Object[] args, Locale locale) {
+		return getMessage(key, args, key, locale);
 	}
 
 	/**
@@ -71,18 +78,8 @@ public class MessageUtil {
 	 * @param locale - specific locale to check
 	 * @return - message for key in locale
 	 */
-	public static String getMessage(String key, String[] args, Locale locale) {
-		String msg;
-		try {
-			msg = instance.messageSource.getMessage(key, args, locale);
-		} catch (NullPointerException e) {
-			msg = key;
-			LogEvent.logError("MessageUtil", "getMessage()", e.toString());
-		} catch (NoSuchMessageException e) {
-			msg = key;
-			LogEvent.logWarn("MessageUtil", "getMessage()", e.toString());
-		}
-		return msg;
+	public static String getMessage(String key, Object[] args, String defaultMessage, Locale locale) {
+		return instance.messageSource.getMessage(key, args, defaultMessage, locale);
 	}
 
 	/**

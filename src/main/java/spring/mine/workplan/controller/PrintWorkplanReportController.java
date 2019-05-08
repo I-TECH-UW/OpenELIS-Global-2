@@ -39,7 +39,7 @@ public class PrintWorkplanReportController extends BaseController {
 	public void showPrintWorkplanReport(HttpServletRequest request, HttpServletResponse response,
 			@ModelAttribute("form") @Validated(PrintWorkplan.class) WorkplanForm form, BindingResult result) {
 		if (result.hasErrors()) {
-			saveErrors(result);
+			writeErrorsToResponse(result, response);
 			return;
 		}
 

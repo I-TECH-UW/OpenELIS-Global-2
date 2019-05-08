@@ -35,93 +35,100 @@ import us.mn.state.health.lims.sampleproject.dao.SampleProjectDAO;
 import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
 
 /**
- *  $Header$
+ * $Header$
  *
- *  @author         Hung Nguyen
- *  @date created   08/04/2006
- *  @version        $Revision$
+ * @author Hung Nguyen
+ * @date created 08/04/2006
+ * @version $Revision$
  */
-public class SampleProjectDAOImpl extends BaseDAOImpl implements SampleProjectDAO {
+public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements SampleProjectDAO {
 
+	public SampleProjectDAOImpl() {
+		super(SampleProject.class);
+	}
+
+	@Override
 	public void deleteData(List sampleProjs) throws LIMSRuntimeException {
-		//add to audit trail
+		// add to audit trail
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			for (int i = 0; i < sampleProjs.size(); i++) {
-				SampleProject data = (SampleProject)sampleProjs.get(i);
+				SampleProject data = (SampleProject) sampleProjs.get(i);
 
-				SampleProject oldData = (SampleProject)readSampleProject(data.getId());
+				SampleProject oldData = readSampleProject(data.getId());
 				SampleProject newData = new SampleProject();
 
 				String sysUserId = data.getSysUserId();
 				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				//bugzilla 2104 change to SAMPLE_PROJECTS instead of SAMPLE_PROJECT
+				// bugzilla 2104 change to SAMPLE_PROJECTS instead of SAMPLE_PROJECT
 				String tableName = "SAMPLE_PROJECTS";
-				auditDAO.saveHistory(newData,oldData,sysUserId,event,tableName);
+				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 			}
-		}  catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("SampleProjectDAOImpl","AuditTrail deleteData()",e.toString());
+		} catch (Exception e) {
+			// bugzilla 2154
+			LogEvent.logError("SampleProjectDAOImpl", "AuditTrail deleteData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleProject AuditTrail deleteData()", e);
 		}
 
 		try {
 			for (int i = 0; i < sampleProjs.size(); i++) {
 				SampleProject data = (SampleProject) sampleProjs.get(i);
-				//bugzilla 2206
-				data = (SampleProject)readSampleProject(data.getId());
+				// bugzilla 2206
+				data = readSampleProject(data.getId());
 				HibernateUtil.getSession().delete(data);
 				HibernateUtil.getSession().flush();
 				HibernateUtil.getSession().clear();
 			}
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("SampleProjectDAOImpl","deleteData()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("SampleProjectDAOImpl", "deleteData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleProject deleteData()", e);
 		}
 	}
 
+	@Override
 	public boolean insertData(SampleProject sampleProj) throws LIMSRuntimeException {
 
 		try {
-			String id = (String)HibernateUtil.getSession().save(sampleProj);
+			String id = (String) HibernateUtil.getSession().save(sampleProj);
 			sampleProj.setId(id);
 
-			//bugzilla 1824 inserts will be logged in history table
+			// bugzilla 1824 inserts will be logged in history table
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = sampleProj.getSysUserId();
-			//bugzilla 2104 change to SAMPLE_PROJECTS instead of SAMPLE_PROJECT
+			// bugzilla 2104 change to SAMPLE_PROJECTS instead of SAMPLE_PROJECT
 			String tableName = "SAMPLE_PROJECTS";
-			auditDAO.saveNewHistory(sampleProj,sysUserId,tableName);
+			auditDAO.saveNewHistory(sampleProj, sysUserId, tableName);
 
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("SampleProjectDAOImpl","insertData()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("SampleProjectDAOImpl", "insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleProject insertData()", e);
 		}
 
 		return true;
 	}
 
+	@Override
 	public void updateData(SampleProject sampleProj) throws LIMSRuntimeException {
 
-		SampleProject oldData = (SampleProject)readSampleProject(sampleProj.getId());
+		SampleProject oldData = readSampleProject(sampleProj.getId());
 		SampleProject newData = sampleProj;
 
-		//add to audit trail
+		// add to audit trail
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = sampleProj.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			//bugzilla 2104 change to SAMPLE_PROJECTS instead of SAMPLE_PROJECT
+			// bugzilla 2104 change to SAMPLE_PROJECTS instead of SAMPLE_PROJECT
 			String tableName = "SAMPLE_PROJECTS";
-			auditDAO.saveHistory(newData,oldData,sysUserId,event,tableName);
-		}  catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("SampleProjectDAOImpl","AuditTrail updateData()",e.toString());
+			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+		} catch (Exception e) {
+			// bugzilla 2154
+			LogEvent.logError("SampleProjectDAOImpl", "AuditTrail updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleProject AuditTrail updateData()", e);
 		}
 
@@ -132,15 +139,17 @@ public class SampleProjectDAOImpl extends BaseDAOImpl implements SampleProjectDA
 			HibernateUtil.getSession().evict(sampleProj);
 			HibernateUtil.getSession().refresh(sampleProj);
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("SampleProjectDAOImpl","updateData()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("SampleProjectDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleProject updateData()", e);
 		}
 	}
 
+	@Override
 	public void getData(SampleProject sampleProj) throws LIMSRuntimeException {
 		try {
-			SampleProject data = (SampleProject)HibernateUtil.getSession().get(SampleProject.class, sampleProj.getId());
+			SampleProject data = (SampleProject) HibernateUtil.getSession().get(SampleProject.class,
+					sampleProj.getId());
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			if (data != null) {
@@ -149,8 +158,8 @@ public class SampleProjectDAOImpl extends BaseDAOImpl implements SampleProjectDA
 				sampleProj.setId(null);
 			}
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("SampleProjectDAOImpl","getData()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("SampleProjectDAOImpl", "getData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleProject getData()", e);
 		}
 	}
@@ -158,12 +167,12 @@ public class SampleProjectDAOImpl extends BaseDAOImpl implements SampleProjectDA
 	public SampleProject readSampleProject(String idString) {
 		SampleProject sp = null;
 		try {
-			sp = (SampleProject)HibernateUtil.getSession().get(SampleProject.class, idString);
+			sp = (SampleProject) HibernateUtil.getSession().get(SampleProject.class, idString);
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("SampleProjectDAOImpl","readSampleProject()",e.toString());
+			// bugzilla 2154
+			LogEvent.logError("SampleProjectDAOImpl", "readSampleProject()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleProject readSampleProject()", e);
 		}
 
@@ -171,7 +180,8 @@ public class SampleProjectDAOImpl extends BaseDAOImpl implements SampleProjectDA
 	}
 
 	// AIS - bugzilla 1851
-	//Diane - bugzilla 1920
+	// Diane - bugzilla 1920
+	@Override
 	public List getSampleProjectsByProjId(String projId) throws LIMSRuntimeException {
 		List sampleProjects = new ArrayList();
 
@@ -186,15 +196,14 @@ public class SampleProjectDAOImpl extends BaseDAOImpl implements SampleProjectDA
 
 			return sampleProjects;
 
-
 		} catch (Exception e) {
-			//bugzilla 2154
-			LogEvent.logError("SampleProjectDAOImpl","getSampleProjectsByProjId()",e.toString());
-			throw new LIMSRuntimeException(
-					"Error in SampleProjectDAO getSampleProjectsByProjId()", e);
+			// bugzilla 2154
+			LogEvent.logError("SampleProjectDAOImpl", "getSampleProjectsByProjId()", e.toString());
+			throw new LIMSRuntimeException("Error in SampleProjectDAO getSampleProjectsByProjId()", e);
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public SampleProject getSampleProjectBySampleId(String id) throws LIMSRuntimeException {
 		List<SampleProject> sampleProjects = null;
@@ -213,29 +222,30 @@ public class SampleProjectDAOImpl extends BaseDAOImpl implements SampleProjectDA
 
 		return sampleProjects.isEmpty() ? null : sampleProjects.get(0);
 	}
-	
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<SampleProject> getByOrganizationProjectAndReceivedOnRange(String organizationId, String projectName, Date lowReceivedDate, Date highReceivedDate) throws LIMSRuntimeException {
-        List<SampleProject> list = null;
-        try {          
-            String sql = "FROM SampleProject as sp " + 
-                " WHERE sp.project.projectName = :projectName AND sp.sample.id IN (SELECT so.sample.id FROM SampleOrganization as so WHERE so.sample.receivedTimestamp >= :dateLow AND so.sample.receivedTimestamp <= :dateHigh " +
-                " AND   so.organization.id = :organizationId ) ";
-            Query query = HibernateUtil.getSession().createQuery(sql);
-            
-            query.setString("projectName", projectName);
-            query.setDate("dateLow", lowReceivedDate);
-            query.setDate("dateHigh", highReceivedDate);
-            query.setInteger("organizationId", Integer.valueOf(organizationId));
-            list = query.list();
-        } catch (Exception e) {
-            LogEvent.logError("SampleDAOImpl", "getSamplesByOrganiztionAndReceivedOnRange()", e.toString());
-            throw new LIMSRuntimeException("Exception occurred in SampleNumberDAOImpl.getByOrganizationProjectAndReceivedOnRange", e);
-        }
 
-        return list;
-    }   
-	
-	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<SampleProject> getByOrganizationProjectAndReceivedOnRange(String organizationId, String projectName,
+			Date lowReceivedDate, Date highReceivedDate) throws LIMSRuntimeException {
+		List<SampleProject> list = null;
+		try {
+			String sql = "FROM SampleProject as sp "
+					+ " WHERE sp.project.projectName = :projectName AND sp.sample.id IN (SELECT so.sample.id FROM SampleOrganization as so WHERE so.sample.receivedTimestamp >= :dateLow AND so.sample.receivedTimestamp <= :dateHigh "
+					+ " AND   so.organization.id = :organizationId ) ";
+			Query query = HibernateUtil.getSession().createQuery(sql);
+
+			query.setString("projectName", projectName);
+			query.setDate("dateLow", lowReceivedDate);
+			query.setDate("dateHigh", highReceivedDate);
+			query.setInteger("organizationId", Integer.valueOf(organizationId));
+			list = query.list();
+		} catch (Exception e) {
+			LogEvent.logError("SampleDAOImpl", "getSamplesByOrganiztionAndReceivedOnRange()", e.toString());
+			throw new LIMSRuntimeException(
+					"Exception occurred in SampleNumberDAOImpl.getByOrganizationProjectAndReceivedOnRange", e);
+		}
+
+		return list;
+	}
+
 }

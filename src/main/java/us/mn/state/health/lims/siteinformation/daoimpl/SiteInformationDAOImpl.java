@@ -34,7 +34,11 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
-public class SiteInformationDAOImpl extends BaseDAOImpl implements SiteInformationDAO {
+public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation> implements SiteInformationDAO {
+
+	public SiteInformationDAOImpl() {
+		super(SiteInformation.class);
+	}
 
 	@Override
 	public void deleteData(String siteInformationId, String currentUserId) throws LIMSRuntimeException {

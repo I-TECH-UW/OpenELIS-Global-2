@@ -171,7 +171,7 @@ function getSampleTypeHtml(  row, sampleDescription, sampleType ){
 }
 
 function getCollectionDateHtml( row, date ){ 
-	return "<input name='collectionDate' maxlength='10' size ='12' value='" + date + "' onchange=\"checkValidEntryDate(this, 'past', true);\" id='collectionDate_" + row + "' class='text' type='text'>";
+	return "<input name='collectionDate' maxlength='10' size ='12' value='" + date + "' onkeyup=\"addDateSlashes(this, event);\" onchange=\"checkValidEntryDate(this, 'past', true);\" id='collectionDate_" + row + "' class='text' type='text'>";
 }
 
 function getCollectionTimeHtml( row, time ){

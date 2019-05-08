@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
 *
 */
@@ -21,13 +21,18 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 
+import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.menu.dao.MenuDAO;
 import us.mn.state.health.lims.menu.valueholder.Menu;
 
-public class MenuDAOImpl implements MenuDAO {
+public class MenuDAOImpl extends BaseDAOImpl<Menu> implements MenuDAO {
+
+	public MenuDAOImpl() {
+		super(Menu.class);
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -39,12 +44,12 @@ public class MenuDAOImpl implements MenuDAO {
 			List<Menu> menus = query.list();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
-			
+
 			return menus;
-		} catch(HibernateException e) {
-			LogEvent.logError("MenuDAOImpl","getAllMenus()",e.toString());
+		} catch (HibernateException e) {
+			LogEvent.logError("MenuDAOImpl", "getAllMenus()", e.toString());
 			throw new LIMSRuntimeException("Error in Menu getAllMenus()", e);
-		} 
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -59,26 +64,27 @@ public class MenuDAOImpl implements MenuDAO {
 			HibernateUtil.getSession().clear();
 
 			return menus;
-		} catch(HibernateException e) {
-			LogEvent.logError("MenuDAOImpl","getAllActiveMenus()",e.toString());
+		} catch (HibernateException e) {
+			LogEvent.logError("MenuDAOImpl", "getAllActiveMenus()", e.toString());
 			throw new LIMSRuntimeException("Error in Menu getAllActiveMenus()", e);
 		}
 	}
 
-	public Menu getMenuByElementId(String elementId)  throws LIMSRuntimeException {
+	@Override
+	public Menu getMenuByElementId(String elementId) throws LIMSRuntimeException {
 		String sql = "From Menu m where m.elementId = :elementId";
 		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("elementId", elementId);
-			Menu menu = (Menu)query.uniqueResult();
+			Menu menu = (Menu) query.uniqueResult();
 			HibernateUtil.getSession().flush();
 			HibernateUtil.getSession().clear();
 			return menu;
 		} catch (HibernateException e) {
-			LogEvent.logError("MenuDAOImpl","getMenuByElementId()",e.toString());
+			LogEvent.logError("MenuDAOImpl", "getMenuByElementId()", e.toString());
 			throw new LIMSRuntimeException("Error in Menu getMenuByElementId()", e);
 		}
-		
+
 	}
 
 	@Override
@@ -91,10 +97,9 @@ public class MenuDAOImpl implements MenuDAO {
 			HibernateUtil.getSession().refresh(menu);
 		} catch (Exception e) {
 
-			LogEvent.logError("Menu.DAOImpl","updateData()",e.toString());
+			LogEvent.logError("Menu.DAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in Menu updateData()", e);
 		}
 	}
-
 
 }

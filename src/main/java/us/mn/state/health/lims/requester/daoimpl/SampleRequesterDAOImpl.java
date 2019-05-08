@@ -33,74 +33,77 @@ import us.mn.state.health.lims.requester.valueholder.SampleRequester;
 
 /*
  */
-public class SampleRequesterDAOImpl extends BaseDAOImpl implements SampleRequesterDAO {
+public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> implements SampleRequesterDAO {
 
-    public boolean insertData(SampleRequester sampleRequester) throws LIMSRuntimeException {
-            try {
-                HibernateUtil.getSession().save(sampleRequester);
+	public SampleRequesterDAOImpl() {
+		super(SampleRequester.class);
+	}
 
-                new AuditTrailDAOImpl().saveNewHistory(sampleRequester, sampleRequester.getSysUserId(), "SAMPLE_REQUESTER");
-                HibernateUtil.getSession().flush();
-                HibernateUtil.getSession().clear();
+	@Override
+	public boolean insertData(SampleRequester sampleRequester) throws LIMSRuntimeException {
+		try {
+			HibernateUtil.getSession().save(sampleRequester);
 
-            } catch (Exception e) {
-                LogEvent.logError( "SampleRequesterDAOImpl", "insertData()", e.toString() );
-                throw new LIMSRuntimeException("Error in SampleRequester insertData()", e);
-            }
+			new AuditTrailDAOImpl().saveNewHistory(sampleRequester, sampleRequester.getSysUserId(), "SAMPLE_REQUESTER");
+			HibernateUtil.getSession().flush();
+			HibernateUtil.getSession().clear();
 
-            return true;
-        }
+		} catch (Exception e) {
+			LogEvent.logError("SampleRequesterDAOImpl", "insertData()", e.toString());
+			throw new LIMSRuntimeException("Error in SampleRequester insertData()", e);
+		}
 
-    @Override
-    public void updateData( SampleRequester sampleRequester ) throws LIMSRuntimeException{
-        SampleRequester oldData = (SampleRequester) readOld(sampleRequester.getSampleId(), sampleRequester.getRequesterTypeId());
+		return true;
+	}
 
-        try {
-            AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-            String sysUserId = sampleRequester.getSysUserId();
-            String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-            String tableName = "SAMPLE_REQUESTER";
-            auditDAO.saveHistory(sampleRequester, oldData, sysUserId, event, tableName);
-        } catch (Exception e) {
-            LogEvent.logError( "SampleRequesterDAOImpl", "updateData()", e.toString() );
-            throw new LIMSRuntimeException("Error in SampleRequester AuditTrail updateData()", e);
-        }
+	@Override
+	public void updateData(SampleRequester sampleRequester) throws LIMSRuntimeException {
+		SampleRequester oldData = readOld(sampleRequester.getSampleId(), sampleRequester.getRequesterTypeId());
 
-        try {
-            HibernateUtil.getSession().merge(sampleRequester);
-            HibernateUtil.getSession().flush();
-            HibernateUtil.getSession().clear();
-            HibernateUtil.getSession().evict(sampleRequester);
-            HibernateUtil.getSession().refresh(sampleRequester);
-        } catch (Exception e) {
-            LogEvent.logError("SampleRequesterDAOImpl","updateData()",e.toString());
-            throw new LIMSRuntimeException("Error in SampleRequester updateData()", e);
-        }
-    }
+		try {
+			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+			String sysUserId = sampleRequester.getSysUserId();
+			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+			String tableName = "SAMPLE_REQUESTER";
+			auditDAO.saveHistory(sampleRequester, oldData, sysUserId, event, tableName);
+		} catch (Exception e) {
+			LogEvent.logError("SampleRequesterDAOImpl", "updateData()", e.toString());
+			throw new LIMSRuntimeException("Error in SampleRequester AuditTrail updateData()", e);
+		}
 
+		try {
+			HibernateUtil.getSession().merge(sampleRequester);
+			HibernateUtil.getSession().flush();
+			HibernateUtil.getSession().clear();
+			HibernateUtil.getSession().evict(sampleRequester);
+			HibernateUtil.getSession().refresh(sampleRequester);
+		} catch (Exception e) {
+			LogEvent.logError("SampleRequesterDAOImpl", "updateData()", e.toString());
+			throw new LIMSRuntimeException("Error in SampleRequester updateData()", e);
+		}
+	}
 
-    @Override
-    public void insertOrUpdateData( SampleRequester samplePersonRequester ) throws LIMSRuntimeException{
-        if( samplePersonRequester.getLastupdated() == null){
-            insertData( samplePersonRequester );
-        }else{
-            updateData( samplePersonRequester);
-        }
-    }
+	@Override
+	public void insertOrUpdateData(SampleRequester samplePersonRequester) throws LIMSRuntimeException {
+		if (samplePersonRequester.getLastupdated() == null) {
+			insertData(samplePersonRequester);
+		} else {
+			updateData(samplePersonRequester);
+		}
+	}
 
-    @Override
-    public void delete( SampleRequester sampleRequester ) throws LIMSRuntimeException{
-        HibernateUtil.getSession().delete(sampleRequester);
-        closeSession();
-    }
+	@Override
+	public void delete(SampleRequester sampleRequester) throws LIMSRuntimeException {
+		HibernateUtil.getSession().delete(sampleRequester);
+		closeSession();
+	}
 
-
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<SampleRequester> getRequestersForSampleId(String sampleId) throws LIMSRuntimeException {
 		String sql = "From SampleRequester sr where sr.sampleId = :sampleId";
 
-		try{
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setLong("sampleId", Long.parseLong(sampleId));
 			List<SampleRequester> requester = query.list();
@@ -109,24 +112,24 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl implements SampleRequest
 
 			return requester;
 
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getRequesterForSampleId");
 		}
 		return null;
 	}
 
-    public SampleRequester readOld(long sampleId, long requesterTypeId) {
-        String sql = "From SampleRequester sr where sr.sampleId = :sampleId and sr.requesterTypeId = :requesterTypeId";
-        try {
-            Query query = HibernateUtil.getSession().createQuery( sql );
-            query.setLong( "sampleId",  sampleId );
-            query.setLong( "requesterTypeId",  requesterTypeId );
-            SampleRequester requester = (SampleRequester)query.uniqueResult();
-            closeSession();
-            return requester;
-        } catch (HibernateException e) {
-            LogEvent.logError("SampleRequesterDAOImpl","readOld()",e.toString());
-            throw new LIMSRuntimeException("Error in SampleRequester readOld()", e);
-        }
-    }
+	public SampleRequester readOld(long sampleId, long requesterTypeId) {
+		String sql = "From SampleRequester sr where sr.sampleId = :sampleId and sr.requesterTypeId = :requesterTypeId";
+		try {
+			Query query = HibernateUtil.getSession().createQuery(sql);
+			query.setLong("sampleId", sampleId);
+			query.setLong("requesterTypeId", requesterTypeId);
+			SampleRequester requester = (SampleRequester) query.uniqueResult();
+			closeSession();
+			return requester;
+		} catch (HibernateException e) {
+			LogEvent.logError("SampleRequesterDAOImpl", "readOld()", e.toString());
+			throw new LIMSRuntimeException("Error in SampleRequester readOld()", e);
+		}
+	}
 }

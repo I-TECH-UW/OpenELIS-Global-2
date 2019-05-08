@@ -6,8 +6,8 @@
     <class name="SystemUserSection" table="SYSTEM_USER_SECTION" optimistic-lock="version" dynamic-update="true">
         <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
-            <generator class="sequence">
-               <param name="sequence">system_user_section_seq</param>
+            <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+               <param name="sequence_name">system_user_section_seq</param>
             </generator>   
         </id>                                            
         

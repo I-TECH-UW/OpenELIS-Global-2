@@ -21,15 +21,16 @@ import java.util.List;
 
 import org.hibernate.Query;
 
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.organization.dao.OrganizationOrganizationTypeDAO;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 
-public class OrganizationOrganizationTypeDAOImpl extends BaseDAOImpl implements OrganizationOrganizationTypeDAO {
+//TODO move to service layer, or other DAOs
+public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganizationTypeDAO {
 
+	@Override
 	public void deleteAllLinksForOrganization(String id) throws LIMSRuntimeException {
 
 		try {
@@ -41,10 +42,12 @@ public class OrganizationOrganizationTypeDAOImpl extends BaseDAOImpl implements 
 		}
 	}
 
+	@Override
 	public void linkOrganizationAndType(Organization org, String typeId) throws LIMSRuntimeException {
 
 		try {
-			StringBuffer buffer = new StringBuffer("INSERT INTO organization_organization_type(org_id, org_type_id)VALUES (");
+			StringBuffer buffer = new StringBuffer(
+					"INSERT INTO organization_organization_type(org_id, org_type_id)VALUES (");
 			buffer.append(Integer.parseInt(org.getId()));
 			buffer.append(",");
 			buffer.append(Integer.parseInt(typeId));
@@ -57,12 +60,13 @@ public class OrganizationOrganizationTypeDAOImpl extends BaseDAOImpl implements 
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<String> getOrganizationIdsForType(String typeId) throws LIMSRuntimeException {
 		List<String> orgIdList = null;
 		String sql = "select cast(org_id AS varchar) from organization_organization_type where org_type_id = :orgTypeId";
 
-		try{
+		try {
 			Query query = HibernateUtil.getSession().createSQLQuery(sql);
 			query.setInteger("orgTypeId", Integer.parseInt(typeId));
 			orgIdList = query.list();
@@ -80,7 +84,7 @@ public class OrganizationOrganizationTypeDAOImpl extends BaseDAOImpl implements 
 		List<String> orgIdList = null;
 		String sql = "select cast(org_type_id AS varchar) from organization_organization_type where org_id = :orgId";
 
-		try{
+		try {
 			Query query = HibernateUtil.getSession().createSQLQuery(sql);
 			query.setInteger("orgId", Integer.parseInt(organizationId));
 			orgIdList = query.list();
@@ -89,5 +93,11 @@ public class OrganizationOrganizationTypeDAOImpl extends BaseDAOImpl implements 
 			handleException(e, "getTypeIdsForOrganizationId");
 		}
 		return orgIdList;
+	}
+
+	private void handleException(Exception e, String string) {
+		// TODO Auto-generated method stub
+		e.printStackTrace();
+
 	}
 }

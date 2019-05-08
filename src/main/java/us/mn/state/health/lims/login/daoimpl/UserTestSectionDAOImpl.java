@@ -46,7 +46,11 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
-public class UserTestSectionDAOImpl extends BaseDAOImpl implements UserTestSectionDAO {
+public class UserTestSectionDAOImpl extends BaseDAOImpl<TestSection> implements UserTestSectionDAO {
+
+	public UserTestSectionDAOImpl() {
+		super(TestSection.class);
+	}
 
 	@Override
 	public List<Object> getAllUserTestSectionsByName(HttpServletRequest request, String testSectionName)

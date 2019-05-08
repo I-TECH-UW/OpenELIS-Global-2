@@ -31,10 +31,15 @@ import us.mn.state.health.lims.referral.valueholder.ReferringTestResult;
 
 /*
  */
-public class ReferringTestResultDAOImpl extends BaseDAOImpl implements ReferringTestResultDAO {
+public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult> implements ReferringTestResultDAO {
+
+	public ReferringTestResultDAOImpl() {
+		super(ReferringTestResult.class);
+	}
 
 	private AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 
+	@Override
 	public boolean insertData(ReferringTestResult referringTestResult) throws LIMSRuntimeException {
 		try {
 			String id = (String) HibernateUtil.getSession().save(referringTestResult);
@@ -49,39 +54,39 @@ public class ReferringTestResultDAOImpl extends BaseDAOImpl implements Referring
 		return true;
 	}
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<ReferringTestResult> getReferringTestResultsForSampleItem(String sampleItemId) throws LIMSRuntimeException {
-        String sql = "from ReferringTestResult rtr where rtr.sampleItemId = :sampleItemId";
-        try{
-            Query query = HibernateUtil.getSession().createQuery(sql);
-            query.setInteger("sampleItemId", Integer.parseInt(sampleItemId));
-            List<ReferringTestResult> list = query.list();
-            closeSession();
-            return list;
-        }catch (HibernateException e){
-            handleException(e, "getReferringTestResultsForSampleItem");
-        }
-        return null;
-    }
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ReferringTestResult> getReferringTestResultsForSampleItem(String sampleItemId)
+			throws LIMSRuntimeException {
+		String sql = "from ReferringTestResult rtr where rtr.sampleItemId = :sampleItemId";
+		try {
+			Query query = HibernateUtil.getSession().createQuery(sql);
+			query.setInteger("sampleItemId", Integer.parseInt(sampleItemId));
+			List<ReferringTestResult> list = query.list();
+			closeSession();
+			return list;
+		} catch (HibernateException e) {
+			handleException(e, "getReferringTestResultsForSampleItem");
+		}
+		return null;
+	}
 
-    @Override
-    public List<ReferringTestResult> getResultsInDateRange(Date lowDate, Date highDate) throws LIMSRuntimeException {
-        String sql = "from ReferringTestResult rtr where rtr.lastupdated BETWEEN :lowDate AND :highDate";
-        try{
-            Query query = HibernateUtil.getSession().createQuery(sql);
-            query.setDate("lowDate", lowDate);
-            query.setDate("highDate", highDate);
+	@Override
+	public List<ReferringTestResult> getResultsInDateRange(Date lowDate, Date highDate) throws LIMSRuntimeException {
+		String sql = "from ReferringTestResult rtr where rtr.lastupdated BETWEEN :lowDate AND :highDate";
+		try {
+			Query query = HibernateUtil.getSession().createQuery(sql);
+			query.setDate("lowDate", lowDate);
+			query.setDate("highDate", highDate);
 
-            List<ReferringTestResult> list = query.list();
-            closeSession();
-            return list;
-        }catch (HibernateException e){
-            handleException(e, "getResultsInDateRange");
-        }
+			List<ReferringTestResult> list = query.list();
+			closeSession();
+			return list;
+		} catch (HibernateException e) {
+			handleException(e, "getResultsInDateRange");
+		}
 
-        return null;
-    }
-
+		return null;
+	}
 
 }

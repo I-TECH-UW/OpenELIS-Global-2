@@ -21,17 +21,15 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
-public interface TypeOfSampleTestDAO extends BaseDAO {
+public interface TypeOfSampleTestDAO extends BaseDAO<TypeOfSampleTest> {
 
-	public boolean insertData(TypeOfSampleTest typeOfSample)
-			throws LIMSRuntimeException;
+	public boolean insertData(TypeOfSampleTest typeOfSample) throws LIMSRuntimeException;
 
 	public void deleteData(String[] typeOfSampleTestIds, String currentUserId) throws LIMSRuntimeException;
 
 	public List getAllTypeOfSampleTests() throws LIMSRuntimeException;
 
-	public List getPageOfTypeOfSampleTests(int startingRecNo)
-			throws LIMSRuntimeException;
+	public List getPageOfTypeOfSampleTests(int startingRecNo) throws LIMSRuntimeException;
 
 	public void getData(TypeOfSampleTest typeOfSampleTest) throws LIMSRuntimeException;
 
@@ -44,6 +42,6 @@ public interface TypeOfSampleTestDAO extends BaseDAO {
 	public List<TypeOfSampleTest> getTypeOfSampleTestsForSampleType(String sampleTypeId) throws LIMSRuntimeException;
 
 	public TypeOfSampleTest getTypeOfSampleTestForTest(String testId) throws LIMSRuntimeException;
-	
+
 	public List<TypeOfSampleTest> getTypeOfSampleTestsForTest(String testId) throws LIMSRuntimeException;
 }

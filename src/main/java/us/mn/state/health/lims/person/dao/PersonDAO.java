@@ -24,11 +24,12 @@ import us.mn.state.health.lims.person.valueholder.Person;
 /**
  * @author diane benz
  *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates. To enable and disable the creation of type
- * comments go to Window>Preferences>Java>Code Generation.
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
-public interface PersonDAO extends BaseDAO {
+public interface PersonDAO extends BaseDAO<Person> {
 
 	public boolean insertData(Person person) throws LIMSRuntimeException;
 
@@ -46,7 +47,7 @@ public interface PersonDAO extends BaseDAO {
 
 	public List getPreviousPersonRecord(String id) throws LIMSRuntimeException;
 
-	public Person getPersonByLastName( String lastName) throws LIMSRuntimeException;
+	public Person getPersonByLastName(String lastName) throws LIMSRuntimeException;
 
 	public Person getPersonById(String personId) throws LIMSRuntimeException;
 

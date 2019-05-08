@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
 *
 */
@@ -31,13 +31,18 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportExterna
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalImport;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
-public class ReportExternalImportDAOImpl extends BaseDAOImpl implements ReportExternalImportDAO {
-	
+public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImport> implements ReportExternalImportDAO {
+
+	public ReportExternalImportDAOImpl() {
+		super(ReportExternalImport.class);
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ReportExternalImport> getReportsInDateRangeSorted(Timestamp lower, Timestamp upper) throws LIMSRuntimeException {
+	public List<ReportExternalImport> getReportsInDateRangeSorted(Timestamp lower, Timestamp upper)
+			throws LIMSRuntimeException {
 		String sql = "from ReportExternalImport rq where rq.eventDate >= :lower and rq.eventDate <= :upper order by rq.sendingSite";
-		
+
 		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setTimestamp("lower", lower);
@@ -74,7 +79,8 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl implements ReportEx
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 
-			auditDAO.saveHistory(report, oldData, report.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE, "REPORT_EXTERNAL_IMPORT");
+			auditDAO.saveHistory(report, oldData, report.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
+					"REPORT_EXTERNAL_IMPORT");
 
 			HibernateUtil.getSession().merge(report);
 			HibernateUtil.getSession().flush();
@@ -89,7 +95,8 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl implements ReportEx
 	public ReportExternalImport readReportExternalImport(String idString) throws LIMSRuntimeException {
 
 		try {
-			ReportExternalImport data = (ReportExternalImport) HibernateUtil.getSession().get(ReportExternalImport.class, idString);
+			ReportExternalImport data = (ReportExternalImport) HibernateUtil.getSession()
+					.get(ReportExternalImport.class, idString);
 			closeSession();
 			return data;
 		} catch (HibernateException e) {
@@ -102,25 +109,24 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl implements ReportEx
 	@Override
 	public List<String> getUniqueSites() throws LIMSRuntimeException {
 		String sql = "select distinct sending_site from clinlims.report_external_import ";
-		try{
+		try {
 			Query query = HibernateUtil.getSession().createSQLQuery(sql);
 			List<String> sites = query.list();
 			closeSession();
 			return sites;
-		}catch(HibernateException e){
-			handleException(e,"getUniqueSites");
+		} catch (HibernateException e) {
+			handleException(e, "getUniqueSites");
 		}
-		
+
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ReportExternalImport> getReportsInDateRangeSortedForSite(Timestamp lower, Timestamp upper,  String site)
+	public List<ReportExternalImport> getReportsInDateRangeSortedForSite(Timestamp lower, Timestamp upper, String site)
 			throws LIMSRuntimeException {
-	String sql = "from ReportExternalImport rq where rq.eventDate >= :lower and rq.eventDate <= :upper and rq.sendingSite = :site order by rq.sendingSite"; 
-		
-		
+		String sql = "from ReportExternalImport rq where rq.eventDate >= :lower and rq.eventDate <= :upper and rq.sendingSite = :site order by rq.sendingSite";
+
 		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setTimestamp("lower", lower);
@@ -136,29 +142,31 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl implements ReportEx
 			handleException(e, "getReportsInDateRangeSortedForSite");
 		}
 
-		return null;	}
+		return null;
+	}
 
-    @SuppressWarnings( "unchecked" )
-    @Override
-	public ReportExternalImport  getReportByEventDateSiteType(ReportExternalImport importReport) throws LIMSRuntimeException {
+	@SuppressWarnings("unchecked")
+	@Override
+	public ReportExternalImport getReportByEventDateSiteType(ReportExternalImport importReport)
+			throws LIMSRuntimeException {
 		String sql = "from ReportExternalImport rei where rei.eventDate = :eventDate and rei.sendingSite = :site and rei.reportType = :type";
-		
-		try{
+
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setDate("eventDate", importReport.getEventDate());
 			query.setString("site", importReport.getSendingSite());
 			query.setString("type", importReport.getReportType());
-			
-            List<ReportExternalImport> reports = query.list();
 
-            closeSession();
+			List<ReportExternalImport> reports = query.list();
 
-            return reports.isEmpty()  ? new ReportExternalImport() : reports.get( 0 );
-			
-		}catch( HibernateException e){
+			closeSession();
+
+			return reports.isEmpty() ? new ReportExternalImport() : reports.get(0);
+
+		} catch (HibernateException e) {
 			handleException(e, "getReportByEventDateSiteType");
 		}
-		
+
 		return null;
 	}
 

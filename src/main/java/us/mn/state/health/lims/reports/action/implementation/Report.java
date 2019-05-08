@@ -106,6 +106,7 @@ public abstract class Report implements IReportCreator {
 		reportParameters.put("REPORT_LOCALE", SystemConfiguration.getInstance().getDefaultLocale());
 	}
 
+	@Deprecated
 	private Object getImage(String siteName) {
 		SiteInformation siteInformation = siteInformationDAO.getSiteInformationByName(siteName);
 		return GenericValidator.isBlankOrNull(siteInformation.getValue()) ? null

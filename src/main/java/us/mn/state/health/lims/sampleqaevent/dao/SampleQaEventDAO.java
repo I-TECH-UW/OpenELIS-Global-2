@@ -12,7 +12,7 @@
 * The Original Code is OpenELIS code.
 *
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-* 
+*
 * Contributor(s): ITECH, University of Washington, Seattle WA.
 */
 package us.mn.state.health.lims.sampleqaevent.dao;
@@ -26,14 +26,13 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 
 /**
- *  $Header$
+ * $Header$
  *
- *  @author         Diane Benz
- *  @date created   06/12/2008
- *  @version        $Revision$
- *  bugzilla 2510
+ * @author Diane Benz
+ * @date created 06/12/2008
+ * @version $Revision$ bugzilla 2510
  */
-public interface SampleQaEventDAO extends BaseDAO {
+public interface SampleQaEventDAO extends BaseDAO<SampleQaEvent> {
 
 	public boolean insertData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
 
@@ -49,7 +48,7 @@ public interface SampleQaEventDAO extends BaseDAO {
 
 	public SampleQaEvent getSampleQaEventBySampleAndQaEvent(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
 
-    public List<SampleQaEvent> getSampleQaEventsByUpdatedDate(Date lowDate, Date highDate) throws LIMSRuntimeException;
+	public List<SampleQaEvent> getSampleQaEventsByUpdatedDate(Date lowDate, Date highDate) throws LIMSRuntimeException;
 
 	public List<SampleQaEvent> getAllUncompleatedEvents() throws LIMSRuntimeException;
 

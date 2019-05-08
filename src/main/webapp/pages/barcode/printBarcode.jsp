@@ -274,7 +274,7 @@ function /*void*/ doNothing(){
 function enableSearchButton(eventCode){
     var valueElem = $jq("#searchValue");
     var searchButton = $jq("#searchButton");
-    if( valueElem.val() && valueElem.val() != '<%=MessageUtil.getMessage("label.select.search.here")%>'){
+    if( valueElem.val()){
         searchButton.removeAttr("disabled");
         if( eventCode == 13 ){
             searchButton.click();
@@ -299,41 +299,6 @@ function handleSelectedPatient(){
     $jq("#patientId").val(patientSelectID);
     
     form.submit();
-}
-
-function firstClick(){
-    var searchValue = $jq("#searchValue");
-    searchValue.val("");
-    searchValue.removeAttr("onkeydown");
-}
-
-function messageRestore(element ){
-    if( !element.value ){
-        element.maxlength = 120;
-        element.value = '<%=MessageUtil.getMessage("label.select.search.here")%>';
-        element.onkeydown = firstClick;
-        setCaretPosition(element, 0);
-    }
-}
-
-function cursorAtFront(element){
-
-    if( element.onkeydown){
-        setCaretPosition( element, 0);
-    }
-}
-
-function setCaretPosition(ctrl, pos){
-    if(ctrl.setSelectionRange){
-        ctrl.focus();
-        ctrl.setSelectionRange(pos,pos);
-    } else if (ctrl.createTextRange) {
-        var range = ctrl.createTextRange();
-        range.collapse(true);
-        range.moveEnd('character', pos);
-        range.moveStart('character', pos);
-        range.select();
-    }
 }
 
 function printBarcode(button) {
@@ -393,12 +358,10 @@ function printBarcode(button) {
            maxlength="120"
            id="searchValue"
            class="patientSearch"
-           value='<%=MessageUtil.getMessage("label.select.search.here")%>'
+           placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>'
            type="text"
-           onclick="cursorAtFront(this)"
-           onkeydown='firstClick();'
-           onkeyup="messageRestore(this);enableSearchButton(event.which);"
-            tabindex="2"/>
+           oninput="enableSearchButton(event.which);"
+           tabindex="2"/>
 
     <input type="button"
            name="searchButton"

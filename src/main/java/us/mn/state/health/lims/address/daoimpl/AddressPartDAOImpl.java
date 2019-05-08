@@ -27,13 +27,17 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
-public class AddressPartDAOImpl extends BaseDAOImpl implements AddressPartDAO {
+public class AddressPartDAOImpl extends BaseDAOImpl<AddressPart> implements AddressPartDAO {
+
+	public AddressPartDAOImpl() {
+		super(AddressPart.class);
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<AddressPart> getAll() throws LIMSRuntimeException {
 		String sql = "from AddressPart";
-		try{
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 
 			List<AddressPart> addressPartList = query.list();
@@ -42,23 +46,23 @@ public class AddressPartDAOImpl extends BaseDAOImpl implements AddressPartDAO {
 
 			return addressPartList;
 
-		}catch(HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getAll");
 		}
 		return null;
 	}
 
 	@Override
-	public AddressPart getAddresPartByName(String name) throws LIMSRuntimeException{
+	public AddressPart getAddresPartByName(String name) throws LIMSRuntimeException {
 		String sql = "from AddressPart ap where ap.partName = :name";
-		
-		try{
+
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", name);
-			AddressPart part = (AddressPart)query.uniqueResult();
+			AddressPart part = (AddressPart) query.uniqueResult();
 			closeSession();
 			return part;
-		}catch(HibernateException he){
+		} catch (HibernateException he) {
 			handleException(he, "getAddressPartByName");
 		}
 		return null;

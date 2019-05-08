@@ -20,7 +20,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.testdictionary.valueholder.TestDictionary;
 
-public interface TestDictionaryDAO extends BaseDAO {
+public interface TestDictionaryDAO extends BaseDAO<TestDictionary> {
 
 	public TestDictionary getTestDictionaryForTestId(String testId) throws LIMSRuntimeException;
 

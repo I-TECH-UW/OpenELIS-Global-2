@@ -5,8 +5,8 @@
     <class name="SiteInformation" table="site_information" optimistic-lock="version" dynamic-update="true">
 		  <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
 			   <column name="ID" precision="10" scale="0"/>
-			   <generator class="sequence">
-			    	<param name="sequence">site_information_seq</param>
+			   <generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">
+			    	<param name="sequence_name">site_information_seq</param>
 			   </generator>
 		  </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>

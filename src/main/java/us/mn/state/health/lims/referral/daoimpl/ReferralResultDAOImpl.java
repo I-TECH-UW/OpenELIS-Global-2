@@ -34,10 +34,15 @@ import us.mn.state.health.lims.referral.valueholder.ReferralResult;
 
 /*
  */
-public class ReferralResultDAOImpl extends BaseDAOImpl implements ReferralResultDAO {
+public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult> implements ReferralResultDAO {
+
+	public ReferralResultDAOImpl() {
+		super(ReferralResult.class);
+	}
 
 	protected AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 
+	@Override
 	public boolean insertData(ReferralResult referralResult) throws LIMSRuntimeException {
 		try {
 			String id = (String) HibernateUtil.getSession().save(referralResult);
@@ -52,10 +57,12 @@ public class ReferralResultDAOImpl extends BaseDAOImpl implements ReferralResult
 		return true;
 	}
 
+	@Override
 	public ReferralResult getReferralResultById(String referralResultId) throws LIMSRuntimeException {
 		if (!GenericValidator.isBlankOrNull(referralResultId)) {
 			try {
-				ReferralResult referralResult = (ReferralResult) HibernateUtil.getSession().get(ReferralResult.class, referralResultId);
+				ReferralResult referralResult = (ReferralResult) HibernateUtil.getSession().get(ReferralResult.class,
+						referralResultId);
 				closeSession();
 				return referralResult;
 			} catch (HibernateException e) {
@@ -65,6 +72,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl implements ReferralResult
 		return null;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<ReferralResult> getReferralResultsForReferral(String referralId) throws LIMSRuntimeException {
 		if (!GenericValidator.isBlankOrNull(referralId)) {
@@ -84,13 +92,14 @@ public class ReferralResultDAOImpl extends BaseDAOImpl implements ReferralResult
 			}
 		}
 
-		return new ArrayList<ReferralResult>();
+		return new ArrayList<>();
 	}
 
 	private ReferralResult readReferralResult(String referralResultId) {
 		if (!GenericValidator.isBlankOrNull(referralResultId)) {
 			try {
-				ReferralResult referralResult = (ReferralResult) HibernateUtil.getSession().get(ReferralResult.class, referralResultId);
+				ReferralResult referralResult = (ReferralResult) HibernateUtil.getSession().get(ReferralResult.class,
+						referralResultId);
 				closeSession();
 				return referralResult;
 			} catch (HibernateException e) {
@@ -101,12 +110,13 @@ public class ReferralResultDAOImpl extends BaseDAOImpl implements ReferralResult
 		return null;
 	}
 
+	@Override
 	public void updateData(ReferralResult referralResult) throws LIMSRuntimeException {
 		ReferralResult oldData = readReferralResult(referralResult.getId());
 
 		try {
-			auditDAO.saveHistory(referralResult, oldData, referralResult.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
-					"referral_result");
+			auditDAO.saveHistory(referralResult, oldData, referralResult.getSysUserId(),
+					IActionConstants.AUDIT_TRAIL_UPDATE, "referral_result");
 		} catch (HibernateException e) {
 			handleException(e, "updateData");
 		}
@@ -123,13 +133,14 @@ public class ReferralResultDAOImpl extends BaseDAOImpl implements ReferralResult
 
 	}
 
+	@Override
 	public void deleteData(ReferralResult referralResult) throws LIMSRuntimeException {
 		ReferralResult oldData = readReferralResult(referralResult.getId());
 
 		try {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			auditDAO.saveHistory(new ReferralResult(), oldData, referralResult.getSysUserId(), IActionConstants.AUDIT_TRAIL_DELETE,
-					"referral_result");
+			auditDAO.saveHistory(new ReferralResult(), oldData, referralResult.getSysUserId(),
+					IActionConstants.AUDIT_TRAIL_DELETE, "referral_result");
 		} catch (HibernateException e) {
 			handleException(e, "AuditTrail deleteData");
 		}
@@ -142,11 +153,12 @@ public class ReferralResultDAOImpl extends BaseDAOImpl implements ReferralResult
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<ReferralResult> getReferralsByResultId(String resultId) throws LIMSRuntimeException {
 		String sql = "From ReferralResult rr where rr.result.id= :resultId";
 
-		try{
+		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("resultId", Integer.parseInt(resultId));
 			List<ReferralResult> referralResults = query.list();
@@ -154,7 +166,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl implements ReferralResult
 			closeSession();
 
 			return referralResults;
-		}catch( HibernateException e){
+		} catch (HibernateException e) {
 			handleException(e, "getReferralsByResultId");
 		}
 

@@ -23,10 +23,13 @@ import us.mn.state.health.lims.analyzerimport.valueholder.AnalyzerTestMapping;
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
-public interface AnalyzerTestMappingDAO extends BaseDAO {
+public interface AnalyzerTestMappingDAO extends BaseDAO<AnalyzerTestMapping> {
 
 	List<AnalyzerTestMapping> getAllAnalyzerTestMappings() throws LIMSRuntimeException;
-	void deleteData(List<AnalyzerTestMapping> testMappingList,  String currentUserId) throws LIMSRuntimeException;
+
+	void deleteData(List<AnalyzerTestMapping> testMappingList, String currentUserId) throws LIMSRuntimeException;
+
 	void insertData(AnalyzerTestMapping analyzerTestMapping, String currentUserId) throws LIMSRuntimeException;
+
 	void updateMapping(AnalyzerTestMapping analyzerTestNameMapping, String currentUserId) throws LIMSRuntimeException;
 }
