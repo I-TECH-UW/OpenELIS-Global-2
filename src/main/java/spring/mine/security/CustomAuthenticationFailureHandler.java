@@ -38,6 +38,9 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 			errors.reject("login.error.account.disable");
 		} else if (exception instanceof LockedException) {
 			errors.reject("login.error.account.lock");
+		} else {
+			exception.printStackTrace();
+			errors.reject("login.error.generic");
 		}
 
 		request.getSession().setAttribute(Constants.LOGIN_ERRORS, errors);

@@ -27,11 +27,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.persister.entity.AbstractEntityPersister;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -56,6 +58,9 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 
 	private boolean logAuditTrail = true;
 
+	@Autowired
+	private SessionFactory sessionFactory;
+	
 	public BaseDAOImpl(Class<T> clazz) {
 		classType = clazz;
 	}
@@ -63,9 +68,10 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 	@SuppressWarnings("unchecked")
 	@Override
 	public Optional<T> get(String id) {
-		Session session = startSession();
+//		Session session = startSession();
+		Session session = sessionFactory.getCurrentSession();
 		T object = (T) session.get(classType, id);
-		commitAndCloseSession(session);
+//		commitAndCloseSession(session);
 		return Optional.ofNullable(object);
 	}
 

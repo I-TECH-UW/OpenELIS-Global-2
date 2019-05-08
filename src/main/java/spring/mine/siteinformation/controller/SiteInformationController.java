@@ -29,6 +29,8 @@ import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.siteinformation.form.SiteInformationForm;
 import spring.mine.siteinformation.validator.SiteInformationFormValidator;
+import spring.service.siteinformation.SiteInformationService;
+import spring.service.siteinformation.SiteInformationServiceImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.LocalizationService;
 import us.mn.state.health.lims.common.services.PhoneNumberService;
@@ -53,6 +55,8 @@ public class SiteInformationController extends BaseController {
 
 	@Autowired
 	SiteInformationFormValidator formValidator;
+	@Autowired
+	SiteInformationService siteInformationService;
 
 	@ModelAttribute("form")
 	public SiteInformationForm form(HttpServletRequest request) {
@@ -93,11 +97,15 @@ public class SiteInformationController extends BaseController {
 		boolean isNew = id == null || "0".equals(id);
 
 		if (!isNew) {
-			SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
+//			SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
 
 			SiteInformation siteInformation = new SiteInformation();
 			siteInformation.setId(id);
-			siteInformationDAO.getData(siteInformation);
+			
+//			siteInformationDAO.getData(siteInformation);
+			
+			siteInformation = siteInformationService.getData(siteInformation);
+			
 			request.setAttribute(ID, siteInformation.getId());
 
 			PropertyUtils.setProperty(form, "paramName", siteInformation.getName());
