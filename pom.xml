@@ -183,9 +183,13 @@
 		<dependency>
 		    <groupId>org.hibernate</groupId>
 		    <artifactId>hibernate-core</artifactId>
-		<!-- <version>3.3.0.GA</version> -->
-		<version>3.6.10.Final</version>
 		<!-- <version>3.2.6.ga</version> -->
+		<!-- <version>3.3.0.GA</version> -->
+<!-- 		<version>3.6.10.Final</version> -->
+<!-- 		<version>4.0.1.Final</version> -->
+		<version>4.3.10.Final</version>
+		<!-- <version>4.3.11.Final</version> -->
+		
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.javassist/javassist -->

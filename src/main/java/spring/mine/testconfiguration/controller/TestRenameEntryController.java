@@ -27,6 +27,7 @@ public class TestRenameEntryController extends BaseController {
 
 	@RequestMapping(value = "/TestRenameEntry", method = RequestMethod.GET)
 	public ModelAndView showTestRenameEntry(HttpServletRequest request) {
+		System.out.println("Hibernate Version: "+org.hibernate.Version.getVersionString());
 		String forward = FWD_SUCCESS;
 		TestRenameEntryForm form = new TestRenameEntryForm();
 

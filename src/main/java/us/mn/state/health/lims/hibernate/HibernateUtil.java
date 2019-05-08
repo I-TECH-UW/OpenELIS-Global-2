@@ -19,8 +19,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.hibernate.resources.interceptor.LIMSTrimDataInterceptor;
@@ -38,6 +38,7 @@ public class HibernateUtil {
 
     public static final String HIBERNATE_CFG_FILE_PROPERTY = "openELIS.hibernate.cfg";
     private static Configuration configuration;
+    private static StandardServiceRegistryBuilder builder;
     private static SessionFactory sessionFactory;
     private static final ThreadLocal threadSession = new ThreadLocal();
     private static final ThreadLocal threadTransaction = new ThreadLocal();
@@ -56,10 +57,11 @@ public class HibernateUtil {
     static {
         try {  	
         	
-        	configuration = new Configuration();
+        	configuration = new Configuration().configure(configFile);
+        	builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
 			//bugzilla 1939 (trim changed data before update/insert)
 			configuration.setInterceptor(new LIMSTrimDataInterceptor());
-             sessionFactory = configuration.configure(configFile).buildSessionFactory();
+            sessionFactory = configuration.buildSessionFactory(builder.build());
             // We could also let Hibernate bind it to JNDI:
             
             // configuration.configure().buildSessionFactory()
@@ -116,7 +118,9 @@ public class HibernateUtil {
     public static void rebuildSessionFactory() throws LIMSRuntimeException {
         synchronized (sessionFactory) {
             try {
-                sessionFactory = getConfiguration().buildSessionFactory();
+                //sessionFactory = getConfiguration().buildSessionFactory();
+            	sessionFactory = configuration.buildSessionFactory(builder.build());
+            	
             } catch (Exception ex) {
                 //bugzilla 2154
 			    LogEvent.logError("HibernateUtil","rebuildSessionFactory()",ex.toString());
@@ -134,8 +138,9 @@ public class HibernateUtil {
     public static void rebuildSessionFactory(Configuration cfg) throws LIMSRuntimeException {
         synchronized (sessionFactory) {
             try {
-                sessionFactory = cfg.buildSessionFactory();
+                //sessionFactory = cfg.buildSessionFactory();
                 configuration = cfg;
+                sessionFactory = configuration.buildSessionFactory(builder.build());
             } catch (Exception ex) {
                 //bugzilla 2154
 			    LogEvent.logError("HibernateUtil","rebuildSessionFactory()",ex.toString());
@@ -160,9 +165,9 @@ public class HibernateUtil {
                 LogEvent.logDebug("HibernateUtil","getSession()","Opening new Session for this thread.");
                 if (getInterceptor() != null) {
                     LogEvent.logDebug("HibernateUtil","getSession()","Using interceptor: " + getInterceptor().getClass());
-                    s = getSessionFactory().openSession(getInterceptor());
+                    s = (Session) getSessionFactory().withOptions().interceptor(getInterceptor()).openSession();
                 } else {
-                    s = getSessionFactory().openSession();
+                    s = (Session) getSessionFactory().withOptions().openSession();
                 }
                 threadSession.set(s);
             }
