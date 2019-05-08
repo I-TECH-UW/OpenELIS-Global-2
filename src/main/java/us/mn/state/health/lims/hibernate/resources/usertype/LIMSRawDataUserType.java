@@ -29,13 +29,14 @@ import org.dom4j.Node;
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
-import org.hibernate.engine.Mapping;
-import org.hibernate.engine.SessionFactoryImplementor;
-import org.hibernate.engine.SessionImplementor;
-import org.hibernate.lob.BlobImpl;
-import org.hibernate.lob.SerializableBlob;
+import org.hibernate.engine.spi.Mapping;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.metamodel.relational.Size;
+//import org.hibernate.lob.BlobImpl;
+//import org.hibernate.lob.SerializableBlob;
 import org.hibernate.type.AbstractType;
-import org.hibernate.util.ArrayHelper;
+//import org.hibernate.util.ArrayHelper;
 
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -64,40 +65,35 @@ public class LIMSRawDataUserType extends AbstractType {
 			//1908 changed from Types.Blob to Types.BINARY for postgres
 			st.setNull(index, Types.BINARY);
 		}
-		else {
-			
-			if (value instanceof SerializableBlob) {
-				value = ( (SerializableBlob) value ).getWrappedBlob();
-			}
-		
-	
-			BlobImpl blob = (BlobImpl) value;
-			st.setBinaryStream( index, blob.getBinaryStream(), (int) blob.length() );
-			
-		}
+//		else {
+//			
+//			if (value instanceof SerializableBlob) {
+//				value = ( (SerializableBlob) value ).getWrappedBlob();
+//			}
+//		
+//	
+//			BlobImpl blob = (BlobImpl) value;
+//			st.setBinaryStream( index, blob.getBinaryStream(), (int) blob.length() );
+//			
+//		}
 		
 	}
 
 	//bugzilla 1908 modified this method. This seems to work for postgres (bytea) AND oracle (Blob)
 	public Object get(ResultSet rs, String name, SessionImplementor session) throws HibernateException, SQLException {
 		
-		SerializableBlob serializableBlob = null;
+//		SerializableBlob serializableBlob = null;
 		InputStream is = rs.getBinaryStream(name);
-		BlobImpl blob = null;
+//		BlobImpl blob = null;
 		
 		//bugzilla 2569 need to check if blob in history.changes is null when getting data  
 		if (is != null) {
-		try{
-		 blob = new BlobImpl(is, is.available());
-		} catch (IOException io) {
-    		//bugzilla 2154
-			LogEvent.logError("LIMSRawDataUserType","get()",io.toString());
-			throw new LIMSRuntimeException("Incorrect Mapping using this UserType LIMSRawDataUserType", io);
-		}
-        serializableBlob = new SerializableBlob(blob);
+		//		 blob = new BlobImpl(is, is.available());
+		if(true) {}
 		}
 		
-		return rs.wasNull() ? null : serializableBlob;
+//		return rs.wasNull() ? null : serializableBlob;
+		return null;
 
 	}
 	
@@ -186,11 +182,30 @@ public class LIMSRawDataUserType extends AbstractType {
 	}
 	
 	public boolean[] toColumnNullness(Object value, Mapping mapping) {
-		return value==null ? ArrayHelper.FALSE : ArrayHelper.TRUE;
+//		return value==null ? ArrayHelper.FALSE : ArrayHelper.TRUE;
+		return null;
 	}
 
 	public boolean isDirty(Object old, Object current, boolean[] checkable, SessionImplementor session) throws HibernateException {
 		return checkable[0] && isDirty(old, current, session);
+	}
+
+	@Override
+	public Size[] dictatedSizes(Mapping mapping) throws MappingException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Size[] defaultSizes(Mapping mapping) throws MappingException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object deepCopy(Object value, SessionFactoryImplementor factory) throws HibernateException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
