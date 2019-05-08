@@ -27,7 +27,7 @@ import spring.mine.security.SecurityConfig;
 
 @EnableWebMvc
 @Configuration
-@ComponentScan("spring")
+@ComponentScan({"spring", "us.mn.state.health.lims"})
 public class AppConfig implements WebMvcConfigurer {
 
 	@Autowired
