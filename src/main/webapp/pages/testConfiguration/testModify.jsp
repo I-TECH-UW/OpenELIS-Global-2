@@ -918,8 +918,10 @@
 			var sampleTypeData = {value:sampleTypeId, type:"add"};
 			//Triggered manualy, non-event. Added test for undefined event object in createOrderBoxForSampleType
 			//because "change" triggers extra call
-            createOrderBoxForSampleType(sampleTypeData);
-			$jq("#sampleTypeSelection").change();
+			if (sampleTypeId != null) {
+	            createOrderBoxForSampleType(sampleTypeData);
+				$jq("#sampleTypeSelection").change();
+			}
 			$jq("#nextButton").prop("disabled", false);	
 
         } else if (step == 'step2') {
