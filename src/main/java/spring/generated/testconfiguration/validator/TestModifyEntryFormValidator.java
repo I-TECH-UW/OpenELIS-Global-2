@@ -97,7 +97,7 @@ public class TestModifyEntryFormValidator implements Validator {
 						false, 255, ValidationHelper.FLOAT_REGEX);
 
 				ValidationHelper.validateFieldAndCharset(String.valueOf(newTest.get("significantDigits")), "JsonWad",
-						errors, false, 2, "0-9");
+						"Significant digits", errors, false, 2, "0-9");
 
 				JSONArray resultLimits = JSONUtils.getAsArray(newTest.get("resultLimits"));
 				for (int i = 0; i < resultLimits.size(); ++i) {
@@ -137,7 +137,7 @@ public class TestModifyEntryFormValidator implements Validator {
 
 		} catch (ParseException e) {
 			LogEvent.logError("TestAddFormValidator", "validate()", e.toString());
-			errors.rejectValue("jsonWad", "error.field.format.json");
+			errors.rejectValue("jsonWad", "error.field.format.json", "expected JSON but got something else");
 		}
 	}
 

@@ -31,6 +31,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.valueholder.History;
@@ -46,6 +47,7 @@ import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
 import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;
 import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 
+@Component
 public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrailDAO {
 
 	public AuditTrailDAOImpl() {
@@ -1397,7 +1399,7 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 	public String retrieveBlobData(String id) throws LIMSRuntimeException {
 		byte[] bindata = new byte[1024];
 		try {
-			History history = (History) HibernateUtil.getSession().get(History.class, id);
+			History history = HibernateUtil.getSession().get(History.class, id);
 			if (history != null) {
 				bindata = history.getChanges();
 			}
