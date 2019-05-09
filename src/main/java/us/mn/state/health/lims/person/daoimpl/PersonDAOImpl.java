@@ -74,8 +74,8 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 				// bugzilla 2206
 				data = readPerson(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -97,8 +97,8 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 			String tableName = "PERSON";
 			auditDAO.saveNewHistory(person, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("PersonDAOImpl", "insertData()", e.toString());
@@ -129,10 +129,10 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 
 		try {
 			HibernateUtil.getSession().merge(person);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(person);
-			HibernateUtil.getSession().refresh(person);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(person);
+			// HibernateUtil.getSession().refresh // CSL remove old(person);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("PersonDAOImpl", "updateData()", e.toString());
@@ -144,8 +144,8 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 	public void getData(Person person) throws LIMSRuntimeException {
 		try {
 			Person pers = (Person) HibernateUtil.getSession().get(Person.class, person.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (pers != null) {
 				PropertyUtils.copyProperties(person, pers);
 			} else {
@@ -166,8 +166,8 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 			String sql = "from Person";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("PersonDAOImpl", "getAllPersons()", e.toString());
@@ -190,8 +190,8 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("PersonDAOImpl", "getPageOfPersons()", e.toString());
@@ -205,8 +205,8 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 		Person person = null;
 		try {
 			person = (Person) HibernateUtil.getSession().get(Person.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("PersonDAOImpl", "readPerson()", e.toString());
@@ -239,8 +239,8 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 			query.setString("lastName", lastName);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PersonDAOImpl", "getPersonByLastName()", e.toString());
 			throw new LIMSRuntimeException("Error in Person getPersonByLastName()", e);

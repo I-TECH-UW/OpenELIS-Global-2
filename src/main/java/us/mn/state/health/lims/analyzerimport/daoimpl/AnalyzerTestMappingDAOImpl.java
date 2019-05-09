@@ -54,8 +54,8 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping>
 						IActionConstants.AUDIT_TRAIL_DELETE, "ANALYZER_TEST_MAP");
 
 				HibernateUtil.getSession().delete(analyzerTestMapping);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 
 		} catch (Exception e) {
@@ -69,8 +69,8 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping>
 		try {
 			mapping = (AnalyzerTestMapping) HibernateUtil.getSession().get(AnalyzerTestMapping.class, mappingPK);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerTestMappingDAOImpl", "readAnalyzerTestMapping()", e.toString());
 			throw new LIMSRuntimeException("Error in AnalyzerTestMappingDAOImpl readAnalyzerTestMapping()", e);
@@ -87,8 +87,8 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping>
 			String sql = "from AnalyzerTestMapping";
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerTestMappingDAOImpl", "getAnalyzerTestMappings()", e.toString());
 			throw new LIMSRuntimeException("Error in AnalyzerTestMapping getAllAnalyzerTestMappings()", e);
@@ -104,8 +104,8 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping>
 
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveNewHistory(analyzerTestMapping, currentUserId, "ANALYZER_TEST_MAP");
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerTestMappingDAOImpl", "insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in AnalyzerTestMappingDAOImpl insertData()", e);
@@ -118,10 +118,10 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping>
 
 		try {
 			HibernateUtil.getSession().merge(analyzerTestNameMapping);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(analyzerTestNameMapping);
-			HibernateUtil.getSession().refresh(analyzerTestNameMapping);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(analyzerTestNameMapping);
+			// HibernateUtil.getSession().refresh // CSL remove old(analyzerTestNameMapping);
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerTestMappingDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in AnalyzerTestMapping updateData()", e);

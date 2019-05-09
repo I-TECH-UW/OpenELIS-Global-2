@@ -67,8 +67,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip> implements Ci
 				cityStateZips.add(csz);
 			}
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("CityStateZipDAOImpl", "getCities()", e.toString());
@@ -106,8 +106,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip> implements Ci
 				cityStateZips.add(csz);
 			}
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return cityStateZips;
 
@@ -172,8 +172,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip> implements Ci
 				cityStateZips.add(cityStateZip);
 			}
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("CityStateZipDAOImpl", "getAllStateCodes()", e.toString());
@@ -198,8 +198,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip> implements Ci
 				csz = (CityStateZip) list.get(0);
 			}
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// buzilla 2154
@@ -236,8 +236,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip> implements Ci
 				csz = (CityStateZip) cityStateZips.get(0);
 			}
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("CityStateZipDAOImpl", "CityStateZip()", e.toString());
@@ -274,8 +274,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip> implements Ci
 				csz = (CityStateZip) cityStateZips.get(0);
 			}
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("CityStateZipDAOImpl", "getCity()", e.toString());
@@ -312,8 +312,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip> implements Ci
 				csz = (CityStateZip) cityStateZips.get(0);
 			}
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("CityStateZipDAOImpl", "getZip()", e.toString());
@@ -390,8 +390,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip> implements Ci
 				isValid = true;
 			}
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return isValid;
 
@@ -577,8 +577,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip> implements Ci
 				}
 			}
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return cityStateZips;
 
@@ -622,8 +622,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip> implements Ci
 				countyCode = (String) list.get(0);
 			}
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("CityStateZipDAOImpl", "getCountyCodeByStateAndZipCode()", e.toString());

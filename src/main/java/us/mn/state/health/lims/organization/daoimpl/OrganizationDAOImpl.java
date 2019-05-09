@@ -85,10 +85,10 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 				// Make the change to the object.
 				cloneData.setIsActive(IActionConstants.NO);
 				HibernateUtil.getSession().merge(cloneData);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
-				HibernateUtil.getSession().evict(cloneData);
-				HibernateUtil.getSession().refresh(cloneData);
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
+				// HibernateUtil.getSession().evict // CSL remove old(cloneData);
+				// HibernateUtil.getSession().refresh // CSL remove old(cloneData);
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -112,8 +112,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveNewHistory(organization, organization.getSysUserId(), "ORGANIZATION");
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("OrganizationDAOImpl", "insertData()", e.toString());
@@ -155,10 +155,10 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 
 		try {
 			HibernateUtil.getSession().merge(organization);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(organization);
-			HibernateUtil.getSession().refresh(organization);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(organization);
+			// HibernateUtil.getSession().refresh // CSL remove old(organization);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("OrganizationDAOImpl", "updateData()", e.toString());
@@ -170,8 +170,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 	public void getData(Organization organization) throws LIMSRuntimeException {
 		try {
 			Organization org = (Organization) HibernateUtil.getSession().get(Organization.class, organization.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (org != null) {
 				PropertyUtils.copyProperties(organization, org);
 			} else {
@@ -192,8 +192,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 			String sql = "from Organization";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("OrganizationDAOImpl", "getAllOrganizations()", e.toString());
@@ -217,8 +217,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("OrganizationDAOImpl", "getPageOfOrganizations()", e.toString());
@@ -254,8 +254,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in OrganizationDAOImpl getPageOfSearchedOrganizations()", e);
@@ -269,8 +269,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 		Organization org = null;
 		try {
 			org = (Organization) HibernateUtil.getSession().get(Organization.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("OrganizationDAOImpl", "readOrganization()", e.toString());
@@ -290,8 +290,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 			query.setParameter("param", filter + "%");
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("OrganizationDAOImpl", "getOrganizations()", e.toString());
@@ -334,8 +334,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 			}
 
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			Organization org = null;
 			if (list.size() > 0) {
 				org = (Organization) list.get(0);
@@ -370,8 +370,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 			}
 
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			Organization org = null;
 			if (list.size() > 0) {
 				org = (Organization) list.get(0);
@@ -464,8 +464,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 				query.setParameter("orgAbrv", organizationLocalAbbrev);
 
 				list = query.list();
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 
 			}
 
@@ -507,8 +507,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 			query.setParameter("param", newSearchStr);
 
 			List results = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (results != null && results.get(0) != null) {
 				if (results.get(0) != null) {

@@ -108,10 +108,10 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 
 		try {
 			HibernateUtil.getSession().merge(report);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(report);
-			HibernateUtil.getSession().refresh(report);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(report);
+			// HibernateUtil.getSession().refresh // CSL remove old(report);
 		} catch (Exception e) {
 			handleException(e, "updateReportExternalExport");
 		}

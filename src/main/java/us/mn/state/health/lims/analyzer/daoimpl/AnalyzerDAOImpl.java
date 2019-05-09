@@ -58,8 +58,8 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDA
 
 				data = readAnalyzer(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerDAOImpl", "deleteData()", e.toString());
@@ -75,8 +75,8 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDA
 			String sql = "from Analyzer";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			analyzer = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerDAOImpl", "getAllAnalyzerItems()", e.toString());
 			throw new LIMSRuntimeException("Error in Analyzer getAllAnalyzer()", e);
@@ -89,8 +89,8 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDA
 	public Analyzer getAnalyzerById(Analyzer analyzer) throws LIMSRuntimeException {
 		try {
 			Analyzer re = (Analyzer) HibernateUtil.getSession().get(Analyzer.class, analyzer.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return re;
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerDAOImpl", "getAnalyzerById()", e.toString());
@@ -117,8 +117,8 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDA
 	public void getData(Analyzer analyzer) throws LIMSRuntimeException {
 		try {
 			Analyzer tmpAnalyzer = (Analyzer) HibernateUtil.getSession().get(Analyzer.class, analyzer.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (tmpAnalyzer != null) {
 				PropertyUtils.copyProperties(analyzer, tmpAnalyzer);
 			} else {
@@ -141,8 +141,8 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDA
 			String tableName = "ANALYZER";
 			auditDAO.saveNewHistory(analyzer, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("analyzerDAOImpl", "insertData()", e.toString());
@@ -166,10 +166,10 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDA
 			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 
 			HibernateUtil.getSession().merge(analyzer);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(analyzer);
-			HibernateUtil.getSession().refresh(analyzer);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(analyzer);
+			// HibernateUtil.getSession().refresh // CSL remove old(analyzer);
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in Analyzer updateData()", e);
@@ -181,8 +181,8 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDA
 		Analyzer data = null;
 		try {
 			data = (Analyzer) HibernateUtil.getSession().get(Analyzer.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerDAOImpl", "readAnalyzer()", e.toString());
 			throw new LIMSRuntimeException("Error in Analyzer readAnalyzer()", e);

@@ -46,8 +46,8 @@ public class ImageDAOImpl extends BaseDAOImpl<Image> implements ImageDAO {
 						// around
 				HibernateUtil.getSession().merge(image);
 				closeSession();
-				HibernateUtil.getSession().evict(image);
-				HibernateUtil.getSession().refresh(image);
+				// HibernateUtil.getSession().evict // CSL remove old(image);
+				// HibernateUtil.getSession().refresh // CSL remove old(image);
 			}
 		} catch (HibernateException e) {
 			handleException(e, "saveImage");
@@ -106,8 +106,8 @@ public class ImageDAOImpl extends BaseDAOImpl<Image> implements ImageDAO {
 	public Image readImage(String idString) {
 		try {
 			Image image = (Image) HibernateUtil.getSession().get(Image.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return image;
 		} catch (Exception e) {
 			handleException(e, "readImage");

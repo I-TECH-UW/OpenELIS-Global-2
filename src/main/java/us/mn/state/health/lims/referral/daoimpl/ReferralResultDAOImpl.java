@@ -125,10 +125,10 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult> implement
 
 		try {
 			HibernateUtil.getSession().merge(referralResult);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(referralResult);
-			HibernateUtil.getSession().refresh(referralResult);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(referralResult);
+			// HibernateUtil.getSession().refresh // CSL remove old(referralResult);
 		} catch (HibernateException e) {
 			handleException(e, "updateData");
 		}

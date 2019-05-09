@@ -78,8 +78,8 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 				// bugzilla 2206
 				data = readSampleProject(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -102,8 +102,8 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 			String tableName = "SAMPLE_PROJECTS";
 			auditDAO.saveNewHistory(sampleProj, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -136,10 +136,10 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 
 		try {
 			HibernateUtil.getSession().merge(sampleProj);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(sampleProj);
-			HibernateUtil.getSession().refresh(sampleProj);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(sampleProj);
+			// HibernateUtil.getSession().refresh // CSL remove old(sampleProj);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SampleProjectDAOImpl", "updateData()", e.toString());
@@ -152,8 +152,8 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 		try {
 			SampleProject data = (SampleProject) HibernateUtil.getSession().get(SampleProject.class,
 					sampleProj.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (data != null) {
 				PropertyUtils.copyProperties(sampleProj, data);
 			} else {
@@ -170,8 +170,8 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 		SampleProject sp = null;
 		try {
 			sp = (SampleProject) HibernateUtil.getSession().get(SampleProject.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SampleProjectDAOImpl", "readSampleProject()", e.toString());
@@ -193,8 +193,8 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 			query.setParameter("param", projId);
 
 			sampleProjects = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return sampleProjects;
 

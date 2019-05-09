@@ -74,8 +74,8 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 				Note data = (Note) note;
 				data = readNote(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 
@@ -96,8 +96,8 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 			String tableName = "NOTE";
 			auditDAO.saveNewHistory(note, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 
@@ -136,10 +136,10 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 
 		try {
 			HibernateUtil.getSession().merge(note);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(note);
-			HibernateUtil.getSession().refresh(note);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(note);
+			// HibernateUtil.getSession().refresh // CSL remove old(note);
 		} catch (Exception e) {
 			LogEvent.logError("NoteDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in Note updateData()", e);
@@ -150,8 +150,8 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 	public void getData(Note note) throws LIMSRuntimeException {
 		try {
 			Note nt = (Note) HibernateUtil.getSession().get(Note.class, note.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (nt != null) {
 				PropertyUtils.copyProperties(note, nt);
 
@@ -186,8 +186,8 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 			String sql = "from Note";
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("NoteDAOImpl", "getAllNotes()", e.toString());
@@ -210,8 +210,8 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 
@@ -226,8 +226,8 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 		Note note;
 		try {
 			note = (Note) HibernateUtil.getSession().get(Note.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("NoteDAOImpl", "readNote()", e.toString());
@@ -261,8 +261,8 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 			query.setInteger("refTableId", Integer.parseInt(note.getReferenceTableId()));
 
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return list;
 
 		} catch (Exception e) {
@@ -283,8 +283,8 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 			query.setParameter("noteType", note.getNoteType());
 
 			List<Note> list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return list;
 
 		} catch (Exception e) {
@@ -310,8 +310,8 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
@@ -339,8 +339,8 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
@@ -375,8 +375,8 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 			query.setInteger("noteId", noteId);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return list.size() > 0;
 

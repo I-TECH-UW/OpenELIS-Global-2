@@ -51,8 +51,8 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo> imple
 			String tableName = "BARCODE_LABEL_INFO";
 			auditDAO.saveNewHistory(barcodeLabelInfo, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("BarcodeLabelInfoDAOImpl", "insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in BarcodeLabelInfo insertData()", e);
@@ -87,10 +87,10 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo> imple
 
 		try {
 			HibernateUtil.getSession().merge(barcodeLabelInfo);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(barcodeLabelInfo);
-			HibernateUtil.getSession().refresh(barcodeLabelInfo);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(barcodeLabelInfo);
+			// HibernateUtil.getSession().refresh // CSL remove old(barcodeLabelInfo);
 		} catch (Exception e) {
 			LogEvent.logError("BarcodeLabelInfoDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in BarcodeLabelInfo updateData()", e);
@@ -115,8 +115,8 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo> imple
 			if (list != null && list.size() > 0) {
 				bli = (BarcodeLabelInfo) list.get(0);
 			}
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("BarcodeLabelInfoDAOImpl", "getDataByCode()", e.toString());
 			throw new LIMSRuntimeException("Error in getDataByCode()", e);
@@ -135,8 +135,8 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo> imple
 		try {
 			recoveredBarcodeLabelInfo = (BarcodeLabelInfo) HibernateUtil.getSession().get(BarcodeLabelInfo.class,
 					idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("BarcodeLabelInfoDAOImpl", "readBarcodeLabelInfo()", e.toString());
 			throw new LIMSRuntimeException("Error in BarcodeLabelInfo readBarcodeLabelInfo()", e);

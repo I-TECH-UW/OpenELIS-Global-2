@@ -1284,8 +1284,8 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 			query.setInteger("tableId", Integer.parseInt(tableId));
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (HibernateException e) {
 			LogEvent.logError("AuditTrailDAOImpl", "getHistoryByRefIdAndRefTableId()", e.toString());
 			throw new LIMSRuntimeException("Error in AuditTrail getHistoryByRefIdAndRefTableId()", e);
@@ -1372,8 +1372,8 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 			}
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			LogEvent.logDebug("AuditTrailDAOImpl", "getHistoryBySystemUserAndDateAndRefTableId()",
 					"getting History List");
 
@@ -1415,8 +1415,8 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 		try {
 			String id = (String) HibernateUtil.getSession().save(history);
 			history.setId(id);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("AuditTrailDAOImpl", "insertData()", e.toString());

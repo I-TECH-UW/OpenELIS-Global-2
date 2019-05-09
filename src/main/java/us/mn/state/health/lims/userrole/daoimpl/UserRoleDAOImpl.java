@@ -71,8 +71,8 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 			for (UserRole data : roles) {
 				data = readUserRole(data.getCompoundId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			LogEvent.logError("UserRolesDAOImpl", "deleteData()", e.toString());
@@ -92,8 +92,8 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 			String tableName = "SYSTEM_USER_ROLE";
 			auditDAO.saveNewHistory(role, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (ConstraintViolationException cve) {
 			LogEvent.logError("UserRolesDAOImpl", "insertData()-- duplicate record", cve.toString());
@@ -124,10 +124,10 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 
 		try {
 			HibernateUtil.getSession().merge(role);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(role);
-			HibernateUtil.getSession().refresh(role);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(role);
+			// HibernateUtil.getSession().refresh // CSL remove old(role);
 		} catch (Exception e) {
 			LogEvent.logError("UserRolesDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in UserRole updateData()", e);
@@ -138,8 +138,8 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 	public void getData(UserRole role) throws LIMSRuntimeException {
 		try {
 			UserRole tmpUserRole = (UserRole) HibernateUtil.getSession().get(UserRole.class, role.getCompoundId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (tmpUserRole != null) {
 				PropertyUtils.copyProperties(role, tmpUserRole);
 			} else {
@@ -158,8 +158,8 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 			String sql = "from UserRole";
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("UserRolesDAOImpl", "getAllUserRoles()", e.toString());
 			throw new LIMSRuntimeException("Error in UserRole getAllUserRoles()", e);
@@ -181,8 +181,8 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("UserRolesDAOImpl", "getPageOfUserRoles()", e.toString());
 			throw new LIMSRuntimeException("Error in UserRole getPageOfUserRoles()", e);
@@ -195,8 +195,8 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 		UserRole recoveredUserRole;
 		try {
 			recoveredUserRole = (UserRole) HibernateUtil.getSession().get(UserRole.class, userRolePK);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("UserRoleDAOImpl", "readUserRole()", e.toString());
 			throw new LIMSRuntimeException("Error in UserRole readUserRole()", e);

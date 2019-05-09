@@ -93,8 +93,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 				// bugzilla 2206
 				data = readAnalysis(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 
@@ -130,8 +130,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			String tableName = "ANALYSIS";
 			auditDAO.saveNewHistory(analysis, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 
@@ -166,10 +166,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 
 		try {
 			HibernateUtil.getSession().merge(analysis);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(analysis);
-			HibernateUtil.getSession().refresh(analysis);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(analysis);
+			// HibernateUtil.getSession().refresh // CSL remove old(analysis);
 		} catch (Exception e) {
 			LogEvent.logError("AnalysisDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in Analysis updateData()", e);
@@ -181,8 +181,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 
 		try {
 			Analysis analysisClone = (Analysis) HibernateUtil.getSession().get(Analysis.class, analysis.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (analysisClone != null) {
 				PropertyUtils.copyProperties(analysis, analysisClone);
 			} else {
@@ -203,8 +203,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			String sql = "from Analysis a order by a.id";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getAllAnalyses()", e.toString());
@@ -229,8 +229,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getPageOfAnalyses()", e.toString());
@@ -244,8 +244,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 		Analysis analysis = null;
 		try {
 			analysis = (Analysis) HibernateUtil.getSession().get(Analysis.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "readAnalysis()", e.toString());
@@ -264,8 +264,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("param", filter + "%");
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getAnalyses()", e.toString());
@@ -303,8 +303,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
 			query.setParameterList("exclusionList", statusesToExclude);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getAllAnalysesPerTest()", e.toString());
@@ -325,8 +325,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setInteger("testId", Integer.parseInt(testId));
 			query.setParameterList("statusIdList", statusIdList);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getAllAnalysisByTestAndStatuses()", e.toString());
@@ -353,8 +353,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setParameterList("testList", testList);
 			query.setParameterList("statusIdList", statusIdList);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getAllAnalysisByTestsAndStatuses()", e.toString());
@@ -376,8 +376,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setInteger("testId", Integer.parseInt(testId));
 			query.setParameterList("statusIdList", statusIdList);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getAllAnalysisByTestAndExcludedStatuses()", e.toString());
@@ -404,8 +404,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setInteger("testSectionId", Integer.parseInt(testSectionId));
 			query.setParameterList("statusIdList", statusIdList);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getAllAnalysisByTestSectionAndStatuses()", e.toString());
@@ -427,8 +427,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setInteger("testSectionId", Integer.parseInt(testSectionId));
 			query.setParameterList("statusIdList", statusIdList);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getAllAnalysisByTestSectionAndExcludedStatuses()", e.toString());
@@ -451,8 +451,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setInteger("sampleItemId", Integer.parseInt(sampleItem.getId()));
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("AnalysisDAOImpl", "getAnalysesBySampleItem()", e.toString());
 			throw new LIMSRuntimeException("Error in Analysis getAnalysesBySampleItem()", e);
@@ -479,8 +479,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setParameterList("statusList", statusIds);
 
 			analysisList = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getAnalysesBySampleItemsExcludingByStatusIds()", e.toString());
@@ -528,8 +528,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setInteger("sampleStatusId", Integer.parseInt(statusId));
 
 			analysisList = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getAnalysesBySampleItemsExcludingByStatusIds()", e.toString());
@@ -619,8 +619,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 
 			throw new LIMSRuntimeException("Error in getAnalysesReadyToBeReported()", e);
 		} finally {
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		}
 
 		return list;
@@ -640,8 +640,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
 			query.setParameterList("param2", statusesToExclude);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getallChildAnalysesByResult()", e.toString());
@@ -668,8 +668,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
 			query.setParameterList("param2", statusesToExclude);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getMaxRevisionAnalysesBySample()", e.toString());
@@ -695,8 +695,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("param", sampleItem.getId());
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getMaxRevisionAnalysesBySample()", e.toString());
@@ -723,8 +723,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
 			query.setParameterList("param2", statusesToExclude);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getRevisionHistoryOfAnalysesBySample()", e.toString());
@@ -760,8 +760,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
 			query.setParameterList("param3", statusesToExclude);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getRevisionHistoryOfAnalysesBySample()", e.toString());
@@ -790,8 +790,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setParameterList("param2", statusesToExclude);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getAllMaxRevisionAnalysesPerTest()", e.toString());
@@ -825,8 +825,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			LogEvent.logError("AnalysisDAOImpl", "getMaxRevisionAnalysesReadyToBeReported()", e.toString());
 			throw new LIMSRuntimeException("Error in Analysis getMaxRevisionAnalysesReadyToBeReported()", e);
 		} finally {
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		}
 
 		return list;
@@ -865,8 +865,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			LogEvent.logError("AnalysisDAOImpl", "getMaxRevisionAnalysesReadyForReportPreviewBySample()", e.toString());
 			throw new LIMSRuntimeException("Error in getMaxRevisionAnalysesReadyForReportPreviewBySample()", e);
 		} finally {
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		}
 
 		return list;
@@ -889,8 +889,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			LogEvent.logError("AnalysisDAOImpl", "getAnalysesAlreadyReportedBySample()", e.toString());
 			throw new LIMSRuntimeException("Error in getAnalysesAlreadyReportedBySample()", e);
 		} finally {
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		}
 
 		return list;
@@ -923,8 +923,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			throw new LIMSRuntimeException("Error in Analysis getMaxRevisionPendingAnalysesReadyToBeReportedBySample()",
 					e);
 		} finally {
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		}
 
 		return list;
@@ -955,8 +955,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 					e.toString());
 			throw new LIMSRuntimeException("Error in getMaxRevisionPendingAnalysesReadyForReportPreviewBySample()", e);
 		} finally {
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		}
 
 		return list;
@@ -994,8 +994,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			if ((list != null) && !list.isEmpty()) {
 				previousAnalysis = (Analysis) list.get(0);
 			}
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 
@@ -1021,8 +1021,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setParameterList("param3", statusesToExclude);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;
@@ -1055,8 +1055,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
 			query.setParameterList("param3", statusesToExclude);
 			anal = (Analysis) query.uniqueResult();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (anal != null) {
 				PropertyUtils.copyProperties(analysis, anal);
@@ -1091,8 +1091,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
 			query.setParameterList("param2", statusesToExclude);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("AnalysisDAOImpl", "getMaxRevisionAnalysesBySample()", e.toString());
 			throw new LIMSRuntimeException("Error in Analysis getMaxRevisionAnalysesBySample()", e);
@@ -1230,8 +1230,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setParameterList("testIds", testIds);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (HibernateException he) {
 			LogEvent.logError("AnalysisDAOImpl", "getAnalysisBySampleAndTestIds()", he.toString());

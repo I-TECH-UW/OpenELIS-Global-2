@@ -82,8 +82,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 				// bugzilla 2206
 				data = readSample(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -106,8 +106,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			String tableName = "SAMPLE";
 			auditDAO.saveNewHistory(sample, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("SampleDAOImpl", "insertData()", e.toString());
@@ -135,8 +135,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveNewHistory(sample, sample.getSysUserId(), "SAMPLE");
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -167,10 +167,10 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 
 		try {
 			HibernateUtil.getSession().merge(sample);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(sample);
-			HibernateUtil.getSession().refresh(sample);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(sample);
+			// HibernateUtil.getSession().refresh // CSL remove old(sample);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SampleDAOImpl", "updateData()", e.toString());
@@ -190,8 +190,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 				Query query = HibernateUtil.getSession().createQuery(sql);
 				query.setParameter("sampleId", Integer.parseInt(samp.getId()));
 				List list = query.list();
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 
 				samp.setSampleProjects(list);
 
@@ -220,8 +220,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			query.setMaxResults(endingRecNo - 1);
 
 			samples = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			Sample samp;
 
@@ -249,8 +249,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("param", sample.getAccessionNumber());
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			Sample samp = null;
 			if (list.size() > 0) {
@@ -263,8 +263,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 				query = HibernateUtil.getSession().createQuery(sql);
 				query.setInteger("param", Integer.parseInt(samp.getId()));
 				List sp = query.list();
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 				samp.setSampleProjects(sp);
 
 				PropertyUtils.copyProperties(sample, samp);
@@ -282,8 +282,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 		Sample samp = null;
 		try {
 			samp = (Sample) HibernateUtil.getSession().get(Sample.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SampleDAOImpl", "readSample()", e.toString());
@@ -305,8 +305,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 
 			List reports = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (reports != null && reports.get(0) != null) {
 				if (reports.get(0) != null) {
@@ -419,8 +419,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			query.setParameterList("param1", statuses);
 			query.setParameter("param2", domain);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			// bugzilla 2154
@@ -505,8 +505,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
 			query.setParameterList("param3", statusesToExclude);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("SampleDAOImpl", "getSamplesWithPendingQaEvents()", e.toString());
 			throw new LIMSRuntimeException("Error in Sample getSamplesWithPendingQaEvents()", e);
@@ -548,8 +548,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			query.setCalendarDate("start", start);
 			query.setCalendarDate("end", end);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (HibernateException he) {
 			LogEvent.logError("SampleDAOImpl", "getSamplesReceivedInDateRange()", he.toString());
 			throw new LIMSRuntimeException("Error in Sample getSamplesReceivedInDateRange()", he);
@@ -569,8 +569,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setCalendarDate("date", calendar);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (HibernateException he) {
 			LogEvent.logError("SampleDAOImpl", "getSamplesRecievedOn()", he.toString());

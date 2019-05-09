@@ -52,8 +52,8 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType>
 			Query query = HibernateUtil.getSession().createQuery(sql);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "getAllPatientIdenityTypes");
 		}
@@ -76,8 +76,8 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType>
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveNewHistory(patientIdentityType, patientIdentityType.getSysUserId(), "PATIENT_IDENTITY_TYPE");
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "insertData");
 		} catch (LIMSDuplicateRecordException e) {

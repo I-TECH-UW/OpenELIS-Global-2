@@ -75,8 +75,8 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestRe
 				// bugzilla 2206
 				data = readTestResult(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -98,8 +98,8 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestRe
 			String tableName = "TEST_RESULT";
 			auditDAO.saveNewHistory(testResult, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -129,10 +129,10 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestRe
 
 		try {
 			HibernateUtil.getSession().merge(testResult);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(testResult);
-			HibernateUtil.getSession().refresh(testResult);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(testResult);
+			// HibernateUtil.getSession().refresh // CSL remove old(testResult);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestResultDAOImpl", "updateData()", e.toString());
@@ -144,8 +144,8 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestRe
 	public void getData(TestResult testResult) throws LIMSRuntimeException {
 		try {
 			TestResult tr = (TestResult) HibernateUtil.getSession().get(TestResult.class, testResult.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (tr != null) {
 				PropertyUtils.copyProperties(testResult, tr);
 			} else {
@@ -165,8 +165,8 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestRe
 			String sql = "from TestResult";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestResultDAOImpl", "getAllTestResults()", e.toString());
@@ -188,8 +188,8 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestRe
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestResultDAOImpl", "getPageOfTestResults()", e.toString());
@@ -203,8 +203,8 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestRe
 		TestResult tr;
 		try {
 			tr = (TestResult) HibernateUtil.getSession().get(TestResult.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestResultDAOImpl", "readTestResult()", e.toString());
@@ -233,8 +233,8 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestRe
 		TestResult newTestResult;
 		try {
 			newTestResult = (TestResult) HibernateUtil.getSession().get(TestResult.class, testResult.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestResultDAOImpl", "getTestResultById()", e.toString());
@@ -257,8 +257,8 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestRe
 				query.setInteger("resultGroup", Integer.parseInt(testAnalyte.getResultGroup()));
 
 				list = query.list();
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 
 		} catch (Exception e) {
@@ -284,8 +284,8 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestRe
 			query.setInteger("testId", Integer.parseInt(test.getId()));
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("TestResultDAOImpl", "getAllActiveTestResultsPerTest()", e.toString());
 			throw new LIMSRuntimeException("Error in TestResult getAllActiveTestResultsPerTest()", e);

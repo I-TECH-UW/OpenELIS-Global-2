@@ -75,8 +75,8 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 				// bugzilla 2206
 				data = readPatient(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 
 		} catch (Exception e) {
@@ -99,8 +99,8 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 			String tableName = "PATIENT";
 			auditDAO.saveNewHistory(patient, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("PatientDAOImpl", "insertData()", e.toString());
@@ -129,10 +129,10 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 
 		try {
 			HibernateUtil.getSession().merge(patient);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(patient);
-			HibernateUtil.getSession().refresh(patient);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(patient);
+			// HibernateUtil.getSession().refresh // CSL remove old(patient);
 		} catch (Exception e) {
 			LogEvent.logError("PatientDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in Patient updateData()", e);
@@ -159,8 +159,8 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 	public void getData(Patient patient) throws LIMSRuntimeException {
 		try {
 			Patient pat = (Patient) HibernateUtil.getSession().get(Patient.class, patient.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (pat != null) {
 				updateDisplayValues(pat);
 
@@ -194,8 +194,8 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 			String sql = "from Patient";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("PatientDAOImpl", "getAllPatients()", e.toString());
@@ -218,8 +218,8 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 			query.setMaxResults(endingRecNo - 1);
 
 			patients = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -235,8 +235,8 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 		Patient pat = null;
 		try {
 			pat = (Patient) HibernateUtil.getSession().get(Patient.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("PatientDAOImpl", "readPatient()", e.toString());
@@ -271,8 +271,8 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 			query.setParameter("patientID", patientExternalID);
 
 			results = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in Patient readPatient()", e);
@@ -290,8 +290,8 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString(propertyName, propertyValue);
 			patients = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in Patient getPatientByStringProperty(" + propertyName + "\", ) ", e);
@@ -338,8 +338,8 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 			query.setInteger("personID", Integer.parseInt(person.getId()));
 
 			patients = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in Patient getPatientByPerson()", e);

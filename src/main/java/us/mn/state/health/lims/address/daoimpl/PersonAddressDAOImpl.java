@@ -83,8 +83,8 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 
 			HibernateUtil.getSession().merge(personAddress);
 			closeSession();
-			HibernateUtil.getSession().evict(personAddress);
-			HibernateUtil.getSession().refresh(personAddress);
+			// HibernateUtil.getSession().evict // CSL remove old(personAddress);
+			// HibernateUtil.getSession().refresh // CSL remove old(personAddress);
 		} catch (HibernateException e) {
 			handleException(e, "update");
 		}

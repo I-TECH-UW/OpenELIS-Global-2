@@ -76,10 +76,10 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 
 				cloneData.setIsActive(IActionConstants.NO);
 				HibernateUtil.getSession().merge(cloneData);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
-				HibernateUtil.getSession().evict(cloneData);
-				HibernateUtil.getSession().refresh(cloneData);
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
+				// HibernateUtil.getSession().evict // CSL remove old(cloneData);
+				// HibernateUtil.getSession().refresh // CSL remove old(cloneData);
 			}
 		} catch (Exception e) {
 			// buzilla 2154
@@ -106,8 +106,8 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 			String tableName = "ANALYTE";
 			auditDAO.saveNewHistory(analyte, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// buzilla 2154
@@ -148,10 +148,10 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 
 		try {
 			HibernateUtil.getSession().merge(analyte);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(analyte);
-			HibernateUtil.getSession().refresh(analyte);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(analyte);
+			// HibernateUtil.getSession().refresh // CSL remove old(analyte);
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("AnalyteDAOImpl", "updateData()", e.toString());
@@ -163,8 +163,8 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 	public void getData(Analyte analyte) throws LIMSRuntimeException {
 		try {
 			Analyte anal = (Analyte) HibernateUtil.getSession().get(Analyte.class, analyte.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (anal != null) {
 				PropertyUtils.copyProperties(analyte, anal);
 			} else {
@@ -185,8 +185,8 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("AnalyteDAOImpl", "getAllAnalytes()", e.toString());
@@ -210,8 +210,8 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("AnalyteDAOImpl", "getPageOfAnalytes()", e.toString());
@@ -247,8 +247,8 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in AnalyteDAOImpl getPagesOfSearchedAnalytes()", e);
@@ -262,8 +262,8 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 		Analyte analyte = null;
 		try {
 			analyte = (Analyte) HibernateUtil.getSession().get(Analyte.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("AnalyteDAOImpl", "readAnalyte()", e.toString());
@@ -282,8 +282,8 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("param", filter + "%");
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("AnalyteDAOImpl", "getAnalytes()", e.toString());
@@ -327,8 +327,8 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 			}
 
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			Analyte ana = null;
 			if (list.size() > 0) {
@@ -423,8 +423,8 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 			query.setInteger("id", Integer.parseInt(analyteId));
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return list.size() > 0;
 
@@ -460,8 +460,8 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 			query.setParameter("param", newSearchStr);
 
 			List results = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (results != null && results.get(0) != null) {
 				if (results.get(0) != null) {

@@ -75,10 +75,10 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser> implements System
 				// Make the change to the object.
 				cloneData.setIsActive(IActionConstants.NO);
 				HibernateUtil.getSession().merge(cloneData);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
-				HibernateUtil.getSession().evict(cloneData);
-				HibernateUtil.getSession().refresh(cloneData);
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
+				// HibernateUtil.getSession().evict // CSL remove old(cloneData);
+				// HibernateUtil.getSession().refresh // CSL remove old(cloneData);
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -105,8 +105,8 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser> implements System
 			String tableName = "SYSTEM_USER";
 			auditDAO.saveNewHistory(systemUser, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -153,10 +153,10 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser> implements System
 
 		try {
 			HibernateUtil.getSession().merge(systemUser);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(systemUser);
-			HibernateUtil.getSession().refresh(systemUser);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(systemUser);
+			// HibernateUtil.getSession().refresh // CSL remove old(systemUser);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SystemUserDAOImpl", "updateData()", e.toString());
@@ -168,8 +168,8 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser> implements System
 	public void getData(SystemUser systemUser) throws LIMSRuntimeException {
 		try {
 			SystemUser sysUser = (SystemUser) HibernateUtil.getSession().get(SystemUser.class, systemUser.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (sysUser != null) {
 				// System.out.println("Just read sysUser " + sysUser.getId() + " " +
@@ -192,8 +192,8 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser> implements System
 			String sql = "from SystemUser";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SystemUserDAOImpl", "getAllSystemUsers()", e.toString());
@@ -217,8 +217,8 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser> implements System
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SystemUserDAOImpl", "getPageOfSystemUsers()", e.toString());
@@ -232,8 +232,8 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser> implements System
 		SystemUser su = null;
 		try {
 			su = (SystemUser) HibernateUtil.getSession().get(SystemUser.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SystemUserDAOImpl", "readSystemUser()", e.toString());
@@ -279,8 +279,8 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser> implements System
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
@@ -312,8 +312,8 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser> implements System
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
@@ -349,8 +349,8 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser> implements System
 			query.setInteger("id", Integer.parseInt(sysUserId));
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;
@@ -374,8 +374,8 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser> implements System
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", userName);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("SystemUserDAOImpl", "getDataForUser()", e.toString());
 			throw new LIMSRuntimeException("Error in SystemUser getDataForUser()", e);

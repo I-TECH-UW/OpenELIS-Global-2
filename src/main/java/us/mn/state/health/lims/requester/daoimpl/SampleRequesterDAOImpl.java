@@ -47,8 +47,8 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> impleme
 			HibernateUtil.getSession().save(sampleRequester);
 
 			new AuditTrailDAOImpl().saveNewHistory(sampleRequester, sampleRequester.getSysUserId(), "SAMPLE_REQUESTER");
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("SampleRequesterDAOImpl", "insertData()", e.toString());
@@ -75,10 +75,10 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> impleme
 
 		try {
 			HibernateUtil.getSession().merge(sampleRequester);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(sampleRequester);
-			HibernateUtil.getSession().refresh(sampleRequester);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(sampleRequester);
+			// HibernateUtil.getSession().refresh // CSL remove old(sampleRequester);
 		} catch (Exception e) {
 			LogEvent.logError("SampleRequesterDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleRequester updateData()", e);

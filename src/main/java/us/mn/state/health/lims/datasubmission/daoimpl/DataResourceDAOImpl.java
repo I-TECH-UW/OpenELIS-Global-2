@@ -27,8 +27,8 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource> implements Da
 		try {
 			DataResource resourceClone = (DataResource) HibernateUtil.getSession().get(DataResource.class,
 					resource.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (resourceClone != null) {
 				PropertyUtils.copyProperties(resource, resourceClone);
 			} else {
@@ -45,8 +45,8 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource> implements Da
 	public DataResource getDataResource(String id) throws LIMSRuntimeException {
 		try {
 			DataResource resource = (DataResource) HibernateUtil.getSession().get(DataResource.class, id);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return resource;
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -67,8 +67,8 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource> implements Da
 			String tableName = "DATA_VALUE";
 			auditDAO.saveNewHistory(resource, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -97,10 +97,10 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource> implements Da
 
 		try {
 			HibernateUtil.getSession().merge(resource);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(resource);
-			HibernateUtil.getSession().refresh(resource);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(resource);
+			// HibernateUtil.getSession().refresh // CSL remove old(resource);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DataResourceDAOImpl", "updateData()", e.toString());

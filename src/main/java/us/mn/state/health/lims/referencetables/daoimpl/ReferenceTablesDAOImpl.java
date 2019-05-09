@@ -77,8 +77,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables> impleme
 				// bugzilla 2206
 				data = readReferenceTables(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -121,8 +121,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables> impleme
 			String tableName = "REFERENCE_TABLES";
 			auditDAO.saveNewHistory(referenceTables, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ReferenceTablesDAOImpl", "insertData()", e.toString());
@@ -184,10 +184,10 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables> impleme
 
 		try {
 			HibernateUtil.getSession().merge(referenceTables);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(referenceTables);
-			HibernateUtil.getSession().refresh(referenceTables);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(referenceTables);
+			// HibernateUtil.getSession().refresh // CSL remove old(referenceTables);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ReferenceTablesDAOImpl", "updateData()", e.toString());
@@ -200,8 +200,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables> impleme
 		try {
 			ReferenceTables reftbl = (ReferenceTables) HibernateUtil.getSession().get(ReferenceTables.class,
 					referenceTables.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (reftbl != null) {
 				PropertyUtils.copyProperties(referenceTables, reftbl);
 			} else {
@@ -223,8 +223,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables> impleme
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ReferenceTablesDAOImpl", "getAllReferenceTables()", e.toString());
@@ -248,8 +248,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables> impleme
 			// query.setCacheMode(org.hibernate.CacheMode.REFRESH);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ReferenceTablesDAOImpl", "getPageOfReferenceTables()", e.toString());
@@ -263,8 +263,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables> impleme
 		ReferenceTables referenceTables = null;
 		try {
 			referenceTables = (ReferenceTables) HibernateUtil.getSession().get(ReferenceTables.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ReferenceTablesDAOImpl", "readReferenceTables()", e.toString());
@@ -309,8 +309,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables> impleme
 			String sql = "select r.id from ReferenceTables r order by r.tableName";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
@@ -341,8 +341,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables> impleme
 			String sql = "select r.id from ReferenceTables r order by r.tableName";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn - 1)
@@ -390,8 +390,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables> impleme
 				query.setParameter("param2", referenceTablesId);
 			}
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;
@@ -416,8 +416,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables> impleme
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("ReferenceTableDAOImpl", "getAllReferenceTablesForHl7Encoding()", e.toString());

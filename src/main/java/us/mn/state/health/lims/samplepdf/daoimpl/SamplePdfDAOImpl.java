@@ -47,8 +47,8 @@ public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf> implements SamplePd
 			if ((list != null) && !list.isEmpty()) {
 				isFound = true;
 			}
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SamplePdfDAOImpl", "isAccessionNumberFound()", e.toString());
@@ -71,8 +71,8 @@ public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf> implements SamplePd
 				samplePdf = (SamplePdf) list.get(0);
 			}
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("SamplePdfDAOImpl", "getSamplePdfByAccessionNumber()", e.toString());

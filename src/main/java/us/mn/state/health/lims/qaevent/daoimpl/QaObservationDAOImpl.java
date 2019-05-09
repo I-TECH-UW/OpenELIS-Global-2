@@ -68,10 +68,10 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation> implements 
 
 		try {
 			HibernateUtil.getSession().merge(qaObservation);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(qaObservation);
-			HibernateUtil.getSession().refresh(qaObservation);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(qaObservation);
+			// HibernateUtil.getSession().refresh // CSL remove old(qaObservation);
 		} catch (Exception e) {
 			handleException(e, "updateData");
 		}

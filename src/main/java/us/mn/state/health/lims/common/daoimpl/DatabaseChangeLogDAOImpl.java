@@ -47,8 +47,8 @@ public class DatabaseChangeLogDAOImpl extends BaseDAOImpl<DatabaseChangeLog> imp
 			Query query = HibernateUtil.getSession().createQuery(sql);
 
 			results = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (results != null && results.get(0) != null) {
 				return results.get(0);

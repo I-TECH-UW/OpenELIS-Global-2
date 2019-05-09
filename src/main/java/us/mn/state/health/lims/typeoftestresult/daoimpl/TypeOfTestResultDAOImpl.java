@@ -72,8 +72,8 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult> imple
 
 				data = readTypeOfTestResult(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			LogEvent.logError("TypeOfTestResultDAOImpl", "deleteData()", e.toString());
@@ -99,8 +99,8 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult> imple
 			String tableName = "TYPE_OF_TEST_RESULT";
 			auditDAO.saveNewHistory(typeOfTestResult, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TypeOfTestResultDAOImpl", "insertData()", e.toString());
@@ -139,10 +139,10 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult> imple
 
 		try {
 			HibernateUtil.getSession().merge(typeOfTestResult);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(typeOfTestResult);
-			HibernateUtil.getSession().refresh(typeOfTestResult);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(typeOfTestResult);
+			// HibernateUtil.getSession().refresh // CSL remove old(typeOfTestResult);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TypeOfTestResultDAOImpl", "updateData()", e.toString());
@@ -155,8 +155,8 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult> imple
 		try {
 			TypeOfTestResult sc = (TypeOfTestResult) HibernateUtil.getSession().get(TypeOfTestResult.class,
 					typeOfTestResult.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (sc != null) {
 				PropertyUtils.copyProperties(typeOfTestResult, sc);
 			} else {
@@ -178,8 +178,8 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult> imple
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TypeOfTestResultDAOImpl", "getAllTypeOfTestResults()", e.toString());
@@ -202,8 +202,8 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult> imple
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TypeOfTestResultDAOImpl", "getPageOfTypeOfTestResults()", e.toString());
@@ -217,8 +217,8 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult> imple
 		TypeOfTestResult data;
 		try {
 			data = (TypeOfTestResult) HibernateUtil.getSession().get(TypeOfTestResult.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TypeOfTestResultDAOImpl", "readTypeOfTestResult()", e.toString());
@@ -312,8 +312,8 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult> imple
 			query.setParameter("param2", typeOfTestResultId);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return list.size() > 0;
 
@@ -339,8 +339,8 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult> imple
 				totr = (TypeOfTestResult) list.get(0);
 			}
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("TypeOfTestResultDAOImpl", "getTypeOfTestResultByType()", e.toString());

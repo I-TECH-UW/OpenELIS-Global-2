@@ -79,8 +79,8 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements 
 				// bugzilla 2206
 				data = readSampleQaEvent(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// buzilla 2154
@@ -101,8 +101,8 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements 
 			String tableName = "SAMPLE_QAEVENT";
 			auditDAO.saveNewHistory(sampleQaEvent, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// buzilla 2154
@@ -134,10 +134,10 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements 
 
 		try {
 			HibernateUtil.getSession().merge(sampleQaEvent);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(sampleQaEvent);
-			HibernateUtil.getSession().refresh(sampleQaEvent);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(sampleQaEvent);
+			// HibernateUtil.getSession().refresh // CSL remove old(sampleQaEvent);
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("SampleQaEventDAOImpl", "updateData()", e.toString());
@@ -162,8 +162,8 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements 
 		try {
 			SampleQaEvent data = (SampleQaEvent) HibernateUtil.getSession().get(SampleQaEvent.class,
 					sampleQaEvent.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (data != null) {
 				PropertyUtils.copyProperties(sampleQaEvent, data);
 			} else {
@@ -180,8 +180,8 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements 
 		SampleQaEvent sp = null;
 		try {
 			sp = (SampleQaEvent) HibernateUtil.getSession().get(SampleQaEvent.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("SampleQaEventDAOImpl", "readSampleQaEvent()", e.toString());
@@ -201,8 +201,8 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements 
 			query.setParameter("param", sampleQaEvent.getSample().getId());
 
 			sampleQaEvents = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return sampleQaEvents;
 
@@ -248,8 +248,8 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements 
 			if ((list != null) && !list.isEmpty()) {
 				analQaEvent = (SampleQaEvent) list.get(0);
 			}
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// buzilla 2154

@@ -43,7 +43,7 @@ public class RequesterTypeDAOImpl extends BaseDAOImpl<RequesterType> implements 
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("typeName", typeName);
 			RequesterType type = (RequesterType) query.uniqueResult();
-			HibernateUtil.getSession().flush();
+			// HibernateUtil.getSession().flush(); // CSL remove old
 			HibernateUtil.getSession().close();
 			return type;
 		} catch (HibernateException e) {

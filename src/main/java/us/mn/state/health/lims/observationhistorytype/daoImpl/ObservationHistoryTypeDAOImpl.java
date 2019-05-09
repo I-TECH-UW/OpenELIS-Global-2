@@ -30,8 +30,8 @@ public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistor
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", name);
 			historyTypeList = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return historyTypeList.size() > 0 ? historyTypeList.get(0) : null;
 

@@ -45,8 +45,8 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation> imp
 			String sql = "from InventoryLocation";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			inventoryItems = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("InventoryLocationDAOImpl", "getAllInventoryLocations()", e.toString());
 			throw new LIMSRuntimeException("Error in InventoryLocation getAllInventoryLocations()", e);
@@ -74,8 +74,8 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation> imp
 
 				data = readInventoryLocation(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			LogEvent.logError("InventoryLocationDAOImpl", "deleteData()", e.toString());
@@ -94,8 +94,8 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation> imp
 			String tableName = "INVENTORY_ITEM";
 			auditDAO.saveNewHistory(inventoryItem, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("InventoryLocationDAOImpl", "insertData()", e.toString());
@@ -119,10 +119,10 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation> imp
 			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 
 			HibernateUtil.getSession().merge(inventoryItem);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(inventoryItem);
-			HibernateUtil.getSession().refresh(inventoryItem);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(inventoryItem);
+			// HibernateUtil.getSession().refresh // CSL remove old(inventoryItem);
 		} catch (Exception e) {
 			LogEvent.logError("InventoryLocationDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in InventoryLocation updateData()", e);
@@ -134,8 +134,8 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation> imp
 		try {
 			InventoryLocation tmpInventoryLocation = (InventoryLocation) HibernateUtil.getSession()
 					.get(InventoryLocation.class, inventoryItem.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (tmpInventoryLocation != null) {
 				PropertyUtils.copyProperties(inventoryItem, tmpInventoryLocation);
 			} else {
@@ -151,8 +151,8 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation> imp
 		InventoryLocation data = null;
 		try {
 			data = (InventoryLocation) HibernateUtil.getSession().get(InventoryLocation.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("InventoryLocationDAOImpl", "readInventoryLocation()", e.toString());
 			throw new LIMSRuntimeException("Error in InventoryLocation readInventoryLocation()", e);
@@ -166,8 +166,8 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation> imp
 		try {
 			InventoryLocation re = (InventoryLocation) HibernateUtil.getSession().get(InventoryLocation.class,
 					inventoryItem.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return re;
 		} catch (Exception e) {
 			LogEvent.logError("InventoryLocationDAOImpl", "getInventoryLocationById()", e.toString());

@@ -79,8 +79,8 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 				// bugzilla 2206
 				data = readSampleHuman(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -102,8 +102,8 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 			String tableName = "SAMPLE_HUMAN";
 			auditDAO.saveNewHistory(sampleHuman, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -135,10 +135,10 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 
 		try {
 			HibernateUtil.getSession().merge(sampleHuman);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(sampleHuman);
-			HibernateUtil.getSession().refresh(sampleHuman);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(sampleHuman);
+			// HibernateUtil.getSession().refresh // CSL remove old(sampleHuman);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SampleHumanDAOImpl", "updateData()", e.toString());
@@ -151,8 +151,8 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 		try {
 			SampleHuman sampHuman = (SampleHuman) HibernateUtil.getSession().get(SampleHuman.class,
 					sampleHuman.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (sampHuman != null) {
 				PropertyUtils.copyProperties(sampleHuman, sampHuman);
 			} else {
@@ -169,8 +169,8 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 		SampleHuman sh = null;
 		try {
 			sh = (SampleHuman) HibernateUtil.getSession().get(SampleHuman.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SampleHumanDAOImpl", "readSampleHuman()", e.toString());
@@ -188,8 +188,8 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("param", Integer.parseInt(sampleHuman.getSampleId()));
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			SampleHuman sh = null;
 			if (list.size() > 0) {
 				sh = (SampleHuman) list.get(0);
@@ -210,8 +210,8 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("sId", Integer.parseInt(sample.getId()));
 			patient = (Patient) query.uniqueResult();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (HibernateException he) {
 			LogEvent.logError("SampleHumanDAOImpl", "getPatientForSample()", he.toString());
@@ -249,8 +249,8 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("patientId", Integer.parseInt(patientID));
 			samples = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (HibernateException he) {
 			LogEvent.logError("SampleHumanDAOImpl", "getSamplesForPatient()", he.toString());
 			throw new LIMSRuntimeException("Error in SampleHuman getSamplesForPatient()", he);

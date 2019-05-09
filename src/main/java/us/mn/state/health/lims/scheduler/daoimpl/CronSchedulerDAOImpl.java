@@ -98,10 +98,10 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements 
 					IActionConstants.AUDIT_TRAIL_UPDATE, "QUARTZ_CRON_SCHEDULER");
 
 			HibernateUtil.getSession().merge(cronSchedule);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(cronSchedule);
-			HibernateUtil.getSession().refresh(cronSchedule);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(cronSchedule);
+			// HibernateUtil.getSession().refresh // CSL remove old(cronSchedule);
 		} catch (Exception e) {
 			handleException(e, "update");
 		}

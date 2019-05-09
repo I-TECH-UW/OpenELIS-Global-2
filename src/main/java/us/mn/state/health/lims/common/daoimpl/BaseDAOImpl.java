@@ -393,8 +393,8 @@ public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, I
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 
 			List results = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (results != null && results.get(0) != null) {
 				if (results.get(0) != null) {
@@ -432,7 +432,7 @@ public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, I
 	}
 
 	protected void closeSession() {
-		HibernateUtil.getSession().flush();
-		HibernateUtil.getSession().clear();
+		// HibernateUtil.getSession().flush(); // CSL remove old
+		// HibernateUtil.getSession().clear(); // CSL remove old
 	}
 }

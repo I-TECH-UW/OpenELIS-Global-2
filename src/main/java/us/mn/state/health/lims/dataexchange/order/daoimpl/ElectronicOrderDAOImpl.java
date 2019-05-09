@@ -101,10 +101,10 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder> impleme
 					"ELECTROINIC_ORDER");
 
 			HibernateUtil.getSession().merge(eOrder);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(eOrder);
-			HibernateUtil.getSession().refresh(eOrder);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(eOrder);
+			// HibernateUtil.getSession().refresh // CSL remove old(eOrder);
 		} catch (HibernateException e) {
 			handleException(e, "updateData");
 		}
@@ -130,8 +130,8 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder> impleme
 			String sql = "from ElectronicOrder";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "getAllElectronicOrders");
 		}
@@ -153,8 +153,8 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder> impleme
 				list = HibernateUtil.getSession().createCriteria(ElectronicOrder.class)
 						.addOrder(Order.asc(order.getValue())).addOrder(Order.desc("lastupdated")).list();
 			}
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "getAllElectronicOrdersOrderedBy");
 		}

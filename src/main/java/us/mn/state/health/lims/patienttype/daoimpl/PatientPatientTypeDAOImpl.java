@@ -53,8 +53,8 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType> i
 			String tableName = "PATIENT_PATIENT_TYPE";
 			auditDAO.saveNewHistory(patientType, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("PatientPatientTypeDAOImpl", "insertData()", e.toString());
@@ -82,10 +82,10 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType> i
 
 		try {
 			HibernateUtil.getSession().merge(patientType);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(patientType);
-			HibernateUtil.getSession().refresh(patientType);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(patientType);
+			// HibernateUtil.getSession().refresh // CSL remove old(patientType);
 		} catch (Exception e) {
 			LogEvent.logError("patientPatientTypeDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in patientPatientType updateData()", e);
@@ -96,8 +96,8 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType> i
 		PatientPatientType current = null;
 		try {
 			current = (PatientPatientType) HibernateUtil.getSession().get(PatientPatientType.class, id);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PatientPatientTypeDAOImpl", "getCurrentPatientPatientType()", e.toString());
 			throw new LIMSRuntimeException("Error in PatientPatientType getCurrentPatientPatientType()", e);
@@ -135,8 +135,8 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType> i
 
 			patientTypes = query.list();
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (HibernateException he) {
 			LogEvent.logError("PatientIdentityDAOImpl", "getPatientPatientTypeForPatient()", he.toString());

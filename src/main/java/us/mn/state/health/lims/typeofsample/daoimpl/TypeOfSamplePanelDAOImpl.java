@@ -56,8 +56,8 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel> imp
 				auditDAO.saveHistory(new TypeOfSamplePanel(), data, currentUserId, IActionConstants.AUDIT_TRAIL_DELETE,
 						"SAMPLETYPE_PANEL");
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 
 		} catch (Exception e) {
@@ -76,8 +76,8 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel> imp
 			typeOfSamplePanel.setId(id);
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveNewHistory(typeOfSamplePanel, typeOfSamplePanel.getSysUserId(), "SAMPLETYPE_PANEL");
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("TypeOfSamplePanelDAOImpl", "insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in TypeOfSamplePanel insertData()", e);
@@ -92,8 +92,8 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel> imp
 		try {
 			TypeOfSamplePanel tos = (TypeOfSamplePanel) HibernateUtil.getSession().get(TypeOfSamplePanel.class,
 					typeOfSamplePanel.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (tos != null) {
 				PropertyUtils.copyProperties(typeOfSamplePanel, tos);
 			} else {
@@ -115,8 +115,8 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel> imp
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TypeOfSamplePanelDAOImpl", "getAllTypeOfSamples()", e.toString());
@@ -139,8 +139,8 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel> imp
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("TypeOfSamplePanelDAOImpl", "getPageOfTypeOfSamplePanels()", e.toString());
 			throw new LIMSRuntimeException("Error in TypeOfSamplePanel getPageOfTypeOfSamples()", e);
@@ -153,8 +153,8 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel> imp
 		TypeOfSamplePanel tos = null;
 		try {
 			tos = (TypeOfSamplePanel) HibernateUtil.getSession().get(TypeOfSamplePanel.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TypeOfSamplePanelDAOImpl", "readTypeOfSample()", e.toString());
@@ -197,8 +197,8 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel> imp
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
@@ -229,8 +229,8 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel> imp
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
@@ -259,8 +259,8 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel> imp
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sampleType));
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("TypeOfSamplePanelDAOImpl", "getTypeOfSamplePanelsForSampleType", e.toString());
 			throw new LIMSRuntimeException("Error in TypeOfSamplePanelDAOImpl getTypeOfSamplePanelsForSampleType", e);

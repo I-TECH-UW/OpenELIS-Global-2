@@ -48,8 +48,8 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt> imple
 			String sql = "from InventoryReceipt";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			inventoryReceipts = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("InventoryReceiptDAOImpl", "getAllInventoryReceipts()", e.toString());
 			throw new LIMSRuntimeException("Error in InventoryReceipt getAllInventoryReceipts()", e);
@@ -77,8 +77,8 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt> imple
 
 				data = getInventoryReceiptById(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			LogEvent.logError("InventoryReceiptDAOImpl", "deleteData()", e.toString());
@@ -97,8 +97,8 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt> imple
 			String tableName = "INVENTORY_RECEIPT";
 			auditDAO.saveNewHistory(inventoryReceipt, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("InventoryReceiptDAOImpl", "insertData()", e.toString());
@@ -122,10 +122,10 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt> imple
 			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 
 			HibernateUtil.getSession().merge(inventoryReceipt);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(inventoryReceipt);
-			HibernateUtil.getSession().refresh(inventoryReceipt);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(inventoryReceipt);
+			// HibernateUtil.getSession().refresh // CSL remove old(inventoryReceipt);
 		} catch (Exception e) {
 			LogEvent.logError("InventoryReceiptDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in InventoryReceipt updateData()", e);
@@ -137,8 +137,8 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt> imple
 		try {
 			InventoryReceipt tmpInventoryReceipt = (InventoryReceipt) HibernateUtil.getSession()
 					.get(InventoryReceipt.class, inventoryReceipt.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (tmpInventoryReceipt != null) {
 				PropertyUtils.copyProperties(inventoryReceipt, tmpInventoryReceipt);
 			} else {
@@ -155,8 +155,8 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt> imple
 		InventoryReceipt data = null;
 		try {
 			data = (InventoryReceipt) HibernateUtil.getSession().get(InventoryReceipt.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("InventoryReceiptDAOImpl", "readInventoryReceipt()", e.toString());
 			throw new LIMSRuntimeException("Error in InventoryReceipt readInventoryReceipt()", e);
@@ -176,8 +176,8 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt> imple
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("id", Integer.parseInt(id));
 			inventoryReceipts = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (inventoryReceipts != null && inventoryReceipts.size() > 0) {
 				inventory = (InventoryReceipt) inventoryReceipts.get(0);

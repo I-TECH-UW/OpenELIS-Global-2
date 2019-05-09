@@ -77,8 +77,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 				PanelItem data = (PanelItem) panelItems.get(i);
 				data = readPanelItem(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 
 			}
 		} catch (Exception e) {
@@ -102,8 +102,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 			String tableName = "PANEL_ITEM";
 			auditDAO.saveNewHistory(panelItem, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PanelItemDAOImpl", "insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in PanelItem insertData()", e);
@@ -139,10 +139,10 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 
 		try {
 			HibernateUtil.getSession().merge(panelItem);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(panelItem);
-			HibernateUtil.getSession().refresh(panelItem);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(panelItem);
+			// HibernateUtil.getSession().refresh // CSL remove old(panelItem);
 		} catch (Exception e) {
 			LogEvent.logError("PanelItemDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in PanelItem updateData()", e);
@@ -153,8 +153,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 	public void getData(PanelItem panelItem) throws LIMSRuntimeException {
 		try {
 			PanelItem data = (PanelItem) HibernateUtil.getSession().get(PanelItem.class, panelItem.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (data != null) {
 				PropertyUtils.copyProperties(panelItem, data);
 			} else {
@@ -173,8 +173,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 			String sql = "from PanelItem P order by P.panel.id ";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PanelItemDAOImpl", "getAllPanelItems()", e.toString());
 			throw new LIMSRuntimeException("Error in PanelItem getAllPanelItems()", e);
@@ -196,8 +196,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PanelItemDAOImpl", "getPageOfPanelItems()", e.toString());
 			throw new LIMSRuntimeException("Error in PanelItem getPageOfPanelItems()", e);
@@ -210,8 +210,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 		PanelItem pi;
 		try {
 			pi = (PanelItem) HibernateUtil.getSession().get(PanelItem.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PanelItemDAOImpl", "readPanelItem()", e.toString());
 			throw new LIMSRuntimeException("Error in PanelItem readPanelItem()", e);
@@ -229,8 +229,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 			query.setParameter("param", filter + "%");
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PanelItemDAOImpl", "getPanelItems()", e.toString());
 			throw new LIMSRuntimeException("Error in PanelItem getPanelItems(String filter)", e);
@@ -248,8 +248,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 			query.setInteger("panelId", Integer.parseInt(panelId));
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PanelItemDAOImpl", "getPanelItemsForPanel()", e.toString());
 			throw new LIMSRuntimeException("Error in PanelItem getPanelItemsForPanel(String panelId)", e);
@@ -289,8 +289,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
@@ -316,8 +316,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
@@ -352,8 +352,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 			query.setInteger("panelItemId", Integer.parseInt(panelItemId));
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return !list.isEmpty();
 
@@ -386,8 +386,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 			query.setInteger("panelItemId", Integer.parseInt(panelItemId));
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return !list.isEmpty();
 
@@ -421,8 +421,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 
 				}
 			}
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return list;
 
 		} catch (Exception e) {

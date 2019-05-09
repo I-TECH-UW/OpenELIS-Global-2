@@ -81,10 +81,10 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 				// Make the change to the object.
 				cloneData.setIsActive(IActionConstants.NO);
 				HibernateUtil.getSession().merge(cloneData);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
-				HibernateUtil.getSession().evict(cloneData);
-				HibernateUtil.getSession().refresh(cloneData);
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
+				// HibernateUtil.getSession().evict // CSL remove old(cloneData);
+				// HibernateUtil.getSession().refresh // CSL remove old(cloneData);
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -111,8 +111,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			String tableName = "DICTIONARY";
 			auditDAO.saveNewHistory(dictionary, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryDAOImpl", "insertData()", e.toString());
@@ -170,10 +170,10 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 
 		try {
 			HibernateUtil.getSession().merge(dictionary);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(dictionary);
-			HibernateUtil.getSession().refresh(dictionary);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(dictionary);
+			// HibernateUtil.getSession().refresh // CSL remove old(dictionary);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryDAOImpl", "updateData()", e.toString());
@@ -185,8 +185,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 	public void getData(Dictionary dictionary) throws LIMSRuntimeException {
 		try {
 			Dictionary d = (Dictionary) HibernateUtil.getSession().get(Dictionary.class, dictionary.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (d != null) {
 				PropertyUtils.copyProperties(dictionary, d);
 			} else {
@@ -209,8 +209,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			// query.setFirstResult(3);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryDAOImpl", "getAllDictionarys()", e.toString());
@@ -234,8 +234,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryDAOImpl", "getPageOfDictionarys()", e.toString());
@@ -271,8 +271,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in Dictionary getPageOfSearchedDictionarys()", e);
@@ -287,8 +287,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 		Dictionary dictionary = null;
 		try {
 			dictionary = (Dictionary) HibernateUtil.getSession().get(Dictionary.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryDAOImpl", "readDictionary()", e.toString());
@@ -357,8 +357,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 
 			@SuppressWarnings("unchecked")
 			List<Dictionary> list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return list;
 
@@ -410,8 +410,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 
 			@SuppressWarnings("unchecked")
 			List<Dictionary> list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return list;
 
@@ -446,8 +446,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			String sql = "select d.id from Dictionary d" + " order by d.dictionaryCategory.categoryName, d.dictEntry";
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
@@ -479,8 +479,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 					+ " order by d.dictionaryCategory.categoryName desc, d.dictEntry desc";
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
@@ -539,8 +539,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			query.setInteger("dictId", Integer.parseInt(dictId));
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;
@@ -568,8 +568,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			query.setParameter("param", dictionary.getLocalAbbreviation());
 
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				d = (Dictionary) list.get(0);
@@ -613,8 +613,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			}
 
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				d = (Dictionary) list.get(0);
@@ -656,8 +656,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 
 			list = query.list();
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;
@@ -695,8 +695,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			query.setParameter("param", newSearchStr);
 
 			List results = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (results != null && results.get(0) != null) {
 				if (results.get(0) != null) {

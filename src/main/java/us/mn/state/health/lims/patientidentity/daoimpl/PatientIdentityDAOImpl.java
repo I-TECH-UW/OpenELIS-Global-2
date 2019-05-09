@@ -37,8 +37,8 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 
 			identities = query.list();
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("PatientIdentityDAOImpl", "getPatientIdentitiesForPatient()", e.toString());
@@ -59,8 +59,8 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 			String tableName = "PATIENT_IDENTITY";
 			auditDAO.saveNewHistory(patientIdentity, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("PatientIdentityDAOImpl", "insertData()", e.toString());
@@ -88,10 +88,10 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 
 		try {
 			HibernateUtil.getSession().merge(patientIdentity);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(patientIdentity);
-			HibernateUtil.getSession().refresh(patientIdentity);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(patientIdentity);
+			// HibernateUtil.getSession().refresh // CSL remove old(patientIdentity);
 		} catch (Exception e) {
 			LogEvent.logError("patientIdentityDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in patientIdentity updateData()", e);
@@ -102,8 +102,8 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 		PatientIdentity current = null;
 		try {
 			current = (PatientIdentity) HibernateUtil.getSession().get(PatientIdentity.class, id);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PatientIdentityDAOImpl", "readSampleHuman()", e.toString());
 			throw new LIMSRuntimeException("Error in PatientIdentity getCurrentPatientIdentity()", e);
@@ -125,8 +125,8 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 			auditDAO.saveHistory(newData, oldData, activeUserId, event, tableName);
 
 			HibernateUtil.getSession().delete(oldData);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 
@@ -140,8 +140,8 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 		PatientIdentity patientIdentity = null;
 		try {
 			patientIdentity = (PatientIdentity) HibernateUtil.getSession().get(PatientIdentity.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PatientIdentityDAOImpl", "readPatientIdentity()", e.toString());
 			throw new LIMSRuntimeException("Error in PatientIdentity readPatientIdentity()", e);
@@ -163,8 +163,8 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 
 			List<PatientIdentity> identities = query.list();
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return identities;
 		} catch (Exception e) {

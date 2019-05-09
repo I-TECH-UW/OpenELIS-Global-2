@@ -62,8 +62,8 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation> impleme
 		try {
 			SiteInformation siteInformation = readSiteInformation(siteInformationId);
 			HibernateUtil.getSession().delete(siteInformation);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("SiteInformationsDAOImpl", "deleteData()", e.toString());
@@ -81,8 +81,8 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation> impleme
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveNewHistory(siteInformation, siteInformation.getSysUserId(), "SITE_INFORMATION");
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("SiteInformationDAOImpl", "insertData()", e.toString());
@@ -109,10 +109,10 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation> impleme
 
 		try {
 			HibernateUtil.getSession().merge(siteInformation);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(siteInformation);
-			HibernateUtil.getSession().refresh(siteInformation);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(siteInformation);
+			// HibernateUtil.getSession().refresh // CSL remove old(siteInformation);
 		} catch (Exception e) {
 			LogEvent.logError("SiteInformationsDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in SiteInformation updateData()", e);
@@ -124,8 +124,8 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation> impleme
 		try {
 			SiteInformation tmpSiteInformation = (SiteInformation) HibernateUtil.getSession().get(SiteInformation.class,
 					siteInformation.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (tmpSiteInformation != null) {
 				PropertyUtils.copyProperties(siteInformation, tmpSiteInformation);
 			} else {
@@ -145,8 +145,8 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation> impleme
 			String sql = "from SiteInformation";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("SiteInformationsDAOImpl", "getAllSiteInformation()", e.toString());
 			throw new LIMSRuntimeException("Error in SiteInformation getAllSiteInformation()", e);
@@ -171,8 +171,8 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation> impleme
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "getPageOfSiteInformationByDomainName");
 		}
@@ -185,8 +185,8 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation> impleme
 		try {
 			recoveredSiteInformation = (SiteInformation) HibernateUtil.getSession().get(SiteInformation.class,
 					idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("SiteInformationDAOImpl", "readSiteInformation()", e.toString());
 			throw new LIMSRuntimeException("Error in SiteInformation readSiteInformation()", e);

@@ -73,8 +73,8 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet> implements Scriptle
 				// bugzilla 2206
 				data = readScriptlet(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -100,8 +100,8 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet> implements Scriptle
 			String tableName = "SCRIPTLET";
 			auditDAO.saveNewHistory(scriptlet, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ScriptletDAOImpl", "insertData()", e.toString());
@@ -142,10 +142,10 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet> implements Scriptle
 
 		try {
 			HibernateUtil.getSession().merge(scriptlet);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(scriptlet);
-			HibernateUtil.getSession().refresh(scriptlet);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(scriptlet);
+			// HibernateUtil.getSession().refresh // CSL remove old(scriptlet);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ScriptletDAOImpl", "updateData()", e.toString());
@@ -157,8 +157,8 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet> implements Scriptle
 	public void getData(Scriptlet scriptlet) throws LIMSRuntimeException {
 		try {
 			Scriptlet sc = (Scriptlet) HibernateUtil.getSession().get(Scriptlet.class, scriptlet.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (sc != null) {
 				PropertyUtils.copyProperties(scriptlet, sc);
 			} else {
@@ -180,8 +180,8 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet> implements Scriptle
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ScriptletDAOImpl", "getAllScriptlets()", e.toString());
@@ -205,8 +205,8 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet> implements Scriptle
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ScriptletDAOImpl", "getPageOfScriptlets()", e.toString());
@@ -220,8 +220,8 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet> implements Scriptle
 		Scriptlet scriptlet = null;
 		try {
 			scriptlet = (Scriptlet) HibernateUtil.getSession().get(Scriptlet.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ScriptletDAOImpl", "readScriptlet()", e.toString());
@@ -254,8 +254,8 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet> implements Scriptle
 			query.setParameter("param", filter + "%");
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ScriptletDAOImpl", "getScriptlets()", e.toString());
@@ -272,8 +272,8 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet> implements Scriptle
 			query.setParameter("param", scriptlet.getScriptletName());
 
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			Scriptlet s = null;
 			if (list.size() > 0) {
 				s = (Scriptlet) list.get(0);
@@ -357,8 +357,8 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet> implements Scriptle
 			query.setParameter("param2", scriptletId);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;

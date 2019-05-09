@@ -84,8 +84,8 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress>
 
 			HibernateUtil.getSession().merge(organizationAddress);
 			closeSession();
-			HibernateUtil.getSession().evict(organizationAddress);
-			HibernateUtil.getSession().refresh(organizationAddress);
+			// HibernateUtil.getSession().evict // CSL remove old(organizationAddress);
+			// HibernateUtil.getSession().refresh // CSL remove old(organizationAddress);
 		} catch (HibernateException e) {
 			handleException(e, "update");
 		}

@@ -78,8 +78,8 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory> i
 				// bugzilla 2206
 				data = readDictionaryCategory(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -107,8 +107,8 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory> i
 			String tableName = "DICTIONARY_CATEGORY";
 			auditDAO.saveNewHistory(dictionaryCategory, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryCategoryDAOImpl", "insertData()", e.toString());
@@ -151,10 +151,10 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory> i
 
 		try {
 			HibernateUtil.getSession().merge(dictionaryCategory);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(dictionaryCategory);
-			HibernateUtil.getSession().refresh(dictionaryCategory);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(dictionaryCategory);
+			// HibernateUtil.getSession().refresh // CSL remove old(dictionaryCategory);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryCategoryDAOImpl", "updateData()", e.toString());
@@ -167,8 +167,8 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory> i
 		try {
 			DictionaryCategory cc = (DictionaryCategory) HibernateUtil.getSession().get(DictionaryCategory.class,
 					dictionaryCategory.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (cc != null) {
 				PropertyUtils.copyProperties(dictionaryCategory, cc);
 			} else {
@@ -192,8 +192,8 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory> i
 			// query.setFirstResult(3);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryCategoryDAOImpl", "getAllDictionaryCategorys()", e.toString());
@@ -216,8 +216,8 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory> i
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryCategoryDAOImpl", "getPageOfDictionaryCategorys()", e.toString());
@@ -231,8 +231,8 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory> i
 		DictionaryCategory dc = null;
 		try {
 			dc = (DictionaryCategory) HibernateUtil.getSession().get(DictionaryCategory.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryCategoryDAOImpl", "readDictionaryCategory()", e.toString());
@@ -277,8 +277,8 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory> i
 			String sql = "select dc.id from DictionaryCategory dc " + " order by dc.description, dc.categoryName";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
@@ -310,8 +310,8 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory> i
 					+ " order by dc.description desc, dc.categoryName desc";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
@@ -354,8 +354,8 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory> i
 			query.setParameter("param3", dictId);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;

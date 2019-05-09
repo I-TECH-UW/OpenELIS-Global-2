@@ -40,8 +40,8 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl> impleme
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("urlPath", urlPath);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			closeSession();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -61,8 +61,8 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl> impleme
 			String id = (String) HibernateUtil.getSession().save(systemModuleUrl);
 			systemModuleUrl.setId(id);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			closeSession();
 		} catch (Exception e) {
 			// bugzilla 2154

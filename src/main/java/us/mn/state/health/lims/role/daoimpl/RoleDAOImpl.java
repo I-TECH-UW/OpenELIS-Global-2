@@ -69,8 +69,8 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 			for (Role data : roles) {
 				data = readRole(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			LogEvent.logError("RolesDAOImpl", "deleteData()", e.toString());
@@ -90,8 +90,8 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 			String tableName = "SYSTEM_ROLE";
 			auditDAO.saveNewHistory(role, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("RoleDAOImpl", "insertData()", e.toString());
@@ -120,10 +120,10 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 
 		try {
 			HibernateUtil.getSession().merge(role);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(role);
-			HibernateUtil.getSession().refresh(role);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(role);
+			// HibernateUtil.getSession().refresh // CSL remove old(role);
 		} catch (Exception e) {
 			LogEvent.logError("RolesDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in Role updateData()", e);
@@ -134,8 +134,8 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 	public void getData(Role role) throws LIMSRuntimeException {
 		try {
 			Role tmpRole = (Role) HibernateUtil.getSession().get(Role.class, role.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (tmpRole != null) {
 				PropertyUtils.copyProperties(role, tmpRole);
 			} else {
@@ -193,8 +193,8 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("RolesDAOImpl", "getPageOfRoles()", e.toString());
 			throw new LIMSRuntimeException("Error in Role getPageOfRoles()", e);
@@ -207,8 +207,8 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 		Role recoveredRole = null;
 		try {
 			recoveredRole = (Role) HibernateUtil.getSession().get(Role.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("RoleDAOImpl", "readRole()", e.toString());
 			throw new LIMSRuntimeException("Error in Role readRole()", e);
@@ -243,8 +243,8 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 			query.setInteger("parent", Integer.parseInt(role.getId()));
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("RolesDAOImpl", "getReferencingRoles()", e.toString());
 			throw new LIMSRuntimeException("Error in Role getReferencingRoles()", e);

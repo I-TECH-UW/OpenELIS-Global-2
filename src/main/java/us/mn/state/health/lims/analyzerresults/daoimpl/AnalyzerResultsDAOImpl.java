@@ -54,8 +54,8 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> impleme
 
 			results = query.list();
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return results;
 
@@ -114,8 +114,8 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> impleme
 				}
 			}
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerResultDAOImpl", "insertAnalyzerResult()", e.toString());
 			throw new LIMSRuntimeException("Error in AnalyzerResult insertAnalyzerResult()", e);
@@ -137,8 +137,8 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> impleme
 			query.setString("testName", result.getTestName());
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return list.size() > 0 ? list : null;
 
@@ -160,10 +160,10 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> impleme
 					"ANALYZER_RESULTS");
 
 			HibernateUtil.getSession().merge(results);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(results);
-			HibernateUtil.getSession().refresh(results);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(results);
+			// HibernateUtil.getSession().refresh // CSL remove old(results);
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerResultsImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in AnalyzerResults updateData()", e);
@@ -175,8 +175,8 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> impleme
 		AnalyzerResults data = null;
 		try {
 			data = (AnalyzerResults) HibernateUtil.getSession().get(AnalyzerResults.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerResultsDAOImpl", "readAnalyzerResults()", e.toString());
 			throw new LIMSRuntimeException("Error in AnalyzerResults readAnalyzerResults()", e);
@@ -190,8 +190,8 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> impleme
 		try {
 			AnalyzerResults analyzerResultsClone = (AnalyzerResults) HibernateUtil.getSession()
 					.get(AnalyzerResults.class, analyzerResults.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (analyzerResultsClone != null) {
 				PropertyUtils.copyProperties(analyzerResults, analyzerResultsClone);
 			} else {
@@ -210,8 +210,8 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> impleme
 				result = readAnalyzerResults(result.getId());
 
 				HibernateUtil.getSession().delete(result);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 
 			}
 		} catch (HibernateException se) {

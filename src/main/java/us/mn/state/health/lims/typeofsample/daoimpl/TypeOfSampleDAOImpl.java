@@ -82,8 +82,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 				// bugzilla 2206
 				data = readTypeOfSample(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -112,8 +112,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 			String tableName = "TYPE_OF_SAMPLE";
 			auditDAO.saveNewHistory(typeOfSample, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TypeOfSampleDAOImpl", "insertData()", e.toString());
@@ -141,10 +141,10 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 
 		try {
 			HibernateUtil.getSession().merge(typeOfSample);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(typeOfSample);
-			HibernateUtil.getSession().refresh(typeOfSample);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(typeOfSample);
+			// HibernateUtil.getSession().refresh // CSL remove old(typeOfSample);
 		} catch (Exception e) {
 
 			LogEvent.logError("TypeOfSampleDAOImpl", "updateData()", e.toString());
@@ -158,8 +158,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 	public void getData(TypeOfSample typeOfSample) throws LIMSRuntimeException {
 		try {
 			TypeOfSample tos = (TypeOfSample) HibernateUtil.getSession().get(TypeOfSample.class, typeOfSample.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (tos != null) {
 				PropertyUtils.copyProperties(typeOfSample, tos);
 			} else {
@@ -181,8 +181,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TypeOfSampleDAOImpl", "getAllTypeOfSamples()", e.toString());
@@ -199,8 +199,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 			String sql = "from TypeOfSample order by sort_order";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("TypeOfSampleDAOImpl", "getAllTypeOfSamplesSortOrdered()", e.toString());
 			throw new LIMSRuntimeException("Error in TypeOfSample getAllTypeOfSamplesSortOrdered()", e);
@@ -223,8 +223,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TypeOfSampleDAOImpl", "getPageOfTypeOfSamples()", e.toString());
@@ -238,8 +238,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 		TypeOfSample tos = null;
 		try {
 			tos = (TypeOfSample) HibernateUtil.getSession().get(TypeOfSample.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TypeOfSampleDAOImpl", "readTypeOfSample()", e.toString());
@@ -272,8 +272,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 			}
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TypeOfSampleDAOImpl", "getTypes()", e.toString());
@@ -297,8 +297,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 			query.setParameter("domainKey", key);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in TypeOfSample getTypes(String filter)", e);
@@ -321,8 +321,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 			query.setParameter("domainKey", key);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "getTypesForDomainBySortOrder");
 		}
@@ -408,8 +408,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
@@ -441,8 +441,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
@@ -490,8 +490,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 			}
 
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			TypeOfSample typeOfSample = null;
 			if (list.size() > 0) {
 				typeOfSample = (TypeOfSample) list.get(0);
@@ -533,8 +533,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 			query.setInteger("id", Integer.parseInt(typeOfSampleId));
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;
