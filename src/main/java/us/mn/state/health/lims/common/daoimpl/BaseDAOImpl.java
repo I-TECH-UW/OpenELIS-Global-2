@@ -33,6 +33,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.dao.BaseDAO;
@@ -45,9 +46,11 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 /**
  * @author Caleb
  *
+ *
  * @param <T>
  */
-public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionConstants {
+@Component("baseObjectDAO")
+public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionConstants {
 
 	static final int DEFAULT_PAGE_SIZE = SystemConfiguration.getInstance().getDefaultPageSize();
 
@@ -56,6 +59,7 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 	@Autowired
 	protected SessionFactory sessionFactory;
 
+	@Autowired
 	public BaseDAOImpl(Class<T> clazz) {
 		classType = clazz;
 	}

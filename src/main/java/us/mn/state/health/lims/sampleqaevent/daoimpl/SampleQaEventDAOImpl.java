@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -43,6 +44,7 @@ import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
  * @date created 06/12/2008
  * @version $Revision$ bugzilla 2510
  */
+@Component
 public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements SampleQaEventDAO {
 
 	public SampleQaEventDAOImpl() {

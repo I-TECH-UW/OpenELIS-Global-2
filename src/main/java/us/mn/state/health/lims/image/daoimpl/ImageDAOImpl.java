@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.hibernate.HibernateException;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -27,6 +28,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.image.dao.ImageDAO;
 import us.mn.state.health.lims.image.valueholder.Image;
 
+@Component
 public class ImageDAOImpl extends BaseDAOImpl<Image> implements ImageDAO {
 
 	public ImageDAOImpl() {

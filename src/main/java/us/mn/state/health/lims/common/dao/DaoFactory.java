@@ -34,7 +34,7 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.Repor
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportQueueType;
 import us.mn.state.health.lims.dataexchange.order.daoimpl.ElectronicOrderDAOImpl;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
-import us.mn.state.health.lims.dataexchange.orderresult.DAO.HL7MessageOutDAOImpl;
+import us.mn.state.health.lims.dataexchange.orderresult.dao.HL7MessageOutDAOImpl;
 import us.mn.state.health.lims.dataexchange.orderresult.valueholder.HL7MessageOut;
 import us.mn.state.health.lims.datasubmission.daoimpl.DataIndicatorDAOImpl;
 import us.mn.state.health.lims.datasubmission.daoimpl.DataResourceDAOImpl;
@@ -70,7 +70,7 @@ import us.mn.state.health.lims.note.daoimpl.NoteDAOImpl;
 import us.mn.state.health.lims.note.valueholder.Note;
 import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
-import us.mn.state.health.lims.observationhistorytype.daoImpl.ObservationHistoryTypeDAOImpl;
+import us.mn.state.health.lims.observationhistorytype.daoimpl.ObservationHistoryTypeDAOImpl;
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
 import us.mn.state.health.lims.organization.daoimpl.OrganizationContactDAOImpl;
 import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;

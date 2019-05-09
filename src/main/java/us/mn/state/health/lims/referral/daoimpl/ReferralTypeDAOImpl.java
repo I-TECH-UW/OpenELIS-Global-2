@@ -18,6 +18,7 @@ package us.mn.state.health.lims.referral.daoimpl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -27,6 +28,7 @@ import us.mn.state.health.lims.referral.valueholder.ReferralType;
 
 /*
  */
+@Component
 public class ReferralTypeDAOImpl extends BaseDAOImpl<ReferralType> implements ReferralTypeDAO {
 
 	public ReferralTypeDAOImpl() {

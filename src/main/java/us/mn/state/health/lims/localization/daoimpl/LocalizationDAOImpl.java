@@ -17,6 +17,7 @@
 package us.mn.state.health.lims.localization.daoimpl;
 
 import org.hibernate.HibernateException;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -29,6 +30,7 @@ import us.mn.state.health.lims.localization.valueholder.Localization;
 
 /**
  */
+@Component
 public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements LocalizationDAO {
 
 	public LocalizationDAOImpl() {

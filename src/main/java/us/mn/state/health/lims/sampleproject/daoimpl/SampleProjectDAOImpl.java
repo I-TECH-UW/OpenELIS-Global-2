@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -41,6 +42,7 @@ import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
  * @date created 08/04/2006
  * @version $Revision$
  */
+@Component
 public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements SampleProjectDAO {
 
 	public SampleProjectDAOImpl() {

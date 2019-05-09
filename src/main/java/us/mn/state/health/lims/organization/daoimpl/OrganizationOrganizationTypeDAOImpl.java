@@ -20,6 +20,7 @@ package us.mn.state.health.lims.organization.daoimpl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -28,6 +29,7 @@ import us.mn.state.health.lims.organization.dao.OrganizationOrganizationTypeDAO;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 
 //TODO move to service layer, or other DAOs
+@Component
 public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganizationTypeDAO {
 
 	@Override

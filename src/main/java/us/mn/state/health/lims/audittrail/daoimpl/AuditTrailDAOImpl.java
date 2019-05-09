@@ -24,12 +24,6 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Vector;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
-import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Component;
 
@@ -1214,28 +1208,28 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 	 */
 	@Override
 	public String getXML(String table, String id) throws LIMSRuntimeException {
-		org.hibernate.Session session = HibernateUtil.getSession();
-		org.hibernate.Session dom4jSession = session.getSession(org.hibernate.EntityMode.DOM4J);
-
-		Element elem = (Element) dom4jSession.createQuery("from " + table + " where id=" + id).uniqueResult();
-		java.io.StringWriter sw = new java.io.StringWriter();
-		if (elem != null) {
-			try {
-				Document doc = DocumentHelper.createDocument();
-				doc.add(elem);
-				OutputFormat format = OutputFormat.createPrettyPrint();
-				XMLWriter writer = new XMLWriter(sw, format);
-				writer.write(doc);
-				writer.flush();
-				writer.close();
-
-				return sw.toString();
-			} catch (Exception e) {
-				// buzilla 2154
-				LogEvent.logError("AuditTrailDAOImpl", "getXML()", e.toString());
-				throw new LIMSRuntimeException("Error in AuditTrail getXML()", e);
-			}
-		}
+//		org.hibernate.Session session = HibernateUtil.getSession();
+//		org.hibernate.Session dom4jSession = session.getSession(org.hibernate.EntityMode.DOM4J);
+//
+//		Element elem = (Element) dom4jSession.createQuery("from " + table + " where id=" + id).uniqueResult();
+//		java.io.StringWriter sw = new java.io.StringWriter();
+//		if (elem != null) {
+//			try {
+//				Document doc = DocumentHelper.createDocument();
+//				doc.add(elem);
+//				OutputFormat format = OutputFormat.createPrettyPrint();
+//				XMLWriter writer = new XMLWriter(sw, format);
+//				writer.write(doc);
+//				writer.flush();
+//				writer.close();
+//
+//				return sw.toString();
+//			} catch (Exception e) {
+//				// buzilla 2154
+//				LogEvent.logError("AuditTrailDAOImpl", "getXML()", e.toString());
+//				throw new LIMSRuntimeException("Error in AuditTrail getXML()", e);
+//			}
+//		}
 		return null;
 	}
 
@@ -1248,22 +1242,23 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 	 */
 	@Override
 	public String getXMLData(String table, String id) throws LIMSRuntimeException {
-		StringBuffer xml;
-
-		LogEvent.logDebug("AuditTrailDAOImpl", "getXMLData()", "getting History instance");
-		try {
-			String out = (String) HibernateUtil
-					.getSession().createSQLQuery("select to_char(dbms_xmlgen.getxml('select * from " + table
-							+ " where id=" + id + "')) as xml from dual")
-					.addScalar("xml", Hibernate.STRING).uniqueResult();
-			xml = new StringBuffer().append(out);
-
-			return xml.toString();
-
-		} catch (Exception e) {
-			LogEvent.logError("AuditTrailDAOImpl", "getXMLData()", e.toString());
-			throw new LIMSRuntimeException("Error in AuditTrail getXMLData()", e);
-		}
+//		StringBuffer xml;
+//
+//		LogEvent.logDebug("AuditTrailDAOImpl", "getXMLData()", "getting History instance");
+//		try {
+//			String out = (String) HibernateUtil
+//					.getSession().createSQLQuery("select to_char(dbms_xmlgen.getxml('select * from " + table
+//							+ " where id=" + id + "')) as xml from dual")
+//					.addScalar("xml", Hibernate.STRING).uniqueResult();
+//			xml = new StringBuffer().append(out);
+//
+//			return xml.toString();
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("AuditTrailDAOImpl", "getXMLData()", e.toString());
+//			throw new LIMSRuntimeException("Error in AuditTrail getXMLData()", e);
+//		}
+		return null;
 	}
 
 	/**

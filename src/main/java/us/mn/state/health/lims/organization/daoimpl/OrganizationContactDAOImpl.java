@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -29,6 +30,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.organization.dao.OrganizationContactDAO;
 import us.mn.state.health.lims.organization.valueholder.OrganizationContact;
 
+@Component
 public class OrganizationContactDAOImpl extends BaseDAOImpl<OrganizationContact> implements OrganizationContactDAO {
 
 	public OrganizationContactDAOImpl() {

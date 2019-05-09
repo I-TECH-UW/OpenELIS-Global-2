@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -28,6 +29,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.menu.dao.MenuDAO;
 import us.mn.state.health.lims.menu.valueholder.Menu;
 
+@Component
 public class MenuDAOImpl extends BaseDAOImpl<Menu> implements MenuDAO {
 
 	public MenuDAOImpl() {

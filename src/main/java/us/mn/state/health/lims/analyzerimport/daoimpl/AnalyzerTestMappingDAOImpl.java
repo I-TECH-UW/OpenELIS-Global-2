@@ -20,6 +20,7 @@ package us.mn.state.health.lims.analyzerimport.daoimpl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.analyzerimport.dao.AnalyzerTestMappingDAO;
@@ -33,6 +34,7 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
+@Component
 public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping> implements AnalyzerTestMappingDAO {
 
 	public AnalyzerTestMappingDAOImpl() {

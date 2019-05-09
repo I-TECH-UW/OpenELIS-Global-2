@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -37,6 +38,7 @@ import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
+@Component
 public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements SystemModuleDAO {
 
 	public SystemModuleDAOImpl() {

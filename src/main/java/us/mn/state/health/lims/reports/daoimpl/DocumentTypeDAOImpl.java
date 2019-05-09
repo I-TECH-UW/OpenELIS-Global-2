@@ -18,6 +18,7 @@ package us.mn.state.health.lims.reports.daoimpl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -25,6 +26,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.reports.dao.DocumentTypeDAO;
 import us.mn.state.health.lims.reports.valueholder.DocumentType;
 
+@Component
 public class DocumentTypeDAOImpl extends BaseDAOImpl<DocumentType> implements DocumentTypeDAO {
 
 	public DocumentTypeDAOImpl() {

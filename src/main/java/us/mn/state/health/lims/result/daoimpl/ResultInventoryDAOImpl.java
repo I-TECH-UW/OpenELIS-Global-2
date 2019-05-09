@@ -20,6 +20,7 @@ package us.mn.state.health.lims.result.daoimpl;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -32,6 +33,7 @@ import us.mn.state.health.lims.result.dao.ResultInventoryDAO;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultInventory;
 
+@Component
 public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory> implements ResultInventoryDAO {
 
 	public ResultInventoryDAOImpl() {

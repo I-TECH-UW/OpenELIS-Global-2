@@ -18,6 +18,7 @@ package us.mn.state.health.lims.qaevent.daoimpl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -25,6 +26,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.qaevent.dao.QaObservationTypeDAO;
 import us.mn.state.health.lims.qaevent.valueholder.QaObservationType;
 
+@Component
 public class QaObservationTypeDAOImpl extends BaseDAOImpl<QaObservationType> implements QaObservationTypeDAO {
 
 	public QaObservationTypeDAOImpl() {

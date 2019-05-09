@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -17,6 +18,7 @@ import us.mn.state.health.lims.datasubmission.valueholder.DataIndicator;
 import us.mn.state.health.lims.datasubmission.valueholder.TypeOfDataIndicator;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
+@Component
 public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator> implements DataIndicatorDAO {
 
 	public DataIndicatorDAOImpl() {

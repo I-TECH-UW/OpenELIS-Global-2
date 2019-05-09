@@ -18,6 +18,7 @@ package us.mn.state.health.lims.siteinformation.daoimpl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -25,6 +26,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.siteinformation.dao.SiteInformationDomainDAO;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformationDomain;
 
+@Component
 public class SiteInformationDomainDAOImpl extends BaseDAOImpl<SiteInformationDomain>
 		implements SiteInformationDomainDAO {
 

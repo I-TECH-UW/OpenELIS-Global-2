@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.dao.DatabaseChangeLogDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -29,6 +30,7 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.valueholder.DatabaseChangeLog;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
+@Component
 public class DatabaseChangeLogDAOImpl extends BaseDAOImpl<DatabaseChangeLog> implements DatabaseChangeLogDAO {
 
 	public DatabaseChangeLogDAOImpl() {

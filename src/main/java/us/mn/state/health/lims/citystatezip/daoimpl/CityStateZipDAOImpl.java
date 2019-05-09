@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.springframework.stereotype.Component;
+
 import us.mn.state.health.lims.citystatezip.dao.CityStateZipDAO;
 import us.mn.state.health.lims.citystatezip.valueholder.CityStateZip;
 import us.mn.state.health.lims.citystatezip.valueholder.CityView;
@@ -35,6 +37,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  * @author benzd1
  *
  */
+@Component
 public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip> implements CityStateZipDAO {
 
 	public CityStateZipDAOImpl() {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -16,6 +17,7 @@ import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.patientidentity.dao.PatientIdentityDAO;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 
+@Component
 public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> implements PatientIdentityDAO {
 
 	public PatientIdentityDAOImpl() {

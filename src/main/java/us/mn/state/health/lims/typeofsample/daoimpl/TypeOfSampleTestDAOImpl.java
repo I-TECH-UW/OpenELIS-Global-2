@@ -17,10 +17,13 @@
  */
 package us.mn.state.health.lims.typeofsample.daoimpl;
 
+import static us.mn.state.health.lims.common.daoimpl.BaseDAOImpl.DEFAULT_PAGE_SIZE;
+
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -32,6 +35,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
+@Component
 public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> implements TypeOfSampleTestDAO {
 
 	public TypeOfSampleTestDAOImpl() {

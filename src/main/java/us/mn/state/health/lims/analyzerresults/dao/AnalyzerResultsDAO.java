@@ -35,6 +35,5 @@ public interface AnalyzerResultsDAO extends BaseDAO<AnalyzerResults> {
 
 	public AnalyzerResults readAnalyzerResults(String idString);
 
-	@Override
 	public void deleteAll(List<AnalyzerResults> deletableAnalyzerResults) throws LIMSRuntimeException;
 }

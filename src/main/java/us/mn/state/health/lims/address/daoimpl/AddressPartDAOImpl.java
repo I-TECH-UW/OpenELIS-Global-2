@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.address.dao.AddressPartDAO;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
@@ -27,6 +28,7 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
+@Component
 public class AddressPartDAOImpl extends BaseDAOImpl<AddressPart> implements AddressPartDAO {
 
 	public AddressPartDAOImpl() {

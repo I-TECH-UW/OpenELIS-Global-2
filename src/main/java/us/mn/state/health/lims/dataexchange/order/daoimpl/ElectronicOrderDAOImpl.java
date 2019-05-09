@@ -22,6 +22,7 @@ import java.util.Vector;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -32,6 +33,7 @@ import us.mn.state.health.lims.dataexchange.order.dao.ElectronicOrderDAO;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
+@Component
 public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder> implements ElectronicOrderDAO {
 
 	public ElectronicOrderDAOImpl() {

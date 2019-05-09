@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -39,6 +40,7 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
 /**
  * @author diane benz
  */
+@Component
 public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestResultDAO {
 
 	public TestResultDAOImpl() {

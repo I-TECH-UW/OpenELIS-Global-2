@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -35,6 +36,7 @@ import us.mn.state.health.lims.result.dao.ResultSignatureDAO;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultSignature;
 
+@Component
 public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature> implements ResultSignatureDAO {
 
 	public ResultSignatureDAOImpl() {

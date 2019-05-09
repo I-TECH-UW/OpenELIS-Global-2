@@ -22,6 +22,7 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
@@ -43,6 +44,7 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
 /**
  * @author diane benz 11/17/2007 instead of printing StackTrace log error
  */
+@Component
 public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestReflexDAO {
 
 	public TestReflexDAOImpl() {

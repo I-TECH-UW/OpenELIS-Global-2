@@ -18,6 +18,7 @@ package us.mn.state.health.lims.testcodes.daoimpl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -25,6 +26,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.testcodes.dao.TestCodeTypeDAO;
 import us.mn.state.health.lims.testcodes.valueholder.TestCodeType;
 
+@Component
 public class TestCodeTypeDAOImpl extends BaseDAOImpl<TestCodeType> implements TestCodeTypeDAO {
 
 	public TestCodeTypeDAOImpl() {

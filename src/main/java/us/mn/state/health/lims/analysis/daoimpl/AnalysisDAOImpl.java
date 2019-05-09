@@ -28,6 +28,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -56,6 +57,7 @@ import us.mn.state.health.lims.test.valueholder.Test;
 /**
  * @author diane benz
  */
+@Component
 public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDAO {
 
 	public AnalysisDAOImpl() {

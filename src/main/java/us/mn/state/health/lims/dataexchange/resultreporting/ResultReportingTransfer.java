@@ -2,15 +2,15 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
@@ -33,7 +33,7 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.Repor
 import us.mn.state.health.lims.dataexchange.common.ITransmissionResponseHandler;
 import us.mn.state.health.lims.dataexchange.common.ReportTransmission;
 import us.mn.state.health.lims.dataexchange.orderresult.OrderResponseWorker.Event;
-import us.mn.state.health.lims.dataexchange.orderresult.DAO.HL7MessageOutDAOImpl;
+import us.mn.state.health.lims.dataexchange.orderresult.dao.HL7MessageOutDAOImpl;
 import us.mn.state.health.lims.dataexchange.orderresult.valueholder.HL7MessageOut;
 import us.mn.state.health.lims.dataexchange.resultreporting.beans.ResultReportXmit;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -51,19 +51,19 @@ public class ResultReportingTransfer {
 	private static DocumentType DOCUMENT_TYPE;
 	private static String QUEUE_TYPE_ID;
 	private static String RESULT_REFERRANCE_TABLE_ID;
-	
-	static{
-		DOCUMENT_TYPE  = new DocumentTypeDAOImpl().getDocumentTypeByName("resultExport");
-		ReferenceTables  referenceTable = new ReferenceTablesDAOImpl().getReferenceTableByName("RESULT");
-		if( referenceTable != null){
+
+	static {
+		DOCUMENT_TYPE = new DocumentTypeDAOImpl().getDocumentTypeByName("resultExport");
+		ReferenceTables referenceTable = new ReferenceTablesDAOImpl().getReferenceTableByName("RESULT");
+		if (referenceTable != null) {
 			RESULT_REFERRANCE_TABLE_ID = referenceTable.getId();
 		}
 		ReportQueueType queueType = new ReportQueueTypeDAOImpl().getReportQueueTypeByName("Results");
-		if( queueType != null){
+		if (queueType != null) {
 			QUEUE_TYPE_ID = queueType.getId();
-		}	
+		}
 	}
-	
+
 	public void sendResults(ResultReportXmit resultReport, List<Result> reportingResult, String url) {
 
 		if (resultReport.getTestResults() == null || resultReport.getTestResults().isEmpty()) {
@@ -77,7 +77,7 @@ public class ResultReportingTransfer {
 	class ResultFailHandler implements ITransmissionResponseHandler {
 
 		private List<Result> reportingResults;
-		
+
 		public ResultFailHandler(List<Result> reportingResults) {
 			this.reportingResults = reportingResults;
 		}
@@ -114,7 +114,7 @@ public class ResultReportingTransfer {
 			report.setTypeId(QUEUE_TYPE_ID);
 			report.setBookkeepingData(getResultIdListString() == null ? "" : getResultIdListString());
 			report.setSend(true);
-			
+
 			Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 			try {
@@ -129,24 +129,24 @@ public class ResultReportingTransfer {
 
 		private String getResultIdListString() {
 			String comma = "";
-			
+
 			StringBuilder builder = new StringBuilder();
-			
-			for(Result result : reportingResults){
-				builder.append(comma);  //empty first time through
+
+			for (Result result : reportingResults) {
+				builder.append(comma); // empty first time through
 				builder.append(result.getId());
-				
+
 				comma = ",";
 			}
-			
+
 			return builder.toString();
 		}
 
 		private void markFinalResultsAsSent() {
 			Timestamp now = DateUtil.getNowAsTimestamp();
 
-			List<DocumentTrack> documents = new ArrayList<DocumentTrack>();
-			
+			List<DocumentTrack> documents = new ArrayList<>();
+
 			for (Result result : reportingResults) {
 				if (result.getResultEvent() == Event.FINAL_RESULT || result.getResultEvent() == Event.CORRECTION) {
 					DocumentTrack document = new DocumentTrack();

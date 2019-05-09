@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.analyzer.dao.AnalyzerDAO;
 import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
@@ -31,6 +32,7 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
+@Component
 public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDAO {
 
 	public AnalyzerDAOImpl() {

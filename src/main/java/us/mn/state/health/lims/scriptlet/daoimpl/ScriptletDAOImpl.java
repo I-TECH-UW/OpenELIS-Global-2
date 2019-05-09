@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -37,6 +38,7 @@ import us.mn.state.health.lims.scriptlet.valueholder.Scriptlet;
 /**
  * @author diane benz
  */
+@Component
 public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet> implements ScriptletDAO {
 
 	public ScriptletDAOImpl() {

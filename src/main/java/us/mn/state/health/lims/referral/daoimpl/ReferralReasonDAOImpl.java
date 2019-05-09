@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -29,6 +30,7 @@ import us.mn.state.health.lims.referral.valueholder.ReferralReason;
 
 /*
  */
+@Component
 public class ReferralReasonDAOImpl extends BaseDAOImpl<ReferralReason> implements ReferralReasonDAO {
 	public ReferralReasonDAOImpl() {
 		super(ReferralReason.class);

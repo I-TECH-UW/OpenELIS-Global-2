@@ -21,6 +21,8 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.stereotype.Component;
+
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -46,6 +48,7 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
+@Component
 public class UserTestSectionDAOImpl extends BaseDAOImpl<TestSection> implements UserTestSectionDAO {
 
 	public UserTestSectionDAOImpl() {

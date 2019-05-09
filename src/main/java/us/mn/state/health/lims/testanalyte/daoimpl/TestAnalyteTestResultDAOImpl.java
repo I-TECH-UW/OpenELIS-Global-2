@@ -25,6 +25,7 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -40,6 +41,7 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
  * @author diane benz
  */
 //TODO delete this unused DAO object
+@Component
 public class TestAnalyteTestResultDAOImpl implements TestAnalyteTestResultDAO {
 
 	/*

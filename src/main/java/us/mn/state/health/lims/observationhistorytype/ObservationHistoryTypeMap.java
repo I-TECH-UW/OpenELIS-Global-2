@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.commons.validator.GenericValidator;
 
 import us.mn.state.health.lims.observationhistorytype.dao.ObservationHistoryTypeDAO;
-import us.mn.state.health.lims.observationhistorytype.daoImpl.ObservationHistoryTypeDAOImpl;
+import us.mn.state.health.lims.observationhistorytype.daoimpl.ObservationHistoryTypeDAOImpl;
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
 
 /**

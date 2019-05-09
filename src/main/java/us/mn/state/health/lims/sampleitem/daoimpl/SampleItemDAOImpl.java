@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -41,6 +42,7 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 /**
  * @author diane benz
  */
+@Component
 public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem> implements SampleItemDAO {
 
 	public SampleItemDAOImpl() {

@@ -24,6 +24,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -36,6 +37,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.role.dao.RoleDAO;
 import us.mn.state.health.lims.role.valueholder.Role;
 
+@Component
 public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 
 	public RoleDAOImpl() {

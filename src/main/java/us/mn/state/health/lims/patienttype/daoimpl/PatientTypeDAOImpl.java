@@ -14,6 +14,7 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -27,6 +28,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.patienttype.dao.PatientTypeDAO;
 import us.mn.state.health.lims.patienttype.valueholder.PatientType;
 
+@Component
 public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType> implements PatientTypeDAO {
 
 	public PatientTypeDAOImpl() {

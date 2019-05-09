@@ -21,6 +21,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.stereotype.Component;
+
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -41,6 +43,7 @@ import us.mn.state.health.lims.systemusermodule.valueholder.SystemUserModule;
  * N.B. This class has nothing to do with database access
  */
 //TODO move to service layer
+@Component
 public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 
 	@Override

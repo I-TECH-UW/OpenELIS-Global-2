@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -40,6 +41,7 @@ import us.mn.state.health.lims.security.PasswordUtil;
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
+@Component
 public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 
 	public LoginDAOImpl() {

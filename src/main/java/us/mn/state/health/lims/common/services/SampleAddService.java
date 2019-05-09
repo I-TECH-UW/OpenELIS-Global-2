@@ -35,7 +35,7 @@ import us.mn.state.health.lims.common.services.StatusService.SampleStatus;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.observationhistorytype.dao.ObservationHistoryTypeDAO;
-import us.mn.state.health.lims.observationhistorytype.daoImpl.ObservationHistoryTypeDAOImpl;
+import us.mn.state.health.lims.observationhistorytype.daoimpl.ObservationHistoryTypeDAOImpl;
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
 import us.mn.state.health.lims.panel.dao.PanelDAO;
 import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;

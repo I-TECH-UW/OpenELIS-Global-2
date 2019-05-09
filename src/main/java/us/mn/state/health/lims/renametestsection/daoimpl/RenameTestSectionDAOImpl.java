@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -34,6 +35,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.renametestsection.dao.RenameTestSectionDAO;
 import us.mn.state.health.lims.renametestsection.valueholder.RenameTestSection;
 
+@Component
 public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> implements RenameTestSectionDAO {
 
 	public RenameTestSectionDAOImpl() {

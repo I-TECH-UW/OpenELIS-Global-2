@@ -27,6 +27,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -47,6 +48,7 @@ import us.mn.state.health.lims.project.valueholder.Project;
 /**
  * @author diane benz
  */
+@Component
 public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements OrganizationDAO {
 
 	public OrganizationDAOImpl() {

@@ -1,0 +1,22 @@
+package spring.service.dataexchange.aggregatereporting;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import spring.service.common.BaseObjectServiceImpl;
+import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportQueueTypeDAO;
+import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportQueueType;
+
+@Service
+public class ReportQueueTypeServiceImpl extends BaseObjectServiceImpl<ReportQueueType> implements ReportQueueTypeService {
+  @Autowired
+  protected ReportQueueTypeDAO baseObjectDAO;
+
+  ReportQueueTypeServiceImpl() {
+    super(ReportQueueType.class);
+  }
+
+  @Override
+  protected ReportQueueTypeDAO getBaseObjectDAO() {
+    return baseObjectDAO;}
+}
