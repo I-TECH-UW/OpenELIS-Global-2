@@ -1,42 +1,22 @@
-/**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
-package us.mn.state.health.lims.common.dao;
+package spring.service.common;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-/**
- * @author caleb
- *
- * @param <T> the type of data object that this returns
- */
-public interface BaseDAO<T extends BaseObject> {
+public interface BaseObjectService<T extends BaseObject> {
 
 	/**
 	 * @param id
-	 * @return the object corresponding with the id
+	 * @return the baseObject corresponding with the id or a new object
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
 	 */
-	Optional<T> get(String id);
+	T get(String id) throws InstantiationException, IllegalAccessException;
 
 	/**
-	 * @return all data type for the object type
+	 * @return all data type for the baseObject type
 	 */
 	List<T> getAll();
 
@@ -215,23 +195,56 @@ public interface BaseDAO<T extends BaseObject> {
 			int pageNumber);
 
 	/**
-	 * @param object the data to insert
-	 * @return the id of the inserted object
+	 * @param baseObject the data to insert
+	 * @return the id of the inserted baseObject
 	 */
-	String insert(T object);
+	String insert(T baseObject);
 
 	/**
-	 * @param object the new data to update the database with. Will insert if it
-	 *               doesn't already exist
-	 * @return the object as it was saved to the database
+	 * @param baseObjects the data to insert
+	 * @return the ids of the inserted baseObjects
 	 */
-	T save(T object);
+	List<String> insertAll(List<T> baseObjects);
 
 	/**
-	 * @param object the data to delete from the database. Must have primary key
-	 *               fields filled in
+	 * @param baseObject the new data to update the database with. Will insert if it
+	 *                   doesn't already exist
+	 * @return the baseObject as it was saved to the database
 	 */
-	void delete(T object);
+	T save(T baseObject);
+
+	/**
+	 * @param baseObjects the new data to update the database with. Will insert if
+	 *                    it doesn't already exist
+	 * @return the baseObjects as they were saved to the database
+	 */
+	List<T> saveAll(List<T> baseObjects);
+
+	/**
+	 * @param baseObject the new data to update the database with. Must have an id
+	 *                   parameter
+	 * @return the baseObject as it was saved to the database
+	 */
+	T update(T baseObject);
+
+	/**
+	 * @param baseObjects the new data to update the database with. Must have an id
+	 *                    parameter
+	 * @return the baseObjects as they were saved to the database
+	 */
+	List<T> updateAll(List<T> baseObjects);
+
+	/**
+	 * @param baseObject the data to delete from the database. Must have primary key
+	 *                   fields filled in
+	 */
+	void delete(T baseObject);
+
+	/**
+	 * @param baseObjects List of all baseObjects to delete from the database. Must
+	 *                    have primary key fields filled in
+	 */
+	void deleteAll(List<T> baseObjects);
 
 	/**
 	 * @return the number of rows
@@ -240,39 +253,32 @@ public interface BaseDAO<T extends BaseObject> {
 
 	/**
 	 * @param id the id to start from
-	 * @return list of the object corresponding to the next two ids ( if they exist)
+	 * @return list of the baseObject corresponding to the next two ids ( if they
+	 *         exist)
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
 	 */
-	public Optional<T> getNext(String id);
+	public T getNext(String id) throws InstantiationException, IllegalAccessException;
 
 	/**
 	 * @param id the id to start from
-	 * @return list of the object corresponding to the previous two ids ( if they
-	 *         exist)
+	 * @return list of the baseObject corresponding to the previous two ids ( if
+	 *         they exist)
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
 	 */
-	public Optional<T> getPrevious(String id);
+	public T getPrevious(String id) throws InstantiationException, IllegalAccessException;
 
 	/**
-	 * @return get table name in database for the object
+	 * @param id the id to start from
+	 * @return check if baseObject has a next baseObject in the database
 	 */
-	public String getTableName();
+	public boolean hasNext(String id);
 
 	/**
-	 * @deprecated (simpler method replacing this one, call getNext(id) instead
+	 * @param id the id to start from
+	 * @return check if baseObject has a previous baseObject in the database
 	 */
-	@Deprecated
-	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException;
-
-	/**
-	 * @deprecated (simpler method replacing this one, call getPrevious(id) instead
-	 */
-	@Deprecated
-	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException;
-
-	/**
-	 * @deprecated (simpler method replacing this one, call getCount() instead
-	 */
-	@Deprecated
-	// bugzilla 1411
-	public Integer getTotalCount(String table, Class clazz) throws LIMSRuntimeException;
+	public boolean hasPrevious(String id);
 
 }

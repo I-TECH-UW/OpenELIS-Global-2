@@ -38,4 +38,24 @@ public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistor
 			throw new LIMSRuntimeException("Error in ObservationHistoryTypeDAOImpl  getByName()", e);
 		}
 	}
+
+	/**
+	 * Read all entities from the database.
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ObservationHistoryType> getAll() throws LIMSRuntimeException {
+		List<ObservationHistoryType> entities;
+		try {
+			String sql = "from ObservationHistoryType";
+			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			entities = query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw (e);
+		}
+
+		return entities;
+	}
+
 }

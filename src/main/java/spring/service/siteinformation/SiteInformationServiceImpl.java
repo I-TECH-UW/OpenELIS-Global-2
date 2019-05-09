@@ -1,33 +1,26 @@
 package spring.service.siteinformation;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 @Service
-public class SiteInformationServiceImpl implements SiteInformationService {
-	
-	   @Autowired
-	   private SiteInformationDAO siteInformationDAO;
+public class SiteInformationServiceImpl extends BaseObjectServiceImpl<SiteInformation>
+		implements SiteInformationService {
 
-	   @Transactional
-       public void save(SiteInformation siteInformation) {
-		   siteInformationDAO.insert(siteInformation);
-	   }
-	   
-       @Transactional
-	   public SiteInformation getData(SiteInformation siteInformation) {
-		   return siteInformationDAO.get(siteInformation.getId()).get();
-	   }
+	@Autowired
+	private SiteInformationDAO siteInformationDAO;
 
-	   @Transactional(readOnly = true)
-	   public List<SiteInformation> getAll() {
-	      return siteInformationDAO.getAll();
-	   }
+	public SiteInformationServiceImpl() {
+		super(SiteInformation.class);
+	}
+
+	@Override
+	protected SiteInformationDAO getBaseObjectDAO() {
+		return siteInformationDAO;
+	}
 
 }

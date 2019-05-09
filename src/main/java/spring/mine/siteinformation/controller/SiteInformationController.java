@@ -30,7 +30,6 @@ import spring.mine.internationalization.MessageUtil;
 import spring.mine.siteinformation.form.SiteInformationForm;
 import spring.mine.siteinformation.validator.SiteInformationFormValidator;
 import spring.service.siteinformation.SiteInformationService;
-import spring.service.siteinformation.SiteInformationServiceImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.LocalizationService;
 import us.mn.state.health.lims.common.services.PhoneNumberService;
@@ -82,7 +81,7 @@ public class SiteInformationController extends BaseController {
 			"/NextPreviousSiteInformation" }, method = RequestMethod.GET)
 	// TODO decide if still needing NextPrevious (functionality is not implemented)
 	public ModelAndView showSiteInformation(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
 		// protect form from injection arbitrary values on the get step (since csrf is
 		// not checked at this stage)
 		form = resetFormToType(form, SiteInformationForm.class);
@@ -98,14 +97,12 @@ public class SiteInformationController extends BaseController {
 
 		if (!isNew) {
 //			SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
-
-			SiteInformation siteInformation = new SiteInformation();
-			siteInformation.setId(id);
-			
+//			SiteInformation siteInformation = new SiteInformation();
+//			siteInformation.setId(id);
 //			siteInformationDAO.getData(siteInformation);
-			
-			siteInformation = siteInformationService.getData(siteInformation);
-			
+
+			SiteInformation siteInformation = siteInformationService.get(id);
+
 			request.setAttribute(ID, siteInformation.getId());
 
 			PropertyUtils.setProperty(form, "paramName", siteInformation.getName());
