@@ -20,8 +20,8 @@
 			.getPermissionAgent();
 	AdminFormFields adminFields = AdminFormFields.getInstance();%>
 <table cellpadding="0" cellspacing="1" width="100%" align="left">
-	<%--id is important for activating the menu tabs: see tabs.jsp from struts-menu for how masterListsSubMenu is used--%>
-	<%-- similar code will need to be added in the left panel and in tabs.jsp for any menu tab that has the submenu on the left hand side--%>
+	<%--id is important for activating the menu tabs: see tabs.js from struts-menu for how masterListsSubMenu is used--%>
+	<%-- similar code will need to be added in the left panel and in tabs.js for any menu tab that has the submenu on the left hand side--%>
 
 	<ul id="masterListsSubMenu.do" class="leftnavigation">
 		 <%-- <%

@@ -249,7 +249,7 @@ function /*void*/ handleReferralReasonChange(select,  index ){
 	}
 }
 
-//this overrides the form in utilities.jsp
+//this overrides the form in additional_utilities.js
 function  /*void*/ savePage()
 {
 	

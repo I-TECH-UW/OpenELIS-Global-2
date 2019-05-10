@@ -57,7 +57,7 @@
 
 %>
 
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.jsp"></script>
+<script type="text/javascript" src="<%=basePath%>scripts/additional_utilities.js"></script>
 <script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
 <script type="text/javascript" src="scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
