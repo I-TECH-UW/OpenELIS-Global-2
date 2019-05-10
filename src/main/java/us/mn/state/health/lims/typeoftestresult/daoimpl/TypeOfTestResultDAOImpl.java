@@ -357,7 +357,7 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult> imple
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("type", type);
 			TypeOfTestResult typeOfTestResult = (TypeOfTestResult) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return typeOfTestResult;
 		} catch (HibernateException e) {
 			handleException(e, "getTypeOfTestResultByType");

@@ -41,11 +41,11 @@ public class ImageDAOImpl extends BaseDAOImpl<Image> implements ImageDAO {
 		try {
 			if (id == null) {
 				id = (String) HibernateUtil.getSession().save(image);
-				closeSession();
+				// closeSession(); // CSL remove old
 			} else { // this part does not seem to work so we are deleting and then adding as a work
 						// around
 				HibernateUtil.getSession().merge(image);
-				closeSession();
+				// closeSession(); // CSL remove old
 				// HibernateUtil.getSession().evict // CSL remove old(image);
 				// HibernateUtil.getSession().refresh // CSL remove old(image);
 			}
@@ -60,7 +60,7 @@ public class ImageDAOImpl extends BaseDAOImpl<Image> implements ImageDAO {
 	public Image getImage(String imageId) throws LIMSRuntimeException {
 		try {
 			Image image = (Image) HibernateUtil.getSession().get(Image.class, imageId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return image;
 		} catch (HibernateException e) {
 			handleException(e, "getImage");
@@ -73,7 +73,7 @@ public class ImageDAOImpl extends BaseDAOImpl<Image> implements ImageDAO {
 	public void deleteImage(Image image) throws LIMSRuntimeException {
 		try {
 			HibernateUtil.getSession().delete(image);
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "deleteImage");
 		}

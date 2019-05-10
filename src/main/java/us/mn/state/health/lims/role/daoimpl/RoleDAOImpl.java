@@ -155,7 +155,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 			String sql = "from Role";
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "getAllRoles");
 		}
@@ -171,7 +171,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 			String sql = "from Role r where r.active = true";
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "getAllActiveRoles");
 		}
@@ -261,7 +261,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", name);
 			Role role = (Role) query.setMaxResults(1).uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return role;
 		} catch (HibernateException e) {
 			handleException(e, "getRoleByName");
@@ -277,7 +277,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("id", Integer.parseInt(roleId));
 			Role role = (Role) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return role;
 		} catch (HibernateException e) {
 			handleException(e, "getRoleById");

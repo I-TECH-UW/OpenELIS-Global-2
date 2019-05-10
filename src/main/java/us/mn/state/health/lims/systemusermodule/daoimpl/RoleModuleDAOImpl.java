@@ -252,7 +252,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 			query.setInteger("moduleId", Integer.parseInt(moduleId));
 			query.setInteger("roleId", Integer.parseInt(roleId));
 			List<RoleModule> modules = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return modules.isEmpty() ? new RoleModule() : modules.get(0);
 		} catch (HibernateException he) {
 			handleException(he, "getRoleModuleByRoleAndModuleId");

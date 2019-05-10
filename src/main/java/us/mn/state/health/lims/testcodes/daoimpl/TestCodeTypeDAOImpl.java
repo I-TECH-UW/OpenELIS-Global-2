@@ -41,7 +41,7 @@ public class TestCodeTypeDAOImpl extends BaseDAOImpl<TestCodeType> implements Te
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", name);
 			TestCodeType et = (TestCodeType) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return et;
 		} catch (HibernateException e) {
 			handleException(e, "getTestCodeTypeByName");
@@ -57,7 +57,7 @@ public class TestCodeTypeDAOImpl extends BaseDAOImpl<TestCodeType> implements Te
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("id", id);
 			TestCodeType et = (TestCodeType) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return et;
 		} catch (HibernateException e) {
 			handleException(e, "getTestCodeTypeByName");

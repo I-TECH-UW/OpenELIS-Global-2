@@ -506,7 +506,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setParameterList("excludedStatusIds", statusIds);
 
 			List<Analysis> analysisList = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return analysisList;
 
 		} catch (HibernateException e) {
@@ -554,7 +554,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setInteger("sampleId", Integer.parseInt(id));
 			query.setParameterList("excludedIds", statusIds);
 			List<Analysis> analysisList = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return analysisList;
 		} catch (HibernateException e) {
 			handleException(e, "getAnalysesBySampleIdExcludedByStatusId");
@@ -578,7 +578,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setInteger("sampleId", Integer.parseInt(id));
 			query.setParameterList("statusIds", statusIds);
 			List<Analysis> analysisList = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return analysisList;
 		} catch (HibernateException e) {
 			handleException(e, "getAnalysesBySampleIdAndStatusId");
@@ -1113,7 +1113,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setInteger("statusId", Integer.parseInt(statusId));
 
 			list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (HibernateException he) {
 			handleException(he, "getAnalysisForStatusId");
@@ -1138,7 +1138,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setParameterList("statusList", statusIds);
 
 			List<Analysis> analysisList = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return analysisList;
 		} catch (HibernateException e) {
 			handleException(e, "getAnalysisStartedOnExcludedByStatusId");
@@ -1157,7 +1157,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setDate("startedDate", collectionDate);
 
 			List<Analysis> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 
 		} catch (HibernateException he) {
@@ -1183,7 +1183,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setParameterList("statusList", statusIds);
 
 			List<Analysis> analysisList = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return analysisList;
 		} catch (HibernateException e) {
 			handleException(e, "getAnalysisStartedOnExcludedByStatusId");
@@ -1202,7 +1202,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setDate("startedDate", collectionDate);
 
 			List<Analysis> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 
 		} catch (HibernateException he) {
@@ -1255,7 +1255,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setDate("highDate", highDate);
 
 			List<Analysis> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (HibernateException he) {
 			handleException(he, "getAnalysisByTestSectionAndCompletedDateRange");
@@ -1276,7 +1276,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setDate("highDate", highDate);
 
 			List<Analysis> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (HibernateException he) {
 			handleException(he, "getAnalysisStartedOrCompletedInDateRange");
@@ -1298,7 +1298,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 				query.setInteger("sampleId", Integer.parseInt(id));
 
 				list = query.list();
-				closeSession();
+				// closeSession(); // CSL remove old
 			} catch (Exception e) {
 				handleException(e, "getAnalysesBySampleId");
 			}
@@ -1321,7 +1321,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 
 			List<Analysis> analysisList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return analysisList;
 
@@ -1345,7 +1345,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setDate("highDate", highDate);
 
 			List<Analysis> analysisList = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return analysisList;
 
 		} catch (HibernateException e) {
@@ -1367,7 +1367,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setTimestamp("highDate", highDate);
 
 			List<Analysis> analysisList = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return analysisList;
 
 		} catch (HibernateException e) {
@@ -1387,7 +1387,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setTimestamp("date", date);
 
 			List<Analysis> analysisList = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return analysisList;
 
 		} catch (HibernateException e) {
@@ -1412,7 +1412,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setString("accessionNumber", accessionNumber);
 			query.setInteger("testId", Integer.parseInt(testId));
 			List<Analysis> analysises = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return analysises;
 		} catch (HibernateException e) {
 			handleException(e, "getAnalysisByAccessionAndTestId");
@@ -1438,7 +1438,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 
 			@SuppressWarnings("unchecked")
 			List<Analysis> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (HibernateException he) {
 			handleException(he, "getAnalysisByTestNamesAndCompletedDateRange");
@@ -1464,7 +1464,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 
 			@SuppressWarnings("unchecked")
 			List<Analysis> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (HibernateException he) {
 			handleException(he, "getAnalysisByTestDescriptionsAndCompletedDateRange");
@@ -1485,7 +1485,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 
 			@SuppressWarnings("unchecked")
 			List<Analysis> analysisList = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return analysisList;
 		} catch (Exception e) {
 			handleException(e, "getAnalysesBySampleItemIdAndStatusId");
@@ -1501,7 +1501,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 		}
 		try {
 			Analysis analysis = (Analysis) HibernateUtil.getSession().get(Analysis.class, analysisId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return analysis;
 		} catch (Exception e) {
 			handleException(e, "getAnalysisById");
@@ -1526,7 +1526,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			query.setParameterList("testIdList", testIdList);
 			query.setParameterList("statusIdList", statusIdList);
 			List<Analysis> analysisList = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return analysisList;
 		} catch (HibernateException e) {
 			handleException(e, "getAnalysesBySampleIdTestIdAndStatusId");

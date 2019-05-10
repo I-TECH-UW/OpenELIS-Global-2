@@ -44,7 +44,7 @@ public class ReferralReasonDAOImpl extends BaseDAOImpl<ReferralReason> implement
 		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			List<ReferralReason> reasons = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return reasons;
 		} catch (HibernateException e) {
 			handleException(e, "getAllReferralReasons");

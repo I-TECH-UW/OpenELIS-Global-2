@@ -217,7 +217,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel> implements PanelDAO {
 	public Panel getPanelById(String panelId) throws LIMSRuntimeException {
 		try {
 			Panel panel = (Panel) HibernateUtil.getSession().get(Panel.class, panelId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return panel;
 		} catch (HibernateException e) {
 			handleException(e, "getDataById");
@@ -510,7 +510,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel> implements PanelDAO {
 			@SuppressWarnings("unchecked")
 			List<Panel> panelList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return panelList.isEmpty() ? null : panelList.get(0);
 

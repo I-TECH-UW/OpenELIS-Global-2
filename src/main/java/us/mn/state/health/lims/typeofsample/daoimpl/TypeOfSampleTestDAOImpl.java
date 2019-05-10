@@ -254,7 +254,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sampleTypeId));
 			List<TypeOfSampleTest> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (Exception e) {
 			handleException(e, "getTypeOfSampleTestsForSampleType");
@@ -273,7 +273,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(testId));
 			List<TypeOfSampleTest> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list.size() > 0 ? list.get(0) : null;
 		} catch (Exception e) {
 			handleException(e, "getTypeOfSampleTestForTest");
@@ -292,7 +292,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(testId));
 			List<TypeOfSampleTest> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (Exception e) {
 			handleException(e, "getTypeOfSampleTestsForTest");

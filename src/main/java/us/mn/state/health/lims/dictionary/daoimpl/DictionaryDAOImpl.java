@@ -723,7 +723,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			query.setInteger("categoryId", Integer.parseInt(categoryId));
 			List<Dictionary> queryResults = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return queryResults;
 		} catch (Exception e) {
@@ -737,7 +737,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 	public Dictionary getDictionaryById(String dictionaryId) throws LIMSRuntimeException {
 		try {
 			Dictionary dictionary = (Dictionary) HibernateUtil.getSession().get(Dictionary.class, dictionaryId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return dictionary;
 		} catch (Exception e) {
 			handleException(e, "getDictionaryById");
@@ -758,7 +758,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 
 			Dictionary dictionary = (Dictionary) query.uniqueResult();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return dictionary;
 		} catch (HibernateException e) {
@@ -775,7 +775,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("dictionaryEntry", dictEntry);
 			Dictionary dictionary = (Dictionary) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return dictionary;
 		} catch (HibernateException e) {
 			handleException(e, "getDictioanryByDictEntry");
@@ -791,7 +791,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("id", Integer.parseInt(dictionaryId));
 			Dictionary dictionary = (Dictionary) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return dictionary;
 
 		} catch (HibernateException e) {

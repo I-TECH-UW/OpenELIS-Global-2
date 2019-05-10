@@ -260,7 +260,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("personId", Integer.parseInt(personId));
 			Person person = (Person) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return person;
 		} catch (HibernateException e) {
 			handleException(e, "getPersonById");

@@ -41,7 +41,7 @@ public class DocumentTypeDAOImpl extends BaseDAOImpl<DocumentType> implements Do
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", name);
 			DocumentType docType = (DocumentType) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return docType;
 		} catch (HibernateException e) {
 			handleException(e, "getDocumentTypeByName");
@@ -56,7 +56,7 @@ public class DocumentTypeDAOImpl extends BaseDAOImpl<DocumentType> implements Do
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", name);
 			DocumentType document = (DocumentType) query.setMaxResults(1).uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return document;
 		} catch (HibernateException e) {
 			handleException(e, "getByName");

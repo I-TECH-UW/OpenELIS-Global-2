@@ -28,26 +28,43 @@ public class TestCode extends BaseObject {
 	public TestSchemaPK getCompoundId() {
 		return compoundId;
 	}
+
 	public void setCompoundId(TestSchemaPK compoundId) {
 		this.compoundId = compoundId;
 	}
+
 	public String getValue() {
 		return value;
 	}
+
 	public void setValue(String value) {
-		this.value=value;
+		this.value = value;
 	}
+
 	public String getTestId() {
 		return compoundId.getTestId();
 	}
+
 	public void setTestId(String testId) {
 		compoundId.setTestId(testId);
 	}
+
 	public String getCodeTypeId() {
 		return compoundId.getCodeTypeId();
 	}
+
 	public void setCodeTypeId(String codeTypeId) {
 		compoundId.setCodeTypeId(codeTypeId);
+	}
+
+	@Override
+	public String getId() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setId(String id) {
+		throw new UnsupportedOperationException();
 	}
 
 }

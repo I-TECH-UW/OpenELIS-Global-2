@@ -49,7 +49,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder> impleme
 			query.setString("externalid", id);
 			@SuppressWarnings("unchecked")
 			List<ElectronicOrder> eOrders = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return eOrders;
 		} catch (HibernateException e) {
 			handleException(e, "getElectronicOrderByExternalId");
@@ -67,7 +67,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder> impleme
 
 			query.setString("patientid", id);
 			List<ElectronicOrder> eorders = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return eorders;
 		} catch (HibernateException e) {
@@ -84,7 +84,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder> impleme
 
 			new AuditTrailDAOImpl().saveNewHistory(eOrder, eOrder.getSysUserId(), "ELECTROINIC_ORDER");
 
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "insertData");
 		}
@@ -113,7 +113,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder> impleme
 	public ElectronicOrder readOrder(String idString) {
 		try {
 			ElectronicOrder eOrder = (ElectronicOrder) HibernateUtil.getSession().get(ElectronicOrder.class, idString);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return eOrder;
 		} catch (HibernateException e) {
 			handleException(e, "readOrder");

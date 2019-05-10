@@ -52,7 +52,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 
 			List<ReportExternalImport> reports = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return reports;
 		} catch (HibernateException e) {
@@ -68,7 +68,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 			String id = (String) HibernateUtil.getSession().save(report);
 			report.setId(id);
 			new AuditTrailDAOImpl().saveNewHistory(report, report.getSysUserId(), "REPORT_EXTERNAL_IMPORT");
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "insertReportExternalImport");
 		}
@@ -99,7 +99,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 		try {
 			ReportExternalImport data = (ReportExternalImport) HibernateUtil.getSession()
 					.get(ReportExternalImport.class, idString);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return data;
 		} catch (HibernateException e) {
 			handleException(e, "readReportExternalImport");
@@ -114,7 +114,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 		try {
 			Query query = HibernateUtil.getSession().createSQLQuery(sql);
 			List<String> sites = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return sites;
 		} catch (HibernateException e) {
 			handleException(e, "getUniqueSites");
@@ -137,7 +137,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 
 			List<ReportExternalImport> reports = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return reports;
 		} catch (HibernateException e) {
@@ -161,7 +161,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 
 			List<ReportExternalImport> reports = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return reports.isEmpty() ? new ReportExternalImport() : reports.get(0);
 

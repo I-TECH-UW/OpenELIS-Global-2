@@ -47,7 +47,7 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation> implements 
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveNewHistory(qaObservation, qaObservation.getSysUserId(), "QA_OBSERVATION");
 
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "insertData");
 		}
@@ -88,7 +88,7 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation> implements 
 			query.setString("observedType", observedType);
 			query.setInteger("observedId", Integer.parseInt(observedId));
 			QaObservation observation = (QaObservation) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return observation;
 		} catch (HibernateException e) {
 			handleException(e, "getQaObservationByTypeAndObserved");
@@ -100,7 +100,7 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation> implements 
 		QaObservation qaObservation = null;
 		try {
 			qaObservation = (QaObservation) HibernateUtil.getSession().get(QaObservation.class, idString);
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "readQaObservation");
 		}

@@ -95,7 +95,7 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType>
 			query.setString("identityType", patientIdentityType.getIdentityType().toUpperCase());
 
 			List<PatientIdentityType> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return list.size() > 0;
 
@@ -114,7 +114,7 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType>
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("identityType", name);
 			PatientIdentityType pit = (PatientIdentityType) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return pit;
 		} catch (HibernateException e) {
 			handleException(e, "getNamedIdentityType");

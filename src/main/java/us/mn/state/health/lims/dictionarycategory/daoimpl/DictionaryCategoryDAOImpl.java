@@ -397,7 +397,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory> i
 			query.setString("name", name);
 
 			List<DictionaryCategory> categoryList = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			if (categoryList.size() > 0) {
 				return categoryList.get(0);

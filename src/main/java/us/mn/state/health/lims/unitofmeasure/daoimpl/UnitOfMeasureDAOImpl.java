@@ -159,7 +159,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements 
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("id", Integer.parseInt(uomId));
 			UnitOfMeasure uom = (UnitOfMeasure) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return uom;
 		} catch (HibernateException e) {
 			handleException(e, "getUnitOfMeeasureById");
@@ -231,7 +231,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements 
 //			Query query = HibernateUtil.getSession().createQuery(sql);
 //			@SuppressWarnings("unchecked")
 //			List<TestSection> sections = query.list();
-//			closeSession();
+//			// closeSession(); // CSL remove old
 //			return sections;
 //		} catch (HibernateException e) {
 //			handleException(e, "getAllActiveTestSections");

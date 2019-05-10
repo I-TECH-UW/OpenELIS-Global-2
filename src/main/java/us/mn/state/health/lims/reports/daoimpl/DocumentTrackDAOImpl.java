@@ -47,7 +47,7 @@ public class DocumentTrackDAOImpl extends BaseDAOImpl<DocumentTrack> implements 
 			query.setInteger("tableId", Integer.parseInt(tableId));
 			query.setInteger("recordId", Integer.parseInt(recordId));
 			List<DocumentTrack> documents = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return documents;
 
 		} catch (HibernateException e) {
@@ -69,7 +69,7 @@ public class DocumentTrackDAOImpl extends BaseDAOImpl<DocumentTrack> implements 
 			query.setInteger("recordId", Integer.parseInt(recordId));
 			query.setString("name", name);
 			List<DocumentTrack> documents = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return documents;
 
 		} catch (HibernateException e) {

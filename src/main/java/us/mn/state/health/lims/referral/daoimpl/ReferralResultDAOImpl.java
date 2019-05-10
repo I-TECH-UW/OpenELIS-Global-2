@@ -51,7 +51,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult> implement
 			referralResult.setId(id);
 
 			auditDAO.saveNewHistory(referralResult, referralResult.getSysUserId(), "referral_result");
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "insertData");
 		}
@@ -65,7 +65,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult> implement
 			try {
 				ReferralResult referralResult = (ReferralResult) HibernateUtil.getSession().get(ReferralResult.class,
 						referralResultId);
-				closeSession();
+				// closeSession(); // CSL remove old
 				return referralResult;
 			} catch (HibernateException e) {
 				handleException(e, "getReferralResultById");
@@ -85,7 +85,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult> implement
 				query.setInteger("referralId", Integer.parseInt(referralId));
 				List<ReferralResult> resultList = query.list();
 
-				closeSession();
+				// closeSession(); // CSL remove old
 
 				return resultList;
 
@@ -102,7 +102,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult> implement
 			try {
 				ReferralResult referralResult = (ReferralResult) HibernateUtil.getSession().get(ReferralResult.class,
 						referralResultId);
-				closeSession();
+				// closeSession(); // CSL remove old
 				return referralResult;
 			} catch (HibernateException e) {
 				handleException(e, "readResult");
@@ -149,7 +149,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult> implement
 
 		try {
 			HibernateUtil.getSession().delete(oldData);
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "deleteData");
 		}
@@ -165,7 +165,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult> implement
 			query.setInteger("resultId", Integer.parseInt(resultId));
 			List<ReferralResult> referralResults = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return referralResults;
 		} catch (HibernateException e) {

@@ -228,7 +228,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("sId", Integer.parseInt(sample.getId()));
 			Provider provider = (Provider) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return provider;
 		} catch (HibernateException he) {

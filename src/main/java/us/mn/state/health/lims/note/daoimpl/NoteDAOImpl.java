@@ -169,7 +169,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 	public Note getData(String noteId) throws LIMSRuntimeException {
 		try {
 			Note note = (Note) HibernateUtil.getSession().get(Note.class, noteId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return note;
 		} catch (Exception e) {
 			handleException(e, "getData");
@@ -400,7 +400,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 
 			List<Note> noteList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return noteList;
 		} catch (HibernateException e) {
@@ -422,7 +422,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 
 			List<Note> noteList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return noteList;
 		} catch (HibernateException e) {
@@ -445,7 +445,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 
 			List<Note> noteList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return noteList;
 		} catch (HibernateException e) {
@@ -468,7 +468,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 
 			List<Note> noteList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return noteList;
 		} catch (HibernateException e) {

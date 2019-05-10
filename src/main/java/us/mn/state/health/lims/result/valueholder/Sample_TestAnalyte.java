@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package us.mn.state.health.lims.result.valueholder;
@@ -27,8 +27,9 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
  * @author benzd1 bugzilla 1992 - cleanup (for batchresultsverification: view
  *         all) - one instance of Sample_TestAnalyte per Analysis - one instance
  *         of Test_TestAnalyte per Sample_TestAnalyte
- * 
+ *
  */
+//TODO should this be a BaseObject?
 public class Sample_TestAnalyte extends BaseObject {
 
 	private List testAnalytes;
@@ -38,9 +39,12 @@ public class Sample_TestAnalyte extends BaseObject {
 	private List sampleTestResults;
 
 	private List resultLastupdatedList;
-	
-	// bugzilla 1942 this is a list of boolean flags on whether the result on this sample have notes attached
-	//this is used for readonly in batch results entry to determine whether a result is eligible to be deleted or not (if note attached - don't delete result)
+
+	// bugzilla 1942 this is a list of boolean flags on whether the result on this
+	// sample have notes attached
+	// this is used for readonly in batch results entry to determine whether a
+	// result is eligible to be deleted or not (if note attached - don't delete
+	// result)
 	private List resultHasNotesList;
 
 	private Sample sample;
@@ -61,17 +65,17 @@ public class Sample_TestAnalyte extends BaseObject {
 	private List testResultValues;
 
 	private List resultIds;
-	
-	//bugzilla 2227
+
+	// bugzilla 2227
 	private String sampleHasTestRevisions;
-	
-	//bugzilla 1856 (is this analysis parent of other analyses?)
+
+	// bugzilla 1856 (is this analysis parent of other analyses?)
 	private List children;
-	
-    //bugzilla 1856 this is used for sorting:
-    //parent tests are loaded into the list of tests to sort in order to 
-    //maintain the original sorting order
-    //phantom tests are removed before displaying/reporting
+
+	// bugzilla 1856 this is used for sorting:
+	// parent tests are loaded into the list of tests to sort in order to
+	// maintain the original sorting order
+	// phantom tests are removed before displaying/reporting
 	private boolean isPhantom;
 
 	public List getChildren() {

@@ -548,7 +548,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 			query.setInteger("testResultId", Integer.parseInt(testResult.getId()));
 			query.setString("flag", flag);
 			List<TestReflex> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (Exception e) {
 			handleException(e, "getFlaggedTestReflexesByTestResult");

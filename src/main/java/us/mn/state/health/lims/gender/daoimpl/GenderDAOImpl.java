@@ -238,7 +238,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender> implements GenderDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("type", type);
 			Gender gender = (Gender) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return gender;
 		} catch (HibernateException e) {
 			handleException(e, "getGenderByType");

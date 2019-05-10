@@ -50,7 +50,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("personId", Integer.parseInt(personId));
 			List<PersonAddress> addressPartList = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return addressPartList;
 		} catch (HibernateException e) {
 			handleException(e, "getAddressPartsByPersonId");
@@ -64,7 +64,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 		try {
 			String id = (String) HibernateUtil.getSession().save(personAddress);
 			auditDAO.saveNewHistory(personAddress, personAddress.getSysUserId(), "person_address");
-			closeSession();
+			// closeSession(); // CSL remove old
 			return id;
 		} catch (HibernateException e) {
 			handleException(e, "insert");
@@ -82,7 +82,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 					IActionConstants.AUDIT_TRAIL_UPDATE, "person_address");
 
 			HibernateUtil.getSession().merge(personAddress);
-			closeSession();
+			// closeSession(); // CSL remove old
 			// HibernateUtil.getSession().evict // CSL remove old(personAddress);
 			// HibernateUtil.getSession().refresh // CSL remove old(personAddress);
 		} catch (HibernateException e) {
@@ -95,7 +95,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 		try {
 			PersonAddress oldPersonAddress = (PersonAddress) HibernateUtil.getSession().get(PersonAddress.class,
 					personAddress.getCompoundId());
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return oldPersonAddress;
 		} catch (HibernateException e) {
@@ -114,7 +114,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 			query.setInteger("personId", Integer.parseInt(personId));
 			query.setInteger("partId", Integer.parseInt(addressPartId));
 			PersonAddress addressPart = (PersonAddress) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return addressPart;
 		} catch (HibernateException e) {
 			handleException(e, "getByPersonIdAndPartId");

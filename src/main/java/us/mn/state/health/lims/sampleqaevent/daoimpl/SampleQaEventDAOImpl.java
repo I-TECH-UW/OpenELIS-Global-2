@@ -149,7 +149,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements 
 	public SampleQaEvent getData(String sampleQaEventId) throws LIMSRuntimeException {
 		try {
 			SampleQaEvent data = (SampleQaEvent) HibernateUtil.getSession().get(SampleQaEvent.class, sampleQaEventId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return data;
 		} catch (Exception e) {
 			handleException(e, "getData");
@@ -224,7 +224,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements 
 			query.setInteger("sampleId", Integer.parseInt(sample.getId()));
 
 			sampleQaEvents = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return sampleQaEvents;
 		} catch (Exception e) {
@@ -276,7 +276,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements 
 			query.setDate("highDate", highDate);
 
 			sampleQaEvents = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "getSampleQaEventsByDate");
 		}
@@ -292,7 +292,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements 
 		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			List<SampleQaEvent> events = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return events;
 		} catch (HibernateException e) {
 			handleException(e, "getAllUncompleatedEvents");

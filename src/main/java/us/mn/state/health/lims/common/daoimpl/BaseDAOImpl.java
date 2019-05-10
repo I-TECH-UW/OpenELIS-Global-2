@@ -422,15 +422,17 @@ public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, I
 	}
 
 	// bugzilla 1427
+	@Deprecated
 	public String getTablePrefix(String table) {
 		return table.toLowerCase() + ".";
 	}
 
 	protected void handleException(Exception e, String method) throws LIMSRuntimeException {
-		LogEvent.logError(this.getClass().getSimpleName(), method, e.toString());
+		LogEvent.logErrorStack(this.getClass().getSimpleName(), method, e);
 		throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + method, e);
 	}
 
+	@Deprecated
 	protected void closeSession() {
 		// HibernateUtil.getSession().flush(); // CSL remove old
 		// HibernateUtil.getSession().clear(); // CSL remove old

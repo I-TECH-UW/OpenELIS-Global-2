@@ -278,7 +278,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel> imp
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("panelId", Integer.parseInt(panelId));
 			List<TypeOfSamplePanel> typeOfSamplePanels = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return typeOfSamplePanels;
 		} catch (HibernateException e) {
 			handleException(e, "getTypeOfSamplePanelsForPanel");

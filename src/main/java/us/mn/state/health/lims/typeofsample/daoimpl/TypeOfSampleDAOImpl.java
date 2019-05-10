@@ -340,7 +340,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 			query.setString("localAbbrev", localAbbrev);
 			query.setString("domain", domain);
 			TypeOfSample typeOfSample = (TypeOfSample) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return typeOfSample;
 		} catch (HibernateException he) {
 			handleException(he, "getTypeOfSampeByLocalAbbreviationAndDomain");
@@ -572,7 +572,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 	public TypeOfSample getTypeOfSampleById(String typeOfSampleId) throws LIMSRuntimeException {
 		try {
 			TypeOfSample tos = (TypeOfSample) HibernateUtil.getSession().get(TypeOfSample.class, typeOfSampleId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return tos;
 		} catch (Exception e) {
 			handleException(e, "getTypeOfSampleById");
@@ -590,7 +590,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 			query.setInteger("id", Integer.parseInt(test.getId()));
 
 			TypeOfSample tos = (TypeOfSample) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return tos;
 		} catch (Exception e) {
 			handleException(e, "getSampleTypeFromTest");

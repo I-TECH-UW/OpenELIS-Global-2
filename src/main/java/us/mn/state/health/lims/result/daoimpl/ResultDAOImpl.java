@@ -100,7 +100,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 		try {
 			HibernateUtil.getSession().delete(oldData);
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "deleteData");
 		}
@@ -353,7 +353,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		try {
 			Result result = (Result) HibernateUtil.getSession().get(Result.class, resultId);
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return result;
 		} catch (Exception e) {
@@ -398,7 +398,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 			List<Result> results = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			if (results.size() > 0) {
 				return results.get(0);
@@ -425,7 +425,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 			List<Result> results = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			if (results.size() > 0) {
 				return results.get(0);
@@ -452,7 +452,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 			List<Result> resultList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return resultList;
 
@@ -475,7 +475,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 			List<Result> resultList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 			return resultList;
 
 		} catch (HibernateException e) {
@@ -493,7 +493,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sample.getId()));
 			List<Result> results = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return results;
 
 		} catch (HibernateException e) {
@@ -511,7 +511,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("parentId", Integer.parseInt(resultId));
 			List<Result> results = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return results;
 		} catch (HibernateException e) {
 			handleException(e, "getChildResults");
@@ -534,7 +534,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 			List<Result> resultList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 			return resultList;
 
 		} catch (HibernateException e) {
@@ -557,7 +557,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 			List<Result> resultList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 			return resultList;
 
 		} catch (HibernateException e) {
@@ -580,7 +580,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 			List<Result> resultList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 			return resultList;
 
 		} catch (HibernateException e) {

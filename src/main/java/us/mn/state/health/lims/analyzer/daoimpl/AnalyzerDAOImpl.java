@@ -105,7 +105,7 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDA
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", name);
 			Analyzer analyzer = (Analyzer) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return analyzer;
 		} catch (HibernateException e) {
 			handleException(e, "getAnalyzerrByName");

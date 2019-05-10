@@ -402,7 +402,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			if ((list != null) && !list.isEmpty()) {
 				sample = list.get(0);
 			}
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (Exception e) {
 			throw new LIMSRuntimeException("Exception occurred in getSampleForAccessionNumber", e);
 		}
@@ -607,7 +607,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 
 			List<Sample> sampleList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return sampleList;
 		} catch (HibernateException e) {
@@ -634,7 +634,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 
 			List<Sample> sampleList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return sampleList;
 		} catch (HibernateException e) {
@@ -657,7 +657,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 
 			List<Sample> sampleList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return sampleList;
 		} catch (HibernateException e) {
@@ -730,7 +730,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("serviceId", Integer.parseInt(serviceId));
 			List<Sample> samples = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return samples;
 		} catch (HibernateException e) {
 			handleException(e, "getSamplesWithPendingQaEventsByService");
@@ -749,7 +749,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			query.setDate("highDate", receivedDateEnd);
 
 			List<Sample> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (HibernateException e) {
 			handleException(e, "getResultsInDateRange");
@@ -767,7 +767,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			query.setParameter("sampleitemId", sampleitemId);
 			List<Sample> sampleList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return sampleList;
 		} catch (HibernateException e) {
@@ -786,7 +786,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			query.setParameter("referringId", referringId);
 			Sample sample = (Sample) query.uniqueResult();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return sample;
 		} catch (HibernateException e) {

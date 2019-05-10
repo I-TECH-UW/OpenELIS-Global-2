@@ -470,7 +470,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			@SuppressWarnings("unchecked")
 			List<TestSection> sections = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return sections;
 		} catch (HibernateException e) {
 			handleException(e, "getAllActiveTestSections");
@@ -485,7 +485,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			List<TestSection> sections = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return sections;
 		} catch (HibernateException e) {
 			handleException(e, "getAllInActiveTestSections");
@@ -503,7 +503,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 
 			List<TestSection> list = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			if (!list.isEmpty()) {
 				return list.get(0);
@@ -520,7 +520,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 	public TestSection getTestSectionById(String testSectionId) {
 		try {
 			TestSection testSection = (TestSection) HibernateUtil.getSession().get(TestSection.class, testSectionId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return testSection;
 		} catch (HibernateException e) {
 			handleException(e, "getTestSectionById");

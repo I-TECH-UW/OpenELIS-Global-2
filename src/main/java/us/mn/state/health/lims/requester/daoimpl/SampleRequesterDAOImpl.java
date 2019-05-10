@@ -97,7 +97,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> impleme
 	@Override
 	public void delete(SampleRequester sampleRequester) throws LIMSRuntimeException {
 		HibernateUtil.getSession().delete(sampleRequester);
-		closeSession();
+		// closeSession(); // CSL remove old
 	}
 
 	@SuppressWarnings("unchecked")
@@ -110,7 +110,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> impleme
 			query.setLong("sampleId", Long.parseLong(sampleId));
 			List<SampleRequester> requester = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return requester;
 
@@ -127,7 +127,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> impleme
 			query.setLong("sampleId", sampleId);
 			query.setLong("requesterTypeId", requesterTypeId);
 			SampleRequester requester = (SampleRequester) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return requester;
 		} catch (HibernateException e) {
 			LogEvent.logError("SampleRequesterDAOImpl", "readOld()", e.toString());

@@ -72,7 +72,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory> i
 
 			observationList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 			return observationList;
 		} catch (Exception e) {
 			handleException(e, "getObservationHistoryByDictonaryValues");
@@ -93,7 +93,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory> i
 
 			List<ObservationHistory> observationList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return observationList;
 		} catch (HibernateException e) {
@@ -113,7 +113,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory> i
 
 			List<ObservationHistory> observationList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return observationList;
 		} catch (HibernateException e) {
@@ -134,7 +134,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory> i
 
 			List<ObservationHistory> ohList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return ohList;
 		} catch (HibernateException e) {
@@ -157,7 +157,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory> i
 
 			ObservationHistory oh = (ObservationHistory) query.setMaxResults(1).uniqueResult();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return oh;
 		} catch (HibernateException e) {
@@ -180,7 +180,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory> i
 
 			List<ObservationHistory> ohList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return ohList;
 		} catch (HibernateException e) {

@@ -186,7 +186,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 
 			PatientIdentity pi = (PatientIdentity) query.uniqueResult();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return pi;
 		} catch (HibernateException e) {

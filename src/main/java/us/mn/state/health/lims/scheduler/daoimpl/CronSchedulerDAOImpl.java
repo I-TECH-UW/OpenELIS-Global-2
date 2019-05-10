@@ -47,7 +47,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements 
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			@SuppressWarnings("unchecked")
 			List<CronScheduler> schedulers = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return schedulers;
 		} catch (HibernateException e) {
 			handleException(e, "getAllCronSchedules");
@@ -64,7 +64,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements 
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("jobName", jobName);
 			CronScheduler scheduler = (CronScheduler) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return scheduler;
 		} catch (HibernateException e) {
 			handleException(e, "getCronScheduleByJobName");
@@ -79,7 +79,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements 
 			String id = (String) HibernateUtil.getSession().save(cronSchedule);
 			cronSchedule.setId(id);
 			new AuditTrailDAOImpl().saveNewHistory(cronSchedule, cronSchedule.getSysUserId(), "QUARTZ_CRON_SCHEDULER");
-			closeSession();
+			// closeSession(); // CSL remove old
 			return id;
 		} catch (HibernateException e) {
 			handleException(e, "insert");
@@ -112,7 +112,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements 
 
 		try {
 			CronScheduler data = (CronScheduler) HibernateUtil.getSession().get(CronScheduler.class, idString);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return data;
 		} catch (HibernateException e) {
 			handleException(e, "readCronScheduler");
@@ -128,7 +128,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements 
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("id", Integer.parseInt(schedulerId));
 			CronScheduler scheduler = (CronScheduler) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return scheduler;
 		} catch (HibernateException e) {
 			handleException(e, "getCronScheduleById");

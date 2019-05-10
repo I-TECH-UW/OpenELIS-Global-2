@@ -377,7 +377,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet> implements Scriptle
 	public Scriptlet getScriptletById(String scriptletId) throws LIMSRuntimeException {
 		try {
 			Scriptlet scriptlet = (Scriptlet) HibernateUtil.getSession().get(Scriptlet.class, scriptletId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return scriptlet;
 		} catch (Exception e) {
 			handleException(e, "getScriptletById");

@@ -42,7 +42,7 @@ public class SiteInformationDomainDAOImpl extends BaseDAOImpl<SiteInformationDom
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", name);
 			SiteInformationDomain domain = (SiteInformationDomain) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return domain;
 		} catch (HibernateException e) {
 			handleException(e, "getByName");

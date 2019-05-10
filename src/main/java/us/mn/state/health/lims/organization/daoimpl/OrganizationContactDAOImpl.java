@@ -47,7 +47,7 @@ public class OrganizationContactDAOImpl extends BaseDAOImpl<OrganizationContact>
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("orgId", Integer.parseInt(orgId));
 			List<OrganizationContact> contactList = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return contactList;
 		} catch (HibernateException e) {
 			handleException(e, "getListForOrganizationId");
@@ -63,7 +63,7 @@ public class OrganizationContactDAOImpl extends BaseDAOImpl<OrganizationContact>
 			id = (String) HibernateUtil.getSession().save(contact);
 			contact.setId(id);
 			auditDAO.saveNewHistory(contact, contact.getSysUserId(), "organization_contact");
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "insert");
 		}

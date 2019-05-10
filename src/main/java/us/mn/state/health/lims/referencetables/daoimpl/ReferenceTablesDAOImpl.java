@@ -446,7 +446,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables> impleme
 
 			ReferenceTables table = (ReferenceTables) query.setMaxResults(1).uniqueResult();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return table;
 

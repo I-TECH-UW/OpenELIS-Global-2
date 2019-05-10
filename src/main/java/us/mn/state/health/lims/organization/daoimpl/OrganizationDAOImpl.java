@@ -574,7 +574,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 			query.setParameter("partialName", partialName + "%");
 			@SuppressWarnings("unchecked")
 			List<Organization> orgs = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return orgs;
 		} catch (Exception e) {
@@ -594,7 +594,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 				query.setInteger("organizationId", Integer.parseInt(organizationId));
 				Organization organization = (Organization) query.uniqueResult();
 
-				closeSession();
+				// closeSession(); // CSL remove old
 
 				return organization;
 
@@ -630,7 +630,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 			query.setInteger("parentId", Integer.parseInt(parentId));
 			List<Organization> orgs = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return orgs;
 		} catch (HibernateException e) {

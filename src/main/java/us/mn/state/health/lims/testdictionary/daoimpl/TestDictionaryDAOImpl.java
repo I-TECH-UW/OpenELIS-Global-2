@@ -40,7 +40,7 @@ public class TestDictionaryDAOImpl extends BaseDAOImpl<TestDictionary> implement
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(testId));
 			TestDictionary testDictionary = (TestDictionary) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return testDictionary;
 		} catch (HibernateException e) {
 			handleException(e, "getTestDictionaryForTestId");

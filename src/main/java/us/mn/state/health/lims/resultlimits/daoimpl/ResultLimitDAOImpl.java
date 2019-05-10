@@ -223,7 +223,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit> implements Resu
 			query.setInteger("test_id", Integer.parseInt(testId));
 
 			List<ResultLimit> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (Exception e) {
 			handleException(e, "getAllResultLimitsForTest");
@@ -236,7 +236,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit> implements Resu
 	public ResultLimit getResultLimitById(String resultLimitId) throws LIMSRuntimeException {
 		try {
 			ResultLimit resultLimit = (ResultLimit) HibernateUtil.getSession().get(ResultLimit.class, resultLimitId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return resultLimit;
 		} catch (Exception e) {
 			handleException(e, "getResultLimitById");

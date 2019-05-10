@@ -52,7 +52,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDA
 			referral.setId(id);
 
 			auditDAO.saveNewHistory(referral, referral.getSysUserId(), "referral");
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "insertData");
 		}
@@ -64,7 +64,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDA
 	public Referral getReferralById(String referralId) throws LIMSRuntimeException {
 		try {
 			Referral referral = (Referral) HibernateUtil.getSession().get(Referral.class, referralId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return referral;
 		} catch (HibernateException e) {
 			handleException(e, "getReferralById");
@@ -84,7 +84,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDA
 				Query query = HibernateUtil.getSession().createQuery(sql);
 				query.setInteger("analysisId", Integer.parseInt(analysisId));
 				List<Referral> referralList = query.list();
-				closeSession();
+				// closeSession(); // CSL remove old
 				return referralList.isEmpty() ? null : referralList.get(referralList.size() - 1);
 			} catch (HibernateException e) {
 				handleException(e, "getReferralByAnalysisId");
@@ -102,7 +102,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDA
 		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			List<Referral> referrals = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return referrals;
 		} catch (HibernateException e) {
 			handleException(e, "getAllUncanceledOpenReferrals");
@@ -113,7 +113,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDA
 	private Referral readResult(String referralId) {
 		try {
 			Referral referral = (Referral) HibernateUtil.getSession().get(Referral.class, referralId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return referral;
 		} catch (HibernateException e) {
 			handleException(e, "readResult");
@@ -155,7 +155,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDA
 				Query query = HibernateUtil.getSession().createQuery(sql);
 				query.setInteger("sampleId", Integer.parseInt(id));
 				List<Referral> referralList = query.list();
-				closeSession();
+				// closeSession(); // CSL remove old
 				return referralList;
 
 			} catch (HibernateException e) {
@@ -182,7 +182,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDA
 			query.setDate("lowDate", lowDate);
 			query.setDate("highDate", highDate);
 			List<Referral> referralList = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return referralList;
 		} catch (HibernateException e) {
 			handleException(e, "getAllReferralsByOrganization");

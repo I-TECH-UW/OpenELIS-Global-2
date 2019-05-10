@@ -41,7 +41,7 @@ public class QaObservationTypeDAOImpl extends BaseDAOImpl<QaObservationType> imp
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", typeName);
 			QaObservationType type = (QaObservationType) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return type;
 		} catch (HibernateException e) {
 			handleException(e, "getQaObservationTypeByName");

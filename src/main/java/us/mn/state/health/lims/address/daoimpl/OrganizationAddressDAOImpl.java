@@ -51,7 +51,7 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress>
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("organizationId", Integer.parseInt(organizationId));
 			List<OrganizationAddress> addressPartList = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return addressPartList;
 		} catch (HibernateException e) {
 			handleException(e, "getAddressPartsByOrganizationId");
@@ -65,7 +65,7 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress>
 		try {
 			String id = (String) HibernateUtil.getSession().save(organizationAddress);
 			auditDAO.saveNewHistory(organizationAddress, organizationAddress.getSysUserId(), "organization_address");
-			closeSession();
+			// closeSession(); // CSL remove old
 			return id;
 		} catch (HibernateException e) {
 			handleException(e, "insert");
@@ -83,7 +83,7 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress>
 					IActionConstants.AUDIT_TRAIL_UPDATE, "organization_address");
 
 			HibernateUtil.getSession().merge(organizationAddress);
-			closeSession();
+			// closeSession(); // CSL remove old
 			// HibernateUtil.getSession().evict // CSL remove old(organizationAddress);
 			// HibernateUtil.getSession().refresh // CSL remove old(organizationAddress);
 		} catch (HibernateException e) {
@@ -96,7 +96,7 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress>
 		try {
 			OrganizationAddress oldOrganizationAddress = (OrganizationAddress) HibernateUtil.getSession()
 					.get(OrganizationAddress.class, organizationAddress.getCompoundId());
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return oldOrganizationAddress;
 		} catch (HibernateException e) {

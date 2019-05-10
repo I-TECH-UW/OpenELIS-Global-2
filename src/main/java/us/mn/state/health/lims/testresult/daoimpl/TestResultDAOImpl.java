@@ -307,7 +307,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestRe
 
 				list = query.list();
 
-				closeSession();
+				// closeSession(); // CSL remove old
 
 				if (list != null && !list.isEmpty()) {
 					return list.get(0);
@@ -334,7 +334,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestRe
 
 			list = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 
 		} catch (Exception e) {

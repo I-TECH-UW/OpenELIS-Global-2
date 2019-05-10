@@ -42,7 +42,7 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl> impleme
 			list = query.list();
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			LogEvent.logError("SystemModuleUrlDAOImpl", "getByUrlPath()", e.toString());
@@ -63,7 +63,7 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl> impleme
 
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			e.printStackTrace();

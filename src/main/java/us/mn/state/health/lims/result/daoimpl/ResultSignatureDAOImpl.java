@@ -214,7 +214,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature> impleme
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameterList("resultIdList", resultIds);
 			List<ResultSignature> sigs = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return sigs;
 
 		} catch (HibernateException e) {

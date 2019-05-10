@@ -440,7 +440,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(testId));
 			List<PanelItem> panelItems = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return panelItems;
 
 		} catch (HibernateException e) {
@@ -460,7 +460,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 			query.setInteger("panelId", Integer.parseInt(panelId));
 			query.setParameterList("testList", testList);
 			List<PanelItem> items = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return items;
 		} catch (HibernateException e) {
 			handleException(e, "getPanelItemsFromPanelAndItemList");

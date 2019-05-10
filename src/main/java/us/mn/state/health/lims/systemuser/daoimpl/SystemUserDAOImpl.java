@@ -388,7 +388,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser> implements System
 	public SystemUser getUserById(String userId) throws LIMSRuntimeException {
 		try {
 			SystemUser sysUser = (SystemUser) HibernateUtil.getSession().get(SystemUser.class, userId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return sysUser;
 		} catch (Exception e) {
 			handleException(e, "getUserById");

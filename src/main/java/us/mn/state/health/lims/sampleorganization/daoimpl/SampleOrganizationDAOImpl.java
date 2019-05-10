@@ -206,7 +206,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization> i
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sample.getId()));
 			List<SampleOrganization> sampleOrg = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			// There was a bug that allowed the same sample id / organization id to be
 			// entered twice
 			return sampleOrg.isEmpty() ? null : sampleOrg.get(0);

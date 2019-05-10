@@ -162,7 +162,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem> implements Sample
 	public SampleItem getData(String sampleItemId) throws LIMSRuntimeException {
 		try {
 			SampleItem sampleItem = (SampleItem) HibernateUtil.getSession().get(SampleItem.class, sampleItemId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return sampleItem;
 		} catch (Exception e) {
 			handleException(e, "getData");
@@ -344,7 +344,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem> implements Sample
 			query.setParameterList("statusIds", includedStatusList);
 			@SuppressWarnings("unchecked")
 			List<SampleItem> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return list;
 

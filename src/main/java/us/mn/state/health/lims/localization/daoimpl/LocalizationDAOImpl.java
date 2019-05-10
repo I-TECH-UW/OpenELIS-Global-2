@@ -41,7 +41,7 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements Lo
 	public Localization getLocalizationById(String id) throws LIMSRuntimeException {
 		try {
 			Localization localization = (Localization) HibernateUtil.getSession().get(Localization.class, id);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return localization;
 		} catch (HibernateException e) {
 			handleException(e, "getLocalizationById");

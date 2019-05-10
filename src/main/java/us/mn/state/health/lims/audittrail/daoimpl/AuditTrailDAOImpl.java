@@ -1307,7 +1307,7 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 			query.setTimestamp("end", end);
 
 			List<History> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (Exception e) {
 			handleException(e, "getHistoryByRefTableIdAndDateRange");

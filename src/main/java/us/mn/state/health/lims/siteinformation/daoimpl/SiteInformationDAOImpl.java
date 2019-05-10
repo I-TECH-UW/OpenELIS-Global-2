@@ -215,7 +215,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation> impleme
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", siteName);
 			SiteInformation information = (SiteInformation) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return information;
 		} catch (HibernateException e) {
 			handleException(e, "getSiteInformationByName");
@@ -232,7 +232,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation> impleme
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("domainName", domainName);
 			Integer count = ((Long) query.uniqueResult()).intValue();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return count;
 		} catch (HibernateException e) {
 			handleException(e, "getSiteInformationForDomainName");
@@ -245,7 +245,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation> impleme
 
 		try {
 			SiteInformation info = (SiteInformation) HibernateUtil.getSession().get(SiteInformation.class, id);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return info;
 		} catch (HibernateException e) {
 			handleException(e, "getSiteInformationById");
@@ -261,7 +261,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation> impleme
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("domainName", domainName);
 			List<SiteInformation> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (HibernateException e) {
 			handleException(e, "getSiteInformationByDomainName");

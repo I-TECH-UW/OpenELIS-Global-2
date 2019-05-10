@@ -292,7 +292,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 		try {
 			RenameTestSection ts = (RenameTestSection) HibernateUtil.getSession().get(RenameTestSection.class,
 					testSectionId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return ts;
 		} catch (Exception e) {
 			handleException(e, "getTestSectionById");

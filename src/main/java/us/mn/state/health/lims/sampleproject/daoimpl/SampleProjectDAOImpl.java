@@ -216,7 +216,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 			query.setInteger("sampleId", Integer.parseInt(id));
 
 			sampleProjects = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 
 		} catch (Exception e) {
 			handleException(e, "getSampleProjectBySampleId");

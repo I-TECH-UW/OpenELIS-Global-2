@@ -243,7 +243,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements Sy
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", name);
 			SystemModule module = (SystemModule) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return module;
 		} catch (HibernateException he) {
 			handleException(he, "getSystemModuleByName");

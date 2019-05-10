@@ -143,7 +143,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 	public Patient getData(String patientId) throws LIMSRuntimeException {
 		try {
 			Patient pat = (Patient) HibernateUtil.getSession().get(Patient.class, patientId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			if (pat != null) {
 				updateDisplayValues(pat);
 			}
@@ -312,7 +312,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("nationalId", nationalId);
 			List<Patient> patients = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return patients;
 		} catch (Exception e) {
 			handleException(e, "getPatientsByNationalId");
@@ -373,7 +373,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 			query.setString("project", project);
 
 			List<String> subjectList = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return subjectList;
 		} catch (Exception e) {

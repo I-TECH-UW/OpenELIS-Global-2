@@ -41,7 +41,7 @@ public class ReportQueueTypeDAOImpl extends BaseDAOImpl<ReportQueueType> impleme
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", name);
 			ReportQueueType type = (ReportQueueType) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return type;
 		} catch (HibernateException e) {
 			handleException(e, "getReportQueueTypeByName");

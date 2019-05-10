@@ -247,7 +247,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			List<Test> list = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (Exception e) {
 			handleException(e, "getAllActiveOrderableTests()");
@@ -587,7 +587,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setParameter("testName", testName);
 
 			List<Test> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (HibernateException e) {
 			handleException(e, "getActiveTestByName");
@@ -608,7 +608,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 
 			list = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "getActiveTestById");
 		}
@@ -697,7 +697,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setInteger("id", Integer.parseInt(id));
 
 			List list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 
 		} catch (Exception e) {
@@ -1075,7 +1075,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			String hql = "from Test t where t.isActive='Y' ORDER BY " + columnName;
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(hql);
 			entities = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("TestDAOImpl", "getAllOrderBy()", e.toString());
 			throw new LIMSRuntimeException("Error in getAllOrderBy()", e);
@@ -1092,7 +1092,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setInteger("id", Integer.parseInt(testId));
 
 			Test test = (Test) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return test;
 		} catch (HibernateException e) {
 			handleException(e, "getTestById");
@@ -1109,7 +1109,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setString("description", description);
 
 			Test test = (Test) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return test;
 		} catch (HibernateException e) {
 			handleException(e, "getTestByDescription");
@@ -1126,7 +1126,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setString("guid", guid);
 
 			Test test = (Test) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return test;
 		} catch (HibernateException e) {
 			handleException(e, "getTestByGUID");
@@ -1143,7 +1143,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("loinc", loincCode);
 			List<Test> tests = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return tests;
 		} catch (HibernateException e) {
 			handleException(e, "getTestByLoincCode");
@@ -1160,7 +1160,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("loinc", loincCode);
 			List<Test> tests = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return tests;
 		} catch (HibernateException e) {
 			handleException(e, "getActiveTestByLoinc");

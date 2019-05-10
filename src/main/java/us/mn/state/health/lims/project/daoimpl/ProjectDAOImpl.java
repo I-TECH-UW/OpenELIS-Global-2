@@ -459,7 +459,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 			} catch (HibernateException e) {
 				handleException(e, "getProjectById");
 			} finally {
-				closeSession();
+				// closeSession(); // CSL remove old
 			}
 		}
 		return null;

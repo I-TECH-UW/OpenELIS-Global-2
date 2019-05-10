@@ -44,7 +44,7 @@ public class AddressPartDAOImpl extends BaseDAOImpl<AddressPart> implements Addr
 
 			List<AddressPart> addressPartList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return addressPartList;
 
@@ -62,7 +62,7 @@ public class AddressPartDAOImpl extends BaseDAOImpl<AddressPart> implements Addr
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", name);
 			AddressPart part = (AddressPart) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return part;
 		} catch (HibernateException he) {
 			handleException(he, "getAddressPartByName");
