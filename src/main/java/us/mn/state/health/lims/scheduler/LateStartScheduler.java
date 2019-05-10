@@ -2,15 +2,15 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
@@ -32,14 +32,21 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import spring.service.scheduler.CronSchedulerService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dataexchange.MalariaSurveilance.MalariaSurveilanceJob;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.AggregateReportJob;
-import us.mn.state.health.lims.scheduler.daoimpl.CronSchedulerDAOImpl;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
 
+@Component
 public class LateStartScheduler {
+
+	@Autowired
+	CronSchedulerService cronSchedulerService;
+
 	private static final String NEVER = "never";
 
 	private static Map<String, Class<? extends Job>> scheduleJobMap;
@@ -47,7 +54,7 @@ public class LateStartScheduler {
 	private Scheduler scheduler;
 
 	static {
-		scheduleJobMap = new HashMap<String, Class<? extends Job>>();
+		scheduleJobMap = new HashMap<>();
 		scheduleJobMap.put("sendSiteIndicators", AggregateReportJob.class);
 		scheduleJobMap.put("sendMalariaSurviellanceReport", MalariaSurveilanceJob.class);
 	}
@@ -57,6 +64,7 @@ public class LateStartScheduler {
 	}
 
 	public class Restarter extends Thread {
+		@Override
 		public void run() {
 			try {
 				scheduler = StdSchedulerFactory.getDefaultScheduler();
@@ -72,7 +80,8 @@ public class LateStartScheduler {
 		try {
 			scheduler = StdSchedulerFactory.getDefaultScheduler();
 
-			List<CronScheduler> schedulers = new CronSchedulerDAOImpl().getAllCronSchedules();
+			List<CronScheduler> schedulers = cronSchedulerService.getAll();
+			// new CronSchedulerDAOImpl().getAllCronSchedules();
 
 			for (CronScheduler schedule : schedulers) {
 				addOrRunSchedule(scheduler, schedule);
@@ -86,7 +95,8 @@ public class LateStartScheduler {
 		}
 	}
 
-	private void addOrRunSchedule(Scheduler scheduler, CronScheduler schedule) throws SchedulerException, ParseException {
+	private void addOrRunSchedule(Scheduler scheduler, CronScheduler schedule)
+			throws SchedulerException, ParseException {
 		int currentHour = DateUtil.getCurrentHour();
 		int currentMin = DateUtil.getCurrentMinute();
 
@@ -105,8 +115,8 @@ public class LateStartScheduler {
 
 		JobDetail job = newJob(targetJob).withIdentity(jobName + "Job", jobName).build();
 
-		Trigger trigger = newTrigger().withIdentity(jobName + "Trigger", jobName).withSchedule(cronSchedule(schedule.getCronStatement()))
-				.forJob(jobName + "Job", jobName).build();
+		Trigger trigger = newTrigger().withIdentity(jobName + "Trigger", jobName)
+				.withSchedule(cronSchedule(schedule.getCronStatement())).forJob(jobName + "Job", jobName).build();
 
 		scheduler.scheduleJob(job, trigger);
 
@@ -140,7 +150,7 @@ public class LateStartScheduler {
 		public void run() {
 			try {
 				// so everything doesn't happen at once
-				long delay = 2000L * (Long) Math.round(Math.random() * 10);
+				long delay = 2000L * Math.round(Math.random() * 10);
 				sleep(delay);
 				synchronized (scheduler) {
 					if (!scheduler.isShutdown()) {

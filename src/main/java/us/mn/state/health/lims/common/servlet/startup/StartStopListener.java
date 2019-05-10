@@ -3,18 +3,24 @@ package us.mn.state.health.lims.common.servlet.startup;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 import org.quartz.SchedulerException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import us.mn.state.health.lims.plugin.PluginLoader;
 import us.mn.state.health.lims.scheduler.IndependentThreadStarter;
 import us.mn.state.health.lims.scheduler.LateStartScheduler;
 
+@WebListener
 public final class StartStopListener implements ServletContextListener {
 
 	private ServletContext context = null;
-	private LateStartScheduler scheduler;
 	private IndependentThreadStarter threadStarter;
+
+	@Autowired
+	LateStartScheduler lateStartScheduler;
 
 	public StartStopListener() {
 
@@ -24,17 +30,22 @@ public final class StartStopListener implements ServletContextListener {
 	// has been removed and is no longer able to accept
 	// requests
 
+	@Override
 	public void contextDestroyed(ServletContextEvent event) {
 
-		this.context = null;
+		context = null;
 		if (threadStarter != null) {
 			threadStarter.stopThreads();
 		}
-
+		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 		try {
-			scheduler.shutdown();
-		} catch (SchedulerException e) {
-			e.printStackTrace();
+			lateStartScheduler.shutdown();
+		} catch (Exception e) {
+			if (e instanceof SchedulerException) {
+				e.printStackTrace();
+			}
+			// rethrow as a runtime exception
+			throw new IllegalStateException(e);
 		}
 
 		System.out.println("\nShutting down context\n");
@@ -43,11 +54,17 @@ public final class StartStopListener implements ServletContextListener {
 	// This method is invoked when the Web Application
 	// is ready to service requests
 
+	@Override
 	public void contextInitialized(ServletContextEvent event) {
-		this.context = event.getServletContext();
+		context = event.getServletContext();
 
-		scheduler = new LateStartScheduler();
-		scheduler.checkAndStartScheduler();
+		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+		try {
+			lateStartScheduler.checkAndStartScheduler();
+		} catch (Exception e) {
+			// rethrow as a runtime exception
+			throw new IllegalStateException(e);
+		}
 
 		System.out.println("Scheduler started");
 
