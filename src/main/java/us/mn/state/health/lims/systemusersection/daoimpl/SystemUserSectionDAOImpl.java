@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -37,6 +38,7 @@ import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
+@Component
 public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection> implements SystemUserSectionDAO {
 
 	public SystemUserSectionDAOImpl() {
@@ -71,8 +73,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection> imp
 				// bugzilla 2206
 				data = readSystemUserSection(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -99,8 +101,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection> imp
 			String tableName = "SYSTEM_USER_SECTION";
 			auditDAO.saveNewHistory(systemUserSection, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SystemUserSectionDAOImpl", "insertData()", e.toString());
@@ -142,10 +144,10 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection> imp
 
 		try {
 			HibernateUtil.getSession().merge(systemUserSection);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(systemUserSection);
-			HibernateUtil.getSession().refresh(systemUserSection);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(systemUserSection);
+			// HibernateUtil.getSession().refresh // CSL remove old(systemUserSection);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SystemUserSectionDAOImpl", "updateData()", e.toString());
@@ -158,8 +160,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection> imp
 		try {
 			SystemUserSection sysUserSection = (SystemUserSection) HibernateUtil.getSession()
 					.get(SystemUserSection.class, systemUserSection.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (sysUserSection != null) {
 				PropertyUtils.copyProperties(systemUserSection, sysUserSection);
 			} else {
@@ -179,8 +181,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection> imp
 			String sql = "from SystemUserSection";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SystemUserSectionDAOImpl", "getAllSystemModules()", e.toString());
@@ -198,8 +200,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection> imp
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("param", systemUserId);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SystemUserSectionDAOImpl", "getAllSystemUserSectionsBySystemUserId()", e.toString());
@@ -222,8 +224,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection> imp
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SystemUserSectionDAOImpl", "getPageOfSystemUserSections()", e.toString());
@@ -237,8 +239,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection> imp
 		SystemUserSection sysUserSection = null;
 		try {
 			sysUserSection = (SystemUserSection) HibernateUtil.getSession().get(SystemUserSection.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SystemUserSectionDAOImpl", "readSystemUserSection()", e.toString());
@@ -276,8 +278,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection> imp
 			String sql = "select sus.id from SystemUserSection sus order by sus.systemUser.id";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
@@ -303,8 +305,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection> imp
 			String sql = "select sus.id from SystemUserSection sus order by sus.systemUser.id";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
@@ -336,8 +338,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection> imp
 			query.setParameter("param3", systemUserSectionId);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;

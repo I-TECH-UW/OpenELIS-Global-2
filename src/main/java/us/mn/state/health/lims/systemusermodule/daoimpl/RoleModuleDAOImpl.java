@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -43,6 +44,7 @@ import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
 /**
  *
  */
+@Component
 public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements PermissionAgentModuleDAO {
 
 	public RoleModuleDAOImpl() {
@@ -75,8 +77,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 				RoleModule data = (RoleModule) roleModules.get(i);
 				data = readRoleModule(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			LogEvent.logError("RoleModuleDAOImpl", "deleteData()", e.toString());
@@ -102,8 +104,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 			String tableName = "SYSTEM_ROLE_MODULE";
 			auditDAO.saveNewHistory(permissionModule, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("RoleModuleDAOImpl", "insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in RoleModule insertData()", e);
@@ -142,10 +144,10 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 
 		try {
 			HibernateUtil.getSession().merge(roleModule);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(roleModule);
-			HibernateUtil.getSession().refresh(roleModule);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(roleModule);
+			// HibernateUtil.getSession().refresh // CSL remove old(roleModule);
 		} catch (Exception e) {
 			LogEvent.logError("RoleModuleDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in RoleModule updateData()", e);
@@ -157,8 +159,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 		try {
 			RoleModule sysUserModule = (RoleModule) HibernateUtil.getSession().get(RoleModule.class,
 					systemUserModule.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (sysUserModule != null) {
 				PropertyUtils.copyProperties(systemUserModule, sysUserModule);
 			} else {
@@ -177,8 +179,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 			String sql = "from RoleModule";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("RoleModuleDAOImpl", "getAllSystemModules()", e.toString());
 			throw new LIMSRuntimeException("Error in RoleModule getAllSystemModules()", e);
@@ -195,8 +197,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("param", systemUserId);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("RoleModuleDAOImpl", "getAllRoleModulesBySystemUserId()", e.toString());
 			throw new LIMSRuntimeException("Error in RoleModule getAllRoleModulesBySystemUserId()", e);
@@ -218,8 +220,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("RoleModuleDAOImpl", "getPageOfRoleModules()", e.toString());
 			throw new LIMSRuntimeException("Error in RoleModule getPageOfRoleModules()", e);
@@ -232,8 +234,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 		RoleModule sysUserModule;
 		try {
 			sysUserModule = (RoleModule) HibernateUtil.getSession().get(RoleModule.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("RoleModuleDAOImpl", "readRoleModule()", e.toString());
 			throw new LIMSRuntimeException("Error in Gender readRoleModule(idString)", e);
@@ -250,7 +252,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 			query.setInteger("moduleId", Integer.parseInt(moduleId));
 			query.setInteger("roleId", Integer.parseInt(roleId));
 			List<RoleModule> modules = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return modules.isEmpty() ? new RoleModule() : modules.get(0);
 		} catch (HibernateException he) {
 			handleException(he, "getRoleModuleByRoleAndModuleId");
@@ -287,8 +289,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 			String sql = "select rm.id from RoleModule rm order by rm.role.id";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
@@ -313,8 +315,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 			String sql = "select rm.id from RoleModule rm order by rm.role.id";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
@@ -345,8 +347,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 			query.setInteger("param3", Integer.parseInt(systemUserModuleId));
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return list.size() > 0;
 

@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -37,6 +38,7 @@ import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
+@Component
 public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements SystemModuleDAO {
 
 	public SystemModuleDAOImpl() {
@@ -69,8 +71,8 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements Sy
 				SystemModule data = (SystemModule) systemModules.get(i);
 				data = readSystemModule(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			LogEvent.logError("SystemModuleDAOImpl", "deleteData()", e.toString());
@@ -96,8 +98,8 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements Sy
 			String tableName = "SYSTEM_MODULE";
 			auditDAO.saveNewHistory(systemModule, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SystemModuleDAOImpl", "insertData()", e.toString());
@@ -133,10 +135,10 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements Sy
 
 		try {
 			HibernateUtil.getSession().merge(systemModule);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(systemModule);
-			HibernateUtil.getSession().refresh(systemModule);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(systemModule);
+			// HibernateUtil.getSession().refresh // CSL remove old(systemModule);
 		} catch (Exception e) {
 			LogEvent.logError("SystemModuleDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in SystemModule updateData()", e);
@@ -148,8 +150,8 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements Sy
 		try {
 			SystemModule sysModule = (SystemModule) HibernateUtil.getSession().get(SystemModule.class,
 					systemModule.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (sysModule != null) {
 				PropertyUtils.copyProperties(systemModule, sysModule);
 			} else {
@@ -169,8 +171,8 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements Sy
 			String sql = "from SystemModule";
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("SystemModuleDAOImpl", "getAllSystemModules()", e.toString());
 			throw new LIMSRuntimeException("Error in SystemModule getAllSystemModules()", e);
@@ -192,8 +194,8 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements Sy
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("SystemModuleDAOImpl", "getPageOfSystemModules()", e.toString());
 			throw new LIMSRuntimeException("Error in SystemModule getPageOfSystemModules()", e);
@@ -206,8 +208,8 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements Sy
 		SystemModule sysModule;
 		try {
 			sysModule = (SystemModule) HibernateUtil.getSession().get(SystemModule.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("SystemModuleDAOImpl", "readSystemModule()", e.toString());
 			throw new LIMSRuntimeException("Error in SystemModule readSystemModule(idString)", e);
@@ -241,7 +243,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements Sy
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", name);
 			SystemModule module = (SystemModule) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return module;
 		} catch (HibernateException he) {
 			handleException(he, "getSystemModuleByName");
@@ -260,8 +262,8 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements Sy
 			String sql = "select sm.id from SystemModule sm order by sm.systemModuleName";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
@@ -286,8 +288,8 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements Sy
 			String sql = "select sm.id from SystemModule sm order by sm.systemModuleName";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
@@ -317,8 +319,8 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements Sy
 			query.setInteger("moduleId", Integer.parseInt(systemModuleId));
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return list.size() > 0;
 		} catch (Exception e) {

@@ -1,8 +1,9 @@
-package us.mn.state.health.lims.observationhistorytype.daoImpl;
+package us.mn.state.health.lims.observationhistorytype.daoimpl;
 
 import java.util.List;
 
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -10,7 +11,8 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.observationhistorytype.dao.ObservationHistoryTypeDAO;
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
-
+ 
+@Component
 public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistoryType>
 		implements ObservationHistoryTypeDAO {
 
@@ -28,8 +30,8 @@ public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistor
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", name);
 			historyTypeList = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return historyTypeList.size() > 0 ? historyTypeList.get(0) : null;
 

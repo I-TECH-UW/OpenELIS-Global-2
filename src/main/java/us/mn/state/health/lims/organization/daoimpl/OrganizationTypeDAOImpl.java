@@ -20,6 +20,7 @@ package us.mn.state.health.lims.organization.daoimpl;
 import java.util.List;
 
 import org.hibernate.Session;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -29,6 +30,7 @@ import us.mn.state.health.lims.organization.dao.OrganizationTypeDAO;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.organization.valueholder.OrganizationType;
 
+@Component
 public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType> implements OrganizationTypeDAO {
 
 	public OrganizationTypeDAOImpl() {
@@ -43,8 +45,8 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType> imple
 			String sql = "from OrganizationType";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("OrganizationTypeDAOImpl", "getAllOrganizationTypess()", e.toString());
 			throw new LIMSRuntimeException("Error in Organization getAllOrganizationTypes()", e);
@@ -64,8 +66,8 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType> imple
 
 			@SuppressWarnings("unchecked")
 			List<OrganizationType> list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return list.size() > 0 ? list.get(0) : null;
 

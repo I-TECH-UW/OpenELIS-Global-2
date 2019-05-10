@@ -14,6 +14,7 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -27,6 +28,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.patienttype.dao.PatientTypeDAO;
 import us.mn.state.health.lims.patienttype.valueholder.PatientType;
 
+@Component
 public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType> implements PatientTypeDAO {
 
 	public PatientTypeDAOImpl() {
@@ -61,8 +63,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType> implements Pati
 			for (int i = 0; i < patientTypes.size(); i++) {
 				PatientType data = (PatientType) patientTypes.get(i);
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -84,8 +86,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType> implements Pati
 			String sysUserId = patientType.getSysUserId();
 			String tableName = "PATIENT_TYPE";
 			auditDAO.saveNewHistory(patientType, sysUserId, tableName);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in patientType insertData()", e);
@@ -123,10 +125,10 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType> implements Pati
 
 		try {
 			HibernateUtil.getSession().merge(patientTypes);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(patientTypes);
-			HibernateUtil.getSession().refresh(patientTypes);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(patientTypes);
+			// HibernateUtil.getSession().refresh // CSL remove old(patientTypes);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in PatientType updateData()", e);
@@ -137,8 +139,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType> implements Pati
 	public void getData(PatientType patientType) throws LIMSRuntimeException {
 		try {
 			PatientType cityvns = (PatientType) HibernateUtil.getSession().get(PatientType.class, patientType.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (cityvns != null) {
 				PropertyUtils.copyProperties(patientType, cityvns);
 			} else {
@@ -159,8 +161,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType> implements Pati
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in patientType getAllPatientTypes()", e);
@@ -182,8 +184,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType> implements Pati
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in getPageOfPatientType()", e);
@@ -196,8 +198,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType> implements Pati
 		PatientType patientType = null;
 		try {
 			patientType = (PatientType) HibernateUtil.getSession().get(PatientType.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in PatientType readPatientType()", e);
@@ -216,8 +218,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType> implements Pati
 			query.setParameter("param", description + "%");
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in patientType getPatientTypes(String filter)", e);
@@ -247,8 +249,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType> implements Pati
 			query.setParameter("param", patientType.getType());
 
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			PatientType patientTypes = null;
 			if (list.size() > 0) {
 				patientTypes = (PatientType) list.get(0);
@@ -278,8 +280,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType> implements Pati
 			String sql = "select d.id from PatientType d" + " order by d.type";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
@@ -303,8 +305,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType> implements Pati
 			String sql = "select g.id from PatientType g order by g.type desc";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
@@ -336,8 +338,8 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType> implements Pati
 			query.setParameter("param2", type);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;

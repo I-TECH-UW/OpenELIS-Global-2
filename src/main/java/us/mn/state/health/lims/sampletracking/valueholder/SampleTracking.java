@@ -195,4 +195,14 @@ public class SampleTracking extends BaseObject implements Serializable {
 	public void setDateofBirth(String dateofBirth) {
 		this.dateofBirth = dateofBirth;
 	}
+
+	@Override
+	public String getId() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setId(String id) {
+		throw new UnsupportedOperationException();
+	}
 }

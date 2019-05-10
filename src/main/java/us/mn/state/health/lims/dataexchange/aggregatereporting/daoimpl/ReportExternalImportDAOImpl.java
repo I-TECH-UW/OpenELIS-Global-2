@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -31,6 +32,7 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportExterna
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalImport;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
+@Component
 public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImport> implements ReportExternalImportDAO {
 
 	public ReportExternalImportDAOImpl() {
@@ -50,7 +52,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 
 			List<ReportExternalImport> reports = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return reports;
 		} catch (HibernateException e) {
@@ -66,7 +68,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 			String id = (String) HibernateUtil.getSession().save(report);
 			report.setId(id);
 			new AuditTrailDAOImpl().saveNewHistory(report, report.getSysUserId(), "REPORT_EXTERNAL_IMPORT");
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "insertReportExternalImport");
 		}
@@ -83,10 +85,10 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 					"REPORT_EXTERNAL_IMPORT");
 
 			HibernateUtil.getSession().merge(report);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(report);
-			HibernateUtil.getSession().refresh(report);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(report);
+			// HibernateUtil.getSession().refresh // CSL remove old(report);
 		} catch (Exception e) {
 			handleException(e, "updateReportExternalImport");
 		}
@@ -97,7 +99,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 		try {
 			ReportExternalImport data = (ReportExternalImport) HibernateUtil.getSession()
 					.get(ReportExternalImport.class, idString);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return data;
 		} catch (HibernateException e) {
 			handleException(e, "readReportExternalImport");
@@ -112,7 +114,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 		try {
 			Query query = HibernateUtil.getSession().createSQLQuery(sql);
 			List<String> sites = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return sites;
 		} catch (HibernateException e) {
 			handleException(e, "getUniqueSites");
@@ -135,7 +137,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 
 			List<ReportExternalImport> reports = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return reports;
 		} catch (HibernateException e) {
@@ -159,7 +161,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 
 			List<ReportExternalImport> reports = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return reports.isEmpty() ? new ReportExternalImport() : reports.get(0);
 

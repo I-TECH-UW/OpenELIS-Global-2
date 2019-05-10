@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
@@ -43,6 +44,7 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
 /**
  * @author diane benz
  */
+@Component
 public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 	public ResultDAOImpl() {
@@ -74,8 +76,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 				Result data = (Result) result;
 				data = readResult(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 
@@ -98,7 +100,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 		try {
 			HibernateUtil.getSession().delete(oldData);
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "deleteData");
 		}
@@ -117,8 +119,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 			String tableName = "RESULT";
 			auditDAO.saveNewHistory(result, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 
@@ -148,10 +150,10 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 		try {
 			HibernateUtil.getSession().merge(result);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(result);
-			HibernateUtil.getSession().refresh(result);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(result);
+			// HibernateUtil.getSession().refresh // CSL remove old(result);
 		} catch (Exception e) {
 
 			LogEvent.logError("ResultDAOImpl", "updateData()", e.toString());
@@ -163,8 +165,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 	public void getData(Result result) throws LIMSRuntimeException {
 		try {
 			Result re = (Result) HibernateUtil.getSession().get(Result.class, result.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (re != null) {
 				PropertyUtils.copyProperties(result, re);
 			} else {
@@ -190,8 +192,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 			query.setInteger("analyteId", Integer.parseInt(analyte.getId()));
 
 			results = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			Result thisResult;
 			if (results != null && results.size() > 0) {
@@ -222,8 +224,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 			query.setInteger("analysisId", Integer.parseInt(analysis.getId()));
 
 			List<Result> results = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return results;
 
@@ -249,8 +251,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 			query.setInteger("testResultId", Integer.parseInt(testResult.getId()));
 
 			results = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			Result thisResult;
 			if (results != null && results.size() > 0) {
@@ -278,8 +280,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 			String sql = "from Result";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			results = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("ResultDAOImpl", "getAllResults()", e.toString());
@@ -302,8 +304,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 			query.setMaxResults(endingRecNo - 1);
 
 			results = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("ResultDAOImpl", "getPageOfResults()", e.toString());
@@ -317,8 +319,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		Result data;
 		try {
 			data = (Result) HibernateUtil.getSession().get(Result.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("ResultDAOImpl", "readResult()", e.toString());
@@ -351,7 +353,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		try {
 			Result result = (Result) HibernateUtil.getSession().get(Result.class, resultId);
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return result;
 		} catch (Exception e) {
@@ -371,8 +373,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 			query.setParameter("param1", analysis);
 
 			List<Result> results = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return results;
 
@@ -396,7 +398,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 			List<Result> results = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			if (results.size() > 0) {
 				return results.get(0);
@@ -423,7 +425,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 			List<Result> results = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			if (results.size() > 0) {
 				return results.get(0);
@@ -450,7 +452,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 			List<Result> resultList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return resultList;
 
@@ -473,7 +475,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 			List<Result> resultList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 			return resultList;
 
 		} catch (HibernateException e) {
@@ -491,7 +493,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sample.getId()));
 			List<Result> results = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return results;
 
 		} catch (HibernateException e) {
@@ -509,7 +511,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("parentId", Integer.parseInt(resultId));
 			List<Result> results = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return results;
 		} catch (HibernateException e) {
 			handleException(e, "getChildResults");
@@ -532,7 +534,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 			List<Result> resultList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 			return resultList;
 
 		} catch (HibernateException e) {
@@ -555,7 +557,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 			List<Result> resultList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 			return resultList;
 
 		} catch (HibernateException e) {
@@ -578,7 +580,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 			List<Result> resultList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 			return resultList;
 
 		} catch (HibernateException e) {

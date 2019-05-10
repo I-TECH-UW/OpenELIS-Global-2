@@ -31,7 +31,6 @@ public interface CronSchedulerDAO extends BaseDAO<CronScheduler> {
 	@Override
 	public String insert(CronScheduler cronScheduler) throws LIMSRuntimeException;
 
-	@Override
 	public Optional<CronScheduler> update(CronScheduler cronScheduler) throws LIMSRuntimeException;
 
 	public CronScheduler getCronScheduleById(String schedulerId) throws LIMSRuntimeException;

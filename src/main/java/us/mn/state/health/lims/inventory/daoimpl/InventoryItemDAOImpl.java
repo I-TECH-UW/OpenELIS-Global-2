@@ -18,6 +18,7 @@ package us.mn.state.health.lims.inventory.daoimpl;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -29,6 +30,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.inventory.dao.InventoryItemDAO;
 import us.mn.state.health.lims.inventory.valueholder.InventoryItem;
 
+@Component
 public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem> implements InventoryItemDAO {
 
 	public InventoryItemDAOImpl() {
@@ -43,8 +45,8 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem> implements 
 			String sql = "from InventoryItem";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			inventoryItems = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("InventoryItemDAOImpl", "getAllInventoryItems()", e.toString());
 			throw new LIMSRuntimeException("Error in InventoryItem getAllInventoryItems()", e);
@@ -72,8 +74,8 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem> implements 
 
 				data = readInventoryItem(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			LogEvent.logError("InventoryItemDAOImpl", "deleteData()", e.toString());
@@ -92,8 +94,8 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem> implements 
 			String tableName = "INVENTORY_ITEM";
 			auditDAO.saveNewHistory(inventoryItem, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("InventoryItemDAOImpl", "insertData()", e.toString());
@@ -117,10 +119,10 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem> implements 
 			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 
 			HibernateUtil.getSession().merge(inventoryItem);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(inventoryItem);
-			HibernateUtil.getSession().refresh(inventoryItem);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(inventoryItem);
+			// HibernateUtil.getSession().refresh // CSL remove old(inventoryItem);
 		} catch (Exception e) {
 			LogEvent.logError("InventoryItemDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in InventoryItem updateData()", e);
@@ -132,8 +134,8 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem> implements 
 		try {
 			InventoryItem tmpInventoryItem = (InventoryItem) HibernateUtil.getSession().get(InventoryItem.class,
 					inventoryItem.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (tmpInventoryItem != null) {
 				PropertyUtils.copyProperties(inventoryItem, tmpInventoryItem);
 			} else {
@@ -150,8 +152,8 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem> implements 
 		InventoryItem data = null;
 		try {
 			data = (InventoryItem) HibernateUtil.getSession().get(InventoryItem.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("InventoryItemDAOImpl", "readInventoryItem()", e.toString());
 			throw new LIMSRuntimeException("Error in InventoryItem readInventoryItem()", e);
@@ -165,8 +167,8 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem> implements 
 		try {
 			InventoryItem re = (InventoryItem) HibernateUtil.getSession().get(InventoryItem.class,
 					inventoryItem.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return re;
 		} catch (Exception e) {
 			LogEvent.logError("InventoryItemDAOImpl", "getInventoryItemById()", e.toString());

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -13,6 +14,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.systemmodule.dao.SystemModuleUrlDAO;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModuleUrl;
 
+@Component
 public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl> implements SystemModuleUrlDAO {
 
 	public SystemModuleUrlDAOImpl() {
@@ -38,9 +40,9 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl> impleme
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("urlPath", urlPath);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			closeSession();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// closeSession(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			LogEvent.logError("SystemModuleUrlDAOImpl", "getByUrlPath()", e.toString());
@@ -59,9 +61,9 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl> impleme
 			String id = (String) HibernateUtil.getSession().save(systemModuleUrl);
 			systemModuleUrl.setId(id);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			closeSession();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// closeSession(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			e.printStackTrace();

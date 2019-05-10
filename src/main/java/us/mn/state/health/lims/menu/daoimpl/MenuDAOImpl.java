@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -28,6 +29,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.menu.dao.MenuDAO;
 import us.mn.state.health.lims.menu.valueholder.Menu;
 
+@Component
 public class MenuDAOImpl extends BaseDAOImpl<Menu> implements MenuDAO {
 
 	public MenuDAOImpl() {
@@ -42,8 +44,8 @@ public class MenuDAOImpl extends BaseDAOImpl<Menu> implements MenuDAO {
 			String sql = "from Menu";
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			List<Menu> menus = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return menus;
 		} catch (HibernateException e) {
@@ -60,8 +62,8 @@ public class MenuDAOImpl extends BaseDAOImpl<Menu> implements MenuDAO {
 			String sql = "from Menu m where m.isActive = true";
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			List<Menu> menus = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return menus;
 		} catch (HibernateException e) {
@@ -77,8 +79,8 @@ public class MenuDAOImpl extends BaseDAOImpl<Menu> implements MenuDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("elementId", elementId);
 			Menu menu = (Menu) query.uniqueResult();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return menu;
 		} catch (HibernateException e) {
 			LogEvent.logError("MenuDAOImpl", "getMenuByElementId()", e.toString());
@@ -91,10 +93,10 @@ public class MenuDAOImpl extends BaseDAOImpl<Menu> implements MenuDAO {
 	public void updateData(Menu menu) throws LIMSRuntimeException {
 		try {
 			HibernateUtil.getSession().merge(menu);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(menu);
-			HibernateUtil.getSession().refresh(menu);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(menu);
+			// HibernateUtil.getSession().refresh // CSL remove old(menu);
 		} catch (Exception e) {
 
 			LogEvent.logError("Menu.DAOImpl", "updateData()", e.toString());

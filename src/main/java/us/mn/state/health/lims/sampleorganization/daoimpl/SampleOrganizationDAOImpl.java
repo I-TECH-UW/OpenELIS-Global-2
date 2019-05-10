@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -39,6 +40,7 @@ import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization
  * @date created 08/04/2006
  * @version $Revision$
  */
+@Component
 public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization> implements SampleOrganizationDAO {
 
 	public SampleOrganizationDAOImpl() {
@@ -73,8 +75,8 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization> i
 				// bugzilla 2206
 				data = readSampleOrganization(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -96,8 +98,8 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization> i
 			String tableName = "SAMPLE_ORGANIZATION";
 			auditDAO.saveNewHistory(sampleOrg, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -129,10 +131,10 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization> i
 
 		try {
 			HibernateUtil.getSession().merge(sampleOrg);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(sampleOrg);
-			HibernateUtil.getSession().refresh(sampleOrg);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(sampleOrg);
+			// HibernateUtil.getSession().refresh // CSL remove old(sampleOrg);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SampleOrganizationDAOImpl", "updateData()", e.toString());
@@ -145,8 +147,8 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization> i
 		try {
 			SampleOrganization data = (SampleOrganization) HibernateUtil.getSession().get(SampleOrganization.class,
 					sampleOrg.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (data != null) {
 				PropertyUtils.copyProperties(sampleOrg, data);
 			} else {
@@ -163,8 +165,8 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization> i
 		SampleOrganization so = null;
 		try {
 			so = (SampleOrganization) HibernateUtil.getSession().get(SampleOrganization.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SampleOrganizationDAOImpl", "readSampleOrganization()", e.toString());
@@ -182,8 +184,8 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization> i
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("param", Integer.valueOf(sampleOrganization.getSample().getId()));
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			SampleOrganization so = null;
 			if (list.size() > 0) {
 				so = (SampleOrganization) list.get(0);
@@ -204,7 +206,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization> i
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sample.getId()));
 			List<SampleOrganization> sampleOrg = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			// There was a bug that allowed the same sample id / organization id to be
 			// entered twice
 			return sampleOrg.isEmpty() ? null : sampleOrg.get(0);

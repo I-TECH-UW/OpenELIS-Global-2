@@ -24,6 +24,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -36,6 +37,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.role.dao.RoleDAO;
 import us.mn.state.health.lims.role.valueholder.Role;
 
+@Component
 public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 
 	public RoleDAOImpl() {
@@ -67,8 +69,8 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 			for (Role data : roles) {
 				data = readRole(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			LogEvent.logError("RolesDAOImpl", "deleteData()", e.toString());
@@ -88,8 +90,8 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 			String tableName = "SYSTEM_ROLE";
 			auditDAO.saveNewHistory(role, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("RoleDAOImpl", "insertData()", e.toString());
@@ -118,10 +120,10 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 
 		try {
 			HibernateUtil.getSession().merge(role);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(role);
-			HibernateUtil.getSession().refresh(role);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(role);
+			// HibernateUtil.getSession().refresh // CSL remove old(role);
 		} catch (Exception e) {
 			LogEvent.logError("RolesDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in Role updateData()", e);
@@ -132,8 +134,8 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 	public void getData(Role role) throws LIMSRuntimeException {
 		try {
 			Role tmpRole = (Role) HibernateUtil.getSession().get(Role.class, role.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (tmpRole != null) {
 				PropertyUtils.copyProperties(role, tmpRole);
 			} else {
@@ -153,7 +155,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 			String sql = "from Role";
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "getAllRoles");
 		}
@@ -169,7 +171,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 			String sql = "from Role r where r.active = true";
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "getAllActiveRoles");
 		}
@@ -191,8 +193,8 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("RolesDAOImpl", "getPageOfRoles()", e.toString());
 			throw new LIMSRuntimeException("Error in Role getPageOfRoles()", e);
@@ -205,8 +207,8 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 		Role recoveredRole = null;
 		try {
 			recoveredRole = (Role) HibernateUtil.getSession().get(Role.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("RoleDAOImpl", "readRole()", e.toString());
 			throw new LIMSRuntimeException("Error in Role readRole()", e);
@@ -241,8 +243,8 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 			query.setInteger("parent", Integer.parseInt(role.getId()));
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("RolesDAOImpl", "getReferencingRoles()", e.toString());
 			throw new LIMSRuntimeException("Error in Role getReferencingRoles()", e);
@@ -259,7 +261,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", name);
 			Role role = (Role) query.setMaxResults(1).uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return role;
 		} catch (HibernateException e) {
 			handleException(e, "getRoleByName");
@@ -275,7 +277,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("id", Integer.parseInt(roleId));
 			Role role = (Role) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return role;
 		} catch (HibernateException e) {
 			handleException(e, "getRoleById");

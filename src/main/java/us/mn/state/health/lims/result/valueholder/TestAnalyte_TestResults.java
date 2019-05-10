@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package us.mn.state.health.lims.result.valueholder;
@@ -20,6 +20,7 @@ import java.util.List;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
 
+//TODO should this be a BaseObject?
 public class TestAnalyte_TestResults extends BaseObject {
 
 	private TestAnalyte testAnalyte;
@@ -27,23 +28,24 @@ public class TestAnalyte_TestResults extends BaseObject {
 	private List testResults;
 
 	private String selectedTestResultId;
-	
+
 	private String resultId;
-	
+
 	private List resultNotes;
-	
+
 	private List testResultReflexTests;
-	//AIS - bugzilla 1797
+	// AIS - bugzilla 1797
 	private String resultValue;
-	
-	//bugzilla 1798 if this analysis has a parent - distinguish between 
-	//   it being a reflexed test and a linked test (child test/parent test)
+
+	// bugzilla 1798 if this analysis has a parent - distinguish between
+	// it being a reflexed test and a linked test (child test/parent test)
 	private String childType;
-	
-	//bugzilla 1798 can this analysis be linked as a child? (show LINK button? does popup have options?)
+
+	// bugzilla 1798 can this analysis be linked as a child? (show LINK button? does
+	// popup have options?)
 	private String canBeLinked;
-	
-	//bugzilla 2532/2627
+
+	// bugzilla 2532/2627
 	private String canBeUnlinked;
 
 	public String getCanBeUnlinked() {
@@ -69,23 +71,25 @@ public class TestAnalyte_TestResults extends BaseObject {
 	public void setChildType(String childType) {
 		this.childType = childType;
 	}
-	
+
 	public String getResultValue() {
 		return resultValue;
 	}
-	
+
 	public void setResultValue(String resultValue) {
 		this.resultValue = resultValue;
 	}
-	
-	//AIS - bugzilla 1872 
+
+	// AIS - bugzilla 1872
 	private String resultIsReportable;
+
 	public String getResultIsReportable() {
 		return resultIsReportable;
-	}	
+	}
+
 	public void setResultIsReportable(String resultIsReportable) {
 		this.resultIsReportable = resultIsReportable;
-	}	
+	}
 
 	public TestAnalyte_TestResults() {
 		super();

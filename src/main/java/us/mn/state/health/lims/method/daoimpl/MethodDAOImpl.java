@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -38,6 +39,7 @@ import us.mn.state.health.lims.method.valueholder.Method;
 /**
  * @author diane benz
  */
+@Component
 public class MethodDAOImpl extends BaseDAOImpl<Method> implements MethodDAO {
 
 	public MethodDAOImpl() {
@@ -74,10 +76,10 @@ public class MethodDAOImpl extends BaseDAOImpl<Method> implements MethodDAO {
 				// Make the change to the object.
 				cloneData.setIsActive(IActionConstants.NO);
 				HibernateUtil.getSession().merge(cloneData);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
-				HibernateUtil.getSession().evict(cloneData);
-				HibernateUtil.getSession().refresh(cloneData);
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
+				// HibernateUtil.getSession().evict // CSL remove old(cloneData);
+				// HibernateUtil.getSession().refresh // CSL remove old(cloneData);
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -104,8 +106,8 @@ public class MethodDAOImpl extends BaseDAOImpl<Method> implements MethodDAO {
 			String tableName = "METHOD";
 			auditDAO.saveNewHistory(method, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -147,10 +149,10 @@ public class MethodDAOImpl extends BaseDAOImpl<Method> implements MethodDAO {
 
 		try {
 			HibernateUtil.getSession().merge(method);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(method);
-			HibernateUtil.getSession().refresh(method);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(method);
+			// HibernateUtil.getSession().refresh // CSL remove old(method);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("MethodDAOImpl", "updateData()", e.toString());
@@ -162,8 +164,8 @@ public class MethodDAOImpl extends BaseDAOImpl<Method> implements MethodDAO {
 	public void getData(Method method) throws LIMSRuntimeException {
 		try {
 			Method meth = (Method) HibernateUtil.getSession().get(Method.class, method.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (meth != null) {
 
 				if (meth.getActiveBeginDate() != null) {
@@ -191,8 +193,8 @@ public class MethodDAOImpl extends BaseDAOImpl<Method> implements MethodDAO {
 			String sql = "from Method";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -217,8 +219,8 @@ public class MethodDAOImpl extends BaseDAOImpl<Method> implements MethodDAO {
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -233,8 +235,8 @@ public class MethodDAOImpl extends BaseDAOImpl<Method> implements MethodDAO {
 		Method method = null;
 		try {
 			method = (Method) HibernateUtil.getSession().get(Method.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("MethodDAOImpl", "readMethod()", e.toString());
@@ -267,8 +269,8 @@ public class MethodDAOImpl extends BaseDAOImpl<Method> implements MethodDAO {
 			query.setParameter("param", filter + "%");
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("MethodDAOImpl", "getMethods()", e.toString());
@@ -286,8 +288,8 @@ public class MethodDAOImpl extends BaseDAOImpl<Method> implements MethodDAO {
 			query.setParameter("param", method.getMethodName());
 
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			Method m = null;
 			if (list.size() > 0) {
 				m = (Method) list.get(0);
@@ -371,8 +373,8 @@ public class MethodDAOImpl extends BaseDAOImpl<Method> implements MethodDAO {
 			query.setParameter("param2", methodId);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;

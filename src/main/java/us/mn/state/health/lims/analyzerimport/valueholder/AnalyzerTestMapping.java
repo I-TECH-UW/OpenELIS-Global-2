@@ -21,15 +21,15 @@ import org.apache.commons.validator.GenericValidator;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class AnalyzerTestMapping extends BaseObject{
+public class AnalyzerTestMapping extends BaseObject {
 
 	private static final long serialVersionUID = 1L;
 
-	private String id = "1"; //not this is not used but it is needed in the audit trail
+	private String id = "1"; // not this is not used but it is needed in the audit trail
 	private AnalyzerTestMappingPK compoundId = new AnalyzerTestMappingPK();
 	private String testId;
 	private String uniqueIdentifyer;
-	
+
 	public void setCompoundId(AnalyzerTestMappingPK compoundId) {
 		uniqueIdentifyer = null;
 		this.compoundId = compoundId;
@@ -51,6 +51,7 @@ public class AnalyzerTestMapping extends BaseObject{
 	public String getAnalyzerTestName() {
 		return compoundId == null ? null : compoundId.getAnalyzerTestName();
 	}
+
 	public void setAnalyzerTestName(String analyzerTestName) {
 		uniqueIdentifyer = null;
 		compoundId.setAnalyzerTestName(analyzerTestName);
@@ -69,15 +70,22 @@ public class AnalyzerTestMapping extends BaseObject{
 	}
 
 	public String getUniqueIdentifyer() {
-		if( GenericValidator.isBlankOrNull(uniqueIdentifyer)){
+		if (GenericValidator.isBlankOrNull(uniqueIdentifyer)) {
 			uniqueIdentifyer = getAnalyzerId() + "-" + getAnalyzerTestName();
 		}
 
 		return uniqueIdentifyer;
 	}
 
+	@Override
 	public String getId() {
 		return id;
+	}
+
+	@Override
+	public void setId(String id) {
+		throw new UnsupportedOperationException("use compund id when setting the id");
+
 	}
 
 }

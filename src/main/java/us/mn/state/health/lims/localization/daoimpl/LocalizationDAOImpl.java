@@ -17,6 +17,7 @@
 package us.mn.state.health.lims.localization.daoimpl;
 
 import org.hibernate.HibernateException;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -29,6 +30,7 @@ import us.mn.state.health.lims.localization.valueholder.Localization;
 
 /**
  */
+@Component
 public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements LocalizationDAO {
 
 	public LocalizationDAOImpl() {
@@ -39,7 +41,7 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements Lo
 	public Localization getLocalizationById(String id) throws LIMSRuntimeException {
 		try {
 			Localization localization = (Localization) HibernateUtil.getSession().get(Localization.class, id);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return localization;
 		} catch (HibernateException e) {
 			handleException(e, "getLocalizationById");
@@ -61,10 +63,10 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements Lo
 
 		try {
 			HibernateUtil.getSession().merge(localization);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(localization);
-			HibernateUtil.getSession().refresh(localization);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(localization);
+			// HibernateUtil.getSession().refresh // CSL remove old(localization);
 		} catch (HibernateException e) {
 			handleException(e, "updateData");
 		}
@@ -78,8 +80,8 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements Lo
 
 			new AuditTrailDAOImpl().saveNewHistory(localization, localization.getSysUserId(), "LOCALIZATION");
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return id;
 		} catch (Exception e) {
 			handleException(e, "insert");
@@ -90,8 +92,8 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements Lo
 	public Localization readLocalization(String idString) {
 		try {
 			Localization localization = (Localization) HibernateUtil.getSession().get(Localization.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return localization;
 		} catch (Exception e) {
 			handleException(e, "readLocalization");

@@ -29,6 +29,5 @@ public interface OrganizationAddressDAO extends BaseDAO<OrganizationAddress> {
 	@Override
 	public String insert(OrganizationAddress organizationAddress) throws LIMSRuntimeException;
 
-	@Override
 	public Optional<OrganizationAddress> update(OrganizationAddress organizationAddress) throws LIMSRuntimeException;
 }

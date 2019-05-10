@@ -36,6 +36,7 @@ import us.mn.state.health.lims.hibernate.resources.interceptor.LIMSTrimDataInter
  *
  * @author christian@hibernate.org
  */
+@Deprecated
 public class HibernateUtil {
 
 	public static final String HIBERNATE_CFG_FILE_PROPERTY = "openELIS.hibernate.cfg";

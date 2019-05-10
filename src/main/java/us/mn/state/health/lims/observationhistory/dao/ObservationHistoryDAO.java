@@ -27,7 +27,7 @@ import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 
 /**
- * Record of survey/interview questions. First used for Côte d'Ivoire RetroCI
+ * Record of survey/interview questions. First used for Cï¿½te d'Ivoire RetroCI
  * Study forms.
  *
  * @author pahill
@@ -53,7 +53,6 @@ public interface ObservationHistoryDAO extends BaseDAO<ObservationHistory> {
 	 */
 	public List<ObservationHistory> getAll(Patient patient, Sample sample, String observationHistoryTypeId);
 
-	@Override
 	public void deleteAll(List<ObservationHistory> entities) throws LIMSRuntimeException;
 
 	public List<ObservationHistory> getObservationHistoryByDictonaryValues(String dictionaryValue)

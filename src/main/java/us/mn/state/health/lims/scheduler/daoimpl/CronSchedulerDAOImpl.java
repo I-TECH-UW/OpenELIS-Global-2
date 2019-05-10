@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -31,6 +32,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.scheduler.dao.CronSchedulerDAO;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
 
+@Component
 public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements CronSchedulerDAO {
 
 	public CronSchedulerDAOImpl() {
@@ -45,7 +47,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements 
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			@SuppressWarnings("unchecked")
 			List<CronScheduler> schedulers = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return schedulers;
 		} catch (HibernateException e) {
 			handleException(e, "getAllCronSchedules");
@@ -62,7 +64,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements 
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("jobName", jobName);
 			CronScheduler scheduler = (CronScheduler) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return scheduler;
 		} catch (HibernateException e) {
 			handleException(e, "getCronScheduleByJobName");
@@ -77,7 +79,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements 
 			String id = (String) HibernateUtil.getSession().save(cronSchedule);
 			cronSchedule.setId(id);
 			new AuditTrailDAOImpl().saveNewHistory(cronSchedule, cronSchedule.getSysUserId(), "QUARTZ_CRON_SCHEDULER");
-			closeSession();
+			// closeSession(); // CSL remove old
 			return id;
 		} catch (HibernateException e) {
 			handleException(e, "insert");
@@ -96,10 +98,10 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements 
 					IActionConstants.AUDIT_TRAIL_UPDATE, "QUARTZ_CRON_SCHEDULER");
 
 			HibernateUtil.getSession().merge(cronSchedule);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(cronSchedule);
-			HibernateUtil.getSession().refresh(cronSchedule);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(cronSchedule);
+			// HibernateUtil.getSession().refresh // CSL remove old(cronSchedule);
 		} catch (Exception e) {
 			handleException(e, "update");
 		}
@@ -110,7 +112,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements 
 
 		try {
 			CronScheduler data = (CronScheduler) HibernateUtil.getSession().get(CronScheduler.class, idString);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return data;
 		} catch (HibernateException e) {
 			handleException(e, "readCronScheduler");
@@ -126,7 +128,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements 
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("id", Integer.parseInt(schedulerId));
 			CronScheduler scheduler = (CronScheduler) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return scheduler;
 		} catch (HibernateException e) {
 			handleException(e, "getCronScheduleById");

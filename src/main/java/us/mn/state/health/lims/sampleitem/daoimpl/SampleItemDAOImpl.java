@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -41,6 +42,7 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 /**
  * @author diane benz
  */
+@Component
 public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem> implements SampleItemDAO {
 
 	public SampleItemDAOImpl() {
@@ -75,8 +77,8 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem> implements Sample
 
 				data = readSampleItem(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			LogEvent.logError("SampleItemDAOImpl", "deleteData()", e.toString());
@@ -99,8 +101,8 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem> implements Sample
 			String tableName = "SAMPLE_ITEM";
 			auditDAO.saveNewHistory(sampleItem, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("SampleItemDAOImpl", "insertData()", e.toString());
@@ -129,10 +131,10 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem> implements Sample
 
 		try {
 			HibernateUtil.getSession().merge(sampleItem);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(sampleItem);
-			HibernateUtil.getSession().refresh(sampleItem);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(sampleItem);
+			// HibernateUtil.getSession().refresh // CSL remove old(sampleItem);
 		} catch (Exception e) {
 			LogEvent.logError("SampleItemDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleItem updateData()", e);
@@ -143,8 +145,8 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem> implements Sample
 	public void getData(SampleItem sampleItem) throws LIMSRuntimeException {
 		try {
 			SampleItem sampleIt = (SampleItem) HibernateUtil.getSession().get(SampleItem.class, sampleItem.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (sampleIt != null) {
 				PropertyUtils.copyProperties(sampleItem, sampleIt);
 			} else {
@@ -160,7 +162,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem> implements Sample
 	public SampleItem getData(String sampleItemId) throws LIMSRuntimeException {
 		try {
 			SampleItem sampleItem = (SampleItem) HibernateUtil.getSession().get(SampleItem.class, sampleItemId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return sampleItem;
 		} catch (Exception e) {
 			handleException(e, "getData");
@@ -177,8 +179,8 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem> implements Sample
 			String sql = "from SampleItem";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("SampleItemDAOImpl", "getAllSampleItems()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleItem getAllSampleItems()", e);
@@ -201,8 +203,8 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem> implements Sample
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("SampleItemDAOImpl", "getPageOfSampleItems()", e.toString());
@@ -216,8 +218,8 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem> implements Sample
 		SampleItem samp = null;
 		try {
 			samp = (SampleItem) HibernateUtil.getSession().get(SampleItem.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("SampleItemDAOImpl", "readSampleItem()", e.toString());
@@ -253,8 +255,8 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem> implements Sample
 			query.setInteger("param", Integer.parseInt(sampleItem.getSample().getId()));
 			@SuppressWarnings("unchecked")
 			List<SampleItem> list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			SampleItem si = null;
 			if (!list.isEmpty()) {
 				si = list.get(0);
@@ -262,8 +264,8 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem> implements Sample
 				TypeOfSample tos = null;
 				if (si.getTypeOfSampleId() != null) {
 					tos = (TypeOfSample) HibernateUtil.getSession().get(TypeOfSample.class, si.getTypeOfSampleId());
-					HibernateUtil.getSession().flush();
-					HibernateUtil.getSession().clear();
+					// HibernateUtil.getSession().flush(); // CSL remove old
+					// HibernateUtil.getSession().clear(); // CSL remove old
 					si.setTypeOfSample(tos);
 				}
 				SourceOfSample sos = null;
@@ -271,8 +273,8 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem> implements Sample
 					sos = (SourceOfSample) HibernateUtil.getSession().get(SourceOfSample.class,
 							si.getSourceOfSampleId());
 					si.setSourceOfSample(sos);
-					HibernateUtil.getSession().flush();
-					HibernateUtil.getSession().clear();
+					// HibernateUtil.getSession().flush(); // CSL remove old
+					// HibernateUtil.getSession().clear(); // CSL remove old
 				}
 				PropertyUtils.copyProperties(sampleItem, si);
 			}
@@ -292,8 +294,8 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem> implements Sample
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(id));
 			List<SampleItem> list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return list;
 
@@ -317,8 +319,8 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem> implements Sample
 			query.setInteger("sampleId", Integer.parseInt(sampleId));
 			query.setInteger("typeOfSampleId", Integer.parseInt(typeOfSample.getId()));
 			List<SampleItem> list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return list;
 
@@ -342,7 +344,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem> implements Sample
 			query.setParameterList("statusIds", includedStatusList);
 			@SuppressWarnings("unchecked")
 			List<SampleItem> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return list;
 

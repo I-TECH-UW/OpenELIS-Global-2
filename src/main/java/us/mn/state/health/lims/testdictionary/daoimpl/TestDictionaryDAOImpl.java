@@ -18,6 +18,7 @@ package us.mn.state.health.lims.testdictionary.daoimpl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -25,6 +26,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.testdictionary.dao.TestDictionaryDAO;
 import us.mn.state.health.lims.testdictionary.valueholder.TestDictionary;
 
+@Component
 public class TestDictionaryDAOImpl extends BaseDAOImpl<TestDictionary> implements TestDictionaryDAO {
 
 	public TestDictionaryDAOImpl() {
@@ -38,7 +40,7 @@ public class TestDictionaryDAOImpl extends BaseDAOImpl<TestDictionary> implement
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(testId));
 			TestDictionary testDictionary = (TestDictionary) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return testDictionary;
 		} catch (HibernateException e) {
 			handleException(e, "getTestDictionaryForTestId");

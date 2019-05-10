@@ -25,11 +25,10 @@ import java.util.Scanner;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.log.LogEvent;
 
-public class BaseObject implements Serializable, Cloneable {
+public abstract class BaseObject implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 
-	private String id;
 	private Timestamp lastupdated;
 
 	private Timestamp originalLastupdated;
@@ -39,17 +38,13 @@ public class BaseObject implements Serializable, Cloneable {
 	public BaseObject() {
 	}
 
+	public abstract String getId();
+
+	public abstract void setId(String id);
+
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	/**

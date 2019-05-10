@@ -36,7 +36,7 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.Repor
 import us.mn.state.health.lims.dataexchange.common.ITransmissionResponseHandler;
 import us.mn.state.health.lims.dataexchange.common.ReportTransmission;
 import us.mn.state.health.lims.dataexchange.common.ReportTransmission.HTTP_TYPE;
-import us.mn.state.health.lims.dataexchange.orderresult.DAO.HL7MessageOutDAOImpl;
+import us.mn.state.health.lims.dataexchange.orderresult.dao.HL7MessageOutDAOImpl;
 import us.mn.state.health.lims.dataexchange.orderresult.valueholder.HL7MessageOut;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;

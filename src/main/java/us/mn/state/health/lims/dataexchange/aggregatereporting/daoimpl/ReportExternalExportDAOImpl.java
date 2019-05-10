@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -28,6 +29,7 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportExterna
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalExport;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
+@Component
 public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExport> implements ReportExternalExportDAO {
 	public ReportExternalExportDAOImpl() {
 		super(ReportExternalExport.class);
@@ -80,7 +82,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 			query.setTimestamp("upper", upper);
 			List<ReportExternalExport> reports = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return reports;
 		} catch (HibernateException e) {
@@ -95,7 +97,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 		try {
 			String id = (String) HibernateUtil.getSession().save(report);
 			report.setId(id);
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "insertReportExternalExport");
 		}
@@ -106,10 +108,10 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 
 		try {
 			HibernateUtil.getSession().merge(report);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(report);
-			HibernateUtil.getSession().refresh(report);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(report);
+			// HibernateUtil.getSession().refresh // CSL remove old(report);
 		} catch (Exception e) {
 			handleException(e, "updateReportExternalExport");
 		}
@@ -121,7 +123,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 		try {
 			ReportExternalExport data = (ReportExternalExport) HibernateUtil.getSession()
 					.get(ReportExternalExport.class, idString);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return data;
 		} catch (HibernateException e) {
 			handleException(e, "readReportExternalExport");
@@ -136,7 +138,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 			query.setInteger(TYPE_PARAM, Integer.parseInt(typeId));
 			List<ReportExternalExport> reports = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return reports;
 		} catch (HibernateException e) {
@@ -152,7 +154,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 			query.setInteger(TYPE_PARAM, Integer.parseInt(typeId));
 			ReportExternalExport report = (ReportExternalExport) query.setMaxResults(1).uniqueResult();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return report;
 		} catch (HibernateException e) {
@@ -169,7 +171,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			ReportExternalExport report = (ReportExternalExport) query.setMaxResults(1).uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			if (report != null) {
 				return report.getSentDate();
 			}
@@ -186,7 +188,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			ReportExternalExport report = (ReportExternalExport) query.setMaxResults(1).uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			if (report != null) {
 				return report.getCollectionDate();
 			}
@@ -206,7 +208,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 			query.setDate("nextDay", new Timestamp(report.getEventDate().getTime() + DAY_IN_MILLSEC));
 			query.setInteger("typeId", Integer.parseInt(report.getTypeId()));
 			ReportExternalExport foundReport = (ReportExternalExport) query.setMaxResults(1).uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return foundReport == null ? report : foundReport;
 
 		} catch (HibernateException e) {
@@ -224,7 +226,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 	public void delete(ReportExternalExport report) throws LIMSRuntimeException {
 		try {
 			HibernateUtil.getSession().delete(readReportExternalExport(report.getId()));
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "delete");
 		}

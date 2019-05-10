@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.hibernate.HibernateException;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -27,6 +28,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.image.dao.ImageDAO;
 import us.mn.state.health.lims.image.valueholder.Image;
 
+@Component
 public class ImageDAOImpl extends BaseDAOImpl<Image> implements ImageDAO {
 
 	public ImageDAOImpl() {
@@ -39,13 +41,13 @@ public class ImageDAOImpl extends BaseDAOImpl<Image> implements ImageDAO {
 		try {
 			if (id == null) {
 				id = (String) HibernateUtil.getSession().save(image);
-				closeSession();
+				// closeSession(); // CSL remove old
 			} else { // this part does not seem to work so we are deleting and then adding as a work
 						// around
 				HibernateUtil.getSession().merge(image);
-				closeSession();
-				HibernateUtil.getSession().evict(image);
-				HibernateUtil.getSession().refresh(image);
+				// closeSession(); // CSL remove old
+				// HibernateUtil.getSession().evict // CSL remove old(image);
+				// HibernateUtil.getSession().refresh // CSL remove old(image);
 			}
 		} catch (HibernateException e) {
 			handleException(e, "saveImage");
@@ -58,7 +60,7 @@ public class ImageDAOImpl extends BaseDAOImpl<Image> implements ImageDAO {
 	public Image getImage(String imageId) throws LIMSRuntimeException {
 		try {
 			Image image = (Image) HibernateUtil.getSession().get(Image.class, imageId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return image;
 		} catch (HibernateException e) {
 			handleException(e, "getImage");
@@ -71,7 +73,7 @@ public class ImageDAOImpl extends BaseDAOImpl<Image> implements ImageDAO {
 	public void deleteImage(Image image) throws LIMSRuntimeException {
 		try {
 			HibernateUtil.getSession().delete(image);
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "deleteImage");
 		}
@@ -104,8 +106,8 @@ public class ImageDAOImpl extends BaseDAOImpl<Image> implements ImageDAO {
 	public Image readImage(String idString) {
 		try {
 			Image image = (Image) HibernateUtil.getSession().get(Image.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return image;
 		} catch (Exception e) {
 			handleException(e, "readImage");

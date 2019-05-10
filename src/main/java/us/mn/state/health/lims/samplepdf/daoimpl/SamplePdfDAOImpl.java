@@ -17,6 +17,8 @@ package us.mn.state.health.lims.samplepdf.daoimpl;
 
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -27,6 +29,7 @@ import us.mn.state.health.lims.samplepdf.valueholder.SamplePdf;
 /**
  * @author Hung Nguyen
  */
+@Component
 public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf> implements SamplePdfDAO {
 
 	public SamplePdfDAOImpl() {
@@ -44,8 +47,8 @@ public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf> implements SamplePd
 			if ((list != null) && !list.isEmpty()) {
 				isFound = true;
 			}
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SamplePdfDAOImpl", "isAccessionNumberFound()", e.toString());
@@ -68,8 +71,8 @@ public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf> implements SamplePd
 				samplePdf = (SamplePdf) list.get(0);
 			}
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("SamplePdfDAOImpl", "getSamplePdfByAccessionNumber()", e.toString());

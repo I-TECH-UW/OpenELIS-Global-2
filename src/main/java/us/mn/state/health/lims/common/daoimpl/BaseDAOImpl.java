@@ -33,6 +33,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.dao.BaseDAO;
@@ -45,9 +46,11 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 /**
  * @author Caleb
  *
+ *
  * @param <T>
  */
-public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionConstants {
+@Component("baseObjectDAO")
+public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionConstants {
 
 	static final int DEFAULT_PAGE_SIZE = SystemConfiguration.getInstance().getDefaultPageSize();
 
@@ -56,6 +59,7 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 	@Autowired
 	protected SessionFactory sessionFactory;
 
+	@Autowired
 	public BaseDAOImpl(Class<T> clazz) {
 		classType = clazz;
 	}
@@ -389,8 +393,8 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 
 			List results = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (results != null && results.get(0) != null) {
 				if (results.get(0) != null) {
@@ -418,17 +422,19 @@ public class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionCon
 	}
 
 	// bugzilla 1427
+	@Deprecated
 	public String getTablePrefix(String table) {
 		return table.toLowerCase() + ".";
 	}
 
 	protected void handleException(Exception e, String method) throws LIMSRuntimeException {
-		LogEvent.logError(this.getClass().getSimpleName(), method, e.toString());
+		LogEvent.logErrorStack(this.getClass().getSimpleName(), method, e);
 		throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + method, e);
 	}
 
+	@Deprecated
 	protected void closeSession() {
-		HibernateUtil.getSession().flush();
-		HibernateUtil.getSession().clear();
+		// HibernateUtil.getSession().flush(); // CSL remove old
+		// HibernateUtil.getSession().clear(); // CSL remove old
 	}
 }

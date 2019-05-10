@@ -17,7 +17,7 @@ import ca.uhn.hl7v2.model.v251.segment.PID;
 import us.mn.state.health.lims.dataexchange.order.dao.ElectronicOrderDAO;
 import us.mn.state.health.lims.dataexchange.order.daoimpl.ElectronicOrderDAOImpl;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
-import us.mn.state.health.lims.dataexchange.orderresult.DAO.HL7MessageOutDAOImpl;
+import us.mn.state.health.lims.dataexchange.orderresult.dao.HL7MessageOutDAOImpl;
 import us.mn.state.health.lims.dataexchange.resultreporting.beans.ResultReportXmit;
 import us.mn.state.health.lims.dataexchange.resultreporting.beans.ResultXmit;
 import us.mn.state.health.lims.dataexchange.resultreporting.beans.TestResultsXmit;

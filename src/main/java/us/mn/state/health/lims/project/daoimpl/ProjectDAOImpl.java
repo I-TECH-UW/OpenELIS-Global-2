@@ -23,6 +23,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -41,6 +42,7 @@ import us.mn.state.health.lims.project.valueholder.Project;
 /**
  * @author diane benz
  */
+@Component
 public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 
 	public ProjectDAOImpl() {
@@ -77,10 +79,10 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 				// Make the change to the object.
 				cloneData.setIsActive(IActionConstants.NO);
 				HibernateUtil.getSession().merge(cloneData);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
-				HibernateUtil.getSession().evict(cloneData);
-				HibernateUtil.getSession().refresh(cloneData);
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
+				// HibernateUtil.getSession().evict // CSL remove old(cloneData);
+				// HibernateUtil.getSession().refresh // CSL remove old(cloneData);
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -107,8 +109,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 			String tableName = "PROJECT";
 			auditDAO.saveNewHistory(project, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -150,10 +152,10 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 
 		try {
 			HibernateUtil.getSession().merge(project);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(project);
-			HibernateUtil.getSession().refresh(project);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(project);
+			// HibernateUtil.getSession().refresh // CSL remove old(project);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ProjectDAOImpl", "updateData()", e.toString());
@@ -165,8 +167,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 	public void getData(Project project) throws LIMSRuntimeException {
 		try {
 			Project proj = (Project) HibernateUtil.getSession().get(Project.class, project.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (proj != null) {
 				if (proj.getStartedDate() != null) {
@@ -193,8 +195,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 			String sql = "from Project";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ProjectDAOImpl", "getAllProjects()", e.toString());
@@ -219,8 +221,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ProjectDAOImpl", "getPageOfProjects()", e.toString());
@@ -234,8 +236,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 		Project pro = null;
 		try {
 			pro = (Project) HibernateUtil.getSession().get(Project.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ProjectDAOImpl", "readProject()", e.toString());
@@ -286,8 +288,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 			}
 
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			Project pro = null;
 			if (list.size() > 0) {
 				pro = (Project) list.get(0);
@@ -317,8 +319,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 			query.setParameter("param", filter + "%");
 
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return list;
 
 		} catch (Exception e) {
@@ -400,8 +402,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 			query.setParameter("param2", projId);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;
@@ -429,8 +431,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setParameter("param", project.getLocalAbbreviation().toLowerCase().trim());
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			Project pro = null;
 			if (list.size() > 0) {
 				pro = (Project) list.get(0);
@@ -457,7 +459,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 			} catch (HibernateException e) {
 				handleException(e, "getProjectById");
 			} finally {
-				closeSession();
+				// closeSession(); // CSL remove old
 			}
 		}
 		return null;

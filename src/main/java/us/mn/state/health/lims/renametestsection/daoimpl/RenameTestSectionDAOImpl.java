@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -34,6 +35,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.renametestsection.dao.RenameTestSectionDAO;
 import us.mn.state.health.lims.renametestsection.valueholder.RenameTestSection;
 
+@Component
 public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> implements RenameTestSectionDAO {
 
 	public RenameTestSectionDAOImpl() {
@@ -68,8 +70,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 				// bugzilla 2206
 				data = readTestSection(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -96,8 +98,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 			String tableName = "TEST_SECTION";
 			auditDAO.saveNewHistory(testSection, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestSectionDAOImpl", "insertData()", e.toString());
@@ -139,10 +141,10 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 
 		try {
 			HibernateUtil.getSession().merge(testSection);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(testSection);
-			HibernateUtil.getSession().refresh(testSection);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(testSection);
+			// HibernateUtil.getSession().refresh // CSL remove old(testSection);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
@@ -155,8 +157,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 		try {
 			RenameTestSection uom = (RenameTestSection) HibernateUtil.getSession().get(RenameTestSection.class,
 					testSection.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (uom != null) {
 				PropertyUtils.copyProperties(testSection, uom);
 			} else {
@@ -178,8 +180,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestSectionDAOImpl", "getAllTestSections()", e.toString());
@@ -203,8 +205,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestSectionDAOImpl", "getPageOfTestSections()", e.toString());
@@ -218,8 +220,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 		RenameTestSection tr = null;
 		try {
 			tr = (RenameTestSection) HibernateUtil.getSession().get(RenameTestSection.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestSectionDAOImpl", "readTestSection()", e.toString());
@@ -250,8 +252,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 			query.setParameter("param", testSection.getTestSectionName());
 
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			RenameTestSection t = null;
 			if (list.size() > 0) {
 				t = (RenameTestSection) list.get(0);
@@ -276,8 +278,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 			query.setParameter("param", filter + "%");
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestSectionDAOImpl", "getTestSections()", e.toString());
@@ -290,7 +292,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 		try {
 			RenameTestSection ts = (RenameTestSection) HibernateUtil.getSession().get(RenameTestSection.class,
 					testSectionId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return ts;
 		} catch (Exception e) {
 			handleException(e, "getTestSectionById");
@@ -369,8 +371,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 			query.setParameter("param2", testSectionId);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;

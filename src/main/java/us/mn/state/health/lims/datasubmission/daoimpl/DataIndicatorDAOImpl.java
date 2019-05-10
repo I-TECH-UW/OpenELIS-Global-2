@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -17,6 +18,7 @@ import us.mn.state.health.lims.datasubmission.valueholder.DataIndicator;
 import us.mn.state.health.lims.datasubmission.valueholder.TypeOfDataIndicator;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
+@Component
 public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator> implements DataIndicatorDAO {
 
 	public DataIndicatorDAOImpl() {
@@ -28,8 +30,8 @@ public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator> implements 
 		try {
 			DataIndicator indicatorClone = (DataIndicator) HibernateUtil.getSession().get(DataIndicator.class,
 					indicator.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (indicatorClone != null) {
 				PropertyUtils.copyProperties(indicator, indicatorClone);
 			} else {
@@ -46,8 +48,8 @@ public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator> implements 
 	public DataIndicator getIndicator(String id) throws LIMSRuntimeException {
 		try {
 			DataIndicator indicator = (DataIndicator) HibernateUtil.getSession().get(DataIndicator.class, id);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return indicator;
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -66,8 +68,8 @@ public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator> implements 
 			query.setInteger("year", year);
 			query.setInteger("month", month);
 			DataIndicator indicator = (DataIndicator) query.uniqueResult();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (indicator == null) {
 				return null;
 			}
@@ -85,8 +87,8 @@ public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator> implements 
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("status", status);
 			List<DataIndicator> indicators = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return indicators;
 		} catch (HibernateException e) {
 			LogEvent.logError("DataIndicatorDAOImpl", "getIndicatorByStatus()", e.toString());
@@ -105,8 +107,8 @@ public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator> implements 
 			String tableName = "DATA_INDICATOR";
 			// auditDAO.saveNewHistory(dataIndicator, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -135,10 +137,10 @@ public class DataIndicatorDAOImpl extends BaseDAOImpl<DataIndicator> implements 
 
 		try {
 			HibernateUtil.getSession().merge(dataIndicator);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(dataIndicator);
-			HibernateUtil.getSession().refresh(dataIndicator);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(dataIndicator);
+			// HibernateUtil.getSession().refresh // CSL remove old(dataIndicator);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DataIndicatorDAOImpl", "updateData()", e.toString());

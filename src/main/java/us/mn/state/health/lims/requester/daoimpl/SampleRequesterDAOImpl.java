@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -33,6 +34,7 @@ import us.mn.state.health.lims.requester.valueholder.SampleRequester;
 
 /*
  */
+@Component
 public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> implements SampleRequesterDAO {
 
 	public SampleRequesterDAOImpl() {
@@ -45,8 +47,8 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> impleme
 			HibernateUtil.getSession().save(sampleRequester);
 
 			new AuditTrailDAOImpl().saveNewHistory(sampleRequester, sampleRequester.getSysUserId(), "SAMPLE_REQUESTER");
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("SampleRequesterDAOImpl", "insertData()", e.toString());
@@ -73,10 +75,10 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> impleme
 
 		try {
 			HibernateUtil.getSession().merge(sampleRequester);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(sampleRequester);
-			HibernateUtil.getSession().refresh(sampleRequester);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(sampleRequester);
+			// HibernateUtil.getSession().refresh // CSL remove old(sampleRequester);
 		} catch (Exception e) {
 			LogEvent.logError("SampleRequesterDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleRequester updateData()", e);
@@ -95,7 +97,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> impleme
 	@Override
 	public void delete(SampleRequester sampleRequester) throws LIMSRuntimeException {
 		HibernateUtil.getSession().delete(sampleRequester);
-		closeSession();
+		// closeSession(); // CSL remove old
 	}
 
 	@SuppressWarnings("unchecked")
@@ -108,7 +110,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> impleme
 			query.setLong("sampleId", Long.parseLong(sampleId));
 			List<SampleRequester> requester = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return requester;
 
@@ -125,7 +127,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> impleme
 			query.setLong("sampleId", sampleId);
 			query.setLong("requesterTypeId", requesterTypeId);
 			SampleRequester requester = (SampleRequester) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return requester;
 		} catch (HibernateException e) {
 			LogEvent.logError("SampleRequesterDAOImpl", "readOld()", e.toString());

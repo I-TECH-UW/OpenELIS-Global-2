@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package us.mn.state.health.lims.reports.valueholder.resultsreport;
@@ -23,40 +23,41 @@ import us.mn.state.health.lims.reports.valueholder.common.JRHibernateDataSource;
 
 /**
  * @author benzd1 bugzilla 2264
- * 
+ *
  */
+//TODO should this be a BaseObject?
 public class ResultsReportTest extends BaseObject {
 
 	private Analysis analysis;
-	
-	private String testName;
-	
-	private String testMessage;
-	
-	private String testId;
-	
-	private String testDescription;
-	
-	private String analysisId;
-	
-	//bugzilla 2292
-	private String analysisStatus;
-	
-	//bugzilla 2292
-	private String printedDate;
-	
-    private JRHibernateDataSource resultsReportAnalyteResults;
 
-    private List analyteResults;
-    
-    //bugzilla 1856
-    private List children;
-    
-    //bugzilla 1856 this is used for sorting:
-    //parent tests are loaded into the list of tests to sort in order to 
-    //maintain the original sorting order
-    //phantom tests are removed before displaying/reporting
-    private boolean isPhantom;
+	private String testName;
+
+	private String testMessage;
+
+	private String testId;
+
+	private String testDescription;
+
+	private String analysisId;
+
+	// bugzilla 2292
+	private String analysisStatus;
+
+	// bugzilla 2292
+	private String printedDate;
+
+	private JRHibernateDataSource resultsReportAnalyteResults;
+
+	private List analyteResults;
+
+	// bugzilla 1856
+	private List children;
+
+	// bugzilla 1856 this is used for sorting:
+	// parent tests are loaded into the list of tests to sort in order to
+	// maintain the original sorting order
+	// phantom tests are removed before displaying/reporting
+	private boolean isPhantom;
 
 	public List getAnalyteResults() {
 		return analyteResults;
@@ -66,13 +67,11 @@ public class ResultsReportTest extends BaseObject {
 		this.analyteResults = analyteResults;
 	}
 
-
 	public JRHibernateDataSource getResultsReportAnalyteResults() {
 		return resultsReportAnalyteResults;
 	}
 
-	public void setResultsReportAnalyteResults(
-			JRHibernateDataSource resultsReportAnalyteResults) {
+	public void setResultsReportAnalyteResults(JRHibernateDataSource resultsReportAnalyteResults) {
 		this.resultsReportAnalyteResults = resultsReportAnalyteResults;
 	}
 
@@ -139,7 +138,7 @@ public class ResultsReportTest extends BaseObject {
 	public void setPrintedDate(String printedDate) {
 		this.printedDate = printedDate;
 	}
-	
+
 	public String getAnalysisStatus() {
 		return analysisStatus;
 	}
@@ -148,7 +147,7 @@ public class ResultsReportTest extends BaseObject {
 		this.analysisStatus = analysisStatus;
 	}
 
-    public boolean isPhantom() {
+	public boolean isPhantom() {
 		return isPhantom;
 	}
 

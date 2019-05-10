@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -32,6 +33,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.patientidentitytype.dao.PatientIdentityTypeDAO;
 import us.mn.state.health.lims.patientidentitytype.valueholder.PatientIdentityType;
 
+@Component
 public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType> implements PatientIdentityTypeDAO {
 
 	public PatientIdentityTypeDAOImpl() {
@@ -50,8 +52,8 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType>
 			Query query = HibernateUtil.getSession().createQuery(sql);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "getAllPatientIdenityTypes");
 		}
@@ -74,8 +76,8 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType>
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveNewHistory(patientIdentityType, patientIdentityType.getSysUserId(), "PATIENT_IDENTITY_TYPE");
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "insertData");
 		} catch (LIMSDuplicateRecordException e) {
@@ -93,7 +95,7 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType>
 			query.setString("identityType", patientIdentityType.getIdentityType().toUpperCase());
 
 			List<PatientIdentityType> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return list.size() > 0;
 
@@ -112,7 +114,7 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType>
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("identityType", name);
 			PatientIdentityType pit = (PatientIdentityType) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return pit;
 		} catch (HibernateException e) {
 			handleException(e, "getNamedIdentityType");

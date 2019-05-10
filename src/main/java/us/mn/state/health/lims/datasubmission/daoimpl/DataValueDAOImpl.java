@@ -3,6 +3,7 @@ package us.mn.state.health.lims.datasubmission.daoimpl;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -14,6 +15,7 @@ import us.mn.state.health.lims.datasubmission.dao.DataValueDAO;
 import us.mn.state.health.lims.datasubmission.valueholder.DataValue;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
+@Component
 public class DataValueDAOImpl extends BaseDAOImpl<DataValue> implements DataValueDAO {
 
 	public DataValueDAOImpl() {
@@ -24,8 +26,8 @@ public class DataValueDAOImpl extends BaseDAOImpl<DataValue> implements DataValu
 	public void getData(DataValue dataValue) throws LIMSRuntimeException {
 		try {
 			DataValue dataValueClone = (DataValue) HibernateUtil.getSession().get(DataValue.class, dataValue.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (dataValueClone != null) {
 				PropertyUtils.copyProperties(dataValue, dataValueClone);
 			} else {
@@ -42,8 +44,8 @@ public class DataValueDAOImpl extends BaseDAOImpl<DataValue> implements DataValu
 	public DataValue getDataValue(String id) throws LIMSRuntimeException {
 		try {
 			DataValue dataValue = (DataValue) HibernateUtil.getSession().get(DataValue.class, id);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return dataValue;
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -64,8 +66,8 @@ public class DataValueDAOImpl extends BaseDAOImpl<DataValue> implements DataValu
 			String tableName = "DATA_VALUE";
 			auditDAO.saveNewHistory(dataValue, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -94,10 +96,10 @@ public class DataValueDAOImpl extends BaseDAOImpl<DataValue> implements DataValu
 
 		try {
 			HibernateUtil.getSession().merge(dataValue);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(dataValue);
-			HibernateUtil.getSession().refresh(dataValue);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(dataValue);
+			// HibernateUtil.getSession().refresh // CSL remove old(dataValue);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DataValueDAOImpl", "updateData()", e.toString());

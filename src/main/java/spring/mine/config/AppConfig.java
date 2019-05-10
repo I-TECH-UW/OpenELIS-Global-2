@@ -12,6 +12,7 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
@@ -27,7 +28,7 @@ import spring.mine.security.SecurityConfig;
 
 @EnableWebMvc
 @Configuration
-@ComponentScan({"spring", "us.mn.state.health.lims"})
+@ComponentScan(basePackages = { "spring", "us.mn.state.health.lims" })
 public class AppConfig implements WebMvcConfigurer {
 
 	@Autowired
@@ -86,6 +87,15 @@ public class AppConfig implements WebMvcConfigurer {
 				.excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES);
 		registry.addInterceptor(urlLocatedErrorsInterceptor).addPathPatterns("/**");
 		registry.addInterceptor(pageAttributesInterceptor).addPathPatterns("/**");
+	}
+
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		// Register resource handlers for css, js, etc.
+		registry.addResourceHandler("scripts/**").addResourceLocations("classpath:static/scripts/");
+		registry.addResourceHandler("css/**").addResourceLocations("classpath:static/css/");
+		registry.addResourceHandler("images/**").addResourceLocations("classpath:static/images/");
+		registry.addResourceHandler("documentation/**").addResourceLocations("classpath:static/documentation/");
 	}
 
 }

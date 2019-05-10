@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -40,6 +41,7 @@ import us.mn.state.health.lims.security.PasswordUtil;
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
+@Component
 public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 
 	public LoginDAOImpl() {
@@ -74,8 +76,8 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 				// bugzilla 2206
 				data = readLoginUser(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -105,8 +107,8 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 			String tableName = "LOGIN_USER";
 			auditDAO.saveNewHistory(login, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("LoginDAOImpl", "insertData()", e.toString());
@@ -154,10 +156,10 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 
 		try {
 			HibernateUtil.getSession().merge(login);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(login);
-			HibernateUtil.getSession().refresh(login);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(login);
+			// HibernateUtil.getSession().refresh // CSL remove old(login);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("LoginDAOImpl", "updateData()", e.toString());
@@ -169,8 +171,8 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 	public void getData(Login login) throws LIMSRuntimeException {
 		try {
 			Login l = (Login) HibernateUtil.getSession().get(Login.class, login.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (l != null) {
 				// Crypto crypto = new Crypto();
 				// l.setPassword(crypto.getDecrypt(l.getPassword()));
@@ -192,8 +194,8 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 			String sql = "from Login";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("LoginDAOImpl", "getAllLogins()", e.toString());
@@ -216,8 +218,8 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("LoginDAOImpl", "getPageOfLogins()", e.toString());
@@ -233,8 +235,8 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 			l = (Login) HibernateUtil.getSession().get(Login.class, idString);
 			// Crypto crypto = new Crypto();
 			// l.setPassword(crypto.getDecrypt(l.getPassword()));
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("LoginDAOImpl", "readLoginUser()", e.toString());
@@ -272,8 +274,8 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 			String sql = "select l.id from Login l order by l.loginName";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
@@ -299,8 +301,8 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 			String sql = "select l.id from Login l order by l.loginName";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
@@ -332,8 +334,8 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 			query.setInteger("loginId", Integer.parseInt(loginId));
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return list.size() > 0;
 
@@ -365,8 +367,8 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 			// query.setParameter("param2", crypto.getEncrypt(login.getPassword()));
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				loginData = (Login) list.get(0);
@@ -419,8 +421,8 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 			query.setParameter("param", loginName);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				login = (Login) list.get(0);
@@ -460,8 +462,8 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 			LogEvent.logError("LoginDAOImpl", "getPasswordExpiredDayNo()", e.toString());
 			throw new LIMSRuntimeException("Error in getPasswordExpiredDayNo()", e);
 		} finally {
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		}
 
 		return retVal;
@@ -490,8 +492,8 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 			LogEvent.logError("LoginDAOImpl", "getSystemUserId()", e.toString());
 			throw new LIMSRuntimeException("Error in getSystemUserId()", e);
 		} finally {
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		}
 
 		return retVal;
@@ -519,10 +521,10 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 					IActionConstants.AUDIT_TRAIL_UPDATE, "LOGIN_USER");
 
 			HibernateUtil.getSession().merge(login);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(login);
-			HibernateUtil.getSession().refresh(login);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(login);
+			// HibernateUtil.getSession().refresh // CSL remove old(login);
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -542,10 +544,10 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 		boolean isSuccess = false;
 		try {
 			HibernateUtil.getSession().merge(login);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(login);
-			HibernateUtil.getSession().refresh(login);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(login);
+			// HibernateUtil.getSession().refresh // CSL remove old(login);
 			isSuccess = true;
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -566,10 +568,10 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 		boolean isSuccess = false;
 		try {
 			HibernateUtil.getSession().merge(login);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(login);
-			HibernateUtil.getSession().refresh(login);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(login);
+			// HibernateUtil.getSession().refresh // CSL remove old(login);
 			isSuccess = true;
 		} catch (Exception e) {
 			// bugzilla 2154

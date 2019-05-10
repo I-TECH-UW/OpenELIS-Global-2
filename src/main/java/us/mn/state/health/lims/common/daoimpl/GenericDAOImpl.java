@@ -115,8 +115,8 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 	 * Just because I hate to say the same thing many times.
 	 */
 	protected void flushAndClear() {
-		HibernateUtil.getSession().flush();
-		HibernateUtil.getSession().clear();
+		// HibernateUtil.getSession().flush(); // CSL remove old
+		// HibernateUtil.getSession().clear(); // CSL remove old
 	}
 
 	/**
@@ -229,8 +229,8 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 
 			HibernateUtil.getSession().merge(entity);
 			flushAndClear();
-			HibernateUtil.getSession().evict(entity);
-			HibernateUtil.getSession().refresh(entity);
+			// HibernateUtil.getSession().evict // CSL remove old(entity);
+			// HibernateUtil.getSession().refresh // CSL remove old(entity);
 		} catch (Exception e) {
 			throw createAndLogException("updateData()", e);
 		}
@@ -289,8 +289,8 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 
 			@SuppressWarnings("unchecked")
 			List<Entity> list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return list;
 
@@ -315,8 +315,8 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 	}
 
 	protected void closeSession() {
-		HibernateUtil.getSession().flush();
-		HibernateUtil.getSession().clear();
+		// HibernateUtil.getSession().flush(); // CSL remove old
+		// HibernateUtil.getSession().clear(); // CSL remove old
 	}
 
 	protected void handleException(Exception e, String method) throws LIMSRuntimeException {

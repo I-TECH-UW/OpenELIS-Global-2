@@ -29,7 +29,6 @@ public interface PersonAddressDAO extends BaseDAO<PersonAddress> {
 	@Override
 	public String insert(PersonAddress personAddress) throws LIMSRuntimeException;
 
-	@Override
 	public Optional<PersonAddress> update(PersonAddress personAddress) throws LIMSRuntimeException;
 
 	public PersonAddress getByPersonIdAndPartId(String personId, String addressPartId) throws LIMSRuntimeException;

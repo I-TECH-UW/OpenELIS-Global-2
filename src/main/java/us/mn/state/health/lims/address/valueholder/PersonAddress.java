@@ -32,42 +32,52 @@ public class PersonAddress extends BaseObject {
 	public AddressPK getCompoundId() {
 		return compoundId;
 	}
+
 	public void setCompoundId(AddressPK compoundId) {
 		uniqueIdentifyer = null;
 		this.compoundId = compoundId;
 	}
 
-	public String getId(){
+	@Override
+	public String getId() {
 		return compoundId == null ? "0" : compoundId.getTargetId() + compoundId.getAddressPartId();
 	}
 
-	public void setPersonId(String personId){
+	@Override
+	public void setId(String id) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setPersonId(String personId) {
 		uniqueIdentifyer = null;
 		compoundId.setTargetId(personId);
 	}
 
-	public String getPersonId(){
+	public String getPersonId() {
 		return compoundId == null ? null : compoundId.getTargetId();
 	}
 
-	public void setAddressPartId(String addressPartId){
+	public void setAddressPartId(String addressPartId) {
 		uniqueIdentifyer = null;
 		compoundId.setAddressPartId(addressPartId);
 	}
 
-	public String getAddressPartId(){
+	public String getAddressPartId() {
 		return compoundId == null ? null : compoundId.getAddressPartId();
 	}
 
 	public String getType() {
 		return type;
 	}
+
 	public void setType(String type) {
 		this.type = type;
 	}
+
 	public String getValue() {
 		return value;
 	}
+
 	public void setValue(String value) {
 		this.value = value;
 	}
@@ -75,12 +85,12 @@ public class PersonAddress extends BaseObject {
 	public void setUniqueIdentifyer(String uniqueIdentifyer) {
 		this.uniqueIdentifyer = uniqueIdentifyer;
 	}
+
 	public String getUniqueIdentifyer() {
-		if( GenericValidator.isBlankOrNull(uniqueIdentifyer)){
+		if (GenericValidator.isBlankOrNull(uniqueIdentifyer)) {
 			uniqueIdentifyer = getPersonId() + "-" + getAddressPartId();
 		}
 
 		return uniqueIdentifyer;
 	}
 }
-

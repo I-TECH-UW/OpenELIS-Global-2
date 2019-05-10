@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -35,6 +36,7 @@ import us.mn.state.health.lims.referral.valueholder.Referral;
 
 /*
  */
+@Component
 public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDAO {
 
 	public ReferralDAOImpl() {
@@ -50,7 +52,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDA
 			referral.setId(id);
 
 			auditDAO.saveNewHistory(referral, referral.getSysUserId(), "referral");
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "insertData");
 		}
@@ -62,7 +64,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDA
 	public Referral getReferralById(String referralId) throws LIMSRuntimeException {
 		try {
 			Referral referral = (Referral) HibernateUtil.getSession().get(Referral.class, referralId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return referral;
 		} catch (HibernateException e) {
 			handleException(e, "getReferralById");
@@ -82,7 +84,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDA
 				Query query = HibernateUtil.getSession().createQuery(sql);
 				query.setInteger("analysisId", Integer.parseInt(analysisId));
 				List<Referral> referralList = query.list();
-				closeSession();
+				// closeSession(); // CSL remove old
 				return referralList.isEmpty() ? null : referralList.get(referralList.size() - 1);
 			} catch (HibernateException e) {
 				handleException(e, "getReferralByAnalysisId");
@@ -100,7 +102,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDA
 		try {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			List<Referral> referrals = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return referrals;
 		} catch (HibernateException e) {
 			handleException(e, "getAllUncanceledOpenReferrals");
@@ -111,7 +113,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDA
 	private Referral readResult(String referralId) {
 		try {
 			Referral referral = (Referral) HibernateUtil.getSession().get(Referral.class, referralId);
-			closeSession();
+			// closeSession(); // CSL remove old
 			return referral;
 		} catch (HibernateException e) {
 			handleException(e, "readResult");
@@ -133,10 +135,10 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDA
 
 		try {
 			HibernateUtil.getSession().merge(referral);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(referral);
-			HibernateUtil.getSession().refresh(referral);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(referral);
+			// HibernateUtil.getSession().refresh // CSL remove old(referral);
 		} catch (HibernateException e) {
 			handleException(e, "updateData");
 		}
@@ -153,7 +155,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDA
 				Query query = HibernateUtil.getSession().createQuery(sql);
 				query.setInteger("sampleId", Integer.parseInt(id));
 				List<Referral> referralList = query.list();
-				closeSession();
+				// closeSession(); // CSL remove old
 				return referralList;
 
 			} catch (HibernateException e) {
@@ -180,7 +182,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDA
 			query.setDate("lowDate", lowDate);
 			query.setDate("highDate", highDate);
 			List<Referral> referralList = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return referralList;
 		} catch (HibernateException e) {
 			handleException(e, "getAllReferralsByOrganization");

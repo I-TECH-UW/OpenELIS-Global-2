@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -37,6 +38,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 /**
  * @author diane benz
  */
+@Component
 public class GenderDAOImpl extends BaseDAOImpl<Gender> implements GenderDAO {
 
 	public GenderDAOImpl() {
@@ -69,8 +71,8 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender> implements GenderDAO {
 				Gender data = (Gender) gender;
 				data = readGender(data.getId());
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			LogEvent.logError("GenderDAOImpl", "deleteData()", e.toString());
@@ -95,8 +97,8 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender> implements GenderDAO {
 			String tableName = "GENDER";
 			auditDAO.saveNewHistory(gender, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("GenderDAOImpl", "insertData()", e.toString());
@@ -134,10 +136,10 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender> implements GenderDAO {
 
 		try {
 			HibernateUtil.getSession().merge(gender);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(gender);
-			HibernateUtil.getSession().refresh(gender);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(gender);
+			// HibernateUtil.getSession().refresh // CSL remove old(gender);
 		} catch (Exception e) {
 
 			LogEvent.logError("GenderDAOImpl", "deleteData()", e.toString());
@@ -149,8 +151,8 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender> implements GenderDAO {
 	public void getData(Gender gender) throws LIMSRuntimeException {
 		try {
 			Gender gen = (Gender) HibernateUtil.getSession().get(Gender.class, gender.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (gen != null) {
 				PropertyUtils.copyProperties(gender, gen);
 			} else {
@@ -172,8 +174,8 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender> implements GenderDAO {
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("GenderDAOImpl", "getAllGenders()", e.toString());
@@ -197,8 +199,8 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender> implements GenderDAO {
 			// query.setCacheMode(org.hibernate.CacheMode.REFRESH);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("GenderDAOImpl", "getPageOfGenders()", e.toString());
@@ -212,8 +214,8 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender> implements GenderDAO {
 		Gender gender;
 		try {
 			gender = (Gender) HibernateUtil.getSession().get(Gender.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("GenderDAOImpl", "readGender()", e.toString());
@@ -236,7 +238,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender> implements GenderDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("type", type);
 			Gender gender = (Gender) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return gender;
 		} catch (HibernateException e) {
 			handleException(e, "getGenderByType");
@@ -266,8 +268,8 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender> implements GenderDAO {
 			String sql = "select g.id from Gender g order by g.description, g.genderType";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			int rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
@@ -293,8 +295,8 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender> implements GenderDAO {
 			String sql = "select g.id from Gender g order by g.description desc, g.genderType desc";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			int rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
@@ -330,8 +332,8 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender> implements GenderDAO {
 			query.setInteger("genderId", Integer.parseInt(genderId));
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			return list.size() > 0;
 

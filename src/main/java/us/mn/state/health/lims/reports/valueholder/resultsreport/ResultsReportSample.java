@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package us.mn.state.health.lims.reports.valueholder.resultsreport;
@@ -24,64 +24,64 @@ import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
 
 /**
  * @author benzd1 bugzilla 2264
- * 
+ *
  */
 /**
- * @author benzd1
+ * @author benzd1 //TODO should this be a BaseObject?
  *
  */
 public class ResultsReportSample extends BaseObject {
 
-    private String accessionNumber;
-    
+	private String accessionNumber;
+
 	private Sample sample;
-	
+
 	private SampleItem sampleItem;
-	
+
 	private String organizationId;
 
-    private String organizationName;
-	
+	private String organizationName;
+
 	private String organizationStreetAddress;
-	
+
 	private String organizationCityStateZip;
-	
+
 	private String sampleCollectionDate;
-	
+
 	private String sampleReceivedDate;
-	
+
 	private String sampleClientReferenceNumber;
-	
+
 	private String sampleHasTestRevisions;
-	
-	//bugzilla 1900
+
+	// bugzilla 1900
 	private String sampleIsForPreview;
-	
+
 	private String clinicianName;
-	
-    private JRHibernateDataSource resultsReportTests;
-	
+
+	private JRHibernateDataSource resultsReportTests;
+
 	private List tests;
-	
+
 	private JRHibernateDataSource resultsReportProjects;
-	
-	//patient stuff
+
+	// patient stuff
 	private String patientName;
 	private String patientStreetAddress;
-    //bugzilla 1852
+	// bugzilla 1852
 	private String patientCity;
 	private String patientState;
 	private String patientZip;
 	private String patientCountry;
-	
+
 	private String patientExternalId;
 	private String patientGender;
 	private String patientDateOfBirth;
-	
-	//source type, source of sample
+
+	// source type, source of sample
 	private String typeOfSample;
 	private String sourceOfSample;
-	
+
 	public List getTests() {
 		return tests;
 	}

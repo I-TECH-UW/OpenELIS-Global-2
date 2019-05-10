@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -55,6 +56,7 @@ import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
 /**
  * @author diane benz
  */
+@Component
 public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 
 	public TestDAOImpl() {
@@ -90,10 +92,10 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 
 				cloneData.setIsActive(IActionConstants.NO);
 				HibernateUtil.getSession().merge(cloneData);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
-				HibernateUtil.getSession().evict(cloneData);
-				HibernateUtil.getSession().refresh(cloneData);
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
+				// HibernateUtil.getSession().evict // CSL remove old(cloneData);
+				// HibernateUtil.getSession().refresh // CSL remove old(cloneData);
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -117,8 +119,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			String tableName = "TEST";
 			auditDAO.saveNewHistory(test, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -156,10 +158,10 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 
 		try {
 			HibernateUtil.getSession().merge(test);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(test);
-			HibernateUtil.getSession().refresh(test);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(test);
+			// HibernateUtil.getSession().refresh // CSL remove old(test);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestDAOImpl", "updateData()", e.toString());
@@ -171,8 +173,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 	public void getData(Test test) throws LIMSRuntimeException {
 		try {
 			Test testClone = (Test) HibernateUtil.getSession().get(Test.class, test.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (testClone != null) {
 				PropertyUtils.copyProperties(test, testClone);
 			} else {
@@ -195,8 +197,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			list = query.list();
 			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "getAllTests()");
 		}
@@ -214,8 +216,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			list = query.list();
 			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "getAllActiveTests()");
 		}
@@ -245,7 +247,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			List<Test> list = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (Exception e) {
 			handleException(e, "getAllActiveOrderableTests()");
@@ -286,8 +288,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 
 			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestDAOImpl", "getAllTestsBySysUserId()", e.toString());
@@ -310,8 +312,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestDAOImpl", "getPageOfTests()", e.toString());
@@ -347,8 +349,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in Test getPageOfSearchedTests()", e);
@@ -396,8 +398,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestDAOImpl", "getPageOfTestsBySysUserId()", e.toString());
@@ -460,8 +462,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 
 			@SuppressWarnings("unchecked")
 			List<Test> list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return list;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -474,8 +476,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 		Test test;
 		try {
 			test = (Test) HibernateUtil.getSession().get(Test.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestDAOImpl", "readTest()", e.toString());
@@ -510,8 +512,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			list = query.list();
 
 			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("TestDAOImpl", "getTests()", e.toString());
 			throw new LIMSRuntimeException("Error in Test getTests(String filter)", e);
@@ -534,8 +536,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 
 			@SuppressWarnings("unchecked")
 			List<Test> list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			Test t = null;
 
 			if (!list.isEmpty()) {
@@ -559,8 +561,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 
 			@SuppressWarnings("unchecked")
 			List<Test> list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			Test t = null;
 
 			if (!list.isEmpty()) {
@@ -585,7 +587,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setParameter("testName", testName);
 
 			List<Test> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (HibernateException e) {
 			handleException(e, "getActiveTestByName");
@@ -606,7 +608,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 
 			list = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "getActiveTestById");
 		}
@@ -619,8 +621,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 		Test returnTest;
 		try {
 			returnTest = (Test) HibernateUtil.getSession().get(Test.class, test.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestDAOImpl", "getTestById()", e.toString());
@@ -639,8 +641,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setParameter("param", filter);
 
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			List methods = new ArrayList();
 
 			for (int i = 0; i < list.size(); i++) {
@@ -676,8 +678,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setInteger("param", Integer.parseInt(filter));
 
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return list;
 
 		} catch (Exception e) {
@@ -695,7 +697,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setInteger("id", Integer.parseInt(id));
 
 			List list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 
 		} catch (Exception e) {
@@ -714,8 +716,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setParameter("param", filter);
 
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return list;
 
 		} catch (Exception e) {
@@ -735,8 +737,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setParameter("param2", filter2);
 
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			return list;
 
 		} catch (Exception e) {
@@ -774,8 +776,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setParameter("param", newSearchStr);
 
 			List results = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (results != null && results.get(0) != null) {
 				if (results.get(0) != null) {
@@ -837,8 +839,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 
 			List results = query.list();
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (results != null && results.get(0) != null) {
 				if (results.get(0) != null) {
@@ -904,8 +906,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
@@ -938,8 +940,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
@@ -975,8 +977,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 				query.setParameter("description", test.getDescription().toLowerCase().trim());
 
 				list = query.list();
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 
 			}
 
@@ -1035,8 +1037,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setParameter("param", test.getTestSection());
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				testWithHighestSortOrder = (Test) list.get(0);
@@ -1073,7 +1075,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			String hql = "from Test t where t.isActive='Y' ORDER BY " + columnName;
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(hql);
 			entities = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("TestDAOImpl", "getAllOrderBy()", e.toString());
 			throw new LIMSRuntimeException("Error in getAllOrderBy()", e);
@@ -1090,7 +1092,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setInteger("id", Integer.parseInt(testId));
 
 			Test test = (Test) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return test;
 		} catch (HibernateException e) {
 			handleException(e, "getTestById");
@@ -1107,7 +1109,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setString("description", description);
 
 			Test test = (Test) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return test;
 		} catch (HibernateException e) {
 			handleException(e, "getTestByDescription");
@@ -1124,7 +1126,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			query.setString("guid", guid);
 
 			Test test = (Test) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return test;
 		} catch (HibernateException e) {
 			handleException(e, "getTestByGUID");
@@ -1141,7 +1143,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("loinc", loincCode);
 			List<Test> tests = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return tests;
 		} catch (HibernateException e) {
 			handleException(e, "getTestByLoincCode");
@@ -1158,7 +1160,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("loinc", loincCode);
 			List<Test> tests = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return tests;
 		} catch (HibernateException e) {
 			handleException(e, "getActiveTestByLoinc");

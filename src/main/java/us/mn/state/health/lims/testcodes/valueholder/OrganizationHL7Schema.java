@@ -35,13 +35,26 @@ public class OrganizationHL7Schema extends BaseObject {
 	public String getOrganizationId() {
 		return compoundId.getOrganizationId();
 	}
+
 	public void setOrganizationId(String organizationId) {
 		compoundId.setOrganizationId(organizationId);
 	}
+
 	public String getEncodingTypeId() {
 		return compoundId.getEncodingTypeId();
 	}
+
 	public void setEncodingTypeId(String encodingTypeId) {
 		compoundId.setEncodingTypeId(encodingTypeId);
+	}
+
+	@Override
+	public String getId() {
+		throw new UnsupportedOperationException("Use getCompoundId");
+	}
+
+	@Override
+	public void setId(String id) {
+		throw new UnsupportedOperationException("Use setCompoundId");
 	}
 }

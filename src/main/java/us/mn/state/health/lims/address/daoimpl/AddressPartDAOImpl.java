@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.address.dao.AddressPartDAO;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
@@ -27,6 +28,7 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
+@Component
 public class AddressPartDAOImpl extends BaseDAOImpl<AddressPart> implements AddressPartDAO {
 
 	public AddressPartDAOImpl() {
@@ -42,7 +44,7 @@ public class AddressPartDAOImpl extends BaseDAOImpl<AddressPart> implements Addr
 
 			List<AddressPart> addressPartList = query.list();
 
-			closeSession();
+			// closeSession(); // CSL remove old
 
 			return addressPartList;
 
@@ -60,7 +62,7 @@ public class AddressPartDAOImpl extends BaseDAOImpl<AddressPart> implements Addr
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setString("name", name);
 			AddressPart part = (AddressPart) query.uniqueResult();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return part;
 		} catch (HibernateException he) {
 			handleException(he, "getAddressPartByName");

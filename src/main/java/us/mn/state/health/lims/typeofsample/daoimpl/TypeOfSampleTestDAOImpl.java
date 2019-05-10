@@ -17,10 +17,13 @@
  */
 package us.mn.state.health.lims.typeofsample.daoimpl;
 
+import static us.mn.state.health.lims.common.daoimpl.BaseDAOImpl.DEFAULT_PAGE_SIZE;
+
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -32,6 +35,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
+@Component
 public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> implements TypeOfSampleTestDAO {
 
 	public TypeOfSampleTestDAOImpl() {
@@ -49,8 +53,8 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 				auditDAO.saveHistory(new TypeOfSampleTest(), data, currentUserId, IActionConstants.AUDIT_TRAIL_DELETE,
 						"SAMPLETYPE_TEST");
 				HibernateUtil.getSession().delete(data);
-				HibernateUtil.getSession().flush();
-				HibernateUtil.getSession().clear();
+				// HibernateUtil.getSession().flush(); // CSL remove old
+				// HibernateUtil.getSession().clear(); // CSL remove old
 			}
 
 		} catch (Exception e) {
@@ -69,8 +73,8 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 			typeOfSampleTest.setId(id);
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveNewHistory(typeOfSampleTest, typeOfSampleTest.getSysUserId(), "SAMPLETYPE_TEST");
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("TypeOfSampleTestDAOImpl", "insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in TypeOfSampleTest insertData()", e);
@@ -84,8 +88,8 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 		try {
 			TypeOfSampleTest tos = (TypeOfSampleTest) HibernateUtil.getSession().get(TypeOfSampleTest.class,
 					typeOfSample.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (tos != null) {
 				PropertyUtils.copyProperties(typeOfSample, tos);
 			} else {
@@ -110,8 +114,8 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("TypeOfSampleDAOImpl", "getAllTypeOfSamples()", e.toString());
@@ -133,8 +137,8 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("TypeOfSampleDAOImpl", "getPageOfTypeOfSamples()", e.toString());
 			throw new LIMSRuntimeException("Error in TypeOfSampleTest getPageOfTypeOfSamples()", e);
@@ -147,8 +151,8 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 		TypeOfSampleTest tos;
 		try {
 			tos = (TypeOfSampleTest) HibernateUtil.getSession().get(TypeOfSampleTest.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("TypeOfSampleDAOImpl", "readTypeOfSample()", e.toString());
@@ -193,8 +197,8 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
@@ -221,8 +225,8 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 			String sql = "select tos.id from TypeOfSampleTest tos " + " order by tos.domain desc, tos.description desc";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
@@ -250,7 +254,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sampleTypeId));
 			List<TypeOfSampleTest> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (Exception e) {
 			handleException(e, "getTypeOfSampleTestsForSampleType");
@@ -269,7 +273,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(testId));
 			List<TypeOfSampleTest> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list.size() > 0 ? list.get(0) : null;
 		} catch (Exception e) {
 			handleException(e, "getTypeOfSampleTestForTest");
@@ -288,7 +292,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(testId));
 			List<TypeOfSampleTest> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (Exception e) {
 			handleException(e, "getTypeOfSampleTestsForTest");

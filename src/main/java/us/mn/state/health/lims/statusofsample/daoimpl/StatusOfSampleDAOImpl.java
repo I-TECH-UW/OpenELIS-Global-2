@@ -20,6 +20,7 @@ import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -37,6 +38,7 @@ import us.mn.state.health.lims.statusofsample.valueholder.StatusOfSample;
 /**
  * @author bill mcgough
  */
+@Component
 public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample> implements StatusOfSampleDAO {
 
 	public StatusOfSampleDAOImpl() {
@@ -54,8 +56,8 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample> implement
 			query.setParameter("param", statusofsample.getStatusType());
 			query.setParameter("param2", statusofsample.getCode());
 			List list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			StatusOfSample statusOfSamp = null;
 
@@ -105,8 +107,8 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample> implement
 			String tableName = "STATUS_OF_SAMPLE";
 			auditDAO.saveNewHistory(statusOfSample, sysUserId, tableName);
 
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -161,10 +163,10 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample> implement
 
 		try {
 			HibernateUtil.getSession().merge(statusOfSample);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
-			HibernateUtil.getSession().evict(statusOfSample);
-			HibernateUtil.getSession().refresh(statusOfSample);
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
+			// HibernateUtil.getSession().evict // CSL remove old(statusOfSample);
+			// HibernateUtil.getSession().refresh // CSL remove old(statusOfSample);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("StatusOfSampleDAOImpl", "updateData()", e.toString());
@@ -184,8 +186,8 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample> implement
 		try {
 			StatusOfSample sos = (StatusOfSample) HibernateUtil.getSession().get(StatusOfSample.class,
 					statusOfSample.getId());
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (sos != null) {
 				PropertyUtils.copyProperties(statusOfSample, sos);
 			} else {
@@ -212,8 +214,8 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample> implement
 			String sql = "from StatusOfSample sos order by sos.statusOfSampleName ";
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("StatusOfSampleDAOImpl", "getAllStatusOfSamples()", e.toString());
@@ -246,8 +248,8 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample> implement
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -269,8 +271,8 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample> implement
 		StatusOfSample sos = null;
 		try {
 			sos = (StatusOfSample) HibernateUtil.getSession().get(StatusOfSample.class, idString);
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("StatusOfSampleDAOImpl", "readStatusOfSample()", e.toString());
@@ -347,8 +349,8 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample> implement
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
@@ -389,8 +391,8 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample> implement
 
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
 			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
@@ -435,8 +437,8 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample> implement
 			query.setParameter("param3", statusOfSampleId);
 
 			list = query.list();
-			HibernateUtil.getSession().flush();
-			HibernateUtil.getSession().clear();
+			// HibernateUtil.getSession().flush(); // CSL remove old
+			// HibernateUtil.getSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;

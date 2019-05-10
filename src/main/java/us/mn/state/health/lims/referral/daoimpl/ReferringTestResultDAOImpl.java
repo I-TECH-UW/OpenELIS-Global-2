@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -31,6 +32,7 @@ import us.mn.state.health.lims.referral.valueholder.ReferringTestResult;
 
 /*
  */
+@Component
 public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult> implements ReferringTestResultDAO {
 
 	public ReferringTestResultDAOImpl() {
@@ -46,7 +48,7 @@ public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult>
 			referringTestResult.setId(id);
 
 			auditDAO.saveNewHistory(referringTestResult, referringTestResult.getSysUserId(), "REFERRING_TEST_RESULT");
-			closeSession();
+			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "insertData");
 		}
@@ -63,7 +65,7 @@ public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult>
 			Query query = HibernateUtil.getSession().createQuery(sql);
 			query.setInteger("sampleItemId", Integer.parseInt(sampleItemId));
 			List<ReferringTestResult> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (HibernateException e) {
 			handleException(e, "getReferringTestResultsForSampleItem");
@@ -80,7 +82,7 @@ public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult>
 			query.setDate("highDate", highDate);
 
 			List<ReferringTestResult> list = query.list();
-			closeSession();
+			// closeSession(); // CSL remove old
 			return list;
 		} catch (HibernateException e) {
 			handleException(e, "getResultsInDateRange");
