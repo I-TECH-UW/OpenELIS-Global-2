@@ -9,11 +9,9 @@ public interface BaseObjectService<T extends BaseObject> {
 
 	/**
 	 * @param id
-	 * @return the baseObject corresponding with the id or a new object
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
+	 * @return the baseObject corresponding with the id or a new object s
 	 */
-	T get(String id) throws InstantiationException, IllegalAccessException;
+	T get(String id);
 
 	/**
 	 * @return all data type for the baseObject type
@@ -240,34 +238,38 @@ public interface BaseObjectService<T extends BaseObject> {
 	 */
 	void delete(T baseObject);
 
+	void delete(String id, String sysUserId);
+
 	/**
 	 * @param baseObjects List of all baseObjects to delete from the database. Must
 	 *                    have primary key fields filled in
 	 */
 	void deleteAll(List<T> baseObjects);
 
+	void delete(List<String> ids, String sysUserId);
+
 	/**
 	 * @return the number of rows
 	 */
-	public Integer getCount();
+	Integer getCount();
+
+	Integer getCountMatching(String propertyName, Object propertyValue);
+
+	Integer getCountMatching(Map<String, Object> propertyValues);
 
 	/**
 	 * @param id the id to start from
 	 * @return list of the baseObject corresponding to the next two ids ( if they
 	 *         exist)
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
 	 */
-	public T getNext(String id) throws InstantiationException, IllegalAccessException;
+	public T getNext(String id);
 
 	/**
 	 * @param id the id to start from
 	 * @return list of the baseObject corresponding to the previous two ids ( if
 	 *         they exist)
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
 	 */
-	public T getPrevious(String id) throws InstantiationException, IllegalAccessException;
+	public T getPrevious(String id);
 
 	/**
 	 * @param id the id to start from

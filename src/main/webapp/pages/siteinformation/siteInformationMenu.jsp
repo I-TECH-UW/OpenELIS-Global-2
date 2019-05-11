@@ -68,7 +68,7 @@
 	   		<% 
 	   		SiteInformation site = (SiteInformation) pageContext.getAttribute("site");
 	   		Localization localization = localizationDAO.getLocalizationById( site.getValue() ); %>
-	   			<td class='textcontent'> <%=Encode.forHtmlContent(localization.getEnglish())%>/<%=Encode.forHtmlContent(localization.getFrench())%> </td>
+	   			<td class='textcontent'> <c:out value="${site.englishValue}"/>/<c:out value="${site.frenchValue}"/> </td>
             </c:when><c:otherwise>
 	   		<td class="textcontent">
 	   	  		<c:out value="${site.value}"/>

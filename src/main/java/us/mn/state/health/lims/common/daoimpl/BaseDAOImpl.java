@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Vector;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -53,6 +54,8 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionConstants {
 
 	static final int DEFAULT_PAGE_SIZE = SystemConfiguration.getInstance().getDefaultPageSize();
+	private static final int RANDOM_ALIAS_LENGTH = 5;
+	private static final String MULTI_NESTED_MARKING = ",";
 
 	private final Class<T> classType;
 
@@ -133,111 +136,241 @@ public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, I
 	@Override
 	public List<T> getAllMatchingOrdered(Map<String, Object> propertyValues, List<String> orderProperties,
 			boolean descending) {
+		Map<String, String> aliases = new HashMap<>();
+
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(classType);
 		for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
-			criteria.add(Restrictions.eq(entrySet.getKey(), entrySet.getValue()));
+			addRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
 		}
 		for (String orderProperty : orderProperties) {
-			addOrder(criteria, orderProperty, descending);
+			addOrder(criteria, orderProperty, descending, aliases);
 		}
 		return criteria.list();
 	}
 
 	@Override
-	public List<T> getPage(int pageNumber) {
-		return getOrderedPage("id", false, pageNumber);
+	public List<T> getPage(int startingRecNo) {
+		return getOrderedPage("id", false, startingRecNo);
 	}
 
 	@Override
-	public List<T> getMatchingPage(String propertyName, Object propertyValue, int pageNumber) {
+	public List<T> getMatchingPage(String propertyName, Object propertyValue, int startingRecNo) {
 		Map<String, Object> propertyValues = new HashMap<>();
 		propertyValues.put(propertyName, propertyValue);
-		return getMatchingPage(propertyValues, pageNumber);
+		return getMatchingPage(propertyValues, startingRecNo);
 	}
 
 	@Override
-	public List<T> getMatchingPage(Map<String, Object> propertyValues, int pageNumber) {
-		return getMatchingOrderedPage(propertyValues, "id", false, pageNumber);
+	public List<T> getMatchingPage(Map<String, Object> propertyValues, int startingRecNo) {
+		return getMatchingOrderedPage(propertyValues, "id", false, startingRecNo);
 	}
 
 	@Override
-	public List<T> getOrderedPage(String orderProperty, boolean descending, int pageNumber) {
+	public List<T> getOrderedPage(String orderProperty, boolean descending, int startingRecNo) {
 		List<String> orderProperties = new ArrayList<>();
 		orderProperties.add(orderProperty);
 
-		return getOrderedPage(orderProperties, descending, pageNumber);
+		return getOrderedPage(orderProperties, descending, startingRecNo);
 	}
 
 	@Override
-	public List<T> getOrderedPage(List<String> orderProperties, boolean descending, int pageNumber) {
-		return getMatchingOrderedPage(new HashMap<>(), orderProperties, descending, pageNumber);
+	public List<T> getOrderedPage(List<String> orderProperties, boolean descending, int startingRecNo) {
+		return getMatchingOrderedPage(new HashMap<>(), orderProperties, descending, startingRecNo);
 	}
 
 	@Override
 	public List<T> getMatchingOrderedPage(String propertyName, Object propertyValue, String orderProperty,
-			boolean descending, int pageNumber) {
+			boolean descending, int startingRecNo) {
 		List<String> orderProperties = new ArrayList<>();
 		orderProperties.add(orderProperty);
 		Map<String, Object> propertyValues = new HashMap<>();
 		propertyValues.put(propertyName, propertyValue);
 
-		return getMatchingOrderedPage(propertyValues, orderProperties, descending, pageNumber);
+		return getMatchingOrderedPage(propertyValues, orderProperties, descending, startingRecNo);
 	}
 
 	@Override
 	public List<T> getMatchingOrderedPage(String propertyName, Object propertyValue, List<String> orderProperties,
-			boolean descending, int pageNumber) {
+			boolean descending, int startingRecNo) {
 		Map<String, Object> propertyValues = new HashMap<>();
 		propertyValues.put(propertyName, propertyValue);
 
-		return getMatchingOrderedPage(propertyValues, orderProperties, descending, pageNumber);
+		return getMatchingOrderedPage(propertyValues, orderProperties, descending, startingRecNo);
 	}
 
 	@Override
 	public List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, String orderProperty, boolean descending,
-			int pageNumber) {
+			int startingRecNo) {
 		List<String> orderProperties = new ArrayList<>();
 		orderProperties.add(orderProperty);
 
-		return getMatchingOrderedPage(propertyValues, orderProperties, descending, pageNumber);
+		return getMatchingOrderedPage(propertyValues, orderProperties, descending, startingRecNo);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, List<String> orderProperties,
-			boolean descending, int pageNumber) {
+			boolean descending, int startingRecNo) {
+		Map<String, String> aliases = new HashMap<>();
+
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(classType);
 		for (Entry<String, Object> entrySet : propertyValues.entrySet()) {
-			criteria.add(Restrictions.eq(entrySet.getKey(), entrySet.getValue()));
+			addRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
 		}
 		for (String orderProperty : orderProperties) {
-			addOrder(criteria, orderProperty, descending);
+			addOrder(criteria, orderProperty, descending, aliases);
 		}
-		criteria.setFirstResult(pageNumber * DEFAULT_PAGE_SIZE);
+		criteria.setFirstResult(startingRecNo - 1);
 		criteria.setMaxResults(DEFAULT_PAGE_SIZE + 1);
 		return criteria.list();
 	}
 
-	// TODO can only have one alias with the same name, find way to avoid collision
-	// TODO only supports one level of nesting, expand to multi-level if needed
-	private void addOrder(Criteria criteria, String orderProperty, boolean descending) {
-		// nested property detection
-		int dotCount = StringUtils.countMatches(orderProperty, '.');
-		if (dotCount > 1) {
-			throw new UnsupportedOperationException(
-					"BaseDAOImpl addOrder() does not support orders using multi-nested \".\" properties");
-		} else if (dotCount == 1) {
-			String nestedPropertyAlias = orderProperty.substring(0, orderProperty.indexOf('.'));
-			criteria.createAlias(nestedPropertyAlias, nestedPropertyAlias);
-		}
+	private void addRestriction(Criteria criteria, String propertyName, Object propertyValue,
+			Map<String, String> aliases) {
+		String aliasedProperty = createAliasIfNeeded(criteria, propertyName, aliases);
+		criteria.add(Restrictions.eq(aliasedProperty, propertyValue));
+	}
+
+	private void addOrder(Criteria criteria, String orderProperty, boolean descending, Map<String, String> aliases) {
+		String aliasedProperty = createAliasIfNeeded(criteria, orderProperty, aliases);
 		if (descending) {
-			criteria.addOrder(Order.desc(orderProperty));
+			criteria.addOrder(Order.desc(aliasedProperty));
 		} else {
-			criteria.addOrder(Order.asc(orderProperty));
+			criteria.addOrder(Order.asc(aliasedProperty));
 		}
 
+	}
+
+	private String createAliasIfNeeded(Criteria criteria, String propertyName, Map<String, String> aliases) {
+		int dotCount = StringUtils.countMatches(propertyName, '.');
+		if (dotCount > 2 || (dotCount == 2 && !propertyName.endsWith(".id"))) {
+			// multi nesting detected, need special consideration to generate multiple
+			// aliases unless there are only 2 levels and the third property is the id field
+			return createMultiNestedAliases(criteria, propertyName, aliases);
+		} else if (dotCount == 1) {
+			// alias needed, one level of nesting is used
+			String nestedProperty = propertyName.substring(0, propertyName.indexOf('.'));
+			Optional<String> alias = createAlias(nestedProperty, aliases);
+			// alias is new and needs to be added
+			if (alias.isPresent()) {
+				criteria.createAlias(nestedProperty, alias.get());
+				aliases.put(nestedProperty, alias.get());
+			}
+			return aliases.get(nestedProperty) + propertyName.substring(propertyName.indexOf('.'));
+		} else {
+			// no aliasing needed, use the property name as is
+			return propertyName;
+		}
+	}
+
+	private Optional<String> createAlias(String nestedProperty, Map<String, String> aliases) {
+		return createAlias(nestedProperty, 1, aliases);
+	}
+
+	private Optional<String> createAlias(String nestedProperty, int i, Map<String, String> aliases) {
+		String alias;
+		if (aliases.containsKey(nestedProperty)) {
+			// signal alias does not need to be created, it already exists
+			return Optional.empty();
+		} else {
+			if (nestedProperty.length() > i) {
+				// use substring of property as alias
+				alias = nestedProperty.substring(0, i);
+			} else {
+				// reached max length for the property without finding a unique alias, using
+				// random alias
+				LogEvent.logWarn(this.getClass().getSimpleName(), "createAlias()",
+						"this alias is going to be a poorly named alias as the string length has been reached.");
+				alias = createRandomAlias();
+			}
+			if (aliases.containsValue(alias)) {
+				// recurse to try and find an unused alias,
+				return createAlias(nestedProperty, ++i, aliases);
+			} else {
+				// unique alias found, end recursion
+				return Optional.of(alias);
+			}
+		}
+
+	}
+
+	private String createRandomAlias() {
+		return RandomStringUtils.randomAlphabetic(RANDOM_ALIAS_LENGTH);
+	}
+
+	private String createMultiNestedAliases(Criteria criteria, String propertyName, Map<String, String> aliases) {
+		String alias;
+		String newPropertyName = propertyName;
+		while (true) {
+			String[] properties = newPropertyName.split("\\.");
+			// create alias for one level of nesting
+			alias = createMarkedAlias(criteria, properties[0] + "." + properties[1], aliases);
+			// mark nesting level that has just been completed
+			newPropertyName = newPropertyName.replaceFirst("\\.", MULTI_NESTED_MARKING);
+			// check if there is another level of nesting
+			if (newPropertyName.contains(".")) {
+				// replace the property name with it's alias
+				newPropertyName = alias.replaceFirst("\\.", MULTI_NESTED_MARKING)
+						+ newPropertyName.substring(newPropertyName.indexOf('.'));
+			} else {
+				break;
+			}
+		}
+		return alias;
+	}
+
+	private String createMarkedAlias(Criteria criteria, String propertyName, Map<String, String> aliases) {
+		String nestedProperty = propertyName.substring(0, propertyName.indexOf('.'));
+		// replace properties that have been marked as done with "." for properly adding
+		// the criteria
+		nestedProperty = nestedProperty.replace(MULTI_NESTED_MARKING, ".");
+		Optional<String> alias = createMarkedAlias(nestedProperty, aliases);
+		// alias is new and needs to be added
+		if (alias.isPresent()) {
+			criteria.createAlias(nestedProperty, alias.get());
+			aliases.put(nestedProperty, alias.get());
+		}
+		return aliases.get(nestedProperty) + propertyName.substring(propertyName.indexOf('.'));
+
+	}
+
+	private Optional<String> createMarkedAlias(String nestedProperty, Map<String, String> aliases) {
+		return createMarkedAlias(nestedProperty, 1, aliases);
+	}
+
+	private Optional<String> createMarkedAlias(String nestedProperty, int i, Map<String, String> aliases) {
+		String alias;
+		if (aliases.containsKey(nestedProperty)) {
+			// signal alias does not need to be created, it already exists
+			return Optional.empty();
+		} else {
+			if (nestedProperty.length() > i) {
+				if (nestedProperty.contains(".")) {
+					// use substring of second property as alias (property after the first ".")
+					alias = nestedProperty.substring(nestedProperty.indexOf('.') + 1,
+							nestedProperty.indexOf('.') + 1 + i);
+				} else {
+					// use substring of property as alias
+					alias = nestedProperty.substring(0, i);
+				}
+			} else {
+				// reached max length for the property without finding a unique alias, using
+				// random alias
+				LogEvent.logWarn(this.getClass().getSimpleName(), "createMultiAlias()",
+						"this alias is going to be a poor alias as the string length has been reached.");
+				alias = createRandomAlias();
+
+			}
+			if (aliases.containsValue(alias)) {
+				// recurse to try and find an unused alias,
+				return createAlias(nestedProperty, ++i, aliases);
+			} else {
+				// unique alias found, end recursion
+				return Optional.of(alias);
+			}
+		}
 	}
 
 	@Override

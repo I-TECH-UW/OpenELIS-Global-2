@@ -1,6 +1,7 @@
 package spring.service.common;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -12,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.dao.BaseDAO;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
+import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
@@ -32,8 +35,14 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 
 	@Override
 	@Transactional
-	public T get(String id) throws InstantiationException, IllegalAccessException {
-		return getBaseObjectDAO().get(id).orElse(classType.newInstance());
+	public T get(String id) {
+		try {
+			return getBaseObjectDAO().get(id).orElse(classType.newInstance());
+		} catch (InstantiationException | IllegalAccessException e) {
+			LogEvent.logError(this.getClass().getSimpleName(), "get()",
+					"Could not create new Instance for " + classType.getName());
+			throw new LIMSRuntimeException(e);
+		}
 	}
 
 	@Override
@@ -239,6 +248,26 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 
 	@Override
 	@Transactional
+	public void delete(String id, String sysUserId) {
+		T oldObject = getBaseObjectDAO().get(id)
+				.orElseThrow(() -> new ObjectNotFoundException(id, classType.getName()));
+		if (auditTrailLog) {
+			auditTrailDAO.saveHistory(null, oldObject, sysUserId, IActionConstants.AUDIT_TRAIL_DELETE,
+					getBaseObjectDAO().getTableName());
+		}
+		getBaseObjectDAO().delete(oldObject);
+	}
+
+	@Override
+	@Transactional
+	public void delete(List<String> ids, String sysUserId) {
+		for (String id : ids) {
+			delete(id, sysUserId);
+		}
+	}
+
+	@Override
+	@Transactional
 	public void deleteAll(List<T> baseObjects) {
 		for (T baseObject : baseObjects) {
 			delete(baseObject);
@@ -253,14 +282,40 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 
 	@Override
 	@Transactional
-	public T getNext(String id) throws InstantiationException, IllegalAccessException {
-		return getBaseObjectDAO().getNext(id).orElse(classType.newInstance());
+	public Integer getCountMatching(String propertyName, Object propertyValue) {
+		Map<String, Object> propertyValues = new HashMap<>();
+		propertyValues.put(propertyName, propertyValue);
+		return getCountMatching(propertyValues);
 	}
 
 	@Override
 	@Transactional
-	public T getPrevious(String id) throws InstantiationException, IllegalAccessException {
-		return getBaseObjectDAO().getPrevious(id).orElse(classType.newInstance());
+	public Integer getCountMatching(Map<String, Object> propertyValues) {
+		return getBaseObjectDAO().getAllMatching(propertyValues).size();
+	}
+
+	@Override
+	@Transactional
+	public T getNext(String id) {
+		try {
+			return getBaseObjectDAO().getNext(id).orElse(classType.newInstance());
+		} catch (InstantiationException | IllegalAccessException e) {
+			LogEvent.logError(this.getClass().getSimpleName(), "get()",
+					"Could not create new Instance for " + classType.getName());
+			throw new LIMSRuntimeException(e);
+		}
+	}
+
+	@Override
+	@Transactional
+	public T getPrevious(String id) {
+		try {
+			return getBaseObjectDAO().getPrevious(id).orElse(classType.newInstance());
+		} catch (InstantiationException | IllegalAccessException e) {
+			LogEvent.logError(this.getClass().getSimpleName(), "get()",
+					"Could not create new Instance for " + classType.getName());
+			throw new LIMSRuntimeException(e);
+		}
 	}
 
 	@Override

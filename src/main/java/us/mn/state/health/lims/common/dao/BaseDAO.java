@@ -115,50 +115,50 @@ public interface BaseDAO<T extends BaseObject> {
 	List<T> getAllMatchingOrdered(Map<String, Object> propertyValues, List<String> orderProperties, boolean descending);
 
 	/**
-	 * @param pageNumber 0 indexed page number to get results from
+	 * @param startingRecNo the rec number to start from for this page
 	 * @return A page of results sorted by id. If length is 1 more than page size,
 	 *         this signifies there is a next page
 	 */
-	List<T> getPage(int pageNumber);
+	List<T> getPage(int startingRecNo);
 
 	/**
 	 * @param propertyName  the property that must match
 	 * @param propertyValue the value the property must equal
-	 * @param pageNumber    0 indexed page number to get results from
+	 * @param startingRecNo the rec number to start from for this page
 	 * @return A page of results. If length is 1 more than page size, this signifies
 	 *         there is a next page
 	 */
-	List<T> getMatchingPage(String propertyName, Object propertyValue, int pageNumber);
+	List<T> getMatchingPage(String propertyName, Object propertyValue, int startingRecNo);
 
 	/**
 	 * @param propertyValues Key Value pairs where key is the property name and
 	 *                       value is the value it must match
-	 * @param pageNumber     0 indexed page number to get results from
+	 * @param startingRecNo  the rec number to start from for this page
 	 * @return A page of results. If length is 1 more than page size, this signifies
 	 *         there is a next page
 	 */
-	List<T> getMatchingPage(Map<String, Object> propertyValues, int pageNumber);
+	List<T> getMatchingPage(Map<String, Object> propertyValues, int startingRecNo);
 
 	/**
 	 * @param orderProperty the property to order by
 	 * @param descending    Set to true to order by descending, false for order by
 	 *                      ascending
-	 * @param pageNumber    0 indexed page number to get results from
+	 * @param startingRecNo the rec number to start from for this page
 	 * @return A page of results. If length is 1 more than page size, this signifies
 	 *         there is a next page
 	 */
-	List<T> getOrderedPage(String orderProperty, boolean descending, int pageNumber);
+	List<T> getOrderedPage(String orderProperty, boolean descending, int startingRecNo);
 
 	/**
 	 * @param orderProperties the properties to order by, starting with the first
 	 *                        entry
 	 * @param descending      Set to true to order by descending, false for order by
 	 *                        ascending
-	 * @param pageNumber      0 indexed page number to get results from
+	 * @param startingRecNo   the rec number to start from for this page
 	 * @return A page of results. If length is 1 more than page size, this signifies
 	 *         there is a next page
 	 */
-	List<T> getOrderedPage(List<String> orderProperties, boolean descending, int pageNumber);
+	List<T> getOrderedPage(List<String> orderProperties, boolean descending, int startingRecNo);
 
 	/**
 	 * @param propertyName  the property that must match
@@ -166,12 +166,12 @@ public interface BaseDAO<T extends BaseObject> {
 	 * @param orderProperty the property to order by
 	 * @param descending    Set to true to order by descending, false for order by
 	 *                      ascending
-	 * @param pageNumber    0 indexed page number to get results from
+	 * @param startingRecNo the rec number to start from for this page
 	 * @return A page of results. If length is 1 more than page size, this signifies
 	 *         there is a next page
 	 */
 	List<T> getMatchingOrderedPage(String propertyName, Object propertyValue, String orderProperty, boolean descending,
-			int pageNumber);
+			int startingRecNo);
 
 	/**
 	 * @param propertyName    the property that must match
@@ -180,12 +180,12 @@ public interface BaseDAO<T extends BaseObject> {
 	 *                        entry
 	 * @param descending      Set to true to order by descending, false for order by
 	 *                        ascending
-	 * @param pageNumber      0 indexed page number to get results from
+	 * @param startingRecNo   the rec number to start from for this page
 	 * @return A page of results. If length is 1 more than page size, this signifies
 	 *         there is a next page
 	 */
 	List<T> getMatchingOrderedPage(String propertyName, Object propertyValue, List<String> orderProperties,
-			boolean descending, int pageNumber);
+			boolean descending, int startingRecNo);
 
 	/**
 	 * @param propertyValues Key Value pairs where key is the property name and
@@ -193,12 +193,12 @@ public interface BaseDAO<T extends BaseObject> {
 	 * @param orderProperty  the property to order by
 	 * @param descending     Set to true to order by descending, false for order by
 	 *                       ascending
-	 * @param pageNumber     0 indexed page number to get results from
+	 * @param startingRecNo  the rec number to start from for this page
 	 * @return A page of results. If length is 1 more than page size, this signifies
 	 *         there is a next page
 	 */
 	List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, String orderProperty, boolean descending,
-			int pageNumber);
+			int startingRecNo);
 
 	/**
 	 * @param propertyValues  Key Value pairs where key is the property name and
@@ -207,12 +207,12 @@ public interface BaseDAO<T extends BaseObject> {
 	 *                        entry
 	 * @param descending      Set to true to order by descending, false for order by
 	 *                        ascending
-	 * @param pageNumber      0 indexed page number to get results from
+	 * @param startingRecNo   the rec number to start from for this page
 	 * @return A page of results. If length is 1 more than page size, this signifies
 	 *         there is a next page
 	 */
 	List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, List<String> orderProperties, boolean descending,
-			int pageNumber);
+			int startingRecNo);
 
 	/**
 	 * @param object the data to insert
