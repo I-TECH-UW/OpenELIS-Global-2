@@ -7,7 +7,7 @@ import us.mn.state.health.lims.dataexchange.orderresult.valueholder.HL7MessageOu
 
 @Component
 public class HL7MessageOutDAOImpl extends BaseDAOImpl<HL7MessageOut> implements HL7MessageOutDAO {
-  HL7MessageOutDAOImpl() {
+  public HL7MessageOutDAOImpl() {
     super(HL7MessageOut.class);
   }
 }
