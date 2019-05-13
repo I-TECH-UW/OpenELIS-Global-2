@@ -331,7 +331,6 @@ function validateForm(form) {
   minimumCharacters="1"
   />
 <% } %>
-  <%--postFunction="playSound"--%>
 <% if( useParent){ %>
   <ajax:autocomplete
   source="parentOrgName"

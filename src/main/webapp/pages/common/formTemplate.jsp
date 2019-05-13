@@ -53,7 +53,7 @@ if (form == null) {
 var  $jq = jQuery.noConflict();
 </script>
 <script
-	src="<%=basePath%>scripts/utilities.jsp"></script>
+	src="<%=basePath%>scripts/additional_utilities.js"></script>
 <script type="text/javascript"
 	src="<%=basePath%>scripts/prototype-1.5.1.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript"

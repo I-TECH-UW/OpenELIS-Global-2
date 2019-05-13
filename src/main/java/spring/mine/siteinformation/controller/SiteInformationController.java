@@ -10,7 +10,6 @@ import javax.validation.Valid;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -37,13 +36,9 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationSideEffects;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
 import us.mn.state.health.lims.localization.valueholder.Localization;
 import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
 import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDomainDAOImpl;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformationDomain;
@@ -56,6 +51,8 @@ public class SiteInformationController extends BaseController {
 	SiteInformationFormValidator formValidator;
 	@Autowired
 	SiteInformationService siteInformationService;
+	@Autowired
+	spring.service.localization.LocalizationService localizationService;
 
 	@ModelAttribute("form")
 	public SiteInformationForm form(HttpServletRequest request) {
@@ -262,27 +259,33 @@ public class SiteInformationController extends BaseController {
 
 	private String validateAndUpdateLocalization(HttpServletRequest request, String localizationId, String english,
 			String french) {
-		LocalizationService localizationService = new LocalizationService(localizationId);
-		localizationService.setCurrentUserId(getSysUserId(request));
-
+		// LocalizationService oldLocalizationService = new
+		// LocalizationService(localizationId);
+		// oldLocalizationService.setCurrentUserId(getSysUserId(request));
+		Localization localization = localizationService.get(localizationId);
+		localization.setSysUserId(getSysUserId(request));
 		String forward = FWD_SUCCESS_INSERT;
-		if (localizationService.updateLocalizationIfNeeded(english, french)) {
-
+		// if (oldLocalizationService.updateLocalizationIfNeeded(english, french)) {
+		if (localizationService.languageChanged(localization, english, french)) {
 			Errors errors;
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
+//			Transaction tx = HibernateUtil.getSession().beginTransaction();
 			try {
-				new LocalizationDAOImpl().updateData(localizationService.getLocalization());
-				tx.commit();
+//				new LocalizationDAOImpl().updateData(oldLocalizationService.getLocalization());
+				localization.setEnglish(english);
+				localization.setFrench(french);
+				localizationService.update(localization);
+//				tx.commit();
 			} catch (LIMSRuntimeException lre) {
-				tx.rollback();
+//				tx.rollback();
 				errors = new BaseErrors();
 				errors.reject("errors.UpdateException");
 				saveErrors(errors);
 				forward = FWD_FAIL_INSERT;
 
-			} finally {
-				HibernateUtil.closeSession();
 			}
+//			finally {
+//				HibernateUtil.closeSession();
+//			}
 
 		}
 
@@ -301,7 +304,7 @@ public class SiteInformationController extends BaseController {
 		}
 
 		String forward = FWD_SUCCESS_INSERT;
-		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
+//		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
 		SiteInformation siteInformation = new SiteInformation();
 
 		if (newSiteInformation) {
@@ -311,8 +314,9 @@ public class SiteInformationController extends BaseController {
 			siteInformation.setEncrypted((Boolean) form.get("encrypted"));
 			siteInformation.setDomain(SITE_IDENTITY_DOMAIN);
 		} else {
-			siteInformation.setId(request.getParameter(ID));
-			siteInformationDAO.getData(siteInformation);
+//			siteInformation.setId(request.getParameter(ID));
+//			siteInformationDAO.getData(siteInformation);
+			siteInformation = siteInformationService.get(request.getParameter(ID));
 		}
 
 		siteInformation.setValue(value);
@@ -325,21 +329,23 @@ public class SiteInformationController extends BaseController {
 		} else if ("ResultConfiguration".equals(domainName)) {
 			siteInformation.setDomain(RESULT_CONFIG_DOMAIN);
 		}
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 		try {
 
 			if (newSiteInformation) {
-				siteInformationDAO.insertData(siteInformation);
+				siteInformationService.insert(siteInformation);
+//				siteInformationDAO.insertData(siteInformation);
 			} else {
-				siteInformationDAO.updateData(siteInformation);
+				siteInformationService.update(siteInformation);
+//				siteInformationDAO.updateData(siteInformation);
 			}
 
 			new ConfigurationSideEffects().siteInformationChanged(siteInformation);
 
-			tx.commit();
+//			tx.commit();
 		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
+//			tx.rollback();
 			String errorMsg;
 			if (lre.getException() instanceof StaleObjectStateException) {
 
@@ -357,9 +363,10 @@ public class SiteInformationController extends BaseController {
 			request.setAttribute(NEXT_DISABLED, TRUE);
 			forward = FWD_FAIL_INSERT;
 
-		} finally {
-			HibernateUtil.closeSession();
 		}
+//		finally {
+//			HibernateUtil.closeSession();
+//		}
 
 		return forward;
 	}

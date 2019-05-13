@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.validator.GenericValidator;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -24,11 +23,10 @@ import spring.mine.common.form.MenuForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.siteinformation.form.SiteInformationMenuForm;
 import spring.mine.siteinformation.validator.SiteInformationMenuFormValidator;
+import spring.service.localization.LocalizationService;
+import spring.service.siteinformation.SiteInformationService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 @Controller
@@ -36,6 +34,10 @@ public class SiteInformationMenuController extends BaseMenuController {
 
 	@Autowired
 	SiteInformationMenuFormValidator formValidator;
+	@Autowired
+	SiteInformationService siteInformationService;
+	@Autowired
+	LocalizationService localizationService;
 
 	private String titleKey = null;
 
@@ -127,14 +129,23 @@ public class SiteInformationMenuController extends BaseMenuController {
 
 		request.setAttribute("menuDefinition", "SiteInformationMenuDefinition");
 
-		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
+//		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
 
-		configurationList = siteInformationDAO.getPageOfSiteInformationByDomainName(startingRecNo, dbDomainName);
+//		configurationList = siteInformationDAO.getPageOfSiteInformationByDomainName(startingRecNo, dbDomainName);
+		configurationList = siteInformationService.getPageOfSiteInformationByDomainName(startingRecNo, dbDomainName);
+		for (SiteInformation siteInformation : configurationList) {
+			if ("localization".equals(siteInformation.getTag())) {
+				siteInformation.setEnglishValue(localizationService.get(siteInformation.getValue()).getEnglish());
+				siteInformation.setFrenchValue(localizationService.get(siteInformation.getValue()).getFrench());
+			}
+		}
 
 		hideEncryptedFields(configurationList);
 
+//		setDisplayPageBounds(request, configurationList == null ? 0 : configurationList.size(), startingRecNo,
+//				siteInformationDAO.getCountForDomainName(dbDomainName));
 		setDisplayPageBounds(request, configurationList == null ? 0 : configurationList.size(), startingRecNo,
-				siteInformationDAO.getCountForDomainName(dbDomainName));
+				siteInformationService.getCountForDomainName(dbDomainName));
 
 		return configurationList;
 	}
@@ -171,19 +182,18 @@ public class SiteInformationMenuController extends BaseMenuController {
 		}
 
 		List<String> selectedIDs = (List<String>) form.get("selectedIDs");
-
-		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
-
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+//		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
 
 			for (String siteInformationId : selectedIDs) {
-				siteInformationDAO.deleteData(siteInformationId, getSysUserId(request));
+//				siteInformationDAO.deleteData(siteInformationId, getSysUserId(request));
+				siteInformationService.delete(siteInformationId, getSysUserId(request));
 			}
 
-			tx.commit();
+//			tx.commit();
 		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
+//			tx.rollback();
 
 			String errorMsg;
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
@@ -195,9 +205,10 @@ public class SiteInformationMenuController extends BaseMenuController {
 			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, result);
 			return findForward(FWD_FAIL_DELETE, form);
 
-		} finally {
-			HibernateUtil.closeSession();
 		}
+//		finally {
+//			HibernateUtil.closeSession();
+//		}
 
 		ConfigurationProperties.forceReload();
 

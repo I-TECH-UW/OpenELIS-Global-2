@@ -45,6 +45,9 @@ public class SiteInformation extends BaseObject {
 	private String dictionaryCategoryId;
 	private String descriptionKey;
 
+	private String englishValue;
+	private String frenchValue;
+
 	public int getGroup() {
 		return group;
 	}
@@ -61,10 +64,12 @@ public class SiteInformation extends BaseObject {
 		this.schedule.setValue(schedule);
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
+	@Override
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -159,6 +164,23 @@ public class SiteInformation extends BaseObject {
 
 	@Override
 	protected String getDefaultLocalizedName() {
-		return getName();
+		return englishValue;
 	}
+
+	public void setEnglishValue(String englishValue) {
+		this.englishValue = englishValue;
+	}
+
+	public String getEnglishValue() {
+		return englishValue;
+	}
+
+	public void setFrenchValue(String frenchValue) {
+		this.frenchValue = frenchValue;
+	}
+
+	public String getFrenchValue() {
+		return frenchValue;
+	}
+
 }

@@ -122,7 +122,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation> impleme
 	@Override
 	public void getData(SiteInformation siteInformation) throws LIMSRuntimeException {
 		try {
-			SiteInformation tmpSiteInformation = (SiteInformation) HibernateUtil.getSession().get(SiteInformation.class,
+			SiteInformation tmpSiteInformation = HibernateUtil.getSession().get(SiteInformation.class,
 					siteInformation.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
@@ -165,7 +165,8 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation> impleme
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from SiteInformation si where si.domain.name = :domainName order by si.name";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+//			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("domainName", domainName);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
@@ -183,8 +184,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation> impleme
 	public SiteInformation readSiteInformation(String idString) {
 		SiteInformation recoveredSiteInformation;
 		try {
-			recoveredSiteInformation = (SiteInformation) HibernateUtil.getSession().get(SiteInformation.class,
-					idString);
+			recoveredSiteInformation = HibernateUtil.getSession().get(SiteInformation.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -244,7 +244,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation> impleme
 	public SiteInformation getSiteInformationById(String id) throws LIMSRuntimeException {
 
 		try {
-			SiteInformation info = (SiteInformation) HibernateUtil.getSession().get(SiteInformation.class, id);
+			SiteInformation info = HibernateUtil.getSession().get(SiteInformation.class, id);
 			// closeSession(); // CSL remove old
 			return info;
 		} catch (HibernateException e) {

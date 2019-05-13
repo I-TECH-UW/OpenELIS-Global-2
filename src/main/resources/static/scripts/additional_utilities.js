@@ -1,31 +1,3 @@
-<%@ page language="java"
-	contentType="application/javascript; charset=utf-8"
-	import="java.util.Iterator,javax.servlet.jsp.JspException,
-			us.mn.state.health.lims.common.action.IActionConstants,
-			spring.mine.internationalization.MessageUtil,
-			spring.mine.internationalization.MessageUtil"
- %>
-<%!
-
-String errorMessagePhone = "";
-String errorMessagePicklist = "";
-
-String path = "";
-String basePath = "";
-%>
-<%
-
-path = request.getContextPath();
-basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
-
-errorMessagePhone = MessageUtil.getMessage("error.phone");
-errorMessagePicklist = MessageUtil.getMessage("error.picklist");
-%>
-
-var myFormName = '<%= (String)request.getAttribute(IActionConstants.FORM_NAME) %>';
-
-
-
 var buttonClicked = false;
 
 function checkClicked(){
@@ -519,25 +491,6 @@ function delIt(includeSorting) {
   }
 }
 
-// Selection - invoked on submit
-function selIt(btn) {
-//alert("Here I am selIt");
-  var pickList = document.getElementById("PickList");
-  var pickOptions = pickList.options;
-  var pickOLength = pickOptions.length;
-  if (pickOLength < 1) {
-  //bugzilla 1494
-    alert('<%=errorMessagePicklist%>');
-    return false;
-  }
-  for (var i = 0; i < pickOLength; i++) {
-    pickOptions[i].selected = true;
-  }
-  return true;
-}
-
-
-
 //POPUP STUFF
 
 // Default window width for tree select popup
@@ -670,10 +623,6 @@ function createSelectPopup(pageAddress, theForm, theField)
 	parentForm = theForm;
 	parentField = theField;
 
-}
-
-function playSound(){ 
-  document.getElementById("sound").innerHTML= '<embed src="<%=basePath%>media/DING.WAV" loop=false autostart="true" width="0" height="0" hidden>' 
 }
 
 function IsNumeric(strString)
