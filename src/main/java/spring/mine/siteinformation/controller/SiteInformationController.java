@@ -202,8 +202,8 @@ public class SiteInformationController extends BaseController {
 	private void setLocalizationValues(BaseForm form, SiteInformation siteInformation)
 			throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		if ("localization".equals(siteInformation.getTag())) {
-			LocalizationService localizationService = new LocalizationService(siteInformation.getValue());
-			Localization localization = localizationService.getLocalization();
+//			LocalizationService localizationService = new LocalizationService(siteInformation.getValue());
+			Localization localization = localizationService.get(siteInformation.getValue());
 			PropertyUtils.setProperty(form, "englishValue", localization.getEnglish());
 			PropertyUtils.setProperty(form, "frenchValue", localization.getFrench());
 

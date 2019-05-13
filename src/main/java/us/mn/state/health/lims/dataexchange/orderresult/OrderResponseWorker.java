@@ -181,7 +181,8 @@ public class OrderResponseWorker {
 	private String generateMessageId() {
 		String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 		HL7MessageOutDAOImpl messageOutDAO = new HL7MessageOutDAOImpl();
-		int sequenceNum = messageOutDAO.getNextIdNoIncrement();
+//		int sequenceNum = messageOutDAO.getNextIdNoIncrement();
+		int sequenceNum = 0;
 		if (sequenceNum != 0) {
 			sequenceNum = ((sequenceNum - 1) % 99999) + 1;
 		}
