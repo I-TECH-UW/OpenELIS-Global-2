@@ -39,8 +39,8 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.image.dao.ImageDAO;
 import us.mn.state.health.lims.image.daoimpl.ImageDAOImpl;
 import us.mn.state.health.lims.image.valueholder.Image;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
-import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
+import us.mn.state.health.lims.login.dao.UserModuleService;
+import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
 import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
 import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
@@ -56,8 +56,8 @@ public class LogoUploadServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// check for authentication
-		UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-		if (userModuleDAO.isSessionExpired(request)) {
+		UserModuleService userModuleService = new UserModuleServiceImpl();
+		if (userModuleService.isSessionExpired(request)) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.setContentType("text/html; charset=utf-8");
 			response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));

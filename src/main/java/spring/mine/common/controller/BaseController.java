@@ -25,8 +25,8 @@ import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
-import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
+import us.mn.state.health.lims.login.dao.UserModuleService;
+import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
 
 @Component
@@ -200,8 +200,8 @@ public abstract class BaseController implements IActionConstants {
 	}
 
 	protected boolean userHasPermissionForModule(HttpServletRequest request, String module) {
-		UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-		if (!userModuleDAO.isUserAdmin(request)
+		UserModuleService userModuleService = new UserModuleServiceImpl();
+		if (!userModuleService.isUserAdmin(request)
 				&& SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
 			@SuppressWarnings("rawtypes")
 			HashSet accessMap = (HashSet) request.getSession().getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);

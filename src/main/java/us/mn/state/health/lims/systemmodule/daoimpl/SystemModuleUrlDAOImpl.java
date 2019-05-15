@@ -37,12 +37,9 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl> impleme
 		List<SystemModuleUrl> list;
 		try {
 			String sql = "From SystemModuleUrl smu where smu.urlPath = :urlPath";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("urlPath", urlPath);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// closeSession(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			LogEvent.logError("SystemModuleUrlDAOImpl", "getByUrlPath()", e.toString());

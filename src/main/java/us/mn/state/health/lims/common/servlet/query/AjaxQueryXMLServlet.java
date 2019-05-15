@@ -12,8 +12,8 @@ import us.mn.state.health.lims.common.provider.query.BaseQueryProvider;
 import us.mn.state.health.lims.common.provider.query.QueryProviderFactory;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
-import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
+import us.mn.state.health.lims.login.dao.UserModuleService;
+import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
 import us.mn.state.health.lims.security.SecureXmlHttpServletRequest;
 
 public class AjaxQueryXMLServlet extends AjaxServlet {
@@ -44,8 +44,8 @@ public class AjaxQueryXMLServlet extends AjaxServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException, LIMSRuntimeException {
 		//check for authentication
-		UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-		if (userModuleDAO.isSessionExpired(request)) {
+		UserModuleService userModuleService = new UserModuleServiceImpl();
+		if (userModuleService.isSessionExpired(request)) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.setContentType("text/html; charset=utf-8");
 			response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));

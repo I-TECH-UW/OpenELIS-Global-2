@@ -15,6 +15,7 @@
 */
 package us.mn.state.health.lims.common.dao;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,7 +34,7 @@ public interface BaseDAO<T extends BaseObject> {
 	 * @param id
 	 * @return the object corresponding with the id
 	 */
-	Optional<T> get(String id);
+	Optional<T> get(Serializable id);
 
 	/**
 	 * @return all data type for the object type
@@ -53,6 +54,10 @@ public interface BaseDAO<T extends BaseObject> {
 	 * @return List of all matching entries
 	 */
 	List<T> getAllMatching(Map<String, Object> propertyValues);
+
+	List<T> getAllLike(Map<String, String> propertyValues);
+
+	List<T> getAllLike(String propertyName, String propertyValue);
 
 	/**
 	 * @param orderProperty the property to order by
@@ -113,6 +118,49 @@ public interface BaseDAO<T extends BaseObject> {
 	 * @return List of all ordered matching entries
 	 */
 	List<T> getAllMatchingOrdered(Map<String, Object> propertyValues, List<String> orderProperties, boolean descending);
+
+	/**
+	 * @param propertyName  the property that must match
+	 * @param propertyValue the value the property must equal
+	 * @param orderProperty the property to order by
+	 * @param descending    Set to true to order by descending, false for order by
+	 *                      ascending
+	 * @return List of all ordered matching entries
+	 */
+	List<T> getAllLikeOrdered(String propertyName, String propertyValue, String orderProperty, boolean descending);
+
+	/**
+	 * @param propertyName    the property that must match
+	 * @param propertyValue   the value the property must equal
+	 * @param orderProperties the properties to order by, starting with the first
+	 *                        entry
+	 * @param descending      Set to true to order by descending, false for order by
+	 *                        ascending
+	 * @return List of all ordered matching entries
+	 */
+	List<T> getAllLikeOrdered(String propertyName, String propertyValue, List<String> orderProperties,
+			boolean descending);
+
+	/**
+	 * @param propertyValues Key Value pairs where key is the property name and
+	 *                       value is the value it must match
+	 * @param orderProperty  the property to order by
+	 * @param descending     Set to true to order by descending, false for order by
+	 *                       ascending
+	 * @return List of all ordered matching entries
+	 */
+	List<T> getAllLikeOrdered(Map<String, String> propertyValues, String orderProperty, boolean descending);
+
+	/**
+	 * @param propertyValues  Key Value pairs where key is the property name and
+	 *                        value is the value it must match
+	 * @param orderProperties the properties to order by, starting with the first
+	 *                        entry
+	 * @param descending      Set to true to order by descending, false for order by
+	 *                        ascending
+	 * @return List of all ordered matching entries
+	 */
+	List<T> getAllLikeOrdered(Map<String, String> propertyValues, List<String> orderProperties, boolean descending);
 
 	/**
 	 * @param startingRecNo the rec number to start from for this page
@@ -274,5 +322,21 @@ public interface BaseDAO<T extends BaseObject> {
 	@Deprecated
 	// bugzilla 1411
 	public Integer getTotalCount(String table, Class clazz) throws LIMSRuntimeException;
+
+	List<T> getLikePage(String propertyName, String propertyValue, int startingRecNo);
+
+	List<T> getLikePage(Map<String, String> propertyValues, int startingRecNo);
+
+	List<T> getLikeOrderedPage(String propertyName, String propertyValue, String orderProperty, boolean descending,
+			int startingRecNo);
+
+	List<T> getLikeOrderedPage(String propertyName, String propertyValue, List<String> orderProperties,
+			boolean descending, int startingRecNo);
+
+	List<T> getLikeOrderedPage(Map<String, String> propertyValues, String orderProperty, boolean descending,
+			int startingRecNo);
+
+	List<T> getLikeOrderedPage(Map<String, String> propertyValues, List<String> orderProperties, boolean descending,
+			int startingRecNo);
 
 }

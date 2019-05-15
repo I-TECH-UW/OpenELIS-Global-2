@@ -34,8 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.provider.reports.BaseReportsProvider;
 import us.mn.state.health.lims.common.provider.reports.ReportsProviderFactory;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
-import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
+import us.mn.state.health.lims.login.dao.UserModuleService;
+import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
 
 /**
  * @author benzd1
@@ -52,8 +52,8 @@ public class ReportsServlet extends HttpServlet {
 			HttpServletResponse response) throws IOException, ServletException
 	{
 		//check for authentication
-		UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-		if (userModuleDAO.isSessionExpired(request)) {
+		UserModuleService userModuleService = new UserModuleServiceImpl();
+		if (userModuleService.isSessionExpired(request)) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.setContentType("text/html; charset=utf-8");
 			response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));

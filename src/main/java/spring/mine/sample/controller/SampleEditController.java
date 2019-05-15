@@ -57,8 +57,8 @@ import us.mn.state.health.lims.common.services.registration.interfaces.IResultUp
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dataexchange.orderresult.OrderResponseWorker.Event;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
-import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
+import us.mn.state.health.lims.login.dao.UserModuleService;
+import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
 import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
 import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
@@ -130,7 +130,7 @@ public class SampleEditController extends BaseController {
 
 	private static final TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
 	private static final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-	private static final UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
+	private static final UserModuleService userModuleService = new UserModuleServiceImpl();
 	private static final SampleEditItemComparator testComparator = new SampleEditItemComparator();
 	private static final Set<Integer> excludedAnalysisStatusList;
 	private static final Set<Integer> ENTERED_STATUS_SAMPLE_LIST = new HashSet<>();
@@ -155,7 +155,7 @@ public class SampleEditController extends BaseController {
 
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
-		boolean allowedToCancelResults = userModuleDAO.isUserAdmin(request)
+		boolean allowedToCancelResults = userModuleService.isUserAdmin(request)
 				|| new UserRoleDAOImpl().userInRole(getSysUserId(request), ABLE_TO_CANCEL_ROLE_NAMES);
 		boolean isEditable = "readwrite".equals(request.getSession().getAttribute(SAMPLE_EDIT_WRITABLE))
 				|| "readwrite".equals(request.getParameter("type"));

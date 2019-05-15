@@ -39,9 +39,9 @@ import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.login.dao.LoginDAO;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
+import us.mn.state.health.lims.login.dao.UserModuleService;
 import us.mn.state.health.lims.login.daoimpl.LoginDAOImpl;
-import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
+import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
 import us.mn.state.health.lims.login.valueholder.Login;
 import us.mn.state.health.lims.role.action.bean.DisplayRole;
 import us.mn.state.health.lims.role.dao.RoleDAO;
@@ -106,8 +106,8 @@ public class UnifiedSystemUserController extends BaseController {
 
 	private void setupRoles(UnifiedSystemUserForm form, HttpServletRequest request, boolean doFiltering) {
 		List<Role> roles = getAllRoles();
-		UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-		doFiltering &= !userModuleDAO.isUserAdmin(request);
+		UserModuleService userModuleService = new UserModuleServiceImpl();
+		doFiltering &= !userModuleService.isUserAdmin(request);
 
 		if (doFiltering) {
 			roles = doRoleFiltering(roles, getSysUserId(request));

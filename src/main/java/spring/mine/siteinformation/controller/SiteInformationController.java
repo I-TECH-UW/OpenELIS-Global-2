@@ -30,7 +30,6 @@ import spring.mine.siteinformation.form.SiteInformationForm;
 import spring.mine.siteinformation.validator.SiteInformationFormValidator;
 import spring.service.siteinformation.SiteInformationService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.services.LocalizationService;
 import us.mn.state.health.lims.common.services.PhoneNumberService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationSideEffects;

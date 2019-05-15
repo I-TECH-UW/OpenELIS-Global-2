@@ -5,9 +5,7 @@
 				us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
 	            us.mn.state.health.lims.common.util.Versioning,
 		        java.util.HashSet,
-		        org.owasp.encoder.Encode,
-		        us.mn.state.health.lims.login.dao.UserModuleDAO,
-		        us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl"%>
+		        org.owasp.encoder.Encode,us.mn.state.health.lims.login.dao.UserModuleService,us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl"%>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -29,10 +27,8 @@
 <bean:define id="accessionFormat" value='<%=ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat)%>' />
 <bean:define id="genericDomain" value='' /> --%>
 
-<%!
-	String basePath = "";
-	UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-%>
+<%!String basePath = "";
+	UserModuleService userModuleDAO = new UserModuleServiceImpl();%>
 <%
 	String path = request.getContextPath();
 	basePath = request.getScheme() + "://" + request.getServerName() + ":"	+ request.getServerPort() + path + "/";

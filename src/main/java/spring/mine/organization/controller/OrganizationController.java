@@ -4,11 +4,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,14 +24,14 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.organization.form.OrganizationForm;
-import us.mn.state.health.lims.address.dao.AddressPartDAO;
-import us.mn.state.health.lims.address.dao.OrganizationAddressDAO;
-import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
-import us.mn.state.health.lims.address.daoimpl.OrganizationAddressDAOImpl;
+import spring.service.address.AddressPartService;
+import spring.service.address.OrganizationAddressService;
+import spring.service.citystatezip.CityStateZipService;
+import spring.service.dictionary.DictionaryService;
+import spring.service.organization.OrganizationService;
+import spring.service.organization.OrganizationTypeService;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
 import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
-import us.mn.state.health.lims.citystatezip.dao.CityStateZipDAO;
-import us.mn.state.health.lims.citystatezip.daoimpl.CityStateZipDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
@@ -38,22 +39,27 @@ import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.dao.OrganizationOrganizationTypeDAO;
-import us.mn.state.health.lims.organization.dao.OrganizationTypeDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationOrganizationTypeDAOImpl;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationTypeDAOImpl;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.organization.valueholder.OrganizationType;
 
 @Controller
 @SessionAttributes("form")
 public class OrganizationController extends BaseController {
+
+	@Autowired
+	OrganizationService organizationService;
+	@Autowired
+	OrganizationAddressService organizationAddressService;
+	@Autowired
+	AddressPartService addressPartService;
+	@Autowired
+	CityStateZipService cityStateZipService;
+	@Autowired
+	OrganizationTypeService organizationTypeService;
+	@Autowired
+	DictionaryService dictionaryService;
 
 	@ModelAttribute("form")
 	public OrganizationForm form() {
@@ -68,12 +74,9 @@ public class OrganizationController extends BaseController {
 
 	private List<String> selectedOrgTypes;
 
-	private static String DEPARTMENT_ID;
-	private static String COMMUNE_ID;
-	private static String VILLAGE_ID;
-
-	private static OrganizationDAO organizationDAO = new OrganizationDAOImpl();
-	private static OrganizationAddressDAO orgAddressDAO = new OrganizationAddressDAOImpl();
+	private String DEPARTMENT_ID;
+	private String COMMUNE_ID;
+	private String VILLAGE_ID;
 
 	private OrganizationAddress departmentAddress;
 	private boolean updateDepartment = false;
@@ -82,30 +85,29 @@ public class OrganizationController extends BaseController {
 	private OrganizationAddress villageAddress;
 	private boolean updateVillage = false;
 
-	static {
-		AddressPartDAO addressPartDAO = new AddressPartDAOImpl();
-		List<AddressPart> partList = addressPartDAO.getAll();
-
-		for (AddressPart addressPart : partList) {
-			if ("department".equals(addressPart.getPartName())) {
-				DEPARTMENT_ID = addressPart.getId();
-			} else if ("commune".equals(addressPart.getPartName())) {
-				COMMUNE_ID = addressPart.getId();
-			} else if ("village".equals(addressPart.getPartName())) {
-				VILLAGE_ID = addressPart.getId();
-			}
-		}
-
-	}
+//	static {
+//		AddressPartDAO addressPartDAO = new AddressPartDAOImpl();
+//		List<AddressPart> partList = addressPartDAO.getAll();
+//
+//		for (AddressPart addressPart : partList) {
+//			if ("department".equals(addressPart.getPartName())) {
+//				DEPARTMENT_ID = addressPart.getId();
+//			} else if ("commune".equals(addressPart.getPartName())) {
+//				COMMUNE_ID = addressPart.getId();
+//			} else if ("village".equals(addressPart.getPartName())) {
+//				VILLAGE_ID = addressPart.getId();
+//			}
+//		}
+//
+//	}
 
 	private static boolean useParentOrganization = FormFields.getInstance().useField(Field.OrganizationParent);
 	private static boolean useOrganizationState = FormFields.getInstance().useField(Field.OrgState);
 	private static boolean useOrganizationTypeList = FormFields.getInstance().useField(Field.InlineOrganizationTypes);
 
-	static {
-		AddressPartDAO addressPartDAO = new AddressPartDAOImpl();
-		List<AddressPart> partList = addressPartDAO.getAll();
-
+	@PostConstruct
+	public void initialize() {
+		List<AddressPart> partList = addressPartService.getAll();
 		for (AddressPart addressPart : partList) {
 			if ("department".equals(addressPart.getPartName())) {
 				DEPARTMENT_ID = addressPart.getId();
@@ -115,7 +117,6 @@ public class OrganizationController extends BaseController {
 				VILLAGE_ID = addressPart.getId();
 			}
 		}
-
 	}
 
 	@RequestMapping(value = { "/Organization", "/NextPreviousOrganization" }, method = RequestMethod.GET)
@@ -141,21 +142,16 @@ public class OrganizationController extends BaseController {
 		List<Dictionary> departmentList = getDepartmentList();
 		PropertyUtils.setProperty(form, "departmentList", departmentList);
 
-		Organization organization = new Organization();
-		organization.setId(id);
+		Organization organization;
 
 		// redirect to get organization for next or previous entry
-		if (FWD_NEXT.equals(direction) || FWD_PREVIOUS.equals(direction)) {
-			List<Organization> organizations;
-			organizationDAO.getData(organization);
-			if (FWD_NEXT.equals(direction)) {
-				organizations = organizationDAO.getNextOrganizationRecord(organization.getId());
-			} else {
-				organizations = organizationDAO.getPreviousOrganizationRecord(organization.getId());
-			}
-			if (organizations != null && !organizations.isEmpty()) {
-				organization = organizations.get(organizations.size() - 1);
-			}
+		if (FWD_NEXT.equals(direction)) {
+			organization = organizationService.getNext(id);
+			String newId = organization.getId();
+			String url = "redirect:/Organization.do?ID=" + newId + "&startingRecNo=" + start;
+			return new ModelAndView(url);
+		} else if (FWD_PREVIOUS.equals(direction)) {
+			organization = organizationService.getPrevious(id);
 			String newId = organization.getId();
 			String url = "redirect:/Organization.do?ID=" + newId + "&startingRecNo=" + start;
 			return new ModelAndView(url);
@@ -164,29 +160,30 @@ public class OrganizationController extends BaseController {
 		boolean isNew = (id == null) || "0".equals(id);
 		if (isNew) {
 			request.setAttribute("key", "organization.add.title");
+			organization = new Organization();
+
+			// default isActive to 'Y'
+			organization.setIsActive(YES);
+			organization.setMlsSentinelLabFlag(NO);
+			organization.setMlsLabFlag("N");
 		} else {
 			request.setAttribute("key", "organization.edit.title");
-		}
 
-		if (!isNew) {
-			organizationDAO.getData(organization);
+			organization = organizationService.get(id);
 			if (organization.getOrganization() != null) {
 				organization.setSelectedOrgId(organization.getOrganization().getId());
 			}
 
-			List<Organization> organizations = organizationDAO
-					.getNextOrganizationRecord(organization.getOrganizationName());
-			if (!organizations.isEmpty()) {
+			if (organizationService.hasNext(id)) {
 				request.setAttribute(NEXT_DISABLED, "false");
 			}
-
-			organizations = organizationDAO.getPreviousOrganizationRecord(organization.getOrganizationName());
-			if (!organizations.isEmpty()) {
+			if (organizationService.hasPrevious(id)) {
 				request.setAttribute(PREVIOUS_DISABLED, "false");
 			}
 
 			if (useCommune || useDepartment || useVillage) {
-				List<OrganizationAddress> orgAddressList = orgAddressDAO.getAddressPartsByOrganizationId(id);
+				List<OrganizationAddress> orgAddressList = organizationAddressService
+						.getAddressPartsByOrganizationId(id);
 
 				for (OrganizationAddress orgAddress : orgAddressList) {
 					if (useCommune && COMMUNE_ID.equals(orgAddress.getAddressPartId())) {
@@ -199,12 +196,6 @@ public class OrganizationController extends BaseController {
 				}
 			}
 
-		} else { // this is a new organization
-
-			// default isActive to 'Y'
-			organization.setIsActive(YES);
-			organization.setMlsSentinelLabFlag(NO);
-			organization.setMlsLabFlag("N");
 		}
 
 		// initialize state to MN
@@ -219,7 +210,7 @@ public class OrganizationController extends BaseController {
 		PropertyUtils.copyProperties(form, organization);
 
 		if (useParentOrganization) {
-			setParentOrganiztionName(form, organization, organizationDAO);
+			setParentOrganiztionName(form, organization);
 		}
 
 		if (useOrganizationState) {
@@ -234,8 +225,11 @@ public class OrganizationController extends BaseController {
 			if (organization.getId() != null && orgTypeList != null) {
 				if (orgTypeList.size() > 0) {
 
-					OrganizationOrganizationTypeDAO ootDAO = new OrganizationOrganizationTypeDAOImpl();
-					List<String> selectedOrgTypeList = ootDAO.getTypeIdsForOrganizationId(organization.getId());
+					// OrganizationOrganizationTypeDAO ootDAO = new
+					// OrganizationOrganizationTypeDAOImpl();
+					List<String> selectedOrgTypeList = organizationService
+							.getTypeIdsForOrganizationId(organization.getId());
+//					List<String> selectedOrgTypeList = ootDAO.getTypeIdsForOrganizationId(organization.getId());
 
 					for (String orgTypeId : selectedOrgTypeList) {
 						selectedList.add(orgTypeId);
@@ -248,14 +242,13 @@ public class OrganizationController extends BaseController {
 		return findForward(FWD_SUCCESS, form);
 	}
 
-	private void setParentOrganiztionName(BaseForm form, Organization organization, OrganizationDAO organizationDAO)
+	private void setParentOrganiztionName(BaseForm form, Organization organization)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		Organization parentOrg = new Organization();
 		String parentOrgName = null;
 
 		if (!StringUtil.isNullorNill(organization.getSelectedOrgId())) {
-			parentOrg.setId(organization.getSelectedOrgId());
-			organizationDAO.getData(parentOrg);
+			parentOrg = organizationService.get(organization.getSelectedOrgId());
 			parentOrgName = parentOrg.getOrganizationName();
 		}
 
@@ -266,17 +259,14 @@ public class OrganizationController extends BaseController {
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		if (FormFields.getInstance().useField(FormFields.Field.OrgState)) {
 			// bugzilla 1545
-			CityStateZipDAO cityStateZipDAO = new CityStateZipDAOImpl();
-			List states = cityStateZipDAO.getAllStateCodes();
+			List states = cityStateZipService.getAllStateCodes();
 			PropertyUtils.setProperty(form, "states", states);
 		}
 	}
 
 	private List<OrganizationType> getOrganizationTypeList() {
 
-		OrganizationTypeDAO orgTypeDAO = new OrganizationTypeDAOImpl();
-
-		List<OrganizationType> orgTypeList = orgTypeDAO.getAllOrganizationTypes();
+		List<OrganizationType> orgTypeList = organizationTypeService.getAll();
 		if (orgTypeList == null) {
 			orgTypeList = new ArrayList<>();
 		}
@@ -285,8 +275,7 @@ public class OrganizationController extends BaseController {
 	}
 
 	private List<Dictionary> getDepartmentList() {
-		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-		return dictionaryDAO.getDictionaryEntrysByCategoryAbbreviation("description", "haitiDepartment", true);
+		return dictionaryService.getDictionaryEntrysByCategoryAbbreviation("description", "haitiDepartment", true);
 	}
 
 	@RequestMapping(value = "/Organization", method = RequestMethod.POST)
@@ -302,19 +291,19 @@ public class OrganizationController extends BaseController {
 		}
 
 		String id = request.getParameter(ID);
+		Organization organization;
 		boolean isNew = (StringUtil.isNullorNill(id) || "0".equals(id));
 		if (isNew) {
+			organization = new Organization();
 			request.setAttribute("key", "organization.add.title");
 		} else {
+			organization = organizationService.get(id);
 			request.setAttribute("key", "organization.edit.title");
 		}
 
 		selectedOrgTypes = (List<String>) form.get("selectedTypes");
 
-		Organization organization = new Organization();
 		organization.setSysUserId(getSysUserId(request));
-
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 		List states = getPossibleStates(form);
 		PropertyUtils.copyProperties(organization, form);
@@ -323,27 +312,25 @@ public class OrganizationController extends BaseController {
 			String parentOrgName = (String) form.get("parentOrgName");
 			Organization o = new Organization();
 			o.setOrganizationName(parentOrgName);
-			Organization parentOrg = organizationDAO.getOrganizationByName(o, false);
+			Organization parentOrg = organizationService.getOrganizationByName(o, false);
 			organization.setOrganization(parentOrg);
 		}
 		createAddressParts(id, form, isNew);
 
 		try {
 			if (!isNew) {
-				organizationDAO.updateData(organization);
+				organizationService.update(organization);
 			} else {
-				organizationDAO.insertData(organization);
+				organizationService.insert(organization);
 			}
 
 			persistAddressParts(organization);
 
 			linkOrgWithOrgType(organization);
 
-			tx.commit();
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
 			LogEvent.logError("OrganizationUpdateAction", "performAction()", lre.toString());
-			tx.rollback();
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
 				result.reject("errors.OptimisticLockException");
 			} else {
@@ -391,28 +378,28 @@ public class OrganizationController extends BaseController {
 	private void persistAddressParts(Organization organization) {
 		if (departmentAddress != null) {
 			if (updateDepartment) {
-				orgAddressDAO.update(departmentAddress);
+				organizationAddressService.update(departmentAddress);
 			} else {
 				departmentAddress.setOrganizationId(organization.getId());
-				orgAddressDAO.insert(departmentAddress);
+				organizationAddressService.insert(departmentAddress);
 			}
 		}
 
 		if (communeAddress != null) {
 			if (updateCommune) {
-				orgAddressDAO.update(communeAddress);
+				organizationAddressService.update(communeAddress);
 			} else {
 				communeAddress.setOrganizationId(organization.getId());
-				orgAddressDAO.insert(communeAddress);
+				organizationAddressService.insert(communeAddress);
 			}
 		}
 
 		if (villageAddress != null) {
 			if (updateVillage) {
-				orgAddressDAO.update(villageAddress);
+				organizationAddressService.update(villageAddress);
 			} else {
 				villageAddress.setOrganizationId(organization.getId());
-				orgAddressDAO.insert(villageAddress);
+				organizationAddressService.insert(villageAddress);
 			}
 		}
 	}
@@ -423,7 +410,8 @@ public class OrganizationController extends BaseController {
 			updateCommune = false;
 			updateVillage = false;
 			if (!isNew) {
-				List<OrganizationAddress> orgAddressList = orgAddressDAO.getAddressPartsByOrganizationId(id);
+				List<OrganizationAddress> orgAddressList = organizationAddressService
+						.getAddressPartsByOrganizationId(id);
 
 				for (OrganizationAddress orgAddress : orgAddressList) {
 					if (DEPARTMENT_ID.equals(orgAddress.getAddressPartId())) {
@@ -475,12 +463,12 @@ public class OrganizationController extends BaseController {
 	}
 
 	private void linkOrgWithOrgType(Organization organization) {
-		OrganizationOrganizationTypeDAO ootDAO = new OrganizationOrganizationTypeDAOImpl();
+//		OrganizationOrganizationTypeDAO ootDAO = new OrganizationOrganizationTypeDAOImpl();
 
-		ootDAO.deleteAllLinksForOrganization(organization.getId());
+		organizationService.deleteAllLinksForOrganization(organization.getId());
 
 		for (String typeId : selectedOrgTypes) {
-			ootDAO.linkOrganizationAndType(organization, typeId);
+			organizationService.linkOrganizationAndType(organization, typeId);
 		}
 
 	}
@@ -488,13 +476,10 @@ public class OrganizationController extends BaseController {
 	private List getPossibleStates(BaseForm form) {
 		List states = null;
 		if (useState) {
-
-			CityStateZipDAO cityStateZipDAO = new CityStateZipDAOImpl();
-
 			if (form.get("states") != null) {
 				states = (List) form.get("states");
 			} else {
-				states = cityStateZipDAO.getAllStateCodes();
+				states = cityStateZipService.getAllStateCodes();
 			}
 		}
 		return states;

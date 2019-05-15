@@ -3,11 +3,13 @@ package spring.mine.config;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -21,7 +23,6 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesView;
 
-import spring.mine.interceptor.ModuleAuthenticationInterceptor;
 import spring.mine.interceptor.PageAttributesInterceptor;
 import spring.mine.interceptor.UrlErrorsInterceptor;
 import spring.mine.security.SecurityConfig;
@@ -32,7 +33,8 @@ import spring.mine.security.SecurityConfig;
 public class AppConfig implements WebMvcConfigurer {
 
 	@Autowired
-	ModuleAuthenticationInterceptor moduleAuthenticationInterceptor;
+	@Qualifier(value = "ModuleAuthenticationInterceptor")
+	HandlerInterceptor moduleAuthenticationInterceptor;
 	@Autowired
 	UrlErrorsInterceptor urlLocatedErrorsInterceptor;
 	@Autowired

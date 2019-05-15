@@ -1,14 +1,11 @@
 package spring.mine.login.controller;
 
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Date;
-import java.util.Calendar;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -26,12 +23,9 @@ import spring.mine.internationalization.MessageUtil;
 import spring.mine.login.form.ChangePasswordLoginForm;
 import spring.mine.login.validator.ChangePasswordLoginFormValidator;
 import spring.mine.login.validator.LoginValidator;
+import spring.service.login.LoginService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.login.dao.LoginDAO;
-import us.mn.state.health.lims.login.daoimpl.LoginDAOImpl;
 import us.mn.state.health.lims.login.valueholder.Login;
 
 @Controller
@@ -41,6 +35,8 @@ public class ChangePasswordLoginController extends BaseController {
 	ChangePasswordLoginFormValidator formValidator;
 	@Autowired
 	LoginValidator loginValidator;
+	@Autowired
+	LoginService loginService;
 
 	@RequestMapping(value = "/ChangePasswordLogin", method = RequestMethod.GET)
 	public ModelAndView showChangePasswordLogin(HttpServletRequest request) {
@@ -59,44 +55,33 @@ public class ChangePasswordLoginController extends BaseController {
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
-		Login login = new Login();
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
-		// populate valueholder from form
-		PropertyUtils.copyProperties(login, form);
-		LoginDAO loginDAO = new LoginDAOImpl();
+//		Login newLogin = new Login();
+//		// populate valueholder from form
+//		PropertyUtils.copyProperties(newLogin, form);
 		try {
+			Login login;
 			// get user information if password correct
-			Login loginInfo = loginDAO.getValidateLogin(login);
-			if (loginInfo == null) {
+			Optional<Login> matchedLogin = loginService.getValidatedLogin(form.getLoginName(), form.getPassword());
+			if (!matchedLogin.isPresent()) {
 				result.reject("login.error.message");
 			} else {
+				login = matchedLogin.get();
 				// update fields of login before validating again
-				loginInfo.setPassword(login.getNewPassword());
-				Calendar passwordExpiredDate = Calendar.getInstance();
-				passwordExpiredDate.add(Calendar.MONTH,
-						Integer.parseInt(SystemConfiguration.getInstance().getLoginUserChangePasswordExpiredMonth()));
-				loginInfo.setPasswordExpiredDate(new Date(passwordExpiredDate.getTimeInMillis()));
-				loginInfo.setSysUserId(String.valueOf(loginInfo.getSystemUserId())); // there is no loggedin user when
-
-				Errors loginResult = new BeanPropertyBindingResult(loginInfo, "loginInfo");
-				loginValidator.unauthenticatedPasswordUpdateValidate(loginInfo, loginResult);
+				loginService.updatePassword(login, form.getNewPassword());
+				Errors loginResult = new BeanPropertyBindingResult(login, "loginInfo");
+				loginValidator.unauthenticatedPasswordUpdateValidate(login, loginResult);
 
 				if (loginResult.hasErrors()) {
 					saveErrors(loginResult);
 					return findForward(FWD_FAIL_INSERT, form);
 				}
+				loginService.update(login);
 			}
-
-			loginDAO.updatePassword(loginInfo);
-			tx.commit();
 
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
 			LogEvent.logError("LoginChangePasswordUpdateAction", "performAction()", lre.toString());
-			tx.rollback();
 			result.reject("login.error.message");
-		} finally {
-			HibernateUtil.closeSession();
 		}
 		if (result.hasErrors()) {
 			saveErrors(result);

@@ -159,7 +159,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip> implements Ci
 		try {
 			// bugzilla 1908 postgres error on order by
 			String sql = "select distinct upper(csz.state) from CityStateZip csz order by upper(csz.state)";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
 
 			for (int i = 0; i < list.size(); i++) {
@@ -171,9 +171,6 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip> implements Ci
 				cityStateZip.setState(state);
 				cityStateZips.add(cityStateZip);
 			}
-
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("CityStateZipDAOImpl", "getAllStateCodes()", e.toString());

@@ -11,9 +11,7 @@
 	            us.mn.state.health.lims.sample.bean.SampleOrderItem,
 	            us.mn.state.health.lims.sample.util.AccessionNumberUtil,
 	            org.owasp.encoder.Encode,
-	        	java.util.HashSet,
-	        	us.mn.state.health.lims.login.dao.UserModuleDAO,
-	        	us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl"%>
+	        	java.util.HashSet,us.mn.state.health.lims.login.dao.UserModuleService,us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl"%>
 
 
 <%@ page isELIgnored="false" %>
@@ -23,9 +21,7 @@
 <%@ taglib prefix="app" uri="/tags/labdev-view" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%!
-	UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-%>
+<%!UserModuleService userModuleDAO = new UserModuleServiceImpl();%>
 <%
 	String path = request.getContextPath();
 	basePath = request.getScheme() + "://" + request.getServerName() + ":"	+ request.getServerPort() + path + "/";

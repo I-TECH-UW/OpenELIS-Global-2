@@ -25,8 +25,8 @@ import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.provider.validation.BaseValidationProvider;
 import us.mn.state.health.lims.common.provider.validation.ValidationProviderFactory;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
-import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
+import us.mn.state.health.lims.login.dao.UserModuleService;
+import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
 import us.mn.state.health.lims.security.SecureXmlHttpServletRequest;
 
 public class AjaxTextServlet extends AjaxServlet {
@@ -48,8 +48,8 @@ public class AjaxTextServlet extends AjaxServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		//check for authentication
-		UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-		if (userModuleDAO.isSessionExpired(request)) {
+		UserModuleService userModuleService = new UserModuleServiceImpl();
+		if (userModuleService.isSessionExpired(request)) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.setContentType("text/html; charset=utf-8");
 			response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));

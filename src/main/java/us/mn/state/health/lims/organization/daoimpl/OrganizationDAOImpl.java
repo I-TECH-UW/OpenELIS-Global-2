@@ -17,8 +17,6 @@ package us.mn.state.health.lims.organization.daoimpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.Vector;
 
@@ -169,7 +167,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 	@Override
 	public void getData(Organization organization) throws LIMSRuntimeException {
 		try {
-			Organization org = (Organization) HibernateUtil.getSession().get(Organization.class, organization.getId());
+			Organization org = HibernateUtil.getSession().get(Organization.class, organization.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (org != null) {
@@ -268,7 +266,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 	public Organization readOrganization(String idString) {
 		Organization org = null;
 		try {
-			org = (Organization) HibernateUtil.getSession().get(Organization.class, idString);
+			org = HibernateUtil.getSession().get(Organization.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -326,7 +324,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 				sql = "from Organization o where o.organizationName = :param and o.isActive='Y'";
 			}
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			if (ignoreCase) {
 				query.setString("param", organization.getOrganizationName().trim().toLowerCase());
 			} else {
@@ -640,88 +638,4 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 		return null;
 	}
 
-	@Override
-	public Optional<Organization> get(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Organization> getAllMatching(Map<String, Object> columnValues) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Organization> getAllOrdered(String orderByColumn, boolean descending) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Organization> getAllOrdered(List<String> orderByColumns, boolean descending) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Organization> getAllMatchingOrdered(Map<String, Object> columnValues, String orderByColumn,
-			boolean descending) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String insert(Organization object) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Optional<Organization> update(Organization object) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void delete(Organization object) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void delete(String id) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void deleteAll(String[] objectIds) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public Integer getCount() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Organization> getNext(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Organization> getPrevious(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Integer getTotalCount(String table, Class clazz) throws LIMSRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

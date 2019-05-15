@@ -21,7 +21,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
 public abstract class BaseObjectServiceImpl<T extends BaseObject> implements BaseObjectService<T> {
 
 	@Autowired
-	AuditTrailDAO auditTrailDAO;
+	protected AuditTrailDAO auditTrailDAO;
 
 	private final Class<T> classType;
 
@@ -34,106 +34,121 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	protected abstract BaseDAO<T> getBaseObjectDAO();
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public T get(String id) {
-		try {
-			return getBaseObjectDAO().get(id).orElse(classType.newInstance());
-		} catch (InstantiationException | IllegalAccessException e) {
-			LogEvent.logError(this.getClass().getSimpleName(), "get()",
-					"Could not create new Instance for " + classType.getName());
-			throw new LIMSRuntimeException(e);
+		return getBaseObjectDAO().get(id).orElseThrow(() -> new ObjectNotFoundException(id, classType.getName()));
+
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Optional<T> getMatch(String propertyName, Object propertyValue) {
+		Map<String, Object> propertyValues = new HashMap<>();
+		propertyValues.put(propertyName, propertyValue);
+		return getMatch(propertyValues);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Optional<T> getMatch(Map<String, Object> propertyValues) {
+		List<T> matches = getAllMatching(propertyValues);
+
+		if (matches.isEmpty() || matches.size() > 1) {
+			return Optional.empty();
+		} else {
+			return Optional.of(matches.get(0));
 		}
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<T> getAll() {
 		return getBaseObjectDAO().getAll();
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<T> getAllMatching(String propertyName, Object propertyValue) {
 		return getBaseObjectDAO().getAllMatching(propertyName, propertyValue);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<T> getAllMatching(Map<String, Object> propertyValues) {
 		return getBaseObjectDAO().getAllMatching(propertyValues);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<T> getAllOrdered(String orderProperty, boolean descending) {
 		return getBaseObjectDAO().getAllOrdered(orderProperty, descending);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<T> getAllOrdered(List<String> orderProperties, boolean descending) {
 		return getBaseObjectDAO().getAllOrdered(orderProperties, descending);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<T> getAllMatchingOrdered(String propertyName, Object propertyValue, String orderProperty,
 			boolean descending) {
 		return getBaseObjectDAO().getAllMatchingOrdered(propertyName, propertyValue, orderProperty, descending);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<T> getAllMatchingOrdered(String propertyName, Object propertyValue, List<String> orderProperties,
 			boolean descending) {
 		return getBaseObjectDAO().getAllMatchingOrdered(propertyName, propertyValue, orderProperties, descending);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<T> getAllMatchingOrdered(Map<String, Object> propertyValues, String orderProperty, boolean descending) {
 		return getBaseObjectDAO().getAllMatchingOrdered(propertyValues, orderProperty, descending);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<T> getAllMatchingOrdered(Map<String, Object> propertyValues, List<String> orderProperties,
 			boolean descending) {
 		return getBaseObjectDAO().getAllMatchingOrdered(propertyValues, orderProperties, descending);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<T> getPage(int pageNumber) {
 		return getBaseObjectDAO().getPage(pageNumber);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<T> getMatchingPage(String propertyName, Object propertyValue, int pageNumber) {
 		return getBaseObjectDAO().getMatchingPage(propertyName, propertyValue, pageNumber);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<T> getMatchingPage(Map<String, Object> propertyValues, int pageNumber) {
 		return getBaseObjectDAO().getMatchingPage(propertyValues, pageNumber);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<T> getOrderedPage(String orderProperty, boolean descending, int pageNumber) {
 		return getBaseObjectDAO().getOrderedPage(orderProperty, descending, pageNumber);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<T> getOrderedPage(List<String> orderProperties, boolean descending, int pageNumber) {
 		return getBaseObjectDAO().getOrderedPage(orderProperties, descending, pageNumber);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<T> getMatchingOrderedPage(String propertyName, Object propertyValue, String orderProperty,
 			boolean descending, int pageNumber) {
 		return getBaseObjectDAO().getMatchingOrderedPage(propertyName, propertyValue, orderProperty, descending,
@@ -141,7 +156,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<T> getMatchingOrderedPage(String propertyName, Object propertyValue, List<String> orderProperties,
 			boolean descending, int pageNumber) {
 		return getBaseObjectDAO().getMatchingOrderedPage(propertyName, propertyValue, orderProperties, descending,
@@ -149,14 +164,14 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, String orderProperty, boolean descending,
 			int pageNumber) {
 		return getBaseObjectDAO().getMatchingOrderedPage(propertyValues, orderProperty, descending, pageNumber);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, List<String> orderProperties,
 			boolean descending, int pageNumber) {
 		return getBaseObjectDAO().getMatchingOrderedPage(propertyValues, orderProperties, descending, pageNumber);
@@ -260,14 +275,6 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 
 	@Override
 	@Transactional
-	public void delete(List<String> ids, String sysUserId) {
-		for (String id : ids) {
-			delete(id, sysUserId);
-		}
-	}
-
-	@Override
-	@Transactional
 	public void deleteAll(List<T> baseObjects) {
 		for (T baseObject : baseObjects) {
 			delete(baseObject);
@@ -276,12 +283,21 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 
 	@Override
 	@Transactional
+	public void deleteAll(List<String> ids, String sysUserId) {
+		for (String id : ids) {
+			delete(id, sysUserId);
+		}
+
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public Integer getCount() {
 		return getBaseObjectDAO().getCount();
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Integer getCountMatching(String propertyName, Object propertyValue) {
 		Map<String, Object> propertyValues = new HashMap<>();
 		propertyValues.put(propertyName, propertyValue);
@@ -289,13 +305,27 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Integer getCountMatching(Map<String, Object> propertyValues) {
 		return getBaseObjectDAO().getAllMatching(propertyValues).size();
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
+	public Integer getCountLike(String propertyName, String propertyValue) {
+		Map<String, String> propertyValues = new HashMap<>();
+		propertyValues.put(propertyName, propertyValue);
+		return getCountLike(propertyValues);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Integer getCountLike(Map<String, String> propertyValues) {
+		return getBaseObjectDAO().getAllLike(propertyValues).size();
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public T getNext(String id) {
 		try {
 			return getBaseObjectDAO().getNext(id).orElse(classType.newInstance());
@@ -307,7 +337,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public T getPrevious(String id) {
 		try {
 			return getBaseObjectDAO().getPrevious(id).orElse(classType.newInstance());
@@ -319,13 +349,13 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public boolean hasNext(String id) {
 		return getBaseObjectDAO().getNext(id).isPresent();
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public boolean hasPrevious(String id) {
 		return getBaseObjectDAO().getPrevious(id).isPresent();
 	}

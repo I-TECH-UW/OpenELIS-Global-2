@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -22,17 +23,19 @@ import spring.mine.common.controller.BaseMenuController;
 import spring.mine.common.form.MenuForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.organization.form.OrganizationMenuForm;
+import spring.service.organization.OrganizationService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 
 @Controller
 public class OrganizationMenuController extends BaseMenuController {
+
+	@Autowired
+	OrganizationService organizationService;
 
 	@RequestMapping(value = { "/OrganizationMenu", "/SearchOrganizationMenu" }, method = RequestMethod.GET)
 	public ModelAndView showOrganizationMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
@@ -68,12 +71,10 @@ public class OrganizationMenuController extends BaseMenuController {
 
 		String doingSearch = request.getParameter("search");
 
-		OrganizationDAO organizationDAO = new OrganizationDAOImpl();
-
 		if (!StringUtil.isNullorNill(doingSearch) && doingSearch.equals(YES)) {
-			organizations = organizationDAO.getPagesOfSearchedOrganizations(startingRecNo, searchString);
+			organizations = organizationService.getPagesOfSearchedOrganizations(startingRecNo, searchString);
 		} else {
-			organizations = organizationDAO.getPageOfOrganizations(startingRecNo);
+			organizations = organizationService.getOrderedPage("organizationName", false, startingRecNo);
 		}
 
 		request.setAttribute("menuDefinition", "OrganizationMenuDefinition");
@@ -82,9 +83,9 @@ public class OrganizationMenuController extends BaseMenuController {
 		// bugzilla 2372 set pagination variables for searched results
 		if (!StringUtil.isNullorNill(doingSearch) && doingSearch.equals(YES)) {
 			request.setAttribute(MENU_TOTAL_RECORDS,
-					String.valueOf(organizationDAO.getTotalSearchedOrganizationCount(searchString)));
+					String.valueOf(organizationService.getTotalSearchedOrganizationCount(searchString)));
 		} else {
-			request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(organizationDAO.getTotalOrganizationCount()));
+			request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(organizationService.getCount()));
 		}
 
 		request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
@@ -148,8 +149,7 @@ public class OrganizationMenuController extends BaseMenuController {
 		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
 			// System.out.println("Going to delete Organization");
-			OrganizationDAO organizationDAO = new OrganizationDAOImpl();
-			organizationDAO.deleteData(organizations);
+			organizationService.deleteAll(organizations);
 			// System.out.println("Just deleted Organization");
 			tx.commit();
 		} catch (LIMSRuntimeException lre) {

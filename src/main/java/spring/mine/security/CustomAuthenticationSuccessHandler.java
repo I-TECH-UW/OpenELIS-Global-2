@@ -9,30 +9,38 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.stereotype.Component;
 
+import spring.service.login.LoginService;
+import spring.service.systemuser.SystemUserService;
+import spring.service.systemusermodule.PermissionModuleService;
+import spring.service.userrole.UserRoleService;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.login.dao.LoginDAO;
-import us.mn.state.health.lims.login.daoimpl.LoginDAOImpl;
 import us.mn.state.health.lims.login.valueholder.Login;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
-import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
-import us.mn.state.health.lims.systemuser.daoimpl.SystemUserDAOImpl;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
-import us.mn.state.health.lims.systemusermodule.dao.PermissionAgentModuleDAO;
-import us.mn.state.health.lims.systemusermodule.daoimpl.RoleModuleDAOImpl;
-import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
-import us.mn.state.health.lims.userrole.dao.UserRoleDAO;
-import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
+import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
 
+@Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler, IActionConstants {
 
 	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+
+	@Autowired
+	LoginService loginService;
+	@Autowired
+	UserRoleService userRoleService;
+	@Autowired
+	PermissionModuleService permissionModuleService;
+	@Autowired
+	SystemUserService systemUserService;
 
 	public static final int DEFAULT_SESSION_TIMEOUT_IN_MINUTES = 20;
 
@@ -40,8 +48,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
 		String homePath = "/Dashboard.do";
-		LoginDAO loginDao = new LoginDAOImpl();
-		Login loginInfo = loginDao.getUserProfile(request.getParameter("loginName"));
+		Login loginInfo = loginService.getMatch("loginName", request.getParameter("loginName")).get();
 		setupUserSession(request, loginInfo);
 
 		if (passwordExpiringSoon(loginInfo)) {
@@ -63,10 +70,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		request.getSession().setMaxInactiveInterval(timeout);
 
 		// get system user and link to login user
-		SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
-		SystemUser su = new SystemUser();
-		su.setId(String.valueOf(loginInfo.getSystemUserId()));
-		systemUserDAO.getData(su);
+		SystemUser su = systemUserService.get(String.valueOf(loginInfo.getSystemUserId()));
 		// create usersessiondata and store in session
 		UserSessionData usd = new UserSessionData();
 		usd.setSytemUserId(loginInfo.getSystemUserId());
@@ -83,21 +87,17 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private HashSet<String> getPermittedForms(int systemUserId) {
 		HashSet<String> permittedPages = new HashSet<>();
 
-		UserRoleDAO userRoleDAO = new UserRoleDAOImpl();
-
-		List<String> roleIds = userRoleDAO.getRoleIdsForUser(Integer.toString(systemUserId));
-
-		PermissionAgentModuleDAO roleModuleDAO = new RoleModuleDAOImpl();
+		List<String> roleIds = userRoleService.getRoleIdsForUser(Integer.toString(systemUserId));
 
 		for (String roleId : roleIds) {
-			List<RoleModule> roleModules = roleModuleDAO.getAllPermissionModulesByAgentId(Integer.parseInt(roleId));
+			List<PermissionModule> permissionModules = permissionModuleService
+					.getAllPermissionModulesByAgentId(Integer.parseInt(roleId));
 
-			for (RoleModule roleModule : roleModules) {
-				permittedPages.add(roleModule.getSystemModule().getSystemModuleName());
+			for (PermissionModule permissionModule : permissionModules) {
+				permittedPages.add(permissionModule.getSystemModule().getSystemModuleName());
 			}
 		}
 
