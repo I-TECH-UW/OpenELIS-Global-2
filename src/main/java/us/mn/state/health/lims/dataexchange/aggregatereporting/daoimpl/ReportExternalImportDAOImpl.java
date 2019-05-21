@@ -22,6 +22,7 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -33,6 +34,7 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.Repor
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
+@Transactional
 public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImport> implements ReportExternalImportDAO {
 
 	public ReportExternalImportDAOImpl() {

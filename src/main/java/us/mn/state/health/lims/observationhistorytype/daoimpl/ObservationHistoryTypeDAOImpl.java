@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -13,6 +14,7 @@ import us.mn.state.health.lims.observationhistorytype.dao.ObservationHistoryType
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
  
 @Component
+@Transactional
 public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistoryType>
 		implements ObservationHistoryTypeDAO {
 

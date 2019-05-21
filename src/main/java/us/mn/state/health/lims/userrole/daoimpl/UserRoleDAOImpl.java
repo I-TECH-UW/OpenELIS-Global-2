@@ -26,6 +26,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -40,6 +41,7 @@ import us.mn.state.health.lims.userrole.valueholder.UserRole;
 import us.mn.state.health.lims.userrole.valueholder.UserRolePK;
 
 @Component
+@Transactional
 public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDAO {
 
 	public UserRoleDAOImpl() {

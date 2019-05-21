@@ -22,6 +22,7 @@ import spring.service.analysis.AnalysisService;
 import spring.service.panel.PanelService;
 import spring.service.panelitem.PanelItemService;
 import spring.service.sampleqaevent.SampleQaEventService;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -30,7 +31,6 @@ import us.mn.state.health.lims.common.services.ObservationHistoryService;
 import us.mn.state.health.lims.common.services.ObservationHistoryService.ObservationType;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
@@ -107,7 +107,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
 					testResultItem.setNextVisitDate(ObservationHistoryService
 							.getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId()));
 					testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
-					testResultItem.setTestName(TestService.getUserLocalizedTestName(analysis.getTest()));
+					testResultItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
 					testResultItem.setNonconforming(QAService.isAnalysisParentNonConforming(analysis));
 					if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
 						testResultItem.setNonconforming(getQaEventByTestSection(analysis));

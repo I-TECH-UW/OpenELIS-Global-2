@@ -19,6 +19,7 @@ package us.mn.state.health.lims.testdictionary.daoimpl;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -27,6 +28,7 @@ import us.mn.state.health.lims.testdictionary.dao.TestDictionaryDAO;
 import us.mn.state.health.lims.testdictionary.valueholder.TestDictionary;
 
 @Component
+@Transactional
 public class TestDictionaryDAOImpl extends BaseDAOImpl<TestDictionary> implements TestDictionaryDAO {
 
 	public TestDictionaryDAOImpl() {

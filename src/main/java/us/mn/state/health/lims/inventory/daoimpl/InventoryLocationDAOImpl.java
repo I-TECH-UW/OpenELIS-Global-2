@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -31,6 +32,7 @@ import us.mn.state.health.lims.inventory.dao.InventoryLocationDAO;
 import us.mn.state.health.lims.inventory.valueholder.InventoryLocation;
 
 @Component
+@Transactional
 public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation> implements InventoryLocationDAO {
 
 	public InventoryLocationDAOImpl() {

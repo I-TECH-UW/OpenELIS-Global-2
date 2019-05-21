@@ -27,6 +27,7 @@ import java.util.Map;
 import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -46,7 +47,6 @@ import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.RecordStatus;
 import us.mn.state.health.lims.common.services.TestIdentityService;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.tools.StopWatch;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -456,7 +456,7 @@ public class ResultsValidationRetroCIUtility {
 
 		List<TestResult> testResults = getPossibleResultsForTest(test);
 
-		String displayTestName = TestService.getLocalizedTestNameWithType( test );
+		String displayTestName = TestServiceImpl.getLocalizedTestNameWithType( test );
 //		displayTestName = augmentTestNameWithRange(displayTestName, result);
 		
 		ResultValidationItem testItem = new ResultValidationItem();

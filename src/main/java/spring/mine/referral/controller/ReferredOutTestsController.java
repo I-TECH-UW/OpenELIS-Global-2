@@ -41,6 +41,7 @@ import spring.service.referral.ReferralResultService;
 import spring.service.referral.ReferralService;
 import spring.service.sample.SampleService;
 import spring.service.samplehuman.SampleHumanService;
+import spring.service.test.TestServiceImpl;
 import spring.service.testresult.TestResultService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -52,7 +53,6 @@ import us.mn.state.health.lims.common.services.ResultService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.TypeOfSampleService;
 import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -200,7 +200,7 @@ public class ReferredOutTestsController extends BaseController {
 		referralItem.setSampleType(typeOfSample.getLocalizedName());
 
 		referralItem
-				.setReferringTestName(TestService.getUserLocalizedTestName(analysisService.getAnalysis().getTest()));
+				.setReferringTestName(TestServiceImpl.getUserLocalizedTestName(analysisService.getAnalysis().getTest()));
 		List<Result> resultList = analysisService.getResults();
 		String resultString = "";
 
@@ -367,7 +367,7 @@ public class ReferredOutTestsController extends BaseController {
 
 		for (Test test : testList) {
 			if (test.getOrderable()) {
-				valueList.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
+				valueList.add(new IdValuePair(test.getId(), TestServiceImpl.getUserLocalizedTestName(test)));
 			}
 		}
 
@@ -815,7 +815,7 @@ public class ReferredOutTestsController extends BaseController {
 
 				ReferredTest referralTest = new ReferredTest();
 				referralTest.setReferredTestId(testId);
-				referralTest.setReferredResultType(new TestService(testId).getResultType());
+				referralTest.setReferredResultType(new TestServiceImpl(testId).getResultType());
 				referralTest.setReferredResult("");
 				referralTest.setReferredDictionaryResult("");
 				referralTest.setReferredMultiDictionaryResult("");
@@ -907,7 +907,7 @@ public class ReferredOutTestsController extends BaseController {
 					if (updatedReferralResult == null) {
 						referralResult.setTestId(newTestId);
 						referralResult.setSysUserId(currentUserId);
-						result.setResultType(new TestService(newTestId).getResultType());
+						result.setResultType(new TestServiceImpl(newTestId).getResultType());
 						result.setValue("");
 						updatedReferralResult = referralResult;
 						updatableReferralResults.add(referralResult);

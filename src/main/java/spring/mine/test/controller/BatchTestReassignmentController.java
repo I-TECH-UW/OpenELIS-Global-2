@@ -25,13 +25,13 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.test.form.BatchTestReassignmentForm;
 import spring.mine.test.validator.BatchTestReassignmentFormValidator;
+import spring.service.analysis.AnalysisService;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.services.AnalysisService;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.StatusService;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.test.action.BatchTestStatusChangeBean;
 import us.mn.state.health.lims.test.valueholder.Test;
 
@@ -42,7 +42,7 @@ public class BatchTestReassignmentController extends BaseController {
 	BatchTestReassignmentFormValidator formValidator;
 
 	@Autowired
-	private spring.service.analysis.AnalysisService analysisService;
+	private AnalysisService analysisService;
 
 	@RequestMapping(value = "/BatchTestReassignment", method = RequestMethod.GET)
 	public ModelAndView showBatchTestReassignment(HttpServletRequest request)
@@ -141,9 +141,9 @@ public class BatchTestReassignmentController extends BaseController {
 					newTestsString = MessageUtil.getMessage("status.test.canceled");
 				} else {
 					newTestsString = MessageUtil.getMessage("label.test.batch.reassignment") + ": "
-							+ TestService.getUserLocalizedTestName(newTests.get(0));
+							+ TestServiceImpl.getUserLocalizedTestName(newTests.get(0));
 					for (int i = 1; i < newTests.size(); i++) {
-						newTestsString += ", " + TestService.getUserLocalizedTestName(newTests.get(i));
+						newTestsString += ", " + TestServiceImpl.getUserLocalizedTestName(newTests.get(i));
 					}
 				}
 				changedMetaInfo.nextTest = newTestsString;
@@ -160,7 +160,7 @@ public class BatchTestReassignmentController extends BaseController {
 		List<Analysis> newAnalysis = new ArrayList<>();
 		for (Test test : newTests) {
 			for (Analysis analysis : changeAnalysis) {
-				newAnalysis.add(AnalysisService.buildAnalysis(test, analysis.getSampleItem()));
+				newAnalysis.add(analysisService.buildAnalysis(test, analysis.getSampleItem()));
 			}
 		}
 
@@ -240,7 +240,7 @@ public class BatchTestReassignmentController extends BaseController {
 		}
 
 		for (Object testIdObject : replacementTestArray) {
-			replacementTestList.add(new TestService((String) testIdObject).getTest());
+			replacementTestList.add(new TestServiceImpl((String) testIdObject).getTest());
 		}
 
 		return replacementTestList;

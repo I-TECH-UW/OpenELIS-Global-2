@@ -28,6 +28,7 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -36,7 +37,6 @@ import us.mn.state.health.lims.common.services.NoteService;
 import us.mn.state.health.lims.common.services.ResultService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.referral.valueholder.Referral;
 import us.mn.state.health.lims.referral.valueholder.ReferralResult;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ClinicalPatientData;
@@ -150,7 +150,7 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
 					Test test = new Test();
 					test.setId(testId);
 					testDAO.getData(test);
-					data.setTestName( TestService.getUserLocalizedReportingTestName( test ) );
+					data.setTestName( TestServiceImpl.getUserLocalizedReportingTestName( test ) );
 
 					String uom = getUnitOfMeasure( test);
 					if(reportReferralResultValue != null){

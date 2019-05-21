@@ -41,6 +41,7 @@ import spring.service.result.ResultService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.sampleitem.SampleItemService;
 import spring.service.test.TestSectionService;
+import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleTestService;
 import spring.service.userrole.UserRoleService;
@@ -61,7 +62,6 @@ import us.mn.state.health.lims.common.services.SampleService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.SampleStatus;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.registration.ResultUpdateRegister;
 import us.mn.state.health.lims.common.services.registration.interfaces.IResultUpdate;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -300,7 +300,7 @@ public class SampleEditController extends BaseController {
 			SampleEditItem sampleEditItem = new SampleEditItem();
 
 			sampleEditItem.setTestId(analysis.getTest().getId());
-			sampleEditItem.setTestName(TestService.getUserLocalizedTestName(analysis.getTest()));
+			sampleEditItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
 			sampleEditItem.setSampleItemId(sampleItem.getId());
 
 			boolean canCancel = allowedToCancelAll
@@ -365,7 +365,7 @@ public class SampleEditController extends BaseController {
 			sampleEditItem.setTestId(typeOfSampleTest.getTestId());
 			Test test = testService.get(typeOfSampleTest.getTestId());
 			if ("Y".equals(test.getIsActive()) && test.getOrderable()) {
-				sampleEditItem.setTestName(TestService.getUserLocalizedTestName(test));
+				sampleEditItem.setTestName(TestServiceImpl.getUserLocalizedTestName(test));
 				sampleEditItem.setSampleItemId(sampleItem.getId());
 				sampleEditItem.setSortOrder(test.getSortOrder());
 				typeOfTestSampleItemList.add(sampleEditItem);

@@ -168,7 +168,7 @@ public class DisplayListService implements LocaleChangeListener {
 		dictionaryToListMap = new HashMap<>();
 		typeToListMap.put(ListType.REJECTION_REASONS, createDictionaryListForCategory("resultRejectionReasons"));
 		typeToListMap.put(ListType.REFERRAL_REASONS, createReferralReasonList());
-		new TestService((Test) null).localeChanged(locale);
+		new TestServiceImpl((Test) null).localeChanged(locale);
 		typeToListMap.put(ListType.ORDERABLE_TESTS, createOrderableTestList());
 		typeToListMap.put(ListType.ALL_TESTS, createTestList());
 		typeToListMap.put(ListType.TEST_LOCATION_CODE, createDictionaryListForCategory("testLocationCode"));
@@ -295,12 +295,12 @@ public class DisplayListService implements LocaleChangeListener {
 			break;
 		}
 		case ALL_TESTS: {
-			TestService.refreshTestNames();
+			TestServiceImpl.refreshTestNames();
 			typeToListMap.put(ListType.ALL_TESTS, createTestList());
 			break;
 		}
 		case ORDERABLE_TESTS: {
-			TestService.refreshTestNames();
+			TestServiceImpl.refreshTestNames();
 			typeToListMap.put(ListType.ORDERABLE_TESTS, createOrderableTestList());
 			break;
 		}
@@ -423,7 +423,7 @@ public class DisplayListService implements LocaleChangeListener {
 
 		List<Test> testList = new TestDAOImpl().getAllActiveOrderableTests();
 		for (Test test : testList) {
-			tests.add(new IdValuePair(test.getId(), TestService.getLocalizedTestNameWithType(test)));
+			tests.add(new IdValuePair(test.getId(), TestServiceImpl.getLocalizedTestNameWithType(test)));
 		}
 
 		Collections.sort(tests, new Comparator<IdValuePair>() {
@@ -441,7 +441,7 @@ public class DisplayListService implements LocaleChangeListener {
 
 		List<Test> testList = new TestDAOImpl().getAllActiveTests(false);
 		for (Test test : testList) {
-			tests.add(new IdValuePair(test.getId(), TestService.getLocalizedTestNameWithType(test)));
+			tests.add(new IdValuePair(test.getId(), TestServiceImpl.getLocalizedTestNameWithType(test)));
 
 			Collections.sort(tests, new Comparator<IdValuePair>() {
 				@Override

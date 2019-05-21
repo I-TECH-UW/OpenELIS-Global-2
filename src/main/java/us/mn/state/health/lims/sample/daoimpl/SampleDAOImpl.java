@@ -29,6 +29,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -46,6 +47,7 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
  * @author diane benz
  */
 @Component
+@Transactional
 public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 
 	public SampleDAOImpl() {

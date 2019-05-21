@@ -20,6 +20,7 @@ import spring.mine.internationalization.MessageUtil;
 import spring.mine.workplan.form.WorkplanForm;
 import spring.service.analysis.AnalysisService;
 import spring.service.sampleqaevent.SampleQaEventService;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -28,7 +29,6 @@ import us.mn.state.health.lims.common.services.ObservationHistoryService;
 import us.mn.state.health.lims.common.services.ObservationHistoryService.ObservationType;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -216,7 +216,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 	}
 
 	private String getTestName(String testId) {
-		return TestService.getUserLocalizedTestName(testId);
+		return TestServiceImpl.getUserLocalizedTestName(testId);
 	}
 
 	private boolean getQaEventByTestSection(Analysis analysis) {

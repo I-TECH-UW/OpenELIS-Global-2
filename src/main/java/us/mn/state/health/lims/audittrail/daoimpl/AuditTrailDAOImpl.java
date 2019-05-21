@@ -26,6 +26,7 @@ import java.util.Vector;
 
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.valueholder.History;
@@ -42,6 +43,7 @@ import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;
 import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 
 @Component
+@Transactional
 public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrailDAO {
 
 	public AuditTrailDAOImpl() {

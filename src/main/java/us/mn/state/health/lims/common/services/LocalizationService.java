@@ -61,11 +61,6 @@ public class LocalizationService implements LocaleChangeListener {
 	}
 
 	public LocalizationService(String id) {
-		if (localizationDAO == null) {
-			System.out.println("null bean");
-		} else {
-			System.out.println("not null bean");
-		}
 		if (!GenericValidator.isBlankOrNull(id)) {
 			localization = localizationDAO.getLocalizationById(id);
 		}

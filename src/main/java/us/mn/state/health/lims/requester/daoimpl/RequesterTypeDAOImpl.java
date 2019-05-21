@@ -19,6 +19,7 @@ package us.mn.state.health.lims.requester.daoimpl;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -29,6 +30,7 @@ import us.mn.state.health.lims.requester.valueholder.RequesterType;
 /*
  */
 @Component
+@Transactional
 public class RequesterTypeDAOImpl extends BaseDAOImpl<RequesterType> implements RequesterTypeDAO {
 
 	public RequesterTypeDAOImpl() {

@@ -26,8 +26,8 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.TestActivationForm;
 import spring.generated.testconfiguration.validator.TestActivationFormValidator;
 import spring.mine.common.controller.BaseController;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.TypeOfSampleService;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -108,9 +108,9 @@ public class TestActivationController extends BaseController {
 
 			for (Test test : tests) {
 				if (test.isActive()) {
-					activeTests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
+					activeTests.add(new IdValuePair(test.getId(), TestServiceImpl.getUserLocalizedTestName(test)));
 				} else {
-					inactiveTests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
+					inactiveTests.add(new IdValuePair(test.getId(), TestServiceImpl.getUserLocalizedTestName(test)));
 				}
 			}
 
@@ -198,7 +198,7 @@ public class TestActivationController extends BaseController {
 		List<Test> tests = new ArrayList<>();
 
 		for (String testId : testIds) {
-			Test test = new TestService(testId).getTest();
+			Test test = new TestServiceImpl(testId).getTest();
 			test.setIsActive("N");
 			test.setSysUserId(getSysUserId(request));
 			tests.add(test);
@@ -211,7 +211,7 @@ public class TestActivationController extends BaseController {
 		List<Test> tests = new ArrayList<>();
 
 		for (ActivateSet set : testIds) {
-			Test test = new TestService(set.id).getTest();
+			Test test = new TestServiceImpl(set.id).getTest();
 			test.setIsActive("Y");
 			test.setSortOrder(String.valueOf(set.sortOrder * 10));
 			test.setSysUserId(getSysUserId(request));

@@ -35,6 +35,7 @@ import org.hibernate.Transaction;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.address.dao.PersonAddressDAO;
 import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
 import us.mn.state.health.lims.address.daoimpl.PersonAddressDAOImpl;
@@ -60,7 +61,6 @@ import us.mn.state.health.lims.common.services.SampleService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.TestIdentityService;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
@@ -838,13 +838,13 @@ public abstract class PatientReport extends Report {
 		String testName;
 
 		if (useReportingDescription()) {
-			testName = TestService.getUserLocalizedReportingTestName(currentAnalysisService.getTest());
+			testName = TestServiceImpl.getUserLocalizedReportingTestName(currentAnalysisService.getTest());
 		} else {
-			testName = TestService.getUserLocalizedTestName(currentAnalysisService.getTest());
+			testName = TestServiceImpl.getUserLocalizedTestName(currentAnalysisService.getTest());
 		}
 
 		if (GenericValidator.isBlankOrNull(testName)) {
-			testName = TestService.getUserLocalizedTestName(currentAnalysisService.getTest());
+			testName = TestServiceImpl.getUserLocalizedTestName(currentAnalysisService.getTest());
 		}
 		return (indent ? "    " : "") + testName;
 	}

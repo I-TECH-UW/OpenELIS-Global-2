@@ -3,6 +3,7 @@ package us.mn.state.health.lims.barcode.daoimpl;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -23,6 +24,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  *
  */
 @Component
+@Transactional
 public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo> implements BarcodeLabelInfoDAO {
 
 	public BarcodeLabelInfoDAOImpl() {

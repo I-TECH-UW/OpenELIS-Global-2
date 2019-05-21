@@ -23,7 +23,9 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -32,7 +34,6 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -45,6 +46,7 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
  * @author diane benz 11/17/2007 instead of printing StackTrace log error
  */
 @Component
+@Transactional
 public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestReflexDAO {
 
 	public TestReflexDAOImpl() {
@@ -95,10 +97,10 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 			// bugzilla 1482 throw Exception if record already exists
 			if (duplicateTestReflexExists(testReflex)) {
 				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + TestService.getUserLocalizedTestName(testReflex.getTest())
+						"Duplicate record exists for " + TestServiceImpl.getUserLocalizedTestName(testReflex.getTest())
 								+ BLANK + testReflex.getTestAnalyte().getAnalyte().getAnalyteName() + BLANK
 								+ testReflex.getTestResult().getValue() + BLANK
-								+ TestService.getUserLocalizedTestName(testReflex.getAddedTest()));
+								+ TestServiceImpl.getUserLocalizedTestName(testReflex.getAddedTest()));
 			}
 
 			String id = (String) HibernateUtil.getSession().save(testReflex);
@@ -127,10 +129,10 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 		try {
 			if (duplicateTestReflexExists(testReflex)) {
 				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + TestService.getUserLocalizedTestName(testReflex.getTest())
+						"Duplicate record exists for " + TestServiceImpl.getUserLocalizedTestName(testReflex.getTest())
 								+ BLANK + testReflex.getTestAnalyte().getAnalyte().getAnalyteName() + BLANK
 								+ testReflex.getTestResult().getValue() + BLANK
-								+ TestService.getUserLocalizedTestName(testReflex.getAddedTest()));
+								+ TestServiceImpl.getUserLocalizedTestName(testReflex.getAddedTest()));
 			}
 		} catch (Exception e) {
 			// bugzilla 2154

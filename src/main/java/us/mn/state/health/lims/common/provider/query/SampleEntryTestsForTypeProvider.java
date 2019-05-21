@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
 
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.TypeOfSampleService;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.XMLUtil;
@@ -84,7 +84,7 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider{
 			@Override
 			public int compare(Test t1, Test t2){
 				if(GenericValidator.isBlankOrNull(t1.getSortOrder()) || GenericValidator.isBlankOrNull(t2.getSortOrder())){
-					return TestService.getUserLocalizedTestName( t1 ).compareTo(TestService.getUserLocalizedTestName( t2 ));
+					return TestServiceImpl.getUserLocalizedTestName( t1 ).compareTo(TestServiceImpl.getUserLocalizedTestName( t2 ));
 				}
 
 				try{
@@ -100,7 +100,7 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider{
 					}
 
 				}catch(NumberFormatException e){
-                    return TestService.getUserLocalizedTestName( t1 ).compareTo(TestService.getUserLocalizedTestName( t2 ));
+                    return TestServiceImpl.getUserLocalizedTestName( t1 ).compareTo(TestServiceImpl.getUserLocalizedTestName( t2 ));
 				}
 
 			}
@@ -131,7 +131,7 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider{
 
 	private void addTest(Test test, StringBuilder xml){
 		xml.append("<test>");
-		XMLUtil.appendKeyValue("name", StringEscapeUtils.escapeXml( TestService.getUserLocalizedTestName( test )), xml);
+		XMLUtil.appendKeyValue("name", StringEscapeUtils.escapeXml( TestServiceImpl.getUserLocalizedTestName( test )), xml);
 		XMLUtil.appendKeyValue("id", test.getId(), xml);
 		XMLUtil.appendKeyValue("userBenchChoice", String.valueOf(USER_TEST_SECTION_ID.equals(test.getTestSection().getId())), xml);
         if( isVariableTypeOfSample){
@@ -200,7 +200,7 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider{
 		Map<String, Integer> testNameOrderMap = new HashMap<String, Integer>();
 
 		for(int i = 0; i < tests.size(); i++){
-			testNameOrderMap.put(TestService.getUserLocalizedTestName( tests.get( i ) ), i);
+			testNameOrderMap.put(TestServiceImpl.getUserLocalizedTestName( tests.get( i ) ), i);
 		}
 
 		PanelItemDAO panelItemDAO = new PanelItemDAOImpl();
@@ -244,7 +244,7 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider{
 		//This cover the transition in the DB between the panel_item being linked by name
 		// to being linked by id
 		if(item.getTest() != null ){
-				return TestService.getUserLocalizedTestName( item.getTest() );
+				return TestServiceImpl.getUserLocalizedTestName( item.getTest() );
 		}else{
 			return item.getTestName();
 		}

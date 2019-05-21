@@ -24,6 +24,7 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -43,6 +44,7 @@ import us.mn.state.health.lims.systemusermodule.valueholder.SystemUserModule;
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
 @Component
+@Transactional
 @Qualifier(value = "SystemUserModuleDAO")
 public class SystemUserModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements PermissionModuleDAO {
 

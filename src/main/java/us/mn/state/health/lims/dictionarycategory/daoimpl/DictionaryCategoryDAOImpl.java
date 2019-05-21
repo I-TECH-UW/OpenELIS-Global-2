@@ -26,6 +26,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
 import org.hibernate.criterion.Example;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -44,6 +45,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  * @author diane benz bugzilla 2061-2063
  */
 @Component
+@Transactional
 public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory> implements DictionaryCategoryDAO {
 
 	public DictionaryCategoryDAOImpl() {

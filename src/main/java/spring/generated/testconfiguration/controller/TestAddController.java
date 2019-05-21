@@ -29,12 +29,12 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.TestAddForm;
 import spring.generated.testconfiguration.validator.TestAddFormValidator;
 import spring.mine.common.controller.BaseController;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.services.LocalizationService;
 import us.mn.state.health.lims.common.services.ResultLimitService;
 import us.mn.state.health.lims.common.services.TestSectionService;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.TypeOfSampleService;
 import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -189,7 +189,7 @@ public class TestAddController extends BaseController {
 			HibernateUtil.closeSession();
 		}
 
-		TestService.refreshTestNames();
+		TestServiceImpl.refreshTestNames();
 		TypeOfSampleService.clearCache();
 
 		return findForward(FWD_SUCCESS_INSERT, form);
@@ -247,7 +247,7 @@ public class TestAddController extends BaseController {
 				if ("0".equals(orderedTests.get(j))) {
 					test.setSortOrder(String.valueOf(j));
 				} else {
-					Test orderedTest = new TestService(orderedTests.get(j)).getTest();
+					Test orderedTest = new TestServiceImpl(orderedTests.get(j)).getTest();
 					orderedTest.setSortOrder(String.valueOf(j));
 					testSet.sortedTests.add(orderedTest);
 				}

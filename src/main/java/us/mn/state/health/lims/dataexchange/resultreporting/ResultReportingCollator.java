@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.IPatientService;
 import us.mn.state.health.lims.common.services.LabIdentificationService;
@@ -35,7 +36,6 @@ import us.mn.state.health.lims.common.services.ResultLimitService;
 import us.mn.state.health.lims.common.services.ResultService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
@@ -156,7 +156,7 @@ public class ResultReportingCollator {
 /*		} else {
 			codedTest.setCode("34");
 		}*/
-		codedTest.setText(TestService.getUserLocalizedTestName( result.getAnalysis().getTest() ));
+		codedTest.setText(TestServiceImpl.getUserLocalizedTestName( result.getAnalysis().getTest() ));
 		codedTest.setCodeName("LN");
 		codedTest.setCodeSystem("2.16.840.1.113883.6.1");
 		testResult.setTest(codedTest);

@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.common.services.TestService;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.common.util.XMLUtil;
 import us.mn.state.health.lims.result.dao.ResultDAO;
@@ -177,7 +177,7 @@ public class TestReflexCD4Provider extends BaseQueryProvider {
 
 		XMLUtil.appendKeyValue("conclusionText", testReflex.getActionScriptlet().getScriptletName(), xml);
 		XMLUtil.appendKeyValue("conclusionId", testReflex.getActionScriptletId(), xml);
-		XMLUtil.appendKeyValue("testText", TestService.getUserLocalizedTestName( testReflex.getAddedTest() ), xml);
+		XMLUtil.appendKeyValue("testText", TestServiceImpl.getUserLocalizedTestName( testReflex.getAddedTest() ), xml);
 		XMLUtil.appendKeyValue("testId", testReflex.getAddedTestId(), xml);
 	}
 

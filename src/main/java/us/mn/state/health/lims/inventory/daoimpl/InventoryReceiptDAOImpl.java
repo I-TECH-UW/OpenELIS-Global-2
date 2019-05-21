@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -34,6 +35,7 @@ import us.mn.state.health.lims.inventory.dao.InventoryReceiptDAO;
 import us.mn.state.health.lims.inventory.valueholder.InventoryReceipt;
 
 @Component
+@Transactional
 public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt> implements InventoryReceiptDAO {
 
 	public InventoryReceiptDAOImpl() {

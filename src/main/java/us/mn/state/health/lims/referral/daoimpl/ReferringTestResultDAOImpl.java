@@ -21,6 +21,7 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -33,6 +34,7 @@ import us.mn.state.health.lims.referral.valueholder.ReferringTestResult;
 /*
  */
 @Component
+@Transactional
 public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult> implements ReferringTestResultDAO {
 
 	public ReferringTestResultDAOImpl() {

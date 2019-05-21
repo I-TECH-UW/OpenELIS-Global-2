@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -15,6 +16,7 @@ import us.mn.state.health.lims.systemmodule.dao.SystemModuleUrlDAO;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModuleUrl;
 
 @Component
+@Transactional
 public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl> implements SystemModuleUrlDAO {
 
 	public SystemModuleUrlDAOImpl() {

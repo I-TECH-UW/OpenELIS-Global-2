@@ -27,13 +27,13 @@ import java.util.Set;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.analyte.dao.AnalyteDAO;
 import us.mn.state.health.lims.analyte.daoimpl.AnalyteDAOImpl;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
 import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
@@ -136,7 +136,7 @@ public class TestReflexUtil {
 	}
 	
 	public static String makeReflexTestName(TestReflex testReflex) {
-		return TestService.getUserLocalizedTestName( testReflex.getAddedTest() );
+		return TestServiceImpl.getUserLocalizedTestName( testReflex.getAddedTest() );
 	}
 
 	public static String makeReflexScriptName(TestReflex testReflex) {

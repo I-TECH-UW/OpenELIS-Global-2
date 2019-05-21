@@ -18,6 +18,7 @@ package us.mn.state.health.lims.samplepdf.daoimpl;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -30,6 +31,7 @@ import us.mn.state.health.lims.samplepdf.valueholder.SamplePdf;
  * @author Hung Nguyen
  */
 @Component
+@Transactional
 public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf> implements SamplePdfDAO {
 
 	public SamplePdfDAOImpl() {

@@ -19,6 +19,7 @@ package us.mn.state.health.lims.dataexchange.aggregatereporting.daoimpl;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -27,6 +28,7 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.Repor
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
+@Transactional
 public class ReportQueueTypeDAOImpl extends BaseDAOImpl<ReportQueueType> implements ReportQueueTypeDAO {
 
 	public ReportQueueTypeDAOImpl() {
