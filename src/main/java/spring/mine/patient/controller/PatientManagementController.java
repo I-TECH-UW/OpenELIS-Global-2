@@ -5,14 +5,15 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.StaleObjectStateException;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,36 +25,28 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import spring.mine.common.controller.BaseController;
 import spring.mine.sample.form.SamplePatientEntryForm;
 import spring.mine.sample.validator.SamplePatientEntryFormValidator;
-import us.mn.state.health.lims.address.dao.AddressPartDAO;
-import us.mn.state.health.lims.address.dao.PersonAddressDAO;
-import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
-import us.mn.state.health.lims.address.daoimpl.PersonAddressDAOImpl;
+import spring.service.address.AddressPartService;
+import spring.service.address.PersonAddressService;
+import spring.service.patient.PatientService;
+import spring.service.patientidentity.PatientIdentityService;
+import spring.service.patienttype.PatientPatientTypeService;
+import spring.service.person.PersonService;
+import spring.service.search.SearchResultsService;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.provider.query.PatientSearchResults;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.patient.action.IPatientUpdate.PatientUpdateStatus;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
-import us.mn.state.health.lims.patient.dao.PatientDAO;
-import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.patientidentity.dao.PatientIdentityDAO;
-import us.mn.state.health.lims.patientidentity.daoimpl.PatientIdentityDAOImpl;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 import us.mn.state.health.lims.patientidentitytype.util.PatientIdentityTypeMap;
-import us.mn.state.health.lims.patienttype.dao.PatientPatientTypeDAO;
-import us.mn.state.health.lims.patienttype.daoimpl.PatientPatientTypeDAOImpl;
 import us.mn.state.health.lims.patienttype.util.PatientTypeMap;
 import us.mn.state.health.lims.patienttype.valueholder.PatientPatientType;
-import us.mn.state.health.lims.person.dao.PersonDAO;
-import us.mn.state.health.lims.person.daoimpl.PersonDAOImpl;
 import us.mn.state.health.lims.person.valueholder.Person;
-import us.mn.state.health.lims.sample.dao.SearchResultsDAO;
-import us.mn.state.health.lims.sample.daoimpl.SearchResultsDAOImp;
 
 @Controller
 public class PatientManagementController extends BaseController {
@@ -61,9 +54,6 @@ public class PatientManagementController extends BaseController {
 	@Autowired
 	SamplePatientEntryFormValidator formValidator;
 
-	private static PatientIdentityDAO identityDAO = new PatientIdentityDAOImpl();
-	private static PatientDAO patientDAO = new PatientDAOImpl();
-	private static PersonAddressDAO personAddressDAO = new PersonAddressDAOImpl();
 	private static final String AMBIGUOUS_DATE_CHAR = ConfigurationProperties.getInstance()
 			.getPropertyValue(ConfigurationProperties.Property.AmbiguousDateHolder);
 	private static final String AMBIGUOUS_DATE_HOLDER = AMBIGUOUS_DATE_CHAR + AMBIGUOUS_DATE_CHAR;
@@ -72,10 +62,24 @@ public class PatientManagementController extends BaseController {
 	private static String ADDRESS_PART_COMMUNE_ID;
 	private static String ADDRESS_PART_DEPT_ID;
 
-	static {
-		AddressPartDAO addressPartDAO = new AddressPartDAOImpl();
-		List<AddressPart> partList = addressPartDAO.getAll();
+	@Autowired
+	AddressPartService addressPartService;
+	@Autowired
+	PatientPatientTypeService patientPatientTypeService;
+	@Autowired
+	PatientIdentityService patientIdentityService;
+	@Autowired
+	PatientService patientService;
+	@Autowired
+	PersonService personService;
+	@Autowired
+	PersonAddressService personAddressService;
+	@Autowired
+	SearchResultsService searchService;
 
+	@PostConstruct
+	public void initialize() {
+		List<AddressPart> partList = addressPartService.getAll();
 		for (AddressPart addressPart : partList) {
 			if ("department".equals(addressPart.getPartName())) {
 				ADDRESS_PART_DEPT_ID = addressPart.getId();
@@ -122,14 +126,9 @@ public class PatientManagementController extends BaseController {
 				saveErrors(result);
 				return findForward(FWD_FAIL_INSERT, form);
 			}
-
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 			try {
 				persistPatientData(patientInfo, patient);
-				tx.commit();
 			} catch (LIMSRuntimeException lre) {
-				tx.rollback();
 
 				if (lre.getException() instanceof StaleObjectStateException) {
 					result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
@@ -143,8 +142,6 @@ public class PatientManagementController extends BaseController {
 					return findForward(FWD_FAIL_INSERT, form);
 				}
 
-			} finally {
-				HibernateUtil.closeSession();
 			}
 
 		}
@@ -193,9 +190,8 @@ public class PatientManagementController extends BaseController {
 			String newNationalId = GenericValidator.isBlankOrNull(patientInfo.getNationalId()) ? null
 					: patientInfo.getNationalId();
 
-			SearchResultsDAO search = new SearchResultsDAOImp();
-			List<PatientSearchResults> results = search.getSearchResults(null, null, newSTNumber, newSubjectNumber,
-					newNationalId, null, null, null);
+			List<PatientSearchResults> results = searchService.getSearchResults(null, null, newSTNumber,
+					newSubjectNumber, newNationalId, null, null, null);
 
 			if (!results.isEmpty()) {
 				for (PatientSearchResults result : results) {
@@ -256,8 +252,8 @@ public class PatientManagementController extends BaseController {
 	}
 
 	private Patient loadForUpdate(PatientManagementInfo patientInfo) {
-		Patient patient = patientDAO.readPatient(patientInfo.getPatientPK());
-		patientInfo.setPatientIdentities(identityDAO.getPatientIdentitiesForPatient(patient.getId()));
+		Patient patient = patientService.get(patientInfo.getPatientPK());
+		patientInfo.setPatientIdentities(patientIdentityService.getPatientIdentitiesForPatient(patient.getId()));
 		return patient;
 	}
 
@@ -281,20 +277,19 @@ public class PatientManagementController extends BaseController {
 		PropertyUtils.copyProperties(patient.getPerson(), patientInfo);
 	}
 
+	@Transactional
 	public void persistPatientData(PatientManagementInfo patientInfo, Patient patient) throws LIMSRuntimeException {
-		PersonDAO personDAO = new PersonDAOImpl();
-
 		if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {
-			personDAO.insertData(patient.getPerson());
+			personService.insert(patient.getPerson());
 		} else if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {
-			personDAO.updateData(patient.getPerson());
+			personService.update(patient.getPerson());
 		}
 		patient.setPerson(patient.getPerson());
 
 		if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {
-			patientDAO.insertData(patient);
+			patientService.insert(patient);
 		} else if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {
-			patientDAO.updateData(patient);
+			patientService.update(patient);
 		}
 
 		persistPatientRelatedInformation(patientInfo, patient);
@@ -327,19 +322,20 @@ public class PatientManagementController extends BaseController {
 		PersonAddress village = null;
 		PersonAddress commune = null;
 		PersonAddress dept = null;
-		List<PersonAddress> personAddressList = personAddressDAO.getAddressPartsByPersonId(patient.getPerson().getId());
+		List<PersonAddress> personAddressList = personAddressService
+				.getAddressPartsByPersonId(patient.getPerson().getId());
 
 		for (PersonAddress address : personAddressList) {
 			if (address.getAddressPartId().equals(ADDRESS_PART_COMMUNE_ID)) {
 				commune = address;
 				commune.setValue(patientInfo.getCommune());
 				commune.setSysUserId(getSysUserId(request));
-				personAddressDAO.update(commune);
+				personAddressService.update(commune);
 			} else if (address.getAddressPartId().equals(ADDRESS_PART_VILLAGE_ID)) {
 				village = address;
 				village.setValue(patientInfo.getCity());
 				village.setSysUserId(getSysUserId(request));
-				personAddressDAO.update(village);
+				personAddressService.update(village);
 			} else if (address.getAddressPartId().equals(ADDRESS_PART_DEPT_ID)) {
 				dept = address;
 				if (!GenericValidator.isBlankOrNull(patientInfo.getAddressDepartment())
@@ -347,7 +343,7 @@ public class PatientManagementController extends BaseController {
 					dept.setValue(patientInfo.getAddressDepartment());
 					dept.setType("D");
 					dept.setSysUserId(getSysUserId(request));
-					personAddressDAO.update(dept);
+					personAddressService.update(dept);
 				}
 			}
 		}
@@ -384,7 +380,7 @@ public class PatientManagementController extends BaseController {
 		address.setType(type);
 		address.setValue(value);
 		address.setSysUserId(getSysUserId(request));
-		personAddressDAO.insert(address);
+		personAddressService.insert(address);
 	}
 
 	public void persistIdentityType(String paramValue, String type, PatientManagementInfo patientInfo, Patient patient)
@@ -404,7 +400,7 @@ public class PatientManagementController extends BaseController {
 							|| (listIdentity.getIdentityData() != null
 									&& !listIdentity.getIdentityData().equals(paramValue))) {
 						listIdentity.setIdentityData(paramValue);
-						identityDAO.updateData(listIdentity);
+						patientIdentityService.update(listIdentity);
 					}
 
 					break;
@@ -420,14 +416,11 @@ public class PatientManagementController extends BaseController {
 			identity.setSysUserId(getSysUserId(request));
 			identity.setIdentityData(paramValue);
 			identity.setLastupdatedFields();
-			identityDAO.insertData(identity);
+			patientIdentityService.insert(identity);
 		}
 	}
 
 	protected void persistPatientType(PatientManagementInfo patientInfo, Patient patient) {
-
-		PatientPatientTypeDAO patientPatientTypeDAO = new PatientPatientTypeDAOImpl();
-
 		String typeName = null;
 
 		try {
@@ -438,7 +431,7 @@ public class PatientManagementController extends BaseController {
 		if (!GenericValidator.isBlankOrNull(typeName) && !"0".equals(typeName)) {
 			String typeID = PatientTypeMap.getInstance().getIDForType(typeName);
 
-			PatientPatientType patientPatientType = patientPatientTypeDAO
+			PatientPatientType patientPatientType = patientPatientTypeService
 					.getPatientPatientTypeForPatient(patient.getId());
 
 			if (patientPatientType == null) {
@@ -446,11 +439,11 @@ public class PatientManagementController extends BaseController {
 				patientPatientType.setSysUserId(getSysUserId(request));
 				patientPatientType.setPatientId(patient.getId());
 				patientPatientType.setPatientTypeId(typeID);
-				patientPatientTypeDAO.insertData(patientPatientType);
+				patientPatientTypeService.insert(patientPatientType);
 			} else {
 				patientPatientType.setSysUserId(getSysUserId(request));
 				patientPatientType.setPatientTypeId(typeID);
-				patientPatientTypeDAO.updateData(patientPatientType);
+				patientPatientTypeService.update(patientPatientType);
 			}
 		}
 	}

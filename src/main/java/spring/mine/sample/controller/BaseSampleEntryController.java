@@ -9,29 +9,27 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.gender.GenderService;
+import spring.service.organization.OrganizationService;
+import spring.service.project.ProjectService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.dictionary.ObservationHistoryList;
-import us.mn.state.health.lims.gender.dao.GenderDAO;
-import us.mn.state.health.lims.gender.daoimpl.GenderDAOImpl;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
 import us.mn.state.health.lims.organization.util.OrganizationTypeList;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.patient.saving.Accessioner;
 import us.mn.state.health.lims.patient.saving.RequestType;
 import us.mn.state.health.lims.patient.util.PatientUtil;
 import us.mn.state.health.lims.patient.valueholder.ObservationData;
-import us.mn.state.health.lims.project.dao.ProjectDAO;
-import us.mn.state.health.lims.project.daoimpl.ProjectDAOImpl;
 import us.mn.state.health.lims.project.valueholder.Project;
 
 public abstract class BaseSampleEntryController extends BaseController {
@@ -41,6 +39,12 @@ public abstract class BaseSampleEntryController extends BaseController {
 	public static final String FWD_EID_ENTRY = "eid_entry";
 	public static final String FWD_VL_ENTRY = "vl_entry";
 	private static int referenceLabParentId = 0;
+	@Autowired
+	GenderService genderService;
+	@Autowired
+	ProjectService projectService;
+	@Autowired
+	OrganizationService organizationService;
 
 	@Override
 	protected String getPageTitleKey() {
@@ -55,8 +59,7 @@ public abstract class BaseSampleEntryController extends BaseController {
 	protected void addGenderList(BaseForm form)
 			throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-		GenderDAO genderDAO = new GenderDAOImpl();
-		List genders = genderDAO.getAllGenders();
+		List genders = genderService.getAll();
 		PropertyUtils.setProperty(form, "genders", genders);
 	}
 
@@ -69,8 +72,7 @@ public abstract class BaseSampleEntryController extends BaseController {
 	protected void addProjectList(BaseForm form)
 			throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-		ProjectDAO projectDAO = new ProjectDAOImpl();
-		List<Project> projects = projectDAO.getAllProjects();
+		List<Project> projects = projectService.getAll();
 		PropertyUtils.setProperty(form, "projects", projects);
 	}
 
@@ -85,16 +87,15 @@ public abstract class BaseSampleEntryController extends BaseController {
 		return;
 	}
 
-	protected static int getReferenceLabParentId() {
+	protected int getReferenceLabParentId() {
 		if (referenceLabParentId == 0) {
 			String parentOrgName = ConfigurationProperties.getInstance()
 					.getPropertyValue(Property.ReferingLabParentOrg);
 
 			if (parentOrgName != null) { // this dosn't seem to actually do anything. is parentOrg referenced anyplace?
-				OrganizationDAO orgDAO = new OrganizationDAOImpl();
 				Organization parentOrg = new Organization();
 				parentOrg.setName(parentOrgName);
-				parentOrg = orgDAO.getOrganizationByName(parentOrg, false);
+				parentOrg = organizationService.getOrganizationByName(parentOrg, false);
 			}
 		}
 

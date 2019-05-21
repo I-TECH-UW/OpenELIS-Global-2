@@ -11,14 +11,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -31,28 +32,23 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.systemuser.form.UnifiedSystemUserForm;
 import spring.mine.systemuser.validator.UnifiedSystemUserFormValidator;
+import spring.service.login.LoginService;
+import spring.service.role.RoleService;
+import spring.service.systemuser.SystemUserService;
+import spring.service.userrole.UserRoleService;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.provider.validation.PasswordValidationFactory;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.login.dao.LoginDAO;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
-import us.mn.state.health.lims.login.daoimpl.LoginDAOImpl;
-import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
+import us.mn.state.health.lims.login.dao.UserModuleService;
+import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
 import us.mn.state.health.lims.login.valueholder.Login;
 import us.mn.state.health.lims.role.action.bean.DisplayRole;
-import us.mn.state.health.lims.role.dao.RoleDAO;
-import us.mn.state.health.lims.role.daoimpl.RoleDAOImpl;
 import us.mn.state.health.lims.role.valueholder.Role;
-import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
-import us.mn.state.health.lims.systemuser.daoimpl.SystemUserDAOImpl;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 import us.mn.state.health.lims.systemuser.valueholder.UnifiedSystemUser;
-import us.mn.state.health.lims.userrole.dao.UserRoleDAO;
-import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
 import us.mn.state.health.lims.userrole.valueholder.UserRole;
 
 @Controller
@@ -61,16 +57,23 @@ public class UnifiedSystemUserController extends BaseController {
 	@Autowired
 	UnifiedSystemUserFormValidator formValidator;
 
-	private static LoginDAO loginDAO = new LoginDAOImpl();
+	@Autowired
+	private LoginService loginService;
+	@Autowired
+	private RoleService roleService;
+	@Autowired
+	private UserRoleService userRoleService;
+	@Autowired
+	private SystemUserService systemUserService;
 	private static final String RESERVED_ADMIN_NAME = "admin";
 
 	private static final String MAINTENANCE_ADMIN = "Maintenance Admin";
 	private static String MAINTENANCE_ADMIN_ID;
 	public static final char DEFAULT_PASSWORD_FILLER = '@';
 
-	{
-		RoleDAO roleDAO = new RoleDAOImpl();
-		List<Role> roles = roleDAO.getAllRoles();
+	@PostConstruct
+	public void initialize() {
+		List<Role> roles = roleService.getAll();
 		for (Role role : roles) {
 			if (MAINTENANCE_ADMIN.equals(role.getName().trim())) {
 				MAINTENANCE_ADMIN_ID = role.getId();
@@ -106,8 +109,8 @@ public class UnifiedSystemUserController extends BaseController {
 
 	private void setupRoles(UnifiedSystemUserForm form, HttpServletRequest request, boolean doFiltering) {
 		List<Role> roles = getAllRoles();
-		UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-		doFiltering &= !userModuleDAO.isUserAdmin(request);
+		UserModuleService userModuleService = new UserModuleServiceImpl();
+		doFiltering &= !userModuleService.isUserAdmin(request);
 
 		if (doFiltering) {
 			roles = doRoleFiltering(roles, getSysUserId(request));
@@ -256,9 +259,7 @@ public class UnifiedSystemUserController extends BaseController {
 
 	private List<Role> doRoleFiltering(List<Role> roles, String loggedInUserId) {
 
-		UserRoleDAO userRoleDAO = new UserRoleDAOImpl();
-
-		List<String> rolesForLoggedInUser = userRoleDAO.getRoleIdsForUser(loggedInUserId);
+		List<String> rolesForLoggedInUser = userRoleService.getRoleIdsForUser(loggedInUserId);
 
 		if (!rolesForLoggedInUser.contains(MAINTENANCE_ADMIN_ID)) {
 			List<Role> tmpRoles = new ArrayList<>();
@@ -308,8 +309,7 @@ public class UnifiedSystemUserController extends BaseController {
 			PropertyUtils.setProperty(form, "accountActive", systemUser.getIsActive());
 			PropertyUtils.setProperty(form, "systemUserLastupdated", systemUser.getLastupdated());
 
-			UserRoleDAO userRoleDAO = new UserRoleDAOImpl();
-			List<String> roleIds = userRoleDAO.getRoleIdsForUser(systemUser.getId());
+			List<String> roleIds = userRoleService.getRoleIdsForUser(systemUser.getId());
 			PropertyUtils.setProperty(form, "selectedRoles", roleIds);
 
 			doFiltering = !roleIds.contains(MAINTENANCE_ADMIN_ID);
@@ -330,12 +330,7 @@ public class UnifiedSystemUserController extends BaseController {
 		String loginId = UnifiedSystemUser.getLoginUserIDFromCombinedID(id);
 
 		if (!GenericValidator.isBlankOrNull(loginId)) {
-			LoginDAO loginDAO = new LoginDAOImpl();
-
-			login = new Login();
-			login.setId(loginId);
-
-			loginDAO.getData(login);
+			login = loginService.get(loginId);
 		}
 
 		return login;
@@ -346,10 +341,7 @@ public class UnifiedSystemUserController extends BaseController {
 		String systemUserId = UnifiedSystemUser.getSystemUserIDFromCombinedID(id);
 
 		if (!GenericValidator.isBlankOrNull(systemUserId)) {
-			SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
-			systemUser = new SystemUser();
-			systemUser.setId(systemUserId);
-			systemUserDAO.getData(systemUser);
+			systemUser = systemUserService.get(systemUserId);
 		}
 
 		return systemUser;
@@ -364,8 +356,7 @@ public class UnifiedSystemUserController extends BaseController {
 	}
 
 	private List<Role> getAllRoles() {
-		RoleDAO roleDAO = new RoleDAOImpl();
-		return roleDAO.getAllActiveRoles();
+		return roleService.getAllActiveRoles();
 	}
 
 	@RequestMapping(value = "/UnifiedSystemUser", method = RequestMethod.POST)
@@ -436,53 +427,9 @@ public class UnifiedSystemUserController extends BaseController {
 
 		List<String> selectedRoles = form.getSelectedRoles();
 
-		UserRoleDAO usrRoleDAO = new UserRoleDAOImpl();
-		SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
-
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
-
-			if (loginUserNew) {
-				loginDAO.insertData(loginUser);
-			} else {
-				loginDAO.updateData(loginUser, passwordUpdated);
-			}
-
-			if (systemUserNew) {
-				systemUserDAO.insertData(systemUser);
-			} else {
-				systemUserDAO.updateData(systemUser);
-			}
-
-			List<String> currentUserRoles = usrRoleDAO.getRoleIdsForUser(systemUser.getId());
-			List<UserRole> deletedUserRoles = new ArrayList<>();
-
-			for (int i = 0; i < selectedRoles.size(); i++) {
-				if (!currentUserRoles.contains(selectedRoles.get(i))) {
-					UserRole userRole = new UserRole();
-					userRole.setSystemUserId(systemUser.getId());
-					userRole.setRoleId(selectedRoles.get(i));
-					userRole.setSysUserId(loggedOnUserId);
-					usrRoleDAO.insertData(userRole);
-				} else {
-					currentUserRoles.remove(selectedRoles.get(i));
-				}
-			}
-
-			for (String roleId : currentUserRoles) {
-				UserRole userRole = new UserRole();
-				userRole.setSystemUserId(systemUser.getId());
-				userRole.setRoleId(roleId);
-				userRole.setSysUserId(loggedOnUserId);
-				deletedUserRoles.add(userRole);
-			}
-
-			if (deletedUserRoles.size() > 0) {
-				usrRoleDAO.deleteData(deletedUserRoles);
-			}
+			updateLoginUser(loginUser, loginUserNew, systemUser, systemUserNew, selectedRoles, loggedOnUserId);
 		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
 				errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
 			} else if (lre.getException() instanceof LIMSDuplicateRecordException) {
@@ -494,16 +441,55 @@ public class UnifiedSystemUserController extends BaseController {
 			saveErrors(errors);
 			disableNavigationButtons(request);
 			forward = FWD_FAIL_INSERT;
-		} finally {
-			if (!tx.wasRolledBack()) {
-				tx.commit();
-			}
-			HibernateUtil.closeSession();
 		}
 
 		selectedRoles = new ArrayList<>();
 
 		return forward;
+	}
+
+	@Transactional
+	private void updateLoginUser(Login loginUser, boolean loginUserNew, SystemUser systemUser, boolean systemUserNew,
+			List<String> selectedRoles, String loggedOnUserId) {
+		if (loginUserNew) {
+			loginService.insert(loginUser);
+		} else {
+			loginService.updatePassword(loginUser, loginUser.getPassword());
+			loginService.update(loginUser);
+		}
+
+		if (systemUserNew) {
+			systemUserService.insert(systemUser);
+		} else {
+			systemUserService.update(systemUser);
+		}
+
+		List<String> currentUserRoles = userRoleService.getRoleIdsForUser(systemUser.getId());
+		List<UserRole> deletedUserRoles = new ArrayList<>();
+
+		for (int i = 0; i < selectedRoles.size(); i++) {
+			if (!currentUserRoles.contains(selectedRoles.get(i))) {
+				UserRole userRole = new UserRole();
+				userRole.setSystemUserId(systemUser.getId());
+				userRole.setRoleId(selectedRoles.get(i));
+				userRole.setSysUserId(loggedOnUserId);
+				userRoleService.insert(userRole);
+			} else {
+				currentUserRoles.remove(selectedRoles.get(i));
+			}
+		}
+
+		for (String roleId : currentUserRoles) {
+			UserRole userRole = new UserRole();
+			userRole.setSystemUserId(systemUser.getId());
+			userRole.setRoleId(roleId);
+			userRole.setSysUserId(loggedOnUserId);
+			deletedUserRoles.add(userRole);
+		}
+
+		if (deletedUserRoles.size() > 0) {
+			userRoleService.deleteAll(deletedUserRoles);
+		}
 	}
 
 	private boolean passwordHasBeenUpdated(boolean loginUserNew, UnifiedSystemUserForm form) {
@@ -524,7 +510,7 @@ public class UnifiedSystemUserController extends BaseController {
 		if (GenericValidator.isBlankOrNull(form.getUserLoginName())) {
 			errors.reject("errors.loginName.required", "errors.loginName.required");
 		} else if (checkForDuplicateName) {
-			Login login = loginDAO.getUserProfile(form.getUserLoginName());
+			Login login = loginService.getMatch("loginName", form.getUserLoginName()).get();
 			if (login != null) {
 				errors.reject("errors.loginName.duplicated", form.getUserLoginName());
 			}
@@ -562,9 +548,7 @@ public class UnifiedSystemUserController extends BaseController {
 			return false;
 		}
 
-		Login login = new Login();
-		login.setId(loginUserId);
-		loginDAO.getData(login);
+		Login login = loginService.get(loginUserId);
 
 		return !newName.equals(login.getLoginName());
 	}
@@ -588,8 +572,7 @@ public class UnifiedSystemUserController extends BaseController {
 		Login login = new Login();
 
 		if (!loginUserNew) {
-			login.setId(form.getLoginUserId());
-			loginDAO.getData(login);
+			login = loginService.get(form.getLoginUserId());
 		}
 		login.setAccountDisabled(form.getAccountDisabled());
 		login.setAccountLocked(form.getAccountLocked());

@@ -3,8 +3,13 @@ package spring.mine.workplan.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import spring.mine.common.controller.BaseController;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.test.TestService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -18,8 +23,6 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 public abstract class BaseWorkplanController extends BaseController {
@@ -30,14 +33,15 @@ public abstract class BaseWorkplanController extends BaseController {
 		ENDOCRINOLOGY, CYTOBACTERIOLOGY, MYCOLOGY, SEROLOGY_IMMUNOLOGY, MALARIA
 	}
 
-	protected static final TestDAO testDAO = new TestDAOImpl();
+	@Autowired
+	protected TestService testService;
 
 	protected static List<Integer> statusList;
 	protected static boolean useReceptionTime = FormFields.getInstance().useField(Field.SampleEntryUseReceptionHour);
 	protected static List<String> nfsTestIdList = new ArrayList<>();
 
-	static {
-
+	@PostConstruct
+	public void initialize() {
 		statusList = new ArrayList<>();
 		statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted)));
 		statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.BiologistRejected)));
@@ -71,8 +75,8 @@ public abstract class BaseWorkplanController extends BaseController {
 
 	}
 
-	protected static String getTestId(String testName) {
-		Test test = testDAO.getTestByName(testName);
+	protected String getTestId(String testName) {
+		Test test = testService.getMatch("testName", testName).orElse(new Test());
 		return test.getId();
 
 	}

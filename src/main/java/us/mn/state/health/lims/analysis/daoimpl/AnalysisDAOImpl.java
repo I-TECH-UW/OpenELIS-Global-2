@@ -121,7 +121,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 							+ analysis.getTest().getTestDisplayValue());
 				}
 			}
-			String id = (String) HibernateUtil.getSession().save(analysis);
+			String id = (String) sessionFactory.getCurrentSession().save(analysis);
 			analysis.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
@@ -130,11 +130,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			String tableName = "ANALYSIS";
 			auditDAO.saveNewHistory(analysis, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-
 		} catch (Exception e) {
-
 			LogEvent.logError("AnalysisDAOImpl", "insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in Analysis insertData()", e);
 		}
@@ -180,7 +176,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 	public void getData(Analysis analysis) throws LIMSRuntimeException {
 
 		try {
-			Analysis analysisClone = (Analysis) HibernateUtil.getSession().get(Analysis.class, analysis.getId());
+			Analysis analysisClone = HibernateUtil.getSession().get(Analysis.class, analysis.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (analysisClone != null) {
@@ -243,7 +239,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 	public Analysis readAnalysis(String idString) {
 		Analysis analysis = null;
 		try {
-			analysis = (Analysis) HibernateUtil.getSession().get(Analysis.class, idString);
+			analysis = HibernateUtil.getSession().get(Analysis.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -321,12 +317,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 		try {
 			String sql = "from Analysis a where a.test = :testId and a.statusId IN (:statusIdList) order by a.sampleItem.sample.accessionNumber";
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(testId));
 			query.setParameterList("statusIdList", statusIdList);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getAllAnalysisByTestAndStatuses()", e.toString());
@@ -349,14 +343,11 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 				testList.add(Integer.parseInt(testId));
 			}
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameterList("testList", testList);
 			query.setParameterList("statusIdList", statusIdList);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
-
 			LogEvent.logError("AnalysisDAOImpl", "getAllAnalysisByTestsAndStatuses()", e.toString());
 			throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestsAndStatuses()", e);
 		}
@@ -372,12 +363,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 		try {
 			String sql = "from Analysis a where a.test = :testId and a.statusId not IN (:statusIdList) order by a.sampleItem.sample.accessionNumber";
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(testId));
 			query.setParameterList("statusIdList", statusIdList);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getAllAnalysisByTestAndExcludedStatuses()", e.toString());
@@ -400,12 +389,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 				// a.sampleItem.sample.accessionNumber";
 			}
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("testSectionId", Integer.parseInt(testSectionId));
 			query.setParameterList("statusIdList", statusIdList);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getAllAnalysisByTestSectionAndStatuses()", e.toString());
@@ -447,12 +434,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 
 			String sql = "from Analysis a where a.sampleItem.id = :sampleItemId";
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("sampleItemId", Integer.parseInt(sampleItem.getId()));
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("AnalysisDAOImpl", "getAnalysesBySampleItem()", e.toString());
 			throw new LIMSRuntimeException("Error in Analysis getAnalysesBySampleItem()", e);
@@ -474,13 +459,11 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 		try {
 			String sql = "from Analysis a where a.sampleItem.id = :sampleItemId and a.statusId not in ( :statusList )";
 
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("sampleItemId", Integer.parseInt(sampleItem.getId()));
 			query.setParameterList("statusList", statusIds);
 
 			analysisList = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getAnalysesBySampleItemsExcludingByStatusIds()", e.toString());
@@ -501,7 +484,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 		String sql = "from Analysis a where a.sampleItem.sample.statusId = :sampleStatus and a.statusId not in (:excludedStatusIds)";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("sampleStatus", Integer.parseInt(statusId));
 			query.setParameterList("excludedStatusIds", statusIds);
 
@@ -524,12 +507,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 		try {
 			String sql = "from Analysis a where a.sampleItem.sample.statusId = :sampleStatusId";
 
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("sampleStatusId", Integer.parseInt(statusId));
 
 			analysisList = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("AnalysisDAOImpl", "getAnalysesBySampleItemsExcludingByStatusIds()", e.toString());
@@ -1153,11 +1134,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 
 		try {
 			String sql = "from Analysis a where a.startedDate = :startedDate";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setDate("startedDate", collectionDate);
 
 			List<Analysis> list = query.list();
-			// closeSession(); // CSL remove old
 			return list;
 
 		} catch (HibernateException he) {
@@ -1178,12 +1158,11 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 		String sql = "from Analysis a where a.sampleItem.collectionDate = :startedDate and a.statusId not in ( :statusList )";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setDate("startedDate", collectionDate);
 			query.setParameterList("statusList", statusIds);
 
 			List<Analysis> analysisList = query.list();
-			// closeSession(); // CSL remove old
 			return analysisList;
 		} catch (HibernateException e) {
 			handleException(e, "getAnalysisStartedOnExcludedByStatusId");
@@ -1294,11 +1273,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			try {
 				String sql = "from Analysis a where a.sampleItem.sample.id = :sampleId";
 
-				org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 				query.setInteger("sampleId", Integer.parseInt(id));
 
 				list = query.list();
-				// closeSession(); // CSL remove old
 			} catch (Exception e) {
 				handleException(e, "getAnalysesBySampleId");
 			}
@@ -1408,7 +1386,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 		String sql = "From Analysis a where a.sampleItem.sample.accessionNumber = :accessionNumber and a.test.id = :testId";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("accessionNumber", accessionNumber);
 			query.setInteger("testId", Integer.parseInt(testId));
 			List<Analysis> analysises = query.list();
@@ -1479,13 +1457,12 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 		try {
 			String sql = "from Analysis a where a.sampleItem.id = :sampleItemId and a.statusId = :statusId";
 
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("sampleItemId", Integer.parseInt(sampleItemId));
 			query.setInteger("statusId", Integer.parseInt(statusId));
 
 			@SuppressWarnings("unchecked")
 			List<Analysis> analysisList = query.list();
-			// closeSession(); // CSL remove old
 			return analysisList;
 		} catch (Exception e) {
 			handleException(e, "getAnalysesBySampleItemIdAndStatusId");
@@ -1500,7 +1477,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			return null;
 		}
 		try {
-			Analysis analysis = (Analysis) HibernateUtil.getSession().get(Analysis.class, analysisId);
+			Analysis analysis = HibernateUtil.getSession().get(Analysis.class, analysisId);
 			// closeSession(); // CSL remove old
 			return analysis;
 		} catch (Exception e) {

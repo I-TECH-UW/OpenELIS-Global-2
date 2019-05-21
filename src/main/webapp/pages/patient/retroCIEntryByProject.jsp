@@ -1,10 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants,
-            us.mn.state.health.lims.common.util.Versioning,
-            us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl,
-            us.mn.state.health.lims.login.dao.UserModuleDAO,
-	        java.util.HashSet,
-	        org.owasp.encoder.Encode"%>
+            us.mn.state.health.lims.common.util.Versioning,us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl,us.mn.state.health.lims.login.dao.UserModuleService,java.util.HashSet,org.owasp.encoder.Encode"%>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -14,10 +10,8 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>
 
-<%!
-	String basePath = "";
-	UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-%>
+<%!String basePath = "";
+	UserModuleService userModuleDAO = new UserModuleServiceImpl();%>
 <%
 	String path = request.getContextPath();
 	basePath = request.getScheme() + "://" + request.getServerName() + ":"	+ request.getServerPort() + path + "/";

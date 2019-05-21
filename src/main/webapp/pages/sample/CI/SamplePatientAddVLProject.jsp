@@ -21,12 +21,10 @@
 <bean:define id="genericDomain" value='' />
 
 <!-- sampleAddVLProject -->
-<%@page import="us.mn.state.health.lims.login.dao.UserModuleDAO"%>
-<%@page import="us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl"%>
-<%!
-	String basePath = "";
-	UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-%>
+<%@page import="us.mn.state.health.lims.login.dao.UserModuleService"%>
+<%@page import="us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl"%>
+<%!String basePath = "";
+	UserModuleService userModuleDAO = new UserModuleServiceImpl();%>
 <%
 	String path = request.getContextPath();
 	basePath = request.getScheme() + "://" + request.getServerName() + ":"	+ request.getServerPort() + path + "/";

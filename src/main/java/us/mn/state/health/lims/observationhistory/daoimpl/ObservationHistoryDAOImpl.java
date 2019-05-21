@@ -198,7 +198,8 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory> i
 	public List<ObservationHistory> readByExample(ObservationHistory entity) throws LIMSRuntimeException {
 		List<ObservationHistory> results;
 		try {
-			results = HibernateUtil.getSession().createCriteria(entity.getClass()).add(Example.create(entity)).list();
+			results = sessionFactory.getCurrentSession().createCriteria(entity.getClass()).add(Example.create(entity))
+					.list();
 		} catch (Exception e) {
 			throw createAndLogException("readByExample()", e);
 		}
@@ -226,7 +227,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory> i
 
 	@Override
 	public void updateData(ObservationHistory observation) throws LIMSRuntimeException {
-		update(observation);
+		save(observation);
 	}
 
 	@Override

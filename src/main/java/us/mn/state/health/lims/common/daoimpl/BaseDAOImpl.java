@@ -15,6 +15,7 @@
 */
 package us.mn.state.health.lims.common.daoimpl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -53,7 +55,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 @Component("baseObjectDAO")
 public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionConstants {
 
-	static final int DEFAULT_PAGE_SIZE = SystemConfiguration.getInstance().getDefaultPageSize();
+	protected static final int DEFAULT_PAGE_SIZE = SystemConfiguration.getInstance().getDefaultPageSize();
 	private static final int RANDOM_ALIAS_LENGTH = 5;
 	private static final String MULTI_NESTED_MARKING = ",";
 
@@ -68,7 +70,7 @@ public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, I
 	}
 
 	@Override
-	public Optional<T> get(String id) {
+	public Optional<T> get(Serializable id) {
 		Session session = sessionFactory.getCurrentSession();
 		T object = session.get(classType, id);
 		return Optional.ofNullable(object);
@@ -90,6 +92,19 @@ public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, I
 	@Override
 	public List<T> getAllMatching(Map<String, Object> propertyValues) {
 		return getAllMatchingOrdered(propertyValues, "id", false);
+	}
+
+	@Override
+	public List<T> getAllLike(String propertyName, String propertyValue) {
+		Map<String, String> propertyValues = new HashMap<>();
+		propertyValues.put(propertyName, propertyValue);
+
+		return getAllLike(propertyValues);
+	}
+
+	@Override
+	public List<T> getAllLike(Map<String, String> propertyValues) {
+		return getAllLikeOrdered(propertyValues, "id", false);
 	}
 
 	@Override
@@ -150,6 +165,50 @@ public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, I
 	}
 
 	@Override
+	public List<T> getAllLikeOrdered(String propertyName, String propertyValue, String orderProperty,
+			boolean descending) {
+		Map<String, String> propertyValues = new HashMap<>();
+		propertyValues.put(propertyName, propertyValue);
+		List<String> orderProperties = new ArrayList<>();
+		orderProperties.add(orderProperty);
+
+		return getAllLikeOrdered(propertyValues, orderProperties, descending);
+	}
+
+	@Override
+	public List<T> getAllLikeOrdered(String propertyName, String propertyValue, List<String> orderProperties,
+			boolean descending) {
+		Map<String, String> propertyValues = new HashMap<>();
+		propertyValues.put(propertyName, propertyValue);
+
+		return getAllLikeOrdered(propertyValues, orderProperties, descending);
+	}
+
+	@Override
+	public List<T> getAllLikeOrdered(Map<String, String> propertyValues, String orderProperty, boolean descending) {
+		List<String> orderProperties = new ArrayList<>();
+
+		return getAllLikeOrdered(propertyValues, orderProperties, descending);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<T> getAllLikeOrdered(Map<String, String> propertyValues, List<String> orderProperties,
+			boolean descending) {
+		Map<String, String> aliases = new HashMap<>();
+
+		Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(classType);
+		for (Entry<String, String> entrySet : propertyValues.entrySet()) {
+			addLikeRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+		}
+		for (String orderProperty : orderProperties) {
+			addOrder(criteria, orderProperty, descending, aliases);
+		}
+		return criteria.list();
+	}
+
+	@Override
 	public List<T> getPage(int startingRecNo) {
 		return getOrderedPage("id", false, startingRecNo);
 	}
@@ -164,6 +223,18 @@ public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, I
 	@Override
 	public List<T> getMatchingPage(Map<String, Object> propertyValues, int startingRecNo) {
 		return getMatchingOrderedPage(propertyValues, "id", false, startingRecNo);
+	}
+
+	@Override
+	public List<T> getLikePage(String propertyName, String propertyValue, int startingRecNo) {
+		Map<String, Object> propertyValues = new HashMap<>();
+		propertyValues.put(propertyName, propertyValue);
+		return getMatchingPage(propertyValues, startingRecNo);
+	}
+
+	@Override
+	public List<T> getLikePage(Map<String, String> propertyValues, int startingRecNo) {
+		return getLikeOrderedPage(propertyValues, "id", false, startingRecNo);
 	}
 
 	@Override
@@ -227,10 +298,64 @@ public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, I
 		return criteria.list();
 	}
 
+	@Override
+	public List<T> getLikeOrderedPage(String propertyName, String propertyValue, String orderProperty,
+			boolean descending, int startingRecNo) {
+		List<String> orderProperties = new ArrayList<>();
+		orderProperties.add(orderProperty);
+		Map<String, String> propertyValues = new HashMap<>();
+		propertyValues.put(propertyName, propertyValue);
+
+		return getLikeOrderedPage(propertyValues, orderProperties, descending, startingRecNo);
+	}
+
+	@Override
+	public List<T> getLikeOrderedPage(String propertyName, String propertyValue, List<String> orderProperties,
+			boolean descending, int startingRecNo) {
+		Map<String, String> propertyValues = new HashMap<>();
+		propertyValues.put(propertyName, propertyValue);
+
+		return getLikeOrderedPage(propertyValues, orderProperties, descending, startingRecNo);
+	}
+
+	@Override
+	public List<T> getLikeOrderedPage(Map<String, String> propertyValues, String orderProperty, boolean descending,
+			int startingRecNo) {
+		List<String> orderProperties = new ArrayList<>();
+		orderProperties.add(orderProperty);
+
+		return getLikeOrderedPage(propertyValues, orderProperties, descending, startingRecNo);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<T> getLikeOrderedPage(Map<String, String> propertyValues, List<String> orderProperties,
+			boolean descending, int startingRecNo) {
+		Map<String, String> aliases = new HashMap<>();
+
+		Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(classType);
+		for (Entry<String, String> entrySet : propertyValues.entrySet()) {
+			addLikeRestriction(criteria, entrySet.getKey(), entrySet.getValue(), aliases);
+		}
+		for (String orderProperty : orderProperties) {
+			addOrder(criteria, orderProperty, descending, aliases);
+		}
+		criteria.setFirstResult(startingRecNo - 1);
+		criteria.setMaxResults(DEFAULT_PAGE_SIZE + 1);
+		return criteria.list();
+	}
+
 	private void addRestriction(Criteria criteria, String propertyName, Object propertyValue,
 			Map<String, String> aliases) {
 		String aliasedProperty = createAliasIfNeeded(criteria, propertyName, aliases);
 		criteria.add(Restrictions.eq(aliasedProperty, propertyValue));
+	}
+
+	private void addLikeRestriction(Criteria criteria, String propertyName, String propertyValue,
+			Map<String, String> aliases) {
+		String aliasedProperty = createAliasIfNeeded(criteria, propertyName, aliases);
+		criteria.add(Restrictions.ilike(aliasedProperty, propertyValue, MatchMode.ANYWHERE));
 	}
 
 	private void addOrder(Criteria criteria, String orderProperty, boolean descending, Map<String, String> aliases) {

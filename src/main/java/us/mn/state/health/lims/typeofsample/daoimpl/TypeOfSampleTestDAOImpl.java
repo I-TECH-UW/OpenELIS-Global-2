@@ -17,8 +17,6 @@
  */
 package us.mn.state.health.lims.typeofsample.daoimpl;
 
-import static us.mn.state.health.lims.common.daoimpl.BaseDAOImpl.DEFAULT_PAGE_SIZE;
-
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -86,8 +84,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 	@Override
 	public void getData(TypeOfSampleTest typeOfSample) throws LIMSRuntimeException {
 		try {
-			TypeOfSampleTest tos = (TypeOfSampleTest) HibernateUtil.getSession().get(TypeOfSampleTest.class,
-					typeOfSample.getId());
+			TypeOfSampleTest tos = HibernateUtil.getSession().get(TypeOfSampleTest.class, typeOfSample.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (tos != null) {
@@ -150,7 +147,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 	public TypeOfSampleTest readTypeOfSample(String idString) {
 		TypeOfSampleTest tos;
 		try {
-			tos = (TypeOfSampleTest) HibernateUtil.getSession().get(TypeOfSampleTest.class, idString);
+			tos = HibernateUtil.getSession().get(TypeOfSampleTest.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {

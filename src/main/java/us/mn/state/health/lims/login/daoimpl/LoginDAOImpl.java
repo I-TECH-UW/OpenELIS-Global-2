@@ -170,7 +170,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 	@Override
 	public void getData(Login login) throws LIMSRuntimeException {
 		try {
-			Login l = (Login) HibernateUtil.getSession().get(Login.class, login.getId());
+			Login l = HibernateUtil.getSession().get(Login.class, login.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (l != null) {
@@ -232,7 +232,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 	public Login readLoginUser(String idString) {
 		Login l = null;
 		try {
-			l = (Login) HibernateUtil.getSession().get(Login.class, idString);
+			l = HibernateUtil.getSession().get(Login.class, idString);
 			// Crypto crypto = new Crypto();
 			// l.setPassword(crypto.getDecrypt(l.getPassword()));
 			// HibernateUtil.getSession().flush(); // CSL remove old
@@ -417,7 +417,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 		try {
 			List list = new ArrayList();
 			String sql = "from Login l where l.loginName = :param";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", loginName);
 
 			list = query.list();
@@ -450,20 +450,15 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 	public int getPasswordExpiredDayNo(Login login) throws LIMSRuntimeException {
 		int retVal = 0;
 		try {
-			Object obj = HibernateUtil.getSession().getNamedQuery("login.getAnalysisPasswordExpiredDayCount")
+			Object obj = sessionFactory.getCurrentSession().getNamedQuery("login.getAnalysisPasswordExpiredDayCount")
 					.setString("loginName", login.getLoginName()).uniqueResult();
-
 			if (obj != null) {
 				retVal = Integer.parseInt(obj.toString());
 			}
-
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("LoginDAOImpl", "getPasswordExpiredDayNo()", e.toString());
 			throw new LIMSRuntimeException("Error in getPasswordExpiredDayNo()", e);
-		} finally {
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
 		}
 
 		return retVal;
@@ -480,7 +475,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 	public int getSystemUserId(Login login) throws LIMSRuntimeException {
 		int retVal = 0;
 		try {
-			Object obj = HibernateUtil.getSession().getNamedQuery("login.getSystemUserId")
+			Object obj = sessionFactory.getCurrentSession().getNamedQuery("login.getSystemUserId")
 					.setString("loginName", login.getLoginName()).uniqueResult();
 
 			if (obj != null) {

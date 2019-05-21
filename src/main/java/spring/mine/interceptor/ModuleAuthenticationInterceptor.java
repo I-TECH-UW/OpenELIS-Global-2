@@ -7,25 +7,27 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import spring.mine.common.validator.BaseErrors;
+import spring.service.systemmodule.SystemModuleUrlService;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
-import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
-import us.mn.state.health.lims.systemmodule.dao.SystemModuleUrlDAO;
-import us.mn.state.health.lims.systemmodule.daoimpl.SystemModuleUrlDAOImpl;
+import us.mn.state.health.lims.login.dao.UserModuleService;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModuleParam;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModuleUrl;
 
 @Component
+@Qualifier(value = "ModuleAuthenticationInterceptor")
 public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
 	private static final boolean USE_PARAMETERS = true;
@@ -35,13 +37,18 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
 	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
+	@Autowired
+	UserModuleService userModuleService;
+	@Autowired
+	SystemModuleUrlService systemModuleUrlService;
+
 	@Override
+	@Transactional
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 
-		UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
 		Errors errors = new BaseErrors();
-		if (!hasPermission(userModuleDAO, errors, request)) {
+		if (!hasPermission(errors, request)) {
 			LogEvent.logInfo("ModuleAuthenticationInterceptor", "preHandle()",
 					"======> NOT ALLOWED ACCESS TO THIS MODULE");
 			System.out.println("has no permission"); //
@@ -62,12 +69,12 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
 			throws Exception {
 	}
 
-	protected boolean hasPermission(UserModuleDAO userModuleDAO, Errors errors, HttpServletRequest request) {
+	protected boolean hasPermission(Errors errors, HttpServletRequest request) {
 		try {
 			if (SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
-				return hasPermissionForUrl(request, USE_PARAMETERS) || userModuleDAO.isUserAdmin(request);
+				return hasPermissionForUrl(request, USE_PARAMETERS) || userModuleService.isUserAdmin(request);
 			} else {
-				return userModuleDAO.isVerifyUserModule(request) || userModuleDAO.isUserAdmin(request);
+				return userModuleService.isVerifyUserModule(request) || userModuleService.isUserAdmin(request);
 			}
 		} catch (NullPointerException e) {
 			LogEvent.logError("ModuleAuthenticationInterceptor", "hasPermission()", e.toString());
@@ -78,8 +85,7 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
 	private boolean hasPermissionForUrl(HttpServletRequest request, boolean useParameters) {
 		@SuppressWarnings("rawtypes")
 		HashSet accessMap = (HashSet) request.getSession().getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
-		SystemModuleUrlDAO sysModUrlDao = new SystemModuleUrlDAOImpl();
-		List<SystemModuleUrl> sysModsByUrl = sysModUrlDao.getByRequest(request);
+		List<SystemModuleUrl> sysModsByUrl = systemModuleUrlService.getByRequest(request);
 
 		if (useParameters) {
 			sysModsByUrl = filterParamMatches(request, sysModsByUrl);

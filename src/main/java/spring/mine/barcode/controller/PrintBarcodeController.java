@@ -11,10 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -57,16 +59,17 @@ public class PrintBarcodeController extends BaseController {
 	private static final TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
 	private static final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
 	private static final SampleEditItemComparator testComparator = new SampleEditItemComparator();
-	private static final Set<Integer> excludedAnalysisStatusList;
+	private static final Set<Integer> excludedAnalysisStatusList = new HashSet<>();
 	private static final Set<Integer> ENTERED_STATUS_SAMPLE_LIST = new HashSet<>();
 	private static final Collection<String> ABLE_TO_CANCEL_ROLE_NAMES = new ArrayList<>();
 
-	static {
-		excludedAnalysisStatusList = new HashSet<>();
-		excludedAnalysisStatusList
-				.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled)));
+	@Autowired
+	StatusService statusService;
 
-		ENTERED_STATUS_SAMPLE_LIST.add(Integer.parseInt(StatusService.getInstance().getStatusID(SampleStatus.Entered)));
+	@PostConstruct
+	public void initialize() {
+		excludedAnalysisStatusList.add(Integer.parseInt(statusService.getStatusID(AnalysisStatus.Canceled)));
+		ENTERED_STATUS_SAMPLE_LIST.add(Integer.parseInt(statusService.getStatusID(SampleStatus.Entered)));
 		ABLE_TO_CANCEL_ROLE_NAMES.add("Validator");
 		ABLE_TO_CANCEL_ROLE_NAMES.add("Validation");
 		ABLE_TO_CANCEL_ROLE_NAMES.add("Biologist");

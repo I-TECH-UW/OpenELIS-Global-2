@@ -2,6 +2,7 @@ package spring.service.common;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
@@ -12,6 +13,10 @@ public interface BaseObjectService<T extends BaseObject> {
 	 * @return the baseObject corresponding with the id or a new object s
 	 */
 	T get(String id);
+
+	Optional<T> getMatch(String propertyName, Object propertyValue);
+
+	Optional<T> getMatch(Map<String, Object> propertyValues);
 
 	/**
 	 * @return all data type for the baseObject type
@@ -93,50 +98,50 @@ public interface BaseObjectService<T extends BaseObject> {
 	List<T> getAllMatchingOrdered(Map<String, Object> propertyValues, List<String> orderProperties, boolean descending);
 
 	/**
-	 * @param pageNumber 0 indexed page number to get results from
+	 * @param startingRecNo 0 indexed page number to get results from
 	 * @return A page of results sorted by id. If length is 1 more than page size,
 	 *         this signifies there is a next page
 	 */
-	List<T> getPage(int pageNumber);
+	List<T> getPage(int startingRecNo);
 
 	/**
 	 * @param propertyName  the property that must match
 	 * @param propertyValue the value the property must equal
-	 * @param pageNumber    0 indexed page number to get results from
+	 * @param startingRecNo 0 indexed page number to get results from
 	 * @return A page of results. If length is 1 more than page size, this signifies
 	 *         there is a next page
 	 */
-	List<T> getMatchingPage(String propertyName, Object propertyValue, int pageNumber);
+	List<T> getMatchingPage(String propertyName, Object propertyValue, int startingRecNo);
 
 	/**
 	 * @param propertyValues Key Value pairs where key is the property name and
 	 *                       value is the value it must match
-	 * @param pageNumber     0 indexed page number to get results from
+	 * @param startingRecNo  0 indexed page number to get results from
 	 * @return A page of results. If length is 1 more than page size, this signifies
 	 *         there is a next page
 	 */
-	List<T> getMatchingPage(Map<String, Object> propertyValues, int pageNumber);
+	List<T> getMatchingPage(Map<String, Object> propertyValues, int startingRecNo);
 
 	/**
 	 * @param orderProperty the property to order by
 	 * @param descending    Set to true to order by descending, false for order by
 	 *                      ascending
-	 * @param pageNumber    0 indexed page number to get results from
+	 * @param startingRecNo 0 indexed page number to get results from
 	 * @return A page of results. If length is 1 more than page size, this signifies
 	 *         there is a next page
 	 */
-	List<T> getOrderedPage(String orderProperty, boolean descending, int pageNumber);
+	List<T> getOrderedPage(String orderProperty, boolean descending, int startingRecNo);
 
 	/**
 	 * @param orderProperties the properties to order by, starting with the first
 	 *                        entry
 	 * @param descending      Set to true to order by descending, false for order by
 	 *                        ascending
-	 * @param pageNumber      0 indexed page number to get results from
+	 * @param startingRecNo   0 indexed page number to get results from
 	 * @return A page of results. If length is 1 more than page size, this signifies
 	 *         there is a next page
 	 */
-	List<T> getOrderedPage(List<String> orderProperties, boolean descending, int pageNumber);
+	List<T> getOrderedPage(List<String> orderProperties, boolean descending, int startingRecNo);
 
 	/**
 	 * @param propertyName  the property that must match
@@ -144,12 +149,12 @@ public interface BaseObjectService<T extends BaseObject> {
 	 * @param orderProperty the property to order by
 	 * @param descending    Set to true to order by descending, false for order by
 	 *                      ascending
-	 * @param pageNumber    0 indexed page number to get results from
+	 * @param startingRecNo 0 indexed page number to get results from
 	 * @return A page of results. If length is 1 more than page size, this signifies
 	 *         there is a next page
 	 */
 	List<T> getMatchingOrderedPage(String propertyName, Object propertyValue, String orderProperty, boolean descending,
-			int pageNumber);
+			int startingRecNo);
 
 	/**
 	 * @param propertyName    the property that must match
@@ -158,12 +163,12 @@ public interface BaseObjectService<T extends BaseObject> {
 	 *                        entry
 	 * @param descending      Set to true to order by descending, false for order by
 	 *                        ascending
-	 * @param pageNumber      0 indexed page number to get results from
+	 * @param startingRecNo   0 indexed page number to get results from
 	 * @return A page of results. If length is 1 more than page size, this signifies
 	 *         there is a next page
 	 */
 	List<T> getMatchingOrderedPage(String propertyName, Object propertyValue, List<String> orderProperties,
-			boolean descending, int pageNumber);
+			boolean descending, int startingRecNo);
 
 	/**
 	 * @param propertyValues Key Value pairs where key is the property name and
@@ -171,12 +176,12 @@ public interface BaseObjectService<T extends BaseObject> {
 	 * @param orderProperty  the property to order by
 	 * @param descending     Set to true to order by descending, false for order by
 	 *                       ascending
-	 * @param pageNumber     0 indexed page number to get results from
+	 * @param startingRecNo  0 indexed page number to get results from
 	 * @return A page of results. If length is 1 more than page size, this signifies
 	 *         there is a next page
 	 */
 	List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, String orderProperty, boolean descending,
-			int pageNumber);
+			int startingRecNo);
 
 	/**
 	 * @param propertyValues  Key Value pairs where key is the property name and
@@ -185,12 +190,12 @@ public interface BaseObjectService<T extends BaseObject> {
 	 *                        entry
 	 * @param descending      Set to true to order by descending, false for order by
 	 *                        ascending
-	 * @param pageNumber      0 indexed page number to get results from
+	 * @param startingRecNo   0 indexed page number to get results from
 	 * @return A page of results. If length is 1 more than page size, this signifies
 	 *         there is a next page
 	 */
 	List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, List<String> orderProperties, boolean descending,
-			int pageNumber);
+			int startingRecNo);
 
 	/**
 	 * @param baseObject the data to insert
@@ -246,7 +251,7 @@ public interface BaseObjectService<T extends BaseObject> {
 	 */
 	void deleteAll(List<T> baseObjects);
 
-	void delete(List<String> ids, String sysUserId);
+	void deleteAll(List<String> ids, String sysUserId);
 
 	/**
 	 * @return the number of rows
@@ -256,6 +261,10 @@ public interface BaseObjectService<T extends BaseObject> {
 	Integer getCountMatching(String propertyName, Object propertyValue);
 
 	Integer getCountMatching(Map<String, Object> propertyValues);
+
+	Integer getCountLike(String propertyName, String propertyValue);
+
+	Integer getCountLike(Map<String, String> propertyValues);
 
 	/**
 	 * @param id the id to start from

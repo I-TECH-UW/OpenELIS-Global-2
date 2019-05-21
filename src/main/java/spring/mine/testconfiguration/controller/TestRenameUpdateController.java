@@ -23,6 +23,7 @@ import us.mn.state.health.lims.localization.valueholder.Localization;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 @Controller
+//TODO delete this, already in testrenameEntrycontroller.java
 public class TestRenameUpdateController extends BaseController {
 	@RequestMapping(value = "/TestRenameUpdate", method = RequestMethod.POST)
 	public ModelAndView showTestRenameUpdate(@ModelAttribute("form") @Valid TestRenameEntryForm form,

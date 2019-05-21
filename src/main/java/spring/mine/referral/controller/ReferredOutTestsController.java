@@ -19,11 +19,12 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.hibernate.StaleObjectStateException;
-import org.hibernate.Transaction;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -34,8 +35,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.referral.form.ReferredOutTestsForm;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.dictionary.DictionaryService;
+import spring.service.organization.OrganizationService;
+import spring.service.referral.ReferralResultService;
+import spring.service.referral.ReferralService;
+import spring.service.sample.SampleService;
+import spring.service.samplehuman.SampleHumanService;
+import spring.service.testresult.TestResultService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.AnalysisService;
@@ -51,58 +57,48 @@ import us.mn.state.health.lims.common.services.TypeOfSampleService;
 import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.note.dao.NoteDAO;
-import us.mn.state.health.lims.note.daoimpl.NoteDAOImpl;
 import us.mn.state.health.lims.note.valueholder.Note;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.referral.action.beanitems.IReferralResultTest;
 import us.mn.state.health.lims.referral.action.beanitems.ReferralItem;
 import us.mn.state.health.lims.referral.action.beanitems.ReferredTest;
-import us.mn.state.health.lims.referral.dao.ReferralDAO;
-import us.mn.state.health.lims.referral.dao.ReferralResultDAO;
-import us.mn.state.health.lims.referral.daoimpl.ReferralDAOImpl;
-import us.mn.state.health.lims.referral.daoimpl.ReferralResultDAOImpl;
 import us.mn.state.health.lims.referral.valueholder.Referral;
 import us.mn.state.health.lims.referral.valueholder.ReferralResult;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.testresult.dao.TestResultDAO;
-import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Controller
 public class ReferredOutTestsController extends BaseController {
 
-	private final ReferralDAO referralDAO = new ReferralDAOImpl();
-	private final ReferralResultDAO referralResultDAO = new ReferralResultDAOImpl();
-	private final OrganizationDAO organizationDAO = new OrganizationDAOImpl();
-	private final ResultDAO resultDAO = new ResultDAOImpl();
-	private final SampleDAO sampleDAO = new SampleDAOImpl();
-	private final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-	private final NoteDAO noteDAO = new NoteDAOImpl();
-	private final TestResultDAO testResultDAO = new TestResultDAOImpl();
-
 	private static final String RESULT_SUBJECT = "Result Note";
-	private TestDAO testDAO = new TestDAOImpl();
-	private SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
-	private static DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
+
+	@Autowired
+	ReferralService referralService;
+	@Autowired
+	ReferralResultService referralResultService;
+	@Autowired
+	OrganizationService organizationService;
+	@Autowired
+	spring.service.result.ResultService resultService;
+	@Autowired
+	SampleService sampleService;
+	@Autowired
+	spring.service.analysis.AnalysisService analysisService;
+	@Autowired
+	spring.service.note.NoteService noteService;
+	@Autowired
+	TestResultService testResultService;
+	@Autowired
+	spring.service.test.TestService testService;
+	@Autowired
+	SampleHumanService sampleHumanService;
+	@Autowired
+	DictionaryService dictionaryService;
 
 	@RequestMapping(value = "/ReferredOutTests", method = RequestMethod.GET)
 	public ModelAndView showReferredOutTests(HttpServletRequest request)
@@ -147,9 +143,8 @@ public class ReferredOutTestsController extends BaseController {
 
 	private List<ReferralItem> getReferralItems() {
 		List<ReferralItem> referralItems = new ArrayList<>();
-		ReferralDAO referralDAO = new ReferralDAOImpl();
 
-		List<Referral> referralList = referralDAO.getAllUncanceledOpenReferrals();
+		List<Referral> referralList = referralService.getAllUncanceledOpenReferrals();
 
 		for (Referral referral : referralList) {
 			ReferralItem referralItem = getReferralItem(referral);
@@ -180,7 +175,7 @@ public class ReferredOutTestsController extends BaseController {
 
 	private ReferralItem getReferralItem(Referral referral) {
 		boolean allReferralResultsHaveResults = true;
-		List<ReferralResult> referralResults = referralResultDAO.getReferralResultsForReferral(referral.getId());
+		List<ReferralResult> referralResults = referralResultService.getReferralResultsForReferral(referral.getId());
 		for (ReferralResult referralResult : referralResults) {
 			if (referralResult.getResult() == null
 					|| GenericValidator.isBlankOrNull(referralResult.getResult().getValue())) {
@@ -330,17 +325,15 @@ public class ReferredOutTestsController extends BaseController {
 	private String getAppropriateResultValue(List<Result> results) {
 		Result result = results.get(0);
 		if (TypeOfTestResultService.ResultType.DICTIONARY.matches(result.getResultType())) {
-			Dictionary dictionary = dictionaryDAO.getDictionaryById(result.getValue());
+			Dictionary dictionary = dictionaryService.get(result.getValue());
 			if (dictionary != null) {
 				return dictionary.getLocalizedName();
 			}
 		} else if (TypeOfTestResultService.ResultType.isMultiSelectVariant(result.getResultType())) {
-			Dictionary dictionary = new Dictionary();
 			StringBuilder multiResult = new StringBuilder();
 
 			for (Result subResult : results) {
-				dictionary.setId(subResult.getValue());
-				dictionaryDAO.getData(dictionary);
+				Dictionary dictionary = dictionaryService.get(subResult.getValue());
 
 				if (dictionary.getId() != null) {
 					multiResult.append(dictionary.getLocalizedName());
@@ -382,7 +375,6 @@ public class ReferredOutTestsController extends BaseController {
 	}
 
 	private List<NonNumericTests> getNonNumericTests(List<ReferralItem> referralItems) {
-		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
 		Set<String> testIdSet = new HashSet<>();
 
 		for (ReferralItem item : referralItems) {
@@ -392,9 +384,8 @@ public class ReferredOutTestsController extends BaseController {
 		}
 
 		List<NonNumericTests> nonNumericTestList = new ArrayList<>();
-		TestResultDAO testResultDAO = new TestResultDAOImpl();
 		for (String testId : testIdSet) {
-			List<TestResult> testResultList = testResultDAO.getActiveTestResultsByTest(testId);
+			List<TestResult> testResultList = testResultService.getActiveTestResultsByTest(testId);
 
 			if (!(testResultList == null || testResultList.isEmpty())) {
 				NonNumericTests nonNumericTests = new NonNumericTests();
@@ -407,8 +398,7 @@ public class ReferredOutTestsController extends BaseController {
 					List<IdValuePair> dictionaryValues = new ArrayList<>();
 					for (TestResult testResult : testResultList) {
 						if (TypeOfTestResultService.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
-							String resultName = dictionaryDAO.getDictionaryById(testResult.getValue())
-									.getLocalizedName();
+							String resultName = dictionaryService.get(testResult.getValue()).getLocalizedName();
 							dictionaryValues.add(new IdValuePair(testResult.getValue(), resultName));
 						}
 					}
@@ -461,61 +451,9 @@ public class ReferredOutTestsController extends BaseController {
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
-			for (ReferralSet referralSet : referralSetList) {
-				referralDAO.updateData(referralSet.referral);
-
-				for (ReferralResult referralResult : referralSet.updatableReferralResults) {
-					Result rResult = referralResult.getResult();
-					if (rResult != null) {
-						if (rResult.getId() == null) {
-							resultDAO.insertData(rResult);
-						} else {
-							rResult.setSysUserId(getSysUserId(request));
-							resultDAO.updateData(rResult);
-						}
-					}
-
-					if (referralResult.getId() == null) {
-						referralResultDAO.insertData(referralResult);
-					} else {
-						referralResultDAO.updateData(referralResult);
-					}
-				}
-
-				if (referralSet.note != null) {
-					if (referralSet.note.getId() == null) {
-						noteDAO.insertData(referralSet.note);
-					} else {
-						noteDAO.updateData(referralSet.note);
-					}
-				}
-			}
-
-			for (ReferralResult referralResult : removableReferralResults) {
-
-				referralResult.setSysUserId(getSysUserId(request));
-				referralResultDAO.deleteData(referralResult);
-
-				if (referralResult.getResult() != null && referralResult.getResult().getId() != null) {
-					referralResult.getResult().setSysUserId(getSysUserId(request));
-					resultDAO.deleteData(referralResult.getResult());
-				}
-			}
-
-			setStatusOfParentSamples(modifiedSamples, parentSamples);
-
-			for (Sample sample : modifiedSamples) {
-				sampleDAO.updateData(sample);
-			}
-
-			tx.commit();
-
+			updateRefreralSets(referralSetList, modifiedSamples, parentSamples, removableReferralResults);
 		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
-
 			String errorMsg;
 			if (lre.getException() instanceof StaleObjectStateException) {
 				errorMsg = "errors.OptimisticLockException";
@@ -528,12 +466,62 @@ public class ReferredOutTestsController extends BaseController {
 			saveErrors(result);
 			request.setAttribute(ALLOW_EDITS_KEY, "false");
 			return findForward(FWD_FAIL_INSERT, form);
-
-		} finally {
-			HibernateUtil.closeSession();
 		}
+
 		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 		return findForward(FWD_SUCCESS_INSERT, form);
+	}
+
+	@Transactional
+	private void updateRefreralSets(List<ReferralSet> referralSetList, List<Sample> modifiedSamples,
+			Set<Sample> parentSamples, List<ReferralResult> removableReferralResults) {
+		for (ReferralSet referralSet : referralSetList) {
+			referralService.update(referralSet.referral);
+
+			for (ReferralResult referralResult : referralSet.updatableReferralResults) {
+				Result rResult = referralResult.getResult();
+				if (rResult != null) {
+					if (rResult.getId() == null) {
+						resultService.insert(rResult);
+					} else {
+						rResult.setSysUserId(getSysUserId(request));
+						resultService.update(rResult);
+					}
+				}
+
+				if (referralResult.getId() == null) {
+					referralResultService.insert(referralResult);
+				} else {
+					referralResultService.update(referralResult);
+				}
+			}
+
+			if (referralSet.note != null) {
+				if (referralSet.note.getId() == null) {
+					noteService.insert(referralSet.note);
+				} else {
+					noteService.update(referralSet.note);
+				}
+			}
+		}
+
+		for (ReferralResult referralResult : removableReferralResults) {
+
+			referralResult.setSysUserId(getSysUserId(request));
+			referralResultService.delete(referralResult);
+
+			if (referralResult.getResult() != null && referralResult.getResult().getId() != null) {
+				referralResult.getResult().setSysUserId(getSysUserId(request));
+				resultService.delete(referralResult.getResult());
+			}
+		}
+
+		setStatusOfParentSamples(modifiedSamples, parentSamples);
+
+		for (Sample sample : modifiedSamples) {
+			sampleService.update(sample);
+		}
+
 	}
 
 	private void selectModifiedAndCanceledItems(List<ReferralItem> referralItems, List<ReferralItem> modifiedItems,
@@ -607,7 +595,7 @@ public class ReferredOutTestsController extends BaseController {
 	private ReferralSet createCanceledReferralSet(ReferralItem item, Set<Sample> parentSamples) {
 		ReferralSet referralSet = new ReferralSet();
 
-		Referral referral = referralDAO.getReferralById(item.getReferralId());
+		Referral referral = referralService.get(item.getReferralId());
 
 		referralSet.referral = referral;
 		referral.setSysUserId(getSysUserId(request));
@@ -633,12 +621,12 @@ public class ReferredOutTestsController extends BaseController {
 		// place all existing referral results in list
 		ReferralSet referralSet = new ReferralSet();
 		referralSet.setExistingReferralResults(
-				referralResultDAO.getReferralResultsForReferral(referralItem.getReferralId()));
+				referralResultService.getReferralResultsForReferral(referralItem.getReferralId()));
 
-		Referral referral = referralDAO.getReferralById(referralItem.getReferralId());
+		Referral referral = referralService.get(referralItem.getReferralId());
 		referral.setCanceled(false);
 		referral.setSysUserId(getSysUserId(request));
-		referral.setOrganization(organizationDAO.getOrganizationById(referralItem.getReferredInstituteId()));
+		referral.setOrganization(organizationService.get(referralItem.getReferredInstituteId()));
 		referral.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));
 		referral.setRequesterName(referralItem.getReferrer());
 		referral.setReferralReasonId(referralItem.getReferralReasonId());
@@ -744,10 +732,9 @@ public class ReferredOutTestsController extends BaseController {
 		result.setSysUserId(getSysUserId(request));
 		result.setSortOrder("0");
 
-		Test test = testDAO.getTestById(referredTest.getReferredTestId());
-		Sample sample = referralDAO.getReferralById(referredTest.getReferralId()).getAnalysis().getSampleItem()
-				.getSample();
-		Patient patient = sampleHumanDAO.getPatientForSample(sample);
+		Test test = testService.get(referredTest.getReferredTestId());
+		Sample sample = referralService.get(referredTest.getReferralId()).getAnalysis().getSampleItem().getSample();
+		Patient patient = sampleHumanService.getPatientForSample(sample);
 		ResultLimit limit = new ResultLimitService().getResultLimitForTestAndPatient(test, patient);
 		result.setMinNormal(limit != null ? limit.getLowNormal() : 0.0);
 		result.setMaxNormal(limit != null ? limit.getHighNormal() : 0.0);
@@ -776,7 +763,7 @@ public class ReferredOutTestsController extends BaseController {
 
 		if (!TypeOfTestResultService.ResultType.isDictionaryVariant(referredResultType) && test != null) {
 			@SuppressWarnings("unchecked")
-			List<TestResult> testResults = testResultDAO.getAllActiveTestResultsPerTest(test);
+			List<TestResult> testResults = testResultService.getAllActiveTestResultsPerTest(test);
 
 			if (!testResults.isEmpty()) {
 				referredResultType = testResults.get(0).getTestResultType();
@@ -846,20 +833,20 @@ public class ReferredOutTestsController extends BaseController {
 
 	private void setStatusOfParentSamples(List<Sample> modifiedSamples, Set<Sample> parentSamples) {
 		for (Sample sample : parentSamples) {
-			List<Analysis> analysisList = analysisDAO.getAnalysesBySampleId(sample.getId());
+			List<Analysis> analysisList = analysisService.getAnalysesBySampleId(sample.getId());
 
 			String finalizedId = StatusService.getInstance().getStatusID(AnalysisStatus.Finalized);
 			boolean allAnalysisFinished = true;
 
 			if (analysisList != null) {
 				for (Analysis childAnalysis : analysisList) {
-					Referral referral = referralDAO.getReferralByAnalysisId(childAnalysis.getId());
+					Referral referral = referralService.getReferralByAnalysisId(childAnalysis.getId());
 					List<ReferralResult> referralResultList;
 
 					if (referral == null || referral.getId() == null) {
 						referralResultList = new ArrayList<>();
 					} else {
-						referralResultList = referralResultDAO.getReferralResultsForReferral(referral.getId());
+						referralResultList = referralResultService.getReferralResultsForReferral(referral.getId());
 					}
 
 					if (referralResultList.isEmpty()) {

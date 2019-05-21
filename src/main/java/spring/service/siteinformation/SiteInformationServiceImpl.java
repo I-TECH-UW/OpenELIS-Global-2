@@ -38,4 +38,10 @@ public class SiteInformationServiceImpl extends BaseObjectServiceImpl<SiteInform
 		return this.getCountMatching("domain.name", dbDomainName);
 	}
 
+	@Override
+	@Transactional
+	public SiteInformation getSiteInformationByName(String name) {
+		return getMatch("name", name).get();
+	}
+
 }

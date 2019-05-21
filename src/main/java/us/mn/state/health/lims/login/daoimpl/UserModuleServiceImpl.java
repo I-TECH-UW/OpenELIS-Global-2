@@ -19,21 +19,24 @@ package us.mn.state.health.lims.login.daoimpl;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.security.PageIdentityUtil;
+import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.login.dao.LoginDAO;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
+import us.mn.state.health.lims.login.dao.UserModuleService;
 import us.mn.state.health.lims.login.valueholder.Login;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
-import us.mn.state.health.lims.systemusermodule.dao.PermissionAgentModuleDAO;
-import us.mn.state.health.lims.systemusermodule.daoimpl.PermissionAgentFactory;
-import us.mn.state.health.lims.systemusermodule.daoimpl.SystemUserModuleDAOImpl;
+import us.mn.state.health.lims.systemusermodule.dao.PermissionModuleDAO;
 import us.mn.state.health.lims.systemusermodule.valueholder.SystemUserModule;
 
 /**
@@ -43,10 +46,31 @@ import us.mn.state.health.lims.systemusermodule.valueholder.SystemUserModule;
  * N.B. This class has nothing to do with database access
  */
 //TODO move to service layer
-@Component
-public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
+@Service
+public class UserModuleServiceImpl implements UserModuleService, IActionConstants {
+
+	@Autowired
+	@Qualifier(value = "RoleModuleDAO")
+	PermissionModuleDAO roleModuleDAO;
+	@Autowired
+	@Qualifier(value = "SystemUserModuleDAO")
+	PermissionModuleDAO systemUserModuleDAO;
+	@Autowired
+	LoginDAO loginDAO;
+
+	PermissionModuleDAO permissionModuleDAO;
+
+	@PostConstruct
+	public void initializePermissionModule() {
+		if (SystemConfiguration.getInstance().getPermissionAgent().equals("USER")) {
+			permissionModuleDAO = systemUserModuleDAO;
+		} else {
+			permissionModuleDAO = roleModuleDAO;
+		}
+	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public boolean isSessionExpired(HttpServletRequest request) throws LIMSRuntimeException {
 		if (request.getSession().getAttribute(USER_SESSION_DATA) == null) {
 			return true;
@@ -62,17 +86,16 @@ public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 	 * @return true if found, false otherwise
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public boolean isUserModuleFound(HttpServletRequest request) throws LIMSRuntimeException {
 		boolean isFound = false;
 		try {
 			UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-			PermissionAgentModuleDAO permissionAgentModuleDAO = PermissionAgentFactory.getPermissionAgentImpl();// new
-																												// SystemUserModuleDAOImpl();
-			isFound = permissionAgentModuleDAO.doesUserHaveAnyModules(usd.getSystemUserId());
+			isFound = permissionModuleDAO.doesUserHaveAnyModules(usd.getSystemUserId());
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
-			LogEvent.logError("UserModuleDAOImpl", "isUserModuleFound()", lre.toString());
-			throw new LIMSRuntimeException("Error in UserModuleDAOImpl isUserModuleFound()", lre);
+			LogEvent.logError("UserModuleServiceImpl", "isUserModuleFound()", lre.toString());
+			throw new LIMSRuntimeException("Error in UserModuleServiceImpl isUserModuleFound()", lre);
 		}
 		return isFound;
 	}
@@ -85,13 +108,13 @@ public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 	 * @return true if success, false otherwise
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public boolean isVerifyUserModule(HttpServletRequest request) throws LIMSRuntimeException {
 		boolean isFound = PageIdentityUtil.isMainPage(request);
 
 		if (!isFound) {
 			try {
 				UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-				PermissionAgentModuleDAO systemUserModuleDAO = new SystemUserModuleDAOImpl();
 				List list = systemUserModuleDAO.getAllPermissionModulesByAgentId(usd.getSystemUserId());
 
 				for (int i = 0; i < list.size(); i++) {
@@ -105,30 +128,30 @@ public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 						isFound = true;
 						setupUserButtons(request, systemUserModule, actionName);
 						// bugzilla 2154
-						LogEvent.logInfo("UserModuleDAOImpl", "isVerifyUserModule()",
+						LogEvent.logInfo("UserModuleServiceImpl", "isVerifyUserModule()",
 								"======> ALLOWED ACCESS TO THIS MODULE");
-						LogEvent.logDebug("UserModuleDAOImpl", "isVerifyUserModule()",
+						LogEvent.logDebug("UserModuleServiceImpl", "isVerifyUserModule()",
 								"======> MODULE ID   : " + systemUserModule.getSystemModule().getId());
-						LogEvent.logDebug("UserModuleDAOImpl", "isVerifyUserModule()",
+						LogEvent.logDebug("UserModuleServiceImpl", "isVerifyUserModule()",
 								"======> MODULE NAME : " + systemUserModule.getSystemModule().getSystemModuleName());
 
-						LogEvent.logDebug("UserModuleDAOImpl", "isVerifyUserModule()",
+						LogEvent.logDebug("UserModuleServiceImpl", "isVerifyUserModule()",
 								"======> ALLOW_VIEW  : " + systemUserModule.getHasSelect());
-						LogEvent.logDebug("UserModuleDAOImpl", "isVerifyUserModule()",
+						LogEvent.logDebug("UserModuleServiceImpl", "isVerifyUserModule()",
 								"======> ALLOW_ADD   : " + systemUserModule.getHasAdd());
-						LogEvent.logDebug("UserModuleDAOImpl", "isVerifyUserModule()",
+						LogEvent.logDebug("UserModuleServiceImpl", "isVerifyUserModule()",
 								"======> ALLOW_UPDATE: " + systemUserModule.getHasUpdate());
-						LogEvent.logDebug("UserModuleDAOImpl", "isVerifyUserModule()",
+						LogEvent.logDebug("UserModuleServiceImpl", "isVerifyUserModule()",
 								"======> ALLOW_DELETE: " + systemUserModule.getHasDelete());
-						LogEvent.logDebug("UserModuleDAOImpl", "isVerifyUserModule()",
+						LogEvent.logDebug("UserModuleServiceImpl", "isVerifyUserModule()",
 								"======> SYSTEM MODULE DEFAULT VALUE");
-						LogEvent.logDebug("UserModuleDAOImpl", "isVerifyUserModule()",
+						LogEvent.logDebug("UserModuleServiceImpl", "isVerifyUserModule()",
 								"======> HAS_VIEW  : " + systemUserModule.getSystemModule().getHasSelectFlag());
-						LogEvent.logDebug("UserModuleDAOImpl", "isVerifyUserModule()",
+						LogEvent.logDebug("UserModuleServiceImpl", "isVerifyUserModule()",
 								"======> HAS_ADD   : " + systemUserModule.getSystemModule().getHasAddFlag());
-						LogEvent.logDebug("UserModuleDAOImpl", "isVerifyUserModule()",
+						LogEvent.logDebug("UserModuleServiceImpl", "isVerifyUserModule()",
 								"======> HAS_UPDATE: " + systemUserModule.getSystemModule().getHasUpdateFlag());
-						LogEvent.logDebug("UserModuleDAOImpl", "isVerifyUserModule()",
+						LogEvent.logDebug("UserModuleServiceImpl", "isVerifyUserModule()",
 								"======> HAS_DELETE: " + systemUserModule.getSystemModule().getHasDeleteFlag());
 
 						break;
@@ -136,8 +159,8 @@ public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 				}
 			} catch (LIMSRuntimeException lre) {
 				// bugzilla 2154
-				LogEvent.logError("UserModuleDAOImpl", "isVerifyUserModule()", lre.toString());
-				throw new LIMSRuntimeException("Error in UserModuleDAOImpl isVerifyUserModule()", lre);
+				LogEvent.logError("UserModuleServiceImpl", "isVerifyUserModule()", lre.toString());
+				throw new LIMSRuntimeException("Error in UserModuleServiceImpl isVerifyUserModule()", lre);
 			}
 		}
 		return isFound;
@@ -149,16 +172,16 @@ public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 	 * @param request is HttpServletRequest
 	 * @return user information
 	 */
+	@Transactional(readOnly = true)
 	private Login getUserLogin(HttpServletRequest request) throws LIMSRuntimeException {
 		Login login = null;
 		try {
 			UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-			LoginDAO loginDAO = new LoginDAOImpl();
 			login = loginDAO.getUserProfile(usd.getLoginName());
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
-			LogEvent.logError("UserModuleDAOImpl", "getUserLogin()", lre.toString());
-			throw new LIMSRuntimeException("Error in UserModuleDAOImpl getUserLogin()", lre);
+			LogEvent.logError("UserModuleServiceImpl", "getUserLogin()", lre.toString());
+			throw new LIMSRuntimeException("Error in UserModuleServiceImpl getUserLogin()", lre);
 		}
 		return login;
 	}
@@ -170,6 +193,7 @@ public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 	 * @return true if locked, false otherwise
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public boolean isAccountLocked(HttpServletRequest request) throws LIMSRuntimeException {
 		try {
 			Login login = getUserLogin(request);
@@ -178,8 +202,8 @@ public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 			}
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
-			LogEvent.logError("UserModuleDAOImpl", "isAccountLocked()", lre.toString());
-			throw new LIMSRuntimeException("Error in UserModuleDAOImpl isAccountLocked()", lre);
+			LogEvent.logError("UserModuleServiceImpl", "isAccountLocked()", lre.toString());
+			throw new LIMSRuntimeException("Error in UserModuleServiceImpl isAccountLocked()", lre);
 		}
 		return false;
 	}
@@ -191,6 +215,7 @@ public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 	 * @return true if disabled, false otherwise
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public boolean isAccountDisabled(HttpServletRequest request) throws LIMSRuntimeException {
 		try {
 			Login login = getUserLogin(request);
@@ -199,8 +224,8 @@ public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 			}
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
-			LogEvent.logError("UserModuleDAOImpl", "isAccountDisabled()", lre.toString());
-			throw new LIMSRuntimeException("Error in UserModuleDAOImpl isAccountDisabled()", lre);
+			LogEvent.logError("UserModuleServiceImpl", "isAccountDisabled()", lre.toString());
+			throw new LIMSRuntimeException("Error in UserModuleServiceImpl isAccountDisabled()", lre);
 		}
 		return false;
 	}
@@ -212,6 +237,7 @@ public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 	 * @return true if expired, false otherwise
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public boolean isPasswordExpired(HttpServletRequest request) throws LIMSRuntimeException {
 		try {
 			Login login = getUserLogin(request);
@@ -220,8 +246,8 @@ public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 			}
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
-			LogEvent.logError("UserModuleDAOImpl", "isPasswordExpired()", lre.toString());
-			throw new LIMSRuntimeException("Error in UserModuleDAOImpl isPasswordExpired()", lre);
+			LogEvent.logError("UserModuleServiceImpl", "isPasswordExpired()", lre.toString());
+			throw new LIMSRuntimeException("Error in UserModuleServiceImpl isPasswordExpired()", lre);
 		}
 		return false;
 	}
@@ -233,6 +259,7 @@ public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 	 * @return true if admin, false otherwise
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public boolean isUserAdmin(HttpServletRequest request) throws LIMSRuntimeException {
 		try {
 			Login login = getUserLogin(request);
@@ -241,8 +268,8 @@ public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 			}
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
-			LogEvent.logError("UserModuleDAOImpl", "isUserAdmin()", lre.toString());
-			throw new LIMSRuntimeException("Error in UserModuleDAOImpl isUserAdmin()", lre);
+			LogEvent.logError("UserModuleServiceImpl", "isUserAdmin()", lre.toString());
+			throw new LIMSRuntimeException("Error in UserModuleServiceImpl isUserAdmin()", lre);
 		}
 		return false;
 	}
@@ -267,8 +294,8 @@ public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 			request.getSession().setAttribute(USER_SESSION_DATA, usd);
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
-			LogEvent.logError("UserModuleDAOImpl", "setupUserSessionTimeOut()", lre.toString());
-			throw new LIMSRuntimeException("Error in UserModuleDAOImpl setupUserSessionTimeOut()", lre);
+			LogEvent.logError("UserModuleServiceImpl", "setupUserSessionTimeOut()", lre.toString());
+			throw new LIMSRuntimeException("Error in UserModuleServiceImpl setupUserSessionTimeOut()", lre);
 		}
 	}
 
@@ -286,9 +313,10 @@ public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 			actionName = (String) request.getAttribute(ACTION_KEY);
 
 			// bugzilla 2154
-			LogEvent.logDebug("UserModuleDAOImpl", "getActionName()",
+			LogEvent.logDebug("UserModuleServiceImpl", "getActionName()",
 					"======> USER ASSIGNED MODULE: " + userAssignedModule);
-			LogEvent.logDebug("UserModuleDAOImpl", "getActionName()", "======> ACTION MODULE NAME  : " + actionName);
+			LogEvent.logDebug("UserModuleServiceImpl", "getActionName()",
+					"======> ACTION MODULE NAME  : " + actionName);
 
 			// N.B. The effect of this first if is that the first module on the list for the
 			// user becomes the
@@ -323,8 +351,8 @@ public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 			}
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
-			LogEvent.logError("UserModuleDAOImpl", "getActionName()", lre.toString());
-			throw new LIMSRuntimeException("Error in UserModuleDAOImpl getActionName()", lre);
+			LogEvent.logError("UserModuleServiceImpl", "getActionName()", lre.toString());
+			throw new LIMSRuntimeException("Error in UserModuleServiceImpl getActionName()", lre);
 		}
 		return actionName;
 	}
@@ -365,8 +393,8 @@ public class UserModuleDAOImpl implements UserModuleDAO, IActionConstants {
 			}
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
-			LogEvent.logError("UserModuleDAOImpl", "enabledAdminButtons()", lre.toString());
-			throw new LIMSRuntimeException("Error in UserModuleDAOImpl enabledAdminButtons()", lre);
+			LogEvent.logError("UserModuleServiceImpl", "enabledAdminButtons()", lre.toString());
+			throw new LIMSRuntimeException("Error in UserModuleServiceImpl enabledAdminButtons()", lre);
 		}
 	}
 

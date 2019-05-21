@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
@@ -35,7 +36,7 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.systemusermodule.dao.PermissionAgentModuleDAO;
+import us.mn.state.health.lims.systemusermodule.dao.PermissionModuleDAO;
 import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
 import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
 import us.mn.state.health.lims.userrole.dao.UserRoleDAO;
@@ -45,7 +46,8 @@ import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
  *
  */
 @Component
-public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements PermissionAgentModuleDAO {
+@Qualifier("RoleModuleDAO")
+public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements PermissionModuleDAO {
 
 	public RoleModuleDAOImpl() {
 		super(PermissionModule.class);
@@ -157,8 +159,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 	@Override
 	public void getData(PermissionModule systemUserModule) throws LIMSRuntimeException {
 		try {
-			RoleModule sysUserModule = (RoleModule) HibernateUtil.getSession().get(RoleModule.class,
-					systemUserModule.getId());
+			RoleModule sysUserModule = HibernateUtil.getSession().get(RoleModule.class, systemUserModule.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (sysUserModule != null) {
@@ -233,7 +234,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 	public RoleModule readRoleModule(String idString) {
 		RoleModule sysUserModule;
 		try {
-			sysUserModule = (RoleModule) HibernateUtil.getSession().get(RoleModule.class, idString);
+			sysUserModule = HibernateUtil.getSession().get(RoleModule.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -368,7 +369,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 	public boolean doesUserHaveAnyModules(int userId) throws LIMSRuntimeException {
 		try {
 			String sql = "select count(*) from system_user_role where system_user_id = :userId";
-			Query query = HibernateUtil.getSession().createSQLQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
 			query.setInteger("userId", userId);
 			int roleCount = ((BigInteger) query.uniqueResult()).intValue();
 			return roleCount > 0;

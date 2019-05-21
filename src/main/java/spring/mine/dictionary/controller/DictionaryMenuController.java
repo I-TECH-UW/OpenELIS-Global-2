@@ -7,7 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -22,17 +22,18 @@ import spring.mine.common.controller.BaseMenuController;
 import spring.mine.common.form.MenuForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.dictionary.form.DictionaryMenuForm;
+import spring.service.dictionary.DictionaryService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Controller
 public class DictionaryMenuController extends BaseMenuController {
+
+	@Autowired
+	DictionaryService dictionaryService;
 
 	@RequestMapping(value = { "/DictionaryMenu", "/SearchDictionaryMenu" }, method = RequestMethod.GET)
 	public ModelAndView showDictionaryMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
@@ -55,7 +56,7 @@ public class DictionaryMenuController extends BaseMenuController {
 	@Override
 	protected List createMenuList(MenuForm form, HttpServletRequest request) throws Exception {
 
-		List dictionarys = new ArrayList();
+		List<Dictionary> dictionaries;
 
 		String stringStartingRecNo = (String) request.getAttribute("startingRecNo");
 		int startingRecNo = Integer.parseInt(stringStartingRecNo);
@@ -63,13 +64,13 @@ public class DictionaryMenuController extends BaseMenuController {
 		String searchString = request.getParameter("searchString");
 
 		String doingSearch = request.getParameter("search");
-
-		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-
+		int total;
 		if (!StringUtil.isNullorNill(doingSearch) && doingSearch.equals(YES)) {
-			dictionarys = dictionaryDAO.getPagesOfSearchedDictionarys(startingRecNo, searchString);
+			dictionaries = dictionaryService.getPagesOfSearchedDictionaries(startingRecNo, searchString);
+			total = dictionaryService.getCountSearchedDictionaries(searchString);
 		} else {
-			dictionarys = dictionaryDAO.getPageOfDictionarys(startingRecNo);
+			dictionaries = dictionaryService.getPage(startingRecNo);
+			total = dictionaryService.getCount();
 			// end of bugzilla 1413
 		}
 
@@ -77,22 +78,15 @@ public class DictionaryMenuController extends BaseMenuController {
 
 		// bugzilla 1411 set pagination variables
 		// bugzilla 1413 set pagination variables for searched results
-		if (!StringUtil.isNullorNill(doingSearch) && doingSearch.equals(YES)) {
-			request.setAttribute(MENU_TOTAL_RECORDS,
-					String.valueOf(dictionaryDAO.getTotalSearchedDictionaryCount(searchString)));
-		} else {
-			request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(dictionaryDAO.getTotalDictionaryCount()));
-		}
+		request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(total));
 		request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
 		int numOfRecs = 0;
-		if (dictionarys != null) {
-			if (dictionarys.size() > SystemConfiguration.getInstance().getDefaultPageSize()) {
-				numOfRecs = SystemConfiguration.getInstance().getDefaultPageSize();
-			} else {
-				numOfRecs = dictionarys.size();
-			}
-			numOfRecs--;
+		if (dictionaries.size() > SystemConfiguration.getInstance().getDefaultPageSize()) {
+			numOfRecs = SystemConfiguration.getInstance().getDefaultPageSize();
+		} else {
+			numOfRecs = dictionaries.size();
 		}
+		numOfRecs--;
 		int endingRecNo = startingRecNo + numOfRecs;
 		request.setAttribute(MENU_TO_RECORD, String.valueOf(endingRecNo));
 		// end bugzilla 1411
@@ -110,7 +104,7 @@ public class DictionaryMenuController extends BaseMenuController {
 			request.setAttribute(MENU_SELECT_LIST_HEADER_SEARCH_STRING, searchString);
 		}
 
-		return dictionarys;
+		return dictionaries;
 	}
 
 	@Override
@@ -123,6 +117,7 @@ public class DictionaryMenuController extends BaseMenuController {
 		return "false";
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/DeleteDictionary", method = RequestMethod.POST)
 	public ModelAndView showDeleteDictionary(HttpServletRequest request,
 			@ModelAttribute("form") @Valid DictionaryMenuForm form, BindingResult result,
@@ -134,27 +129,19 @@ public class DictionaryMenuController extends BaseMenuController {
 
 		List<String> selectedIDs = (List<String>) form.get("selectedIDs");
 
-		List<Dictionary> dictionarys = new ArrayList<>();
+		List<Dictionary> dictionaries = new ArrayList<>();
 		for (int i = 0; i < selectedIDs.size(); i++) {
 			Dictionary dictionary = new Dictionary();
 			dictionary.setId(selectedIDs.get(i));
 			dictionary.setSysUserId(getSysUserId(request));
-			dictionarys.add(dictionary);
+			dictionaries.add(dictionary);
 		}
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
-			// selectedIDs = (List)PropertyUtils.getProperty(form,
-			// "selectedIDs");
-			DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-			dictionaryDAO.deleteData(dictionarys);
-			// initialize the form
-			tx.commit();
+			dictionaryService.deleteAll(dictionaries);
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
-			LogEvent.logError("DictionaryDeleteAction", "performAction()", lre.toString());
-			tx.rollback();
-
+			LogEvent.logError("DictionaryMenuController", "showDeleteDictionary()", lre.toString());
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
 				result.reject("errors.OptimisticLockException");
 			} else {
@@ -163,8 +150,6 @@ public class DictionaryMenuController extends BaseMenuController {
 			redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, result);
 			return findForward(FWD_FAIL_DELETE, form);
 
-		} finally {
-			HibernateUtil.closeSession();
 		}
 
 		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);

@@ -137,7 +137,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 	@Override
 	public void getData(UserRole role) throws LIMSRuntimeException {
 		try {
-			UserRole tmpUserRole = (UserRole) HibernateUtil.getSession().get(UserRole.class, role.getCompoundId());
+			UserRole tmpUserRole = HibernateUtil.getSession().get(UserRole.class, role.getCompoundId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (tmpUserRole != null) {
@@ -194,7 +194,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 	public UserRole readUserRole(UserRolePK userRolePK) {
 		UserRole recoveredUserRole;
 		try {
-			recoveredUserRole = (UserRole) HibernateUtil.getSession().get(UserRole.class, userRolePK);
+			recoveredUserRole = HibernateUtil.getSession().get(UserRole.class, userRolePK);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -222,7 +222,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 
 		try {
 			String sql = "select cast(role_id AS varchar) from system_user_role where system_user_id = :userId";
-			Query query = HibernateUtil.getSession().createSQLQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
 			query.setInteger("userId", Integer.parseInt(userId));
 			userRoles = query.list();
 		} catch (Exception e) {
@@ -239,7 +239,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 		try {
 			String sql = "select count(*) from system_user_role sur " + "join system_role as sr on sr.id = sur.role_id "
 					+ "where sur.system_user_id = :userId and sr.name = :roleName";
-			Query query = HibernateUtil.getSession().createSQLQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
 			query.setInteger("userId", Integer.parseInt(userId));
 			query.setString("roleName", roleName);
 			int result = ((BigInteger) query.uniqueResult()).intValue();

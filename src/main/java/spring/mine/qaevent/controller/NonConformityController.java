@@ -29,6 +29,18 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.qaevent.form.NonConformityForm;
 import spring.mine.qaevent.service.NonConformityHelper;
 import spring.mine.qaevent.validator.NonConformityFormValidator;
+import spring.service.observationhistory.ObservationHistoryService;
+import spring.service.organization.OrganizationService;
+import spring.service.project.ProjectService;
+import spring.service.provider.ProviderService;
+import spring.service.requester.SampleRequesterService;
+import spring.service.sample.SampleService;
+import spring.service.samplehuman.SampleHumanService;
+import spring.service.sampleitem.SampleItemService;
+import spring.service.sampleproject.SampleProjectService;
+import spring.service.sampleqaevent.SampleQaEventService;
+import spring.service.test.TestSectionService;
+import spring.service.typeofsample.TypeOfSampleService;
 import us.mn.state.health.lims.common.exception.LIMSInvalidConfigurationException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -42,48 +54,23 @@ import us.mn.state.health.lims.common.services.TableIdService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
-import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.patient.util.PatientUtil;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.person.dao.PersonDAO;
-import us.mn.state.health.lims.person.daoimpl.PersonDAOImpl;
 import us.mn.state.health.lims.person.valueholder.Person;
-import us.mn.state.health.lims.project.dao.ProjectDAO;
-import us.mn.state.health.lims.project.daoimpl.ProjectDAOImpl;
 import us.mn.state.health.lims.project.valueholder.Project;
-import us.mn.state.health.lims.provider.dao.ProviderDAO;
-import us.mn.state.health.lims.provider.daoimpl.ProviderDAOImpl;
 import us.mn.state.health.lims.provider.valueholder.Provider;
 import us.mn.state.health.lims.qaevent.valueholder.retroCI.QaEventItem;
 import us.mn.state.health.lims.qaevent.worker.NonConformityUpdateData;
 import us.mn.state.health.lims.qaevent.worker.NonConformityUpdateWorker;
-import us.mn.state.health.lims.requester.dao.SampleRequesterDAO;
-import us.mn.state.health.lims.requester.daoimpl.SampleRequesterDAOImpl;
 import us.mn.state.health.lims.requester.valueholder.SampleRequester;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
 import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
-import us.mn.state.health.lims.sampleitem.dao.SampleItemDAO;
-import us.mn.state.health.lims.sampleitem.daoimpl.SampleItemDAOImpl;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
-import us.mn.state.health.lims.sampleproject.dao.SampleProjectDAO;
-import us.mn.state.health.lims.sampleproject.daoimpl.SampleProjectDAOImpl;
 import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
-import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
-import us.mn.state.health.lims.sampleqaevent.daoimpl.SampleQaEventDAOImpl;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
-import us.mn.state.health.lims.test.daoimpl.TestSectionDAOImpl;
 import us.mn.state.health.lims.test.valueholder.TestSection;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Controller
@@ -92,13 +79,32 @@ public class NonConformityController extends BaseController {
 	@Autowired
 	NonConformityFormValidator formValidator;
 
-	private static SampleDAO sampleDAO = new SampleDAOImpl();
-	private static SampleItemDAO sampleItemDAO = new SampleItemDAOImpl();
-	private static TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
-	private static SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
-	private static PersonDAO personDAO = new PersonDAOImpl();
-	private static ProviderDAO providerDAO = new ProviderDAOImpl();
-	private static OrganizationDAO orgDAO = new OrganizationDAOImpl();
+	@Autowired
+	SampleService sampleService;
+	@Autowired
+	SampleItemService sampleItemService;
+	@Autowired
+	TypeOfSampleService typeOfSampleService;
+	@Autowired
+	SampleHumanService sampleHumanService;
+	@Autowired
+	spring.service.person.PersonService personService;
+	@Autowired
+	ProviderService providerService;
+	@Autowired
+	OrganizationService organizationService;
+	@Autowired
+	ObservationHistoryService observationHistoryService;
+	@Autowired
+	SampleProjectService sampleProjectService;
+	@Autowired
+	TestSectionService testSectionService;
+	@Autowired
+	SampleRequesterService sampleRequesterService;
+	@Autowired
+	ProjectService projectService;
+	@Autowired
+	SampleQaEventService sampleQaEventService;
 
 	@RequestMapping(value = "/NonConformity", method = RequestMethod.GET)
 	public ModelAndView showNonConformity(HttpServletRequest request) throws LIMSInvalidConfigurationException,
@@ -229,8 +235,7 @@ public class NonConformityController extends BaseController {
 	 * @return
 	 */
 	private String getSampleRequesterOrganizationName(Sample sample) {
-		SampleRequesterDAO sampleRequesterDAO = new SampleRequesterDAOImpl();
-		List<SampleRequester> sampleRequestors = sampleRequesterDAO.getRequestersForSampleId(sample.getId());
+		List<SampleRequester> sampleRequestors = sampleRequesterService.getRequestersForSampleId(sample.getId());
 		if (sampleRequestors.isEmpty()) {
 			return null;
 		}
@@ -238,7 +243,7 @@ public class NonConformityController extends BaseController {
 		for (SampleRequester sampleRequester : sampleRequestors) {
 			if (sampleRequester.getRequesterTypeId() == typeID) {
 				String orgId = String.valueOf(sampleRequester.getRequesterId());
-				Organization org = orgDAO.getOrganizationById(orgId);
+				Organization org = organizationService.get(orgId);
 
 				if (org != null) {
 					String orgName = org.getOrganizationName();
@@ -258,9 +263,7 @@ public class NonConformityController extends BaseController {
 		if (provider == null) {
 			return null;
 		}
-		Person providerPerson = provider.getPerson();
-		personDAO.getData(providerPerson);
-		return providerPerson;
+		return personService.get(provider.getPerson().getId());
 	}
 
 	private Provider getProvider(Sample sample) {
@@ -268,15 +271,11 @@ public class NonConformityController extends BaseController {
 			return null;
 		}
 		SampleHuman sampleHuman = getSampleHuman(sample);
-		Provider provider = new Provider();
 		String id = sampleHuman.getProviderId();
 		if (id == null) {
 			return null;
 		}
-		provider.setId(id);
-		providerDAO.getData(provider);
-		return provider;
-
+		return providerService.get(id);
 	}
 
 	/**
@@ -285,8 +284,7 @@ public class NonConformityController extends BaseController {
 	private SampleHuman getSampleHuman(Sample sample) {
 		SampleHuman sampleHuman = new SampleHuman();
 		sampleHuman.setSampleId(sample.getId());
-		sampleHumanDAO.getDataBySample(sampleHuman);
-		return sampleHuman;
+		return sampleHumanService.getDataBySample(sampleHuman);
 	}
 
 	/**
@@ -324,9 +322,9 @@ public class NonConformityController extends BaseController {
 
 	private Set<TypeOfSample> getSampleTypeOfSamples(Sample sample) {
 		Set<TypeOfSample> typeOfSamples = new HashSet<>();
-		List<SampleItem> sampleItems = sampleItemDAO.getSampleItemsBySampleId(sample.getId());
+		List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(sample.getId());
 		for (SampleItem sampleItem : sampleItems) {
-			TypeOfSample typeOfSample = typeOfSampleDAO.getTypeOfSampleById(sampleItem.getTypeOfSampleId());
+			TypeOfSample typeOfSample = typeOfSampleService.get(sampleItem.getTypeOfSampleId());
 			if (!typeOfSamples.contains(typeOfSample)) {
 				typeOfSamples.add(typeOfSample);
 			}
@@ -347,34 +345,30 @@ public class NonConformityController extends BaseController {
 	}
 
 	private List<SampleQaEvent> getSampleQaEvents(Sample sample) {
-		SampleQaEventDAO sampleQaEventDAO = new SampleQaEventDAOImpl();
-		return sampleQaEventDAO.getSampleQaEventsBySample(sample);
+		return sampleQaEventService.getSampleQaEventsBySample(sample);
 	}
 
 	private void setProjectList(NonConformityForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		ProjectDAO projectDAO = new ProjectDAOImpl();
-		List<Project> projects = projectDAO.getAllProjects();
+		List<Project> projects = projectService.getAll();
 		PropertyUtils.setProperty(form, "projects", projects);
 	}
 
 	private Sample getSampleForLabNumber(String labNumber) throws LIMSInvalidConfigurationException {
-		return sampleDAO.getSampleByAccessionNumber(labNumber);
+		return sampleService.getSampleByAccessionNumber(labNumber);
 	}
 
 	private PatientService getPatientService(Sample sample) {
-		Patient patient = sampleHumanDAO.getPatientForSample(sample);
+		Patient patient = sampleHumanService.getPatientForSample(sample);
 		return new PatientService(patient);
 	}
 
 	private List<ObservationHistory> getObservationHistory(Sample sample, PatientService patientService) {
-		ObservationHistoryDAO observationDAO = new ObservationHistoryDAOImpl();
-		return observationDAO.getAll(patientService.getPatient(), sample);
+		return observationHistoryService.getAll(patientService.getPatient(), sample);
 	}
 
 	private Project getProjectForSample(Sample sample) {
-		SampleProjectDAO samplePorjectDAO = new SampleProjectDAOImpl();
-		SampleProject sampleProject = samplePorjectDAO.getSampleProjectBySampleId(sample.getId());
+		SampleProject sampleProject = sampleProjectService.getSampleProjectBySampleId(sample.getId());
 
 		return sampleProject == null ? null : sampleProject.getProject();
 	}
@@ -410,7 +404,7 @@ public class NonConformityController extends BaseController {
 
 	private List<TestSection> createSectionList() {
 
-		List<TestSection> sections = new TestSectionDAOImpl().getAllActiveTestSections();
+		List<TestSection> sections = testSectionService.getAllActiveTestSections();
 		if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.NONCONFORMITY_RECEPTION_AS_UNIT,
 				"true")) {
 			TestSection extra = new TestSection();

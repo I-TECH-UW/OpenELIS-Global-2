@@ -18,11 +18,11 @@ package us.mn.state.health.lims.referral.dao;
 
 import java.util.List;
 
+import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.referral.valueholder.ReferralResult;
 
-
-public interface ReferralResultDAO{
+public interface ReferralResultDAO extends BaseDAO<ReferralResult> {
 
 	public boolean insertData(ReferralResult referralResult) throws LIMSRuntimeException;
 

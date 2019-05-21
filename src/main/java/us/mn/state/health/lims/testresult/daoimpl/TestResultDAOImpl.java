@@ -143,7 +143,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestRe
 	@Override
 	public void getData(TestResult testResult) throws LIMSRuntimeException {
 		try {
-			TestResult tr = (TestResult) HibernateUtil.getSession().get(TestResult.class, testResult.getId());
+			TestResult tr = HibernateUtil.getSession().get(TestResult.class, testResult.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (tr != null) {
@@ -202,7 +202,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestRe
 	public TestResult readTestResult(String idString) {
 		TestResult tr;
 		try {
-			tr = (TestResult) HibernateUtil.getSession().get(TestResult.class, idString);
+			tr = HibernateUtil.getSession().get(TestResult.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -232,7 +232,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestRe
 	public TestResult getTestResultById(TestResult testResult) throws LIMSRuntimeException {
 		TestResult newTestResult;
 		try {
-			newTestResult = (TestResult) HibernateUtil.getSession().get(TestResult.class, testResult.getId());
+			newTestResult = HibernateUtil.getSession().get(TestResult.class, testResult.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -301,13 +301,11 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestRe
 			List<TestResult> list;
 			try {
 				String sql = "from TestResult t where  t.testResultType in ('D','M','Q') and t.test = :testId and t.value = :testValue";
-				org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 				query.setInteger("testId", Integer.parseInt(testId));
 				query.setString("testValue", result);
 
 				list = query.list();
-
-				// closeSession(); // CSL remove old
 
 				if (list != null && !list.isEmpty()) {
 					return list.get(0);

@@ -45,8 +45,8 @@ import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.common.util.resources.ResourceLocator;
 import us.mn.state.health.lims.common.util.validator.ActionError;
 import us.mn.state.health.lims.common.valueholder.BaseTestComparator;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
-import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
+import us.mn.state.health.lims.login.dao.userModuleService;
+import us.mn.state.health.lims.login.daoimpl.userModuleServiceImpl;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
 
 public abstract class BaseAction extends Action implements IActionConstants {
@@ -62,8 +62,8 @@ public abstract class BaseAction extends Action implements IActionConstants {
 			throws Exception {
 
 		// return to login page if user session is not found
-		UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-		if (userModuleDAO.isSessionExpired(request)) {
+		userModuleService userModuleService = new userModuleServiceImpl();
+		if (userModuleService.isSessionExpired(request)) {
 			ActionMessages errors = new ActionMessages();
 			ActionError error = new ActionError("login.error.session.message", null, null);
 			errors.add(ActionMessages.GLOBAL_MESSAGE, error);
@@ -108,7 +108,7 @@ public abstract class BaseAction extends Action implements IActionConstants {
 
 		setFormAttributes(form, request);
 
-		if (userModuleDAO.isAccountDisabled(request)) {
+		if (userModuleService.isAccountDisabled(request)) {
 			ActionMessages errors = new ActionMessages();
 			ActionError error = new ActionError("login.error.account.disable", null, null);
 			errors.add(ActionMessages.GLOBAL_MESSAGE, error);
@@ -116,7 +116,7 @@ public abstract class BaseAction extends Action implements IActionConstants {
 			return mapping.findForward(LOGIN_PAGE);
 		}
 
-		if (userModuleDAO.isAccountLocked(request)) {
+		if (userModuleService.isAccountLocked(request)) {
 			ActionMessages errors = new ActionMessages();
 			ActionError error = new ActionError("login.error.account.lock", null, null);
 			errors.add(ActionMessages.GLOBAL_MESSAGE, error);
@@ -124,7 +124,7 @@ public abstract class BaseAction extends Action implements IActionConstants {
 			return mapping.findForward(LOGIN_PAGE);
 		}
 
-		if (userModuleDAO.isPasswordExpired(request)) {
+		if (userModuleService.isPasswordExpired(request)) {
 			ActionMessages errors = new ActionMessages();
 			ActionError error = new ActionError("login.error.password.expired", null, null);
 			errors.add(ActionMessages.GLOBAL_MESSAGE, error);
@@ -136,7 +136,7 @@ public abstract class BaseAction extends Action implements IActionConstants {
 		// System.out.println("actionName: " + PageIdentityUtil.getActionName(request, USE_PARAMETERS));
 
 		// check for user type (admin or non-admin)
-		if (!userModuleDAO.isUserAdmin(request)) {
+		if (!userModuleService.isUserAdmin(request)) {
 			if (SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
 				if (!PageIdentityUtil.isMainPage(request)) {
 
@@ -144,23 +144,23 @@ public abstract class BaseAction extends Action implements IActionConstants {
 					HashSet accessMap = (HashSet) request.getSession().getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
 
 					if (!accessMap.contains(PageIdentityUtil.getActionName(request, USE_PARAMETERS))) {
-						return handlePermissionDenied(mapping, request, userModuleDAO.isSessionExpired(request));
+						return handlePermissionDenied(mapping, request, userModuleService.isSessionExpired(request));
 					}
 				}
 			} else {
-				if (!userModuleDAO.isVerifyUserModule(request)) {
-					return handlePermissionDenied(mapping, request, userModuleDAO.isSessionExpired(request));
+				if (!userModuleService.isVerifyUserModule(request)) {
+					return handlePermissionDenied(mapping, request, userModuleService.isSessionExpired(request));
 				}
 			}
 		}
-		userModuleDAO.setupUserSessionTimeOut(request);
+		userModuleService.setupUserSessionTimeOut(request);
 
 		return forward;
 	}
 
 	protected boolean userHasPermissionForModule(HttpServletRequest request, String module){
-		UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-		if (!userModuleDAO.isUserAdmin(request) && SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
+		userModuleService userModuleService = new userModuleServiceImpl();
+		if (!userModuleService.isUserAdmin(request) && SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
 				@SuppressWarnings("rawtypes")
 				HashSet accessMap = (HashSet) request.getSession().getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
 				return accessMap.contains( module);

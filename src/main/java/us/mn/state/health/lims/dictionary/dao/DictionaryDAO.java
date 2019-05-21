@@ -51,7 +51,7 @@ public interface DictionaryDAO extends BaseDAO<Dictionary> {
 
 	/**
 	 * Finds some dictionary values where
-	 * 
+	 *
 	 * @param filter             -- the dictEntry column starts with this string
 	 *                           (case insensitive).
 	 * @param dictionaryCategory -- local_abbrev is this value
@@ -77,7 +77,7 @@ public interface DictionaryDAO extends BaseDAO<Dictionary> {
 	/**
 	 * Find Dictionary entites by DictionaryCategory.categoryName, sorted by
 	 * Dictionary.getLocalizedName (Resource String)
-	 * 
+	 *
 	 * @param the dictionaryCategory.Name to match
 	 * @return List<Dictionary>
 	 * @throws LIMSRuntimeException
@@ -88,7 +88,7 @@ public interface DictionaryDAO extends BaseDAO<Dictionary> {
 	/**
 	 * A more complex lower level version of getting entries when you want to find
 	 * them by some field and maybe sort by entry value.
-	 * 
+	 *
 	 * @param fieldName        - the bean name of the field to match
 	 * @param fieldValue       - value to match with fieldName
 	 * @param orderByDictEntry - what to order by TRUE => dictEntry field, FALSE =>
@@ -124,4 +124,8 @@ public interface DictionaryDAO extends BaseDAO<Dictionary> {
 	public Dictionary getDictionaryByDictEntry(String dictEntry) throws LIMSRuntimeException;
 
 	public Dictionary getDataForId(String dictId) throws LIMSRuntimeException;
+
+	public boolean duplicateDictionaryExists(Dictionary dictionary);
+
+	public boolean isDictionaryFrozen(Dictionary dictionary);
 }

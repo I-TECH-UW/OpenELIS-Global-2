@@ -19,11 +19,11 @@ package us.mn.state.health.lims.referral.dao;
 import java.sql.Date;
 import java.util.List;
 
+import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.referral.valueholder.Referral;
 
-
-public interface ReferralDAO{
+public interface ReferralDAO extends BaseDAO<Referral> {
 
 	public boolean insertData(Referral referral) throws LIMSRuntimeException;
 
@@ -37,11 +37,11 @@ public interface ReferralDAO{
 
 	public List<Referral> getAllReferralsBySampleId(String id) throws LIMSRuntimeException;
 
-    /**
-     * @param organizationId - the PK of an organization 
-     * @param lowDate  - referral request date low
-     * @param highDate - referral request date high
-     * @return a list in the of referrals
-     */
-    public List<Referral> getAllReferralsByOrganization(String organizationId, Date lowDate, Date highDate);
+	/**
+	 * @param organizationId - the PK of an organization
+	 * @param lowDate        - referral request date low
+	 * @param highDate       - referral request date high
+	 * @return a list in the of referrals
+	 */
+	public List<Referral> getAllReferralsByOrganization(String organizationId, Date lowDate, Date highDate);
 }

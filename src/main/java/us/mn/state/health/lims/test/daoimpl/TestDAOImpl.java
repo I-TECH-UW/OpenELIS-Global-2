@@ -40,8 +40,8 @@ import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
-import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
+import us.mn.state.health.lims.login.dao.UserModuleService;
+import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
 import us.mn.state.health.lims.method.valueholder.Method;
 import us.mn.state.health.lims.systemusersection.dao.SystemUserSectionDAO;
@@ -871,8 +871,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 			} else {
 				UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
 
-				UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-				if (!userModuleDAO.isUserAdmin(request)) {
+				UserModuleService userModuleService = new UserModuleServiceImpl();
+				if (!userModuleService.isUserAdmin(request)) {
 					count = testDAO.getTotalSearchedTestCountBySysUserId(usd.getSystemUserId(), searchString);
 				} else {
 					count = testDAO.getTotalSearchedTestCount(searchString);

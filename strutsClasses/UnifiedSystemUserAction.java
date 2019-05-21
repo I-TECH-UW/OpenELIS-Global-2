@@ -39,9 +39,9 @@ import org.apache.struts.action.DynaActionForm;
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.login.dao.LoginDAO;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
+import us.mn.state.health.lims.login.dao.userModuleService;
 import us.mn.state.health.lims.login.daoimpl.LoginDAOImpl;
-import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
+import us.mn.state.health.lims.login.daoimpl.userModuleServiceImpl;
 import us.mn.state.health.lims.login.valueholder.Login;
 import us.mn.state.health.lims.role.action.bean.DisplayRole;
 import us.mn.state.health.lims.role.dao.RoleDAO;
@@ -101,8 +101,8 @@ public class UnifiedSystemUserAction extends BaseAction {
 			setPropertiesForExistingUser(dynaForm, id);
 		}
 
-		UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-		doFiltering &= !userModuleDAO.isUserAdmin(request);
+		userModuleService userModuleService = new userModuleServiceImpl();
+		doFiltering &= !userModuleService.isUserAdmin(request);
 
 		if (doFiltering) {
 			roles = doRoleFiltering(roles, getSysUserId(request));

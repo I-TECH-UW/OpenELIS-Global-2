@@ -8,7 +8,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -22,23 +24,26 @@ import spring.mine.common.controller.BaseMenuController;
 import spring.mine.common.form.MenuForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.systemuser.form.UnifiedSystemUserMenuForm;
+import spring.service.login.LoginService;
+import spring.service.systemuser.SystemUserService;
+import spring.service.userrole.UserRoleService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.login.dao.LoginDAO;
-import us.mn.state.health.lims.login.daoimpl.LoginDAOImpl;
 import us.mn.state.health.lims.login.valueholder.Login;
-import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
-import us.mn.state.health.lims.systemuser.daoimpl.SystemUserDAOImpl;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 import us.mn.state.health.lims.systemuser.valueholder.UnifiedSystemUser;
-import us.mn.state.health.lims.userrole.dao.UserRoleDAO;
-import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
 import us.mn.state.health.lims.userrole.valueholder.UserRole;
 
 @Controller
 public class UnifiedSystemUserMenuController extends BaseMenuController {
+
+	@Autowired
+	SystemUserService systemUserService;
+	@Autowired
+	LoginService loginService;
+	@Autowired
+	UserRoleService userRoleService;
 
 	@RequestMapping(value = "/UnifiedSystemUserMenu", method = RequestMethod.GET)
 	public ModelAndView showUnifiedSystemUserMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
@@ -65,25 +70,22 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 		String stringStartingRecNo = (String) request.getAttribute("startingRecNo");
 		int startingRecNo = Integer.parseInt(stringStartingRecNo);
 
-		SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
-		systemUsers = systemUserDAO.getPageOfSystemUsers(startingRecNo);
+		systemUsers = systemUserService.getPage(startingRecNo);
 
 		List<UnifiedSystemUser> unifiedUsers = getUnifiedUsers(systemUsers);
 
 		request.setAttribute("menuDefinition", "UnifiedSystemUserMenuDefinition");
 
-		setDisplayPageBounds(request, systemUsers.size(), startingRecNo, systemUserDAO, SystemUser.class);
+		setDisplayPageBounds(request, systemUsers.size(), startingRecNo, systemUserService);
 
 		return unifiedUsers;
 	}
 
-	@SuppressWarnings("unchecked")
 	private List<UnifiedSystemUser> getUnifiedUsers(List<SystemUser> systemUsers) {
 
 		List<UnifiedSystemUser> unifiedUsers = new ArrayList<>();
 
-		LoginDAO loginDAO = new LoginDAOImpl();
-		List<Login> loginUsers = loginDAO.getAllLoginUsers();
+		List<Login> loginUsers = loginService.getAll();
 
 		HashMap<String, Login> loginMap = createLoginMap(loginUsers);
 
@@ -171,10 +173,8 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 			}
 		}
 
-		UserRoleDAO userRoleDAO = new UserRoleDAOImpl();
-
 		for (SystemUser systemUser : systemUsers) {
-			List<String> roleIds = userRoleDAO.getRoleIdsForUser(systemUser.getId());
+			List<String> roleIds = userRoleService.getRoleIdsForUser(systemUser.getId());
 
 			for (String roleId : roleIds) {
 				UserRole userRole = new UserRole();
@@ -185,27 +185,9 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 			}
 		}
 
-		SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
-		LoginDAO loginDAO = new LoginDAOImpl();
-
-		org.hibernate.Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
-
-			userRoleDAO.deleteData(userRoles);
-
-			for (SystemUser systemUser : systemUsers) {
-				// we're not going to actually delete them to preserve auditing
-				systemUserDAO.getData(systemUser);
-				systemUser.setSysUserId(sysUserId);
-				systemUser.setIsActive("N");
-				systemUserDAO.updateData(systemUser);
-			}
-
-			loginDAO.deleteData(loginUsers);
-
-			tx.commit();
+			deleteData(userRoles, systemUsers, loginUsers);
 		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
 
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
 				result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
@@ -215,11 +197,25 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 			saveErrors(result);
 			return findForward(FWD_FAIL_DELETE, form);
 
-		} finally {
-			HibernateUtil.closeSession();
 		}
 
 		return findForward(FWD_SUCCESS_DELETE, form);
+	}
+
+	@Transactional
+	public void deleteData(List<UserRole> userRoles, List<SystemUser> systemUsers, List<Login> loginUsers) {
+		String sysUserId = getSysUserId(request);
+
+		userRoleService.deleteAll(userRoles);
+
+		for (SystemUser systemUser : systemUsers) {
+			// we're not going to actually delete them to preserve auditing
+			systemUser = systemUserService.get(systemUser.getId());
+			systemUser.setSysUserId(sysUserId);
+			systemUserService.delete(systemUser);
+		}
+
+		loginService.deleteAll(loginUsers);
 	}
 
 	@Override

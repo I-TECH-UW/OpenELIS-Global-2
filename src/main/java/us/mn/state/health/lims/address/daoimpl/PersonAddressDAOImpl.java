@@ -47,10 +47,9 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 		String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("personId", Integer.parseInt(personId));
 			List<PersonAddress> addressPartList = query.list();
-			// closeSession(); // CSL remove old
 			return addressPartList;
 		} catch (HibernateException e) {
 			handleException(e, "getAddressPartsByPersonId");
@@ -93,7 +92,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 
 	public PersonAddress readPersonAddress(PersonAddress personAddress) {
 		try {
-			PersonAddress oldPersonAddress = (PersonAddress) HibernateUtil.getSession().get(PersonAddress.class,
+			PersonAddress oldPersonAddress = HibernateUtil.getSession().get(PersonAddress.class,
 					personAddress.getCompoundId());
 			// closeSession(); // CSL remove old
 

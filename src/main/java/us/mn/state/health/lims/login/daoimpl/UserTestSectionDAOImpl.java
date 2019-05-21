@@ -31,7 +31,7 @@ import us.mn.state.health.lims.common.provider.validation.FileValidationProvider
 import us.mn.state.health.lims.common.util.LabelValuePair;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
+import us.mn.state.health.lims.login.dao.UserModuleService;
 import us.mn.state.health.lims.login.dao.UserTestSectionDAO;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
 import us.mn.state.health.lims.result.valueholder.Sample_TestAnalyte;
@@ -68,8 +68,8 @@ public class UserTestSectionDAOImpl extends BaseDAOImpl<TestSection> implements 
 			} else {
 				UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
 				// bugzilla 2160
-				UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-				if (!userModuleDAO.isUserAdmin(request)) {
+				UserModuleService userModuleService = new UserModuleServiceImpl();
+				if (!userModuleService.isUserAdmin(request)) {
 					list = testSectionDAO.getTestSectionsBySysUserId(testSectionName, usd.getSystemUserId());
 				} else {
 					list = testSectionDAO.getTestSections(testSectionName);
@@ -102,8 +102,8 @@ public class UserTestSectionDAOImpl extends BaseDAOImpl<TestSection> implements 
 			} else {
 				UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
 				// bugzilla 2160
-				UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-				if (!userModuleDAO.isUserAdmin(request)) {
+				UserModuleService userModuleService = new UserModuleServiceImpl();
+				if (!userModuleService.isUserAdmin(request)) {
 					if (!StringUtil.isNullorNill(doingSearch) && doingSearch.equals(YES)) {
 
 						list = testDAO.getPageOfSearchedTestsBySysUserId(startingRecNo, usd.getSystemUserId(),
@@ -142,8 +142,8 @@ public class UserTestSectionDAOImpl extends BaseDAOImpl<TestSection> implements 
 			} else {
 				UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
 				// bugzilla 2160
-				UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-				if (!userModuleDAO.isUserAdmin(request)) {
+				UserModuleService userModuleService = new UserModuleServiceImpl();
+				if (!userModuleService.isUserAdmin(request)) {
 					list = testSectDAO.getAllTestSectionsBySysUserId(usd.getSystemUserId());
 				} else {
 					list = testSectDAO.getAllTestSections();
@@ -169,8 +169,8 @@ public class UserTestSectionDAOImpl extends BaseDAOImpl<TestSection> implements 
 			} else {
 				UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
 				// bugzilla 2160
-				UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-				if (!userModuleDAO.isUserAdmin(request)) {
+				UserModuleService userModuleService = new UserModuleServiceImpl();
+				if (!userModuleService.isUserAdmin(request)) {
 					list = testDAO.getAllTestsBySysUserId(usd.getSystemUserId(), onlyTestsFullySetup);
 				} else {
 					list = testDAO.getAllTests(onlyTestsFullySetup);
@@ -193,8 +193,8 @@ public class UserTestSectionDAOImpl extends BaseDAOImpl<TestSection> implements 
 				return sample_Tas;
 			} else {
 				// bugzilla 2160
-				UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-				if (!userModuleDAO.isUserAdmin(request)) {
+				UserModuleService userModuleService = new UserModuleServiceImpl();
+				if (!userModuleService.isUserAdmin(request)) {
 					for (int i = 0; i < sample_Tas.size(); i++) {
 						Sample_TestAnalyte sample_ta = (Sample_TestAnalyte) sample_Tas.get(i);
 						Test_TestAnalyte test = sample_ta.getTestTestAnalyte();
@@ -267,8 +267,8 @@ public class UserTestSectionDAOImpl extends BaseDAOImpl<TestSection> implements 
 			if (SystemConfiguration.getInstance().getEnableUserTestSection().equals(NO)) {
 				return newAnalyses;
 			} else {
-				UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-				if (!userModuleDAO.isUserAdmin(request)) {
+				UserModuleService userModuleService = new UserModuleServiceImpl();
+				if (!userModuleService.isUserAdmin(request)) {
 					newAnalyses = new ArrayList();
 					for (int i = 0; i < analyses.size(); i++) {
 						us.mn.state.health.lims.analysis.valueholder.Analysis analysis = (us.mn.state.health.lims.analysis.valueholder.Analysis) analyses

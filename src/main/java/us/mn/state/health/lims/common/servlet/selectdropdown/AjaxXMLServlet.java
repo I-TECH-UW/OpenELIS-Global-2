@@ -26,16 +26,16 @@ import org.ajaxtags.servlets.BaseAjaxServlet;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.provider.selectdropdown.BaseSelectDropDownProvider;
 import us.mn.state.health.lims.common.provider.selectdropdown.SelectDropDownProviderFactory;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
-import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
+import us.mn.state.health.lims.login.dao.UserModuleService;
+import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
 
 public class AjaxXMLServlet extends BaseAjaxServlet {
 
 	public String getXmlContent(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		//check for authentication
-		UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-		if (userModuleDAO.isSessionExpired(request)) {
+		UserModuleService userModuleService = new UserModuleServiceImpl();
+		if (userModuleService.isSessionExpired(request)) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.setContentType("text/html; charset=utf-8");
 			response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));

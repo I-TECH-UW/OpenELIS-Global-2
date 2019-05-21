@@ -181,7 +181,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 	@Override
 	public void getData(Sample sample) throws LIMSRuntimeException {
 		try {
-			Sample samp = (Sample) HibernateUtil.getSession().get(Sample.class, sample.getId());
+			Sample samp = HibernateUtil.getSession().get(Sample.class, sample.getId());
 
 			if (samp != null) {
 
@@ -281,7 +281,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 	public Sample readSample(String idString) {
 		Sample samp = null;
 		try {
-			samp = (Sample) HibernateUtil.getSession().get(Sample.class, idString);
+			samp = HibernateUtil.getSession().get(Sample.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -544,12 +544,10 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 		end.set(Calendar.SECOND, 0);
 		try {
 			String sql = "from Sample as s where s.receivedTimestamp >= :start AND s.receivedTimestamp < :end";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setCalendarDate("start", start);
 			query.setCalendarDate("end", end);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (HibernateException he) {
 			LogEvent.logError("SampleDAOImpl", "getSamplesReceivedInDateRange()", he.toString());
 			throw new LIMSRuntimeException("Error in Sample getSamplesReceivedInDateRange()", he);

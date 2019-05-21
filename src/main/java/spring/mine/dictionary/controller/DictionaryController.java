@@ -8,10 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,22 +22,21 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
+import spring.mine.common.validator.BaseErrors;
 import spring.mine.dictionary.form.DictionaryForm;
 import spring.mine.dictionary.validator.DictionaryFormValidator;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.dictionary.DictionaryService;
+import spring.service.dictionarycategory.DictionaryCategoryService;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSFrozenRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
+import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.dictionarycategory.dao.DictionaryCategoryDAO;
-import us.mn.state.health.lims.dictionarycategory.daoimpl.DictionaryCategoryDAOImpl;
 import us.mn.state.health.lims.dictionarycategory.valueholder.DictionaryCategory;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
 
 @Controller
@@ -46,6 +45,10 @@ public class DictionaryController extends BaseController {
 
 	@Autowired
 	DictionaryFormValidator formValidator;
+	@Autowired
+	DictionaryService dictionaryService;
+	@Autowired
+	DictionaryCategoryService dictionaryCategoryService;
 
 	@ModelAttribute("form")
 	public DictionaryForm form() {
@@ -62,25 +65,21 @@ public class DictionaryController extends BaseController {
 
 		setDefaultButtonAttributes(request);
 
-		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
 		Dictionary dictionary = new Dictionary();
 		dictionary.setId(id);
 
 		if ((id != null) && (!"0".equals(id))) {
 			// this is an existing dictionary
-			dictionaryDAO.getData(dictionary);
+			dictionary = dictionaryService.get(id);
 
-			// do we need to enable next or previous button
-			List<Dictionary> dictionaries = dictionaryDAO.getNextDictionaryRecord(dictionary.getId());
-			if (!dictionaries.isEmpty()) {
-				// enable next button
+			if (dictionaryService.hasNext(id)) {
 				request.setAttribute(NEXT_DISABLED, "false");
 			}
-			dictionaries = dictionaryDAO.getPreviousDictionaryRecord(dictionary.getId());
-			if (!dictionaries.isEmpty()) {
-				// enable next button
+
+			if (dictionaryService.hasPrevious(id)) {
 				request.setAttribute(PREVIOUS_DISABLED, "false");
 			}
+
 		} else { // this is a new dictionary
 			dictionary.setIsActive(YES);
 		}
@@ -96,8 +95,7 @@ public class DictionaryController extends BaseController {
 		// populate form from valueholder
 		PropertyUtils.copyProperties(form, dictionary);
 
-		DictionaryCategoryDAO dictCategorygDAO = new DictionaryCategoryDAOImpl();
-		List dictCats = dictCategorygDAO.getAllDictionaryCategorys();
+		List<DictionaryCategory> dictCats = dictionaryCategoryService.getAll();
 
 		PropertyUtils.setProperty(form, "categories", dictCats);
 
@@ -117,33 +115,21 @@ public class DictionaryController extends BaseController {
 		String id = request.getParameter(ID);
 		String direction = request.getParameter("direction");
 
-		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-		Dictionary dictionary = new Dictionary();
-		dictionary.setId(id);
-
-		if (FWD_NEXT.equals(direction) || FWD_PREVIOUS.equals(direction)) {
-			dictionary = getNextPreviousDictionary(dictionary, dictionaryDAO, direction);
-
-			String newId = dictionary.getId();
-			String url = "redirect:/Dictionary.do?ID=" + newId;
-			return new ModelAndView(url);
-		} else {
+		String nextPrevId = null;
+		if (FWD_NEXT.equals(direction)) {
+			nextPrevId = dictionaryService.getNext(id).getId();
+		} else if (FWD_PREVIOUS.equals(direction)) {
+			nextPrevId = dictionaryService.getPrevious(id).getId();
+		}
+		if (GenericValidator.isBlankOrNull(nextPrevId)) {
+			Errors errors = new BaseErrors();
+			errors.reject("dictionary.nextprev.error");
+			saveErrors(errors);
 			return new ModelAndView(findForward(FWD_FAIL));
 		}
-	}
 
-	private Dictionary getNextPreviousDictionary(Dictionary dictionary, DictionaryDAO dictionaryDAO, String direction) {
-		List dictionaries;
-		dictionaryDAO.getData(dictionary);
-		if (FWD_NEXT.equals(direction)) {
-			dictionaries = dictionaryDAO.getNextDictionaryRecord(dictionary.getId());
-		} else {
-			dictionaries = dictionaryDAO.getPreviousDictionaryRecord(dictionary.getId());
-		}
-		if (dictionaries != null && !dictionaries.isEmpty()) {
-			return (Dictionary) dictionaries.get(0);
-		}
-		return dictionary;
+		String url = "redirect:/Dictionary.do?ID=" + nextPrevId;
+		return new ModelAndView(url);
 	}
 
 	@RequestMapping(value = "/Dictionary", method = RequestMethod.POST)
@@ -160,10 +146,7 @@ public class DictionaryController extends BaseController {
 
 		setDefaultButtonAttributes(request);
 
-		Dictionary dictionary = new Dictionary();
-		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
-		setupDictionary(dictionary, form);
+		Dictionary dictionary = setupDictionary(form);
 
 		try {
 			String id = form.getId();
@@ -171,16 +154,14 @@ public class DictionaryController extends BaseController {
 				// UPDATE
 				// bugzilla 2062
 				boolean isDictionaryFrozenCheckRequired = checkForDictionaryFrozenCheck(form);
-				dictionaryDAO.updateData(dictionary, isDictionaryFrozenCheckRequired);
+				dictionaryService.update(dictionary, isDictionaryFrozenCheckRequired);
 			} else {
 				// INSERT
-				dictionaryDAO.insertData(dictionary);
+				dictionaryService.insert(dictionary);
 			}
-			tx.commit();
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryUpdateAction", "performAction()", lre.toString());
-			tx.rollback();
 			// 1482
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
 				result.reject("errors.OptimisticLockException");
@@ -210,8 +191,6 @@ public class DictionaryController extends BaseController {
 			request.setAttribute(NEXT_DISABLED, "true");
 			return findForward(FWD_FAIL_INSERT, form);
 
-		} finally {
-			HibernateUtil.closeSession();
 		}
 
 		status.setComplete();
@@ -219,8 +198,10 @@ public class DictionaryController extends BaseController {
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
-	private void setupDictionary(Dictionary dictionary, DictionaryForm form)
+	private Dictionary setupDictionary(DictionaryForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+		Dictionary dictionary = dictionaryService.get(form.getId());
 		// get sysUserId from login module
 		UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
 		String sysUserId = String.valueOf(usd.getSystemUserId());
@@ -229,15 +210,11 @@ public class DictionaryController extends BaseController {
 		// populate valueholder from form
 		PropertyUtils.copyProperties(dictionary, form);
 
-		// bugzilla 2062
-		DictionaryCategoryDAO dictionaryCategoryDAO = new DictionaryCategoryDAOImpl();
-
 		String selectedCategoryId = (String) form.get("selectedDictionaryCategoryId");
 		// bugzilla 2108
-		DictionaryCategory dictionaryCategory = new DictionaryCategory();
-		dictionaryCategory.setId(selectedCategoryId);
-		dictionaryCategoryDAO.getData(dictionaryCategory);
+		DictionaryCategory dictionaryCategory = dictionaryCategoryService.get(selectedCategoryId);
 		dictionary.setDictionaryCategory(dictionaryCategory);
+		return dictionary;
 
 	}
 

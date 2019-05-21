@@ -36,9 +36,9 @@ import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.common.util.validator.ActionError;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.login.dao.LoginDAO;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
+import us.mn.state.health.lims.login.dao.userModuleService;
 import us.mn.state.health.lims.login.daoimpl.LoginDAOImpl;
-import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
+import us.mn.state.health.lims.login.daoimpl.userModuleServiceImpl;
 import us.mn.state.health.lims.login.valueholder.Login;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
 import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
@@ -242,8 +242,8 @@ public class LoginValidateAction extends LoginBaseAction {
 					//bugzilla 2154
 					LogEvent.logInfo("LoginValidateAction","performAction()","======> USER TYPE: NON-ADMIN");
 					//bugzilla 2160
-					UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
-					if ( !userModuleDAO.isUserModuleFound(request) ) {
+					userModuleService userModuleService = new userModuleServiceImpl();
+					if ( !userModuleService.isUserModuleFound(request) ) {
 						errors = new ActionMessages();
 						ActionError error = new ActionError("login.error.no.module", null, null);
 						errors.add(ActionMessages.GLOBAL_MESSAGE, error);

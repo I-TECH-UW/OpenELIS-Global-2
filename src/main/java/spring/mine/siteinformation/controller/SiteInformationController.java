@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -28,18 +29,16 @@ import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.siteinformation.form.SiteInformationForm;
 import spring.mine.siteinformation.validator.SiteInformationFormValidator;
+import spring.service.dictionary.DictionaryService;
+import spring.service.sample.SampleService;
+import spring.service.siteinformation.SiteInformationDomainService;
 import spring.service.siteinformation.SiteInformationService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.services.LocalizationService;
 import us.mn.state.health.lims.common.services.PhoneNumberService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationSideEffects;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.localization.valueholder.Localization;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
-import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDomainDAOImpl;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformationDomain;
 
@@ -53,6 +52,12 @@ public class SiteInformationController extends BaseController {
 	SiteInformationService siteInformationService;
 	@Autowired
 	spring.service.localization.LocalizationService localizationService;
+	@Autowired
+	SiteInformationDomainService siteInformationDomainService;
+	@Autowired
+	DictionaryService dictionaryService;
+	@Autowired
+	SampleService sampleService;
 
 	@ModelAttribute("form")
 	public SiteInformationForm form(HttpServletRequest request) {
@@ -62,12 +67,13 @@ public class SiteInformationController extends BaseController {
 	}
 
 	private static final String ACCESSION_NUMBER_PREFIX = "Accession number prefix";
-	private static final SiteInformationDomain SITE_IDENTITY_DOMAIN;
-	private static final SiteInformationDomain RESULT_CONFIG_DOMAIN;
+	private SiteInformationDomain SITE_IDENTITY_DOMAIN;
+	private SiteInformationDomain RESULT_CONFIG_DOMAIN;
 
-	static {
-		SITE_IDENTITY_DOMAIN = new SiteInformationDomainDAOImpl().getByName("siteIdentity");
-		RESULT_CONFIG_DOMAIN = new SiteInformationDomainDAOImpl().getByName("resultConfiguration");
+	@PostConstruct
+	public void initialize() {
+		SITE_IDENTITY_DOMAIN = siteInformationDomainService.getByName("siteIdentity");
+		RESULT_CONFIG_DOMAIN = siteInformationDomainService.getByName("resultConfiguration");
 	}
 
 	@RequestMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration", "/PrintedReportsConfiguration",
@@ -114,7 +120,7 @@ public class SiteInformationController extends BaseController {
 			if ("dictionary".equals(siteInformation.getValueType())) {
 				List<String> dictionaryValues = new ArrayList<>();
 
-				List<Dictionary> dictionaries = new DictionaryDAOImpl()
+				List<Dictionary> dictionaries = dictionaryService
 						.getDictionaryEntriesByCategoryId(siteInformation.getDictionaryCategoryId());
 
 				for (Dictionary dictionary : dictionaries) {
@@ -212,7 +218,7 @@ public class SiteInformationController extends BaseController {
 
 	private Boolean isEditable(SiteInformation siteInformation) {
 		if (ACCESSION_NUMBER_PREFIX.endsWith(siteInformation.getName())) {
-			return new SampleDAOImpl().getTotalCount("Sample", Sample.class) == 0;
+			return sampleService.getCount() == 0;
 		}
 		return Boolean.TRUE;
 	}

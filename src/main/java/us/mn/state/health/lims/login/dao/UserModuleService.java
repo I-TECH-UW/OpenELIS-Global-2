@@ -23,7 +23,7 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
 // this should not be a dao, and should instead be a service layer
-public interface UserModuleDAO {
+public interface UserModuleService {
 
 	public boolean isSessionExpired(HttpServletRequest request) throws LIMSRuntimeException;
 

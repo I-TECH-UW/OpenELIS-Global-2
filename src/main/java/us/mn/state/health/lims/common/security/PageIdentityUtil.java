@@ -37,7 +37,7 @@ public class PageIdentityUtil {
 	}
 
 	/*
-	 * This is ripped and simplified from UserModuleDAOImp. In it's most basic form
+	 * This is ripped and simplified from userModuleServiceImp. In it's most basic form
 	 * it gets the ACTION_KEY
 	 */
 	public static String getActionName(HttpServletRequest request, boolean useParameterExtention)

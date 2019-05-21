@@ -24,6 +24,7 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
@@ -125,6 +126,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 	// modified for bugzilla 2061-2063
 	@Override
 	public void updateData(Dictionary dictionary, boolean isDictionaryFrozenCheckRequired) throws LIMSRuntimeException {
+		Session session = sessionFactory.getCurrentSession();
 
 		// bugzilla 1386 throw Exception if record already exists
 		try {
@@ -169,7 +171,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 		}
 
 		try {
-			HibernateUtil.getSession().merge(dictionary);
+			session.merge(dictionary);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			// HibernateUtil.getSession().evict // CSL remove old(dictionary);
@@ -184,7 +186,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 	@Override
 	public void getData(Dictionary dictionary) throws LIMSRuntimeException {
 		try {
-			Dictionary d = (Dictionary) HibernateUtil.getSession().get(Dictionary.class, dictionary.getId());
+			Dictionary d = HibernateUtil.getSession().get(Dictionary.class, dictionary.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (d != null) {
@@ -286,7 +288,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 	public Dictionary readDictionary(String idString) {
 		Dictionary dictionary = null;
 		try {
-			dictionary = (Dictionary) HibernateUtil.getSession().get(Dictionary.class, idString);
+			dictionary = HibernateUtil.getSession().get(Dictionary.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -410,9 +412,6 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 
 			@SuppressWarnings("unchecked")
 			List<Dictionary> list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-
 			return list;
 
 		} catch (Exception e) {
@@ -500,15 +499,12 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 	 * note 2: The error message claims that there is a duplicate entry, it can also
 	 * be a duplicate abbreviation in the same category
 	 */
-	private boolean duplicateDictionaryExists(Dictionary dictionary) throws LIMSRuntimeException {
+	// not case sensitive hemolysis and Hemolysis are considered duplicates
+	// description within category is unique AND local abbreviation within category
+	// is unique
+	@Override
+	public boolean duplicateDictionaryExists(Dictionary dictionary) throws LIMSRuntimeException {
 		try {
-
-			List list = new ArrayList();
-
-			// not case sensitive hemolysis and Hemolysis are considered
-			// duplicates
-			// description within category is unique AND local abbreviation
-			// within category is unique
 			String sql = null;
 			if (dictionary.getDictionaryCategory() != null) {
 				sql = "from Dictionary t where "
@@ -523,7 +519,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 						+ "(trim(lower(t.localAbbreviation)) = :param4 and t.dictionaryCategory is null and t.id != :param3)) ";
 
 			}
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", dictionary.getDictEntry().toLowerCase().trim());
 			query.setParameter("param4", dictionary.getLocalAbbreviation().toLowerCase().trim());
 			if (dictionary.getDictionaryCategory() != null) {
@@ -538,16 +534,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			}
 			query.setInteger("dictId", Integer.parseInt(dictId));
 
-			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-
-			if (list.size() > 0) {
-				return true;
-			} else {
-				return false;
-			}
-
+			return query.list().isEmpty();
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryDAOImpl", "duplicateDictionaryExists()", e.toString());
@@ -629,7 +616,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 	}
 
 	// bugzilla 2061-2063
-	private boolean isDictionaryFrozen(Dictionary dictionary) throws LIMSRuntimeException {
+	@Override
+	public boolean isDictionaryFrozen(Dictionary dictionary) throws LIMSRuntimeException {
 		try {
 			List list = new ArrayList();
 
@@ -651,20 +639,10 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 				sql = "from TestResult tr where tr.value = :param and tr.test.isActive = " + enquote(YES);
 			}
 
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", dictionary.getId());
 
-			list = query.list();
-
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-
-			if (list.size() > 0) {
-				return true;
-			} else {
-				return false;
-			}
-
+			return !query.list().isEmpty();
 		} catch (Exception e) {
 			LogEvent.logError("DictionaryDAOImpl", "dictionaryIsInUse()", e.toString());
 			throw new LIMSRuntimeException("Error in dictionaryIsInUse()", e);
@@ -736,7 +714,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 	@Override
 	public Dictionary getDictionaryById(String dictionaryId) throws LIMSRuntimeException {
 		try {
-			Dictionary dictionary = (Dictionary) HibernateUtil.getSession().get(Dictionary.class, dictionaryId);
+			Dictionary dictionary = HibernateUtil.getSession().get(Dictionary.class, dictionaryId);
 			// closeSession(); // CSL remove old
 			return dictionary;
 		} catch (Exception e) {

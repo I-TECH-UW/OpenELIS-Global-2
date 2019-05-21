@@ -198,8 +198,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables> impleme
 	@Override
 	public void getData(ReferenceTables referenceTables) throws LIMSRuntimeException {
 		try {
-			ReferenceTables reftbl = (ReferenceTables) HibernateUtil.getSession().get(ReferenceTables.class,
-					referenceTables.getId());
+			ReferenceTables reftbl = HibernateUtil.getSession().get(ReferenceTables.class, referenceTables.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (reftbl != null) {
@@ -262,7 +261,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables> impleme
 	public ReferenceTables readReferenceTables(String idString) {
 		ReferenceTables referenceTables = null;
 		try {
-			referenceTables = (ReferenceTables) HibernateUtil.getSession().get(ReferenceTables.class, idString);
+			referenceTables = HibernateUtil.getSession().get(ReferenceTables.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -441,12 +440,10 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables> impleme
 	public ReferenceTables getReferenceTableByName(String tableName) {
 		try {
 			String sql = "from ReferenceTables rt where trim(lower(rt.tableName)) = :tableName";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("tableName", tableName.toLowerCase().trim());
 
 			ReferenceTables table = (ReferenceTables) query.setMaxResults(1).uniqueResult();
-
-			// closeSession(); // CSL remove old
 
 			return table;
 

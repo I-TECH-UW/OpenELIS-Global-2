@@ -40,8 +40,8 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.validator.ActionError;
 import us.mn.state.health.lims.inventory.action.InventoryUtility;
 import us.mn.state.health.lims.inventory.form.InventoryKitItem;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
-import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
+import us.mn.state.health.lims.login.dao.userModuleService;
+import us.mn.state.health.lims.login.daoimpl.userModuleServiceImpl;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.result.action.util.ResultsLoadUtility;
 import us.mn.state.health.lims.result.action.util.ResultsPaging;
@@ -62,7 +62,7 @@ public class AccessionResultsAction extends BaseAction {
 	private Sample sample;
 	private InventoryUtility inventoryUtility = new InventoryUtility();
 	private static SampleDAO sampleDAO = new SampleDAOImpl();
-	private static UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
+	private static userModuleService userModuleService = new userModuleServiceImpl();
 	private static String RESULT_EDIT_ROLE_ID;
 
 	static {
@@ -155,7 +155,7 @@ public class AccessionResultsAction extends BaseAction {
 	}
 
 	private boolean userNotInRole(HttpServletRequest request) {
-		if (userModuleDAO.isUserAdmin(request)) {
+		if (userModuleService.isUserAdmin(request)) {
 			return false;
 		}
 

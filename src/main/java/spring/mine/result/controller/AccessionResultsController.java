@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
@@ -17,24 +18,21 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.result.form.AccessionResultsForm;
+import spring.service.sample.SampleService;
+import spring.service.samplehuman.SampleHumanService;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.inventory.action.InventoryUtility;
 import us.mn.state.health.lims.inventory.form.InventoryKitItem;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
-import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
+import us.mn.state.health.lims.login.dao.UserModuleService;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.result.action.util.ResultsLoadUtility;
 import us.mn.state.health.lims.result.action.util.ResultsPaging;
 import us.mn.state.health.lims.role.daoimpl.RoleDAOImpl;
 import us.mn.state.health.lims.role.valueholder.Role;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 import us.mn.state.health.lims.userrole.dao.UserRoleDAO;
 import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
@@ -45,8 +43,12 @@ public class AccessionResultsController extends BaseController {
 	private String accessionNumber;
 	private Sample sample;
 	private InventoryUtility inventoryUtility = new InventoryUtility();
-	private static SampleDAO sampleDAO = new SampleDAOImpl();
-	private static UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
+	@Autowired
+	private SampleService sampleService;
+	@Autowired
+	private SampleHumanService sampleHumanService;
+	@Autowired
+	private UserModuleService userModuleService;
 	private static String RESULT_EDIT_ROLE_ID;
 
 	static {
@@ -131,7 +133,7 @@ public class AccessionResultsController extends BaseController {
 	}
 
 	private boolean userNotInRole(HttpServletRequest request) {
-		if (userModuleDAO.isUserAdmin(request)) {
+		if (userModuleService.isUserAdmin(request)) {
 			return false;
 		}
 
@@ -176,7 +178,7 @@ public class AccessionResultsController extends BaseController {
 
 	private Errors validateAll(HttpServletRequest request, Errors errors, AccessionResultsForm form) {
 
-		Sample sample = sampleDAO.getSampleByAccessionNumber(accessionNumber);
+		Sample sample = sampleService.getSampleByAccessionNumber(accessionNumber);
 
 		if (sample == null) {
 			// ActionError error = new ActionError("sample.edit.sample.notFound",
@@ -189,12 +191,11 @@ public class AccessionResultsController extends BaseController {
 	}
 
 	private Patient getPatient() {
-		SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
-		return sampleHumanDAO.getPatientForSample(sample);
+		return sampleHumanService.getPatientForSample(sample);
 	}
 
 	private void getSample() {
-		sample = sampleDAO.getSampleByAccessionNumber(accessionNumber);
+		sample = sampleService.getSampleByAccessionNumber(accessionNumber);
 	}
 
 	@Override

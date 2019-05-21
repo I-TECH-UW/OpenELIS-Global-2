@@ -53,8 +53,8 @@ import us.mn.state.health.lims.common.services.StatusService.SampleStatus;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.login.dao.UserModuleDAO;
-import us.mn.state.health.lims.login.daoimpl.UserModuleDAOImpl;
+import us.mn.state.health.lims.login.dao.userModuleService;
+import us.mn.state.health.lims.login.daoimpl.userModuleServiceImpl;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.sample.bean.SampleEditItem;
@@ -80,7 +80,7 @@ public class SampleEditAction extends BaseAction {
 
     private static final TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
     private static final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-    private static final UserModuleDAO userModuleDAO = new UserModuleDAOImpl();
+    private static final userModuleService userModuleService = new userModuleServiceImpl();
     private static final SampleEditItemComparator testComparator = new SampleEditItemComparator();
     private static final Set<Integer> excludedAnalysisStatusList;
     private static final Set<Integer> ENTERED_STATUS_SAMPLE_LIST = new HashSet<Integer>();
@@ -109,7 +109,7 @@ public class SampleEditAction extends BaseAction {
 		DynaActionForm dynaForm = (DynaActionForm) form;
 
 		String accessionNumber = request.getParameter("accessionNumber");
-        boolean allowedToCancelResults = userModuleDAO.isUserAdmin(request) ||
+        boolean allowedToCancelResults = userModuleService.isUserAdmin(request) ||
                 new UserRoleDAOImpl().userInRole( currentUserId, ABLE_TO_CANCEL_ROLE_NAMES );
 
 		if( GenericValidator.isBlankOrNull(accessionNumber)){

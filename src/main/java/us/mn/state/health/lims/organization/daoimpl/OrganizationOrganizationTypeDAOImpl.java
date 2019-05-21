@@ -20,11 +20,12 @@ package us.mn.state.health.lims.organization.daoimpl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.organization.dao.OrganizationOrganizationTypeDAO;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 
@@ -32,12 +33,17 @@ import us.mn.state.health.lims.organization.valueholder.Organization;
 @Component
 public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganizationTypeDAO {
 
+	@Autowired
+	SessionFactory sessionFactory;
+
 	@Override
 	public void deleteAllLinksForOrganization(String id) throws LIMSRuntimeException {
 
 		try {
-			String sql = "delete from organization_organization_type where org_id = '" + Integer.parseInt(id) + "';";
-			HibernateUtil.getSession().connection().prepareStatement(sql).executeUpdate();
+			String sql = "delete from organization_organization_type where org_id = :id";
+			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
+			query.setInteger("id", Integer.parseInt(id));
+			query.executeUpdate();
 		} catch (Exception e) {
 			LogEvent.logError("OrganizationOrganizationTypeDAOImpl", "deleteAllLinksForOrganization()", e.toString());
 			throw new LIMSRuntimeException("Error in OrganizationOrganizationType deleteAllLinksForOrganization()", e);
@@ -48,14 +54,12 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
 	public void linkOrganizationAndType(Organization org, String typeId) throws LIMSRuntimeException {
 
 		try {
-			StringBuffer buffer = new StringBuffer(
-					"INSERT INTO organization_organization_type(org_id, org_type_id)VALUES (");
-			buffer.append(Integer.parseInt(org.getId()));
-			buffer.append(",");
-			buffer.append(Integer.parseInt(typeId));
-			buffer.append(");");
+			String sql = "INSERT INTO organization_organization_type(org_id, org_type_id)VALUES (:org_id, :type_id);";
+			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
+			query.setInteger("org_id", Integer.parseInt(org.getId()));
+			query.setInteger("type_id", Integer.parseInt(typeId));
+			query.executeUpdate();
 
-			HibernateUtil.getSession().connection().prepareStatement(buffer.toString()).executeUpdate();
 		} catch (Exception e) {
 			LogEvent.logError("OrganizationOrganizationTypeDAOImpl", "linkOrganizationAndType()", e.toString());
 			throw new LIMSRuntimeException("Error in OrganizationOrganizationType linkOrganizationAndType()", e);
@@ -69,7 +73,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
 		String sql = "select cast(org_id AS varchar) from organization_organization_type where org_type_id = :orgTypeId";
 
 		try {
-			Query query = HibernateUtil.getSession().createSQLQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
 			query.setInteger("orgTypeId", Integer.parseInt(typeId));
 			orgIdList = query.list();
 
@@ -87,7 +91,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
 		String sql = "select cast(org_type_id AS varchar) from organization_organization_type where org_id = :orgId";
 
 		try {
-			Query query = HibernateUtil.getSession().createSQLQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
 			query.setInteger("orgId", Integer.parseInt(organizationId));
 			orgIdList = query.list();
 

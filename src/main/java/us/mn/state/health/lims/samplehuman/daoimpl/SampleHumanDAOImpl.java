@@ -149,8 +149,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 	@Override
 	public void getData(SampleHuman sampleHuman) throws LIMSRuntimeException {
 		try {
-			SampleHuman sampHuman = (SampleHuman) HibernateUtil.getSession().get(SampleHuman.class,
-					sampleHuman.getId());
+			SampleHuman sampHuman = HibernateUtil.getSession().get(SampleHuman.class, sampleHuman.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (sampHuman != null) {
@@ -168,7 +167,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 	public SampleHuman readSampleHuman(String idString) {
 		SampleHuman sh = null;
 		try {
-			sh = (SampleHuman) HibernateUtil.getSession().get(SampleHuman.class, idString);
+			sh = HibernateUtil.getSession().get(SampleHuman.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -207,12 +206,9 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 		Patient patient = null;
 		try {
 			String sql = "select patient from Patient as patient, SampleHuman as sampleHuman where sampleHuman.patientId = patient.id and sampleHuman.sampleId = :sId";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("sId", Integer.parseInt(sample.getId()));
 			patient = (Patient) query.uniqueResult();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-
 		} catch (HibernateException he) {
 			LogEvent.logError("SampleHumanDAOImpl", "getPatientForSample()", he.toString());
 			throw new LIMSRuntimeException("Error in SampleHuman getPatientForSample()", he);
@@ -246,11 +242,9 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 
 		try {
 			String sql = "select sample from Sample as sample, SampleHuman as sampleHuman where sampleHuman.sampleId = sample.id and sampleHuman.patientId = :patientId order by sample.id";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("patientId", Integer.parseInt(patientID));
 			samples = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (HibernateException he) {
 			LogEvent.logError("SampleHumanDAOImpl", "getSamplesForPatient()", he.toString());
 			throw new LIMSRuntimeException("Error in SampleHuman getSamplesForPatient()", he);

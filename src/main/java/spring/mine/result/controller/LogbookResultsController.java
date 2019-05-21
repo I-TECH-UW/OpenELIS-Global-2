@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -21,6 +22,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -33,8 +35,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.result.form.LogbookResultsForm;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.referral.ReferralResultService;
+import spring.service.referral.ReferralService;
+import spring.service.referral.ReferralTypeService;
+import spring.service.result.ResultInventoryService;
+import spring.service.result.ResultService;
+import spring.service.result.ResultSignatureService;
+import spring.service.resultlimits.ResultLimitService;
+import spring.service.test.TestSectionService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
@@ -62,16 +70,8 @@ import us.mn.state.health.lims.dataexchange.orderresult.OrderResponseWorker.Even
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.inventory.action.InventoryUtility;
 import us.mn.state.health.lims.inventory.form.InventoryKitItem;
-import us.mn.state.health.lims.note.dao.NoteDAO;
-import us.mn.state.health.lims.note.daoimpl.NoteDAOImpl;
 import us.mn.state.health.lims.note.valueholder.Note;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.referral.dao.ReferralDAO;
-import us.mn.state.health.lims.referral.dao.ReferralResultDAO;
-import us.mn.state.health.lims.referral.dao.ReferralTypeDAO;
-import us.mn.state.health.lims.referral.daoimpl.ReferralDAOImpl;
-import us.mn.state.health.lims.referral.daoimpl.ReferralResultDAOImpl;
-import us.mn.state.health.lims.referral.daoimpl.ReferralTypeDAOImpl;
 import us.mn.state.health.lims.referral.valueholder.Referral;
 import us.mn.state.health.lims.referral.valueholder.ReferralResult;
 import us.mn.state.health.lims.referral.valueholder.ReferralType;
@@ -80,25 +80,13 @@ import us.mn.state.health.lims.result.action.util.ResultUtil;
 import us.mn.state.health.lims.result.action.util.ResultsLoadUtility;
 import us.mn.state.health.lims.result.action.util.ResultsPaging;
 import us.mn.state.health.lims.result.action.util.ResultsUpdateDataSet;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.dao.ResultInventoryDAO;
-import us.mn.state.health.lims.result.dao.ResultSignatureDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
-import us.mn.state.health.lims.result.daoimpl.ResultInventoryDAOImpl;
-import us.mn.state.health.lims.result.daoimpl.ResultSignatureDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultInventory;
 import us.mn.state.health.lims.result.valueholder.ResultSignature;
-import us.mn.state.health.lims.resultlimits.dao.ResultLimitDAO;
-import us.mn.state.health.lims.resultlimits.daoimpl.ResultLimitDAOImpl;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.statusofsample.util.StatusRules;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
-import us.mn.state.health.lims.test.dao.TestSectionDAO;
-import us.mn.state.health.lims.test.daoimpl.TestSectionDAOImpl;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 import us.mn.state.health.lims.testreflex.action.util.TestReflexBean;
 import us.mn.state.health.lims.testreflex.action.util.TestReflexUtil;
@@ -106,15 +94,28 @@ import us.mn.state.health.lims.testreflex.action.util.TestReflexUtil;
 @Controller
 public class LogbookResultsController extends LogbookResultsBaseController {
 
-	private AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-	private ResultDAO resultDAO = new ResultDAOImpl();
-	private ResultSignatureDAO resultSigDAO = new ResultSignatureDAOImpl();
-	private ResultInventoryDAO resultInventoryDAO = new ResultInventoryDAOImpl();
-	private NoteDAO noteDAO = new NoteDAOImpl();
-	private SampleDAO sampleDAO = new SampleDAOImpl();
-	private ReferralDAO referralDAO = new ReferralDAOImpl();
-	private ReferralResultDAO referralResultDAO = new ReferralResultDAOImpl();
-	private ResultLimitDAO resultLimitDAO = new ResultLimitDAOImpl();
+	@Autowired
+	private spring.service.analysis.AnalysisService analysisService;
+	@Autowired
+	private ResultService resultService;
+	@Autowired
+	private ResultSignatureService resultSigService;
+	@Autowired
+	private ResultInventoryService resultInventoryService;
+	@Autowired
+	private spring.service.note.NoteService noteService;
+	@Autowired
+	private spring.service.sample.SampleService sampleService;
+	@Autowired
+	private ReferralService referralService;
+	@Autowired
+	private ReferralResultService referralResultService;
+	@Autowired
+	private ResultLimitService resultLimitService;
+	@Autowired
+	TestSectionService testSectionService;
+	@Autowired
+	ReferralTypeService referralTypeService;
 
 	private static final String RESULT_SUBJECT = "Result Note";
 	private static String REFERRAL_CONFORMATION_ID;
@@ -127,9 +128,9 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 	private String statusRuleSet = ConfigurationProperties.getInstance()
 			.getPropertyValueUpperCase(Property.StatusRules);
 
-	static {
-		ReferralTypeDAO referralTypeDAO = new ReferralTypeDAOImpl();
-		ReferralType referralType = referralTypeDAO.getReferralTypeByName("Confirmation");
+	@PostConstruct
+	public void initialize() {
+		ReferralType referralType = referralTypeService.getReferralTypeByName("Confirmation");
 		if (referralType != null) {
 			REFERRAL_CONFORMATION_ID = referralType.getId();
 		}
@@ -156,14 +157,13 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 				DisplayListService.getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
 		// load testSections for drop down
-		TestSectionDAO testSectionDAO = new TestSectionDAOImpl();
 		List<IdValuePair> testSections = DisplayListService.getList(ListType.TEST_SECTION);
 		PropertyUtils.setProperty(form, "testSections", testSections);
 		PropertyUtils.setProperty(form, "testSectionsByName",
 				DisplayListService.getList(ListType.TEST_SECTION_BY_NAME));
 
 		if (!GenericValidator.isBlankOrNull(testSectionId)) {
-			ts = testSectionDAO.getTestSectionById(testSectionId);
+			ts = testSectionService.get(testSectionId);
 			PropertyUtils.setProperty(form, "testSectionId", "0");
 		}
 
@@ -267,20 +267,20 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
 		try {
 			for (Note note : actionDataSet.getNoteList()) {
-				noteDAO.insertData(note);
+				noteService.insert(note);
 			}
 
 			for (ResultSet resultSet : actionDataSet.getNewResults()) {
 				resultSet.result.setResultEvent(Event.PRELIMINARY_RESULT);
-				resultDAO.insertData(resultSet.result);
+				resultService.insert(resultSet.result);
 				if (resultSet.signature != null) {
 					resultSet.signature.setResultId(resultSet.result.getId());
-					resultSigDAO.insertData(resultSet.signature);
+					resultSigService.insert(resultSet.signature);
 				}
 
 				if (resultSet.testKit != null && resultSet.testKit.getInventoryLocationId() != null) {
 					resultSet.testKit.setResultId(resultSet.result.getId());
-					resultInventoryDAO.insertData(resultSet.testKit);
+					resultInventoryService.insert(resultSet.testKit);
 				}
 			}
 
@@ -292,29 +292,29 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
 			for (ResultSet resultSet : actionDataSet.getModifiedResults()) {
 				resultSet.result.setResultEvent(Event.RESULT);
-				resultDAO.updateData(resultSet.result);
+				resultService.update(resultSet.result);
 
 				if (resultSet.signature != null) {
 					resultSet.signature.setResultId(resultSet.result.getId());
 					if (resultSet.alwaysInsertSignature) {
-						resultSigDAO.insertData(resultSet.signature);
+						resultSigService.insert(resultSet.signature);
 					} else {
-						resultSigDAO.updateData(resultSet.signature);
+						resultSigService.update(resultSet.signature);
 					}
 				}
 
 				if (resultSet.testKit != null && resultSet.testKit.getInventoryLocationId() != null) {
 					resultSet.testKit.setResultId(resultSet.result.getId());
 					if (resultSet.testKit.getId() == null) {
-						resultInventoryDAO.insertData(resultSet.testKit);
+						resultInventoryService.insert(resultSet.testKit);
 					} else {
-						resultInventoryDAO.updateData(resultSet.testKit);
+						resultInventoryService.update(resultSet.testKit);
 					}
 				}
 			}
 
 			for (Analysis analysis : actionDataSet.getModifiedAnalysis()) {
-				analysisDAO.updateData(analysis);
+				analysisService.update(analysis);
 			}
 
 			ResultSaveService.removeDeletedResultsInTransaction(actionDataSet.getDeletableResults(),
@@ -363,13 +363,13 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
 	private void saveReferralsWithRequiredObjects(Referral referral) {
 		if (referral.getId() != null) {
-			referralDAO.updateData(referral);
+			referralService.update(referral);
 		} else {
-			referralDAO.insertData(referral);
+			referralService.insert(referral);
 			ReferralResult referralResult = new ReferralResult();
 			referralResult.setReferralId(referral.getId());
 			referralResult.setSysUserId(getSysUserId(request));
-			referralResultDAO.insertData(referralResult);
+			referralResultService.insert(referralResult);
 		}
 	}
 
@@ -423,27 +423,25 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 		for (Sample sample : sampleSet) {
 			if (!(sample.getStatusId().equals(sampleNonConformingId)
 					|| sample.getStatusId().equals(sampleTestingStartedId))) {
-				Sample newSample = new Sample();
-				newSample.setId(sample.getId());
-				sampleDAO.getData(newSample);
+				Sample newSample = sampleService.get(sample.getId());
 
 				newSample.setStatusId(sampleTestingStartedId);
 				newSample.setSysUserId(getSysUserId(request));
-				sampleDAO.updateData(newSample);
+				sampleService.update(newSample);
 			}
 		}
 	}
 
 	private void createAnalysisOnlyUpdates(ResultsUpdateDataSet actionDataSet) {
 		for (TestResultItem testResultItem : actionDataSet.getAnalysisOnlyChangeResults()) {
-			AnalysisService analysisService = new AnalysisService(testResultItem.getAnalysisId());
-			analysisService.getAnalysis().setSysUserId(getSysUserId(request));
-			analysisService.getAnalysis()
+			AnalysisService analysisServiceOld = new AnalysisService(testResultItem.getAnalysisId());
+			analysisServiceOld.getAnalysis().setSysUserId(getSysUserId(request));
+			analysisServiceOld.getAnalysis()
 					.setCompletedDate(DateUtil.convertStringDateToSqlDate(testResultItem.getTestDate()));
 			if (testResultItem.getAnalysisMethod() != null) {
-				analysisService.getAnalysis().setAnalysisType(testResultItem.getAnalysisMethod());
+				analysisServiceOld.getAnalysis().setAnalysisType(testResultItem.getAnalysisMethod());
 			}
-			actionDataSet.getModifiedAnalysis().add(analysisService.getAnalysis());
+			actionDataSet.getModifiedAnalysis().add(analysisServiceOld.getAnalysis());
 		}
 	}
 
@@ -456,15 +454,15 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 			handleReferrals(testResultItem, analysisService.getAnalysis(), actionDataSet);
 			actionDataSet.getModifiedAnalysis().add(analysisService.getAnalysis());
 
-			NoteService noteService = new NoteService(analysisService.getAnalysis());
-			actionDataSet.addToNoteList(noteService.createSavableNote(NoteType.INTERNAL, testResultItem.getNote(),
+			NoteService noteServiceOld = new NoteService(analysisService.getAnalysis());
+			actionDataSet.addToNoteList(noteServiceOld.createSavableNote(NoteType.INTERNAL, testResultItem.getNote(),
 					RESULT_SUBJECT, getSysUserId(request)));
 
 			if (testResultItem.isShadowRejected()) {
 				String rejectedReasonId = testResultItem.getRejectReasonId();
 				for (IdValuePair rejectReason : DisplayListService.getList(ListType.REJECTION_REASONS)) {
 					if (rejectedReasonId.equals(rejectReason.getId())) {
-						actionDataSet.addToNoteList(noteService.createSavableNote(NoteType.REJECTION_REASON,
+						actionDataSet.addToNoteList(noteServiceOld.createSavableNote(NoteType.REJECTION_REASON,
 								rejectReason.getValue(), RESULT_SUBJECT, getSysUserId(request)));
 						break;
 					}
@@ -482,7 +480,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 					resultSaveService.isUpdatedResult() && analysisService.patientReportHasBeenDone());
 
 			if (analysisService.hasBeenCorrectedSinceLastPatientReport()) {
-				actionDataSet.addToNoteList(noteService.createSavableNote(NoteType.EXTERNAL,
+				actionDataSet.addToNoteList(noteServiceOld.createSavableNote(NoteType.EXTERNAL,
 						MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
 			}
 
@@ -521,7 +519,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 					referral.setAnalysis(analysis);
 					referral.setReferralReasonId(testResultItem.getReferralReasonId());
 				} else if (testResultItem.isReferralCanceled()) {
-					referral = referralDAO.getReferralById(testResultItem.getReferralId());
+					referral = referralService.get(testResultItem.getReferralId());
 					referral.setCanceled(false);
 					referral.setSysUserId(getSysUserId(request));
 					referral.setRequesterName(testResultItem.getTechnician());
@@ -563,8 +561,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 			analysis.setRevision(String.valueOf(Integer.parseInt(analysis.getRevision()) + 1));
 		}
 
-		SampleService sampleService = new SampleService(testResultItem.getAccessionNumber());
-		Patient patient = sampleService.getPatient();
+		SampleService sampleServiceOld = new SampleService(testResultItem.getAccessionNumber());
+		Patient patient = sampleServiceOld.getPatient();
 
 		Map<String, List<String>> triggersToReflexesMap = new HashMap<>();
 
@@ -572,10 +570,10 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
 		if (newResult) {
 			actionDataSet.getNewResults().add(new ResultSet(result, technicianResultSignature, testKit, patient,
-					sampleService.getSample(), triggersToReflexesMap, multipleResultsForAnalysis));
+					sampleServiceOld.getSample(), triggersToReflexesMap, multipleResultsForAnalysis));
 		} else {
 			actionDataSet.getModifiedResults().add(new ResultSet(result, technicianResultSignature, testKit, patient,
-					sampleService.getSample(), triggersToReflexesMap, multipleResultsForAnalysis));
+					sampleServiceOld.getSample(), triggersToReflexesMap, multipleResultsForAnalysis));
 		}
 
 		actionDataSet.setPreviousAnalysis(analysis);
@@ -613,7 +611,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 				testResult.getResultType())) {
 			return StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted);
 		} else {
-			ResultLimit resultLimit = resultLimitDAO.getResultLimitById(testResult.getResultLimitId());
+			ResultLimit resultLimit = resultLimitService.get(testResult.getResultLimitId());
 			if (resultLimit != null && resultLimit.isAlwaysValidate()) {
 				return StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance);
 			}
@@ -648,7 +646,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
 		if (!GenericValidator.isBlankOrNull(testKitId)) {
 			testKit.setId(testKitId);
-			resultInventoryDAO.getData(testKit);
+			testKit = resultInventoryService.get(testKitId);
 		}
 
 		testKit.setInventoryLocationId(testResult.getTestKitInventoryId());
@@ -689,8 +687,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 			sig = new ResultSignature();
 
 			if (!GenericValidator.isBlankOrNull(testResult.getTechnicianSignatureId())) {
-				sig.setId(testResult.getTechnicianSignatureId());
-				resultSigDAO.getData(sig);
+				sig = resultSigService.get(testResult.getTechnicianSignatureId());
 			}
 
 			sig.setIsSupervisor(false);

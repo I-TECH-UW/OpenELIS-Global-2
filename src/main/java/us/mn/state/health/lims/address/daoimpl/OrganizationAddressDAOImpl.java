@@ -48,10 +48,9 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress>
 		String sql = "from OrganizationAddress pa where pa.compoundId.targetId = :organizationId";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("organizationId", Integer.parseInt(organizationId));
 			List<OrganizationAddress> addressPartList = query.list();
-			// closeSession(); // CSL remove old
 			return addressPartList;
 		} catch (HibernateException e) {
 			handleException(e, "getAddressPartsByOrganizationId");
@@ -94,8 +93,8 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress>
 
 	public OrganizationAddress readOrganizationAddress(OrganizationAddress organizationAddress) {
 		try {
-			OrganizationAddress oldOrganizationAddress = (OrganizationAddress) HibernateUtil.getSession()
-					.get(OrganizationAddress.class, organizationAddress.getCompoundId());
+			OrganizationAddress oldOrganizationAddress = HibernateUtil.getSession().get(OrganizationAddress.class,
+					organizationAddress.getCompoundId());
 			// closeSession(); // CSL remove old
 
 			return oldOrganizationAddress;

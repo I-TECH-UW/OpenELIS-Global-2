@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.Transaction;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -26,15 +25,13 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.test.form.BatchTestReassignmentForm;
 import spring.mine.test.validator.BatchTestReassignmentFormValidator;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
+import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.AnalysisService;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.test.action.BatchTestStatusChangeBean;
 import us.mn.state.health.lims.test.valueholder.Test;
 
@@ -44,7 +41,8 @@ public class BatchTestReassignmentController extends BaseController {
 	@Autowired
 	BatchTestReassignmentFormValidator formValidator;
 
-	private AnalysisDAO analysisDAO = new AnalysisDAOImpl();
+	@Autowired
+	private spring.service.analysis.AnalysisService analysisService;
 
 	@RequestMapping(value = "/BatchTestReassignment", method = RequestMethod.GET)
 	public ModelAndView showBatchTestReassignment(HttpServletRequest request)
@@ -79,24 +77,11 @@ public class BatchTestReassignmentController extends BaseController {
 		StatusChangedMetaInfo changedMetaInfo = new StatusChangedMetaInfo();
 		manageAnalysis(jsonString, cancelAnalysis, newAnalysis, changeBeans, changedMetaInfo);
 
-		String cancelStatus = StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Canceled);
-
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
-			for (Analysis analysis : cancelAnalysis) {
-				analysis.setStatusId(cancelStatus);
-				analysis.setSysUserId(getSysUserId(request));
-				analysisDAO.updateData(analysis);
-			}
+			analysisService.updateAnalysises(cancelAnalysis, newAnalysis, getSysUserId(request));
 
-			for (Analysis analysis : newAnalysis) {
-				analysis.setSysUserId(getSysUserId(request));
-				analysisDAO.insertData(analysis, false);
-			}
-
-			tx.commit();
 		} catch (LIMSRuntimeException e) {
-			tx.rollback();
+			LogEvent.logErrorStack(this.getClass().getSimpleName(), "showBatchTestReassignmentUpdate", e);
 		}
 
 		if (changeBeans.isEmpty()) {
@@ -277,7 +262,7 @@ public class BatchTestReassignmentController extends BaseController {
 		}
 
 		for (Object analysisId : modifyAnalysisArray) {
-			analysisList.add(analysisDAO.getAnalysisById((String) analysisId));
+			analysisList.add(analysisService.get((String) analysisId));
 		}
 
 		return analysisList;
