@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.provider.query.PatientSearchResults;
@@ -30,7 +33,11 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.patientidentitytype.util.PatientIdentityTypeMap;
 import us.mn.state.health.lims.sample.dao.SearchResultsDAO;
 
+@Component
 public class SearchResultsDAOImp implements SearchResultsDAO {
+
+	@Autowired
+	SessionFactory sessionFactory;
 
 	private static final String FIRST_NAME_PARAM = "firstName";
 	private static final String LAST_NAME_PARAM = "lastName";
@@ -40,12 +47,13 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
 	private static final String SUBJECT_NUMBER_PARAM = "subjectNumber";
 	private static final String ID_PARAM = "id";
 	private static final String GUID = "guid";
-    private static final Charset UTF_8 = Charset.forName("UTF-8");
+	private static final Charset UTF_8 = Charset.forName("UTF-8");
 
-
+	@Override
 	@SuppressWarnings("rawtypes")
-	public List<PatientSearchResults> getSearchResults(String lastName, String firstName, String STNumber, String subjectNumber,
-			String nationalID, String externalID, String patientID, String guid) throws LIMSRuntimeException {
+	public List<PatientSearchResults> getSearchResults(String lastName, String firstName, String STNumber,
+			String subjectNumber, String nationalID, String externalID, String patientID, String guid)
+			throws LIMSRuntimeException {
 
 		List queryResults;
 
@@ -60,8 +68,8 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
 			boolean queryPatientID = !GenericValidator.isBlankOrNull(patientID);
 			boolean queryGuid = !GenericValidator.isBlankOrNull(guid);
 
-			String sql = buildQueryString(queryLastName, queryFirstName, querySTNumber, querySubjectNumber, queryNationalId,
-					queryExternalId, queryAnyID, queryPatientID, queryGuid);
+			String sql = buildQueryString(queryLastName, queryFirstName, querySTNumber, querySubjectNumber,
+					queryNationalId, queryExternalId, queryAnyID, queryPatientID, queryGuid);
 
 			org.hibernate.Query query = HibernateUtil.getSession().createSQLQuery(sql);
 
@@ -84,10 +92,10 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
 				query.setString(SUBJECT_NUMBER_PARAM, subjectNumber);
 			}
 			if (queryPatientID) {
-			    query.setInteger(ID_PARAM, Integer.valueOf(patientID));
+				query.setInteger(ID_PARAM, Integer.valueOf(patientID));
 			}
 
-			if( queryGuid){
+			if (queryGuid) {
 				query.setString(GUID, guid);
 			}
 			queryResults = query.list();
@@ -98,14 +106,15 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
 			throw new LIMSRuntimeException("Error in SearchResultsDAOImpl getSearchResults()", e);
 		}
 
-		List<PatientSearchResults> results = new ArrayList<PatientSearchResults>();
+		List<PatientSearchResults> results = new ArrayList<>();
 
 		for (Object resultLine : queryResults) {
 
 			Object[] line = (Object[]) resultLine;
 
-			results.add(new PatientSearchResults((BigDecimal) line[0], (String) line[1], (String) line[2], (String) line[3],
-                    (String)line[4], (String) line[5], (String) line[6], (String) line[7], (String) line[8], (String) line[9], null));
+			results.add(new PatientSearchResults((BigDecimal) line[0], (String) line[1], (String) line[2],
+					(String) line[3], (String) line[4], (String) line[5], (String) line[6], (String) line[7],
+					(String) line[8], (String) line[9], null));
 		}
 
 		return results;
@@ -118,13 +127,15 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
 	 * @param subjectNumber
 	 * @param nationalID
 	 * @param externalID
-	 * @param patientID - if a previous query has already found a candidate patient
+	 * @param patientID     - if a previous query has already found a candidate
+	 *                      patient
 	 */
-	private String buildQueryString(boolean lastName, boolean firstName, boolean STNumber, boolean subjectNumber, boolean nationalID,
-			boolean externalID, boolean anyID, boolean patientID, boolean guid) {
+	private String buildQueryString(boolean lastName, boolean firstName, boolean STNumber, boolean subjectNumber,
+			boolean nationalID, boolean externalID, boolean anyID, boolean patientID, boolean guid) {
 
-        StringBuilder queryBuilder = new StringBuilder();
-		queryBuilder.append("select p.id, pr.first_name, pr.last_name, p.gender, p.entered_birth_date, p.national_id, p.external_id, pi.identity_data as st, piSN.identity_data as subject, piGUID.identity_data as guid from patient p join person pr on p.person_id = pr.id ");
+		StringBuilder queryBuilder = new StringBuilder();
+		queryBuilder.append(
+				"select p.id, pr.first_name, pr.last_name, p.gender, p.entered_birth_date, p.national_id, p.external_id, pi.identity_data as st, piSN.identity_data as subject, piGUID.identity_data as guid from patient p join person pr on p.person_id = pr.id ");
 		queryBuilder.append("left join patient_identity  pi on pi.patient_id = p.id and pi.identity_type_id = '");
 		queryBuilder.append(PatientIdentityTypeMap.getInstance().getIDForType("ST"));
 		queryBuilder.append("' ");
@@ -133,13 +144,14 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
 		queryBuilder.append(PatientIdentityTypeMap.getInstance().getIDForType("SUBJECT"));
 		queryBuilder.append("' ");
 
-		queryBuilder.append("left join patient_identity  piGUID on piGUID.patient_id = p.id and piGUID.identity_type_id = '");
+		queryBuilder.append(
+				"left join patient_identity  piGUID on piGUID.patient_id = p.id and piGUID.identity_type_id = '");
 		queryBuilder.append(PatientIdentityTypeMap.getInstance().getIDForType("GUID"));
 		queryBuilder.append("' where ");
 
 		if (lastName) {
 			queryBuilder.append(" pr.last_name ilike :");
-			queryBuilder.append( LAST_NAME_PARAM );
+			queryBuilder.append(LAST_NAME_PARAM);
 			queryBuilder.append(" and");
 		}
 
@@ -189,26 +201,26 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
 		}
 
 		if (patientID) {
-            queryBuilder.append(" p.id = :");
-            queryBuilder.append(ID_PARAM);
-            queryBuilder.append(" or");
+			queryBuilder.append(" p.id = :");
+			queryBuilder.append(ID_PARAM);
+			queryBuilder.append(" or");
 		}
 
-		if( guid){
+		if (guid) {
 			queryBuilder.append(" piGUID.identity_data = :");
-            queryBuilder.append(GUID);
-            queryBuilder.append(" or");
+			queryBuilder.append(GUID);
+			queryBuilder.append(" or");
 		}
 		// No matter which was added last there is one dangling AND to remove.
 		int lastAndIndex = queryBuilder.lastIndexOf("and");
 		int lastOrIndex = queryBuilder.lastIndexOf("or");
-		
-		if( lastAndIndex > lastOrIndex){
+
+		if (lastAndIndex > lastOrIndex) {
 			queryBuilder.delete(lastAndIndex, queryBuilder.length());
-		}else if( lastOrIndex > lastAndIndex){
+		} else if (lastOrIndex > lastAndIndex) {
 			queryBuilder.delete(lastOrIndex, queryBuilder.length());
 		}
-		
+
 		return queryBuilder.toString();
 	}
 

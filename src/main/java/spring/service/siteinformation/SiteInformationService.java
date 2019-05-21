@@ -11,4 +11,6 @@ public interface SiteInformationService extends BaseObjectService<SiteInformatio
 
 	int getCountForDomainName(String dbDomainName);
 
+	SiteInformation getSiteInformationByName(String name);
+
 }

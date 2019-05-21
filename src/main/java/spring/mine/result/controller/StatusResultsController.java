@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,8 +20,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.result.form.StatusResultsForm;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.analysis.AnalysisService;
+import spring.service.sample.SampleService;
+import spring.service.sampleitem.SampleItemService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.StatusService;
@@ -33,21 +35,20 @@ import us.mn.state.health.lims.inventory.action.InventoryUtility;
 import us.mn.state.health.lims.inventory.form.InventoryKitItem;
 import us.mn.state.health.lims.result.action.util.ResultsLoadUtility;
 import us.mn.state.health.lims.result.action.util.ResultsPaging;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.sampleitem.dao.SampleItemDAO;
-import us.mn.state.health.lims.sampleitem.daoimpl.SampleItemDAOImpl;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
 @Controller
 public class StatusResultsController extends BaseController {
 
-	private static final long serialVersionUID = 1L;
 	private static final boolean REVERSE_SORT_ORDER = false;
-	private final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-	private final SampleDAO sampleDAO = new SampleDAOImpl();
+	@Autowired
+	private AnalysisService analysisService;
+	@Autowired
+	private SampleService sampleService;
+	@Autowired
+	SampleItemService sampleItemService;
 	private ResultsLoadUtility resultsUtility;
 	private final InventoryUtility inventoryUtility = new InventoryUtility();
 	private static final ConfigurationProperties configProperties = ConfigurationProperties.getInstance();
@@ -224,24 +225,23 @@ public class StatusResultsController extends BaseController {
 
 	private List<Analysis> getAnalysisForCollectionDate(String collectionDate) {
 		Date date = DateUtil.convertStringDateToSqlDate(collectionDate);
-		return analysisDAO.getAnalysisCollectedOnExcludedByStatusId(date, excludedStatusIds);
+		return analysisService.getAnalysisCollectedOnExcludedByStatusId(date, excludedStatusIds);
 	}
 
 	private List<Analysis> getAnalysisForRecievedDate(String recievedDate) {
-		List<Sample> sampleList = sampleDAO.getSamplesReceivedOn(recievedDate);
+		List<Sample> sampleList = sampleService.getSamplesReceivedOn(recievedDate);
 
 		return getAnalysisListForSampleItems(sampleList);
 	}
 
 	private List<Analysis> getAnalysisListForSampleItems(List<Sample> sampleList) {
 		List<Analysis> analysisList = new ArrayList<>();
-		SampleItemDAO sampleItemDAO = new SampleItemDAOImpl();
 
 		for (Sample sample : sampleList) {
-			List<SampleItem> sampleItemList = sampleItemDAO.getSampleItemsBySampleId(sample.getId());
+			List<SampleItem> sampleItemList = sampleItemService.getSampleItemsBySampleId(sample.getId());
 
 			for (SampleItem sampleItem : sampleItemList) {
-				List<Analysis> analysisListForItem = analysisDAO
+				List<Analysis> analysisListForItem = analysisService
 						.getAnalysesBySampleItemsExcludingByStatusIds(sampleItem, excludedStatusIds);
 
 				analysisList.addAll(analysisListForItem);
@@ -252,18 +252,18 @@ public class StatusResultsController extends BaseController {
 	}
 
 	private List<Analysis> getAnalysisForAnalysisStatus(String status) {
-		return analysisDAO.getAnalysesForStatusId(status);
+		return analysisService.getAnalysesForStatusId(status);
 	}
 
 	private List<Analysis> getAnalysisForSampleStatus(String sampleStatus) {
-		return analysisDAO.getAnalysesBySampleStatusIdExcludingByStatusId(sampleStatus, excludedStatusIds);
+		return analysisService.getAnalysesBySampleStatusIdExcludingByStatusId(sampleStatus, excludedStatusIds);
 	}
 
 	@SuppressWarnings("unchecked")
 	private List<Analysis> getAnalysisForTest(String testId) {
 		List<Integer> excludedStatusIntList = new ArrayList<>();
 		excludedStatusIntList.addAll(excludedStatusIds);
-		return analysisDAO.getAllAnalysisByTestAndExcludedStatus(testId, excludedStatusIntList);
+		return analysisService.getAllAnalysisByTestAndExcludedStatus(testId, excludedStatusIntList);
 	}
 
 	private List<TestResultItem> buildTestItems(List<Analysis> analysisList) {

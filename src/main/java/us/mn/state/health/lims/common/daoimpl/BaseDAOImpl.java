@@ -55,7 +55,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 @Component("baseObjectDAO")
 public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionConstants {
 
-	static final int DEFAULT_PAGE_SIZE = SystemConfiguration.getInstance().getDefaultPageSize();
+	protected static final int DEFAULT_PAGE_SIZE = SystemConfiguration.getInstance().getDefaultPageSize();
 	private static final int RANDOM_ALIAS_LENGTH = 5;
 	private static final String MULTI_NESTED_MARKING = ",";
 

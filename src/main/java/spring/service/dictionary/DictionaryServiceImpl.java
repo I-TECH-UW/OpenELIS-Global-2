@@ -105,4 +105,10 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary> imp
 			boolean orderByDictEntry) {
 		return baseObjectDAO.getDictionaryEntrysByCategoryAbbreviation(fieldName, fieldValue, orderByDictEntry);
 	}
+
+	@Override
+	@Transactional
+	public List<Dictionary> getDictionaryEntriesByCategoryId(String dictionaryCategoryId) {
+		return baseObjectDAO.getAllMatching("dictionaryCategory.id", dictionaryCategoryId);
+	}
 }

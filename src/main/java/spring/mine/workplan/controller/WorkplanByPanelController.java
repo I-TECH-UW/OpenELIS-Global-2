@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,8 +18,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.workplan.form.WorkplanForm;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.analysis.AnalysisService;
+import spring.service.panel.PanelService;
+import spring.service.panelitem.PanelItemService;
+import spring.service.sampleqaevent.SampleQaEventService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -30,23 +33,21 @@ import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.panel.dao.PanelDAO;
-import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
-import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
-import us.mn.state.health.lims.panelitem.daoimpl.PanelItemDAOImpl;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
-import us.mn.state.health.lims.sampleqaevent.daoimpl.SampleQaEventDAOImpl;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
 @Controller
 public class WorkplanByPanelController extends BaseWorkplanController {
-
-	private final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-	private final PanelDAO panelDAO = new PanelDAOImpl();
-	private final PanelItemDAO panelItemDAO = new PanelItemDAOImpl();
+	@Autowired
+	private AnalysisService analysisService;
+	@Autowired
+	private PanelService panelService;
+	@Autowired
+	private PanelItemService panelItemService;
+	@Autowired
+	private SampleQaEventService sampleQaEventService;
 
 	@RequestMapping(value = "/WorkPlanByPanel", method = RequestMethod.GET)
 	public ModelAndView showWorkPlanByTest(HttpServletRequest request)
@@ -92,10 +93,10 @@ public class WorkplanByPanelController extends BaseWorkplanController {
 
 		if (!(GenericValidator.isBlankOrNull(panelId) || panelId.equals("0"))) {
 
-			List<PanelItem> panelItems = panelItemDAO.getPanelItemsForPanel(panelId);
+			List<PanelItem> panelItems = panelItemService.getPanelItemsForPanel(panelId);
 
 			for (PanelItem panelItem : panelItems) {
-				List<Analysis> analysisList = analysisDAO.getAllAnalysisByTestAndStatus(panelItem.getTest().getId(),
+				List<Analysis> analysisList = analysisService.getAllAnalysisByTestAndStatus(panelItem.getTest().getId(),
 						statusList);
 
 				for (Analysis analysis : analysisList) {
@@ -177,7 +178,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
 	}
 
 	private String getPanelName(String panelId) {
-		return panelDAO.getNameForPanelId(panelId);
+		return panelService.get(panelId).getName();
 	}
 
 	private boolean getQaEventByTestSection(Analysis analysis) {
@@ -198,8 +199,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
 	}
 
 	public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
-		SampleQaEventDAO sampleQaEventDAO = new SampleQaEventDAOImpl();
-		return sampleQaEventDAO.getSampleQaEventsBySample(sample);
+		return sampleQaEventService.getSampleQaEventsBySample(sample);
 	}
 
 	@Override

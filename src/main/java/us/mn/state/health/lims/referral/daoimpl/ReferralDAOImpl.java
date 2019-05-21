@@ -63,7 +63,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDA
 	@Override
 	public Referral getReferralById(String referralId) throws LIMSRuntimeException {
 		try {
-			Referral referral = (Referral) HibernateUtil.getSession().get(Referral.class, referralId);
+			Referral referral = HibernateUtil.getSession().get(Referral.class, referralId);
 			// closeSession(); // CSL remove old
 			return referral;
 		} catch (HibernateException e) {
@@ -100,9 +100,8 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDA
 		String sql = "From Referral r where r.resultRecievedDate is NULL and r.canceled = 'false' order by r.id";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			List<Referral> referrals = query.list();
-			// closeSession(); // CSL remove old
 			return referrals;
 		} catch (HibernateException e) {
 			handleException(e, "getAllUncanceledOpenReferrals");
@@ -112,7 +111,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral> implements ReferralDA
 
 	private Referral readResult(String referralId) {
 		try {
-			Referral referral = (Referral) HibernateUtil.getSession().get(Referral.class, referralId);
+			Referral referral = HibernateUtil.getSession().get(Referral.class, referralId);
 			// closeSession(); // CSL remove old
 			return referral;
 		} catch (HibernateException e) {

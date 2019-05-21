@@ -7,9 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.StaleObjectStateException;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -22,11 +22,20 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.sample.form.SamplePatientEntryForm;
 import spring.mine.sample.validator.SamplePatientEntryFormValidator;
-import us.mn.state.health.lims.address.dao.OrganizationAddressDAO;
-import us.mn.state.health.lims.address.daoimpl.OrganizationAddressDAOImpl;
+import spring.service.address.OrganizationAddressService;
+import spring.service.analysis.AnalysisService;
+import spring.service.dataexchange.order.ElectronicOrderService;
+import spring.service.observationhistory.ObservationHistoryService;
+import spring.service.organization.OrganizationService;
+import spring.service.person.PersonService;
+import spring.service.provider.ProviderService;
+import spring.service.requester.SampleRequesterService;
+import spring.service.sample.SampleService;
+import spring.service.samplehuman.SampleHumanService;
+import spring.service.sampleitem.SampleItemService;
+import spring.service.test.TestSectionService;
+import spring.service.test.TestService;
 import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
@@ -43,41 +52,16 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
-import us.mn.state.health.lims.dataexchange.order.dao.ElectronicOrderDAO;
-import us.mn.state.health.lims.dataexchange.order.daoimpl.ElectronicOrderDAOImpl;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
-import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.dao.OrganizationOrganizationTypeDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationOrganizationTypeDAOImpl;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.patient.action.IPatientUpdate;
 import us.mn.state.health.lims.patient.action.IPatientUpdate.PatientUpdateStatus;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
-import us.mn.state.health.lims.person.dao.PersonDAO;
-import us.mn.state.health.lims.person.daoimpl.PersonDAOImpl;
-import us.mn.state.health.lims.provider.dao.ProviderDAO;
-import us.mn.state.health.lims.provider.daoimpl.ProviderDAOImpl;
-import us.mn.state.health.lims.requester.dao.SampleRequesterDAO;
-import us.mn.state.health.lims.requester.daoimpl.SampleRequesterDAOImpl;
 import us.mn.state.health.lims.requester.valueholder.SampleRequester;
 import us.mn.state.health.lims.sample.action.util.SamplePatientUpdateData;
 import us.mn.state.health.lims.sample.bean.SampleOrderItem;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
-import us.mn.state.health.lims.sampleitem.dao.SampleItemDAO;
-import us.mn.state.health.lims.sampleitem.daoimpl.SampleItemDAOImpl;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.dao.TestSectionDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
-import us.mn.state.health.lims.test.daoimpl.TestSectionDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 
@@ -88,11 +72,32 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 	SamplePatientEntryFormValidator formValidator;
 
 	private static final String DEFAULT_ANALYSIS_TYPE = "MANUAL";
-	private OrganizationDAO orgDAO = new OrganizationDAOImpl();
-	private OrganizationAddressDAO orgAddressDAO = new OrganizationAddressDAOImpl();
-	private OrganizationOrganizationTypeDAO orgOrgTypeDAO = new OrganizationOrganizationTypeDAOImpl();
-	private TestSectionDAO testSectionDAO = new TestSectionDAOImpl();
-	private ElectronicOrderDAO electronicOrderDAO = new ElectronicOrderDAOImpl();
+	@Autowired
+	private OrganizationService organizationService;
+	@Autowired
+	private OrganizationAddressService organizationAddressService;
+	@Autowired
+	private TestSectionService testSectionService;
+	@Autowired
+	private ElectronicOrderService electronicOrderService;
+	@Autowired
+	private ObservationHistoryService observationHistoryService;
+	@Autowired
+	private PersonService personService;
+	@Autowired
+	private ProviderService providerService;
+	@Autowired
+	private SampleService sampleService;
+	@Autowired
+	private SampleHumanService sampleHumanService;
+	@Autowired
+	private SampleItemService sampleItemService;
+	@Autowired
+	private AnalysisService analysisService;
+	@Autowired
+	private TestService testService;
+	@Autowired
+	private SampleRequesterService sampleRequesterService;
 
 	@RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.GET)
 	public ModelAndView showSamplePatientEntry(HttpServletRequest request)
@@ -136,7 +141,6 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 		}
 		SamplePatientUpdateData updateData = new SamplePatientUpdateData(getSysUserId(request));
 
-		boolean useInitialSampleCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
 		PatientManagementInfo patientInfo = (PatientManagementInfo) PropertyUtils.getProperty(form,
 				"patientProperties");
 		SampleOrderItem sampleOrder = (SampleOrderItem) PropertyUtils.getProperty(form, "sampleOrderItems");
@@ -170,34 +174,9 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
-			persistOrganizationData(updateData);
-
-			if (updateData.isSavePatient()) {
-				patientUpdate.persistPatientData(patientInfo);
-			}
-
-			updateData.setPatientId(patientUpdate.getPatientId(form));
-
-			persistProviderData(updateData);
-			persistSampleData(updateData);
-			persistRequesterData(updateData);
-			if (useInitialSampleCondition) {
-				persistInitialSampleConditions(updateData);
-			}
-
-			persistObservations(updateData);
-
-			tx.commit();
-
-			request.getSession().setAttribute("lastAccessionNumber", updateData.getAccessionNumber());
-			request.getSession().setAttribute("lastPatientId", updateData.getPatientId());
-
+			persistData(updateData, patientUpdate, patientInfo, form);
 		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
-
 			// ActionError error;
 			if (lre.getException() instanceof StaleObjectStateException) {
 				// error = new ActionError("errors.OptimisticLockException", null, null);
@@ -214,21 +193,44 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 			request.setAttribute(ALLOW_EDITS_KEY, "false");
 			return findForward(FWD_FAIL_INSERT, form);
 
-		} finally {
-			HibernateUtil.closeSession();
 		}
 
 		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
+	@Transactional
+	public void persistData(SamplePatientUpdateData updateData, PatientManagementUpdate patientUpdate,
+			PatientManagementInfo patientInfo, SamplePatientEntryForm form) {
+		boolean useInitialSampleCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
+
+		persistOrganizationData(updateData);
+
+		if (updateData.isSavePatient()) {
+			patientUpdate.persistPatientData(patientInfo);
+		}
+
+		updateData.setPatientId(patientUpdate.getPatientId(form));
+
+		persistProviderData(updateData);
+		persistSampleData(updateData);
+		persistRequesterData(updateData);
+		if (useInitialSampleCondition) {
+			persistInitialSampleConditions(updateData);
+		}
+
+		persistObservations(updateData);
+
+		request.getSession().setAttribute("lastAccessionNumber", updateData.getAccessionNumber());
+		request.getSession().setAttribute("lastPatientId", updateData.getPatientId());
+	}
+
 	private void persistObservations(SamplePatientUpdateData updateData) {
 
-		ObservationHistoryDAO observationDAO = new ObservationHistoryDAOImpl();
 		for (ObservationHistory observation : updateData.getObservations()) {
 			observation.setSampleId(updateData.getSample().getId());
 			observation.setPatientId(updateData.getPatientId());
-			observationDAO.insertData(observation);
+			observationHistoryService.insert(observation);
 		}
 	}
 
@@ -249,45 +251,38 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 	private void persistOrganizationData(SamplePatientUpdateData updateData) {
 		Organization newOrganization = updateData.getNewOrganization();
 		if (newOrganization != null) {
-			orgDAO.insertData(newOrganization);
-			orgOrgTypeDAO.linkOrganizationAndType(newOrganization, TableIdService.REFERRING_ORG_TYPE_ID);
+			organizationService.insert(newOrganization);
+			organizationService.linkOrganizationAndType(newOrganization, TableIdService.REFERRING_ORG_TYPE_ID);
 			if (updateData.getRequesterSite() != null) {
 				updateData.getRequesterSite().setRequesterId(newOrganization.getId());
 			}
 
 			for (OrganizationAddress address : updateData.getOrgAddressExtra()) {
 				address.setOrganizationId(newOrganization.getId());
-				orgAddressDAO.insert(address);
+				organizationAddressService.insert(address);
 			}
 		}
 
 		if (updateData.getCurrentOrganization() != null) {
-			orgDAO.updateData(updateData.getCurrentOrganization());
+			organizationService.update(updateData.getCurrentOrganization());
 		}
 
 	}
 
 	private void persistProviderData(SamplePatientUpdateData updateData) {
 		if (updateData.getProviderPerson() != null && updateData.getProvider() != null) {
-			PersonDAO personDAO = new PersonDAOImpl();
-			ProviderDAO providerDAO = new ProviderDAOImpl();
 
-			personDAO.insertData(updateData.getProviderPerson());
+			personService.insert(updateData.getProviderPerson());
 			updateData.getProvider().setPerson(updateData.getProviderPerson());
 
-			providerDAO.insertData(updateData.getProvider());
+			providerService.insert(updateData.getProvider());
 		}
 	}
 
 	private void persistSampleData(SamplePatientUpdateData updateData) {
-		SampleDAO sampleDAO = new SampleDAOImpl();
-		SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
-		SampleItemDAO sampleItemDAO = new SampleItemDAOImpl();
-		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-		TestDAO testDAO = new TestDAOImpl();
 		String analysisRevision = SystemConfiguration.getInstance().getAnalysisDefaultRevision();
 
-		sampleDAO.insertDataWithAccessionNumber(updateData.getSample());
+		sampleService.insertDataWithAccessionNumber(updateData.getSample());
 
 		// if (!GenericValidator.isBlankOrNull(projectId)) {
 		// persistSampleProject();
@@ -295,25 +290,25 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
 		for (SampleTestCollection sampleTestCollection : updateData.getSampleItemsTests()) {
 
-			sampleItemDAO.insertData(sampleTestCollection.item);
+			sampleItemService.insert(sampleTestCollection.item);
 
 			for (Test test : sampleTestCollection.tests) {
-				testDAO.getData(test);
+				test = testService.get(test.getId());
 
 				Analysis analysis = populateAnalysis(analysisRevision, sampleTestCollection, test,
 						sampleTestCollection.testIdToUserSectionMap.get(test.getId()),
 						sampleTestCollection.testIdToUserSampleTypeMap.get(test.getId()), updateData);
-				analysisDAO.insertData(analysis, false); // false--do not check for duplicates
+				analysisService.insert(analysis, false); // false--do not check for duplicates
 			}
 
 		}
 
 		updateData.buildSampleHuman();
 
-		sampleHumanDAO.insertData(updateData.getSampleHuman());
+		sampleHumanService.insert(updateData.getSampleHuman());
 
 		if (updateData.getElectronicOrder() != null) {
-			electronicOrderDAO.updateData(updateData.getElectronicOrder());
+			electronicOrderService.update(updateData.getElectronicOrder());
 		}
 	}
 
@@ -330,7 +325,6 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 	 */
 
 	private void persistRequesterData(SamplePatientUpdateData updateData) {
-		SampleRequesterDAO sampleRequesterDAO = new SampleRequesterDAOImpl();
 		if (updateData.getProviderPerson() != null
 				&& !GenericValidator.isBlankOrNull(updateData.getProviderPerson().getId())) {
 			SampleRequester sampleRequester = new SampleRequester();
@@ -338,7 +332,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 			sampleRequester.setRequesterTypeId(TableIdService.PROVIDER_REQUESTER_TYPE_ID);
 			sampleRequester.setSampleId(Long.parseLong(updateData.getSample().getId()));
 			sampleRequester.setSysUserId(updateData.getCurrentUserId());
-			sampleRequesterDAO.insertData(sampleRequester);
+			sampleRequesterService.insert(sampleRequester);
 		}
 
 		if (updateData.getRequesterSite() != null) {
@@ -346,12 +340,11 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 			if (updateData.getNewOrganization() != null) {
 				updateData.getRequesterSite().setRequesterId(updateData.getNewOrganization().getId());
 			}
-			sampleRequesterDAO.insertData(updateData.getRequesterSite());
+			sampleRequesterService.insert(updateData.getRequesterSite());
 		}
 	}
 
 	private void persistInitialSampleConditions(SamplePatientUpdateData updateData) {
-		ObservationHistoryDAO ohDAO = new ObservationHistoryDAOImpl();
 
 		for (SampleTestCollection sampleTestCollection : updateData.getSampleItemsTests()) {
 			List<ObservationHistory> initialConditions = sampleTestCollection.initialSampleConditionIdList;
@@ -362,7 +355,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 					observation.setSampleItemId(sampleTestCollection.item.getId());
 					observation.setPatientId(updateData.getPatientId());
 					observation.setSysUserId(updateData.getCurrentUserId());
-					ohDAO.insertData(observation);
+					observationHistoryService.insert(observation);
 				}
 			}
 		}
@@ -373,7 +366,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 		java.sql.Date collectionDateTime = DateUtil.convertStringDateTimeToSqlDate(sampleTestCollection.collectionDate);
 		TestSection testSection = test.getTestSection();
 		if (!GenericValidator.isBlankOrNull(userSelectedTestSection)) {
-			testSection = testSectionDAO.getTestSectionById(userSelectedTestSection);
+			testSection = testSectionService.get(userSelectedTestSection);
 		}
 
 		Panel panel = updateData.getSampleAddService().getPanelForTest(test);

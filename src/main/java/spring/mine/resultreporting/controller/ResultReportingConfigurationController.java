@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,26 +21,23 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.resultreporting.form.ResultReportingConfigurationForm;
+import spring.service.scheduler.CronSchedulerService;
+import spring.service.siteinformation.SiteInformationService;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.services.ExchangeConfigurationService;
 import us.mn.state.health.lims.common.services.ExchangeConfigurationService.ConfigurationDomain;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.dataexchange.resultreporting.beans.ReportingConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.scheduler.LateStartScheduler;
-import us.mn.state.health.lims.scheduler.dao.CronSchedulerDAO;
-import us.mn.state.health.lims.scheduler.daoimpl.CronSchedulerDAOImpl;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
-import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 @Controller
 public class ResultReportingConfigurationController extends BaseController {
 
-	private SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
-	private CronSchedulerDAO schedulerDAO = new CronSchedulerDAOImpl();
+	private SiteInformationService siteInformationService;
+	private CronSchedulerService schedulerService;
 	private static final String NEVER = "never";
 	private static final String CRON_POSTFIX = "? * *";
 	private static final String CRON_PREFIX = "0 ";
@@ -90,24 +87,10 @@ public class ResultReportingConfigurationController extends BaseController {
 			}
 		}
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
-			for (SiteInformation info : informationList) {
-				siteInformationDAO.updateData(info);
-			}
-
-			for (CronScheduler scheduler : scheduleList) {
-				schedulerDAO.update(scheduler);
-			}
-
-			tx.commit();
-			ConfigurationProperties.forceReload();
+			updateInformationAndSchedulers(informationList, scheduleList);
 		} catch (HibernateException e) {
-			tx.rollback();
 			return findForward(FWD_FAIL_INSERT, form);
-		} finally {
-
 		}
 
 		ConfigurationProperties.forceReload();
@@ -117,8 +100,22 @@ public class ResultReportingConfigurationController extends BaseController {
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
+	@Transactional
+	private void updateInformationAndSchedulers(List<SiteInformation> informationList,
+			List<CronScheduler> scheduleList) {
+		for (SiteInformation info : informationList) {
+			siteInformationService.update(info);
+		}
+
+		for (CronScheduler scheduler : scheduleList) {
+			schedulerService.update(scheduler);
+		}
+
+		ConfigurationProperties.forceReload();
+	}
+
 	private CronScheduler setScheduleInformationFor(ReportingConfiguration config) {
-		CronScheduler scheduler = schedulerDAO.getCronScheduleById(config.getSchedulerId());
+		CronScheduler scheduler = schedulerService.get(config.getSchedulerId());
 
 		if (scheduler != null) {
 			String cronStatement = createCronStatement(config.getScheduleHours(), config.getScheduleMin(), false);
@@ -152,7 +149,7 @@ public class ResultReportingConfigurationController extends BaseController {
 	}
 
 	private SiteInformation setSiteInformationFor(String value, String id) {
-		SiteInformation siteInformation = siteInformationDAO.getSiteInformationById(id);
+		SiteInformation siteInformation = siteInformationService.get(id);
 
 		if (siteInformation.getId() != null) {
 

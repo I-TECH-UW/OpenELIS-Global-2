@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,8 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.workplan.form.WorkplanForm;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.analysis.AnalysisService;
+import spring.service.sampleqaevent.SampleQaEventService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -33,15 +34,16 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.result.action.util.ResultsLoadUtility;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
-import us.mn.state.health.lims.sampleqaevent.daoimpl.SampleQaEventDAOImpl;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
 @Controller
 public class WorkPlanByTestController extends BaseWorkplanController {
 
-	private final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
+	@Autowired
+	private AnalysisService analysisService;
+	@Autowired
+	private SampleQaEventService sampleQaEventService;
 	private static boolean HAS_NFS_PANEL = false;
 
 	static {
@@ -126,7 +128,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 
 		if (!(GenericValidator.isBlankOrNull(testType) || testType.equals("0"))) {
 
-			testList = analysisDAO.getAllAnalysisByTestAndStatus(testType, statusList);
+			testList = analysisService.getAllAnalysisByTestAndStatus(testType, statusList);
 
 			if (testList.isEmpty()) {
 				return new ArrayList<>();
@@ -178,7 +180,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 
 		if (!(GenericValidator.isBlankOrNull(testType) || testType.equals("0"))) {
 
-			testList = analysisDAO.getAllAnalysisByTestsAndStatus(nfsTestIdList, statusList);
+			testList = analysisService.getAllAnalysisByTestsAndStatus(nfsTestIdList, statusList);
 
 			if (testList.isEmpty()) {
 				return new ArrayList<>();
@@ -235,8 +237,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 	}
 
 	public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
-		SampleQaEventDAO sampleQaEventDAO = new SampleQaEventDAOImpl();
-		return sampleQaEventDAO.getSampleQaEventsBySample(sample);
+		return sampleQaEventService.getSampleQaEventsBySample(sample);
 	}
 
 	@Override

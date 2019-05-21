@@ -1,5 +1,6 @@
 package spring.service.userrole;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,5 +36,11 @@ public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole> impleme
 //		}
 //		return userRoleIds;
 		return baseObjectDAO.getRoleIdsForUser(userId);
+	}
+
+	@Override
+	@Transactional
+	public boolean userInRole(String sysUserId, Collection<String> ableToCancelRoleNames) {
+		return baseObjectDAO.userInRole(sysUserId, ableToCancelRoleNames);
 	}
 }

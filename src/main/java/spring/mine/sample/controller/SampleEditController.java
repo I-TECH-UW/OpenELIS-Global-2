@@ -16,9 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
@@ -32,8 +32,18 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.sample.form.SampleEditForm;
 import spring.mine.sample.validator.SampleEditFormValidator;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.analysis.AnalysisService;
+import spring.service.observationhistory.ObservationHistoryService;
+import spring.service.organization.OrganizationService;
+import spring.service.person.PersonService;
+import spring.service.requester.SampleRequesterService;
+import spring.service.result.ResultService;
+import spring.service.samplehuman.SampleHumanService;
+import spring.service.sampleitem.SampleItemService;
+import spring.service.test.TestSectionService;
+import spring.service.typeofsample.TypeOfSampleService;
+import spring.service.typeofsample.TypeOfSampleTestService;
+import spring.service.userrole.UserRoleService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
@@ -56,52 +66,24 @@ import us.mn.state.health.lims.common.services.registration.ResultUpdateRegister
 import us.mn.state.health.lims.common.services.registration.interfaces.IResultUpdate;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dataexchange.orderresult.OrderResponseWorker.Event;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.login.dao.UserModuleService;
-import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
-import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
-import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.dao.OrganizationOrganizationTypeDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationOrganizationTypeDAOImpl;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.person.dao.PersonDAO;
-import us.mn.state.health.lims.person.daoimpl.PersonDAOImpl;
 import us.mn.state.health.lims.person.valueholder.Person;
-import us.mn.state.health.lims.requester.dao.SampleRequesterDAO;
-import us.mn.state.health.lims.requester.daoimpl.SampleRequesterDAOImpl;
 import us.mn.state.health.lims.requester.valueholder.SampleRequester;
 import us.mn.state.health.lims.result.action.util.ResultSet;
 import us.mn.state.health.lims.result.action.util.ResultsUpdateDataSet;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.bean.SampleEditItem;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.util.AccessionNumberUtil;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
-import us.mn.state.health.lims.sampleitem.dao.SampleItemDAO;
-import us.mn.state.health.lims.sampleitem.daoimpl.SampleItemDAOImpl;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.dao.TestSectionDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
-import us.mn.state.health.lims.test.daoimpl.TestSectionDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestSection;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleTestDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
-import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
 
 @Controller
 public class SampleEditController extends BaseController {
@@ -110,31 +92,18 @@ public class SampleEditController extends BaseController {
 	SampleEditFormValidator formValidator;
 
 	private static final String DEFAULT_ANALYSIS_TYPE = "MANUAL";
-	private static final SampleItemDAO sampleItemDAO = new SampleItemDAOImpl();
-	private static final SampleDAO sampleDAO = new SampleDAOImpl();
-	private static final TestDAO testDAO = new TestDAOImpl();
 	private static final String CANCELED_TEST_STATUS_ID;
 	private static final String CANCELED_SAMPLE_STATUS_ID;
 	// private ObservationHistory paymentObservation = null;
-	private static final ObservationHistoryDAO observationDAO = new ObservationHistoryDAOImpl();
-	private static final TestSectionDAO testSectionDAO = new TestSectionDAOImpl();
-	private static final PersonDAO personDAO = new PersonDAOImpl();
-	private static final SampleRequesterDAO sampleRequesterDAO = new SampleRequesterDAOImpl();
-	private static final OrganizationDAO organizationDAO = new OrganizationDAOImpl();
-	private static final OrganizationOrganizationTypeDAO orgOrgTypeDAO = new OrganizationOrganizationTypeDAOImpl();
+	private static final SampleEditItemComparator testComparator = new SampleEditItemComparator();
+	private static final Set<Integer> excludedAnalysisStatusList;
+	private static final Set<Integer> ENTERED_STATUS_SAMPLE_LIST = new HashSet<>();
+	private static final Collection<String> ABLE_TO_CANCEL_ROLE_NAMES = new ArrayList<>();
 
 	static {
 		CANCELED_TEST_STATUS_ID = StatusService.getInstance().getStatusID(AnalysisStatus.Canceled);
 		CANCELED_SAMPLE_STATUS_ID = StatusService.getInstance().getStatusID(SampleStatus.Canceled);
 	}
-
-	private static final TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
-	private static final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-	private static final UserModuleService userModuleService = new UserModuleServiceImpl();
-	private static final SampleEditItemComparator testComparator = new SampleEditItemComparator();
-	private static final Set<Integer> excludedAnalysisStatusList;
-	private static final Set<Integer> ENTERED_STATUS_SAMPLE_LIST = new HashSet<>();
-	private static final Collection<String> ABLE_TO_CANCEL_ROLE_NAMES = new ArrayList<>();
 
 	static {
 		excludedAnalysisStatusList = new HashSet<>();
@@ -147,6 +116,39 @@ public class SampleEditController extends BaseController {
 		ABLE_TO_CANCEL_ROLE_NAMES.add("Biologist");
 	}
 
+	@Autowired
+	private SampleItemService sampleItemService;
+	@Autowired
+	private spring.service.sample.SampleService sampleService;
+	@Autowired
+	private spring.service.test.TestService testService;
+	@Autowired
+	private ObservationHistoryService observationService;
+	@Autowired
+	private TestSectionService testSectionService;
+	@Autowired
+	private PersonService personService;
+	@Autowired
+	private SampleRequesterService sampleRequesterService;
+	@Autowired
+	private OrganizationService organizationService;
+//	@Autowired
+//	private OrganizationOrganizationTypeService orgOrgTypeService;
+	@Autowired
+	private TypeOfSampleService typeOfSampleService;
+	@Autowired
+	private AnalysisService analysisService;
+	@Autowired
+	private UserModuleService userModuleService;
+	@Autowired
+	TypeOfSampleTestService typeOfSampleTestService;
+	@Autowired
+	ResultService resultService;
+	@Autowired
+	SampleHumanService sampleHumanService;
+	@Autowired
+	UserRoleService userRoleService;
+
 	@RequestMapping(value = "/SampleEdit", method = RequestMethod.GET)
 	public ModelAndView showSampleEdit(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -156,7 +158,7 @@ public class SampleEditController extends BaseController {
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
 		boolean allowedToCancelResults = userModuleService.isUserAdmin(request)
-				|| new UserRoleDAOImpl().userInRole(getSysUserId(request), ABLE_TO_CANCEL_ROLE_NAMES);
+				|| userRoleService.userInRole(getSysUserId(request), ABLE_TO_CANCEL_ROLE_NAMES);
 		boolean isEditable = "readwrite".equals(request.getSession().getAttribute(SAMPLE_EDIT_WRITABLE))
 				|| "readwrite".equals(request.getParameter("type"));
 		PropertyUtils.setProperty(form, "isEditable", isEditable);
@@ -235,7 +237,7 @@ public class SampleEditController extends BaseController {
 	private String getMostRecentAccessionNumberForPaitient(String patientID) {
 		String accessionNumber = null;
 		if (!GenericValidator.isBlankOrNull(patientID)) {
-			List<Sample> samples = new SampleHumanDAOImpl().getSamplesForPatient(patientID);
+			List<Sample> samples = sampleService.getSamplesForPatient(patientID);
 
 			int maxId = 0;
 			for (Sample sample : samples) {
@@ -250,20 +252,18 @@ public class SampleEditController extends BaseController {
 	}
 
 	private Sample getSample(String accessionNumber) {
-		SampleDAO sampleDAO = new SampleDAOImpl();
-		return sampleDAO.getSampleByAccessionNumber(accessionNumber);
+		return sampleService.getSampleByAccessionNumber(accessionNumber);
 	}
 
 	private List<SampleItem> getSampleItems(Sample sample) {
-		SampleItemDAO sampleItemDAO = new SampleItemDAOImpl();
 
-		return sampleItemDAO.getSampleItemsBySampleIdAndStatus(sample.getId(), ENTERED_STATUS_SAMPLE_LIST);
+		return sampleItemService.getSampleItemsBySampleIdAndStatus(sample.getId(), ENTERED_STATUS_SAMPLE_LIST);
 	}
 
 	private void setPatientInfo(SampleEditForm form, Sample sample)
 			throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
-		Patient patient = new SampleHumanDAOImpl().getPatientForSample(sample);
+		Patient patient = sampleHumanService.getPatientForSample(sample);
 		IPatientService patientService = new PatientService(patient);
 
 		PropertyUtils.setProperty(form, "patientName", patientService.getLastFirstName());
@@ -286,11 +286,9 @@ public class SampleEditController extends BaseController {
 	private void addCurrentTestsToList(SampleItem sampleItem, List<SampleEditItem> currentTestList,
 			String accessionNumber, boolean allowedToCancelAll) {
 
-		TypeOfSample typeOfSample = new TypeOfSample();
-		typeOfSample.setId(sampleItem.getTypeOfSampleId());
-		typeOfSampleDAO.getData(typeOfSample);
+		TypeOfSample typeOfSample = typeOfSampleService.get(sampleItem.getTypeOfSampleId());
 
-		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleItemsExcludingByStatusIds(sampleItem,
+		List<Analysis> analysisList = analysisService.getAnalysesBySampleItemsExcludingByStatusIds(sampleItem,
 				excludedAnalysisStatusList);
 
 		List<SampleEditItem> analysisSampleItemList = new ArrayList<>();
@@ -355,15 +353,9 @@ public class SampleEditController extends BaseController {
 	private void addPossibleTestsToList(SampleItem sampleItem, List<SampleEditItem> possibleTestList,
 			String accessionNumber) {
 
-		TypeOfSample typeOfSample = new TypeOfSample();
-		typeOfSample.setId(sampleItem.getTypeOfSampleId());
-		typeOfSampleDAO.getData(typeOfSample);
+		TypeOfSample typeOfSample = typeOfSampleService.get(sampleItem.getTypeOfSampleId());
 
-		TestDAO testDAO = new TestDAOImpl();
-		Test test = new Test();
-
-		TypeOfSampleTestDAO sampleTypeTestDAO = new TypeOfSampleTestDAOImpl();
-		List<TypeOfSampleTest> typeOfSampleTestList = sampleTypeTestDAO
+		List<TypeOfSampleTest> typeOfSampleTestList = typeOfSampleTestService
 				.getTypeOfSampleTestsForSampleType(typeOfSample.getId());
 		List<SampleEditItem> typeOfTestSampleItemList = new ArrayList<>();
 
@@ -371,8 +363,7 @@ public class SampleEditController extends BaseController {
 			SampleEditItem sampleEditItem = new SampleEditItem();
 
 			sampleEditItem.setTestId(typeOfSampleTest.getTestId());
-			test.setId(typeOfSampleTest.getTestId());
-			testDAO.getData(test);
+			Test test = testService.get(typeOfSampleTest.getTestId());
 			if ("Y".equals(test.getIsActive()) && test.getOrderable()) {
 				sampleEditItem.setTestName(TestService.getUserLocalizedTestName(test));
 				sampleEditItem.setSampleItemId(sampleItem.getId());
@@ -416,6 +407,38 @@ public class SampleEditController extends BaseController {
 			}
 		}
 
+		try {
+			editSample(form, request, updatedSample, sampleChanged);
+
+		} catch (LIMSRuntimeException lre) {
+			if (lre.getException() instanceof StaleObjectStateException) {
+				result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
+			} else {
+				lre.printStackTrace();
+				result.reject("errors.UpdateException", "errors.UpdateException");
+			}
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
+
+		}
+
+		String sampleEditWritable = (String) request.getSession().getAttribute(SAMPLE_EDIT_WRITABLE);
+
+		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+
+		if (GenericValidator.isBlankOrNull(sampleEditWritable)) {
+			return findForward(FWD_SUCCESS_INSERT, form);
+		} else {
+			Map<String, String> params = new HashMap<>();
+			params.put("type", sampleEditWritable);
+			return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
+		}
+	}
+
+	@Transactional
+	private void editSample(SampleEditForm form, HttpServletRequest request, Sample updatedSample,
+			boolean sampleChanged) {
+
 		List<SampleEditItem> existingTests = form.getExistingTests();
 		List<Analysis> cancelAnalysisList = createRemoveList(existingTests);
 		List<SampleItem> updateSampleItemList = createSampleItemUpdateList(existingTests);
@@ -426,7 +449,7 @@ public class SampleEditController extends BaseController {
 		ResultsUpdateDataSet actionDataSet = new ResultsUpdateDataSet(getSysUserId(request));
 
 		if (updatedSample == null) {
-			updatedSample = sampleDAO.getSampleByAccessionNumber(form.getAccessionNumber());
+			updatedSample = sampleService.getSampleByAccessionNumber(form.getAccessionNumber());
 		}
 
 		String receivedDateForDisplay = updatedSample.getReceivedDateForDisplay();
@@ -453,145 +476,113 @@ public class SampleEditController extends BaseController {
 		Person referringPerson = orderArtifacts.getProviderPerson();
 		Patient patient = new SampleService(updatedSample).getPatient();
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+		for (SampleItem sampleItem : updateSampleItemList) {
+			sampleItemService.update(sampleItem);
+		}
 
-		try {
+		for (Analysis analysis : cancelAnalysisList) {
+			analysisService.update(analysis);
+			addExternalResultsToDeleteList(analysis, patient, updatedSample, actionDataSet);
+		}
 
-			for (SampleItem sampleItem : updateSampleItemList) {
-				sampleItemDAO.updateData(sampleItem);
-			}
+		for (IResultUpdate updater : updaters) {
+			updater.postTransactionalCommitUpdate(actionDataSet);
+		}
 
-			for (Analysis analysis : cancelAnalysisList) {
-				analysisDAO.updateData(analysis);
-				addExternalResultsToDeleteList(analysis, patient, updatedSample, actionDataSet);
-			}
-
-			for (IResultUpdate updater : updaters) {
-				updater.postTransactionalCommitUpdate(actionDataSet);
-			}
-
-			for (Analysis analysis : addAnalysisList) {
-				if (analysis.getId() == null) {
-					analysisDAO.insertData(analysis, false); // don't check for duplicates
-				} else {
-					analysisDAO.updateData(analysis);
-				}
-			}
-
-			for (SampleItem sampleItem : cancelSampleItemList) {
-				sampleItemDAO.updateData(sampleItem);
-			}
-
-			if (sampleChanged) {
-				sampleDAO.updateData(updatedSample);
-			}
-
-			// seems like this is unused
-			/*
-			 * if (paymentObservation != null) {
-			 * paymentObservation.setPatientId(patient.getId());
-			 * observationDAO.insertOrUpdateData(paymentObservation); }
-			 */
-
-			for (SampleTestCollection sampleTestCollection : addedSamples) {
-				sampleItemDAO.insertData(sampleTestCollection.item);
-
-				for (Test test : sampleTestCollection.tests) {
-					testDAO.getData(test);
-
-					Analysis analysis = populateAnalysis(sampleTestCollection, test,
-							sampleTestCollection.testIdToUserSectionMap.get(test.getId()), sampleAddService);
-					analysisDAO.insertData(analysis, false); // false--do not check for duplicates
-				}
-
-				if (sampleTestCollection.initialSampleConditionIdList != null) {
-					for (ObservationHistory observation : sampleTestCollection.initialSampleConditionIdList) {
-						observation.setPatientId(patient.getId());
-						observation.setSampleItemId(sampleTestCollection.item.getId());
-						observation.setSampleId(sampleTestCollection.item.getSample().getId());
-						observation.setSysUserId(getSysUserId(request));
-						observationDAO.insertData(observation);
-					}
-				}
-			}
-
-			if (referringPerson != null) {
-				if (referringPerson.getId() == null) {
-					personDAO.insertData(referringPerson);
-				} else {
-					personDAO.updateData(referringPerson);
-				}
-			}
-
-			for (ObservationHistory observation : orderArtifacts.getObservations()) {
-				observationDAO.insertOrUpdateData(observation);
-			}
-
-			if (orderArtifacts.getSamplePersonRequester() != null) {
-				SampleRequester samplePersonRequester = orderArtifacts.getSamplePersonRequester();
-				samplePersonRequester.setRequesterId(orderArtifacts.getProviderPerson().getId());
-				sampleRequesterDAO.insertOrUpdateData(samplePersonRequester);
-			}
-
-			if (orderArtifacts.getProviderOrganization() != null) {
-				boolean link = orderArtifacts.getProviderOrganization().getId() == null;
-				organizationDAO.insertOrUpdateData(orderArtifacts.getProviderOrganization());
-				if (link) {
-					orgOrgTypeDAO.linkOrganizationAndType(orderArtifacts.getProviderOrganization(),
-							RequesterService.REFERRAL_ORG_TYPE_ID);
-				}
-			}
-
-			if (orderArtifacts.getSampleOrganizationRequester() != null) {
-				if (orderArtifacts.getProviderOrganization() != null) {
-					orderArtifacts.getSampleOrganizationRequester()
-							.setRequesterId(orderArtifacts.getProviderOrganization().getId());
-				}
-				sampleRequesterDAO.insertOrUpdateData(orderArtifacts.getSampleOrganizationRequester());
-			}
-
-			if (orderArtifacts.getDeletableSampleOrganizationRequester() != null) {
-				sampleRequesterDAO.delete(orderArtifacts.getDeletableSampleOrganizationRequester());
-			}
-
-			tx.commit();
-
-			request.getSession().setAttribute("lastAccessionNumber", updatedSample.getAccessionNumber());
-			request.getSession().setAttribute("lastPatientId", patient.getId());
-		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
-			if (lre.getException() instanceof StaleObjectStateException) {
-				result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
+		for (Analysis analysis : addAnalysisList) {
+			if (analysis.getId() == null) {
+				analysisService.insert(analysis, false); // don't check for duplicates
 			} else {
-				lre.printStackTrace();
-				result.reject("errors.UpdateException", "errors.UpdateException");
+				analysisService.update(analysis);
 			}
-			saveErrors(result);
-			return findForward(FWD_FAIL_INSERT, form);
-
-		} finally {
-			HibernateUtil.closeSession();
 		}
 
-		String sampleEditWritable = (String) request.getSession().getAttribute(SAMPLE_EDIT_WRITABLE);
-
-		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-
-		if (GenericValidator.isBlankOrNull(sampleEditWritable)) {
-			return findForward(FWD_SUCCESS_INSERT, form);
-		} else {
-			Map<String, String> params = new HashMap<>();
-			params.put("type", sampleEditWritable);
-			return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
+		for (SampleItem sampleItem : cancelSampleItemList) {
+			sampleItemService.update(sampleItem);
 		}
+
+		if (sampleChanged) {
+			sampleService.update(updatedSample);
+		}
+
+		// seems like this is unused
+		/*
+		 * if (paymentObservation != null) {
+		 * paymentObservation.setPatientId(patient.getId());
+		 * observationDAO.insertOrUpdateData(paymentObservation); }
+		 */
+
+		for (SampleTestCollection sampleTestCollection : addedSamples) {
+			sampleItemService.insert(sampleTestCollection.item);
+
+			for (Test test : sampleTestCollection.tests) {
+				test = testService.get(test.getId());
+
+				Analysis analysis = populateAnalysis(sampleTestCollection, test,
+						sampleTestCollection.testIdToUserSectionMap.get(test.getId()), sampleAddService);
+				analysisService.insert(analysis, false); // false--do not check for duplicates
+			}
+
+			if (sampleTestCollection.initialSampleConditionIdList != null) {
+				for (ObservationHistory observation : sampleTestCollection.initialSampleConditionIdList) {
+					observation.setPatientId(patient.getId());
+					observation.setSampleItemId(sampleTestCollection.item.getId());
+					observation.setSampleId(sampleTestCollection.item.getSample().getId());
+					observation.setSysUserId(getSysUserId(request));
+					observationService.insert(observation);
+				}
+			}
+		}
+
+		if (referringPerson != null) {
+			if (referringPerson.getId() == null) {
+				personService.insert(referringPerson);
+			} else {
+				personService.update(referringPerson);
+			}
+		}
+
+		for (ObservationHistory observation : orderArtifacts.getObservations()) {
+			observationService.save(observation);
+		}
+
+		if (orderArtifacts.getSamplePersonRequester() != null) {
+			SampleRequester samplePersonRequester = orderArtifacts.getSamplePersonRequester();
+			samplePersonRequester.setRequesterId(orderArtifacts.getProviderPerson().getId());
+			sampleRequesterService.save(samplePersonRequester);
+		}
+
+		if (orderArtifacts.getProviderOrganization() != null) {
+			boolean link = orderArtifacts.getProviderOrganization().getId() == null;
+			organizationService.save(orderArtifacts.getProviderOrganization());
+			if (link) {
+				organizationService.linkOrganizationAndType(orderArtifacts.getProviderOrganization(),
+						RequesterService.REFERRAL_ORG_TYPE_ID);
+			}
+		}
+
+		if (orderArtifacts.getSampleOrganizationRequester() != null) {
+			if (orderArtifacts.getProviderOrganization() != null) {
+				orderArtifacts.getSampleOrganizationRequester()
+						.setRequesterId(orderArtifacts.getProviderOrganization().getId());
+			}
+			sampleRequesterService.save(orderArtifacts.getSampleOrganizationRequester());
+		}
+
+		if (orderArtifacts.getDeletableSampleOrganizationRequester() != null) {
+			sampleRequesterService.delete(orderArtifacts.getDeletableSampleOrganizationRequester());
+		}
+
+		request.getSession().setAttribute("lastAccessionNumber", updatedSample.getAccessionNumber());
+		request.getSession().setAttribute("lastPatientId", patient.getId());
+
 	}
 
 	private void addExternalResultsToDeleteList(Analysis analysis, Patient patient, Sample updatedSample,
 			ResultsUpdateDataSet actionDataSet) {
 		List<ResultSet> deletedResults = new ArrayList<>();
 		if (!GenericValidator.isBlankOrNull(analysis.getSampleItem().getSample().getReferringId())) {
-			ResultDAO resultDAO = new ResultDAOImpl();
-			List<Result> results = resultDAO.getResultsByAnalysis(analysis);
+			List<Result> results = resultService.getResultsByAnalysis(analysis);
 			if (results.size() == 0) {
 				Result result = createCancelResult(analysis);
 				results.add(result);
@@ -620,7 +611,7 @@ public class SampleEditController extends BaseController {
 
 		for (SampleEditItem editItem : existingTests) {
 			if (editItem.isSampleItemChanged()) {
-				SampleItem sampleItem = sampleItemDAO.getData(editItem.getSampleItemId());
+				SampleItem sampleItem = sampleItemService.get(editItem.getSampleItemId());
 				if (sampleItem != null) {
 					String collectionTime = editItem.getCollectionDate();
 					if (GenericValidator.isBlankOrNull(collectionTime)) {
@@ -644,7 +635,7 @@ public class SampleEditController extends BaseController {
 		java.sql.Date collectionDateTime = DateUtil.convertStringDateTimeToSqlDate(sampleTestCollection.collectionDate);
 		TestSection testSection = test.getTestSection();
 		if (!GenericValidator.isBlankOrNull(userSelectedTestSection)) {
-			testSection = testSectionDAO.getTestSectionById(userSelectedTestSection); // change
+			testSection = testSectionService.get(userSelectedTestSection); // change
 		}
 
 		Panel panel = sampleAddService.getPanelForTest(test);
@@ -705,9 +696,7 @@ public class SampleEditController extends BaseController {
 
 	private SampleItem getCancelableSampleItem(SampleEditItem editItem) {
 		String sampleItemId = editItem.getSampleItemId();
-		SampleItem item = new SampleItem();
-		item.setId(sampleItemId);
-		sampleItemDAO.getData(item);
+		SampleItem item = sampleItemService.get(sampleItemId);
 
 		if (item.getId() != null) {
 			item.setStatusId(CANCELED_SAMPLE_STATUS_ID);
@@ -743,7 +732,7 @@ public class SampleEditController extends BaseController {
 	}
 
 	private Sample updateAccessionNumberInSample(SampleEditForm form) {
-		Sample sample = sampleDAO.getSampleByAccessionNumber(form.getAccessionNumber());
+		Sample sample = sampleService.getSampleByAccessionNumber(form.getAccessionNumber());
 
 		if (sample != null) {
 			sample.setAccessionNumber(form.getNewAccessionNumber());
@@ -775,9 +764,7 @@ public class SampleEditController extends BaseController {
 	}
 
 	private Analysis getCancelableAnalysis(SampleEditItem sampleEditItem) {
-		Analysis analysis = new Analysis();
-		analysis.setId(sampleEditItem.getAnalysisId());
-		analysisDAO.getData(analysis);
+		Analysis analysis = analysisService.get(sampleEditItem.getAnalysisId());
 		analysis.setSysUserId(getSysUserId(request));
 		analysis.setStatusId(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled));
 		return analysis;
@@ -792,14 +779,10 @@ public class SampleEditController extends BaseController {
 				Analysis analysis = newOrExistingCanceledAnalysis(sampleEditItem);
 
 				if (analysis.getId() == null) {
-					SampleItem sampleItem = new SampleItem();
-					sampleItem.setId(sampleEditItem.getSampleItemId());
-					sampleItemDAO.getData(sampleItem);
+					SampleItem sampleItem = sampleItemService.get(sampleEditItem.getSampleItemId());
 					analysis.setSampleItem(sampleItem);
 
-					Test test = new Test();
-					test.setId(sampleEditItem.getTestId());
-					testDAO.getData(test);
+					Test test = testService.get(sampleEditItem.getTestId());
 
 					analysis.setTest(test);
 					analysis.setRevision("0");
@@ -821,7 +804,7 @@ public class SampleEditController extends BaseController {
 	}
 
 	private Analysis newOrExistingCanceledAnalysis(SampleEditItem sampleEditItem) {
-		List<Analysis> canceledAnalysis = analysisDAO
+		List<Analysis> canceledAnalysis = analysisService
 				.getAnalysesBySampleItemIdAndStatusId(sampleEditItem.getSampleItemId(), CANCELED_TEST_STATUS_ID);
 
 		for (Analysis analysis : canceledAnalysis) {

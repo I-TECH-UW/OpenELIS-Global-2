@@ -9,11 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -28,15 +30,20 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.result.form.AnalyzerResultsForm;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.analyzerresults.AnalyzerResultsService;
+import spring.service.dictionary.DictionaryService;
+import spring.service.samplehuman.SampleHumanService;
+import spring.service.sampleitem.SampleItemService;
+import spring.service.sampleqaevent.SampleQaEventService;
+import spring.service.test.TestService;
+import spring.service.testreflex.TestReflexService;
+import spring.service.testresult.TestResultService;
+import spring.service.typeofsample.TypeOfSampleTestService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.analyzerimport.util.AnalyzerTestNameCache;
 import us.mn.state.health.lims.analyzerimport.util.MappedTestName;
 import us.mn.state.health.lims.analyzerresults.action.AnalyzerResultsPaging;
 import us.mn.state.health.lims.analyzerresults.action.beanitems.AnalyzerResultItem;
-import us.mn.state.health.lims.analyzerresults.dao.AnalyzerResultsDAO;
-import us.mn.state.health.lims.analyzerresults.daoimpl.AnalyzerResultsDAOImpl;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
@@ -58,48 +65,24 @@ import us.mn.state.health.lims.common.services.TypeOfSampleService;
 import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.note.dao.NoteDAO;
-import us.mn.state.health.lims.note.daoimpl.NoteDAOImpl;
 import us.mn.state.health.lims.note.valueholder.Note;
 import us.mn.state.health.lims.patient.util.PatientUtil;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.result.action.util.ResultUtil;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
 import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
-import us.mn.state.health.lims.sampleitem.dao.SampleItemDAO;
-import us.mn.state.health.lims.sampleitem.daoimpl.SampleItemDAOImpl;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
-import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
-import us.mn.state.health.lims.sampleqaevent.daoimpl.SampleQaEventDAOImpl;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
 import us.mn.state.health.lims.testreflex.action.util.TestReflexBean;
 import us.mn.state.health.lims.testreflex.action.util.TestReflexUtil;
-import us.mn.state.health.lims.testreflex.dao.TestReflexDAO;
-import us.mn.state.health.lims.testreflex.daoimpl.TestReflexDAOImpl;
 import us.mn.state.health.lims.testreflex.valueholder.TestReflex;
-import us.mn.state.health.lims.testresult.dao.TestResultDAO;
-import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleTestDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
@@ -109,37 +92,54 @@ public class AnalyzerResultsController extends BaseController {
 	private static final boolean IS_RETROCI = ConfigurationProperties.getInstance()
 			.isPropertyValueEqual(ConfigurationProperties.Property.configurationName, "CI_GENERAL");
 	private static final String REJECT_VALUE = "XXXX";
-	private NoteDAO noteDAO = new NoteDAOImpl();
-	private SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
-	private SampleItemDAO sampleItemDAO = new SampleItemDAOImpl();
-	private TestDAO testDAO = new TestDAOImpl();
-	private TypeOfSampleTestDAO typeOfSampleTestDAO = new TypeOfSampleTestDAOImpl();
-	private TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
+	private String RESULT_SUBJECT = "Analyzer Result Note";
+	private String DBS_SAMPLE_TYPE_ID;
 
-	private static final String RESULT_SUBJECT = "Analyzer Result Note";
-	private static final String DBS_SAMPLE_TYPE_ID;
-
-	static {
+	@PostConstruct
+	public void initialize() {
 		if (IS_RETROCI) {
 			TypeOfSample typeOfSample = new TypeOfSample();
 			typeOfSample.setDescription("DBS");
 			typeOfSample.setDomain("H");
-			typeOfSample = new TypeOfSampleDAOImpl().getTypeOfSampleByDescriptionAndDomain(typeOfSample, false);
+			typeOfSample = typeOfSampleService.getTypeOfSampleByDescriptionAndDomain(typeOfSample, false);
 			DBS_SAMPLE_TYPE_ID = typeOfSample.getId();
 		} else {
 			DBS_SAMPLE_TYPE_ID = null;
 		}
 	}
 
-	private AnalyzerResultsDAO analyzerResultsDAO = new AnalyzerResultsDAOImpl();
-	private DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-	private TestResultDAO testResultDAO = new TestResultDAOImpl();
-	private SampleDAO sampleDAO = new SampleDAOImpl();
-	private TypeOfSampleTestDAO sampleTypeTestDAO = new TypeOfSampleTestDAOImpl();
-	private AnalysisDAO analysisDAO = new AnalysisDAOImpl();
+	@Autowired
+	private spring.service.note.NoteService noteService;
+	@Autowired
+	private SampleHumanService sampleHumanService;
+	@Autowired
+	private SampleItemService sampleItemService;
+	@Autowired
+	private TestService testService;
+	@Autowired
+	private TypeOfSampleTestService typeOfSampleTestService;
+	@Autowired
+	private spring.service.typeofsample.TypeOfSampleService typeOfSampleService;
+	@Autowired
+	private AnalyzerResultsService analyzerResultsService;
+	@Autowired
+	private DictionaryService dictionaryService;
+	@Autowired
+	private TestResultService testResultService;
+	@Autowired
+	private spring.service.sample.SampleService sampleService;
+	@Autowired
+	private TypeOfSampleTestService sampleTypeTestService;
+	@Autowired
+	private spring.service.analysis.AnalysisService analysisService;
+	@Autowired
+	private TestReflexService testReflexService;
+	@Autowired
+	private spring.service.result.ResultService resultService;
+	@Autowired
+	private SampleQaEventService sampleQaEventService;
+
 	private TestReflexUtil reflexUtil = new TestReflexUtil();
-	private TestReflexDAO testReflexDAO = new TestReflexDAOImpl();
-	private ResultDAO resultDAO = new ResultDAOImpl();
 
 	private static Map<String, String> analyzerNameToSubtitleKey = new HashMap<>();
 	static {
@@ -200,8 +200,8 @@ public class AnalyzerResultsController extends BaseController {
 							groupHeader = resultItem;
 							setNonConformityStateForResultItem(resultItem);
 							if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
-								resultItem.setNonconforming(getQaEventByTestSection(
-										analysisDAO.getAnalysisById(resultItem.getAnalysisId())));
+								resultItem.setNonconforming(
+										getQaEventByTestSection(analysisService.get(resultItem.getAnalysisId())));
 							}
 
 						}
@@ -238,7 +238,7 @@ public class AnalyzerResultsController extends BaseController {
 	private void setNonConformityStateForResultItem(AnalyzerResultItem resultItem) {
 		boolean nonconforming = false;
 
-		Sample sample = sampleDAO.getSampleByAccessionNumber(resultItem.getAccessionNumber());
+		Sample sample = sampleService.getSampleByAccessionNumber(resultItem.getAccessionNumber());
 		if (sample != null) {
 			nonconforming = QAService.isOrderNonConforming(sample);
 			// The sample is nonconforming, now we have to check if any sample items are
@@ -253,7 +253,7 @@ public class AnalyzerResultsController extends BaseController {
 				// one for this
 				// test if it is then it is nonconforming if not then it is not nonconforming
 				if (!nonConformingSampleItems.isEmpty()) {
-					TypeOfSampleTest typeOfSample = sampleTypeTestDAO
+					TypeOfSampleTest typeOfSample = sampleTypeTestService
 							.getTypeOfSampleTestForTest(resultItem.getTestId());
 					if (typeOfSample != null) {
 						String sampleTypeId = typeOfSample.getTypeOfSampleId();
@@ -321,27 +321,17 @@ public class AnalyzerResultsController extends BaseController {
 		}
 
 		if (resolvedResults.size() > 0) {
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
-			try {
-				for (AnalyzerResults analyzerResult : resolvedResults) {
-					analyzerResult.setSysUserId(getSysUserId(request));
-					analyzerResultsDAO.updateData(analyzerResult);
-				}
-
-				tx.commit();
-			} catch (LIMSRuntimeException lre) {
-				tx.rollback();
-			} finally {
-				HibernateUtil.closeSession();
+			for (AnalyzerResults analyzerResult : resolvedResults) {
+				analyzerResult.setSysUserId(getSysUserId(request));
 			}
 
+			analyzerResultsService.updateAll(resolvedResults);
 		}
 
 	}
 
 	private List<AnalyzerResults> getAnalyzerResults() {
-		return analyzerResultsDAO.getResultsbyAnalyzer(
+		return analyzerResultsService.getResultsbyAnalyzer(
 				AnalyzerTestNameCache.instance().getAnalyzerIdForName(getAnalyzerNameFromRequest()));
 	}
 
@@ -396,7 +386,7 @@ public class AnalyzerResultsController extends BaseController {
 
 		List<TestReflex> reflexes = reflexUtil.getPossibleUserChoiceTestReflexsForTest(result.getTestId());
 
-		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleId(sample.getId());
+		List<Analysis> analysisList = analysisService.getAnalysesBySampleId(sample.getId());
 		Set<String> analysisTestIds = new HashSet<>();
 
 		for (Analysis analysis : analysisList) {
@@ -412,7 +402,7 @@ public class AnalyzerResultsController extends BaseController {
 	}
 
 	private Sample getSampleForAnalyzerResult(AnalyzerResults result) {
-		return sampleDAO.getSampleByAccessionNumber(result.getAccessionNumber());
+		return sampleService.getSampleByAccessionNumber(result.getAccessionNumber());
 	}
 
 	private void setChoiceForCurrentValue(AnalyzerResultItem resultItem, AnalyzerResults analyzerResult) {
@@ -441,7 +431,7 @@ public class AnalyzerResultsController extends BaseController {
 
 			Sample sample = getSampleForAnalyzerResult(analyzerResult);
 
-			List<Analysis> analysisList = analysisDAO.getAnalysesBySampleId(sample.getId());
+			List<Analysis> analysisList = analysisService.getAnalysesBySampleId(sample.getId());
 
 			List<TestReflex> reflexesForDisplayedTest = reflexUtil.getTestReflexsForDictioanryResultTestId(
 					analyzerResult.getResult(), analyzerResult.getTestId(), true);
@@ -460,21 +450,16 @@ public class AnalyzerResultsController extends BaseController {
 						}
 					} else {
 						// find if the sibling reflex is satisfied
-						TestReflex sibTestReflex = new TestReflex();
-						sibTestReflex.setId(possibleTestReflex.getSiblingReflexId());
+						TestReflex sibTestReflex = testReflexService.get(possibleTestReflex.getSiblingReflexId());
 
-						testReflexDAO.getData(sibTestReflex);
-
-						TestResult sibTestResult = new TestResult();
-						sibTestResult.setId(sibTestReflex.getTestResultId());
-						testResultDAO.getData(sibTestResult);
+						TestResult sibTestResult = testResultService.get(sibTestReflex.getTestResultId());
 
 						for (Analysis analysis : analysisList) {
-							List<Result> resultList = resultDAO.getResultsByAnalysis(analysis);
+							List<Result> resultList = resultService.getResultsByAnalysis(analysis);
 							Test test = analysis.getTest();
 
 							for (Result result : resultList) {
-								TestResult testResult = testResultDAO
+								TestResult testResult = testResultService
 										.getTestResultsByTestAndDictonaryResult(test.getId(), result.getValue());
 								if (testResult != null && testResult.getId().equals(sibTestReflex.getTestResultId())) {
 									if (possibleTestReflex.getActionScriptlet() != null) {
@@ -541,7 +526,7 @@ public class AnalyzerResultsController extends BaseController {
 		// If it's readonly or the selectlist can not be gotten then we want the result
 		// otherwise we want the id so the correct selection will be choosen
 		if (result.isReadOnly() || result.getTestId() == null || result.getIsControl()) {
-			return dictionaryDAO.getDictionaryById(result.getResult()).getDictEntry();
+			return dictionaryService.get(result.getResult()).getDictEntry();
 		} else {
 			return result.getResult();
 		}
@@ -549,7 +534,7 @@ public class AnalyzerResultsController extends BaseController {
 
 	private String getSignificantDigitsFromAnalyzerResults(AnalyzerResults result) {
 
-		List<TestResult> testResults = testResultDAO.getActiveTestResultsByTest(result.getTestId());
+		List<TestResult> testResults = testResultService.getActiveTestResultsByTest(result.getTestId());
 
 		if (GenericValidator.isBlankOrNull(result.getResult()) || testResults.isEmpty()) {
 			return result.getResult();
@@ -610,10 +595,10 @@ public class AnalyzerResultsController extends BaseController {
 
 		List<Dictionary> dictionaryList = new ArrayList<>();
 
-		List<TestResult> testResults = testResultDAO.getActiveTestResultsByTest(result.getTestId());
+		List<TestResult> testResults = testResultService.getActiveTestResultsByTest(result.getTestId());
 
 		for (TestResult testResult : testResults) {
-			dictionaryList.add(dictionaryDAO.getDictionaryById(testResult.getValue()));
+			dictionaryList.add(dictionaryService.get(testResult.getValue()));
 		}
 
 		return dictionaryList;
@@ -658,8 +643,7 @@ public class AnalyzerResultsController extends BaseController {
 	}
 
 	public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
-		SampleQaEventDAO sampleQaEventDAO = new SampleQaEventDAOImpl();
-		return sampleQaEventDAO.getSampleQaEventsBySample(sample);
+		return sampleQaEventService.getSampleQaEventsBySample(sample);
 	}
 
 	@RequestMapping(value = "/AnalyzerResults", method = RequestMethod.POST)
@@ -752,7 +736,7 @@ public class AnalyzerResultsController extends BaseController {
 		for (SampleGrouping grouping : sampleGroupList) {
 			if (grouping.addSample) {
 				try {
-					sampleDAO.insertDataWithAccessionNumber(grouping.sample);
+					sampleService.insertDataWithAccessionNumber(grouping.sample);
 				} catch (LIMSRuntimeException lre) {
 					Errors errors = new BaseErrors();
 					String errorMsg = "warning.duplicate.accession";
@@ -761,14 +745,14 @@ public class AnalyzerResultsController extends BaseController {
 					return false;
 				}
 			} else if (grouping.updateSample) {
-				sampleDAO.updateData(grouping.sample);
+				sampleService.update(grouping.sample);
 			}
 
 			String sampleId = grouping.sample.getId();
 
 			if (grouping.addSample) {
 				grouping.sampleHuman.setSampleId(sampleId);
-				sampleHumanDAO.insertData(grouping.sampleHuman);
+				sampleHumanService.insert(grouping.sampleHuman);
 
 				RecordStatus patientStatus = grouping.statusSet.getPatientRecordStatus() == null
 						? RecordStatus.NotRegistered
@@ -782,7 +766,7 @@ public class AnalyzerResultsController extends BaseController {
 
 			if (grouping.addSampleItem) {
 				grouping.sampleItem.setSample(grouping.sample);
-				sampleItemDAO.insertData(grouping.sampleItem);
+				sampleItemService.insert(grouping.sampleItem);
 			}
 
 			for (int i = 0; i < grouping.analysisList.size(); i++) {
@@ -790,25 +774,25 @@ public class AnalyzerResultsController extends BaseController {
 				Analysis analysis = grouping.analysisList.get(i);
 				if (GenericValidator.isBlankOrNull(analysis.getId())) {
 					analysis.setSampleItem(grouping.sampleItem);
-					analysisDAO.insertData(analysis, false);
+					analysisService.insert(analysis, false);
 				} else {
-					analysisDAO.updateData(analysis);
+					analysisService.update(analysis);
 				}
 
 				Result result = grouping.resultList.get(i);
 				if (GenericValidator.isBlankOrNull(result.getId())) {
 					result.setAnalysis(analysis);
 					setAnalyte(result);
-					resultDAO.insertData(result);
+					resultService.insert(result);
 				} else {
-					resultDAO.updateData(result);
+					resultService.update(result);
 				}
 
 				Note note = grouping.noteList.get(i);
 
 				if (note != null) {
 					note.setReferenceId(result.getId());
-					noteDAO.insertData(note);
+					noteService.insert(note);
 				}
 			}
 		}
@@ -923,7 +907,7 @@ public class AnalyzerResultsController extends BaseController {
 		}
 
 		// This last case is that non-conformity may have been done
-		return sampleDAO.getSampleByAccessionNumber(accessionNumber) == null;
+		return sampleService.getSampleByAccessionNumber(accessionNumber) == null;
 
 	}
 
@@ -934,7 +918,8 @@ public class AnalyzerResultsController extends BaseController {
 	private SampleGrouping createGroupForPreviousAnalyzerDone(List<AnalyzerResultItem> groupedAnalyzerResultItems,
 			StatusSet statusSet) {
 		SampleGrouping sampleGrouping = new SampleGrouping();
-		Sample sample = sampleDAO.getSampleByAccessionNumber(groupedAnalyzerResultItems.get(0).getAccessionNumber());
+		Sample sample = sampleService
+				.getSampleByAccessionNumber(groupedAnalyzerResultItems.get(0).getAccessionNumber());
 
 		List<Analysis> analysisList = new ArrayList<>();
 		List<Result> resultList = new ArrayList<>();
@@ -945,7 +930,7 @@ public class AnalyzerResultsController extends BaseController {
 		sample.setEnteredDate(new Date(new java.util.Date().getTime()));
 		sample.setSysUserId(getSysUserId(request));
 
-		Patient patient = sampleHumanDAO.getPatientForSample(sample);
+		Patient patient = sampleHumanService.getPatientForSample(sample);
 		createAndAddItems_Analysis_Results(groupedAnalyzerResultItems, analysisList, resultList,
 				resultToUserSelectionMap, noteList, patient);
 
@@ -968,9 +953,9 @@ public class AnalyzerResultsController extends BaseController {
 	}
 
 	protected SampleItem getOrCreateSampleItem(List<AnalyzerResultItem> groupedAnalyzerResultItems, Sample sample) {
-		List<Analysis> dBAnalysisList = analysisDAO.getAnalysesBySampleId(sample.getId());
+		List<Analysis> dBAnalysisList = analysisService.getAnalysesBySampleId(sample.getId());
 
-		TypeOfSampleTest typeOfSampleForNewTest = typeOfSampleTestDAO
+		TypeOfSampleTest typeOfSampleForNewTest = typeOfSampleTestService
 				.getTypeOfSampleTestForTest(groupedAnalyzerResultItems.get(0).getTestId());
 		String typeOfSampleId = typeOfSampleForNewTest.getTypeOfSampleId();
 
@@ -995,9 +980,7 @@ public class AnalyzerResultsController extends BaseController {
 			sampleItem.setSysUserId(getSysUserId(request));
 			sampleItem.setSortOrder(Integer.toString(maxSampleItemSortOrder + 1));
 			sampleItem.setStatusId(StatusService.getInstance().getStatusID(SampleStatus.Entered));
-			TypeOfSample typeOfSample = new TypeOfSample();
-			typeOfSample.setId(typeOfSampleId);
-			typeOfSampleDAO.getData(typeOfSample);
+			TypeOfSample typeOfSample = typeOfSampleService.get(typeOfSampleId);
 			sampleItem.setTypeOfSample(typeOfSample);
 		}
 		return sampleItem;
@@ -1006,7 +989,8 @@ public class AnalyzerResultsController extends BaseController {
 	private SampleGrouping createGroupForDemographicsEntered(List<AnalyzerResultItem> groupedAnalyzerResultItems,
 			StatusSet statusSet) {
 		SampleGrouping sampleGrouping = new SampleGrouping();
-		Sample sample = sampleDAO.getSampleByAccessionNumber(groupedAnalyzerResultItems.get(0).getAccessionNumber());
+		Sample sample = sampleService
+				.getSampleByAccessionNumber(groupedAnalyzerResultItems.get(0).getAccessionNumber());
 
 		// A previous sample item may exist if there was a previous import and
 		// patient demographics was entered
@@ -1023,7 +1007,7 @@ public class AnalyzerResultsController extends BaseController {
 		sample.setEnteredDate(new Date(new java.util.Date().getTime()));
 		sample.setSysUserId(getSysUserId(request));
 
-		Patient patient = sampleHumanDAO.getPatientForSample(sample);
+		Patient patient = sampleHumanService.getPatientForSample(sample);
 		createAndAddItems_Analysis_Results(groupedAnalyzerResultItems, analysisList, resultList,
 				resultToUserSelectionMap, noteList, patient);
 
@@ -1046,7 +1030,8 @@ public class AnalyzerResultsController extends BaseController {
 	private SampleGrouping createGroupForSampleAndDemographicsEntered(
 			List<AnalyzerResultItem> groupedAnalyzerResultItems, StatusSet statusSet) {
 		SampleGrouping sampleGrouping = new SampleGrouping();
-		Sample sample = sampleDAO.getSampleByAccessionNumber(groupedAnalyzerResultItems.get(0).getAccessionNumber());
+		Sample sample = sampleService
+				.getSampleByAccessionNumber(groupedAnalyzerResultItems.get(0).getAccessionNumber());
 
 		List<Analysis> analysisList = new ArrayList<>();
 		List<Result> resultList = new ArrayList<>();
@@ -1063,8 +1048,8 @@ public class AnalyzerResultsController extends BaseController {
 		/*****
 		 * this is causing the status id for the sample in the DB to be updated
 		 *********/
-		List<Analysis> dBAnalysisList = analysisDAO.getAnalysesBySampleId(sample.getId());
-		Patient patient = sampleHumanDAO.getPatientForSample(sample);
+		List<Analysis> dBAnalysisList = analysisService.getAnalysesBySampleId(sample.getId());
+		Patient patient = sampleHumanService.getPatientForSample(sample);
 
 		for (AnalyzerResultItem resultItem : groupedAnalyzerResultItems) {
 			Analysis analysis = null;
@@ -1080,13 +1065,11 @@ public class AnalyzerResultsController extends BaseController {
 				// This is an analysis which is not in the ordered tests but
 				// should be tracked anyway
 				analysis = new Analysis();
-				Test test = new Test();
-				test.setId(resultItem.getTestId());
-				test = testDAO.getTestById(test);
+				Test test = testService.get(resultItem.getTestId());
 				analysis.setTest(test);
 				// A new sampleItem may be needed
 				TypeOfSample typeOfSample = TypeOfSampleService.getTypeOfSampleForTest(test.getId());
-				List<SampleItem> sampleItemsForSample = sampleItemDAO.getSampleItemsBySampleId(sample.getId());
+				List<SampleItem> sampleItemsForSample = sampleItemService.getSampleItemsBySampleId(sample.getId());
 
 				// if the type of sample is found then assign to analysis
 				// otherwise create it and assign
@@ -1199,13 +1182,13 @@ public class AnalyzerResultsController extends BaseController {
 	private void addSampleTypeToSampleItem(SampleItem sampleItem, List<Analysis> analysisList, String accessionNumber) {
 		if (analysisList.size() > 0) {
 			String typeOfSampleId = getTypeOfSampleId(analysisList, accessionNumber);
-			sampleItem.setTypeOfSample(typeOfSampleDAO.getTypeOfSampleById(typeOfSampleId));
+			sampleItem.setTypeOfSample(typeOfSampleService.get(typeOfSampleId));
 		}
 	}
 
 	private String getTypeOfSampleId(List<Analysis> analysisList, String accessionNumber) {
 		if (IS_RETROCI && accessionNumber.startsWith("LDBS")) {
-			List<TypeOfSampleTest> typeOfSmapleTestList = typeOfSampleTestDAO
+			List<TypeOfSampleTest> typeOfSmapleTestList = typeOfSampleTestService
 					.getTypeOfSampleTestsForTest(analysisList.get(0).getTest().getId());
 
 			for (TypeOfSampleTest typeOfSampleTest : typeOfSmapleTestList) {
@@ -1216,7 +1199,7 @@ public class AnalyzerResultsController extends BaseController {
 
 		}
 
-		return typeOfSampleTestDAO.getTypeOfSampleTestsForTest(analysisList.get(0).getTest().getId()).get(0)
+		return typeOfSampleTestService.getTypeOfSampleTestsForTest(analysisList.get(0).getTest().getId()).get(0)
 				.getTypeOfSampleId();
 
 	}
@@ -1230,9 +1213,7 @@ public class AnalyzerResultsController extends BaseController {
 
 			if (analysis == null) {
 				analysis = new Analysis();
-				Test test = new Test();
-				test.setId(resultItem.getTestId());
-				test = testDAO.getTestById(test);
+				Test test = testService.get(resultItem.getTestId());
 				populateAnalysis(resultItem, analysis, test);
 			} else {
 				String statusId = StatusService.getInstance()
@@ -1258,7 +1239,7 @@ public class AnalyzerResultsController extends BaseController {
 	}
 
 	private Analysis getExistingAnalysis(AnalyzerResultItem resultItem) {
-		List<Analysis> analysisList = analysisDAO.getAnalysisByAccessionAndTestId(resultItem.getAccessionNumber(),
+		List<Analysis> analysisList = analysisService.getAnalysisByAccessionAndTestId(resultItem.getAccessionNumber(),
 				resultItem.getTestId());
 
 		return analysisList.isEmpty() ? null : analysisList.get(0);
@@ -1269,7 +1250,7 @@ public class AnalyzerResultsController extends BaseController {
 		Result result = null;
 
 		if (analysis.getId() != null) {
-			List<Result> resultList = resultDAO.getResultsByAnalysis(analysis);
+			List<Result> resultList = resultService.getResultsByAnalysis(analysis);
 
 			if (!resultList.isEmpty()) {
 				result = resultList.get(resultList.size() - 1);
@@ -1338,11 +1319,11 @@ public class AnalyzerResultsController extends BaseController {
 	private TestResult getTestResultForResult(AnalyzerResultItem resultItem) {
 		if ("D".equals(resultItem.getTestResultType())) {
 			TestResult testResult;
-			testResult = testResultDAO.getTestResultsByTestAndDictonaryResult(resultItem.getTestId(),
+			testResult = testResultService.getTestResultsByTestAndDictonaryResult(resultItem.getTestId(),
 					resultItem.getResult());
 			return testResult;
 		} else {
-			List<TestResult> testResultList = testResultDAO.getActiveTestResultsByTest(resultItem.getTestId());
+			List<TestResult> testResultList = testResultService.getActiveTestResultsByTest(resultItem.getTestId());
 			// we are assuming there is only one testResult for a numeric
 			// type result
 			if (!testResultList.isEmpty()) {
@@ -1369,10 +1350,7 @@ public class AnalyzerResultsController extends BaseController {
 	}
 
 	private void removeHandledResultsFromAnalyzerResults(List<AnalyzerResults> deletableAnalyzerResults) {
-
-		AnalyzerResultsDAO analyzerResultsDAO = new AnalyzerResultsDAOImpl();
-		analyzerResultsDAO.deleteAll(deletableAnalyzerResults);
-
+		analyzerResultsService.deleteAll(deletableAnalyzerResults);
 	}
 
 	private List<AnalyzerResults> getRemovableAnalyzerResults(List<AnalyzerResultItem> actionableResults,

@@ -10,4 +10,5 @@ public interface LoginService extends BaseObjectService<Login> {
 	Optional<Login> getValidatedLogin(String loginName, String password);
 
 	void updatePassword(Login login, String string);
+
 }

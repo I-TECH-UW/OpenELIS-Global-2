@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -11,17 +12,19 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.sample.controller.BaseSampleEntryController;
 import spring.mine.samplebatchentry.form.SampleBatchEntryForm;
+import spring.service.siteinformation.SiteInformationService;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.services.SampleOrderService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.sample.form.ProjectData;
-import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
 
 @Controller
 public class SampleBatchEntrySetupController extends BaseSampleEntryController {
+
+	@Autowired
+	SiteInformationService siteInformationService;
 
 	@RequestMapping(value = "/SampleBatchEntrySetup", method = RequestMethod.GET)
 	public ModelAndView showSampleBatchEntrySetup(HttpServletRequest request)
@@ -41,8 +44,7 @@ public class SampleBatchEntrySetupController extends BaseSampleEntryController {
 		form.setProjectDataVL(new ProjectData());
 		form.setProjectDataEID(new ProjectData());
 
-		SiteInformationDAO siteInfoDAO = new SiteInformationDAOImpl();
-		String siteInfo = siteInfoDAO.getSiteInformationByName("Study Management tab").getValue();
+		String siteInfo = siteInformationService.getSiteInformationByName("Study Management tab").getValue();
 		request.getSession().setAttribute("siteInfo", siteInfo);
 
 		addProjectList(form);

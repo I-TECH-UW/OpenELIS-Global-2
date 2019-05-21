@@ -15,4 +15,6 @@ public interface DictionaryService extends BaseObjectService<Dictionary> {
 
 	List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String fieldName, String fieldValue,
 			boolean orderByDictEntry);
+
+	List<Dictionary> getDictionaryEntriesByCategoryId(String dictionaryCategoryId);
 }

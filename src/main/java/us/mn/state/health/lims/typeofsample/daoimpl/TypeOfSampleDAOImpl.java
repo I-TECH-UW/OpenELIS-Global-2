@@ -157,7 +157,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 	@Override
 	public void getData(TypeOfSample typeOfSample) throws LIMSRuntimeException {
 		try {
-			TypeOfSample tos = (TypeOfSample) HibernateUtil.getSession().get(TypeOfSample.class, typeOfSample.getId());
+			TypeOfSample tos = HibernateUtil.getSession().get(TypeOfSample.class, typeOfSample.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (tos != null) {
@@ -237,7 +237,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 	public TypeOfSample readTypeOfSample(String idString) {
 		TypeOfSample tos = null;
 		try {
-			tos = (TypeOfSample) HibernateUtil.getSession().get(TypeOfSample.class, idString);
+			tos = HibernateUtil.getSession().get(TypeOfSample.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -477,7 +477,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 					sql = "from TypeOfSample tos where trim(tos.description) = :param";
 				}
 			}
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			if (ignoreCase) {
 				query.setParameter("param", tos.getDescription().toLowerCase().trim());
@@ -571,7 +571,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 	@Override
 	public TypeOfSample getTypeOfSampleById(String typeOfSampleId) throws LIMSRuntimeException {
 		try {
-			TypeOfSample tos = (TypeOfSample) HibernateUtil.getSession().get(TypeOfSample.class, typeOfSampleId);
+			TypeOfSample tos = HibernateUtil.getSession().get(TypeOfSample.class, typeOfSampleId);
 			// closeSession(); // CSL remove old
 			return tos;
 		} catch (Exception e) {

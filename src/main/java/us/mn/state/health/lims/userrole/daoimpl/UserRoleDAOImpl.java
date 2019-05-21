@@ -239,7 +239,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 		try {
 			String sql = "select count(*) from system_user_role sur " + "join system_role as sr on sr.id = sur.role_id "
 					+ "where sur.system_user_id = :userId and sr.name = :roleName";
-			Query query = HibernateUtil.getSession().createSQLQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
 			query.setInteger("userId", Integer.parseInt(userId));
 			query.setString("roleName", roleName);
 			int result = ((BigInteger) query.uniqueResult()).intValue();

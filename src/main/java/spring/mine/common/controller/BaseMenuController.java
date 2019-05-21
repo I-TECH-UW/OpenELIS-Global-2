@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import spring.mine.common.form.MenuForm;
-import us.mn.state.health.lims.common.dao.BaseDAO;
+import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -175,9 +175,9 @@ public abstract class BaseMenuController extends BaseController {
 		return "false";
 	}
 
-	protected void setDisplayPageBounds(HttpServletRequest request, int listSize, int startingRecNo, BaseDAO DAO,
-			Class valueClass) throws LIMSRuntimeException {
-		request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(DAO.getTotalCount(valueClass.getName(), valueClass)));
+	protected void setDisplayPageBounds(HttpServletRequest request, int listSize, int startingRecNo,
+			BaseObjectService baseObjectService) throws LIMSRuntimeException {
+		request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(baseObjectService.getCount()));
 		request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
 
 		int numOfRecs = 0;

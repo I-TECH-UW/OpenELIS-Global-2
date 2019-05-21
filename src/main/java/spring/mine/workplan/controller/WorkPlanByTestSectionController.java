@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,8 +16,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.workplan.form.WorkplanForm;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.sampleqaevent.SampleQaEventService;
+import spring.service.test.TestSectionService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -31,18 +32,19 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.result.action.util.ResultsLoadUtility;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
-import us.mn.state.health.lims.sampleqaevent.daoimpl.SampleQaEventDAOImpl;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
-import us.mn.state.health.lims.test.dao.TestSectionDAO;
-import us.mn.state.health.lims.test.daoimpl.TestSectionDAOImpl;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 
 @Controller
 public class WorkPlanByTestSectionController extends BaseWorkplanController {
 
-	private final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
+	@Autowired
+	private spring.service.analysis.AnalysisService analysisService;
+	@Autowired
+	private SampleQaEventService sampleQaEventService;
+	@Autowired
+	private TestSectionService testSectionService;
 
 	@RequestMapping(value = "/WorkPlanByTestSection", method = RequestMethod.GET)
 	public ModelAndView showWorkPlanByTestSection(HttpServletRequest request)
@@ -56,7 +58,6 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
 		String workplan = request.getParameter("type");
 
 		// load testSections for drop down
-		TestSectionDAO testSectionDAO = new TestSectionDAOImpl();
 		PropertyUtils.setProperty(form, "testSections", DisplayListService.getList(ListType.TEST_SECTION));
 		PropertyUtils.setProperty(form, "testSectionsByName",
 				DisplayListService.getList(ListType.TEST_SECTION_BY_NAME));
@@ -64,7 +65,7 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
 		TestSection ts = null;
 
 		if (!GenericValidator.isBlankOrNull(testSectionId)) {
-			ts = testSectionDAO.getTestSectionById(testSectionId);
+			ts = testSectionService.get(testSectionId);
 			PropertyUtils.setProperty(form, "testSectionId", "0");
 		}
 
@@ -111,7 +112,7 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
 		if (!(GenericValidator.isBlankOrNull(testSectionId))) {
 
 			String sectionId = testSectionId;
-			testList = analysisDAO.getAllAnalysisByTestSectionAndStatus(sectionId, statusList, true);
+			testList = analysisService.getAllAnalysisByTestSectionAndStatus(sectionId, statusList, true);
 
 			if (testList.isEmpty()) {
 				return new ArrayList<>();
@@ -145,9 +146,9 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
 							sample.getId());
 				}
 
-				AnalysisService analysisService = new AnalysisService(analysis);
+				AnalysisService analysisServiceOld = new AnalysisService(analysis);
 				testResultItem = new TestResultItem();
-				testResultItem.setTestName(analysisService.getTestDisplayName());
+				testResultItem.setTestName(analysisServiceOld.getTestDisplayName());
 				testResultItem.setAccessionNumber(currentAccessionNumber);
 				testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
 				testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
@@ -254,8 +255,7 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
 	}
 
 	public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
-		SampleQaEventDAO sampleQaEventDAO = new SampleQaEventDAOImpl();
-		return sampleQaEventDAO.getSampleQaEventsBySample(sample);
+		return sampleQaEventService.getSampleQaEventsBySample(sample);
 	}
 
 	@Override

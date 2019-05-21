@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.mine.common.controller.BaseController;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.result.form.PatientResultsForm;
+import spring.service.patient.PatientService;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -23,8 +25,6 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.inventory.action.InventoryUtility;
 import us.mn.state.health.lims.inventory.form.InventoryKitItem;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
-import us.mn.state.health.lims.patient.dao.PatientDAO;
-import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.result.action.util.ResultsLoadUtility;
 import us.mn.state.health.lims.result.action.util.ResultsPaging;
@@ -32,6 +32,9 @@ import us.mn.state.health.lims.test.beanItems.TestResultItem;
 
 @Controller
 public class PatientResultsController extends BaseController {
+
+	@Autowired
+	PatientService patientService;
 
 	@RequestMapping(value = "/PatientResults", method = RequestMethod.GET)
 	public ModelAndView showPatientResults(HttpServletRequest request)
@@ -112,12 +115,7 @@ public class PatientResultsController extends BaseController {
 	}
 
 	private Patient getPatient(String patientID) {
-		PatientDAO patientDAO = new PatientDAOImpl();
-		Patient patient = new Patient();
-		patient.setId(patientID);
-		patientDAO.getData(patient);
-
-		return patient;
+		return patientService.get(patientID);
 	}
 
 	@Override

@@ -12,11 +12,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -31,8 +33,15 @@ import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.resultvalidation.form.ResultValidationForm;
 import spring.mine.resultvalidation.util.ResultValidationSaveService;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.referencetables.ReferenceTablesService;
+import spring.service.reports.DocumentTrackService;
+import spring.service.reports.DocumentTypeService;
+import spring.service.result.ResultService;
+import spring.service.sample.SampleService;
+import spring.service.samplehuman.SampleHumanService;
+import spring.service.systemuser.SystemUserService;
+import spring.service.test.TestSectionService;
+import spring.service.testresult.TestResultService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.AnalysisService;
@@ -53,56 +62,53 @@ import us.mn.state.health.lims.common.services.serviceBeans.ResultSaveBean;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.dataexchange.orderresult.OrderResponseWorker.Event;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.note.dao.NoteDAO;
-import us.mn.state.health.lims.note.daoimpl.NoteDAOImpl;
 import us.mn.state.health.lims.note.valueholder.Note;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;
-import us.mn.state.health.lims.reports.dao.DocumentTrackDAO;
-import us.mn.state.health.lims.reports.daoimpl.DocumentTrackDAOImpl;
-import us.mn.state.health.lims.reports.daoimpl.DocumentTypeDAOImpl;
 import us.mn.state.health.lims.reports.valueholder.DocumentTrack;
 import us.mn.state.health.lims.result.action.util.ResultSet;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.resultvalidation.action.util.ResultValidationPaging;
 import us.mn.state.health.lims.resultvalidation.bean.AnalysisItem;
 import us.mn.state.health.lims.resultvalidation.util.ResultsValidationUtility;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
-import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
-import us.mn.state.health.lims.systemuser.daoimpl.SystemUserDAOImpl;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
-import us.mn.state.health.lims.test.dao.TestSectionDAO;
-import us.mn.state.health.lims.test.daoimpl.TestSectionDAOImpl;
 import us.mn.state.health.lims.test.valueholder.TestSection;
-import us.mn.state.health.lims.testresult.dao.TestResultDAO;
-import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
 @Controller
 public class ResultValidationController extends BaseResultValidationController {
 
-	// DAOs
-	private static final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-	private static final SampleDAO sampleDAO = new SampleDAOImpl();
-	private static final TestResultDAO testResultDAO = new TestResultDAOImpl();
-	private static final ResultDAO resultDAO = new ResultDAOImpl();
-	private static final NoteDAO noteDAO = new NoteDAOImpl();
-	private static final SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
-	private static final DocumentTrackDAO documentTrackDAO = new DocumentTrackDAOImpl();
+	@Autowired
+	private spring.service.analysis.AnalysisService analysisService;
+	@Autowired
+	private SampleService sampleService;
+	@Autowired
+	private TestResultService testResultService;
+	@Autowired
+	private ResultService resultService;
+	@Autowired
+	private spring.service.note.NoteService noteService;
+	@Autowired
+	private SampleHumanService sampleHumanService;
+	@Autowired
+	private DocumentTrackService documentTrackService;
+	@Autowired
+	private ReferenceTablesService referenceTablesService;
+	@Autowired
+	private DocumentTypeService documentTypeService;
+	@Autowired
+	private TestSectionService testSectionService;
+	@Autowired
+	private SystemUserService systemUserService;
 
 	private static final String RESULT_SUBJECT = "Result Note";
-	private static final String RESULT_TABLE_ID;
-	private static final String RESULT_REPORT_ID;
+	private static String RESULT_TABLE_ID;
+	private static String RESULT_REPORT_ID;
 
-	static {
-		RESULT_TABLE_ID = new ReferenceTablesDAOImpl().getReferenceTableByName("RESULT").getId();
-		RESULT_REPORT_ID = new DocumentTypeDAOImpl().getDocumentTypeByName("resultExport").getId();
+	@PostConstruct
+	public void initialize() {
+		RESULT_TABLE_ID = referenceTablesService.getReferenceTableByName("RESULT").getId();
+		RESULT_REPORT_ID = documentTypeService.getDocumentTypeByName("resultExport").getId();
 	}
 
 	@RequestMapping(value = "/ResultValidation", method = RequestMethod.GET)
@@ -121,13 +127,12 @@ public class ResultValidationController extends BaseResultValidationController {
 		if (GenericValidator.isBlankOrNull(newPage)) {
 
 			// load testSections for drop down
-			TestSectionDAO testSectionDAO = new TestSectionDAOImpl();
 			PropertyUtils.setProperty(form, "testSections", DisplayListService.getList(ListType.TEST_SECTION));
 			PropertyUtils.setProperty(form, "testSectionsByName",
 					DisplayListService.getList(ListType.TEST_SECTION_BY_NAME));
 
 			if (!GenericValidator.isBlankOrNull(testSectionId)) {
-				ts = testSectionDAO.getTestSectionById(testSectionId);
+				ts = testSectionService.get(testSectionId);
 				PropertyUtils.setProperty(form, "testSectionId", "0");
 			}
 
@@ -220,14 +225,14 @@ public class ResultValidationController extends BaseResultValidationController {
 
 			// update analysis
 			for (Analysis analysis : analysisUpdateList) {
-				analysisDAO.updateData(analysis);
+				analysisService.update(analysis);
 			}
 
 			for (Result resultUpdate : resultUpdateList) {
 				if (resultUpdate.getId() != null) {
-					resultDAO.updateData(resultUpdate);
+					resultService.update(resultUpdate);
 				} else {
-					resultDAO.insertData(resultUpdate);
+					resultService.insert(resultUpdate);
 				}
 			}
 
@@ -235,16 +240,16 @@ public class ResultValidationController extends BaseResultValidationController {
 
 			// update finished samples
 			for (Sample sample : sampleUpdateList) {
-				sampleDAO.updateData(sample);
+				sampleService.update(sample);
 			}
 
 			// create or update notes
 			for (Note note : noteUpdateList) {
 				if (note != null) {
 					if (note.getId() == null) {
-						noteDAO.insertData(note);
+						noteService.insert(note);
 					} else {
-						noteDAO.updateData(note);
+						noteService.update(note);
 					}
 				}
 			}
@@ -394,7 +399,7 @@ public class ResultValidationController extends BaseResultValidationController {
 
 	private void addResultSets(Analysis analysis, Result result, IResultSaveService resultValidationSave) {
 		Sample sample = analysis.getSampleItem().getSample();
-		Patient patient = sampleHumanDAO.getPatientForSample(sample);
+		Patient patient = sampleHumanService.getPatientForSample(sample);
 		if (finalResultAlreadySent(result)) {
 			result.setResultEvent(Event.CORRECTION);
 			resultValidationSave.getModifiedResults()
@@ -408,7 +413,7 @@ public class ResultValidationController extends BaseResultValidationController {
 	// TO DO bug falsely triggered when preliminary result is sent, fails, retries
 	// and succeeds
 	private boolean finalResultAlreadySent(Result result) {
-		List<DocumentTrack> documents = documentTrackDAO.getByTypeRecordAndTable(RESULT_REPORT_ID, RESULT_TABLE_ID,
+		List<DocumentTrack> documents = documentTrackService.getByTypeRecordAndTable(RESULT_REPORT_ID, RESULT_TABLE_ID,
 				result.getId());
 		return documents.size() > 0;
 	}
@@ -506,12 +511,13 @@ public class ResultValidationController extends BaseResultValidationController {
 
 		for (AnalysisItem analysisItem : resultItemList) {
 
-			String analysisSampleId = sampleDAO.getSampleByAccessionNumber(analysisItem.getAccessionNumber()).getId();
+			String analysisSampleId = sampleService.getSampleByAccessionNumber(analysisItem.getAccessionNumber())
+					.getId();
 			if (!analysisSampleId.equals(currentSampleId)) {
 
 				currentSampleId = analysisSampleId;
 
-				List<Analysis> analysisList = analysisDAO.getAnalysesBySampleId(currentSampleId);
+				List<Analysis> analysisList = analysisService.getAnalysesBySampleId(currentSampleId);
 
 				for (Analysis analysis : analysisList) {
 					if (!sampleFinishedStatus.contains(Integer.parseInt(analysis.getStatusId()))) {
@@ -521,9 +527,7 @@ public class ResultValidationController extends BaseResultValidationController {
 				}
 
 				if (sampleFinished) {
-					Sample sample = new Sample();
-					sample.setId(currentSampleId);
-					sampleDAO.getData(sample);
+					Sample sample = sampleService.get(currentSampleId);
 					sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Finished));
 					sampleUpdateList.add(sample);
 				}
@@ -536,9 +540,7 @@ public class ResultValidationController extends BaseResultValidationController {
 	}
 
 	private Analysis getAnalysisFromId(String id) {
-		Analysis analysis = new Analysis();
-		analysis.setId(id);
-		analysisDAO.getData(analysis);
+		Analysis analysis = analysisService.get(id);
 		analysis.setSysUserId(getSysUserId(request));
 
 		return analysis;
@@ -562,10 +564,10 @@ public class ResultValidationController extends BaseResultValidationController {
 	protected TestResult getTestResult(AnalysisItem analysisItem) {
 		TestResult testResult = null;
 		if (TypeOfTestResultService.ResultType.DICTIONARY.matches(analysisItem.getResultType())) {
-			testResult = testResultDAO.getTestResultsByTestAndDictonaryResult(analysisItem.getTestId(),
+			testResult = testResultService.getTestResultsByTestAndDictonaryResult(analysisItem.getTestId(),
 					analysisItem.getResult());
 		} else {
-			List<TestResult> testResultList = testResultDAO.getActiveTestResultsByTest(analysisItem.getTestId());
+			List<TestResult> testResultList = testResultService.getActiveTestResultsByTest(analysisItem.getTestId());
 			// we are assuming there is only one testResult for a numeric type
 			// result
 			if (!testResultList.isEmpty()) {
@@ -584,11 +586,7 @@ public class ResultValidationController extends BaseResultValidationController {
 	}
 
 	private SystemUser createSystemUser() {
-		SystemUser systemUser = new SystemUser();
-		systemUser.setId(getSysUserId(request));
-		SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
-		systemUserDAO.getData(systemUser);
-		return systemUser;
+		return systemUserService.get(getSysUserId(request));
 	}
 
 	private List<Integer> getSampleFinishedStatuses() {

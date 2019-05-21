@@ -16,11 +16,11 @@
 */
 package us.mn.state.health.lims.referral.dao;
 
+import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.referral.valueholder.ReferralType;
 
-
-public interface ReferralTypeDAO{
+public interface ReferralTypeDAO extends BaseDAO<ReferralType> {
 
 	public ReferralType getReferralTypeByName(String name) throws LIMSRuntimeException;
 
