@@ -19,6 +19,7 @@ package us.mn.state.health.lims.login.daoimpl;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.security.PageIdentityUtil;
+import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.login.dao.LoginDAO;
 import us.mn.state.health.lims.login.dao.UserModuleService;
 import us.mn.state.health.lims.login.valueholder.Login;
@@ -56,6 +58,17 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
 	@Autowired
 	LoginDAO loginDAO;
 
+	PermissionModuleDAO permissionModuleDAO;
+
+	@PostConstruct
+	public void initializePermissionModule() {
+		if (SystemConfiguration.getInstance().getPermissionAgent().equals("USER")) {
+			permissionModuleDAO = systemUserModuleDAO;
+		} else {
+			permissionModuleDAO = roleModuleDAO;
+		}
+	}
+
 	@Override
 	@Transactional(readOnly = true)
 	public boolean isSessionExpired(HttpServletRequest request) throws LIMSRuntimeException {
@@ -78,7 +91,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
 		boolean isFound = false;
 		try {
 			UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-			isFound = roleModuleDAO.doesUserHaveAnyModules(usd.getSystemUserId());
+			isFound = permissionModuleDAO.doesUserHaveAnyModules(usd.getSystemUserId());
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
 			LogEvent.logError("UserModuleServiceImpl", "isUserModuleFound()", lre.toString());
