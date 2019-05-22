@@ -25,13 +25,13 @@ public class ReferralServiceImpl extends BaseObjectServiceImpl<Referral> impleme
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public Referral getReferralByAnalysisId(String id) {
 		return getMatch("analysis.id", id).get();
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<Referral> getAllUncanceledOpenReferrals() {
 		return baseObjectDAO.getAllUncanceledOpenReferrals();
 	}

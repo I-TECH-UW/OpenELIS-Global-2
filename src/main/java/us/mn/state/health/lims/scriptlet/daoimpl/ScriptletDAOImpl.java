@@ -40,7 +40,7 @@ import us.mn.state.health.lims.scriptlet.valueholder.Scriptlet;
  * @author diane benz
  */
 @Component
-@Transactional
+@Transactional 
 public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet> implements ScriptletDAO {
 
 	public ScriptletDAOImpl() {

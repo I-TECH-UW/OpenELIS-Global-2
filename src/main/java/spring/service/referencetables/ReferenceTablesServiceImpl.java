@@ -24,7 +24,7 @@ public class ReferenceTablesServiceImpl extends BaseObjectServiceImpl<ReferenceT
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public ReferenceTables getReferenceTableByName(String tableName) {
 		return baseObjectDAO.getReferenceTableByName(tableName);
 	}

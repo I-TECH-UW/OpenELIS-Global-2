@@ -41,7 +41,7 @@ import us.mn.state.health.lims.person.valueholder.Person;
  * @author diane benz
  */
 @Component
-@Transactional
+@Transactional 
 public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 
 	public PersonDAOImpl() {

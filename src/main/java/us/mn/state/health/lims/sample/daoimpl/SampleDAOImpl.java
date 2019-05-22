@@ -47,7 +47,7 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
  * @author diane benz
  */
 @Component
-@Transactional
+@Transactional 
 public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 
 	public SampleDAOImpl() {

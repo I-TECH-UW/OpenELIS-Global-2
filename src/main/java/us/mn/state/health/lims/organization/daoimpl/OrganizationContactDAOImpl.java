@@ -32,7 +32,7 @@ import us.mn.state.health.lims.organization.dao.OrganizationContactDAO;
 import us.mn.state.health.lims.organization.valueholder.OrganizationContact;
 
 @Component
-@Transactional
+@Transactional 
 public class OrganizationContactDAOImpl extends BaseDAOImpl<OrganizationContact> implements OrganizationContactDAO {
 
 	public OrganizationContactDAOImpl() {

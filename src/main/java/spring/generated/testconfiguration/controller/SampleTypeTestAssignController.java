@@ -20,7 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.SampleTypeTestAssignForm;
 import spring.mine.common.controller.BaseController;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.TypeOfSampleService;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -56,7 +56,7 @@ public class SampleTypeTestAssignController extends BaseController {
 
 			for (Test test : testList) {
 				if (test.isActive()) {
-					tests.add(new IdValuePair(test.getId(), TestServiceImpl.getLocalizedTestNameWithType(test)));
+					tests.add(new IdValuePair(test.getId(), TestService.getLocalizedTestNameWithType(test)));
 				}
 			}
 		}

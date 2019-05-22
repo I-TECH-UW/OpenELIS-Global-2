@@ -41,7 +41,7 @@ import us.mn.state.health.lims.userrole.valueholder.UserRole;
 import us.mn.state.health.lims.userrole.valueholder.UserRolePK;
 
 @Component
-@Transactional
+@Transactional 
 public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDAO {
 
 	public UserRoleDAOImpl() {

@@ -17,7 +17,7 @@ import us.mn.state.health.lims.datasubmission.valueholder.TypeOfDataIndicator;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional
+@Transactional 
 public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator> implements TypeOfDataIndicatorDAO {
 
 	public TypeOfDataIndicatorDAOImpl() {

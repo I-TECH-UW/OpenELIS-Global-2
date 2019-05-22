@@ -38,7 +38,7 @@ import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultSignature;
 
 @Component
-@Transactional
+@Transactional 
 public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature> implements ResultSignatureDAO {
 
 	public ResultSignatureDAOImpl() {

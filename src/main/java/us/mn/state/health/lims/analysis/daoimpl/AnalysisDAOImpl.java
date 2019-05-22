@@ -59,7 +59,7 @@ import us.mn.state.health.lims.test.valueholder.Test;
  * @author diane benz
  */
 @Component
-@Transactional
+@Transactional 
 public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDAO {
 
 	public AnalysisDAOImpl() {

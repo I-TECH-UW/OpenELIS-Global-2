@@ -20,7 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.TestSectionTestAssignForm;
 import spring.mine.common.controller.BaseController;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.TestSectionService;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -55,7 +55,7 @@ public class TestSectionTestAssignController extends BaseController {
 
 			for (Test test : testList) {
 				if (test.isActive()) {
-					tests.add(new IdValuePair(test.getId(), TestServiceImpl.getLocalizedTestNameWithType(test)));
+					tests.add(new IdValuePair(test.getId(), TestService.getLocalizedTestNameWithType(test)));
 				}
 			}
 		}
@@ -110,7 +110,7 @@ public class TestSectionTestAssignController extends BaseController {
 		String deactivateTestSectionId = form.getString("deactivateTestSectionId");
 		boolean updateTestSection = false;
 		String currentUser = getSysUserId(request);
-		Test test = new TestServiceImpl(testId).getTest();
+		Test test = new TestService(testId).getTest();
 		TestSection testSection = new TestSectionService(testSectionId).getTestSection();
 		TestSection deActivateTestSection = null;
 		test.setTestSection(testSection);

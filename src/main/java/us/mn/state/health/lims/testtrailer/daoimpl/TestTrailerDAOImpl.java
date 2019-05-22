@@ -40,7 +40,7 @@ import us.mn.state.health.lims.testtrailer.valueholder.TestTrailer;
  * @author diane benz
  */
 @Component
-@Transactional
+@Transactional 
 public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer> implements TestTrailerDAO {
 
 	public TestTrailerDAOImpl() {

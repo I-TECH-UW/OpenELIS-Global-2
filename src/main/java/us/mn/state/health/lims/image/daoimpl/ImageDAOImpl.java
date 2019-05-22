@@ -30,7 +30,7 @@ import us.mn.state.health.lims.image.dao.ImageDAO;
 import us.mn.state.health.lims.image.valueholder.Image;
 
 @Component
-@Transactional
+@Transactional 
 public class ImageDAOImpl extends BaseDAOImpl<Image> implements ImageDAO {
 
 	public ImageDAOImpl() {

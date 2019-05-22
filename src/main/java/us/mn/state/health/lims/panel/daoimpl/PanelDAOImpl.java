@@ -44,7 +44,7 @@ import us.mn.state.health.lims.panel.valueholder.Panel;
  * @author diane benz
  */
 @Component
-@Transactional
+@Transactional 
 public class PanelDAOImpl extends BaseDAOImpl<Panel> implements PanelDAO {
 
 	public PanelDAOImpl() {

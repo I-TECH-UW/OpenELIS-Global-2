@@ -7,7 +7,7 @@ import us.mn.state.health.lims.audittrail.valueholder.History;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 
 @Component
-@Transactional
+@Transactional 
 public class HistoryDAOImpl extends BaseDAOImpl<History> implements HistoryDAO {
   HistoryDAOImpl() {
     super(History.class);

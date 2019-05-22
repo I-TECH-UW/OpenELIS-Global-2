@@ -32,7 +32,7 @@ import us.mn.state.health.lims.common.valueholder.DatabaseChangeLog;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional
+@Transactional 
 public class DatabaseChangeLogDAOImpl extends BaseDAOImpl<DatabaseChangeLog> implements DatabaseChangeLogDAO {
 
 	public DatabaseChangeLogDAOImpl() {

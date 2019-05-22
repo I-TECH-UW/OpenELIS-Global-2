@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import spring.mine.internationalization.MessageUtil;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.valueholder.History;
@@ -53,7 +53,7 @@ public class AnalysisHistoryService extends HistoryService {
 			newValueMap = new HashMap<String, String>();
 			newValueMap.put(STATUS_ATTRIBUTE, StatusService.getInstance().getStatusNameFromId(analysis.getStatusId()));
 
-			identifier = TestServiceImpl.getLocalizedTestNameWithType( analysis.getTest() ) + " - " + analysis.getAnalysisType();
+			identifier = TestService.getLocalizedTestNameWithType( analysis.getTest() ) + " - " + analysis.getAnalysisType();
 		}else{
 			historyList = new ArrayList<History>();
 		}

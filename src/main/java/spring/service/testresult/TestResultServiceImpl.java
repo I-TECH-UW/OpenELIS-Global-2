@@ -29,7 +29,7 @@ public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult> imp
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<TestResult> getAllActiveTestResultsPerTest(Test test) {
 		Map<String, Object> propertyValues = new HashMap<>();
 		List<String> orderProperties = new ArrayList<>();
@@ -41,7 +41,7 @@ public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult> imp
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<TestResult> getActiveTestResultsByTest(String testId) {
 		Map<String, Object> propertyValues = new HashMap<>();
 		propertyValues.put("test", testId);
@@ -50,7 +50,7 @@ public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult> imp
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public TestResult getTestResultsByTestAndDictonaryResult(String id, String value) {
 		return baseObjectDAO.getTestResultsByTestAndDictonaryResult(id, value);
 	}

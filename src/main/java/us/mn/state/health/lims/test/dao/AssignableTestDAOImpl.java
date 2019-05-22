@@ -7,7 +7,7 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.test.valueholder.AssignableTest;
 
 @Component
-@Transactional
+@Transactional 
 public class AssignableTestDAOImpl extends BaseDAOImpl<AssignableTest> implements AssignableTestDAO {
   AssignableTestDAOImpl() {
     super(AssignableTest.class);

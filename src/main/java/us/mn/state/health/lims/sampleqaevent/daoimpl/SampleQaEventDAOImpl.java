@@ -46,7 +46,7 @@ import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
  * @version $Revision$ bugzilla 2510
  */
 @Component
-@Transactional
+@Transactional 
 public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements SampleQaEventDAO {
 
 	public SampleQaEventDAOImpl() {

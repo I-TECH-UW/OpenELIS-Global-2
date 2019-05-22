@@ -32,7 +32,7 @@ import us.mn.state.health.lims.organization.valueholder.Organization;
 
 //TODO move to service layer, or other DAOs
 @Component
-@Transactional
+@Transactional 
 public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganizationTypeDAO {
 
 	@Autowired

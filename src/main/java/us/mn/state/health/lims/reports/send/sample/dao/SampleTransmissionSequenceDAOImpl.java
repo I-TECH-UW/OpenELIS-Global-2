@@ -7,7 +7,7 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.reports.send.sample.valueholder.SampleTransmissionSequence;
 
 @Component
-@Transactional
+@Transactional 
 public class SampleTransmissionSequenceDAOImpl extends BaseDAOImpl<SampleTransmissionSequence> implements SampleTransmissionSequenceDAO {
   SampleTransmissionSequenceDAOImpl() {
     super(SampleTransmissionSequence.class);

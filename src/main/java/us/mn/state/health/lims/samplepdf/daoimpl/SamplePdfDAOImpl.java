@@ -31,7 +31,7 @@ import us.mn.state.health.lims.samplepdf.valueholder.SamplePdf;
  * @author Hung Nguyen
  */
 @Component
-@Transactional
+@Transactional 
 public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf> implements SamplePdfDAO {
 
 	public SamplePdfDAOImpl() {

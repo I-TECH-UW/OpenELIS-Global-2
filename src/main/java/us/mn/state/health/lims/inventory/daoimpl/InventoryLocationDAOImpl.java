@@ -32,7 +32,7 @@ import us.mn.state.health.lims.inventory.dao.InventoryLocationDAO;
 import us.mn.state.health.lims.inventory.valueholder.InventoryLocation;
 
 @Component
-@Transactional
+@Transactional 
 public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation> implements InventoryLocationDAO {
 
 	public InventoryLocationDAOImpl() {

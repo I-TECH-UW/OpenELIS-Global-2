@@ -29,7 +29,7 @@ import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import spring.service.analysis.AnalysisService;
 import spring.service.analysis.AnalysisServiceImpl;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -98,18 +98,18 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 		concatSection_TestToBucketMap = new HashMap<>();
 		testBucketList = new ArrayList<>();
 
-		List<Test> testList = TestServiceImpl.getAllActiveTests();
+		List<Test> testList = TestService.getAllActiveTests();
 
 		for (Test test : testList) {
 
 			TestBucket bucket = new TestBucket();
 
-			bucket.testName = TestServiceImpl.getUserLocalizedReportingTestName(test);
+			bucket.testName = TestService.getUserLocalizedReportingTestName(test);
 			bucket.testSort = Integer.parseInt(test.getSortOrder());
 			bucket.testSection = test.getTestSection().getLocalizedName();
 			bucket.sectionSort = test.getTestSection().getSortOrderInt();
 
-			testNameToBucketList.put(TestServiceImpl.getUserLocalizedReportingTestName(test), bucket);
+			testNameToBucketList.put(TestService.getUserLocalizedReportingTestName(test), bucket);
 			testBucketList.add(bucket);
 		}
 
@@ -221,11 +221,11 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 			// that entry will not be in the test to test section map
 			if (USER_TEST_SECTION_ID.equals(analysis.getTest().getTestSection().getId())) {
 				String concatedName = analysis.getTestSection().getLocalizedName()
-						+ TestServiceImpl.getUserLocalizedTestName(analysis.getTest());
+						+ TestService.getUserLocalizedTestName(analysis.getTest());
 				testBucket = concatSection_TestToBucketMap.get(concatedName);
 				if (testBucket == null) {
 					testBucket = new TestBucket();
-					testBucket.testName = TestServiceImpl.getUserLocalizedReportingTestName(test);
+					testBucket.testName = TestService.getUserLocalizedReportingTestName(test);
 					testBucket.testSort = Integer.parseInt(test.getSortOrder());
 					testBucket.testSection = analysis.getTestSection().getLocalizedName();
 					testBucket.sectionSort = analysis.getTestSection().getSortOrderInt();
@@ -234,7 +234,7 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 			} else if (test.getLocalizedTestName() == null) {
 				testBucket = testNameToBucketList.get(test.getTestName());
 			} else {
-				testBucket = testNameToBucketList.get(TestServiceImpl.getUserLocalizedReportingTestName(test));
+				testBucket = testNameToBucketList.get(TestService.getUserLocalizedReportingTestName(test));
 			}
 
 			if (testBucket != null) {

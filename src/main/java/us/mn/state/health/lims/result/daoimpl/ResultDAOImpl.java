@@ -46,7 +46,7 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
  * @author diane benz
  */
 @Component
-@Transactional
+@Transactional 
 public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 	public ResultDAOImpl() {

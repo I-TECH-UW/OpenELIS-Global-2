@@ -35,7 +35,7 @@ import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional
+@Transactional 
 public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder> implements ElectronicOrderDAO {
 
 	public ElectronicOrderDAOImpl() {

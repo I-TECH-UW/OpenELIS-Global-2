@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
 
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.localization.valueholder.Localization;
 import us.mn.state.health.lims.test.valueholder.Test;
@@ -73,7 +73,7 @@ public class TestNamesProvider extends BaseQueryProvider {
             throw new IllegalStateException( "TestNamesProvider testId was blank.  It must have a value" );
         }
 
-        Test test = new TestServiceImpl( testId ).getTest();
+        Test test = new TestService( testId ).getTest();
         if( test != null){
             Localization nameLocalization = test.getLocalizedTestName();
             Localization reportNameLocalization = test.getLocalizedReportingName();

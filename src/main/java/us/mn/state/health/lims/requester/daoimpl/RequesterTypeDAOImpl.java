@@ -23,14 +23,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.requester.dao.RequesterTypeDAO;
 import us.mn.state.health.lims.requester.valueholder.RequesterType;
 
 /*
  */
 @Component
-@Transactional
+@Transactional 
 public class RequesterTypeDAOImpl extends BaseDAOImpl<RequesterType> implements RequesterTypeDAO {
 
 	public RequesterTypeDAOImpl() {
@@ -42,11 +41,9 @@ public class RequesterTypeDAOImpl extends BaseDAOImpl<RequesterType> implements 
 		String sql = "from RequesterType rt where rt.requesterType = :typeName";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("typeName", typeName);
 			RequesterType type = (RequesterType) query.uniqueResult();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			HibernateUtil.getSession().close();
 			return type;
 		} catch (HibernateException e) {
 			handleException(e, "getRequesterTypeByName");

@@ -16,7 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.TestCatalogForm;
 import spring.mine.common.controller.BaseController;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.LocalizationService;
 import us.mn.state.health.lims.common.services.ResultLimitService;
 import us.mn.state.health.lims.common.services.TypeOfTestResultService;
@@ -81,7 +81,7 @@ public class TestCatalogController extends BaseController {
 		for (Test test : testList) {
 
 			TestCatalog catalog = new TestCatalog();
-			TestServiceImpl testService = new TestServiceImpl(test);
+			TestService testService = new TestService(test);
 			String resultType = testService.getResultType();
 			catalog.setId(test.getId());
 			catalog.setEnglishName(test.getLocalizedTestName().getEnglish());
@@ -151,7 +151,7 @@ public class TestCatalogController extends BaseController {
 
 	}
 
-	private List<String> createDictionaryValues(TestServiceImpl testService) {
+	private List<String> createDictionaryValues(TestService testService) {
 		List<String> dictionaryList = new ArrayList<>();
 		List<TestResult> testResultList = testService.getPossibleTestResults();
 		for (TestResult testResult : testResultList) {
@@ -206,7 +206,7 @@ public class TestCatalogController extends BaseController {
 		return limitBeans;
 	}
 
-	private String createPanelList(TestServiceImpl testService) {
+	private String createPanelList(TestService testService) {
 		StringBuilder builder = new StringBuilder();
 
 		List<Panel> panelList = testService.getPanels();

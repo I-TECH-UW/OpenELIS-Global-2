@@ -16,7 +16,7 @@ import us.mn.state.health.lims.systemmodule.dao.SystemModuleUrlDAO;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModuleUrl;
 
 @Component
-@Transactional
+@Transactional 
 public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl> implements SystemModuleUrlDAO {
 
 	public SystemModuleUrlDAOImpl() {

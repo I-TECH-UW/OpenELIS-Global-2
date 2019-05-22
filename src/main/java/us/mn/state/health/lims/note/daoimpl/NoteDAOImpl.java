@@ -43,7 +43,7 @@ import us.mn.state.health.lims.note.valueholder.Note;
  * @author diane benz
  */
 @Component
-@Transactional
+@Transactional 
 public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 
 	public NoteDAOImpl() {

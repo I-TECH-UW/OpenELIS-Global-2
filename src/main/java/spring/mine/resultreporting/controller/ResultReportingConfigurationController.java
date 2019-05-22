@@ -100,7 +100,7 @@ public class ResultReportingConfigurationController extends BaseController {
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
-	@Transactional
+	@Transactional 
 	private void updateInformationAndSchedulers(List<SiteInformation> informationList,
 			List<CronScheduler> scheduleList) {
 		for (SiteInformation info : informationList) {

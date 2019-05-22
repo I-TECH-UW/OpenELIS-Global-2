@@ -24,7 +24,7 @@ public class PatientPatientTypeServiceImpl extends BaseObjectServiceImpl<Patient
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public PatientPatientType getPatientPatientTypeForPatient(String id) {
 		return getMatch("patientId", id).get();
 	}

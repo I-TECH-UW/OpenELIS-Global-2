@@ -17,7 +17,7 @@ import us.mn.state.health.lims.datasubmission.valueholder.DataValue;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional
+@Transactional 
 public class DataValueDAOImpl extends BaseDAOImpl<DataValue> implements DataValueDAO {
 
 	public DataValueDAOImpl() {

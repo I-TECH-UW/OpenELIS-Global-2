@@ -202,7 +202,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 		return findForward(FWD_SUCCESS_DELETE, form);
 	}
 
-	@Transactional
+	@Transactional 
 	public void deleteData(List<UserRole> userRoles, List<SystemUser> systemUsers, List<Login> loginUsers) {
 		String sysUserId = getSysUserId(request);
 

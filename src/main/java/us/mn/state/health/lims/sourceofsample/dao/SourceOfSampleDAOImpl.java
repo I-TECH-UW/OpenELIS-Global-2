@@ -7,7 +7,7 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.sourceofsample.valueholder.SourceOfSample;
 
 @Component
-@Transactional
+@Transactional 
 public class SourceOfSampleDAOImpl extends BaseDAOImpl<SourceOfSample> implements SourceOfSampleDAO {
   SourceOfSampleDAOImpl() {
     super(SourceOfSample.class);

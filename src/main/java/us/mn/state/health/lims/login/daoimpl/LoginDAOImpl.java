@@ -43,7 +43,7 @@ import us.mn.state.health.lims.security.PasswordUtil;
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
 @Component
-@Transactional
+@Transactional 
 public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
 
 	public LoginDAOImpl() {

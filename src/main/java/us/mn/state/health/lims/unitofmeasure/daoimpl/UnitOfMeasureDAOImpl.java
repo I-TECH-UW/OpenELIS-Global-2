@@ -40,7 +40,7 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
  * @author diane benz
  */
 @Component
-@Transactional
+@Transactional 
 public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements UnitOfMeasureDAO {
 
 	public UnitOfMeasureDAOImpl() {

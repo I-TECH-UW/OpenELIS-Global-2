@@ -17,7 +17,7 @@ import us.mn.state.health.lims.datasubmission.valueholder.DataResource;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional
+@Transactional 
 public class DataResourceDAOImpl extends BaseDAOImpl<DataResource> implements DataResourceDAO {
 
 	public DataResourceDAOImpl() {

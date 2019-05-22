@@ -17,7 +17,7 @@ package us.mn.state.health.lims.test.valueholder;
 
 import java.sql.Date;
 
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
@@ -459,7 +459,7 @@ public class Test extends EnumValueItemImpl {
 
 	@Override
 	protected String getDefaultLocalizedName() {
-		return TestServiceImpl.getUserLocalizedTestName(this);
+		return TestService.getUserLocalizedTestName(this);
     }
 
 	public void setLocalCode( String localCode ) {

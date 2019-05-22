@@ -26,7 +26,7 @@ import spring.mine.internationalization.MessageUtil;
 import spring.mine.test.form.BatchTestReassignmentForm;
 import spring.mine.test.validator.BatchTestReassignmentFormValidator;
 import spring.service.analysis.AnalysisService;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -141,9 +141,9 @@ public class BatchTestReassignmentController extends BaseController {
 					newTestsString = MessageUtil.getMessage("status.test.canceled");
 				} else {
 					newTestsString = MessageUtil.getMessage("label.test.batch.reassignment") + ": "
-							+ TestServiceImpl.getUserLocalizedTestName(newTests.get(0));
+							+ TestService.getUserLocalizedTestName(newTests.get(0));
 					for (int i = 1; i < newTests.size(); i++) {
-						newTestsString += ", " + TestServiceImpl.getUserLocalizedTestName(newTests.get(i));
+						newTestsString += ", " + TestService.getUserLocalizedTestName(newTests.get(i));
 					}
 				}
 				changedMetaInfo.nextTest = newTestsString;
@@ -240,7 +240,7 @@ public class BatchTestReassignmentController extends BaseController {
 		}
 
 		for (Object testIdObject : replacementTestArray) {
-			replacementTestList.add(new TestServiceImpl((String) testIdObject).getTest());
+			replacementTestList.add(new TestService((String) testIdObject).getTest());
 		}
 
 		return replacementTestList;

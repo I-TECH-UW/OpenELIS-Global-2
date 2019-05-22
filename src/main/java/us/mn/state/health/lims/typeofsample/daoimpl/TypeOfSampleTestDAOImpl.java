@@ -35,7 +35,7 @@ import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 @Component
-@Transactional
+@Transactional 
 public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> implements TypeOfSampleTestDAO {
 
 	public TypeOfSampleTestDAOImpl() {

@@ -24,7 +24,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  *
  */
 @Component
-@Transactional
+@Transactional 
 public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo> implements BarcodeLabelInfoDAO {
 
 	public BarcodeLabelInfoDAOImpl() {

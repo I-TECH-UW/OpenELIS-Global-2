@@ -41,7 +41,7 @@ import us.mn.state.health.lims.method.valueholder.Method;
  * @author diane benz
  */
 @Component
-@Transactional
+@Transactional 
 public class MethodDAOImpl extends BaseDAOImpl<Method> implements MethodDAO {
 
 	public MethodDAOImpl() {

@@ -40,7 +40,7 @@ import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
  * @author diane benz
  */
 @Component
-@Transactional
+@Transactional 
 public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser> implements SystemUserDAO {
 
 	public SystemUserDAOImpl() {

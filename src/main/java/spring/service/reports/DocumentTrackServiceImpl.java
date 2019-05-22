@@ -27,7 +27,7 @@ public class DocumentTrackServiceImpl extends BaseObjectServiceImpl<DocumentTrac
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<DocumentTrack> getByTypeRecordAndTable(String typeId, String tableId, String recordId) {
 		Map<String, Object> propertyValues = new HashMap<>();
 		propertyValues.put("documentTypeId", typeId);

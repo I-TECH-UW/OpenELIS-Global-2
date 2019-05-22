@@ -43,7 +43,7 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
  */
 //TODO delete this unused DAO object
 @Component
-@Transactional
+@Transactional 
 public class TestAnalyteTestResultDAOImpl implements TestAnalyteTestResultDAO {
 
 	/*

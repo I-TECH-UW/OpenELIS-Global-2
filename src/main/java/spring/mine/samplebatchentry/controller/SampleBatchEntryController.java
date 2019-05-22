@@ -21,7 +21,7 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.samplebatchentry.form.SampleBatchEntryForm;
 import spring.mine.samplebatchentry.validator.SampleBatchEntryFormValidator;
 import spring.service.organization.OrganizationService;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import spring.service.typeofsample.TypeOfSampleService;
 import us.mn.state.health.lims.common.services.SampleOrderService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -80,7 +80,7 @@ public class SampleBatchEntryController extends BaseController {
 		String seperator = "";
 		while (tokenizer.hasMoreTokens()) {
 			sBuilder.append(seperator);
-			sBuilder.append(TestServiceImpl.getUserLocalizedTestName(testService.get(tokenizer.nextToken().trim())));
+			sBuilder.append(TestService.getUserLocalizedTestName(testService.get(tokenizer.nextToken().trim())));
 			seperator = "<br>";
 		}
 		String sampleType = typeOfSampleService.get(sampleItem.attributeValue("sampleID")).getLocalAbbreviation();

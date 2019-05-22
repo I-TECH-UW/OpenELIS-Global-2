@@ -40,7 +40,7 @@ import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
 @Component
-@Transactional
+@Transactional 
 public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements SystemModuleDAO {
 
 	public SystemModuleDAOImpl() {

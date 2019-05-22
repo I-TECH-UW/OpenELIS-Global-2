@@ -31,7 +31,7 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login> implements Lo
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public Login get(String id) {
 		Login login = super.get(id);
 		inferExtraData(login);
@@ -40,7 +40,7 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login> implements Lo
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public Optional<Login> getMatch(String propertyName, Object propertyValue) {
 		Optional<Login> login = super.getMatch(propertyName, propertyValue);
 		if (login.isPresent()) {
@@ -50,7 +50,7 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login> implements Lo
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public Optional<Login> getMatch(Map<String, Object> propertyValues) {
 		Optional<Login> login = super.getMatch(propertyValues);
 		if (login.isPresent()) {
@@ -59,14 +59,14 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login> implements Lo
 		return login;
 	}
 
-	@Transactional
+	@Transactional 
 	private void inferExtraData(Login login) {
 		login.setSystemUserId(baseObjectDAO.getSystemUserId(login));
 		login.setPasswordExpiredDayNo(baseObjectDAO.getPasswordExpiredDayNo(login));
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public Optional<Login> getValidatedLogin(String loginName, String password) {
 		PasswordUtil passUtil = new PasswordUtil();
 		List<Login> logins = baseObjectDAO.getAllMatching("loginName", loginName);
@@ -83,7 +83,7 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login> implements Lo
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public void updatePassword(Login login, String newPassword) {
 		PasswordUtil passUtil = new PasswordUtil();
 		login.setPassword(passUtil.hashPassword(newPassword));

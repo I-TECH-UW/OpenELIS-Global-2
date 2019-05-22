@@ -42,7 +42,7 @@ import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
  * @author diane benz
  */
 @Component
-@Transactional
+@Transactional 
 public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte> implements TestAnalyteDAO {
 
 	public TestAnalyteDAOImpl() {

@@ -25,7 +25,7 @@ public class RoleServiceImpl extends BaseObjectServiceImpl<Role> implements Role
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<Role> getAllActiveRoles() {
 		return baseObjectDAO.getAllMatching("active", true);
 	}

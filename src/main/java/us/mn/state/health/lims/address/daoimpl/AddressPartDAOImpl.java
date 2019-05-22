@@ -30,7 +30,7 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional
+@Transactional 
 public class AddressPartDAOImpl extends BaseDAOImpl<AddressPart> implements AddressPartDAO {
 
 	public AddressPartDAOImpl() {

@@ -43,7 +43,7 @@ import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;
 import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 
 @Component
-@Transactional
+@Transactional 
 public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrailDAO {
 
 	public AuditTrailDAOImpl() {

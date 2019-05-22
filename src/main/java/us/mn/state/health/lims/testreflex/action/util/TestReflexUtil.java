@@ -27,7 +27,7 @@ import java.util.Set;
 
 import org.apache.commons.validator.GenericValidator;
 
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -136,7 +136,7 @@ public class TestReflexUtil {
 	}
 	
 	public static String makeReflexTestName(TestReflex testReflex) {
-		return TestServiceImpl.getUserLocalizedTestName( testReflex.getAddedTest() );
+		return TestService.getUserLocalizedTestName( testReflex.getAddedTest() );
 	}
 
 	public static String makeReflexScriptName(TestReflex testReflex) {

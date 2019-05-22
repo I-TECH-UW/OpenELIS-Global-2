@@ -28,7 +28,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.AnalysisService;
 import us.mn.state.health.lims.common.services.PatientService;
@@ -142,7 +142,7 @@ public abstract class RejectionReport extends Report implements IReportCreator{
 
 
         if( useTestName ){
-            item.setPatientOrTestName( TestServiceImpl.getUserLocalizedTestName( analysisService.getTest() ) );
+            item.setPatientOrTestName( TestService.getUserLocalizedTestName( analysisService.getTest() ) );
             item.setNonPrintingPatient( nameBuilder.toString() );
         }else{
             item.setPatientOrTestName( nameBuilder.toString() );

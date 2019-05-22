@@ -35,7 +35,7 @@ import org.hibernate.Transaction;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.address.dao.PersonAddressDAO;
 import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
 import us.mn.state.health.lims.address.daoimpl.PersonAddressDAOImpl;
@@ -838,13 +838,13 @@ public abstract class PatientReport extends Report {
 		String testName;
 
 		if (useReportingDescription()) {
-			testName = TestServiceImpl.getUserLocalizedReportingTestName(currentAnalysisService.getTest());
+			testName = TestService.getUserLocalizedReportingTestName(currentAnalysisService.getTest());
 		} else {
-			testName = TestServiceImpl.getUserLocalizedTestName(currentAnalysisService.getTest());
+			testName = TestService.getUserLocalizedTestName(currentAnalysisService.getTest());
 		}
 
 		if (GenericValidator.isBlankOrNull(testName)) {
-			testName = TestServiceImpl.getUserLocalizedTestName(currentAnalysisService.getTest());
+			testName = TestService.getUserLocalizedTestName(currentAnalysisService.getTest());
 		}
 		return (indent ? "    " : "") + testName;
 	}

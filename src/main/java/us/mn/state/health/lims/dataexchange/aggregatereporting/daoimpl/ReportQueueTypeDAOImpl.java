@@ -28,7 +28,7 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.Repor
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional
+@Transactional 
 public class ReportQueueTypeDAOImpl extends BaseDAOImpl<ReportQueueType> implements ReportQueueTypeDAO {
 
 	public ReportQueueTypeDAOImpl() {

@@ -48,7 +48,7 @@ import us.mn.state.health.lims.project.valueholder.Project;
  * @author diane benz
  */
 @Component
-@Transactional
+@Transactional 
 public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements OrganizationDAO {
 
 	public OrganizationDAOImpl() {

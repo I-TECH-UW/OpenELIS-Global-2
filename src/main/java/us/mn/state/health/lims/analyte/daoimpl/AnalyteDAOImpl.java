@@ -42,7 +42,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  * @author diane benz
  */
 @Component
-@Transactional
+@Transactional 
 public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 
 	public AnalyteDAOImpl() {

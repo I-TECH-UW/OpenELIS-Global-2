@@ -19,7 +19,7 @@ import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 
 @Component
-@Transactional
+@Transactional 
 public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory> implements ObservationHistoryDAO {
 
 	public ObservationHistoryDAOImpl() {

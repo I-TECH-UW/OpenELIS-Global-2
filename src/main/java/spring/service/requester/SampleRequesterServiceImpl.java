@@ -26,7 +26,7 @@ public class SampleRequesterServiceImpl extends BaseObjectServiceImpl<SampleRequ
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<SampleRequester> getRequestersForSampleId(String id) {
 		return baseObjectDAO.getAllMatching("sampleId", id);
 	}

@@ -7,7 +7,7 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.label.valueholder.Label;
 
 @Component
-@Transactional
+@Transactional 
 public class LabelDAOImpl extends BaseDAOImpl<Label> implements LabelDAO {
   LabelDAOImpl() {
     super(Label.class);

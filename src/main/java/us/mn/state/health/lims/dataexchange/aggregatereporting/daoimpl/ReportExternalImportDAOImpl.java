@@ -34,7 +34,7 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.Repor
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional
+@Transactional 
 public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImport> implements ReportExternalImportDAO {
 
 	public ReportExternalImportDAOImpl() {

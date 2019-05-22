@@ -280,7 +280,7 @@ public class StatusService {
 		}
 	}
 
-	@Transactional
+	@Transactional 
 	private void insertOrUpdateStatus(Sample sample, Patient patient, RecordStatus status, String sysUserId,
 			ObservationHistory record, String historyTypeId) {
 
@@ -300,7 +300,7 @@ public class StatusService {
 		}
 	}
 
-	@Transactional
+	@Transactional 
 	public void deleteRecordStatus(Sample sample, Patient patient, String sysUserId) {
 		insureMapsAreBuilt();
 

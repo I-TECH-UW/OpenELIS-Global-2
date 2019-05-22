@@ -44,7 +44,7 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
  * @author diane benz
  */
 @Component
-@Transactional
+@Transactional 
 public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements TestSectionDAO {
 
 	public TestSectionDAOImpl() {

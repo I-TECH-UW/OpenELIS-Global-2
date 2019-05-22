@@ -28,7 +28,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -178,7 +178,7 @@ public class IndicatorHIV extends IndicatorReport implements IReportCreator, IRe
 
 		for (Analysis analysis : analysisList) {
 
-			String testName = TestServiceImpl.getUserLocalizedTestName( analysis.getTest() );
+			String testName = TestService.getUserLocalizedTestName( analysis.getTest() );
 
 			TestBucket bucket = testBuckets.get(testName);
 

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -152,7 +152,7 @@ public class HaitiLNSPExportReport extends CSVExportReport{
 		ts.setStatus(StatusService.getInstance().getStatusName(StatusService.getInstance().getAnalysisStatusForID(analysis.getStatusId())));
 		ts.setSampleType(sampleItem.getTypeOfSample().getLocalizedName());
 		ts.setTestBench(analysis.getTestSection() == null ? "" : analysis.getTestSection().getTestSectionName());
-        ts.setTestName( TestServiceImpl.getUserLocalizedTestName( analysis.getTest() ) );
+        ts.setTestName( TestService.getUserLocalizedTestName( analysis.getTest() ) );
         ts.setDepartment( StringUtil.blankIfNull(patientService.getAddressComponents().get(PatientService.ADDRESS_DEPT) ) );
         String notes = new NoteService( analysis ).getNotesAsString( false, false, "|", false );
         if( notes != null){

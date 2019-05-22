@@ -7,7 +7,7 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.patientrelation.valueholder.PatientRelation;
 
 @Component
-@Transactional
+@Transactional 
 public class PatientRelationDAOImpl extends BaseDAOImpl<PatientRelation> implements PatientRelationDAO {
   PatientRelationDAOImpl() {
     super(PatientRelation.class);

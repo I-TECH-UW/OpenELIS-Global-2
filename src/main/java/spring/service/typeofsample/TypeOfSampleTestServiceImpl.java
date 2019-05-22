@@ -16,7 +16,7 @@ public class TypeOfSampleTestServiceImpl extends BaseObjectServiceImpl<TypeOfSam
 	@Autowired
 	protected TypeOfSampleTestDAO baseObjectDAO;
 
-	TypeOfSampleTestServiceImpl() {
+	public TypeOfSampleTestServiceImpl() {
 		super(TypeOfSampleTest.class);
 	}
 

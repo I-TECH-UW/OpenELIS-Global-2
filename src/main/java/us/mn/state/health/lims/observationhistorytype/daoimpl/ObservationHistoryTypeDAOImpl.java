@@ -14,7 +14,7 @@ import us.mn.state.health.lims.observationhistorytype.dao.ObservationHistoryType
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
  
 @Component
-@Transactional
+@Transactional 
 public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistoryType>
 		implements ObservationHistoryTypeDAO {
 

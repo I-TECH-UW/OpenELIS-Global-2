@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import spring.util.SpringContext;
@@ -19,23 +20,19 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.LocaleChangeListener;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.localization.valueholder.Localization;
-import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
+import us.mn.state.health.lims.panel.dao.PanelDAO;
 import us.mn.state.health.lims.panel.valueholder.Panel;
-import us.mn.state.health.lims.panelitem.daoimpl.PanelItemDAOImpl;
+import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 import us.mn.state.health.lims.test.beanItems.TestResultItem.ResultDisplayType;
 import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 import us.mn.state.health.lims.testresult.dao.TestResultDAO;
-import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleTestDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
@@ -49,64 +46,72 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test> implements Test
 
 	public static final String HIV_TYPE = "HIV_TEST_KIT";
 	public static final String SYPHILIS_TYPE = "SYPHILIS_TEST_KIT";
-//	private static final TestService INSTANCE = new TestService(new Test());
 	private static String VARIABLE_TYPE_OF_SAMPLE_ID;
 	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()
 			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
-
-	private final Test test;
-
 	private static Map<Entity, Map<String, String>> entityToMap;
 
 	@Autowired
-	protected TestDAO baseObjectDAO;
+	protected static TestDAO testDAO = SpringContext.getBean(TestDAO.class);
 
 	@Autowired
-	private static TestResultDAO TEST_RESULT_DAO = SpringContext.instantiateBean(TestResultDAOImpl.class);
+	private static TestResultDAO TEST_RESULT_DAO = SpringContext.getBean(TestResultDAO.class);
 	@Autowired
-	private static TestDAO TEST_DAO = SpringContext.instantiateBean(TestDAOImpl.class);
+	private static TypeOfSampleDAO TYPE_OF_SAMPLE_DAO = SpringContext.getBean(TypeOfSampleDAO.class);
 	@Autowired
-	private static TypeOfSampleDAO TYPE_OF_SAMPLE_DAO = SpringContext.instantiateBean(TypeOfSampleDAOImpl.class);
+	private static TypeOfSampleTestDAO TYPE_OF_SAMPLE_testDAO = SpringContext.getBean(TypeOfSampleTestDAO.class);
 	@Autowired
-	private static TypeOfSampleTestDAO TYPE_OF_SAMPLE_TEST_DAO = SpringContext
-			.instantiateBean(TypeOfSampleTestDAOImpl.class);
+	private PanelItemDAO panelItemDAO = SpringContext.getBean(PanelItemDAO.class);
+	@Autowired
+	private PanelDAO panelDAO = SpringContext.getBean(PanelDAO.class);
+
+	private Test test;
 
 	@PostConstruct
 	public void initialize() {
-		TypeOfSample variableTypeOfSample = new TypeOfSampleDAOImpl().getTypeOfSampleByLocalAbbrevAndDomain("Variable",
-				"H");
+		SystemConfiguration.getInstance().addLocalChangeListener(this);
+	}
+
+	public synchronized void initializeGlobalVariables() {
+		TypeOfSample variableTypeOfSample = TYPE_OF_SAMPLE_DAO.getTypeOfSampleByLocalAbbrevAndDomain("Variable", "H");
 		VARIABLE_TYPE_OF_SAMPLE_ID = variableTypeOfSample == null ? "-1" : variableTypeOfSample.getId();
 
+		if (entityToMap == null) {
+			createEntityMap();
+		}
+	}
+
+	private synchronized void createEntityMap() {
 		entityToMap = new HashMap<>();
 		entityToMap.put(Entity.TEST_NAME, createTestIdToNameMap());
 		entityToMap.put(Entity.TEST_AUGMENTED_NAME, createTestIdToAugmentedNameMap());
 		entityToMap.put(Entity.TEST_REPORTING_NAME, createTestIdToReportingNameMap());
 
-		SystemConfiguration.getInstance().addLocalChangeListener(this);
 	}
 
-	TestServiceImpl() {
+	public TestServiceImpl() {
 		super(Test.class);
-		test = null;
+		initializeGlobalVariables();
 	}
 
 	public TestServiceImpl(Test test) {
-		super(Test.class);
+		this();
 		this.test = test;
 	}
 
 	public TestServiceImpl(String testId) {
-		super(Test.class);
-		test = TEST_DAO.getTestById(testId);
+		this();
+		test = get(testId);
 	}
 
 	@Override
 	protected TestDAO getBaseObjectDAO() {
-		return baseObjectDAO;
+		return testDAO;
 	}
 
+	@Transactional
 	public static List<Test> getTestsInTestSectionById(String testSectionId) {
-		return new TestDAOImpl().getTestsByTestSectionId(testSectionId);
+		return testDAO.getTestsByTestSectionId(testSectionId);
 	}
 
 	@Override
@@ -134,6 +139,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test> implements Test
 	}
 
 	@SuppressWarnings("unchecked")
+	@Transactional
 	public List<TestResult> getPossibleTestResults() {
 		return TEST_RESULT_DAO.getAllActiveTestResultsPerTest(test);
 	}
@@ -179,12 +185,13 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test> implements Test
 		return testResultType;
 	}
 
+	@Transactional
 	public TypeOfSample getTypeOfSample() {
 		if (test == null) {
 			return null;
 		}
 
-		TypeOfSampleTest typeOfSampleTest = TYPE_OF_SAMPLE_TEST_DAO.getTypeOfSampleTestForTest(test.getId());
+		TypeOfSampleTest typeOfSampleTest = TYPE_OF_SAMPLE_testDAO.getTypeOfSampleTestForTest(test.getId());
 
 		if (typeOfSampleTest == null) {
 			return null;
@@ -195,10 +202,11 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test> implements Test
 		return TYPE_OF_SAMPLE_DAO.getTypeOfSampleById(typeOfSampleId);
 	}
 
+	@Transactional
 	public List<Panel> getPanels() {
 		List<Panel> panelList = new ArrayList<>();
 		if (test != null) {
-			List<PanelItem> panelItemList = new PanelItemDAOImpl().getPanelItemByTestId(test.getId());
+			List<PanelItem> panelItemList = panelItemDAO.getPanelItemByTestId(test.getId());
 			for (PanelItem panelItem : panelItemList) {
 				panelList.add(panelItem.getPanel());
 			}
@@ -207,8 +215,9 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test> implements Test
 		return panelList;
 	}
 
+	@Transactional
 	public List<Panel> getAllPanels() {
-		return new PanelDAOImpl().getAllPanels();
+		return panelDAO.getAllPanels();
 	}
 
 	public TestSection getTestSection() {
@@ -219,8 +228,9 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test> implements Test
 		return TestSectionService.getUserLocalizedTesSectionName(getTestSection());
 	}
 
+	@Transactional
 	public static List<Test> getAllActiveTests() {
-		return TEST_DAO.getAllActiveTests(false);
+		return testDAO.getAllActiveTests(false);
 	}
 
 	public static Map<String, String> getMap(Entity entiy) {
@@ -284,10 +294,11 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test> implements Test
 		return description == null ? "" : description;
 	}
 
+	@Transactional
 	private static Map<String, String> createTestIdToNameMap() {
 		Map<String, String> testIdToNameMap = new HashMap<>();
 
-		List<Test> tests = new TestDAOImpl().getAllTests(false);
+		List<Test> tests = testDAO.getAllTests(false);
 
 		for (Test test : tests) {
 			testIdToNameMap.put(test.getId(), buildTestName(test).replace("\n", " "));
@@ -311,10 +322,11 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test> implements Test
 		}
 	}
 
+	@Transactional
 	private static Map<String, String> createTestIdToAugmentedNameMap() {
 		Map<String, String> testIdToNameMap = new HashMap<>();
 
-		List<Test> tests = new TestDAOImpl().getAllTests(false);
+		List<Test> tests = testDAO.getAllTests(false);
 
 		for (Test test : tests) {
 			testIdToNameMap.put(test.getId(), buildAugmentedTestName(test).replace("\n", " "));
@@ -323,10 +335,11 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test> implements Test
 		return testIdToNameMap;
 	}
 
+	@Transactional
 	private static Map<String, String> createTestIdToReportingNameMap() {
 		Map<String, String> testIdToNameMap = new HashMap<>();
 
-		List<Test> tests = new TestDAOImpl().getAllActiveTests(false);
+		List<Test> tests = testDAO.getAllActiveTests(false);
 
 		for (Test test : tests) {
 			testIdToNameMap.put(test.getId(), buildReportingTestName(test));

@@ -277,7 +277,7 @@ public class PatientManagementController extends BaseController {
 		PropertyUtils.copyProperties(patient.getPerson(), patientInfo);
 	}
 
-	@Transactional
+	@Transactional 
 	public void persistPatientData(PatientManagementInfo patientInfo, Patient patient) throws LIMSRuntimeException {
 		if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {
 			personService.insert(patient.getPerson());

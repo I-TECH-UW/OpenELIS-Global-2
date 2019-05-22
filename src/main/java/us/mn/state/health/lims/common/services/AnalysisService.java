@@ -73,7 +73,7 @@ public class AnalysisService {
 			return "";
 		}
 		Test test = getTest();
-		String name = TestServiceImpl.getLocalizedTestNameWithType(test);
+		String name = TestService.getLocalizedTestNameWithType(test);
 
 		TypeOfSample typeOfSample = TypeOfSampleService.getTypeOfSampleForTest(test.getId());
 

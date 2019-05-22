@@ -33,7 +33,7 @@ import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -596,7 +596,7 @@ public class ResultsLoadUtility {
 			String sequenceNumber, Result result, String accessionNumber, String patientName, String patientInfo,
 			String techSignature, String techSignatureId, String initialSampleConditions, String sampleType) {
 
-		TestServiceImpl testService = new TestServiceImpl(analysisService.getTest());
+		TestService testService = new TestService(analysisService.getTest());
 		ResultLimit resultLimit = new ResultLimitService().getResultLimitForTestAndPatient(testService.getTest(),
 				patientService.getPatient());
 
@@ -827,7 +827,7 @@ public class ResultsLoadUtility {
 		return result != null ? new ResultService(result).getResultValue(false) : "";
 	}
 
-	private boolean hasLogValue(TestServiceImpl testService) {// Analysis analysis, String resultValue) {
+	private boolean hasLogValue(TestService testService) {// Analysis analysis, String resultValue) {
 		// TO-DO refactor
 		// if ( ){
 //			if (GenericValidator.isBlankOrNull(resultValue)) {

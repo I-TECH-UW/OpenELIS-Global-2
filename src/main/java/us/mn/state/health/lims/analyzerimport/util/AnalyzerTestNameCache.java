@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import spring.mine.internationalization.MessageUtil;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.analyzer.dao.AnalyzerDAO;
 import us.mn.state.health.lims.analyzer.daoimpl.AnalyzerDAOImpl;
 import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
@@ -159,7 +159,7 @@ public class AnalyzerTestNameCache {
             Test test = new Test();
             test.setId(mapping.getTestId());
             testDAO.getData(test);
-            mappedTest.setOpenElisTestName( TestServiceImpl.getUserLocalizedTestName( test ));
+            mappedTest.setOpenElisTestName( TestService.getUserLocalizedTestName( test ));
         }else{
             mappedTest.setTestId("-1");
             mappedTest.setOpenElisTestName(MessageUtil.getMessage("warning.configuration.needed"));

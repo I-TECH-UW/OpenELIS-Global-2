@@ -37,7 +37,7 @@ import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 @Component
-@Transactional
+@Transactional 
 public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation> implements SiteInformationDAO {
 
 	public SiteInformationDAOImpl() {

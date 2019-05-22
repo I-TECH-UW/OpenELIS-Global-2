@@ -32,7 +32,7 @@ import us.mn.state.health.lims.localization.valueholder.Localization;
 /**
  */
 @Component
-@Transactional
+@Transactional 
 public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements LocalizationDAO {
 
 	public LocalizationDAOImpl() {

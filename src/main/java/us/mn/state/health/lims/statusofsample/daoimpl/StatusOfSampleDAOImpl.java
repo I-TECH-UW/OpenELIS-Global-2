@@ -40,7 +40,7 @@ import us.mn.state.health.lims.statusofsample.valueholder.StatusOfSample;
  * @author bill mcgough
  */
 @Component
-@Transactional
+@Transactional 
 public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample> implements StatusOfSampleDAO {
 
 	public StatusOfSampleDAOImpl() {

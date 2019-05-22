@@ -28,7 +28,7 @@ import us.mn.state.health.lims.reports.dao.DocumentTypeDAO;
 import us.mn.state.health.lims.reports.valueholder.DocumentType;
 
 @Component
-@Transactional
+@Transactional 
 public class DocumentTypeDAOImpl extends BaseDAOImpl<DocumentType> implements DocumentTypeDAO {
 
 	public DocumentTypeDAOImpl() {

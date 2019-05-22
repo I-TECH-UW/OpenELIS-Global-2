@@ -37,7 +37,7 @@ import us.mn.state.health.lims.renametestsection.dao.RenameTestSectionDAO;
 import us.mn.state.health.lims.renametestsection.valueholder.RenameTestSection;
 
 @Component
-@Transactional
+@Transactional 
 public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> implements RenameTestSectionDAO {
 
 	public RenameTestSectionDAOImpl() {

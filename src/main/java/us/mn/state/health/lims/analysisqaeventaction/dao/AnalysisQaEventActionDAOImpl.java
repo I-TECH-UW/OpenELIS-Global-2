@@ -7,7 +7,7 @@ import us.mn.state.health.lims.analysisqaeventaction.valueholder.AnalysisQaEvent
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 
 @Component
-@Transactional
+@Transactional 
 public class AnalysisQaEventActionDAOImpl extends BaseDAOImpl<AnalysisQaEventAction> implements AnalysisQaEventActionDAO {
   AnalysisQaEventActionDAOImpl() {
     super(AnalysisQaEventAction.class);

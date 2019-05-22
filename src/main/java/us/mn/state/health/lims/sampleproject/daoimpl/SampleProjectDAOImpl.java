@@ -44,7 +44,7 @@ import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
  * @version $Revision$
  */
 @Component
-@Transactional
+@Transactional 
 public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements SampleProjectDAO {
 
 	public SampleProjectDAOImpl() {

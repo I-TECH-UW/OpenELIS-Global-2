@@ -7,7 +7,7 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.sampletracking.valueholder.SampleTracking;
 
 @Component
-@Transactional
+@Transactional 
 public class SampleTrackingDAOImpl extends BaseDAOImpl<SampleTracking> implements SampleTrackingDAO {
   SampleTrackingDAOImpl() {
     super(SampleTracking.class);

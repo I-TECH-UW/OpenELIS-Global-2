@@ -23,7 +23,7 @@ public class SystemUserServiceImpl extends BaseObjectServiceImpl<SystemUser> imp
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public void delete(SystemUser systemUser) {
 		systemUser.setIsActive("N");
 		update(systemUser);

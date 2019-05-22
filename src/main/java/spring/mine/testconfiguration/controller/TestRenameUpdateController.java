@@ -15,7 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.testconfiguration.form.TestRenameEntryForm;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
@@ -66,7 +66,7 @@ public class TestRenameUpdateController extends BaseController {
 
 	private void updateTestNames(String testId, String nameEnglish, String nameFrench, String reportNameEnglish,
 			String reportNameFrench, String userId) {
-		Test test = new TestServiceImpl(testId).getTest();
+		Test test = new TestService(testId).getTest();
 
 		if (test != null) {
 

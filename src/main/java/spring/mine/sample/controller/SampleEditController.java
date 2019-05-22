@@ -41,7 +41,7 @@ import spring.service.result.ResultService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.sampleitem.SampleItemService;
 import spring.service.test.TestSectionService;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleTestService;
 import spring.service.userrole.UserRoleService;
@@ -300,7 +300,7 @@ public class SampleEditController extends BaseController {
 			SampleEditItem sampleEditItem = new SampleEditItem();
 
 			sampleEditItem.setTestId(analysis.getTest().getId());
-			sampleEditItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
+			sampleEditItem.setTestName(TestService.getUserLocalizedTestName(analysis.getTest()));
 			sampleEditItem.setSampleItemId(sampleItem.getId());
 
 			boolean canCancel = allowedToCancelAll
@@ -365,7 +365,7 @@ public class SampleEditController extends BaseController {
 			sampleEditItem.setTestId(typeOfSampleTest.getTestId());
 			Test test = testService.get(typeOfSampleTest.getTestId());
 			if ("Y".equals(test.getIsActive()) && test.getOrderable()) {
-				sampleEditItem.setTestName(TestServiceImpl.getUserLocalizedTestName(test));
+				sampleEditItem.setTestName(TestService.getUserLocalizedTestName(test));
 				sampleEditItem.setSampleItemId(sampleItem.getId());
 				sampleEditItem.setSortOrder(test.getSortOrder());
 				typeOfTestSampleItemList.add(sampleEditItem);
@@ -435,7 +435,7 @@ public class SampleEditController extends BaseController {
 		}
 	}
 
-	@Transactional
+	@Transactional 
 	private void editSample(SampleEditForm form, HttpServletRequest request, Sample updatedSample,
 			boolean sampleChanged) {
 

@@ -54,7 +54,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  * @param <T>
  */
 @Component
-@Transactional("baseObjectDAO")
+@Transactional 
 public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionConstants {
 
 	protected static final int DEFAULT_PAGE_SIZE = SystemConfiguration.getInstance().getDefaultPageSize();

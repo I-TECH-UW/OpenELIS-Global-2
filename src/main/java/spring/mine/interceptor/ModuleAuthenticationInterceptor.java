@@ -43,7 +43,7 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
 	SystemModuleUrlService systemModuleUrlService;
 
 	@Override
-	@Transactional
+	@Transactional 
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 

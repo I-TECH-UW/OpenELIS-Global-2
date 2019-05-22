@@ -37,7 +37,7 @@ import us.mn.state.health.lims.resultlimits.dao.ResultLimitDAO;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
 
 @Component
-@Transactional
+@Transactional 
 public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit> implements ResultLimitDAO {
 
 	public ResultLimitDAOImpl() {

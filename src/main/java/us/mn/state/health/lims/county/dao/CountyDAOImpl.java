@@ -7,7 +7,7 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.county.valueholder.County;
 
 @Component
-@Transactional
+@Transactional 
 public class CountyDAOImpl extends BaseDAOImpl<County> implements CountyDAO {
   CountyDAOImpl() {
     super(County.class);

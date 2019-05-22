@@ -28,7 +28,7 @@ import us.mn.state.health.lims.testcodes.dao.OrgHL7SchemaDAO;
 import us.mn.state.health.lims.testcodes.valueholder.OrganizationHL7Schema;
 
 @Component
-@Transactional
+@Transactional 
 public class OrgHL7SchemaDAOImpl extends BaseDAOImpl<OrganizationHL7Schema> implements OrgHL7SchemaDAO {
 
 	public OrgHL7SchemaDAOImpl() {

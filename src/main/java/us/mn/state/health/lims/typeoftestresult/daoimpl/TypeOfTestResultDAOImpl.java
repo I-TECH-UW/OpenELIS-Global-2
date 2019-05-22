@@ -40,7 +40,7 @@ import us.mn.state.health.lims.typeoftestresult.valueholder.TypeOfTestResult;
  * @author diane benz
  */
 @Component
-@Transactional
+@Transactional 
 public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult> implements TypeOfTestResultDAO {
 
 	public TypeOfTestResultDAOImpl() {

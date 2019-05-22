@@ -36,7 +36,7 @@ import us.mn.state.health.lims.requester.valueholder.SampleRequester;
 /*
  */
 @Component
-@Transactional
+@Transactional 
 public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> implements SampleRequesterDAO {
 
 	public SampleRequesterDAOImpl() {

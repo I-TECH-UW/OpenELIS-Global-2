@@ -46,7 +46,7 @@ import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
  * @version $Revision$
  */
 @Component
-@Transactional
+@Transactional 
 public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements SampleHumanDAO {
 
 	public SampleHumanDAOImpl() {

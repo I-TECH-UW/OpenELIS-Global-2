@@ -30,7 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.TestModifyEntryForm;
 import spring.generated.testconfiguration.validator.TestModifyEntryFormValidator;
 import spring.mine.common.controller.BaseController;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.services.LocalizationService;
@@ -138,7 +138,7 @@ public class TestModifyEntryController extends BaseController {
 		for (Test test : testList) {
 
 			TestCatalogBean bean = new TestCatalogBean();
-			TestServiceImpl testService = new TestServiceImpl(test);
+			TestService testService = new TestService(test);
 			String resultType = testService.getResultType();
 			bean.setId(test.getId());
 			bean.setEnglishName(test.getLocalizedTestName().getEnglish());
@@ -232,7 +232,7 @@ public class TestModifyEntryController extends BaseController {
 
 	}
 
-	private List<String> createDictionaryValues(TestServiceImpl testService) {
+	private List<String> createDictionaryValues(TestService testService) {
 		List<String> dictionaryList = new ArrayList<>();
 		List<TestResult> testResultList = testService.getPossibleTestResults();
 		for (TestResult testResult : testResultList) {
@@ -272,7 +272,7 @@ public class TestModifyEntryController extends BaseController {
 		return ResultLimitService.getDisplayReferenceRange(resultLimits.get(0), null, null);
 	}
 
-	private List<String> createDictionaryIds(TestServiceImpl testService) {
+	private List<String> createDictionaryIds(TestService testService) {
 		List<String> dictionaryList = new ArrayList<>();
 		List<TestResult> testResultList = testService.getPossibleTestResults();
 		for (TestResult testResult : testResultList) {
@@ -317,7 +317,7 @@ public class TestModifyEntryController extends BaseController {
 		return null;
 	}
 
-	private String createPanelList(TestServiceImpl testService) {
+	private String createPanelList(TestService testService) {
 		StringBuilder builder = new StringBuilder();
 
 		List<Panel> panelList = testService.getPanels();
@@ -525,14 +525,14 @@ public class TestModifyEntryController extends BaseController {
 			HibernateUtil.closeSession();
 		}
 
-		TestServiceImpl.refreshTestNames();
+		TestService.refreshTestNames();
 		TypeOfSampleService.clearCache();
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private void updateTestEntities(String testId, String loinc, String userId) {
-		Test test = new TestServiceImpl(testId).getTest();
+		Test test = new TestService(testId).getTest();
 
 		if (test != null) {
 			test.setSysUserId(userId);
@@ -543,7 +543,7 @@ public class TestModifyEntryController extends BaseController {
 
 	private void updateTestNames(String testId, String nameEnglish, String nameFrench, String reportNameEnglish,
 			String reportNameFrench, String userId) {
-		Test test = new TestServiceImpl(testId).getTest();
+		Test test = new TestService(testId).getTest();
 
 		if (test != null) {
 			Localization name = test.getLocalizedTestName();
@@ -655,7 +655,7 @@ public class TestModifyEntryController extends BaseController {
 				if ("0".equals(orderedTests.get(j))) {
 					test.setSortOrder(String.valueOf(j));
 				} else {
-					Test orderedTest = new TestServiceImpl(orderedTests.get(j)).getTest();
+					Test orderedTest = new TestService(orderedTests.get(j)).getTest();
 					orderedTest.setSortOrder(String.valueOf(j));
 					testSet.sortedTests.add(orderedTest);
 				}

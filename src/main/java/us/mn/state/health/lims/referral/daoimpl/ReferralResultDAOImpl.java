@@ -37,7 +37,7 @@ import us.mn.state.health.lims.referral.valueholder.ReferralResult;
 /*
  */
 @Component
-@Transactional
+@Transactional 
 public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult> implements ReferralResultDAO {
 
 	public ReferralResultDAOImpl() {

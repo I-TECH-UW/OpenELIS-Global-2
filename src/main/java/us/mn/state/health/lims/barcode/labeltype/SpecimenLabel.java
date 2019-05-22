@@ -7,7 +7,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import spring.mine.internationalization.MessageUtil;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -84,7 +84,7 @@ public class SpecimenLabel extends Label {
     List<Analysis> analysisList = analysisDAO.getAnalysesBySampleItem(sampleItem);
     for (Analysis analysis : analysisList) {
       tests.append(seperator);
-      tests.append(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
+      tests.append(TestService.getUserLocalizedTestName(analysis.getTest()));
       seperator = ", ";
     }
     

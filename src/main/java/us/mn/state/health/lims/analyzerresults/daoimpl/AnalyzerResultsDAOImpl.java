@@ -36,7 +36,7 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional
+@Transactional 
 public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> implements AnalyzerResultsDAO {
 
 	public AnalyzerResultsDAOImpl() {

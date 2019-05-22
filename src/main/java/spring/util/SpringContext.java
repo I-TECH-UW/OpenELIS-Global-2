@@ -20,14 +20,16 @@ public class SpringContext implements ApplicationContextAware {
 	 * @return
 	 */
 	public static <T extends Object> T getBean(Class<T> beanClass) {
-		return context.getBean(beanClass);
+		return factory.getBean(beanClass);
 	}
 
-	public static <T extends Object> T instantiateBean(Class<T> beanClass) {
-		return factory.createBean(beanClass);
+	@SuppressWarnings("unchecked")
+	public static <T extends Object> T createBean(Class<T> beanClass) {
+		return (T) factory.createBean(beanClass, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
 	}
 
-	public static <T extends Object> T initializeBean(T bean) {
+	@SuppressWarnings("unchecked")
+	public static <T extends Object> T fillBean(T bean) {
 		return (T) factory.initializeBean(bean, null);
 	}
 

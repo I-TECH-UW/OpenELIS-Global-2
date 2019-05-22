@@ -23,7 +23,7 @@ public class SampleProjectServiceImpl extends BaseObjectServiceImpl<SampleProjec
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public SampleProject getSampleProjectBySampleId(String id) {
 		return getMatch("sample.id", id).get();
 	}

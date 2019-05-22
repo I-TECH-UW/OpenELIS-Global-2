@@ -38,30 +38,35 @@ public abstract class BaseWorkplanController extends BaseController {
 
 	protected static List<Integer> statusList;
 	protected static boolean useReceptionTime = FormFields.getInstance().useField(Field.SampleEntryUseReceptionHour);
-	protected static List<String> nfsTestIdList = new ArrayList<>();
+	protected static List<String> nfsTestIdList;
 
 	@PostConstruct
 	public void initialize() {
-		statusList = new ArrayList<>();
-		statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted)));
-		statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.BiologistRejected)));
-		statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected)));
-		statusList.add(
-				Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.NonConforming_depricated)));
+		if (statusList == null) {
+			statusList = new ArrayList<>();
+			statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted)));
+			statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.BiologistRejected)));
+			statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected)));
+			statusList.add(
+					Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.NonConforming_depricated)));
+		}
 
-		nfsTestIdList.add(getTestId("GB"));
-		nfsTestIdList.add(getTestId("Neut %"));
-		nfsTestIdList.add(getTestId("Lymph %"));
-		nfsTestIdList.add(getTestId("Mono %"));
-		nfsTestIdList.add(getTestId("Eo %"));
-		nfsTestIdList.add(getTestId("Baso %"));
-		nfsTestIdList.add(getTestId("GR"));
-		nfsTestIdList.add(getTestId("Hb"));
-		nfsTestIdList.add(getTestId("HCT"));
-		nfsTestIdList.add(getTestId("VGM"));
-		nfsTestIdList.add(getTestId("TCMH"));
-		nfsTestIdList.add(getTestId("CCMH"));
-		nfsTestIdList.add(getTestId("PLQ"));
+		if (nfsTestIdList == null) {
+			nfsTestIdList = new ArrayList<>();
+			nfsTestIdList.add(getTestId("GB"));
+			nfsTestIdList.add(getTestId("Neut %"));
+			nfsTestIdList.add(getTestId("Lymph %"));
+			nfsTestIdList.add(getTestId("Mono %"));
+			nfsTestIdList.add(getTestId("Eo %"));
+			nfsTestIdList.add(getTestId("Baso %"));
+			nfsTestIdList.add(getTestId("GR"));
+			nfsTestIdList.add(getTestId("Hb"));
+			nfsTestIdList.add(getTestId("HCT"));
+			nfsTestIdList.add(getTestId("VGM"));
+			nfsTestIdList.add(getTestId("TCMH"));
+			nfsTestIdList.add(getTestId("CCMH"));
+			nfsTestIdList.add(getTestId("PLQ"));
+		}
 
 	}
 

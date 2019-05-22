@@ -34,7 +34,7 @@ import us.mn.state.health.lims.scheduler.dao.CronSchedulerDAO;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
 
 @Component
-@Transactional
+@Transactional 
 public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements CronSchedulerDAO {
 
 	public CronSchedulerDAOImpl() {

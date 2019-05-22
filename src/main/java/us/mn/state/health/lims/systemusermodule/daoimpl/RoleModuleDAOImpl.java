@@ -47,7 +47,7 @@ import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
  *
  */
 @Component
-@Transactional
+@Transactional 
 @Qualifier("RoleModuleDAO")
 public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements PermissionModuleDAO {
 

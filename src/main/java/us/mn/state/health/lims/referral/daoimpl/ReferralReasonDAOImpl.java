@@ -32,7 +32,7 @@ import us.mn.state.health.lims.referral.valueholder.ReferralReason;
 /*
  */
 @Component
-@Transactional
+@Transactional 
 public class ReferralReasonDAOImpl extends BaseDAOImpl<ReferralReason> implements ReferralReasonDAO {
 	public ReferralReasonDAOImpl() {
 		super(ReferralReason.class);

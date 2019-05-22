@@ -25,7 +25,7 @@ public class ReferralResultServiceImpl extends BaseObjectServiceImpl<ReferralRes
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<ReferralResult> getReferralResultsForReferral(String id) {
 		return baseObjectDAO.getAllMatchingOrdered("referralId", id, "id", false);
 	}

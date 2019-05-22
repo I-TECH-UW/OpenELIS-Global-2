@@ -27,7 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.mine.barcode.form.PrintBarcodeForm;
 import spring.mine.common.controller.BaseController;
 import spring.mine.internationalization.MessageUtil;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -196,7 +196,7 @@ public class PrintBarcodeController extends BaseController {
 		for (Analysis analysis : analysisList) {
 			SampleEditItem sampleEditItem = new SampleEditItem();
 			sampleEditItem.setTestId(analysis.getTest().getId());
-			sampleEditItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
+			sampleEditItem.setTestName(TestService.getUserLocalizedTestName(analysis.getTest()));
 			sampleEditItem.setSampleItemId(sampleItem.getId());
 
 			boolean canCancel = allowedToCancelAll

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
@@ -14,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
-import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.services.TestService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -27,19 +25,15 @@ import us.mn.state.health.lims.common.services.TypeOfSampleService;
 import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
-import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;
 import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Service
@@ -50,56 +44,39 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 	protected AnalysisDAO analysisDAO;
 
 	@Autowired
-	private DictionaryDAO dictionaryDAO;
+	private DictionaryDAO dictionaryDAO = SpringContext.getBean(DictionaryDAO.class);
 	@Autowired
-	private ResultDAO resultDAO;
+	private ResultDAO resultDAO = SpringContext.getBean(ResultDAO.class);
 	@Autowired
-	private TypeOfSampleDAO typeOfSampleDAO;
+	private TypeOfSampleDAO typeOfSampleDAO = SpringContext.getBean(TypeOfSampleDAO.class);
 	@Autowired
-	private ReferenceTablesDAO referenceTablesDAO;
+	private ReferenceTablesDAO referenceTablesDAO = SpringContext.getBean(ReferenceTablesDAO.class);
 
 	private Analysis analysis;
 	public String TABLE_REFERENCE_ID;
 	private final String DEFAULT_ANALYSIS_TYPE = "MANUAL";
 
-	@PostConstruct
-	public void initialize() {
-		TABLE_REFERENCE_ID = referenceTablesDAO.getReferenceTableByName("ANALYSIS").getId();
+	public synchronized void initializeGlobalVariables() {
+		if (TABLE_REFERENCE_ID == null) {
+			TABLE_REFERENCE_ID = referenceTablesDAO.getReferenceTableByName("ANALYSIS").getId();
+		}
 	}
 
-	AnalysisServiceImpl() {
+	public AnalysisServiceImpl() {
 		super(Analysis.class);
+		initializeGlobalVariables();
 
 	}
 
 	public AnalysisServiceImpl(Analysis analysis) {
-		super(Analysis.class);
+		this();
 		this.analysis = analysis;
-		instantiateDAOsIfNotExist();
-		initialize();
 	}
 
 	public AnalysisServiceImpl(String analysisId) {
-		super(Analysis.class);
-		instantiateDAOsIfNotExist();
+		this();
 		if (!GenericValidator.isBlankOrNull(analysisId)) {
 			analysis = analysisDAO.getAnalysisById(analysisId);
-		}
-		initialize();
-	}
-
-	private void instantiateDAOsIfNotExist() {
-		if (dictionaryDAO == null) {
-			dictionaryDAO = SpringContext.instantiateBean(DictionaryDAOImpl.class);
-		}
-		if (resultDAO == null) {
-			resultDAO = SpringContext.instantiateBean(ResultDAOImpl.class);
-		}
-		if (typeOfSampleDAO == null) {
-			typeOfSampleDAO = SpringContext.instantiateBean(TypeOfSampleDAOImpl.class);
-		}
-		if (referenceTablesDAO == null) {
-			referenceTablesDAO = SpringContext.instantiateBean(ReferenceTablesDAOImpl.class);
 		}
 	}
 
@@ -114,7 +91,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 			return "";
 		}
 		Test test = getTest();
-		String name = TestServiceImpl.getLocalizedTestNameWithType(test);
+		String name = TestService.getLocalizedTestNameWithType(test);
 
 		TypeOfSample typeOfSample = TypeOfSampleService.getTypeOfSampleForTest(test.getId());
 
@@ -316,57 +293,57 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<Analysis> getAnalysesBySampleId(String id) {
 		return analysisDAO.getAnalysesBySampleId(id);
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public void insert(Analysis analysis, boolean duplicateCheck) {
 		analysisDAO.insertData(analysis, duplicateCheck);
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<Analysis> getAnalysisByAccessionAndTestId(String accessionNumber, String testId) {
 		return analysisDAO.getAnalysisByAccessionAndTestId(accessionNumber, testId);
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<Analysis> getAnalysisCollectedOnExcludedByStatusId(Date date, Set<Integer> excludedStatusIds) {
 		return analysisDAO.getAnalysisCollectedOnExcludedByStatusId(date, excludedStatusIds);
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<Analysis> getAnalysesBySampleItemsExcludingByStatusIds(SampleItem sampleItem,
 			Set<Integer> excludedStatusIds) {
 		return analysisDAO.getAnalysesBySampleItemsExcludingByStatusIds(sampleItem, excludedStatusIds);
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<Analysis> getAnalysesForStatusId(String status) {
 		return analysisDAO.getAllMatching("statusId", status);
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<Analysis> getAnalysesBySampleStatusIdExcludingByStatusId(String sampleStatus,
 			Set<Integer> excludedStatusIds) {
 		return analysisDAO.getAnalysesBySampleStatusIdExcludingByStatusId(sampleStatus, excludedStatusIds);
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<Analysis> getAllAnalysisByTestAndExcludedStatus(String testId, List<Integer> excludedStatusIntList) {
 		return analysisDAO.getAllAnalysisByTestAndExcludedStatus(testId, excludedStatusIntList);
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public void updateAnalysises(List<Analysis> cancelAnalysis, List<Analysis> newAnalysis, String sysUserId) {
 		String cancelStatus = StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Canceled);
 		for (Analysis analysis : cancelAnalysis) {
@@ -382,26 +359,26 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<Analysis> getAllAnalysisByTestAndStatus(String id, List<Integer> statusList) {
 		return analysisDAO.getAllAnalysisByTestAndStatus(id, statusList);
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<Analysis> getAllAnalysisByTestsAndStatus(List<String> nfsTestIdList, List<Integer> statusList) {
 		return analysisDAO.getAllAnalysisByTestsAndStatus(nfsTestIdList, statusList);
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<Analysis> getAllAnalysisByTestSectionAndStatus(String sectionId, List<Integer> statusList,
 			boolean sortedByDateAndAccession) {
 		return analysisDAO.getAllAnalysisByTestSectionAndStatus(sectionId, statusList, sortedByDateAndAccession);
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<Analysis> getAnalysesBySampleItemIdAndStatusId(String sampleItemId, String canceledTestStatusId) {
 		return analysisDAO.getAnalysesBySampleItemIdAndStatusId(sampleItemId, canceledTestStatusId);
 	}

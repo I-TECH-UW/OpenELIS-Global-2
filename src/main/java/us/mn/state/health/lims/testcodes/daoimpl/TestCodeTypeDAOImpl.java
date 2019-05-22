@@ -28,7 +28,7 @@ import us.mn.state.health.lims.testcodes.dao.TestCodeTypeDAO;
 import us.mn.state.health.lims.testcodes.valueholder.TestCodeType;
 
 @Component
-@Transactional
+@Transactional 
 public class TestCodeTypeDAOImpl extends BaseDAOImpl<TestCodeType> implements TestCodeTypeDAO {
 
 	public TestCodeTypeDAOImpl() {

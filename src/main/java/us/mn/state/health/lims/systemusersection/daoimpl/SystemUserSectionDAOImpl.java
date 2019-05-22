@@ -40,7 +40,7 @@ import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
 @Component
-@Transactional
+@Transactional 
 public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection> implements SystemUserSectionDAO {
 
 	public SystemUserSectionDAOImpl() {

@@ -30,7 +30,7 @@ import us.mn.state.health.lims.patienttype.dao.PatientTypeDAO;
 import us.mn.state.health.lims.patienttype.valueholder.PatientType;
 
 @Component
-@Transactional
+@Transactional 
 public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType> implements PatientTypeDAO {
 
 	public PatientTypeDAOImpl() {

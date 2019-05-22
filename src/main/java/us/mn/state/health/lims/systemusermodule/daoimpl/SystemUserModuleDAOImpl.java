@@ -44,7 +44,7 @@ import us.mn.state.health.lims.systemusermodule.valueholder.SystemUserModule;
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
 @Component
-@Transactional
+@Transactional 
 @Qualifier(value = "SystemUserModuleDAO")
 public class SystemUserModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements PermissionModuleDAO {
 
