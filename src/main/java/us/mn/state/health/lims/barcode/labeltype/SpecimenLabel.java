@@ -7,13 +7,13 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.patient.PatientServiceImpl;
 import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.barcode.LabelField;
 import us.mn.state.health.lims.common.log.LogEvent;
-import spring.service.patient.PatientServiceImpl;
 import us.mn.state.health.lims.common.services.SampleOrderService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;

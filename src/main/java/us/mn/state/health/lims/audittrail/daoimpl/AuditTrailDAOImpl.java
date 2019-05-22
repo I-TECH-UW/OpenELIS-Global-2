@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.hibernate.HibernateException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,13 +40,15 @@ import us.mn.state.health.lims.common.util.LabelValuePair;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
-import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;
 import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 
 @Component
 @Transactional 
 public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrailDAO {
 
+	@Autowired
+	ReferenceTablesDAO referenceTablesDAO;
+	
 	public AuditTrailDAOImpl() {
 		super(History.class);
 	}
@@ -57,7 +60,6 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 	@Override
 	public void saveNewHistory(Object newObject, String sysUserId, String tableName) throws LIMSRuntimeException {
 
-		ReferenceTablesDAO referenceTablesDAO = new ReferenceTablesDAOImpl();
 		ReferenceTables referenceTables = new ReferenceTables();
 		referenceTables.setTableName(tableName);
 		ReferenceTables referenceTable = referenceTablesDAO.getReferenceTableByName(referenceTables);
@@ -116,7 +118,6 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 			throws LIMSRuntimeException {
 
 		// bugzilla 2571 go through ReferenceTablesDAO to get reference tables info
-		ReferenceTablesDAO referenceTablesDAO = new ReferenceTablesDAOImpl();
 		ReferenceTables referenceTables = new ReferenceTables();
 		referenceTables.setTableName(tableName);
 		ReferenceTables rt = referenceTablesDAO.getReferenceTableByName(referenceTables);

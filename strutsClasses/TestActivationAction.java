@@ -73,9 +73,9 @@ public class TestActivationAction extends BaseAction {
 
             for( Test test : tests) {
                 if( test.isActive()) {
-                    activeTests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
+                    activeTests.add(new IdValuePair(test.getId(), TestServiceImpl.getUserLocalizedTestName(test)));
                 }else{
-                    inactiveTests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
+                    inactiveTests.add(new IdValuePair(test.getId(), TestServiceImpl.getUserLocalizedTestName(test)));
                 }
             }
 

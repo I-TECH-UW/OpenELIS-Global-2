@@ -163,7 +163,7 @@ public class PrintWorkplanReportAction extends BaseAction {
 	}
 
 	private String getTestTypeName(String id) {
-		return TestService.getUserLocalizedTestName(id);
+		return TestServiceImpl.getUserLocalizedTestName(id);
 	}
 
 	public IWorkplanReport getWorkplanReport(String testType, String name) {

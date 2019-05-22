@@ -245,7 +245,7 @@ public class WorkplanByTestAction extends BaseWorkplanAction {
 	}
 		
 	private String getTestName(String testId) {
-		return TestService.getUserLocalizedTestName( testId );
+		return TestServiceImpl.getUserLocalizedTestName( testId );
 	}
 
 	private boolean getQaEventByTestSection(Analysis analysis){

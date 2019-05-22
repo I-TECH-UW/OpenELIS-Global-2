@@ -12,11 +12,11 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
 import spring.service.common.BaseObjectServiceImpl;
+import spring.service.person.PersonServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.address.dao.AddressPartDAO;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
 import us.mn.state.health.lims.common.services.IPatientService;
-import spring.service.person.PersonServiceImpl;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dataexchange.order.action.MessagePatient;
 import us.mn.state.health.lims.gender.dao.GenderDAO;

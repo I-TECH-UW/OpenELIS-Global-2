@@ -135,9 +135,9 @@ public class BatchTestReassignmentUpdateAction extends BaseAction {
                 if( newTests.isEmpty()){
                     newTestsString = StringUtil.getMessageForKey("status.test.canceled");
                 }else{
-                    newTestsString = StringUtil.getMessageForKey("label.test.batch.reassignment") + ": " + TestService.getUserLocalizedTestName(newTests.get(0));
+                    newTestsString = StringUtil.getMessageForKey("label.test.batch.reassignment") + ": " + TestServiceImpl.getUserLocalizedTestName(newTests.get(0));
                     for( int i = 1; i < newTests.size(); i++){
-                        newTestsString += ", " + TestService.getUserLocalizedTestName(newTests.get(i));
+                        newTestsString += ", " + TestServiceImpl.getUserLocalizedTestName(newTests.get(i));
                     }
                 }
                 changedMetaInfo.nextTest = newTestsString;

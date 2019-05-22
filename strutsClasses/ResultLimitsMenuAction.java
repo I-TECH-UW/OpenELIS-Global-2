@@ -79,7 +79,7 @@ public class ResultLimitsMenuAction extends BaseMenuAction {
 		ResultLimitsLink link = new ResultLimitsLink();
 		link.setReadWrite(false);
 		link.setResultLimit(resultLimit);
-        String testName = TestService.getLocalizedTestNameWithType( link.getTestId() );
+        String testName = TestServiceImpl.getLocalizedTestNameWithType( link.getTestId() );
 
 		String resultName = getResultTypeMap().get(link.getResultTypeId());
 

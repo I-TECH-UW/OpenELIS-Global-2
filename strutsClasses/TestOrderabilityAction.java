@@ -67,9 +67,9 @@ public class TestOrderabilityAction extends BaseAction {
 
             for( Test test : tests) {
                 if( test.getOrderable()) {
-                     orderableTests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
+                     orderableTests.add(new IdValuePair(test.getId(), TestServiceImpl.getUserLocalizedTestName(test)));
                 }else{
-                    unorderableTests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
+                    unorderableTests.add(new IdValuePair(test.getId(), TestServiceImpl.getUserLocalizedTestName(test)));
                 }
             }
 

@@ -17,7 +17,7 @@ public class HibernateConfig {
 	@Autowired
 	private ApplicationContext context;
 
-	HibernateTransactionManager transactionManager;
+	static HibernateTransactionManager transactionManager;
 	LocalSessionFactoryBean factoryBean;
 
 	@Bean

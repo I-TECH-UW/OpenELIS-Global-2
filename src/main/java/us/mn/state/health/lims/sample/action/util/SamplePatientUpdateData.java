@@ -22,12 +22,12 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.validation.Errors;
 
+import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator;
-import spring.service.observationhistory.ObservationHistoryServiceImpl;
-import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import us.mn.state.health.lims.common.services.SampleAddService;
 import us.mn.state.health.lims.common.services.SampleAddService.SampleTestCollection;
 import us.mn.state.health.lims.common.services.StatusService;

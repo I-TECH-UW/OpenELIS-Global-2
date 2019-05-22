@@ -9,14 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
+import spring.service.patient.PatientServiceImpl;
 import spring.service.test.TestService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.common.services.IPatientService;
-import spring.service.observationhistory.ObservationHistoryServiceImpl;
-import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
-import spring.service.patient.PatientServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
