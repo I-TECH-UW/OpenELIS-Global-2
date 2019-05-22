@@ -46,7 +46,7 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection>
 		SystemConfiguration.getInstance().addLocalChangeListener(this);
 	}
 
-	TestSectionServiceImpl() {
+	public TestSectionServiceImpl() {
 		super(TestSection.class);
 		initializeGlobalVariables();
 	}
@@ -67,7 +67,7 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection>
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<TestSection> getAllActiveTestSections() {
 		return testSectionDAO.getAllMatchingOrdered("isActive", "Y", "sortOrderInt", false);
 	}
@@ -128,7 +128,7 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection>
 	}
 
 	public static List<Test> getTestsInSection(String id) {
-		return TestService.getTestsInTestSectionById(id);
+		return TestServiceImpl.getTestsInTestSectionById(id);
 	}
 
 	public static List<TestSection> getAllTestSections() {

@@ -38,7 +38,7 @@ import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
 import us.mn.state.health.lims.analyzerimport.analyzerreaders.AnalyzerLineInserter;
 import us.mn.state.health.lims.analyzerimport.analyzerreaders.AnalyzerReaderUtil;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
-import us.mn.state.health.lims.common.services.SampleService;
+import spring.service.sample.SampleServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
@@ -94,7 +94,7 @@ public class Cobas6800VLAnalyzerImplementation extends AnalyzerLineInserter
 		resultList.add(result);
 		return;
 	}
-	SampleService sampleServ=new SampleService(result.getAccessionNumber());
+	SampleServiceImpl sampleServ=new SampleServiceImpl(result.getAccessionNumber());
 	if (!result.getAccessionNumber().startsWith(projectCode) || sampleServ.getSample()==null )
 		return;
 			

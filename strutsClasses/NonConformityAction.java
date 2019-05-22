@@ -45,7 +45,7 @@ import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.services.NoteService;
 import us.mn.state.health.lims.common.services.PatientService;
-import us.mn.state.health.lims.common.services.PersonService;
+import spring.service.person.PersonServiceImpl;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.services.TableIdService;

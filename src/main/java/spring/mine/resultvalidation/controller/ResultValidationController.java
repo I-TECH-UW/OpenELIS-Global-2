@@ -44,17 +44,17 @@ import spring.service.test.TestSectionService;
 import spring.service.testresult.TestResultService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.services.AnalysisService;
+import spring.service.analysis.AnalysisServiceImpl;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.services.IResultSaveService;
-import us.mn.state.health.lims.common.services.NoteService;
-import us.mn.state.health.lims.common.services.NoteService.NoteType;
+import spring.service.note.NoteServiceImpl;
+import spring.service.note.NoteServiceImpl.NoteType;
 import us.mn.state.health.lims.common.services.ResultSaveService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.services.beanAdapters.ResultSaveBeanAdapter;
 import us.mn.state.health.lims.common.services.registration.ValidationUpdateRegister;
 import us.mn.state.health.lims.common.services.registration.interfaces.IResultUpdate;
@@ -343,9 +343,9 @@ public class ResultValidationController extends BaseResultValidationController {
 		for (AnalysisItem analysisItem : analysisItems) {
 			if (!analysisItem.isReadOnly() && analysisItemWillBeUpdated(analysisItem)) {
 
-				AnalysisService analysisService = new AnalysisService(analysisItem.getAnalysisId());
+				AnalysisServiceImpl analysisService = new AnalysisServiceImpl(analysisItem.getAnalysisId());
 				Analysis analysis = analysisService.getAnalysis();
-				NoteService noteService = new NoteService(analysis);
+				NoteServiceImpl noteService = new NoteServiceImpl(analysis);
 
 				analysis.setSysUserId(getSysUserId(request));
 
@@ -382,7 +382,7 @@ public class ResultValidationController extends BaseResultValidationController {
 		}
 	}
 
-	private void createNeededNotes(AnalysisItem analysisItem, NoteService noteService, List<Note> noteUpdateList) {
+	private void createNeededNotes(AnalysisItem analysisItem, NoteServiceImpl noteService, List<Note> noteUpdateList) {
 		if (analysisItem.getIsRejected()) {
 			Note note = noteService.createSavableNote(NoteType.INTERNAL,
 					MessageUtil.getMessage("validation.note.retest"), RESULT_SUBJECT, getSysUserId(request));
@@ -546,8 +546,8 @@ public class ResultValidationController extends BaseResultValidationController {
 		return analysis;
 	}
 
-	private List<Result> createResultFromAnalysisItem(AnalysisItem analysisItem, AnalysisService analysisService,
-			NoteService noteService, List<Note> noteUpdateList, List<Result> deletableList) {
+	private List<Result> createResultFromAnalysisItem(AnalysisItem analysisItem, AnalysisServiceImpl analysisService,
+			NoteServiceImpl noteService, List<Note> noteUpdateList, List<Result> deletableList) {
 
 		ResultSaveBean bean = ResultSaveBeanAdapter.fromAnalysisItem(analysisItem);
 		ResultSaveService resultSaveService = new ResultSaveService(analysisService.getAnalysis(),
@@ -563,7 +563,7 @@ public class ResultValidationController extends BaseResultValidationController {
 
 	protected TestResult getTestResult(AnalysisItem analysisItem) {
 		TestResult testResult = null;
-		if (TypeOfTestResultService.ResultType.DICTIONARY.matches(analysisItem.getResultType())) {
+		if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(analysisItem.getResultType())) {
 			testResult = testResultService.getTestResultsByTestAndDictonaryResult(analysisItem.getTestId(),
 					analysisItem.getResult());
 		} else {
@@ -579,9 +579,9 @@ public class ResultValidationController extends BaseResultValidationController {
 
 	private boolean areResults(AnalysisItem item) {
 		return !(isBlankOrNull(item.getResult())
-				|| (TypeOfTestResultService.ResultType.DICTIONARY.matches(item.getResultType())
+				|| (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(item.getResultType())
 						&& "0".equals(item.getResult())))
-				|| (TypeOfTestResultService.ResultType.isMultiSelectVariant(item.getResultType())
+				|| (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(item.getResultType())
 						&& !isBlankOrNull(item.getMultiSelectResultValues()));
 	}
 

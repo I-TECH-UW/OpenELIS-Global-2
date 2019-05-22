@@ -49,20 +49,20 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.common.paging.PagingBean.Paging;
-import us.mn.state.health.lims.common.services.LocalizationService;
-import us.mn.state.health.lims.common.services.NoteService;
+import spring.service.localization.LocalizationServiceImpl;
+import spring.service.note.NoteServiceImpl;
 import us.mn.state.health.lims.common.services.PluginMenuService;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
-import us.mn.state.health.lims.common.services.ResultLimitService;
+import spring.service.resultlimit.ResultLimitServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
 import us.mn.state.health.lims.common.services.StatusService.RecordStatus;
 import us.mn.state.health.lims.common.services.StatusService.SampleStatus;
 import us.mn.state.health.lims.common.services.StatusSet;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -512,11 +512,11 @@ public class AnalyzerResultsController extends BaseController {
 	}
 
 	private String getResultForItem(AnalyzerResults result) {
-		if (TypeOfTestResultService.ResultType.NUMERIC.matches(result.getResultType())) {
+		if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(result.getResultType())) {
 			return getRoundedToSignificantDigits(result);
 		}
 
-		if (TypeOfTestResultService.ResultType.isTextOnlyVariant(result.getResultType())
+		if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(result.getResultType())
 				|| GenericValidator.isBlankOrNull(result.getResultType())
 				|| GenericValidator.isBlankOrNull(result.getResult())) {
 
@@ -608,7 +608,7 @@ public class AnalyzerResultsController extends BaseController {
 	protected String getActualMessage(String messageKey) {
 		String actualMessage = null;
 		if (messageKey != null) {
-			actualMessage = PluginMenuService.getInstance().getMenuLabel(LocalizationService.getCurrentLocale(),
+			actualMessage = PluginMenuService.getInstance().getMenuLabel(LocalizationServiceImpl.getCurrentLocale(),
 					messageKey);
 		}
 		return actualMessage == null ? getAnalyzerNameFromRequest() : actualMessage;
@@ -1068,7 +1068,7 @@ public class AnalyzerResultsController extends BaseController {
 				Test test = testService.get(resultItem.getTestId());
 				analysis.setTest(test);
 				// A new sampleItem may be needed
-				TypeOfSample typeOfSample = TypeOfSampleService.getTypeOfSampleForTest(test.getId());
+				TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getTypeOfSampleForTest(test.getId());
 				List<SampleItem> sampleItemsForSample = sampleItemService.getSampleItemsBySampleId(sample.getId());
 
 				// if the type of sample is found then assign to analysis
@@ -1110,7 +1110,7 @@ public class AnalyzerResultsController extends BaseController {
 			if (GenericValidator.isBlankOrNull(resultItem.getNote())) {
 				noteList.add(null);
 			} else {
-				Note note = new NoteService(analysis).createSavableNote(NoteService.NoteType.INTERNAL,
+				Note note = new NoteServiceImpl(analysis).createSavableNote(NoteServiceImpl.NoteType.INTERNAL,
 						resultItem.getNote(), RESULT_SUBJECT, getSysUserId(request));
 				noteList.add(note);
 			}
@@ -1231,7 +1231,7 @@ public class AnalyzerResultsController extends BaseController {
 			if (GenericValidator.isBlankOrNull(resultItem.getNote())) {
 				noteList.add(null);
 			} else {
-				Note note = new NoteService(analysis).createSavableNote(NoteService.NoteType.INTERNAL,
+				Note note = new NoteServiceImpl(analysis).createSavableNote(NoteServiceImpl.NoteType.INTERNAL,
 						resultItem.getNote(), RESULT_SUBJECT, getSysUserId(request));
 				noteList.add(note);
 			}
@@ -1301,7 +1301,7 @@ public class AnalyzerResultsController extends BaseController {
 		boolean limitsFound = false;
 
 		if (resultItem != null) {
-			ResultLimit resultLimit = new ResultLimitService().getResultLimitForTestAndPatient(resultItem.getTestId(),
+			ResultLimit resultLimit = new ResultLimitServiceImpl().getResultLimitForTestAndPatient(resultItem.getTestId(),
 					patient);
 			if (resultLimit != null) {
 				result.setMinNormal(resultLimit.getLowNormal());

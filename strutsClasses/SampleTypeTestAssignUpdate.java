@@ -28,7 +28,7 @@ import org.hibernate.Transaction;
 
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
@@ -47,7 +47,7 @@ public class SampleTypeTestAssignUpdate extends BaseAction {
         boolean updateTypeOfSample = false;
         String currentUser = getSysUserId(request);
         
-        TypeOfSample typeOfSample = TypeOfSampleService.getTransientTypeOfSampleById(sampleTypeId);
+        TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getTransientTypeOfSampleById(sampleTypeId);
         TypeOfSample deActivateTypeOfSample = null;
         
         //Test test = new TestService(testId).getTest();
@@ -85,7 +85,7 @@ public class SampleTypeTestAssignUpdate extends BaseAction {
         
 //------------------------------------------
         if( !GenericValidator.isBlankOrNull(deactivateSampleTypeId) ){
-        	deActivateTypeOfSample  = TypeOfSampleService.getTransientTypeOfSampleById(deactivateSampleTypeId);
+        	deActivateTypeOfSample  = TypeOfSampleServiceImpl.getTransientTypeOfSampleById(deactivateSampleTypeId);
         	deActivateTypeOfSample.setIsActive(false);
         	deActivateTypeOfSample.setSysUserId(currentUser);
         }

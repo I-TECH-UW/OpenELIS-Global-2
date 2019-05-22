@@ -19,8 +19,8 @@ import spring.generated.testconfiguration.form.SampleTypeCreateForm;
 import spring.mine.common.controller.BaseController;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.LocalizationService;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
+import spring.service.localization.LocalizationServiceImpl;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
@@ -57,7 +57,7 @@ public class SampleTypeCreateController extends BaseController {
 					DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
 			PropertyUtils.setProperty(form, "inactiveSampleTypeList",
 					DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE));
-			List<TypeOfSample> typeOfSamples = TypeOfSampleService.getAllTypeOfSamples();
+			List<TypeOfSample> typeOfSamples = TypeOfSampleServiceImpl.getAllTypeOfSamples();
 			PropertyUtils.setProperty(form, "existingEnglishNames",
 					getExistingTestNames(typeOfSamples, ConfigurationProperties.LOCALE.ENGLISH));
 			PropertyUtils.setProperty(form, "existingFrenchNames",
@@ -71,7 +71,7 @@ public class SampleTypeCreateController extends BaseController {
 		StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
 
 		for (TypeOfSample typeOfSample : typeOfSamples) {
-			builder.append(LocalizationService.getLocalizationValueByLocal(locale, typeOfSample.getLocalization()));
+			builder.append(LocalizationServiceImpl.getLocalizationValueByLocal(locale, typeOfSample.getLocalization()));
 			builder.append(NAME_SEPARATOR);
 		}
 

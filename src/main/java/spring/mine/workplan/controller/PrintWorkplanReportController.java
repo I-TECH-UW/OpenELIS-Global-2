@@ -22,7 +22,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.controller.BaseController;
 import spring.mine.workplan.form.WorkplanForm;
 import spring.mine.workplan.form.WorkplanForm.PrintWorkplan;
-import us.mn.state.health.lims.common.services.TestService;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.workplan.reports.ElisaWorkplanReport;
 import us.mn.state.health.lims.workplan.reports.IWorkplanReport;
@@ -108,7 +108,7 @@ public class PrintWorkplanReportController extends BaseController {
 	}
 
 	private String getTestTypeName(String id) {
-		return TestService.getUserLocalizedTestName(id);
+		return TestServiceImpl.getUserLocalizedTestName(id);
 	}
 
 	public IWorkplanReport getWorkplanReport(String testType, String name) {

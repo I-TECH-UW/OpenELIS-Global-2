@@ -20,13 +20,13 @@ import spring.mine.internationalization.MessageUtil;
 import spring.mine.workplan.form.WorkplanForm;
 import spring.service.analysis.AnalysisService;
 import spring.service.sampleqaevent.SampleQaEventService;
-import us.mn.state.health.lims.common.services.TestService;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.ObservationHistoryService;
-import us.mn.state.health.lims.common.services.ObservationHistoryService.ObservationType;
+import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -150,7 +150,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 					currentAccessionNumber = testResultItem.getAccessionNumber();
 					subjectNumber = getSubjectNumber(analysis);
 					patientName = getPatientName(analysis);
-					nextVisit = ObservationHistoryService.getValueForSample(ObservationType.NEXT_VISIT_DATE,
+					nextVisit = ObservationHistoryServiceImpl.getValueForSample(ObservationType.NEXT_VISIT_DATE,
 							sample.getId());
 				}
 				testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
@@ -216,7 +216,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 	}
 
 	private String getTestName(String testId) {
-		return TestService.getUserLocalizedTestName(testId);
+		return TestServiceImpl.getUserLocalizedTestName(testId);
 	}
 
 	private boolean getQaEventByTestSection(Analysis analysis) {

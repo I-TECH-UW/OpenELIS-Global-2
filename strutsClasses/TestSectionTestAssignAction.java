@@ -31,7 +31,7 @@ import org.apache.struts.validator.DynaValidatorForm;
 
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.TestSectionService;
+import spring.service.test.TestSectionServiceImpl;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.test.valueholder.Test;
@@ -46,7 +46,7 @@ public class TestSectionTestAssignAction extends BaseAction {
         for( IdValuePair sectionPair : testSections){
             List<IdValuePair> tests = new ArrayList<IdValuePair>();
             testSectionTestsMap.put(sectionPair, tests );
-            List<Test> testList = TestSectionService.getTestsInSection(sectionPair.getId());
+            List<Test> testList = TestSectionServiceImpl.getTestsInSection(sectionPair.getId());
 
             for( Test test : testList){
                 if( test.isActive()) {

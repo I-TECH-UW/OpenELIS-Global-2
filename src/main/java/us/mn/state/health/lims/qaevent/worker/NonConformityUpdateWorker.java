@@ -33,7 +33,7 @@ import us.mn.state.health.lims.address.valueholder.PersonAddress;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
-import us.mn.state.health.lims.common.services.NoteService;
+import spring.service.note.NoteServiceImpl;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.services.QAService.QAObservationValueType;
@@ -699,7 +699,7 @@ public class NonConformityUpdateWorker {
 			} else {
 				NoteSet noteSet = new NoteSet();
 				noteSet.referencedSample = sample;
-				noteSet.note = new NoteService(sample).createSavableNote(NoteService.NoteType.NON_CONFORMITY, noteText,
+				noteSet.note = new NoteServiceImpl(sample).createSavableNote(NoteServiceImpl.NoteType.NON_CONFORMITY, noteText,
 						NOTE_SUBJECT, webData.getCurrentSysUserId());
 				insertableNotes.add(noteSet);
 			}
@@ -773,7 +773,7 @@ public class NonConformityUpdateWorker {
 		}
 
 		List<Note> notes = noteDAO.getNoteByRefIAndRefTableAndSubject(sample.getId(),
-				NoteService.getReferenceTableIdForNoteBinding(NoteService.BoundTo.SAMPLE), NOTE_SUBJECT);
+				NoteServiceImpl.getReferenceTableIdForNoteBinding(NoteServiceImpl.BoundTo.SAMPLE), NOTE_SUBJECT);
 		return notes.isEmpty() ? null : notes.get(0);
 	}
 
@@ -783,7 +783,7 @@ public class NonConformityUpdateWorker {
 		}
 
 		List<Note> notes = noteDAO.getNoteByRefIAndRefTableAndSubject(sampleQAEventId,
-				NoteService.getReferenceTableIdForNoteBinding(NoteService.BoundTo.QA_EVENT), NOTE_SUBJECT);
+				NoteServiceImpl.getReferenceTableIdForNoteBinding(NoteServiceImpl.BoundTo.QA_EVENT), NOTE_SUBJECT);
 		return notes.isEmpty() ? null : notes.get(0);
 	}
 
@@ -791,7 +791,7 @@ public class NonConformityUpdateWorker {
 		if (!GenericValidator.isBlankOrNull(noteText)) {
 			NoteSet noteSet = new NoteSet();
 			noteSet.referencedEvent = event;
-			noteSet.note = new NoteService(event).createSavableNote(NoteService.NoteType.NON_CONFORMITY, noteText,
+			noteSet.note = new NoteServiceImpl(event).createSavableNote(NoteServiceImpl.NoteType.NON_CONFORMITY, noteText,
 					NOTE_SUBJECT, webData.getCurrentSysUserId());
 			insertableNotes.add(noteSet);
 		}

@@ -16,10 +16,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.TestCatalogForm;
 import spring.mine.common.controller.BaseController;
-import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.services.LocalizationService;
-import us.mn.state.health.lims.common.services.ResultLimitService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.test.TestServiceImpl;
+import spring.service.localization.LocalizationServiceImpl;
+import spring.service.resultlimit.ResultLimitServiceImpl;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
@@ -81,7 +81,7 @@ public class TestCatalogController extends BaseController {
 		for (Test test : testList) {
 
 			TestCatalog catalog = new TestCatalog();
-			TestService testService = new TestService(test);
+			TestServiceImpl testService = new TestServiceImpl(test);
 			String resultType = testService.getResultType();
 			catalog.setId(test.getId());
 			catalog.setEnglishName(test.getLocalizedTestName().getEnglish());
@@ -100,13 +100,13 @@ public class TestCatalogController extends BaseController {
 			catalog.setLoinc(test.getLoinc());
 			catalog.setActive(test.isActive() ? "Active" : "Not active");
 			catalog.setUom(testService.getUOM(false));
-			if (TypeOfTestResultService.ResultType.NUMERIC.matches(resultType)) {
+			if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(resultType)) {
 				catalog.setSignificantDigits(testService.getPossibleTestResults().get(0).getSignificantDigits());
 				catalog.setHasLimitValues(true);
 				catalog.setResultLimits(getResultLimits(test, catalog.getSignificantDigits()));
 			}
 			catalog.setHasDictionaryValues(
-					TypeOfTestResultService.ResultType.isDictionaryVariant(catalog.getResultType()));
+					TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(catalog.getResultType()));
 			if (catalog.isHasDictionaryValues()) {
 				catalog.setDictionaryValues(createDictionaryValues(testService));
 				catalog.setReferenceValue(createReferenceValueForDictionaryType(test));
@@ -141,17 +141,17 @@ public class TestCatalogController extends BaseController {
 	}
 
 	private String createReferenceValueForDictionaryType(Test test) {
-		List<ResultLimit> resultLimits = ResultLimitService.getResultLimits(test);
+		List<ResultLimit> resultLimits = ResultLimitServiceImpl.getResultLimits(test);
 
 		if (resultLimits.isEmpty()) {
 			return "n/a";
 		}
 
-		return ResultLimitService.getDisplayReferenceRange(resultLimits.get(0), null, null);
+		return ResultLimitServiceImpl.getDisplayReferenceRange(resultLimits.get(0), null, null);
 
 	}
 
-	private List<String> createDictionaryValues(TestService testService) {
+	private List<String> createDictionaryValues(TestServiceImpl testService) {
 		List<String> dictionaryList = new ArrayList<>();
 		List<TestResult> testResultList = testService.getPossibleTestResults();
 		for (TestResult testResult : testResultList) {
@@ -165,7 +165,7 @@ public class TestCatalogController extends BaseController {
 
 	private String getDictionaryValue(TestResult testResult) {
 
-		if (TypeOfTestResultService.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
+		if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
 			Dictionary dictionary = dictionaryDAO.getDataForId(testResult.getValue());
 			String displayValue = dictionary.getLocalizedName();
 
@@ -186,7 +186,7 @@ public class TestCatalogController extends BaseController {
 	private List<ResultLimitBean> getResultLimits(Test test, String significantDigits) {
 		List<ResultLimitBean> limitBeans = new ArrayList<>();
 
-		List<ResultLimit> resultLimitList = ResultLimitService.getResultLimits(test);
+		List<ResultLimit> resultLimitList = ResultLimitServiceImpl.getResultLimits(test);
 
 		Collections.sort(resultLimitList, new Comparator<ResultLimit>() {
 			@Override
@@ -197,21 +197,21 @@ public class TestCatalogController extends BaseController {
 
 		for (ResultLimit limit : resultLimitList) {
 			ResultLimitBean bean = new ResultLimitBean();
-			bean.setNormalRange(ResultLimitService.getDisplayReferenceRange(limit, significantDigits, "-"));
-			bean.setValidRange(ResultLimitService.getDisplayValidRange(limit, significantDigits, "-"));
+			bean.setNormalRange(ResultLimitServiceImpl.getDisplayReferenceRange(limit, significantDigits, "-"));
+			bean.setValidRange(ResultLimitServiceImpl.getDisplayValidRange(limit, significantDigits, "-"));
 			bean.setGender(limit.getGender());
-			bean.setAgeRange(ResultLimitService.getDisplayAgeRange(limit, "-"));
+			bean.setAgeRange(ResultLimitServiceImpl.getDisplayAgeRange(limit, "-"));
 			limitBeans.add(bean);
 		}
 		return limitBeans;
 	}
 
-	private String createPanelList(TestService testService) {
+	private String createPanelList(TestServiceImpl testService) {
 		StringBuilder builder = new StringBuilder();
 
 		List<Panel> panelList = testService.getPanels();
 		for (Panel panel : panelList) {
-			builder.append(LocalizationService.getLocalizedValueById(panel.getLocalization().getId()));
+			builder.append(LocalizationServiceImpl.getLocalizedValueById(panel.getLocalization().getId()));
 			builder.append(", ");
 		}
 

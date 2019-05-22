@@ -34,8 +34,8 @@ import org.apache.struts.validator.DynaValidatorForm;
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
-import us.mn.state.health.lims.common.services.ResultLimitService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.resultlimit.ResultLimitServiceImpl;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
@@ -59,7 +59,7 @@ public class TestAddAction extends BaseAction {
         PropertyUtils.setProperty(form, "resultTypeList", DisplayListService.getList(ListType.RESULT_TYPE_LOCALIZED));
         PropertyUtils.setProperty(form, "uomList", DisplayListService.getList(ListType.UNIT_OF_MEASURE));
         PropertyUtils.setProperty(form, "labUnitList", DisplayListService.getList(ListType.TEST_SECTION));
-        PropertyUtils.setProperty(form, "ageRangeList", ResultLimitService.getPredefinedAgeRanges());
+        PropertyUtils.setProperty(form, "ageRangeList", ResultLimitServiceImpl.getPredefinedAgeRanges());
         PropertyUtils.setProperty(form, "dictionaryList", DisplayListService.getList(ListType.DICTIONARY_TEST_RESULTS));
         PropertyUtils.setProperty(form, "groupedDictionaryList", createGroupedDictionaryList());
 
@@ -99,7 +99,7 @@ public class TestAddAction extends BaseAction {
         String currentTestId = null;
         String dictionaryIdGroup = null;
         for( TestResult testResult : testResults){
-            if(TypeOfTestResultService.ResultType.isDictionaryVariant(testResult.getTestResultType()) ){
+            if(TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType()) ){
                 if( testResult.getTest().getId().equals(currentTestId) ){
                     dictionaryIdGroup += "," + testResult.getValue();
                 }else{

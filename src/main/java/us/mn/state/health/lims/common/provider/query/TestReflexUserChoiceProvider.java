@@ -32,7 +32,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import us.mn.state.health.lims.common.services.TestService;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -160,7 +160,7 @@ public class TestReflexUserChoiceProvider extends BaseQueryProvider {
                 if (TestReflexUtil.isUserChoiceReflex( candidateReflex )) {
                     if (GenericValidator.isBlankOrNull( candidateReflex.getSiblingReflexId() )) {
                         selectableReflexes.add( candidateReflex );
-                        reflexTriggers.add( TestService.getUserLocalizedTestName( candidateReflex.getTest() ) + ":" + dictionaryResult.getDictEntry() );
+                        reflexTriggers.add( TestServiceImpl.getUserLocalizedTestName( candidateReflex.getTest() ) + ":" + dictionaryResult.getDictEntry() );
           //              reflexTriggerIds.add( candidateReflex.getTest().getId() );
                     } else {
                         // find if the sibling reflex is satisfied
@@ -182,7 +182,7 @@ public class TestReflexUserChoiceProvider extends BaseQueryProvider {
                                         result.getValue() );
                                 if (testResult != null && testResult.getId().equals(sibTestReflex.getTestResultId())) {
                                     selectableReflexes.add(candidateReflex);
-                                    reflexTriggers.add( TestService.getUserLocalizedTestName( candidateReflex.getTest() ) + ":" + dictionaryResult.getDictEntry() );
+                                    reflexTriggers.add( TestServiceImpl.getUserLocalizedTestName( candidateReflex.getTest() ) + ":" + dictionaryResult.getDictEntry() );
                        //             reflexTriggerIds.add( candidateReflex.getTest().getId() );
                                 }
                             }

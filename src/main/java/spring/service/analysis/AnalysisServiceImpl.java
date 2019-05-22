@@ -12,17 +12,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
-import us.mn.state.health.lims.common.services.TestService;
+import spring.service.test.TestServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.services.NoteService;
+import spring.service.note.NoteServiceImpl;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.ReportTrackingService;
-import us.mn.state.health.lims.common.services.ResultService;
+import spring.service.result.ResultServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -53,7 +53,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 	private ReferenceTablesDAO referenceTablesDAO = SpringContext.getBean(ReferenceTablesDAO.class);
 
 	private Analysis analysis;
-	public String TABLE_REFERENCE_ID;
+	public static String TABLE_REFERENCE_ID;
 	private final String DEFAULT_ANALYSIS_TYPE = "MANUAL";
 
 	public synchronized void initializeGlobalVariables() {
@@ -91,17 +91,17 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 			return "";
 		}
 		Test test = getTest();
-		String name = TestService.getLocalizedTestNameWithType(test);
+		String name = TestServiceImpl.getLocalizedTestNameWithType(test);
 
-		TypeOfSample typeOfSample = TypeOfSampleService.getTypeOfSampleForTest(test.getId());
+		TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getTypeOfSampleForTest(test.getId());
 
 		if (typeOfSample != null
-				&& typeOfSample.getId().equals(TypeOfSampleService.getTypeOfSampleIdForLocalAbbreviation("Variable"))) {
+				&& typeOfSample.getId().equals(TypeOfSampleServiceImpl.getTypeOfSampleIdForLocalAbbreviation("Variable"))) {
 			name += "(" + analysis.getSampleTypeName() + ")";
 		}
 
 		String parentResultType = analysis.getParentResult() != null ? analysis.getParentResult().getResultType() : "";
-		if (TypeOfTestResultService.ResultType.isMultiSelectVariant(parentResultType)) {
+		if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(parentResultType)) {
 			Dictionary dictionary = dictionaryDAO.getDictionaryById(analysis.getParentResult().getValue());
 			if (dictionary != null) {
 				String parentResult = dictionary.getLocalAbbreviation();
@@ -123,7 +123,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 		List<Result> existingResults = resultDAO.getResultsByAnalysis(analysis);
 		StringBuilder multiSelectBuffer = new StringBuilder();
 		for (Result existingResult : existingResults) {
-			if (TypeOfTestResultService.ResultType.isMultiSelectVariant(existingResult.getResultType())) {
+			if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(existingResult.getResultType())) {
 				multiSelectBuffer.append(existingResult.getValue());
 				multiSelectBuffer.append(',');
 			}
@@ -138,7 +138,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 	@Override
 	public String getJSONMultiSelectResults() {
 		return analysis == null ? ""
-				: ResultService.getJSONStringForMultiSelect(resultDAO.getResultsByAnalysis(analysis));
+				: ResultServiceImpl.getJSONStringForMultiSelect(resultDAO.getResultsByAnalysis(analysis));
 	}
 
 	@Override
@@ -149,13 +149,13 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 		List<Result> existingResults = resultDAO.getResultsByAnalysis(analysis);
 		List<String> quantifiableResultsIds = new ArrayList<>();
 		for (Result existingResult : existingResults) {
-			if (TypeOfTestResultService.ResultType.isDictionaryVariant(existingResult.getResultType())) {
+			if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(existingResult.getResultType())) {
 				quantifiableResultsIds.add(existingResult.getId());
 			}
 		}
 
 		for (Result existingResult : existingResults) {
-			if (!TypeOfTestResultService.ResultType.isDictionaryVariant(existingResult.getResultType())
+			if (!TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(existingResult.getResultType())
 					&& existingResult.getParentResult() != null
 					&& quantifiableResultsIds.contains(existingResult.getParentResult().getId())
 					&& !GenericValidator.isBlankOrNull(existingResult.getValue())) {
@@ -245,7 +245,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator,
 			boolean excludeExternPrefix) {
 		return analysis == null ? ""
-				: new NoteService(analysis).getNotesAsString(prefixType, prefixTimestamp, noteSeparator,
+				: new NoteServiceImpl(analysis).getNotesAsString(prefixType, prefixTimestamp, noteSeparator,
 						excludeExternPrefix);
 	}
 
@@ -293,57 +293,57 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<Analysis> getAnalysesBySampleId(String id) {
 		return analysisDAO.getAnalysesBySampleId(id);
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public void insert(Analysis analysis, boolean duplicateCheck) {
 		analysisDAO.insertData(analysis, duplicateCheck);
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<Analysis> getAnalysisByAccessionAndTestId(String accessionNumber, String testId) {
 		return analysisDAO.getAnalysisByAccessionAndTestId(accessionNumber, testId);
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<Analysis> getAnalysisCollectedOnExcludedByStatusId(Date date, Set<Integer> excludedStatusIds) {
 		return analysisDAO.getAnalysisCollectedOnExcludedByStatusId(date, excludedStatusIds);
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<Analysis> getAnalysesBySampleItemsExcludingByStatusIds(SampleItem sampleItem,
 			Set<Integer> excludedStatusIds) {
 		return analysisDAO.getAnalysesBySampleItemsExcludingByStatusIds(sampleItem, excludedStatusIds);
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<Analysis> getAnalysesForStatusId(String status) {
 		return analysisDAO.getAllMatching("statusId", status);
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<Analysis> getAnalysesBySampleStatusIdExcludingByStatusId(String sampleStatus,
 			Set<Integer> excludedStatusIds) {
 		return analysisDAO.getAnalysesBySampleStatusIdExcludingByStatusId(sampleStatus, excludedStatusIds);
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<Analysis> getAllAnalysisByTestAndExcludedStatus(String testId, List<Integer> excludedStatusIntList) {
 		return analysisDAO.getAllAnalysisByTestAndExcludedStatus(testId, excludedStatusIntList);
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public void updateAnalysises(List<Analysis> cancelAnalysis, List<Analysis> newAnalysis, String sysUserId) {
 		String cancelStatus = StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Canceled);
 		for (Analysis analysis : cancelAnalysis) {
@@ -359,26 +359,26 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<Analysis> getAllAnalysisByTestAndStatus(String id, List<Integer> statusList) {
 		return analysisDAO.getAllAnalysisByTestAndStatus(id, statusList);
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<Analysis> getAllAnalysisByTestsAndStatus(List<String> nfsTestIdList, List<Integer> statusList) {
 		return analysisDAO.getAllAnalysisByTestsAndStatus(nfsTestIdList, statusList);
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<Analysis> getAllAnalysisByTestSectionAndStatus(String sectionId, List<Integer> statusList,
 			boolean sortedByDateAndAccession) {
 		return analysisDAO.getAllAnalysisByTestSectionAndStatus(sectionId, statusList, sortedByDateAndAccession);
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<Analysis> getAnalysesBySampleItemIdAndStatusId(String sampleItemId, String canceledTestStatusId) {
 		return analysisDAO.getAnalysesBySampleItemIdAndStatusId(sampleItemId, canceledTestStatusId);
 	}

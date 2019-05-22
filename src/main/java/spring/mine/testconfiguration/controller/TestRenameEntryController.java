@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import spring.mine.common.controller.BaseController;
 import spring.mine.testconfiguration.form.TestRenameEntryForm;
 import spring.service.localization.LocalizationService;
-import us.mn.state.health.lims.common.services.TestService;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.localization.valueholder.Localization;
@@ -78,7 +78,7 @@ public class TestRenameEntryController extends BaseController {
 
 	private void updateTestNames(String testId, String nameEnglish, String nameFrench, String reportNameEnglish,
 			String reportNameFrench, String userId) {
-		Test test = new TestService(testId).getTest();
+		Test test = new TestServiceImpl(testId).getTest();
 
 		if (test != null) {
 

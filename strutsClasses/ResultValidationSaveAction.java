@@ -53,7 +53,7 @@ import us.mn.state.health.lims.common.services.ResultSaveService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.services.beanAdapters.ResultSaveBeanAdapter;
 import us.mn.state.health.lims.common.services.registration.ValidationUpdateRegister;
 import us.mn.state.health.lims.common.services.registration.interfaces.IResultUpdate;
@@ -515,7 +515,7 @@ public class ResultValidationSaveAction extends BaseResultValidationAction imple
 
 	protected TestResult getTestResult(AnalysisItem analysisItem) {
 		TestResult testResult = null;
-		if (TypeOfTestResultService.ResultType.DICTIONARY.matches(analysisItem.getResultType())) {
+		if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(analysisItem.getResultType())) {
 			testResult = testResultDAO.getTestResultsByTestAndDictonaryResult(analysisItem.getTestId(),
 					analysisItem.getResult());
 		} else {
@@ -531,9 +531,9 @@ public class ResultValidationSaveAction extends BaseResultValidationAction imple
 
 	private boolean areResults(AnalysisItem item) {
 		return !(isBlankOrNull(item.getResult())
-				|| (TypeOfTestResultService.ResultType.DICTIONARY.matches(item.getResultType())
+				|| (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(item.getResultType())
 						&& "0".equals(item.getResult())))
-				|| (TypeOfTestResultService.ResultType.isMultiSelectVariant(item.getResultType())
+				|| (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(item.getResultType())
 						&& !isBlankOrNull(item.getMultiSelectResultValues()));
 	}
 

@@ -41,7 +41,7 @@ import spring.service.result.ResultService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.sampleitem.SampleItemService;
 import spring.service.test.TestSectionService;
-import us.mn.state.health.lims.common.services.TestService;
+import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleTestService;
 import spring.service.userrole.UserRoleService;
@@ -53,12 +53,12 @@ import us.mn.state.health.lims.common.provider.validation.IAccessionNumberValida
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.services.IPatientService;
-import us.mn.state.health.lims.common.services.PatientService;
+import spring.service.patient.PatientServiceImpl;
 import us.mn.state.health.lims.common.services.RequesterService;
 import us.mn.state.health.lims.common.services.SampleAddService;
 import us.mn.state.health.lims.common.services.SampleAddService.SampleTestCollection;
 import us.mn.state.health.lims.common.services.SampleOrderService;
-import us.mn.state.health.lims.common.services.SampleService;
+import spring.service.sample.SampleServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.SampleStatus;
@@ -189,7 +189,7 @@ public class SampleEditController extends BaseController {
 						+ sampleItemList.get(sampleItemList.size() - 1).getSortOrder();
 				PropertyUtils.setProperty(form, "maxAccessionNumber", maxAccessionNumber);
 				PropertyUtils.setProperty(form, "isConfirmationSample",
-						new SampleService(sample).isConfirmationSample());
+						new SampleServiceImpl(sample).isConfirmationSample());
 			} else {
 				PropertyUtils.setProperty(form, "noSampleFound", Boolean.TRUE);
 			}
@@ -264,7 +264,7 @@ public class SampleEditController extends BaseController {
 			throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
 		Patient patient = sampleHumanService.getPatientForSample(sample);
-		IPatientService patientService = new PatientService(patient);
+		IPatientService patientService = new PatientServiceImpl(patient);
 
 		PropertyUtils.setProperty(form, "patientName", patientService.getLastFirstName());
 		PropertyUtils.setProperty(form, "dob", patientService.getEnteredDOB());
@@ -300,7 +300,7 @@ public class SampleEditController extends BaseController {
 			SampleEditItem sampleEditItem = new SampleEditItem();
 
 			sampleEditItem.setTestId(analysis.getTest().getId());
-			sampleEditItem.setTestName(TestService.getUserLocalizedTestName(analysis.getTest()));
+			sampleEditItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
 			sampleEditItem.setSampleItemId(sampleItem.getId());
 
 			boolean canCancel = allowedToCancelAll
@@ -365,7 +365,7 @@ public class SampleEditController extends BaseController {
 			sampleEditItem.setTestId(typeOfSampleTest.getTestId());
 			Test test = testService.get(typeOfSampleTest.getTestId());
 			if ("Y".equals(test.getIsActive()) && test.getOrderable()) {
-				sampleEditItem.setTestName(TestService.getUserLocalizedTestName(test));
+				sampleEditItem.setTestName(TestServiceImpl.getUserLocalizedTestName(test));
 				sampleEditItem.setSampleItemId(sampleItem.getId());
 				sampleEditItem.setSortOrder(test.getSortOrder());
 				typeOfTestSampleItemList.add(sampleEditItem);
@@ -474,7 +474,7 @@ public class SampleEditController extends BaseController {
 		}
 
 		Person referringPerson = orderArtifacts.getProviderPerson();
-		Patient patient = new SampleService(updatedSample).getPatient();
+		Patient patient = new SampleServiceImpl(updatedSample).getPatient();
 
 		for (SampleItem sampleItem : updateSampleItemList) {
 			sampleItemService.update(sampleItem);

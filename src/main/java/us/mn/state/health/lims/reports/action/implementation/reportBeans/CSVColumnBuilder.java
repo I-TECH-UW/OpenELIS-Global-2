@@ -33,13 +33,13 @@ import java.util.Map;
 
 import org.hibernate.Session;
 
-import us.mn.state.health.lims.common.services.TestService;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analyte.dao.AnalyteDAO;
 import us.mn.state.health.lims.analyte.daoimpl.AnalyteDAOImpl;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -135,7 +135,7 @@ abstract public class CSVColumnBuilder {
 			testResultsByTestName = new HashMap<>();
 			List<TestResult> allTestResults = new TestResultDAOImpl().getAllTestResults();
 			for (TestResult testResult : allTestResults) {
-				String key = TestService.getLocalizedTestNameWithType(testResult.getTest());
+				String key = TestServiceImpl.getLocalizedTestNameWithType(testResult.getTest());
 				testResultsByTestName.put(key, testResult);
 			}
 		}
@@ -420,9 +420,9 @@ abstract public class CSVColumnBuilder {
 			String type = testResult.getTestResultType();
 			// if it is in the table D have to be translated through the
 			// dictionary, otherwise don't
-			if (TypeOfTestResultService.ResultType.DICTIONARY.getCharacterValue().equals(type)) {
+			if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.getCharacterValue().equals(type)) {
 				return ResourceTranslator.DictionaryTranslator.getInstance().translateRaw(value);
-			} else if (TypeOfTestResultService.ResultType.MULTISELECT.getCharacterValue().equals(type)) {
+			} else if (TypeOfTestResultServiceImpl.ResultType.MULTISELECT.getCharacterValue().equals(type)) {
 				return findMultiSelectItemsForTest(testResult.getTest().getId());
 			}
 			return value;
@@ -496,7 +496,7 @@ abstract public class CSVColumnBuilder {
 		query.append("\n as " + listName + " ( " // inner use of the list name
 				+ "\"si_id\" numeric(10) ");
 		for (Test col : allTests) {
-			String testName = TestService.getLocalizedTestNameWithType(col);
+			String testName = TestServiceImpl.getLocalizedTestNameWithType(col);
 			if (!"CD4".equals(testName)) { // CD4 is listed as a test name but
 											// it isn't clear it should be line
 											// 446 may also have to be changed
@@ -593,9 +593,9 @@ abstract public class CSVColumnBuilder {
 	 */
 	protected void addAllResultsColumns() {
 		for (Test test : allTests) {
-			String testTag = TestService.getLocalizedTestNameWithType(test);
+			String testTag = TestServiceImpl.getLocalizedTestNameWithType(test);
 			if (!"CD4".equals(testTag)) {
-				add(testTag, TestService.getLocalizedTestNameWithType(test), TEST_RESULT);
+				add(testTag, TestServiceImpl.getLocalizedTestNameWithType(test), TEST_RESULT);
 			}
 		}
 	}

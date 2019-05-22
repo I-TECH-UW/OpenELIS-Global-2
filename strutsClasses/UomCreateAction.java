@@ -14,8 +14,8 @@ import org.apache.struts.validator.DynaValidatorForm;
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.LocalizationService;
-//import us.mn.state.health.lims.common.services.TestSectionService;
-import us.mn.state.health.lims.common.services.UnitOfMeasureService;
+//import spring.service.test.TestSectionServiceImpl;
+import spring.service.unitofmeasure.UnitOfMeasureServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 // import us.mn.state.health.lims.test.valueholder.TestSection;
 import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
@@ -28,7 +28,7 @@ public class UomCreateAction extends BaseAction {
         ((DynaValidatorForm)form).initialize(mapping);
         PropertyUtils.setProperty(form, "existingUomList", DisplayListService.getList(DisplayListService.ListType.UNIT_OF_MEASURE));
         PropertyUtils.setProperty(form, "inactiveUomList", DisplayListService.getList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE));
-        List<UnitOfMeasure> uoms = UnitOfMeasureService.getAllUnitOfMeasures();
+        List<UnitOfMeasure> uoms = UnitOfMeasureServiceImpl.getAllUnitOfMeasures();
         PropertyUtils.setProperty(form, "existingEnglishNames", getExistingUomNames(uoms, ConfigurationProperties.LOCALE.ENGLISH));
         PropertyUtils.setProperty(form, "existingFrenchNames", getExistingUomNames(uoms, ConfigurationProperties.LOCALE.FRENCH));
 

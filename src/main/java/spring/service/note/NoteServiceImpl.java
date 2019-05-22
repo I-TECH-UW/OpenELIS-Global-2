@@ -15,9 +15,9 @@ import spring.mine.internationalization.MessageUtil;
 import spring.service.common.BaseObjectServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.services.AnalysisService;
+import spring.service.analysis.AnalysisServiceImpl;
 import us.mn.state.health.lims.common.services.QAService;
-import us.mn.state.health.lims.common.services.SampleService;
+import spring.service.sample.SampleServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -88,7 +88,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 
 	public NoteServiceImpl(Analysis analysis) {
 		this();
-		tableId = AnalysisService.TABLE_REFERENCE_ID;
+		tableId = AnalysisServiceImpl.TABLE_REFERENCE_ID;
 		objectId = analysis.getId();
 		binding = BoundTo.ANALYSIS;
 		object = analysis;
@@ -96,7 +96,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 
 	public NoteServiceImpl(Sample sample) {
 		this();
-		tableId = SampleService.TABLE_REFERENCE_ID;
+		tableId = SampleServiceImpl.TABLE_REFERENCE_ID;
 		objectId = sample.getId();
 		binding = BoundTo.SAMPLE;
 		object = sample;
@@ -180,12 +180,12 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 
 			sample = sampleItem.getSample();
 			notes.addAll(noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sample.getId(),
-					SampleService.TABLE_REFERENCE_ID, filter));
+					SampleServiceImpl.TABLE_REFERENCE_ID, filter));
 		} else if (binding == BoundTo.SAMPLE_ITEM) {
 			sampleItem = (SampleItem) object;
 			sample = sampleItem.getSample();
 			notes.addAll(noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sample.getId(),
-					SampleService.TABLE_REFERENCE_ID, filter));
+					SampleServiceImpl.TABLE_REFERENCE_ID, filter));
 		}
 
 		if (sample != null) {
@@ -323,13 +323,13 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 	public static String getReferenceTableIdForNoteBinding(BoundTo binding) {
 		switch (binding) {
 		case ANALYSIS: {
-			return AnalysisService.TABLE_REFERENCE_ID;
+			return AnalysisServiceImpl.TABLE_REFERENCE_ID;
 		}
 		case QA_EVENT: {
 			return QAService.TABLE_REFERENCE_ID;
 		}
 		case SAMPLE: {
-			return SampleService.TABLE_REFERENCE_ID;
+			return SampleServiceImpl.TABLE_REFERENCE_ID;
 		}
 		case SAMPLE_ITEM: {
 			return SAMPLE_ITEM_TABLE_REFERENCE_ID;
@@ -342,7 +342,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 
 	public static List<Note> getTestNotesInDateRangeByType(Date lowDate, Date highDate, NoteType noteType) {
 		return noteDAO.getNotesInDateRangeAndType(lowDate, DateUtil.addDaysToSQLDate(highDate, 1), noteType.DBCode,
-				AnalysisService.TABLE_REFERENCE_ID);
+				AnalysisServiceImpl.TABLE_REFERENCE_ID);
 	}
 
 	private String getNotePrefix(Note note, boolean excludeExternPrefix) {

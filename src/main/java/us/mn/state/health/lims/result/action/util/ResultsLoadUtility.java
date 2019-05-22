@@ -33,7 +33,16 @@ import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.common.services.TestService;
+import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.note.NoteServiceImpl;
+import spring.service.note.NoteServiceImpl.NoteType;
+import spring.service.patient.PatientServiceImpl;
+import spring.service.result.ResultServiceImpl;
+import spring.service.resultlimit.ResultLimitServiceImpl;
+import spring.service.sample.SampleServiceImpl;
+import spring.service.test.TestServiceImpl;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -43,21 +52,12 @@ import us.mn.state.health.lims.analyte.valueholder.Analyte;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
-import us.mn.state.health.lims.common.services.AnalysisService;
-import us.mn.state.health.lims.common.services.NoteService;
-import us.mn.state.health.lims.common.services.NoteService.NoteType;
-import us.mn.state.health.lims.common.services.PatientService;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
-import us.mn.state.health.lims.common.services.ResultLimitService;
-import us.mn.state.health.lims.common.services.ResultService;
-import us.mn.state.health.lims.common.services.SampleService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
 import us.mn.state.health.lims.common.services.TestIdentityService;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DAOImplFactory;
@@ -120,7 +120,7 @@ public class ResultsLoadUtility {
 
 	private List<Sample> samples;
 	private String currentDate = "";
-	private PatientService patientService;
+	private PatientServiceImpl patientService;
 	private Sample currSample;
 
 	private Set<Integer> excludedAnalysisStatus = new HashSet<>();
@@ -198,7 +198,7 @@ public class ResultsLoadUtility {
 			samples.add(sample);
 		}
 
-		patientService = new PatientService(patient);
+		patientService = new PatientServiceImpl(patient);
 
 		return getGroupedTestsForSamples();
 	}
@@ -208,7 +208,7 @@ public class ResultsLoadUtility {
 		activeKits = null;
 		inventoryNeeded = false;
 
-		patientService = new PatientService(patient);
+		patientService = new PatientServiceImpl(patient);
 
 		SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
 		samples = sampleHumanDAO.getSamplesForPatient(patient.getId());
@@ -262,7 +262,8 @@ public class ResultsLoadUtility {
 		List<TestResultItem> selectedTestList = new ArrayList<>();
 
 		for (Analysis analysis : filteredAnalysisList) {
-			patientService = new PatientService(new SampleService(analysis.getSampleItem().getSample()).getPatient());
+			patientService = new PatientServiceImpl(
+					new SampleServiceImpl(analysis.getSampleItem().getSample()).getPatient());
 
 			String patientName = "";
 			String patientInfo;
@@ -422,18 +423,19 @@ public class ResultsLoadUtility {
 
 				testKit = getInventoryForResult(result);
 
-				multiSelectionResult = TypeOfTestResultService.ResultType.isMultiSelectVariant(result.getResultType());
+				multiSelectionResult = TypeOfTestResultServiceImpl.ResultType
+						.isMultiSelectVariant(result.getResultType());
 			}
 
 			String initialConditions = getInitialSampleConditionString(sampleItem);
 			NoteType[] noteTypes = { NoteType.EXTERNAL, NoteType.INTERNAL, NoteType.REJECTION_REASON,
 					NoteType.NON_CONFORMITY };
-			String notes = new NoteService(analysis).getNotesAsString(true, true, "<br/>", noteTypes, false);
+			String notes = new NoteServiceImpl(analysis).getNotesAsString(true, true, "<br/>", noteTypes, false);
 
-			TestResultItem resultItem = createTestResultItem(new AnalysisService(analysis), testKit, notes,
+			TestResultItem resultItem = createTestResultItem(new AnalysisServiceImpl(analysis), testKit, notes,
 					sampleItem.getSortOrder(), result, sampleItem.getSample().getAccessionNumber(), patientName,
 					patientInfo, techSignature, techSignatureId, initialConditions,
-					TypeOfSampleService.getTypeOfSampleNameForId(sampleItem.getTypeOfSampleId()));
+					TypeOfSampleServiceImpl.getTypeOfSampleNameForId(sampleItem.getTypeOfSampleId()));
 			resultItem.setNationalId(nationalId);
 			testResultList.add(resultItem);
 
@@ -592,12 +594,13 @@ public class ResultsLoadUtility {
 		return analysisDAO.getAnalysesBySampleItemsExcludingByStatusIds(item, excludedAnalysisStatus);
 	}
 
-	private TestResultItem createTestResultItem(AnalysisService analysisService, ResultInventory testKit, String notes,
-			String sequenceNumber, Result result, String accessionNumber, String patientName, String patientInfo,
-			String techSignature, String techSignatureId, String initialSampleConditions, String sampleType) {
+	private TestResultItem createTestResultItem(AnalysisServiceImpl analysisService, ResultInventory testKit,
+			String notes, String sequenceNumber, Result result, String accessionNumber, String patientName,
+			String patientInfo, String techSignature, String techSignatureId, String initialSampleConditions,
+			String sampleType) {
 
-		TestService testService = new TestService(analysisService.getTest());
-		ResultLimit resultLimit = new ResultLimitService().getResultLimitForTestAndPatient(testService.getTest(),
+		TestServiceImpl testService = new TestServiceImpl(analysisService.getTest());
+		ResultLimit resultLimit = new ResultLimitServiceImpl().getResultLimitForTestAndPatient(testService.getTest(),
 				patientService.getPatient());
 
 		String receivedDate = currSample == null ? getCurrentDate() : currSample.getReceivedDateForDisplay();
@@ -742,7 +745,7 @@ public class ResultsLoadUtility {
 					resultLimit.getHighValid() == Double.POSITIVE_INFINITY ? 0 : resultLimit.getHighValid());
 			testItem.setValid(getIsValid(testItem.getResultValue(), resultLimit));
 			testItem.setNormal(getIsNormal(testItem.getResultValue(), resultLimit));
-			testItem.setNormalRange(ResultLimitService.getDisplayReferenceRange(resultLimit,
+			testItem.setNormalRange(ResultLimitServiceImpl.getDisplayReferenceRange(resultLimit,
 					testResults.get(0).getSignificantDigits(), " - "));
 		}
 	}
@@ -762,7 +765,7 @@ public class ResultsLoadUtility {
 		Dictionary dictionary;
 
 		if (testResults != null && !testResults.isEmpty()
-				&& TypeOfTestResultService.ResultType.isDictionaryVariant(testResults.get(0).getTestResultType())) {
+				&& TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResults.get(0).getTestResultType())) {
 			values = new ArrayList<>();
 
 			Collections.sort(testResults, new Comparator<TestResult>() {
@@ -779,7 +782,7 @@ public class ResultsLoadUtility {
 
 			String qualifiedDictionaryIds = "";
 			for (TestResult testResult : testResults) {
-				if (TypeOfTestResultService.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
+				if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
 					dictionary = new Dictionary();
 					dictionary.setId(testResult.getValue());
 					dictionaryDAO.getData(dictionary);
@@ -824,10 +827,10 @@ public class ResultsLoadUtility {
 	}
 
 	private String getFormattedResultValue(Result result) {
-		return result != null ? new ResultService(result).getResultValue(false) : "";
+		return result != null ? new ResultServiceImpl(result).getResultValue(false) : "";
 	}
 
-	private boolean hasLogValue(TestService testService) {// Analysis analysis, String resultValue) {
+	private boolean hasLogValue(TestServiceImpl testService) {// Analysis analysis, String resultValue) {
 		// TO-DO refactor
 		// if ( ){
 //			if (GenericValidator.isBlankOrNull(resultValue)) {
@@ -850,7 +853,7 @@ public class ResultsLoadUtility {
 	private List<IdValuePair> getAnyDictionaryValues(Result result) {
 		List<IdValuePair> values = null;
 
-		if (result != null && TypeOfTestResultService.ResultType.isDictionaryVariant(result.getResultType())) {
+		if (result != null && TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
 			values = new ArrayList<>();
 
 			Dictionary dictionaryValue = new Dictionary();

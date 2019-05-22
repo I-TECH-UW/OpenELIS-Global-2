@@ -58,7 +58,7 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.services.NoteService;
+import spring.service.note.NoteServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
@@ -383,7 +383,7 @@ public abstract class Accessioner {
 			}
 
 			note.setSysUserId(sysUserId);
-			note.setSystemUser(NoteService.createSystemUser(sysUserId));
+			note.setSystemUser(NoteServiceImpl.createSystemUser(sysUserId));
 
 			if (note.getId() == null) {
 				noteDAO.insertData(note);

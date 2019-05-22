@@ -30,14 +30,14 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.TestModifyEntryForm;
 import spring.generated.testconfiguration.validator.TestModifyEntryFormValidator;
 import spring.mine.common.controller.BaseController;
-import us.mn.state.health.lims.common.services.TestService;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
-import us.mn.state.health.lims.common.services.LocalizationService;
-import us.mn.state.health.lims.common.services.ResultLimitService;
-import us.mn.state.health.lims.common.services.TestSectionService;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.localization.LocalizationServiceImpl;
+import spring.service.resultlimit.ResultLimitServiceImpl;
+import spring.service.test.TestSectionServiceImpl;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
@@ -104,7 +104,7 @@ public class TestModifyEntryController extends BaseController {
 					DisplayListService.getList(ListType.RESULT_TYPE_LOCALIZED));
 			PropertyUtils.setProperty(form, "uomList", DisplayListService.getList(ListType.UNIT_OF_MEASURE));
 			PropertyUtils.setProperty(form, "labUnitList", DisplayListService.getList(ListType.TEST_SECTION));
-			PropertyUtils.setProperty(form, "ageRangeList", ResultLimitService.getPredefinedAgeRanges());
+			PropertyUtils.setProperty(form, "ageRangeList", ResultLimitServiceImpl.getPredefinedAgeRanges());
 			PropertyUtils.setProperty(form, "dictionaryList",
 					DisplayListService.getList(ListType.DICTIONARY_TEST_RESULTS));
 			PropertyUtils.setProperty(form, "groupedDictionaryList", createGroupedDictionaryList());
@@ -138,7 +138,7 @@ public class TestModifyEntryController extends BaseController {
 		for (Test test : testList) {
 
 			TestCatalogBean bean = new TestCatalogBean();
-			TestService testService = new TestService(test);
+			TestServiceImpl testService = new TestServiceImpl(test);
 			String resultType = testService.getResultType();
 			bean.setId(test.getId());
 			bean.setEnglishName(test.getLocalizedTestName().getEnglish());
@@ -155,12 +155,12 @@ public class TestModifyEntryController extends BaseController {
 			bean.setLoinc(test.getLoinc());
 			bean.setActive(test.isActive() ? "Active" : "Not active");
 			bean.setUom(testService.getUOM(false));
-			if (TypeOfTestResultService.ResultType.NUMERIC.matches(resultType)) {
+			if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(resultType)) {
 				bean.setSignificantDigits(testService.getPossibleTestResults().get(0).getSignificantDigits());
 				bean.setHasLimitValues(true);
 				bean.setResultLimits(getResultLimits(test, bean.getSignificantDigits()));
 			}
-			bean.setHasDictionaryValues(TypeOfTestResultService.ResultType.isDictionaryVariant(bean.getResultType()));
+			bean.setHasDictionaryValues(TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(bean.getResultType()));
 			if (bean.isHasDictionaryValues()) {
 				bean.setDictionaryValues(createDictionaryValues(testService));
 				bean.setReferenceValue(createReferenceValueForDictionaryType(test));
@@ -201,7 +201,7 @@ public class TestModifyEntryController extends BaseController {
 	private List<ResultLimitBean> getResultLimits(Test test, String significantDigits) {
 		List<ResultLimitBean> limitBeans = new ArrayList<>();
 
-		List<ResultLimit> resultLimitList = ResultLimitService.getResultLimits(test);
+		List<ResultLimit> resultLimitList = ResultLimitServiceImpl.getResultLimits(test);
 
 		Collections.sort(resultLimitList, new Comparator<ResultLimit>() {
 			@Override
@@ -212,27 +212,27 @@ public class TestModifyEntryController extends BaseController {
 
 		for (ResultLimit limit : resultLimitList) {
 			ResultLimitBean bean = new ResultLimitBean();
-			bean.setNormalRange(ResultLimitService.getDisplayReferenceRange(limit, significantDigits, "-"));
-			bean.setValidRange(ResultLimitService.getDisplayValidRange(limit, significantDigits, "-"));
+			bean.setNormalRange(ResultLimitServiceImpl.getDisplayReferenceRange(limit, significantDigits, "-"));
+			bean.setValidRange(ResultLimitServiceImpl.getDisplayValidRange(limit, significantDigits, "-"));
 			bean.setGender(limit.getGender());
-			bean.setAgeRange(ResultLimitService.getDisplayAgeRange(limit, "-"));
+			bean.setAgeRange(ResultLimitServiceImpl.getDisplayAgeRange(limit, "-"));
 			limitBeans.add(bean);
 		}
 		return limitBeans;
 	}
 
 	private String createReferenceValueForDictionaryType(Test test) {
-		List<ResultLimit> resultLimits = ResultLimitService.getResultLimits(test);
+		List<ResultLimit> resultLimits = ResultLimitServiceImpl.getResultLimits(test);
 
 		if (resultLimits.isEmpty()) {
 			return "n/a";
 		}
 
-		return ResultLimitService.getDisplayReferenceRange(resultLimits.get(0), null, null);
+		return ResultLimitServiceImpl.getDisplayReferenceRange(resultLimits.get(0), null, null);
 
 	}
 
-	private List<String> createDictionaryValues(TestService testService) {
+	private List<String> createDictionaryValues(TestServiceImpl testService) {
 		List<String> dictionaryList = new ArrayList<>();
 		List<TestResult> testResultList = testService.getPossibleTestResults();
 		for (TestResult testResult : testResultList) {
@@ -244,7 +244,7 @@ public class TestModifyEntryController extends BaseController {
 
 	private String getDictionaryValue(TestResult testResult) {
 
-		if (TypeOfTestResultService.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
+		if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
 			Dictionary dictionary = dictionaryDAO.getDataForId(testResult.getValue());
 			String displayValue = dictionary.getLocalizedName();
 
@@ -263,16 +263,16 @@ public class TestModifyEntryController extends BaseController {
 	}
 
 	private String createReferenceIdForDictionaryType(Test test) {
-		List<ResultLimit> resultLimits = ResultLimitService.getResultLimits(test);
+		List<ResultLimit> resultLimits = ResultLimitServiceImpl.getResultLimits(test);
 
 		if (resultLimits.isEmpty()) {
 			return "n/a";
 		}
 
-		return ResultLimitService.getDisplayReferenceRange(resultLimits.get(0), null, null);
+		return ResultLimitServiceImpl.getDisplayReferenceRange(resultLimits.get(0), null, null);
 	}
 
-	private List<String> createDictionaryIds(TestService testService) {
+	private List<String> createDictionaryIds(TestServiceImpl testService) {
 		List<String> dictionaryList = new ArrayList<>();
 		List<TestResult> testResultList = testService.getPossibleTestResults();
 		for (TestResult testResult : testResultList) {
@@ -299,7 +299,7 @@ public class TestModifyEntryController extends BaseController {
 
 	private String getDictionaryId(TestResult testResult) {
 
-		if (TypeOfTestResultService.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
+		if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
 			Dictionary dictionary = dictionaryDAO.getDataForId(testResult.getValue());
 			String displayId = dictionary.getId();
 
@@ -317,12 +317,12 @@ public class TestModifyEntryController extends BaseController {
 		return null;
 	}
 
-	private String createPanelList(TestService testService) {
+	private String createPanelList(TestServiceImpl testService) {
 		StringBuilder builder = new StringBuilder();
 
 		List<Panel> panelList = testService.getPanels();
 		for (Panel panel : panelList) {
-			builder.append(LocalizationService.getLocalizedValueById(panel.getLocalization().getId()));
+			builder.append(LocalizationServiceImpl.getLocalizedValueById(panel.getLocalization().getId()));
 			builder.append(", ");
 		}
 
@@ -369,7 +369,7 @@ public class TestModifyEntryController extends BaseController {
 		String currentTestId = null;
 		String dictionaryIdGroup = null;
 		for (TestResult testResult : testResults) {
-			if (TypeOfTestResultService.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
+			if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
 				if (testResult.getTest().getId().equals(currentTestId)) {
 					dictionaryIdGroup += "," + testResult.getValue();
 				} else {
@@ -525,14 +525,14 @@ public class TestModifyEntryController extends BaseController {
 			HibernateUtil.closeSession();
 		}
 
-		TestService.refreshTestNames();
-		TypeOfSampleService.clearCache();
+		TestServiceImpl.refreshTestNames();
+		TypeOfSampleServiceImpl.clearCache();
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private void updateTestEntities(String testId, String loinc, String userId) {
-		Test test = new TestService(testId).getTest();
+		Test test = new TestServiceImpl(testId).getTest();
 
 		if (test != null) {
 			test.setSysUserId(userId);
@@ -543,7 +543,7 @@ public class TestModifyEntryController extends BaseController {
 
 	private void updateTestNames(String testId, String nameEnglish, String nameFrench, String reportNameEnglish,
 			String reportNameFrench, String userId) {
-		Test test = new TestService(testId).getTest();
+		Test test = new TestServiceImpl(testId).getTest();
 
 		if (test != null) {
 			Localization name = test.getLocalizedTestName();
@@ -576,17 +576,17 @@ public class TestModifyEntryController extends BaseController {
 
 	private void createTestResults(ArrayList<TestResult> testResults, String significantDigits,
 			TestAddParams testAddParams) {
-		TypeOfTestResultService.ResultType type = TypeOfTestResultService.getResultTypeById(testAddParams.resultTypeId);
+		TypeOfTestResultServiceImpl.ResultType type = TypeOfTestResultServiceImpl.getResultTypeById(testAddParams.resultTypeId);
 
-		if (TypeOfTestResultService.ResultType.isTextOnlyVariant(type)
-				|| TypeOfTestResultService.ResultType.isNumeric(type)) {
+		if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(type)
+				|| TypeOfTestResultServiceImpl.ResultType.isNumeric(type)) {
 			TestResult testResult = new TestResult();
 			testResult.setTestResultType(type.getCharacterValue());
 			testResult.setSortOrder("1");
 			testResult.setIsActive(true);
 			testResult.setSignificantDigits(significantDigits);
 			testResults.add(testResult);
-		} else if (TypeOfTestResultService.ResultType.isDictionaryVariant(type.getCharacterValue())) {
+		} else if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(type.getCharacterValue())) {
 			int sortOrder = 10;
 			for (DictionaryParams params : testAddParams.dictionaryParamList) {
 				TestResult testResult = new TestResult();
@@ -602,28 +602,28 @@ public class TestModifyEntryController extends BaseController {
 	}
 
 	private Localization createNameLocalization(TestAddParams testAddParams) {
-		return LocalizationService.createNewLocalization(testAddParams.testNameEnglish, testAddParams.testNameFrench,
-				LocalizationService.LocalizationType.TEST_NAME);
+		return LocalizationServiceImpl.createNewLocalization(testAddParams.testNameEnglish, testAddParams.testNameFrench,
+				LocalizationServiceImpl.LocalizationType.TEST_NAME);
 	}
 
 	private Localization createReportingNameLocalization(TestAddParams testAddParams) {
-		return LocalizationService.createNewLocalization(testAddParams.testReportNameEnglish,
-				testAddParams.testReportNameFrench, LocalizationService.LocalizationType.REPORTING_TEST_NAME);
+		return LocalizationServiceImpl.createNewLocalization(testAddParams.testReportNameEnglish,
+				testAddParams.testReportNameFrench, LocalizationServiceImpl.LocalizationType.REPORTING_TEST_NAME);
 	}
 
 	private List<TestSet> createTestSets(TestAddParams testAddParams) {
 		Double lowValid = null;
 		Double highValid = null;
 		String significantDigits = testAddParams.significantDigits;
-		boolean numericResults = TypeOfTestResultService.ResultType.isNumericById(testAddParams.resultTypeId);
-		boolean dictionaryResults = TypeOfTestResultService.ResultType
+		boolean numericResults = TypeOfTestResultServiceImpl.ResultType.isNumericById(testAddParams.resultTypeId);
+		boolean dictionaryResults = TypeOfTestResultServiceImpl.ResultType
 				.isDictionaryVarientById(testAddParams.resultTypeId);
 		List<TestSet> testSets = new ArrayList<>();
 		UnitOfMeasure uom = null;
 		if (!GenericValidator.isBlankOrNull(testAddParams.uomId) || "0".equals(testAddParams.uomId)) {
 			uom = new UnitOfMeasureDAOImpl().getUnitOfMeasureById(testAddParams.uomId);
 		}
-		TestSection testSection = new TestSectionService(testAddParams.testSectionId).getTestSection();
+		TestSection testSection = new TestSectionServiceImpl(testAddParams.testSectionId).getTestSection();
 
 		if (numericResults) {
 			lowValid = StringUtil.doubleWithInfinity(testAddParams.lowValid);
@@ -655,7 +655,7 @@ public class TestModifyEntryController extends BaseController {
 				if ("0".equals(orderedTests.get(j))) {
 					test.setSortOrder(String.valueOf(j));
 				} else {
-					Test orderedTest = new TestService(orderedTests.get(j)).getTest();
+					Test orderedTest = new TestServiceImpl(orderedTests.get(j)).getTest();
 					orderedTest.setSortOrder(String.valueOf(j));
 					testSet.sortedTests.add(orderedTest);
 				}
@@ -729,12 +729,12 @@ public class TestModifyEntryController extends BaseController {
 			extractSampleTypes(obj, parser, testAddParams);
 			testAddParams.active = (String) obj.get("active");
 			testAddParams.orderable = (String) obj.get("orderable");
-			if (TypeOfTestResultService.ResultType.isNumericById(testAddParams.resultTypeId)) {
+			if (TypeOfTestResultServiceImpl.ResultType.isNumericById(testAddParams.resultTypeId)) {
 				testAddParams.lowValid = (String) obj.get("lowValid");
 				testAddParams.highValid = (String) obj.get("highValid");
 				testAddParams.significantDigits = (String) obj.get("significantDigits");
 				extractLimits(obj, parser, testAddParams);
-			} else if (TypeOfTestResultService.ResultType.isDictionaryVarientById(testAddParams.resultTypeId)) {
+			} else if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVarientById(testAddParams.resultTypeId)) {
 				String dictionary = (String) obj.get("dictionary");
 				JSONArray dictionaryArray = (JSONArray) parser.parse(dictionary);
 				for (int i = 0; i < dictionaryArray.size(); i++) {

@@ -14,7 +14,7 @@ import spring.service.common.BaseObjectServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.services.ObservationHistoryService;
+import spring.service.observationhistory.ObservationHistoryServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -150,8 +150,8 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample> implements 
 		if (sample == null) {
 			return null;
 		}
-		ObservationHistory observation = ObservationHistoryService
-				.getObservationForSample(ObservationHistoryService.ObservationType.REQUEST_DATE, sample.getId());
+		ObservationHistory observation = ObservationHistoryServiceImpl
+				.getObservationForSample(ObservationHistoryServiceImpl.ObservationType.REQUEST_DATE, sample.getId());
 		if (observation != null && observation.getValue() != null) {
 			return DateUtil.convertStringDateToTruncatedTimestamp(observation.getValue());
 		} else { // If ordered date is not given then use received date

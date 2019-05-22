@@ -14,9 +14,9 @@ import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.common.services.IPatientService;
-import us.mn.state.health.lims.common.services.ObservationHistoryService;
-import us.mn.state.health.lims.common.services.ObservationHistoryService.ObservationType;
-import us.mn.state.health.lims.common.services.PatientService;
+import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
+import spring.service.patient.PatientServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -88,7 +88,7 @@ public abstract class BaseWorkplanController extends BaseController {
 
 	protected String getSubjectNumber(Analysis analysis) {
 		if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.SUBJECT_ON_WORKPLAN, "true")) {
-			IPatientService patientService = new PatientService(analysis.getSampleItem().getSample());
+			IPatientService patientService = new PatientServiceImpl(analysis.getSampleItem().getSample());
 			return patientService.getSubjectNumber();
 		} else {
 			return "";
@@ -98,12 +98,12 @@ public abstract class BaseWorkplanController extends BaseController {
 	protected String getPatientName(Analysis analysis) {
 		if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "Haiti LNSP")) {
 			Sample sample = analysis.getSampleItem().getSample();
-			IPatientService patientService = new PatientService(sample);
+			IPatientService patientService = new PatientServiceImpl(sample);
 			List<String> values = new ArrayList<>();
 			values.add(patientService.getLastName() == null ? "" : patientService.getLastName().toUpperCase());
 			values.add(patientService.getNationalId());
 
-			String referringPatientId = ObservationHistoryService
+			String referringPatientId = ObservationHistoryServiceImpl
 					.getValueForSample(ObservationType.REFERRERS_PATIENT_ID, sample.getId());
 			values.add(referringPatientId == null ? "" : referringPatientId);
 			return StringUtil.buildDelimitedStringFromList(values, " / ", true);

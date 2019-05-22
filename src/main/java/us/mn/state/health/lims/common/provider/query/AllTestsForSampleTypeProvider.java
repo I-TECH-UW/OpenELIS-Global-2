@@ -27,8 +27,8 @@ import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import us.mn.state.health.lims.common.services.LocalizationService;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
+import spring.service.localization.LocalizationServiceImpl;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.test.valueholder.Test;
 
@@ -70,13 +70,13 @@ public class AllTestsForSampleTypeProvider extends BaseQueryProvider {
 
     @SuppressWarnings("unchecked")
     private String createJsonGroupedTestNames(String sampleTypeId, JSONObject jsonResult)throws IllegalStateException{
-        List<Test> tests = TypeOfSampleService.getAllTestsBySampleTypeId(sampleTypeId);
+        List<Test> tests = TypeOfSampleServiceImpl.getAllTestsBySampleTypeId(sampleTypeId);
 
         JSONArray testArray = new JSONArray();
 
         for(Test test:tests){
             JSONObject testObject = new JSONObject();
-            testObject.put("name" , LocalizationService.getLocalizedValue(test.getLocalizedTestName()));
+            testObject.put("name" , LocalizationServiceImpl.getLocalizedValue(test.getLocalizedTestName()));
             testObject.put("id", test.getId());
             testObject.put("isActive", test.getIsActive());
             testArray.add(testObject);

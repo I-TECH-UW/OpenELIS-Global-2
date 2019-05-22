@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Transaction;
 
-import us.mn.state.health.lims.common.services.PatientService;
+import spring.service.patient.PatientServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.ExternalOrderStatus;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -71,7 +71,7 @@ public class DBOrderPersister implements IOrderPersister{
 	}
 
 	private void persist(MessagePatient orderPatient){
-		PatientService patientService = new PatientService(orderPatient);
+		PatientServiceImpl patientService = new PatientServiceImpl(orderPatient);
 	    patient = patientService.getPatient();
 		if(patient == null){
 			createNewPatient(orderPatient);
@@ -125,7 +125,7 @@ public class DBOrderPersister implements IOrderPersister{
 		}
 	}
 
-	private void updatePatient(MessagePatient orderPatient, PatientService patientService){
+	private void updatePatient(MessagePatient orderPatient, PatientServiceImpl patientService){
 		Patient patient = patientService.getPatient();
 		Person person = patientService.getPerson();
 
@@ -166,7 +166,7 @@ public class DBOrderPersister implements IOrderPersister{
 		}
 	}
 
-	private void updatePatientIfNeeded(MessagePatient orderPatient, PatientService patientService, Patient patient){
+	private void updatePatientIfNeeded(MessagePatient orderPatient, PatientServiceImpl patientService, Patient patient){
 		boolean updatePatient = false;
 
 		if(needsUpdating(orderPatient.getDisplayDOB() , patientService.getBirthdayForDisplay() )){
@@ -190,7 +190,7 @@ public class DBOrderPersister implements IOrderPersister{
 		}
 	}
 
-	private void updatePersonIfNeeded(MessagePatient orderPatient, PatientService patientService, Person person){
+	private void updatePersonIfNeeded(MessagePatient orderPatient, PatientServiceImpl patientService, Person person){
 		boolean updatePerson = false;
 
 		if(needsUpdating(orderPatient.getFirstName(), patientService.getFirstName())){

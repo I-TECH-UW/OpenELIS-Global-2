@@ -14,8 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import spring.util.SpringContext;
-import us.mn.state.health.lims.common.services.TestSectionService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.test.TestSectionServiceImpl;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.LocaleChangeListener;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
@@ -175,7 +175,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test> implements Test
 	}
 
 	public String getResultType() {
-		String testResultType = TypeOfTestResultService.ResultType.NUMERIC.getCharacterValue();
+		String testResultType = TypeOfTestResultServiceImpl.ResultType.NUMERIC.getCharacterValue();
 		List<TestResult> testResults = getPossibleTestResults();
 
 		if (testResults != null && !testResults.isEmpty()) {
@@ -225,7 +225,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test> implements Test
 	}
 
 	public String getTestSectionName() {
-		return TestSectionService.getUserLocalizedTesSectionName(getTestSection());
+		return TestSectionServiceImpl.getUserLocalizedTesSectionName(getTestSection());
 	}
 
 	@Transactional

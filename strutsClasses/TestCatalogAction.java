@@ -34,9 +34,9 @@ import org.apache.struts.validator.DynaValidatorForm;
 
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.services.LocalizationService;
-import us.mn.state.health.lims.common.services.ResultLimitService;
+import spring.service.resultlimit.ResultLimitServiceImpl;
 import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -97,12 +97,12 @@ public class TestCatalogAction extends BaseAction {
             bean.setLoinc(test.getLoinc());
             bean.setActive(test.isActive() ? "Active" : "Not active");
             bean.setUom(testService.getUOM(false));
-            if( TypeOfTestResultService.ResultType.NUMERIC.matches(resultType)) {
+            if( TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(resultType)) {
                 bean.setSignificantDigits(testService.getPossibleTestResults().get(0).getSignificantDigits());
                 bean.setHasLimitValues(true);
                 bean.setResultLimits(getResultLimits(test, bean.getSignificantDigits()));
             }
-            bean.setHasDictionaryValues(TypeOfTestResultService.ResultType.isDictionaryVariant(bean.getResultType()));
+            bean.setHasDictionaryValues(TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(bean.getResultType()));
             if( bean.isHasDictionaryValues()){
                 bean.setDictionaryValues(createDictionaryValues(testService));
                 bean.setReferenceValue(createReferenceValueForDictionaryType(test));
@@ -139,7 +139,7 @@ public class TestCatalogAction extends BaseAction {
     private List<ResultLimitBean> getResultLimits(Test test, String significantDigits) {
         List<ResultLimitBean> limitBeans = new ArrayList<ResultLimitBean>();
 
-        List<ResultLimit> resultLimitList = ResultLimitService.getResultLimits(test);
+        List<ResultLimit> resultLimitList = ResultLimitServiceImpl.getResultLimits(test);
 
         Collections.sort(resultLimitList, new Comparator<ResultLimit>() {
             @Override
@@ -150,23 +150,23 @@ public class TestCatalogAction extends BaseAction {
 
         for( ResultLimit limit : resultLimitList){
             ResultLimitBean bean = new ResultLimitBean();
-            bean.setNormalRange(ResultLimitService.getDisplayReferenceRange(limit, significantDigits, "-"));
-            bean.setValidRange(ResultLimitService.getDisplayValidRange(limit, significantDigits, "-"));
+            bean.setNormalRange(ResultLimitServiceImpl.getDisplayReferenceRange(limit, significantDigits, "-"));
+            bean.setValidRange(ResultLimitServiceImpl.getDisplayValidRange(limit, significantDigits, "-"));
             bean.setGender(limit.getGender());
-            bean.setAgeRange( ResultLimitService.getDisplayAgeRange(limit, "-"));
+            bean.setAgeRange( ResultLimitServiceImpl.getDisplayAgeRange(limit, "-"));
             limitBeans.add(bean);
         }
         return limitBeans;
     }
 
     private String createReferenceValueForDictionaryType(Test test) {
-        List<ResultLimit> resultLimits = ResultLimitService.getResultLimits(test);
+        List<ResultLimit> resultLimits = ResultLimitServiceImpl.getResultLimits(test);
 
         if( resultLimits.isEmpty() ){
             return "n/a";
         }
 
-        return ResultLimitService.getDisplayReferenceRange(resultLimits.get(0),null, null);
+        return ResultLimitServiceImpl.getDisplayReferenceRange(resultLimits.get(0),null, null);
 
     }
 
@@ -182,7 +182,7 @@ public class TestCatalogAction extends BaseAction {
 
     private String getDictionaryValue(TestResult testResult) {
 
-        if (TypeOfTestResultService.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
+        if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
             Dictionary dictionary = dictionaryDAO.getDataForId(testResult.getValue());
             String displayValue = dictionary.getLocalizedName();
 

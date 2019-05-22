@@ -17,7 +17,7 @@
 */
 package us.mn.state.health.lims.typeofsample.valueholder;
 
-import us.mn.state.health.lims.common.services.LocalizationService;
+import spring.service.localization.LocalizationServiceImpl;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.localization.valueholder.Localization;
@@ -77,7 +77,7 @@ public class TypeOfSample extends BaseObject {
 	protected String getDefaultLocalizedName() {
 		String msg="";
 		try {
-		msg= LocalizationService.getLocalizedValue(getLocalization());
+		msg= LocalizationServiceImpl.getLocalizedValue(getLocalization());
 		return msg;
 		} catch (Exception ex) {
 			//throw away

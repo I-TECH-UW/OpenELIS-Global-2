@@ -24,7 +24,7 @@ import java.util.List;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.ResultService;
+import spring.service.result.ResultServiceImpl;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ActivityReportBean;
 import us.mn.state.health.lims.result.valueholder.Result;
 
@@ -52,7 +52,7 @@ public class ActivityReportByTestSection extends ActivityReport implements IRepo
         unitName = unitSelection.getSelectionAsName();
         createReportParameters();
 
-        List<Result> resultList = ResultService.getResultsInTimePeriodInTestSection( dateRange.getLowDate(), dateRange.getHighDate(), unitSelection.getSelection() );
+        List<Result> resultList = ResultServiceImpl.getResultsInTimePeriodInTestSection( dateRange.getLowDate(), dateRange.getHighDate(), unitSelection.getSelection() );
         ArrayList<ActivityReportBean> rawResults = new ArrayList<ActivityReportBean>( resultList.size() );
         testsResults = new ArrayList<ActivityReportBean>( );
 

@@ -35,29 +35,29 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.result.form.LogbookResultsForm;
+import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.note.NoteServiceImpl;
+import spring.service.note.NoteServiceImpl.NoteType;
 import spring.service.referral.ReferralResultService;
 import spring.service.referral.ReferralService;
 import spring.service.referral.ReferralTypeService;
 import spring.service.result.ResultInventoryService;
 import spring.service.result.ResultService;
 import spring.service.result.ResultSignatureService;
-import spring.service.resultlimits.ResultLimitService;
+import spring.service.resultlimit.ResultLimitService;
+import spring.service.sample.SampleServiceImpl;
 import spring.service.test.TestSectionService;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
-import us.mn.state.health.lims.common.services.AnalysisService;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
-import us.mn.state.health.lims.common.services.NoteService;
-import us.mn.state.health.lims.common.services.NoteService.NoteType;
 import us.mn.state.health.lims.common.services.ResultSaveService;
-import us.mn.state.health.lims.common.services.SampleService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.services.beanAdapters.ResultSaveBeanAdapter;
 import us.mn.state.health.lims.common.services.registration.ResultUpdateRegister;
 import us.mn.state.health.lims.common.services.registration.interfaces.IResultUpdate;
@@ -434,7 +434,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
 	private void createAnalysisOnlyUpdates(ResultsUpdateDataSet actionDataSet) {
 		for (TestResultItem testResultItem : actionDataSet.getAnalysisOnlyChangeResults()) {
-			AnalysisService analysisServiceOld = new AnalysisService(testResultItem.getAnalysisId());
+			AnalysisServiceImpl analysisServiceOld = new AnalysisServiceImpl(testResultItem.getAnalysisId());
 			analysisServiceOld.getAnalysis().setSysUserId(getSysUserId(request));
 			analysisServiceOld.getAnalysis()
 					.setCompletedDate(DateUtil.convertStringDateToSqlDate(testResultItem.getTestDate()));
@@ -448,13 +448,13 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 	private void createResultsFromItems(ResultsUpdateDataSet actionDataSet) {
 
 		for (TestResultItem testResultItem : actionDataSet.getModifiedItems()) {
-			AnalysisService analysisService = new AnalysisService(testResultItem.getAnalysisId());
+			AnalysisServiceImpl analysisService = new AnalysisServiceImpl(testResultItem.getAnalysisId());
 			analysisService.getAnalysis().setStatusId(getStatusForTestResult(testResultItem));
 			analysisService.getAnalysis().setSysUserId(getSysUserId(request));
 			handleReferrals(testResultItem, analysisService.getAnalysis(), actionDataSet);
 			actionDataSet.getModifiedAnalysis().add(analysisService.getAnalysis());
 
-			NoteService noteServiceOld = new NoteService(analysisService.getAnalysis());
+			NoteServiceImpl noteServiceOld = new NoteServiceImpl(analysisService.getAnalysis());
 			actionDataSet.addToNoteList(noteServiceOld.createSavableNote(NoteType.INTERNAL, testResultItem.getNote(),
 					RESULT_SUBJECT, getSysUserId(request)));
 
@@ -561,7 +561,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 			analysis.setRevision(String.valueOf(Integer.parseInt(analysis.getRevision()) + 1));
 		}
 
-		SampleService sampleServiceOld = new SampleService(testResultItem.getAccessionNumber());
+		SampleServiceImpl sampleServiceOld = new SampleServiceImpl(testResultItem.getAccessionNumber());
 		Patient patient = sampleServiceOld.getPatient();
 
 		Map<String, List<String>> triggersToReflexesMap = new HashMap<>();
@@ -623,7 +623,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 	private boolean noResults(String value, String multiSelectValue, String type) {
 
 		return (GenericValidator.isBlankOrNull(value) && GenericValidator.isBlankOrNull(multiSelectValue))
-				|| (TypeOfTestResultService.ResultType.DICTIONARY.matches(type) && "0".equals(value));
+				|| (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(type) && "0".equals(value));
 	}
 
 	private ResultInventory createTestKitLinkIfNeeded(TestResultItem testResult, String testKitName) {

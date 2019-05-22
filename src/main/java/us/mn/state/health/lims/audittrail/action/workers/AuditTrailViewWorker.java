@@ -28,7 +28,7 @@ import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.services.PatientService;
+import spring.service.patient.PatientServiceImpl;
 import us.mn.state.health.lims.common.services.SampleOrderService;
 import us.mn.state.health.lims.common.services.historyservices.AnalysisHistoryService;
 import us.mn.state.health.lims.common.services.historyservices.HistoryService;
@@ -106,7 +106,7 @@ public class AuditTrailViewWorker {
 
 
         if( sample != null){
-            PatientService patientService = new PatientService( sample );
+            PatientServiceImpl patientService = new PatientServiceImpl( sample );
             return new PatientManagementBridge().getPatientManagementInfoFor( patientService.getPatient(), true );
         }else{
             return new PatientManagementInfo();

@@ -22,7 +22,7 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.common.services.NoteService;
+import spring.service.note.NoteServiceImpl;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.note.valueholder.Note;
@@ -428,7 +428,7 @@ public class ARVReportData {
 		if(sampleQaEvent == null || GenericValidator.isBlankOrNull(sampleQaEvent.getId())){
 			return null;
 		}else{
-	        Note note = new NoteService( sampleQaEvent ).getMostRecentNoteFilteredBySubject( null );
+	        Note note = new NoteServiceImpl( sampleQaEvent ).getMostRecentNoteFilteredBySubject( null );
 			return note != null ? note.getText() : null;
 		}
 	}

@@ -28,9 +28,9 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.services.AnalysisService;
-import us.mn.state.health.lims.common.services.SampleService;
+import spring.service.test.TestServiceImpl;
+import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.sample.SampleServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -172,9 +172,9 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
 	 * @param referral
 	 */
 	private void reportReferral(Referral referral) {
-        currentAnalysisService = new AnalysisService( referral.getAnalysis() );
+        currentAnalysisService = new AnalysisServiceImpl( referral.getAnalysis() );
 		Sample sample = referralDao.getReferralById(referral.getId()).getAnalysis().getSampleItem().getSample();
-		currentSampleService = new SampleService(sample);
+		currentSampleService = new SampleServiceImpl(sample);
 		findPatientFromSample();
 
         String note =  currentAnalysisService.getNotesAsString( false, true, "<br/>", false  );
@@ -191,7 +191,7 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
 				Test test = new Test();
 				test.setId(testId);
 				testDAO.getData(test);
-				data.setReferralTestName( TestService.getUserLocalizedReportingTestName( test ) );
+				data.setReferralTestName( TestServiceImpl.getUserLocalizedReportingTestName( test ) );
 				
 				String uom = getUnitOfMeasure( test);
 				if (reportReferralResultValue != null) {

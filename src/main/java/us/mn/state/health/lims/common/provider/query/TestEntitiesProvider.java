@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
 
-import us.mn.state.health.lims.common.services.TestService;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestSection;
@@ -74,7 +74,7 @@ public class TestEntitiesProvider extends BaseQueryProvider {
             throw new IllegalStateException( "TestEntitiesProvider testId was blank.  It must have a value" );
         }
 
-        Test test = new TestService( testId ).getTest();
+        Test test = new TestServiceImpl( testId ).getTest();
         if( test != null){
             TestSection testSection = test.getTestSection();
             String testSectionId = "";

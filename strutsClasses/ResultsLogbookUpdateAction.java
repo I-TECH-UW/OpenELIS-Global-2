@@ -61,7 +61,7 @@ import us.mn.state.health.lims.common.services.SampleService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.services.beanAdapters.ResultSaveBeanAdapter;
 import us.mn.state.health.lims.common.services.registration.ResultUpdateRegister;
 import us.mn.state.health.lims.common.services.registration.interfaces.IResultUpdate;
@@ -528,7 +528,7 @@ public class ResultsLogbookUpdateAction extends BaseAction {
 	private boolean noResults(String value, String multiSelectValue, String type){
 
 		return (GenericValidator.isBlankOrNull(value) && GenericValidator.isBlankOrNull(multiSelectValue)) ||
-				( TypeOfTestResultService.ResultType.DICTIONARY.matches(type) && "0".equals(value));
+				( TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(type) && "0".equals(value));
 	}
 
 	private ResultInventory createTestKitLinkIfNeeded(TestResultItem testResult, String testKitName){

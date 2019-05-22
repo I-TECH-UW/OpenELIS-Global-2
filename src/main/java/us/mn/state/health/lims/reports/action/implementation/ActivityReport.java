@@ -26,11 +26,11 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.common.services.ObservationHistoryService;
-import us.mn.state.health.lims.common.services.ObservationHistoryService.ObservationType;
-import us.mn.state.health.lims.common.services.PatientService;
-import us.mn.state.health.lims.common.services.ResultService;
-import us.mn.state.health.lims.common.services.SampleService;
+import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
+import spring.service.patient.PatientServiceImpl;
+import spring.service.result.ResultServiceImpl;
+import spring.service.sample.SampleServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -113,9 +113,9 @@ public abstract class ActivityReport extends Report implements IReportCreator{
     protected ActivityReportBean createActivityReportBean( Result result, boolean useTestName ){
         ActivityReportBean item = new ActivityReportBean();
 
-        ResultService resultService = new ResultService( result );
-        SampleService sampleService = new SampleService( result.getAnalysis().getSampleItem().getSample() );
-        PatientService patientService = new PatientService( sampleService.getSample() );
+        ResultServiceImpl resultService = new ResultServiceImpl( result );
+        SampleServiceImpl sampleService = new SampleServiceImpl( result.getAnalysis().getSampleItem().getSample() );
+        PatientServiceImpl patientService = new PatientServiceImpl( sampleService.getSample() );
         item.setResultValue( resultService.getResultValue( "\n", true, true ) );
         item.setTechnician( resultService.getSignature() );
         item.setAccessionNumber( sampleService.getAccessionNumber().substring( PREFIX_LENGTH ) );
@@ -127,7 +127,7 @@ public abstract class ActivityReport extends Report implements IReportCreator{
         values.add(patientService.getLastName() == null ? "" : patientService.getLastName().toUpperCase());
         values.add(patientService.getNationalId());
         
-        String referringPatientId = ObservationHistoryService.getValueForSample( ObservationType.REFERRERS_PATIENT_ID, sampleService.getSample().getId() );
+        String referringPatientId = ObservationHistoryServiceImpl.getValueForSample( ObservationType.REFERRERS_PATIENT_ID, sampleService.getSample().getId() );
         values.add( referringPatientId == null ? "" : referringPatientId);
 
         String name = StringUtil.buildDelimitedStringFromList(values, " / ", true);

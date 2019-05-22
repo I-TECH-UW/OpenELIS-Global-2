@@ -49,14 +49,14 @@ import us.mn.state.health.lims.common.action.BaseActionForm;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.NoteService;
-import us.mn.state.health.lims.common.services.ResultLimitService;
+import spring.service.resultlimit.ResultLimitServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
 import us.mn.state.health.lims.common.services.StatusService.RecordStatus;
 import us.mn.state.health.lims.common.services.StatusService.SampleStatus;
 import us.mn.state.health.lims.common.services.StatusSet;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -570,7 +570,7 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 				test = testDAO.getTestById(test);
 				analysis.setTest(test);
 				// A new sampleItem may be needed
-				TypeOfSample typeOfSample = TypeOfSampleService.getTypeOfSampleForTest(test.getId());
+				TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getTypeOfSampleForTest(test.getId());
 				List<SampleItem> sampleItemsForSample = sampleItemDAO.getSampleItemsBySampleId(sample.getId());
 
 				// if the type of sample is found then assign to analysis
@@ -805,7 +805,7 @@ public class AnalyzerResultsSaveAction extends BaseAction {
 		boolean limitsFound = false;
 
 		if (resultItem != null) {
-			ResultLimit resultLimit = new ResultLimitService().getResultLimitForTestAndPatient(resultItem.getTestId(),
+			ResultLimit resultLimit = new ResultLimitServiceImpl().getResultLimitForTestAndPatient(resultItem.getTestId(),
 					patient);
 			if (resultLimit != null) {
 				result.setMinNormal(resultLimit.getLowNormal());

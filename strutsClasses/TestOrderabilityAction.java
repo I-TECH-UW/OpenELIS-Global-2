@@ -32,7 +32,7 @@ import org.apache.struts.action.ActionMapping;
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.test.beanItems.TestActivationBean;
 import us.mn.state.health.lims.test.valueholder.Test;
@@ -53,7 +53,7 @@ public class TestOrderabilityAction extends BaseAction {
         for( IdValuePair pair : sampleTypeList){
             TestActivationBean bean = new TestActivationBean();
 
-            List<Test> tests = TypeOfSampleService.getActiveTestsBySampleTypeId(pair.getId(), false);
+            List<Test> tests = TypeOfSampleServiceImpl.getActiveTestsBySampleTypeId(pair.getId(), false);
             List<IdValuePair> orderableTests = new ArrayList<IdValuePair>();
             List<IdValuePair> unorderableTests = new ArrayList<IdValuePair>();
 

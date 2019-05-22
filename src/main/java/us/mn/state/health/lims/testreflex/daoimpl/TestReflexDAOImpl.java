@@ -25,7 +25,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.services.TestService;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -97,10 +97,10 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 			// bugzilla 1482 throw Exception if record already exists
 			if (duplicateTestReflexExists(testReflex)) {
 				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + TestService.getUserLocalizedTestName(testReflex.getTest())
+						"Duplicate record exists for " + TestServiceImpl.getUserLocalizedTestName(testReflex.getTest())
 								+ BLANK + testReflex.getTestAnalyte().getAnalyte().getAnalyteName() + BLANK
 								+ testReflex.getTestResult().getValue() + BLANK
-								+ TestService.getUserLocalizedTestName(testReflex.getAddedTest()));
+								+ TestServiceImpl.getUserLocalizedTestName(testReflex.getAddedTest()));
 			}
 
 			String id = (String) HibernateUtil.getSession().save(testReflex);
@@ -129,10 +129,10 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 		try {
 			if (duplicateTestReflexExists(testReflex)) {
 				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + TestService.getUserLocalizedTestName(testReflex.getTest())
+						"Duplicate record exists for " + TestServiceImpl.getUserLocalizedTestName(testReflex.getTest())
 								+ BLANK + testReflex.getTestAnalyte().getAnalyte().getAnalyteName() + BLANK
 								+ testReflex.getTestResult().getValue() + BLANK
-								+ TestService.getUserLocalizedTestName(testReflex.getAddedTest()));
+								+ TestServiceImpl.getUserLocalizedTestName(testReflex.getAddedTest()));
 			}
 		} catch (Exception e) {
 			// bugzilla 2154

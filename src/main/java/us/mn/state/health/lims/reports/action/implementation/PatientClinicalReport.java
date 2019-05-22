@@ -28,13 +28,13 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.common.services.TestService;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.services.AnalysisService;
-import us.mn.state.health.lims.common.services.NoteService;
-import us.mn.state.health.lims.common.services.ResultService;
+import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.note.NoteServiceImpl;
+import spring.service.result.ResultServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.referral.valueholder.Referral;
@@ -90,7 +90,7 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
             boolean hasParentResult = analysis.getParentResult() != null;
 
 			if(analysis.getTest() != null ){
-                currentAnalysisService = new AnalysisService( analysis );
+                currentAnalysisService = new AnalysisServiceImpl( analysis );
 				ClinicalPatientData resultsData = buildClinicalPatientData( hasParentResult );
 
 				if(currentAnalysisService.getAnalysis().isReferredOut()){
@@ -113,7 +113,7 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
 
         List<ClinicalPatientData> currentSampleReportItems = new ArrayList<ClinicalPatientData>(  );
         List<ReferralResult> referralResults = referralResultDAO.getReferralResultsForReferral(referral.getId());
-        String note = new NoteService( currentAnalysisService.getAnalysis() ).getNotesAsString( false, true, "<br/>", FILTER, true );
+        String note = new NoteServiceImpl( currentAnalysisService.getAnalysis() ).getNotesAsString( false, true, "<br/>", FILTER, true );
 
 		if( !referralResults.isEmpty()){
 		
@@ -150,7 +150,7 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
 					Test test = new Test();
 					test.setId(testId);
 					testDAO.getData(test);
-					data.setTestName( TestService.getUserLocalizedReportingTestName( test ) );
+					data.setTestName( TestServiceImpl.getUserLocalizedReportingTestName( test ) );
 
 					String uom = getUnitOfMeasure( test);
 					if(reportReferralResultValue != null){
@@ -262,7 +262,7 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
             if( data.getParentResult() != null && !parentResults.contains( data.getParentResult().getId() )){
                 parentResults.add( data.getParentResult().getId() );
                 ClinicalPatientData marker = new ClinicalPatientData(data);
-                marker.setTestName( new ResultService(data.getParentResult()).getSimpleResultValue() );
+                marker.setTestName( new ResultServiceImpl(data.getParentResult()).getSimpleResultValue() );
                 marker.setResult( null );
                 marker.setTestRefRange( null );
                 marker.setParentMarker( true );

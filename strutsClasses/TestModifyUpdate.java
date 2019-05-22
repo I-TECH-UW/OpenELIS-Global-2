@@ -38,10 +38,10 @@ import org.json.simple.parser.ParseException;
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.LocalizationService;
-import us.mn.state.health.lims.common.services.TestSectionService;
+import spring.service.test.TestSectionServiceImpl;
 import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
@@ -168,7 +168,7 @@ public class TestModifyUpdate extends BaseAction {
         }
 
         TestService.refreshTestNames();
-        TypeOfSampleService.clearCache();
+        TypeOfSampleServiceImpl.clearCache();
         return mapping.findForward(FWD_SUCCESS);
     }
     
@@ -215,17 +215,17 @@ public class TestModifyUpdate extends BaseAction {
     }
 
     private void createTestResults(ArrayList<TestResult> testResults, String significantDigits, TestAddParams testAddParams) {
-        TypeOfTestResultService.ResultType type = TypeOfTestResultService.getResultTypeById(testAddParams.resultTypeId);
+        TypeOfTestResultServiceImpl.ResultType type = TypeOfTestResultServiceImpl.getResultTypeById(testAddParams.resultTypeId);
 
-        if (TypeOfTestResultService.ResultType.isTextOnlyVariant(type) ||
-                TypeOfTestResultService.ResultType.isNumeric(type)){
+        if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(type) ||
+                TypeOfTestResultServiceImpl.ResultType.isNumeric(type)){
             TestResult testResult = new TestResult();
             testResult.setTestResultType(type.getCharacterValue());
             testResult.setSortOrder("1");
             testResult.setIsActive(true);
             testResult.setSignificantDigits(significantDigits);
             testResults.add(testResult);
-        }else if(TypeOfTestResultService.ResultType.isDictionaryVariant(type.getCharacterValue())){
+        }else if(TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(type.getCharacterValue())){
             int sortOrder = 10;
             for(DictionaryParams params : testAddParams.dictionaryParamList){
                 TestResult testResult = new TestResult();
@@ -253,14 +253,14 @@ public class TestModifyUpdate extends BaseAction {
         Double lowValid = null;
         Double highValid = null;
         String significantDigits = testAddParams.significantDigits;
-        boolean numericResults = TypeOfTestResultService.ResultType.isNumericById(testAddParams.resultTypeId);
-        boolean dictionaryResults = TypeOfTestResultService.ResultType.isDictionaryVarientById(testAddParams.resultTypeId);
+        boolean numericResults = TypeOfTestResultServiceImpl.ResultType.isNumericById(testAddParams.resultTypeId);
+        boolean dictionaryResults = TypeOfTestResultServiceImpl.ResultType.isDictionaryVarientById(testAddParams.resultTypeId);
         List<TestSet> testSets = new ArrayList<TestSet>();
         UnitOfMeasure uom = null;
         if(!GenericValidator.isBlankOrNull(testAddParams.uomId) || "0".equals(testAddParams.uomId)) {
             uom = new UnitOfMeasureDAOImpl().getUnitOfMeasureById(testAddParams.uomId);
         }
-        TestSection testSection = new TestSectionService( testAddParams.testSectionId).getTestSection();
+        TestSection testSection = new TestSectionServiceImpl( testAddParams.testSectionId).getTestSection();
 
         if( numericResults ){
             lowValid = StringUtil.doubleWithInfinity(testAddParams.lowValid);
@@ -366,12 +366,12 @@ public class TestModifyUpdate extends BaseAction {
             extractSampleTypes(obj, parser, testAddParams);
             testAddParams.active = (String) obj.get("active");
             testAddParams.orderable = (String) obj.get("orderable");
-            if( TypeOfTestResultService.ResultType.isNumericById(testAddParams.resultTypeId)){
+            if( TypeOfTestResultServiceImpl.ResultType.isNumericById(testAddParams.resultTypeId)){
                 testAddParams.lowValid = (String)obj.get("lowValid");
                 testAddParams.highValid = (String)obj.get("highValid");
                 testAddParams.significantDigits = (String)obj.get("significantDigits");
                 extractLimits( obj, parser, testAddParams);
-            }else if( TypeOfTestResultService.ResultType.isDictionaryVarientById(testAddParams.resultTypeId)){
+            }else if( TypeOfTestResultServiceImpl.ResultType.isDictionaryVarientById(testAddParams.resultTypeId)){
                 String dictionary = (String)obj.get("dictionary");
                 JSONArray dictionaryArray = (JSONArray) parser.parse(dictionary);
                 for( int i = 0; i < dictionaryArray.size(); i++){

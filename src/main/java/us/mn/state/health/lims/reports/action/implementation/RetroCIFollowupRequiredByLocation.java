@@ -29,7 +29,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.common.services.NoteService;
+import spring.service.note.NoteServiceImpl;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -180,7 +180,7 @@ public class RetroCIFollowupRequiredByLocation extends RetroCIReport implements 
 	private String getNonConformingNotes(Sample sample) {
 		StringBuilder allNotes = new StringBuilder();
 
-        String notes = new NoteService( sample ).getNotesAsString( MessageUtil.getMessage("report.followup.general.comment") + ": ","<br/>" );
+        String notes = new NoteServiceImpl( sample ).getNotesAsString( MessageUtil.getMessage("report.followup.general.comment") + ": ","<br/>" );
         if( notes != null){
             allNotes.append( notes );
             allNotes.append( "<br/>" );

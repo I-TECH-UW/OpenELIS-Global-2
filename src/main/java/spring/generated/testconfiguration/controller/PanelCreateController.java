@@ -21,7 +21,7 @@ import spring.generated.testconfiguration.form.PanelCreateForm;
 import spring.mine.common.controller.BaseController;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.LocalizationService;
+import spring.service.localization.LocalizationServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -103,7 +103,7 @@ public class PanelCreateController extends BaseController {
 		StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
 
 		for (Panel panel : panels) {
-			builder.append(LocalizationService.getLocalizationValueByLocal(locale, panel.getLocalization()));
+			builder.append(LocalizationServiceImpl.getLocalizationValueByLocal(locale, panel.getLocalization()));
 			builder.append(NAME_SEPARATOR);
 		}
 

@@ -16,7 +16,7 @@ import spring.util.SpringContext;
 import us.mn.state.health.lims.address.dao.AddressPartDAO;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
 import us.mn.state.health.lims.common.services.IPatientService;
-import us.mn.state.health.lims.common.services.PersonService;
+import spring.service.person.PersonServiceImpl;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dataexchange.order.action.MessagePatient;
 import us.mn.state.health.lims.gender.dao.GenderDAO;
@@ -79,7 +79,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient> implement
 	AddressPartDAO addressPartDAO = SpringContext.getBean(AddressPartDAO.class);
 
 	private Patient patient;
-	private PersonService personService;
+	private PersonServiceImpl personService;
 
 	public synchronized void initializeGlobalVariables() {
 
@@ -180,14 +180,14 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient> implement
 		this.patient = patient;
 
 		if (patient == null) {
-			personService = new PersonService(null);
+			personService = new PersonServiceImpl(null);
 			return;
 		}
 
 		if (patient.getPerson() == null) {
 			patientDAO.getData(this.patient);
 		}
-		personService = new PersonService(patient.getPerson());
+		personService = new PersonServiceImpl(patient.getPerson());
 
 	}
 

@@ -22,7 +22,6 @@ import us.mn.state.health.lims.barcode.daoimpl.BarcodeLabelInfoDAOImpl;
 import us.mn.state.health.lims.barcode.valueholder.BarcodeLabelInfo;
 import us.mn.state.health.lims.citystatezip.daoimpl.CityStateZipDAOImpl;
 import us.mn.state.health.lims.citystatezip.valueholder.CityStateZip;
-import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.daoimpl.DatabaseChangeLogDAOImpl;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.common.valueholder.DatabaseChangeLog;
@@ -384,7 +383,7 @@ public class DaoFactory<T> {
 			return (BaseDAO<T>) new UserRoleDAOImpl();
 		}
 
-		return new BaseDAOImpl<>(type);
+		return null;
 	}
 
 }

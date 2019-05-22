@@ -27,13 +27,13 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.common.services.TestService;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.services.NoteService;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.note.NoteServiceImpl;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -155,7 +155,7 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 			ConfirmationData data = new ConfirmationData();
 
 			data.setLabAccession(accessionNumber + "-" + sampleItem.getSortOrder());
-			data.setSampleType(TypeOfSampleService.getTypeOfSampleNameForId(sampleItem.getTypeOfSampleId()));
+			data.setSampleType(TypeOfSampleServiceImpl.getTypeOfSampleNameForId(sampleItem.getTypeOfSampleId()));
 			data.setOrganizationName(StringUtil.replaceNullWithEmptyString(orgName));
 			data.setRequesterAccession(sampleItem.getExternalId());
 			data.setNote(getNoteForSampleItem(sampleItem));
@@ -197,7 +197,7 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 	}
 
 	private String getNoteForSampleItem(SampleItem sampleItem) {
-        String notes = new NoteService( sampleItem ).getNotesAsString( null, null );
+        String notes = new NoteServiceImpl( sampleItem ).getNotesAsString( null, null );
 		return notes == null ? "" : notes;
 	}
 
@@ -211,7 +211,7 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 		List<String> completionDate = new ArrayList<String>();
 
 		for (Analysis analysis : analysisList) {
-				labTestList.add(TestService.getUserLocalizedTestName( analysis.getTest() ));
+				labTestList.add(TestServiceImpl.getUserLocalizedTestName( analysis.getTest() ));
 				labResultList.add(getResultsForAnalysis(analysis));
 				completionDate.add( getCompleationDate( analysis ) );
 		}
@@ -242,7 +242,7 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 		if (results != null && !results.isEmpty()) {
 			String type = results.get(0).getResultType();
 
-			if ( TypeOfTestResultService.ResultType.isDictionaryVariant( type )) {
+			if ( TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant( type )) {
 				StringBuilder builder = new StringBuilder();
 				boolean firstNumber = true;
 				for (Result result : results) {

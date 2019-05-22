@@ -30,7 +30,7 @@ import org.apache.struts.validator.DynaValidatorForm;
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.LocalizationService;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
@@ -41,7 +41,7 @@ public class SampleTypeCreateAction extends BaseAction {
         ((DynaValidatorForm)form).initialize(mapping);
         PropertyUtils.setProperty(form, "existingSampleTypeList", DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
         PropertyUtils.setProperty(form, "inactiveSampleTypeList", DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE));
-        List<TypeOfSample> typeOfSamples = TypeOfSampleService.getAllTypeOfSamples();
+        List<TypeOfSample> typeOfSamples = TypeOfSampleServiceImpl.getAllTypeOfSamples();
         PropertyUtils.setProperty(form, "existingEnglishNames", getExistingTestNames(typeOfSamples, ConfigurationProperties.LOCALE.ENGLISH));
         PropertyUtils.setProperty(form, "existingFrenchNames", getExistingTestNames(typeOfSamples, ConfigurationProperties.LOCALE.FRENCH));
 

@@ -19,8 +19,8 @@ import spring.generated.testconfiguration.form.TestSectionCreateForm;
 import spring.mine.common.controller.BaseController;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.LocalizationService;
-import us.mn.state.health.lims.common.services.TestSectionService;
+import spring.service.localization.LocalizationServiceImpl;
+import spring.service.test.TestSectionServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
@@ -56,7 +56,7 @@ public class TestSectionCreateController extends BaseController {
 					DisplayListService.getList(DisplayListService.ListType.TEST_SECTION));
 			PropertyUtils.setProperty(form, "inactiveTestUnitList",
 					DisplayListService.getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
-			List<TestSection> testSections = TestSectionService.getAllTestSections();
+			List<TestSection> testSections = TestSectionServiceImpl.getAllTestSections();
 			PropertyUtils.setProperty(form, "existingEnglishNames",
 					getExistingTestNames(testSections, ConfigurationProperties.LOCALE.ENGLISH));
 
@@ -71,7 +71,7 @@ public class TestSectionCreateController extends BaseController {
 		StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
 
 		for (TestSection testSection : testSections) {
-			builder.append(LocalizationService.getLocalizationValueByLocal(locale, testSection.getLocalization()));
+			builder.append(LocalizationServiceImpl.getLocalizationValueByLocal(locale, testSection.getLocalization()));
 			builder.append(NAME_SEPARATOR);
 		}
 

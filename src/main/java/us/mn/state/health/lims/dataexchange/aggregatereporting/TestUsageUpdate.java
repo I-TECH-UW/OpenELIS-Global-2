@@ -33,7 +33,7 @@ import org.json.simple.parser.ParseException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.IResultSaveService;
-import us.mn.state.health.lims.common.services.ResultService;
+import spring.service.result.ResultServiceImpl;
 import us.mn.state.health.lims.common.services.registration.interfaces.IResultUpdate;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportExternalExportDAO;
@@ -105,7 +105,7 @@ public class TestUsageUpdate implements IResultUpdate {
 	
 	private void createMaps(Map<String, Map<String, Integer>> dateTestMap, List<Result> results) {
 		for (Result result : results) {
-			ResultService resultService = new ResultService(result);
+			ResultServiceImpl resultService = new ResultServiceImpl(result);
 			String testDate = resultService.getTestTime();
 			if( testDate == null){
 				testDate = resultService.getLastUpdatedTime();

@@ -26,9 +26,9 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.TestActivationForm;
 import spring.generated.testconfiguration.validator.TestActivationFormValidator;
 import spring.mine.common.controller.BaseController;
-import us.mn.state.health.lims.common.services.TestService;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.test.beanItems.TestActivationBean;
@@ -81,7 +81,7 @@ public class TestActivationController extends BaseController {
 		for (IdValuePair pair : sampleTypeList) {
 			TestActivationBean bean = new TestActivationBean();
 
-			List<Test> tests = TypeOfSampleService.getAllTestsBySampleTypeId(pair.getId());
+			List<Test> tests = TypeOfSampleServiceImpl.getAllTestsBySampleTypeId(pair.getId());
 			List<IdValuePair> activeTests = new ArrayList<>();
 			List<IdValuePair> inactiveTests = new ArrayList<>();
 
@@ -108,9 +108,9 @@ public class TestActivationController extends BaseController {
 
 			for (Test test : tests) {
 				if (test.isActive()) {
-					activeTests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
+					activeTests.add(new IdValuePair(test.getId(), TestServiceImpl.getUserLocalizedTestName(test)));
 				} else {
-					inactiveTests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
+					inactiveTests.add(new IdValuePair(test.getId(), TestServiceImpl.getUserLocalizedTestName(test)));
 				}
 			}
 
@@ -176,7 +176,7 @@ public class TestActivationController extends BaseController {
 			}
 
 			if (!deactivateSampleTypes.isEmpty() || !activateSampleTypes.isEmpty()) {
-				TypeOfSampleService.clearCache();
+				TypeOfSampleServiceImpl.clearCache();
 			}
 
 			tx.commit();
@@ -198,7 +198,7 @@ public class TestActivationController extends BaseController {
 		List<Test> tests = new ArrayList<>();
 
 		for (String testId : testIds) {
-			Test test = new TestService(testId).getTest();
+			Test test = new TestServiceImpl(testId).getTest();
 			test.setIsActive("N");
 			test.setSysUserId(getSysUserId(request));
 			tests.add(test);
@@ -211,7 +211,7 @@ public class TestActivationController extends BaseController {
 		List<Test> tests = new ArrayList<>();
 
 		for (ActivateSet set : testIds) {
-			Test test = new TestService(set.id).getTest();
+			Test test = new TestServiceImpl(set.id).getTest();
 			test.setIsActive("Y");
 			test.setSortOrder(String.valueOf(set.sortOrder * 10));
 			test.setSysUserId(getSysUserId(request));
@@ -225,7 +225,7 @@ public class TestActivationController extends BaseController {
 		List<TypeOfSample> sampleTypes = new ArrayList<>();
 
 		for (String id : sampleTypeIds) {
-			TypeOfSample typeOfSample = TypeOfSampleService.getTransientTypeOfSampleById(id);
+			TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getTransientTypeOfSampleById(id);
 			typeOfSample.setActive(false);
 			typeOfSample.setSysUserId(getSysUserId(request));
 			sampleTypes.add(typeOfSample);
@@ -238,7 +238,7 @@ public class TestActivationController extends BaseController {
 		List<TypeOfSample> sampleTypes = new ArrayList<>();
 
 		for (ActivateSet set : sampleTypeSets) {
-			TypeOfSample typeOfSample = TypeOfSampleService.getTransientTypeOfSampleById(set.id);
+			TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getTransientTypeOfSampleById(set.id);
 			typeOfSample.setActive(true);
 			typeOfSample.setSortOrder(set.sortOrder * 10);
 			typeOfSample.setSysUserId(getSysUserId(request));

@@ -1,4 +1,4 @@
-package spring.service.resultlimits;
+package spring.service.resultlimit;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,7 +54,7 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> i
 
 	}
 
-	ResultLimitServiceImpl() {
+	public ResultLimitServiceImpl() {
 		super(ResultLimit.class);
 		initializeGlobalVariables();
 	}

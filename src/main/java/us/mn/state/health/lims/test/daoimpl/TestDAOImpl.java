@@ -30,7 +30,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.common.services.TestService;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
@@ -139,7 +139,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 		try {
 			if (test.getIsActive().equals(IActionConstants.YES) && duplicateTestExists(test)) {
 				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + TestService.getUserLocalizedTestName(test));
+						"Duplicate record exists for " + TestServiceImpl.getUserLocalizedTestName(test));
 			}
 		} catch (Exception e) {
 			LogEvent.logError("TestDAOImpl", "updateData()", e.toString());

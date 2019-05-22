@@ -15,11 +15,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
-import us.mn.state.health.lims.common.services.TestService;
+import spring.service.resultlimit.ResultLimitServiceImpl;
+import spring.service.test.TestServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.services.ResultLimitService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -83,7 +83,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<Result> getResultsByAnalysis(Analysis analysis) {
 		return resultDAO.getAllMatchingOrdered("analysis", analysis.getId(), "id", false);
 	}
@@ -93,15 +93,15 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 	}
 
 	public String getTestName() {
-		return TestService.getUserLocalizedTestName(test);
+		return TestServiceImpl.getUserLocalizedTestName(test);
 	}
 
 	public String getReportingTestName() {
-		return TestService.getUserLocalizedReportingTestName(test);
+		return TestServiceImpl.getUserLocalizedReportingTestName(test);
 	}
 
 	public String getTestDescription() {
-		return TestService.getLocalizedTestNameWithType(test);
+		return TestServiceImpl.getLocalizedTestNameWithType(test);
 	}
 
 	public String getSampleType() {
@@ -141,9 +141,9 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 			return "";
 		}
 
-		if (TypeOfTestResultService.ResultType.isDictionaryVariant(getTestType())) {
+		if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(getTestType())) {
 			return getDictEntry();
-		} else if (TypeOfTestResultService.ResultType.NUMERIC.matches(getTestType())) {
+		} else if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(getTestType())) {
 			int significantPlaces = result.getSignificantDigits();
 			if (significantPlaces == 0) {
 				return result.getValue().split("\\.")[0];
@@ -163,7 +163,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 			}
 
 			return value.toString();
-		} else if (TypeOfTestResultService.ResultType.ALPHA.matches(result.getResultType())
+		} else if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(result.getResultType())
 				&& !GenericValidator.isBlankOrNull(result.getValue())) {
 			return result.getValue().split("\\(")[0].trim();
 		} else {
@@ -189,7 +189,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 			return "";
 		}
 
-		if (TypeOfTestResultService.ResultType.DICTIONARY.matches(getTestType())) {
+		if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(getTestType())) {
 
 			if (!printable) {
 				return result.getValue();
@@ -204,9 +204,9 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 					List<Result> dictionaryResults = new ArrayList<>();
 					Result quantification = null;
 					for (Result sibResult : resultList) {
-						if (TypeOfTestResultService.ResultType.DICTIONARY.matches(sibResult.getResultType())) {
+						if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(sibResult.getResultType())) {
 							dictionaryResults.add(sibResult);
-						} else if (TypeOfTestResultService.ResultType.ALPHA.matches(sibResult.getResultType())
+						} else if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(sibResult.getResultType())
 								&& sibResult.getParentResult() != null) {
 							quantification = sibResult;
 						}
@@ -233,7 +233,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 			}
 
 			return StringEscapeUtils.escapeHtml(reportResult);
-		} else if (TypeOfTestResultService.ResultType.isMultiSelectVariant(getTestType())) {
+		} else if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(getTestType())) {
 			StringBuilder buffer = new StringBuilder();
 			boolean firstPass = true;
 
@@ -241,7 +241,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 
 			for (Result multiResult : results) {
 				if (!GenericValidator.isBlankOrNull(multiResult.getValue())
-						&& TypeOfTestResultService.ResultType.isMultiSelectVariant(multiResult.getResultType())) {
+						&& TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(multiResult.getResultType())) {
 					if (firstPass) {
 						firstPass = false;
 					} else {
@@ -251,7 +251,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 				}
 			}
 			return buffer.toString();
-		} else if (TypeOfTestResultService.ResultType.NUMERIC.matches(getTestType())) {
+		} else if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(getTestType())) {
 			int significantPlaces = result.getSignificantDigits();
 			if (significantPlaces == -1) {
 				return result.getValue() + appendUOM(includeUOM);
@@ -274,7 +274,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 			}
 
 			return value.toString() + appendUOM(includeUOM);
-		} else if (TypeOfTestResultService.ResultType.ALPHA.matches(result.getResultType())
+		} else if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(result.getResultType())
 				&& !GenericValidator.isBlankOrNull(result.getValue())) {
 			return result.getValue().split("\\(")[0].trim();
 		} else {
@@ -300,7 +300,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 			return "";
 		}
 
-		if (TypeOfTestResultService.ResultType.MULTISELECT.getCharacterValue().equals(getTestType())) {
+		if (TypeOfTestResultServiceImpl.ResultType.MULTISELECT.getCharacterValue().equals(getTestType())) {
 			StringBuilder buffer = new StringBuilder();
 			boolean firstPass = true;
 
@@ -308,7 +308,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 
 			for (Result multiResult : results) {
 				if (!GenericValidator.isBlankOrNull(multiResult.getValue())
-						&& TypeOfTestResultService.ResultType.isMultiSelectVariant(multiResult.getResultType())) {
+						&& TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(multiResult.getResultType())) {
 					if (firstPass) {
 						firstPass = false;
 					} else {
@@ -366,14 +366,14 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 
 	public String getDisplayReferenceRange(boolean includeSelectList) {
 		String range = "";
-		if (TypeOfTestResultService.ResultType.NUMERIC.matches(result.getResultType())) {
+		if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(result.getResultType())) {
 			if (result.getMinNormal() != null && result.getMaxNormal() != null
 					&& !result.getMinNormal().equals(result.getMaxNormal())) {
-				range = ResultLimitService.getDisplayNormalRange(result.getMinNormal(), result.getMaxNormal(),
+				range = ResultLimitServiceImpl.getDisplayNormalRange(result.getMinNormal(), result.getMaxNormal(),
 						String.valueOf(result.getSignificantDigits()), "-");
 			}
 		} else if (includeSelectList
-				&& TypeOfTestResultService.ResultType.isDictionaryVariant(result.getResultType())) {
+				&& TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
 			List<ResultLimit> limits = getResultLimits();
 			if (!limits.isEmpty() && !GenericValidator.isBlankOrNull(limits.get(0).getDictionaryNormalId())) {
 				range = dictionaryDAO.getDataForId(limits.get(0).getDictionaryNormalId()).getLocalizedName();
@@ -392,7 +392,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 
 	public boolean isAbnormalDictionaryResult() {
 		if (result.getValue() != null
-				&& TypeOfTestResultService.ResultType.isDictionaryVariant(result.getResultType())) {
+				&& TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
 			List<ResultLimit> limits = getResultLimits();
 			if (!limits.isEmpty()) {
 				return !result.getValue().equals(limits.get(0).getDictionaryNormalId());
@@ -438,7 +438,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 		StringBuilder currentString = new StringBuilder();
 
 		for (Result result : resultList) {
-			if (TypeOfTestResultService.ResultType.isMultiSelectVariant(result.getResultType())
+			if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())
 					&& result.getValue() != null) {
 				if (currentGrouping != result.getGrouping()) {
 					if (currentString.length() > 1) {
