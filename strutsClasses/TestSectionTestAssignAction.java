@@ -50,7 +50,7 @@ public class TestSectionTestAssignAction extends BaseAction {
 
             for( Test test : testList){
                 if( test.isActive()) {
-                    tests.add(new IdValuePair(test.getId(), TestService.getLocalizedTestNameWithType(test)));
+                    tests.add(new IdValuePair(test.getId(), TestServiceImpl.getLocalizedTestNameWithType(test)));
                 }
             }
         }

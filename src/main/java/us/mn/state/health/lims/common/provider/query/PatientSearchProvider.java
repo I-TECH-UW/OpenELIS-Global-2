@@ -26,13 +26,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
+import spring.service.patient.PatientServiceImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.provider.query.workerObjects.PatientSearchLocalAndClinicWorker;
 import us.mn.state.health.lims.common.provider.query.workerObjects.PatientSearchLocalWorker;
 import us.mn.state.health.lims.common.provider.query.workerObjects.PatientSearchWorker;
-import spring.service.observationhistory.ObservationHistoryServiceImpl;
-import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
-import spring.service.patient.PatientServiceImpl;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;

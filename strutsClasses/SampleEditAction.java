@@ -315,7 +315,7 @@ public class SampleEditAction extends BaseAction {
 			test.setId(typeOfSampleTest.getTestId());
 			testDAO.getData(test);
 			if ("Y".equals(test.getIsActive()) && test.getOrderable()) {
-				sampleEditItem.setTestName( TestService.getUserLocalizedTestName( test ) );
+				sampleEditItem.setTestName( TestServiceImpl.getUserLocalizedTestName( test ) );
 				sampleEditItem.setSampleItemId(sampleItem.getId());
 				sampleEditItem.setSortOrder(test.getSortOrder());
 				typeOfTestSampleItemList.add(sampleEditItem);

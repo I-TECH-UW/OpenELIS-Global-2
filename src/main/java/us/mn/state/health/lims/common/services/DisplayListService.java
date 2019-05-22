@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -423,7 +424,7 @@ public class DisplayListService implements LocaleChangeListener {
 
 		List<Test> testList = new TestDAOImpl().getAllActiveOrderableTests();
 		for (Test test : testList) {
-			tests.add(new IdValuePair(test.getId(), TestService.getLocalizedTestNameWithType(test)));
+			tests.add(new IdValuePair(test.getId(), TestServiceImpl.getLocalizedTestNameWithType(test)));
 		}
 
 		Collections.sort(tests, new Comparator<IdValuePair>() {
@@ -441,7 +442,7 @@ public class DisplayListService implements LocaleChangeListener {
 
 		List<Test> testList = new TestDAOImpl().getAllActiveTests(false);
 		for (Test test : testList) {
-			tests.add(new IdValuePair(test.getId(), TestService.getLocalizedTestNameWithType(test)));
+			tests.add(new IdValuePair(test.getId(), TestServiceImpl.getLocalizedTestNameWithType(test)));
 
 			Collections.sort(tests, new Comparator<IdValuePair>() {
 				@Override

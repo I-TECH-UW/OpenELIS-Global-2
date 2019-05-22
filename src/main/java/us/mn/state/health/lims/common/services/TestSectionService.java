@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.LocaleChangeListener;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
@@ -114,7 +115,7 @@ public class TestSectionService implements LocaleChangeListener{
     }
 
     public static List<Test> getTestsInSection(String id) {
-        return TestService.getTestsInTestSectionById(id);
+        return TestServiceImpl.getTestsInTestSectionById(id);
     }
 
     public static List<TestSection> getAllTestSections() {

@@ -140,7 +140,7 @@ public class TestAddUpdate extends BaseAction {
             HibernateUtil.closeSession();
         }
 
-        TestService.refreshTestNames();
+        TestServiceImpl.refreshTestNames();
         TypeOfSampleServiceImpl.clearCache();
         return mapping.findForward(FWD_SUCCESS);
     }

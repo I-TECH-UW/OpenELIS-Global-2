@@ -13,9 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
-import spring.util.SpringContext;
-import spring.service.test.TestSectionServiceImpl;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.LocaleChangeListener;
 import us.mn.state.health.lims.common.util.SystemConfiguration;

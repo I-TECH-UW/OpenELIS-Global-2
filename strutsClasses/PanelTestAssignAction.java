@@ -70,7 +70,7 @@ public class PanelTestAssignAction extends BaseAction {
             
             for( Test test : testList){
                 if( test.isActive()) {
-                    tests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
+                    tests.add(new IdValuePair(test.getId(), TestServiceImpl.getUserLocalizedTestName(test)));
                     testIdSet.add(test.getId());
                 }
             }

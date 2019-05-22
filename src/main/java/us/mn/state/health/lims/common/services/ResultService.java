@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
 
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
@@ -69,15 +70,15 @@ public class ResultService {
 	}
 
 	public String getTestName() {
-		return TestService.getUserLocalizedTestName(test);
+		return TestServiceImpl.getUserLocalizedTestName(test);
 	}
 
     public String getReportingTestName() {
-        return TestService.getUserLocalizedReportingTestName(test);
+        return TestServiceImpl.getUserLocalizedReportingTestName(test);
     }
 
 	public String getTestDescription() {
-		return TestService.getLocalizedTestNameWithType( test );
+		return TestServiceImpl.getLocalizedTestNameWithType( test );
 	}
 
 	public String getSampleType() {

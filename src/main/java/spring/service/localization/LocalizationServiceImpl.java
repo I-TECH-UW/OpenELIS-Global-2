@@ -3,9 +3,11 @@ package spring.service.localization;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import spring.util.SpringContext;
@@ -33,6 +35,13 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization>
 		public String getDBDescription() {
 			return dbLabel;
 		}
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Localization get(String id) {
+		return getBaseObjectDAO().get(id).orElseThrow(() -> new ObjectNotFoundException(id, "Localization"));
+
 	}
 
 	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()

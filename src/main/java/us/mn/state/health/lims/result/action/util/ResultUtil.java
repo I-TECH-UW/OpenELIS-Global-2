@@ -20,8 +20,8 @@ import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 
-import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
+import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;

@@ -613,7 +613,7 @@ public class ResultsReportProvider extends BaseReportsProvider {
 
 			ResultsReportTest reportTest = new ResultsReportTest();
 			reportTest.setAnalysis(analysis);
-			String testName = TestService.getUserLocalizedTestName(analysis.getTest());
+			String testName = TestServiceImpl.getUserLocalizedTestName(analysis.getTest());
 			reportTest.setTestName(testName);
 			// bugzilla 1900
 			if (!resultsReportType.equals(RESULTS_REPORT_TYPE_PREVIEW)) {
@@ -655,7 +655,7 @@ public class ResultsReportProvider extends BaseReportsProvider {
 			// this will be Testing Pending for other tests
 			reportTest.setAnalysisStatus(testingPendingMessage);
 
-			String testName = TestService.getUserLocalizedTestName(pendingAnalysis.getTest());
+			String testName = TestServiceImpl.getUserLocalizedTestName(pendingAnalysis.getTest());
 			reportTest.setTestName(testName);
 			reportTest.setTestMessage("");
 			reportTest.setTestId(pendingAnalysis.getTest().getId());
@@ -691,7 +691,7 @@ public class ResultsReportProvider extends BaseReportsProvider {
 							.getPreviousAnalysisForAmendedAnalysis(currentTest.getAnalysis());
 					ResultsReportTest reportTest = new ResultsReportTest();
 					reportTest.setAnalysis(previousAnalysis);
-					String testName = TestService.getUserLocalizedTestName(previousAnalysis.getTest());
+					String testName = TestServiceImpl.getUserLocalizedTestName(previousAnalysis.getTest());
 					reportTest.setTestName(testName);
 					reportTest.setPrintedDate(previousAnalysis.getPrintedDateForDisplay());
 					String testMessage = " " + originalMessage;

@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.service.test.TestServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -73,7 +74,7 @@ public class AnalysisService {
 			return "";
 		}
 		Test test = getTest();
-		String name = TestService.getLocalizedTestNameWithType(test);
+		String name = TestServiceImpl.getLocalizedTestNameWithType(test);
 
 		TypeOfSample typeOfSample = TypeOfSampleService.getTypeOfSampleForTest(test.getId());
 
