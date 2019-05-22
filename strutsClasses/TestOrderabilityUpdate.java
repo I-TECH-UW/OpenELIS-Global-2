@@ -35,7 +35,7 @@ import org.json.simple.parser.ParseException;
 
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.test.dao.TestDAO;
 import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
@@ -75,7 +75,7 @@ public class TestOrderabilityUpdate extends BaseAction {
             HibernateUtil.closeSession();
         }
 
-        TypeOfSampleService.clearCache();
+        TypeOfSampleServiceImpl.clearCache();
         return mapping.findForward(FWD_SUCCESS);
     }
 

@@ -25,7 +25,7 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem> imple
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<PanelItem> getPanelItemsForPanel(String panelId) {
 		return baseObjectDAO.getAllMatching("panel.id", panelId);
 	}

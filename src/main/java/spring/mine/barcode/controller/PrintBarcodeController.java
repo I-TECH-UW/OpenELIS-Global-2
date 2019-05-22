@@ -27,15 +27,15 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.mine.barcode.form.PrintBarcodeForm;
 import spring.mine.common.controller.BaseController;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.IPatientService;
-import us.mn.state.health.lims.common.services.PatientService;
+import spring.service.patient.PatientServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.SampleStatus;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -196,7 +196,7 @@ public class PrintBarcodeController extends BaseController {
 		for (Analysis analysis : analysisList) {
 			SampleEditItem sampleEditItem = new SampleEditItem();
 			sampleEditItem.setTestId(analysis.getTest().getId());
-			sampleEditItem.setTestName(TestService.getUserLocalizedTestName(analysis.getTest()));
+			sampleEditItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
 			sampleEditItem.setSampleItemId(sampleItem.getId());
 
 			boolean canCancel = allowedToCancelAll
@@ -232,7 +232,7 @@ public class PrintBarcodeController extends BaseController {
 			throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
 		Patient patient = new SampleHumanDAOImpl().getPatientForSample(sample);
-		IPatientService patientService = new PatientService(patient);
+		IPatientService patientService = new PatientServiceImpl(patient);
 
 		displayObjects.put("patientName", patientService.getLastFirstName());
 		displayObjects.put("dob", patientService.getEnteredDOB());

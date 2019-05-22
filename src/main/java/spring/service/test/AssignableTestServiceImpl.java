@@ -9,14 +9,15 @@ import us.mn.state.health.lims.test.valueholder.AssignableTest;
 
 @Service
 public class AssignableTestServiceImpl extends BaseObjectServiceImpl<AssignableTest> implements AssignableTestService {
-  @Autowired
-  protected BaseDAO<AssignableTest> baseObjectDAO;
+	@Autowired
+	protected BaseDAO<AssignableTest> baseObjectDAO;
 
-  AssignableTestServiceImpl() {
-    super(AssignableTest.class);
-  }
+	public AssignableTestServiceImpl() {
+		super(AssignableTest.class);
+	}
 
-  @Override
-  protected BaseDAO<AssignableTest> getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected BaseDAO<AssignableTest> getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }

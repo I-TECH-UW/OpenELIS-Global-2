@@ -28,16 +28,16 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.services.AnalysisService;
-import us.mn.state.health.lims.common.services.LocalizationService;
-import us.mn.state.health.lims.common.services.NoteService;
-import us.mn.state.health.lims.common.services.ResultService;
+import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.localization.LocalizationServiceImpl;
+import spring.service.note.NoteServiceImpl;
+import spring.service.result.ResultServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.referral.valueholder.Referral;
@@ -82,7 +82,7 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
     @Override
     protected void createReportParameters(){
         super.createReportParameters();
-        reportParameters.put( "billingNumberLabel", LocalizationService.getLocalizedValueById( ConfigurationProperties.getInstance().getPropertyValue( Property.BILLING_REFERENCE_NUMBER_LABEL ) ) );
+        reportParameters.put( "billingNumberLabel", LocalizationServiceImpl.getLocalizedValueById( ConfigurationProperties.getInstance().getPropertyValue( Property.BILLING_REFERENCE_NUMBER_LABEL ) ) );
         reportParameters.put("footerName", getFooterName());
     }
 
@@ -111,7 +111,7 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
             boolean hasParentResult = analysis.getParentResult() != null;
             sampleSet.add( analysis.getSampleItem() );
 			if(analysis.getTest() != null ){
-                currentAnalysisService = new AnalysisService( analysis );
+                currentAnalysisService = new AnalysisServiceImpl( analysis );
 				ClinicalPatientData resultsData = buildClinicalPatientData( hasParentResult );
                 if( isConfirmationSample){
                     String alerts = resultsData.getAlerts();
@@ -155,7 +155,7 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 	// should be refactored to use the same code.
     private List<ClinicalPatientData> addReferredTests(Referral referral, ClinicalPatientData parentData){
 		List<ReferralResult> referralResults = referralResultDAO.getReferralResultsForReferral(referral.getId());
-        String note =  new NoteService( currentAnalysisService.getAnalysis() ).getNotesAsString( false, true, "<br/>", FILTER, true );
+        String note =  new NoteServiceImpl( currentAnalysisService.getAnalysis() ).getNotesAsString( false, true, "<br/>", FILTER, true );
         List<ClinicalPatientData> currentSampleReportItems = new ArrayList<ClinicalPatientData>(  );
         
 		if( !referralResults.isEmpty()){
@@ -193,7 +193,7 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
 					Test test = new Test();
 					test.setId(testId);
 					testDAO.getData(test);
-					data.setTestName( TestService.getUserLocalizedReportingTestName( test ) );
+					data.setTestName( TestServiceImpl.getUserLocalizedReportingTestName( test ) );
 
 					String uom = getUnitOfMeasure( test);
 					if(reportReferralResultValue != null){
@@ -304,7 +304,7 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
             if( data.getParentResult() != null && !parentResults.contains( data.getParentResult().getId() ) ){
                 parentResults.add( data.getParentResult().getId() );
                 ClinicalPatientData marker = new ClinicalPatientData( data );
-                marker.setTestName( new ResultService( data.getParentResult() ).getSimpleResultValue() );
+                marker.setTestName( new ResultServiceImpl( data.getParentResult() ).getSimpleResultValue() );
                 marker.setResult( null );
                 marker.setTestRefRange( null );
                 marker.setParentMarker( true );

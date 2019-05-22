@@ -25,7 +25,7 @@ public class CityStateZipServiceImpl extends BaseObjectServiceImpl<CityStateZip>
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List getAllStateCodes() {
 		return baseObjectDAO.getAllStateCodes();
 	}

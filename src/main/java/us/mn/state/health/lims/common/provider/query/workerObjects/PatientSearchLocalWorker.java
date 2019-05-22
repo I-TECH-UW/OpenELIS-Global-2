@@ -26,9 +26,9 @@ import org.apache.commons.validator.GenericValidator;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.provider.query.PatientSearchResults;
-import us.mn.state.health.lims.common.services.ObservationHistoryService;
-import us.mn.state.health.lims.common.services.ObservationHistoryService.ObservationType;
-import us.mn.state.health.lims.common.services.PatientService;
+import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
+import spring.service.patient.PatientServiceImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.patient.dao.PatientDAO;
 import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
@@ -82,7 +82,7 @@ public class PatientSearchLocalWorker extends PatientSearchWorker {
 
     private List<PatientSearchResults> getObservationsByReferringPatientId( String referringId ){
         List<PatientSearchResults> resultList = new ArrayList<PatientSearchResults>(  );
-        List<ObservationHistory> observationList = ObservationHistoryService.getObservationsByTypeAndValue(ObservationType.REFERRERS_PATIENT_ID, referringId);
+        List<ObservationHistory> observationList = ObservationHistoryServiceImpl.getObservationsByTypeAndValue(ObservationType.REFERRERS_PATIENT_ID, referringId);
 
         if (observationList != null) {
             for (ObservationHistory observation : observationList) {
@@ -98,7 +98,7 @@ public class PatientSearchLocalWorker extends PatientSearchWorker {
     }
 
     private PatientSearchResults getSearchResultsForPatient(Patient patient, String referringId){
-        PatientService service = new PatientService(patient);
+        PatientServiceImpl service = new PatientServiceImpl(patient);
 
         return new PatientSearchResults( BigDecimal.valueOf( Long.parseLong( patient.getId() ) ),
                 service.getFirstName(),

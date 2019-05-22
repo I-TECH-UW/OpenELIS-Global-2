@@ -22,7 +22,7 @@ import java.util.Map;
 import us.mn.state.health.lims.address.dao.AddressPartDAO;
 import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
-import us.mn.state.health.lims.common.services.PatientService;
+import spring.service.patient.PatientServiceImpl;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 
@@ -54,14 +54,14 @@ public class PatientManagementBridge{
         info.setReadOnly( readOnly );
 
         if( patient != null){
-            PatientService patientService = new PatientService( patient );
+            PatientServiceImpl patientService = new PatientServiceImpl( patient );
             Map<String, String> addressComponents = patientService.getAddressComponents();
             info.setFirstName( patientService.getFirstName() );
             info.setLastName( patientService.getLastName() );
-            info.setAddressDepartment( addressComponents.get( PatientService.ADDRESS_DEPT ) );
-            info.setCommune( addressComponents.get( PatientService.ADDRESS_COMMUNE ) );
-            info.setCity( addressComponents.get( PatientService.ADDRESS_CITY ) );
-            info.setStreetAddress( addressComponents.get( PatientService.ADDRESS_STREET ) );
+            info.setAddressDepartment( addressComponents.get( PatientServiceImpl.ADDRESS_DEPT ) );
+            info.setCommune( addressComponents.get( PatientServiceImpl.ADDRESS_COMMUNE ) );
+            info.setCity( addressComponents.get( PatientServiceImpl.ADDRESS_CITY ) );
+            info.setStreetAddress( addressComponents.get( PatientServiceImpl.ADDRESS_STREET ) );
             info.setGender( readOnly ? patientService.getLocalizedGender() : patientService.getGender() );
             info.setBirthDateForDisplay( patientService.getBirthdayForDisplay() );
             info.setNationalId( patientService.getNationalId() );

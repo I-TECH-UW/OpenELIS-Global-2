@@ -199,7 +199,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
-	@Transactional
+	@Transactional 
 	public void persistData(SamplePatientUpdateData updateData, PatientManagementUpdate patientUpdate,
 			PatientManagementInfo patientInfo, SamplePatientEntryForm form) {
 		boolean useInitialSampleCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);

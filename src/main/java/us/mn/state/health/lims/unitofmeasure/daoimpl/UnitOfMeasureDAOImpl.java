@@ -21,6 +21,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -39,6 +40,7 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
  * @author diane benz
  */
 @Component
+@Transactional 
 public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements UnitOfMeasureDAO {
 
 	public UnitOfMeasureDAOImpl() {

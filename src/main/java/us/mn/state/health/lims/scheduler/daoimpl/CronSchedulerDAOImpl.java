@@ -22,6 +22,7 @@ import java.util.Optional;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -33,6 +34,7 @@ import us.mn.state.health.lims.scheduler.dao.CronSchedulerDAO;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
 
 @Component
+@Transactional 
 public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements CronSchedulerDAO {
 
 	public CronSchedulerDAOImpl() {

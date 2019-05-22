@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.barcode.LabelField;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.services.PatientService;
+import spring.service.patient.PatientServiceImpl;
 import us.mn.state.health.lims.common.services.SampleOrderService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
@@ -74,7 +74,7 @@ public class OrderLabel extends Label {
    * @return          label field containing patient id
    */
   private LabelField getAvailableIdField(Patient patient) {
-    PatientService service = new PatientService(patient);
+    PatientServiceImpl service = new PatientServiceImpl(patient);
     String patientId = service.getSubjectNumber();
     if (!StringUtil.isNullorNill(patientId)) {
       return new LabelField(MessageUtil.getMessage("barcode.label.info.patientid"),

@@ -19,8 +19,8 @@ import spring.generated.testconfiguration.form.UomCreateForm;
 import spring.mine.common.controller.BaseController;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.LocalizationService;
-import us.mn.state.health.lims.common.services.UnitOfMeasureService;
+import spring.service.localization.LocalizationServiceImpl;
+import spring.service.unitofmeasure.UnitOfMeasureServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.unitofmeasure.daoimpl.UnitOfMeasureDAOImpl;
@@ -50,7 +50,7 @@ public class UomCreateController extends BaseController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		List<UnitOfMeasure> uoms = UnitOfMeasureService.getAllUnitOfMeasures();
+		List<UnitOfMeasure> uoms = UnitOfMeasureServiceImpl.getAllUnitOfMeasures();
 		try {
 			PropertyUtils.setProperty(form, "existingEnglishNames",
 					getExistingUomNames(uoms, ConfigurationProperties.LOCALE.ENGLISH));
@@ -66,7 +66,7 @@ public class UomCreateController extends BaseController {
 		StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
 
 		for (UnitOfMeasure uom : uoms) {
-			builder.append(LocalizationService.getLocalizationValueByLocal(locale, uom.getLocalization()));
+			builder.append(LocalizationServiceImpl.getLocalizationValueByLocal(locale, uom.getLocalization()));
 			builder.append(NAME_SEPARATOR);
 		}
 

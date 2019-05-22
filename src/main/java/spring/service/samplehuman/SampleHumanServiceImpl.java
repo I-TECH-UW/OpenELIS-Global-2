@@ -25,13 +25,13 @@ public class SampleHumanServiceImpl extends BaseObjectServiceImpl<SampleHuman> i
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public SampleHuman getDataBySample(SampleHuman sampleHuman) {
 		return getMatch("sampleId", sampleHuman.getSampleId()).get();
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public Patient getPatientForSample(Sample sample) {
 		return baseObjectDAO.getPatientForSample(sample);
 	}

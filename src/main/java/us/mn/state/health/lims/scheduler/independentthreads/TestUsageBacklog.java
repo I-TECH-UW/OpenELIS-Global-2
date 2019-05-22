@@ -26,12 +26,12 @@ import java.util.Map;
 import org.hibernate.Transaction;
 import org.json.simple.JSONObject;
 
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -101,7 +101,7 @@ public class TestUsageBacklog extends Thread {
 		List<Analysis> analysisList = analysisDAO.getAnalysisCompleteInRange(dayOne, dayTwo);
 
 		Map<String, Integer> testBucket = new HashMap<String, Integer>();
-		for (String key : TestService.getMap( TestService.Entity.TEST_AUGMENTED_NAME ).keySet()) {
+		for (String key : TestServiceImpl.getMap( TestServiceImpl.Entity.TEST_AUGMENTED_NAME ).keySet()) {
 			testBucket.put(key, 0);
 		}
 
@@ -115,7 +115,7 @@ public class TestUsageBacklog extends Thread {
 		JSONObject json = new JSONObject();
 		for (String id : testBucket.keySet()) {
 			if( testBucket.get(id).intValue() > 0){
-				json.put(TestService.getMap(TestService.Entity.TEST_AUGMENTED_NAME ).get(id), testBucket.get(id));
+				json.put(TestServiceImpl.getMap(TestServiceImpl.Entity.TEST_AUGMENTED_NAME ).get(id), testBucket.get(id));
 			}
 		}
 

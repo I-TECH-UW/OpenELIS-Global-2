@@ -35,6 +35,7 @@ import org.hibernate.Transaction;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.address.dao.PersonAddressDAO;
 import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
 import us.mn.state.health.lims.address.daoimpl.PersonAddressDAOImpl;
@@ -47,21 +48,20 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator;
-import us.mn.state.health.lims.common.services.AnalysisService;
+import spring.service.analysis.AnalysisServiceImpl;
 import us.mn.state.health.lims.common.services.IPatientService;
-import us.mn.state.health.lims.common.services.NoteService;
-import us.mn.state.health.lims.common.services.NoteService.NoteType;
-import us.mn.state.health.lims.common.services.ObservationHistoryService;
-import us.mn.state.health.lims.common.services.ObservationHistoryService.ObservationType;
-import us.mn.state.health.lims.common.services.PatientService;
-import us.mn.state.health.lims.common.services.PersonService;
-import us.mn.state.health.lims.common.services.ResultService;
-import us.mn.state.health.lims.common.services.SampleService;
+import spring.service.note.NoteServiceImpl;
+import spring.service.note.NoteServiceImpl.NoteType;
+import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
+import spring.service.patient.PatientServiceImpl;
+import spring.service.person.PersonServiceImpl;
+import spring.service.result.ResultServiceImpl;
+import spring.service.sample.SampleServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.TestIdentityService;
-import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -146,11 +146,11 @@ public abstract class PatientReport extends Report {
 
 	protected IPatientService patientService;
 	protected Provider currentProvider;
-	protected AnalysisService currentAnalysisService;
+	protected AnalysisServiceImpl currentAnalysisService;
 	protected String reportReferralResultValue;
 	protected List<ClinicalPatientData> reportItems;
 	protected String completionDate;
-	protected SampleService currentSampleService;
+	protected SampleServiceImpl currentSampleService;
 
 	protected static final NoteType[] FILTER = { NoteType.EXTERNAL, NoteType.REJECTION_REASON,
 			NoteType.NON_CONFORMITY };
@@ -242,7 +242,7 @@ public abstract class PatientReport extends Report {
 		} else {
 
 			for (Sample sample : reportSampleList) {
-				currentSampleService = new SampleService(sample);
+				currentSampleService = new SampleServiceImpl(sample);
 				handledOrders.add(sample.getId());
 				sampleCompleteMap.put(sample.getAccessionNumber(), Boolean.TRUE);
 				findCompletionDate();
@@ -315,7 +315,7 @@ public abstract class PatientReport extends Report {
 
 		Person person = currentSampleService.getPersonRequester();
 		if (person != null) {
-			currentContactInfo = new PersonService(person).getLastFirstName();
+			currentContactInfo = new PersonServiceImpl(person).getLastFirstName();
 			currentProvider = providerDAO.getProviderByPerson(person);
 		}
 	}
@@ -327,11 +327,11 @@ public abstract class PatientReport extends Report {
 
 		if (patientList.isEmpty()) {
 			List<PatientIdentity> identities = patientIdentityDAO.getPatientIdentitiesByValueAndType(patientNumber,
-					PatientService.PATIENT_ST_IDENTITY);
+					PatientServiceImpl.PATIENT_ST_IDENTITY);
 
 			if (identities.isEmpty()) {
 				identities = patientIdentityDAO.getPatientIdentitiesByValueAndType(patientNumber,
-						PatientService.PATIENT_SUBJECT_IDENTITY);
+						PatientServiceImpl.PATIENT_SUBJECT_IDENTITY);
 			}
 
 			if (!identities.isEmpty()) {
@@ -400,7 +400,7 @@ public abstract class PatientReport extends Report {
 		if (patientService == null || !patient.getId().equals(patientService.getPatientId())) {
 			STNumber = null;
 			patientDOB = null;
-			patientService = new PatientService(patient);
+			patientService = new PatientServiceImpl(patient);
 		}
 	}
 
@@ -451,7 +451,7 @@ public abstract class PatientReport extends Report {
 		List<Result> resultList = currentAnalysisService.getResults();
 
 		Test test = currentAnalysisService.getTest();
-		String note = new NoteService(currentAnalysisService.getAnalysis()).getNotesAsString(true, true, "<br/>",
+		String note = new NoteServiceImpl(currentAnalysisService.getAnalysis()).getNotesAsString(true, true, "<br/>",
 				FILTER, true);
 		if (note != null) {
 			data.setNote(note);
@@ -541,7 +541,7 @@ public abstract class PatientReport extends Report {
 	protected String getResultFlag(Result result, String imbed, ClinicalPatientData data) {
 		String flag = "";
 		try {
-			if (TypeOfTestResultService.ResultType.NUMERIC.matches(result.getResultType())
+			if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(result.getResultType())
 					&& !GenericValidator.isBlankOrNull(result.getValue())) {
 				if (result.getMinNormal() != null & result.getMaxNormal() != null
 						&& (result.getMinNormal() != 0.0 || result.getMaxNormal() != 0.0)) {
@@ -551,11 +551,11 @@ public abstract class PatientReport extends Report {
 						flag = "E";
 					}
 				}
-			} else if (TypeOfTestResultService.ResultType.isDictionaryVariant(result.getResultType())) {
+			} else if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
 				boolean isAbnormal;
 
 				if (data == null) {
-					isAbnormal = new ResultService(result).isAbnormalDictionaryResult();
+					isAbnormal = new ResultServiceImpl(result).isAbnormalDictionaryResult();
 				} else {
 					isAbnormal = data.getAbnormalResult();
 				}
@@ -586,7 +586,7 @@ public abstract class PatientReport extends Report {
 	}
 
 	protected String getRange(Result result) {
-		return new ResultService(result).getDisplayReferenceRange(true);
+		return new ResultServiceImpl(result).getDisplayReferenceRange(true);
 	}
 
 	protected String getUnitOfMeasure(Test test) {
@@ -600,11 +600,11 @@ public abstract class PatientReport extends Report {
 			// If only one result just get it and get out
 			if (resultList.size() == 1) {
 				Result result = resultList.get(0);
-				if (TypeOfTestResultService.ResultType.isDictionaryVariant(result.getResultType())) {
+				if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
 					Dictionary dictionary = new Dictionary();
 					dictionary.setId(result.getValue());
 					dictionaryDAO.getData(dictionary);
-					data.setAbnormalResult(new ResultService(result).isAbnormalDictionaryResult());
+					data.setAbnormalResult(new ResultServiceImpl(result).isAbnormalDictionaryResult());
 
 					if (result.getAnalyte() != null && "Conclusion".equals(result.getAnalyte().getAnalyteName())) {
 						currentConclusion = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
@@ -612,25 +612,25 @@ public abstract class PatientReport extends Report {
 						reportResult = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
 					}
 				} else {
-					reportResult = new ResultService(result).getResultValue(true);
+					reportResult = new ResultServiceImpl(result).getResultValue(true);
 					// TODO - how is this used. Selection types can also have
 					// UOM and reference ranges
-					data.setHasRangeAndUOM(TypeOfTestResultService.ResultType.NUMERIC.matches(result.getResultType()));
+					data.setHasRangeAndUOM(TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(result.getResultType()));
 				}
 			} else {
 				// If multiple results it can be a quantified result, multiple
 				// results with quantified other results or it can be a
 				// conclusion
-				ResultService resultService = new ResultService(resultList.get(0));
+				ResultServiceImpl resultService = new ResultServiceImpl(resultList.get(0));
 
-				if (TypeOfTestResultService.ResultType.DICTIONARY.matches(resultService.getTestType())) {
+				if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(resultService.getTestType())) {
 					data.setAbnormalResult(resultService.isAbnormalDictionaryResult());
 					List<Result> dictionaryResults = new ArrayList<Result>();
 					Result quantification = null;
 					for (Result sibResult : resultList) {
-						if (TypeOfTestResultService.ResultType.DICTIONARY.matches(sibResult.getResultType())) {
+						if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(sibResult.getResultType())) {
 							dictionaryResults.add(sibResult);
-						} else if (TypeOfTestResultService.ResultType.ALPHA.matches(sibResult.getResultType())
+						} else if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(sibResult.getResultType())
 								&& sibResult.getParentResult() != null) {
 							quantification = sibResult;
 						}
@@ -651,7 +651,7 @@ public abstract class PatientReport extends Report {
 							}
 						}
 					}
-				} else if (TypeOfTestResultService.ResultType.isMultiSelectVariant(resultService.getTestType())) {
+				} else if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(resultService.getTestType())) {
 					Dictionary dictionary = new Dictionary();
 					StringBuilder multiResult = new StringBuilder();
 
@@ -668,7 +668,7 @@ public abstract class PatientReport extends Report {
 
 					Result quantifiedResult = null;
 					for (Result subResult : resultList) {
-						if (TypeOfTestResultService.ResultType.ALPHA.matches(subResult.getResultType())) {
+						if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(subResult.getResultType())) {
 							quantifiedResult = subResult;
 							resultList.remove(subResult);
 							break;
@@ -797,16 +797,16 @@ public abstract class PatientReport extends Report {
 		setPatientName(data);
 		data.setDept(patientDept);
 		data.setCommune(patientCommune);
-		data.setStNumber(getLazyPatientIdentity(STNumber, PatientService.PATIENT_ST_IDENTITY));
-		data.setSubjectNumber(getLazyPatientIdentity(subjectNumber, PatientService.PATIENT_SUBJECT_IDENTITY));
-		data.setHealthRegion(getLazyPatientIdentity(healthRegion, PatientService.PATIENT_HEALTH_REGION_IDENTITY));
-		data.setHealthDistrict(getLazyPatientIdentity(healthDistrict, PatientService.PATIENT_HEALTH_DISTRICT_IDENTITY));
+		data.setStNumber(getLazyPatientIdentity(STNumber, PatientServiceImpl.PATIENT_ST_IDENTITY));
+		data.setSubjectNumber(getLazyPatientIdentity(subjectNumber, PatientServiceImpl.PATIENT_SUBJECT_IDENTITY));
+		data.setHealthRegion(getLazyPatientIdentity(healthRegion, PatientServiceImpl.PATIENT_HEALTH_REGION_IDENTITY));
+		data.setHealthDistrict(getLazyPatientIdentity(healthDistrict, PatientServiceImpl.PATIENT_HEALTH_DISTRICT_IDENTITY));
 		data.setLabOrderType(
-				ObservationHistoryService.getValueForSample(ObservationType.PROGRAM, currentSampleService.getId()));
+				ObservationHistoryServiceImpl.getValueForSample(ObservationType.PROGRAM, currentSampleService.getId()));
 		data.setTestName(testName);
-		data.setPatientSiteNumber(ObservationHistoryService.getValueForSample(ObservationType.REFERRERS_PATIENT_ID,
+		data.setPatientSiteNumber(ObservationHistoryServiceImpl.getValueForSample(ObservationType.REFERRERS_PATIENT_ID,
 				currentSampleService.getId()));
-		data.setBillingNumber(ObservationHistoryService.getValueForSample(ObservationType.BILLING_REFERENCE_NUMBER,
+		data.setBillingNumber(ObservationHistoryServiceImpl.getValueForSample(ObservationType.BILLING_REFERENCE_NUMBER,
 				currentSampleService.getId()));
 
 		if (doAnalysis) {
@@ -838,13 +838,13 @@ public abstract class PatientReport extends Report {
 		String testName;
 
 		if (useReportingDescription()) {
-			testName = TestService.getUserLocalizedReportingTestName(currentAnalysisService.getTest());
+			testName = TestServiceImpl.getUserLocalizedReportingTestName(currentAnalysisService.getTest());
 		} else {
-			testName = TestService.getUserLocalizedTestName(currentAnalysisService.getTest());
+			testName = TestServiceImpl.getUserLocalizedTestName(currentAnalysisService.getTest());
 		}
 
 		if (GenericValidator.isBlankOrNull(testName)) {
-			testName = TestService.getUserLocalizedTestName(currentAnalysisService.getTest());
+			testName = TestServiceImpl.getUserLocalizedTestName(currentAnalysisService.getTest());
 		}
 		return (indent ? "    " : "") + testName;
 	}
@@ -899,7 +899,7 @@ public abstract class PatientReport extends Report {
 		if (value == null) {
 			return reportResult;
 		}
-		if (TypeOfTestResultService.ResultType.isDictionaryVariant(type)) {
+		if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(type)) {
 			if (result.getValue() != null && !"null".equals(result.getValue())) {
 				Dictionary dictionary = new Dictionary();
 				dictionary.setId(result.getValue());

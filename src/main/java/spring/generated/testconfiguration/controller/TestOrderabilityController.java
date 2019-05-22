@@ -26,9 +26,9 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.TestOrderabilityForm;
 import spring.generated.testconfiguration.validator.TestOrderabilityFormValidator;
 import spring.mine.common.controller.BaseController;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.test.beanItems.TestActivationBean;
@@ -66,7 +66,7 @@ public class TestOrderabilityController extends BaseController {
 		for (IdValuePair pair : sampleTypeList) {
 			TestActivationBean bean = new TestActivationBean();
 
-			List<Test> tests = TypeOfSampleService.getAllTestsBySampleTypeId(pair.getId());
+			List<Test> tests = TypeOfSampleServiceImpl.getAllTestsBySampleTypeId(pair.getId());
 			List<IdValuePair> orderableTests = new ArrayList<>();
 			List<IdValuePair> inorderableTests = new ArrayList<>();
 
@@ -93,9 +93,9 @@ public class TestOrderabilityController extends BaseController {
 
 			for (Test test : tests) {
 				if (test.getOrderable()) {
-					orderableTests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
+					orderableTests.add(new IdValuePair(test.getId(), TestServiceImpl.getUserLocalizedTestName(test)));
 				} else {
-					inorderableTests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
+					inorderableTests.add(new IdValuePair(test.getId(), TestServiceImpl.getUserLocalizedTestName(test)));
 				}
 			}
 
@@ -163,7 +163,7 @@ public class TestOrderabilityController extends BaseController {
 			HibernateUtil.closeSession();
 		}
 
-		TypeOfSampleService.clearCache();
+		TypeOfSampleServiceImpl.clearCache();
 
 		List<TestActivationBean> orderableTestList = createTestList(true);
 		form.setOrderableTestList(orderableTestList);
@@ -175,7 +175,7 @@ public class TestOrderabilityController extends BaseController {
 		List<Test> tests = new ArrayList<>();
 
 		for (String testId : testIds) {
-			Test test = new TestService(testId).getTest();
+			Test test = new TestServiceImpl(testId).getTest();
 			test.setOrderable(orderable);
 			test.setSysUserId(getSysUserId(request));
 			tests.add(test);

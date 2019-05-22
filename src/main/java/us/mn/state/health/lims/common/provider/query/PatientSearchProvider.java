@@ -30,9 +30,9 @@ import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.provider.query.workerObjects.PatientSearchLocalAndClinicWorker;
 import us.mn.state.health.lims.common.provider.query.workerObjects.PatientSearchLocalWorker;
 import us.mn.state.health.lims.common.provider.query.workerObjects.PatientSearchWorker;
-import us.mn.state.health.lims.common.services.ObservationHistoryService;
-import us.mn.state.health.lims.common.services.ObservationHistoryService.ObservationType;
-import us.mn.state.health.lims.common.services.PatientService;
+import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
+import spring.service.patient.PatientServiceImpl;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
@@ -92,7 +92,7 @@ public class PatientSearchProvider extends BaseQueryProvider{
 	}
 
 	private PatientSearchResults getSearchResultsForPatient(Patient patient){
-		PatientService service = new PatientService(patient);
+		PatientServiceImpl service = new PatientServiceImpl(patient);
 
 		return new PatientSearchResults(BigDecimal.valueOf(Long.parseLong(patient.getId())),
 				service.getFirstName(),
@@ -104,7 +104,7 @@ public class PatientSearchProvider extends BaseQueryProvider{
 				service.getSTNumber(),
 				service.getSubjectNumber(),
 				service.getGUID(),
-                ObservationHistoryService.getMostRecentValueForPatient( ObservationType.REFERRERS_PATIENT_ID, service.getPatientId() ));
+                ObservationHistoryServiceImpl.getMostRecentValueForPatient( ObservationType.REFERRERS_PATIENT_ID, service.getPatientId() ));
 	}
 
 	private Patient getPatientForLabNumber(String labNumber){

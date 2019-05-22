@@ -26,17 +26,17 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.IPatientService;
 import us.mn.state.health.lims.common.services.LabIdentificationService;
-import us.mn.state.health.lims.common.services.NoteService;
-import us.mn.state.health.lims.common.services.PatientService;
-import us.mn.state.health.lims.common.services.ResultLimitService;
-import us.mn.state.health.lims.common.services.ResultService;
+import spring.service.note.NoteServiceImpl;
+import spring.service.patient.PatientServiceImpl;
+import spring.service.resultlimit.ResultLimitServiceImpl;
+import spring.service.result.ResultServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
-import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -116,7 +116,7 @@ public class ResultReportingCollator {
 		ResultXmit resultBean = new ResultXmit();
 
 		CodedValueXmit codedValue = new CodedValueXmit();
-		if ( TypeOfTestResultService.ResultType.isDictionaryVariant( result.getResultType() )) {
+		if ( TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant( result.getResultType() )) {
 			codedValue.setCode(DictionaryUtil.getHL7ForDictioanryById(result.getValue()));
 		}
 
@@ -131,7 +131,7 @@ public class ResultReportingCollator {
 		}
 		resultBean.setTypeResult(hl7type);
 		resultBean.setUpdateStatus(isUpdate ? "update" : "new");
-		resultBean.setLoinc(new ResultService(result).getLOINCCode());
+		resultBean.setLoinc(new ResultServiceImpl(result).getLOINCCode());
 		results.add(resultBean);
 
 		SampleItem sampleItemForResult = result.getAnalysis().getSampleItem();
@@ -151,12 +151,12 @@ public class ResultReportingCollator {
 
 		CodedValueXmit codedTest = new CodedValueXmit();
 /*		if (forMalaria) {*/
-			ResultService resultService = new ResultService(result);
+			ResultServiceImpl resultService = new ResultServiceImpl(result);
 			codedTest.setCode(resultService.getLOINCCode() == null ? "34" : resultService.getLOINCCode());
 /*		} else {
 			codedTest.setCode("34");
 		}*/
-		codedTest.setText(TestService.getUserLocalizedTestName( result.getAnalysis().getTest() ));
+		codedTest.setText(TestServiceImpl.getUserLocalizedTestName( result.getAnalysis().getTest() ));
 		codedTest.setCodeName("LN");
 		codedTest.setCodeSystem("2.16.840.1.113883.6.1");
 		testResult.setTest(codedTest);
@@ -204,7 +204,7 @@ public class ResultReportingCollator {
 
 		// For valid range min/max
 		SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
-		ResultLimit validLimit = new ResultLimitService().getResultLimitForTestAndPatient(result.getAnalysis().getTest(),
+		ResultLimit validLimit = new ResultLimitServiceImpl().getResultLimitForTestAndPatient(result.getAnalysis().getTest(),
 																			   sampleHumanDAO.getPatientForSample(result.getAnalysis().getSampleItem().getSample()));
 		if (validLimit != null && (validLimit.getLowValid() != validLimit.getHighValid())) {
 			TestRangeXmit validRange = new TestRangeXmit();
@@ -221,7 +221,7 @@ public class ResultReportingCollator {
 		// Malaria case report needs the following extra data elements
 		if (forMalaria) {
 			// Patient demographic data
-			IPatientService patientService = new PatientService(patient);
+			IPatientService patientService = new PatientServiceImpl(patient);
 			testResult.setPatientFirstName(patientService.getFirstName());
 			testResult.setPatientLastName(patientService.getLastName());
 			testResult.setPatientGender(patientService.getGender());
@@ -260,7 +260,7 @@ public class ResultReportingCollator {
 		if (result != null) {
             Analysis analysis = new Analysis();
             analysis.setId( result.getAnalysis().getId() );
-            return new NoteService( analysis ).getNotesAsString( false, false, "<br/>", false );
+            return new NoteServiceImpl( analysis ).getNotesAsString( false, false, "<br/>", false );
 		}
 		return null;
 	}
@@ -276,7 +276,7 @@ public class ResultReportingCollator {
 	private boolean hasNoReportableResults(Result result, Patient patient) {
 		return noGUIDPatients.contains(patient.getId()) ||
 			   GenericValidator.isBlankOrNull(result.getValue()) ||
-			   (TypeOfTestResultService.ResultType.isDictionaryVariant( result.getResultType() ) && "0".equals(result.getValue()) /*||
+			   (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant( result.getResultType() ) && "0".equals(result.getValue()) /*||
 				!VALIDATED_RESULT_STATUS_ID.equals(result.getAnalysis().getStatusId())*/ );
 	}
 

@@ -28,7 +28,7 @@ import org.hibernate.Transaction;
 
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.TestSectionService;
+import spring.service.test.TestSectionServiceImpl;
 import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -48,7 +48,7 @@ public class TestSectionTestAssignUpdate extends BaseAction {
         boolean updateTestSection = false;
         String currentUser = getSysUserId(request);
         Test test = new TestService(testId).getTest();
-        TestSection testSection = new TestSectionService(testSectionId).getTestSection();
+        TestSection testSection = new TestSectionServiceImpl(testSectionId).getTestSection();
         TestSection deActivateTestSection = null;
         test.setTestSection(testSection);
         test.setSysUserId(currentUser);
@@ -65,7 +65,7 @@ public class TestSectionTestAssignUpdate extends BaseAction {
         }
 
         if( !GenericValidator.isBlankOrNull(deactivateTestSectionId) ){
-            deActivateTestSection  = new TestSectionService(deactivateTestSectionId).getTestSection();
+            deActivateTestSection  = new TestSectionServiceImpl(deactivateTestSectionId).getTestSection();
             deActivateTestSection.setIsActive("N");
             deActivateTestSection.setSysUserId(currentUser);
         }

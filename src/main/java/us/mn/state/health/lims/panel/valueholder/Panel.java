@@ -15,7 +15,7 @@
 */
 package us.mn.state.health.lims.panel.valueholder;
 
-import us.mn.state.health.lims.common.services.LocalizationService;
+import spring.service.localization.LocalizationServiceImpl;
 import us.mn.state.health.lims.common.valueholder.EnumValueItemImpl;
 import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.localization.valueholder.Localization;
@@ -61,7 +61,7 @@ public class Panel extends EnumValueItemImpl {
 
 	@Override
 	protected String getDefaultLocalizedName() {
-		return LocalizationService.getLocalizedValueById(getLocalization().getId());
+		return LocalizationServiceImpl.getLocalizedValueById(getLocalization().getId());
 	}
 
 	public int getSortOrderInt() {

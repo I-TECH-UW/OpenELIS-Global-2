@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -16,6 +17,7 @@ import us.mn.state.health.lims.datasubmission.valueholder.DataValue;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
+@Transactional 
 public class DataValueDAOImpl extends BaseDAOImpl<DataValue> implements DataValueDAO {
 
 	public DataValueDAOImpl() {

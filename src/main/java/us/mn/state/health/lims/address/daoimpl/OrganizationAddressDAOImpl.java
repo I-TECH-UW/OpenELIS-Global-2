@@ -22,6 +22,7 @@ import java.util.Optional;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.address.dao.OrganizationAddressDAO;
 import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
@@ -33,6 +34,7 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
+@Transactional 
 public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress> implements OrganizationAddressDAO {
 
 	public OrganizationAddressDAOImpl() {

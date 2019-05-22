@@ -26,13 +26,13 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.ReportTrackingService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
@@ -124,7 +124,7 @@ public abstract class PatientARVReport extends RetroCIPatientReport {
 			}
 
 			if (!analysis.getStatusId().equals(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled))) {
-				String testName = TestService.getUserLocalizedTestName(analysis.getTest());
+				String testName = TestServiceImpl.getUserLocalizedTestName(analysis.getTest());
 				List<Result> resultList = resultDAO.getResultsByAnalysis(analysis);
 				String resultValue = null;
 

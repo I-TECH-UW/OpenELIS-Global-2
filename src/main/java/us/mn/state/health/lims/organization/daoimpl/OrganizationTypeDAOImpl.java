@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -31,6 +32,7 @@ import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.organization.valueholder.OrganizationType;
 
 @Component
+@Transactional 
 public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType> implements OrganizationTypeDAO {
 
 	public OrganizationTypeDAOImpl() {

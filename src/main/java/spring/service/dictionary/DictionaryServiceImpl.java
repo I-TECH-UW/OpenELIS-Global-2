@@ -30,7 +30,7 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary> imp
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public Dictionary update(Dictionary dictionary) {
 		if (baseObjectDAO.duplicateDictionaryExists(dictionary)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + dictionary.getDictEntry());
@@ -41,13 +41,13 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary> imp
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public void delete(Dictionary dictionary) {
 		delete(dictionary.getId(), dictionary.getSysUserId());
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public void delete(String id, String sysUserId) {
 		Dictionary oldData = baseObjectDAO.get(id)
 				.orElseThrow(() -> new ObjectNotFoundException(id, Dictionary.class.getName()));
@@ -57,7 +57,7 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary> imp
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public void deleteAll(List<Dictionary> dictionaries) {
 		for (Dictionary dictionary : dictionaries) {
 			delete(dictionary);
@@ -65,7 +65,7 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary> imp
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public void deleteAll(List<String> ids, String sysUserId) {
 		for (String id : ids) {
 			delete(id, sysUserId);
@@ -73,7 +73,7 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary> imp
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public void update(Dictionary dictionary, boolean isDictionaryFrozenCheckRequired) {
 		if (baseObjectDAO.duplicateDictionaryExists(dictionary)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + dictionary.getDictEntry());
@@ -85,7 +85,7 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary> imp
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<Dictionary> getPagesOfSearchedDictionaries(int startingRecNo, String searchString) {
 		List<String> orderProperties = new ArrayList<>();
 		orderProperties.add("dictionaryCategory.categoryName");
@@ -94,20 +94,20 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary> imp
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public int getCountSearchedDictionaries(String searchString) {
 		return getCountLike("dictEntry", searchString);
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String fieldName, String fieldValue,
 			boolean orderByDictEntry) {
 		return baseObjectDAO.getDictionaryEntrysByCategoryAbbreviation(fieldName, fieldValue, orderByDictEntry);
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<Dictionary> getDictionaryEntriesByCategoryId(String dictionaryCategoryId) {
 		return baseObjectDAO.getAllMatching("dictionaryCategory.id", dictionaryCategoryId);
 	}

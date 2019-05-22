@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.citystatezip.dao.CityStateZipDAO;
 import us.mn.state.health.lims.citystatezip.valueholder.CityStateZip;
@@ -38,6 +39,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  *
  */
 @Component
+@Transactional 
 public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip> implements CityStateZipDAO {
 
 	public CityStateZipDAOImpl() {

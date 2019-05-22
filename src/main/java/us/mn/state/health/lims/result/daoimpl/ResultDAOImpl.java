@@ -24,6 +24,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
@@ -45,6 +46,7 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
  * @author diane benz
  */
 @Component
+@Transactional 
 public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 
 	public ResultDAOImpl() {

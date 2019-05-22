@@ -20,9 +20,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.SampleTypeTestAssignForm;
 import spring.mine.common.controller.BaseController;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -52,11 +52,11 @@ public class SampleTypeTestAssignController extends BaseController {
 		for (IdValuePair sampleTypePair : typeOfSamples) {
 			List<IdValuePair> tests = new ArrayList<>();
 			sampleTypesTestsMap.put(sampleTypePair, tests);
-			List<Test> testList = TypeOfSampleService.getAllTestsBySampleTypeId(sampleTypePair.getId());
+			List<Test> testList = TypeOfSampleServiceImpl.getAllTestsBySampleTypeId(sampleTypePair.getId());
 
 			for (Test test : testList) {
 				if (test.isActive()) {
-					tests.add(new IdValuePair(test.getId(), TestService.getLocalizedTestNameWithType(test)));
+					tests.add(new IdValuePair(test.getId(), TestServiceImpl.getLocalizedTestNameWithType(test)));
 				}
 			}
 		}
@@ -110,7 +110,7 @@ public class SampleTypeTestAssignController extends BaseController {
 		boolean updateTypeOfSample = false;
 		String currentUser = getSysUserId(request);
 
-		TypeOfSample typeOfSample = TypeOfSampleService.getTransientTypeOfSampleById(sampleTypeId);
+		TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getTransientTypeOfSampleById(sampleTypeId);
 		TypeOfSample deActivateTypeOfSample = null;
 
 		// Test test = new TestService(testId).getTest();
@@ -144,7 +144,7 @@ public class SampleTypeTestAssignController extends BaseController {
 
 //------------------------------------------
 		if (!GenericValidator.isBlankOrNull(deactivateSampleTypeId)) {
-			deActivateTypeOfSample = TypeOfSampleService.getTransientTypeOfSampleById(deactivateSampleTypeId);
+			deActivateTypeOfSample = TypeOfSampleServiceImpl.getTransientTypeOfSampleById(deactivateSampleTypeId);
 			deActivateTypeOfSample.setIsActive(false);
 			deActivateTypeOfSample.setSysUserId(currentUser);
 		}

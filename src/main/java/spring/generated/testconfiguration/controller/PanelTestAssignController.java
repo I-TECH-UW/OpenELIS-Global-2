@@ -23,9 +23,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.generated.testconfiguration.form.PanelTestAssignForm;
 import spring.mine.common.controller.BaseController;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.panel.dao.PanelDAO;
@@ -85,7 +85,7 @@ public class PanelTestAssignController extends BaseController {
 
 			for (Test test : testList) {
 				if (test.isActive()) {
-					tests.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
+					tests.add(new IdValuePair(test.getId(), TestServiceImpl.getUserLocalizedTestName(test)));
 					testIdSet.add(test.getId());
 				}
 			}

@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
@@ -35,7 +35,7 @@ public class ResultUtil {
 	private static final TestAnalyteDAO testAnalyteDAO = new TestAnalyteDAOImpl();
 	
 	public static String getStringValueOfResult( Result result){
-		if( TypeOfTestResultService.ResultType.isDictionaryVariant( result.getResultType() )){
+		if( TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant( result.getResultType() )){
 			return dictionaryDAO.getDictionaryById(result.getValue()).getLocalizedName();
 		}else{
 			return result.getValue();
@@ -87,8 +87,8 @@ public class ResultUtil {
     }
 	public static boolean areResults(TestResultItem item) {
 		return !(GenericValidator.isBlankOrNull(item.getShadowResultValue()) ||
-				(TypeOfTestResultService.ResultType.DICTIONARY.matches(item.getResultType()) && "0".equals(item.getShadowResultValue()))) ||
-				(TypeOfTestResultService.ResultType.isMultiSelectVariant(item.getResultType()) && !GenericValidator.isBlankOrNull(item.getMultiSelectResultValues()));
+				(TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(item.getResultType()) && "0".equals(item.getShadowResultValue()))) ||
+				(TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(item.getResultType()) && !GenericValidator.isBlankOrNull(item.getMultiSelectResultValues()));
 	}
 
 	public static boolean isForcedToAcceptance(TestResultItem item){

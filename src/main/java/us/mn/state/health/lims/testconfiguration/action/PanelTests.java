@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSamplePanelDAO;
@@ -62,7 +62,7 @@ public class PanelTests {
 
 	public void setTests(List<IdValuePair> tests, Set<String> testIdSet) {
 		this.tests = tests;
-		List<Test> allTests = TypeOfSampleService.getAllTestsBySampleTypeId(this.sampleTypeIdValuePair.getId());
+		List<Test> allTests = TypeOfSampleServiceImpl.getAllTestsBySampleTypeId(this.sampleTypeIdValuePair.getId());
 		
 		for (Test test : allTests) {
 			if (!testIdSet.contains(test.getId())) {

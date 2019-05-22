@@ -26,8 +26,8 @@ import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator;
-import us.mn.state.health.lims.common.services.ObservationHistoryService;
-import us.mn.state.health.lims.common.services.ObservationHistoryService.ObservationType;
+import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import us.mn.state.health.lims.common.services.SampleAddService;
 import us.mn.state.health.lims.common.services.SampleAddService.SampleTestCollection;
 import us.mn.state.health.lims.common.services.StatusService;
@@ -454,19 +454,19 @@ public class SamplePatientUpdateData{
 
     private void addObservations( SampleOrderItem sampleOrder, boolean trackPayments ) {
         if (trackPayments) {
-            createObservation( sampleOrder.getPaymentOptionSelection(), ObservationHistoryService.getObservationTypeIdForType( ObservationType.PAYMENT_STATUS ), ValueType.DICTIONARY );
+            createObservation( sampleOrder.getPaymentOptionSelection(), ObservationHistoryServiceImpl.getObservationTypeIdForType( ObservationType.PAYMENT_STATUS ), ValueType.DICTIONARY );
         }
 
-        createObservation( sampleOrder.getRequestDate(), ObservationHistoryService.getObservationTypeIdForType( ObservationType.REQUEST_DATE ), ValueType.LITERAL );
-        createObservation( sampleOrder.getNextVisitDate(), ObservationHistoryService.getObservationTypeIdForType( ObservationType.NEXT_VISIT_DATE ), ValueType.LITERAL );
-        createObservation( sampleOrder.getTestLocationCode(), ObservationHistoryService.getObservationTypeIdForType( ObservationType.TEST_LOCATION_CODE ), ValueType.DICTIONARY );
-        createObservation( sampleOrder.getOtherLocationCode(), ObservationHistoryService.getObservationTypeIdForType( ObservationType.TEST_LOCATION_CODE_OTHER ), ValueType.LITERAL );
-        createObservation( sampleOrder.getReferringPatientNumber(), ObservationHistoryService.getObservationTypeIdForType( ObservationType.REFERRERS_PATIENT_ID ), ValueType.LITERAL );
+        createObservation( sampleOrder.getRequestDate(), ObservationHistoryServiceImpl.getObservationTypeIdForType( ObservationType.REQUEST_DATE ), ValueType.LITERAL );
+        createObservation( sampleOrder.getNextVisitDate(), ObservationHistoryServiceImpl.getObservationTypeIdForType( ObservationType.NEXT_VISIT_DATE ), ValueType.LITERAL );
+        createObservation( sampleOrder.getTestLocationCode(), ObservationHistoryServiceImpl.getObservationTypeIdForType( ObservationType.TEST_LOCATION_CODE ), ValueType.DICTIONARY );
+        createObservation( sampleOrder.getOtherLocationCode(), ObservationHistoryServiceImpl.getObservationTypeIdForType( ObservationType.TEST_LOCATION_CODE_OTHER ), ValueType.LITERAL );
+        createObservation( sampleOrder.getReferringPatientNumber(), ObservationHistoryServiceImpl.getObservationTypeIdForType( ObservationType.REFERRERS_PATIENT_ID ), ValueType.LITERAL );
         if( ConfigurationProperties.getInstance().isPropertyValueEqual( Property.USE_BILLING_REFERENCE_NUMBER, "true" )){
-            createObservation( sampleOrder.getBillingReferenceNumber(), ObservationHistoryService.getObservationTypeIdForType( ObservationType.BILLING_REFERENCE_NUMBER ), ValueType.LITERAL );
+            createObservation( sampleOrder.getBillingReferenceNumber(), ObservationHistoryServiceImpl.getObservationTypeIdForType( ObservationType.BILLING_REFERENCE_NUMBER ), ValueType.LITERAL );
         }
         if( ConfigurationProperties.getInstance().isPropertyValueEqual( Property.ORDER_PROGRAM, "true" )){
-            createObservation( sampleOrder.getProgram(), ObservationHistoryService.getObservationTypeIdForType( ObservationType.PROGRAM ), ValueType.DICTIONARY );
+            createObservation( sampleOrder.getProgram(), ObservationHistoryServiceImpl.getObservationTypeIdForType( ObservationType.PROGRAM ), ValueType.DICTIONARY );
         }
     }
 

@@ -21,11 +21,11 @@ import spring.service.test.TestSectionService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
-import us.mn.state.health.lims.common.services.AnalysisService;
+import spring.service.analysis.AnalysisServiceImpl;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
-import us.mn.state.health.lims.common.services.ObservationHistoryService;
-import us.mn.state.health.lims.common.services.ObservationHistoryService.ObservationType;
+import spring.service.observationhistory.ObservationHistoryServiceImpl;
+import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -142,11 +142,11 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
 
 					subjectNumber = getSubjectNumber(analysis);
 					patientName = getPatientName(analysis);
-					nextVisit = ObservationHistoryService.getValueForSample(ObservationType.NEXT_VISIT_DATE,
+					nextVisit = ObservationHistoryServiceImpl.getValueForSample(ObservationType.NEXT_VISIT_DATE,
 							sample.getId());
 				}
 
-				AnalysisService analysisServiceOld = new AnalysisService(analysis);
+				AnalysisServiceImpl analysisServiceOld = new AnalysisServiceImpl(analysis);
 				testResultItem = new TestResultItem();
 				testResultItem.setTestName(analysisServiceOld.getTestDisplayName());
 				testResultItem.setAccessionNumber(currentAccessionNumber);

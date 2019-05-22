@@ -23,6 +23,7 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -31,6 +32,7 @@ import us.mn.state.health.lims.organization.valueholder.Organization;
 
 //TODO move to service layer, or other DAOs
 @Component
+@Transactional 
 public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganizationTypeDAO {
 
 	@Autowired

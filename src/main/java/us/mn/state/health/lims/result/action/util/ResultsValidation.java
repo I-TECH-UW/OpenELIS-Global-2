@@ -14,8 +14,8 @@ import spring.mine.common.validator.BaseErrors;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
-import us.mn.state.health.lims.common.services.AnalysisService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.validator.CustomDateValidator;
@@ -153,8 +153,8 @@ public class ResultsValidation {
 
 	private boolean resultHasChanged(TestResultItem item) {
 
-		if (TypeOfTestResultService.ResultType.isMultiSelectVariant(item.getResultType())) {
-			List<Result> resultList = new AnalysisService(item.getAnalysisId()).getResults();
+		if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(item.getResultType())) {
+			List<Result> resultList = new AnalysisServiceImpl(item.getAnalysisId()).getResults();
 			ArrayList<String> dictionaryIds = new ArrayList<>(resultList.size());
 			for (Result result : resultList) {
 				dictionaryIds.add(result.getValue());

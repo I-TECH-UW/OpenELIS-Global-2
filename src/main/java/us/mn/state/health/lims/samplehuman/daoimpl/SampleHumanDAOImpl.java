@@ -23,6 +23,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -45,6 +46,7 @@ import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
  * @version $Revision$
  */
 @Component
+@Transactional 
 public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements SampleHumanDAO {
 
 	public SampleHumanDAOImpl() {

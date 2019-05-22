@@ -22,7 +22,7 @@ import java.util.List;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.ResultService;
+import spring.service.result.ResultServiceImpl;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ActivityReportBean;
 import us.mn.state.health.lims.result.valueholder.Result;
 
@@ -54,7 +54,7 @@ public class ActivityReportByTest extends ActivityReport implements IReportCreat
         // do not print the separator bar between name/Id and tests
         reportParameters.put( "underlineResults", false );
         
-        List<Result> resultList = ResultService.getResultsInTimePeriodWithTest( dateRange.getLowDate(), dateRange.getHighDate(), testSelection.getSelection() );
+        List<Result> resultList = ResultServiceImpl.getResultsInTimePeriodWithTest( dateRange.getLowDate(), dateRange.getHighDate(), testSelection.getSelection() );
         testsResults = new ArrayList<ActivityReportBean>( resultList.size() );
 
         String currentAnalysisId = "-1";

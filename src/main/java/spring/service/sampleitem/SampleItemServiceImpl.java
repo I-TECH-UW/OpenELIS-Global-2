@@ -26,13 +26,13 @@ public class SampleItemServiceImpl extends BaseObjectServiceImpl<SampleItem> imp
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<SampleItem> getSampleItemsBySampleId(String id) {
 		return baseObjectDAO.getAllMatching("sample.id", id);
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<SampleItem> getSampleItemsBySampleIdAndStatus(String id, Set<Integer> enteredStatusSampleList) {
 		return baseObjectDAO.getSampleItemsBySampleIdAndStatus(id, enteredStatusSampleList);
 	}

@@ -35,9 +35,9 @@ import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.services.LocalizationService;
-import us.mn.state.health.lims.common.services.ResultLimitService;
+import spring.service.resultlimit.ResultLimitServiceImpl;
 import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
@@ -70,7 +70,7 @@ public class TestModifyAction extends BaseAction {
         PropertyUtils.setProperty(form, "resultTypeList", DisplayListService.getList(ListType.RESULT_TYPE_LOCALIZED));
         PropertyUtils.setProperty(form, "uomList", DisplayListService.getList(ListType.UNIT_OF_MEASURE));
         PropertyUtils.setProperty(form, "labUnitList", DisplayListService.getList(ListType.TEST_SECTION));
-        PropertyUtils.setProperty(form, "ageRangeList", ResultLimitService.getPredefinedAgeRanges());
+        PropertyUtils.setProperty(form, "ageRangeList", ResultLimitServiceImpl.getPredefinedAgeRanges());
         PropertyUtils.setProperty(form, "dictionaryList", DisplayListService.getList(ListType.DICTIONARY_TEST_RESULTS));
         PropertyUtils.setProperty(form, "groupedDictionaryList", createGroupedDictionaryList());
         PropertyUtils.setProperty( form, "testList", DisplayListService.getFreshList( DisplayListService.ListType.ALL_TESTS ) );
@@ -112,12 +112,12 @@ public class TestModifyAction extends BaseAction {
             bean.setLoinc(test.getLoinc());
             bean.setActive(test.isActive() ? "Active" : "Not active");
             bean.setUom(testService.getUOM(false));
-            if( TypeOfTestResultService.ResultType.NUMERIC.matches(resultType)) {
+            if( TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(resultType)) {
                 bean.setSignificantDigits(testService.getPossibleTestResults().get(0).getSignificantDigits());
                 bean.setHasLimitValues(true);
                 bean.setResultLimits(getResultLimits(test, bean.getSignificantDigits()));
             }
-            bean.setHasDictionaryValues(TypeOfTestResultService.ResultType.isDictionaryVariant(bean.getResultType()));
+            bean.setHasDictionaryValues(TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(bean.getResultType()));
             if( bean.isHasDictionaryValues()){
                 bean.setDictionaryValues(createDictionaryValues(testService));
                 bean.setReferenceValue(createReferenceValueForDictionaryType(test));
@@ -157,7 +157,7 @@ public class TestModifyAction extends BaseAction {
     private List<ResultLimitBean> getResultLimits(Test test, String significantDigits) {
         List<ResultLimitBean> limitBeans = new ArrayList<ResultLimitBean>();
 
-        List<ResultLimit> resultLimitList = ResultLimitService.getResultLimits(test);
+        List<ResultLimit> resultLimitList = ResultLimitServiceImpl.getResultLimits(test);
 
         Collections.sort(resultLimitList, new Comparator<ResultLimit>() {
             @Override
@@ -168,23 +168,23 @@ public class TestModifyAction extends BaseAction {
 
         for( ResultLimit limit : resultLimitList){
             ResultLimitBean bean = new ResultLimitBean();
-            bean.setNormalRange(ResultLimitService.getDisplayReferenceRange(limit, significantDigits, "-"));
-            bean.setValidRange(ResultLimitService.getDisplayValidRange(limit, significantDigits, "-"));
+            bean.setNormalRange(ResultLimitServiceImpl.getDisplayReferenceRange(limit, significantDigits, "-"));
+            bean.setValidRange(ResultLimitServiceImpl.getDisplayValidRange(limit, significantDigits, "-"));
             bean.setGender(limit.getGender());
-            bean.setAgeRange( ResultLimitService.getDisplayAgeRange(limit, "-"));
+            bean.setAgeRange( ResultLimitServiceImpl.getDisplayAgeRange(limit, "-"));
             limitBeans.add(bean);
         }
         return limitBeans;
     }
 
     private String createReferenceValueForDictionaryType(Test test) {
-        List<ResultLimit> resultLimits = ResultLimitService.getResultLimits(test);
+        List<ResultLimit> resultLimits = ResultLimitServiceImpl.getResultLimits(test);
 
         if( resultLimits.isEmpty() ){
             return "n/a";
         }
 
-        return ResultLimitService.getDisplayReferenceRange(resultLimits.get(0),null, null);
+        return ResultLimitServiceImpl.getDisplayReferenceRange(resultLimits.get(0),null, null);
 
     }
 
@@ -200,7 +200,7 @@ public class TestModifyAction extends BaseAction {
 
     private String getDictionaryValue(TestResult testResult) {
 
-        if (TypeOfTestResultService.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
+        if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
             Dictionary dictionary = dictionaryDAO.getDataForId(testResult.getValue());
             String displayValue = dictionary.getLocalizedName();
 
@@ -219,13 +219,13 @@ public class TestModifyAction extends BaseAction {
     }
 
     private String createReferenceIdForDictionaryType(Test test) {
-        List<ResultLimit> resultLimits = ResultLimitService.getResultLimits(test);
+        List<ResultLimit> resultLimits = ResultLimitServiceImpl.getResultLimits(test);
 
         if( resultLimits.isEmpty() ){
             return "n/a";
         }
 
-        return ResultLimitService.getDisplayReferenceRange(resultLimits.get(0),null, null);
+        return ResultLimitServiceImpl.getDisplayReferenceRange(resultLimits.get(0),null, null);
     }
 
     private List<String> createDictionaryIds(TestService testService) {
@@ -255,7 +255,7 @@ public class TestModifyAction extends BaseAction {
     
     private String getDictionaryId(TestResult testResult) {
 
-        if (TypeOfTestResultService.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
+        if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
             Dictionary dictionary = dictionaryDAO.getDataForId(testResult.getValue());
             String displayId = dictionary.getId();
 
@@ -325,7 +325,7 @@ public class TestModifyAction extends BaseAction {
         String currentTestId = null;
         String dictionaryIdGroup = null;
         for( TestResult testResult : testResults){
-            if(TypeOfTestResultService.ResultType.isDictionaryVariant(testResult.getTestResultType()) ){
+            if(TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType()) ){
                 if( testResult.getTest().getId().equals(currentTestId) ){
                     dictionaryIdGroup += "," + testResult.getValue();
                 }else{

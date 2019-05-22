@@ -28,7 +28,7 @@ public class OrganizationAddressServiceImpl extends BaseObjectServiceImpl<Organi
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public OrganizationAddress update(OrganizationAddress organizationAddress) {
 		OrganizationAddress oldObject = getBaseObjectDAO().get(organizationAddress.getCompoundId()).orElseThrow(
 				() -> new ObjectNotFoundException(organizationAddress.getId(), OrganizationAddress.class.getName()));
@@ -40,7 +40,7 @@ public class OrganizationAddressServiceImpl extends BaseObjectServiceImpl<Organi
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<OrganizationAddress> getAddressPartsByOrganizationId(String id) {
 		return baseObjectDAO.getAddressPartsByOrganizationId(id);
 	}

@@ -32,7 +32,7 @@ import org.apache.struts.validator.DynaValidatorForm;
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.test.valueholder.Test;
 
@@ -46,7 +46,7 @@ public class SampleTypeTestAssignAction extends BaseAction {
         for( IdValuePair sampleTypePair : typeOfSamples){
             List<IdValuePair> tests = new ArrayList<IdValuePair>();
             sampleTypesTestsMap.put(sampleTypePair, tests );
-            List<Test> testList = TypeOfSampleService.getAllTestsBySampleTypeId(sampleTypePair.getId());
+            List<Test> testList = TypeOfSampleServiceImpl.getAllTestsBySampleTypeId(sampleTypePair.getId());
 
             for( Test test : testList){
                 if( test.isActive()) {

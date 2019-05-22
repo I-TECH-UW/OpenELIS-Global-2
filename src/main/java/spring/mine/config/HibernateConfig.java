@@ -17,18 +17,25 @@ public class HibernateConfig {
 	@Autowired
 	private ApplicationContext context;
 
+	HibernateTransactionManager transactionManager;
+	LocalSessionFactoryBean factoryBean;
+
 	@Bean
 	public LocalSessionFactoryBean getSessionFactory() {
-		LocalSessionFactoryBean factoryBean = new LocalSessionFactoryBean();
-		factoryBean.setConfigLocation(context.getResource("classpath:hibernate/hibernate.cfg.xml"));
+		if (factoryBean == null) {
+			factoryBean = new LocalSessionFactoryBean();
+			factoryBean.setConfigLocation(context.getResource("classpath:hibernate/hibernate.cfg.xml"));
+		}
 //		factoryBean.setAnnotatedClasses(User.class);//
 		return factoryBean;
 	}
 
 	@Bean
 	public HibernateTransactionManager getTransactionManager(SessionFactory sessionFactory) {
-		HibernateTransactionManager transactionManager = new HibernateTransactionManager();
-		transactionManager.setSessionFactory(sessionFactory);
+		if (transactionManager == null) {
+			transactionManager = new HibernateTransactionManager();
+			transactionManager.setSessionFactory(sessionFactory);
+		}
 		return transactionManager;
 	}
 

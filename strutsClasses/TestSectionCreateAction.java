@@ -30,7 +30,7 @@ import org.apache.struts.validator.DynaValidatorForm;
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.LocalizationService;
-import us.mn.state.health.lims.common.services.TestSectionService;
+import spring.service.test.TestSectionServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 
@@ -41,7 +41,7 @@ public class TestSectionCreateAction extends BaseAction {
         ((DynaValidatorForm)form).initialize(mapping);
         PropertyUtils.setProperty(form, "existingTestUnitList", DisplayListService.getList(DisplayListService.ListType.TEST_SECTION));
         PropertyUtils.setProperty(form, "inactiveTestUnitList", DisplayListService.getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
-        List<TestSection> testSections = TestSectionService.getAllTestSections();
+        List<TestSection> testSections = TestSectionServiceImpl.getAllTestSections();
         PropertyUtils.setProperty(form, "existingEnglishNames", getExistingTestNames(testSections, ConfigurationProperties.LOCALE.ENGLISH));
         PropertyUtils.setProperty(form, "existingFrenchNames", getExistingTestNames(testSections, ConfigurationProperties.LOCALE.FRENCH));
 

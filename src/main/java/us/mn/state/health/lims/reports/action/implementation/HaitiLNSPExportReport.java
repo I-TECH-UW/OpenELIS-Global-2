@@ -22,16 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.services.AnalysisService;
-import us.mn.state.health.lims.common.services.NoteService;
-import us.mn.state.health.lims.common.services.PatientService;
-import us.mn.state.health.lims.common.services.ResultService;
+import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.note.NoteServiceImpl;
+import spring.service.patient.PatientServiceImpl;
+import spring.service.result.ResultServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.organization.dao.OrganizationDAO;
@@ -116,7 +116,7 @@ public class HaitiLNSPExportReport extends CSVExportReport{
 			}
 		}
 
-		PatientService patientService = new PatientService(patient);
+		PatientServiceImpl patientService = new PatientServiceImpl(patient);
 
 		List<SampleItem> sampleItemList = sampleItemDAO.getSampleItemsBySampleId(order.getId());
 
@@ -125,7 +125,7 @@ public class HaitiLNSPExportReport extends CSVExportReport{
 		}
 	}
 
-	private void getResultsForSampleItem(Organization requesterOrganization, PatientService patientService, SampleItem sampleItem, Sample order){
+	private void getResultsForSampleItem(Organization requesterOrganization, PatientServiceImpl patientService, SampleItem sampleItem, Sample order){
 		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleItem(sampleItem);
 
 		for(Analysis analysis : analysisList){
@@ -134,7 +134,7 @@ public class HaitiLNSPExportReport extends CSVExportReport{
 
 	}
 
-	private void getResultForAnalysis(Organization requesterOrganization, PatientService patientService, Sample order, SampleItem sampleItem,
+	private void getResultForAnalysis(Organization requesterOrganization, PatientServiceImpl patientService, Sample order, SampleItem sampleItem,
 			Analysis analysis){
 		TestSegmentedExportBean ts = new TestSegmentedExportBean();
 
@@ -152,9 +152,9 @@ public class HaitiLNSPExportReport extends CSVExportReport{
 		ts.setStatus(StatusService.getInstance().getStatusName(StatusService.getInstance().getAnalysisStatusForID(analysis.getStatusId())));
 		ts.setSampleType(sampleItem.getTypeOfSample().getLocalizedName());
 		ts.setTestBench(analysis.getTestSection() == null ? "" : analysis.getTestSection().getTestSectionName());
-        ts.setTestName( TestService.getUserLocalizedTestName( analysis.getTest() ) );
-        ts.setDepartment( StringUtil.blankIfNull(patientService.getAddressComponents().get(PatientService.ADDRESS_DEPT) ) );
-        String notes = new NoteService( analysis ).getNotesAsString( false, false, "|", false );
+        ts.setTestName( TestServiceImpl.getUserLocalizedTestName( analysis.getTest() ) );
+        ts.setDepartment( StringUtil.blankIfNull(patientService.getAddressComponents().get(PatientServiceImpl.ADDRESS_DEPT) ) );
+        String notes = new NoteServiceImpl( analysis ).getNotesAsString( false, false, "|", false );
         if( notes != null){
             ts.setNotes(notes);
         }
@@ -244,9 +244,9 @@ public class HaitiLNSPExportReport extends CSVExportReport{
 
 	private void setAppropriateResults(List<Result> resultList, Analysis analysis, TestSegmentedExportBean data){
 		Result result = resultList.get(0);
-        ResultService resultService = new ResultService( result );
+        ResultServiceImpl resultService = new ResultServiceImpl( result );
 		String reportResult = resultService.getResultValue( true );
-        Result quantifiableResult = new AnalysisService(analysis).getQuantifiedResult();
+        Result quantifiableResult = new AnalysisServiceImpl(analysis).getQuantifiedResult();
         if( quantifiableResult != null){
             reportResult += ":" + quantifiableResult.getValue();
         }

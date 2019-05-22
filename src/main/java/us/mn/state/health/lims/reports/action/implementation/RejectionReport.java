@@ -28,12 +28,12 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.services.AnalysisService;
-import us.mn.state.health.lims.common.services.PatientService;
-import us.mn.state.health.lims.common.services.ResultService;
-import us.mn.state.health.lims.common.services.SampleService;
-import us.mn.state.health.lims.common.services.TestService;
+import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.patient.PatientServiceImpl;
+import spring.service.result.ResultServiceImpl;
+import spring.service.sample.SampleServiceImpl;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -114,13 +114,13 @@ public abstract class RejectionReport extends Report implements IReportCreator{
     protected RejectionReportBean createRejectionReportBean( String noteText, Analysis analysis, boolean useTestName  ){
         RejectionReportBean item = new RejectionReportBean();
 
-        AnalysisService analysisService = new AnalysisService( analysis );
-        SampleService sampleService = new SampleService(  analysisService.getAnalysis().getSampleItem().getSample() );
-        PatientService patientService = new PatientService( sampleService.getSample() );
+        AnalysisServiceImpl analysisService = new AnalysisServiceImpl( analysis );
+        SampleServiceImpl sampleService = new SampleServiceImpl(  analysisService.getAnalysis().getSampleItem().getSample() );
+        PatientServiceImpl patientService = new PatientServiceImpl( sampleService.getSample() );
 
         List<Result> results = analysisService.getResults();
         for( Result result : results){
-            String signature = new ResultService( result ).getSignature();
+            String signature = new ResultServiceImpl( result ).getSignature();
             if( !GenericValidator.isBlankOrNull( signature )){
                 item.setTechnician( signature);
                 break;
@@ -142,7 +142,7 @@ public abstract class RejectionReport extends Report implements IReportCreator{
 
 
         if( useTestName ){
-            item.setPatientOrTestName( TestService.getUserLocalizedTestName( analysisService.getTest() ) );
+            item.setPatientOrTestName( TestServiceImpl.getUserLocalizedTestName( analysisService.getTest() ) );
             item.setNonPrintingPatient( nameBuilder.toString() );
         }else{
             item.setPatientOrTestName( nameBuilder.toString() );

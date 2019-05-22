@@ -38,10 +38,10 @@ import ca.uhn.hl7v2.model.v251.segment.OBX;
 import ca.uhn.hl7v2.model.v251.segment.ORC;
 import ca.uhn.hl7v2.parser.Parser;
 import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.common.services.PatientService;
+import spring.service.patient.PatientServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.ExternalOrderStatus;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.util.XMLUtil;
 import us.mn.state.health.lims.dataexchange.order.daoimpl.ElectronicOrderDAOImpl;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
@@ -125,7 +125,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 	}
 
 	private String getPatientGuid(ElectronicOrder eOrder){
-		PatientService patientService = new PatientService(eOrder.getPatient());
+		PatientServiceImpl patientService = new PatientServiceImpl(eOrder.getPatient());
 		return patientService.getGUID();
 	}
 
@@ -184,7 +184,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 	private void addToTestOrPanel(List<Request> tests, List<Request> panels, ORC orc, OBX obx){
 		String loinc = orc.getOrderType().getIdentifier().toString();
 		String testName = testDAO.getActiveTestsByLoinc(loinc).get(0).getName();
-		tests.add(new Request(testName, loinc, TypeOfSampleService.getTypeOfSampleNameForId(testDAO.getActiveTestsByLoinc(loinc).get(0).getId())));
+		tests.add(new Request(testName, loinc, TypeOfSampleServiceImpl.getTypeOfSampleNameForId(testDAO.getActiveTestsByLoinc(loinc).get(0).getId())));
 	}
 
 	private void createMaps(List<Request> testRequests, List<Request> panelNames){
@@ -208,13 +208,13 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 			List<Test> tests = testDAO.getActiveTestsByLoinc(testRequest.getLoinc());
 						
 			Test singleTest = tests.get(0);
-			TypeOfSample singleSampleType = TypeOfSampleService.getTypeOfSampleForTest(singleTest.getId());
+			TypeOfSample singleSampleType = TypeOfSampleServiceImpl.getTypeOfSampleForTest(singleTest.getId());
 			boolean hasSingleSampleType = tests.size() == 1;
 
 			if(tests.size() > 1){
 				if(!GenericValidator.isBlankOrNull(testRequest.getSampleType())){
 					for(Test test : tests){
-						TypeOfSample typeOfSample = TypeOfSampleService.getTypeOfSampleForTest(test.getId());
+						TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getTypeOfSampleForTest(test.getId());
 						if(typeOfSample.getDescription().equals(testRequest.getSampleType())){
 							hasSingleSampleType = true;
 							singleSampleType = typeOfSample;
@@ -233,7 +233,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 					}
 
 					for(Test test : tests){
-						testSampleTypeList.add(new TestSampleType(test, TypeOfSampleService.getTypeOfSampleForTest(test.getId())));
+						testSampleTypeList.add(new TestSampleType(test, TypeOfSampleServiceImpl.getTypeOfSampleForTest(test.getId())));
 					}
 				}
 			}
@@ -255,7 +255,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 			Panel panel = panelDAO.getPanelByName(panelRequest.getName());
 
 			if(panel != null){
-				List<TypeOfSample> typeOfSamples = TypeOfSampleService.getTypeOfSampleForPanelId(panel.getId());
+				List<TypeOfSample> typeOfSamples = TypeOfSampleServiceImpl.getTypeOfSampleForPanelId(panel.getId());
 				boolean hasSingleSampleType = typeOfSamples.size() == 1;
 				TypeOfSample singleTypeOfSample = typeOfSamples.get(0);
 				
@@ -414,7 +414,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 	}
 
 	private void addAlerts(StringBuilder xml, String patientGuid){
-		PatientService patientService = new PatientService( patientGuid);
+		PatientServiceImpl patientService = new PatientServiceImpl( patientGuid);
 		if( GenericValidator.isBlankOrNull(patientService.getEnteredDOB()) || GenericValidator.isBlankOrNull(patientService.getGender())){
 			XMLUtil.appendKeyValue("user_alert", MessageUtil.getMessage("electroinic.order.warning.missingPatientInfo"), xml);
 		}

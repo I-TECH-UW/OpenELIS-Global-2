@@ -47,12 +47,12 @@ import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.NoteService;
-import us.mn.state.health.lims.common.services.ResultLimitService;
+import spring.service.resultlimit.ResultLimitServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
 import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.validator.ActionError;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -379,7 +379,7 @@ public class ReferredOutUpdateAction extends BaseAction {
               referralItem.getReferredTestId(), currentUserId);
     } else {
       String referredResultType = getReferredResultType(referralItem, null);
-      if (TypeOfTestResultService.ResultType.isMultiSelectVariant(referredResultType)) {
+      if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(referredResultType)) {
         if (!GenericValidator.isBlankOrNull(referralItem.getMultiSelectResultValues())
                 && !"{}".equals(referralItem.getMultiSelectResultValues())) {
           JSONParser parser = new JSONParser();
@@ -446,14 +446,14 @@ public class ReferredOutUpdateAction extends BaseAction {
     Sample sample = referralDAO.getReferralById(referredTest.getReferralId()).getAnalysis()
             .getSampleItem().getSample();
     Patient patient = sampleHumanDAO.getPatientForSample(sample);
-    ResultLimit limit = new ResultLimitService().getResultLimitForTestAndPatient(test, patient);
+    ResultLimit limit = new ResultLimitServiceImpl().getResultLimitForTestAndPatient(test, patient);
     result.setMinNormal(limit != null ? limit.getLowNormal() : 0.0);
     result.setMaxNormal(limit != null ? limit.getHighNormal() : 0.0);
     result.setGrouping(grouping);
 
     String referredResultType = getReferredResultType(referredTest, test);
     result.setResultType(referredResultType);
-    if (TypeOfTestResultService.ResultType.isDictionaryVariant(referredResultType)) {
+    if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(referredResultType)) {
       String dicResult = referredTest.getReferredDictionaryResult();
       if (!(GenericValidator.isBlankOrNull(dicResult) || "0".equals(dicResult))) {
         result.setValue(dicResult);
@@ -472,7 +472,7 @@ public class ReferredOutUpdateAction extends BaseAction {
 
     String referredResultType = referredTest.getReferredResultType();
 
-    if (!TypeOfTestResultService.ResultType.isDictionaryVariant(referredResultType)
+    if (!TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(referredResultType)
             && test != null) {
       @SuppressWarnings("unchecked")
       List<TestResult> testResults = testResultDAO.getAllActiveTestResultsPerTest(test);

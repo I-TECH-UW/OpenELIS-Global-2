@@ -17,7 +17,7 @@ package us.mn.state.health.lims.test.valueholder;
 
 import java.sql.Timestamp;
 
-import us.mn.state.health.lims.common.services.TestSectionService;
+import spring.service.test.TestSectionServiceImpl;
 import us.mn.state.health.lims.common.valueholder.EnumValueItemImpl;
 import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
@@ -138,7 +138,7 @@ public class TestSection extends EnumValueItemImpl {
 
 	@Override
 	protected String getDefaultLocalizedName() {
-		return TestSectionService.getUserLocalizedTesSectionName(this);
+		return TestSectionServiceImpl.getUserLocalizedTesSectionName(this);
 	}
 
 

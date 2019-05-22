@@ -27,6 +27,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -46,6 +47,7 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
  * @author diane benz
  */
 @Component
+@Transactional 
 public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements TypeOfSampleDAO {
 
 	public TypeOfSampleDAOImpl() {
@@ -336,7 +338,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample> implements Ty
 			throws LIMSRuntimeException {
 		String sql = "From TypeOfSample tos where tos.localAbbreviation = :localAbbrev and tos.domain = :domain";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("localAbbrev", localAbbrev);
 			query.setString("domain", domain);
 			TypeOfSample typeOfSample = (TypeOfSample) query.uniqueResult();

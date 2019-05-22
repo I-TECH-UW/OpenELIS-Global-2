@@ -21,6 +21,7 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -29,6 +30,7 @@ import us.mn.state.health.lims.reports.dao.DocumentTrackDAO;
 import us.mn.state.health.lims.reports.valueholder.DocumentTrack;
 
 @Component
+@Transactional 
 public class DocumentTrackDAOImpl extends BaseDAOImpl<DocumentTrack> implements DocumentTrackDAO {
 
 	public DocumentTrackDAOImpl() {

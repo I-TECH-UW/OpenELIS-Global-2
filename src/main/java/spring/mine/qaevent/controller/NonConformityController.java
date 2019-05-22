@@ -46,8 +46,8 @@ import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
-import us.mn.state.health.lims.common.services.PatientService;
-import us.mn.state.health.lims.common.services.PersonService;
+import spring.service.patient.PatientServiceImpl;
+import spring.service.person.PersonServiceImpl;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.services.TableIdService;
@@ -155,7 +155,7 @@ public class NonConformityController extends BaseController {
 			PropertyUtils.setProperty(form, "providerNew", Boolean.FALSE.toString());
 			Person providerPerson = getProviderPerson(provider);
 			if (providerPerson != null && !providerPerson.getId().equals(PatientUtil.getUnknownPerson().getId())) {
-				PersonService personService = new PersonService(providerPerson);
+				PersonServiceImpl personService = new PersonServiceImpl(providerPerson);
 				PropertyUtils.setProperty(form, "providerFirstName", personService.getFirstName());
 				PropertyUtils.setProperty(form, "providerLastName", personService.getLastName());
 				PropertyUtils.setProperty(form, "providerWorkPhone", personService.getPhone());
@@ -180,7 +180,7 @@ public class NonConformityController extends BaseController {
 
 	private void createForExistingSample(NonConformityForm form, Sample sample)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		PatientService patientService = getPatientService(sample);
+		PatientServiceImpl patientService = getPatientService(sample);
 		List<ObservationHistory> observationHistoryList = getObservationHistory(sample, patientService);
 		PropertyUtils.setProperty(form, "sampleId", sample.getId());
 		PropertyUtils.setProperty(form, "patientId", patientService.getPatientId());
@@ -358,12 +358,12 @@ public class NonConformityController extends BaseController {
 		return sampleService.getSampleByAccessionNumber(labNumber);
 	}
 
-	private PatientService getPatientService(Sample sample) {
+	private PatientServiceImpl getPatientService(Sample sample) {
 		Patient patient = sampleHumanService.getPatientForSample(sample);
-		return new PatientService(patient);
+		return new PatientServiceImpl(patient);
 	}
 
-	private List<ObservationHistory> getObservationHistory(Sample sample, PatientService patientService) {
+	private List<ObservationHistory> getObservationHistory(Sample sample, PatientServiceImpl patientService) {
 		return observationHistoryService.getAll(patientService.getPatient(), sample);
 	}
 

@@ -26,7 +26,7 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<AnalyzerResults> getResultsbyAnalyzer(String analyzerId) {
 		return baseObjectDAO.getAllMatchingOrdered("analyzerId", analyzerId, "id", false);
 	}

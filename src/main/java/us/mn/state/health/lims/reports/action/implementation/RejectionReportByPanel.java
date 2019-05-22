@@ -24,9 +24,9 @@ import java.util.List;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.common.services.AnalysisService;
+import spring.service.analysis.AnalysisServiceImpl;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.NoteService;
+import spring.service.note.NoteServiceImpl;
 import us.mn.state.health.lims.note.valueholder.Note;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.RejectionReportBean;
 
@@ -58,7 +58,7 @@ public class RejectionReportByPanel extends RejectionReport implements IReportCr
         rejections = new ArrayList<RejectionReportBean>();
         ArrayList<RejectionReportBean> rawResults = new ArrayList<RejectionReportBean>(  );
 
-        List<Note> testRejectionNotes = NoteService.getTestNotesInDateRangeByType( dateRange.getLowDate(), dateRange.getHighDate(), NoteService.NoteType.REJECTION_REASON );
+        List<Note> testRejectionNotes = NoteServiceImpl.getTestNotesInDateRangeByType( dateRange.getLowDate(), dateRange.getHighDate(), NoteServiceImpl.NoteType.REJECTION_REASON );
 
         Collections.sort( testRejectionNotes, new Comparator<Note>(){
             @Override
@@ -71,7 +71,7 @@ public class RejectionReportByPanel extends RejectionReport implements IReportCr
         Analysis currentAnalysis = new Analysis();
         String noteText = null;
         for( Note note : testRejectionNotes ){
-            Analysis analysis = new AnalysisService( note.getReferenceId() ).getAnalysis();
+            Analysis analysis = new AnalysisServiceImpl( note.getReferenceId() ).getAnalysis();
             if( analysis != null && analysis.getPanel() != null && panelSelection.getSelection().equals( analysis.getPanel().getId() ) ){
                 if( analysis.getId().equals( currentAnalysis.getId() ) ){
                     noteText += (noteText != null ? "<br/>" : "") + note.getText();

@@ -41,20 +41,20 @@ import spring.service.referral.ReferralResultService;
 import spring.service.referral.ReferralService;
 import spring.service.sample.SampleService;
 import spring.service.samplehuman.SampleHumanService;
+import spring.service.test.TestServiceImpl;
 import spring.service.testresult.TestResultService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.services.AnalysisService;
+import spring.service.analysis.AnalysisServiceImpl;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.NoteService;
-import us.mn.state.health.lims.common.services.ResultLimitService;
-import us.mn.state.health.lims.common.services.ResultService;
+import spring.service.note.NoteServiceImpl;
+import spring.service.resultlimit.ResultLimitServiceImpl;
+import spring.service.result.ResultServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
-import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
@@ -124,14 +124,14 @@ public class ReferredOutTestsController extends BaseController {
 		List<NonNumericTests> nonNumericTests = getNonNumericTests(referralItems);
 		for (ReferralItem referralItem : referralItems) {
 			String referredResultType = referralItem.getReferredResultType();
-			if (TypeOfTestResultService.ResultType.isDictionaryVariant(referredResultType)) {
+			if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(referredResultType)) {
 				referralItem.setDictionaryResults(
 						getDictionaryValuesForTest(referralItem.getReferredTestId(), nonNumericTests));
 			}
 
 			if (referralItem.getAdditionalTests() != null) {
 				for (ReferredTest test : referralItem.getAdditionalTests()) {
-					if (TypeOfTestResultService.ResultType.isDictionaryVariant(test.getReferredResultType())) {
+					if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(test.getReferredResultType())) {
 						test.setDictionaryResults(
 								getDictionaryValuesForTest(test.getReferredTestId(), nonNumericTests));
 					}
@@ -190,7 +190,7 @@ public class ReferredOutTestsController extends BaseController {
 
 		ReferralItem referralItem = new ReferralItem();
 
-		AnalysisService analysisService = new AnalysisService(referral.getAnalysis());
+		AnalysisServiceImpl analysisService = new AnalysisServiceImpl(referral.getAnalysis());
 
 		referralItem.setCanceled(false);
 		referralItem.setReferredResultType("N");
@@ -200,7 +200,7 @@ public class ReferredOutTestsController extends BaseController {
 		referralItem.setSampleType(typeOfSample.getLocalizedName());
 
 		referralItem
-				.setReferringTestName(TestService.getUserLocalizedTestName(analysisService.getAnalysis().getTest()));
+				.setReferringTestName(TestServiceImpl.getUserLocalizedTestName(analysisService.getAnalysis().getTest()));
 		List<Result> resultList = analysisService.getResults();
 		String resultString = "";
 
@@ -287,7 +287,7 @@ public class ReferredOutTestsController extends BaseController {
 
 		String resultType = (result != null) ? result.getResultType() : "N";
 		referralItem.setReferredResultType(resultType);
-		if (!TypeOfTestResultService.ResultType.isMultiSelectVariant(resultType)) {
+		if (!TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(resultType)) {
 			if (result != null) {
 				String resultValue = GenericValidator.isBlankOrNull(result.getValue()) ? "" : result.getValue();
 				referralItem.setReferredResult(resultValue);
@@ -305,7 +305,7 @@ public class ReferredOutTestsController extends BaseController {
 				}
 			}
 
-			referralItem.setMultiSelectResultValues(ResultService.getJSONStringForMultiSelect(resultList));
+			referralItem.setMultiSelectResultValues(ResultServiceImpl.getJSONStringForMultiSelect(resultList));
 		}
 
 		return resultsForOtherTests;
@@ -324,12 +324,12 @@ public class ReferredOutTestsController extends BaseController {
 
 	private String getAppropriateResultValue(List<Result> results) {
 		Result result = results.get(0);
-		if (TypeOfTestResultService.ResultType.DICTIONARY.matches(result.getResultType())) {
+		if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(result.getResultType())) {
 			Dictionary dictionary = dictionaryService.get(result.getValue());
 			if (dictionary != null) {
 				return dictionary.getLocalizedName();
 			}
-		} else if (TypeOfTestResultService.ResultType.isMultiSelectVariant(result.getResultType())) {
+		} else if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())) {
 			StringBuilder multiResult = new StringBuilder();
 
 			for (Result subResult : results) {
@@ -361,13 +361,13 @@ public class ReferredOutTestsController extends BaseController {
 	}
 
 	private List<IdValuePair> getTestsForTypeOfSample(TypeOfSample typeOfSample) {
-		List<Test> testList = TypeOfSampleService.getActiveTestsBySampleTypeId(typeOfSample.getId(), false);
+		List<Test> testList = TypeOfSampleServiceImpl.getActiveTestsBySampleTypeId(typeOfSample.getId(), false);
 
 		List<IdValuePair> valueList = new ArrayList<>();
 
 		for (Test test : testList) {
 			if (test.getOrderable()) {
-				valueList.add(new IdValuePair(test.getId(), TestService.getUserLocalizedTestName(test)));
+				valueList.add(new IdValuePair(test.getId(), TestServiceImpl.getUserLocalizedTestName(test)));
 			}
 		}
 
@@ -392,12 +392,12 @@ public class ReferredOutTestsController extends BaseController {
 
 				nonNumericTests.testId = testId;
 				nonNumericTests.testType = testResultList.get(0).getTestResultType();
-				boolean isSelectList = TypeOfTestResultService.ResultType.isDictionaryVariant(nonNumericTests.testType);
+				boolean isSelectList = TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(nonNumericTests.testType);
 
 				if (isSelectList) {
 					List<IdValuePair> dictionaryValues = new ArrayList<>();
 					for (TestResult testResult : testResultList) {
-						if (TypeOfTestResultService.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
+						if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
 							String resultName = dictionaryService.get(testResult.getValue()).getLocalizedName();
 							dictionaryValues.add(new IdValuePair(testResult.getValue(), resultName));
 						}
@@ -472,7 +472,7 @@ public class ReferredOutTestsController extends BaseController {
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
-	@Transactional
+	@Transactional 
 	private void updateRefreralSets(List<ReferralSet> referralSetList, List<Sample> modifiedSamples,
 			Set<Sample> parentSamples, List<ReferralResult> removableReferralResults) {
 		for (ReferralSet referralSet : referralSetList) {
@@ -632,7 +632,7 @@ public class ReferredOutTestsController extends BaseController {
 		referral.setReferralReasonId(referralItem.getReferralReasonId());
 		referralSet.referral = referral;
 
-		referralSet.note = new NoteService(referral.getAnalysis()).createSavableNote(NoteService.NoteType.INTERNAL,
+		referralSet.note = new NoteServiceImpl(referral.getAnalysis()).createSavableNote(NoteServiceImpl.NoteType.INTERNAL,
 				referralItem.getNote(), RESULT_SUBJECT, getSysUserId(request));
 
 		createReferralResults(referralItem, referralSet);
@@ -672,7 +672,7 @@ public class ReferredOutTestsController extends BaseController {
 					getSysUserId(request));
 		} else {
 			String referredResultType = getReferredResultType(referralItem, null);
-			if (TypeOfTestResultService.ResultType.isMultiSelectVariant(referredResultType)) {
+			if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(referredResultType)) {
 				if (!GenericValidator.isBlankOrNull(referralItem.getMultiSelectResultValues())
 						&& !"{}".equals(referralItem.getMultiSelectResultValues())) {
 					JSONParser parser = new JSONParser();
@@ -735,14 +735,14 @@ public class ReferredOutTestsController extends BaseController {
 		Test test = testService.get(referredTest.getReferredTestId());
 		Sample sample = referralService.get(referredTest.getReferralId()).getAnalysis().getSampleItem().getSample();
 		Patient patient = sampleHumanService.getPatientForSample(sample);
-		ResultLimit limit = new ResultLimitService().getResultLimitForTestAndPatient(test, patient);
+		ResultLimit limit = new ResultLimitServiceImpl().getResultLimitForTestAndPatient(test, patient);
 		result.setMinNormal(limit != null ? limit.getLowNormal() : 0.0);
 		result.setMaxNormal(limit != null ? limit.getHighNormal() : 0.0);
 		result.setGrouping(grouping);
 
 		String referredResultType = getReferredResultType(referredTest, test);
 		result.setResultType(referredResultType);
-		if (TypeOfTestResultService.ResultType.isDictionaryVariant(referredResultType)) {
+		if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(referredResultType)) {
 			String dicResult = referredTest.getReferredDictionaryResult();
 			if (!(GenericValidator.isBlankOrNull(dicResult) || "0".equals(dicResult))) {
 				result.setValue(dicResult);
@@ -761,7 +761,7 @@ public class ReferredOutTestsController extends BaseController {
 
 		String referredResultType = referredTest.getReferredResultType();
 
-		if (!TypeOfTestResultService.ResultType.isDictionaryVariant(referredResultType) && test != null) {
+		if (!TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(referredResultType) && test != null) {
 			@SuppressWarnings("unchecked")
 			List<TestResult> testResults = testResultService.getAllActiveTestResultsPerTest(test);
 
@@ -815,7 +815,7 @@ public class ReferredOutTestsController extends BaseController {
 
 				ReferredTest referralTest = new ReferredTest();
 				referralTest.setReferredTestId(testId);
-				referralTest.setReferredResultType(new TestService(testId).getResultType());
+				referralTest.setReferredResultType(new TestServiceImpl(testId).getResultType());
 				referralTest.setReferredResult("");
 				referralTest.setReferredDictionaryResult("");
 				referralTest.setReferredMultiDictionaryResult("");
@@ -907,7 +907,7 @@ public class ReferredOutTestsController extends BaseController {
 					if (updatedReferralResult == null) {
 						referralResult.setTestId(newTestId);
 						referralResult.setSysUserId(currentUserId);
-						result.setResultType(new TestService(newTestId).getResultType());
+						result.setResultType(new TestServiceImpl(newTestId).getResultType());
 						result.setValue("");
 						updatedReferralResult = referralResult;
 						updatableReferralResults.add(referralResult);

@@ -25,6 +25,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -46,6 +47,7 @@ import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
  *
  */
 @Component
+@Transactional 
 @Qualifier("RoleModuleDAO")
 public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements PermissionModuleDAO {
 

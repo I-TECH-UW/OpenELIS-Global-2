@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
@@ -39,6 +40,7 @@ import us.mn.state.health.lims.qaevent.valueholder.QaEvent;
  * @author diane benz
  */
 @Component
+@Transactional 
 public class QaEventDAOImpl extends BaseDAOImpl<QaEvent> implements QaEventDAO {
 
 	public QaEventDAOImpl() {

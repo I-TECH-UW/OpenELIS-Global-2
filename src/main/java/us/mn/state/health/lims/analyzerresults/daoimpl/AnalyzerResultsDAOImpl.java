@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.analyzerresults.dao.AnalyzerResultsDAO;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
@@ -35,6 +36,7 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
+@Transactional 
 public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> implements AnalyzerResultsDAO {
 
 	public AnalyzerResultsDAOImpl() {

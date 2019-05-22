@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.analyzerimport.dao.AnalyzerTestMappingDAO;
@@ -35,6 +36,7 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
+@Transactional 
 public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping> implements AnalyzerTestMappingDAO {
 
 	public AnalyzerTestMappingDAOImpl() {

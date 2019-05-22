@@ -32,7 +32,7 @@ import org.apache.struts.action.ActionMapping;
 import us.mn.state.health.lims.common.action.BaseAction;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.test.beanItems.TestActivationBean;
 import us.mn.state.health.lims.test.valueholder.Test;
@@ -59,7 +59,7 @@ public class TestActivationAction extends BaseAction {
         for( IdValuePair pair : sampleTypeList){
             TestActivationBean bean = new TestActivationBean();
 
-            List<Test> tests = TypeOfSampleService.getAllTestsBySampleTypeId(pair.getId());
+            List<Test> tests = TypeOfSampleServiceImpl.getAllTestsBySampleTypeId(pair.getId());
             List<IdValuePair> activeTests = new ArrayList<IdValuePair>();
             List<IdValuePair> inactiveTests = new ArrayList<IdValuePair>();
 

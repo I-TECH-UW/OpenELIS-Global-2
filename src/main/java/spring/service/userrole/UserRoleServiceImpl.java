@@ -26,7 +26,7 @@ public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole> impleme
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public List<String> getRoleIdsForUser(String userId) {
 		// doesn't work for composite-ids
 //		List<UserRole> userRoles = baseObjectDAO.getAllMatching("compoundId.systemUserId", userId);
@@ -39,7 +39,7 @@ public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole> impleme
 	}
 
 	@Override
-	@Transactional
+	@Transactional 
 	public boolean userInRole(String sysUserId, Collection<String> ableToCancelRoleNames) {
 		return baseObjectDAO.userInRole(sysUserId, ableToCancelRoleNames);
 	}

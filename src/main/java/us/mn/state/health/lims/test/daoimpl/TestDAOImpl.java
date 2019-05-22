@@ -28,7 +28,9 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
@@ -36,7 +38,6 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
@@ -57,6 +58,7 @@ import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
  * @author diane benz
  */
 @Component
+@Transactional 
 public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 
 	public TestDAOImpl() {
@@ -137,7 +139,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 		try {
 			if (test.getIsActive().equals(IActionConstants.YES) && duplicateTestExists(test)) {
 				throw new LIMSDuplicateRecordException(
-						"Duplicate record exists for " + TestService.getUserLocalizedTestName(test));
+						"Duplicate record exists for " + TestServiceImpl.getUserLocalizedTestName(test));
 			}
 		} catch (Exception e) {
 			LogEvent.logError("TestDAOImpl", "updateData()", e.toString());
@@ -172,7 +174,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 	@Override
 	public void getData(Test test) throws LIMSRuntimeException {
 		try {
-			Test testClone = (Test) HibernateUtil.getSession().get(Test.class, test.getId());
+			Test testClone = HibernateUtil.getSession().get(Test.class, test.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (testClone != null) {
@@ -193,12 +195,10 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 		List<Test> list = new Vector<>();
 		try {
 			String sql = "from Test Order by description";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
 			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "getAllTests()");
 		}
@@ -475,7 +475,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 	public Test readTest(String idString) {
 		Test test;
 		try {
-			test = (Test) HibernateUtil.getSession().get(Test.class, idString);
+			test = HibernateUtil.getSession().get(Test.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -620,7 +620,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test> implements TestDAO {
 	public Test getTestById(Test test) throws LIMSRuntimeException {
 		Test returnTest;
 		try {
-			returnTest = (Test) HibernateUtil.getSession().get(Test.class, test.getId());
+			returnTest = HibernateUtil.getSession().get(Test.class, test.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {

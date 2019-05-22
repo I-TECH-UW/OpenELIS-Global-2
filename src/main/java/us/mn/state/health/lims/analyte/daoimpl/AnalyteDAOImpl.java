@@ -23,6 +23,7 @@ import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.analyte.dao.AnalyteDAO;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
@@ -41,6 +42,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  * @author diane benz
  */
 @Component
+@Transactional 
 public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 
 	public AnalyteDAOImpl() {

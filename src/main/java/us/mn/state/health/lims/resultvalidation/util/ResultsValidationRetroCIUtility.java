@@ -27,6 +27,7 @@ import java.util.Map;
 import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
@@ -36,18 +37,17 @@ import us.mn.state.health.lims.analyte.valueholder.Analyte;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
-import us.mn.state.health.lims.common.services.AnalysisService;
-import us.mn.state.health.lims.common.services.NoteService;
-import us.mn.state.health.lims.common.services.NoteService.NoteType;
+import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.note.NoteServiceImpl;
+import spring.service.note.NoteServiceImpl.NoteType;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
-import us.mn.state.health.lims.common.services.ResultService;
+import spring.service.result.ResultServiceImpl;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.RecordStatus;
 import us.mn.state.health.lims.common.services.TestIdentityService;
-import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.tools.StopWatch;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
@@ -256,7 +256,7 @@ public class ResultsValidationRetroCIUtility {
 		item.setAccessionNumber( resultItem.getAccessionNumber() );
 		item.setResult( new Result() );
 		item.getResult().setValue( "0" );
-		item.setResultType( TypeOfTestResultService.ResultType.NUMERIC.getCharacterValue() );
+		item.setResultType( TypeOfTestResultServiceImpl.ResultType.NUMERIC.getCharacterValue() );
 		item.setTestSortNumber( "0" );
 		return item;
 	}
@@ -364,7 +364,7 @@ public class ResultsValidationRetroCIUtility {
 				List<ResultValidationItem> testResultItemList = getResultItemFromAnalysis(analysis);
 				//NB.  The resultValue is filled in during getResultItemFromAnalysis as a side effect of setResult
 				for (ResultValidationItem validationItem : testResultItemList) {
-					if (TypeOfTestResultService.ResultType.isDictionaryVariant( validationItem.getResultType() )) {
+					if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant( validationItem.getResultType() )) {
 						dictionary = new Dictionary();
 						String resultValue = null;
 						try {
@@ -412,7 +412,7 @@ public class ResultsValidationRetroCIUtility {
 
 		List<Result> resultList = resultDAO.getResultsByAnalysis(analysis);
         NoteType[] noteTypes = { NoteType.EXTERNAL, NoteType.INTERNAL, NoteType.REJECTION_REASON, NoteType.NON_CONFORMITY};
-        String notes = new NoteService( analysis ).getNotesAsString( true, true, "<br/>", noteTypes, false );
+        String notes = new NoteServiceImpl( analysis ).getNotesAsString( true, true, "<br/>", noteTypes, false );
 
 		if (resultList == null) {
 			return testResultList;
@@ -456,7 +456,7 @@ public class ResultsValidationRetroCIUtility {
 
 		List<TestResult> testResults = getPossibleResultsForTest(test);
 
-		String displayTestName = TestService.getLocalizedTestNameWithType( test );
+		String displayTestName = TestServiceImpl.getLocalizedTestNameWithType( test );
 //		displayTestName = augmentTestNameWithRange(displayTestName, result);
 		
 		ResultValidationItem testItem = new ResultValidationItem();
@@ -494,7 +494,7 @@ public class ResultsValidationRetroCIUtility {
 
 	private String augmentUOMWithRange(String uom,	Result result) {
         if( result == null){return uom;}
-        String range = new ResultService( result ).getDisplayReferenceRange( true );
+        String range = new ResultServiceImpl( result ).getDisplayReferenceRange( true );
         uom = StringUtil.blankIfNull( uom );
         return GenericValidator.isBlankOrNull( range ) ? uom : (uom + " ( " + range + " )");
 	}
@@ -527,14 +527,14 @@ public class ResultsValidationRetroCIUtility {
 		List<IdValuePair> values = null;
 		Dictionary dictionary;
 
-		if (testResults != null && testResults.size() > 0 && TypeOfTestResultService.ResultType.isDictionaryVariant( testResults.get( 0 ).getTestResultType() )) {
+		if (testResults != null && testResults.size() > 0 && TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant( testResults.get( 0 ).getTestResultType() )) {
 			values = new ArrayList<IdValuePair>();
 			values.add(new IdValuePair("0", ""));
 
 			for (TestResult testResult : testResults) {
 				// Note: result group use to be a criteria but was removed, if
 				// results are not as expected investigate
-				if ( TypeOfTestResultService.ResultType.isDictionaryVariant( testResult.getTestResultType() )) {
+				if ( TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant( testResult.getTestResultType() )) {
 					dictionary = dictionaryDAO.getDataForId(testResult.getValue());
 					String displayValue = dictionary.getLocalizedName();
 
@@ -552,7 +552,7 @@ public class ResultsValidationRetroCIUtility {
 
 
 	private String getTestResultType(List<TestResult> testResults) {
-		String testResultType = TypeOfTestResultService.ResultType.NUMERIC.getCharacterValue();
+		String testResultType = TypeOfTestResultServiceImpl.ResultType.NUMERIC.getCharacterValue();
 
 		if (testResults != null && testResults.size() > 0) {
 			testResultType = testResults.get(0).getTestResultType();
@@ -746,7 +746,7 @@ public class ResultsValidationRetroCIUtility {
             if( !multiResultEntered){
                 AnalysisItem convertedItem = testResultItemToAnalysisItem(testResultItem);
                 analysisResultList.add(convertedItem);
-                if( TypeOfTestResultService.ResultType.isMultiSelectVariant( testResultItem.getResultType() )){
+                if( TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant( testResultItem.getResultType() )){
                     multiResultEntered = true;
                     currentMultiSelectAnalysisItem = convertedItem;
                 }
@@ -810,13 +810,13 @@ public class ResultsValidationRetroCIUtility {
 		analysisResultItem.setDictionaryResults(testResultItem.getDictionaryResults());
 		analysisResultItem.setDisplayResultAsLog(TestIdentityService.isTestNumericViralLoad(testResultItem.getTestId()));
         if( result != null){
-            if( TypeOfTestResultService.ResultType.isMultiSelectVariant( testResultItem.getResultType() ) && !(testResultItem.getAnalysis() == null) ){
-                analysisResultItem.setMultiSelectResultValues( new AnalysisService( testResultItem.getAnalysis() ).getJSONMultiSelectResults() );
+            if( TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant( testResultItem.getResultType() ) && !(testResultItem.getAnalysis() == null) ){
+                analysisResultItem.setMultiSelectResultValues( new AnalysisServiceImpl( testResultItem.getAnalysis() ).getJSONMultiSelectResults() );
             }else{
                 analysisResultItem.setResult( getFormattedResult( testResultItem ) );
             }
 
-            if( TypeOfTestResultService.ResultType.NUMERIC.matches( testResultItem.getResultType() )){
+            if( TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches( testResultItem.getResultType() )){
             	if (result.getMinNormal() == null || result.getMaxNormal() == null) {
             		analysisResultItem.setSignificantDigits(result.getSignificantDigits());
             	} else {
@@ -844,7 +844,7 @@ public class ResultsValidationRetroCIUtility {
 		if( TestIdentityService.isTestNumericViralLoad(testResultItem.getTestId()) && !GenericValidator.isBlankOrNull(result)){
 			return result.split("\\(")[0].trim();
 		}else{
-            return new ResultService(testResultItem.getResult()).getResultValue( false );
+            return new ResultServiceImpl(testResultItem.getResult()).getResultValue( false );
         }
 	}
 

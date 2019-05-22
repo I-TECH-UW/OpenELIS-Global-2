@@ -448,7 +448,7 @@ public class UnifiedSystemUserController extends BaseController {
 		return forward;
 	}
 
-	@Transactional
+	@Transactional 
 	private void updateLoginUser(Login loginUser, boolean loginUserNew, SystemUser systemUser, boolean systemUserNew,
 			List<String> selectedRoles, String loggedOnUserId) {
 		if (loginUserNew) {

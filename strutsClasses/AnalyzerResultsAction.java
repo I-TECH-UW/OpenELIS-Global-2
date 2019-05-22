@@ -52,7 +52,7 @@ import us.mn.state.health.lims.common.services.LocalizationService;
 import us.mn.state.health.lims.common.services.PluginMenuService;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
@@ -484,11 +484,11 @@ public class AnalyzerResultsAction extends BaseAction {
 	}
 
 	private String getResultForItem(AnalyzerResults result) {
-		if (TypeOfTestResultService.ResultType.NUMERIC.matches(result.getResultType())) {
+		if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(result.getResultType())) {
 			return getRoundedToSignificantDigits(result);
 		}
 
-		if (TypeOfTestResultService.ResultType.isTextOnlyVariant(result.getResultType())
+		if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(result.getResultType())
 				|| GenericValidator.isBlankOrNull(result.getResultType())
 				|| GenericValidator.isBlankOrNull(result.getResult())) {
 

@@ -1,4 +1,4 @@
-package spring.service.resultlimits;
+package spring.service.resultlimit;
 
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;

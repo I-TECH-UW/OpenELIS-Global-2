@@ -29,14 +29,14 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.TestAddForm;
 import spring.generated.testconfiguration.validator.TestAddFormValidator;
 import spring.mine.common.controller.BaseController;
+import spring.service.localization.LocalizationServiceImpl;
+import spring.service.resultlimit.ResultLimitServiceImpl;
+import spring.service.test.TestSectionServiceImpl;
+import spring.service.test.TestServiceImpl;
+import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
-import us.mn.state.health.lims.common.services.LocalizationService;
-import us.mn.state.health.lims.common.services.ResultLimitService;
-import us.mn.state.health.lims.common.services.TestSectionService;
-import us.mn.state.health.lims.common.services.TestService;
-import us.mn.state.health.lims.common.services.TypeOfSampleService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
@@ -95,7 +95,7 @@ public class TestAddController extends BaseController {
 					DisplayListService.getList(ListType.RESULT_TYPE_LOCALIZED));
 			PropertyUtils.setProperty(form, "uomList", DisplayListService.getList(ListType.UNIT_OF_MEASURE));
 			PropertyUtils.setProperty(form, "labUnitList", DisplayListService.getList(ListType.TEST_SECTION));
-			PropertyUtils.setProperty(form, "ageRangeList", ResultLimitService.getPredefinedAgeRanges());
+			PropertyUtils.setProperty(form, "ageRangeList", ResultLimitServiceImpl.getPredefinedAgeRanges());
 			PropertyUtils.setProperty(form, "dictionaryList",
 					DisplayListService.getList(ListType.DICTIONARY_TEST_RESULTS));
 			PropertyUtils.setProperty(form, "groupedDictionaryList", createGroupedDictionaryList());
@@ -189,35 +189,35 @@ public class TestAddController extends BaseController {
 			HibernateUtil.closeSession();
 		}
 
-		TestService.refreshTestNames();
-		TypeOfSampleService.clearCache();
+		TestServiceImpl.refreshTestNames();
+		TypeOfSampleServiceImpl.clearCache();
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	private Localization createNameLocalization(TestAddParams testAddParams) {
-		return LocalizationService.createNewLocalization(testAddParams.testNameEnglish, testAddParams.testNameFrench,
-				LocalizationService.LocalizationType.TEST_NAME);
+		return LocalizationServiceImpl.createNewLocalization(testAddParams.testNameEnglish,
+				testAddParams.testNameFrench, LocalizationServiceImpl.LocalizationType.TEST_NAME);
 	}
 
 	private Localization createReportingNameLocalization(TestAddParams testAddParams) {
-		return LocalizationService.createNewLocalization(testAddParams.testReportNameEnglish,
-				testAddParams.testReportNameFrench, LocalizationService.LocalizationType.REPORTING_TEST_NAME);
+		return LocalizationServiceImpl.createNewLocalization(testAddParams.testReportNameEnglish,
+				testAddParams.testReportNameFrench, LocalizationServiceImpl.LocalizationType.REPORTING_TEST_NAME);
 	}
 
 	private List<TestSet> createTestSets(TestAddParams testAddParams) {
 		Double lowValid = null;
 		Double highValid = null;
 		String significantDigits = testAddParams.significantDigits;
-		boolean numericResults = TypeOfTestResultService.ResultType.isNumericById(testAddParams.resultTypeId);
-		boolean dictionaryResults = TypeOfTestResultService.ResultType
+		boolean numericResults = TypeOfTestResultServiceImpl.ResultType.isNumericById(testAddParams.resultTypeId);
+		boolean dictionaryResults = TypeOfTestResultServiceImpl.ResultType
 				.isDictionaryVarientById(testAddParams.resultTypeId);
 		List<TestSet> testSets = new ArrayList<>();
 		UnitOfMeasure uom = null;
 		if (!GenericValidator.isBlankOrNull(testAddParams.uomId) || "0".equals(testAddParams.uomId)) {
 			uom = new UnitOfMeasureDAOImpl().getUnitOfMeasureById(testAddParams.uomId);
 		}
-		TestSection testSection = new TestSectionService(testAddParams.testSectionId).getTestSection();
+		TestSection testSection = new TestSectionServiceImpl(testAddParams.testSectionId).getTestSection();
 
 		if (numericResults) {
 			lowValid = StringUtil.doubleWithInfinity(testAddParams.lowValid);
@@ -247,7 +247,7 @@ public class TestAddController extends BaseController {
 				if ("0".equals(orderedTests.get(j))) {
 					test.setSortOrder(String.valueOf(j));
 				} else {
-					Test orderedTest = new TestService(orderedTests.get(j)).getTest();
+					Test orderedTest = new TestServiceImpl(orderedTests.get(j)).getTest();
 					orderedTest.setSortOrder(String.valueOf(j));
 					testSet.sortedTests.add(orderedTest);
 				}
@@ -314,17 +314,18 @@ public class TestAddController extends BaseController {
 
 	private void createTestResults(ArrayList<TestResult> testResults, String significantDigits,
 			TestAddParams testAddParams) {
-		TypeOfTestResultService.ResultType type = TypeOfTestResultService.getResultTypeById(testAddParams.resultTypeId);
+		TypeOfTestResultServiceImpl.ResultType type = TypeOfTestResultServiceImpl
+				.getResultTypeById(testAddParams.resultTypeId);
 
-		if (TypeOfTestResultService.ResultType.isTextOnlyVariant(type)
-				|| TypeOfTestResultService.ResultType.isNumeric(type)) {
+		if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(type)
+				|| TypeOfTestResultServiceImpl.ResultType.isNumeric(type)) {
 			TestResult testResult = new TestResult();
 			testResult.setTestResultType(type.getCharacterValue());
 			testResult.setSortOrder("1");
 			testResult.setIsActive(true);
 			testResult.setSignificantDigits(significantDigits);
 			testResults.add(testResult);
-		} else if (TypeOfTestResultService.ResultType.isDictionaryVariant(type.getCharacterValue())) {
+		} else if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(type.getCharacterValue())) {
 			int sortOrder = 10;
 			for (DictionaryParams params : testAddParams.dictionaryParamList) {
 				TestResult testResult = new TestResult();
@@ -356,12 +357,12 @@ public class TestAddController extends BaseController {
 			extractSampleTypes(obj, parser, testAddParams);
 			testAddParams.active = (String) obj.get("active");
 			testAddParams.orderable = (String) obj.get("orderable");
-			if (TypeOfTestResultService.ResultType.isNumericById(testAddParams.resultTypeId)) {
+			if (TypeOfTestResultServiceImpl.ResultType.isNumericById(testAddParams.resultTypeId)) {
 				testAddParams.lowValid = (String) obj.get("lowValid");
 				testAddParams.highValid = (String) obj.get("highValid");
 				testAddParams.significantDigits = (String) obj.get("significantDigits");
 				extractLimits(obj, parser, testAddParams);
-			} else if (TypeOfTestResultService.ResultType.isDictionaryVarientById(testAddParams.resultTypeId)) {
+			} else if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVarientById(testAddParams.resultTypeId)) {
 				String dictionary = (String) obj.get("dictionary");
 				JSONArray dictionaryArray = (JSONArray) parser.parse(dictionary);
 				for (int i = 0; i < dictionaryArray.size(); i++) {
@@ -472,7 +473,7 @@ public class TestAddController extends BaseController {
 		String currentTestId = null;
 		String dictionaryIdGroup = null;
 		for (TestResult testResult : testResults) {
-			if (TypeOfTestResultService.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
+			if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
 				if (testResult.getTest().getId().equals(currentTestId)) {
 					dictionaryIdGroup += "," + testResult.getValue();
 				} else {

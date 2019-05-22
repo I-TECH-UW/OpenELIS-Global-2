@@ -24,7 +24,6 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.LocaleChangeListener;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.localization.dao.LocalizationDAO;
-import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
 import us.mn.state.health.lims.localization.valueholder.Localization;
 
 /**
@@ -34,7 +33,8 @@ public class LocalizationService implements LocaleChangeListener {
 	private static final LocalizationService INSTANCE = new LocalizationService(null);
 	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()
 			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
-	private static LocalizationDAO localizationDAO = SpringContext.instantiateBean(LocalizationDAOImpl.class);
+
+	private static LocalizationDAO localizationDAO = SpringContext.getBean(LocalizationDAO.class);
 	private Localization localization;
 
 	static {
@@ -61,11 +61,6 @@ public class LocalizationService implements LocaleChangeListener {
 	}
 
 	public LocalizationService(String id) {
-		if (localizationDAO == null) {
-			System.out.println("null bean");
-		} else {
-			System.out.println("not null bean");
-		}
 		if (!GenericValidator.isBlankOrNull(id)) {
 			localization = localizationDAO.getLocalizationById(id);
 		}
@@ -84,7 +79,7 @@ public class LocalizationService implements LocaleChangeListener {
 		LANGUAGE_LOCALE = locale;
 	}
 
-	@Transactional
+	@Transactional 
 	public static String getLocalizedValueById(String id) {
 		return getLocalizedValue(localizationDAO.getLocalizationById(id));
 	}

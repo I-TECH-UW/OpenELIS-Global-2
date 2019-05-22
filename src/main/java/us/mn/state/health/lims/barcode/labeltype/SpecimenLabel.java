@@ -7,14 +7,14 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.barcode.LabelField;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.services.PatientService;
+import spring.service.patient.PatientServiceImpl;
 import us.mn.state.health.lims.common.services.SampleOrderService;
-import us.mn.state.health.lims.common.services.TestService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -84,7 +84,7 @@ public class SpecimenLabel extends Label {
     List<Analysis> analysisList = analysisDAO.getAnalysesBySampleItem(sampleItem);
     for (Analysis analysis : analysisList) {
       tests.append(seperator);
-      tests.append(TestService.getUserLocalizedTestName(analysis.getTest()));
+      tests.append(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
       seperator = ", ";
     }
     
@@ -136,7 +136,7 @@ public class SpecimenLabel extends Label {
    * @return          label field containing patient id
    */
   private LabelField getAvailableIdField(Patient patient) {
-    PatientService service = new PatientService(patient);
+    PatientServiceImpl service = new PatientServiceImpl(patient);
     String patientId = service.getSubjectNumber();
     if (!StringUtil.isNullorNill(patientId))
       return new LabelField(MessageUtil.getMessage("barcode.label.info.patientid"),
