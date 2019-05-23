@@ -1,34 +1,43 @@
 package spring.service.rolemodule;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
+import spring.service.systemusermodule.PermissionModuleServiceImpl;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
+import us.mn.state.health.lims.role.dao.RoleDAO;
+import us.mn.state.health.lims.role.valueholder.Role;
+import us.mn.state.health.lims.systemusermodule.dao.PermissionModuleDAO;
+import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
 import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
-import us.mn.state.health.lims.systemusermodule.dao.RoleModuleDAO;
 
 @Service
-public class RoleModuleServiceImpl extends BaseObjectServiceImpl<RoleModule> 
-		implements RoleModuleService {
-  
-  @Autowired
-  private RoleModuleDAO roleModuleDAO;
-	
-  public RoleModuleServiceImpl() {
-    super(RoleModule.class);
-  }
-  
-  @Override
-  protected RoleModuleDAO getBaseObjectDAO() {
-	return roleModuleDAO;
-  }
+@Qualifier ("RoleModuleService")
+public class RoleModuleServiceImpl extends PermissionModuleServiceImpl implements RoleModuleService {
+	@Autowired
+	@Qualifier("RoleModuleDAO")
+	protected PermissionModuleDAO baseObjectDAO; // is RoleModuleDAO
 
-  @Override
-  @Transactional
-  public void insertData(RoleModule workplanResultModule) {
-    this.insertData(workplanResultModule);	
-  }
+	RoleModuleServiceImpl() {
+		super();
+	}
 
+	@Override
+	protected PermissionModuleDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
+
+	@Override
+	public String insert(PermissionModule roleModule) {
+		if (baseObjectDAO.duplicateRoleModuleExists((RoleModule) roleModule)) {
+			throw new LIMSDuplicateRecordException(
+					"Duplicate record exists for " + roleModule.getPermissionAgentId());
+		}
+		return baseObjectDAO.insert(roleModule);
+	}
 }
-

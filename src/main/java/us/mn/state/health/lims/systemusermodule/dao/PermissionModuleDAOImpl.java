@@ -8,7 +8,7 @@ import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
 
 @Component
 @Transactional 
-public class PermissionModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements PermissionModuleDAO {
+public abstract class PermissionModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements PermissionModuleDAO {
   PermissionModuleDAOImpl() {
     super(PermissionModule.class);
   }

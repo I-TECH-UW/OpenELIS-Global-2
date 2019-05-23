@@ -99,7 +99,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 						"Duplicate record exists for " + permissionModule.getPermissionAgentId());
 			}
 
-			String id = (String) HibernateUtil.getSession().save(permissionModule);
+//			String id = (String) HibernateUtil.getSession().save(permissionModule);
+			String id = (String) sessionFactory.getCurrentSession().save(permissionModule);
 			permissionModule.setId(id);
 
 			// add to audit trail
@@ -316,7 +317,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 		int rrn;
 		try {
 			String sql = "select rm.id from RoleModule rm order by rm.role.id";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
@@ -333,14 +334,14 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 		return list;
 	}
 
-	private boolean duplicateRoleModuleExists(RoleModule roleModule) throws LIMSRuntimeException {
+	public boolean duplicateRoleModuleExists(PermissionModule roleModule) throws LIMSRuntimeException {
 		try {
 
 			List list;
 
 			String sql = "from RoleModule s where s.role.id = :param and s.systemModule.id = :param2 and s.id != :param3";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
-			query.setInteger("param", Integer.parseInt(roleModule.getRole().getId()));
+			query.setInteger("param", Integer.parseInt( ((RoleModule) roleModule).getRole().getId()));
 			query.setInteger("param2", Integer.parseInt(roleModule.getSystemModule().getId()));
 
 			String systemUserModuleId = "0";

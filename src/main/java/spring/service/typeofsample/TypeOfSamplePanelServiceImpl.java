@@ -19,4 +19,9 @@ public class TypeOfSamplePanelServiceImpl extends BaseObjectServiceImpl<TypeOfSa
   @Override
   protected TypeOfSamplePanelDAO getBaseObjectDAO() {
     return baseObjectDAO;}
+
+  @Override
+  public void insertData(TypeOfSamplePanel typeOfSamplePanel) {
+  	baseObjectDAO.insertData(typeOfSamplePanel);
+  }
 }

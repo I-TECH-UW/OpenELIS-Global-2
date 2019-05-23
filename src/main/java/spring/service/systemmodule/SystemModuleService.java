@@ -5,5 +5,4 @@ import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
 
 public interface SystemModuleService extends BaseObjectService<SystemModule> {
 
-	void insertData(SystemModule workplanModule);
 }

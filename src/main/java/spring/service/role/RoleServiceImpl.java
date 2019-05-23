@@ -32,6 +32,6 @@ public class RoleServiceImpl extends BaseObjectServiceImpl<Role> implements Role
 
 	@Override
 	public Role getRoleByName(String string) {
-		return this.getRoleByName(string);
+		return baseObjectDAO.getRoleByName(string);
 	}
 }

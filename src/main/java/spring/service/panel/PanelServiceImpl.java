@@ -11,8 +11,9 @@ import us.mn.state.health.lims.panel.valueholder.Panel;
 
 @Service
 public class PanelServiceImpl extends BaseObjectServiceImpl<Panel> implements PanelService {
+  
   @Autowired
-  protected PanelDAO baseObjectDAO;
+  protected PanelDAO panelDAO;
 
   PanelServiceImpl() {
     super(Panel.class);
@@ -20,10 +21,10 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel> implements Pa
 
   @Override
   protected PanelDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+    return panelDAO;}
 
   @Override
   public List<Panel> getAllPanels() {
-  	return this.getAllPanels();
+  	return panelDAO.getAllPanels();
   }
 }

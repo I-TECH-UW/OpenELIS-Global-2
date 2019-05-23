@@ -155,4 +155,14 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization>
 		localization.setFrench(french);
 		return localization;
 	}
+
+	public static String getLocalizationValueByLocal(ConfigurationProperties.LOCALE locale, Localization localization) {
+		if (locale == ConfigurationProperties.LOCALE.FRENCH) {
+			return localization.getFrench();
+		} else {
+			return localization.getEnglish();
+		}
+	}
+
+	
 }

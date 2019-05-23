@@ -70,7 +70,6 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel> imp
 	public boolean insertData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException {
 
 		try {
-
 			String id = (String) HibernateUtil.getSession().save(typeOfSamplePanel);
 
 			typeOfSamplePanel.setId(id);

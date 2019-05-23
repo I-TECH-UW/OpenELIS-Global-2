@@ -10,16 +10,23 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.systemusermodule.dao.PermissionModuleDAO;
 import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
+import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
 
 @Service
+@Qualifier("PermissionModuleService")
 public class PermissionModuleServiceImpl extends BaseObjectServiceImpl<PermissionModule>
 		implements PermissionModuleService {
+	
 	@Autowired
 	@Qualifier("RoleModuleDAO")
 	protected PermissionModuleDAO baseObjectDAO;
 
-	PermissionModuleServiceImpl() {
+	protected PermissionModuleServiceImpl() {
 		super(PermissionModule.class);
+	}
+
+	public PermissionModuleServiceImpl(Class<PermissionModule> class1) {
+		super(class1);
 	}
 
 	@Override

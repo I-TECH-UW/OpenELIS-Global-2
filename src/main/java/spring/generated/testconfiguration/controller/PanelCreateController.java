@@ -10,6 +10,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -22,10 +23,13 @@ import spring.mine.common.controller.BaseController;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import spring.service.localization.LocalizationService;
+import spring.service.localization.LocalizationServiceImpl;
 import spring.service.role.RoleService;
 import spring.service.rolemodule.RoleModuleService;
 import spring.service.panel.PanelService;
 import spring.service.systemmodule.SystemModuleService;
+import spring.service.systemusermodule.PermissionModuleService;
+import spring.service.typeofsample.TypeOfSamplePanelService;
 import spring.service.typeofsample.TypeOfSampleService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -54,6 +58,8 @@ public class PanelCreateController extends BaseController {
 	SystemModuleService systemModuleService;
 	@Autowired
 	TypeOfSampleService typeOfSampleService;
+	@Autowired
+	TypeOfSamplePanelService typeOfSamplePanelService;
 	@Autowired
 	LocalizationService localizationService;
 
@@ -115,7 +121,7 @@ public class PanelCreateController extends BaseController {
 		StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
 
 		for (Panel panel : panels) {
-			builder.append(LocalizationService.getLocalizationValueByLocal(locale, panel.getLocalization()));
+			builder.append(LocalizationServiceImpl.getLocalizationValueByLocal(locale, panel.getLocalization()));
 			builder.append(NAME_SEPARATOR);
 		}
 
@@ -156,17 +162,17 @@ public class PanelCreateController extends BaseController {
 		try {
 			localizationService.insert(localization);
 			panel.setLocalization(localization);
-			new PanelDAOImpl().insert(panel);
+			panelService.insert(panel);
 
 			TypeOfSamplePanel typeOfSamplePanel = createTypeOfSamplePanel(sampleTypeId, panel, userId);
-			new TypeOfSamplePanelDAOImpl().insertData(typeOfSamplePanel);
+			typeOfSamplePanelService.insert(typeOfSamplePanel);
 
-			systemModuleService.insertData(workplanModule);
-			systemModuleService.insertData(resultModule);
-			systemModuleService.insertData(validationModule);
-			roleModuleService.insertData(workplanResultModule);
-			roleModuleService.insertData(resultResultModule);
-			roleModuleService.insertData(validationValidationModule);
+			systemModuleService.insert(workplanModule);
+			systemModuleService.insert(resultModule);
+			systemModuleService.insert(validationModule);
+			roleModuleService.insert(workplanResultModule);
+			roleModuleService.insert(resultResultModule);
+			roleModuleService.insert(validationValidationModule);
 
 //			tx.commit();
 

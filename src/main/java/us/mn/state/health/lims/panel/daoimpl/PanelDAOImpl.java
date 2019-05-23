@@ -95,22 +95,22 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel> implements PanelDAO {
 		clearIDMaps();
 	}
 
-	@Override
-	public String insert(Panel panel) throws LIMSRuntimeException {
-		try {
-			String id = (String) HibernateUtil.getSession().save(panel);
-			panel.setId(id);
-
-			new AuditTrailDAOImpl().saveNewHistory(panel, panel.getSysUserId(), "PANEL");
-
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			return id;
-		} catch (Exception e) {
-			handleException(e, "insert");
-		}
-		return null;
-	}
+//	@Override
+//	public String insert(Panel panel) throws LIMSRuntimeException {
+//		try {
+//			String id = (String) HibernateUtil.getSession().save(panel);
+//			panel.setId(id);
+//
+//			new AuditTrailDAOImpl().saveNewHistory(panel, panel.getSysUserId(), "PANEL");
+//
+//			// HibernateUtil.getSession().flush(); // CSL remove old
+//			// HibernateUtil.getSession().clear(); // CSL remove old
+//			return id;
+//		} catch (Exception e) {
+//			handleException(e, "insert");
+//		}
+//		return null;
+//	}
 
 	@Override
 	public boolean insertData(Panel panel) throws LIMSRuntimeException {

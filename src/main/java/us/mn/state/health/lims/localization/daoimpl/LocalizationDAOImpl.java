@@ -74,22 +74,22 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements Lo
 		}
 	}
 
-	@Override
-	public String insert(Localization localization) throws LIMSRuntimeException {
-		try {
-			String id = (String) HibernateUtil.getSession().save(localization);
-			localization.setId(id);
-
-			new AuditTrailDAOImpl().saveNewHistory(localization, localization.getSysUserId(), "LOCALIZATION");
-
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			return id;
-		} catch (Exception e) {
-			handleException(e, "insert");
-		}
-		return null;
-	}
+//	@Override
+//	public String insert(Localization localization) throws LIMSRuntimeException {
+//		try {
+//			String id = (String) HibernateUtil.getSession().save(localization);
+//			localization.setId(id);
+//
+//			new AuditTrailDAOImpl().saveNewHistory(localization, localization.getSysUserId(), "LOCALIZATION");
+//
+//			// HibernateUtil.getSession().flush(); // CSL remove old
+//			// HibernateUtil.getSession().clear(); // CSL remove old
+//			return id;
+//		} catch (Exception e) {
+//			handleException(e, "insert");
+//		}
+//		return null;
+//	}
 
 	public Localization readLocalization(String idString) {
 		try {

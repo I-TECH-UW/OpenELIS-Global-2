@@ -8,7 +8,4 @@ public interface LocalizationService extends BaseObjectService<Localization> {
 
 	boolean languageChanged(Localization localization, String english, String french);
 
-	static Object getLocalizationValueByLocal(LOCALE locale, Localization localization) {
-		return getLocalizationValueByLocal(locale, localization);
-	}
 }
