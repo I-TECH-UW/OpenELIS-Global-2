@@ -19,4 +19,9 @@ public class SystemModuleServiceImpl extends BaseObjectServiceImpl<SystemModule>
   @Override
   protected SystemModuleDAO getBaseObjectDAO() {
     return baseObjectDAO;}
+
+  @Override
+  public void insertData(SystemModule workplanModule) {
+  	this.insertData(workplanModule);
+  }
 }

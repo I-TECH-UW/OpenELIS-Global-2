@@ -29,4 +29,9 @@ public class RoleServiceImpl extends BaseObjectServiceImpl<Role> implements Role
 	public List<Role> getAllActiveRoles() {
 		return baseObjectDAO.getAllMatching("active", true);
 	}
+
+	@Override
+	public Role getRoleByName(String string) {
+		return this.getRoleByName(string);
+	}
 }

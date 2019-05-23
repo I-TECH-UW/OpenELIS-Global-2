@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.service.common.BaseObjectServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
+import us.mn.state.health.lims.common.util.ConfigurationProperties.LOCALE;
 import us.mn.state.health.lims.common.util.LocaleChangeListener;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.localization.dao.LocalizationDAO;

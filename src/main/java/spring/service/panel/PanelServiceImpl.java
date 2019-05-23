@@ -1,5 +1,7 @@
 package spring.service.panel;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,4 +21,9 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel> implements Pa
   @Override
   protected PanelDAO getBaseObjectDAO() {
     return baseObjectDAO;}
+
+  @Override
+  public List<Panel> getAllPanels() {
+  	return this.getAllPanels();
+  }
 }

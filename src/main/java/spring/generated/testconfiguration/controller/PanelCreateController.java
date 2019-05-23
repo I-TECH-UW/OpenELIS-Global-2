@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -19,21 +19,20 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.PanelCreateForm;
 import spring.mine.common.controller.BaseController;
-import spring.service.localization.LocalizationServiceImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
+import spring.service.localization.LocalizationService;
+import spring.service.role.RoleService;
+import spring.service.rolemodule.RoleModuleService;
+import spring.service.panel.PanelService;
+import spring.service.systemmodule.SystemModuleService;
+import spring.service.typeofsample.TypeOfSampleService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
 import us.mn.state.health.lims.localization.valueholder.Localization;
 import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
 import us.mn.state.health.lims.panel.valueholder.Panel;
-import us.mn.state.health.lims.role.dao.RoleDAO;
-import us.mn.state.health.lims.role.daoimpl.RoleDAOImpl;
 import us.mn.state.health.lims.role.valueholder.Role;
-import us.mn.state.health.lims.systemmodule.dao.SystemModuleDAO;
-import us.mn.state.health.lims.systemmodule.daoimpl.SystemModuleDAOImpl;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
 import us.mn.state.health.lims.systemusermodule.daoimpl.RoleModuleDAOImpl;
 import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
@@ -44,6 +43,19 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSamplePanel;
 
 @Controller
 public class PanelCreateController extends BaseController {
+	
+	@Autowired
+	PanelService panelService;
+	@Autowired
+	RoleService roleService;
+	@Autowired
+	RoleModuleService roleModuleService;
+	@Autowired
+	SystemModuleService systemModuleService;
+	@Autowired
+	TypeOfSampleService typeOfSampleService;
+	@Autowired
+	LocalizationService localizationService;
 
 	public static final String NAME_SEPARATOR = "$";
 
@@ -68,7 +80,7 @@ public class PanelCreateController extends BaseController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		List<Panel> panels = new PanelDAOImpl().getAllPanels();
+		List<Panel> panels = panelService.getAllPanels();
 		try {
 			PropertyUtils.setProperty(form, "existingEnglishNames",
 					getExistingTestNames(panels, ConfigurationProperties.LOCALE.ENGLISH));
@@ -103,7 +115,7 @@ public class PanelCreateController extends BaseController {
 		StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
 
 		for (Panel panel : panels) {
-			builder.append(LocalizationServiceImpl.getLocalizationValueByLocal(locale, panel.getLocalization()));
+			builder.append(LocalizationService.getLocalizationValueByLocal(locale, panel.getLocalization()));
 			builder.append(NAME_SEPARATOR);
 		}
 
@@ -118,9 +130,9 @@ public class PanelCreateController extends BaseController {
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
-		RoleDAO roleDAO = new RoleDAOImpl();
-		RoleModuleDAOImpl roleModuleDAO = new RoleModuleDAOImpl();
-		SystemModuleDAO systemModuleDAO = new SystemModuleDAOImpl();
+//		RoleDAO roleDAO = new RoleDAOImpl();
+//		RoleModuleDAOImpl roleModuleDAO = new RoleModuleDAOImpl();
+//		SystemModuleDAO systemModuleDAO = new SystemModuleDAOImpl();
 		String identifyingName = form.getString("panelEnglishName");
 		String sampleTypeId = form.getString("sampleTypeId");
 		String userId = getSysUserId(request);
@@ -132,38 +144,39 @@ public class PanelCreateController extends BaseController {
 		SystemModule resultModule = createSystemModule("LogbookResults", identifyingName, userId);
 		SystemModule validationModule = createSystemModule("ResultValidation", identifyingName, userId);
 
-		Role resultsEntryRole = roleDAO.getRoleByName("Results entry");
-		Role validationRole = roleDAO.getRoleByName("Validator");
+		Role resultsEntryRole = roleService.getRoleByName("Results entry");
+		Role validationRole = roleService.getRoleByName("Validator");
 
 		RoleModule workplanResultModule = createRoleModule(userId, workplanModule, resultsEntryRole);
 		RoleModule resultResultModule = createRoleModule(userId, resultModule, resultsEntryRole);
 		RoleModule validationValidationModule = createRoleModule(userId, validationModule, validationRole);
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 		try {
-			new LocalizationDAOImpl().insert(localization);
+			localizationService.insert(localization);
 			panel.setLocalization(localization);
 			new PanelDAOImpl().insert(panel);
 
 			TypeOfSamplePanel typeOfSamplePanel = createTypeOfSamplePanel(sampleTypeId, panel, userId);
 			new TypeOfSamplePanelDAOImpl().insertData(typeOfSamplePanel);
 
-			systemModuleDAO.insertData(workplanModule);
-			systemModuleDAO.insertData(resultModule);
-			systemModuleDAO.insertData(validationModule);
-			roleModuleDAO.insertData(workplanResultModule);
-			roleModuleDAO.insertData(resultResultModule);
-			roleModuleDAO.insertData(validationValidationModule);
+			systemModuleService.insertData(workplanModule);
+			systemModuleService.insertData(resultModule);
+			systemModuleService.insertData(validationModule);
+			roleModuleService.insertData(workplanResultModule);
+			roleModuleService.insertData(resultResultModule);
+			roleModuleService.insertData(validationValidationModule);
 
-			tx.commit();
+//			tx.commit();
 
 		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
+//			tx.rollback();
 			lre.printStackTrace();
-		} finally {
-			HibernateUtil.closeSession();
-		}
+		} 
+//			finally {
+//			HibernateUtil.closeSession();
+//		}
 
 		DisplayListService.refreshList(DisplayListService.ListType.PANELS);
 		DisplayListService.refreshList(DisplayListService.ListType.PANELS_INACTIVE);

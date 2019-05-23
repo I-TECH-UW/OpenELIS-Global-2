@@ -8,4 +8,6 @@ import us.mn.state.health.lims.role.valueholder.Role;
 public interface RoleService extends BaseObjectService<Role> {
 
 	List<Role> getAllActiveRoles();
+
+	Role getRoleByName(String string);
 }

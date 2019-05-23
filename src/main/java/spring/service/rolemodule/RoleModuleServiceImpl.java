@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
-import us.mn.state.health.lims.rolemodule.dao.RoleModuleDAO;
-import us.mn.state.health.lims.rolemodule.valueholder.RoleModule;
+import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
+import us.mn.state.health.lims.systemusermodule.dao.RoleModuleDAO;
 
 @Service
 public class RoleModuleServiceImpl extends BaseObjectServiceImpl<RoleModule> 
