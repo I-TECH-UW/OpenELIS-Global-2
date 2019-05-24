@@ -9,14 +9,15 @@ import us.mn.state.health.lims.sampletracking.valueholder.SampleTracking;
 
 @Service
 public class SampleTrackingServiceImpl extends BaseObjectServiceImpl<SampleTracking> implements SampleTrackingService {
-  @Autowired
-  protected SampleTrackingDAO baseObjectDAO;
+	@Autowired
+	protected SampleTrackingDAO baseObjectDAO;
 
-  SampleTrackingServiceImpl() {
-    super(SampleTracking.class);
-  }
+	SampleTrackingServiceImpl() {
+		super(SampleTracking.class);
+	}
 
-  @Override
-  protected SampleTrackingDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected SampleTrackingDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }

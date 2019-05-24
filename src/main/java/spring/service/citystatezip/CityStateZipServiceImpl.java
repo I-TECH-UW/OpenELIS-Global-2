@@ -25,8 +25,58 @@ public class CityStateZipServiceImpl extends BaseObjectServiceImpl<CityStateZip>
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List getAllStateCodes() {
 		return baseObjectDAO.getAllStateCodes();
+	}
+
+	@Override
+	public CityStateZip getState(CityStateZip cityStateZip) {
+        return getBaseObjectDAO().getState(cityStateZip);
+	}
+
+	@Override
+	public List getValidCityStateZipCombosForHumanSampleEntry(CityStateZip cityStateZip) {
+        return getBaseObjectDAO().getValidCityStateZipCombosForHumanSampleEntry(cityStateZip);
+	}
+
+	@Override
+	public List getCities(String filter) {
+        return getBaseObjectDAO().getCities(filter);
+	}
+
+	@Override
+	public CityStateZip getZipCode(CityStateZip cityStateZip) {
+        return getBaseObjectDAO().getZipCode(cityStateZip);
+	}
+
+	@Override
+	public CityStateZip getCity(CityStateZip cityStateZip) {
+        return getBaseObjectDAO().getCity(cityStateZip);
+	}
+
+	@Override
+	public List getCitiesByZipCode(CityStateZip cityStateZip) {
+        return getBaseObjectDAO().getCitiesByZipCode(cityStateZip);
+	}
+
+	@Override
+	public String getCountyCodeByStateAndZipCode(CityStateZip cityStateZip) {
+        return getBaseObjectDAO().getCountyCodeByStateAndZipCode(cityStateZip);
+	}
+
+	@Override
+	public List getZipCodesByCity(CityStateZip cityStateZip) {
+        return getBaseObjectDAO().getZipCodesByCity(cityStateZip);
+	}
+
+	@Override
+	public boolean isCityStateZipComboValid(CityStateZip cityStateZip) {
+        return getBaseObjectDAO().isCityStateZipComboValid(cityStateZip);
+	}
+
+	@Override
+	public CityStateZip getCityStateZipByCityAndZipCode(CityStateZip cityStateZip) {
+        return getBaseObjectDAO().getCityStateZipByCityAndZipCode(cityStateZip);
 	}
 }

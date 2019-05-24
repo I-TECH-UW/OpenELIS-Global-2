@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -18,7 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.TestSectionCreateForm;
 import spring.mine.common.controller.BaseController;
 import spring.service.localization.LocalizationServiceImpl;
-import spring.service.test.TestSectionServiceImpl;
+import spring.service.test.TestSectionService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -41,6 +42,9 @@ public class TestSectionCreateController extends BaseController {
 
 	public static final String NAME_SEPARATOR = "$";
 
+	@Autowired
+	TestSectionService testSectionService;
+
 	@RequestMapping(value = "/TestSectionCreate", method = RequestMethod.GET)
 	public ModelAndView showTestSectionCreate(HttpServletRequest request) {
 		TestSectionCreateForm form = new TestSectionCreateForm();
@@ -56,7 +60,7 @@ public class TestSectionCreateController extends BaseController {
 					DisplayListService.getList(DisplayListService.ListType.TEST_SECTION));
 			PropertyUtils.setProperty(form, "inactiveTestUnitList",
 					DisplayListService.getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
-			List<TestSection> testSections = TestSectionServiceImpl.getAllTestSections();
+			List<TestSection> testSections = testSectionService.getAllTestSections();
 			PropertyUtils.setProperty(form, "existingEnglishNames",
 					getExistingTestNames(testSections, ConfigurationProperties.LOCALE.ENGLISH));
 

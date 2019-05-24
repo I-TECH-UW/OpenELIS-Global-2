@@ -9,14 +9,25 @@ import us.mn.state.health.lims.testcodes.valueholder.TestCodeType;
 
 @Service
 public class TestCodeTypeServiceImpl extends BaseObjectServiceImpl<TestCodeType> implements TestCodeTypeService {
-  @Autowired
-  protected TestCodeTypeDAO baseObjectDAO;
+	@Autowired
+	protected TestCodeTypeDAO baseObjectDAO;
 
-  TestCodeTypeServiceImpl() {
-    super(TestCodeType.class);
-  }
+	TestCodeTypeServiceImpl() {
+		super(TestCodeType.class);
+	}
 
-  @Override
-  protected TestCodeTypeDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected TestCodeTypeDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
+
+	@Override
+	public TestCodeType getTestCodeTypeById(String id) {
+        return getBaseObjectDAO().getTestCodeTypeById(id);
+	}
+
+	@Override
+	public TestCodeType getTestCodeTypeByName(String name) {
+        return getBaseObjectDAO().getTestCodeTypeByName(name);
+	}
 }

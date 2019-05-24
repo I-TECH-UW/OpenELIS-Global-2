@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -18,7 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.UomCreateForm;
 import spring.mine.common.controller.BaseController;
 import spring.service.localization.LocalizationServiceImpl;
-import spring.service.unitofmeasure.UnitOfMeasureServiceImpl;
+import spring.service.unitofmeasure.UnitOfMeasureService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -30,6 +31,9 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 public class UomCreateController extends BaseController {
 
 	public static final String NAME_SEPARATOR = "$";
+
+	@Autowired
+	UnitOfMeasureService unitOfMeasureService;
 
 	@RequestMapping(value = "/UomCreate", method = RequestMethod.GET)
 	public ModelAndView showUomCreate(HttpServletRequest request) {
@@ -50,7 +54,7 @@ public class UomCreateController extends BaseController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		List<UnitOfMeasure> uoms = UnitOfMeasureServiceImpl.getAllUnitOfMeasures();
+		List<UnitOfMeasure> uoms = unitOfMeasureService.getAllUnitOfMeasures();
 		try {
 			PropertyUtils.setProperty(form, "existingEnglishNames",
 					getExistingUomNames(uoms, ConfigurationProperties.LOCALE.ENGLISH));

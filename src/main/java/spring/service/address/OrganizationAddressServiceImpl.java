@@ -13,8 +13,7 @@ import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
 import us.mn.state.health.lims.common.action.IActionConstants;
 
 @Service
-public class OrganizationAddressServiceImpl extends BaseObjectServiceImpl<OrganizationAddress>
-		implements OrganizationAddressService {
+public class OrganizationAddressServiceImpl extends BaseObjectServiceImpl<OrganizationAddress> implements OrganizationAddressService {
 	@Autowired
 	protected OrganizationAddressDAO baseObjectDAO;
 
@@ -28,19 +27,17 @@ public class OrganizationAddressServiceImpl extends BaseObjectServiceImpl<Organi
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public OrganizationAddress update(OrganizationAddress organizationAddress) {
-		OrganizationAddress oldObject = getBaseObjectDAO().get(organizationAddress.getCompoundId()).orElseThrow(
-				() -> new ObjectNotFoundException(organizationAddress.getId(), OrganizationAddress.class.getName()));
+		OrganizationAddress oldObject = getBaseObjectDAO().get(organizationAddress.getCompoundId()).orElseThrow(() -> new ObjectNotFoundException(organizationAddress.getId(), OrganizationAddress.class.getName()));
 		if (auditTrailLog) {
-			auditTrailDAO.saveHistory(organizationAddress, oldObject, organizationAddress.getSysUserId(),
-					IActionConstants.AUDIT_TRAIL_UPDATE, getBaseObjectDAO().getTableName());
+			auditTrailDAO.saveHistory(organizationAddress, oldObject, organizationAddress.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE, getBaseObjectDAO().getTableName());
 		}
 		return getBaseObjectDAO().save(organizationAddress);
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<OrganizationAddress> getAddressPartsByOrganizationId(String id) {
 		return baseObjectDAO.getAddressPartsByOrganizationId(id);
 	}

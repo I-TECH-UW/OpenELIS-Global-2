@@ -12,8 +12,7 @@ import us.mn.state.health.lims.systemusermodule.dao.PermissionModuleDAO;
 import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
 
 @Service
-public class PermissionModuleServiceImpl extends BaseObjectServiceImpl<PermissionModule>
-		implements PermissionModuleService {
+public class PermissionModuleServiceImpl extends BaseObjectServiceImpl<PermissionModule> implements PermissionModuleService {
 	@Autowired
 	@Qualifier("RoleModuleDAO")
 	protected PermissionModuleDAO baseObjectDAO;
@@ -31,5 +30,63 @@ public class PermissionModuleServiceImpl extends BaseObjectServiceImpl<Permissio
 	@Transactional(readOnly = true)
 	public List<PermissionModule> getAllPermissionModulesByAgentId(int agentId) {
 		return baseObjectDAO.getAllMatching("role.id", agentId);
+	}
+
+	@Override
+	public void getData(PermissionModule permissionModule) {
+        getBaseObjectDAO().getData(permissionModule);
+
+	}
+
+	@Override
+	public void deleteData(List permissionModules) {
+        getBaseObjectDAO().deleteData(permissionModules);
+
+	}
+
+	@Override
+	public void updateData(PermissionModule permissionModule) {
+        getBaseObjectDAO().updateData(permissionModule);
+
+	}
+
+	@Override
+	public boolean insertData(PermissionModule permissionModule) {
+        return getBaseObjectDAO().insertData(permissionModule);
+	}
+
+	@Override
+	public List getAllPermissionModules() {
+        return getBaseObjectDAO().getAllPermissionModules();
+	}
+
+	@Override
+	public Integer getTotalPermissionModuleCount() {
+        return getBaseObjectDAO().getTotalPermissionModuleCount();
+	}
+
+	@Override
+	public List getPageOfPermissionModules(int startingRecNo) {
+        return getBaseObjectDAO().getPageOfPermissionModules(startingRecNo);
+	}
+
+	@Override
+	public boolean isAgentAllowedAccordingToName(String id, String string) {
+        return getBaseObjectDAO().isAgentAllowedAccordingToName(id,string);
+	}
+
+	@Override
+	public List getNextPermissionModuleRecord(String id) {
+        return getBaseObjectDAO().getNextPermissionModuleRecord(id);
+	}
+
+	@Override
+	public boolean doesUserHaveAnyModules(int userId) {
+        return getBaseObjectDAO().doesUserHaveAnyModules(userId);
+	}
+
+	@Override
+	public List getPreviousPermissionModuleRecord(String id) {
+        return getBaseObjectDAO().getPreviousPermissionModuleRecord(id);
 	}
 }

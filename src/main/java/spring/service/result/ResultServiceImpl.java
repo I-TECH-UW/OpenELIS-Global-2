@@ -30,7 +30,10 @@ import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultSignature;
 import us.mn.state.health.lims.resultlimits.dao.ResultLimitDAO;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
+import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.test.valueholder.Test;
+import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
+import us.mn.state.health.lims.testresult.valueholder.TestResult;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
@@ -163,8 +166,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 			}
 
 			return value.toString();
-		} else if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(result.getResultType())
-				&& !GenericValidator.isBlankOrNull(result.getValue())) {
+		} else if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(result.getResultType()) && !GenericValidator.isBlankOrNull(result.getValue())) {
 			return result.getValue().split("\\(")[0].trim();
 		} else {
 			return result.getValue();
@@ -206,19 +208,15 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 					for (Result sibResult : resultList) {
 						if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(sibResult.getResultType())) {
 							dictionaryResults.add(sibResult);
-						} else if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(sibResult.getResultType())
-								&& sibResult.getParentResult() != null) {
+						} else if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(sibResult.getResultType()) && sibResult.getParentResult() != null) {
 							quantification = sibResult;
 						}
 					}
 
 					for (Result sibResult : dictionaryResults) {
 						Dictionary dictionary = dictionaryDAO.getDictionaryById(sibResult.getValue());
-						reportResult = (dictionary != null && dictionary.getId() != null)
-								? dictionary.getLocalizedName()
-								: "";
-						if (quantification != null
-								&& quantification.getParentResult().getId().equals(sibResult.getId())) {
+						reportResult = (dictionary != null && dictionary.getId() != null) ? dictionary.getLocalizedName() : "";
+						if (quantification != null && quantification.getParentResult().getId().equals(sibResult.getId())) {
 							reportResult += separator + quantification.getValue();
 						}
 					}
@@ -240,8 +238,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 			List<Result> results = resultDAO.getResultsByAnalysis(result.getAnalysis());
 
 			for (Result multiResult : results) {
-				if (!GenericValidator.isBlankOrNull(multiResult.getValue())
-						&& TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(multiResult.getResultType())) {
+				if (!GenericValidator.isBlankOrNull(multiResult.getValue()) && TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(multiResult.getResultType())) {
 					if (firstPass) {
 						firstPass = false;
 					} else {
@@ -274,8 +271,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 			}
 
 			return value.toString() + appendUOM(includeUOM);
-		} else if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(result.getResultType())
-				&& !GenericValidator.isBlankOrNull(result.getValue())) {
+		} else if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(result.getResultType()) && !GenericValidator.isBlankOrNull(result.getValue())) {
 			return result.getValue().split("\\(")[0].trim();
 		} else {
 			return result.getValue();
@@ -307,8 +303,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 			List<Result> results = resultDAO.getResultsByAnalysis(result.getAnalysis());
 
 			for (Result multiResult : results) {
-				if (!GenericValidator.isBlankOrNull(multiResult.getValue())
-						&& TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(multiResult.getResultType())) {
+				if (!GenericValidator.isBlankOrNull(multiResult.getValue()) && TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(multiResult.getResultType())) {
 					if (firstPass) {
 						firstPass = false;
 					} else {
@@ -367,13 +362,10 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 	public String getDisplayReferenceRange(boolean includeSelectList) {
 		String range = "";
 		if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(result.getResultType())) {
-			if (result.getMinNormal() != null && result.getMaxNormal() != null
-					&& !result.getMinNormal().equals(result.getMaxNormal())) {
-				range = ResultLimitServiceImpl.getDisplayNormalRange(result.getMinNormal(), result.getMaxNormal(),
-						String.valueOf(result.getSignificantDigits()), "-");
+			if (result.getMinNormal() != null && result.getMaxNormal() != null && !result.getMinNormal().equals(result.getMaxNormal())) {
+				range = ResultLimitServiceImpl.getDisplayNormalRange(result.getMinNormal(), result.getMaxNormal(), String.valueOf(result.getSignificantDigits()), "-");
 			}
-		} else if (includeSelectList
-				&& TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
+		} else if (includeSelectList && TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
 			List<ResultLimit> limits = getResultLimits();
 			if (!limits.isEmpty() && !GenericValidator.isBlankOrNull(limits.get(0).getDictionaryNormalId())) {
 				range = dictionaryDAO.getDataForId(limits.get(0).getDictionaryNormalId()).getLocalizedName();
@@ -391,8 +383,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 	}
 
 	public boolean isAbnormalDictionaryResult() {
-		if (result.getValue() != null
-				&& TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
+		if (result.getValue() != null && TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
 			List<ResultLimit> limits = getResultLimits();
 			if (!limits.isEmpty()) {
 				return !result.getValue().equals(limits.get(0).getDictionaryNormalId());
@@ -420,8 +411,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 	}
 
 	public static List<Result> getResultsInTimePeriodInTestSection(Date lowDate, Date highDate, String testSectionId) {
-		return resultDAO.getResultsForTestSectionInDateRange(testSectionId, lowDate,
-				DateUtil.addDaysToSQLDate(highDate, 1));
+		return resultDAO.getResultsForTestSectionInDateRange(testSectionId, lowDate, DateUtil.addDaysToSQLDate(highDate, 1));
 	}
 
 	public static String getJSONStringForMultiSelect(List<Result> resultList) {
@@ -438,8 +428,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 		StringBuilder currentString = new StringBuilder();
 
 		for (Result result : resultList) {
-			if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())
-					&& result.getValue() != null) {
+			if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType()) && result.getValue() != null) {
 				if (currentGrouping != result.getGrouping()) {
 					if (currentString.length() > 1) {
 						currentString.setLength(currentString.length() - 1);
@@ -461,5 +450,126 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 		}
 
 		return jsonRep.toJSONString();
+	}
+
+	@Override
+	public void getData(Result result) {
+        getBaseObjectDAO().getData(result);
+
+	}
+
+	@Override
+	public void deleteData(Result result) {
+        getBaseObjectDAO().deleteData(result);
+
+	}
+
+	@Override
+	public void deleteData(List results) {
+        getBaseObjectDAO().deleteData(results);
+
+	}
+
+	@Override
+	public void updateData(Result result) {
+        getBaseObjectDAO().updateData(result);
+
+	}
+
+	@Override
+	public boolean insertData(Result result) {
+        return getBaseObjectDAO().insertData(result);
+	}
+
+	@Override
+	public List<Result> getResultsForTestSectionInDateRange(String testSectionId, Date lowDate, Date highDate) {
+        return getBaseObjectDAO().getResultsForTestSectionInDateRange(testSectionId,lowDate,highDate);
+	}
+
+	@Override
+	public List getNextResultRecord(String id) {
+        return getBaseObjectDAO().getNextResultRecord(id);
+	}
+
+	@Override
+	public List getPreviousResultRecord(String id) {
+        return getBaseObjectDAO().getPreviousResultRecord(id);
+	}
+
+	@Override
+	public void getResultByAnalysisAndAnalyte(Result result, Analysis analysis, TestAnalyte ta) {
+        getBaseObjectDAO().getResultByAnalysisAndAnalyte(result,analysis,ta);
+
+	}
+
+	@Override
+	public List<Result> getResultsForAnalysisIdList(List<Integer> analysisIdList) {
+        return getBaseObjectDAO().getResultsForAnalysisIdList(analysisIdList);
+	}
+
+	@Override
+	public List<Result> getResultsForPanelInDateRange(String panelId, Date lowDate, Date highDate) {
+        return getBaseObjectDAO().getResultsForPanelInDateRange(panelId,lowDate,highDate);
+	}
+
+	@Override
+	public List<Result> getResultsForSample(Sample sample) {
+        return getBaseObjectDAO().getResultsForSample(sample);
+	}
+
+	@Override
+	public Result getResultForAnalyteInAnalysisSet(String analyteId, List<Integer> analysisIDList) {
+        return getBaseObjectDAO().getResultForAnalyteInAnalysisSet(analyteId,analysisIDList);
+	}
+
+	@Override
+	public List<Result> getResultsForTestInDateRange(String testId, Date startDate, Date endDate) {
+        return getBaseObjectDAO().getResultsForTestInDateRange(testId,startDate,endDate);
+	}
+
+	@Override
+	public void getResultByTestResult(Result result, TestResult testResult) {
+        getBaseObjectDAO().getResultByTestResult(result,testResult);
+
+	}
+
+	@Override
+	public Result getResultForAnalyteAndSampleItem(String analyteId, String sampleItemId) {
+        return getBaseObjectDAO().getResultForAnalyteAndSampleItem(analyteId,sampleItemId);
+	}
+
+	@Override
+	public List<Result> getResultsForTestAndSample(String sampleId, String testId) {
+        return getBaseObjectDAO().getResultsForTestAndSample(sampleId,testId);
+	}
+
+	@Override
+	public List<Result> getReportableResultsByAnalysis(Analysis analysis) {
+        return getBaseObjectDAO().getReportableResultsByAnalysis(analysis);
+	}
+
+	@Override
+	public List<Result> getChildResults(String resultId) {
+        return getBaseObjectDAO().getChildResults(resultId);
+	}
+
+	@Override
+	public List getAllResults() {
+        return getBaseObjectDAO().getAllResults();
+	}
+
+	@Override
+	public Result getResultById(Result result) {
+        return getBaseObjectDAO().getResultById(result);
+	}
+
+	@Override
+	public Result getResultById(String resultId) {
+        return getBaseObjectDAO().getResultById(resultId);
+	}
+
+	@Override
+	public List getPageOfResults(int startingRecNo) {
+        return getBaseObjectDAO().getPageOfResults(startingRecNo);
 	}
 }

@@ -31,7 +31,7 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login> implements Lo
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public Login get(String id) {
 		Login login = super.get(id);
 		inferExtraData(login);
@@ -40,7 +40,7 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login> implements Lo
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public Optional<Login> getMatch(String propertyName, Object propertyValue) {
 		Optional<Login> login = super.getMatch(propertyName, propertyValue);
 		if (login.isPresent()) {
@@ -50,7 +50,7 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login> implements Lo
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public Optional<Login> getMatch(Map<String, Object> propertyValues) {
 		Optional<Login> login = super.getMatch(propertyValues);
 		if (login.isPresent()) {
@@ -59,14 +59,14 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login> implements Lo
 		return login;
 	}
 
-	@Transactional 
+	@Transactional
 	private void inferExtraData(Login login) {
 		login.setSystemUserId(baseObjectDAO.getSystemUserId(login));
 		login.setPasswordExpiredDayNo(baseObjectDAO.getPasswordExpiredDayNo(login));
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public Optional<Login> getValidatedLogin(String loginName, String password) {
 		PasswordUtil passUtil = new PasswordUtil();
 		List<Login> logins = baseObjectDAO.getAllMatching("loginName", loginName);
@@ -83,15 +83,98 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login> implements Lo
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public void updatePassword(Login login, String newPassword) {
 		PasswordUtil passUtil = new PasswordUtil();
 		login.setPassword(passUtil.hashPassword(newPassword));
 		Calendar passwordExpiredDate = Calendar.getInstance();
-		passwordExpiredDate.add(Calendar.MONTH,
-				Integer.parseInt(SystemConfiguration.getInstance().getLoginUserChangePasswordExpiredMonth()));
+		passwordExpiredDate.add(Calendar.MONTH, Integer.parseInt(SystemConfiguration.getInstance().getLoginUserChangePasswordExpiredMonth()));
 		login.setPasswordExpiredDate(new Date(passwordExpiredDate.getTimeInMillis()));
 		login.setPasswordExpiredDayNo(baseObjectDAO.getPasswordExpiredDayNo(login));
+
+	}
+
+	@Override
+	public void getData(Login login) {
+        getBaseObjectDAO().getData(login);
+
+	}
+
+	@Override
+	public void deleteData(List login) {
+        getBaseObjectDAO().deleteData(login);
+
+	}
+
+	@Override
+	public void updateData(Login login, boolean passwordUpdated) {
+        getBaseObjectDAO().updateData(login,passwordUpdated);
+
+	}
+
+	@Override
+	public boolean insertData(Login login) {
+        return getBaseObjectDAO().insertData(login);
+	}
+
+	@Override
+	public List getNextLoginUserRecord(String id) {
+        return getBaseObjectDAO().getNextLoginUserRecord(id);
+	}
+
+	@Override
+	public List getPreviousLoginUserRecord(String id) {
+        return getBaseObjectDAO().getPreviousLoginUserRecord(id);
+	}
+
+	@Override
+	public int getPasswordExpiredDayNo(Login login) {
+        return getBaseObjectDAO().getPasswordExpiredDayNo(login);
+	}
+
+	@Override
+	public Integer getTotalLoginUserCount() {
+        return getBaseObjectDAO().getTotalLoginUserCount();
+	}
+
+	@Override
+	public List getPageOfLoginUsers(int startingRecNo) {
+        return getBaseObjectDAO().getPageOfLoginUsers(startingRecNo);
+	}
+
+	@Override
+	public boolean lockAccount(Login login) {
+        return getBaseObjectDAO().lockAccount(login);
+	}
+
+	@Override
+	public Login getValidateLogin(Login login) {
+        return getBaseObjectDAO().getValidateLogin(login);
+	}
+
+	@Override
+	public Login getUserProfile(String loginName) {
+        return getBaseObjectDAO().getUserProfile(loginName);
+	}
+
+	@Override
+	public boolean unlockAccount(Login login) {
+        return getBaseObjectDAO().unlockAccount(login);
+	}
+
+	@Override
+	public int getSystemUserId(Login login) {
+        return getBaseObjectDAO().getSystemUserId(login);
+	}
+
+	@Override
+	public List getAllLoginUsers() {
+        return getBaseObjectDAO().getAllLoginUsers();
+	}
+
+	@Override
+	public void updatePassword(Login login) {
+        getBaseObjectDAO().updatePassword(login);
 
 	}
 }

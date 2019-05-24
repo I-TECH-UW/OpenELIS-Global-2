@@ -9,14 +9,15 @@ import us.mn.state.health.lims.testcodes.valueholder.OrganizationHL7Schema;
 
 @Service
 public class OrganizationHL7SchemaServiceImpl extends BaseObjectServiceImpl<OrganizationHL7Schema> implements OrganizationHL7SchemaService {
-  @Autowired
-  protected OrganizationHL7SchemaDAO baseObjectDAO;
+	@Autowired
+	protected OrganizationHL7SchemaDAO baseObjectDAO;
 
-  OrganizationHL7SchemaServiceImpl() {
-    super(OrganizationHL7Schema.class);
-  }
+	OrganizationHL7SchemaServiceImpl() {
+		super(OrganizationHL7Schema.class);
+	}
 
-  @Override
-  protected OrganizationHL7SchemaDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected OrganizationHL7SchemaDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }

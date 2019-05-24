@@ -9,14 +9,15 @@ import us.mn.state.health.lims.testcodes.valueholder.TestCode;
 
 @Service
 public class TestCodeServiceImpl extends BaseObjectServiceImpl<TestCode> implements TestCodeService {
-  @Autowired
-  protected TestCodeDAO baseObjectDAO;
+	@Autowired
+	protected TestCodeDAO baseObjectDAO;
 
-  TestCodeServiceImpl() {
-    super(TestCode.class);
-  }
+	TestCodeServiceImpl() {
+		super(TestCode.class);
+	}
 
-  @Override
-  protected TestCodeDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected TestCodeDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }

@@ -9,14 +9,20 @@ import us.mn.state.health.lims.requester.valueholder.RequesterType;
 
 @Service
 public class RequesterTypeServiceImpl extends BaseObjectServiceImpl<RequesterType> implements RequesterTypeService {
-  @Autowired
-  protected RequesterTypeDAO baseObjectDAO;
+	@Autowired
+	protected RequesterTypeDAO baseObjectDAO;
 
-  RequesterTypeServiceImpl() {
-    super(RequesterType.class);
-  }
+	RequesterTypeServiceImpl() {
+		super(RequesterType.class);
+	}
 
-  @Override
-  protected RequesterTypeDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected RequesterTypeDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
+
+	@Override
+	public RequesterType getRequesterTypeByName(String typeName) {
+        return getBaseObjectDAO().getRequesterTypeByName(typeName);
+	}
 }

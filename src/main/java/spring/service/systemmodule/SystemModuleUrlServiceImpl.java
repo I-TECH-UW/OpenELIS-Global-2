@@ -12,8 +12,7 @@ import us.mn.state.health.lims.systemmodule.dao.SystemModuleUrlDAO;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModuleUrl;
 
 @Service
-public class SystemModuleUrlServiceImpl extends BaseObjectServiceImpl<SystemModuleUrl>
-		implements SystemModuleUrlService {
+public class SystemModuleUrlServiceImpl extends BaseObjectServiceImpl<SystemModuleUrl> implements SystemModuleUrlService {
 	@Autowired
 	protected SystemModuleUrlDAO baseObjectDAO;
 
@@ -29,5 +28,15 @@ public class SystemModuleUrlServiceImpl extends BaseObjectServiceImpl<SystemModu
 	@Override
 	public List<SystemModuleUrl> getByRequest(HttpServletRequest request) {
 		return baseObjectDAO.getByRequest(request);
+	}
+
+	@Override
+	public boolean insertData(SystemModuleUrl systemModuleUrl) {
+        return getBaseObjectDAO().insertData(systemModuleUrl);
+	}
+
+	@Override
+	public List<SystemModuleUrl> getByUrlPath(String urlPath) {
+        return getBaseObjectDAO().getByUrlPath(urlPath);
 	}
 }

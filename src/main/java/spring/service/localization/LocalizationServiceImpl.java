@@ -19,12 +19,10 @@ import us.mn.state.health.lims.localization.valueholder.Localization;
 
 @Service
 @DependsOn({ "springContext" })
-public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization>
-		implements LocalizationService, LocaleChangeListener {
+public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization> implements LocalizationService, LocaleChangeListener {
 
 	public enum LocalizationType {
-		TEST_NAME("test name"), REPORTING_TEST_NAME("test report name"), BANNER_LABEL("Site information banner test"),
-		TEST_UNIT_NAME("test unit name"), PANEL_NAME("panel name"), BILL_REF_LABEL("Billing reference_label");
+		TEST_NAME("test name"), REPORTING_TEST_NAME("test report name"), BANNER_LABEL("Site information banner test"), TEST_UNIT_NAME("test unit name"), PANEL_NAME("panel name"), BILL_REF_LABEL("Billing reference_label");
 
 		String dbLabel;
 
@@ -36,7 +34,7 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization>
 			return dbLabel;
 		}
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public Localization get(String id) {
@@ -44,8 +42,7 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization>
 
 	}
 
-	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()
-			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
+	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance().getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
 
 	@Autowired
 	private static LocalizationDAO localizationDAO = SpringContext.getBean(LocalizationDAO.class);
@@ -71,6 +68,18 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization>
 	@Override
 	protected LocalizationDAO getBaseObjectDAO() {
 		return localizationDAO;
+	}
+
+	public static String getLocalizationValueByLocal(ConfigurationProperties.LOCALE locale, Localization localization) {
+		if (locale == ConfigurationProperties.LOCALE.FRENCH) {
+			return localization.getFrench();
+		} else {
+			return localization.getEnglish();
+		}
+	}
+
+	public static String getCurrentLocale() {
+		return LANGUAGE_LOCALE;
 	}
 
 	@Override
@@ -153,5 +162,16 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization>
 		localization.setEnglish(english);
 		localization.setFrench(french);
 		return localization;
+	}
+
+	@Override
+	public void updateData(Localization localization) {
+        getBaseObjectDAO().updateData(localization);
+
+	}
+
+	@Override
+	public Localization getLocalizationById(String id) {
+        return getBaseObjectDAO().getLocalizationById(id);
 	}
 }

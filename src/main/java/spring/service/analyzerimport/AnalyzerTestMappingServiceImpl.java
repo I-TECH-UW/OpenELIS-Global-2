@@ -1,5 +1,7 @@
 package spring.service.analyzerimport;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,14 +11,38 @@ import us.mn.state.health.lims.analyzerimport.valueholder.AnalyzerTestMapping;
 
 @Service
 public class AnalyzerTestMappingServiceImpl extends BaseObjectServiceImpl<AnalyzerTestMapping> implements AnalyzerTestMappingService {
-  @Autowired
-  protected AnalyzerTestMappingDAO baseObjectDAO;
+	@Autowired
+	protected AnalyzerTestMappingDAO baseObjectDAO;
 
-  AnalyzerTestMappingServiceImpl() {
-    super(AnalyzerTestMapping.class);
-  }
+	AnalyzerTestMappingServiceImpl() {
+		super(AnalyzerTestMapping.class);
+	}
 
-  @Override
-  protected AnalyzerTestMappingDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected AnalyzerTestMappingDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
+
+	@Override
+	public void updateMapping(AnalyzerTestMapping analyzerTestNameMapping, String currentUserId) {
+        getBaseObjectDAO().updateMapping(analyzerTestNameMapping,currentUserId);
+
+	}
+
+	@Override
+	public void deleteData(List<AnalyzerTestMapping> testMappingList, String currentUserId) {
+        getBaseObjectDAO().deleteData(testMappingList,currentUserId);
+
+	}
+
+	@Override
+	public void insertData(AnalyzerTestMapping analyzerTestMapping, String currentUserId) {
+        getBaseObjectDAO().insertData(analyzerTestMapping,currentUserId);
+
+	}
+
+	@Override
+	public List<AnalyzerTestMapping> getAllAnalyzerTestMappings() {
+        return getBaseObjectDAO().getAllAnalyzerTestMappings();
+	}
 }

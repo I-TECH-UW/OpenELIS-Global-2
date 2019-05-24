@@ -38,8 +38,7 @@ import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements NoteService {
 
 	public enum NoteType {
-		EXTERNAL(Note.EXTERNAL), INTERNAL(Note.INTERNAL), REJECTION_REASON(Note.REJECT_REASON),
-		NON_CONFORMITY(Note.NON_CONFORMITY);
+		EXTERNAL(Note.EXTERNAL), INTERNAL(Note.INTERNAL), REJECTION_REASON(Note.REJECT_REASON), NON_CONFORMITY(Note.NON_CONFORMITY);
 
 		String DBCode;
 
@@ -56,8 +55,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 		ANALYSIS, QA_EVENT, SAMPLE, SAMPLE_ITEM
 	}
 
-	private static boolean SUPPORT_INTERNAL_EXTERNAL = ConfigurationProperties.getInstance()
-			.isPropertyValueEqual(Property.NOTE_EXTERNAL_ONLY_FOR_VALIDATION, "true");
+	private static boolean SUPPORT_INTERNAL_EXTERNAL = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.NOTE_EXTERNAL_ONLY_FOR_VALIDATION, "true");
 	private static String SAMPLE_ITEM_TABLE_REFERENCE_ID;
 	public static String TABLE_REFERENCE_ID;
 
@@ -123,14 +121,11 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 		return noteDAO;
 	}
 
-	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, NoteType[] filter,
-			boolean excludeExternPrefix) {
-		return getNotesAsString(prefixType, prefixTimestamp, noteSeparator, filter, excludeExternPrefix,
-				EncodeContext.HTML);
+	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, NoteType[] filter, boolean excludeExternPrefix) {
+		return getNotesAsString(prefixType, prefixTimestamp, noteSeparator, filter, excludeExternPrefix, EncodeContext.HTML);
 	}
 
-	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, NoteType[] filter,
-			boolean excludeExternPrefix, EncodeContext context) {
+	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, NoteType[] filter, boolean excludeExternPrefix, EncodeContext context) {
 		boolean includeNoneConformity = false;
 		List<String> dbFilter = new ArrayList<>(filter.length);
 		for (NoteType type : filter) {
@@ -175,26 +170,21 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 		// get parent objects and the qa notes
 		if (binding == BoundTo.ANALYSIS) {
 			sampleItem = ((Analysis) object).getSampleItem();
-			notes.addAll(noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sampleItem.getId(),
-					SAMPLE_ITEM_TABLE_REFERENCE_ID, filter));
+			notes.addAll(noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sampleItem.getId(), SAMPLE_ITEM_TABLE_REFERENCE_ID, filter));
 
 			sample = sampleItem.getSample();
-			notes.addAll(noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sample.getId(),
-					SampleServiceImpl.TABLE_REFERENCE_ID, filter));
+			notes.addAll(noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sample.getId(), SampleServiceImpl.TABLE_REFERENCE_ID, filter));
 		} else if (binding == BoundTo.SAMPLE_ITEM) {
 			sampleItem = (SampleItem) object;
 			sample = sampleItem.getSample();
-			notes.addAll(noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sample.getId(),
-					SampleServiceImpl.TABLE_REFERENCE_ID, filter));
+			notes.addAll(noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sample.getId(), SampleServiceImpl.TABLE_REFERENCE_ID, filter));
 		}
 
 		if (sample != null) {
 			List<SampleQaEvent> sampleQAList = sampleQADAO.getSampleQaEventsBySample(sample);
 			for (SampleQaEvent event : sampleQAList) {
-				if (sampleItem == null || event.getSampleItem() == null
-						|| (sampleItem.getId().equals(event.getSampleItem().getId()))) {
-					notes.addAll(noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(event.getId(),
-							QAService.TABLE_REFERENCE_ID, filter));
+				if (sampleItem == null || event.getSampleItem() == null || (sampleItem.getId().equals(event.getSampleItem().getId()))) {
+					notes.addAll(noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(event.getId(), QAService.TABLE_REFERENCE_ID, filter));
 					Note proxyNote = new Note();
 					proxyNote.setNoteType(Note.NON_CONFORMITY);
 					proxyNote.setText(event.getQaEvent().getLocalizedName());
@@ -207,20 +197,17 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 		return notes;
 	}
 
-	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator,
-			boolean excludeExternPrefix) {
+	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, boolean excludeExternPrefix) {
 		return getNotesAsString(prefixType, prefixTimestamp, noteSeparator, excludeExternPrefix, EncodeContext.HTML);
 	}
 
-	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator,
-			boolean excludeExternPrefix, EncodeContext context) {
+	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, boolean excludeExternPrefix, EncodeContext context) {
 		List<Note> noteList = noteDAO.getNotesChronologicallyByRefIdAndRefTable(objectId, tableId);
 
 		return notesToString(prefixType, prefixTimestamp, noteSeparator, noteList, excludeExternPrefix, context);
 	}
 
-	private String notesToString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, List<Note> noteList,
-			boolean excludeExternPrefix, EncodeContext context) {
+	private String notesToString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, List<Note> noteList, boolean excludeExternPrefix, EncodeContext context) {
 		if (noteList.isEmpty()) {
 			return null;
 		}
@@ -341,8 +328,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 	}
 
 	public static List<Note> getTestNotesInDateRangeByType(Date lowDate, Date highDate, NoteType noteType) {
-		return noteDAO.getNotesInDateRangeAndType(lowDate, DateUtil.addDaysToSQLDate(highDate, 1), noteType.DBCode,
-				AnalysisServiceImpl.TABLE_REFERENCE_ID);
+		return noteDAO.getNotesInDateRangeAndType(lowDate, DateUtil.addDaysToSQLDate(highDate, 1), noteType.DBCode, AnalysisServiceImpl.TABLE_REFERENCE_ID);
 	}
 
 	private String getNotePrefix(Note note, boolean excludeExternPrefix) {
@@ -359,5 +345,88 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 		}
 
 		return "";
+	}
+
+	@Override
+	public void getData(Note note) {
+        getBaseObjectDAO().getData(note);
+
+	}
+
+	@Override
+	public Note getData(String noteId) {
+        return getBaseObjectDAO().getData(noteId);
+	}
+
+	@Override
+	public void deleteData(List notes) {
+        getBaseObjectDAO().deleteData(notes);
+
+	}
+
+	@Override
+	public void updateData(Note note) {
+        getBaseObjectDAO().updateData(note);
+
+	}
+
+	@Override
+	public boolean insertData(Note note) {
+        return getBaseObjectDAO().insertData(note);
+	}
+
+	@Override
+	public List<Note> getNotesByNoteTypeRefIdRefTable(Note note) {
+        return getBaseObjectDAO().getNotesByNoteTypeRefIdRefTable(note);
+	}
+
+	@Override
+	public List<Note> getNotesInDateRangeAndType(Date lowDate, Date highDate, String noteType, String referenceTableId) {
+        return getBaseObjectDAO().getNotesInDateRangeAndType(lowDate,highDate,noteType,referenceTableId);
+	}
+
+	@Override
+	public List getPreviousNoteRecord(String id) {
+        return getBaseObjectDAO().getPreviousNoteRecord(id);
+	}
+
+	@Override
+	public List getNextNoteRecord(String id) {
+        return getBaseObjectDAO().getNextNoteRecord(id);
+	}
+
+	@Override
+	public Integer getTotalNoteCount() {
+        return getBaseObjectDAO().getTotalNoteCount();
+	}
+
+	@Override
+	public List getAllNotesByRefIdRefTable(Note note) {
+        return getBaseObjectDAO().getAllNotesByRefIdRefTable(note);
+	}
+
+	@Override
+	public List<Note> getNotesChronologicallyByRefIdAndRefTable(String refId, String table_id) {
+        return getBaseObjectDAO().getNotesChronologicallyByRefIdAndRefTable(refId,table_id);
+	}
+
+	@Override
+	public List<Note> getNotesChronologicallyByRefIdAndRefTableAndType(String objectId, String tableId, List<String> filter) {
+        return getBaseObjectDAO().getNotesChronologicallyByRefIdAndRefTableAndType(objectId,tableId,filter);
+	}
+
+	@Override
+	public List<Note> getNoteByRefIAndRefTableAndSubject(String refId, String table_id, String subject) {
+        return getBaseObjectDAO().getNoteByRefIAndRefTableAndSubject(refId,table_id,subject);
+	}
+
+	@Override
+	public List getPageOfNotes(int startingRecNo) {
+        return getBaseObjectDAO().getPageOfNotes(startingRecNo);
+	}
+
+	@Override
+	public List<Note> getAllNotes() {
+        return getBaseObjectDAO().getAllNotes();
 	}
 }

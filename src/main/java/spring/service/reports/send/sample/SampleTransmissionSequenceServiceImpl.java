@@ -9,14 +9,15 @@ import us.mn.state.health.lims.reports.send.sample.valueholder.SampleTransmissio
 
 @Service
 public class SampleTransmissionSequenceServiceImpl extends BaseObjectServiceImpl<SampleTransmissionSequence> implements SampleTransmissionSequenceService {
-  @Autowired
-  protected SampleTransmissionSequenceDAO baseObjectDAO;
+	@Autowired
+	protected SampleTransmissionSequenceDAO baseObjectDAO;
 
-  SampleTransmissionSequenceServiceImpl() {
-    super(SampleTransmissionSequence.class);
-  }
+	SampleTransmissionSequenceServiceImpl() {
+		super(SampleTransmissionSequence.class);
+	}
 
-  @Override
-  protected SampleTransmissionSequenceDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected SampleTransmissionSequenceDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }

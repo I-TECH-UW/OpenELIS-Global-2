@@ -220,8 +220,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient> implement
 	}
 
 	private static Patient getPatientForGuid(String guid) {
-		List<PatientIdentity> identites = patientIdentityDAO.getPatientIdentitiesByValueAndType(guid,
-				PATIENT_GUID_IDENTITY);
+		List<PatientIdentity> identites = patientIdentityDAO.getPatientIdentitiesByValueAndType(guid, PATIENT_GUID_IDENTITY);
 		if (identites.isEmpty()) {
 			return null;
 		}
@@ -498,5 +497,88 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient> implement
 	@Override
 	public String getPCNumber() {
 		return getIdentityInfo(PATIENT_PC_NUMBER_IDENTITY);
+	}
+
+	@Override
+	public void getData(Patient patient) {
+        getBaseObjectDAO().getData(patient);
+
+	}
+
+	@Override
+	public Patient getData(String patientId) {
+        return getBaseObjectDAO().getData(patientId);
+	}
+
+	@Override
+	public void deleteData(List patients) {
+        getBaseObjectDAO().deleteData(patients);
+
+	}
+
+	@Override
+	public void updateData(Patient patient) {
+        getBaseObjectDAO().updateData(patient);
+
+	}
+
+	@Override
+	public boolean insertData(Patient patient) {
+        return getBaseObjectDAO().insertData(patient);
+	}
+
+	@Override
+	public Patient getPatientByNationalId(String subjectNumber) {
+        return getBaseObjectDAO().getPatientByNationalId(subjectNumber);
+	}
+
+	@Override
+	public List<Patient> getPatientsByNationalId(String nationalId) {
+        return getBaseObjectDAO().getPatientsByNationalId(nationalId);
+	}
+
+	@Override
+	public List getPreviousPatientRecord(String id) {
+        return getBaseObjectDAO().getPreviousPatientRecord(id);
+	}
+
+	@Override
+	public Patient getPatientByPerson(Person person) {
+        return getBaseObjectDAO().getPatientByPerson(person);
+	}
+
+	@Override
+	public List getPageOfPatients(int startingRecNo) {
+        return getBaseObjectDAO().getPageOfPatients(startingRecNo);
+	}
+
+	@Override
+	public List getNextPatientRecord(String id) {
+        return getBaseObjectDAO().getNextPatientRecord(id);
+	}
+
+	@Override
+	public Patient getPatientByExternalId(String externalId) {
+        return getBaseObjectDAO().getPatientByExternalId(externalId);
+	}
+
+	@Override
+	public List getAllPatients() {
+        return getBaseObjectDAO().getAllPatients();
+	}
+
+	@Override
+	public boolean externalIDExists(String patientExternalID) {
+        return getBaseObjectDAO().externalIDExists(patientExternalID);
+	}
+
+	@Override
+	public Patient readPatient(String idString) {
+        return getBaseObjectDAO().readPatient(idString);
+	}
+
+	@Override
+	public List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList, String study) {
+        return getBaseObjectDAO().getPatientIdentityBySampleStatusIdAndProject(inclusiveStatusIdList,study);
 	}
 }

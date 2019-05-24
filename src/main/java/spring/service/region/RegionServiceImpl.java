@@ -9,14 +9,15 @@ import us.mn.state.health.lims.region.valueholder.Region;
 
 @Service
 public class RegionServiceImpl extends BaseObjectServiceImpl<Region> implements RegionService {
-  @Autowired
-  protected BaseDAO<Region> baseObjectDAO;
+	@Autowired
+	protected BaseDAO<Region> baseObjectDAO;
 
-  RegionServiceImpl() {
-    super(Region.class);
-  }
+	RegionServiceImpl() {
+		super(Region.class);
+	}
 
-  @Override
-  protected BaseDAO<Region> getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected BaseDAO<Region> getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }

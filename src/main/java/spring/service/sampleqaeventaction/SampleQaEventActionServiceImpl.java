@@ -9,14 +9,15 @@ import us.mn.state.health.lims.sampleqaeventaction.valueholder.SampleQaEventActi
 
 @Service
 public class SampleQaEventActionServiceImpl extends BaseObjectServiceImpl<SampleQaEventAction> implements SampleQaEventActionService {
-  @Autowired
-  protected SampleQaEventActionDAO baseObjectDAO;
+	@Autowired
+	protected SampleQaEventActionDAO baseObjectDAO;
 
-  SampleQaEventActionServiceImpl() {
-    super(SampleQaEventAction.class);
-  }
+	SampleQaEventActionServiceImpl() {
+		super(SampleQaEventAction.class);
+	}
 
-  @Override
-  protected SampleQaEventActionDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected SampleQaEventActionDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }

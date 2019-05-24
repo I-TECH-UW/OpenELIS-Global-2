@@ -9,14 +9,15 @@ import us.mn.state.health.lims.patientrelation.valueholder.PatientRelation;
 
 @Service
 public class PatientRelationServiceImpl extends BaseObjectServiceImpl<PatientRelation> implements PatientRelationService {
-  @Autowired
-  protected PatientRelationDAO baseObjectDAO;
+	@Autowired
+	protected PatientRelationDAO baseObjectDAO;
 
-  PatientRelationServiceImpl() {
-    super(PatientRelation.class);
-  }
+	PatientRelationServiceImpl() {
+		super(PatientRelation.class);
+	}
 
-  @Override
-  protected PatientRelationDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected PatientRelationDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }

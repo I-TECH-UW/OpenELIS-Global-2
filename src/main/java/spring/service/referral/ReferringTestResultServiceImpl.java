@@ -9,14 +9,15 @@ import us.mn.state.health.lims.referral.valueholder.ReferringTestResult;
 
 @Service
 public class ReferringTestResultServiceImpl extends BaseObjectServiceImpl<ReferringTestResult> implements ReferringTestResultService {
-  @Autowired
-  protected ReferringTestResultDAO baseObjectDAO;
+	@Autowired
+	protected ReferringTestResultDAO baseObjectDAO;
 
-  ReferringTestResultServiceImpl() {
-    super(ReferringTestResult.class);
-  }
+	ReferringTestResultServiceImpl() {
+		super(ReferringTestResult.class);
+	}
 
-  @Override
-  protected ReferringTestResultDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected ReferringTestResultDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }
