@@ -40,7 +40,7 @@ public class RejectionReportByPanel extends RejectionReport implements IReportCr
         new ReportSpecificationParameters( ReportSpecificationParameters.Parameter.DATE_RANGE,
                 MessageUtil.getMessage( "report.rejection.report.base" ) + " " + MessageUtil.getMessage( "report.by.panel" ),
                 MessageUtil.getMessage( "report.instruction.all.fields" ) ).setRequestParameters( form );
-        new ReportSpecificationList( DisplayListService.getList( DisplayListService.ListType.PANELS ),
+        new ReportSpecificationList( DisplayListService.getInstance().getList( DisplayListService.ListType.PANELS ),
                                      MessageUtil.getMessage( "workplan.panel.types" ) ).setRequestParameters( form );
     }
 

@@ -36,7 +36,7 @@ public class PatientSearch{
     }
 
     public List<IdValuePair> getSearchCriteria() {
-        return DisplayListService.getList( DisplayListService.ListType.PATIENT_SEARCH_CRITERIA );
+        return DisplayListService.getInstance().getList( DisplayListService.ListType.PATIENT_SEARCH_CRITERIA );
     }
 
     public String getSelectedPatientActionButtonText(){

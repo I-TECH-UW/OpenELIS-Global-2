@@ -12,7 +12,7 @@ public class AddressPartServiceImpl extends BaseObjectServiceImpl<AddressPart> i
 	@Autowired
 	protected AddressPartDAO baseObjectDAO;
 
-	AddressPartServiceImpl() {
+	public AddressPartServiceImpl() {
 		super(AddressPart.class);
 	}
 
@@ -23,6 +23,6 @@ public class AddressPartServiceImpl extends BaseObjectServiceImpl<AddressPart> i
 
 	@Override
 	public AddressPart getAddresPartByName(String name) {
-        return getBaseObjectDAO().getAddresPartByName(name);
+		return getBaseObjectDAO().getAddresPartByName(name);
 	}
 }

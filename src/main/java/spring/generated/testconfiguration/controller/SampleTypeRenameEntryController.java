@@ -28,7 +28,7 @@ public class SampleTypeRenameEntryController extends BaseController {
 	public ModelAndView showSampleTypeRenameEntry(HttpServletRequest request) {
 		SampleTypeRenameEntryForm form = new SampleTypeRenameEntryForm();
 
-		form.setSampleTypeList(DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+		form.setSampleTypeList(DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
 
 		return findForward(FWD_SUCCESS, form);
 	}
@@ -51,7 +51,7 @@ public class SampleTypeRenameEntryController extends BaseController {
 			@ModelAttribute("form") @Valid SampleTypeRenameEntryForm form, BindingResult result) {
 		if (result.hasErrors()) {
 			saveErrors(result);
-			form.setSampleTypeList(DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+			form.setSampleTypeList(DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
@@ -62,7 +62,7 @@ public class SampleTypeRenameEntryController extends BaseController {
 
 		updateSampleTypeNames(sampleTypeId, nameEnglish, nameFrench, userId);
 
-		form.setSampleTypeList(DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+		form.setSampleTypeList(DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}
@@ -91,7 +91,7 @@ public class SampleTypeRenameEntryController extends BaseController {
 		}
 
 		// Refresh SampleType names
-		DisplayListService.getFreshList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
+		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
 	}
 
 	@Override

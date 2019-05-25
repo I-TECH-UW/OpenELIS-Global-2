@@ -25,89 +25,94 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel> implements Pa
 
 	@Override
 	public void getData(Panel panel) {
-        getBaseObjectDAO().getData(panel);
+		getBaseObjectDAO().getData(panel);
 
 	}
 
 	@Override
 	public void deleteData(List panels) {
-        getBaseObjectDAO().deleteData(panels);
+		getBaseObjectDAO().deleteData(panels);
 
 	}
 
 	@Override
 	public void updateData(Panel panel) {
-        getBaseObjectDAO().updateData(panel);
+		getBaseObjectDAO().updateData(panel);
 
 	}
 
 	@Override
 	public boolean insertData(Panel panel) {
-        return getBaseObjectDAO().insertData(panel);
+		return getBaseObjectDAO().insertData(panel);
 	}
 
 	@Override
 	public String getIdForPanelName(String name) {
-        return getBaseObjectDAO().getIdForPanelName(name);
+		return getBaseObjectDAO().getIdForPanelName(name);
 	}
 
 	@Override
 	public String getDescriptionForPanelId(String id) {
-        return getBaseObjectDAO().getDescriptionForPanelId(id);
+		return getBaseObjectDAO().getDescriptionForPanelId(id);
 	}
 
 	@Override
 	public String getNameForPanelId(String panelId) {
-        return getBaseObjectDAO().getNameForPanelId(panelId);
+		return getBaseObjectDAO().getNameForPanelId(panelId);
 	}
 
 	@Override
 	public List<Panel> getAllActivePanels() {
-        return getBaseObjectDAO().getAllActivePanels();
+		return getBaseObjectDAO().getAllActivePanels();
 	}
 
 	@Override
 	public List getNextPanelRecord(String id) {
-        return getBaseObjectDAO().getNextPanelRecord(id);
+		return getBaseObjectDAO().getNextPanelRecord(id);
 	}
 
 	@Override
 	public List getPreviousPanelRecord(String id) {
-        return getBaseObjectDAO().getPreviousPanelRecord(id);
+		return getBaseObjectDAO().getPreviousPanelRecord(id);
 	}
 
 	@Override
 	public Integer getTotalPanelCount() {
-        return getBaseObjectDAO().getTotalPanelCount();
+		return getBaseObjectDAO().getTotalPanelCount();
 	}
 
 	@Override
 	public List getActivePanels(String filter) {
-        return getBaseObjectDAO().getActivePanels(filter);
+		return getBaseObjectDAO().getActivePanels(filter);
 	}
 
 	@Override
 	public Panel getPanelByName(String panelName) {
-        return getBaseObjectDAO().getPanelByName(panelName);
+		return getBaseObjectDAO().getPanelByName(panelName);
 	}
 
 	@Override
 	public Panel getPanelByName(Panel panel) {
-        return getBaseObjectDAO().getPanelByName(panel);
+		return getBaseObjectDAO().getPanelByName(panel);
 	}
 
 	@Override
 	public Panel getPanelById(String id) {
-        return getBaseObjectDAO().getPanelById(id);
+		return getBaseObjectDAO().getPanelById(id);
 	}
 
 	@Override
 	public List getPageOfPanels(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfPanels(startingRecNo);
+		return getBaseObjectDAO().getPageOfPanels(startingRecNo);
 	}
 
 	@Override
 	public List<Panel> getAllPanels() {
-        return getBaseObjectDAO().getAllPanels();
+		return getBaseObjectDAO().getAllPanels();
+	}
+
+	@Override
+	public String insert(Panel panel) {
+		return (String) super.insert(panel);
 	}
 }

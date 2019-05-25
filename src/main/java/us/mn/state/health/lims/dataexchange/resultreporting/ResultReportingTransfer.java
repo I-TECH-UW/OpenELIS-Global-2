@@ -102,7 +102,7 @@ public class ResultReportingTransfer {
 			} else {
 				messageOut.setStatus(HL7MessageOut.FAIL);
 			}
-			messageOutDAO.insertData(messageOut);
+			messageOutDAO.insert(messageOut);
 		}
 
 		private void bufferResults(String msg) {

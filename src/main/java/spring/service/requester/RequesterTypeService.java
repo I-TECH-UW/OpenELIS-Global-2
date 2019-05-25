@@ -1,6 +1,5 @@
 package spring.service.requester;
 
-import java.lang.String;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.requester.valueholder.RequesterType;
 

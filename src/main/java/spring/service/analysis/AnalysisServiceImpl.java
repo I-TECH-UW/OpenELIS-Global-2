@@ -234,7 +234,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 
 	@Override
 	public boolean patientReportHasBeenDone() {
-		return analysis == null ? false : new ReportTrackingService().getLastReportForSample(analysis.getSampleItem().getSample(), ReportTrackingService.ReportType.PATIENT) != null;
+		return analysis == null ? false : ReportTrackingService.getInstance().getLastReportForSample(analysis.getSampleItem().getSample(), ReportTrackingService.ReportType.PATIENT) != null;
 	}
 
 	@Override

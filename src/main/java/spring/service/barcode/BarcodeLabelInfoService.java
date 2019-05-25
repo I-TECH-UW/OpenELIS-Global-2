@@ -1,6 +1,5 @@
 package spring.service.barcode;
 
-import java.lang.String;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.barcode.valueholder.BarcodeLabelInfo;
 

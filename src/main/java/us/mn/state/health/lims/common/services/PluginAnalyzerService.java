@@ -19,139 +19,156 @@ package us.mn.state.health.lims.common.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.Transaction;
+import javax.annotation.PostConstruct;
 
-import us.mn.state.health.lims.analyzer.dao.AnalyzerDAO;
-import us.mn.state.health.lims.analyzer.daoimpl.AnalyzerDAOImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import spring.service.analyzer.AnalyzerService;
+import spring.service.analyzerimport.AnalyzerTestMappingService;
+import spring.service.test.TestService;
 import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
 import us.mn.state.health.lims.analyzerimport.analyzerreaders.AnalyzerLineReader;
-import us.mn.state.health.lims.analyzerimport.dao.AnalyzerTestMappingDAO;
-import us.mn.state.health.lims.analyzerimport.daoimpl.AnalyzerTestMappingDAOImpl;
 import us.mn.state.health.lims.analyzerimport.util.AnalyzerTestNameCache;
 import us.mn.state.health.lims.analyzerimport.valueholder.AnalyzerTestMapping;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.plugin.AnalyzerImporterPlugin;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 
+@Service
 public class PluginAnalyzerService {
-    private List<AnalyzerTestMapping> existingMappings;
-    private static AnalyzerTestMappingDAO analyzerMappingDAO = new AnalyzerTestMappingDAOImpl();
 
-    private PluginAnalyzerService() {
-    }
+	private static PluginAnalyzerService INSTANCE;
 
-    public static PluginAnalyzerService getInstance() {
-        return SingletonHolder.INSTANCE;
-    }
+	@Autowired
+	private AnalyzerTestMappingService analyzerMappingService;
+	@Autowired
+	private AnalyzerService analyzerService;
+	@Autowired
+	private TestService testService;
 
-    public void registerAnalyzer( AnalyzerImporterPlugin analyzer){
-        AnalyzerLineReader.registerAnalyzerPlugin(analyzer);
-    }
-    public String addAnalyzerDatabaseParts(String name, String description, List<TestMapping> nameMappings) {
-        AnalyzerDAO analyzerDAO = new AnalyzerDAOImpl();
-        Analyzer analyzer = analyzerDAO.getAnalyzerByName(name);
-        if ( analyzer != null && analyzer.getId() != null) {
-            analyzer.setActive(true);
-            registerAanlyzerInCache(name, analyzer.getId());
-        } else {
-            if( analyzer == null){
-                analyzer = new Analyzer();
-                analyzer.setActive(true);
-                analyzer.setName(name);
-            }
-            analyzer.setDescription(description);
-        }
+	private List<AnalyzerTestMapping> existingMappings;
 
-        List<AnalyzerTestMapping> testMappings = createTestMappings( nameMappings);
-        if( !testMappings.isEmpty() && existingMappings == null){
-            existingMappings = analyzerMappingDAO.getAllAnalyzerTestMappings();
-        }
+	@PostConstruct
+	public void registerInstance() {
+		INSTANCE = this;
+	}
 
-        analyzer.setSysUserId("1");
+	public static PluginAnalyzerService getInstance() {
+		return INSTANCE;
+	}
 
-        Transaction tx = HibernateUtil.getSession().beginTransaction();
+	public void registerAnalyzer(AnalyzerImporterPlugin analyzer) {
+		AnalyzerLineReader.registerAnalyzerPlugin(analyzer);
+	}
 
-        try {
-            if (analyzer.getId() == null) {
-                analyzerDAO.insertData(analyzer);
-            } else {
-                analyzerDAO.updateData(analyzer);
-            }
+	public String addAnalyzerDatabaseParts(String name, String description, List<TestMapping> nameMappings) {
+		Analyzer analyzer = analyzerService.getAnalyzerByName(name);
+		if (analyzer != null && analyzer.getId() != null) {
+			analyzer.setActive(true);
+			registerAanlyzerInCache(name, analyzer.getId());
+		} else {
+			if (analyzer == null) {
+				analyzer = new Analyzer();
+				analyzer.setActive(true);
+				analyzer.setName(name);
+			}
+			analyzer.setDescription(description);
+		}
 
-            for( AnalyzerTestMapping mapping : testMappings){
-                mapping.setAnalyzerId(analyzer.getId());
-                if( newMapping(mapping)){
-                    analyzerMappingDAO.insertData(mapping, "1");
-                    existingMappings.add(mapping);
-                }
-            }
-            tx.commit();
+		List<AnalyzerTestMapping> testMappings = createTestMappings(nameMappings);
+		if (!testMappings.isEmpty() && existingMappings == null) {
+			existingMappings = analyzerMappingService.getAllAnalyzerTestMappings();
+		}
 
-        } catch (LIMSRuntimeException lre) {
-            tx.rollback();
-        }
+		analyzer.setSysUserId("1");
 
-        registerAanlyzerInCache(name, analyzer.getId());
-        return analyzer.getId();
-    }
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
-    private boolean newMapping(AnalyzerTestMapping mapping) {
-        for( AnalyzerTestMapping existingMap: existingMappings){
-            if( existingMap.getAnalyzerId().equals(mapping.getAnalyzerId()) &&
-                    existingMap.getAnalyzerTestName().equals(mapping.getAnalyzerTestName())){
-                return false;
-            }
-        }
-        return true;
-    }
+		try {
+			persistData(analyzer, testMappings);
+//			tx.commit();
 
-    private List<AnalyzerTestMapping> createTestMappings(List<TestMapping> nameMappings) {
-        ArrayList<AnalyzerTestMapping> testMappings = new ArrayList<AnalyzerTestMapping>();
-        for(TestMapping names : nameMappings){
-            String testId = getIdForTestName( names.getDbbTestName());
+			registerAanlyzerInCache(name, analyzer.getId());
+		} catch (Exception lre) {
+			LogEvent.logErrorStack(this.getClass().getSimpleName(), "addAnalyzerDatabaseParts", lre);
+		}
+//
+//		registerAanlyzerInCache(name, analyzer.getId());
+		return analyzer.getId();
+	}
 
-            AnalyzerTestMapping analyzerMapping = new AnalyzerTestMapping();
-            analyzerMapping.setAnalyzerTestName(names.getAnalyzerTestName());
-            analyzerMapping.setTestId(testId);
-            testMappings.add(analyzerMapping);
-        }
-        return testMappings;
-    }
+	@Transactional
+	private void persistData(Analyzer analyzer, List<AnalyzerTestMapping> testMappings) {
+		if (analyzer.getId() == null) {
+			analyzerService.insertData(analyzer);
+		} else {
+			analyzerService.updateData(analyzer);
+		}
 
-    private String getIdForTestName(String dbbTestName) {
-        Test test = new TestDAOImpl().getTestByName(dbbTestName);
-        if( test != null){
-            return test.getId();
-        }
-        LogEvent.logError("PluginAnalyzerService", "createTestMappings", "Unable to find test " + dbbTestName + " in test catalog");
-        return null;
-    }
+		for (AnalyzerTestMapping mapping : testMappings) {
+			mapping.setAnalyzerId(analyzer.getId());
+			if (newMapping(mapping)) {
+				analyzerMappingService.insertData(mapping, "1");
+				existingMappings.add(mapping);
+			}
+		}
+	}
 
-    private void registerAanlyzerInCache(String name, String id) {
-        AnalyzerTestNameCache.instance().registerPluginAnalyzer(name, id);
-    }
+	private boolean newMapping(AnalyzerTestMapping mapping) {
+		for (AnalyzerTestMapping existingMap : existingMappings) {
+			if (existingMap.getAnalyzerId().equals(mapping.getAnalyzerId())
+					&& existingMap.getAnalyzerTestName().equals(mapping.getAnalyzerTestName())) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-    public static class TestMapping{
-        private final String  analyzerTestName;
-        private final String dbbTestName;
+	private List<AnalyzerTestMapping> createTestMappings(List<TestMapping> nameMappings) {
+		ArrayList<AnalyzerTestMapping> testMappings = new ArrayList<>();
+		for (TestMapping names : nameMappings) {
+			String testId = getIdForTestName(names.getDbbTestName());
 
-        public TestMapping(String analyzerTestName, String dbbTestName){
-            this.analyzerTestName = analyzerTestName;
-            this.dbbTestName = dbbTestName;
-        }
+			AnalyzerTestMapping analyzerMapping = new AnalyzerTestMapping();
+			analyzerMapping.setAnalyzerTestName(names.getAnalyzerTestName());
+			analyzerMapping.setTestId(testId);
+			testMappings.add(analyzerMapping);
+		}
+		return testMappings;
+	}
 
-        public String getAnalyzerTestName(){
-            return analyzerTestName;
-        }
+	private String getIdForTestName(String dbbTestName) {
+		Test test = testService.getTestByName(dbbTestName);
+		if (test != null) {
+			return test.getId();
+		}
+		LogEvent.logError("PluginAnalyzerService", "createTestMappings",
+				"Unable to find test " + dbbTestName + " in test catalog");
+		return null;
+	}
 
-        public String getDbbTestName(){
-            return dbbTestName;
-        }
-    }
-    static class SingletonHolder {
-        static final PluginAnalyzerService INSTANCE = new PluginAnalyzerService();
-    }
+	private void registerAanlyzerInCache(String name, String id) {
+		AnalyzerTestNameCache.instance().registerPluginAnalyzer(name, id);
+	}
+
+	public static class TestMapping {
+		private final String analyzerTestName;
+		private final String dbbTestName;
+
+		public TestMapping(String analyzerTestName, String dbbTestName) {
+			this.analyzerTestName = analyzerTestName;
+			this.dbbTestName = dbbTestName;
+		}
+
+		public String getAnalyzerTestName() {
+			return analyzerTestName;
+		}
+
+		public String getDbbTestName() {
+			return dbbTestName;
+		}
+	}
+
 }

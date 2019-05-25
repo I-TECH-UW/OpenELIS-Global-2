@@ -52,7 +52,7 @@ public class TestSectionRenameUpdate extends BaseAction{
         updateTestSectionNames(testSectionId, nameEnglish, nameFrench, userId);
 
         //Refresh testSection names
-        DisplayListService.getFreshList( DisplayListService.ListType.TEST_SECTION );
+        DisplayListService.getInstance().getFreshList( DisplayListService.ListType.TEST_SECTION );
         return mapping.findForward( forward );
     }
 

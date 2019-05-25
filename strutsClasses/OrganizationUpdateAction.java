@@ -230,7 +230,7 @@ public class OrganizationUpdateAction extends BaseAction {
 			forward = FWD_SUCCESS_INSERT;
 		}
 
-        DisplayListService.refreshList(DisplayListService.ListType.REFERRAL_ORGANIZATIONS);
+        DisplayListService.getInstance().refreshList(DisplayListService.ListType.REFERRAL_ORGANIZATIONS);
 
 		return getForward(mapping.findForward(forward), id, start, direction);
 

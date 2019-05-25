@@ -34,7 +34,7 @@ public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult> imp
 	public List<TestResult> getAllActiveTestResultsPerTest(Test test) {
 		Map<String, Object> propertyValues = new HashMap<>();
 		List<String> orderProperties = new ArrayList<>();
-		propertyValues.put("test", test.getId());
+		propertyValues.put("test.id", test.getId());
 		propertyValues.put("isActive", true);
 		orderProperties.add("resultGroup");
 		orderProperties.add("id");
@@ -45,7 +45,7 @@ public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult> imp
 	@Transactional
 	public List<TestResult> getActiveTestResultsByTest(String testId) {
 		Map<String, Object> propertyValues = new HashMap<>();
-		propertyValues.put("test", testId);
+		propertyValues.put("test.id", testId);
 		propertyValues.put("isActive", true);
 		return baseObjectDAO.getAllMatching(propertyValues);
 	}
@@ -58,54 +58,54 @@ public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult> imp
 
 	@Override
 	public void getData(TestResult testResult) {
-        getBaseObjectDAO().getData(testResult);
+		getBaseObjectDAO().getData(testResult);
 
 	}
 
 	@Override
 	public void deleteData(List testResults) {
-        getBaseObjectDAO().deleteData(testResults);
+		getBaseObjectDAO().deleteData(testResults);
 
 	}
 
 	@Override
 	public void updateData(TestResult testResult) {
-        getBaseObjectDAO().updateData(testResult);
+		getBaseObjectDAO().updateData(testResult);
 
 	}
 
 	@Override
 	public boolean insertData(TestResult testResult) {
-        return getBaseObjectDAO().insertData(testResult);
+		return getBaseObjectDAO().insertData(testResult);
 	}
 
 	@Override
 	public List getNextTestResultRecord(String id) {
-        return getBaseObjectDAO().getNextTestResultRecord(id);
+		return getBaseObjectDAO().getNextTestResultRecord(id);
 	}
 
 	@Override
 	public TestResult getTestResultById(TestResult testResult) {
-        return getBaseObjectDAO().getTestResultById(testResult);
+		return getBaseObjectDAO().getTestResultById(testResult);
 	}
 
 	@Override
 	public List getPageOfTestResults(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfTestResults(startingRecNo);
+		return getBaseObjectDAO().getPageOfTestResults(startingRecNo);
 	}
 
 	@Override
 	public List getPreviousTestResultRecord(String id) {
-        return getBaseObjectDAO().getPreviousTestResultRecord(id);
+		return getBaseObjectDAO().getPreviousTestResultRecord(id);
 	}
 
 	@Override
 	public List getAllTestResults() {
-        return getBaseObjectDAO().getAllTestResults();
+		return getBaseObjectDAO().getAllTestResults();
 	}
 
 	@Override
 	public List getTestResultsByTestAndResultGroup(TestAnalyte testAnalyte) {
-        return getBaseObjectDAO().getTestResultsByTestAndResultGroup(testAnalyte);
+		return getBaseObjectDAO().getTestResultsByTestAndResultGroup(testAnalyte);
 	}
 }

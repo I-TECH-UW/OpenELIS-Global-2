@@ -48,7 +48,7 @@ public class TestRenameUpdateController extends BaseController {
 		form = new TestRenameEntryForm();
 		form.setFormAction("");
 
-		form.setTestList(DisplayListService.getList(DisplayListService.ListType.ALL_TESTS));
+		form.setTestList(DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS));
 
 		return findForward(forward, form);
 	}
@@ -94,8 +94,8 @@ public class TestRenameUpdateController extends BaseController {
 		}
 
 		// Refresh test names
-		DisplayListService.getFreshList(DisplayListService.ListType.ALL_TESTS);
-		DisplayListService.getFreshList(DisplayListService.ListType.ORDERABLE_TESTS);
+		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ALL_TESTS);
+		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ORDERABLE_TESTS);
 	}
 
 	@Override

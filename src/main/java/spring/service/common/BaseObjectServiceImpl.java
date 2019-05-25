@@ -1,5 +1,6 @@
 package spring.service.common;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -92,13 +93,15 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<T> getAllMatchingOrdered(String propertyName, Object propertyValue, String orderProperty, boolean descending) {
+	public List<T> getAllMatchingOrdered(String propertyName, Object propertyValue, String orderProperty,
+			boolean descending) {
 		return getBaseObjectDAO().getAllMatchingOrdered(propertyName, propertyValue, orderProperty, descending);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<T> getAllMatchingOrdered(String propertyName, Object propertyValue, List<String> orderProperties, boolean descending) {
+	public List<T> getAllMatchingOrdered(String propertyName, Object propertyValue, List<String> orderProperties,
+			boolean descending) {
 		return getBaseObjectDAO().getAllMatchingOrdered(propertyName, propertyValue, orderProperties, descending);
 	}
 
@@ -110,7 +113,8 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<T> getAllMatchingOrdered(Map<String, Object> propertyValues, List<String> orderProperties, boolean descending) {
+	public List<T> getAllMatchingOrdered(Map<String, Object> propertyValues, List<String> orderProperties,
+			boolean descending) {
 		return getBaseObjectDAO().getAllMatchingOrdered(propertyValues, orderProperties, descending);
 	}
 
@@ -146,31 +150,37 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<T> getMatchingOrderedPage(String propertyName, Object propertyValue, String orderProperty, boolean descending, int pageNumber) {
-		return getBaseObjectDAO().getMatchingOrderedPage(propertyName, propertyValue, orderProperty, descending, pageNumber);
+	public List<T> getMatchingOrderedPage(String propertyName, Object propertyValue, String orderProperty,
+			boolean descending, int pageNumber) {
+		return getBaseObjectDAO().getMatchingOrderedPage(propertyName, propertyValue, orderProperty, descending,
+				pageNumber);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<T> getMatchingOrderedPage(String propertyName, Object propertyValue, List<String> orderProperties, boolean descending, int pageNumber) {
-		return getBaseObjectDAO().getMatchingOrderedPage(propertyName, propertyValue, orderProperties, descending, pageNumber);
+	public List<T> getMatchingOrderedPage(String propertyName, Object propertyValue, List<String> orderProperties,
+			boolean descending, int pageNumber) {
+		return getBaseObjectDAO().getMatchingOrderedPage(propertyName, propertyValue, orderProperties, descending,
+				pageNumber);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, String orderProperty, boolean descending, int pageNumber) {
+	public List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, String orderProperty, boolean descending,
+			int pageNumber) {
 		return getBaseObjectDAO().getMatchingOrderedPage(propertyValues, orderProperty, descending, pageNumber);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, List<String> orderProperties, boolean descending, int pageNumber) {
+	public List<T> getMatchingOrderedPage(Map<String, Object> propertyValues, List<String> orderProperties,
+			boolean descending, int pageNumber) {
 		return getBaseObjectDAO().getMatchingOrderedPage(propertyValues, orderProperties, descending, pageNumber);
 	}
 
 	@Override
 	@Transactional
-	public String insert(T baseObject) {
+	public Serializable insert(T baseObject) {
 		if (auditTrailLog) {
 			auditTrailDAO.saveNewHistory(baseObject, baseObject.getSysUserId(), getBaseObjectDAO().getTableName());
 		}
@@ -179,8 +189,8 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 
 	@Override
 	@Transactional
-	public List<String> insertAll(List<T> baseObjects) {
-		List<String> ids = new ArrayList<>();
+	public List<Serializable> insertAll(List<T> baseObjects) {
+		List<Serializable> ids = new ArrayList<>();
 		for (T baseObject : baseObjects) {
 			ids.add(insert(baseObject));
 		}
@@ -197,7 +207,8 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 			}
 
 			if (oldObject.isPresent()) {
-				auditTrailDAO.saveHistory(baseObject, oldObject.get(), baseObject.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE, getBaseObjectDAO().getTableName());
+				auditTrailDAO.saveHistory(baseObject, oldObject.get(), baseObject.getSysUserId(),
+						IActionConstants.AUDIT_TRAIL_UPDATE, getBaseObjectDAO().getTableName());
 			} else {
 				auditTrailDAO.saveNewHistory(baseObject, baseObject.getSysUserId(), getBaseObjectDAO().getTableName());
 			}
@@ -219,9 +230,11 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	@Override
 	@Transactional
 	public T update(T baseObject) {
-		T oldObject = getBaseObjectDAO().get(baseObject.getId()).orElseThrow(() -> new ObjectNotFoundException(baseObject.getId(), classType.getName()));
+		T oldObject = getBaseObjectDAO().get(baseObject.getId())
+				.orElseThrow(() -> new ObjectNotFoundException(baseObject.getId(), classType.getName()));
 		if (auditTrailLog) {
-			auditTrailDAO.saveHistory(baseObject, oldObject, baseObject.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE, getBaseObjectDAO().getTableName());
+			auditTrailDAO.saveHistory(baseObject, oldObject, baseObject.getSysUserId(),
+					IActionConstants.AUDIT_TRAIL_UPDATE, getBaseObjectDAO().getTableName());
 		}
 		return getBaseObjectDAO().save(baseObject);
 
@@ -240,9 +253,11 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	@Override
 	@Transactional
 	public void delete(T baseObject) {
-		T oldObject = getBaseObjectDAO().get(baseObject.getId()).orElseThrow(() -> new ObjectNotFoundException(baseObject.getId(), classType.getName()));
+		T oldObject = getBaseObjectDAO().get(baseObject.getId())
+				.orElseThrow(() -> new ObjectNotFoundException(baseObject.getId(), classType.getName()));
 		if (auditTrailLog) {
-			auditTrailDAO.saveHistory(null, oldObject, baseObject.getSysUserId(), IActionConstants.AUDIT_TRAIL_DELETE, getBaseObjectDAO().getTableName());
+			auditTrailDAO.saveHistory(null, oldObject, baseObject.getSysUserId(), IActionConstants.AUDIT_TRAIL_DELETE,
+					getBaseObjectDAO().getTableName());
 		}
 		getBaseObjectDAO().delete(baseObject);
 	}
@@ -250,9 +265,11 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	@Override
 	@Transactional
 	public void delete(String id, String sysUserId) {
-		T oldObject = getBaseObjectDAO().get(id).orElseThrow(() -> new ObjectNotFoundException(id, classType.getName()));
+		T oldObject = getBaseObjectDAO().get(id)
+				.orElseThrow(() -> new ObjectNotFoundException(id, classType.getName()));
 		if (auditTrailLog) {
-			auditTrailDAO.saveHistory(null, oldObject, sysUserId, IActionConstants.AUDIT_TRAIL_DELETE, getBaseObjectDAO().getTableName());
+			auditTrailDAO.saveHistory(null, oldObject, sysUserId, IActionConstants.AUDIT_TRAIL_DELETE,
+					getBaseObjectDAO().getTableName());
 		}
 		getBaseObjectDAO().delete(oldObject);
 	}
@@ -314,7 +331,8 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 		try {
 			return getBaseObjectDAO().getNext(id).orElse(classType.newInstance());
 		} catch (InstantiationException | IllegalAccessException e) {
-			LogEvent.logError(this.getClass().getSimpleName(), "get()", "Could not create new Instance for " + classType.getName());
+			LogEvent.logError(this.getClass().getSimpleName(), "get()",
+					"Could not create new Instance for " + classType.getName());
 			throw new LIMSRuntimeException(e);
 		}
 	}
@@ -325,7 +343,8 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 		try {
 			return getBaseObjectDAO().getPrevious(id).orElse(classType.newInstance());
 		} catch (InstantiationException | IllegalAccessException e) {
-			LogEvent.logError(this.getClass().getSimpleName(), "get()", "Could not create new Instance for " + classType.getName());
+			LogEvent.logError(this.getClass().getSimpleName(), "get()",
+					"Could not create new Instance for " + classType.getName());
 			throw new LIMSRuntimeException(e);
 		}
 	}

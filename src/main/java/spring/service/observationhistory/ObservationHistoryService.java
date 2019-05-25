@@ -1,7 +1,7 @@
 package spring.service.observationhistory;
 
-import java.lang.String;
 import java.util.List;
+
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.patient.valueholder.Patient;

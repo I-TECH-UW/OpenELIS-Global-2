@@ -10,7 +10,8 @@ import us.mn.state.health.lims.organization.dao.OrganizationContactDAO;
 import us.mn.state.health.lims.organization.valueholder.OrganizationContact;
 
 @Service
-public class OrganizationContactServiceImpl extends BaseObjectServiceImpl<OrganizationContact> implements OrganizationContactService {
+public class OrganizationContactServiceImpl extends BaseObjectServiceImpl<OrganizationContact>
+		implements OrganizationContactService {
 	@Autowired
 	protected OrganizationContactDAO baseObjectDAO;
 
@@ -25,6 +26,11 @@ public class OrganizationContactServiceImpl extends BaseObjectServiceImpl<Organi
 
 	@Override
 	public List<OrganizationContact> getListForOrganizationId(String orgId) {
-        return getBaseObjectDAO().getListForOrganizationId(orgId);
+		return getBaseObjectDAO().getListForOrganizationId(orgId);
+	}
+
+	@Override
+	public String insert(OrganizationContact organizationContact) {
+		return (String) super.insert(organizationContact);
 	}
 }

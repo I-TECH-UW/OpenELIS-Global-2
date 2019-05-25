@@ -1,7 +1,7 @@
 package spring.service.provider;
 
-import java.lang.String;
 import java.util.List;
+
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.person.valueholder.Person;
 import us.mn.state.health.lims.provider.valueholder.Provider;

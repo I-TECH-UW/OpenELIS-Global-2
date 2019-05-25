@@ -148,7 +148,7 @@ public class SampleEditAction extends BaseAction {
 		}
 
 		if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
-			PropertyUtils.setProperty(dynaForm, "initialSampleConditionList", DisplayListService.getList(ListType.INITIAL_SAMPLE_CONDITION));
+			PropertyUtils.setProperty(dynaForm, "initialSampleConditionList", DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
 		}
 		
 		PropertyUtils.setProperty(form, "currentDate", DateUtil.getCurrentDateAsText());
@@ -288,11 +288,11 @@ public class SampleEditAction extends BaseAction {
 		}
 
 		PropertyUtils.setProperty(dynaForm, "possibleTests", possibleTestList);
-		PropertyUtils.setProperty(dynaForm, "testSectionList", DisplayListService.getList(ListType.TEST_SECTION));
+		PropertyUtils.setProperty(dynaForm, "testSectionList", DisplayListService.getInstance().getList(ListType.TEST_SECTION));
 	}
 
 	private void setAddableSampleTypes(DynaActionForm dynaForm) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		PropertyUtils.setProperty(dynaForm, "sampleTypes", DisplayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
+		PropertyUtils.setProperty(dynaForm, "sampleTypes", DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
 	}
 	
 	private void addPossibleTestsToList(SampleItem sampleItem, List<SampleEditItem> possibleTestList, String accessionNumber) {

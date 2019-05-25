@@ -16,6 +16,7 @@
 */
 package us.mn.state.health.lims.address.dao;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +28,7 @@ public interface OrganizationAddressDAO extends BaseDAO<OrganizationAddress> {
 	public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId) throws LIMSRuntimeException;
 
 	@Override
-	public String insert(OrganizationAddress organizationAddress) throws LIMSRuntimeException;
+	public Serializable insert(OrganizationAddress organizationAddress) throws LIMSRuntimeException;
 
 	public Optional<OrganizationAddress> update(OrganizationAddress organizationAddress) throws LIMSRuntimeException;
 }

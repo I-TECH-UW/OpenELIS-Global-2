@@ -54,7 +54,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  * @param <T>
  */
 @Component
-@Transactional 
+@Transactional
 public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionConstants {
 
 	protected static final int DEFAULT_PAGE_SIZE = SystemConfiguration.getInstance().getDefaultPageSize();
@@ -501,9 +501,9 @@ public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, I
 	}
 
 	@Override
-	public String insert(T object) {
+	public Serializable insert(T object) {
 		Session session = sessionFactory.getCurrentSession();
-		return (String) session.save(object);
+		return session.save(object);
 	}
 
 	@SuppressWarnings("unchecked")

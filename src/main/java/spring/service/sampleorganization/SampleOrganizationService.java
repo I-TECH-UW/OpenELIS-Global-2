@@ -1,6 +1,7 @@
 package spring.service.sampleorganization;
 
 import java.util.List;
+
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization;

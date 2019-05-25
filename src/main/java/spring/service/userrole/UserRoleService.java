@@ -1,8 +1,8 @@
 package spring.service.userrole;
 
-import java.lang.String;
 import java.util.Collection;
 import java.util.List;
+
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.userrole.valueholder.UserRole;
 

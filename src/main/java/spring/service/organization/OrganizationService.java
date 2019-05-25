@@ -1,9 +1,8 @@
 package spring.service.organization;
 
-import java.lang.Integer;
-import java.lang.String;
 import java.util.List;
 import java.util.Set;
+
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 
@@ -53,4 +52,6 @@ public interface OrganizationService extends BaseObjectService<Organization> {
 	List<String> getTypeIdsForOrganizationId(String id);
 
 	void deleteAllLinksForOrganization(String id);
+
+	List<Organization> getOrganizationsByTypeName(String orderByProperty, String referralOrgType);
 }

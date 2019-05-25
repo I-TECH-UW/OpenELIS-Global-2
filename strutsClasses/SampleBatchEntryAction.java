@@ -59,9 +59,9 @@ public class SampleBatchEntryAction extends BaseSampleEntryAction {
     PropertyUtils.setProperty(dynaForm, "sampleOrderItems",
             sampleOrderService.getSampleOrderItem());
     PropertyUtils.setProperty(dynaForm, "sampleTypes",
-            DisplayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
+            DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
     PropertyUtils.setProperty(dynaForm, "testSectionList",
-            DisplayListService.getList(ListType.TEST_SECTION));
+            DisplayListService.getInstance().getList(ListType.TEST_SECTION));
     PropertyUtils.setProperty(dynaForm, "currentDate", request.getParameter("currentDate"));
     PropertyUtils.setProperty(dynaForm, "currentTime", request.getParameter("currentTime"));
     PropertyUtils.setProperty(dynaForm, "sampleOrderItems.receivedTime",

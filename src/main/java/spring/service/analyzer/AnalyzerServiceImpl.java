@@ -25,44 +25,44 @@ public class AnalyzerServiceImpl extends BaseObjectServiceImpl<Analyzer> impleme
 
 	@Override
 	public void getData(Analyzer analyzer) {
-        getBaseObjectDAO().getData(analyzer);
+		getBaseObjectDAO().getData(analyzer);
 
 	}
 
 	@Override
 	public Analyzer getAnalyzerById(Analyzer analyzer) {
-        return getBaseObjectDAO().getAnalyzerById(analyzer);
+		return getBaseObjectDAO().getAnalyzerById(analyzer);
 	}
 
 	@Override
 	public List<Analyzer> getAllAnalyzers() {
-        return getBaseObjectDAO().getAllAnalyzers();
+		return getBaseObjectDAO().getAllAnalyzers();
 	}
 
 	@Override
 	public Analyzer readAnalyzer(String idString) {
-        return getBaseObjectDAO().readAnalyzer(idString);
+		return getBaseObjectDAO().readAnalyzer(idString);
 	}
 
 	@Override
 	public void deleteData(List<Analyzer> results) {
-        getBaseObjectDAO().deleteData(results);
+		getBaseObjectDAO().deleteData(results);
 
 	}
 
 	@Override
 	public void updateData(Analyzer analyzer) {
-        getBaseObjectDAO().updateData(analyzer);
+		update(analyzer);
 
 	}
 
 	@Override
 	public boolean insertData(Analyzer analyzer) {
-        return getBaseObjectDAO().insertData(analyzer);
+		return insert(analyzer) != null;
 	}
 
 	@Override
 	public Analyzer getAnalyzerByName(String name) {
-        return getBaseObjectDAO().getAnalyzerByName(name);
+		return getMatch("name", name).orElse(null);
 	}
 }

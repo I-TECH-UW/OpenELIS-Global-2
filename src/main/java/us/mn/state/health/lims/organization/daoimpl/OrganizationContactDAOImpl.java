@@ -16,6 +16,7 @@
 */
 package us.mn.state.health.lims.organization.daoimpl;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -59,7 +60,7 @@ public class OrganizationContactDAOImpl extends BaseDAOImpl<OrganizationContact>
 	}
 
 	@Override
-	public String insert(OrganizationContact contact) throws LIMSRuntimeException {
+	public Serializable insert(OrganizationContact contact) throws LIMSRuntimeException {
 		String id = null;
 		try {
 			id = (String) HibernateUtil.getSession().save(contact);

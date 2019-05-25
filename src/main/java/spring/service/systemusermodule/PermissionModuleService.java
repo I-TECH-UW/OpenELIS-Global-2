@@ -1,19 +1,18 @@
 package spring.service.systemusermodule;
 
-import java.lang.Integer;
-import java.lang.String;
 import java.util.List;
+
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
 
-public interface PermissionModuleService extends BaseObjectService<PermissionModule> {
-	void getData(PermissionModule permissionModule);
+public interface PermissionModuleService<T extends PermissionModule> extends BaseObjectService<T> {
+	void getData(T permissionModule);
 
 	void deleteData(List permissionModules);
 
-	void updateData(PermissionModule permissionModule);
+	void updateData(T permissionModule);
 
-	boolean insertData(PermissionModule permissionModule);
+	boolean insertData(T permissionModule);
 
 	List getAllPermissionModules();
 

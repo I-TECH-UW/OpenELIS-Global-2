@@ -69,7 +69,8 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization>
 	@Override
 	@Transactional
 	public void delete(Organization organization) {
-		Organization oldObject = getBaseObjectDAO().get(organization.getId()).orElseThrow(() -> new ObjectNotFoundException(organization.getId(), Organization.class.getName()));
+		Organization oldObject = getBaseObjectDAO().get(organization.getId())
+				.orElseThrow(() -> new ObjectNotFoundException(organization.getId(), Organization.class.getName()));
 		oldObject.setIsActive(IActionConstants.NO);
 		oldObject.setSysUserId(organization.getSysUserId());
 		update(oldObject);
@@ -78,7 +79,8 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization>
 	@Override
 	@Transactional
 	public void delete(String id, String sysUserId) {
-		Organization oldObject = getBaseObjectDAO().get(id).orElseThrow(() -> new ObjectNotFoundException(id, Organization.class.getName()));
+		Organization oldObject = getBaseObjectDAO().get(id)
+				.orElseThrow(() -> new ObjectNotFoundException(id, Organization.class.getName()));
 		oldObject.setIsActive(IActionConstants.NO);
 		oldObject.setSysUserId(sysUserId);
 		update(oldObject);
@@ -103,91 +105,95 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization>
 
 	@Override
 	public void getData(Organization organization) {
-        getBaseObjectDAO().getData(organization);
+		getBaseObjectDAO().getData(organization);
 
 	}
 
 	@Override
 	public void deleteData(List organizations) {
-        getBaseObjectDAO().deleteData(organizations);
+		getBaseObjectDAO().deleteData(organizations);
 
 	}
 
 	@Override
 	public void updateData(Organization organization) {
-        getBaseObjectDAO().updateData(organization);
+		getBaseObjectDAO().updateData(organization);
 
 	}
 
 	@Override
 	public boolean insertData(Organization organization) {
-        return getBaseObjectDAO().insertData(organization);
+		return getBaseObjectDAO().insertData(organization);
 	}
 
 	@Override
 	public void insertOrUpdateData(Organization organization) {
-        getBaseObjectDAO().insertOrUpdateData(organization);
+		getBaseObjectDAO().insertOrUpdateData(organization);
 
 	}
 
 	@Override
 	public List getNextOrganizationRecord(String id) {
-        return getBaseObjectDAO().getNextOrganizationRecord(id);
+		return getBaseObjectDAO().getNextOrganizationRecord(id);
 	}
 
 	@Override
 	public List<Organization> getOrganizationsByParentId(String parentId) {
-        return getBaseObjectDAO().getOrganizationsByParentId(parentId);
+		return getBaseObjectDAO().getOrganizationsByParentId(parentId);
 	}
 
 	@Override
 	public List<Organization> getOrganizationsByTypeName(String orderByProperty, String[] typeName) {
-        return getBaseObjectDAO().getOrganizationsByTypeName(orderByProperty,typeName);
+		return getBaseObjectDAO().getOrganizationsByTypeName(orderByProperty, typeName);
 	}
 
 	@Override
 	public Set<Organization> getOrganizationsByProjectName(String projectName) {
-        return getBaseObjectDAO().getOrganizationsByProjectName(projectName);
+		return getBaseObjectDAO().getOrganizationsByProjectName(projectName);
 	}
 
 	@Override
 	public Integer getTotalOrganizationCount() {
-        return getBaseObjectDAO().getTotalOrganizationCount();
+		return getBaseObjectDAO().getTotalOrganizationCount();
 	}
 
 	@Override
 	public List getAllOrganizations() {
-        return getBaseObjectDAO().getAllOrganizations();
+		return getBaseObjectDAO().getAllOrganizations();
 	}
 
 	@Override
 	public List getPreviousOrganizationRecord(String id) {
-        return getBaseObjectDAO().getPreviousOrganizationRecord(id);
+		return getBaseObjectDAO().getPreviousOrganizationRecord(id);
 	}
 
 	@Override
 	public Organization getOrganizationById(String organizationId) {
-        return getBaseObjectDAO().getOrganizationById(organizationId);
+		return getBaseObjectDAO().getOrganizationById(organizationId);
 	}
 
 	@Override
 	public List getPageOfOrganizations(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfOrganizations(startingRecNo);
+		return getBaseObjectDAO().getPageOfOrganizations(startingRecNo);
 	}
 
 	@Override
 	public List getOrganizations(String filter) {
-        return getBaseObjectDAO().getOrganizations(filter);
+		return getBaseObjectDAO().getOrganizations(filter);
 	}
 
 	@Override
 	public List<Organization> getOrganizationsByTypeNameAndLeadingChars(String partialName, String typeName) {
-        return getBaseObjectDAO().getOrganizationsByTypeNameAndLeadingChars(partialName,typeName);
+		return getBaseObjectDAO().getOrganizationsByTypeNameAndLeadingChars(partialName, typeName);
 	}
 
 	@Override
 	public Organization getOrganizationByLocalAbbreviation(Organization organization, boolean ignoreCase) {
-        return getBaseObjectDAO().getOrganizationByLocalAbbreviation(organization,ignoreCase);
+		return getBaseObjectDAO().getOrganizationByLocalAbbreviation(organization, ignoreCase);
+	}
+
+	public List<Organization> getOrganizationsByTypeName(String orderByProperty, String referralOrgType) {
+		return getBaseObjectDAO().getOrganizationsByTypeName(orderByProperty, referralOrgType);
 	}
 
 }

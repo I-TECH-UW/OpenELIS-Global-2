@@ -58,9 +58,9 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
 		String workplan = request.getParameter("type");
 
 		// load testSections for drop down
-		PropertyUtils.setProperty(form, "testSections", DisplayListService.getList(ListType.TEST_SECTION));
+		PropertyUtils.setProperty(form, "testSections", DisplayListService.getInstance().getList(ListType.TEST_SECTION));
 		PropertyUtils.setProperty(form, "testSectionsByName",
-				DisplayListService.getList(ListType.TEST_SECTION_BY_NAME));
+				DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
 		TestSection ts = null;
 

@@ -47,9 +47,9 @@ public class UomCreateController extends BaseController {
 	private void setupDisplayItems(UomCreateForm form) {
 		try {
 			PropertyUtils.setProperty(form, "existingUomList",
-					DisplayListService.getList(DisplayListService.ListType.UNIT_OF_MEASURE));
+					DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE));
 			PropertyUtils.setProperty(form, "inactiveUomList",
-					DisplayListService.getList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE));
+					DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE));
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -108,8 +108,8 @@ public class UomCreateController extends BaseController {
 			HibernateUtil.closeSession();
 		}
 
-		DisplayListService.refreshList(DisplayListService.ListType.UNIT_OF_MEASURE);
-		DisplayListService.refreshList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.UNIT_OF_MEASURE);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE);
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}

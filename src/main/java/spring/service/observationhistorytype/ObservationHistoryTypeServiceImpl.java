@@ -8,11 +8,12 @@ import us.mn.state.health.lims.observationhistorytype.dao.ObservationHistoryType
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
 
 @Service
-public class ObservationHistoryTypeServiceImpl extends BaseObjectServiceImpl<ObservationHistoryType> implements ObservationHistoryTypeService {
+public class ObservationHistoryTypeServiceImpl extends BaseObjectServiceImpl<ObservationHistoryType>
+		implements ObservationHistoryTypeService {
 	@Autowired
 	protected ObservationHistoryTypeDAO baseObjectDAO;
 
-	ObservationHistoryTypeServiceImpl() {
+	public ObservationHistoryTypeServiceImpl() {
 		super(ObservationHistoryType.class);
 	}
 
@@ -23,6 +24,6 @@ public class ObservationHistoryTypeServiceImpl extends BaseObjectServiceImpl<Obs
 
 	@Override
 	public ObservationHistoryType getByName(String name) {
-        return getBaseObjectDAO().getByName(name);
+		return getBaseObjectDAO().getByName(name);
 	}
 }

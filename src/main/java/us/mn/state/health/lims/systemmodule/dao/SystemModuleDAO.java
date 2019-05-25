@@ -45,4 +45,6 @@ public interface SystemModuleDAO extends BaseDAO<SystemModule> {
 	public Integer getTotalSystemModuleCount() throws LIMSRuntimeException;
 
 	public SystemModule getSystemModuleByName(String name) throws LIMSRuntimeException;
+
+	public boolean duplicateSystemModuleExists(SystemModule systemModule);
 }

@@ -28,7 +28,7 @@ public class TestSectionRenameEntryController extends BaseController {
 	public ModelAndView showTestSectionRenameEntry(HttpServletRequest request) {
 		TestSectionRenameEntryForm form = new TestSectionRenameEntryForm();
 
-		form.setTestSectionList(DisplayListService.getList(DisplayListService.ListType.TEST_SECTION));
+		form.setTestSectionList(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
 
 		return findForward(FWD_SUCCESS, form);
 	}
@@ -51,7 +51,7 @@ public class TestSectionRenameEntryController extends BaseController {
 			@ModelAttribute("form") @Valid TestSectionRenameEntryForm form, BindingResult result) {
 		if (result.hasErrors()) {
 			saveErrors(result);
-			form.setTestSectionList(DisplayListService.getList(DisplayListService.ListType.TEST_SECTION));
+			form.setTestSectionList(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
@@ -89,7 +89,7 @@ public class TestSectionRenameEntryController extends BaseController {
 		}
 
 		// Refresh Test Section names
-		DisplayListService.getFreshList(DisplayListService.ListType.TEST_SECTION);
+		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.TEST_SECTION);
 	}
 
 	@Override

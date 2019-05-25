@@ -91,8 +91,8 @@ public class TestRenameUpdate extends BaseAction{
         }
 
         //Refresh test names
-        DisplayListService.getFreshList( DisplayListService.ListType.ALL_TESTS );
-        DisplayListService.getFreshList( DisplayListService.ListType.ORDERABLE_TESTS );
+        DisplayListService.getInstance().getFreshList( DisplayListService.ListType.ALL_TESTS );
+        DisplayListService.getInstance().getFreshList( DisplayListService.ListType.ORDERABLE_TESTS );
     }
 
     protected String getPageTitleKey(){

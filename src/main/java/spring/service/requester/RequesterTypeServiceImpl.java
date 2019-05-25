@@ -12,7 +12,7 @@ public class RequesterTypeServiceImpl extends BaseObjectServiceImpl<RequesterTyp
 	@Autowired
 	protected RequesterTypeDAO baseObjectDAO;
 
-	RequesterTypeServiceImpl() {
+	public RequesterTypeServiceImpl() {
 		super(RequesterType.class);
 	}
 
@@ -23,6 +23,6 @@ public class RequesterTypeServiceImpl extends BaseObjectServiceImpl<RequesterTyp
 
 	@Override
 	public RequesterType getRequesterTypeByName(String typeName) {
-        return getBaseObjectDAO().getRequesterTypeByName(typeName);
+		return getBaseObjectDAO().getRequesterTypeByName(typeName);
 	}
 }

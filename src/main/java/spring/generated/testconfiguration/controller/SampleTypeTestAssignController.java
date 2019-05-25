@@ -45,7 +45,7 @@ public class SampleTypeTestAssignController extends BaseController {
 	}
 
 	private void setupDisplayItems(SampleTypeTestAssignForm form) {
-		List<IdValuePair> typeOfSamples = DisplayListService
+		List<IdValuePair> typeOfSamples = DisplayListService.getInstance()
 				.getListWithLeadingBlank(DisplayListService.ListType.SAMPLE_TYPE);
 		LinkedHashMap<IdValuePair, List<IdValuePair>> sampleTypesTestsMap = new LinkedHashMap<>(typeOfSamples.size());
 
@@ -63,7 +63,7 @@ public class SampleTypeTestAssignController extends BaseController {
 
 		// we can't just append the original list because that list is in the cache
 		List<IdValuePair> joinedList = new ArrayList<>(typeOfSamples);
-		joinedList.addAll(DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE));
+		joinedList.addAll(DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE));
 		try {
 			PropertyUtils.setProperty(form, "sampleTypeList", joinedList);
 			PropertyUtils.setProperty(form, "sampleTypeTestList", sampleTypesTestsMap);
@@ -177,8 +177,8 @@ public class SampleTypeTestAssignController extends BaseController {
 			HibernateUtil.closeSession();
 		}
 
-		DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE);
-		DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}

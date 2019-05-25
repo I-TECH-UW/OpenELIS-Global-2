@@ -11,11 +11,12 @@ import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.organization.valueholder.OrganizationType;
 
 @Service
-public class OrganizationTypeServiceImpl extends BaseObjectServiceImpl<OrganizationType> implements OrganizationTypeService {
+public class OrganizationTypeServiceImpl extends BaseObjectServiceImpl<OrganizationType>
+		implements OrganizationTypeService {
 	@Autowired
 	protected OrganizationTypeDAO baseObjectDAO;
 
-	OrganizationTypeServiceImpl() {
+	public OrganizationTypeServiceImpl() {
 		super(OrganizationType.class);
 	}
 
@@ -26,16 +27,16 @@ public class OrganizationTypeServiceImpl extends BaseObjectServiceImpl<Organizat
 
 	@Override
 	public List<Organization> getOrganizationsByTypeName(String orderByCol, String[] names) {
-        return getBaseObjectDAO().getOrganizationsByTypeName(orderByCol,names);
+		return getBaseObjectDAO().getOrganizationsByTypeName(orderByCol, names);
 	}
 
 	@Override
 	public List<OrganizationType> getAllOrganizationTypes() {
-        return getBaseObjectDAO().getAllOrganizationTypes();
+		return getBaseObjectDAO().getAllOrganizationTypes();
 	}
 
 	@Override
 	public OrganizationType getOrganizationTypeByName(String name) {
-        return getBaseObjectDAO().getOrganizationTypeByName(name);
+		return getBaseObjectDAO().getOrganizationTypeByName(name);
 	}
 }

@@ -1,9 +1,8 @@
 package spring.service.sampleitem;
 
-import java.lang.Integer;
-import java.lang.String;
 import java.util.List;
 import java.util.Set;
+
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;

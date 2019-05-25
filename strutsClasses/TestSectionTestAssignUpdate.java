@@ -88,8 +88,8 @@ public class TestSectionTestAssignUpdate extends BaseAction {
             HibernateUtil.closeSession();
         }
 
-        DisplayListService.refreshList(DisplayListService.ListType.TEST_SECTION);
-        DisplayListService.refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);
+        DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION);
+        DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);
 
         return mapping.findForward(FWD_SUCCESS);
     }

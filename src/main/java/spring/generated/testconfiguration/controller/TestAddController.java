@@ -86,18 +86,20 @@ public class TestAddController extends BaseController {
 		TestAddForm form = new TestAddForm();
 
 		List<IdValuePair> allSampleTypesList = new ArrayList<>();
-		allSampleTypesList.addAll(DisplayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
-		allSampleTypesList.addAll(DisplayListService.getList(ListType.SAMPLE_TYPE_INACTIVE));
+		allSampleTypesList.addAll(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
+		allSampleTypesList.addAll(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_INACTIVE));
 		try {
 			PropertyUtils.setProperty(form, "sampleTypeList", allSampleTypesList);
-			PropertyUtils.setProperty(form, "panelList", DisplayListService.getList(ListType.PANELS));
+			PropertyUtils.setProperty(form, "panelList", DisplayListService.getInstance().getList(ListType.PANELS));
 			PropertyUtils.setProperty(form, "resultTypeList",
-					DisplayListService.getList(ListType.RESULT_TYPE_LOCALIZED));
-			PropertyUtils.setProperty(form, "uomList", DisplayListService.getList(ListType.UNIT_OF_MEASURE));
-			PropertyUtils.setProperty(form, "labUnitList", DisplayListService.getList(ListType.TEST_SECTION));
+					DisplayListService.getInstance().getList(ListType.RESULT_TYPE_LOCALIZED));
+			PropertyUtils.setProperty(form, "uomList",
+					DisplayListService.getInstance().getList(ListType.UNIT_OF_MEASURE));
+			PropertyUtils.setProperty(form, "labUnitList",
+					DisplayListService.getInstance().getList(ListType.TEST_SECTION));
 			PropertyUtils.setProperty(form, "ageRangeList", ResultLimitServiceImpl.getPredefinedAgeRanges());
 			PropertyUtils.setProperty(form, "dictionaryList",
-					DisplayListService.getList(ListType.DICTIONARY_TEST_RESULTS));
+					DisplayListService.getInstance().getList(ListType.DICTIONARY_TEST_RESULTS));
 			PropertyUtils.setProperty(form, "groupedDictionaryList", createGroupedDictionaryList());
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 			// TODO Auto-generated catch block

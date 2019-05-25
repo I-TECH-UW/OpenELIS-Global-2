@@ -32,7 +32,7 @@ public class SampleTypeOrderAction extends BaseAction {
     @Override
     protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ((DynaValidatorForm)form).initialize(mapping);
-        PropertyUtils.setProperty(form, "sampleTypeList", DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE));
+        PropertyUtils.setProperty(form, "sampleTypeList", DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE));
 
         return mapping.findForward(FWD_SUCCESS);
     }

@@ -200,7 +200,7 @@ public class SampleEditController extends BaseController {
 
 		if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
 			PropertyUtils.setProperty(form, "initialSampleConditionList",
-					DisplayListService.getList(ListType.INITIAL_SAMPLE_CONDITION));
+					DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
 		}
 
 		PropertyUtils.setProperty(form, "currentDate", DateUtil.getCurrentDateAsText());
@@ -342,12 +342,12 @@ public class SampleEditController extends BaseController {
 		}
 
 		PropertyUtils.setProperty(form, "possibleTests", possibleTestList);
-		PropertyUtils.setProperty(form, "testSectionList", DisplayListService.getList(ListType.TEST_SECTION));
+		PropertyUtils.setProperty(form, "testSectionList", DisplayListService.getInstance().getList(ListType.TEST_SECTION));
 	}
 
 	private void setAddableSampleTypes(SampleEditForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		PropertyUtils.setProperty(form, "sampleTypes", DisplayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
+		PropertyUtils.setProperty(form, "sampleTypes", DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
 	}
 
 	private void addPossibleTestsToList(SampleItem sampleItem, List<SampleEditItem> possibleTestList,

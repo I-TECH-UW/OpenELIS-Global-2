@@ -10,7 +10,8 @@ import us.mn.state.health.lims.analyzerimport.dao.AnalyzerTestMappingDAO;
 import us.mn.state.health.lims.analyzerimport.valueholder.AnalyzerTestMapping;
 
 @Service
-public class AnalyzerTestMappingServiceImpl extends BaseObjectServiceImpl<AnalyzerTestMapping> implements AnalyzerTestMappingService {
+public class AnalyzerTestMappingServiceImpl extends BaseObjectServiceImpl<AnalyzerTestMapping>
+		implements AnalyzerTestMappingService {
 	@Autowired
 	protected AnalyzerTestMappingDAO baseObjectDAO;
 
@@ -25,24 +26,24 @@ public class AnalyzerTestMappingServiceImpl extends BaseObjectServiceImpl<Analyz
 
 	@Override
 	public void updateMapping(AnalyzerTestMapping analyzerTestNameMapping, String currentUserId) {
-        getBaseObjectDAO().updateMapping(analyzerTestNameMapping,currentUserId);
+		getBaseObjectDAO().updateMapping(analyzerTestNameMapping, currentUserId);
 
 	}
 
 	@Override
 	public void deleteData(List<AnalyzerTestMapping> testMappingList, String currentUserId) {
-        getBaseObjectDAO().deleteData(testMappingList,currentUserId);
+		getBaseObjectDAO().deleteData(testMappingList, currentUserId);
 
 	}
 
 	@Override
 	public void insertData(AnalyzerTestMapping analyzerTestMapping, String currentUserId) {
-        getBaseObjectDAO().insertData(analyzerTestMapping,currentUserId);
-
+		analyzerTestMapping.setSysUserId(currentUserId);
+		insert(analyzerTestMapping);
 	}
 
 	@Override
 	public List<AnalyzerTestMapping> getAllAnalyzerTestMappings() {
-        return getBaseObjectDAO().getAllAnalyzerTestMappings();
+		return getBaseObjectDAO().getAllAnalyzerTestMappings();
 	}
 }

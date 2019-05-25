@@ -1,8 +1,7 @@
 package spring.service.unitofmeasure;
 
-import java.lang.Integer;
-import java.lang.String;
 import java.util.List;
+
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
@@ -28,4 +27,6 @@ public interface UnitOfMeasureService extends BaseObjectService<UnitOfMeasure> {
 	UnitOfMeasure getUnitOfMeasureByName(UnitOfMeasure unitOfMeasure);
 
 	List getAllUnitOfMeasures();
+
+	List<UnitOfMeasure> getAllActiveUnitOfMeasures();
 }

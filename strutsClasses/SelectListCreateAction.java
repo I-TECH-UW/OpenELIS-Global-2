@@ -39,9 +39,9 @@ public class SelectListCreateAction extends BaseAction {
     @Override
     protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ((DynaValidatorForm)form).initialize(mapping);
-        PropertyUtils.setProperty(form, "existingPanelList", DisplayListService.getList(DisplayListService.ListType.PANELS_ACTIVE));
-        PropertyUtils.setProperty(form, "inactivePanelList", DisplayListService.getList(DisplayListService.ListType.PANELS_INACTIVE));
-        PropertyUtils.setProperty(form, "existingSampleTypeList", DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+        PropertyUtils.setProperty(form, "existingPanelList", DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS_ACTIVE));
+        PropertyUtils.setProperty(form, "inactivePanelList", DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS_INACTIVE));
+        PropertyUtils.setProperty(form, "existingSampleTypeList", DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
         List<Panel> panels = new PanelDAOImpl().getAllPanels();
         PropertyUtils.setProperty(form, "existingEnglishNames", getExistingTestNames(panels, ConfigurationProperties.LOCALE.ENGLISH));
         PropertyUtils.setProperty(form, "existingFrenchNames", getExistingTestNames(panels, ConfigurationProperties.LOCALE.FRENCH));

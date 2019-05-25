@@ -25,16 +25,21 @@ public class CronSchedulerServiceImpl extends BaseObjectServiceImpl<CronSchedule
 
 	@Override
 	public List<CronScheduler> getAllCronSchedules() {
-        return getBaseObjectDAO().getAllCronSchedules();
+		return getBaseObjectDAO().getAllCronSchedules();
 	}
 
 	@Override
 	public CronScheduler getCronScheduleByJobName(String jobName) {
-        return getBaseObjectDAO().getCronScheduleByJobName(jobName);
+		return getBaseObjectDAO().getCronScheduleByJobName(jobName);
 	}
 
 	@Override
 	public CronScheduler getCronScheduleById(String schedulerId) {
-        return getBaseObjectDAO().getCronScheduleById(schedulerId);
+		return getBaseObjectDAO().getCronScheduleById(schedulerId);
+	}
+
+	@Override
+	public String insert(CronScheduler cronScheduler) {
+		return (String) super.insert(cronScheduler);
 	}
 }

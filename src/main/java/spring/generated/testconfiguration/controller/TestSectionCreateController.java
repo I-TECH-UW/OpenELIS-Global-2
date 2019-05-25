@@ -57,9 +57,9 @@ public class TestSectionCreateController extends BaseController {
 	private void setupDisplayItems(TestSectionCreateForm form) {
 		try {
 			PropertyUtils.setProperty(form, "existingTestUnitList",
-					DisplayListService.getList(DisplayListService.ListType.TEST_SECTION));
+					DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
 			PropertyUtils.setProperty(form, "inactiveTestUnitList",
-					DisplayListService.getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
+					DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
 			List<TestSection> testSections = testSectionService.getAllTestSections();
 			PropertyUtils.setProperty(form, "existingEnglishNames",
 					getExistingTestNames(testSections, ConfigurationProperties.LOCALE.ENGLISH));
@@ -134,8 +134,8 @@ public class TestSectionCreateController extends BaseController {
 			HibernateUtil.closeSession();
 		}
 
-		DisplayListService.refreshList(DisplayListService.ListType.TEST_SECTION);
-		DisplayListService.refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}

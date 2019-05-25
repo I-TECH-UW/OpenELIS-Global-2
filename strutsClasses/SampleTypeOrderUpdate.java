@@ -73,8 +73,8 @@ public class SampleTypeOrderUpdate extends BaseAction {
             HibernateUtil.closeSession();
         }
 
-        DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE);
-        DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
+        DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);
+        DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
 
         return mapping.findForward(FWD_SUCCESS);
     }

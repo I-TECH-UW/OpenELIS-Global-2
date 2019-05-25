@@ -32,7 +32,7 @@ public class TestSectionOrderAction extends BaseAction {
     @Override
     protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ((DynaValidatorForm)form).initialize(mapping);
-        PropertyUtils.setProperty(form, "testSectionList", DisplayListService.getList(DisplayListService.ListType.TEST_SECTION));
+        PropertyUtils.setProperty(form, "testSectionList", DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
 
         return mapping.findForward(FWD_SUCCESS);
     }

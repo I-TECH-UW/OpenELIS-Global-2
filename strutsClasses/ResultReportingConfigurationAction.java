@@ -48,8 +48,8 @@ public class ResultReportingConfigurationAction extends BaseAction {
 		ExchangeConfigurationService configService = new ExchangeConfigurationService( ConfigurationDomain.REPORT);
 		
 		PropertyUtils.setProperty(dynaForm, "reports", configService.getConfigurations());
-		PropertyUtils.setProperty(dynaForm, "hourList", DisplayListService.getList(ListType.HOURS));
-		PropertyUtils.setProperty(dynaForm, "minList", DisplayListService.getList(ListType.MINS));
+		PropertyUtils.setProperty(dynaForm, "hourList", DisplayListService.getInstance().getList(ListType.HOURS));
+		PropertyUtils.setProperty(dynaForm, "minList", DisplayListService.getInstance().getList(ListType.MINS));
 		return mapping.findForward(FWD_SUCCESS);
 	}
 

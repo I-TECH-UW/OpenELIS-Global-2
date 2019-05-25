@@ -109,8 +109,8 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 		PropertyUtils.setProperty(form, "sampleOrderItems", sampleOrderService.getSampleOrderItem());
 		PropertyUtils.setProperty(form, "patientProperties", new PatientManagementInfo());
 		PropertyUtils.setProperty(form, "patientSearch", new PatientSearch());
-		PropertyUtils.setProperty(form, "sampleTypes", DisplayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
-		PropertyUtils.setProperty(form, "testSectionList", DisplayListService.getList(ListType.TEST_SECTION));
+		PropertyUtils.setProperty(form, "sampleTypes", DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
+		PropertyUtils.setProperty(form, "testSectionList", DisplayListService.getInstance().getList(ListType.TEST_SECTION));
 		PropertyUtils.setProperty(form, "currentDate", DateUtil.getCurrentDateAsText());
 
 		// for (Object program : form.getSampleOrderItems().getProgramList()) {
@@ -121,7 +121,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
 		if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
 			PropertyUtils.setProperty(form, "initialSampleConditionList",
-					DisplayListService.getList(ListType.INITIAL_SAMPLE_CONDITION));
+					DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
 		}
 
 		addFlashMsgsToRequest(request);
@@ -252,7 +252,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 		Organization newOrganization = updateData.getNewOrganization();
 		if (newOrganization != null) {
 			organizationService.insert(newOrganization);
-			organizationService.linkOrganizationAndType(newOrganization, TableIdService.REFERRING_ORG_TYPE_ID);
+			organizationService.linkOrganizationAndType(newOrganization, TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
 			if (updateData.getRequesterSite() != null) {
 				updateData.getRequesterSite().setRequesterId(newOrganization.getId());
 			}
@@ -329,7 +329,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 				&& !GenericValidator.isBlankOrNull(updateData.getProviderPerson().getId())) {
 			SampleRequester sampleRequester = new SampleRequester();
 			sampleRequester.setRequesterId(updateData.getProviderPerson().getId());
-			sampleRequester.setRequesterTypeId(TableIdService.PROVIDER_REQUESTER_TYPE_ID);
+			sampleRequester.setRequesterTypeId(TableIdService.getInstance().PROVIDER_REQUESTER_TYPE_ID);
 			sampleRequester.setSampleId(Long.parseLong(updateData.getSample().getId()));
 			sampleRequester.setSysUserId(updateData.getCurrentUserId());
 			sampleRequesterService.insert(sampleRequester);

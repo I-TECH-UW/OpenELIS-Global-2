@@ -38,7 +38,7 @@ public class ActivityReportByTestSection extends ActivityReport implements IRepo
         new ReportSpecificationParameters( ReportSpecificationParameters.Parameter.DATE_RANGE,
                 MessageUtil.getMessage( "report.activity.report.base" ) + " " + MessageUtil.getMessage( "report.by.unit" ),
                 MessageUtil.getMessage( "report.instruction.all.fields" ) ).setRequestParameters( form );
-        new ReportSpecificationList( DisplayListService.getList( DisplayListService.ListType.TEST_SECTION ),
+        new ReportSpecificationList( DisplayListService.getInstance().getList( DisplayListService.ListType.TEST_SECTION ),
                                      MessageUtil.getMessage( "workplan.unit.types" ) ).setRequestParameters( form );
     }
 

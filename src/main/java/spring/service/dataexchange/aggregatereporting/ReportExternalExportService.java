@@ -1,10 +1,9 @@
 package spring.service.dataexchange.aggregatereporting;
 
-import java.lang.String;
 import java.sql.Timestamp;
 import java.util.List;
+
 import spring.service.common.BaseObjectService;
-import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalExport;
 
 public interface ReportExternalExportService extends BaseObjectService<ReportExternalExport> {

@@ -1,7 +1,7 @@
 package spring.service.organization;
 
-import java.lang.String;
 import java.util.List;
+
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.organization.valueholder.OrganizationType;

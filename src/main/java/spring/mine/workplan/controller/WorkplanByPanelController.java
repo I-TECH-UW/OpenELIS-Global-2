@@ -77,7 +77,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
 		}
 
 		PropertyUtils.setProperty(form, "workplanType", "panel");
-		PropertyUtils.setProperty(form, "searchTypes", DisplayListService.getList(DisplayListService.ListType.PANELS));
+		PropertyUtils.setProperty(form, "searchTypes", DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
 		PropertyUtils.setProperty(form, "searchLabel", MessageUtil.getMessage("workplan.panel.types"));
 		PropertyUtils.setProperty(form, "searchAction", "WorkPlanByPanel.do");
 

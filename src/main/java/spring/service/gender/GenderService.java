@@ -1,8 +1,7 @@
 package spring.service.gender;
 
-import java.lang.Integer;
-import java.lang.String;
 import java.util.List;
+
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.gender.valueholder.Gender;
 

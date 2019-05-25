@@ -58,9 +58,9 @@ public class SampleTypeCreateController extends BaseController {
 	private void setupDisplayItems(SampleTypeCreateForm form) {
 		try {
 			PropertyUtils.setProperty(form, "existingSampleTypeList",
-					DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+					DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
 			PropertyUtils.setProperty(form, "inactiveSampleTypeList",
-					DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE));
+					DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE));
 			List<TypeOfSample> typeOfSamples = typeOfSampleService.getAllTypeOfSamples();
 			PropertyUtils.setProperty(form, "existingEnglishNames",
 					getExistingTestNames(typeOfSamples, ConfigurationProperties.LOCALE.ENGLISH));
@@ -134,8 +134,8 @@ public class SampleTypeCreateController extends BaseController {
 			HibernateUtil.closeSession();
 		}
 
-		DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE);
-		DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}

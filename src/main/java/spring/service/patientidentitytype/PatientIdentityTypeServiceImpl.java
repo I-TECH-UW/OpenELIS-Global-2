@@ -10,11 +10,12 @@ import us.mn.state.health.lims.patientidentitytype.dao.PatientIdentityTypeDAO;
 import us.mn.state.health.lims.patientidentitytype.valueholder.PatientIdentityType;
 
 @Service
-public class PatientIdentityTypeServiceImpl extends BaseObjectServiceImpl<PatientIdentityType> implements PatientIdentityTypeService {
+public class PatientIdentityTypeServiceImpl extends BaseObjectServiceImpl<PatientIdentityType>
+		implements PatientIdentityTypeService {
 	@Autowired
 	protected PatientIdentityTypeDAO baseObjectDAO;
 
-	PatientIdentityTypeServiceImpl() {
+	public PatientIdentityTypeServiceImpl() {
 		super(PatientIdentityType.class);
 	}
 
@@ -25,17 +26,17 @@ public class PatientIdentityTypeServiceImpl extends BaseObjectServiceImpl<Patien
 
 	@Override
 	public void insertData(PatientIdentityType patientIdenityType) {
-        getBaseObjectDAO().insertData(patientIdenityType);
+		getBaseObjectDAO().insertData(patientIdenityType);
 
 	}
 
 	@Override
 	public PatientIdentityType getNamedIdentityType(String name) {
-        return getBaseObjectDAO().getNamedIdentityType(name);
+		return getBaseObjectDAO().getNamedIdentityType(name);
 	}
 
 	@Override
 	public List<PatientIdentityType> getAllPatientIdenityTypes() {
-        return getBaseObjectDAO().getAllPatientIdenityTypes();
+		return getBaseObjectDAO().getAllPatientIdenityTypes();
 	}
 }

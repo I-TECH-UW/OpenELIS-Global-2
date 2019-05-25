@@ -26,11 +26,11 @@ import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
-public interface PermissionModuleDAO extends BaseDAO<PermissionModule> {
+public interface PermissionModuleDAO<T extends PermissionModule> extends BaseDAO<T> {
 
 	public static final String SUPERVISOR = "Supervisor";
 
-	public boolean insertData(PermissionModule permissionModule) throws LIMSRuntimeException;
+	public boolean insertData(T permissionModule) throws LIMSRuntimeException;
 
 	public void deleteData(List permissionModules) throws LIMSRuntimeException;
 
@@ -38,9 +38,9 @@ public interface PermissionModuleDAO extends BaseDAO<PermissionModule> {
 
 	public List getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(PermissionModule permissionModule) throws LIMSRuntimeException;
+	public void getData(T permissionModule) throws LIMSRuntimeException;
 
-	public void updateData(PermissionModule permissionModule) throws LIMSRuntimeException;
+	public void updateData(T permissionModule) throws LIMSRuntimeException;
 
 	public List getNextPermissionModuleRecord(String id) throws LIMSRuntimeException;
 

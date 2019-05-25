@@ -1,8 +1,7 @@
 package spring.service.dictionary;
 
-import java.lang.Integer;
-import java.lang.String;
 import java.util.List;
+
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 

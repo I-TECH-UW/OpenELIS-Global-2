@@ -1,9 +1,9 @@
 package spring.service.test;
 
-import java.lang.Integer;
-import java.lang.String;
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
+
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.test.valueholder.Test;
 
@@ -83,4 +83,7 @@ public interface TestService extends BaseObjectService<Test> {
 	Integer getNextAvailableSortOrderByTestSection(Test test);
 
 	List<Test> getPageOfSearchedTestsBySysUserId(int startingRecNo, int sysUserId, String searchString);
+
+	void localeChanged(String locale);
+
 }

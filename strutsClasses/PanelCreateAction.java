@@ -45,7 +45,7 @@ public class PanelCreateAction extends BaseAction {
 
         HashMap<String, List<Panel>> existingSampleTypePanelMap = PanelTestConfigurationUtil.createTypeOfSamplePanelMap(true);
         HashMap<String, List<Panel>> inactiveSampleTypePanelMap = PanelTestConfigurationUtil.createTypeOfSamplePanelMap(false);
-        PropertyUtils.setProperty(form, "existingSampleTypeList", DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+        PropertyUtils.setProperty(form, "existingSampleTypeList", DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
         List<Panel> panels = new PanelDAOImpl().getAllPanels();
         PropertyUtils.setProperty(form, "existingEnglishNames", getExistingTestNames(panels, ConfigurationProperties.LOCALE.ENGLISH));
         PropertyUtils.setProperty(form, "existingFrenchNames", getExistingTestNames(panels, ConfigurationProperties.LOCALE.FRENCH));
@@ -53,7 +53,7 @@ public class PanelCreateAction extends BaseAction {
         List<SampleTypePanel> sampleTypePanelsExists = new ArrayList<SampleTypePanel>();
         List<SampleTypePanel> sampleTypePanelsInactive = new ArrayList<SampleTypePanel>();
 
-        for (IdValuePair typeOfSample : DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE)) {
+        for (IdValuePair typeOfSample : DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE)) {
         	SampleTypePanel sampleTypePanel = new SampleTypePanel(typeOfSample.getValue());
         	sampleTypePanel.setPanels(existingSampleTypePanelMap.get(typeOfSample.getValue()));
         	sampleTypePanelsExists.add(sampleTypePanel);

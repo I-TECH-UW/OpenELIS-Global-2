@@ -20,9 +20,11 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 @Service
 @DependsOn({ "springContext" })
-public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasure> implements UnitOfMeasureService, LocaleChangeListener {
+public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasure>
+		implements UnitOfMeasureService, LocaleChangeListener {
 
-	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance().getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
+	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()
+			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
 	private static Map<String, String> unitOfMeasureIdToNameMap = null;
 
 	@Autowired
@@ -104,7 +106,8 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
 		List<UnitOfMeasure> UnitOfMeasures = unitOfMeasureDAO.getAllUnitOfMeasures();
 
 		for (UnitOfMeasure unitOfMeasure : UnitOfMeasures) {
-			unitOfMeasureIdToNameMap.put(unitOfMeasure.getId(), buildUnitOfMeasureName(unitOfMeasure).replace("\n", " "));
+			unitOfMeasureIdToNameMap.put(unitOfMeasure.getId(),
+					buildUnitOfMeasureName(unitOfMeasure).replace("\n", " "));
 		}
 	}
 
@@ -125,59 +128,64 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
 
 	@Override
 	public void getData(UnitOfMeasure unitOfMeasure) {
-        getBaseObjectDAO().getData(unitOfMeasure);
+		getBaseObjectDAO().getData(unitOfMeasure);
 
 	}
 
 	@Override
 	public void deleteData(List unitOfMeasures) {
-        getBaseObjectDAO().deleteData(unitOfMeasures);
+		getBaseObjectDAO().deleteData(unitOfMeasures);
 
 	}
 
 	@Override
 	public void updateData(UnitOfMeasure unitOfMeasure) {
-        getBaseObjectDAO().updateData(unitOfMeasure);
+		getBaseObjectDAO().updateData(unitOfMeasure);
 
 	}
 
 	@Override
 	public boolean insertData(UnitOfMeasure unitOfMeasure) {
-        return getBaseObjectDAO().insertData(unitOfMeasure);
+		return getBaseObjectDAO().insertData(unitOfMeasure);
 	}
 
 	@Override
 	public List getPageOfUnitOfMeasures(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfUnitOfMeasures(startingRecNo);
+		return getBaseObjectDAO().getPageOfUnitOfMeasures(startingRecNo);
 	}
 
 	@Override
 	public UnitOfMeasure getUnitOfMeasureById(String uomId) {
-        return getBaseObjectDAO().getUnitOfMeasureById(uomId);
+		return getBaseObjectDAO().getUnitOfMeasureById(uomId);
 	}
 
 	@Override
 	public List getPreviousUnitOfMeasureRecord(String id) {
-        return getBaseObjectDAO().getPreviousUnitOfMeasureRecord(id);
+		return getBaseObjectDAO().getPreviousUnitOfMeasureRecord(id);
 	}
 
 	@Override
 	public Integer getTotalUnitOfMeasureCount() {
-        return getBaseObjectDAO().getTotalUnitOfMeasureCount();
+		return getBaseObjectDAO().getTotalUnitOfMeasureCount();
 	}
 
 	@Override
 	public List getNextUnitOfMeasureRecord(String id) {
-        return getBaseObjectDAO().getNextUnitOfMeasureRecord(id);
+		return getBaseObjectDAO().getNextUnitOfMeasureRecord(id);
 	}
 
 	@Override
 	public UnitOfMeasure getUnitOfMeasureByName(UnitOfMeasure unitOfMeasure) {
-        return getBaseObjectDAO().getUnitOfMeasureByName(unitOfMeasure);
+		return getBaseObjectDAO().getUnitOfMeasureByName(unitOfMeasure);
 	}
 
 	@Override
 	public List getAllUnitOfMeasures() {
 		return unitOfMeasureDAO.getAllUnitOfMeasures();
+	}
+
+	@Override
+	public List<UnitOfMeasure> getAllActiveUnitOfMeasures() {
+		return unitOfMeasureDAO.getAllActiveUnitOfMeasures();
 	}
 }

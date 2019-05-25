@@ -2,7 +2,7 @@ package spring.service.image;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.lang.String;
+
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.image.valueholder.Image;
 

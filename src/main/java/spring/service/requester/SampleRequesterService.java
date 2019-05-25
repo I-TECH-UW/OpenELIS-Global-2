@@ -1,9 +1,8 @@
 package spring.service.requester;
 
-import java.lang.String;
 import java.util.List;
+
 import spring.service.common.BaseObjectService;
-import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.requester.valueholder.SampleRequester;
 
 public interface SampleRequesterService extends BaseObjectService<SampleRequester> {

@@ -37,7 +37,7 @@ public class UomRenameAction extends BaseAction {
 
 		dynaForm.initialize(mapping);
 
-        PropertyUtils.setProperty( form, "uomList", DisplayListService.getList( DisplayListService.ListType.UNIT_OF_MEASURE ) );
+        PropertyUtils.setProperty( form, "uomList", DisplayListService.getInstance().getList( DisplayListService.ListType.UNIT_OF_MEASURE ) );
 
         return mapping.findForward(FWD_SUCCESS);
 	}

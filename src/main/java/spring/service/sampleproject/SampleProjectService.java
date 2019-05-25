@@ -1,8 +1,8 @@
 package spring.service.sampleproject;
 
-import java.lang.String;
 import java.sql.Date;
 import java.util.List;
+
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
 

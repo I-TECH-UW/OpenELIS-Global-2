@@ -40,7 +40,7 @@ public class RejectionReportByTest extends RejectionReport implements IReportCre
         new ReportSpecificationParameters( ReportSpecificationParameters.Parameter.DATE_RANGE,
                 MessageUtil.getMessage( "report.rejection.report.base" ) + " " + MessageUtil.getMessage( "report.by.test" ),
                 MessageUtil.getMessage( "report.instruction.all.fields" ) ).setRequestParameters( form );
-        new ReportSpecificationList( DisplayListService.getList( DisplayListService.ListType.ALL_TESTS ),
+        new ReportSpecificationList( DisplayListService.getInstance().getList( DisplayListService.ListType.ALL_TESTS ),
                                      MessageUtil.getMessage( "workplan.test.types" ) ).setRequestParameters( form );
     }
 
