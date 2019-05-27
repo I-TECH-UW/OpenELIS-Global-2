@@ -6,13 +6,13 @@ import org.apache.commons.validator.GenericValidator;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.common.util.ConfigurationProperties.LOCALE;
 import us.mn.state.health.lims.common.util.LocaleChangeListener;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.localization.dao.LocalizationDAO;
@@ -20,6 +20,7 @@ import us.mn.state.health.lims.localization.valueholder.Localization;
 
 @Service
 @DependsOn({ "springContext" })
+@Scope("prototype")
 public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization>
 		implements LocalizationService, LocaleChangeListener {
 
@@ -49,12 +50,12 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization>
 			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
 
 	@Autowired
-	private static LocalizationDAO localizationDAO = SpringContext.getBean(LocalizationDAO.class);
+	private static LocalizationDAO baseObjectDAO = SpringContext.getBean(LocalizationDAO.class);
 
 	private Localization localization;
 
 	@PostConstruct
-	public void initialize() {
+	private void initialize() {
 		SystemConfiguration.getInstance().addLocalChangeListener(this);
 	}
 
@@ -65,13 +66,13 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization>
 	public LocalizationServiceImpl(String id) {
 		this();
 		if (!GenericValidator.isBlankOrNull(id)) {
-			localization = localizationDAO.getLocalizationById(id);
+			localization = baseObjectDAO.getLocalizationById(id);
 		}
 	}
 
 	@Override
 	protected LocalizationDAO getBaseObjectDAO() {
-		return localizationDAO;
+		return baseObjectDAO;
 	}
 
 	public static String getLocalizationValueByLocal(ConfigurationProperties.LOCALE locale, Localization localization) {
@@ -108,7 +109,7 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization>
 	}
 
 	public static String getLocalizedValueById(String id) {
-		return getLocalizedValue(localizationDAO.getLocalizationById(id));
+		return getLocalizedValue(baseObjectDAO.getLocalizationById(id));
 	}
 
 	public static String getLocalizedValue(Localization localization) {

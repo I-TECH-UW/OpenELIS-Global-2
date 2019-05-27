@@ -30,7 +30,7 @@ public class SampleHumanServiceImpl extends BaseObjectServiceImpl<SampleHuman> i
 	@Override
 	@Transactional
 	public SampleHuman getDataBySample(SampleHuman sampleHuman) {
-		return getMatch("sampleId", sampleHuman.getSampleId()).get();
+		return getMatch("sampleId", sampleHuman.getSampleId()).orElse(null);
 	}
 
 	@Override
@@ -41,35 +41,35 @@ public class SampleHumanServiceImpl extends BaseObjectServiceImpl<SampleHuman> i
 
 	@Override
 	public void getData(SampleHuman sampleHuman) {
-        getBaseObjectDAO().getData(sampleHuman);
+		getBaseObjectDAO().getData(sampleHuman);
 
 	}
 
 	@Override
 	public void deleteData(List sampleHumans) {
-        getBaseObjectDAO().deleteData(sampleHumans);
+		getBaseObjectDAO().deleteData(sampleHumans);
 
 	}
 
 	@Override
 	public void updateData(SampleHuman sampleHuman) {
-        getBaseObjectDAO().updateData(sampleHuman);
+		getBaseObjectDAO().updateData(sampleHuman);
 
 	}
 
 	@Override
 	public boolean insertData(SampleHuman sampleHuman) {
-        return getBaseObjectDAO().insertData(sampleHuman);
+		return getBaseObjectDAO().insertData(sampleHuman);
 	}
 
 	@Override
 	public Provider getProviderForSample(Sample sample) {
-        return getBaseObjectDAO().getProviderForSample(sample);
+		return getBaseObjectDAO().getProviderForSample(sample);
 	}
 
 	@Override
 	public List<Sample> getSamplesForPatient(String patientID) {
-        return getBaseObjectDAO().getSamplesForPatient(patientID);
+		return getBaseObjectDAO().getSamplesForPatient(patientID);
 	}
 
 }

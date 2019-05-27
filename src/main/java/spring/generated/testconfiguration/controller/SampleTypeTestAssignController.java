@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.SampleTypeTestAssignForm;
 import spring.mine.common.controller.BaseController;
 import spring.service.test.TestServiceImpl;
+import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -34,6 +36,9 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 @Controller
 public class SampleTypeTestAssignController extends BaseController {
+
+	@Autowired
+	TypeOfSampleService typeOfSampleService;
 
 	@RequestMapping(value = "/SampleTypeTestAssign", method = RequestMethod.GET)
 	public ModelAndView showSampleTypeTestAssign(HttpServletRequest request) {
@@ -52,7 +57,7 @@ public class SampleTypeTestAssignController extends BaseController {
 		for (IdValuePair sampleTypePair : typeOfSamples) {
 			List<IdValuePair> tests = new ArrayList<>();
 			sampleTypesTestsMap.put(sampleTypePair, tests);
-			List<Test> testList = TypeOfSampleServiceImpl.getAllTestsBySampleTypeId(sampleTypePair.getId());
+			List<Test> testList = typeOfSampleService.getAllTestsBySampleTypeId(sampleTypePair.getId());
 
 			for (Test test : testList) {
 				if (test.isActive()) {
@@ -110,7 +115,7 @@ public class SampleTypeTestAssignController extends BaseController {
 		boolean updateTypeOfSample = false;
 		String currentUser = getSysUserId(request);
 
-		TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getTransientTypeOfSampleById(sampleTypeId);
+		TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getInstance().getTransientTypeOfSampleById(sampleTypeId);
 		TypeOfSample deActivateTypeOfSample = null;
 
 		// Test test = new TestService(testId).getTest();
@@ -144,7 +149,7 @@ public class SampleTypeTestAssignController extends BaseController {
 
 //------------------------------------------
 		if (!GenericValidator.isBlankOrNull(deactivateSampleTypeId)) {
-			deActivateTypeOfSample = TypeOfSampleServiceImpl.getTransientTypeOfSampleById(deactivateSampleTypeId);
+			deActivateTypeOfSample = TypeOfSampleServiceImpl.getInstance().getTransientTypeOfSampleById(deactivateSampleTypeId);
 			deActivateTypeOfSample.setIsActive(false);
 			deActivateTypeOfSample.setSysUserId(currentUser);
 		}

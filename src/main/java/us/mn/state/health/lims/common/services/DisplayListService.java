@@ -105,12 +105,12 @@ public class DisplayListService implements LocaleChangeListener {
 	private TypeOfTestResultService typeOfTestResultService;
 
 	@PostConstruct
-	public void registerInstance() {
+	private void registerInstance() {
 		instance = this;
 	}
 
 	@PostConstruct
-	public void setupGlobalVariables() {
+	private void setupGlobalVariables() {
 		typeToListMap = new HashMap<>();
 		typeToListMap.put(ListType.HOURS, createHourList());
 		typeToListMap.put(ListType.MINS, createMinList());
@@ -382,7 +382,7 @@ public class DisplayListService implements LocaleChangeListener {
 			break;
 		}
 		case UNIT_OF_MEASURE: {
-			UnitOfMeasureServiceImpl.refreshNames();
+			UnitOfMeasureServiceImpl.getInstance().refreshNames();
 			typeToListMap.put(ListType.UNIT_OF_MEASURE, createUnitOfMeasureList());
 			break;
 		}

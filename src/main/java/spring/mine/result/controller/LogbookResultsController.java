@@ -129,7 +129,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 			.getPropertyValueUpperCase(Property.StatusRules);
 
 	@PostConstruct
-	public void initialize() {
+	private void initialize() {
 		ReferralType referralType = referralTypeService.getReferralTypeByName("Confirmation");
 		if (referralType != null) {
 			REFERRAL_CONFORMATION_ID = referralType.getId();
@@ -153,8 +153,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 		PropertyUtils.setProperty(form, "logbookType", request.getParameter("type"));
 		PropertyUtils.setProperty(form, "referralReasons",
 				DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-		PropertyUtils.setProperty(form, "rejectReasons",
-				DisplayListService.getInstance().getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+		PropertyUtils.setProperty(form, "rejectReasons", DisplayListService.getInstance()
+				.getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
 		// load testSections for drop down
 		List<IdValuePair> testSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION);

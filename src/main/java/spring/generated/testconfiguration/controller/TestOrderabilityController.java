@@ -27,6 +27,7 @@ import spring.generated.testconfiguration.form.TestOrderabilityForm;
 import spring.generated.testconfiguration.validator.TestOrderabilityFormValidator;
 import spring.mine.common.controller.BaseController;
 import spring.service.test.TestServiceImpl;
+import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -41,6 +42,9 @@ public class TestOrderabilityController extends BaseController {
 
 	@Autowired
 	TestOrderabilityFormValidator formValidator;
+
+	@Autowired
+	TypeOfSampleService typeOfSampleService;
 
 	@RequestMapping(value = "/TestOrderability", method = RequestMethod.GET)
 	public ModelAndView showTestOrderability(HttpServletRequest request) {
@@ -61,12 +65,13 @@ public class TestOrderabilityController extends BaseController {
 			DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
 		}
 
-		List<IdValuePair> sampleTypeList = DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
+		List<IdValuePair> sampleTypeList = DisplayListService.getInstance()
+				.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
 
 		for (IdValuePair pair : sampleTypeList) {
 			TestActivationBean bean = new TestActivationBean();
 
-			List<Test> tests = TypeOfSampleServiceImpl.getAllTestsBySampleTypeId(pair.getId());
+			List<Test> tests = typeOfSampleService.getAllTestsBySampleTypeId(pair.getId());
 			List<IdValuePair> orderableTests = new ArrayList<>();
 			List<IdValuePair> inorderableTests = new ArrayList<>();
 
@@ -163,7 +168,7 @@ public class TestOrderabilityController extends BaseController {
 			HibernateUtil.closeSession();
 		}
 
-		TypeOfSampleServiceImpl.clearCache();
+		TypeOfSampleServiceImpl.getInstance().clearCache();
 
 		List<TestActivationBean> orderableTestList = createTestList(true);
 		form.setOrderableTestList(orderableTestList);

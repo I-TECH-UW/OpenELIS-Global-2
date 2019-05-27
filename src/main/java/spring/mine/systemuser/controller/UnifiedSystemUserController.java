@@ -73,7 +73,7 @@ public class UnifiedSystemUserController extends BaseController {
 	public static final char DEFAULT_PASSWORD_FILLER = '@';
 
 	@PostConstruct
-	public void initialize() {
+	private void initialize() {
 		List<Role> roles = roleService.getAll();
 		for (Role role : roles) {
 			if (MAINTENANCE_ADMIN.equals(role.getName().trim())) {

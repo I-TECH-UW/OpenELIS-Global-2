@@ -28,80 +28,76 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 /**
  */
-public class UnitOfMeasureService implements LocaleChangeListener{
+public class UnitOfMeasureService implements LocaleChangeListener {
 
+	private static final UnitOfMeasureService INSTANCE = new UnitOfMeasureService(new UnitOfMeasure());
+	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()
+			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
+	private UnitOfMeasure unitOfMeasure;
 
-    private static final UnitOfMeasureService INSTANCE = new UnitOfMeasureService( new UnitOfMeasure() );
-    private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance().getPropertyValue( ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
-    private UnitOfMeasure unitOfMeasure;
+	private static Map<String, String> unitOfMeasureIdToNameMap = new HashMap<>();
 
-    private static Map<String, String> unitOfMeasureIdToNameMap = new HashMap<String, String>();
+	static {
+		createTestIdToNameMap();
 
+		SystemConfiguration.getInstance().addLocalChangeListener(INSTANCE);
+	}
 
-    static{
-        createTestIdToNameMap();
+	public UnitOfMeasureService(UnitOfMeasure unitOfMeasure) {
+		this.unitOfMeasure = unitOfMeasure;
+	}
 
+	public UnitOfMeasureService(String unitOfMeasureId) {
+		unitOfMeasure = new UnitOfMeasureDAOImpl().getUnitOfMeasureById(unitOfMeasureId);
+	}
 
-        SystemConfiguration.getInstance().addLocalChangeListener( INSTANCE );
-    }
+	public UnitOfMeasure getUnitOfMeasure() {
+		return unitOfMeasure;
+	}
 
-    public UnitOfMeasureService(UnitOfMeasure unitOfMeasure){
-        this.unitOfMeasure = unitOfMeasure;
-    }
+	@Override
+	public void localeChanged(String locale) {
+		LANGUAGE_LOCALE = locale;
+		testNamesChanged();
+	}
 
-    public UnitOfMeasureService(String unitOfMeasureId){
-        this.unitOfMeasure = new UnitOfMeasureDAOImpl().getUnitOfMeasureById(unitOfMeasureId);
-    }
+	public static void refreshNames() {
+		testNamesChanged();
+	}
 
-    public UnitOfMeasure getUnitOfMeasure(){
-        return unitOfMeasure;
-    }
-    @Override
-    public void localeChanged( String locale ){
-        LANGUAGE_LOCALE = locale;
-        testNamesChanged();
-    }
+	public static void testNamesChanged() {
+		createTestIdToNameMap();
+	}
 
-    public static void refreshNames(){
-        testNamesChanged();
-    }
+	public String getSortOrder() {
+		return unitOfMeasure == null ? "0" : unitOfMeasure.getSortOrder();
+	}
 
-    public static void testNamesChanged( ){
-        createTestIdToNameMap();
-    }
+	public static String getUserLocalizedUnitOfMeasureName(UnitOfMeasure unitOfMeasure) {
+		if (unitOfMeasure == null) {
+			return "";
+		}
 
-    public String getSortOrder(){
-        return unitOfMeasure == null ? "0" :unitOfMeasure.getSortOrder();
-    }
+		return getUserLocalizedUnitOfMeasureName(unitOfMeasure.getId());
+	}
 
+	public static String getUserLocalizedUnitOfMeasureName(String unitOfMeasureId) {
+		String name = unitOfMeasureIdToNameMap.get(unitOfMeasureId);
+		return name == null ? "" : name;
+	}
 
-    public static String getUserLocalizedUnitOfMeasureName(UnitOfMeasure unitOfMeasure){
-        if( unitOfMeasure == null){
-            return "";
-        }
+	private static void createTestIdToNameMap() {
+		unitOfMeasureIdToNameMap = new HashMap<>();
 
-        return getUserLocalizedUnitOfMeasureName(unitOfMeasure.getId());
-    }
+		List<UnitOfMeasure> UnitOfMeasures = new UnitOfMeasureDAOImpl().getAllUnitOfMeasures();
 
-    public static String getUserLocalizedUnitOfMeasureName( String unitOfMeasureId ){
-        String name = unitOfMeasureIdToNameMap.get(unitOfMeasureId);
-        return name == null ? "" : name;
-    }
+		for (UnitOfMeasure unitOfMeasure : UnitOfMeasures) {
+			unitOfMeasureIdToNameMap.put(unitOfMeasure.getId(),
+					buildUnitOfMeasureName(unitOfMeasure).replace("\n", " "));
+		}
+	}
 
-
-
-
-    private static void createTestIdToNameMap() {
-    	unitOfMeasureIdToNameMap = new HashMap<String, String>();
-
-        List<UnitOfMeasure> UnitOfMeasures = new UnitOfMeasureDAOImpl().getAllUnitOfMeasures();
-
-        for (UnitOfMeasure unitOfMeasure : UnitOfMeasures) {
-            unitOfMeasureIdToNameMap.put(unitOfMeasure.getId(), buildUnitOfMeasureName( unitOfMeasure ).replace("\n", " "));
-        }
-    }
-
-    private static String buildUnitOfMeasureName( UnitOfMeasure unitOfMeasure ){
+	private static String buildUnitOfMeasureName(UnitOfMeasure unitOfMeasure) {
 //        Localization localization = unitOfMeasure.getLocalization();
 //
 //        if( LANGUAGE_LOCALE.equals( ConfigurationProperties.LOCALE.FRENCH.getRepresentation() )){
@@ -113,10 +109,10 @@ public class UnitOfMeasureService implements LocaleChangeListener{
 
 //    public static List<Test> getTestsInSection(String id) {
 //        return TestServiceImpl.getTestsInTestSectionById(id);
-    	return ""; // just for compile
-    }
+		return ""; // just for compile
+	}
 
-    public static List<UnitOfMeasure> getAllUnitOfMeasures() {
-        return new UnitOfMeasureDAOImpl().getAllUnitOfMeasures();
-    }
+	public static List<UnitOfMeasure> getAllUnitOfMeasures() {
+		return new UnitOfMeasureDAOImpl().getAllUnitOfMeasures();
+	}
 }

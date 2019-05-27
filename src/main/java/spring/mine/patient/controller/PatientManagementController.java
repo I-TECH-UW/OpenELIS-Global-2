@@ -78,7 +78,7 @@ public class PatientManagementController extends BaseController {
 	SearchResultsService searchService;
 
 	@PostConstruct
-	public void initialize() {
+	private void initialize() {
 		List<AddressPart> partList = addressPartService.getAll();
 		for (AddressPart addressPart : partList) {
 			if ("department".equals(addressPart.getPartName())) {
@@ -277,7 +277,7 @@ public class PatientManagementController extends BaseController {
 		PropertyUtils.copyProperties(patient.getPerson(), patientInfo);
 	}
 
-	@Transactional 
+	@Transactional
 	public void persistPatientData(PatientManagementInfo patientInfo, Patient patient) throws LIMSRuntimeException {
 		if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {
 			personService.insert(patient.getPerson());

@@ -20,7 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
+import spring.service.organization.OrganizationService;
+import spring.service.sample.SampleService;
+import spring.service.sample.SampleServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.services.ObservationHistoryService.ObservationType;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -28,21 +35,21 @@ import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory.ValueType;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.person.valueholder.Person;
 import us.mn.state.health.lims.requester.valueholder.SampleRequester;
 import us.mn.state.health.lims.sample.bean.SampleOrderItem;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 
 /**
  */
+@Service
+@Scope("prototype")
+@DependsOn({ "springContext" })
 public class SampleOrderService {
-	private static final SampleDAO sampleDAO = new SampleDAOImpl();
-	private static final OrganizationDAO orgDAO = new OrganizationDAOImpl();
+
+	private static SampleService sampleService = SpringContext.getBean(SampleService.class);
+	private static OrganizationService orgService = SpringContext.getBean(OrganizationService.class);
 	private boolean needRequesterList = FormFields.getInstance().useField(FormFields.Field.RequesterSiteList);
 	private boolean needPaymentOptions = ConfigurationProperties.getInstance()
 			.isPropertyValueEqual(ConfigurationProperties.Property.TRACK_PATIENT_PAYMENT, "true");
@@ -64,7 +71,7 @@ public class SampleOrderService {
 	}
 
 	public SampleOrderService(String accessionNumber, boolean readOnly) {
-		sample = sampleDAO.getSampleByAccessionNumber(accessionNumber);
+		sample = sampleService.getSampleByAccessionNumber(accessionNumber);
 		this.readOnly = readOnly;
 	}
 
@@ -78,13 +85,13 @@ public class SampleOrderService {
 		orderItems.setReceivedTime(DateUtil.convertTimestampToStringHourTime(DateUtil.getNowAsTimestamp()));
 
 		if (needRequesterList) {
-			orderItems.setReferringSiteList(
-					DisplayListService.getInstance().getFreshList(DisplayListService.ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
+			orderItems.setReferringSiteList(DisplayListService.getInstance()
+					.getFreshList(DisplayListService.ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
 		}
 
 		if (needPaymentOptions) {
-			orderItems.setPaymentOptions(
-					DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_PATIENT_PAYMENT_OPTIONS));
+			orderItems.setPaymentOptions(DisplayListService.getInstance()
+					.getList(DisplayListService.ListType.SAMPLE_PATIENT_PAYMENT_OPTIONS));
 		}
 
 		if (needTestLocationCode) {
@@ -111,11 +118,11 @@ public class SampleOrderService {
 		sampleOrder = getBaseSampleOrderItem();
 
 		if (sample != null) {
-			SampleService sampleService = new SampleService(sample);
+			SampleServiceImpl sampleServiceImpl = new SampleServiceImpl(sample);
 			sampleOrder.setSampleId(sample.getId());
-			sampleOrder.setLabNo(sampleService.getAccessionNumber());
-			sampleOrder.setReceivedDateForDisplay(sampleService.getReceivedDateForDisplay());
-			sampleOrder.setReceivedTime(sampleService.getReceived24HourTimeForDisplay());
+			sampleOrder.setLabNo(sampleServiceImpl.getAccessionNumber());
+			sampleOrder.setReceivedDateForDisplay(sampleServiceImpl.getReceivedDateForDisplay());
+			sampleOrder.setReceivedTime(sampleServiceImpl.getReceived24HourTimeForDisplay());
 
 			sampleOrder.setRequestDate(
 					ObservationHistoryService.getValueForSample(ObservationType.REQUEST_DATE, sample.getId()));
@@ -170,7 +177,7 @@ public class SampleOrderService {
 		if (sample == null) {
 			sample = new Sample();
 			sample.setId(sampleOrder.getSampleId());
-			sampleDAO.getData(sample);
+			sampleService.getData(sample);
 			sample.setSysUserId(currentUserId);
 		}
 
@@ -329,7 +336,7 @@ public class SampleOrderService {
 		// Either there is an existing org else a new org
 		Organization org;
 		if (GenericValidator.isBlankOrNull(sampleOrder.getNewRequesterName())) {
-			org = orgDAO.getOrganizationById(sampleOrder.getReferringSiteId());
+			org = orgService.getOrganizationById(sampleOrder.getReferringSiteId());
 			// all of these are reasons to have nothing to do with the organization
 			if (GenericValidator.isBlankOrNull(sampleOrder.getReferringSiteCode()) || org == null
 					|| sampleOrder.getReferringSiteCode().equals(org.getCode())) {
@@ -367,7 +374,7 @@ public class SampleOrderService {
 			orgRequester.setSysUserId(currentUserId);
 			artifacts.setSampleOrganizationRequester(orgRequester);
 		} else {
-			org = orgDAO.getOrganizationById(String.valueOf(orgRequester.getRequesterId()));
+			org = orgService.getOrganizationById(String.valueOf(orgRequester.getRequesterId()));
 			if (String.valueOf(orgRequester.getRequesterId()).equals(sampleOrder.getReferringSiteId())) {
 				if (org == null || sampleOrder.getReferringSiteCode() == null
 						|| sampleOrder.getReferringSiteCode().equals(org.getCode())) {

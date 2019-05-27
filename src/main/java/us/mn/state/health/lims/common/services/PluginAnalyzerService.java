@@ -51,7 +51,7 @@ public class PluginAnalyzerService {
 	private List<AnalyzerTestMapping> existingMappings;
 
 	@PostConstruct
-	public void registerInstance() {
+	private void registerInstance() {
 		INSTANCE = this;
 	}
 

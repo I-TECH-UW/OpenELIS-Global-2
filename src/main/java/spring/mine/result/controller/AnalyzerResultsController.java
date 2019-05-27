@@ -96,7 +96,7 @@ public class AnalyzerResultsController extends BaseController {
 	private String DBS_SAMPLE_TYPE_ID;
 
 	@PostConstruct
-	public void initialize() {
+	private void initialize() {
 		if (IS_RETROCI) {
 			TypeOfSample typeOfSample = new TypeOfSample();
 			typeOfSample.setDescription("DBS");
@@ -1068,7 +1068,7 @@ public class AnalyzerResultsController extends BaseController {
 				Test test = testService.get(resultItem.getTestId());
 				analysis.setTest(test);
 				// A new sampleItem may be needed
-				TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getTypeOfSampleForTest(test.getId());
+				TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getInstance().getTypeOfSampleForTest(test.getId());
 				List<SampleItem> sampleItemsForSample = sampleItemService.getSampleItemsBySampleId(sample.getId());
 
 				// if the type of sample is found then assign to analysis
@@ -1301,8 +1301,8 @@ public class AnalyzerResultsController extends BaseController {
 		boolean limitsFound = false;
 
 		if (resultItem != null) {
-			ResultLimit resultLimit = new ResultLimitServiceImpl().getResultLimitForTestAndPatient(resultItem.getTestId(),
-					patient);
+			ResultLimit resultLimit = new ResultLimitServiceImpl()
+					.getResultLimitForTestAndPatient(resultItem.getTestId(), patient);
 			if (resultLimit != null) {
 				result.setMinNormal(resultLimit.getLowNormal());
 				result.setMaxNormal(resultLimit.getHighNormal());

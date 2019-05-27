@@ -106,7 +106,7 @@ public class OrganizationController extends BaseController {
 	private static boolean useOrganizationTypeList = FormFields.getInstance().useField(Field.InlineOrganizationTypes);
 
 	@PostConstruct
-	public void initialize() {
+	private void initialize() {
 		List<AddressPart> partList = addressPartService.getAll();
 		for (AddressPart addressPart : partList) {
 			if ("department".equals(addressPart.getPartName())) {

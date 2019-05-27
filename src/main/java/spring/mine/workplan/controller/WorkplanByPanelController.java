@@ -77,7 +77,8 @@ public class WorkplanByPanelController extends BaseWorkplanController {
 		}
 
 		PropertyUtils.setProperty(form, "workplanType", "panel");
-		PropertyUtils.setProperty(form, "searchTypes", DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
+		PropertyUtils.setProperty(form, "searchTypes",
+				DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
 		PropertyUtils.setProperty(form, "searchLabel", MessageUtil.getMessage("workplan.panel.types"));
 		PropertyUtils.setProperty(form, "searchAction", "WorkPlanByPanel.do");
 
@@ -104,7 +105,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
 					Sample sample = analysis.getSampleItem().getSample();
 					testResultItem.setAccessionNumber(sample.getAccessionNumber());
 					testResultItem.setPatientInfo(getSubjectNumber(analysis));
-					testResultItem.setNextVisitDate(ObservationHistoryServiceImpl
+					testResultItem.setNextVisitDate(ObservationHistoryServiceImpl.getInstance()
 							.getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId()));
 					testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
 					testResultItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));

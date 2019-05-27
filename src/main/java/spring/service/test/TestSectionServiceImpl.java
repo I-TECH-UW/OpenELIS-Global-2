@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,13 +24,16 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 
 @Service
 @DependsOn({ "springContext" })
-public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection> implements TestSectionService, LocaleChangeListener {
+@Scope("prototype")
+public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection>
+		implements TestSectionService, LocaleChangeListener {
 
-	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance().getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
+	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()
+			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
 	private static Map<String, String> testUnitIdToNameMap;
 
 	@Autowired
-	protected static TestSectionDAO testSectionDAO = SpringContext.getBean(TestSectionDAO.class);
+	protected static TestSectionDAO baseObjectDAO = SpringContext.getBean(TestSectionDAO.class);
 
 	private TestSection testSection;
 
@@ -40,7 +44,7 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection> i
 	}
 
 	@PostConstruct
-	public void initialize() {
+	private void initialize() {
 		SystemConfiguration.getInstance().addLocalChangeListener(this);
 	}
 
@@ -56,18 +60,18 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection> i
 
 	public TestSectionServiceImpl(String testSectionId) {
 		this();
-		testSection = testSectionDAO.getTestSectionById(testSectionId);
+		testSection = baseObjectDAO.getTestSectionById(testSectionId);
 	}
 
 	@Override
 	protected TestSectionDAO getBaseObjectDAO() {
-		return testSectionDAO;
+		return baseObjectDAO;
 	}
 
 	@Override
 	@Transactional
 	public List<TestSection> getAllActiveTestSections() {
-		return testSectionDAO.getAllMatchingOrdered("isActive", "Y", "sortOrderInt", false);
+		return baseObjectDAO.getAllMatchingOrdered("isActive", "Y", "sortOrderInt", false);
 	}
 
 	public TestSection getTestSection() {
@@ -108,7 +112,7 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection> i
 	private static void createTestIdToNameMap() {
 		testUnitIdToNameMap = new HashMap<>();
 
-		List<TestSection> testSections = testSectionDAO.getAllTestSections();
+		List<TestSection> testSections = baseObjectDAO.getAllTestSections();
 
 		for (TestSection testSection : testSections) {
 			testUnitIdToNameMap.put(testSection.getId(), buildTestSectionName(testSection).replace("\n", " "));
@@ -131,84 +135,84 @@ public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection> i
 
 	@Override
 	public void getData(TestSection testSection) {
-        getBaseObjectDAO().getData(testSection);
+		getBaseObjectDAO().getData(testSection);
 
 	}
 
 	@Override
 	public void deleteData(List testSections) {
-        getBaseObjectDAO().deleteData(testSections);
+		getBaseObjectDAO().deleteData(testSections);
 
 	}
 
 	@Override
 	public void updateData(TestSection testSection) {
-        getBaseObjectDAO().updateData(testSection);
+		getBaseObjectDAO().updateData(testSection);
 
 	}
 
 	@Override
 	public boolean insertData(TestSection testSection) {
-        return getBaseObjectDAO().insertData(testSection);
+		return getBaseObjectDAO().insertData(testSection);
 	}
 
 	@Override
 	public List getTestSections(String filter) {
-        return getBaseObjectDAO().getTestSections(filter);
+		return getBaseObjectDAO().getTestSections(filter);
 	}
 
 	@Override
 	public TestSection getTestSectionByName(String testSection) {
-        return getBaseObjectDAO().getTestSectionByName(testSection);
+		return getBaseObjectDAO().getTestSectionByName(testSection);
 	}
 
 	@Override
 	public TestSection getTestSectionByName(TestSection testSection) {
-        return getBaseObjectDAO().getTestSectionByName(testSection);
+		return getBaseObjectDAO().getTestSectionByName(testSection);
 	}
 
 	@Override
 	public List getNextTestSectionRecord(String id) {
-        return getBaseObjectDAO().getNextTestSectionRecord(id);
+		return getBaseObjectDAO().getNextTestSectionRecord(id);
 	}
 
 	@Override
 	public List getPageOfTestSections(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfTestSections(startingRecNo);
+		return getBaseObjectDAO().getPageOfTestSections(startingRecNo);
 	}
 
 	@Override
 	public Integer getTotalTestSectionCount() {
-        return getBaseObjectDAO().getTotalTestSectionCount();
+		return getBaseObjectDAO().getTotalTestSectionCount();
 	}
 
 	@Override
 	public List getPreviousTestSectionRecord(String id) {
-        return getBaseObjectDAO().getPreviousTestSectionRecord(id);
+		return getBaseObjectDAO().getPreviousTestSectionRecord(id);
 	}
 
 	@Override
 	public List<TestSection> getAllTestSections() {
-		return testSectionDAO.getAllTestSections();
+		return baseObjectDAO.getAllTestSections();
 	}
 
 	@Override
 	public List getTestSectionsBySysUserId(String filter, int sysUserId) {
-        return getBaseObjectDAO().getTestSectionsBySysUserId(filter,sysUserId);
+		return getBaseObjectDAO().getTestSectionsBySysUserId(filter, sysUserId);
 	}
 
 	@Override
 	public List getAllTestSectionsBySysUserId(int sysUserId) {
-        return getBaseObjectDAO().getAllTestSectionsBySysUserId(sysUserId);
+		return getBaseObjectDAO().getAllTestSectionsBySysUserId(sysUserId);
 	}
 
 	@Override
 	public TestSection getTestSectionById(String testSectionId) {
-        return getBaseObjectDAO().getTestSectionById(testSectionId);
+		return getBaseObjectDAO().getTestSectionById(testSectionId);
 	}
 
 	@Override
 	public List<TestSection> getAllInActiveTestSections() {
-        return getBaseObjectDAO().getAllInActiveTestSections();
+		return getBaseObjectDAO().getAllInActiveTestSections();
 	}
 }

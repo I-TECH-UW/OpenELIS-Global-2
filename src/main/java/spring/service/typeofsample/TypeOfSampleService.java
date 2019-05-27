@@ -43,4 +43,20 @@ public interface TypeOfSampleService extends BaseObjectService<TypeOfSample> {
 	TypeOfSample getTypeOfSampleByLocalAbbrevAndDomain(String localAbbrev, String domain);
 
 	TypeOfSample getTypeOfSampleByDescriptionAndDomain(TypeOfSample tos, boolean ignoreCase);
+
+	List<Test> getAllTestsBySampleTypeId(String sampleTypeId);
+
+	List<Test> getActiveTestsBySampleTypeId(String sampleType, boolean b);
+
+	TypeOfSample getTransientTypeOfSampleById(String sampleTypeId);
+
+	void clearCache();
+
+	TypeOfSample getTypeOfSampleForTest(String testId);
+
+	String getTypeOfSampleNameForId(String id);
+
+	String getTypeOfSampleIdForLocalAbbreviation(String name);
+
+	List<TypeOfSample> getTypeOfSampleForPanelId(String id);
 }

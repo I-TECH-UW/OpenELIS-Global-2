@@ -184,7 +184,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 	private void addToTestOrPanel(List<Request> tests, List<Request> panels, ORC orc, OBX obx){
 		String loinc = orc.getOrderType().getIdentifier().toString();
 		String testName = testDAO.getActiveTestsByLoinc(loinc).get(0).getName();
-		tests.add(new Request(testName, loinc, TypeOfSampleServiceImpl.getTypeOfSampleNameForId(testDAO.getActiveTestsByLoinc(loinc).get(0).getId())));
+		tests.add(new Request(testName, loinc, TypeOfSampleServiceImpl.getInstance().getTypeOfSampleNameForId(testDAO.getActiveTestsByLoinc(loinc).get(0).getId())));
 	}
 
 	private void createMaps(List<Request> testRequests, List<Request> panelNames){
@@ -208,13 +208,13 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 			List<Test> tests = testDAO.getActiveTestsByLoinc(testRequest.getLoinc());
 						
 			Test singleTest = tests.get(0);
-			TypeOfSample singleSampleType = TypeOfSampleServiceImpl.getTypeOfSampleForTest(singleTest.getId());
+			TypeOfSample singleSampleType = TypeOfSampleServiceImpl.getInstance().getTypeOfSampleForTest(singleTest.getId());
 			boolean hasSingleSampleType = tests.size() == 1;
 
 			if(tests.size() > 1){
 				if(!GenericValidator.isBlankOrNull(testRequest.getSampleType())){
 					for(Test test : tests){
-						TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getTypeOfSampleForTest(test.getId());
+						TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getInstance().getTypeOfSampleForTest(test.getId());
 						if(typeOfSample.getDescription().equals(testRequest.getSampleType())){
 							hasSingleSampleType = true;
 							singleSampleType = typeOfSample;
@@ -233,7 +233,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 					}
 
 					for(Test test : tests){
-						testSampleTypeList.add(new TestSampleType(test, TypeOfSampleServiceImpl.getTypeOfSampleForTest(test.getId())));
+						testSampleTypeList.add(new TestSampleType(test, TypeOfSampleServiceImpl.getInstance().getTypeOfSampleForTest(test.getId())));
 					}
 				}
 			}
@@ -255,7 +255,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider{
 			Panel panel = panelDAO.getPanelByName(panelRequest.getName());
 
 			if(panel != null){
-				List<TypeOfSample> typeOfSamples = TypeOfSampleServiceImpl.getTypeOfSampleForPanelId(panel.getId());
+				List<TypeOfSample> typeOfSamples = TypeOfSampleServiceImpl.getInstance().getTypeOfSampleForPanelId(panel.getId());
 				boolean hasSingleSampleType = typeOfSamples.size() == 1;
 				TypeOfSample singleTypeOfSample = typeOfSamples.get(0);
 				

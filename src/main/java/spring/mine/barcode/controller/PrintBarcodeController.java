@@ -67,7 +67,7 @@ public class PrintBarcodeController extends BaseController {
 	StatusService statusService;
 
 	@PostConstruct
-	public void initialize() {
+	private void initialize() {
 		excludedAnalysisStatusList.add(Integer.parseInt(statusService.getStatusID(AnalysisStatus.Canceled)));
 		ENTERED_STATUS_SAMPLE_LIST.add(Integer.parseInt(statusService.getStatusID(SampleStatus.Entered)));
 		ABLE_TO_CANCEL_ROLE_NAMES.add("Validator");

@@ -25,6 +25,6 @@ public class DocumentTypeServiceImpl extends BaseObjectServiceImpl<DocumentType>
 	@Override
 	@Transactional
 	public DocumentType getDocumentTypeByName(String name) {
-		return getMatch("name", name).get();
+		return getMatch("name", name).orElse(null);
 	}
 }

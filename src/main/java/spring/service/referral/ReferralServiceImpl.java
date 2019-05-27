@@ -28,7 +28,7 @@ public class ReferralServiceImpl extends BaseObjectServiceImpl<Referral> impleme
 	@Override
 	@Transactional
 	public Referral getReferralByAnalysisId(String id) {
-		return getMatch("analysis.id", id).get();
+		return getMatch("analysis.id", id).orElse(null);
 	}
 
 	@Override
@@ -39,27 +39,27 @@ public class ReferralServiceImpl extends BaseObjectServiceImpl<Referral> impleme
 
 	@Override
 	public void updateData(Referral referral) {
-        getBaseObjectDAO().updateData(referral);
+		getBaseObjectDAO().updateData(referral);
 
 	}
 
 	@Override
 	public boolean insertData(Referral referral) {
-        return getBaseObjectDAO().insertData(referral);
+		return getBaseObjectDAO().insertData(referral);
 	}
 
 	@Override
 	public Referral getReferralById(String referralId) {
-        return getBaseObjectDAO().getReferralById(referralId);
+		return getBaseObjectDAO().getReferralById(referralId);
 	}
 
 	@Override
 	public List<Referral> getAllReferralsBySampleId(String id) {
-        return getBaseObjectDAO().getAllReferralsBySampleId(id);
+		return getBaseObjectDAO().getAllReferralsBySampleId(id);
 	}
 
 	@Override
 	public List<Referral> getAllReferralsByOrganization(String organizationId, Date lowDate, Date highDate) {
-        return getBaseObjectDAO().getAllReferralsByOrganization(organizationId,lowDate,highDate);
+		return getBaseObjectDAO().getAllReferralsByOrganization(organizationId, lowDate, highDate);
 	}
 }

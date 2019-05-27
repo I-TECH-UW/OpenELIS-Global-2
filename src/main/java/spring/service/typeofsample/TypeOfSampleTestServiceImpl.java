@@ -11,7 +11,8 @@ import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 @Service
-public class TypeOfSampleTestServiceImpl extends BaseObjectServiceImpl<TypeOfSampleTest> implements TypeOfSampleTestService {
+public class TypeOfSampleTestServiceImpl extends BaseObjectServiceImpl<TypeOfSampleTest>
+		implements TypeOfSampleTestService {
 	@Autowired
 	protected TypeOfSampleTestDAO baseObjectDAO;
 
@@ -27,7 +28,7 @@ public class TypeOfSampleTestServiceImpl extends BaseObjectServiceImpl<TypeOfSam
 	@Override
 	@Transactional
 	public TypeOfSampleTest getTypeOfSampleTestForTest(String testId) {
-		return getMatch("testId", testId).get();
+		return getMatch("testId", testId).orElse(null);
 	}
 
 	@Override
@@ -44,43 +45,43 @@ public class TypeOfSampleTestServiceImpl extends BaseObjectServiceImpl<TypeOfSam
 
 	@Override
 	public void getData(TypeOfSampleTest typeOfSampleTest) {
-        getBaseObjectDAO().getData(typeOfSampleTest);
+		getBaseObjectDAO().getData(typeOfSampleTest);
 
 	}
 
 	@Override
 	public void deleteData(String[] typeOfSampleTestIds, String currentUserId) {
-        getBaseObjectDAO().deleteData(typeOfSampleTestIds,currentUserId);
+		getBaseObjectDAO().deleteData(typeOfSampleTestIds, currentUserId);
 
 	}
 
 	@Override
 	public boolean insertData(TypeOfSampleTest typeOfSample) {
-        return getBaseObjectDAO().insertData(typeOfSample);
+		return getBaseObjectDAO().insertData(typeOfSample);
 	}
 
 	@Override
 	public List getPageOfTypeOfSampleTests(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfTypeOfSampleTests(startingRecNo);
+		return getBaseObjectDAO().getPageOfTypeOfSampleTests(startingRecNo);
 	}
 
 	@Override
 	public List getNextTypeOfSampleTestRecord(String id) {
-        return getBaseObjectDAO().getNextTypeOfSampleTestRecord(id);
+		return getBaseObjectDAO().getNextTypeOfSampleTestRecord(id);
 	}
 
 	@Override
 	public List getAllTypeOfSampleTests() {
-        return getBaseObjectDAO().getAllTypeOfSampleTests();
+		return getBaseObjectDAO().getAllTypeOfSampleTests();
 	}
 
 	@Override
 	public Integer getTotalTypeOfSampleTestCount() {
-        return getBaseObjectDAO().getTotalTypeOfSampleTestCount();
+		return getBaseObjectDAO().getTotalTypeOfSampleTestCount();
 	}
 
 	@Override
 	public List getPreviousTypeOfSampleRecord(String id) {
-        return getBaseObjectDAO().getPreviousTypeOfSampleRecord(id);
+		return getBaseObjectDAO().getPreviousTypeOfSampleRecord(id);
 	}
 }

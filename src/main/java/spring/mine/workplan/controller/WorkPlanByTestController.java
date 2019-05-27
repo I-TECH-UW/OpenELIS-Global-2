@@ -150,8 +150,8 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 					currentAccessionNumber = testResultItem.getAccessionNumber();
 					subjectNumber = getSubjectNumber(analysis);
 					patientName = getPatientName(analysis);
-					nextVisit = ObservationHistoryServiceImpl.getValueForSample(ObservationType.NEXT_VISIT_DATE,
-							sample.getId());
+					nextVisit = ObservationHistoryServiceImpl.getInstance()
+							.getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId());
 				}
 				testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
 				testResultItem.setPatientInfo(subjectNumber);

@@ -37,33 +37,32 @@ import us.mn.state.health.lims.sample.dao.SearchResultsDAO;
 import us.mn.state.health.lims.sample.daoimpl.SearchResultsDAOImp;
 
 public class PatientSearchLocalWorker extends PatientSearchWorker {
-    private PatientDAO patientDAO = new PatientDAOImpl();
+	private PatientDAO patientDAO = new PatientDAOImpl();
 
 	@Override
-	public String createSearchResultXML(String lastName, String firstName, String STNumber, String subjectNumber, String nationalID,
-			String patientID, String guid, StringBuilder xml)  {
+	public String createSearchResultXML(String lastName, String firstName, String STNumber, String subjectNumber,
+			String nationalID, String patientID, String guid, StringBuilder xml) {
 
 		String success = IActionConstants.VALID;
 
-		if( GenericValidator.isBlankOrNull(lastName) &&
-				GenericValidator.isBlankOrNull(firstName) &&
-				GenericValidator.isBlankOrNull(STNumber) &&
-				GenericValidator.isBlankOrNull(subjectNumber) &&
-				GenericValidator.isBlankOrNull(nationalID) &&
-				GenericValidator.isBlankOrNull(patientID) &&
-				GenericValidator.isBlankOrNull(guid)){
+		if (GenericValidator.isBlankOrNull(lastName) && GenericValidator.isBlankOrNull(firstName)
+				&& GenericValidator.isBlankOrNull(STNumber) && GenericValidator.isBlankOrNull(subjectNumber)
+				&& GenericValidator.isBlankOrNull(nationalID) && GenericValidator.isBlankOrNull(patientID)
+				&& GenericValidator.isBlankOrNull(guid)) {
 
 			xml.append("No search terms were entered");
 			return IActionConstants.INVALID;
 		}
 
 		SearchResultsDAO search = new SearchResultsDAOImp();
-        //N.B. results do not have the referrinngPatientId information but it is not displayed so for now it will be left as null
-		List<PatientSearchResults> results = search.getSearchResults(lastName, firstName, STNumber, subjectNumber, nationalID, nationalID, patientID, guid);
-        if( !GenericValidator.isBlankOrNull(nationalID)) {
-            List<PatientSearchResults> observationResults = getObservationsByReferringPatientId(nationalID);
-            results.addAll(observationResults);
-        }
+		// N.B. results do not have the referrinngPatientId information but it is not
+		// displayed so for now it will be left as null
+		List<PatientSearchResults> results = search.getSearchResults(lastName, firstName, STNumber, subjectNumber,
+				nationalID, nationalID, patientID, guid);
+		if (!GenericValidator.isBlankOrNull(nationalID)) {
+			List<PatientSearchResults> observationResults = getObservationsByReferringPatientId(nationalID);
+			results.addAll(observationResults);
+		}
 		sortPatients(results);
 
 		if (!results.isEmpty()) {
@@ -71,7 +70,7 @@ public class PatientSearchLocalWorker extends PatientSearchWorker {
 				singleResult.setDataSourceName(MessageUtil.getMessage("patient.local.source"));
 				appendSearchResultRow(singleResult, xml);
 			}
-		}else{
+		} else {
 			success = IActionConstants.INVALID;
 
 			xml.append("No results were found for search.  Check spelling or remove some of the fields");
@@ -80,37 +79,31 @@ public class PatientSearchLocalWorker extends PatientSearchWorker {
 		return success;
 	}
 
-    private List<PatientSearchResults> getObservationsByReferringPatientId( String referringId ){
-        List<PatientSearchResults> resultList = new ArrayList<PatientSearchResults>(  );
-        List<ObservationHistory> observationList = ObservationHistoryServiceImpl.getObservationsByTypeAndValue(ObservationType.REFERRERS_PATIENT_ID, referringId);
+	private List<PatientSearchResults> getObservationsByReferringPatientId(String referringId) {
+		List<PatientSearchResults> resultList = new ArrayList<>();
+		List<ObservationHistory> observationList = ObservationHistoryServiceImpl.getInstance()
+				.getObservationsByTypeAndValue(ObservationType.REFERRERS_PATIENT_ID, referringId);
 
-        if (observationList != null) {
-            for (ObservationHistory observation : observationList) {
-                Patient patient = patientDAO.getData(observation.getPatientId());
-                if (patient != null) {
-                    resultList.add(getSearchResultsForPatient(patient, referringId));
-                }
+		if (observationList != null) {
+			for (ObservationHistory observation : observationList) {
+				Patient patient = patientDAO.getData(observation.getPatientId());
+				if (patient != null) {
+					resultList.add(getSearchResultsForPatient(patient, referringId));
+				}
 
-            }
-        }
+			}
+		}
 
-        return resultList;
-    }
+		return resultList;
+	}
 
-    private PatientSearchResults getSearchResultsForPatient(Patient patient, String referringId){
-        PatientServiceImpl service = new PatientServiceImpl(patient);
+	private PatientSearchResults getSearchResultsForPatient(Patient patient, String referringId) {
+		PatientServiceImpl service = new PatientServiceImpl(patient);
 
-        return new PatientSearchResults( BigDecimal.valueOf( Long.parseLong( patient.getId() ) ),
-                service.getFirstName(),
-                service.getLastName(),
-                service.getGender(),
-                service.getEnteredDOB(),
-                service.getNationalId(),
-                patient.getExternalId(),
-                service.getSTNumber(),
-                service.getSubjectNumber(),
-                service.getGUID(),
-                referringId);
-    }
+		return new PatientSearchResults(BigDecimal.valueOf(Long.parseLong(patient.getId())), service.getFirstName(),
+				service.getLastName(), service.getGender(), service.getEnteredDOB(), service.getNationalId(),
+				patient.getExternalId(), service.getSTNumber(), service.getSubjectNumber(), service.getGUID(),
+				referringId);
+	}
 
 }

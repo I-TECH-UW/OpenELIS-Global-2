@@ -40,5 +40,4 @@ public interface PanelItemService extends BaseObjectService<PanelItem> {
 
 	void delete(List panelItems) throws LIMSRuntimeException;
 
-	void delete(List panelItems) throws LIMSRuntimeException;
 }

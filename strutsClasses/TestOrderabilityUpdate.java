@@ -75,7 +75,7 @@ public class TestOrderabilityUpdate extends BaseAction {
             HibernateUtil.closeSession();
         }
 
-        TypeOfSampleServiceImpl.clearCache();
+        TypeOfSampleServiceImpl.getInstance().clearCache();
         return mapping.findForward(FWD_SUCCESS);
     }
 

@@ -28,39 +28,41 @@ public class SampleProjectServiceImpl extends BaseObjectServiceImpl<SampleProjec
 	@Override
 	@Transactional
 	public SampleProject getSampleProjectBySampleId(String id) {
-		return getMatch("sample.id", id).get();
+		return getMatch("sample.id", id).orElse(null);
 	}
 
 	@Override
 	public void getData(SampleProject sampleProj) {
-        getBaseObjectDAO().getData(sampleProj);
+		getBaseObjectDAO().getData(sampleProj);
 
 	}
 
 	@Override
 	public void deleteData(List sampleProjs) {
-        getBaseObjectDAO().deleteData(sampleProjs);
+		getBaseObjectDAO().deleteData(sampleProjs);
 
 	}
 
 	@Override
 	public void updateData(SampleProject sampleProj) {
-        getBaseObjectDAO().updateData(sampleProj);
+		getBaseObjectDAO().updateData(sampleProj);
 
 	}
 
 	@Override
 	public boolean insertData(SampleProject sampleProj) {
-        return getBaseObjectDAO().insertData(sampleProj);
+		return getBaseObjectDAO().insertData(sampleProj);
 	}
 
 	@Override
 	public List getSampleProjectsByProjId(String projId) {
-        return getBaseObjectDAO().getSampleProjectsByProjId(projId);
+		return getBaseObjectDAO().getSampleProjectsByProjId(projId);
 	}
 
 	@Override
-	public List<SampleProject> getByOrganizationProjectAndReceivedOnRange(String organizationId, String projectName, Date lowDate, Date highDate) {
-        return getBaseObjectDAO().getByOrganizationProjectAndReceivedOnRange(organizationId,projectName,lowDate,highDate);
+	public List<SampleProject> getByOrganizationProjectAndReceivedOnRange(String organizationId, String projectName,
+			Date lowDate, Date highDate) {
+		return getBaseObjectDAO().getByOrganizationProjectAndReceivedOnRange(organizationId, projectName, lowDate,
+				highDate);
 	}
 }

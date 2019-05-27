@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import spring.service.common.BaseObjectServiceImpl;
@@ -20,8 +21,11 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 @Service
 @DependsOn({ "springContext" })
+@Scope("prototype")
 public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasure>
 		implements UnitOfMeasureService, LocaleChangeListener {
+
+	private static UnitOfMeasureServiceImpl INSTANCE;
 
 	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()
 			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
@@ -33,8 +37,17 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
 	private UnitOfMeasure unitOfMeasure;
 
 	@PostConstruct
-	public void initilaize() {
+	private void initilaize() {
 		SystemConfiguration.getInstance().addLocalChangeListener(this);
+	}
+
+	@PostConstruct
+	private void registerInstance() {
+		INSTANCE = this;
+	}
+
+	public static UnitOfMeasureServiceImpl getInstance() {
+		return INSTANCE;
 	}
 
 	public synchronized void initializeGlobalVariables() {

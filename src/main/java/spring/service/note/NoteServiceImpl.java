@@ -9,12 +9,16 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.service.analysis.AnalysisServiceImpl;
 import spring.service.common.BaseObjectServiceImpl;
+import spring.service.referencetables.ReferenceTablesService;
 import spring.service.sample.SampleServiceImpl;
+import spring.service.sampleqaevent.SampleQaEventService;
+import spring.service.systemuser.SystemUserService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.QAService;
@@ -25,20 +29,19 @@ import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.StringUtil.EncodeContext;
 import us.mn.state.health.lims.note.dao.NoteDAO;
 import us.mn.state.health.lims.note.valueholder.Note;
-import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
-import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
-import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 
 @Service
 @DependsOn({ "springContext" })
+@Scope("prototype")
 public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements NoteService {
 
 	public enum NoteType {
-		EXTERNAL(Note.EXTERNAL), INTERNAL(Note.INTERNAL), REJECTION_REASON(Note.REJECT_REASON), NON_CONFORMITY(Note.NON_CONFORMITY);
+		EXTERNAL(Note.EXTERNAL), INTERNAL(Note.INTERNAL), REJECTION_REASON(Note.REJECT_REASON),
+		NON_CONFORMITY(Note.NON_CONFORMITY);
 
 		String DBCode;
 
@@ -55,19 +58,20 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 		ANALYSIS, QA_EVENT, SAMPLE, SAMPLE_ITEM
 	}
 
-	private static boolean SUPPORT_INTERNAL_EXTERNAL = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.NOTE_EXTERNAL_ONLY_FOR_VALIDATION, "true");
+	private static boolean SUPPORT_INTERNAL_EXTERNAL = ConfigurationProperties.getInstance()
+			.isPropertyValueEqual(Property.NOTE_EXTERNAL_ONLY_FOR_VALIDATION, "true");
 	private static String SAMPLE_ITEM_TABLE_REFERENCE_ID;
 	public static String TABLE_REFERENCE_ID;
 
 	@Autowired
-	private static NoteDAO noteDAO = SpringContext.getBean(NoteDAO.class);
+	private static NoteDAO baseObjectDAO = SpringContext.getBean(NoteDAO.class);
 
 	@Autowired
-	private static SampleQaEventDAO sampleQADAO = SpringContext.getBean(SampleQaEventDAO.class);
+	private static SampleQaEventService sampleQAService = SpringContext.getBean(SampleQaEventService.class);
 	@Autowired
-	private ReferenceTablesDAO refTableDAO = SpringContext.getBean(ReferenceTablesDAO.class);
+	private ReferenceTablesService refTableService = SpringContext.getBean(ReferenceTablesService.class);
 	@Autowired
-	static SystemUserDAO systemUserDAO = SpringContext.getBean(SystemUserDAO.class);
+	static SystemUserService systemUserService = SpringContext.getBean(SystemUserService.class);
 
 	private BoundTo binding;
 	private String tableId;
@@ -75,8 +79,8 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 	private Object object;
 
 	public synchronized void initializeGlobalVariables() {
-		TABLE_REFERENCE_ID = refTableDAO.getReferenceTableByName("NOTE").getId();
-		SAMPLE_ITEM_TABLE_REFERENCE_ID = refTableDAO.getReferenceTableByName("SAMPLE_ITEM").getId();
+		TABLE_REFERENCE_ID = refTableService.getReferenceTableByName("NOTE").getId();
+		SAMPLE_ITEM_TABLE_REFERENCE_ID = refTableService.getReferenceTableByName("SAMPLE_ITEM").getId();
 	}
 
 	NoteServiceImpl() {
@@ -118,14 +122,17 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 
 	@Override
 	protected NoteDAO getBaseObjectDAO() {
-		return noteDAO;
+		return baseObjectDAO;
 	}
 
-	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, NoteType[] filter, boolean excludeExternPrefix) {
-		return getNotesAsString(prefixType, prefixTimestamp, noteSeparator, filter, excludeExternPrefix, EncodeContext.HTML);
+	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, NoteType[] filter,
+			boolean excludeExternPrefix) {
+		return getNotesAsString(prefixType, prefixTimestamp, noteSeparator, filter, excludeExternPrefix,
+				EncodeContext.HTML);
 	}
 
-	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, NoteType[] filter, boolean excludeExternPrefix, EncodeContext context) {
+	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, NoteType[] filter,
+			boolean excludeExternPrefix, EncodeContext context) {
 		boolean includeNoneConformity = false;
 		List<String> dbFilter = new ArrayList<>(filter.length);
 		for (NoteType type : filter) {
@@ -137,7 +144,8 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 
 		}
 
-		List<Note> noteList = noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(objectId, tableId, dbFilter);
+		List<Note> noteList = baseObjectDAO.getNotesChronologicallyByRefIdAndRefTableAndType(objectId, tableId,
+				dbFilter);
 
 		if (includeNoneConformity) {
 			List<Note> nonConformityNoteList = getNonConformityReasons();
@@ -170,21 +178,26 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 		// get parent objects and the qa notes
 		if (binding == BoundTo.ANALYSIS) {
 			sampleItem = ((Analysis) object).getSampleItem();
-			notes.addAll(noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sampleItem.getId(), SAMPLE_ITEM_TABLE_REFERENCE_ID, filter));
+			notes.addAll(baseObjectDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sampleItem.getId(),
+					SAMPLE_ITEM_TABLE_REFERENCE_ID, filter));
 
 			sample = sampleItem.getSample();
-			notes.addAll(noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sample.getId(), SampleServiceImpl.TABLE_REFERENCE_ID, filter));
+			notes.addAll(baseObjectDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sample.getId(),
+					SampleServiceImpl.TABLE_REFERENCE_ID, filter));
 		} else if (binding == BoundTo.SAMPLE_ITEM) {
 			sampleItem = (SampleItem) object;
 			sample = sampleItem.getSample();
-			notes.addAll(noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sample.getId(), SampleServiceImpl.TABLE_REFERENCE_ID, filter));
+			notes.addAll(baseObjectDAO.getNotesChronologicallyByRefIdAndRefTableAndType(sample.getId(),
+					SampleServiceImpl.TABLE_REFERENCE_ID, filter));
 		}
 
 		if (sample != null) {
-			List<SampleQaEvent> sampleQAList = sampleQADAO.getSampleQaEventsBySample(sample);
+			List<SampleQaEvent> sampleQAList = sampleQAService.getSampleQaEventsBySample(sample);
 			for (SampleQaEvent event : sampleQAList) {
-				if (sampleItem == null || event.getSampleItem() == null || (sampleItem.getId().equals(event.getSampleItem().getId()))) {
-					notes.addAll(noteDAO.getNotesChronologicallyByRefIdAndRefTableAndType(event.getId(), QAService.TABLE_REFERENCE_ID, filter));
+				if (sampleItem == null || event.getSampleItem() == null
+						|| (sampleItem.getId().equals(event.getSampleItem().getId()))) {
+					notes.addAll(baseObjectDAO.getNotesChronologicallyByRefIdAndRefTableAndType(event.getId(),
+							QAService.TABLE_REFERENCE_ID, filter));
 					Note proxyNote = new Note();
 					proxyNote.setNoteType(Note.NON_CONFORMITY);
 					proxyNote.setText(event.getQaEvent().getLocalizedName());
@@ -197,17 +210,20 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 		return notes;
 	}
 
-	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, boolean excludeExternPrefix) {
+	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator,
+			boolean excludeExternPrefix) {
 		return getNotesAsString(prefixType, prefixTimestamp, noteSeparator, excludeExternPrefix, EncodeContext.HTML);
 	}
 
-	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, boolean excludeExternPrefix, EncodeContext context) {
-		List<Note> noteList = noteDAO.getNotesChronologicallyByRefIdAndRefTable(objectId, tableId);
+	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator,
+			boolean excludeExternPrefix, EncodeContext context) {
+		List<Note> noteList = baseObjectDAO.getNotesChronologicallyByRefIdAndRefTable(objectId, tableId);
 
 		return notesToString(prefixType, prefixTimestamp, noteSeparator, noteList, excludeExternPrefix, context);
 	}
 
-	private String notesToString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, List<Note> noteList, boolean excludeExternPrefix, EncodeContext context) {
+	private String notesToString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, List<Note> noteList,
+			boolean excludeExternPrefix, EncodeContext context) {
 		if (noteList.isEmpty()) {
 			return null;
 		}
@@ -241,7 +257,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 	}
 
 	public String getNotesAsString(String prefix, String noteSeparator) {
-		List<Note> noteList = noteDAO.getNotesChronologicallyByRefIdAndRefTable(objectId, tableId);
+		List<Note> noteList = baseObjectDAO.getNotesChronologicallyByRefIdAndRefTable(objectId, tableId);
 
 		if (noteList.isEmpty()) {
 			return null;
@@ -265,12 +281,12 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 	public Note getMostRecentNoteFilteredBySubject(String filter) {
 		List<Note> noteList;
 		if (GenericValidator.isBlankOrNull(filter)) {
-			noteList = noteDAO.getNotesChronologicallyByRefIdAndRefTable(objectId, tableId);
+			noteList = baseObjectDAO.getNotesChronologicallyByRefIdAndRefTable(objectId, tableId);
 			if (!noteList.isEmpty()) {
 				return noteList.get(noteList.size() - 1);
 			}
 		} else {
-			noteList = noteDAO.getNoteByRefIAndRefTableAndSubject(objectId, tableId, filter);
+			noteList = baseObjectDAO.getNoteByRefIAndRefTableAndSubject(objectId, tableId, filter);
 			if (!noteList.isEmpty()) {
 				return noteList.get(0);
 			}
@@ -303,7 +319,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 	public static SystemUser createSystemUser(String currentUserId) {
 		SystemUser systemUser = new SystemUser();
 		systemUser.setId(currentUserId);
-		systemUserDAO.getData(systemUser);
+		systemUserService.getData(systemUser);
 		return systemUser;
 	}
 
@@ -328,7 +344,8 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 	}
 
 	public static List<Note> getTestNotesInDateRangeByType(Date lowDate, Date highDate, NoteType noteType) {
-		return noteDAO.getNotesInDateRangeAndType(lowDate, DateUtil.addDaysToSQLDate(highDate, 1), noteType.DBCode, AnalysisServiceImpl.TABLE_REFERENCE_ID);
+		return baseObjectDAO.getNotesInDateRangeAndType(lowDate, DateUtil.addDaysToSQLDate(highDate, 1),
+				noteType.DBCode, AnalysisServiceImpl.TABLE_REFERENCE_ID);
 	}
 
 	private String getNotePrefix(Note note, boolean excludeExternPrefix) {
@@ -349,84 +366,86 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements Note
 
 	@Override
 	public void getData(Note note) {
-        getBaseObjectDAO().getData(note);
+		getBaseObjectDAO().getData(note);
 
 	}
 
 	@Override
 	public Note getData(String noteId) {
-        return getBaseObjectDAO().getData(noteId);
+		return getBaseObjectDAO().getData(noteId);
 	}
 
 	@Override
 	public void deleteData(List notes) {
-        getBaseObjectDAO().deleteData(notes);
+		getBaseObjectDAO().deleteData(notes);
 
 	}
 
 	@Override
 	public void updateData(Note note) {
-        getBaseObjectDAO().updateData(note);
+		getBaseObjectDAO().updateData(note);
 
 	}
 
 	@Override
 	public boolean insertData(Note note) {
-        return getBaseObjectDAO().insertData(note);
+		return getBaseObjectDAO().insertData(note);
 	}
 
 	@Override
 	public List<Note> getNotesByNoteTypeRefIdRefTable(Note note) {
-        return getBaseObjectDAO().getNotesByNoteTypeRefIdRefTable(note);
+		return getBaseObjectDAO().getNotesByNoteTypeRefIdRefTable(note);
 	}
 
 	@Override
-	public List<Note> getNotesInDateRangeAndType(Date lowDate, Date highDate, String noteType, String referenceTableId) {
-        return getBaseObjectDAO().getNotesInDateRangeAndType(lowDate,highDate,noteType,referenceTableId);
+	public List<Note> getNotesInDateRangeAndType(Date lowDate, Date highDate, String noteType,
+			String referenceTableId) {
+		return getBaseObjectDAO().getNotesInDateRangeAndType(lowDate, highDate, noteType, referenceTableId);
 	}
 
 	@Override
 	public List getPreviousNoteRecord(String id) {
-        return getBaseObjectDAO().getPreviousNoteRecord(id);
+		return getBaseObjectDAO().getPreviousNoteRecord(id);
 	}
 
 	@Override
 	public List getNextNoteRecord(String id) {
-        return getBaseObjectDAO().getNextNoteRecord(id);
+		return getBaseObjectDAO().getNextNoteRecord(id);
 	}
 
 	@Override
 	public Integer getTotalNoteCount() {
-        return getBaseObjectDAO().getTotalNoteCount();
+		return getBaseObjectDAO().getTotalNoteCount();
 	}
 
 	@Override
 	public List getAllNotesByRefIdRefTable(Note note) {
-        return getBaseObjectDAO().getAllNotesByRefIdRefTable(note);
+		return getBaseObjectDAO().getAllNotesByRefIdRefTable(note);
 	}
 
 	@Override
 	public List<Note> getNotesChronologicallyByRefIdAndRefTable(String refId, String table_id) {
-        return getBaseObjectDAO().getNotesChronologicallyByRefIdAndRefTable(refId,table_id);
+		return getBaseObjectDAO().getNotesChronologicallyByRefIdAndRefTable(refId, table_id);
 	}
 
 	@Override
-	public List<Note> getNotesChronologicallyByRefIdAndRefTableAndType(String objectId, String tableId, List<String> filter) {
-        return getBaseObjectDAO().getNotesChronologicallyByRefIdAndRefTableAndType(objectId,tableId,filter);
+	public List<Note> getNotesChronologicallyByRefIdAndRefTableAndType(String objectId, String tableId,
+			List<String> filter) {
+		return getBaseObjectDAO().getNotesChronologicallyByRefIdAndRefTableAndType(objectId, tableId, filter);
 	}
 
 	@Override
 	public List<Note> getNoteByRefIAndRefTableAndSubject(String refId, String table_id, String subject) {
-        return getBaseObjectDAO().getNoteByRefIAndRefTableAndSubject(refId,table_id,subject);
+		return getBaseObjectDAO().getNoteByRefIAndRefTableAndSubject(refId, table_id, subject);
 	}
 
 	@Override
 	public List getPageOfNotes(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfNotes(startingRecNo);
+		return getBaseObjectDAO().getPageOfNotes(startingRecNo);
 	}
 
 	@Override
 	public List<Note> getAllNotes() {
-        return getBaseObjectDAO().getAllNotes();
+		return getBaseObjectDAO().getAllNotes();
 	}
 }

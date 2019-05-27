@@ -74,12 +74,12 @@ public class TableIdService {
 	private PatientIdentityTypeService patientIdentityTypeService;
 
 	@PostConstruct
-	public void registerInstance() {
+	private void registerInstance() {
 		INSTANCE = this;
 	}
 
 	@PostConstruct
-	public void initialize() {
+	private void initialize() {
 		RequesterType type = requesterTypeService.getRequesterTypeByName("organization");
 		if (type != null) {
 			ORGANIZATION_REQUESTER_TYPE_ID = Long.parseLong(type.getId());

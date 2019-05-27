@@ -44,7 +44,6 @@ import us.mn.state.health.lims.systemusermodule.valueholder.SystemUserModule;
 /*
  * N.B. This class has nothing to do with database access
  */
-//TODO move to service layer
 @Service
 public class UserModuleServiceImpl implements UserModuleService, IActionConstants {
 

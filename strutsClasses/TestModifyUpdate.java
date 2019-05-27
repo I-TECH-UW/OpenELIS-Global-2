@@ -168,7 +168,7 @@ public class TestModifyUpdate extends BaseAction {
         }
 
         TestServiceImpl.refreshTestNames();
-        TypeOfSampleServiceImpl.clearCache();
+        TypeOfSampleServiceImpl.getInstance().clearCache();
         return mapping.findForward(FWD_SUCCESS);
     }
     

@@ -71,7 +71,7 @@ public class SiteInformationController extends BaseController {
 	private SiteInformationDomain RESULT_CONFIG_DOMAIN;
 
 	@PostConstruct
-	public void initialize() {
+	private void initialize() {
 		SITE_IDENTITY_DOMAIN = siteInformationDomainService.getByName("siteIdentity");
 		RESULT_CONFIG_DOMAIN = siteInformationDomainService.getByName("resultConfiguration");
 	}

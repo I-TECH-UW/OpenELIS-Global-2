@@ -16,7 +16,6 @@
 
 package us.mn.state.health.lims.reports.action.implementation;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,122 +38,122 @@ import us.mn.state.health.lims.reports.action.implementation.reportBeans.Activit
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.util.AccessionNumberUtil;
 
-public abstract class ActivityReport extends Report implements IReportCreator{
-    private int PREFIX_LENGTH = AccessionNumberUtil.getAccessionNumberValidator().getInvarientLength();
-    protected List<ActivityReportBean> testsResults;
-    protected String reportPath = "";
-    protected DateRange dateRange;
+public abstract class ActivityReport extends Report implements IReportCreator {
+	private int PREFIX_LENGTH = AccessionNumberUtil.getAccessionNumberValidator().getInvarientLength();
+	protected List<ActivityReportBean> testsResults;
+	protected String reportPath = "";
+	protected DateRange dateRange;
 
-    @Override
-    public JRDataSource getReportDataSource() throws IllegalStateException{
-        return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(testsResults);
-    }
+	@Override
+	public JRDataSource getReportDataSource() throws IllegalStateException {
+		return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(testsResults);
+	}
 
-    @Override
-    protected void createReportParameters() {
-        reportParameters.put( "activityLabel", getActivityLabel() );
-        reportParameters.put( "accessionPrefix", AccessionNumberUtil.getAccessionNumberValidator().getPrefix() );
-        reportParameters.put( "labNumberTitle", MessageUtil.getContextualMessage( "quick.entry.accession.number" ) );
-        reportParameters.put( "labName", ConfigurationProperties.getInstance().getPropertyValue( Property.SiteName ) );
-        reportParameters.put( "SUBREPORT_DIR", reportPath );
-        reportParameters.put( "startDate", dateRange.getLowDateStr() );
-        reportParameters.put( "endDate", dateRange.getHighDateStr() );
-        reportParameters.put( "isReportByTest", isReportByTest() );
+	@Override
+	protected void createReportParameters() {
+		reportParameters.put("activityLabel", getActivityLabel());
+		reportParameters.put("accessionPrefix", AccessionNumberUtil.getAccessionNumberValidator().getPrefix());
+		reportParameters.put("labNumberTitle", MessageUtil.getContextualMessage("quick.entry.accession.number"));
+		reportParameters.put("labName", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName));
+		reportParameters.put("SUBREPORT_DIR", reportPath);
+		reportParameters.put("startDate", dateRange.getLowDateStr());
+		reportParameters.put("endDate", dateRange.getHighDateStr());
+		reportParameters.put("isReportByTest", isReportByTest());
 
-    }
+	}
 
-    protected boolean isReportByTest(){
-        return false;
-    }
+	protected boolean isReportByTest() {
+		return false;
+	}
 
-    protected abstract String getActivityLabel();
+	protected abstract String getActivityLabel();
 
-    protected abstract void buildReportContent( ReportSpecificationList testSelection );
+	protected abstract void buildReportContent(ReportSpecificationList testSelection);
 
+	@Override
+	public void initializeReport(BaseForm form) {
+		initialized = true;
+		ReportSpecificationList selection = (ReportSpecificationList) form.get("selectList");
+		String lowDateStr = form.getString("lowerDateRange");
+		String highDateStr = form.getString("upperDateRange");
+		dateRange = new DateRange(lowDateStr, highDateStr);
 
-    @Override
-    public void initializeReport( BaseForm form ){
-        initialized = true;
-        ReportSpecificationList selection = ( ReportSpecificationList ) form.get( "selectList" );
-        String lowDateStr = form.getString( "lowerDateRange" );
-        String highDateStr = form.getString( "upperDateRange" );
-        dateRange = new DateRange( lowDateStr, highDateStr );
-       
-        super.createReportParameters();
-        errorFound = !validateSubmitParameters(selection);
-        if ( errorFound ) {
-            return;
-        }
+		super.createReportParameters();
+		errorFound = !validateSubmitParameters(selection);
+		if (errorFound) {
+			return;
+		}
 
-        buildReportContent( selection );
-        if ( testsResults.size() == 0 ) {
-            add1LineErrorMessage("report.error.message.noPrintableItems");
-        }
-    }
+		buildReportContent(selection);
+		if (testsResults.size() == 0) {
+			add1LineErrorMessage("report.error.message.noPrintableItems");
+		}
+	}
 
+	private boolean validateSubmitParameters(ReportSpecificationList selectList) {
 
-    private boolean validateSubmitParameters(ReportSpecificationList selectList) {
+		return (dateRange.validateHighLowDate("report.error.message.date.received.missing")
+				&& validateSelection(selectList));
+	}
 
-        return (dateRange.validateHighLowDate("report.error.message.date.received.missing") &&
-                validateSelection(selectList));
-    }
+	private boolean validateSelection(ReportSpecificationList selectList) {
+		boolean complete = !GenericValidator.isBlankOrNull(selectList.getSelection())
+				&& !"0".equals(selectList.getSelection());
 
-    private boolean validateSelection( ReportSpecificationList selectList ){
-        boolean complete = !GenericValidator.isBlankOrNull( selectList.getSelection() ) && !"0".equals( selectList.getSelection() );
+		if (!complete) {
+			add1LineErrorMessage("report.error.message.activity.missing");
+		}
 
-        if( !complete){
-            add1LineErrorMessage("report.error.message.activity.missing");
-        }
+		return complete;
+	}
 
-        return complete;
-    }
+	protected ActivityReportBean createActivityReportBean(Result result, boolean useTestName) {
+		ActivityReportBean item = new ActivityReportBean();
 
+		ResultServiceImpl resultService = new ResultServiceImpl(result);
+		SampleServiceImpl sampleService = new SampleServiceImpl(result.getAnalysis().getSampleItem().getSample());
+		PatientServiceImpl patientService = new PatientServiceImpl(sampleService.getSample());
+		item.setResultValue(resultService.getResultValue("\n", true, true));
+		item.setTechnician(resultService.getSignature());
+		item.setAccessionNumber(sampleService.getAccessionNumber().substring(PREFIX_LENGTH));
+		item.setReceivedDate(sampleService.getReceivedDateWithTwoYearDisplay());
+		item.setResultDate(DateUtil.convertTimestampToTwoYearStringDate(result.getLastupdated()));
+		item.setCollectionDate(
+				DateUtil.convertTimestampToTwoYearStringDate(result.getAnalysis().getSampleItem().getCollectionDate()));
 
-    protected ActivityReportBean createActivityReportBean( Result result, boolean useTestName ){
-        ActivityReportBean item = new ActivityReportBean();
+		List<String> values = new ArrayList<>();
+		values.add(patientService.getLastName() == null ? "" : patientService.getLastName().toUpperCase());
+		values.add(patientService.getNationalId());
 
-        ResultServiceImpl resultService = new ResultServiceImpl( result );
-        SampleServiceImpl sampleService = new SampleServiceImpl( result.getAnalysis().getSampleItem().getSample() );
-        PatientServiceImpl patientService = new PatientServiceImpl( sampleService.getSample() );
-        item.setResultValue( resultService.getResultValue( "\n", true, true ) );
-        item.setTechnician( resultService.getSignature() );
-        item.setAccessionNumber( sampleService.getAccessionNumber().substring( PREFIX_LENGTH ) );
-        item.setReceivedDate( sampleService.getReceivedDateWithTwoYearDisplay() );
-        item.setResultDate( DateUtil.convertTimestampToTwoYearStringDate( result.getLastupdated() ) );
-        item.setCollectionDate( DateUtil.convertTimestampToTwoYearStringDate( result.getAnalysis().getSampleItem().getCollectionDate() ) );
+		String referringPatientId = ObservationHistoryServiceImpl.getInstance()
+				.getValueForSample(ObservationType.REFERRERS_PATIENT_ID, sampleService.getSample().getId());
+		values.add(referringPatientId == null ? "" : referringPatientId);
 
-        List<String> values = new ArrayList<String>();
-        values.add(patientService.getLastName() == null ? "" : patientService.getLastName().toUpperCase());
-        values.add(patientService.getNationalId());
-        
-        String referringPatientId = ObservationHistoryServiceImpl.getValueForSample( ObservationType.REFERRERS_PATIENT_ID, sampleService.getSample().getId() );
-        values.add( referringPatientId == null ? "" : referringPatientId);
+		String name = StringUtil.buildDelimitedStringFromList(values, " / ", true);
 
-        String name = StringUtil.buildDelimitedStringFromList(values, " / ", true);
-        
-        if( useTestName ){
-            item.setPatientOrTestName( resultService.getReportingTestName() );
-            item.setNonPrintingPatient( name );
-        }else{
-            item.setPatientOrTestName( name );
-        }
+		if (useTestName) {
+			item.setPatientOrTestName(resultService.getReportingTestName());
+			item.setNonPrintingPatient(name);
+		} else {
+			item.setPatientOrTestName(name);
+		}
 
-        return item;
-    }
+		return item;
+	}
 
-    @Override
-    protected String reportFileName(){
-        return  "ActivityReport";
-    }
+	@Override
+	protected String reportFileName() {
+		return "ActivityReport";
+	}
 
-    protected ActivityReportBean createIdentityActivityBean( ActivityReportBean item, boolean blankCollectionDate ){
-        ActivityReportBean filler = new ActivityReportBean();
+	protected ActivityReportBean createIdentityActivityBean(ActivityReportBean item, boolean blankCollectionDate) {
+		ActivityReportBean filler = new ActivityReportBean();
 
-        filler.setAccessionNumber( item.getAccessionNumber() );
-        filler.setReceivedDate( item.getReceivedDate() );
-        filler.setCollectionDate( blankCollectionDate ? " " : item.getCollectionDate() );
-        filler.setPatientOrTestName( item.getNonPrintingPatient() );
+		filler.setAccessionNumber(item.getAccessionNumber());
+		filler.setReceivedDate(item.getReceivedDate());
+		filler.setCollectionDate(blankCollectionDate ? " " : item.getCollectionDate());
+		filler.setPatientOrTestName(item.getNonPrintingPatient());
 
-        return filler;
-    }
+		return filler;
+	}
 }

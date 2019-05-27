@@ -41,7 +41,7 @@ public abstract class BaseWorkplanController extends BaseController {
 	protected static List<String> nfsTestIdList;
 
 	@PostConstruct
-	public void initialize() {
+	private void initialize() {
 		if (statusList == null) {
 			statusList = new ArrayList<>();
 			statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted)));
@@ -103,7 +103,7 @@ public abstract class BaseWorkplanController extends BaseController {
 			values.add(patientService.getLastName() == null ? "" : patientService.getLastName().toUpperCase());
 			values.add(patientService.getNationalId());
 
-			String referringPatientId = ObservationHistoryServiceImpl
+			String referringPatientId = ObservationHistoryServiceImpl.getInstance()
 					.getValueForSample(ObservationType.REFERRERS_PATIENT_ID, sample.getId());
 			values.add(referringPatientId == null ? "" : referringPatientId);
 			return StringUtil.buildDelimitedStringFromList(values, " / ", true);

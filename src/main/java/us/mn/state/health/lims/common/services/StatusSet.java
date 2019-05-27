@@ -19,56 +19,69 @@ package us.mn.state.health.lims.common.services;
 
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
 import us.mn.state.health.lims.common.services.StatusService.RecordStatus;
 
-
+@Service
 public class StatusSet {
 
 	private OrderStatus sampleStatus;
 	private Map<Analysis, AnalysisStatus> analysisStatus;
 	private RecordStatus sampleRecordStatus;
 	private RecordStatus patientRecordStatus;
-	
-	private String    patientId;
-	private String    sampleId;
+
+	private String patientId;
+	private String sampleId;
 
 	public OrderStatus getSampleStatus() {
 		return sampleStatus;
 	}
+
 	public void setSampleStatus(OrderStatus sampleStatus) {
 		this.sampleStatus = sampleStatus;
 	}
+
 	public Map<Analysis, AnalysisStatus> getAnalysisStatus() {
 		return analysisStatus;
 	}
+
 	public void setAnalysisStatus(Map<Analysis, AnalysisStatus> analysisStatus) {
 		this.analysisStatus = analysisStatus;
 	}
+
 	public RecordStatus getSampleRecordStatus() {
 		return sampleRecordStatus;
 	}
+
 	public void setSampleRecordStatus(RecordStatus sampleEntryStatus) {
-		this.sampleRecordStatus = sampleEntryStatus;
+		sampleRecordStatus = sampleEntryStatus;
 	}
+
 	public RecordStatus getPatientRecordStatus() {
 		return patientRecordStatus;
 	}
+
 	public void setPatientRecordStatus(RecordStatus patientEntryStatus) {
-		this.patientRecordStatus = patientEntryStatus;
+		patientRecordStatus = patientEntryStatus;
 	}
-    public String getPatientId() {
-        return patientId;
-    }
-    public void setPatientId(String patientId) {
-        this.patientId = patientId;
-    }
-    public String getSampleId() {
-        return sampleId;
-    }
-    public void setSampleId(String sampleId) {
-        this.sampleId = sampleId;
-    }
+
+	public String getPatientId() {
+		return patientId;
+	}
+
+	public void setPatientId(String patientId) {
+		this.patientId = patientId;
+	}
+
+	public String getSampleId() {
+		return sampleId;
+	}
+
+	public void setSampleId(String sampleId) {
+		this.sampleId = sampleId;
+	}
 }

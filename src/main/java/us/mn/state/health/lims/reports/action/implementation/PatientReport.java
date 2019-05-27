@@ -129,7 +129,7 @@ public abstract class PatientReport extends Report {
 	protected NoteDAO noteDAO = new NoteDAOImpl();
 	protected PersonAddressDAO addressDAO = new PersonAddressDAOImpl();
 	private List<String> handledOrders;
-	private List<Analysis> updatedAnalysis = new ArrayList<Analysis>();
+	private List<Analysis> updatedAnalysis = new ArrayList<>();
 
 	private String lowerNumber;
 	private String upperNumber;
@@ -204,6 +204,7 @@ public abstract class PatientReport extends Report {
 		}
 	}
 
+	@Override
 	public void initializeReport(BaseForm form) {
 		super.initializeReport();
 		errorFound = false;
@@ -211,15 +212,15 @@ public abstract class PatientReport extends Report {
 		upperNumber = form.getString("highAccessionDirect");
 		String patientNumber = form.getString("patientNumberDirect");
 
-		handledOrders = new ArrayList<String>();
+		handledOrders = new ArrayList<>();
 
 		createReportParameters();
 
 		boolean valid;
-		List<Sample> reportSampleList = new ArrayList<Sample>();
+		List<Sample> reportSampleList = new ArrayList<>();
 
 		if (GenericValidator.isBlankOrNull(lowerNumber) && GenericValidator.isBlankOrNull(upperNumber)) {
-			List<Patient> patientList = new ArrayList<Patient>();
+			List<Patient> patientList = new ArrayList<>();
 			valid = findPatientByPatientNumber(patientNumber, patientList);
 
 			if (valid) {
@@ -233,8 +234,8 @@ public abstract class PatientReport extends Report {
 			}
 		}
 
-		sampleCompleteMap = new HashMap<String, Boolean>();
-		sampleCorrectedMap = new HashMap<String, Boolean>();
+		sampleCompleteMap = new HashMap<>();
+		sampleCorrectedMap = new HashMap<>();
 		initializeReportItems();
 
 		if (reportSampleList.isEmpty()) {
@@ -350,7 +351,7 @@ public abstract class PatientReport extends Report {
 	}
 
 	private List<Sample> findReportSamplesForReportPatient(List<Patient> patientList) {
-		List<Sample> sampleList = new ArrayList<Sample>();
+		List<Sample> sampleList = new ArrayList<>();
 		for (Patient searchPatient : patientList) {
 			sampleList.addAll(sampleHumanDAO.getSamplesForPatient(searchPatient.getId()));
 		}
@@ -391,7 +392,7 @@ public abstract class PatientReport extends Report {
 
 	private List<Sample> findReportSamples(String lowerNumber, String upperNumber) {
 		List<Sample> sampleList = sampleDAO.getSamplesByAccessionRange(lowerNumber, upperNumber);
-		return sampleList == null ? new ArrayList<Sample>() : sampleList;
+		return sampleList == null ? new ArrayList<>() : sampleList;
 	}
 
 	protected void findPatientFromSample() {
@@ -467,13 +468,11 @@ public abstract class PatientReport extends Report {
 			setReferredOutResult(data);
 			return;
 			/*
-			 * Not sure which rules this would support -- above statement was
-			 * conditional on no patient alerts if( noResults( resultList ) ){
-			 * data.setResult( MessageUtil.getMessage(
-			 * "report.test.status.referredOut" ) ); }else{
-			 * setAppropriateResults( resultList, data ); setReferredResult(
-			 * data, resultList.get( 0 ) ); setNormalRange( data, test,
-			 * resultList.get( 0 ) ); }
+			 * Not sure which rules this would support -- above statement was conditional on
+			 * no patient alerts if( noResults( resultList ) ){ data.setResult(
+			 * MessageUtil.getMessage( "report.test.status.referredOut" ) ); }else{
+			 * setAppropriateResults( resultList, data ); setReferredResult( data,
+			 * resultList.get( 0 ) ); setNormalRange( data, test, resultList.get( 0 ) ); }
 			 */
 		} else if (!StatusService.getInstance().matches(currentAnalysisService.getStatusId(),
 				AnalysisStatus.Finalized)) {
@@ -615,7 +614,8 @@ public abstract class PatientReport extends Report {
 					reportResult = new ResultServiceImpl(result).getResultValue(true);
 					// TODO - how is this used. Selection types can also have
 					// UOM and reference ranges
-					data.setHasRangeAndUOM(TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(result.getResultType()));
+					data.setHasRangeAndUOM(
+							TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(result.getResultType()));
 				}
 			} else {
 				// If multiple results it can be a quantified result, multiple
@@ -625,7 +625,7 @@ public abstract class PatientReport extends Report {
 
 				if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(resultService.getTestType())) {
 					data.setAbnormalResult(resultService.isAbnormalDictionaryResult());
-					List<Result> dictionaryResults = new ArrayList<Result>();
+					List<Result> dictionaryResults = new ArrayList<>();
 					Result quantification = null;
 					for (Result sibResult : resultList) {
 						if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(sibResult.getResultType())) {
@@ -744,19 +744,17 @@ public abstract class PatientReport extends Report {
 	 * @see PatientReport#initializeReportItems()
 	 */
 	protected void initializeReportItems() {
-		reportItems = new ArrayList<ClinicalPatientData>();
+		reportItems = new ArrayList<>();
 	}
 
 	/**
-	 * If you have a string that you wish to add a suffix like units of measure,
-	 * use this.
+	 * If you have a string that you wish to add a suffix like units of measure, use
+	 * this.
 	 *
-	 * @param base
-	 *            something
-	 * @param plus
-	 *            something to add, if the above is not null or blank.
-	 * @return the two args put together, or the original if it was blank to
-	 *         begin with.
+	 * @param base something
+	 * @param plus something to add, if the above is not null or blank.
+	 * @return the two args put together, or the original if it was blank to begin
+	 *         with.
 	 */
 	protected String addIfNotEmpty(String base, String plus) {
 		return (!GenericValidator.isBlankOrNull(plus)) ? base + " " + plus : base;
@@ -800,14 +798,15 @@ public abstract class PatientReport extends Report {
 		data.setStNumber(getLazyPatientIdentity(STNumber, PatientServiceImpl.PATIENT_ST_IDENTITY));
 		data.setSubjectNumber(getLazyPatientIdentity(subjectNumber, PatientServiceImpl.PATIENT_SUBJECT_IDENTITY));
 		data.setHealthRegion(getLazyPatientIdentity(healthRegion, PatientServiceImpl.PATIENT_HEALTH_REGION_IDENTITY));
-		data.setHealthDistrict(getLazyPatientIdentity(healthDistrict, PatientServiceImpl.PATIENT_HEALTH_DISTRICT_IDENTITY));
-		data.setLabOrderType(
-				ObservationHistoryServiceImpl.getValueForSample(ObservationType.PROGRAM, currentSampleService.getId()));
+		data.setHealthDistrict(
+				getLazyPatientIdentity(healthDistrict, PatientServiceImpl.PATIENT_HEALTH_DISTRICT_IDENTITY));
+		data.setLabOrderType(ObservationHistoryServiceImpl.getInstance().getValueForSample(ObservationType.PROGRAM,
+				currentSampleService.getId()));
 		data.setTestName(testName);
-		data.setPatientSiteNumber(ObservationHistoryServiceImpl.getValueForSample(ObservationType.REFERRERS_PATIENT_ID,
-				currentSampleService.getId()));
-		data.setBillingNumber(ObservationHistoryServiceImpl.getValueForSample(ObservationType.BILLING_REFERENCE_NUMBER,
-				currentSampleService.getId()));
+		data.setPatientSiteNumber(ObservationHistoryServiceImpl.getInstance()
+				.getValueForSample(ObservationType.REFERRERS_PATIENT_ID, currentSampleService.getId()));
+		data.setBillingNumber(ObservationHistoryServiceImpl.getInstance()
+				.getValueForSample(ObservationType.BILLING_REFERENCE_NUMBER, currentSampleService.getId()));
 
 		if (doAnalysis) {
 			data.setPanel(currentAnalysisService.getPanel());
@@ -850,19 +849,17 @@ public abstract class PatientReport extends Report {
 	}
 
 	/**
-	 * Given a list of referralResults for a particular analysis, generated the
-	 * next displayable value made of from one or more of the values from the
-	 * list starting at the given index. It uses multiresult form the list when
-	 * the results are for the same test.
+	 * Given a list of referralResults for a particular analysis, generated the next
+	 * displayable value made of from one or more of the values from the list
+	 * starting at the given index. It uses multiresult form the list when the
+	 * results are for the same test.
 	 *
-	 * @param referralResultsForReferral
-	 *            The referral
-	 * @param i
-	 *            starting index.
-	 * @return last index actually used. If you start with 2 and this routine
-	 *         uses just item #2, then return result is 2, but if there are two
-	 *         results for the same test (e.g. a multi-select result) and those
-	 *         are in item item 2 and item 3 this routine returns #3.
+	 * @param referralResultsForReferral The referral
+	 * @param i                          starting index.
+	 * @return last index actually used. If you start with 2 and this routine uses
+	 *         just item #2, then return result is 2, but if there are two results
+	 *         for the same test (e.g. a multi-select result) and those are in item
+	 *         item 2 and item 3 this routine returns #3.
 	 */
 	protected int reportReferralResultValue(List<ReferralResult> referralResultsForReferral, int i) {
 		ReferralResult referralResult = referralResultsForReferral.get(i);
@@ -882,11 +879,10 @@ public abstract class PatientReport extends Report {
 	}
 
 	/**
-	 * Derive the appropriate displayable string results, either dictionary
-	 * result or direct value.
+	 * Derive the appropriate displayable string results, either dictionary result
+	 * or direct value.
 	 *
-	 * @param result
-	 *            The result
+	 * @param result The result
 	 * @return a reportable result string.
 	 */
 	private String findDisplayableReportResult(Result result) {

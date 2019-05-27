@@ -328,7 +328,7 @@ public class ReferredOutAction extends BaseAction {
 	}
 
 	private List<IdValuePair> getTestsForTypeOfSample(TypeOfSample typeOfSample) {
-		List<Test> testList = TypeOfSampleServiceImpl.getActiveTestsBySampleTypeId(typeOfSample.getId(), false);
+		List<Test> testList = TypeOfSampleServiceImpl.getInstance().getActiveTestsBySampleTypeId(typeOfSample.getId(), false);
 
 		List<IdValuePair> valueList = new ArrayList<IdValuePair>();
 
