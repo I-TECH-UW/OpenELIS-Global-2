@@ -23,8 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.role.RoleService;
+import spring.service.rolemodule.RoleModuleService;
 import spring.service.systemmodule.SystemModuleService;
-import spring.service.systemusermodule.RoleModuleService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.role.valueholder.Role;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;

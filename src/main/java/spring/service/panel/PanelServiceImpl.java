@@ -6,11 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import spring.service.common.BaseObjectServiceImpl;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.panel.dao.PanelDAO;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 
 @Service
 public class PanelServiceImpl extends BaseObjectServiceImpl<Panel> implements PanelService {
+
 	@Autowired
 	protected PanelDAO baseObjectDAO;
 
@@ -114,5 +116,19 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel> implements Pa
 	@Override
 	public String insert(Panel panel) {
 		return (String) super.insert(panel);
+	}
+
+	@Override
+	public Panel update(Panel panel) {
+		if (baseObjectDAO.duplicatePanelExists(panel)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + panel.getPanelName());
+		}
+		// AIS - bugzilla 1563
+		if (baseObjectDAO.duplicatePanelDescriptionExists(panel)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for panel description");
+		}
+		panel = super.update(panel);
+		baseObjectDAO.clearIDMaps();
+		return panel;
 	}
 }

@@ -91,14 +91,13 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements Sy
 						"Duplicate record exists for " + systemModule.getSystemModuleName());
 			}
 
-			String id = (String) HibernateUtil.getSession().save(systemModule);
+			String id = (String) sessionFactory.getCurrentSession().save(systemModule);
 			systemModule.setId(id);
 
-			// add to audit trail
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
-			String sysUserId = systemModule.getSysUserId();
-			String tableName = "SYSTEM_MODULE";
-			auditDAO.saveNewHistory(systemModule, sysUserId, tableName);
+//			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+//			String sysUserId = systemModule.getSysUserId();
+//			String tableName = "SYSTEM_MODULE";
+//			auditDAO.saveNewHistory(systemModule, sysUserId, tableName);
 
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
