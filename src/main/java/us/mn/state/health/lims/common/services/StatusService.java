@@ -29,21 +29,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
+import spring.service.analysis.AnalysisService;
+import spring.service.dictionary.DictionaryService;
+import spring.service.observationhistory.ObservationHistoryService;
+import spring.service.observationhistorytype.ObservationHistoryTypeService;
+import spring.service.sample.SampleService;
+import spring.service.samplehuman.SampleHumanService;
+import spring.service.statusofsample.StatusOfSampleService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory.ValueType;
-import us.mn.state.health.lims.observationhistorytype.dao.ObservationHistoryTypeDAO;
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
 import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
-import us.mn.state.health.lims.statusofsample.dao.StatusOfSampleDAO;
 import us.mn.state.health.lims.statusofsample.valueholder.StatusOfSample;
 
 @Service
@@ -75,36 +75,37 @@ public class StatusService {
 
 	private static StatusService instance;
 
-	private static Map<String, OrderStatus> idToOrderStatusMap = null;
-	private static Map<String, SampleStatus> idToSampleStatusMap = null;
-	private static Map<String, AnalysisStatus> idToAnalysisStatusMap = null;
-	private static Map<String, RecordStatus> idToRecordStatusMap = null;
-	private static Map<String, ExternalOrderStatus> idToExternalOrderStatusMap = null;
+	private Map<String, OrderStatus> idToOrderStatusMap = null;
+	private Map<String, SampleStatus> idToSampleStatusMap = null;
+	private Map<String, AnalysisStatus> idToAnalysisStatusMap = null;
+	private Map<String, RecordStatus> idToRecordStatusMap = null;
+	private Map<String, ExternalOrderStatus> idToExternalOrderStatusMap = null;
 
-	private static Map<OrderStatus, StatusOfSample> orderStatusToObjectMap = null;
-	private static Map<SampleStatus, StatusOfSample> sampleStatusToObjectMap = null;
-	private static Map<AnalysisStatus, StatusOfSample> analysisStatusToObjectMap = null;
-	private static Map<RecordStatus, Dictionary> recordStatusToObjectMap = null;
-	private static Map<ExternalOrderStatus, StatusOfSample> externalOrderStatusToObjectMap = null;
+	private Map<OrderStatus, StatusOfSample> orderStatusToObjectMap = null;
+	private Map<SampleStatus, StatusOfSample> sampleStatusToObjectMap = null;
+	private Map<AnalysisStatus, StatusOfSample> analysisStatusToObjectMap = null;
+	private Map<RecordStatus, Dictionary> recordStatusToObjectMap = null;
+	private Map<ExternalOrderStatus, StatusOfSample> externalOrderStatusToObjectMap = null;
 
-	private static String orderRecordStatusID;
-	private static String patientRecordStatusID;
-	@Autowired
-	private static ObservationHistoryDAO observationHistoryDAO;
-	@Autowired
-	SampleDAO sampleDAO;
-	@Autowired
-	StatusOfSampleDAO statusOfSampleDAO;
-	@Autowired
-	DictionaryDAO dictionaryDAO;
-	@Autowired
-	ObservationHistoryTypeDAO observationTypeDAO;
-	@Autowired
-	AnalysisDAO analysisDAO;
-	@Autowired
-	SampleHumanDAO sampleHumanDAO;
+	private String orderRecordStatusID;
+	private String patientRecordStatusID;
 
-	private static boolean mapsSet = false;
+	private boolean mapsSet = false;
+
+	@Autowired
+	ObservationHistoryService observationHistoryService;
+	@Autowired
+	SampleService sampleService;
+	@Autowired
+	StatusOfSampleService statusOfSampleService;
+	@Autowired
+	DictionaryService dictionaryService;
+	@Autowired
+	ObservationHistoryTypeService observationTypeService;
+	@Autowired
+	AnalysisService analysisService;
+	@Autowired
+	SampleHumanService sampleHumanService;
 
 	@PostConstruct
 	public void registerInstance() {
@@ -226,7 +227,7 @@ public class StatusService {
 		Sample sample = new Sample();
 		sample.setId(sampleId);
 
-		sampleDAO.getData(sample);
+		sampleService.getData(sample);
 
 		return buildStatusSet(sample);
 	}
@@ -237,7 +238,7 @@ public class StatusService {
 			return new StatusSet();
 		}
 
-		Sample sample = sampleDAO.getSampleByAccessionNumber(accessionNumber);
+		Sample sample = sampleService.getSampleByAccessionNumber(accessionNumber);
 
 		return buildStatusSet(sample);
 	}
@@ -258,7 +259,7 @@ public class StatusService {
 			return;
 		}
 
-		List<ObservationHistory> observationList = observationHistoryDAO.getAll(patient, sample);
+		List<ObservationHistory> observationList = observationHistoryService.getAll(patient, sample);
 
 		ObservationHistory sampleRecord = null;
 		ObservationHistory patientRecord = null;
@@ -280,7 +281,7 @@ public class StatusService {
 		}
 	}
 
-	@Transactional 
+	@Transactional
 	private void insertOrUpdateStatus(Sample sample, Patient patient, RecordStatus status, String sysUserId,
 			ObservationHistory record, String historyTypeId) {
 
@@ -292,15 +293,15 @@ public class StatusService {
 			record.setSysUserId(sysUserId);
 			record.setValue(getDictionaryID(status));
 			record.setValueType(ValueType.DICTIONARY);
-			observationHistoryDAO.insertData(record);
+			observationHistoryService.insertData(record);
 		} else {
 			record.setSysUserId(sysUserId);
 			record.setValue(getDictionaryID(status));
-			observationHistoryDAO.updateData(record);
+			observationHistoryService.updateData(record);
 		}
 	}
 
-	@Transactional 
+	@Transactional
 	public void deleteRecordStatus(Sample sample, Patient patient, String sysUserId) {
 		insureMapsAreBuilt();
 
@@ -308,7 +309,7 @@ public class StatusService {
 			return;
 		}
 
-		List<ObservationHistory> observations = observationHistoryDAO.getAll(patient, sample);
+		List<ObservationHistory> observations = observationHistoryService.getAll(patient, sample);
 
 		List<ObservationHistory> records = new ArrayList<>();
 
@@ -320,7 +321,7 @@ public class StatusService {
 			}
 		}
 
-		observationHistoryDAO.deleteAll(records);
+		observationHistoryService.deleteAll(records);
 	}
 
 	public String getStatusNameFromId(String id) {
@@ -372,7 +373,7 @@ public class StatusService {
 	@Transactional(readOnly = true)
 	private void buildStatusToIdMaps() {
 
-		List<StatusOfSample> statusList = statusOfSampleDAO.getAllStatusOfSamples();
+		List<StatusOfSample> statusList = statusOfSampleService.getAllStatusOfSamples();
 
 		// sorry about this but it is only done once and until Java 7 we have to
 		// use if..else
@@ -388,7 +389,8 @@ public class StatusService {
 			}
 		}
 
-		List<Dictionary> dictionaryList = dictionaryDAO.getDictionaryEntrysByCategoryNameLocalizedSort("REC_STATUS");
+		List<Dictionary> dictionaryList = dictionaryService
+				.getDictionaryEntrysByCategoryNameLocalizedSort("REC_STATUS");
 
 		for (Dictionary dictionary : dictionaryList) {
 			addToRecordMap(dictionary);
@@ -485,7 +487,7 @@ public class StatusService {
 
 	@Transactional(readOnly = true)
 	private void getObservationHistoryTypeIDs() {
-		List<ObservationHistoryType> obsrvationTypeList = observationTypeDAO.getAll();
+		List<ObservationHistoryType> obsrvationTypeList = observationTypeService.getAll();
 
 		for (ObservationHistoryType observationType : obsrvationTypeList) {
 			if ("SampleRecordStatus".equals(observationType.getTypeName())) {
@@ -515,7 +517,7 @@ public class StatusService {
 
 	@Transactional(readOnly = true)
 	private void setAnalysisStatus(StatusSet statusSet, Sample sample) {
-		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleId(sample.getId());
+		List<Analysis> analysisList = analysisService.getAnalysesBySampleId(sample.getId());
 
 		Map<Analysis, AnalysisStatus> analysisStatusMap = new HashMap<>();
 
@@ -531,7 +533,7 @@ public class StatusService {
 		if ("H".equals(sample.getDomain())) {
 			SampleHuman sampleHuman = new SampleHuman();
 			sampleHuman.setSampleId(sample.getId());
-			sampleHumanDAO.getDataBySample(sampleHuman);
+			sampleHumanService.getDataBySample(sampleHuman);
 
 			String patientId = sampleHuman.getPatientId();
 
@@ -542,7 +544,7 @@ public class StatusService {
 				Patient patient = new Patient();
 				patient.setId(patientId);
 
-				List<ObservationHistory> observations = observationHistoryDAO.getAll(patient, sample);
+				List<ObservationHistory> observations = observationHistoryService.getAll(patient, sample);
 
 				for (ObservationHistory observation : observations) {
 					if (observation.getObservationHistoryTypeId().equals(orderRecordStatusID)) {

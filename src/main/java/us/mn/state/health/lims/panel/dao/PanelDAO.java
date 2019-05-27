@@ -65,8 +65,11 @@ public interface PanelDAO extends BaseDAO<Panel> {
 
 	public Panel getPanelById(String id) throws LIMSRuntimeException;
 
-	@Override
-	String insert(Panel panel) throws LIMSRuntimeException;
+	public boolean duplicatePanelExists(Panel panel);
+
+	public boolean duplicatePanelDescriptionExists(Panel panel);
+
+	public void clearIDMaps();
 
 	public boolean duplicatePanelExists(Panel panel);
 

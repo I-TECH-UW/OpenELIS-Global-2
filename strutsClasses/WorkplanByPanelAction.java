@@ -97,7 +97,7 @@ public class WorkplanByPanelAction extends BaseWorkplanAction {
 		}
 
 		PropertyUtils.setProperty(dynaForm, "workplanType", "panel");
-		PropertyUtils.setProperty(dynaForm, "searchTypes", DisplayListService.getList( DisplayListService.ListType.PANELS ));
+		PropertyUtils.setProperty(dynaForm, "searchTypes", DisplayListService.getInstance().getList( DisplayListService.ListType.PANELS ));
 		PropertyUtils.setProperty(dynaForm, "searchLabel", StringUtil.getMessageForKey("workplan.panel.types"));
 		PropertyUtils.setProperty(dynaForm, "searchAction", "WorkPlanByPanel.do");
 

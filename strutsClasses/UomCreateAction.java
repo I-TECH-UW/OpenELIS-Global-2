@@ -26,8 +26,8 @@ public class UomCreateAction extends BaseAction {
     @Override
     protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ((DynaValidatorForm)form).initialize(mapping);
-        PropertyUtils.setProperty(form, "existingUomList", DisplayListService.getList(DisplayListService.ListType.UNIT_OF_MEASURE));
-        PropertyUtils.setProperty(form, "inactiveUomList", DisplayListService.getList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE));
+        PropertyUtils.setProperty(form, "existingUomList", DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE));
+        PropertyUtils.setProperty(form, "inactiveUomList", DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE));
         List<UnitOfMeasure> uoms = UnitOfMeasureServiceImpl.getAllUnitOfMeasures();
         PropertyUtils.setProperty(form, "existingEnglishNames", getExistingUomNames(uoms, ConfigurationProperties.LOCALE.ENGLISH));
         PropertyUtils.setProperty(form, "existingFrenchNames", getExistingUomNames(uoms, ConfigurationProperties.LOCALE.FRENCH));

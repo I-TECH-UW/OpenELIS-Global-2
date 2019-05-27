@@ -65,11 +65,11 @@ public class TestActivationController extends BaseController {
 		ArrayList<TestActivationBean> testList = new ArrayList<>();
 
 		if (refresh) {
-			DisplayListService.refreshList(active ? DisplayListService.ListType.SAMPLE_TYPE_ACTIVE
+			DisplayListService.getInstance().refreshList(active ? DisplayListService.ListType.SAMPLE_TYPE_ACTIVE
 					: DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
 		}
 
-		List<IdValuePair> sampleTypeList = DisplayListService
+		List<IdValuePair> sampleTypeList = DisplayListService.getInstance()
 				.getList(active ? DisplayListService.ListType.SAMPLE_TYPE_ACTIVE
 						: DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
 

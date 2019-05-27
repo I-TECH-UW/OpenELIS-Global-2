@@ -62,9 +62,9 @@ public class PatientResultsAction extends BaseAction {
 		DynaActionForm dynaForm = (DynaActionForm) form;
 		PropertyUtils.setProperty(dynaForm, "displayTestKit", Boolean.FALSE);
 		PropertyUtils.setProperty(dynaForm, "referralReasons",
-				DisplayListService.getList(DisplayListService.ListType.REFERRAL_REASONS));
+				DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
 		PropertyUtils.setProperty(dynaForm, "rejectReasons",
-				DisplayListService.getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+				DisplayListService.getInstance().getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 		PatientSearch patientSearch = new PatientSearch();
 		patientSearch.setLoadFromServerWithPatient(true);
 		patientSearch.setSelectedPatientActionButtonText(StringUtil.getMessageForKey("resultsentry.patient.search"));

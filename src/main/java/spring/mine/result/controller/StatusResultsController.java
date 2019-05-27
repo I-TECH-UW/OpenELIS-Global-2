@@ -74,9 +74,9 @@ public class StatusResultsController extends BaseController {
 		String newRequest = request.getParameter("blank");
 
 		PropertyUtils.setProperty(form, "referralReasons",
-				DisplayListService.getList(DisplayListService.ListType.REFERRAL_REASONS));
+				DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
 		PropertyUtils.setProperty(form, "rejectReasons",
-				DisplayListService.getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+				DisplayListService.getInstance().getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
 		ResultsPaging paging = new ResultsPaging();
 
@@ -152,7 +152,7 @@ public class StatusResultsController extends BaseController {
 
 		PropertyUtils.setProperty(form, "analysisStatusSelections", analysisStatusList);
 		PropertyUtils.setProperty(form, "testSelections",
-				DisplayListService.getListWithLeadingBlank(DisplayListService.ListType.ALL_TESTS));
+				DisplayListService.getInstance().getListWithLeadingBlank(DisplayListService.ListType.ALL_TESTS));
 
 		List<DropPair> sampleStatusList = getSampleStatusTypes();
 		PropertyUtils.setProperty(form, "sampleStatusSelections", sampleStatusList);

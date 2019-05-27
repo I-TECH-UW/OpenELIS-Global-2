@@ -49,7 +49,7 @@ public class SampleTypeOrderController extends BaseController {
 	private void setupDisplayItems(SampleTypeOrderForm form) {
 		try {
 			PropertyUtils.setProperty(form, "sampleTypeList",
-					DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE));
+					DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE));
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
@@ -98,8 +98,8 @@ public class SampleTypeOrderController extends BaseController {
 			HibernateUtil.closeSession();
 		}
 
-		DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE);
-		DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}

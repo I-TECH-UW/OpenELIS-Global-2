@@ -251,7 +251,7 @@ public class NonConformityUpdateWorker {
 
 			if (insertNewOrganizaiton) {
 				orgDAO.insertData(newOrganization);
-				orgOrgTypeDAO.linkOrganizationAndType(newOrganization, TableIdService.REFERRING_ORG_TYPE_ID);
+				orgOrgTypeDAO.linkOrganizationAndType(newOrganization, TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
 			}
 
 			if (insertSampleRequester) {
@@ -437,14 +437,14 @@ public class NonConformityUpdateWorker {
 			}
 
 			subjectNoPatientIdentity = patientIdentityDAO.getPatitentIdentityForPatientAndType(patient.getId(),
-					TableIdService.PATIENT_SUBJECT_IDENTITY);
+					TableIdService.getInstance().PATIENT_SUBJECT_IDENTITY);
 			if (subjectNoPatientIdentity == null) {
 				subjectNoPatientIdentity = new PatientIdentity();
 			}
 
 			subjectNoPatientIdentity.setSysUserId(webData.getCurrentSysUserId());
 			subjectNoPatientIdentity.setIdentityData(webData.getSubjectNo());
-			subjectNoPatientIdentity.setIdentityTypeId(TableIdService.PATIENT_SUBJECT_IDENTITY);
+			subjectNoPatientIdentity.setIdentityTypeId(TableIdService.getInstance().PATIENT_SUBJECT_IDENTITY);
 		}
 
 		if (webData.getNewSTNumber() && !GenericValidator.isBlankOrNull(webData.getSTNumber())) {
@@ -453,14 +453,14 @@ public class NonConformityUpdateWorker {
 			}
 
 			STNoPatientIdentity = patientIdentityDAO.getPatitentIdentityForPatientAndType(patient.getId(),
-					TableIdService.PATIENT_ST_IDENTITY);
+					TableIdService.getInstance().PATIENT_ST_IDENTITY);
 			if (STNoPatientIdentity == null) {
 				STNoPatientIdentity = new PatientIdentity();
 			}
 
 			STNoPatientIdentity.setSysUserId(webData.getCurrentSysUserId());
 			STNoPatientIdentity.setIdentityData(webData.getSTNumber());
-			STNoPatientIdentity.setIdentityTypeId(TableIdService.PATIENT_ST_IDENTITY);
+			STNoPatientIdentity.setIdentityTypeId(TableIdService.getInstance().PATIENT_ST_IDENTITY);
 		}
 
 		if (patient == null || GenericValidator.isBlankOrNull(patient.getId())) {
@@ -522,14 +522,14 @@ public class NonConformityUpdateWorker {
 			subjectNoPatientIdentity = new PatientIdentity();
 			subjectNoPatientIdentity.setSysUserId(webData.getCurrentSysUserId());
 			subjectNoPatientIdentity.setIdentityData(webData.getSubjectNo());
-			subjectNoPatientIdentity.setIdentityTypeId(TableIdService.PATIENT_SUBJECT_IDENTITY);
+			subjectNoPatientIdentity.setIdentityTypeId(TableIdService.getInstance().PATIENT_SUBJECT_IDENTITY);
 		}
 
 		if (webData.getNewSTNumber() && !GenericValidator.isBlankOrNull(webData.getSTNumber())) {
 			STNoPatientIdentity = new PatientIdentity();
 			STNoPatientIdentity.setSysUserId(webData.getCurrentSysUserId());
 			STNoPatientIdentity.setIdentityData(webData.getSTNumber());
-			STNoPatientIdentity.setIdentityTypeId(TableIdService.PATIENT_ST_IDENTITY);
+			STNoPatientIdentity.setIdentityTypeId(TableIdService.getInstance().PATIENT_ST_IDENTITY);
 		}
 	}
 
@@ -548,7 +548,7 @@ public class NonConformityUpdateWorker {
 			doctorObservation.setValue(doctor);
 			doctorObservation.setValueType(ValueType.LITERAL);
 			doctorObservation.setSysUserId(webData.getCurrentSysUserId());
-			doctorObservation.setObservationHistoryTypeId(TableIdService.DOCTOR_OBSERVATION_TYPE_ID);
+			doctorObservation.setObservationHistoryTypeId(TableIdService.getInstance().DOCTOR_OBSERVATION_TYPE_ID);
 		}
 	}
 
@@ -578,9 +578,9 @@ public class NonConformityUpdateWorker {
 			sampleHuman.setSysUserId(webData.getCurrentSysUserId());
 			insertProvider = true;
 
-			addAddressPart(webData.getRequesterCommune(), TableIdService.ADDRESS_COMMUNE_ID, addressPartList, "T");
-			addAddressPart(webData.getRequesterVillage(), TableIdService.ADDRESS_VILLAGE_ID, addressPartList, "T");
-			addAddressPart(webData.getRequesterDepartment(), TableIdService.ADDRESS_DEPARTMENT_ID, addressPartList,
+			addAddressPart(webData.getRequesterCommune(), TableIdService.getInstance().ADDRESS_COMMUNE_ID, addressPartList, "T");
+			addAddressPart(webData.getRequesterVillage(), TableIdService.getInstance().ADDRESS_VILLAGE_ID, addressPartList, "T");
+			addAddressPart(webData.getRequesterDepartment(), TableIdService.getInstance().ADDRESS_DEPARTMENT_ID, addressPartList,
 					"D");
 		}
 
@@ -625,7 +625,7 @@ public class NonConformityUpdateWorker {
 			if (!insertNewOrganizaiton) {
 				sampleRequester.setRequesterId(service);
 			}
-			sampleRequester.setRequesterTypeId(TableIdService.ORGANIZATION_REQUESTER_TYPE_ID);
+			sampleRequester.setRequesterTypeId(TableIdService.getInstance().ORGANIZATION_REQUESTER_TYPE_ID);
 			sampleRequester.setSysUserId(webData.getCurrentSysUserId());
 			insertSampleRequester = true;
 		} else {
@@ -633,7 +633,7 @@ public class NonConformityUpdateWorker {
 			serviceObservation.setValue(service);
 			serviceObservation.setValueType(ValueType.LITERAL);
 			serviceObservation.setSysUserId(webData.getCurrentSysUserId());
-			serviceObservation.setObservationHistoryTypeId(TableIdService.SERVICE_OBSERVATION_TYPE_ID);
+			serviceObservation.setObservationHistoryTypeId(TableIdService.getInstance().SERVICE_OBSERVATION_TYPE_ID);
 			insertServiceObservation = true;
 		}
 	}

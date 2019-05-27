@@ -7,5 +7,7 @@ import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
 
 public interface OrganizationAddressService extends BaseObjectService<OrganizationAddress> {
 
-	List<OrganizationAddress> getAddressPartsByOrganizationId(String id);
+	String insert(OrganizationAddress organizationAddress);
+
+	List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId);
 }

@@ -26,7 +26,7 @@ public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole> impleme
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<String> getRoleIdsForUser(String userId) {
 		// doesn't work for composite-ids
 //		List<UserRole> userRoles = baseObjectDAO.getAllMatching("compoundId.systemUserId", userId);
@@ -39,8 +39,56 @@ public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole> impleme
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public boolean userInRole(String sysUserId, Collection<String> ableToCancelRoleNames) {
 		return baseObjectDAO.userInRole(sysUserId, ableToCancelRoleNames);
+	}
+
+	@Override
+	public void getData(UserRole userRole) {
+        getBaseObjectDAO().getData(userRole);
+
+	}
+
+	@Override
+	public void deleteData(List<UserRole> userRoles) {
+        getBaseObjectDAO().deleteData(userRoles);
+
+	}
+
+	@Override
+	public void updateData(UserRole userRole) {
+        getBaseObjectDAO().updateData(userRole);
+
+	}
+
+	@Override
+	public boolean insertData(UserRole userRole) {
+        return getBaseObjectDAO().insertData(userRole);
+	}
+
+	@Override
+	public List getPageOfUserRoles(int startingRecNo) {
+        return getBaseObjectDAO().getPageOfUserRoles(startingRecNo);
+	}
+
+	@Override
+	public List getNextUserRoleRecord(String id) {
+        return getBaseObjectDAO().getNextUserRoleRecord(id);
+	}
+
+	@Override
+	public List getPreviousUserRoleRecord(String id) {
+        return getBaseObjectDAO().getPreviousUserRoleRecord(id);
+	}
+
+	@Override
+	public boolean userInRole(String userId, String roleName) {
+        return getBaseObjectDAO().userInRole(userId,roleName);
+	}
+
+	@Override
+	public List getAllUserRoles() {
+        return getBaseObjectDAO().getAllUserRoles();
 	}
 }

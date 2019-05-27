@@ -37,7 +37,7 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization>
 			return dbLabel;
 		}
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public Localization get(String id) {
@@ -72,6 +72,18 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization>
 	@Override
 	protected LocalizationDAO getBaseObjectDAO() {
 		return localizationDAO;
+	}
+
+	public static String getLocalizationValueByLocal(ConfigurationProperties.LOCALE locale, Localization localization) {
+		if (locale == ConfigurationProperties.LOCALE.FRENCH) {
+			return localization.getFrench();
+		} else {
+			return localization.getEnglish();
+		}
+	}
+
+	public static String getCurrentLocale() {
+		return LANGUAGE_LOCALE;
 	}
 
 	@Override
@@ -156,13 +168,19 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization>
 		return localization;
 	}
 
-	public static String getLocalizationValueByLocal(ConfigurationProperties.LOCALE locale, Localization localization) {
-		if (locale == ConfigurationProperties.LOCALE.FRENCH) {
-			return localization.getFrench();
-		} else {
-			return localization.getEnglish();
-		}
+	@Override
+	public void updateData(Localization localization) {
+		getBaseObjectDAO().updateData(localization);
+
 	}
 
-	
+	@Override
+	public Localization getLocalizationById(String id) {
+		return getBaseObjectDAO().getLocalizationById(id);
+	}
+
+	@Override
+	public String insert(Localization localization) {
+		return (String) super.insert(localization);
+	}
 }

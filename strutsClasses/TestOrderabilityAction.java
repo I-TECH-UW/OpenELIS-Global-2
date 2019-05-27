@@ -48,7 +48,7 @@ public class TestOrderabilityAction extends BaseAction {
     private List<TestActivationBean> createTestList() {
         ArrayList<TestActivationBean> testList = new ArrayList<TestActivationBean>();
 
-        List<IdValuePair> sampleTypeList = DisplayListService.getList( DisplayListService.ListType.SAMPLE_TYPE_ACTIVE );
+        List<IdValuePair> sampleTypeList = DisplayListService.getInstance().getList( DisplayListService.ListType.SAMPLE_TYPE_ACTIVE );
 
         for( IdValuePair pair : sampleTypeList){
             TestActivationBean bean = new TestActivationBean();

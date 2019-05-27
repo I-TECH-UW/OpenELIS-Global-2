@@ -372,7 +372,7 @@ public class ResultsLogbookUpdateAction extends BaseAction {
 
             if (testResultItem.isShadowRejected()) {
                 String rejectedReasonId = testResultItem.getRejectReasonId();
-                for (IdValuePair rejectReason : DisplayListService.getList(ListType.REJECTION_REASONS)) {
+                for (IdValuePair rejectReason : DisplayListService.getInstance().getList(ListType.REJECTION_REASONS)) {
                     if (rejectedReasonId.equals(rejectReason.getId())) {
                         actionDataSet.addToNoteList( noteService.createSavableNote( NoteType.REJECTION_REASON, rejectReason.getValue(), RESULT_SUBJECT, currentUserId) );
                         break;

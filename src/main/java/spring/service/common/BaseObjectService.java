@@ -1,5 +1,6 @@
 package spring.service.common;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -201,13 +202,13 @@ public interface BaseObjectService<T extends BaseObject> {
 	 * @param baseObject the data to insert
 	 * @return the id of the inserted baseObject
 	 */
-	String insert(T baseObject);
+	Serializable insert(T baseObject);
 
 	/**
 	 * @param baseObjects the data to insert
 	 * @return the ids of the inserted baseObjects
 	 */
-	List<String> insertAll(List<T> baseObjects);
+	List<Serializable> insertAll(List<T> baseObjects);
 
 	/**
 	 * @param baseObject the new data to update the database with. Will insert if it

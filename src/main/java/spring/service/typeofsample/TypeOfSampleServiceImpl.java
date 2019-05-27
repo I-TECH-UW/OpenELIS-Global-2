@@ -19,6 +19,7 @@ import us.mn.state.health.lims.test.dao.TestDAO;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestComparator;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
+import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO.SampleDomain;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSamplePanelDAO;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
@@ -70,7 +71,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample>
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public TypeOfSample getTypeOfSampleByDescriptionAndDomain(TypeOfSample typeOfSample, boolean ignoreCase) {
 		return baseObjectDAO.getTypeOfSampleByDescriptionAndDomain(typeOfSample, ignoreCase);
 	}
@@ -134,8 +135,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample>
 
 		for (TypeOfSampleTest typeTest : typeOfSampleTestList) {
 			String testId = typeTest.getTestId();
-			TypeOfSample typeOfSample = typeOfSampleIdtoTypeOfSampleMap
-					.get(typeOfSampleDAO.getTypeOfSampleById(typeTest.getTypeOfSampleId()).getId());
+			TypeOfSample typeOfSample = typeOfSampleIdtoTypeOfSampleMap.get(typeOfSampleDAO.getTypeOfSampleById(typeTest.getTypeOfSampleId()).getId());
 			testIdToTypeOfSampleMap.put(testId, typeOfSample);
 		}
 	}
@@ -217,12 +217,10 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample>
 			List<Panel> panels = panelDAO.getAllActivePanels();
 
 			for (Panel panel : panels) {
-				List<TypeOfSamplePanel> typeOfSamplePanels = typeOfSamplePanelDAO
-						.getTypeOfSamplePanelsForPanel(panel.getId());
+				List<TypeOfSamplePanel> typeOfSamplePanels = typeOfSamplePanelDAO.getTypeOfSamplePanelsForPanel(panel.getId());
 				List<TypeOfSample> typeOfSampleList = new ArrayList<>();
 				for (TypeOfSamplePanel typeOfSamplePanel : typeOfSamplePanels) {
-					typeOfSampleList.add(typeOfSampleIdtoTypeOfSampleMap
-							.get(typeOfSampleDAO.getTypeOfSampleById(typeOfSamplePanel.getTypeOfSampleId()).getId()));
+					typeOfSampleList.add(typeOfSampleIdtoTypeOfSampleMap.get(typeOfSampleDAO.getTypeOfSampleById(typeOfSamplePanel.getTypeOfSampleId()).getId()));
 				}
 				panelIdToTypeOfSampleMap.put(panel.getId(), typeOfSampleList);
 			}
@@ -231,8 +229,91 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample>
 		return panelIdToTypeOfSampleMap.get(id);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static List<TypeOfSample> getAllTypeOfSamples() {
+	@Override
+	public void getData(TypeOfSample typeOfSample) {
+        getBaseObjectDAO().getData(typeOfSample);
+
+	}
+
+	@Override
+	public void deleteData(List typeOfSamples) {
+        getBaseObjectDAO().deleteData(typeOfSamples);
+
+	}
+
+	@Override
+	public void updateData(TypeOfSample typeOfSample) {
+        getBaseObjectDAO().updateData(typeOfSample);
+
+	}
+
+	@Override
+	public boolean insertData(TypeOfSample typeOfSample) {
+        return getBaseObjectDAO().insertData(typeOfSample);
+	}
+
+	@Override
+	public String getNameForTypeOfSampleId(String id) {
+        return getBaseObjectDAO().getNameForTypeOfSampleId(id);
+	}
+
+	@Override
+	public List getAllTypeOfSamples() {
 		return typeOfSampleDAO.getAllTypeOfSamples();
+	}
+
+	@Override
+	public List<TypeOfSample> getAllTypeOfSamplesSortOrdered() {
+        return getBaseObjectDAO().getAllTypeOfSamplesSortOrdered();
+	}
+
+	@Override
+	public List getTypesForDomain(SampleDomain domain) {
+        return getBaseObjectDAO().getTypesForDomain(domain);
+	}
+
+	@Override
+	public List getPreviousTypeOfSampleRecord(String id) {
+        return getBaseObjectDAO().getPreviousTypeOfSampleRecord(id);
+	}
+
+	@Override
+	public Integer getTotalTypeOfSampleCount() {
+        return getBaseObjectDAO().getTotalTypeOfSampleCount();
+	}
+
+	@Override
+	public List getNextTypeOfSampleRecord(String id) {
+        return getBaseObjectDAO().getNextTypeOfSampleRecord(id);
+	}
+
+	@Override
+	public TypeOfSample getTypeOfSampleById(String typeOfSampleId) {
+        return getBaseObjectDAO().getTypeOfSampleById(typeOfSampleId);
+	}
+
+	@Override
+	public TypeOfSample getSampleTypeFromTest(Test test) {
+        return getBaseObjectDAO().getSampleTypeFromTest(test);
+	}
+
+	@Override
+	public List<TypeOfSample> getTypesForDomainBySortOrder(SampleDomain human) {
+        return getBaseObjectDAO().getTypesForDomainBySortOrder(human);
+	}
+
+	@Override
+	public List getPageOfTypeOfSamples(int startingRecNo) {
+        return getBaseObjectDAO().getPageOfTypeOfSamples(startingRecNo);
+	}
+
+	@Override
+	public List getTypes(String filter, String domain) {
+        return getBaseObjectDAO().getTypes(filter,domain);
+	}
+
+	@Override
+	public TypeOfSample getTypeOfSampleByLocalAbbrevAndDomain(String localAbbrev, String domain) {
+        return getBaseObjectDAO().getTypeOfSampleByLocalAbbrevAndDomain(localAbbrev,domain);
 	}
 }

@@ -125,7 +125,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 	private void setDisplayLists(SampleEntryByProjectForm form) {
 		Map<String, List<Dictionary>> formListsMapOfLists = new HashMap<>();
 		List<Dictionary> listOfDictionary = new ArrayList<>();
-		List<IdValuePair> genders = DisplayListService.getList(ListType.GENDERS);
+		List<IdValuePair> genders = DisplayListService.getInstance().getList(ListType.GENDERS);
 
 		for (IdValuePair i : genders) {
 			Dictionary dictionary = new Dictionary();

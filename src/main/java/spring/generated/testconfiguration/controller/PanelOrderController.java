@@ -55,9 +55,9 @@ public class PanelOrderController extends BaseController {
 	protected void setupDisplayItems(PanelOrderForm form) {
 		try {
 			PropertyUtils.setProperty(form, "panelList",
-					DisplayListService.getList(DisplayListService.ListType.PANELS));
+					DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
 			PropertyUtils.setProperty(form, "existingSampleTypeList",
-					DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+					DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -73,7 +73,7 @@ public class PanelOrderController extends BaseController {
 		List<SampleTypePanel> sampleTypePanelsExists = new ArrayList<>();
 		List<SampleTypePanel> sampleTypePanelsInactive = new ArrayList<>();
 
-		for (IdValuePair typeOfSample : DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE)) {
+		for (IdValuePair typeOfSample : DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE)) {
 			SampleTypePanel sampleTypePanel = new SampleTypePanel(typeOfSample.getValue());
 			sampleTypePanel.setPanels(existingSampleTypePanelMap.get(typeOfSample.getValue()));
 			if (sampleTypePanel.getPanels() != null && sampleTypePanel.getPanels().size() > 0) {
@@ -139,9 +139,9 @@ public class PanelOrderController extends BaseController {
 //			HibernateUtil.closeSession();
 //		}
 
-		DisplayListService.refreshList(DisplayListService.ListType.PANELS);
-		DisplayListService.refreshList(DisplayListService.ListType.PANELS_INACTIVE);
-		DisplayListService.refreshList(DisplayListService.ListType.PANELS_ACTIVE);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS_INACTIVE);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS_ACTIVE);
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}

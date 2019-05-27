@@ -50,7 +50,7 @@ public class UomRenameUpdate extends BaseAction{
         updateUnitOfMeasureNames(unitOfMeasureId, nameEnglish, nameFrench, userId);
 
         //Refresh testSection names
-        DisplayListService.getFreshList( DisplayListService.ListType.UNIT_OF_MEASURE );
+        DisplayListService.getInstance().getFreshList( DisplayListService.ListType.UNIT_OF_MEASURE );
         return mapping.findForward( forward );
     }
 

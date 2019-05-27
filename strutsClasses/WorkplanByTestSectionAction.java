@@ -81,8 +81,8 @@ public class WorkplanByTestSectionAction extends BaseWorkplanAction {
 		
 		// load testSections for drop down
 		TestSectionDAO testSectionDAO = new TestSectionDAOImpl();
-		PropertyUtils.setProperty(dynaForm, "testSections", DisplayListService.getList(ListType.TEST_SECTION));
-		PropertyUtils.setProperty(dynaForm, "testSectionsByName", DisplayListService.getList(ListType.TEST_SECTION_BY_NAME));
+		PropertyUtils.setProperty(dynaForm, "testSections", DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+		PropertyUtils.setProperty(dynaForm, "testSectionsByName", DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 		
 		TestSection ts = null;
 		

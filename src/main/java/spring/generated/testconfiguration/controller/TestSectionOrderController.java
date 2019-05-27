@@ -49,7 +49,7 @@ public class TestSectionOrderController extends BaseController {
 	private void setupDisplayItems(TestSectionOrderForm form) {
 		try {
 			PropertyUtils.setProperty(form, "testSectionList",
-					DisplayListService.getList(DisplayListService.ListType.TEST_SECTION));
+					DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
@@ -120,8 +120,8 @@ public class TestSectionOrderController extends BaseController {
 			HibernateUtil.closeSession();
 		}
 
-		DisplayListService.refreshList(DisplayListService.ListType.TEST_SECTION);
-		DisplayListService.refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}

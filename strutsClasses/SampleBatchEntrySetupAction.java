@@ -34,9 +34,9 @@ public class SampleBatchEntrySetupAction extends BaseSampleEntryAction {
     PropertyUtils.setProperty(dynaForm, "sampleOrderItems",
             sampleOrderService.getSampleOrderItem());
     PropertyUtils.setProperty(dynaForm, "sampleTypes",
-            DisplayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
+            DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
     PropertyUtils.setProperty(dynaForm, "testSectionList",
-            DisplayListService.getList(ListType.TEST_SECTION));
+            DisplayListService.getInstance().getList(ListType.TEST_SECTION));
     PropertyUtils.setProperty(dynaForm, "currentDate", DateUtil.getCurrentDateAsText());
     PropertyUtils.setProperty(dynaForm, "currentTime", DateUtil.getCurrentTimeAsText());
     PropertyUtils.setProperty(dynaForm, "sampleOrderItems.receivedTime",
@@ -48,7 +48,7 @@ public class SampleBatchEntrySetupAction extends BaseSampleEntryAction {
 
     if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
       PropertyUtils.setProperty(dynaForm, "initialSampleConditionList",
-              DisplayListService.getList(ListType.INITIAL_SAMPLE_CONDITION));
+              DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
     }
 
     return mapping.findForward(forward);

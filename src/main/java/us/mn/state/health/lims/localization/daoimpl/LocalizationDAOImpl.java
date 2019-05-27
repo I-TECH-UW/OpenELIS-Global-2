@@ -16,6 +16,8 @@
 
 package us.mn.state.health.lims.localization.daoimpl;
 
+import java.io.Serializable;
+
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +34,7 @@ import us.mn.state.health.lims.localization.valueholder.Localization;
 /**
  */
 @Component
-@Transactional 
+@Transactional
 public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements LocalizationDAO {
 
 	public LocalizationDAOImpl() {
@@ -42,7 +44,7 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements Lo
 	@Override
 	public Localization getLocalizationById(String id) throws LIMSRuntimeException {
 		try {
-			Localization localization = (Localization) HibernateUtil.getSession().get(Localization.class, id);
+			Localization localization = HibernateUtil.getSession().get(Localization.class, id);
 			// closeSession(); // CSL remove old
 			return localization;
 		} catch (HibernateException e) {
@@ -74,26 +76,26 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements Lo
 		}
 	}
 
-//	@Override
-//	public String insert(Localization localization) throws LIMSRuntimeException {
-//		try {
-//			String id = (String) HibernateUtil.getSession().save(localization);
-//			localization.setId(id);
-//
-//			new AuditTrailDAOImpl().saveNewHistory(localization, localization.getSysUserId(), "LOCALIZATION");
-//
-//			// HibernateUtil.getSession().flush(); // CSL remove old
-//			// HibernateUtil.getSession().clear(); // CSL remove old
-//			return id;
-//		} catch (Exception e) {
-//			handleException(e, "insert");
-//		}
-//		return null;
-//	}
+	@Override
+    public Serializable insert(Localization localization) throws LIMSRuntimeException {
+        try {
+            String id = (String) HibernateUtil.getSession().save(localization);
+            localization.setId(id);
+
+            new AuditTrailDAOImpl().saveNewHistory(localization, localization.getSysUserId(), "LOCALIZATION");
+
+            // HibernateUtil.getSession().flush(); // CSL remove old
+            // HibernateUtil.getSession().clear(); // CSL remove old
+            return id;
+        } catch (Exception e) {
+            handleException(e, "insert");
+        }
+        return null;
+    }
 
 	public Localization readLocalization(String idString) {
 		try {
-			Localization localization = (Localization) HibernateUtil.getSession().get(Localization.class, idString);
+			Localization localization = HibernateUtil.getSession().get(Localization.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			return localization;

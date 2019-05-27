@@ -73,16 +73,16 @@ public class ResultsLogbookEntryAction extends ResultsLogbookBaseAction {
 		PropertyUtils.setProperty(dynaForm, "currentDate", currentDate);
 		PropertyUtils.setProperty(dynaForm, "logbookType", request.getParameter("type"));
 		PropertyUtils.setProperty(dynaForm, "referralReasons",
-				DisplayListService.getList(DisplayListService.ListType.REFERRAL_REASONS));
+				DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
 		PropertyUtils.setProperty(dynaForm, "rejectReasons",
-				DisplayListService.getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+				DisplayListService.getInstance().getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
 		// load testSections for drop down
 		TestSectionDAO testSectionDAO = new TestSectionDAOImpl();
-		List<IdValuePair> testSections = DisplayListService.getList(ListType.TEST_SECTION);
+		List<IdValuePair> testSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION);
 		PropertyUtils.setProperty(dynaForm, "testSections", testSections);
 		PropertyUtils.setProperty(dynaForm, "testSectionsByName",
-				DisplayListService.getList(ListType.TEST_SECTION_BY_NAME));
+				DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
 		if (!GenericValidator.isBlankOrNull(testSectionId)) {
 			ts = testSectionDAO.getTestSectionById(testSectionId);

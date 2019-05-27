@@ -16,104 +16,117 @@
 
 package us.mn.state.health.lims.common.services;
 
-import us.mn.state.health.lims.address.dao.AddressPartDAO;
-import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import spring.service.address.AddressPartService;
+import spring.service.observationhistorytype.ObservationHistoryTypeService;
+import spring.service.organization.OrganizationTypeService;
+import spring.service.patientidentitytype.PatientIdentityTypeService;
+import spring.service.requester.RequesterTypeService;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
-import us.mn.state.health.lims.observationhistorytype.dao.ObservationHistoryTypeDAO;
-import us.mn.state.health.lims.observationhistorytype.daoimpl.ObservationHistoryTypeDAOImpl;
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationTypeDAOImpl;
 import us.mn.state.health.lims.organization.valueholder.OrganizationType;
-import us.mn.state.health.lims.patientidentitytype.daoimpl.PatientIdentityTypeDAOImpl;
 import us.mn.state.health.lims.patientidentitytype.valueholder.PatientIdentityType;
-import us.mn.state.health.lims.requester.dao.RequesterTypeDAO;
-import us.mn.state.health.lims.requester.daoimpl.RequesterTypeDAOImpl;
 import us.mn.state.health.lims.requester.valueholder.RequesterType;
 
 /**
  */
-public class TableIdService{
+@Service
+public class TableIdService {
 
-    //address parts
-    public static final String ADDRESS_COMMUNE_ID;
-    public static final String ADDRESS_FAX_ID;
-    public static final String ADDRESS_PHONE_ID;
-    public static final String ADDRESS_STREET_ID;
-    public static final String ADDRESS_VILLAGE_ID;
-    public static final String ADDRESS_DEPARTMENT_ID;
+	private static TableIdService INSTANCE;
 
-    //requester type
-    public static  long ORGANIZATION_REQUESTER_TYPE_ID;
-    public static long PROVIDER_REQUESTER_TYPE_ID;
+	// address parts
+	public String ADDRESS_COMMUNE_ID;
+	public String ADDRESS_FAX_ID;
+	public String ADDRESS_PHONE_ID;
+	public String ADDRESS_STREET_ID;
+	public String ADDRESS_VILLAGE_ID;
+	public String ADDRESS_DEPARTMENT_ID;
 
-    //organization type
-    public static final String REFERRING_ORG_TYPE_ID;
+	// requester type
+	public long ORGANIZATION_REQUESTER_TYPE_ID;
+	public long PROVIDER_REQUESTER_TYPE_ID;
 
-    //Observations types
-    public static String DOCTOR_OBSERVATION_TYPE_ID;
-    public static String SERVICE_OBSERVATION_TYPE_ID;
+	// organization type
+	public String REFERRING_ORG_TYPE_ID;
 
-    //Patient identity
-    public static final String PATIENT_SUBJECT_IDENTITY;
-    public static final String PATIENT_ST_IDENTITY;
+	// Observations types
+	public String DOCTOR_OBSERVATION_TYPE_ID;
+	public String SERVICE_OBSERVATION_TYPE_ID;
 
+	// Patient identity
+	public String PATIENT_SUBJECT_IDENTITY;
+	public String PATIENT_ST_IDENTITY;
 
+	@Autowired
+	private ObservationHistoryTypeService observationHistoryTypeService;
+	@Autowired
+	private RequesterTypeService requesterTypeService;
+	@Autowired
+	private AddressPartService addressPartService;
+	@Autowired
+	private OrganizationTypeService organizationTypeService;
+	@Autowired
+	private PatientIdentityTypeService patientIdentityTypeService;
 
+	@PostConstruct
+	public void registerInstance() {
+		INSTANCE = this;
+	}
 
+	@PostConstruct
+	public void initialize() {
+		RequesterType type = requesterTypeService.getRequesterTypeByName("organization");
+		if (type != null) {
+			ORGANIZATION_REQUESTER_TYPE_ID = Long.parseLong(type.getId());
+		}
+		type = requesterTypeService.getRequesterTypeByName("provider");
+		if (type != null) {
+			PROVIDER_REQUESTER_TYPE_ID = Long.parseLong(type.getId());
+		}
 
+		OrganizationType orgType = organizationTypeService.getOrganizationTypeByName("referring clinic");
+		REFERRING_ORG_TYPE_ID = orgType != null ? orgType.getId() : "";
 
-    private static ObservationHistoryTypeDAO ohtDAO = new ObservationHistoryTypeDAOImpl();
+		AddressPart part = addressPartService.getAddresPartByName("commune");
+		ADDRESS_COMMUNE_ID = part == null ? "" : part.getId();
 
-    static{
-        RequesterTypeDAO requesterTypeDAO = new RequesterTypeDAOImpl();
-        RequesterType type = requesterTypeDAO.getRequesterTypeByName("organization");
-        if (type != null) {
-            ORGANIZATION_REQUESTER_TYPE_ID = Long.parseLong(type.getId());
-        }
-         type = requesterTypeDAO.getRequesterTypeByName("provider");
-        if (type != null) {
-            PROVIDER_REQUESTER_TYPE_ID = Long.parseLong(type.getId());
-        }
+		part = addressPartService.getAddresPartByName("village");
+		ADDRESS_VILLAGE_ID = part == null ? "" : part.getId();
 
+		part = addressPartService.getAddresPartByName("department");
+		ADDRESS_DEPARTMENT_ID = part == null ? "" : part.getId();
 
-        OrganizationType orgType = new OrganizationTypeDAOImpl().getOrganizationTypeByName("referring clinic");
-        REFERRING_ORG_TYPE_ID = orgType != null ? orgType.getId() : "";
+		part = addressPartService.getAddresPartByName("fax");
+		ADDRESS_FAX_ID = part == null ? "" : part.getId();
 
+		part = addressPartService.getAddresPartByName("phone");
+		ADDRESS_PHONE_ID = part == null ? "" : part.getId();
 
-        AddressPartDAO partDAO = new AddressPartDAOImpl();
-        AddressPart part = partDAO.getAddresPartByName("commune");
-        ADDRESS_COMMUNE_ID = part == null ? "" : part.getId();
+		part = addressPartService.getAddresPartByName("street");
+		ADDRESS_STREET_ID = part == null ? "" : part.getId();
 
-        part = partDAO.getAddresPartByName("village");
-        ADDRESS_VILLAGE_ID = part == null ? "" : part.getId();
+		PatientIdentityType patientType = patientIdentityTypeService.getNamedIdentityType("SUBJECT");
+		PATIENT_SUBJECT_IDENTITY = patientType != null ? patientType.getId() : "";
 
-        part = partDAO.getAddresPartByName("department");
-        ADDRESS_DEPARTMENT_ID = part == null ? "" : part.getId();
+		patientType = patientIdentityTypeService.getNamedIdentityType("ST");
+		PATIENT_ST_IDENTITY = patientType != null ? patientType.getId() : "";
 
-        part = partDAO.getAddresPartByName("fax");
-        ADDRESS_FAX_ID  = part == null ? "" : part.getId();
+		DOCTOR_OBSERVATION_TYPE_ID = getOHTypeIdByName("nameOfDoctor");
+		SERVICE_OBSERVATION_TYPE_ID = getOHTypeIdByName("service");
+	}
 
-        part = partDAO.getAddresPartByName("phone");
-        ADDRESS_PHONE_ID  = part == null ? "" : part.getId();
+	public static TableIdService getInstance() {
+		return INSTANCE;
+	}
 
-        part = partDAO.getAddresPartByName("street");
-        ADDRESS_STREET_ID  = part == null ? "" : part.getId();
-
-        PatientIdentityType patientType = new PatientIdentityTypeDAOImpl().getNamedIdentityType("SUBJECT");
-        PATIENT_SUBJECT_IDENTITY = patientType != null ? patientType.getId() : "";
-
-        patientType = new PatientIdentityTypeDAOImpl().getNamedIdentityType("ST");
-        PATIENT_ST_IDENTITY = patientType != null ? patientType.getId() : "";
-
-
-        DOCTOR_OBSERVATION_TYPE_ID = getOHTypeIdByName("nameOfDoctor");
-        SERVICE_OBSERVATION_TYPE_ID = getOHTypeIdByName("service");
-
-    }
-
-    private static final String getOHTypeIdByName(String name){
-        ObservationHistoryType oht = ohtDAO.getByName(name);
-        return (oht == null) ? null : oht.getId();
-    }
+	private String getOHTypeIdByName(String name) {
+		ObservationHistoryType oht = observationHistoryTypeService.getByName(name);
+		return (oht == null) ? null : oht.getId();
+	}
 
 }

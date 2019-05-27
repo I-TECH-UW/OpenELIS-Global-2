@@ -54,7 +54,7 @@ public class PanelTestAssignAction extends BaseAction {
     		panelId = "";
     	}
     	((DynaValidatorForm)form).initialize(mapping);
-        List<IdValuePair> panels = DisplayListService.getList(DisplayListService.ListType.PANELS);
+        List<IdValuePair> panels = DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS);
         
         if (!GenericValidator.isBlankOrNull(panelId)) {
             PanelDAO panelDAO = new PanelDAOImpl();

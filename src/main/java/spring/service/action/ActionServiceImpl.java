@@ -9,14 +9,15 @@ import us.mn.state.health.lims.action.valueholder.Action;
 
 @Service
 public class ActionServiceImpl extends BaseObjectServiceImpl<Action> implements ActionService {
-  @Autowired
-  protected ActionDAO baseObjectDAO;
+	@Autowired
+	protected ActionDAO baseObjectDAO;
 
-  ActionServiceImpl() {
-    super(Action.class);
-  }
+	ActionServiceImpl() {
+		super(Action.class);
+	}
 
-  @Override
-  protected ActionDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected ActionDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }

@@ -9,14 +9,20 @@ import us.mn.state.health.lims.qaevent.valueholder.QaObservationType;
 
 @Service
 public class QaObservationTypeServiceImpl extends BaseObjectServiceImpl<QaObservationType> implements QaObservationTypeService {
-  @Autowired
-  protected QaObservationTypeDAO baseObjectDAO;
+	@Autowired
+	protected QaObservationTypeDAO baseObjectDAO;
 
-  QaObservationTypeServiceImpl() {
-    super(QaObservationType.class);
-  }
+	QaObservationTypeServiceImpl() {
+		super(QaObservationType.class);
+	}
 
-  @Override
-  protected QaObservationTypeDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected QaObservationTypeDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
+
+	@Override
+	public QaObservationType getQaObservationTypeByName(String typeName) {
+        return getBaseObjectDAO().getQaObservationTypeByName(typeName);
+	}
 }

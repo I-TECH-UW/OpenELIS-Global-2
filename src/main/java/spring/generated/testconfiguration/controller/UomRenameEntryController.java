@@ -26,7 +26,7 @@ public class UomRenameEntryController extends BaseController {
 	@RequestMapping(value = "/UomRenameEntry", method = RequestMethod.GET)
 	public ModelAndView showUomRenameEntry(HttpServletRequest request) {
 		UomRenameEntryForm form = new UomRenameEntryForm();
-		form.setUomList(DisplayListService.getList(DisplayListService.ListType.UNIT_OF_MEASURE));
+		form.setUomList(DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE));
 
 		return findForward(FWD_SUCCESS, form);
 	}
@@ -49,7 +49,7 @@ public class UomRenameEntryController extends BaseController {
 			@ModelAttribute("form") @Valid UomRenameEntryForm form, BindingResult result) {
 		if (result.hasErrors()) {
 			saveErrors(result);
-			form.setUomList(DisplayListService.getList(DisplayListService.ListType.UNIT_OF_MEASURE));
+			form.setUomList(DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE));
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 		String uomId = form.getUomId();
@@ -95,7 +95,7 @@ public class UomRenameEntryController extends BaseController {
 		}
 
 		// Refresh Uom names
-		DisplayListService.getFreshList(DisplayListService.ListType.UNIT_OF_MEASURE);
+		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.UNIT_OF_MEASURE);
 	}
 
 	@Override

@@ -7,5 +7,13 @@ import us.mn.state.health.lims.requester.valueholder.SampleRequester;
 
 public interface SampleRequesterService extends BaseObjectService<SampleRequester> {
 
-	List<SampleRequester> getRequestersForSampleId(String id);
+	void delete(SampleRequester sampleRequester);
+
+	void updateData(SampleRequester sampleRequester);
+
+	boolean insertData(SampleRequester sampleRequester);
+
+	void insertOrUpdateData(SampleRequester sampleRequester);
+
+	List<SampleRequester> getRequestersForSampleId(String sampleId);
 }

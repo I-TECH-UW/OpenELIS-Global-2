@@ -37,7 +37,7 @@ public class PanelRenameAction extends BaseAction {
 
 		dynaForm.initialize(mapping);
 
-        PropertyUtils.setProperty( form, "panelList", DisplayListService.getList( DisplayListService.ListType.PANELS ) );
+        PropertyUtils.setProperty( form, "panelList", DisplayListService.getInstance().getList( DisplayListService.ListType.PANELS ) );
 
         return mapping.findForward(FWD_SUCCESS);
 	}

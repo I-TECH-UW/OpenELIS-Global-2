@@ -73,7 +73,7 @@ public abstract class PatientEIDReport extends RetroCIPatientReport {
 		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
 		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleId(reportSample.getId());
 		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-		Timestamp lastReport = new ReportTrackingService().getTimeOfLastNamedReport(reportSample,
+		Timestamp lastReport = ReportTrackingService.getInstance().getTimeOfLastNamedReport(reportSample,
 				ReportTrackingService.ReportType.PATIENT, requestedReport);
 		Boolean mayBeDuplicate = lastReport != null;
 		ResultDAO resultDAO = new ResultDAOImpl();

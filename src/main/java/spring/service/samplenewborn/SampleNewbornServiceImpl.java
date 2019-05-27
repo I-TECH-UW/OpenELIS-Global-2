@@ -9,14 +9,15 @@ import us.mn.state.health.lims.samplenewborn.valueholder.SampleNewborn;
 
 @Service
 public class SampleNewbornServiceImpl extends BaseObjectServiceImpl<SampleNewborn> implements SampleNewbornService {
-  @Autowired
-  protected SampleNewbornDAO baseObjectDAO;
+	@Autowired
+	protected SampleNewbornDAO baseObjectDAO;
 
-  SampleNewbornServiceImpl() {
-    super(SampleNewborn.class);
-  }
+	SampleNewbornServiceImpl() {
+		super(SampleNewborn.class);
+	}
 
-  @Override
-  protected SampleNewbornDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected SampleNewbornDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }

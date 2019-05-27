@@ -40,7 +40,7 @@ public class TestSectionTestAssignAction extends BaseAction {
     @Override
     protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ((DynaValidatorForm)form).initialize(mapping);
-        List<IdValuePair> testSections = DisplayListService.getListWithLeadingBlank(DisplayListService.ListType.TEST_SECTION);
+        List<IdValuePair> testSections = DisplayListService.getInstance().getListWithLeadingBlank(DisplayListService.ListType.TEST_SECTION);
         LinkedHashMap<IdValuePair, List<IdValuePair>> testSectionTestsMap = new LinkedHashMap<IdValuePair, List<IdValuePair>>(testSections.size());
 
         for( IdValuePair sectionPair : testSections){
@@ -57,7 +57,7 @@ public class TestSectionTestAssignAction extends BaseAction {
 
         //we can't just append the original list because that list is in the cache
         List<IdValuePair> joinedList = new ArrayList<IdValuePair>(testSections);
-        joinedList.addAll(DisplayListService.getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
+        joinedList.addAll(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
         PropertyUtils.setProperty(form, "testSectionList", joinedList);
         PropertyUtils.setProperty(form, "sectionTestList", testSectionTestsMap);
 

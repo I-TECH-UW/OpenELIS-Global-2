@@ -72,7 +72,7 @@ public class PanelTestAssignController extends BaseController {
 	}
 
 	private void setupDisplayItems(PanelTestAssignForm form) {
-		List<IdValuePair> panels = DisplayListService.getList(DisplayListService.ListType.PANELS);
+		List<IdValuePair> panels = DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS);
 
 		try {
 			PropertyUtils.setProperty(form, "panelList", panels);
@@ -195,8 +195,8 @@ public class PanelTestAssignController extends BaseController {
 			new PanelDAOImpl().updateData(panel);
 		}
 
-		DisplayListService.refreshList(DisplayListService.ListType.PANELS);
-		DisplayListService.refreshList(DisplayListService.ListType.PANELS_INACTIVE);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS_INACTIVE);
 
 		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 		return findForward(FWD_SUCCESS_INSERT, form);

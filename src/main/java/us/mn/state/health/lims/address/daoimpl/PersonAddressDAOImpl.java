@@ -16,6 +16,7 @@
 */
 package us.mn.state.health.lims.address.daoimpl;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,7 +62,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 	}
 
 	@Override
-	public String insert(PersonAddress personAddress) throws LIMSRuntimeException {
+	public Serializable insert(PersonAddress personAddress) throws LIMSRuntimeException {
 		try {
 			String id = (String) HibernateUtil.getSession().save(personAddress);
 			auditDAO.saveNewHistory(personAddress, personAddress.getSysUserId(), "person_address");

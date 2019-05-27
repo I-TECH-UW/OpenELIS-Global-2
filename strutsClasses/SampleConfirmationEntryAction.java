@@ -63,12 +63,12 @@ public class SampleConfirmationEntryAction extends BaseSampleEntryAction {
 
         SampleOrderService sampleOrder = new SampleOrderService(  );
         PropertyUtils.setProperty( dynaForm, "sampleOrderItems", sampleOrder.getSampleOrderItem() );
-		PropertyUtils.setProperty(dynaForm, "requestingOrganizationList", DisplayListService.getFreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
+		PropertyUtils.setProperty(dynaForm, "requestingOrganizationList", DisplayListService.getInstance().getFreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
         PropertyUtils.setProperty(dynaForm, "patientProperties", new PatientManagementInfo());
         PropertyUtils.setProperty(dynaForm, "patientSearch", new PatientSearch());
-        PropertyUtils.setProperty( dynaForm, "sampleTypes", DisplayListService.getList( ListType.SAMPLE_TYPE_ACTIVE) );
+        PropertyUtils.setProperty( dynaForm, "sampleTypes", DisplayListService.getInstance().getList( ListType.SAMPLE_TYPE_ACTIVE) );
 			if (needSampleInitialConditionList) {
-            PropertyUtils.setProperty(dynaForm,"initialSampleConditionList", DisplayListService.getList(ListType.INITIAL_SAMPLE_CONDITION));
+            PropertyUtils.setProperty(dynaForm,"initialSampleConditionList", DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
 		}
 
 		return mapping.findForward(forward);

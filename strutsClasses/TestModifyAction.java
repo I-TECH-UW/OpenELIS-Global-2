@@ -63,20 +63,20 @@ public class TestModifyAction extends BaseAction {
 		((DynaValidatorForm)form).initialize(mapping);
         
     	List<IdValuePair> allSampleTypesList = new ArrayList<IdValuePair>();
-        allSampleTypesList.addAll(DisplayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
-        allSampleTypesList.addAll(DisplayListService.getList(ListType.SAMPLE_TYPE_INACTIVE));
+        allSampleTypesList.addAll(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
+        allSampleTypesList.addAll(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_INACTIVE));
         PropertyUtils.setProperty(form, "sampleTypeList", allSampleTypesList);
-        PropertyUtils.setProperty(form, "panelList", DisplayListService.getList(ListType.PANELS));
-        PropertyUtils.setProperty(form, "resultTypeList", DisplayListService.getList(ListType.RESULT_TYPE_LOCALIZED));
-        PropertyUtils.setProperty(form, "uomList", DisplayListService.getList(ListType.UNIT_OF_MEASURE));
-        PropertyUtils.setProperty(form, "labUnitList", DisplayListService.getList(ListType.TEST_SECTION));
+        PropertyUtils.setProperty(form, "panelList", DisplayListService.getInstance().getList(ListType.PANELS));
+        PropertyUtils.setProperty(form, "resultTypeList", DisplayListService.getInstance().getList(ListType.RESULT_TYPE_LOCALIZED));
+        PropertyUtils.setProperty(form, "uomList", DisplayListService.getInstance().getList(ListType.UNIT_OF_MEASURE));
+        PropertyUtils.setProperty(form, "labUnitList", DisplayListService.getInstance().getList(ListType.TEST_SECTION));
         PropertyUtils.setProperty(form, "ageRangeList", ResultLimitServiceImpl.getPredefinedAgeRanges());
-        PropertyUtils.setProperty(form, "dictionaryList", DisplayListService.getList(ListType.DICTIONARY_TEST_RESULTS));
+        PropertyUtils.setProperty(form, "dictionaryList", DisplayListService.getInstance().getList(ListType.DICTIONARY_TEST_RESULTS));
         PropertyUtils.setProperty(form, "groupedDictionaryList", createGroupedDictionaryList());
-        PropertyUtils.setProperty( form, "testList", DisplayListService.getFreshList( DisplayListService.ListType.ALL_TESTS ) );
+        PropertyUtils.setProperty( form, "testList", DisplayListService.getInstance().getFreshList( DisplayListService.ListType.ALL_TESTS ) );
         
         // gnr: ALL_TESTS calls getActiveTests, this could be a way to enable maintenance of inactive tests
-        // PropertyUtils.setProperty( form, "testListInactive", DisplayListService.getList( DisplayListService.ListType.ALL_TESTS_INACTIVE ) );
+        // PropertyUtils.setProperty( form, "testListInactive", DisplayListService.getInstance().getList( DisplayListService.ListType.ALL_TESTS_INACTIVE ) );
         
         List<TestCatalogBean> testCatBeanList = createTestCatBeanList();
         PropertyUtils.setProperty(form, "testCatBeanList", testCatBeanList);

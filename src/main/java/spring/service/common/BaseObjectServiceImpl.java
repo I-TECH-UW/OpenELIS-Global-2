@@ -1,5 +1,6 @@
 package spring.service.common;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -178,8 +179,8 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	}
 
 	@Override
-	@Transactional 
-	public String insert(T baseObject) {
+	@Transactional
+	public Serializable insert(T baseObject) {
 		if (auditTrailLog) {
 			auditTrailDAO.saveNewHistory(baseObject, baseObject.getSysUserId(), getBaseObjectDAO().getTableName());
 		}
@@ -187,9 +188,9 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	}
 
 	@Override
-	@Transactional 
-	public List<String> insertAll(List<T> baseObjects) {
-		List<String> ids = new ArrayList<>();
+	@Transactional
+	public List<Serializable> insertAll(List<T> baseObjects) {
+		List<Serializable> ids = new ArrayList<>();
 		for (T baseObject : baseObjects) {
 			ids.add(insert(baseObject));
 		}
@@ -197,7 +198,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public T save(T baseObject) {
 		if (auditTrailLog) {
 			Optional<T> oldObject = Optional.empty();
@@ -217,7 +218,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<T> saveAll(List<T> baseObjects) {
 		List<T> resultObjects = new ArrayList<>();
 		for (T baseObject : baseObjects) {
@@ -227,7 +228,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public T update(T baseObject) {
 		T oldObject = getBaseObjectDAO().get(baseObject.getId())
 				.orElseThrow(() -> new ObjectNotFoundException(baseObject.getId(), classType.getName()));
@@ -240,7 +241,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<T> updateAll(List<T> baseObjects) {
 		List<T> resultObjects = new ArrayList<>();
 		for (T baseObject : baseObjects) {
@@ -250,7 +251,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public void delete(T baseObject) {
 		T oldObject = getBaseObjectDAO().get(baseObject.getId())
 				.orElseThrow(() -> new ObjectNotFoundException(baseObject.getId(), classType.getName()));
@@ -262,7 +263,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public void delete(String id, String sysUserId) {
 		T oldObject = getBaseObjectDAO().get(id)
 				.orElseThrow(() -> new ObjectNotFoundException(id, classType.getName()));
@@ -274,7 +275,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public void deleteAll(List<T> baseObjects) {
 		for (T baseObject : baseObjects) {
 			delete(baseObject);
@@ -282,7 +283,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public void deleteAll(List<String> ids, String sysUserId) {
 		for (String id : ids) {
 			delete(id, sysUserId);

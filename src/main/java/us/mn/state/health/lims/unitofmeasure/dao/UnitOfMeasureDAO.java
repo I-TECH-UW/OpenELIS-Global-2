@@ -44,4 +44,6 @@ public interface UnitOfMeasureDAO extends BaseDAO<UnitOfMeasure> {
 	public Integer getTotalUnitOfMeasureCount() throws LIMSRuntimeException;
 
 	public UnitOfMeasure getUnitOfMeasureById(String uomId) throws LIMSRuntimeException;
+
+	public List<UnitOfMeasure> getAllActiveUnitOfMeasures();
 }

@@ -44,7 +44,7 @@ public class TestSectionTestAssignController extends BaseController {
 	}
 
 	private void setupDisplayItems(TestSectionTestAssignForm form) {
-		List<IdValuePair> testSections = DisplayListService
+		List<IdValuePair> testSections = DisplayListService.getInstance()
 				.getListWithLeadingBlank(DisplayListService.ListType.TEST_SECTION);
 		LinkedHashMap<IdValuePair, List<IdValuePair>> testSectionTestsMap = new LinkedHashMap<>(testSections.size());
 
@@ -62,7 +62,7 @@ public class TestSectionTestAssignController extends BaseController {
 
 		// we can't just append the original list because that list is in the cache
 		List<IdValuePair> joinedList = new ArrayList<>(testSections);
-		joinedList.addAll(DisplayListService.getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
+		joinedList.addAll(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
 		try {
 			PropertyUtils.setProperty(form, "testSectionList", joinedList);
 			PropertyUtils.setProperty(form, "sectionTestList", testSectionTestsMap);
@@ -152,8 +152,8 @@ public class TestSectionTestAssignController extends BaseController {
 			HibernateUtil.closeSession();
 		}
 
-		DisplayListService.refreshList(DisplayListService.ListType.TEST_SECTION);
-		DisplayListService.refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}

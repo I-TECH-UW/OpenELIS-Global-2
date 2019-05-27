@@ -90,9 +90,9 @@ public class StatusResultsAction extends BaseAction implements Serializable {
 
 		DynaActionForm dynaForm = (DynaActionForm) form;
 		PropertyUtils.setProperty(dynaForm, "referralReasons",
-				DisplayListService.getList(DisplayListService.ListType.REFERRAL_REASONS));
+				DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
 		PropertyUtils.setProperty(dynaForm, "rejectReasons",
-				DisplayListService.getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+				DisplayListService.getInstance().getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
 		ResultsPaging paging = new ResultsPaging();
 
@@ -171,7 +171,7 @@ public class StatusResultsAction extends BaseAction implements Serializable {
 
 		PropertyUtils.setProperty(dynaForm, "analysisStatusSelections", analysisStatusList);
 		PropertyUtils.setProperty(dynaForm, "testSelections",
-				DisplayListService.getListWithLeadingBlank(DisplayListService.ListType.ALL_TESTS));
+				DisplayListService.getInstance().getListWithLeadingBlank(DisplayListService.ListType.ALL_TESTS));
 
 		List<DropPair> sampleStatusList = getSampleStatusTypes();
 		PropertyUtils.setProperty(dynaForm, "sampleStatusSelections", sampleStatusList);

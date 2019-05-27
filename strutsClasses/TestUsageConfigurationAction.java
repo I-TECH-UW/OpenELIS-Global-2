@@ -60,8 +60,8 @@ public class TestUsageConfigurationAction extends BaseAction {
 		DynaActionForm dynaForm = (DynaActionForm)(form);
 		dynaForm.initialize(mapping);
 
-		PropertyUtils.setProperty(dynaForm, "hourList", DisplayListService.getList(ListType.HOURS));
-		PropertyUtils.setProperty(dynaForm, "minList", DisplayListService.getList(ListType.MINS));
+		PropertyUtils.setProperty(dynaForm, "hourList", DisplayListService.getInstance().getList(ListType.HOURS));
+		PropertyUtils.setProperty(dynaForm, "minList", DisplayListService.getInstance().getList(ListType.MINS));
 			
 		setSchedulerProperties(dynaForm, "sendSiteIndicators", "enableSending", "sendMin", "sendHour");
 		setSiteProperties(dynaForm, "testUsageAggregationUrl", "url");

@@ -46,9 +46,9 @@ public class PatientResultsController extends BaseController {
 
 		PropertyUtils.setProperty(form, "displayTestKit", Boolean.FALSE);
 		PropertyUtils.setProperty(form, "referralReasons",
-				DisplayListService.getList(DisplayListService.ListType.REFERRAL_REASONS));
+				DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
 		PropertyUtils.setProperty(form, "rejectReasons",
-				DisplayListService.getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+				DisplayListService.getInstance().getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 		PatientSearch patientSearch = new PatientSearch();
 		patientSearch.setLoadFromServerWithPatient(true);
 		patientSearch.setSelectedPatientActionButtonText(MessageUtil.getMessage("resultsentry.patient.search"));

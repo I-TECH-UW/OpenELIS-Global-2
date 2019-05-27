@@ -100,8 +100,8 @@ public class TestActivationUpdate extends BaseAction {
             HibernateUtil.closeSession();
         }
 
-        DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
-        DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
+        DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
+        DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
         TypeOfSampleServiceImpl.clearCache();
 
         return mapping.findForward(FWD_SUCCESS);

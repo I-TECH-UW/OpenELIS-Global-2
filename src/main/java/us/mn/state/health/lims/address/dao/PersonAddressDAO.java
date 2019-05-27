@@ -16,6 +16,7 @@
 */
 package us.mn.state.health.lims.address.dao;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +28,7 @@ public interface PersonAddressDAO extends BaseDAO<PersonAddress> {
 	public List<PersonAddress> getAddressPartsByPersonId(String personId) throws LIMSRuntimeException;
 
 	@Override
-	public String insert(PersonAddress personAddress) throws LIMSRuntimeException;
+	public Serializable insert(PersonAddress personAddress) throws LIMSRuntimeException;
 
 	public Optional<PersonAddress> update(PersonAddress personAddress) throws LIMSRuntimeException;
 

@@ -391,10 +391,10 @@ public class SamplePatientUpdateData{
             setNewOrganization( new Organization() );
 
             if (FormFields.getInstance().useField(Field.SampleEntryHealthFacilityAddress)) {
-                addOrgAddressExtra( orderItem.getFacilityPhone(), "T", TableIdService.ADDRESS_PHONE_ID );
-                addOrgAddressExtra( orderItem.getFacilityFax(), "T", TableIdService.ADDRESS_FAX_ID );
-                addOrgAddressExtra( orderItem.getFacilityAddressCommune(), "T", TableIdService.ADDRESS_COMMUNE_ID );
-                addOrgAddressExtra( orderItem.getFacilityAddressStreet(), "T", TableIdService.ADDRESS_STREET_ID );
+                addOrgAddressExtra( orderItem.getFacilityPhone(), "T", TableIdService.getInstance().ADDRESS_PHONE_ID );
+                addOrgAddressExtra( orderItem.getFacilityFax(), "T", TableIdService.getInstance().ADDRESS_FAX_ID );
+                addOrgAddressExtra( orderItem.getFacilityAddressCommune(), "T", TableIdService.getInstance().ADDRESS_COMMUNE_ID );
+                addOrgAddressExtra( orderItem.getFacilityAddressStreet(), "T", TableIdService.getInstance().ADDRESS_STREET_ID );
             }
 
             initializeNewOrganization( orderItem );
@@ -436,7 +436,7 @@ public class SamplePatientUpdateData{
         SampleRequester requester;
         requester = new SampleRequester();
         requester.setRequesterId(orgId);
-        requester.setRequesterTypeId(TableIdService.ORGANIZATION_REQUESTER_TYPE_ID);
+        requester.setRequesterTypeId(TableIdService.getInstance().ORGANIZATION_REQUESTER_TYPE_ID);
         requester.setSysUserId(currentUserId);
         return requester;
     }

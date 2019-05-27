@@ -101,19 +101,20 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample> implements 
 	}
 
 	@Override
-	@Transactional 
-	public void insertDataWithAccessionNumber(Sample sample) {
+	@Transactional
+	public boolean insertDataWithAccessionNumber(Sample sample) {
 		insert(sample);
+		return true;
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<Sample> getSamplesReceivedOn(String recievedDate) {
 		return sampleDAO.getSamplesReceivedOn(recievedDate);
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<Sample> getSamplesForPatient(String patientID) {
 		return sampleHumanDAO.getSamplesForPatient(patientID);
 	}
@@ -142,16 +143,14 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample> implements 
 	}
 
 	private boolean isCanceled(Analysis analysis) {
-		return StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Canceled)
-				.equals(analysis.getStatusId());
+		return StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Canceled).equals(analysis.getStatusId());
 	}
 
 	public Timestamp getOrderedDate() {
 		if (sample == null) {
 			return null;
 		}
-		ObservationHistory observation = ObservationHistoryServiceImpl
-				.getObservationForSample(ObservationHistoryServiceImpl.ObservationType.REQUEST_DATE, sample.getId());
+		ObservationHistory observation = ObservationHistoryServiceImpl.getObservationForSample(ObservationHistoryServiceImpl.ObservationType.REQUEST_DATE, sample.getId());
 		if (observation != null && observation.getValue() != null) {
 			return DateUtil.convertStringDateToTruncatedTimestamp(observation.getValue());
 		} else { // If ordered date is not given then use received date
@@ -264,16 +263,14 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample> implements 
 		List<Integer> statusList = new ArrayList<>();
 		statusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Finalized)));
 
-		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleIdTestIdAndStatusId(sampIDList, testIDList,
-				statusList);
+		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleIdTestIdAndStatusId(sampIDList, testIDList, statusList);
 
 		if (analysisList.isEmpty()) {
 			return previousSample;
 		}
 
 		for (int j = 0; j < analysisList.size(); j++) {
-			if (j < analysisList.size() && sample.getAccessionNumber()
-					.equals(analysisList.get(j).getSampleItem().getSample().getAccessionNumber())) {
+			if (j < analysisList.size() && sample.getAccessionNumber().equals(analysisList.get(j).getSampleItem().getSample().getAccessionNumber())) {
 				previousSample = analysisList.get(j + 1).getSampleItem().getSample();
 			}
 
@@ -291,5 +288,114 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample> implements 
 		 */
 		return previousSample;
 
+	}
+
+	@Override
+	public void getData(Sample sample) {
+        getBaseObjectDAO().getData(sample);
+
+	}
+
+	@Override
+	public void deleteData(List samples) {
+        getBaseObjectDAO().deleteData(samples);
+
+	}
+
+	@Override
+	public void updateData(Sample sample) {
+        getBaseObjectDAO().updateData(sample);
+
+	}
+
+	@Override
+	public boolean insertData(Sample sample) {
+        return getBaseObjectDAO().insertData(sample);
+	}
+
+	@Override
+	public List<Sample> getConfirmationSamplesReceivedInDateRange(Date receivedDateStart, Date receivedDateEnd) {
+        return getBaseObjectDAO().getConfirmationSamplesReceivedInDateRange(receivedDateStart,receivedDateEnd);
+	}
+
+	@Override
+	public List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(List<Integer> inclusiveProjectIdList, List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession) {
+        return getBaseObjectDAO().getSamplesByProjectAndStatusIDAndAccessionRange(inclusiveProjectIdList,inclusiveStatusIdList,minAccession,maxAccession);
+	}
+
+	@Override
+	public List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(String projectId, List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession) {
+        return getBaseObjectDAO().getSamplesByProjectAndStatusIDAndAccessionRange(projectId,inclusiveStatusIdList,minAccession,maxAccession);
+	}
+
+	@Override
+	public String getLargestAccessionNumberWithPrefix(String prefix) {
+        return getBaseObjectDAO().getLargestAccessionNumberWithPrefix(prefix);
+	}
+
+	@Override
+	public String getLargestAccessionNumberMatchingPattern(String startingWith, int size) {
+        return getBaseObjectDAO().getLargestAccessionNumberMatchingPattern(startingWith,size);
+	}
+
+	@Override
+	public List<Sample> getSamplesWithPendingQaEventsByService(String serviceId) {
+        return getBaseObjectDAO().getSamplesWithPendingQaEventsByService(serviceId);
+	}
+
+	@Override
+	public List getSamplesByStatusAndDomain(List statuses, String domain) {
+        return getBaseObjectDAO().getSamplesByStatusAndDomain(statuses,domain);
+	}
+
+	@Override
+	public List getPreviousSampleRecord(String id) {
+        return getBaseObjectDAO().getPreviousSampleRecord(id);
+	}
+
+	@Override
+	public List<Sample> getSamplesCollectedOn(String collectionDate) {
+        return getBaseObjectDAO().getSamplesCollectedOn(collectionDate);
+	}
+
+	@Override
+	public String getLargestAccessionNumber() {
+        return getBaseObjectDAO().getLargestAccessionNumber();
+	}
+
+	@Override
+	public List<Sample> getSamplesWithPendingQaEvents(Sample sample, boolean filterByCategory, String qaEventCategoryId, boolean filterByDomain) {
+        return getBaseObjectDAO().getSamplesWithPendingQaEvents(sample,filterByCategory,qaEventCategoryId,filterByDomain);
+	}
+
+	@Override
+	public List getNextSampleRecord(String id) {
+        return getBaseObjectDAO().getNextSampleRecord(id);
+	}
+
+	@Override
+	public Sample getSampleByReferringId(String referringId) {
+        return getBaseObjectDAO().getSampleByReferringId(referringId);
+	}
+
+	@Override
+	public List<Sample> getSamplesReceivedInDateRange(String receivedDateStart, String receivedDateEnd) {
+        return getBaseObjectDAO().getSamplesReceivedInDateRange(receivedDateStart,receivedDateEnd);
+	}
+
+	@Override
+	public List<Sample> getSamplesByAccessionRange(String minAccession, String maxAccession) {
+        return getBaseObjectDAO().getSamplesByAccessionRange(minAccession,maxAccession);
+	}
+
+	@Override
+	public void getSampleByAccessionNumber(Sample sample) {
+        getBaseObjectDAO().getSampleByAccessionNumber(sample);
+
+	}
+
+	@Override
+	public List getPageOfSamples(int startingRecNo) {
+        return getBaseObjectDAO().getPageOfSamples(startingRecNo);
 	}
 }

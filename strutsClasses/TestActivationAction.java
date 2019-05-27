@@ -49,7 +49,7 @@ public class TestActivationAction extends BaseAction {
     private List<TestActivationBean> createTestList(boolean active) {
         ArrayList<TestActivationBean> testList = new ArrayList<TestActivationBean>();
 
-        List<IdValuePair> sampleTypeList = DisplayListService.getList(active ? DisplayListService.ListType.SAMPLE_TYPE_ACTIVE : DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
+        List<IdValuePair> sampleTypeList = DisplayListService.getInstance().getList(active ? DisplayListService.ListType.SAMPLE_TYPE_ACTIVE : DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
 
         //if not active we use alphabetical ordering, the default is display order
         if( !active){

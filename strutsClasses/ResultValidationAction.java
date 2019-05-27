@@ -65,9 +65,9 @@ public class ResultValidationAction extends BaseResultValidationAction {
 
 			// load testSections for drop down
 			TestSectionDAO testSectionDAO = new TestSectionDAOImpl();
-			PropertyUtils.setProperty(dynaForm, "testSections", DisplayListService.getList(ListType.TEST_SECTION));
+			PropertyUtils.setProperty(dynaForm, "testSections", DisplayListService.getInstance().getList(ListType.TEST_SECTION));
 			PropertyUtils.setProperty(dynaForm, "testSectionsByName",
-					DisplayListService.getList(ListType.TEST_SECTION_BY_NAME));
+					DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
 			if (!GenericValidator.isBlankOrNull(testSectionId)) {
 				ts = testSectionDAO.getTestSectionById(testSectionId);

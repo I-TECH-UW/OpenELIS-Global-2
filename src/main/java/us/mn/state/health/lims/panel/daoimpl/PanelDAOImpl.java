@@ -36,7 +36,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.panel.dao.PanelDAO;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 
@@ -44,7 +43,7 @@ import us.mn.state.health.lims.panel.valueholder.Panel;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class PanelDAOImpl extends BaseDAOImpl<Panel> implements PanelDAO {
 
 	public PanelDAOImpl() {
@@ -198,7 +197,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel> implements PanelDAO {
 	@Override
 	public void getData(Panel panel) throws LIMSRuntimeException {
 		try {
-			Panel pan = (Panel) sessionFactory.getCurrentSession().get(Panel.class, panel.getId());
+			Panel pan = sessionFactory.getCurrentSession().get(Panel.class, panel.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (pan != null) {
@@ -217,7 +216,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel> implements PanelDAO {
 	@Override
 	public Panel getPanelById(String panelId) throws LIMSRuntimeException {
 		try {
-			Panel panel = (Panel) sessionFactory.getCurrentSession().get(Panel.class, panelId);
+			Panel panel = sessionFactory.getCurrentSession().get(Panel.class, panelId);
 			// closeSession(); // CSL remove old
 			return panel;
 		} catch (HibernateException e) {
@@ -291,7 +290,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel> implements PanelDAO {
 	public Panel readPanel(String idString) {
 		Panel panel = null;
 		try {
-			panel = (Panel) sessionFactory.getCurrentSession().get(Panel.class, idString);
+			panel = sessionFactory.getCurrentSession().get(Panel.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -382,6 +381,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel> implements PanelDAO {
 		return list;
 	}
 
+	@Override
 	public boolean duplicatePanelExists(Panel panel) throws LIMSRuntimeException {
 		try {
 
@@ -417,6 +417,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel> implements PanelDAO {
 		}
 	}
 
+	@Override
 	public boolean duplicatePanelDescriptionExists(Panel panel) throws LIMSRuntimeException {
 		try {
 
@@ -496,6 +497,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel> implements PanelDAO {
 		}
 	}
 
+	@Override
 	public void clearIDMaps() {
 		ID_NAME_MAP = null;
 		ID_DESCRIPTION_MAP = null;

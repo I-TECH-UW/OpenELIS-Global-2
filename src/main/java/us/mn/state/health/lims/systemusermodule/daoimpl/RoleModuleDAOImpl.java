@@ -37,8 +37,7 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.systemusermodule.dao.PermissionModuleDAO;
-import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
+import us.mn.state.health.lims.systemusermodule.dao.RoleModuleDAO;
 import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
 import us.mn.state.health.lims.userrole.dao.UserRoleDAO;
 import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
@@ -47,12 +46,12 @@ import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
  *
  */
 @Component
-@Transactional 
+@Transactional
 @Qualifier("RoleModuleDAO")
-public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements PermissionModuleDAO {
+public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule> implements RoleModuleDAO {
 
 	public RoleModuleDAOImpl() {
-		super(PermissionModule.class);
+		super(RoleModule.class);
 	}
 
 	@Override
@@ -91,10 +90,10 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 	}
 
 	@Override
-	public boolean insertData(PermissionModule permissionModule) throws LIMSRuntimeException {
+	public boolean insertData(RoleModule permissionModule) throws LIMSRuntimeException {
 
 		try {
-			if (duplicateRoleModuleExists((RoleModule) permissionModule)) {
+			if (duplicateRoleModuleExists(permissionModule)) {
 				throw new LIMSDuplicateRecordException(
 						"Duplicate record exists for " + permissionModule.getPermissionAgentId());
 			}
@@ -120,10 +119,10 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 	}
 
 	@Override
-	public void updateData(PermissionModule roleModule) throws LIMSRuntimeException {
+	public void updateData(RoleModule roleModule) throws LIMSRuntimeException {
 
 		try {
-			if (duplicateRoleModuleExists((RoleModule) roleModule)) {
+			if (duplicateRoleModuleExists(roleModule)) {
 				throw new LIMSDuplicateRecordException(
 						"Duplicate record exists for " + roleModule.getPermissionAgentId());
 			}
@@ -133,7 +132,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 		}
 
 		RoleModule oldData = readRoleModule(roleModule.getId());
-		RoleModule newData = (RoleModule) roleModule;
+		RoleModule newData = roleModule;
 
 		// add to audit trail
 		try {
@@ -160,7 +159,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 	}
 
 	@Override
-	public void getData(PermissionModule systemUserModule) throws LIMSRuntimeException {
+	public void getData(RoleModule systemUserModule) throws LIMSRuntimeException {
 		try {
 			RoleModule sysUserModule = HibernateUtil.getSession().get(RoleModule.class, systemUserModule.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
@@ -248,6 +247,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 		return sysUserModule;
 	}
 
+	@Override
 	public RoleModule getRoleModuleByRoleAndModuleId(String roleId, String moduleId) {
 		String sql = "From RoleModule rm where rm.systemModule.id = :moduleId and rm.role.id = :roleId";
 
@@ -334,7 +334,9 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements 
 		return list;
 	}
 
-	public boolean duplicateRoleModuleExists(PermissionModule roleModule) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicateRoleModuleExists(RoleModule roleModule) throws LIMSRuntimeException {
+
 		try {
 
 			List list;

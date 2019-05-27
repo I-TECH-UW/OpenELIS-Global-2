@@ -34,7 +34,7 @@ public class BatchTestReassignmentAction extends BaseAction {
     protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         DynaValidatorForm dynaForm = (DynaValidatorForm)form;
         dynaForm.initialize(mapping);
-        PropertyUtils.setProperty(dynaForm, "sampleList", DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+        PropertyUtils.setProperty(dynaForm, "sampleList", DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
 
         return mapping.findForward("success");
     }

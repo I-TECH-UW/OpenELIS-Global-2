@@ -9,14 +9,15 @@ import us.mn.state.health.lims.sampledomain.valueholder.SampleDomain;
 
 @Service
 public class SampleDomainServiceImpl extends BaseObjectServiceImpl<SampleDomain> implements SampleDomainService {
-  @Autowired
-  protected BaseDAO<SampleDomain> baseObjectDAO;
+	@Autowired
+	protected BaseDAO<SampleDomain> baseObjectDAO;
 
-  SampleDomainServiceImpl() {
-    super(SampleDomain.class);
-  }
+	SampleDomainServiceImpl() {
+		super(SampleDomain.class);
+	}
 
-  @Override
-  protected BaseDAO<SampleDomain> getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected BaseDAO<SampleDomain> getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }

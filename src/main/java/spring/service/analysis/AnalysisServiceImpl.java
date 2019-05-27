@@ -1,6 +1,7 @@
 package spring.service.analysis;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -27,9 +28,11 @@ import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.panel.valueholder.Panel;
+import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
 import us.mn.state.health.lims.result.dao.ResultDAO;
 import us.mn.state.health.lims.result.valueholder.Result;
+import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestSection;
@@ -95,8 +98,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 
 		TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getTypeOfSampleForTest(test.getId());
 
-		if (typeOfSample != null
-				&& typeOfSample.getId().equals(TypeOfSampleServiceImpl.getTypeOfSampleIdForLocalAbbreviation("Variable"))) {
+		if (typeOfSample != null && typeOfSample.getId().equals(TypeOfSampleServiceImpl.getTypeOfSampleIdForLocalAbbreviation("Variable"))) {
 			name += "(" + analysis.getSampleTypeName() + ")";
 		}
 
@@ -137,8 +139,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 
 	@Override
 	public String getJSONMultiSelectResults() {
-		return analysis == null ? ""
-				: ResultServiceImpl.getJSONStringForMultiSelect(resultDAO.getResultsByAnalysis(analysis));
+		return analysis == null ? "" : ResultServiceImpl.getJSONStringForMultiSelect(resultDAO.getResultsByAnalysis(analysis));
 	}
 
 	@Override
@@ -155,10 +156,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 		}
 
 		for (Result existingResult : existingResults) {
-			if (!TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(existingResult.getResultType())
-					&& existingResult.getParentResult() != null
-					&& quantifiableResultsIds.contains(existingResult.getParentResult().getId())
-					&& !GenericValidator.isBlankOrNull(existingResult.getValue())) {
+			if (!TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(existingResult.getResultType()) && existingResult.getParentResult() != null && quantifiableResultsIds.contains(existingResult.getParentResult().getId()) && !GenericValidator.isBlankOrNull(existingResult.getValue())) {
 				return existingResult;
 			}
 		}
@@ -236,17 +234,12 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 
 	@Override
 	public boolean patientReportHasBeenDone() {
-		return analysis == null ? false
-				: new ReportTrackingService().getLastReportForSample(analysis.getSampleItem().getSample(),
-						ReportTrackingService.ReportType.PATIENT) != null;
+		return analysis == null ? false : ReportTrackingService.getInstance().getLastReportForSample(analysis.getSampleItem().getSample(), ReportTrackingService.ReportType.PATIENT) != null;
 	}
 
 	@Override
-	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator,
-			boolean excludeExternPrefix) {
-		return analysis == null ? ""
-				: new NoteServiceImpl(analysis).getNotesAsString(prefixType, prefixTimestamp, noteSeparator,
-						excludeExternPrefix);
+	public String getNotesAsString(boolean prefixType, boolean prefixTimestamp, String noteSeparator, boolean excludeExternPrefix) {
+		return analysis == null ? "" : new NoteServiceImpl(analysis).getNotesAsString(prefixType, prefixTimestamp, noteSeparator, excludeExternPrefix);
 	}
 
 	@Override
@@ -256,8 +249,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 
 	@Override
 	public TypeOfSample getTypeOfSample() {
-		return analysis == null ? null
-				: typeOfSampleDAO.getTypeOfSampleById(analysis.getSampleItem().getTypeOfSampleId());
+		return analysis == null ? null : typeOfSampleDAO.getTypeOfSampleById(analysis.getSampleItem().getTypeOfSampleId());
 	}
 
 	@Override
@@ -318,8 +310,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 
 	@Override
 	@Transactional
-	public List<Analysis> getAnalysesBySampleItemsExcludingByStatusIds(SampleItem sampleItem,
-			Set<Integer> excludedStatusIds) {
+	public List<Analysis> getAnalysesBySampleItemsExcludingByStatusIds(SampleItem sampleItem, Set<Integer> excludedStatusIds) {
 		return analysisDAO.getAnalysesBySampleItemsExcludingByStatusIds(sampleItem, excludedStatusIds);
 	}
 
@@ -331,8 +322,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 
 	@Override
 	@Transactional
-	public List<Analysis> getAnalysesBySampleStatusIdExcludingByStatusId(String sampleStatus,
-			Set<Integer> excludedStatusIds) {
+	public List<Analysis> getAnalysesBySampleStatusIdExcludingByStatusId(String sampleStatus, Set<Integer> excludedStatusIds) {
 		return analysisDAO.getAnalysesBySampleStatusIdExcludingByStatusId(sampleStatus, excludedStatusIds);
 	}
 
@@ -372,8 +362,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 
 	@Override
 	@Transactional
-	public List<Analysis> getAllAnalysisByTestSectionAndStatus(String sectionId, List<Integer> statusList,
-			boolean sortedByDateAndAccession) {
+	public List<Analysis> getAllAnalysisByTestSectionAndStatus(String sectionId, List<Integer> statusList, boolean sortedByDateAndAccession) {
 		return analysisDAO.getAllAnalysisByTestSectionAndStatus(sectionId, statusList, sortedByDateAndAccession);
 	}
 
@@ -381,5 +370,235 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> impleme
 	@Transactional
 	public List<Analysis> getAnalysesBySampleItemIdAndStatusId(String sampleItemId, String canceledTestStatusId) {
 		return analysisDAO.getAnalysesBySampleItemIdAndStatusId(sampleItemId, canceledTestStatusId);
+	}
+
+	@Override
+	public void getData(Analysis analysis) {
+        getBaseObjectDAO().getData(analysis);
+
+	}
+
+	@Override
+	public Analysis getAnalysisById(String analysisId) {
+        return getBaseObjectDAO().getAnalysisById(analysisId);
+	}
+
+	@Override
+	public void deleteData(List analysiss) {
+        getBaseObjectDAO().deleteData(analysiss);
+
+	}
+
+	@Override
+	public List getAllAnalyses() {
+        return getBaseObjectDAO().getAllAnalyses();
+	}
+
+	@Override
+	public void updateData(Analysis analysis) {
+        getBaseObjectDAO().updateData(analysis);
+
+	}
+
+	@Override
+	public void updateData(Analysis analysis, boolean skipAuditTrail) {
+        getBaseObjectDAO().updateData(analysis,skipAuditTrail);
+
+	}
+
+	@Override
+	public List getAnalyses(String filter) {
+        return getBaseObjectDAO().getAnalyses(filter);
+	}
+
+	@Override
+	public boolean insertData(Analysis analysis, boolean duplicateCheck) {
+        return getBaseObjectDAO().insertData(analysis,duplicateCheck);
+	}
+
+	@Override
+	public List<Analysis> getAnalysisByTestDescriptionAndCompletedDateRange(List<String> descriptions, Date sqlDayOne, Date sqlDayTwo) {
+        return getBaseObjectDAO().getAnalysisByTestDescriptionAndCompletedDateRange(descriptions,sqlDayOne,sqlDayTwo);
+	}
+
+	@Override
+	public List getMaxRevisionPendingAnalysesReadyForReportPreviewBySample(Sample sample) {
+        return getBaseObjectDAO().getMaxRevisionPendingAnalysesReadyForReportPreviewBySample(sample);
+	}
+
+	@Override
+	public List getMaxRevisionAnalysesReadyForReportPreviewBySample(List accessionNumbers) {
+        return getBaseObjectDAO().getMaxRevisionAnalysesReadyForReportPreviewBySample(accessionNumbers);
+	}
+
+	@Override
+	public List getMaxRevisionPendingAnalysesReadyToBeReportedBySample(Sample sample) {
+        return getBaseObjectDAO().getMaxRevisionPendingAnalysesReadyToBeReportedBySample(sample);
+	}
+
+	@Override
+	public List<Analysis> getAnalysesBySampleIdExcludedByStatusId(String id, Set<Integer> statusIds) {
+        return getBaseObjectDAO().getAnalysesBySampleIdExcludedByStatusId(id,statusIds);
+	}
+
+	@Override
+	public List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList, List<Integer> sampleStatusList) {
+        return getBaseObjectDAO().getAllAnalysisByTestSectionAndStatus(testSectionId,analysisStatusList,sampleStatusList);
+	}
+
+	@Override
+	public List getMaxRevisionAnalysesBySampleIncludeCanceled(SampleItem sampleItem) {
+        return getBaseObjectDAO().getMaxRevisionAnalysesBySampleIncludeCanceled(sampleItem);
+	}
+
+	@Override
+	public Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName) {
+        return getBaseObjectDAO().getPatientPreviousAnalysisForTestName(patient,currentSample,testName);
+	}
+
+	@Override
+	public List<Analysis> getAnalysisByTestNamesAndCompletedDateRange(List<String> testNames, Date lowDate, Date highDate) {
+        return getBaseObjectDAO().getAnalysisByTestNamesAndCompletedDateRange(testNames,lowDate,highDate);
+	}
+
+	@Override
+	public List<Analysis> getAnalysesBySampleIdTestIdAndStatusId(List<Integer> sampleIdList, List<Integer> testIdList, List<Integer> statusIdList) {
+        return getBaseObjectDAO().getAnalysesBySampleIdTestIdAndStatusId(sampleIdList,testIdList,statusIdList);
+	}
+
+	@Override
+	public List getMaxRevisionParentTestAnalysesBySample(SampleItem sampleItem) {
+        return getBaseObjectDAO().getMaxRevisionParentTestAnalysesBySample(sampleItem);
+	}
+
+	@Override
+	public List<Analysis> getAnalysisStartedOnRangeByStatusId(Date lowDate, Date highDate, String statusID) {
+        return getBaseObjectDAO().getAnalysisStartedOnRangeByStatusId(lowDate,highDate,statusID);
+	}
+
+	@Override
+	public List getRevisionHistoryOfAnalysesBySample(SampleItem sampleItem) {
+        return getBaseObjectDAO().getRevisionHistoryOfAnalysesBySample(sampleItem);
+	}
+
+	@Override
+	public Analysis getPreviousAnalysisForAmendedAnalysis(Analysis analysis) {
+        return getBaseObjectDAO().getPreviousAnalysisForAmendedAnalysis(analysis);
+	}
+
+	@Override
+	public List getAllAnalysisByTestSectionAndExcludedStatus(String testSectionId, List<Integer> statusIdList) {
+        return getBaseObjectDAO().getAllAnalysisByTestSectionAndExcludedStatus(testSectionId,statusIdList);
+	}
+
+	@Override
+	public List<Analysis> getAnalysisStartedOnExcludedByStatusId(Date collectionDate, Set<Integer> statusIds) {
+        return getBaseObjectDAO().getAnalysisStartedOnExcludedByStatusId(collectionDate,statusIds);
+	}
+
+	@Override
+	public List<Analysis> getAnalysisByTestSectionAndCompletedDateRange(String sectionID, Date lowDate, Date highDate) {
+        return getBaseObjectDAO().getAnalysisByTestSectionAndCompletedDateRange(sectionID,lowDate,highDate);
+	}
+
+	@Override
+	public List getMaxRevisionAnalysesReadyToBeReported() {
+        return getBaseObjectDAO().getMaxRevisionAnalysesReadyToBeReported();
+	}
+
+	@Override
+	public void getMaxRevisionAnalysisBySampleAndTest(Analysis analysis) {
+        getBaseObjectDAO().getMaxRevisionAnalysisBySampleAndTest(analysis);
+
+	}
+
+	@Override
+	public List getAnalysesAlreadyReportedBySample(Sample sample) {
+        return getBaseObjectDAO().getAnalysesAlreadyReportedBySample(sample);
+	}
+
+	@Override
+	public List getRevisionHistoryOfAnalysesBySampleAndTest(SampleItem sampleItem, Test test, boolean includeLatestRevision) {
+        return getBaseObjectDAO().getRevisionHistoryOfAnalysesBySampleAndTest(sampleItem,test,includeLatestRevision);
+	}
+
+	@Override
+	public List<Analysis> getAnalysesBySampleStatusId(String statusId) {
+        return getBaseObjectDAO().getAnalysesBySampleStatusId(statusId);
+	}
+
+	@Override
+	public List<Analysis> getAnalysisEnteredAfterDate(Timestamp latestCollectionDate) {
+        return getBaseObjectDAO().getAnalysisEnteredAfterDate(latestCollectionDate);
+	}
+
+	@Override
+	public List<Analysis> getAnalysesBySampleIdAndStatusId(String id, Set<Integer> analysisStatusIds) {
+        return getBaseObjectDAO().getAnalysesBySampleIdAndStatusId(id,analysisStatusIds);
+	}
+
+	@Override
+	public List<Analysis> getAnalysisStartedOn(Date collectionDate) {
+        return getBaseObjectDAO().getAnalysisStartedOn(collectionDate);
+	}
+
+	@Override
+	public List getMaxRevisionAnalysesBySample(SampleItem sampleItem) {
+        return getBaseObjectDAO().getMaxRevisionAnalysesBySample(sampleItem);
+	}
+
+	@Override
+	public List getAllChildAnalysesByResult(Result result) {
+        return getBaseObjectDAO().getAllChildAnalysesByResult(result);
+	}
+
+	@Override
+	public List getAnalysesReadyToBeReported() {
+        return getBaseObjectDAO().getAnalysesReadyToBeReported();
+	}
+
+	@Override
+	public List<Analysis> getAnalysisBySampleAndTestIds(String sampleKey, List<Integer> testIds) {
+        return getBaseObjectDAO().getAnalysisBySampleAndTestIds(sampleKey,testIds);
+	}
+
+	@Override
+	public List<Analysis> getAnalysisCompleteInRange(Timestamp lowDate, Timestamp highDate) {
+        return getBaseObjectDAO().getAnalysisCompleteInRange(lowDate,highDate);
+	}
+
+	@Override
+	public List getAllMaxRevisionAnalysesPerTest(Test test) {
+        return getBaseObjectDAO().getAllMaxRevisionAnalysesPerTest(test);
+	}
+
+	@Override
+	public List<Analysis> getAnalysisCollectedOn(Date collectionDate) {
+        return getBaseObjectDAO().getAnalysisCollectedOn(collectionDate);
+	}
+
+	@Override
+	public List getAllAnalysesPerTest(Test test) {
+        return getBaseObjectDAO().getAllAnalysesPerTest(test);
+	}
+
+	@Override
+	public List getPreviousAnalysisRecord(String id) {
+        return getBaseObjectDAO().getPreviousAnalysisRecord(id);
+	}
+
+	@Override
+	public List<Analysis> getAnalysesBySampleItem(SampleItem sampleItem) {
+        return getBaseObjectDAO().getAnalysesBySampleItem(sampleItem);
+	}
+
+	@Override
+	public List getPageOfAnalyses(int startingRecNo) {
+        return getBaseObjectDAO().getPageOfAnalyses(startingRecNo);
+	}
+
+	@Override
+	public List getNextAnalysisRecord(String id) {
+        return getBaseObjectDAO().getNextAnalysisRecord(id);
 	}
 }

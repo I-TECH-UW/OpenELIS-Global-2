@@ -9,14 +9,20 @@ import us.mn.state.health.lims.address.valueholder.AddressPart;
 
 @Service
 public class AddressPartServiceImpl extends BaseObjectServiceImpl<AddressPart> implements AddressPartService {
-  @Autowired
-  protected AddressPartDAO baseObjectDAO;
+	@Autowired
+	protected AddressPartDAO baseObjectDAO;
 
-  AddressPartServiceImpl() {
-    super(AddressPart.class);
-  }
+	public AddressPartServiceImpl() {
+		super(AddressPart.class);
+	}
 
-  @Override
-  protected AddressPartDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected AddressPartDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
+
+	@Override
+	public AddressPart getAddresPartByName(String name) {
+		return getBaseObjectDAO().getAddresPartByName(name);
+	}
 }

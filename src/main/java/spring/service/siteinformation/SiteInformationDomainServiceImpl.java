@@ -9,8 +9,7 @@ import us.mn.state.health.lims.siteinformation.dao.SiteInformationDomainDAO;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformationDomain;
 
 @Service
-public class SiteInformationDomainServiceImpl extends BaseObjectServiceImpl<SiteInformationDomain>
-		implements SiteInformationDomainService {
+public class SiteInformationDomainServiceImpl extends BaseObjectServiceImpl<SiteInformationDomain> implements SiteInformationDomainService {
 	@Autowired
 	protected SiteInformationDomainDAO baseObjectDAO;
 
@@ -24,7 +23,7 @@ public class SiteInformationDomainServiceImpl extends BaseObjectServiceImpl<Site
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public SiteInformationDomain getByName(String name) {
 		return getMatch("name", name).get();
 	}

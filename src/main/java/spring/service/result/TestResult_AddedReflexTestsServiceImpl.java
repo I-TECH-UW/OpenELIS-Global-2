@@ -9,14 +9,15 @@ import us.mn.state.health.lims.result.valueholder.TestResult_AddedReflexTests;
 
 @Service
 public class TestResult_AddedReflexTestsServiceImpl extends BaseObjectServiceImpl<TestResult_AddedReflexTests> implements TestResult_AddedReflexTestsService {
-  @Autowired
-  protected TestResult_AddedReflexTestsDAO baseObjectDAO;
+	@Autowired
+	protected TestResult_AddedReflexTestsDAO baseObjectDAO;
 
-  TestResult_AddedReflexTestsServiceImpl() {
-    super(TestResult_AddedReflexTests.class);
-  }
+	TestResult_AddedReflexTestsServiceImpl() {
+		super(TestResult_AddedReflexTests.class);
+	}
 
-  @Override
-  protected TestResult_AddedReflexTestsDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected TestResult_AddedReflexTestsDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }

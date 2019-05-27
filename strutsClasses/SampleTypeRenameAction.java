@@ -44,8 +44,8 @@ public class SampleTypeRenameAction extends BaseAction {
 
 		dynaForm.initialize(mapping);
 
-		List<IdValuePair> sampleTypeList = DisplayListService.getList( DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
-		sampleTypeList.addAll(DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE));
+		List<IdValuePair> sampleTypeList = DisplayListService.getInstance().getList( DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
+		sampleTypeList.addAll(DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE));
 		IdValuePair.sortByValue(sampleTypeList);
 
 		PropertyUtils.setProperty( form, "sampleTypeList", sampleTypeList );

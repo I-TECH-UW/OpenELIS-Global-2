@@ -7,8 +7,25 @@ import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.userrole.valueholder.UserRole;
 
 public interface UserRoleService extends BaseObjectService<UserRole> {
+	void getData(UserRole userRole);
 
-	List<String> getRoleIdsForUser(String string);
+	void deleteData(List<UserRole> userRoles);
 
-	boolean userInRole(String sysUserId, Collection<String> ableToCancelRoleNames);
+	void updateData(UserRole userRole);
+
+	boolean insertData(UserRole userRole);
+
+	List getPageOfUserRoles(int startingRecNo);
+
+	List getNextUserRoleRecord(String id);
+
+	List<String> getRoleIdsForUser(String userId);
+
+	List getPreviousUserRoleRecord(String id);
+
+	boolean userInRole(String userId, String roleName);
+
+	boolean userInRole(String userId, Collection<String> roleNames);
+
+	List getAllUserRoles();
 }

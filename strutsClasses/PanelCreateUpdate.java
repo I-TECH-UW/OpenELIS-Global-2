@@ -96,8 +96,8 @@ public class PanelCreateUpdate extends BaseAction {
             HibernateUtil.closeSession();
         }
 
-        DisplayListService.refreshList(DisplayListService.ListType.PANELS);
-        DisplayListService.refreshList(DisplayListService.ListType.PANELS_INACTIVE);
+        DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);
+        DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS_INACTIVE);
 
         return mapping.findForward(FWD_SUCCESS);
     }

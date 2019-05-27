@@ -25,8 +25,18 @@ public class PersonAddressServiceImpl extends BaseObjectServiceImpl<PersonAddres
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<PersonAddress> getAddressPartsByPersonId(String id) {
 		return baseObjectDAO.getAddressPartsByPersonId(id);
+	}
+
+	@Override
+	public PersonAddress getByPersonIdAndPartId(String personId, String addressPartId) {
+		return getBaseObjectDAO().getByPersonIdAndPartId(personId, addressPartId);
+	}
+
+	@Override
+	public String insert(PersonAddress personAddress) {
+		return (String) super.insert(personAddress);
 	}
 }

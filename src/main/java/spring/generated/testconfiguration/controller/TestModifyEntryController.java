@@ -94,22 +94,24 @@ public class TestModifyEntryController extends BaseController {
 	private void setupDisaplyItems(TestModifyEntryForm form) {
 
 		List<IdValuePair> allSampleTypesList = new ArrayList<>();
-		allSampleTypesList.addAll(DisplayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
-		allSampleTypesList.addAll(DisplayListService.getList(ListType.SAMPLE_TYPE_INACTIVE));
+		allSampleTypesList.addAll(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
+		allSampleTypesList.addAll(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_INACTIVE));
 
 		try {
 			PropertyUtils.setProperty(form, "sampleTypeList", allSampleTypesList);
-			PropertyUtils.setProperty(form, "panelList", DisplayListService.getList(ListType.PANELS));
+			PropertyUtils.setProperty(form, "panelList", DisplayListService.getInstance().getList(ListType.PANELS));
 			PropertyUtils.setProperty(form, "resultTypeList",
-					DisplayListService.getList(ListType.RESULT_TYPE_LOCALIZED));
-			PropertyUtils.setProperty(form, "uomList", DisplayListService.getList(ListType.UNIT_OF_MEASURE));
-			PropertyUtils.setProperty(form, "labUnitList", DisplayListService.getList(ListType.TEST_SECTION));
+					DisplayListService.getInstance().getList(ListType.RESULT_TYPE_LOCALIZED));
+			PropertyUtils.setProperty(form, "uomList",
+					DisplayListService.getInstance().getList(ListType.UNIT_OF_MEASURE));
+			PropertyUtils.setProperty(form, "labUnitList",
+					DisplayListService.getInstance().getList(ListType.TEST_SECTION));
 			PropertyUtils.setProperty(form, "ageRangeList", ResultLimitServiceImpl.getPredefinedAgeRanges());
 			PropertyUtils.setProperty(form, "dictionaryList",
-					DisplayListService.getList(ListType.DICTIONARY_TEST_RESULTS));
+					DisplayListService.getInstance().getList(ListType.DICTIONARY_TEST_RESULTS));
 			PropertyUtils.setProperty(form, "groupedDictionaryList", createGroupedDictionaryList());
 			PropertyUtils.setProperty(form, "testList",
-					DisplayListService.getFreshList(DisplayListService.ListType.ALL_TESTS));
+					DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ALL_TESTS));
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -118,7 +120,8 @@ public class TestModifyEntryController extends BaseController {
 		// gnr: ALL_TESTS calls getActiveTests, this could be a way to enable
 		// maintenance of inactive tests
 		// PropertyUtils.setProperty( form, "testListInactive",
-		// DisplayListService.getList( DisplayListService.ListType.ALL_TESTS_INACTIVE )
+		// DisplayListService.getInstance().getList(
+		// DisplayListService.ListType.ALL_TESTS_INACTIVE )
 		// );
 
 		List<TestCatalogBean> testCatBeanList = createTestCatBeanList();
@@ -160,7 +163,8 @@ public class TestModifyEntryController extends BaseController {
 				bean.setHasLimitValues(true);
 				bean.setResultLimits(getResultLimits(test, bean.getSignificantDigits()));
 			}
-			bean.setHasDictionaryValues(TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(bean.getResultType()));
+			bean.setHasDictionaryValues(
+					TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(bean.getResultType()));
 			if (bean.isHasDictionaryValues()) {
 				bean.setDictionaryValues(createDictionaryValues(testService));
 				bean.setReferenceValue(createReferenceValueForDictionaryType(test));
@@ -561,8 +565,8 @@ public class TestModifyEntryController extends BaseController {
 		}
 
 		// Refresh test names
-		DisplayListService.getFreshList(DisplayListService.ListType.ALL_TESTS);
-		DisplayListService.getFreshList(DisplayListService.ListType.ORDERABLE_TESTS);
+		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ALL_TESTS);
+		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ORDERABLE_TESTS);
 	}
 
 	private void createPanelItems(ArrayList<PanelItem> panelItems, TestAddParams testAddParams) {
@@ -576,7 +580,8 @@ public class TestModifyEntryController extends BaseController {
 
 	private void createTestResults(ArrayList<TestResult> testResults, String significantDigits,
 			TestAddParams testAddParams) {
-		TypeOfTestResultServiceImpl.ResultType type = TypeOfTestResultServiceImpl.getResultTypeById(testAddParams.resultTypeId);
+		TypeOfTestResultServiceImpl.ResultType type = TypeOfTestResultServiceImpl
+				.getResultTypeById(testAddParams.resultTypeId);
 
 		if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(type)
 				|| TypeOfTestResultServiceImpl.ResultType.isNumeric(type)) {
@@ -602,8 +607,8 @@ public class TestModifyEntryController extends BaseController {
 	}
 
 	private Localization createNameLocalization(TestAddParams testAddParams) {
-		return LocalizationServiceImpl.createNewLocalization(testAddParams.testNameEnglish, testAddParams.testNameFrench,
-				LocalizationServiceImpl.LocalizationType.TEST_NAME);
+		return LocalizationServiceImpl.createNewLocalization(testAddParams.testNameEnglish,
+				testAddParams.testNameFrench, LocalizationServiceImpl.LocalizationType.TEST_NAME);
 	}
 
 	private Localization createReportingNameLocalization(TestAddParams testAddParams) {

@@ -9,14 +9,15 @@ import us.mn.state.health.lims.analysisqaevent.valueholder.AnalysisQaEvent;
 
 @Service
 public class AnalysisQaEventServiceImpl extends BaseObjectServiceImpl<AnalysisQaEvent> implements AnalysisQaEventService {
-  @Autowired
-  protected AnalysisQaEventDAO baseObjectDAO;
+	@Autowired
+	protected AnalysisQaEventDAO baseObjectDAO;
 
-  AnalysisQaEventServiceImpl() {
-    super(AnalysisQaEvent.class);
-  }
+	AnalysisQaEventServiceImpl() {
+		super(AnalysisQaEvent.class);
+	}
 
-  @Override
-  protected AnalysisQaEventDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected AnalysisQaEventDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }
