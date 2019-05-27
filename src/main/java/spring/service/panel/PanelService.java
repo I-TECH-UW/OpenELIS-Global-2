@@ -6,6 +6,8 @@ import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 
 public interface PanelService extends BaseObjectService<Panel> {
+
+	@Override
 	String insert(Panel panel);
 
 	void getData(Panel panel);
@@ -41,4 +43,5 @@ public interface PanelService extends BaseObjectService<Panel> {
 	List getPageOfPanels(int startingRecNo);
 
 	List<Panel> getAllPanels();
+
 }

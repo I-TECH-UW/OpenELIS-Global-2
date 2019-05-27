@@ -1,4 +1,4 @@
-package spring.service.systemusermodule;
+package spring.service.rolemodule;
 
 import java.io.Serializable;
 import java.util.List;

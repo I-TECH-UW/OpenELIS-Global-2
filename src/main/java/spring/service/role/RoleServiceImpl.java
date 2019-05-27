@@ -32,59 +32,60 @@ public class RoleServiceImpl extends BaseObjectServiceImpl<Role> implements Role
 
 	@Override
 	public void getData(Role role) {
-        getBaseObjectDAO().getData(role);
+		getBaseObjectDAO().getData(role);
 
 	}
 
 	@Override
 	public void deleteData(List<Role> roles) {
-        getBaseObjectDAO().deleteData(roles);
+		getBaseObjectDAO().deleteData(roles);
 
 	}
 
 	@Override
 	public void updateData(Role role) {
-        getBaseObjectDAO().updateData(role);
+		getBaseObjectDAO().updateData(role);
 
 	}
 
 	@Override
 	public boolean insertData(Role role) {
-        return getBaseObjectDAO().insertData(role);
+		return getBaseObjectDAO().insertData(role);
 	}
 
 	@Override
 	public List getNextRoleRecord(String id) {
-        return getBaseObjectDAO().getNextRoleRecord(id);
+		return getBaseObjectDAO().getNextRoleRecord(id);
 	}
 
 	@Override
 	public List getPreviousRoleRecord(String id) {
-        return getBaseObjectDAO().getPreviousRoleRecord(id);
+		return getBaseObjectDAO().getPreviousRoleRecord(id);
 	}
 
 	@Override
 	public List<Role> getReferencingRoles(Role role) {
-        return getBaseObjectDAO().getReferencingRoles(role);
+		return getBaseObjectDAO().getReferencingRoles(role);
 	}
 
 	@Override
 	public List<Role> getPageOfRoles(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfRoles(startingRecNo);
+		return getBaseObjectDAO().getPageOfRoles(startingRecNo);
 	}
 
 	@Override
 	public Role getRoleByName(String name) {
-        return getBaseObjectDAO().getRoleByName(name);
+		return getBaseObjectDAO().getRoleByName(name);
 	}
 
 	@Override
 	public List<Role> getAllRoles() {
-        return getBaseObjectDAO().getAllRoles();
+		return getBaseObjectDAO().getAllRoles();
 	}
 
 	@Override
 	public Role getRoleById(String roleId) {
-        return getBaseObjectDAO().getRoleById(roleId);
+		return getBaseObjectDAO().getRoleById(roleId);
+
 	}
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import spring.service.rolemodule.RoleModuleService;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
 
@@ -17,6 +18,7 @@ public class PermissionModuleServiceImpl implements PermissionModuleService<Perm
 
 	@Autowired
 	protected SystemUserModuleService systemUserService;
+
 	@Autowired
 	protected RoleModuleService roleModuleService;
 

@@ -34,7 +34,7 @@ import us.mn.state.health.lims.localization.valueholder.Localization;
 /**
  */
 @Component
-@Transactional 
+@Transactional
 public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements LocalizationDAO {
 
 	public LocalizationDAOImpl() {
@@ -44,7 +44,7 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements Lo
 	@Override
 	public Localization getLocalizationById(String id) throws LIMSRuntimeException {
 		try {
-			Localization localization = (Localization) HibernateUtil.getSession().get(Localization.class, id);
+			Localization localization = HibernateUtil.getSession().get(Localization.class, id);
 			// closeSession(); // CSL remove old
 			return localization;
 		} catch (HibernateException e) {
@@ -95,7 +95,7 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements Lo
 
 	public Localization readLocalization(String idString) {
 		try {
-			Localization localization = (Localization) HibernateUtil.getSession().get(Localization.class, idString);
+			Localization localization = HibernateUtil.getSession().get(Localization.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			return localization;
