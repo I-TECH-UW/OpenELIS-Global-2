@@ -38,6 +38,6 @@ public class RoleModuleServiceImpl extends PermissionModuleServiceImpl implement
 			throw new LIMSDuplicateRecordException(
 					"Duplicate record exists for " + roleModule.getPermissionAgentId());
 		}
-		return baseObjectDAO.insert(roleModule);
+		return super.insert(roleModule);
 	}
 }

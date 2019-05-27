@@ -27,6 +27,6 @@ public class SystemModuleServiceImpl extends BaseObjectServiceImpl<SystemModule>
 			throw new LIMSDuplicateRecordException(
 					"Duplicate record exists for " + systemModule.getSystemModuleName());
 	  }
-	  return baseObjectDAO.insert(systemModule);
+	  return super.insert(systemModule);
   }
 }

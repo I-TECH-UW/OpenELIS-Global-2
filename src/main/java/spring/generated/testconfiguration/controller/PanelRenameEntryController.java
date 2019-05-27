@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,16 +14,20 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.PanelRenameEntryForm;
 import spring.mine.common.controller.BaseController;
+import spring.service.localization.LocalizationService;
+import spring.service.panel.PanelService;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
 import us.mn.state.health.lims.localization.valueholder.Localization;
-import us.mn.state.health.lims.panel.dao.PanelDAO;
-import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 
 @Controller
 public class PanelRenameEntryController extends BaseController {
+	
+	@Autowired
+	PanelService panelService;
+	@Autowired
+	LocalizationService localizationService;
+	
 
 	@RequestMapping(value = "/PanelRenameEntry", method = RequestMethod.GET)
 	public ModelAndView showPanelRenameEntry(HttpServletRequest request) {
@@ -66,8 +70,8 @@ public class PanelRenameEntryController extends BaseController {
 	}
 
 	private void updatePanelNames(String panelId, String nameEnglish, String nameFrench, String userId) {
-		PanelDAO panelDAO = new PanelDAOImpl();
-		Panel panel = panelDAO.getPanelById(panelId);
+//		PanelDAO panelDAO = new PanelDAOImpl();
+		Panel panel = panelService.getPanelById(panelId);
 
 		if (panel != null) {
 
@@ -76,16 +80,19 @@ public class PanelRenameEntryController extends BaseController {
 			name.setFrench(nameFrench.trim());
 			name.setSysUserId(userId);
 
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
+//			Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 			try {
-				new LocalizationDAOImpl().updateData(name);
-				tx.commit();
+//				new LocalizationDAOImpl().updateData(name);
+				localizationService.update(name);
+//				tx.commit();
 			} catch (HibernateException e) {
-				tx.rollback();
-			} finally {
-				HibernateUtil.closeSession();
-			}
+//				tx.rollback();
+				e.printStackTrace();
+			} 
+//			finally {
+//				HibernateUtil.closeSession();
+//			}
 
 		}
 
