@@ -27,12 +27,28 @@ public class DocumentTrackServiceImpl extends BaseObjectServiceImpl<DocumentTrac
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<DocumentTrack> getByTypeRecordAndTable(String typeId, String tableId, String recordId) {
 		Map<String, Object> propertyValues = new HashMap<>();
 		propertyValues.put("documentTypeId", typeId);
 		propertyValues.put("tableId", tableId);
 		propertyValues.put("recordId", recordId);
 		return baseObjectDAO.getAllMatchingOrdered(propertyValues, "reportTime", false);
+	}
+
+	@Override
+	public void insertData(DocumentTrack docTrack) {
+        getBaseObjectDAO().insertData(docTrack);
+
+	}
+
+	@Override
+	public List<DocumentTrack> getByTypeRecordAndTableAndName(String reportTypeId, String referenceTable, String id, String name) {
+        return getBaseObjectDAO().getByTypeRecordAndTableAndName(reportTypeId,referenceTable,id,name);
+	}
+
+	@Override
+	public DocumentTrack readEntity(String id) {
+        return getBaseObjectDAO().readEntity(id);
 	}
 }

@@ -35,8 +35,8 @@ public class SampleBatchEntrySetupController extends BaseSampleEntryController {
 
 		SampleOrderService sampleOrderService = new SampleOrderService();
 		form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
-		form.setSampleTypes(DisplayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
-		form.setTestSectionList(DisplayListService.getList(ListType.TEST_SECTION));
+		form.setSampleTypes(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
+		form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
 		form.setCurrentDate(DateUtil.getCurrentDateAsText());
 		form.setCurrentTime(DateUtil.getCurrentTimeAsText());
 		form.getSampleOrderItems().setReceivedTime(DateUtil.getCurrentTimeAsText());
@@ -50,7 +50,7 @@ public class SampleBatchEntrySetupController extends BaseSampleEntryController {
 		addProjectList(form);
 
 		if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
-			form.setInitialSampleConditionList(DisplayListService.getList(ListType.INITIAL_SAMPLE_CONDITION));
+			form.setInitialSampleConditionList(DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
 		}
 
 		return findForward(FWD_SUCCESS, form);

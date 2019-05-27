@@ -9,14 +9,15 @@ import us.mn.state.health.lims.county.valueholder.County;
 
 @Service
 public class CountyServiceImpl extends BaseObjectServiceImpl<County> implements CountyService {
-  @Autowired
-  protected BaseDAO<County> baseObjectDAO;
+	@Autowired
+	protected BaseDAO<County> baseObjectDAO;
 
-  CountyServiceImpl() {
-    super(County.class);
-  }
+	CountyServiceImpl() {
+		super(County.class);
+	}
 
-  @Override
-  protected BaseDAO<County> getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected BaseDAO<County> getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }

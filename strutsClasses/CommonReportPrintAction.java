@@ -99,7 +99,7 @@ public class CommonReportPrintAction extends BaseAction {
 	}
 
 	private void trackReports(IReportCreator reportCreator, String reportName, ReportType reportType) {
-		new ReportTrackingService().addReports(reportCreator.getReportedOrders(), reportType, reportName,
+		ReportTrackingService.getInstance().addReports(reportCreator.getReportedOrders(), reportType, reportName,
 				currentUserId);
 	}
 

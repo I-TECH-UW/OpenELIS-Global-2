@@ -9,14 +9,20 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.Repor
 
 @Service
 public class ReportQueueTypeServiceImpl extends BaseObjectServiceImpl<ReportQueueType> implements ReportQueueTypeService {
-  @Autowired
-  protected ReportQueueTypeDAO baseObjectDAO;
+	@Autowired
+	protected ReportQueueTypeDAO baseObjectDAO;
 
-  ReportQueueTypeServiceImpl() {
-    super(ReportQueueType.class);
-  }
+	ReportQueueTypeServiceImpl() {
+		super(ReportQueueType.class);
+	}
 
-  @Override
-  protected ReportQueueTypeDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected ReportQueueTypeDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
+
+	@Override
+	public ReportQueueType getReportQueueTypeByName(String name) {
+        return getBaseObjectDAO().getReportQueueTypeByName(name);
+	}
 }

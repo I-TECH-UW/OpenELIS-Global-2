@@ -847,7 +847,7 @@ public class ResultsLoadUtility {
 		// }
 
 		// return false;
-		return TestIdentityService.isTestNumericViralLoad(testService.getTest());
+		return TestIdentityService.getInstance().isTestNumericViralLoad(testService.getTest());
 	}
 
 	private List<IdValuePair> getAnyDictionaryValues(Result result) {

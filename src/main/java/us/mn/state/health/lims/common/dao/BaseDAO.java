@@ -266,7 +266,7 @@ public interface BaseDAO<T extends BaseObject> {
 	 * @param object the data to insert
 	 * @return the id of the inserted object
 	 */
-	String insert(T object);
+	Serializable insert(T object);
 
 	/**
 	 * @param object the new data to update the database with. Will insert if it

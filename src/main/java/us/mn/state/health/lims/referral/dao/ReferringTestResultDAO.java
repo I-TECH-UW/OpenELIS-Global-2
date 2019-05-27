@@ -18,15 +18,16 @@ package us.mn.state.health.lims.referral.dao;
 import java.sql.Date;
 import java.util.List;
 
+import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.referral.valueholder.ReferringTestResult;
 
-
-public interface ReferringTestResultDAO {
+public interface ReferringTestResultDAO extends BaseDAO<ReferringTestResult> {
 
 	public boolean insertData(ReferringTestResult referringTestResult) throws LIMSRuntimeException;
 
-	public List<ReferringTestResult> getReferringTestResultsForSampleItem( String sampleItemId) throws LIMSRuntimeException;
+	public List<ReferringTestResult> getReferringTestResultsForSampleItem(String sampleItemId)
+			throws LIMSRuntimeException;
 
-    public List<ReferringTestResult> getResultsInDateRange(Date lowDate, Date highDate) throws LIMSRuntimeException;
+	public List<ReferringTestResult> getResultsInDateRange(Date lowDate, Date highDate) throws LIMSRuntimeException;
 }

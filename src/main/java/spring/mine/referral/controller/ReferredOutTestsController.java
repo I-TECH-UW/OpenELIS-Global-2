@@ -110,9 +110,9 @@ public class ReferredOutTestsController extends BaseController {
 		List<ReferralItem> referralItems = getReferralItems();
 		PropertyUtils.setProperty(form, "referralItems", referralItems);
 		PropertyUtils.setProperty(form, "referralReasons",
-				DisplayListService.getList(DisplayListService.ListType.REFERRAL_REASONS));
+				DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
 		PropertyUtils.setProperty(form, "referralOrganizations",
-				DisplayListService.getListWithLeadingBlank(DisplayListService.ListType.REFERRAL_ORGANIZATIONS));
+				DisplayListService.getInstance().getListWithLeadingBlank(DisplayListService.ListType.REFERRAL_ORGANIZATIONS));
 
 		fillInDictionaryValuesForReferralItems(referralItems);
 

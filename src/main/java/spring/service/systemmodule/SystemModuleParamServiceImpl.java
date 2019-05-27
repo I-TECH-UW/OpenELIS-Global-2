@@ -9,14 +9,15 @@ import us.mn.state.health.lims.systemmodule.valueholder.SystemModuleParam;
 
 @Service
 public class SystemModuleParamServiceImpl extends BaseObjectServiceImpl<SystemModuleParam> implements SystemModuleParamService {
-  @Autowired
-  protected SystemModuleParamDAO baseObjectDAO;
+	@Autowired
+	protected SystemModuleParamDAO baseObjectDAO;
 
-  SystemModuleParamServiceImpl() {
-    super(SystemModuleParam.class);
-  }
+	SystemModuleParamServiceImpl() {
+		super(SystemModuleParam.class);
+	}
 
-  @Override
-  protected SystemModuleParamDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected SystemModuleParamDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }

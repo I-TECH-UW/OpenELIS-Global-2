@@ -39,8 +39,8 @@ public class TestSectionCreateAction extends BaseAction {
     @Override
     protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ((DynaValidatorForm)form).initialize(mapping);
-        PropertyUtils.setProperty(form, "existingTestUnitList", DisplayListService.getList(DisplayListService.ListType.TEST_SECTION));
-        PropertyUtils.setProperty(form, "inactiveTestUnitList", DisplayListService.getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
+        PropertyUtils.setProperty(form, "existingTestUnitList", DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
+        PropertyUtils.setProperty(form, "inactiveTestUnitList", DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
         List<TestSection> testSections = TestSectionServiceImpl.getAllTestSections();
         PropertyUtils.setProperty(form, "existingEnglishNames", getExistingTestNames(testSections, ConfigurationProperties.LOCALE.ENGLISH));
         PropertyUtils.setProperty(form, "existingFrenchNames", getExistingTestNames(testSections, ConfigurationProperties.LOCALE.FRENCH));

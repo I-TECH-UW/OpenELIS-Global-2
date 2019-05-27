@@ -40,7 +40,7 @@ public class SampleTypeTestAssignAction extends BaseAction {
     @Override  
     protected ActionForward performAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ((DynaValidatorForm)form).initialize(mapping);
-        List<IdValuePair> typeOfSamples = DisplayListService.getListWithLeadingBlank(DisplayListService.ListType.SAMPLE_TYPE);
+        List<IdValuePair> typeOfSamples = DisplayListService.getInstance().getListWithLeadingBlank(DisplayListService.ListType.SAMPLE_TYPE);
         LinkedHashMap<IdValuePair, List<IdValuePair>> sampleTypesTestsMap = new LinkedHashMap<IdValuePair, List<IdValuePair>>(typeOfSamples.size());
 
         for( IdValuePair sampleTypePair : typeOfSamples){
@@ -57,7 +57,7 @@ public class SampleTypeTestAssignAction extends BaseAction {
 
         //we can't just append the original list because that list is in the cache
         List<IdValuePair> joinedList = new ArrayList<IdValuePair>(typeOfSamples);
-        joinedList.addAll(DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE));
+        joinedList.addAll(DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE));
         PropertyUtils.setProperty(form, "sampleTypeList", joinedList);
         PropertyUtils.setProperty(form, "sampleTypeTestList", sampleTypesTestsMap);
 

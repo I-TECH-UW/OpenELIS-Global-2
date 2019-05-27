@@ -2,15 +2,15 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
@@ -44,7 +44,7 @@ public class ExchangeConfigurationService {
 		private String domainName;
 
 		ConfigurationDomain(String siteDomain) {
-			this.domainName = siteDomain;
+			domainName = siteDomain;
 		}
 
 		public String getSiteDomain() {
@@ -53,9 +53,9 @@ public class ExchangeConfigurationService {
 	}
 
 	public enum ExchangeType {
-		RESULT_REPORT("Result Reporting", "resultReport", true, RESULT_REPORT_TYPE_ID), 
-		MALARIA_SURVEILLANCE("Malaria Surveillance", "malariaSurvaeillance", false, null), 
-		MALARIA_CASE("Malaria Case Report", "malariaCase", true,	MALARIA_CASE_TYPE_ID);
+		RESULT_REPORT("Result Reporting", "resultReport", true, RESULT_REPORT_TYPE_ID),
+		MALARIA_SURVEILLANCE("Malaria Surveillance", "malariaSurvaeillance", false, null),
+		MALARIA_CASE("Malaria Case Report", "malariaCase", true, MALARIA_CASE_TYPE_ID);
 
 		private String title;
 		private boolean showbacklog = false;
@@ -89,9 +89,9 @@ public class ExchangeConfigurationService {
 	private ConfigurationDomain domain;
 	private ExchangeType exchangeType;
 
-	private static Map<String, ExchangeType> dbNameToExchangeTypeMap = new HashMap<String, ExchangeType>();
-	private static Map<String, ExchangeType> testTokenToExchangeTypeMap = new HashMap<String, ExchangeType>();
-	private static Map<String, ConfigurationDomain> testTokenToDomainMap = new HashMap<String, ConfigurationDomain>();
+	private static Map<String, ExchangeType> dbNameToExchangeTypeMap = new HashMap<>();
+	private static Map<String, ExchangeType> testTokenToExchangeTypeMap = new HashMap<>();
+	private static Map<String, ConfigurationDomain> testTokenToDomainMap = new HashMap<>();
 
 	static {
 		RESULT_REPORT_TYPE_ID = new ReportQueueTypeDAOImpl().getReportQueueTypeByName("Results").getId();
@@ -113,7 +113,7 @@ public class ExchangeConfigurationService {
 		}
 		if (ExchangeType.MALARIA_SURVEILLANCE.getUrlTestToken() != null) {
 			String token = ExchangeType.MALARIA_SURVEILLANCE.getUrlTestToken();
-			testTokenToExchangeTypeMap.put(token,ExchangeType.MALARIA_SURVEILLANCE);
+			testTokenToExchangeTypeMap.put(token, ExchangeType.MALARIA_SURVEILLANCE);
 			testTokenToDomainMap.put(token, ConfigurationDomain.REPORT);
 		}
 
@@ -122,8 +122,8 @@ public class ExchangeConfigurationService {
 	public ExchangeConfigurationService(ConfigurationDomain domain) {
 		this.domain = domain;
 	}
-	
-	public ExchangeConfigurationService(String urlTestToken){
+
+	public ExchangeConfigurationService(String urlTestToken) {
 		domain = testTokenToDomainMap.get(urlTestToken);
 		exchangeType = testTokenToExchangeTypeMap.get(urlTestToken);
 	}
@@ -141,7 +141,7 @@ public class ExchangeConfigurationService {
 		});
 
 		int group = informationList.get(0).getGroup();
-		List<ReportingConfiguration> reports = new ArrayList<ReportingConfiguration>();
+		List<ReportingConfiguration> reports = new ArrayList<>();
 		ReportingConfiguration configuration = new ReportingConfiguration();
 		reports.add(configuration);
 
@@ -181,7 +181,7 @@ public class ExchangeConfigurationService {
 					String[] cronParts = cronString.split(" ");
 					int minutes = Integer.parseInt(cronParts[1]);
 					configuration.setScheduleHours(cronParts[2]);
-					configuration.setScheduleMin(String.valueOf((int) (minutes / 10) * 10));
+					configuration.setScheduleMin(String.valueOf(minutes / 10 * 10));
 				}
 			}
 		}
@@ -199,10 +199,10 @@ public class ExchangeConfigurationService {
 	}
 
 	public String testConnection(String url) {
-		if( GenericValidator.isBlankOrNull(url)){
+		if (GenericValidator.isBlankOrNull(url)) {
 			return MessageUtil.getMessage("connection.test.error.missingURL");
 		}
-		
+
 		ConnectionTest connectionTest = new ConnectionTest();
 		return connectionTest.testURL(url);
 	}

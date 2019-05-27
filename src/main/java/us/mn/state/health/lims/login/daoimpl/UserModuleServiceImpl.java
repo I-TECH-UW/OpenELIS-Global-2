@@ -19,24 +19,23 @@ package us.mn.state.health.lims.login.daoimpl;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import spring.service.login.LoginService;
+import spring.service.systemusermodule.PermissionModuleService;
+import spring.service.systemusermodule.SystemUserModuleService;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.security.PageIdentityUtil;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.login.dao.LoginDAO;
 import us.mn.state.health.lims.login.dao.UserModuleService;
 import us.mn.state.health.lims.login.valueholder.Login;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
-import us.mn.state.health.lims.systemusermodule.dao.PermissionModuleDAO;
+import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
 import us.mn.state.health.lims.systemusermodule.valueholder.SystemUserModule;
 
 /**
@@ -50,33 +49,15 @@ import us.mn.state.health.lims.systemusermodule.valueholder.SystemUserModule;
 public class UserModuleServiceImpl implements UserModuleService, IActionConstants {
 
 	@Autowired
-	@Qualifier(value = "RoleModuleDAO")
-	PermissionModuleDAO roleModuleDAO;
+	PermissionModuleService<PermissionModule> permissionModuleService;
 	@Autowired
-	@Qualifier(value = "SystemUserModuleDAO")
-	PermissionModuleDAO systemUserModuleDAO;
+	SystemUserModuleService systemUserModuleService;
 	@Autowired
-	LoginDAO loginDAO;
-
-	PermissionModuleDAO permissionModuleDAO;
-
-	@PostConstruct
-	public void initializePermissionModule() {
-		if (SystemConfiguration.getInstance().getPermissionAgent().equals("USER")) {
-			permissionModuleDAO = systemUserModuleDAO;
-		} else {
-			permissionModuleDAO = roleModuleDAO;
-		}
-	}
+	LoginService loginService;
 
 	@Override
-	@Transactional(readOnly = true)
 	public boolean isSessionExpired(HttpServletRequest request) throws LIMSRuntimeException {
-		if (request.getSession().getAttribute(USER_SESSION_DATA) == null) {
-			return true;
-		}
-
-		return false;
+		return request.getSession().getAttribute(USER_SESSION_DATA) == null;
 	}
 
 	/**
@@ -91,7 +72,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
 		boolean isFound = false;
 		try {
 			UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-			isFound = permissionModuleDAO.doesUserHaveAnyModules(usd.getSystemUserId());
+			isFound = permissionModuleService.doesUserHaveAnyModules(usd.getSystemUserId());
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
 			LogEvent.logError("UserModuleServiceImpl", "isUserModuleFound()", lre.toString());
@@ -115,7 +96,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
 		if (!isFound) {
 			try {
 				UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-				List list = systemUserModuleDAO.getAllPermissionModulesByAgentId(usd.getSystemUserId());
+				List list = systemUserModuleService.getAllPermissionModulesByAgentId(usd.getSystemUserId());
 
 				for (int i = 0; i < list.size(); i++) {
 					SystemUserModule systemUserModule = (SystemUserModule) list.get(i);
@@ -177,7 +158,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
 		Login login = null;
 		try {
 			UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-			login = loginDAO.getUserProfile(usd.getLoginName());
+			login = loginService.getUserProfile(usd.getLoginName());
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
 			LogEvent.logError("UserModuleServiceImpl", "getUserLogin()", lre.toString());

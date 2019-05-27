@@ -1,5 +1,7 @@
 package spring.service.menu;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,14 +11,36 @@ import us.mn.state.health.lims.menu.valueholder.Menu;
 
 @Service
 public class MenuServiceImpl extends BaseObjectServiceImpl<Menu> implements MenuService {
-  @Autowired
-  protected MenuDAO baseObjectDAO;
+	@Autowired
+	protected MenuDAO baseObjectDAO;
 
-  MenuServiceImpl() {
-    super(Menu.class);
-  }
+	MenuServiceImpl() {
+		super(Menu.class);
+	}
 
-  @Override
-  protected MenuDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected MenuDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
+
+	@Override
+	public void updateData(Menu menu) {
+        getBaseObjectDAO().updateData(menu);
+
+	}
+
+	@Override
+	public Menu getMenuByElementId(String elementId) {
+        return getBaseObjectDAO().getMenuByElementId(elementId);
+	}
+
+	@Override
+	public List<Menu> getAllActiveMenus() {
+        return getBaseObjectDAO().getAllActiveMenus();
+	}
+
+	@Override
+	public List<Menu> getAllMenus() {
+        return getBaseObjectDAO().getAllMenus();
+	}
 }

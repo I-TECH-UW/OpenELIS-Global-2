@@ -88,8 +88,8 @@ public class ReferredOutAction extends BaseAction {
 
 		List<ReferralItem> referralItems = getReferralItems();
 		PropertyUtils.setProperty(dynaForm, "referralItems", referralItems);
-		PropertyUtils.setProperty(dynaForm, "referralReasons", DisplayListService.getList( DisplayListService.ListType.REFERRAL_REASONS ));
-		PropertyUtils.setProperty(dynaForm, "referralOrganizations", DisplayListService.getListWithLeadingBlank( DisplayListService.ListType.REFERRAL_ORGANIZATIONS ));
+		PropertyUtils.setProperty(dynaForm, "referralReasons", DisplayListService.getInstance().getList( DisplayListService.ListType.REFERRAL_REASONS ));
+		PropertyUtils.setProperty(dynaForm, "referralOrganizations", DisplayListService.getInstance().getListWithLeadingBlank( DisplayListService.ListType.REFERRAL_ORGANIZATIONS ));
 
         //remove at some point
 		nonNumericTests = getNonNumericTests(referralItems);

@@ -148,7 +148,7 @@ public abstract class NonConformityByDate extends Report implements IReportCreat
 	 */
 	private String findService() {
 		String service = "";
-		List<ObservationHistory> oh = observationDAO.getAll(null, sample, TableIdService.SERVICE_OBSERVATION_TYPE_ID);
+		List<ObservationHistory> oh = observationDAO.getAll(null, sample, TableIdService.getInstance().SERVICE_OBSERVATION_TYPE_ID);
 		if (oh.size() > 0) {
 			service = oh.get(0).getValue();
 		}

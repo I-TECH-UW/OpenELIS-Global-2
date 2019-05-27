@@ -44,7 +44,7 @@ public class TestRenameAction extends BaseAction {
 
 		dynaForm.initialize(mapping);
 
-        PropertyUtils.setProperty( form, "testList", DisplayListService.getList( DisplayListService.ListType.ALL_TESTS ) );
+        PropertyUtils.setProperty( form, "testList", DisplayListService.getInstance().getList( DisplayListService.ListType.ALL_TESTS ) );
 
         return mapping.findForward(FWD_SUCCESS);
 	}

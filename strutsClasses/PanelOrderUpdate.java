@@ -73,9 +73,9 @@ public class PanelOrderUpdate extends BaseAction {
             HibernateUtil.closeSession();
         }
 
-        DisplayListService.refreshList(DisplayListService.ListType.PANELS);
-        DisplayListService.refreshList(DisplayListService.ListType.PANELS_INACTIVE);
-        DisplayListService.refreshList(DisplayListService.ListType.PANELS_ACTIVE);
+        DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);
+        DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS_INACTIVE);
+        DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS_ACTIVE);
 
         return mapping.findForward(FWD_SUCCESS);
     }

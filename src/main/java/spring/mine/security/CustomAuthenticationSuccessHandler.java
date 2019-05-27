@@ -38,7 +38,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 	@Autowired
 	UserRoleService userRoleService;
 	@Autowired
-	PermissionModuleService permissionModuleService;
+	PermissionModuleService<PermissionModule> permissionModuleService;
 	@Autowired
 	SystemUserService systemUserService;
 

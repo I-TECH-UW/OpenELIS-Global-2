@@ -40,7 +40,7 @@ import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
 @Component
-@Transactional 
+@Transactional
 public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements SystemModuleDAO {
 
 	public SystemModuleDAOImpl() {
@@ -150,8 +150,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements Sy
 	@Override
 	public void getData(SystemModule systemModule) throws LIMSRuntimeException {
 		try {
-			SystemModule sysModule = (SystemModule) HibernateUtil.getSession().get(SystemModule.class,
-					systemModule.getId());
+			SystemModule sysModule = HibernateUtil.getSession().get(SystemModule.class, systemModule.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (sysModule != null) {
@@ -209,7 +208,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements Sy
 	public SystemModule readSystemModule(String idString) {
 		SystemModule sysModule;
 		try {
-			sysModule = (SystemModule) HibernateUtil.getSession().get(SystemModule.class, idString);
+			sysModule = HibernateUtil.getSession().get(SystemModule.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -305,7 +304,8 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements Sy
 		return list;
 	}
 
-	private boolean duplicateSystemModuleExists(SystemModule systemModule) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicateSystemModuleExists(SystemModule systemModule) throws LIMSRuntimeException {
 		try {
 
 			List list;

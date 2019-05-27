@@ -44,7 +44,7 @@ import us.mn.state.health.lims.panel.valueholder.Panel;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class PanelDAOImpl extends BaseDAOImpl<Panel> implements PanelDAO {
 
 	public PanelDAOImpl() {
@@ -199,7 +199,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel> implements PanelDAO {
 	@Override
 	public void getData(Panel panel) throws LIMSRuntimeException {
 		try {
-			Panel pan = (Panel) HibernateUtil.getSession().get(Panel.class, panel.getId());
+			Panel pan = HibernateUtil.getSession().get(Panel.class, panel.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (pan != null) {
@@ -218,7 +218,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel> implements PanelDAO {
 	@Override
 	public Panel getPanelById(String panelId) throws LIMSRuntimeException {
 		try {
-			Panel panel = (Panel) HibernateUtil.getSession().get(Panel.class, panelId);
+			Panel panel = HibernateUtil.getSession().get(Panel.class, panelId);
 			// closeSession(); // CSL remove old
 			return panel;
 		} catch (HibernateException e) {
@@ -292,7 +292,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel> implements PanelDAO {
 	public Panel readPanel(String idString) {
 		Panel panel = null;
 		try {
-			panel = (Panel) HibernateUtil.getSession().get(Panel.class, idString);
+			panel = HibernateUtil.getSession().get(Panel.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {

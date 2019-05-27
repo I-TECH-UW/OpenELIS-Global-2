@@ -152,15 +152,15 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 		PropertyUtils.setProperty(form, "currentDate", currentDate);
 		PropertyUtils.setProperty(form, "logbookType", request.getParameter("type"));
 		PropertyUtils.setProperty(form, "referralReasons",
-				DisplayListService.getList(DisplayListService.ListType.REFERRAL_REASONS));
+				DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
 		PropertyUtils.setProperty(form, "rejectReasons",
-				DisplayListService.getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+				DisplayListService.getInstance().getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
 		// load testSections for drop down
-		List<IdValuePair> testSections = DisplayListService.getList(ListType.TEST_SECTION);
+		List<IdValuePair> testSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION);
 		PropertyUtils.setProperty(form, "testSections", testSections);
 		PropertyUtils.setProperty(form, "testSectionsByName",
-				DisplayListService.getList(ListType.TEST_SECTION_BY_NAME));
+				DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
 		if (!GenericValidator.isBlankOrNull(testSectionId)) {
 			ts = testSectionService.get(testSectionId);
@@ -460,7 +460,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
 			if (testResultItem.isShadowRejected()) {
 				String rejectedReasonId = testResultItem.getRejectReasonId();
-				for (IdValuePair rejectReason : DisplayListService.getList(ListType.REJECTION_REASONS)) {
+				for (IdValuePair rejectReason : DisplayListService.getInstance().getList(ListType.REJECTION_REASONS)) {
 					if (rejectedReasonId.equals(rejectReason.getId())) {
 						actionDataSet.addToNoteList(noteServiceOld.createSavableNote(NoteType.REJECTION_REASON,
 								rejectReason.getValue(), RESULT_SUBJECT, getSysUserId(request)));

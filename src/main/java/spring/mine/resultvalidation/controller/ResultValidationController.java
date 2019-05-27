@@ -127,9 +127,9 @@ public class ResultValidationController extends BaseResultValidationController {
 		if (GenericValidator.isBlankOrNull(newPage)) {
 
 			// load testSections for drop down
-			PropertyUtils.setProperty(form, "testSections", DisplayListService.getList(ListType.TEST_SECTION));
+			PropertyUtils.setProperty(form, "testSections", DisplayListService.getInstance().getList(ListType.TEST_SECTION));
 			PropertyUtils.setProperty(form, "testSectionsByName",
-					DisplayListService.getList(ListType.TEST_SECTION_BY_NAME));
+					DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
 			if (!GenericValidator.isBlankOrNull(testSectionId)) {
 				ts = testSectionService.get(testSectionId);

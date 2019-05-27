@@ -9,14 +9,15 @@ import us.mn.state.health.lims.patienttype.valueholder.BasePatientType;
 
 @Service
 public class BasePatientTypeServiceImpl extends BaseObjectServiceImpl<BasePatientType> implements BasePatientTypeService {
-  @Autowired
-  protected BaseDAO<BasePatientType> baseObjectDAO;
+	@Autowired
+	protected BaseDAO<BasePatientType> baseObjectDAO;
 
-  BasePatientTypeServiceImpl() {
-    super(BasePatientType.class);
-  }
+	BasePatientTypeServiceImpl() {
+		super(BasePatientType.class);
+	}
 
-  @Override
-  protected BaseDAO<BasePatientType> getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected BaseDAO<BasePatientType> getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }

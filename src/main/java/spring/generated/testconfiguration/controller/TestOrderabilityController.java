@@ -58,10 +58,10 @@ public class TestOrderabilityController extends BaseController {
 		ArrayList<TestActivationBean> testList = new ArrayList<>();
 
 		if (refresh) {
-			DisplayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
+			DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
 		}
 
-		List<IdValuePair> sampleTypeList = DisplayListService.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
+		List<IdValuePair> sampleTypeList = DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
 
 		for (IdValuePair pair : sampleTypeList) {
 			TestActivationBean bean = new TestActivationBean();

@@ -36,20 +36,19 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.systemusermodule.dao.PermissionModuleDAO;
-import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
+import us.mn.state.health.lims.systemusermodule.dao.SystemUserModuleDAO;
 import us.mn.state.health.lims.systemusermodule.valueholder.SystemUserModule;
 
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
 @Component
-@Transactional 
+@Transactional
 @Qualifier(value = "SystemUserModuleDAO")
-public class SystemUserModuleDAOImpl extends BaseDAOImpl<PermissionModule> implements PermissionModuleDAO {
+public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule> implements SystemUserModuleDAO {
 
 	public SystemUserModuleDAOImpl() {
-		super(PermissionModule.class);
+		super(SystemUserModule.class);
 	}
 
 	@Override
@@ -91,10 +90,10 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<PermissionModule> imple
 	}
 
 	@Override
-	public boolean insertData(PermissionModule systemUserModule) throws LIMSRuntimeException {
+	public boolean insertData(SystemUserModule systemUserModule) throws LIMSRuntimeException {
 
 		try {
-			if (duplicateSystemUserModuleExists((SystemUserModule) systemUserModule)) {
+			if (duplicateSystemUserModuleExists(systemUserModule)) {
 				throw new LIMSDuplicateRecordException(
 						"Duplicate record exists for " + systemUserModule.getPermissionAgentId());
 			}
@@ -120,10 +119,10 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<PermissionModule> imple
 	}
 
 	@Override
-	public void updateData(PermissionModule systemUserModule) throws LIMSRuntimeException {
+	public void updateData(SystemUserModule systemUserModule) throws LIMSRuntimeException {
 
 		try {
-			if (duplicateSystemUserModuleExists((SystemUserModule) systemUserModule)) {
+			if (duplicateSystemUserModuleExists(systemUserModule)) {
 				throw new LIMSDuplicateRecordException(
 						"Duplicate record exists for " + systemUserModule.getPermissionAgentId());
 			}
@@ -134,7 +133,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<PermissionModule> imple
 		}
 
 		SystemUserModule oldData = readSystemUserModule(systemUserModule.getId());
-		SystemUserModule newData = (SystemUserModule) systemUserModule;
+		SystemUserModule newData = systemUserModule;
 
 		// add to audit trail
 		try {
@@ -163,7 +162,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<PermissionModule> imple
 	}
 
 	@Override
-	public void getData(PermissionModule systemUserModule) throws LIMSRuntimeException {
+	public void getData(SystemUserModule systemUserModule) throws LIMSRuntimeException {
 		try {
 			SystemUserModule sysUserModule = HibernateUtil.getSession().get(SystemUserModule.class,
 					systemUserModule.getId());

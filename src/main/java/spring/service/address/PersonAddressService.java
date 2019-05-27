@@ -7,5 +7,9 @@ import us.mn.state.health.lims.address.valueholder.PersonAddress;
 
 public interface PersonAddressService extends BaseObjectService<PersonAddress> {
 
-	List<PersonAddress> getAddressPartsByPersonId(String id);
+	String insert(PersonAddress personAddress);
+
+	List<PersonAddress> getAddressPartsByPersonId(String personId);
+
+	PersonAddress getByPersonIdAndPartId(String personId, String addressPartId);
 }

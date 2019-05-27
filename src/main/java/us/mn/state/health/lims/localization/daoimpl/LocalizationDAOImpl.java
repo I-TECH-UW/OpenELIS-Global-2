@@ -16,6 +16,8 @@
 
 package us.mn.state.health.lims.localization.daoimpl;
 
+import java.io.Serializable;
+
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,7 +77,7 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements Lo
 	}
 
 	@Override
-	public String insert(Localization localization) throws LIMSRuntimeException {
+	public Serializable insert(Localization localization) throws LIMSRuntimeException {
 		try {
 			String id = (String) HibernateUtil.getSession().save(localization);
 			localization.setId(id);

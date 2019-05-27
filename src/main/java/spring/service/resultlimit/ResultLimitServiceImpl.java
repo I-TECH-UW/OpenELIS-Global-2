@@ -49,8 +49,7 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> i
 
 	public synchronized void initializeGlobalVariables() {
 		NUMERIC_RESULT_TYPE_ID = typeOfTestResultDAO.getTypeOfTestResultByType("N").getId();
-		SELECT_LIST_RESULT_TYPE_IDS = typeOfTestResultDAO.getTypeOfTestResultByType("D").getId()
-				+ typeOfTestResultDAO.getTypeOfTestResultByType("M").getId();
+		SELECT_LIST_RESULT_TYPE_IDS = typeOfTestResultDAO.getTypeOfTestResultByType("D").getId() + typeOfTestResultDAO.getTypeOfTestResultByType("M").getId();
 
 	}
 
@@ -75,8 +74,7 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> i
 
 		if (resultLimits.isEmpty()) {
 			return null;
-		} else if (patient == null
-				|| patient.getBirthDate() == null && GenericValidator.isBlankOrNull(patient.getGender())) {
+		} else if (patient == null || patient.getBirthDate() == null && GenericValidator.isBlankOrNull(patient.getGender())) {
 			return defaultResultLimit(resultLimits);
 		} else if (GenericValidator.isBlankOrNull(patient.getGender())) {
 			return ageBasedResultLimit(resultLimits, patient);
@@ -103,9 +101,7 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> i
 
 		// First we look for a limit with no gender
 		for (ResultLimit limit : resultLimits) {
-			if (GenericValidator.isBlankOrNull(limit.getGender()) && !limit.ageLimitsAreDefault()
-					&& getCurrPatientAge(patient) >= limit.getMinAge()
-					&& getCurrPatientAge(patient) <= limit.getMaxAge()) {
+			if (GenericValidator.isBlankOrNull(limit.getGender()) && !limit.ageLimitsAreDefault() && getCurrPatientAge(patient) >= limit.getMinAge() && getCurrPatientAge(patient) <= limit.getMaxAge()) {
 
 				resultLimit = limit;
 				break;
@@ -115,8 +111,7 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> i
 		// if none is found then drop the no gender requirement
 		if (resultLimit == null) {
 			for (ResultLimit limit : resultLimits) {
-				if (!limit.ageLimitsAreDefault() && getCurrPatientAge(patient) >= limit.getMinAge()
-						&& getCurrPatientAge(patient) <= limit.getMaxAge()) {
+				if (!limit.ageLimitsAreDefault() && getCurrPatientAge(patient) >= limit.getMinAge() && getCurrPatientAge(patient) <= limit.getMaxAge()) {
 
 					resultLimit = limit;
 					break;
@@ -227,18 +222,15 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> i
 			return "< " + StringUtil.doubleWithSignificantDigits(high, significantDigits);
 		}
 
-		return StringUtil.doubleWithSignificantDigits(low, significantDigits) + separator
-				+ StringUtil.doubleWithSignificantDigits(high, significantDigits);
+		return StringUtil.doubleWithSignificantDigits(low, significantDigits) + separator + StringUtil.doubleWithSignificantDigits(high, significantDigits);
 	}
 
 	public static String getDisplayReferenceRange(ResultLimit resultLimit, String significantDigits, String separator) {
 		String range = "";
 		if (resultLimit != null && !GenericValidator.isBlankOrNull(resultLimit.getResultTypeId())) {
 			if (NUMERIC_RESULT_TYPE_ID.equals(resultLimit.getResultTypeId())) {
-				range = getDisplayNormalRange(resultLimit.getLowNormal(), resultLimit.getHighNormal(),
-						significantDigits, separator);
-			} else if (SELECT_LIST_RESULT_TYPE_IDS.contains(resultLimit.getResultTypeId())
-					&& !GenericValidator.isBlankOrNull(resultLimit.getDictionaryNormalId())) {
+				range = getDisplayNormalRange(resultLimit.getLowNormal(), resultLimit.getHighNormal(), significantDigits, separator);
+			} else if (SELECT_LIST_RESULT_TYPE_IDS.contains(resultLimit.getResultTypeId()) && !GenericValidator.isBlankOrNull(resultLimit.getDictionaryNormalId())) {
 				return dictionaryDAO.getDataForId(resultLimit.getDictionaryNormalId()).getLocalizedName();
 			}
 		}
@@ -258,8 +250,7 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> i
 		String range = "";
 		if (resultLimit != null && !GenericValidator.isBlankOrNull(resultLimit.getResultTypeId())) {
 			if (NUMERIC_RESULT_TYPE_ID.equals(resultLimit.getResultTypeId())) {
-				range = getDisplayNormalRange(resultLimit.getLowValid(), resultLimit.getHighValid(), significantDigits,
-						separator);
+				range = getDisplayNormalRange(resultLimit.getLowValid(), resultLimit.getHighValid(), significantDigits, separator);
 			}
 		}
 		return range;

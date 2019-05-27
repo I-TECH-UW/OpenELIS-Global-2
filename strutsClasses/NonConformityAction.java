@@ -153,13 +153,13 @@ public class NonConformityAction extends BaseAction{
 
 			PropertyUtils.setProperty(dynaForm, "sampleItemsTypeOfSampleIds", getSampleTypeOfSamplesString());
 			PropertyUtils.setProperty(dynaForm, "sections", createSectionList());
-			PropertyUtils.setProperty(dynaForm, "qaEventTypes", DisplayListService.getList(ListType.QA_EVENTS));
+			PropertyUtils.setProperty(dynaForm, "qaEventTypes", DisplayListService.getInstance().getList(ListType.QA_EVENTS));
 			PropertyUtils.setProperty(dynaForm, "qaEvents", getSampleQaEventItems(sample));
 
-            PropertyUtils.setProperty( dynaForm, "typeOfSamples", DisplayListService.getList( ListType.SAMPLE_TYPE_ACTIVE) );
+            PropertyUtils.setProperty( dynaForm, "typeOfSamples", DisplayListService.getInstance().getList( ListType.SAMPLE_TYPE_ACTIVE) );
 
 			PropertyUtils.setProperty(dynaForm, "readOnly", readOnly);
-			PropertyUtils.setProperty(dynaForm, "siteList", DisplayListService.getFreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
+			PropertyUtils.setProperty(dynaForm, "siteList", DisplayListService.getInstance().getFreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
 			Provider provider = getProvider();
 			if(provider != null){
 				PropertyUtils.setProperty(dynaForm, "providerNew", Boolean.FALSE.toString());
@@ -184,7 +184,7 @@ public class NonConformityAction extends BaseAction{
 				PropertyUtils.setProperty(dynaForm, "providerWorkPhone", "");
 			}
 			
-			PropertyUtils.setProperty(dynaForm, "departments", DisplayListService.getList(ListType.HAITI_DEPARTMENTS));
+			PropertyUtils.setProperty(dynaForm, "departments", DisplayListService.getInstance().getList(ListType.HAITI_DEPARTMENTS));
 		}
 
 		return mapping.findForward(FWD_SUCCESS);
@@ -253,7 +253,7 @@ public class NonConformityAction extends BaseAction{
 		if(sampleRequestors.size() == 0){
 			return null;
 		}
-		long typeID = TableIdService.ORGANIZATION_REQUESTER_TYPE_ID;
+		long typeID = TableIdService.getInstance().ORGANIZATION_REQUESTER_TYPE_ID;
 		for(SampleRequester sampleRequester : sampleRequestors){
 			if(sampleRequester.getRequesterTypeId() == typeID){
 				String orgId = String.valueOf(sampleRequester.getRequesterId());
@@ -414,7 +414,7 @@ public class NonConformityAction extends BaseAction{
 	
 	private ObservationHistory getRefererObservation(Sample sample){
 		for(ObservationHistory observation : observationHistoryList){
-			if(observation.getObservationHistoryTypeId().equals(TableIdService.DOCTOR_OBSERVATION_TYPE_ID)){
+			if(observation.getObservationHistoryTypeId().equals(TableIdService.getInstance().DOCTOR_OBSERVATION_TYPE_ID)){
 				return observation;
 			}
 		}
@@ -424,7 +424,7 @@ public class NonConformityAction extends BaseAction{
 
 	private ObservationHistory getServiceObservation(Sample sample){
 		for(ObservationHistory observation : observationHistoryList){
-			if(observation.getObservationHistoryTypeId().equals(TableIdService.SERVICE_OBSERVATION_TYPE_ID)){
+			if(observation.getObservationHistoryTypeId().equals(TableIdService.getInstance().SERVICE_OBSERVATION_TYPE_ID)){
 				return observation;
 			}
 		}

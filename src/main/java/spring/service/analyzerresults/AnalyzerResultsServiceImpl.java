@@ -11,8 +11,7 @@ import us.mn.state.health.lims.analyzerresults.dao.AnalyzerResultsDAO;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 
 @Service
-public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerResults>
-		implements AnalyzerResultsService {
+public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerResults> implements AnalyzerResultsService {
 	@Autowired
 	protected AnalyzerResultsDAO baseObjectDAO;
 
@@ -26,8 +25,31 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<AnalyzerResults> getResultsbyAnalyzer(String analyzerId) {
 		return baseObjectDAO.getAllMatchingOrdered("analyzerId", analyzerId, "id", false);
+	}
+
+	@Override
+	public void getData(AnalyzerResults results) {
+        getBaseObjectDAO().getData(results);
+
+	}
+
+	@Override
+	public void updateData(AnalyzerResults results) {
+        getBaseObjectDAO().updateData(results);
+
+	}
+
+	@Override
+	public AnalyzerResults readAnalyzerResults(String idString) {
+        return getBaseObjectDAO().readAnalyzerResults(idString);
+	}
+
+	@Override
+	public void insertAnalyzerResults(List<AnalyzerResults> results, String sysUserId) {
+        getBaseObjectDAO().insertAnalyzerResults(results,sysUserId);
+
 	}
 }

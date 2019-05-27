@@ -1,5 +1,7 @@
 package spring.service.analyzer;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,14 +11,58 @@ import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
 
 @Service
 public class AnalyzerServiceImpl extends BaseObjectServiceImpl<Analyzer> implements AnalyzerService {
-  @Autowired
-  protected AnalyzerDAO baseObjectDAO;
+	@Autowired
+	protected AnalyzerDAO baseObjectDAO;
 
-  AnalyzerServiceImpl() {
-    super(Analyzer.class);
-  }
+	AnalyzerServiceImpl() {
+		super(Analyzer.class);
+	}
 
-  @Override
-  protected AnalyzerDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected AnalyzerDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
+
+	@Override
+	public void getData(Analyzer analyzer) {
+		getBaseObjectDAO().getData(analyzer);
+
+	}
+
+	@Override
+	public Analyzer getAnalyzerById(Analyzer analyzer) {
+		return getBaseObjectDAO().getAnalyzerById(analyzer);
+	}
+
+	@Override
+	public List<Analyzer> getAllAnalyzers() {
+		return getBaseObjectDAO().getAllAnalyzers();
+	}
+
+	@Override
+	public Analyzer readAnalyzer(String idString) {
+		return getBaseObjectDAO().readAnalyzer(idString);
+	}
+
+	@Override
+	public void deleteData(List<Analyzer> results) {
+		getBaseObjectDAO().deleteData(results);
+
+	}
+
+	@Override
+	public void updateData(Analyzer analyzer) {
+		update(analyzer);
+
+	}
+
+	@Override
+	public boolean insertData(Analyzer analyzer) {
+		return insert(analyzer) != null;
+	}
+
+	@Override
+	public Analyzer getAnalyzerByName(String name) {
+		return getMatch("name", name).orElse(null);
+	}
 }

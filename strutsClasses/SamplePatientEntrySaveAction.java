@@ -237,7 +237,7 @@ public class SamplePatientEntrySaveAction extends BaseAction {
 		Organization newOrganization = updateData.getNewOrganization();
 		if (newOrganization != null) {
 			orgDAO.insertData(newOrganization);
-			orgOrgTypeDAO.linkOrganizationAndType(newOrganization, TableIdService.REFERRING_ORG_TYPE_ID);
+			orgOrgTypeDAO.linkOrganizationAndType(newOrganization, TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
 			if (updateData.getRequesterSite() != null) {
 				updateData.getRequesterSite().setRequesterId(newOrganization.getId());
 			}
@@ -340,7 +340,7 @@ public class SamplePatientEntrySaveAction extends BaseAction {
 				&& !GenericValidator.isBlankOrNull(updateData.getProviderPerson().getId())) {
 			SampleRequester sampleRequester = new SampleRequester();
 			sampleRequester.setRequesterId(updateData.getProviderPerson().getId());
-			sampleRequester.setRequesterTypeId(TableIdService.PROVIDER_REQUESTER_TYPE_ID);
+			sampleRequester.setRequesterTypeId(TableIdService.getInstance().PROVIDER_REQUESTER_TYPE_ID);
 			sampleRequester.setSampleId(Long.parseLong(updateData.getSample().getId()));
 			sampleRequester.setSysUserId(updateData.getCurrentUserId());
 			sampleRequesterDAO.insertData(sampleRequester);

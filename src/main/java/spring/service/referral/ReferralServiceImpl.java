@@ -1,5 +1,6 @@
 package spring.service.referral;
 
+import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +26,40 @@ public class ReferralServiceImpl extends BaseObjectServiceImpl<Referral> impleme
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public Referral getReferralByAnalysisId(String id) {
 		return getMatch("analysis.id", id).get();
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public List<Referral> getAllUncanceledOpenReferrals() {
 		return baseObjectDAO.getAllUncanceledOpenReferrals();
+	}
+
+	@Override
+	public void updateData(Referral referral) {
+        getBaseObjectDAO().updateData(referral);
+
+	}
+
+	@Override
+	public boolean insertData(Referral referral) {
+        return getBaseObjectDAO().insertData(referral);
+	}
+
+	@Override
+	public Referral getReferralById(String referralId) {
+        return getBaseObjectDAO().getReferralById(referralId);
+	}
+
+	@Override
+	public List<Referral> getAllReferralsBySampleId(String id) {
+        return getBaseObjectDAO().getAllReferralsBySampleId(id);
+	}
+
+	@Override
+	public List<Referral> getAllReferralsByOrganization(String organizationId, Date lowDate, Date highDate) {
+        return getBaseObjectDAO().getAllReferralsByOrganization(organizationId,lowDate,highDate);
 	}
 }

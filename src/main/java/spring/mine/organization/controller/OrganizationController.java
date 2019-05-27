@@ -362,7 +362,7 @@ public class OrganizationController extends BaseController {
 			request.setAttribute(ID, organization.getId());
 		}
 
-		DisplayListService.refreshList(DisplayListService.ListType.REFERRAL_ORGANIZATIONS);
+		DisplayListService.getInstance().refreshList(DisplayListService.ListType.REFERRAL_ORGANIZATIONS);
 
 		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 		status.setComplete();

@@ -44,7 +44,7 @@ public class ReportHistoryService extends HistoryService {
 	
 	@SuppressWarnings("unchecked")
 	private void setUpForReport(Sample sample) {
-		List<DocumentTrack> documentList = new ReportTrackingService().getReportsForSample(sample, ReportType.PATIENT);
+		List<DocumentTrack> documentList = ReportTrackingService.getInstance().getReportsForSample(sample, ReportType.PATIENT);
 
 		historyList = new ArrayList<History>();
 		for (DocumentTrack docTrack : documentList) {
@@ -57,7 +57,7 @@ public class ReportHistoryService extends HistoryService {
 
 	@Override
 	protected void addInsertion(History history, List<AuditTrailItem> items) {
-		identifier = new ReportTrackingService().getDocumentForId(history.getReferenceId()).getDocumentName();
+		identifier = ReportTrackingService.getInstance().getDocumentForId(history.getReferenceId()).getDocumentName();
 		AuditTrailItem item = getCoreTrail(history);
 		items.add(item);
 	}

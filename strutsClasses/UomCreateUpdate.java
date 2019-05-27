@@ -72,8 +72,8 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 	            HibernateUtil.closeSession();
 	        }
 
-	        DisplayListService.refreshList(DisplayListService.ListType.UNIT_OF_MEASURE);
-	        DisplayListService.refreshList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE);
+	        DisplayListService.getInstance().refreshList(DisplayListService.ListType.UNIT_OF_MEASURE);
+	        DisplayListService.getInstance().refreshList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE);
 
 	        return mapping.findForward(FWD_SUCCESS);
 	    }

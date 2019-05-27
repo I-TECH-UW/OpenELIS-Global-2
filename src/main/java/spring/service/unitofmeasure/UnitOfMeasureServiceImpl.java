@@ -126,7 +126,66 @@ public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasur
 		return ""; // just for compile
 	}
 
-	public static List<UnitOfMeasure> getAllUnitOfMeasures() {
+	@Override
+	public void getData(UnitOfMeasure unitOfMeasure) {
+		getBaseObjectDAO().getData(unitOfMeasure);
+
+	}
+
+	@Override
+	public void deleteData(List unitOfMeasures) {
+		getBaseObjectDAO().deleteData(unitOfMeasures);
+
+	}
+
+	@Override
+	public void updateData(UnitOfMeasure unitOfMeasure) {
+		getBaseObjectDAO().updateData(unitOfMeasure);
+
+	}
+
+	@Override
+	public boolean insertData(UnitOfMeasure unitOfMeasure) {
+		return getBaseObjectDAO().insertData(unitOfMeasure);
+	}
+
+	@Override
+	public List getPageOfUnitOfMeasures(int startingRecNo) {
+		return getBaseObjectDAO().getPageOfUnitOfMeasures(startingRecNo);
+	}
+
+	@Override
+	public UnitOfMeasure getUnitOfMeasureById(String uomId) {
+		return getBaseObjectDAO().getUnitOfMeasureById(uomId);
+	}
+
+	@Override
+	public List getPreviousUnitOfMeasureRecord(String id) {
+		return getBaseObjectDAO().getPreviousUnitOfMeasureRecord(id);
+	}
+
+	@Override
+	public Integer getTotalUnitOfMeasureCount() {
+		return getBaseObjectDAO().getTotalUnitOfMeasureCount();
+	}
+
+	@Override
+	public List getNextUnitOfMeasureRecord(String id) {
+		return getBaseObjectDAO().getNextUnitOfMeasureRecord(id);
+	}
+
+	@Override
+	public UnitOfMeasure getUnitOfMeasureByName(UnitOfMeasure unitOfMeasure) {
+		return getBaseObjectDAO().getUnitOfMeasureByName(unitOfMeasure);
+	}
+
+	@Override
+	public List getAllUnitOfMeasures() {
 		return unitOfMeasureDAO.getAllUnitOfMeasures();
+	}
+
+	@Override
+	public List<UnitOfMeasure> getAllActiveUnitOfMeasures() {
+		return unitOfMeasureDAO.getAllActiveUnitOfMeasures();
 	}
 }

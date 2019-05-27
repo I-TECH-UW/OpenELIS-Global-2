@@ -9,14 +9,15 @@ import us.mn.state.health.lims.citystatezip.valueholder.CityView;
 
 @Service
 public class CityViewServiceImpl extends BaseObjectServiceImpl<CityView> implements CityViewService {
-  @Autowired
-  protected CityViewDAO baseObjectDAO;
+	@Autowired
+	protected CityViewDAO baseObjectDAO;
 
-  CityViewServiceImpl() {
-    super(CityView.class);
-  }
+	CityViewServiceImpl() {
+		super(CityView.class);
+	}
 
-  @Override
-  protected CityViewDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected CityViewDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }

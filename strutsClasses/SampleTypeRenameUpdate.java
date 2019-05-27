@@ -51,8 +51,8 @@ public class SampleTypeRenameUpdate extends BaseAction{
         updateSampleTypeNames(sampleTypeId, nameEnglish, nameFrench, userId);
 
         //Refresh sample type names
-        DisplayListService.getFreshList( DisplayListService.ListType.SAMPLE_TYPE_ACTIVE );
-        DisplayListService.getFreshList( DisplayListService.ListType.SAMPLE_TYPE_INACTIVE );
+        DisplayListService.getInstance().getFreshList( DisplayListService.ListType.SAMPLE_TYPE_ACTIVE );
+        DisplayListService.getInstance().getFreshList( DisplayListService.ListType.SAMPLE_TYPE_INACTIVE );
         return mapping.findForward( forward );
     }
 

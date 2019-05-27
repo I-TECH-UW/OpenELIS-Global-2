@@ -142,7 +142,7 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider{
 
     private void addVariableSampleTypes( Test test, StringBuilder xml ){
         TestDictionary testDictionary = new TestDictionaryDAOImpl().getTestDictionaryForTestId( test.getId() );
-        List<IdValuePair> pairs = DisplayListService.getDictionaryListByCategory( testDictionary.getDictionaryCategory().getCategoryName() );
+        List<IdValuePair> pairs = DisplayListService.getInstance().getDictionaryListByCategory( testDictionary.getDictionaryCategory().getCategoryName() );
         xml.append( "<variableSampleTypes " );
         if( !GenericValidator.isBlankOrNull( testDictionary.getQualifiableDictionaryId() )){
              XMLUtil.appendKeyValueAttribute( "qualifiableId", testDictionary.getQualifiableDictionaryId(), xml );

@@ -142,14 +142,14 @@ public class NonConformityController extends BaseController {
 
 		PropertyUtils.setProperty(form, "sampleItemsTypeOfSampleIds", getSampleTypeOfSamplesString(sample));
 		PropertyUtils.setProperty(form, "sections", createSectionList());
-		PropertyUtils.setProperty(form, "qaEventTypes", DisplayListService.getList(ListType.QA_EVENTS));
+		PropertyUtils.setProperty(form, "qaEventTypes", DisplayListService.getInstance().getList(ListType.QA_EVENTS));
 		PropertyUtils.setProperty(form, "qaEvents", getSampleQaEventItems(sample));
 
-		PropertyUtils.setProperty(form, "typeOfSamples", DisplayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
+		PropertyUtils.setProperty(form, "typeOfSamples", DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
 
 		PropertyUtils.setProperty(form, "readOnly", false);
 		PropertyUtils.setProperty(form, "siteList",
-				DisplayListService.getFreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
+				DisplayListService.getInstance().getFreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
 		Provider provider = getProvider(sample);
 		if (provider != null) {
 			PropertyUtils.setProperty(form, "providerNew", Boolean.FALSE.toString());
@@ -174,7 +174,7 @@ public class NonConformityController extends BaseController {
 			PropertyUtils.setProperty(form, "providerWorkPhone", "");
 		}
 
-		PropertyUtils.setProperty(form, "departments", DisplayListService.getList(ListType.HAITI_DEPARTMENTS));
+		PropertyUtils.setProperty(form, "departments", DisplayListService.getInstance().getList(ListType.HAITI_DEPARTMENTS));
 
 	}
 
@@ -239,7 +239,7 @@ public class NonConformityController extends BaseController {
 		if (sampleRequestors.isEmpty()) {
 			return null;
 		}
-		long typeID = TableIdService.ORGANIZATION_REQUESTER_TYPE_ID;
+		long typeID = TableIdService.getInstance().ORGANIZATION_REQUESTER_TYPE_ID;
 		for (SampleRequester sampleRequester : sampleRequestors) {
 			if (sampleRequester.getRequesterTypeId() == typeID) {
 				String orgId = String.valueOf(sampleRequester.getRequesterId());
@@ -375,7 +375,7 @@ public class NonConformityController extends BaseController {
 
 	private ObservationHistory getRefererObservation(List<ObservationHistory> observationHistoryList) {
 		for (ObservationHistory observation : observationHistoryList) {
-			if (observation.getObservationHistoryTypeId().equals(TableIdService.DOCTOR_OBSERVATION_TYPE_ID)) {
+			if (observation.getObservationHistoryTypeId().equals(TableIdService.getInstance().DOCTOR_OBSERVATION_TYPE_ID)) {
 				return observation;
 			}
 		}
@@ -385,7 +385,7 @@ public class NonConformityController extends BaseController {
 
 	private ObservationHistory getServiceObservation(List<ObservationHistory> observationHistoryList) {
 		for (ObservationHistory observation : observationHistoryList) {
-			if (observation.getObservationHistoryTypeId().equals(TableIdService.SERVICE_OBSERVATION_TYPE_ID)) {
+			if (observation.getObservationHistoryTypeId().equals(TableIdService.getInstance().SERVICE_OBSERVATION_TYPE_ID)) {
 				return observation;
 			}
 		}

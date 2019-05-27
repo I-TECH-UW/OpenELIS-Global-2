@@ -523,7 +523,7 @@ public abstract class PatientReport extends Report {
 
 	private String getAugmentedResult(ClinicalPatientData data, Result result) {
 		String resultValue = data.getResult();
-		if (TestIdentityService.isTestNumericViralLoad(currentAnalysisService.getTest())) {
+		if (TestIdentityService.getInstance().isTestNumericViralLoad(currentAnalysisService.getTest())) {
 			try {
 				resultValue += " (" + twoDecimalFormat.format(Math.log10(Double.parseDouble(resultValue))) + ")log ";
 			} catch (IllegalFormatException e) {

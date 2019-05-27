@@ -16,6 +16,7 @@
 */
 package us.mn.state.health.lims.scheduler.daoimpl;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,7 +77,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements 
 	}
 
 	@Override
-	public String insert(CronScheduler cronSchedule) throws LIMSRuntimeException {
+	public Serializable insert(CronScheduler cronSchedule) throws LIMSRuntimeException {
 		try {
 			String id = (String) HibernateUtil.getSession().save(cronSchedule);
 			cronSchedule.setId(id);

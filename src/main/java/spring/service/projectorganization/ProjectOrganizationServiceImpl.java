@@ -9,14 +9,15 @@ import us.mn.state.health.lims.projectorganization.valueholder.ProjectOrganizati
 
 @Service
 public class ProjectOrganizationServiceImpl extends BaseObjectServiceImpl<ProjectOrganization> implements ProjectOrganizationService {
-  @Autowired
-  protected ProjectOrganizationDAO baseObjectDAO;
+	@Autowired
+	protected ProjectOrganizationDAO baseObjectDAO;
 
-  ProjectOrganizationServiceImpl() {
-    super(ProjectOrganization.class);
-  }
+	ProjectOrganizationServiceImpl() {
+		super(ProjectOrganization.class);
+	}
 
-  @Override
-  protected ProjectOrganizationDAO getBaseObjectDAO() {
-    return baseObjectDAO;}
+	@Override
+	protected ProjectOrganizationDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
 }

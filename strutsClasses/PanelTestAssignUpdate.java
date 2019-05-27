@@ -113,8 +113,8 @@ public class PanelTestAssignUpdate extends BaseAction {
  }        
 //---------------------------        
         
-        DisplayListService.refreshList(DisplayListService.ListType.PANELS);
-        DisplayListService.refreshList(DisplayListService.ListType.PANELS_INACTIVE);
+        DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);
+        DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS_INACTIVE);
 
 		setSuccessFlag(request);
         

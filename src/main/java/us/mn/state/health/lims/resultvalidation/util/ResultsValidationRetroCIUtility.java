@@ -808,7 +808,7 @@ public class ResultsValidationRetroCIUtility {
 		analysisResultItem.setTestId(testResultItem.getTestId());
 		analysisResultItem.setTestSortNumber(sortOrder);
 		analysisResultItem.setDictionaryResults(testResultItem.getDictionaryResults());
-		analysisResultItem.setDisplayResultAsLog(TestIdentityService.isTestNumericViralLoad(testResultItem.getTestId()));
+		analysisResultItem.setDisplayResultAsLog(TestIdentityService.getInstance().isTestNumericViralLoad(testResultItem.getTestId()));
         if( result != null){
             if( TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant( testResultItem.getResultType() ) && !(testResultItem.getAnalysis() == null) ){
                 analysisResultItem.setMultiSelectResultValues( new AnalysisServiceImpl( testResultItem.getAnalysis() ).getJSONMultiSelectResults() );
@@ -841,7 +841,7 @@ public class ResultsValidationRetroCIUtility {
 
 	private String getFormattedResult(ResultValidationItem testResultItem) {
         String result = testResultItem.getResult().getValue();
-		if( TestIdentityService.isTestNumericViralLoad(testResultItem.getTestId()) && !GenericValidator.isBlankOrNull(result)){
+		if( TestIdentityService.getInstance().isTestNumericViralLoad(testResultItem.getTestId()) && !GenericValidator.isBlankOrNull(result)){
 			return result.split("\\(")[0].trim();
 		}else{
             return new ResultServiceImpl(testResultItem.getResult()).getResultValue( false );

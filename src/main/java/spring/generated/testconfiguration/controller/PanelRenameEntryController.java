@@ -28,7 +28,7 @@ public class PanelRenameEntryController extends BaseController {
 	@RequestMapping(value = "/PanelRenameEntry", method = RequestMethod.GET)
 	public ModelAndView showPanelRenameEntry(HttpServletRequest request) {
 		PanelRenameEntryForm form = new PanelRenameEntryForm();
-		form.setPanelList(DisplayListService.getList(DisplayListService.ListType.PANELS));
+		form.setPanelList(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
 
 		return findForward(FWD_SUCCESS, form);
 	}
@@ -51,7 +51,7 @@ public class PanelRenameEntryController extends BaseController {
 			@ModelAttribute("form") @Valid PanelRenameEntryForm form, BindingResult result) {
 		if (result.hasErrors()) {
 			saveErrors(result);
-			form.setPanelList(DisplayListService.getList(DisplayListService.ListType.PANELS));
+			form.setPanelList(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 
@@ -90,7 +90,7 @@ public class PanelRenameEntryController extends BaseController {
 		}
 
 		// Refresh panel names
-		DisplayListService.getFreshList(DisplayListService.ListType.PANELS);
+		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.PANELS);
 	}
 
 	@Override

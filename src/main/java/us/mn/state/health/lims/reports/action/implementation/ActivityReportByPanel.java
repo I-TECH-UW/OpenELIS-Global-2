@@ -39,7 +39,7 @@ public class ActivityReportByPanel extends ActivityReport implements IReportCrea
 				MessageUtil.getMessage("report.activity.report.base") + " "
 						+ MessageUtil.getMessage("report.by.panel"),
 				MessageUtil.getMessage("report.instruction.all.fields")).setRequestParameters(form);
-		new ReportSpecificationList(DisplayListService.getList(DisplayListService.ListType.PANELS),
+		new ReportSpecificationList(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS),
 				MessageUtil.getMessage("workplan.panel.types")).setRequestParameters(form);
 	}
 

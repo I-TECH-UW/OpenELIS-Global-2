@@ -23,7 +23,7 @@ public class ReferralTypeServiceImpl extends BaseObjectServiceImpl<ReferralType>
 	}
 
 	@Override
-	@Transactional 
+	@Transactional
 	public ReferralType getReferralTypeByName(String name) {
 		return getMatch("name", name).get();
 	}

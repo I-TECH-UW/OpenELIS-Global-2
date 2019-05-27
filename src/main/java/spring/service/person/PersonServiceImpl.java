@@ -96,8 +96,7 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person> implements 
 
 		for (PersonAddress parts : addressParts) {
 			if ("D".equals(parts.getType()) && !GenericValidator.isBlankOrNull(parts.getValue())) {
-				addressMap.put(addressPartIdToNameMap.get(parts.getAddressPartId()),
-						dictionaryDAO.getDataForId(parts.getValue()).getDictEntry());
+				addressMap.put(addressPartIdToNameMap.get(parts.getAddressPartId()), dictionaryDAO.getDataForId(parts.getValue()).getDictEntry());
 			} else {
 				value = parts.getValue();
 				addressMap.put(addressPartIdToNameMap.get(parts.getAddressPartId()), value == null ? "" : value.trim());
@@ -158,5 +157,58 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person> implements 
 
 	public Person getPerson() {
 		return person;
+	}
+
+	@Override
+	public void getData(Person person) {
+        getBaseObjectDAO().getData(person);
+
+	}
+
+	@Override
+	public void deleteData(List persons) {
+        getBaseObjectDAO().deleteData(persons);
+
+	}
+
+	@Override
+	public void updateData(Person person) {
+        getBaseObjectDAO().updateData(person);
+
+	}
+
+	@Override
+	public boolean insertData(Person person) {
+        return getBaseObjectDAO().insertData(person);
+	}
+
+	@Override
+	public List getNextPersonRecord(String id) {
+        return getBaseObjectDAO().getNextPersonRecord(id);
+	}
+
+	@Override
+	public List getPreviousPersonRecord(String id) {
+        return getBaseObjectDAO().getPreviousPersonRecord(id);
+	}
+
+	@Override
+	public Person getPersonByLastName(String lastName) {
+        return getBaseObjectDAO().getPersonByLastName(lastName);
+	}
+
+	@Override
+	public List getPageOfPersons(int startingRecNo) {
+        return getBaseObjectDAO().getPageOfPersons(startingRecNo);
+	}
+
+	@Override
+	public List getAllPersons() {
+        return getBaseObjectDAO().getAllPersons();
+	}
+
+	@Override
+	public Person getPersonById(String personId) {
+        return getBaseObjectDAO().getPersonById(personId);
 	}
 }

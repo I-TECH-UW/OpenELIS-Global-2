@@ -94,7 +94,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 	}
 
 	private List<IdValuePair> getTestDropdownList() {
-		List<IdValuePair> testList = DisplayListService.getList(DisplayListService.ListType.ALL_TESTS);
+		List<IdValuePair> testList = DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS);
 
 		if (HAS_NFS_PANEL) {
 			testList = adjustNFSTests(testList);

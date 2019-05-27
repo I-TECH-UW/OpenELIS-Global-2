@@ -120,7 +120,7 @@ public class ReportController extends BaseController {
 	}
 
 	private void trackReports(IReportCreator reportCreator, String reportName, ReportType type) {
-		new ReportTrackingService().addReports(reportCreator.getReportedOrders(), type, reportName,
+		ReportTrackingService.getInstance().addReports(reportCreator.getReportedOrders(), type, reportName,
 				getSysUserId(request));
 	}
 

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
@@ -46,8 +47,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test> implements Test
 	public static final String HIV_TYPE = "HIV_TEST_KIT";
 	public static final String SYPHILIS_TYPE = "SYPHILIS_TEST_KIT";
 	private static String VARIABLE_TYPE_OF_SAMPLE_ID;
-	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()
-			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
+	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance().getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
 	private static Map<Entity, Map<String, String>> entityToMap;
 
 	@Autowired
@@ -367,8 +367,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test> implements Test
 
 		String sampleName = "";
 
-		if (ConfigurationProperties.getInstance()
-				.isPropertyValueEqual(ConfigurationProperties.Property.TEST_NAME_AUGMENTED, "true")) {
+		if (ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.TEST_NAME_AUGMENTED, "true")) {
 			TypeOfSample typeOfSample = new TestServiceImpl(test).getTypeOfSample();
 			if (typeOfSample != null && !typeOfSample.getId().equals(VARIABLE_TYPE_OF_SAMPLE_ID)) {
 				sampleName = "(" + typeOfSample.getLocalizedName() + ")";
@@ -386,5 +385,198 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test> implements Test
 			System.out.println("augmented caught LAZY");
 			return "ts:batn:345:name:" + test.getDescription();
 		}
+	}
+
+	@Override
+	public void getData(Test test) {
+        getBaseObjectDAO().getData(test);
+
+	}
+
+	@Override
+	public void deleteData(List tests) {
+        getBaseObjectDAO().deleteData(tests);
+
+	}
+
+	@Override
+	public void updateData(Test test) {
+        getBaseObjectDAO().updateData(test);
+
+	}
+
+	@Override
+	public boolean insertData(Test test) {
+        return getBaseObjectDAO().insertData(test);
+	}
+
+	@Override
+	public Test getActiveTestById(Integer id) {
+        return getBaseObjectDAO().getActiveTestById(id);
+	}
+
+	@Override
+	public Test getTestByUserLocalizedName(String testName) {
+        return getBaseObjectDAO().getTestByUserLocalizedName(testName);
+	}
+
+	@Override
+	public Integer getTotalTestCount() {
+        return getBaseObjectDAO().getTotalTestCount();
+	}
+
+	@Override
+	public List getNextTestRecord(String id) {
+        return getBaseObjectDAO().getNextTestRecord(id);
+	}
+
+	@Override
+	public List<Test> getAllActiveTests(boolean onlyTestsFullySetup) {
+        return getBaseObjectDAO().getAllActiveTests(onlyTestsFullySetup);
+	}
+
+	@Override
+	public List getTestsByTestSectionAndMethod(String filter, String filter2) {
+        return getBaseObjectDAO().getTestsByTestSectionAndMethod(filter,filter2);
+	}
+
+	@Override
+	public List<Test> getTestsByTestSectionId(String id) {
+        return getBaseObjectDAO().getTestsByTestSectionId(id);
+	}
+
+	@Override
+	public List getPageOfTestsBySysUserId(int startingRecNo, int sysUserId) {
+        return getBaseObjectDAO().getPageOfTestsBySysUserId(startingRecNo,sysUserId);
+	}
+
+	@Override
+	public Integer getTotalSearchedTestCount(String searchString) {
+        return getBaseObjectDAO().getTotalSearchedTestCount(searchString);
+	}
+
+	@Override
+	public Integer getAllSearchedTotalTestCount(HttpServletRequest request, String searchString) {
+        return getBaseObjectDAO().getAllSearchedTotalTestCount(request,searchString);
+	}
+
+	@Override
+	public List<Test> getActiveTestByName(String testName) {
+        return getBaseObjectDAO().getActiveTestByName(testName);
+	}
+
+	@Override
+	public List getPreviousTestRecord(String id) {
+        return getBaseObjectDAO().getPreviousTestRecord(id);
+	}
+
+	@Override
+	public List getTestsByTestSection(String filter) {
+        return getBaseObjectDAO().getTestsByTestSection(filter);
+	}
+
+	@Override
+	public List getPageOfSearchedTests(int startingRecNo, String searchString) {
+        return getBaseObjectDAO().getPageOfSearchedTests(startingRecNo,searchString);
+	}
+
+	@Override
+	public List getAllTestsBySysUserId(int sysUserId, boolean onlyTestsFullySetup) {
+        return getBaseObjectDAO().getAllTestsBySysUserId(sysUserId,onlyTestsFullySetup);
+	}
+
+	@Override
+	public List getMethodsByTestSection(String filter) {
+        return getBaseObjectDAO().getMethodsByTestSection(filter);
+	}
+
+	@Override
+	public List<Test> getActiveTestsByLoinc(String loincCode) {
+        return getBaseObjectDAO().getActiveTestsByLoinc(loincCode);
+	}
+
+	@Override
+	public List<Test> getAllActiveOrderableTests() {
+        return getBaseObjectDAO().getAllActiveOrderableTests();
+	}
+
+	@Override
+	public Test getTestByDescription(String description) {
+        return getBaseObjectDAO().getTestByDescription(description);
+	}
+
+	@Override
+	public List<Test> getTestsByLoincCode(String loincCode) {
+        return getBaseObjectDAO().getTestsByLoincCode(loincCode);
+	}
+
+	@Override
+	public List<Test> getAllOrderBy(String columnName) {
+        return getBaseObjectDAO().getAllOrderBy(columnName);
+	}
+
+	@Override
+	public boolean isTestFullySetup(Test test) {
+        return getBaseObjectDAO().isTestFullySetup(test);
+	}
+
+	@Override
+	public Test getTestById(Test test) {
+        return getBaseObjectDAO().getTestById(test);
+	}
+
+	@Override
+	public Test getTestById(String testId) {
+        return getBaseObjectDAO().getTestById(testId);
+	}
+
+	@Override
+	public List getTestsByMethod(String filter) {
+        return getBaseObjectDAO().getTestsByMethod(filter);
+	}
+
+	@Override
+	public List getPageOfTests(int startingRecNo) {
+        return getBaseObjectDAO().getPageOfTests(startingRecNo);
+	}
+
+	@Override
+	public List getTests(String filter, boolean onlyTestsFullySetup) {
+        return getBaseObjectDAO().getTests(filter,onlyTestsFullySetup);
+	}
+
+	@Override
+	public List<Test> getAllTests(boolean onlyTestsFullySetup) {
+        return getBaseObjectDAO().getAllTests(onlyTestsFullySetup);
+	}
+
+	@Override
+	public Test getTestByName(Test test) {
+        return getBaseObjectDAO().getTestByName(test);
+	}
+
+	@Override
+	public Test getTestByName(String testName) {
+        return getBaseObjectDAO().getTestByName(testName);
+	}
+
+	@Override
+	public Test getTestByGUID(String guid) {
+        return getBaseObjectDAO().getTestByGUID(guid);
+	}
+
+	@Override
+	public Integer getTotalSearchedTestCountBySysUserId(int sysUserId, String searchString) {
+        return getBaseObjectDAO().getTotalSearchedTestCountBySysUserId(sysUserId,searchString);
+	}
+
+	@Override
+	public Integer getNextAvailableSortOrderByTestSection(Test test) {
+        return getBaseObjectDAO().getNextAvailableSortOrderByTestSection(test);
+	}
+
+	@Override
+	public List<Test> getPageOfSearchedTestsBySysUserId(int startingRecNo, int sysUserId, String searchString) {
+        return getBaseObjectDAO().getPageOfSearchedTestsBySysUserId(startingRecNo,sysUserId,searchString);
 	}
 }

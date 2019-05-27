@@ -55,8 +55,8 @@ public class ResultReportingConfigurationController extends BaseController {
 		ExchangeConfigurationService configService = new ExchangeConfigurationService(ConfigurationDomain.REPORT);
 
 		PropertyUtils.setProperty(form, "reports", configService.getConfigurations());
-		PropertyUtils.setProperty(form, "hourList", DisplayListService.getList(ListType.HOURS));
-		PropertyUtils.setProperty(form, "minList", DisplayListService.getList(ListType.MINS));
+		PropertyUtils.setProperty(form, "hourList", DisplayListService.getInstance().getList(ListType.HOURS));
+		PropertyUtils.setProperty(form, "minList", DisplayListService.getInstance().getList(ListType.MINS));
 
 		addFlashMsgsToRequest(request);
 		return findForward(FWD_SUCCESS, form);

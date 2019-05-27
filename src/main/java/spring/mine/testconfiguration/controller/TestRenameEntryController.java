@@ -35,7 +35,7 @@ public class TestRenameEntryController extends BaseController {
 		String forward = FWD_SUCCESS;
 		TestRenameEntryForm form = new TestRenameEntryForm();
 
-		form.setTestList(DisplayListService.getList(DisplayListService.ListType.ALL_TESTS));
+		form.setTestList(DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS));
 
 		return findForward(forward, form);
 	}
@@ -100,8 +100,8 @@ public class TestRenameEntryController extends BaseController {
 		}
 
 		// Refresh test names
-		DisplayListService.getFreshList(DisplayListService.ListType.ALL_TESTS);
-		DisplayListService.getFreshList(DisplayListService.ListType.ORDERABLE_TESTS);
+		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ALL_TESTS);
+		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ORDERABLE_TESTS);
 	}
 
 	@Transactional 

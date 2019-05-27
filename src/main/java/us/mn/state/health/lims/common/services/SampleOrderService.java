@@ -79,22 +79,22 @@ public class SampleOrderService {
 
 		if (needRequesterList) {
 			orderItems.setReferringSiteList(
-					DisplayListService.getFreshList(DisplayListService.ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
+					DisplayListService.getInstance().getFreshList(DisplayListService.ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
 		}
 
 		if (needPaymentOptions) {
 			orderItems.setPaymentOptions(
-					DisplayListService.getList(DisplayListService.ListType.SAMPLE_PATIENT_PAYMENT_OPTIONS));
+					DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_PATIENT_PAYMENT_OPTIONS));
 		}
 
 		if (needTestLocationCode) {
 			orderItems.setTestLocationCodeList(
-					DisplayListService.getList(DisplayListService.ListType.TEST_LOCATION_CODE));
+					DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_LOCATION_CODE));
 		}
 
 		if (ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.ORDER_PROGRAM,
 				"true")) {
-			orderItems.setProgramList(DisplayListService.getList(DisplayListService.ListType.PROGRAM));
+			orderItems.setProgramList(DisplayListService.getInstance().getList(DisplayListService.ListType.PROGRAM));
 		}
 
 		return orderItems;

@@ -43,7 +43,6 @@ import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.login.dao.UserModuleService;
-import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
 import us.mn.state.health.lims.login.valueholder.Login;
 import us.mn.state.health.lims.role.action.bean.DisplayRole;
 import us.mn.state.health.lims.role.valueholder.Role;
@@ -65,6 +64,8 @@ public class UnifiedSystemUserController extends BaseController {
 	private UserRoleService userRoleService;
 	@Autowired
 	private SystemUserService systemUserService;
+	@Autowired
+	private UserModuleService userModuleService;
 	private static final String RESERVED_ADMIN_NAME = "admin";
 
 	private static final String MAINTENANCE_ADMIN = "Maintenance Admin";
@@ -109,7 +110,6 @@ public class UnifiedSystemUserController extends BaseController {
 
 	private void setupRoles(UnifiedSystemUserForm form, HttpServletRequest request, boolean doFiltering) {
 		List<Role> roles = getAllRoles();
-		UserModuleService userModuleService = new UserModuleServiceImpl();
 		doFiltering &= !userModuleService.isUserAdmin(request);
 
 		if (doFiltering) {
@@ -401,6 +401,7 @@ public class UnifiedSystemUserController extends BaseController {
 		}
 	}
 
+	@Transactional
 	public String validateAndUpdateSystemUser(HttpServletRequest request, UnifiedSystemUserForm form) {
 		String forward = FWD_SUCCESS_INSERT;
 		String loginUserId = form.getLoginUserId();
@@ -448,10 +449,11 @@ public class UnifiedSystemUserController extends BaseController {
 		return forward;
 	}
 
-	@Transactional 
+	@Transactional
 	private void updateLoginUser(Login loginUser, boolean loginUserNew, SystemUser systemUser, boolean systemUserNew,
 			List<String> selectedRoles, String loggedOnUserId) {
 		if (loginUserNew) {
+			loginService.updatePassword(loginUser, loginUser.getPassword());
 			loginService.insert(loginUser);
 		} else {
 			loginService.updatePassword(loginUser, loginUser.getPassword());
@@ -510,7 +512,7 @@ public class UnifiedSystemUserController extends BaseController {
 		if (GenericValidator.isBlankOrNull(form.getUserLoginName())) {
 			errors.reject("errors.loginName.required", "errors.loginName.required");
 		} else if (checkForDuplicateName) {
-			Login login = loginService.getMatch("loginName", form.getUserLoginName()).get();
+			Login login = loginService.getMatch("loginName", form.getUserLoginName()).orElse(null);
 			if (login != null) {
 				errors.reject("errors.loginName.duplicated", form.getUserLoginName());
 			}

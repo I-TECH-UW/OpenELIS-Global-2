@@ -52,7 +52,7 @@ public class PanelRenameUpdate extends BaseAction{
         updatePanelNames(panelId, nameEnglish, nameFrench, userId);
 
         //Refresh panel names
-        DisplayListService.getFreshList( DisplayListService.ListType.PANELS );
+        DisplayListService.getInstance().getFreshList( DisplayListService.ListType.PANELS );
         return mapping.findForward( forward );
     }
 

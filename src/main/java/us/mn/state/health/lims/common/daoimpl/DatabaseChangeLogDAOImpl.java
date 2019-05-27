@@ -18,8 +18,6 @@
 package us.mn.state.health.lims.common.daoimpl;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
@@ -32,7 +30,7 @@ import us.mn.state.health.lims.common.valueholder.DatabaseChangeLog;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional 
+@Transactional
 public class DatabaseChangeLogDAOImpl extends BaseDAOImpl<DatabaseChangeLog> implements DatabaseChangeLogDAO {
 
 	public DatabaseChangeLogDAOImpl() {
@@ -65,113 +63,5 @@ public class DatabaseChangeLogDAOImpl extends BaseDAOImpl<DatabaseChangeLog> imp
 	}
 
 	// SHOULD NOT NEED BELOW METHODS! Override to hide!
-	@Override
-	public Optional<DatabaseChangeLog> get(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<DatabaseChangeLog> getAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<DatabaseChangeLog> getAllMatching(Map<String, Object> columnValues) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<DatabaseChangeLog> getAllOrdered(String orderByColumn, boolean descending) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<DatabaseChangeLog> getAllOrdered(List<String> orderByColumns, boolean descending) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<DatabaseChangeLog> getAllMatchingOrdered(Map<String, Object> columnValues, String orderByColumn,
-			boolean descending) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String insert(DatabaseChangeLog object) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Optional<DatabaseChangeLog> update(DatabaseChangeLog object) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void delete(DatabaseChangeLog object) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void delete(String id) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void deleteAll(List<DatabaseChangeLog> objects) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void deleteAll(String[] objectIds) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public Integer getCount() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<DatabaseChangeLog> getNext(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<DatabaseChangeLog> getPrevious(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Integer getTotalCount(String table, Class clazz) throws LIMSRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }
