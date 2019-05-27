@@ -71,4 +71,10 @@ public interface PanelDAO extends BaseDAO<Panel> {
 
 	public void clearIDMaps();
 
+	public boolean duplicatePanelExists(Panel panel);
+
+	public boolean duplicatePanelDescriptionExists(Panel panel);
+
+	public void clearIDMaps();
+
 }

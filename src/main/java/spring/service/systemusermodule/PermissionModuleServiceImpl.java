@@ -16,6 +16,7 @@ import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
 @Service
 public class PermissionModuleServiceImpl implements PermissionModuleService<PermissionModule> {
 
+	
 	@Autowired
 	protected SystemUserModuleService systemUserService;
 

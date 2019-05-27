@@ -22,6 +22,7 @@ import java.util.List;
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
+import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
 
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
@@ -53,5 +54,7 @@ public interface PermissionModuleDAO<T extends PermissionModule> extends BaseDAO
 	public boolean isAgentAllowedAccordingToName(String id, String string) throws LIMSRuntimeException;
 
 	public boolean doesUserHaveAnyModules(int userId) throws LIMSRuntimeException;
+
+	public boolean duplicateRoleModuleExists(PermissionModule permissionModule);
 
 }

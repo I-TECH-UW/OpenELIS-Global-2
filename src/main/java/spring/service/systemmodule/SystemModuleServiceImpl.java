@@ -85,4 +85,13 @@ public class SystemModuleServiceImpl extends BaseObjectServiceImpl<SystemModule>
 	public SystemModule getSystemModuleByName(String name) {
 		return getBaseObjectDAO().getSystemModuleByName(name);
 	}
+
+  @Override
+  public String insert(SystemModule systemModule) {
+	  if (baseObjectDAO.duplicateSystemModuleExists(systemModule)) {
+			throw new LIMSDuplicateRecordException(
+					"Duplicate record exists for " + systemModule.getSystemModuleName());
+	  }
+	  return super.insert(systemModule);
+  }
 }

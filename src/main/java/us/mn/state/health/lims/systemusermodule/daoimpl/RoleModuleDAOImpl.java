@@ -343,7 +343,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule> implements RoleMo
 
 			String sql = "from RoleModule s where s.role.id = :param and s.systemModule.id = :param2 and s.id != :param3";
 			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
-			query.setInteger("param", Integer.parseInt(roleModule.getRole().getId()));
+			query.setInteger("param", Integer.parseInt( ((RoleModule) roleModule).getRole().getId()));
 			query.setInteger("param2", Integer.parseInt(roleModule.getSystemModule().getId()));
 
 			String systemUserModuleId = "0";
