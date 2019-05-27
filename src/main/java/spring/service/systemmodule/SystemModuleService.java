@@ -6,6 +6,7 @@ import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
 
 public interface SystemModuleService extends BaseObjectService<SystemModule> {
+
 	void getData(SystemModule systemModule);
 
 	void deleteData(List systemModule);
@@ -25,4 +26,5 @@ public interface SystemModuleService extends BaseObjectService<SystemModule> {
 	List getPreviousSystemModuleRecord(String id);
 
 	SystemModule getSystemModuleByName(String name);
+
 }

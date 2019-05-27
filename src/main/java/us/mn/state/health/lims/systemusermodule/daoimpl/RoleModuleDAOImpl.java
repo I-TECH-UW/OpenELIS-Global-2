@@ -98,7 +98,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule> implements RoleMo
 						"Duplicate record exists for " + permissionModule.getPermissionAgentId());
 			}
 
-			String id = (String) HibernateUtil.getSession().save(permissionModule);
+//			String id = (String) HibernateUtil.getSession().save(permissionModule);
+			String id = (String) sessionFactory.getCurrentSession().save(permissionModule);
 			permissionModule.setId(id);
 
 			// add to audit trail
@@ -316,7 +317,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule> implements RoleMo
 		int rrn;
 		try {
 			String sql = "select rm.id from RoleModule rm order by rm.role.id";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
@@ -333,7 +334,9 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule> implements RoleMo
 		return list;
 	}
 
+	@Override
 	public boolean duplicateRoleModuleExists(RoleModule roleModule) throws LIMSRuntimeException {
+
 		try {
 
 			List list;

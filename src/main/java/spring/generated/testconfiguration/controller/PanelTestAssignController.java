@@ -13,6 +13,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Transaction;
 import org.owasp.encoder.Encode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,9 +24,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.generated.testconfiguration.form.PanelTestAssignForm;
 import spring.mine.common.controller.BaseController;
-import spring.service.test.TestServiceImpl;
+import spring.service.panel.PanelService;
+import spring.service.panelitem.PanelItemService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
+import spring.service.test.TestService;
+import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.panel.dao.PanelDAO;
@@ -42,6 +46,13 @@ import us.mn.state.health.lims.testconfiguration.action.PanelTests;
 
 @Controller
 public class PanelTestAssignController extends BaseController {
+	
+	@Autowired
+	PanelService panelService;
+	@Autowired
+	PanelItemService panelItemService;
+	@Autowired
+	TestService testService;
 
 	@RequestMapping(value = "/PanelTestAssign", method = RequestMethod.GET)
 	public ModelAndView showPanelTestAssign(HttpServletRequest request) {
@@ -130,21 +141,22 @@ public class PanelTestAssignController extends BaseController {
 		String currentUser = getSysUserId(request);
 		boolean updatepanel = false;
 
-		Panel panel = new PanelDAOImpl().getPanelById(panelId);
+//		Panel panel = new PanelDAOImpl().getPanelById(panelId);
+		Panel panel = panelService.getPanelById(panelId);
 
 		if (!GenericValidator.isBlankOrNull(panelId)) {
-			PanelItemDAO panelItemDAO = new PanelItemDAOImpl();
-			@SuppressWarnings("unchecked")
-			List<PanelItem> panelItems = panelItemDAO.getPanelItemsForPanel(panelId);
+//			PanelItemDAO panelItemDAO = new PanelItemDAOImpl();
+			List<PanelItem> panelItems = panelItemService.getPanelItemsForPanel(panelId);
 
 			List<String> newTests = (List<String>) form.get("currentTests");
 
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
+//			Transaction tx = HibernateUtil.getSession().beginTransaction();
 			try {
 				for (PanelItem oldPanelItem : panelItems) {
 					oldPanelItem.setSysUserId(currentUser);
 				}
-				panelItemDAO.deleteData(panelItems);
+//				panelItemDAO.deleteData(panelItems);
+				panelItemService.delete(panelItems);
 
 				for (String testId : newTests) {
 					PanelItem panelItem = new PanelItem();
@@ -167,13 +179,14 @@ public class PanelTestAssignController extends BaseController {
 					new PanelDAOImpl().updateData(panel);
 				}
 
-				tx.commit();
+//				tx.commit();
 			} catch (LIMSRuntimeException lre) {
-				tx.rollback();
+//				tx.rollback();
 				lre.printStackTrace();
-			} finally {
-				HibernateUtil.closeSession();
-			}
+			} 
+//			finally {
+//				HibernateUtil.closeSession();
+//			}
 		}
 
 		if (updatepanel == false) {

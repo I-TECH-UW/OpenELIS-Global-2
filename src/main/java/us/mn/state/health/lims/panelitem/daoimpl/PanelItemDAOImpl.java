@@ -78,9 +78,9 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 			for (int i = 0; i < panelItems.size(); i++) {
 				PanelItem data = (PanelItem) panelItems.get(i);
 				data = readPanelItem(data.getId());
-				HibernateUtil.getSession().delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(data);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			}
 		} catch (Exception e) {
@@ -96,7 +96,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 				throw new LIMSDuplicateRecordException("Duplicate record exists for " + panelItem.getPanelName());
 			}
 
-			String id = (String) HibernateUtil.getSession().save(panelItem);
+			String id = (String) sessionFactory.getCurrentSession().save(panelItem);
 			panelItem.setId(id);
 
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
@@ -104,8 +104,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 			String tableName = "PANEL_ITEM";
 			auditDAO.saveNewHistory(panelItem, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PanelItemDAOImpl", "insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in PanelItem insertData()", e);
@@ -140,11 +140,11 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 		}
 
 		try {
-			HibernateUtil.getSession().merge(panelItem);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(panelItem);
-			// HibernateUtil.getSession().refresh // CSL remove old(panelItem);
+			sessionFactory.getCurrentSession().merge(panelItem);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(panelItem);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(panelItem);
 		} catch (Exception e) {
 			LogEvent.logError("PanelItemDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in PanelItem updateData()", e);
@@ -154,9 +154,9 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 	@Override
 	public void getData(PanelItem panelItem) throws LIMSRuntimeException {
 		try {
-			PanelItem data = (PanelItem) HibernateUtil.getSession().get(PanelItem.class, panelItem.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			PanelItem data = (PanelItem) sessionFactory.getCurrentSession().get(PanelItem.class, panelItem.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (data != null) {
 				PropertyUtils.copyProperties(panelItem, data);
 			} else {
@@ -173,10 +173,10 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 		List list;
 		try {
 			String sql = "from PanelItem P order by P.panel.id ";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PanelItemDAOImpl", "getAllPanelItems()", e.toString());
 			throw new LIMSRuntimeException("Error in PanelItem getAllPanelItems()", e);
@@ -193,13 +193,13 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from PanelItem p order by p.panel.panelName, p.testName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PanelItemDAOImpl", "getPageOfPanelItems()", e.toString());
 			throw new LIMSRuntimeException("Error in PanelItem getPageOfPanelItems()", e);
@@ -211,9 +211,9 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 	public PanelItem readPanelItem(String idString) {
 		PanelItem pi;
 		try {
-			pi = (PanelItem) HibernateUtil.getSession().get(PanelItem.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			pi = (PanelItem) sessionFactory.getCurrentSession().get(PanelItem.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PanelItemDAOImpl", "readPanelItem()", e.toString());
 			throw new LIMSRuntimeException("Error in PanelItem readPanelItem()", e);
@@ -227,12 +227,12 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 		List list;
 		try {
 			String sql = "from PanelItem p where upper(p.methodName) like upper(:param) order by upper(p.methodName)";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", filter + "%");
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PanelItemDAOImpl", "getPanelItems()", e.toString());
 			throw new LIMSRuntimeException("Error in PanelItem getPanelItems(String filter)", e);
@@ -246,12 +246,12 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 		List list;
 		try {
 			String sql = "from PanelItem p where p.panel.id = :panelId";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("panelId", Integer.parseInt(panelId));
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PanelItemDAOImpl", "getPanelItemsForPanel()", e.toString());
 			throw new LIMSRuntimeException("Error in PanelItem getPanelItemsForPanel(String panelId)", e);
@@ -289,13 +289,13 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 		try {
 			String sql = "select pi.id from PanelItem pi " + " order by pi.panel.panelName, pi.testName";
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -316,13 +316,13 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 		try {
 			String sql = "select pi.id from PanelItem pi " + " order by pi.panel.panelName desc, pi.testName desc";
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -341,7 +341,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 			// not case sensitive hemolysis and Hemolysis are considered
 			// duplicates
 			String sql = "from PanelItem t where trim(lower(t.panel.panelName)) = :panelName and trim(lower(t.testName)) = :testName and t.id != :panelItemId";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("panelName", panelItem.getPanel().getPanelName().toLowerCase().trim());
 			query.setParameter("testName", panelItem.getTest().getTestName().toLowerCase().trim());
 
@@ -354,8 +354,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 			query.setInteger("panelItemId", Integer.parseInt(panelItemId));
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return !list.isEmpty();
 
@@ -373,7 +373,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 			// not case sensitive hemolysis and Hemolysis are considered
 			// duplicates
 			String sql = "from PanelItem t where trim(lower(t.panel.panelName)) = :param and t.sortOrder = :sortOrder and t.id != :panelItemId";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			query.setParameter("param", panelItem.getPanelName().toLowerCase().trim());
 			query.setInteger("sortOrder", Integer.parseInt(panelItem.getSortOrder()));
@@ -388,8 +388,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 			query.setInteger("panelItemId", Integer.parseInt(panelItemId));
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return !list.isEmpty();
 
@@ -403,7 +403,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 	public List getPanelItemByPanel(Panel panel, boolean onlyTestsFullySetup) throws LIMSRuntimeException {
 		try {
 			String sql = "from PanelItem pi where pi.panel = :param";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", panel);
 
 			List list = query.list();
@@ -423,8 +423,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 
 				}
 			}
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			return list;
 
 		} catch (Exception e) {
@@ -439,7 +439,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 		String sql = "From PanelItem pi where pi.test.id = :testId";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(testId));
 			List<PanelItem> panelItems = query.list();
 			// closeSession(); // CSL remove old
@@ -458,7 +458,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem> implements PanelIte
 			throws LIMSRuntimeException {
 		String sql = "From PanelItem pi where pi.panel.id = :panelId and pi.test.id in (:testList)";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("panelId", Integer.parseInt(panelId));
 			query.setParameterList("testList", testList);
 			List<PanelItem> items = query.list();

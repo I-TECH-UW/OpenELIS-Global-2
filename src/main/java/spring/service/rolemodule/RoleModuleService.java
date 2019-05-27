@@ -1,5 +1,6 @@
-package spring.service.systemusermodule;
+package spring.service.rolemodule;
 
+import spring.service.systemusermodule.PermissionModuleService;
 import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
 
 public interface RoleModuleService extends PermissionModuleService<RoleModule> {
