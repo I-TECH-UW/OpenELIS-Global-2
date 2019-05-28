@@ -18,156 +18,173 @@ package us.mn.state.health.lims.common.services;
 
 import java.util.List;
 
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationTypeDAOImpl;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
+import spring.service.organization.OrganizationService;
+import spring.service.organization.OrganizationTypeService;
+import spring.service.person.PersonService;
+import spring.service.person.PersonServiceImpl;
+import spring.service.requester.RequesterTypeService;
+import spring.service.requester.SampleRequesterService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.organization.valueholder.OrganizationType;
-import us.mn.state.health.lims.person.dao.PersonDAO;
-import us.mn.state.health.lims.person.daoimpl.PersonDAOImpl;
 import us.mn.state.health.lims.person.valueholder.Person;
-import us.mn.state.health.lims.requester.dao.RequesterTypeDAO;
-import us.mn.state.health.lims.requester.dao.SampleRequesterDAO;
-import us.mn.state.health.lims.requester.daoimpl.RequesterTypeDAOImpl;
-import us.mn.state.health.lims.requester.daoimpl.SampleRequesterDAOImpl;
 import us.mn.state.health.lims.requester.valueholder.RequesterType;
 import us.mn.state.health.lims.requester.valueholder.SampleRequester;
 
 /**
  */
-public class RequesterService{
-    private static final SampleRequesterDAO sampleRequesterDAO = new SampleRequesterDAOImpl();
-    private static final PersonDAO personDAO = new PersonDAOImpl();
-    private static final OrganizationDAO organizationDAO = new OrganizationDAOImpl();
-    public static final String REFERRAL_ORG_TYPE = "referring clinic";
-    public static final String REFERRAL_ORG_TYPE_ID;
-    private final String sampleId;
-    private List<SampleRequester> requesters;
-    private PersonService personService;
-    private Organization organization;
+@Service
+@Scope("prototype")
+@DependsOn({ "springContext" })
+public class RequesterService {
+	public static final String REFERRAL_ORG_TYPE = "referring clinic";
+	public static final String REFERRAL_ORG_TYPE_ID;
 
-    public static enum Requester{
-        PERSON,
-        ORGANIZATION;
+	private static SampleRequesterService sampleRequesterService = SpringContext.getBean(SampleRequesterService.class);
+	private static PersonService personService = SpringContext.getBean(PersonService.class);
+	private static OrganizationTypeService organizationTypeService = SpringContext
+			.getBean(OrganizationTypeService.class);
+	private static OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
+	private static RequesterTypeService requesterTypeService = SpringContext.getBean(RequesterTypeService.class);
 
-        long id;
+	private String sampleId;
+	private List<SampleRequester> requesters;
+	private PersonServiceImpl personServiceImpl;
+	private Organization organization;
 
-        public long getId(){
-            return id;
-        }
+	public static enum Requester {
+		PERSON, ORGANIZATION;
 
-        public void setId( long id ){
-            this.id = id;
-        }
-    }
+		long id;
 
-    static{
-        RequesterTypeDAO requesterTypeDAO = new RequesterTypeDAOImpl();
-        RequesterType requesterType = requesterTypeDAO.getRequesterTypeByName( "organization" );
-        Requester.ORGANIZATION.setId( requesterType != null ? Long.parseLong( requesterType.getId()) : -1L );
+		public long getId() {
+			return id;
+		}
 
-        requesterType = requesterTypeDAO.getRequesterTypeByName( "provider" );
-        Requester.PERSON.setId( requesterType != null ? Long.parseLong( requesterType.getId() ) : -1L);
+		public void setId(long id) {
+			this.id = id;
+		}
+	}
 
-        OrganizationType orgType = new OrganizationTypeDAOImpl().getOrganizationTypeByName( REFERRAL_ORG_TYPE );
+	static {
+		RequesterType requesterType = requesterTypeService.getRequesterTypeByName("organization");
+		Requester.ORGANIZATION.setId(requesterType != null ? Long.parseLong(requesterType.getId()) : -1L);
 
-        REFERRAL_ORG_TYPE_ID = orgType == null ? null : orgType.getId();
-    }
+		requesterType = requesterTypeService.getRequesterTypeByName("provider");
+		Requester.PERSON.setId(requesterType != null ? Long.parseLong(requesterType.getId()) : -1L);
 
-    public RequesterService( String sampleId ){
-        this.sampleId = sampleId;
-    }
+		OrganizationType orgType = organizationTypeService.getOrganizationTypeByName(REFERRAL_ORG_TYPE);
 
-    public String getRequesterFirstName(){
-        return getPersonService() == null ? null : getPersonService().getFirstName();
-    }
+		REFERRAL_ORG_TYPE_ID = orgType == null ? null : orgType.getId();
+	}
 
-    public String getRequesterLastName(){
-        return getPersonService() == null ? null : getPersonService().getLastName();
-    }
+	public RequesterService(String sampleId) {
+		setSampleId(sampleId);
+	}
 
-    public String getRequesterLastFirstName(){
-        return getPersonService() == null ? null : getPersonService().getLastFirstName();
-    }
+	public RequesterService() {
+	}
 
-    public String getWorkPhone(){
-        return getPersonService() == null ? null : getPersonService().getWorkPhone();
-    }
+	public void setSampleId(String sampleId) {
+		this.sampleId = sampleId;
+	}
 
-    public String getCellPhone(){
-        return getPersonService() == null ? null : getPersonService().getCellPhone();
-    }
+	public String getRequesterFirstName() {
+		return getPersonService() == null ? null : getPersonService().getFirstName();
+	}
 
-    public String getFax(){
-        return getPersonService() == null ? null : getPersonService().getFax();
-    }
+	public String getRequesterLastName() {
+		return getPersonService() == null ? null : getPersonService().getLastName();
+	}
 
-    public String getEmail(){
-        return getPersonService() == null ? null : getPersonService().getEmail();
-    }
+	public String getRequesterLastFirstName() {
+		return getPersonService() == null ? null : getPersonService().getLastFirstName();
+	}
 
-    public String getReferringSiteId(){
-        return getOrganization() == null ? null :getOrganization().getId();
-    }
+	public String getWorkPhone() {
+		return getPersonService() == null ? null : getPersonService().getWorkPhone();
+	}
 
-    public String getReferringSiteName(){
-        return getOrganization() == null ? null : getOrganization().getOrganizationName();
-    }
-    public String getReferringSiteCode(){
-        return getOrganization() == null ? null : getOrganization().getCode();
-    }
-    public Person getPerson(){
-        return getPersonService() == null ? null : getPersonService().getPerson();
-    }
+	public String getCellPhone() {
+		return getPersonService() == null ? null : getPersonService().getCellPhone();
+	}
 
-    private PersonService getPersonService(){
-        if( personService == null ){
-            buildRequesters();
-        }
+	public String getFax() {
+		return getPersonService() == null ? null : getPersonService().getFax();
+	}
 
-        return personService;
-    }
+	public String getEmail() {
+		return getPersonService() == null ? null : getPersonService().getEmail();
+	}
 
-    public Organization getOrganization(){
-        if( organization == null ){
-            buildRequesters();
-        }
+	public String getReferringSiteId() {
+		return getOrganization() == null ? null : getOrganization().getId();
+	}
 
-        return organization;
-    }
+	public String getReferringSiteName() {
+		return getOrganization() == null ? null : getOrganization().getOrganizationName();
+	}
 
-    public SampleRequester getSampleRequesterByType( Requester type, boolean createIfNotFound ){
-        if( requesters == null ){
-            buildRequesters();
-        }
+	public String getReferringSiteCode() {
+		return getOrganization() == null ? null : getOrganization().getCode();
+	}
 
-        for( SampleRequester requester : requesters ){
-            if( requester.getRequesterTypeId() == type.getId() ){
-                return requester;
-            }
-        }
+	public Person getPerson() {
+		return getPersonService() == null ? null : getPersonService().getPerson();
+	}
 
-        //reachable only if existing requester not found
-        if( createIfNotFound ){
-            SampleRequester newRequester = new SampleRequester();
-            newRequester.setRequesterTypeId( type.getId() );
-            newRequester.setSampleId( Long.parseLong( sampleId ) );
+	private PersonServiceImpl getPersonService() {
+		if (personServiceImpl == null) {
+			buildRequesters();
+		}
 
-            return newRequester;
-        }
+		return personServiceImpl;
+	}
 
-        return null;
-    }
+	public Organization getOrganization() {
+		if (organization == null) {
+			buildRequesters();
+		}
 
-    private void buildRequesters(){
-        requesters = sampleRequesterDAO.getRequestersForSampleId( sampleId );
-        for( SampleRequester requester : requesters ){
-            if( requester.getRequesterTypeId() == Requester.PERSON.getId()){
-                 Person person = personDAO.getPersonById( String.valueOf( requester.getRequesterId() ) );
-                 personService = new PersonService( person );
-            }else if( requester.getRequesterTypeId() == Requester.ORGANIZATION.getId()){
-                 organization = organizationDAO.getOrganizationById( String.valueOf( requester.getRequesterId() ) );
-            }
-        }
-    }
+		return organization;
+	}
+
+	public SampleRequester getSampleRequesterByType(Requester type, boolean createIfNotFound) {
+		if (requesters == null) {
+			buildRequesters();
+		}
+
+		for (SampleRequester requester : requesters) {
+			if (requester.getRequesterTypeId() == type.getId()) {
+				return requester;
+			}
+		}
+
+		// reachable only if existing requester not found
+		if (createIfNotFound) {
+			SampleRequester newRequester = new SampleRequester();
+			newRequester.setRequesterTypeId(type.getId());
+			newRequester.setSampleId(Long.parseLong(sampleId));
+
+			return newRequester;
+		}
+
+		return null;
+	}
+
+	private void buildRequesters() {
+		requesters = sampleRequesterService.getRequestersForSampleId(sampleId);
+		for (SampleRequester requester : requesters) {
+			if (requester.getRequesterTypeId() == Requester.PERSON.getId()) {
+				Person person = personService.getPersonById(String.valueOf(requester.getRequesterId()));
+				personServiceImpl = new PersonServiceImpl(person);
+			} else if (requester.getRequesterTypeId() == Requester.ORGANIZATION.getId()) {
+				organization = organizationService.getOrganizationById(String.valueOf(requester.getRequesterId()));
+			}
+		}
+	}
 }

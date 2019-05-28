@@ -435,7 +435,7 @@ public class ResultsLoadUtility {
 			TestResultItem resultItem = createTestResultItem(new AnalysisServiceImpl(analysis), testKit, notes,
 					sampleItem.getSortOrder(), result, sampleItem.getSample().getAccessionNumber(), patientName,
 					patientInfo, techSignature, techSignatureId, initialConditions,
-					TypeOfSampleServiceImpl.getTypeOfSampleNameForId(sampleItem.getTypeOfSampleId()));
+					TypeOfSampleServiceImpl.getInstance().getTypeOfSampleNameForId(sampleItem.getTypeOfSampleId()));
 			resultItem.setNationalId(nationalId);
 			testResultList.add(resultItem);
 
@@ -745,7 +745,7 @@ public class ResultsLoadUtility {
 					resultLimit.getHighValid() == Double.POSITIVE_INFINITY ? 0 : resultLimit.getHighValid());
 			testItem.setValid(getIsValid(testItem.getResultValue(), resultLimit));
 			testItem.setNormal(getIsNormal(testItem.getResultValue(), resultLimit));
-			testItem.setNormalRange(ResultLimitServiceImpl.getDisplayReferenceRange(resultLimit,
+			testItem.setNormalRange(ResultLimitServiceImpl.getInstance().getDisplayReferenceRange(resultLimit,
 					testResults.get(0).getSignificantDigits(), " - "));
 		}
 	}

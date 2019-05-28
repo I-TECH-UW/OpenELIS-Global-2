@@ -168,7 +168,7 @@ function /*void*/ markUpdated(){
      <h2><spring:message code="error.missing.test.mapping" /></h2><br/><br/>
 </c:if>
 
-<c:if test="${empty form.notFoundMsg}">
+<c:if test="${not form.displayNotFoundMsg}">
 	<div class="alert alert-info" style="width: 540px">
 		<div><strong><spring:message code="validation.accept"/></strong>: <spring:message code="validation.accept.explanation"/></div>
 		<div><strong><spring:message code="validation.reject"/></strong>: <spring:message code="validation.reject.explanation"/></div>

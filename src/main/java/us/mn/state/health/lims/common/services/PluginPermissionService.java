@@ -19,6 +19,7 @@ package us.mn.state.health.lims.common.services;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +34,7 @@ import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
 /**
  */
 @Service
+@DependsOn({ "springContext" })
 public class PluginPermissionService {
 
 	private static PluginPermissionService INSTANCE;
@@ -45,7 +47,7 @@ public class PluginPermissionService {
 	private RoleModuleService roleModuleService = SpringContext.getBean(RoleModuleService.class);
 
 	@PostConstruct
-	public void registerInstance() {
+	private void registerInstance() {
 		INSTANCE = this;
 	}
 

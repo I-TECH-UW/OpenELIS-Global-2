@@ -46,7 +46,7 @@ public class TestIdentityService implements ITestIdentityService {
 	private Boolean VIRAL_LOAD_IS_NUMERIC = Boolean.TRUE;
 
 	@PostConstruct
-	public void registerInstance() {
+	private void registerInstance() {
 		instance = this;
 	}
 

@@ -3,6 +3,7 @@ package spring.service.typeoftestresult;
 import java.util.List;
 
 import spring.service.common.BaseObjectService;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl.ResultType;
 import us.mn.state.health.lims.typeoftestresult.valueholder.TypeOfTestResult;
 
 public interface TypeOfTestResultService extends BaseObjectService<TypeOfTestResult> {
@@ -27,4 +28,6 @@ public interface TypeOfTestResultService extends BaseObjectService<TypeOfTestRes
 	TypeOfTestResult getTypeOfTestResultByType(String type);
 
 	List getPreviousTypeOfTestResultRecord(String id);
+
+	ResultType getResultTypeById(String resultTypeId);
 }

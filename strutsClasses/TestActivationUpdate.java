@@ -90,7 +90,7 @@ public class TestActivationUpdate extends BaseAction {
             }
 
             if( !deactivateSampleTypes.isEmpty() || !activateSampleTypes.isEmpty()){
-                TypeOfSampleServiceImpl.clearCache();
+                TypeOfSampleServiceImpl.getInstance().clearCache();
             }
 
             tx.commit();
@@ -102,7 +102,7 @@ public class TestActivationUpdate extends BaseAction {
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
-        TypeOfSampleServiceImpl.clearCache();
+        TypeOfSampleServiceImpl.getInstance().clearCache();
 
         return mapping.findForward(FWD_SUCCESS);
     }
@@ -140,7 +140,7 @@ public class TestActivationUpdate extends BaseAction {
         List<TypeOfSample> sampleTypes = new ArrayList<TypeOfSample>();
 
         for( String id : sampleTypeIds){
-            TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getTransientTypeOfSampleById(id);
+            TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getInstance().getTransientTypeOfSampleById(id);
             typeOfSample.setActive( false );
             typeOfSample.setSysUserId(currentUserId);
             sampleTypes.add(typeOfSample);
@@ -153,7 +153,7 @@ public class TestActivationUpdate extends BaseAction {
         List<TypeOfSample> sampleTypes = new ArrayList<TypeOfSample>();
 
         for( ActivateSet set : sampleTypeSets){
-            TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getTransientTypeOfSampleById(set.id);
+            TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getInstance().getTransientTypeOfSampleById(set.id);
             typeOfSample.setActive( true );
             typeOfSample.setSortOrder(set.sortOrder * 10);
             typeOfSample.setSysUserId(currentUserId);

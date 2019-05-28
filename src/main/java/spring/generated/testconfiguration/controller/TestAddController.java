@@ -97,7 +97,8 @@ public class TestAddController extends BaseController {
 					DisplayListService.getInstance().getList(ListType.UNIT_OF_MEASURE));
 			PropertyUtils.setProperty(form, "labUnitList",
 					DisplayListService.getInstance().getList(ListType.TEST_SECTION));
-			PropertyUtils.setProperty(form, "ageRangeList", ResultLimitServiceImpl.getPredefinedAgeRanges());
+			PropertyUtils.setProperty(form, "ageRangeList",
+					ResultLimitServiceImpl.getInstance().getPredefinedAgeRanges());
 			PropertyUtils.setProperty(form, "dictionaryList",
 					DisplayListService.getInstance().getList(ListType.DICTIONARY_TEST_RESULTS));
 			PropertyUtils.setProperty(form, "groupedDictionaryList", createGroupedDictionaryList());
@@ -192,7 +193,7 @@ public class TestAddController extends BaseController {
 		}
 
 		TestServiceImpl.refreshTestNames();
-		TypeOfSampleServiceImpl.clearCache();
+		TypeOfSampleServiceImpl.getInstance().clearCache();
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}
@@ -316,7 +317,7 @@ public class TestAddController extends BaseController {
 
 	private void createTestResults(ArrayList<TestResult> testResults, String significantDigits,
 			TestAddParams testAddParams) {
-		TypeOfTestResultServiceImpl.ResultType type = TypeOfTestResultServiceImpl
+		TypeOfTestResultServiceImpl.ResultType type = TypeOfTestResultServiceImpl.getInstance()
 				.getResultTypeById(testAddParams.resultTypeId);
 
 		if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(type)

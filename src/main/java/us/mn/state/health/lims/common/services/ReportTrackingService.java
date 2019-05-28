@@ -54,12 +54,12 @@ public class ReportTrackingService {
 	private String MALARIA_CASE_DOCUMENT_TYPE_ID;
 
 	@PostConstruct
-	public void registerInstance() {
+	private void registerInstance() {
 		INSTANCE = this;
 	}
 
 	@PostConstruct
-	public void initialize() {
+	private void initialize() {
 		PATIENT_DOCUMENT_TYPE_ID = documentTypeService.getDocumentTypeByName("patientReport").getId();
 		NON_CONFORMITY_DOCUMENT_TYPE_ID = documentTypeService.getDocumentTypeByName("nonConformityNotification")
 				.getId();

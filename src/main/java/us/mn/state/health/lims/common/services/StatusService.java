@@ -108,7 +108,7 @@ public class StatusService {
 	SampleHumanService sampleHumanService;
 
 	@PostConstruct
-	public void registerInstance() {
+	private void registerInstance() {
 		// Makes this a singelton when spring automatically creates this object
 		instance = this;
 	}

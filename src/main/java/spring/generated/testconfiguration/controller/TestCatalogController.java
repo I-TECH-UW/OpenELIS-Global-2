@@ -141,13 +141,13 @@ public class TestCatalogController extends BaseController {
 	}
 
 	private String createReferenceValueForDictionaryType(Test test) {
-		List<ResultLimit> resultLimits = ResultLimitServiceImpl.getResultLimits(test);
+		List<ResultLimit> resultLimits = ResultLimitServiceImpl.getInstance().getResultLimits(test);
 
 		if (resultLimits.isEmpty()) {
 			return "n/a";
 		}
 
-		return ResultLimitServiceImpl.getDisplayReferenceRange(resultLimits.get(0), null, null);
+		return ResultLimitServiceImpl.getInstance().getDisplayReferenceRange(resultLimits.get(0), null, null);
 
 	}
 
@@ -186,7 +186,7 @@ public class TestCatalogController extends BaseController {
 	private List<ResultLimitBean> getResultLimits(Test test, String significantDigits) {
 		List<ResultLimitBean> limitBeans = new ArrayList<>();
 
-		List<ResultLimit> resultLimitList = ResultLimitServiceImpl.getResultLimits(test);
+		List<ResultLimit> resultLimitList = ResultLimitServiceImpl.getInstance().getResultLimits(test);
 
 		Collections.sort(resultLimitList, new Comparator<ResultLimit>() {
 			@Override
@@ -197,10 +197,10 @@ public class TestCatalogController extends BaseController {
 
 		for (ResultLimit limit : resultLimitList) {
 			ResultLimitBean bean = new ResultLimitBean();
-			bean.setNormalRange(ResultLimitServiceImpl.getDisplayReferenceRange(limit, significantDigits, "-"));
-			bean.setValidRange(ResultLimitServiceImpl.getDisplayValidRange(limit, significantDigits, "-"));
+			bean.setNormalRange(ResultLimitServiceImpl.getInstance().getDisplayReferenceRange(limit, significantDigits, "-"));
+			bean.setValidRange(ResultLimitServiceImpl.getInstance().getDisplayValidRange(limit, significantDigits, "-"));
 			bean.setGender(limit.getGender());
-			bean.setAgeRange(ResultLimitServiceImpl.getDisplayAgeRange(limit, "-"));
+			bean.setAgeRange(ResultLimitServiceImpl.getInstance().getDisplayAgeRange(limit, "-"));
 			limitBeans.add(bean);
 		}
 		return limitBeans;

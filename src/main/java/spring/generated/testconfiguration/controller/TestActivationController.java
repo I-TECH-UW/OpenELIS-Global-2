@@ -27,6 +27,7 @@ import spring.generated.testconfiguration.form.TestActivationForm;
 import spring.generated.testconfiguration.validator.TestActivationFormValidator;
 import spring.mine.common.controller.BaseController;
 import spring.service.test.TestServiceImpl;
+import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.IdValuePair;
@@ -44,6 +45,8 @@ public class TestActivationController extends BaseController {
 
 	@Autowired
 	TestActivationFormValidator formValidator;
+	@Autowired
+	TypeOfSampleService typeOfSampleService;
 
 	@RequestMapping(value = "/TestActivation", method = RequestMethod.GET)
 	public ModelAndView showTestActivation(HttpServletRequest request) {
@@ -81,7 +84,7 @@ public class TestActivationController extends BaseController {
 		for (IdValuePair pair : sampleTypeList) {
 			TestActivationBean bean = new TestActivationBean();
 
-			List<Test> tests = TypeOfSampleServiceImpl.getAllTestsBySampleTypeId(pair.getId());
+			List<Test> tests = typeOfSampleService.getAllTestsBySampleTypeId(pair.getId());
 			List<IdValuePair> activeTests = new ArrayList<>();
 			List<IdValuePair> inactiveTests = new ArrayList<>();
 
@@ -176,7 +179,7 @@ public class TestActivationController extends BaseController {
 			}
 
 			if (!deactivateSampleTypes.isEmpty() || !activateSampleTypes.isEmpty()) {
-				TypeOfSampleServiceImpl.clearCache();
+				TypeOfSampleServiceImpl.getInstance().clearCache();
 			}
 
 			tx.commit();
@@ -225,7 +228,7 @@ public class TestActivationController extends BaseController {
 		List<TypeOfSample> sampleTypes = new ArrayList<>();
 
 		for (String id : sampleTypeIds) {
-			TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getTransientTypeOfSampleById(id);
+			TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getInstance().getTransientTypeOfSampleById(id);
 			typeOfSample.setActive(false);
 			typeOfSample.setSysUserId(getSysUserId(request));
 			sampleTypes.add(typeOfSample);
@@ -238,7 +241,7 @@ public class TestActivationController extends BaseController {
 		List<TypeOfSample> sampleTypes = new ArrayList<>();
 
 		for (ActivateSet set : sampleTypeSets) {
-			TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getTransientTypeOfSampleById(set.id);
+			TypeOfSample typeOfSample = TypeOfSampleServiceImpl.getInstance().getTransientTypeOfSampleById(set.id);
 			typeOfSample.setActive(true);
 			typeOfSample.setSortOrder(set.sortOrder * 10);
 			typeOfSample.setSysUserId(getSysUserId(request));

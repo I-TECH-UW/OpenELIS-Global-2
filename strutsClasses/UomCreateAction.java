@@ -28,7 +28,7 @@ public class UomCreateAction extends BaseAction {
         ((DynaValidatorForm)form).initialize(mapping);
         PropertyUtils.setProperty(form, "existingUomList", DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE));
         PropertyUtils.setProperty(form, "inactiveUomList", DisplayListService.getInstance().getList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE));
-        List<UnitOfMeasure> uoms = UnitOfMeasureServiceImpl.getAllUnitOfMeasures();
+        List<UnitOfMeasure> uoms = UnitOfMeasureServiceImpl.getInstance().getAllUnitOfMeasures();
         PropertyUtils.setProperty(form, "existingEnglishNames", getExistingUomNames(uoms, ConfigurationProperties.LOCALE.ENGLISH));
         PropertyUtils.setProperty(form, "existingFrenchNames", getExistingUomNames(uoms, ConfigurationProperties.LOCALE.FRENCH));
 

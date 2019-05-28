@@ -28,7 +28,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import spring.service.localization.LocalizationServiceImpl;
-import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.service.typeofsample.TypeOfSampleService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 import us.mn.state.health.lims.test.valueholder.Test;
 
@@ -36,63 +37,66 @@ public class AllTestsForSampleTypeProvider extends BaseQueryProvider {
 
 	protected AjaxServlet ajaxServlet = null;
 
-    @Override
-	public void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
+
+	@Override
+	public void processRequest(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
 		String sampleTypeId = request.getParameter("sampleTypeId");
 
-        String jResult;
-        JSONObject jsonResult = new JSONObject();
-        String jString;
+		String jResult;
+		JSONObject jsonResult = new JSONObject();
+		String jString;
 
-		if (GenericValidator.isBlankOrNull(sampleTypeId) ){
+		if (GenericValidator.isBlankOrNull(sampleTypeId)) {
 			jResult = INVALID;
 			jString = "Internal error, please contact Admin and file bug report";
 		} else {
-            jResult = createJsonGroupedTestNames(sampleTypeId, jsonResult);
-            StringWriter out = new StringWriter();
-            try{
-                jsonResult.writeJSONString( out );
-                jString = out.toString();
-            }catch( IOException e ){
-                e.printStackTrace();
-                jResult = INVALID;
-                jString = "Internal error, please contact Admin and file bug report";
-            }catch( IllegalStateException e ){
-                e.printStackTrace();
-                jResult = INVALID;
-                jString = "Internal error, please contact Admin and file bug report";
-            }
-        }
+			jResult = createJsonGroupedTestNames(sampleTypeId, jsonResult);
+			StringWriter out = new StringWriter();
+			try {
+				jsonResult.writeJSONString(out);
+				jString = out.toString();
+			} catch (IOException e) {
+				e.printStackTrace();
+				jResult = INVALID;
+				jString = "Internal error, please contact Admin and file bug report";
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+				jResult = INVALID;
+				jString = "Internal error, please contact Admin and file bug report";
+			}
+		}
 		ajaxServlet.sendData(jString, jResult, request, response);
 
 	}
 
-    @SuppressWarnings("unchecked")
-    private String createJsonGroupedTestNames(String sampleTypeId, JSONObject jsonResult)throws IllegalStateException{
-        List<Test> tests = TypeOfSampleServiceImpl.getAllTestsBySampleTypeId(sampleTypeId);
+	@SuppressWarnings("unchecked")
+	private String createJsonGroupedTestNames(String sampleTypeId, JSONObject jsonResult) throws IllegalStateException {
+		List<Test> tests = typeOfSampleService.getAllTestsBySampleTypeId(sampleTypeId);
 
-        JSONArray testArray = new JSONArray();
+		JSONArray testArray = new JSONArray();
 
-        for(Test test:tests){
-            JSONObject testObject = new JSONObject();
-            testObject.put("name" , LocalizationServiceImpl.getLocalizedValue(test.getLocalizedTestName()));
-            testObject.put("id", test.getId());
-            testObject.put("isActive", test.getIsActive());
-            testArray.add(testObject);
-        }
-        jsonResult.put("tests", testArray);
-        return VALID;
-    }
+		for (Test test : tests) {
+			JSONObject testObject = new JSONObject();
+			testObject.put("name", LocalizationServiceImpl.getLocalizedValue(test.getLocalizedTestName()));
+			testObject.put("id", test.getId());
+			testObject.put("isActive", test.getIsActive());
+			testArray.add(testObject);
+		}
+		jsonResult.put("tests", testArray);
+		return VALID;
+	}
 
 	@Override
 	public void setServlet(AjaxServlet as) {
-		this.ajaxServlet = as;
+		ajaxServlet = as;
 	}
 
 	@Override
 	public AjaxServlet getServlet() {
-		return this.ajaxServlet;
+		return ajaxServlet;
 	}
 
 }

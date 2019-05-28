@@ -385,4 +385,5 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule> imple
 		List userModuleList = getAllPermissionModulesByAgentId(userId);
 		return userModuleList.size() > 0;
 	}
+
 }

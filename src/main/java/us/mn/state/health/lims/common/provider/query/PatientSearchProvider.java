@@ -44,17 +44,18 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
 import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
 
-public class PatientSearchProvider extends BaseQueryProvider{
+public class PatientSearchProvider extends BaseQueryProvider {
 
 	protected AjaxServlet ajaxServlet = null;
 
 	@Override
-	public void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	public void processRequest(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
 		String lastName = request.getParameter("lastName");
 		String firstName = request.getParameter("firstName");
 		String STNumber = request.getParameter("STNumber");
-        // N.B. This is a bad name, it is other than STnumber
+		// N.B. This is a bad name, it is other than STnumber
 		String subjectNumber = request.getParameter("subjectNumber");
 		String nationalID = request.getParameter("nationalID");
 		String labNumber = request.getParameter("labNumber");
@@ -66,23 +67,24 @@ public class PatientSearchProvider extends BaseQueryProvider{
 		StringBuilder xml = new StringBuilder();
 		// If we have a lab number then the patient is in the system and we just
 		// have to get the patient and format the xml
-		if(!GenericValidator.isBlankOrNull(labNumber)){
+		if (!GenericValidator.isBlankOrNull(labNumber)) {
 			Patient patient = getPatientForLabNumber(labNumber);
-			if(patient == null || GenericValidator.isBlankOrNull(patient.getId())){
+			if (patient == null || GenericValidator.isBlankOrNull(patient.getId())) {
 				result = IActionConstants.INVALID;
 				xml.append("No results were found for search.  Check spelling or remove some of the fields");
-			}else{
+			} else {
 				PatientSearchResults searchResults = getSearchResultsForPatient(patient);
 				PatientSearchWorker localWorker = new PatientSearchLocalWorker();
 				localWorker.appendSearchResultRow(searchResults, xml);
 			}
-		}else{
+		} else {
 
 			PatientSearchWorker worker = getAppropriateWorker(request, "true".equals(suppressExternalSearch));
 
-			if(worker != null){
-				result = worker.createSearchResultXML(lastName, firstName, STNumber, subjectNumber, nationalID, patientID, guid, xml);
-			}else{
+			if (worker != null) {
+				result = worker.createSearchResultXML(lastName, firstName, STNumber, subjectNumber, nationalID,
+						patientID, guid, xml);
+			} else {
 				result = INVALID;
 				xml.append("System is not configured correctly for searching for patients. Contact Administrator");
 			}
@@ -91,28 +93,22 @@ public class PatientSearchProvider extends BaseQueryProvider{
 
 	}
 
-	private PatientSearchResults getSearchResultsForPatient(Patient patient){
+	private PatientSearchResults getSearchResultsForPatient(Patient patient) {
 		PatientServiceImpl service = new PatientServiceImpl(patient);
 
-		return new PatientSearchResults(BigDecimal.valueOf(Long.parseLong(patient.getId())),
-				service.getFirstName(),
-				service.getLastName(),
-				service.getGender(),
-				service.getEnteredDOB(),
-				service.getNationalId(),
-				patient.getExternalId(),
-				service.getSTNumber(),
-				service.getSubjectNumber(),
-				service.getGUID(),
-                ObservationHistoryServiceImpl.getMostRecentValueForPatient( ObservationType.REFERRERS_PATIENT_ID, service.getPatientId() ));
+		return new PatientSearchResults(BigDecimal.valueOf(Long.parseLong(patient.getId())), service.getFirstName(),
+				service.getLastName(), service.getGender(), service.getEnteredDOB(), service.getNationalId(),
+				patient.getExternalId(), service.getSTNumber(), service.getSubjectNumber(), service.getGUID(),
+				ObservationHistoryServiceImpl.getInstance()
+						.getMostRecentValueForPatient(ObservationType.REFERRERS_PATIENT_ID, service.getPatientId()));
 	}
 
-	private Patient getPatientForLabNumber(String labNumber){
+	private Patient getPatientForLabNumber(String labNumber) {
 
 		SampleDAO sampleDAO = new SampleDAOImpl();
 		Sample sample = sampleDAO.getSampleByAccessionNumber(labNumber);
 
-		if(sample != null && !GenericValidator.isBlankOrNull(sample.getId())){
+		if (sample != null && !GenericValidator.isBlankOrNull(sample.getId())) {
 			SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
 			return sampleHumanDAO.getPatientForSample(sample);
 		}
@@ -120,26 +116,26 @@ public class PatientSearchProvider extends BaseQueryProvider{
 		return new Patient();
 	}
 
-	private PatientSearchWorker getAppropriateWorker(HttpServletRequest request, boolean suppressExternalSearch){
+	private PatientSearchWorker getAppropriateWorker(HttpServletRequest request, boolean suppressExternalSearch) {
 
-		if(ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.UseExternalPatientInfo, "false")
-				|| suppressExternalSearch){
+		if (ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.UseExternalPatientInfo,
+				"false") || suppressExternalSearch) {
 			return new PatientSearchLocalWorker();
-		}else{
-			UserSessionData usd = (UserSessionData)request.getSession().getAttribute(USER_SESSION_DATA);
+		} else {
+			UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
 
 			return new PatientSearchLocalAndClinicWorker(String.valueOf(usd.getSystemUserId()));
 		}
 	}
 
 	@Override
-	public void setServlet(AjaxServlet as){
-		this.ajaxServlet = as;
+	public void setServlet(AjaxServlet as) {
+		ajaxServlet = as;
 	}
 
 	@Override
-	public AjaxServlet getServlet(){
-		return this.ajaxServlet;
+	public AjaxServlet getServlet() {
+		return ajaxServlet;
 	}
 
 }

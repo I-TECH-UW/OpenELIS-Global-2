@@ -106,7 +106,8 @@ public class TestModifyEntryController extends BaseController {
 					DisplayListService.getInstance().getList(ListType.UNIT_OF_MEASURE));
 			PropertyUtils.setProperty(form, "labUnitList",
 					DisplayListService.getInstance().getList(ListType.TEST_SECTION));
-			PropertyUtils.setProperty(form, "ageRangeList", ResultLimitServiceImpl.getPredefinedAgeRanges());
+			PropertyUtils.setProperty(form, "ageRangeList",
+					ResultLimitServiceImpl.getInstance().getPredefinedAgeRanges());
 			PropertyUtils.setProperty(form, "dictionaryList",
 					DisplayListService.getInstance().getList(ListType.DICTIONARY_TEST_RESULTS));
 			PropertyUtils.setProperty(form, "groupedDictionaryList", createGroupedDictionaryList());
@@ -205,7 +206,7 @@ public class TestModifyEntryController extends BaseController {
 	private List<ResultLimitBean> getResultLimits(Test test, String significantDigits) {
 		List<ResultLimitBean> limitBeans = new ArrayList<>();
 
-		List<ResultLimit> resultLimitList = ResultLimitServiceImpl.getResultLimits(test);
+		List<ResultLimit> resultLimitList = ResultLimitServiceImpl.getInstance().getResultLimits(test);
 
 		Collections.sort(resultLimitList, new Comparator<ResultLimit>() {
 			@Override
@@ -216,23 +217,25 @@ public class TestModifyEntryController extends BaseController {
 
 		for (ResultLimit limit : resultLimitList) {
 			ResultLimitBean bean = new ResultLimitBean();
-			bean.setNormalRange(ResultLimitServiceImpl.getDisplayReferenceRange(limit, significantDigits, "-"));
-			bean.setValidRange(ResultLimitServiceImpl.getDisplayValidRange(limit, significantDigits, "-"));
+			bean.setNormalRange(
+					ResultLimitServiceImpl.getInstance().getDisplayReferenceRange(limit, significantDigits, "-"));
+			bean.setValidRange(
+					ResultLimitServiceImpl.getInstance().getDisplayValidRange(limit, significantDigits, "-"));
 			bean.setGender(limit.getGender());
-			bean.setAgeRange(ResultLimitServiceImpl.getDisplayAgeRange(limit, "-"));
+			bean.setAgeRange(ResultLimitServiceImpl.getInstance().getDisplayAgeRange(limit, "-"));
 			limitBeans.add(bean);
 		}
 		return limitBeans;
 	}
 
 	private String createReferenceValueForDictionaryType(Test test) {
-		List<ResultLimit> resultLimits = ResultLimitServiceImpl.getResultLimits(test);
+		List<ResultLimit> resultLimits = ResultLimitServiceImpl.getInstance().getResultLimits(test);
 
 		if (resultLimits.isEmpty()) {
 			return "n/a";
 		}
 
-		return ResultLimitServiceImpl.getDisplayReferenceRange(resultLimits.get(0), null, null);
+		return ResultLimitServiceImpl.getInstance().getDisplayReferenceRange(resultLimits.get(0), null, null);
 
 	}
 
@@ -267,13 +270,13 @@ public class TestModifyEntryController extends BaseController {
 	}
 
 	private String createReferenceIdForDictionaryType(Test test) {
-		List<ResultLimit> resultLimits = ResultLimitServiceImpl.getResultLimits(test);
+		List<ResultLimit> resultLimits = ResultLimitServiceImpl.getInstance().getResultLimits(test);
 
 		if (resultLimits.isEmpty()) {
 			return "n/a";
 		}
 
-		return ResultLimitServiceImpl.getDisplayReferenceRange(resultLimits.get(0), null, null);
+		return ResultLimitServiceImpl.getInstance().getDisplayReferenceRange(resultLimits.get(0), null, null);
 	}
 
 	private List<String> createDictionaryIds(TestServiceImpl testService) {
@@ -530,7 +533,7 @@ public class TestModifyEntryController extends BaseController {
 		}
 
 		TestServiceImpl.refreshTestNames();
-		TypeOfSampleServiceImpl.clearCache();
+		TypeOfSampleServiceImpl.getInstance().clearCache();
 
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}
@@ -580,7 +583,7 @@ public class TestModifyEntryController extends BaseController {
 
 	private void createTestResults(ArrayList<TestResult> testResults, String significantDigits,
 			TestAddParams testAddParams) {
-		TypeOfTestResultServiceImpl.ResultType type = TypeOfTestResultServiceImpl
+		TypeOfTestResultServiceImpl.ResultType type = TypeOfTestResultServiceImpl.getInstance()
 				.getResultTypeById(testAddParams.resultTypeId);
 
 		if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(type)

@@ -7,6 +7,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
@@ -14,42 +16,46 @@ import org.springframework.stereotype.Service;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.service.common.BaseObjectServiceImpl;
+import spring.service.dictionary.DictionaryService;
+import spring.service.siteinformation.SiteInformationService;
+import spring.service.typeoftestresult.TypeOfTestResultService;
 import spring.util.SpringContext;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.resultlimits.dao.ResultLimitDAO;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
-import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.typeoftestresult.dao.TypeOfTestResultDAO;
 
 @Service
 @DependsOn({ "springContext" })
 public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> implements ResultLimitService {
 
-	private static final double INVALID_PATIENT_AGE = Double.MIN_VALUE;
-	private static String NUMERIC_RESULT_TYPE_ID;
-	private static String SELECT_LIST_RESULT_TYPE_IDS;
+	private static ResultLimitServiceImpl INSTANCE;
+
+	private final double INVALID_PATIENT_AGE = Double.MIN_VALUE;
+	private String NUMERIC_RESULT_TYPE_ID;
+	private String SELECT_LIST_RESULT_TYPE_IDS;
 
 	@Autowired
-	protected static ResultLimitDAO resultLimitDAO = SpringContext.getBean(ResultLimitDAO.class);
+	protected ResultLimitDAO baseObjectDAO = SpringContext.getBean(ResultLimitDAO.class);
 
 	@Autowired
-	private static DictionaryDAO dictionaryDAO = SpringContext.getBean(DictionaryDAO.class);
+	private DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 	@Autowired
-	TypeOfTestResultDAO typeOfTestResultDAO = SpringContext.getBean(TypeOfTestResultDAO.class);
+	private SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
 	@Autowired
-	static SiteInformationDAO siteInformationDAO = SpringContext.getBean(SiteInformationDAO.class);
+	private TypeOfTestResultService typeOfTestResultService = SpringContext.getBean(TypeOfTestResultService.class);
 
 	private double currPatientAge;
 
 	public synchronized void initializeGlobalVariables() {
-		NUMERIC_RESULT_TYPE_ID = typeOfTestResultDAO.getTypeOfTestResultByType("N").getId();
-		SELECT_LIST_RESULT_TYPE_IDS = typeOfTestResultDAO.getTypeOfTestResultByType("D").getId() + typeOfTestResultDAO.getTypeOfTestResultByType("M").getId();
+		NUMERIC_RESULT_TYPE_ID = typeOfTestResultService.getTypeOfTestResultByType("N").getId();
+		SELECT_LIST_RESULT_TYPE_IDS = typeOfTestResultService.getTypeOfTestResultByType("D").getId()
+				+ typeOfTestResultService.getTypeOfTestResultByType("M").getId();
 
 	}
 
@@ -58,15 +64,26 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> i
 		initializeGlobalVariables();
 	}
 
-	@Override
-	protected ResultLimitDAO getBaseObjectDAO() {
-		return resultLimitDAO;
+	@PostConstruct
+	private void registerInstance() {
+		INSTANCE = this;
 	}
 
+	public static ResultLimitService getInstance() {
+		return INSTANCE;
+	}
+
+	@Override
+	protected ResultLimitDAO getBaseObjectDAO() {
+		return baseObjectDAO;
+	}
+
+	@Override
 	public ResultLimit getResultLimitForTestAndPatient(Test test, Patient patient) {
 		return getResultLimitForTestAndPatient(test.getId(), patient);
 	}
 
+	@Override
 	public ResultLimit getResultLimitForTestAndPatient(String testId, Patient patient) {
 		currPatientAge = INVALID_PATIENT_AGE;
 
@@ -74,7 +91,8 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> i
 
 		if (resultLimits.isEmpty()) {
 			return null;
-		} else if (patient == null || patient.getBirthDate() == null && GenericValidator.isBlankOrNull(patient.getGender())) {
+		} else if (patient == null
+				|| patient.getBirthDate() == null && GenericValidator.isBlankOrNull(patient.getGender())) {
 			return defaultResultLimit(resultLimits);
 		} else if (GenericValidator.isBlankOrNull(patient.getGender())) {
 			return ageBasedResultLimit(resultLimits, patient);
@@ -101,7 +119,9 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> i
 
 		// First we look for a limit with no gender
 		for (ResultLimit limit : resultLimits) {
-			if (GenericValidator.isBlankOrNull(limit.getGender()) && !limit.ageLimitsAreDefault() && getCurrPatientAge(patient) >= limit.getMinAge() && getCurrPatientAge(patient) <= limit.getMaxAge()) {
+			if (GenericValidator.isBlankOrNull(limit.getGender()) && !limit.ageLimitsAreDefault()
+					&& getCurrPatientAge(patient) >= limit.getMinAge()
+					&& getCurrPatientAge(patient) <= limit.getMaxAge()) {
 
 				resultLimit = limit;
 				break;
@@ -111,7 +131,8 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> i
 		// if none is found then drop the no gender requirement
 		if (resultLimit == null) {
 			for (ResultLimit limit : resultLimits) {
-				if (!limit.ageLimitsAreDefault() && getCurrPatientAge(patient) >= limit.getMinAge() && getCurrPatientAge(patient) <= limit.getMaxAge()) {
+				if (!limit.ageLimitsAreDefault() && getCurrPatientAge(patient) >= limit.getMinAge()
+						&& getCurrPatientAge(patient) <= limit.getMaxAge()) {
 
 					resultLimit = limit;
 					break;
@@ -204,7 +225,8 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> i
 		return currPatientAge;
 	}
 
-	public static String getDisplayNormalRange(double low, double high, String significantDigits, String separator) {
+	@Override
+	public String getDisplayNormalRange(double low, double high, String significantDigits, String separator) {
 
 		if (low == Float.NEGATIVE_INFINITY && high == Float.POSITIVE_INFINITY) {
 			return MessageUtil.getMessage("result.anyValue");
@@ -222,16 +244,20 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> i
 			return "< " + StringUtil.doubleWithSignificantDigits(high, significantDigits);
 		}
 
-		return StringUtil.doubleWithSignificantDigits(low, significantDigits) + separator + StringUtil.doubleWithSignificantDigits(high, significantDigits);
+		return StringUtil.doubleWithSignificantDigits(low, significantDigits) + separator
+				+ StringUtil.doubleWithSignificantDigits(high, significantDigits);
 	}
 
-	public static String getDisplayReferenceRange(ResultLimit resultLimit, String significantDigits, String separator) {
+	@Override
+	public String getDisplayReferenceRange(ResultLimit resultLimit, String significantDigits, String separator) {
 		String range = "";
 		if (resultLimit != null && !GenericValidator.isBlankOrNull(resultLimit.getResultTypeId())) {
 			if (NUMERIC_RESULT_TYPE_ID.equals(resultLimit.getResultTypeId())) {
-				range = getDisplayNormalRange(resultLimit.getLowNormal(), resultLimit.getHighNormal(), significantDigits, separator);
-			} else if (SELECT_LIST_RESULT_TYPE_IDS.contains(resultLimit.getResultTypeId()) && !GenericValidator.isBlankOrNull(resultLimit.getDictionaryNormalId())) {
-				return dictionaryDAO.getDataForId(resultLimit.getDictionaryNormalId()).getLocalizedName();
+				range = getDisplayNormalRange(resultLimit.getLowNormal(), resultLimit.getHighNormal(),
+						significantDigits, separator);
+			} else if (SELECT_LIST_RESULT_TYPE_IDS.contains(resultLimit.getResultTypeId())
+					&& !GenericValidator.isBlankOrNull(resultLimit.getDictionaryNormalId())) {
+				return dictionaryService.getDataForId(resultLimit.getDictionaryNormalId()).getLocalizedName();
 			}
 		}
 		return range;
@@ -246,17 +272,20 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> i
 	 * @param separator         -- how to separate the numbers
 	 * @return The range
 	 */
-	public static String getDisplayValidRange(ResultLimit resultLimit, String significantDigits, String separator) {
+	@Override
+	public String getDisplayValidRange(ResultLimit resultLimit, String significantDigits, String separator) {
 		String range = "";
 		if (resultLimit != null && !GenericValidator.isBlankOrNull(resultLimit.getResultTypeId())) {
 			if (NUMERIC_RESULT_TYPE_ID.equals(resultLimit.getResultTypeId())) {
-				range = getDisplayNormalRange(resultLimit.getLowValid(), resultLimit.getHighValid(), significantDigits, separator);
+				range = getDisplayNormalRange(resultLimit.getLowValid(), resultLimit.getHighValid(), significantDigits,
+						separator);
 			}
 		}
 		return range;
 	}
 
-	public static String getDisplayAgeRange(ResultLimit resultLimit, String separator) {
+	@Override
+	public String getDisplayAgeRange(ResultLimit resultLimit, String separator) {
 		if (resultLimit.getMinAge() == 0 && resultLimit.getMaxAge() == Float.POSITIVE_INFINITY) {
 			return MessageUtil.getMessage("age.anyAge");
 		}
@@ -268,12 +297,14 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> i
 		return resultLimit.getMinAge() + separator + resultLimit.getMaxAge();
 	}
 
-	public static List<ResultLimit> getResultLimits(Test test) {
+	@Override
+	public List<ResultLimit> getResultLimits(Test test) {
 		return getResultLimits(test.getId());
 	}
 
-	public static List<ResultLimit> getResultLimits(String testId) {
-		return resultLimitDAO.getAllResultLimitsForTest(testId);
+	@Override
+	public List<ResultLimit> getResultLimits(String testId) {
+		return baseObjectDAO.getAllResultLimitsForTest(testId);
 	}
 
 	/**
@@ -282,10 +313,12 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> i
 	 *
 	 * @return A list of pairs
 	 */
-	public static List<IdValuePair> getPredefinedAgeRanges() {
+	@Override
+	public List<IdValuePair> getPredefinedAgeRanges() {
 		List<IdValuePair> ages = new ArrayList<>();
 
-		List<SiteInformation> siteInformationList = siteInformationDAO.getSiteInformationByDomainName("resultAgeRange");
+		List<SiteInformation> siteInformationList = siteInformationService
+				.getSiteInformationByDomainName("resultAgeRange");
 
 		for (SiteInformation info : siteInformationList) {
 			String localizedName = null;
@@ -320,5 +353,55 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> i
 		});
 
 		return ages;
+	}
+
+	@Override
+	public boolean insertData(ResultLimit resultLimit) throws LIMSRuntimeException {
+		return getBaseObjectDAO().insertData(resultLimit);
+	}
+
+	@Override
+	public void deleteData(List resultLimits) throws LIMSRuntimeException {
+		getBaseObjectDAO().deleteData(resultLimits);
+	}
+
+	@Override
+	public List getAllResultLimits() throws LIMSRuntimeException {
+		return getBaseObjectDAO().getAllResultLimits();
+	}
+
+	@Override
+	public List getPageOfResultLimits(int startingRecNo) throws LIMSRuntimeException {
+		return getBaseObjectDAO().getPageOfResultLimits(startingRecNo);
+	}
+
+	@Override
+	public void getData(ResultLimit resultLimit) throws LIMSRuntimeException {
+		getBaseObjectDAO().getData(resultLimit);
+	}
+
+	@Override
+	public void updateData(ResultLimit resultLimit) throws LIMSRuntimeException {
+		getBaseObjectDAO().updateData(resultLimit);
+	}
+
+	@Override
+	public List getNextResultLimitRecord(String id) throws LIMSRuntimeException {
+		return getBaseObjectDAO().getNextResultLimitRecord(id);
+	}
+
+	@Override
+	public List getPreviousResultLimitRecord(String id) throws LIMSRuntimeException {
+		return getBaseObjectDAO().getPreviousResultLimitRecord(id);
+	}
+
+	@Override
+	public List<ResultLimit> getAllResultLimitsForTest(String testId) throws LIMSRuntimeException {
+		return getBaseObjectDAO().getAllResultLimitsForTest(testId);
+	}
+
+	@Override
+	public ResultLimit getResultLimitById(String resultLimitId) throws LIMSRuntimeException {
+		return getBaseObjectDAO().getResultLimitById(resultLimitId);
 	}
 }

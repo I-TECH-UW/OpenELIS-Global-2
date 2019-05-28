@@ -9,31 +9,33 @@ import java.util.Map;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import spring.service.address.AddressPartService;
 import spring.service.common.BaseObjectServiceImpl;
+import spring.service.gender.GenderService;
+import spring.service.patientidentity.PatientIdentityService;
+import spring.service.patientidentitytype.PatientIdentityTypeService;
 import spring.service.person.PersonServiceImpl;
+import spring.service.samplehuman.SampleHumanService;
 import spring.util.SpringContext;
-import us.mn.state.health.lims.address.dao.AddressPartDAO;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
 import us.mn.state.health.lims.common.services.IPatientService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dataexchange.order.action.MessagePatient;
-import us.mn.state.health.lims.gender.dao.GenderDAO;
 import us.mn.state.health.lims.gender.valueholder.Gender;
 import us.mn.state.health.lims.patient.dao.PatientDAO;
 import us.mn.state.health.lims.patient.util.PatientUtil;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.patientidentity.dao.PatientIdentityDAO;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
-import us.mn.state.health.lims.patientidentitytype.dao.PatientIdentityTypeDAO;
 import us.mn.state.health.lims.patientidentitytype.valueholder.PatientIdentityType;
 import us.mn.state.health.lims.person.valueholder.Person;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
 
 @Service
 @DependsOn({ "springContext" })
+@Scope("prototype")
 public class PatientServiceImpl extends BaseObjectServiceImpl<Patient> implements PatientService, IPatientService {
 
 	public static final String ADDRESS_STREET = "Street";
@@ -65,105 +67,107 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient> implement
 	private static Map<String, String> addressPartIdToNameMap = new HashMap<>();
 
 	@Autowired
-	private static final PatientDAO patientDAO = SpringContext.getBean(PatientDAO.class);
+	private static final PatientDAO baseObjectDAO = SpringContext.getBean(PatientDAO.class);
 
 	@Autowired
-	private static final PatientIdentityDAO patientIdentityDAO = SpringContext.getBean(PatientIdentityDAO.class);
+	private static final PatientIdentityService patientIdentityService = SpringContext
+			.getBean(PatientIdentityService.class);
 	@Autowired
-	private static final SampleHumanDAO sampleHumanDAO = SpringContext.getBean(SampleHumanDAO.class);
+	private static final SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
 	@Autowired
-	private static final GenderDAO genderDAO = SpringContext.getBean(GenderDAO.class);
+	private static final GenderService genderService = SpringContext.getBean(GenderService.class);
 	@Autowired
-	PatientIdentityTypeDAO identityTypeDAO = SpringContext.getBean(PatientIdentityTypeDAO.class);
+	private static PatientIdentityTypeService identityTypeService = SpringContext
+			.getBean(PatientIdentityTypeService.class);
 	@Autowired
-	AddressPartDAO addressPartDAO = SpringContext.getBean(AddressPartDAO.class);
+	private static AddressPartService addressPartService = SpringContext.getBean(AddressPartService.class);
 
 	private Patient patient;
 	private PersonServiceImpl personService;
 
 	public synchronized void initializeGlobalVariables() {
 
-		PatientIdentityType patientType = identityTypeDAO.getNamedIdentityType("GUID");
+		PatientIdentityType patientType = identityTypeService.getNamedIdentityType("GUID");
 		if (patientType != null) {
 			PATIENT_GUID_IDENTITY = patientType.getId();
 		}
 
-		patientType = identityTypeDAO.getNamedIdentityType("SUBJECT");
+		patientType = identityTypeService.getNamedIdentityType("SUBJECT");
 		if (patientType != null) {
 			PATIENT_SUBJECT_IDENTITY = patientType.getId();
 		}
 
-		patientType = identityTypeDAO.getNamedIdentityType("NATIONAL");
+		patientType = identityTypeService.getNamedIdentityType("NATIONAL");
 		if (patientType != null) {
 			PATIENT_NATIONAL_IDENTITY = patientType.getId();
 		}
 
-		patientType = identityTypeDAO.getNamedIdentityType("ST");
+		patientType = identityTypeService.getNamedIdentityType("ST");
 		if (patientType != null) {
 			PATIENT_ST_IDENTITY = patientType.getId();
 		}
 
-		patientType = identityTypeDAO.getNamedIdentityType("AKA");
+		patientType = identityTypeService.getNamedIdentityType("AKA");
 		if (patientType != null) {
 			PATIENT_AKA_IDENTITY = patientType.getId();
 		}
 
-		patientType = identityTypeDAO.getNamedIdentityType("MOTHER");
+		patientType = identityTypeService.getNamedIdentityType("MOTHER");
 		if (patientType != null) {
 			PATIENT_MOTHER_IDENTITY = patientType.getId();
 		}
 
-		patientType = identityTypeDAO.getNamedIdentityType("INSURANCE");
+		patientType = identityTypeService.getNamedIdentityType("INSURANCE");
 		if (patientType != null) {
 			PATIENT_INSURANCE_IDENTITY = patientType.getId();
 		}
 
-		patientType = identityTypeDAO.getNamedIdentityType("OCCUPATION");
+		patientType = identityTypeService.getNamedIdentityType("OCCUPATION");
 		if (patientType != null) {
 			PATIENT_OCCUPATION_IDENTITY = patientType.getId();
 		}
 
-		patientType = identityTypeDAO.getNamedIdentityType("ORG_SITE");
+		patientType = identityTypeService.getNamedIdentityType("ORG_SITE");
 		if (patientType != null) {
 			PATIENT_ORG_SITE_IDENTITY = patientType.getId();
 		}
 
-		patientType = identityTypeDAO.getNamedIdentityType("MOTHERS_INITIAL");
+		patientType = identityTypeService.getNamedIdentityType("MOTHERS_INITIAL");
 		if (patientType != null) {
 			PATIENT_MOTHERS_INITIAL_IDENTITY = patientType.getId();
 		}
 
-		patientType = identityTypeDAO.getNamedIdentityType("EDUCATION");
+		patientType = identityTypeService.getNamedIdentityType("EDUCATION");
 		if (patientType != null) {
 			PATIENT_EDUCATION_IDENTITY = patientType.getId();
 		}
 
-		patientType = identityTypeDAO.getNamedIdentityType("MARITIAL");
+		patientType = identityTypeService.getNamedIdentityType("MARITIAL");
 		if (patientType != null) {
 			PATIENT_MARITAL_IDENTITY = patientType.getId();
 		}
 
-		patientType = identityTypeDAO.getNamedIdentityType("HEALTH_DISTRICT");
+		patientType = identityTypeService.getNamedIdentityType("HEALTH_DISTRICT");
 		if (patientType != null) {
 			PATIENT_HEALTH_DISTRICT_IDENTITY = patientType.getId();
 		}
 
-		patientType = identityTypeDAO.getNamedIdentityType("HEALTH_REGION");
+		patientType = identityTypeService.getNamedIdentityType("HEALTH_REGION");
 		if (patientType != null) {
 			PATIENT_HEALTH_REGION_IDENTITY = patientType.getId();
 		}
 
-		patientType = identityTypeDAO.getNamedIdentityType("OB_NUMBER");
+		patientType = identityTypeService.getNamedIdentityType("OB_NUMBER");
 		if (patientType != null) {
 			PATIENT_OB_NUMBER_IDENTITY = patientType.getId();
 		}
 
-		patientType = identityTypeDAO.getNamedIdentityType("PC_NUMBER");
+		patientType = identityTypeService.getNamedIdentityType("PC_NUMBER");
 		if (patientType != null) {
 			PATIENT_PC_NUMBER_IDENTITY = patientType.getId();
 		}
 
-		List<AddressPart> parts = addressPartDAO.getAll();
+		List<AddressPart> parts = addressPartService.getAll();
 
 		for (AddressPart part : parts) {
 			addressPartIdToNameMap.put(part.getId(), part.getPartName());
@@ -185,7 +189,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient> implement
 		}
 
 		if (patient.getPerson() == null) {
-			patientDAO.getData(this.patient);
+			baseObjectDAO.getData(this.patient);
 		}
 		personService = new PersonServiceImpl(patient.getPerson());
 
@@ -198,7 +202,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient> implement
 	 * @param sample
 	 */
 	public PatientServiceImpl(Sample sample) {
-		this(sampleHumanDAO.getPatientForSample(sample));
+		this(sampleHumanService.getPatientForSample(sample));
 	}
 
 	/**
@@ -211,21 +215,22 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient> implement
 	}
 
 	public PatientServiceImpl(MessagePatient mPatient) {
-		this(patientDAO.getPatientByExternalId(mPatient.getExternalId()));
+		this(baseObjectDAO.getPatientByExternalId(mPatient.getExternalId()));
 	}
 
 	@Override
 	protected PatientDAO getBaseObjectDAO() {
-		return patientDAO;
+		return baseObjectDAO;
 	}
 
 	private static Patient getPatientForGuid(String guid) {
-		List<PatientIdentity> identites = patientIdentityDAO.getPatientIdentitiesByValueAndType(guid, PATIENT_GUID_IDENTITY);
+		List<PatientIdentity> identites = patientIdentityService.getPatientIdentitiesByValueAndType(guid,
+				PATIENT_GUID_IDENTITY);
 		if (identites.isEmpty()) {
 			return null;
 		}
 
-		return patientDAO.getData(identites.get(0).getPatientId());
+		return baseObjectDAO.getData(identites.get(0).getPatientId());
 	}
 
 	/*
@@ -282,7 +287,8 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient> implement
 			return "";
 		}
 
-		PatientIdentity identity = patientIdentityDAO.getPatitentIdentityForPatientAndType(patient.getId(), identityId);
+		PatientIdentity identity = patientIdentityService.getPatitentIdentityForPatientAndType(patient.getId(),
+				identityId);
 
 		if (identity != null) {
 			return identity.getIdentityData();
@@ -337,7 +343,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient> implement
 		String genderType = getGender();
 
 		if (genderType.length() > 0) {
-			Gender gender = genderDAO.getGenderByType(genderType);
+			Gender gender = genderService.getGenderByType(genderType);
 			if (gender != null) {
 				return gender.getLocalizedName();
 			}
@@ -501,84 +507,85 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient> implement
 
 	@Override
 	public void getData(Patient patient) {
-        getBaseObjectDAO().getData(patient);
+		getBaseObjectDAO().getData(patient);
 
 	}
 
 	@Override
 	public Patient getData(String patientId) {
-        return getBaseObjectDAO().getData(patientId);
+		return getBaseObjectDAO().getData(patientId);
 	}
 
 	@Override
 	public void deleteData(List patients) {
-        getBaseObjectDAO().deleteData(patients);
+		getBaseObjectDAO().deleteData(patients);
 
 	}
 
 	@Override
 	public void updateData(Patient patient) {
-        getBaseObjectDAO().updateData(patient);
+		getBaseObjectDAO().updateData(patient);
 
 	}
 
 	@Override
 	public boolean insertData(Patient patient) {
-        return getBaseObjectDAO().insertData(patient);
+		return getBaseObjectDAO().insertData(patient);
 	}
 
 	@Override
 	public Patient getPatientByNationalId(String subjectNumber) {
-        return getBaseObjectDAO().getPatientByNationalId(subjectNumber);
+		return getBaseObjectDAO().getPatientByNationalId(subjectNumber);
 	}
 
 	@Override
 	public List<Patient> getPatientsByNationalId(String nationalId) {
-        return getBaseObjectDAO().getPatientsByNationalId(nationalId);
+		return getBaseObjectDAO().getPatientsByNationalId(nationalId);
 	}
 
 	@Override
 	public List getPreviousPatientRecord(String id) {
-        return getBaseObjectDAO().getPreviousPatientRecord(id);
+		return getBaseObjectDAO().getPreviousPatientRecord(id);
 	}
 
 	@Override
 	public Patient getPatientByPerson(Person person) {
-        return getBaseObjectDAO().getPatientByPerson(person);
+		return getBaseObjectDAO().getPatientByPerson(person);
 	}
 
 	@Override
 	public List getPageOfPatients(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfPatients(startingRecNo);
+		return getBaseObjectDAO().getPageOfPatients(startingRecNo);
 	}
 
 	@Override
 	public List getNextPatientRecord(String id) {
-        return getBaseObjectDAO().getNextPatientRecord(id);
+		return getBaseObjectDAO().getNextPatientRecord(id);
 	}
 
 	@Override
 	public Patient getPatientByExternalId(String externalId) {
-        return getBaseObjectDAO().getPatientByExternalId(externalId);
+		return getBaseObjectDAO().getPatientByExternalId(externalId);
 	}
 
 	@Override
 	public List getAllPatients() {
-        return getBaseObjectDAO().getAllPatients();
+		return getBaseObjectDAO().getAllPatients();
 	}
 
 	@Override
 	public boolean externalIDExists(String patientExternalID) {
-        return getBaseObjectDAO().externalIDExists(patientExternalID);
+		return getBaseObjectDAO().externalIDExists(patientExternalID);
 	}
 
 	@Override
 	public Patient readPatient(String idString) {
-        return getBaseObjectDAO().readPatient(idString);
+		return getBaseObjectDAO().readPatient(idString);
 	}
 
 	@Override
-	public List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList, String study) {
-        return getBaseObjectDAO().getPatientIdentityBySampleStatusIdAndProject(inclusiveStatusIdList,study);
+	public List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList,
+			String study) {
+		return getBaseObjectDAO().getPatientIdentityBySampleStatusIdAndProject(inclusiveStatusIdList, study);
 	}
 }

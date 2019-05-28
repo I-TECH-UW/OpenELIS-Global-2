@@ -106,7 +106,7 @@ public class ResultValidationController extends BaseResultValidationController {
 	private static String RESULT_REPORT_ID;
 
 	@PostConstruct
-	public void initialize() {
+	private void initialize() {
 		RESULT_TABLE_ID = referenceTablesService.getReferenceTableByName("RESULT").getId();
 		RESULT_REPORT_ID = documentTypeService.getDocumentTypeByName("resultExport").getId();
 	}
@@ -127,7 +127,8 @@ public class ResultValidationController extends BaseResultValidationController {
 		if (GenericValidator.isBlankOrNull(newPage)) {
 
 			// load testSections for drop down
-			PropertyUtils.setProperty(form, "testSections", DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+			PropertyUtils.setProperty(form, "testSections",
+					DisplayListService.getInstance().getList(ListType.TEST_SECTION));
 			PropertyUtils.setProperty(form, "testSectionsByName",
 					DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 

@@ -24,15 +24,22 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.dataexchange.aggregatereporting.daoimpl.ReportExternalExportDAOImpl;
-import us.mn.state.health.lims.dataexchange.aggregatereporting.daoimpl.ReportQueueTypeDAOImpl;
+import spring.service.dataexchange.aggregatereporting.ReportExternalExportService;
+import spring.service.dataexchange.aggregatereporting.ReportQueueTypeService;
+import spring.service.siteinformation.SiteInformationService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.dataexchange.connectionTest.ConnectionTest;
 import us.mn.state.health.lims.dataexchange.resultreporting.beans.ReportingConfiguration;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
+@Service
+@Scope("prototype")
+@DependsOn({ "springContext" })
 public class ExchangeConfigurationService {
 
 	private static String RESULT_REPORT_TYPE_ID;
@@ -86,6 +93,11 @@ public class ExchangeConfigurationService {
 		}
 	}
 
+	private static ReportQueueTypeService reportQueueTypeService = SpringContext.getBean(ReportQueueTypeService.class);
+	private SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
+	private ReportExternalExportService reportExternalExportService = SpringContext
+			.getBean(ReportExternalExportService.class);
+
 	private ConfigurationDomain domain;
 	private ExchangeType exchangeType;
 
@@ -94,8 +106,8 @@ public class ExchangeConfigurationService {
 	private static Map<String, ConfigurationDomain> testTokenToDomainMap = new HashMap<>();
 
 	static {
-		RESULT_REPORT_TYPE_ID = new ReportQueueTypeDAOImpl().getReportQueueTypeByName("Results").getId();
-		MALARIA_CASE_TYPE_ID = new ReportQueueTypeDAOImpl().getReportQueueTypeByName("malariaCase").getId();
+		RESULT_REPORT_TYPE_ID = reportQueueTypeService.getReportQueueTypeByName("Results").getId();
+		MALARIA_CASE_TYPE_ID = reportQueueTypeService.getReportQueueTypeByName("malariaCase").getId();
 
 		dbNameToExchangeTypeMap.put("resultReporting", ExchangeType.RESULT_REPORT);
 		dbNameToExchangeTypeMap.put("malariaSurReport", ExchangeType.MALARIA_SURVEILLANCE);
@@ -119,18 +131,30 @@ public class ExchangeConfigurationService {
 
 	}
 
+	public ExchangeConfigurationService() {
+
+	}
+
 	public ExchangeConfigurationService(ConfigurationDomain domain) {
-		this.domain = domain;
+		setDomain(domain);
 	}
 
 	public ExchangeConfigurationService(String urlTestToken) {
+		setDomainByUrlTestToken(urlTestToken);
+	}
+
+	public void setDomain(ConfigurationDomain domain) {
+		this.domain = domain;
+	}
+
+	public void setDomainByUrlTestToken(String urlTestToken) {
 		domain = testTokenToDomainMap.get(urlTestToken);
 		exchangeType = testTokenToExchangeTypeMap.get(urlTestToken);
 	}
 
 	public List<ReportingConfiguration> getConfigurations() {
 
-		List<SiteInformation> informationList = new SiteInformationDAOImpl().getPageOfSiteInformationByDomainName(0,
+		List<SiteInformation> informationList = siteInformationService.getPageOfSiteInformationByDomainName(0,
 				domain.getSiteDomain());
 
 		Collections.sort(informationList, new Comparator<SiteInformation>() {
@@ -190,7 +214,7 @@ public class ExchangeConfigurationService {
 	}
 
 	private String getReportingBacklogSize(String reportType) {
-		int size = new ReportExternalExportDAOImpl().getUnsentReportExports(reportType).size();
+		int size = reportExternalExportService.getUnsentReportExports(reportType).size();
 		return String.valueOf(size);
 	}
 

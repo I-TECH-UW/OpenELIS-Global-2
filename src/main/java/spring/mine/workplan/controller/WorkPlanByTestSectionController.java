@@ -58,7 +58,8 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
 		String workplan = request.getParameter("type");
 
 		// load testSections for drop down
-		PropertyUtils.setProperty(form, "testSections", DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+		PropertyUtils.setProperty(form, "testSections",
+				DisplayListService.getInstance().getList(ListType.TEST_SECTION));
 		PropertyUtils.setProperty(form, "testSectionsByName",
 				DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
@@ -142,8 +143,8 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
 
 					subjectNumber = getSubjectNumber(analysis);
 					patientName = getPatientName(analysis);
-					nextVisit = ObservationHistoryServiceImpl.getValueForSample(ObservationType.NEXT_VISIT_DATE,
-							sample.getId());
+					nextVisit = ObservationHistoryServiceImpl.getInstance()
+							.getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId());
 				}
 
 				AnalysisServiceImpl analysisServiceOld = new AnalysisServiceImpl(analysis);
