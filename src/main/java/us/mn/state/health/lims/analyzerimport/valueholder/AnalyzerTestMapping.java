@@ -21,7 +21,7 @@ import org.apache.commons.validator.GenericValidator;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class AnalyzerTestMapping extends BaseObject {
+public class AnalyzerTestMapping extends BaseObject<AnalyzerTestMappingPK> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -78,14 +78,13 @@ public class AnalyzerTestMapping extends BaseObject {
 	}
 
 	@Override
-	public String getId() {
-		return id;
+	public void setId(AnalyzerTestMappingPK id) {
+		setCompoundId(id);
 	}
 
 	@Override
-	public void setId(String id) {
-		throw new UnsupportedOperationException("use compund id when setting the id");
-
+	public AnalyzerTestMappingPK getId() {
+		return getCompoundId();
 	}
 
 }

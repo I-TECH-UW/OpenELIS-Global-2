@@ -20,7 +20,7 @@ package us.mn.state.health.lims.qaevent.valueholder;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.common.valueholder.ValueHolder;
 
-public class QaObservation extends BaseObject {
+public class QaObservation extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 

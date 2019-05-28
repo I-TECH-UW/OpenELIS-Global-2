@@ -21,7 +21,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 
-public class Note extends BaseObject {
+public class Note extends BaseObject<String> {
     public static final String EXTERNAL = "E";
     public static final String INTERNAL = "I";
     public static final String REJECT_REASON = "R";

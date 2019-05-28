@@ -23,7 +23,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
  * @author Hung Nguyen
  * @date created 09/12/2006
  */
-public class History extends BaseObject {
+public class History extends BaseObject<String> {
 
 	private String id;
 	private String referenceId;

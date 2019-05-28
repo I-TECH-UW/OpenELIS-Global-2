@@ -11,7 +11,7 @@ import us.mn.state.health.lims.organization.valueholder.Organization;
  * N.B.  This is a subset of the columns in the table.  
  * If you want more then add them here and in the mapping file
  */
-public class InventoryReceipt extends BaseObject {
+public class InventoryReceipt extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 	private String id;

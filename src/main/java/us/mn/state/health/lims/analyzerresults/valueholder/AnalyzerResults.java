@@ -21,7 +21,7 @@ import java.sql.Timestamp;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class AnalyzerResults extends BaseObject implements Cloneable{
+public class AnalyzerResults extends BaseObject<String> implements Cloneable{
 
 	private static final long serialVersionUID = 1L;
 

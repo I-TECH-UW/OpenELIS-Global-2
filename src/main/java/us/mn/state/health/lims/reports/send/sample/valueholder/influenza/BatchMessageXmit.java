@@ -23,7 +23,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
  * @author diane benz bugzilla 2437
  */
 //TODO should this be a BaseObject?
-public class BatchMessageXmit extends BaseObject {
+public class BatchMessageXmit extends BaseObject<String> {
 
 	private ArrayList messages;
 

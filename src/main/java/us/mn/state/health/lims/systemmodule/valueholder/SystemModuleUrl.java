@@ -3,7 +3,7 @@ package us.mn.state.health.lims.systemmodule.valueholder;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
 //This class defines the urls that correspond to the different modules
-public class SystemModuleUrl extends BaseObject {
+public class SystemModuleUrl extends BaseObject<String> {
 
 	private String id;
 	private String urlPath;

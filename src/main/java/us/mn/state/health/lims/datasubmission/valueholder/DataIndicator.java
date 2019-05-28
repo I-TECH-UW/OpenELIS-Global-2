@@ -8,7 +8,7 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class DataIndicator extends BaseObject {
+public class DataIndicator extends BaseObject<String> {
 
 	// TODO start using this enum instead of strings
 	public enum Status {

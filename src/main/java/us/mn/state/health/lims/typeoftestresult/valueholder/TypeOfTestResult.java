@@ -17,7 +17,7 @@ package us.mn.state.health.lims.typeoftestresult.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class TypeOfTestResult extends BaseObject {
+public class TypeOfTestResult extends BaseObject<String> {
 
 
 	private String id;

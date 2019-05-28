@@ -17,7 +17,7 @@ package us.mn.state.health.lims.reports.send.sample.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class UHLXmit extends BaseObject {
+public class UHLXmit extends BaseObject<String> {
 	
 	private String id;
 	

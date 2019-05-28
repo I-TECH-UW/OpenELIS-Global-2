@@ -20,7 +20,7 @@ import java.sql.Timestamp;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class ReportExternalExport extends BaseObject{
+public class ReportExternalExport extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 	

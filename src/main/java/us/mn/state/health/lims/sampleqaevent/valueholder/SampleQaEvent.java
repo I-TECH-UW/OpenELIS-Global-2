@@ -31,7 +31,7 @@ import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
  * @author benzd1
  * bugzilla 2510
  */
-public class SampleQaEvent extends BaseObject {
+public class SampleQaEvent extends BaseObject<String> {
 
 	/**
      * 

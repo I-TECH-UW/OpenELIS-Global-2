@@ -21,7 +21,7 @@ import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
 import us.mn.state.health.lims.person.valueholder.Person;
 
-public class OrganizationContact extends BaseObject {
+public class OrganizationContact extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 

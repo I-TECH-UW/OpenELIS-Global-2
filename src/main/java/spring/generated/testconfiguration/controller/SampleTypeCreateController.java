@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -18,23 +17,19 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.SampleTypeCreateForm;
 import spring.mine.common.controller.BaseController;
+import spring.service.localization.LocalizationService;
 import spring.service.localization.LocalizationServiceImpl;
+import spring.service.role.RoleService;
+import spring.service.rolemodule.RoleModuleService;
+import spring.service.systemmodule.SystemModuleService;
 import spring.service.typeofsample.TypeOfSampleService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
 import us.mn.state.health.lims.localization.valueholder.Localization;
-import us.mn.state.health.lims.role.dao.RoleDAO;
-import us.mn.state.health.lims.role.daoimpl.RoleDAOImpl;
 import us.mn.state.health.lims.role.valueholder.Role;
-import us.mn.state.health.lims.systemmodule.dao.SystemModuleDAO;
-import us.mn.state.health.lims.systemmodule.daoimpl.SystemModuleDAOImpl;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
-import us.mn.state.health.lims.systemusermodule.daoimpl.RoleModuleDAOImpl;
 import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Controller
@@ -44,6 +39,16 @@ public class SampleTypeCreateController extends BaseController {
 
 	@Autowired
 	TypeOfSampleService typeOfSampleService;
+	@Autowired
+	RoleService roleService;
+	@Autowired
+	RoleModuleService roleModuleService;
+	@Autowired
+	SystemModuleService systemModuleService;
+	@Autowired
+	LocalizationService localizationService;
+
+
 
 	@RequestMapping(value = "/SampleTypeCreate", method = RequestMethod.GET)
 	public ModelAndView showSampleTypeCreate(HttpServletRequest request) {
@@ -90,9 +95,9 @@ public class SampleTypeCreateController extends BaseController {
 			setupDisplayItems(form);
 			return findForward(FWD_FAIL_INSERT, form);
 		}
-		RoleDAO roleDAO = new RoleDAOImpl();
-		RoleModuleDAOImpl roleModuleDAO = new RoleModuleDAOImpl();
-		SystemModuleDAO systemModuleDAO = new SystemModuleDAOImpl();
+//		RoleDAO roleDAO = new RoleDAOImpl();
+//		RoleModuleDAOImpl roleModuleDAO = new RoleModuleDAOImpl();
+//		SystemModuleDAO systemModuleDAO = new SystemModuleDAOImpl();
 
 		String identifyingName = form.getString("sampleTypeEnglishName");
 		String userId = getSysUserId(request);
@@ -105,34 +110,35 @@ public class SampleTypeCreateController extends BaseController {
 		SystemModule resultModule = createSystemModule("LogbookResults", identifyingName, userId);
 		SystemModule validationModule = createSystemModule("ResultValidation", identifyingName, userId);
 
-		Role resultsEntryRole = roleDAO.getRoleByName("Results entry");
-		Role validationRole = roleDAO.getRoleByName("Validator");
+		Role resultsEntryRole = roleService.getRoleByName("Results entry");
+		Role validationRole = roleService.getRoleByName("Validator");
 
 		RoleModule workplanResultModule = createRoleModule(userId, workplanModule, resultsEntryRole);
 		RoleModule resultResultModule = createRoleModule(userId, resultModule, resultsEntryRole);
 		RoleModule validationValidationModule = createRoleModule(userId, validationModule, validationRole);
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 		try {
-			new LocalizationDAOImpl().insert(localization);
+			localizationService.insert(localization);
 			typeOfSample.setLocalization(localization);
-			new TypeOfSampleDAOImpl().insertData(typeOfSample);
-			systemModuleDAO.insertData(workplanModule);
-			systemModuleDAO.insertData(resultModule);
-			systemModuleDAO.insertData(validationModule);
-			roleModuleDAO.insertData(workplanResultModule);
-			roleModuleDAO.insertData(resultResultModule);
-			roleModuleDAO.insertData(validationValidationModule);
+			typeOfSampleService.insert(typeOfSample);
+			systemModuleService.insert(workplanModule);
+			systemModuleService.insert(resultModule);
+			systemModuleService.insert(validationModule);
+			roleModuleService.insert(workplanResultModule);
+			roleModuleService.insert(resultResultModule);
+			roleModuleService.insert(validationValidationModule);
 
-			tx.commit();
+//			tx.commit();
 
 		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
+//			tx.rollback();
 			lre.printStackTrace();
-		} finally {
-			HibernateUtil.closeSession();
-		}
+		} 
+//		finally {
+//			HibernateUtil.closeSession();
+//		}
 
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);

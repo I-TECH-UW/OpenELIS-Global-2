@@ -23,7 +23,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
 
-public class Menu extends BaseObject {
+public class Menu extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 

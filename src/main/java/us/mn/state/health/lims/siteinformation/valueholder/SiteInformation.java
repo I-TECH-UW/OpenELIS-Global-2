@@ -17,6 +17,8 @@
 */
 package us.mn.state.health.lims.siteinformation.valueholder;
 
+import java.io.Serializable;
+
 import org.hibernate.validator.constraints.URL;
 
 import spring.mine.datasubmission.form.DataSubmissionForm;
@@ -24,7 +26,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
 
-public class SiteInformation extends BaseObject {
+public class SiteInformation extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 

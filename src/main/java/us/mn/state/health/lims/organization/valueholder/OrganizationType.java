@@ -21,7 +21,7 @@ import java.util.Set;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class OrganizationType extends BaseObject {
+public class OrganizationType extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 

@@ -20,7 +20,7 @@ import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
 import us.mn.state.health.lims.person.valueholder.Person;
 
-public class Provider extends BaseObject {
+public class Provider extends BaseObject<String> {
 
 	private String id;
 

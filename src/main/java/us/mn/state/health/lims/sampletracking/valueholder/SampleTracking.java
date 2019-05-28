@@ -25,7 +25,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
  *
  */
 //TODO delete unused class
-public class SampleTracking extends BaseObject implements Serializable {
+public class SampleTracking extends BaseObject<String> implements Serializable {
 
 	private SampleTracking sampleTrackingId;
 

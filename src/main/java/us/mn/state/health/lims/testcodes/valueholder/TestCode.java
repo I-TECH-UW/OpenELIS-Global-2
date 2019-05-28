@@ -18,7 +18,7 @@ package us.mn.state.health.lims.testcodes.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class TestCode extends BaseObject {
+public class TestCode extends BaseObject<TestSchemaPK> {
 
 	private static final long serialVersionUID = -4020747098359946800L;
 
@@ -58,13 +58,13 @@ public class TestCode extends BaseObject {
 	}
 
 	@Override
-	public String getId() {
-		throw new UnsupportedOperationException();
+	public void setId(TestSchemaPK id) {
+		setCompoundId(id);
 	}
 
 	@Override
-	public void setId(String id) {
-		throw new UnsupportedOperationException();
+	public TestSchemaPK getId() {
+		return getCompoundId();
 	}
 
 }

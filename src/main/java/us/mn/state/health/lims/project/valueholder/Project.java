@@ -29,7 +29,7 @@ import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.scriptlet.valueholder.Scriptlet;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 
-public class Project extends BaseObject {
+public class Project extends BaseObject<String> {
 
 	
 	private static final long serialVersionUID = 1L;

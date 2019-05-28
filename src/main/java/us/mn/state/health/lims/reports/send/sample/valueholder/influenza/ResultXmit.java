@@ -21,7 +21,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
  * @author diane benz bugzilla 2393
  */
 //TODO should this be a BaseObject?
-public class ResultXmit extends BaseObject {
+public class ResultXmit extends BaseObject<String> {
 
 	private String code;
 

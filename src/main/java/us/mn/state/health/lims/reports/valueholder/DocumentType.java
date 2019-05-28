@@ -18,7 +18,7 @@ package us.mn.state.health.lims.reports.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class DocumentType extends BaseObject {
+public class DocumentType extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 	private String id;

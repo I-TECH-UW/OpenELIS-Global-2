@@ -99,18 +99,8 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel> implements Pa
 	}
 
 	@Override
-	public Panel getPanelById(String id) {
-		return getBaseObjectDAO().getPanelById(id);
-	}
-
-	@Override
 	public List getPageOfPanels(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfPanels(startingRecNo);
-	}
-
-	@Override
-	public List<Panel> getAllPanels() {
-		return getBaseObjectDAO().getAllPanels();
 	}
 
 	@Override
@@ -130,5 +120,15 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel> implements Pa
 		panel = super.update(panel);
 		baseObjectDAO.clearIDMaps();
 		return panel;
+	}
+
+	@Override
+	public List<Panel> getAllPanels() {
+		return baseObjectDAO.getAllPanels();
+	}
+
+	@Override
+	public Panel getPanelById(String id) {
+		return baseObjectDAO.getPanelById(id);
 	}
 }
