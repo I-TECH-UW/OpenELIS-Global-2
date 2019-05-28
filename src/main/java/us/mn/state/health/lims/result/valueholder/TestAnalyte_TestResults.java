@@ -21,7 +21,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
 
 //TODO should this be a BaseObject?
-public class TestAnalyte_TestResults extends BaseObject {
+public class TestAnalyte_TestResults extends BaseObject<String> {
 
 	private TestAnalyte testAnalyte;
 

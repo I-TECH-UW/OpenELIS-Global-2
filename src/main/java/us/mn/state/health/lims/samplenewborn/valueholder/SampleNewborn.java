@@ -20,7 +20,7 @@ import java.sql.Timestamp;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class SampleNewborn extends BaseObject {
+public class SampleNewborn extends BaseObject<String> {
 
 	private String id;
 	private String weight;

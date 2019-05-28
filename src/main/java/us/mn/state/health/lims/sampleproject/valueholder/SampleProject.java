@@ -21,7 +21,7 @@ import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
 import us.mn.state.health.lims.project.valueholder.Project;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 
-public class SampleProject extends BaseObject {
+public class SampleProject extends BaseObject<String> {
 
 	/**
 	 *

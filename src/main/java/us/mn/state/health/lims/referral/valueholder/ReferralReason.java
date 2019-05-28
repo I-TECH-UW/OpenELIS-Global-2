@@ -19,7 +19,7 @@ package us.mn.state.health.lims.referral.valueholder;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.common.valueholder.SimpleBaseEntity;
 
-public class ReferralReason extends BaseObject implements SimpleBaseEntity<String>{
+public class ReferralReason extends BaseObject<String> implements SimpleBaseEntity<String>{
 
 	private static final long serialVersionUID = 1L;
 

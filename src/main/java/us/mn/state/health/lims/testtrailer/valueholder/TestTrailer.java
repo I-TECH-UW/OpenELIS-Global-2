@@ -17,7 +17,7 @@ package us.mn.state.health.lims.testtrailer.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class TestTrailer extends BaseObject {
+public class TestTrailer extends BaseObject<String> {
 
 	private String id;
 

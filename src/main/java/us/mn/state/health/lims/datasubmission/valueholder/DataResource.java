@@ -8,7 +8,7 @@ import java.util.Map;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class DataResource extends BaseObject {
+public class DataResource extends BaseObject<String> {
 	
 	//switch to enum if hibernate is upgraded and enums become available
 	/*public enum Level {

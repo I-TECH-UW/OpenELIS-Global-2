@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 import spring.mine.datasubmission.form.DataSubmissionForm;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class DataValue extends BaseObject {
+public class DataValue extends BaseObject<String> {
 	private static final long serialVersionUID = -2843847589920119564L;
 
 	private String id;

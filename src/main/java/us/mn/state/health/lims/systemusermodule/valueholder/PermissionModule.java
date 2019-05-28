@@ -5,7 +5,7 @@ import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
 
-abstract public class PermissionModule extends BaseObject {
+abstract public class PermissionModule extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 

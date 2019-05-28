@@ -21,7 +21,7 @@ import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.project.valueholder.Project;
 
-public class ProjectOrganization extends BaseObject {
+public class ProjectOrganization extends BaseObject<String> {
 
 	private String id;
 

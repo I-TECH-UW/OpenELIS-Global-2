@@ -24,7 +24,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
 /**
  *  @author     Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
-public class Login extends BaseObject {
+public class Login extends BaseObject<String> {
 
 	private String id;
 	private String loginName;

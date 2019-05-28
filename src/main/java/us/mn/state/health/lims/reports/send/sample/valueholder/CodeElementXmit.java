@@ -18,7 +18,7 @@ package us.mn.state.health.lims.reports.send.sample.valueholder;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
 //TODO should this be a BaseObject?
-public class CodeElementXmit extends BaseObject {
+public class CodeElementXmit extends BaseObject<String> {
 
 	private String identifier;
 

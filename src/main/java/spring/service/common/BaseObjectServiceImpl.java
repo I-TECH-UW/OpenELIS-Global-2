@@ -182,10 +182,13 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	@Override
 	@Transactional
 	public Serializable insert(T baseObject) {
+		
+		Serializable id = getBaseObjectDAO().insert(baseObject);
+		baseObject.setId(id);
 		if (auditTrailLog) {
 			auditTrailDAO.saveNewHistory(baseObject, baseObject.getSysUserId(), getBaseObjectDAO().getTableName());
 		}
-		return getBaseObjectDAO().insert(baseObject);
+		return id;
 	}
 
 	@Override
@@ -203,7 +206,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	public T save(T baseObject) {
 		if (auditTrailLog) {
 			Optional<T> oldObject = Optional.empty();
-			if (!GenericValidator.isBlankOrNull(baseObject.getId())) {
+			if (baseObject.getId() != null) {
 				oldObject = getBaseObjectDAO().get(baseObject.getId());
 			}
 

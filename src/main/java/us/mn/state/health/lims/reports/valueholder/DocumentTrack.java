@@ -23,7 +23,7 @@ import us.mn.state.health.lims.common.valueholder.SimpleBaseEntity;
 import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
 
-public class DocumentTrack extends BaseObject implements SimpleBaseEntity<String>  {
+public class DocumentTrack extends BaseObject<String> implements SimpleBaseEntity<String>  {
 
 	private static final long serialVersionUID = 1L;
 	private String id;

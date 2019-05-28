@@ -25,7 +25,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
  * N.B. For Haiti the description is being used to identify the type of inventory.  This may or may not follow for
  * other implementations.
  */
-public class InventoryItem extends BaseObject{
+public class InventoryItem extends BaseObject<String> {
 	
 	
 	private static final long serialVersionUID = 1L;

@@ -41,6 +41,8 @@ public class PanelOrderController extends BaseController {
 	PanelOrderFormValidator formValidator;
 	@Autowired
 	PanelService panelService;
+	@Autowired
+	PanelTestConfigurationUtil panelTestConfigurationUtil;
 
 
 	@RequestMapping(value = "/PanelOrder", method = RequestMethod.GET)
@@ -63,9 +65,9 @@ public class PanelOrderController extends BaseController {
 			e.printStackTrace();
 		}
 
-		HashMap<String, List<Panel>> existingSampleTypePanelMap = PanelTestConfigurationUtil
+		HashMap<String, List<Panel>> existingSampleTypePanelMap = panelTestConfigurationUtil
 				.createTypeOfSamplePanelMap(true);
-		HashMap<String, List<Panel>> inactiveSampleTypePanelMap = PanelTestConfigurationUtil
+		HashMap<String, List<Panel>> inactiveSampleTypePanelMap = panelTestConfigurationUtil
 				.createTypeOfSamplePanelMap(false);
 //		List<Panel> panels = new PanelDAOImpl().getAllPanels();
 //		gnr: local var panels is never used

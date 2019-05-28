@@ -24,7 +24,7 @@ import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 
-public class Referral extends BaseObject {
+public class Referral extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 	private String id;

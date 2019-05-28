@@ -30,7 +30,7 @@ import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
  * @author benzd1 //TODO should this be a BaseObject?
  *
  */
-public class ResultsReportSample extends BaseObject {
+public class ResultsReportSample extends BaseObject<String> {
 
 	private String accessionNumber;
 

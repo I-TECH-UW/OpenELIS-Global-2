@@ -6,7 +6,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
 
-public class InventoryLocation extends BaseObject{
+public class InventoryLocation extends BaseObject<String> {
 	
 	private static final long serialVersionUID = 1L;
 	private String id;

@@ -25,7 +25,7 @@ import us.mn.state.health.lims.sourceofsample.valueholder.SourceOfSample;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
-public class SampleItem extends BaseObject {
+public class SampleItem extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 

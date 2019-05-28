@@ -24,7 +24,7 @@ import us.mn.state.health.lims.result.valueholder.Result;
  *
  */
 //TODO should this be a BaseObject?
-public class ResultsReportAnalyteResult extends BaseObject {
+public class ResultsReportAnalyteResult extends BaseObject<String> {
 
 	private Analyte analyte;
 

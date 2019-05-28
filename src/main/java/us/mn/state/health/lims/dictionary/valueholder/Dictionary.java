@@ -24,7 +24,7 @@ import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
 import us.mn.state.health.lims.dictionarycategory.valueholder.DictionaryCategory;
 
-public class Dictionary extends BaseObject{
+public class Dictionary extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 

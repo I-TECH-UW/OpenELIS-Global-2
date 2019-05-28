@@ -17,7 +17,7 @@ package us.mn.state.health.lims.samplepdf.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class SamplePdf extends BaseObject {
+public class SamplePdf extends BaseObject<String> {
 
 	private String id;
 	private String accessionNumber;

@@ -17,7 +17,7 @@ package us.mn.state.health.lims.referral.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class ReferringTestResult extends BaseObject {
+public class ReferringTestResult extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 	private String id;

@@ -18,7 +18,7 @@ package us.mn.state.health.lims.requester.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class SampleRequester extends BaseObject {
+public class SampleRequester extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 

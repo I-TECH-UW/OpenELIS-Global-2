@@ -25,7 +25,7 @@ import java.util.Scanner;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.log.LogEvent;
 
-public abstract class BaseObject implements Serializable, Cloneable {
+public abstract class BaseObject<T extends Serializable> implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -38,9 +38,9 @@ public abstract class BaseObject implements Serializable, Cloneable {
 	public BaseObject() {
 	}
 
-	public abstract String getId();
+	public abstract T getId();
 
-	public abstract void setId(String id);
+	public abstract void setId(T id);
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {

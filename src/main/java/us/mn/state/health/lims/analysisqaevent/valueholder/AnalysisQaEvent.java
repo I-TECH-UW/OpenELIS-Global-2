@@ -25,7 +25,7 @@ import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
 import us.mn.state.health.lims.qaevent.valueholder.QaEvent;
 
-public class AnalysisQaEvent extends BaseObject {
+public class AnalysisQaEvent extends BaseObject<String> {
 
 	private String id;
 

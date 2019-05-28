@@ -25,7 +25,7 @@ import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.statusofsample.valueholder.StatusOfSample;
 
-public class ElectronicOrder extends BaseObject {
+public class ElectronicOrder extends BaseObject<String> {
 
 	public enum SortOrder {
 		LAST_UPDATED("lastUpdated", "eorder.lastupdated"), 

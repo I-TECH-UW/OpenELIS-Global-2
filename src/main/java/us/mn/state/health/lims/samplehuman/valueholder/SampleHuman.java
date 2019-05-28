@@ -17,7 +17,7 @@ package us.mn.state.health.lims.samplehuman.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class SampleHuman extends BaseObject {
+public class SampleHuman extends BaseObject<String> {
 
 	private String id;
 

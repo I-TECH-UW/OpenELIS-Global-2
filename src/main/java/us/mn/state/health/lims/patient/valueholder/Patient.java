@@ -24,7 +24,7 @@ import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
 import us.mn.state.health.lims.person.valueholder.Person;
 
-public class Patient extends BaseObject {
+public class Patient extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 

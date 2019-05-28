@@ -21,7 +21,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
  * @author diane benz 
  *  bugzilla 2393
  */
-public class MNPHLXmit extends BaseObject {
+public class MNPHLXmit extends BaseObject<String> {
 	
 	private String id;
 	

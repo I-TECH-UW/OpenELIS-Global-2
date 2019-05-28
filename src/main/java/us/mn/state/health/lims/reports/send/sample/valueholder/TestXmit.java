@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
 //TODO should this be a BaseObject?
-public class TestXmit extends BaseObject {
+public class TestXmit extends BaseObject<String> {
 
 	private CodeElementXmit name;
 

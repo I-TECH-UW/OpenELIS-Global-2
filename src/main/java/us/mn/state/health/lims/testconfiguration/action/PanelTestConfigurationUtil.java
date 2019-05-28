@@ -20,6 +20,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import spring.service.panel.PanelService;
+import spring.service.typeofsample.TypeOfSamplePanelService;
+import spring.service.typeofsample.TypeOfSampleService;
 import us.mn.state.health.lims.panel.dao.PanelDAO;
 import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
 import us.mn.state.health.lims.panel.valueholder.Panel;
@@ -30,24 +36,30 @@ import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSamplePanelDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSamplePanel;
 
+@Service
 public class PanelTestConfigurationUtil {
 
+	@Autowired
+	TypeOfSamplePanelService typeOfSamplePanelService ;
+	@Autowired
+	PanelService panelService;
+	@Autowired
+	TypeOfSampleService typeOfSampleService;
+	
 	@SuppressWarnings("unchecked")
-	static public HashMap<String, List<Panel>> createTypeOfSamplePanelMap(boolean isActive) {
+	 public HashMap<String, List<Panel>> createTypeOfSamplePanelMap(boolean isActive) {
 		HashMap<String, List<Panel>> sampleTypeMap = new HashMap<String, List<Panel>>();
-		TypeOfSamplePanelDAO typeOfSamplePanelDAO = new TypeOfSamplePanelDAOImpl();
-		PanelDAO panelDAO = new PanelDAOImpl();
-		TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
 		
-		List<TypeOfSamplePanel> listOfTypeOfSamplePanels = typeOfSamplePanelDAO.getAllTypeOfSamplePanels();
+		
+		List<TypeOfSamplePanel> listOfTypeOfSamplePanels = typeOfSamplePanelService.getAllTypeOfSamplePanels();
 		for (TypeOfSamplePanel typeOfSamplePanel : listOfTypeOfSamplePanels) {
-			TypeOfSample typeOfSample = typeOfSampleDAO.getTypeOfSampleById(typeOfSamplePanel.getTypeOfSampleId());
+			TypeOfSample typeOfSample = typeOfSampleService.getTypeOfSampleById(typeOfSamplePanel.getTypeOfSampleId());
 			List<Panel> panelsForThisSampleType = sampleTypeMap.get(typeOfSample.getLocalizedName());
 			if (panelsForThisSampleType == null) {
 				panelsForThisSampleType = new ArrayList<Panel>();
 				sampleTypeMap.put(typeOfSample.getLocalizedName(), panelsForThisSampleType);
 			}
-			Panel panel = panelDAO.getPanelById(typeOfSamplePanel.getPanelId());
+			Panel panel = panelService.getPanelById(typeOfSamplePanel.getPanelId());
 
 			if ("Y".equals(panel.getIsActive()) && isActive) {
 				sampleTypeMap.get(typeOfSample.getLocalizedName()).add(panel);
@@ -60,21 +72,18 @@ public class PanelTestConfigurationUtil {
 	}	
 
 	@SuppressWarnings("unchecked")
-	static public HashMap<String, List<Panel>> createTypeOfSamplePanelMap() {
+    public HashMap<String, List<Panel>> createTypeOfSamplePanelMap() {
 		HashMap<String, List<Panel>> sampleTypeMap = new HashMap<String, List<Panel>>();
-		TypeOfSamplePanelDAO typeOfSamplePanelDAO = new TypeOfSamplePanelDAOImpl();
-		PanelDAO panelDAO = new PanelDAOImpl();
-		TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
 		
-		List<TypeOfSamplePanel> listOfTypeOfSamplePanels = typeOfSamplePanelDAO.getAllTypeOfSamplePanels();
+		List<TypeOfSamplePanel> listOfTypeOfSamplePanels = typeOfSamplePanelService.getAllTypeOfSamplePanels();
 		for (TypeOfSamplePanel typeOfSamplePanel : listOfTypeOfSamplePanels) {
-			TypeOfSample typeOfSample = typeOfSampleDAO.getTypeOfSampleById(typeOfSamplePanel.getTypeOfSampleId());
+			TypeOfSample typeOfSample = typeOfSampleService.getTypeOfSampleById(typeOfSamplePanel.getTypeOfSampleId());
 			List<Panel> panelsForThisSampleType = sampleTypeMap.get(typeOfSample.getLocalizedName());
 			if (panelsForThisSampleType == null) {
 				panelsForThisSampleType = new ArrayList<Panel>();
 				sampleTypeMap.put(typeOfSample.getLocalizedName(), panelsForThisSampleType);
 			}
-			Panel panel = panelDAO.getPanelById(typeOfSamplePanel.getPanelId());
+			Panel panel = panelService.getPanelById(typeOfSamplePanel.getPanelId());
 
 			sampleTypeMap.get(typeOfSample.getLocalizedName()).add(panel);
 		}

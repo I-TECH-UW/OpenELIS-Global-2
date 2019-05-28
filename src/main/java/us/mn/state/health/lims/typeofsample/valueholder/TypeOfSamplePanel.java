@@ -2,7 +2,7 @@ package us.mn.state.health.lims.typeofsample.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class TypeOfSamplePanel extends BaseObject{
+public class TypeOfSamplePanel extends BaseObject<String> {
 	
 	private static final long serialVersionUID = 1L;
 	

@@ -18,7 +18,7 @@ package us.mn.state.health.lims.requester.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class RequesterType extends BaseObject {
+public class RequesterType extends BaseObject<String> {
 
 	private String id;
 	private String requesterType;
