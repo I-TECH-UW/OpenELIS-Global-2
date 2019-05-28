@@ -143,7 +143,8 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 					"System User ID is null in AuditTrailDAOImpl saveHistory() for table " + tableName);
 		}
 
-		if (newObject == null || existingObject == null || event == null || tableName == null) {
+	    if ((newObject == null && IActionConstants.AUDIT_TRAIL_UPDATE.equals(event)) 
+	    		|| existingObject == null || event == null || tableName == null) {
 			// bugzilla 2154
 			LogEvent.logDebug("AuditTrailDAOImpl", "saveHistory()",
 					"NO CHANGES: EITHER OBJECTS or EVENT or TABLE NAME IS NULL");
@@ -246,7 +247,7 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 
 		// bugzilla 1857
 		Vector<Object> optionList = new Vector<>();
-		Class objectClass = newObject.getClass();
+		Class objectClass = existingObject.getClass();
 		// get an array of all fields in the class including those in superclasses if
 		// this is a subclass.
 		Field[] fields = getAllFields(objectClass, null);
@@ -286,13 +287,17 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 
 				// get new field values
 				try {
-					Object objPropNewState = fields[ii].get(newObject);
-					if (objPropNewState != null) {
-						propertyNewState = objPropNewState.toString();
-					} else {
-						propertyNewState = "";
+					if(newObject != null) {
+					    Object objPropNewState = fields[ii].get(newObject);
+					    if (objPropNewState != null) {
+						  propertyNewState = objPropNewState.toString();
+					    } else {
+						  propertyNewState = "";
+					    }
 					}
-
+					else {
+						  propertyNewState = "";  
+					}
 				} catch (Exception e) {
 					// buzilla 2154
 					LogEvent.logError("AuditTrailDAOImpl", "getChanges()", e.toString());

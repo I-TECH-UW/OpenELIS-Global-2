@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
+import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
 
 public interface BaseObjectService<T extends BaseObject> {
 
@@ -292,5 +293,4 @@ public interface BaseObjectService<T extends BaseObject> {
 	 * @return check if baseObject has a previous baseObject in the database
 	 */
 	public boolean hasPrevious(String id);
-
 }

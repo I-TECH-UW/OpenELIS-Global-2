@@ -18,6 +18,7 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
+import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
 
 public abstract class BaseObjectServiceImpl<T extends BaseObject> implements BaseObjectService<T> {
 
@@ -364,5 +365,4 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	protected void disableLogging() {
 		this.auditTrailLog = false;
 	}
-
 }

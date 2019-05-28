@@ -99,18 +99,8 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel> implements Pa
 	}
 
 	@Override
-	public Panel getPanelById(String id) {
-		return getBaseObjectDAO().getPanelById(id);
-	}
-
-	@Override
 	public List getPageOfPanels(int startingRecNo) {
 		return getBaseObjectDAO().getPageOfPanels(startingRecNo);
-	}
-
-	@Override
-	public List<Panel> getAllPanels() {
-		return getBaseObjectDAO().getAllPanels();
 	}
 
 	@Override
@@ -140,19 +130,5 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel> implements Pa
   @Override
   public Panel getPanelById(String id) {
   	return baseObjectDAO.getPanelById(id);
-  }
-
-  @Override
-  public Panel update(Panel panel) {
-	  if (baseObjectDAO.duplicatePanelExists(panel)) {
-			throw new LIMSDuplicateRecordException("Duplicate record exists for " + panel.getPanelName());
-		}
-		// AIS - bugzilla 1563
-		if (baseObjectDAO.duplicatePanelDescriptionExists(panel)) {
-			throw new LIMSDuplicateRecordException("Duplicate record exists for panel description");
-		}
-      panel = super.update(panel);
-  	  baseObjectDAO.clearIDMaps();
-  	  return panel;
   }
 }

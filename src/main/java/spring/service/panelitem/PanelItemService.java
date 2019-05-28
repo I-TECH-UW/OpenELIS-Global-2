@@ -20,8 +20,6 @@ public interface PanelItemService extends BaseObjectService<PanelItem> {
 
 	List<PanelItem> getPanelItemsForPanelAndItemList(String panelId, List<Integer> testList);
 
-	List getPanelItemsForPanel(String panelId);
-
 	List getPreviousPanelItemRecord(String id);
 
 	List getPageOfPanelItems(int startingRecNo);
@@ -40,5 +38,8 @@ public interface PanelItemService extends BaseObjectService<PanelItem> {
 
 	void delete(List panelItems) throws LIMSRuntimeException;
 
-	void delete(List panelItems) throws LIMSRuntimeException;
+	List<PanelItem> getPanelItemsForPanel(String panelId);
+
+	void updatePanelItems(List<PanelItem> panelItems, Panel panel, boolean updatePanel, String currentUser,
+			List<String> newTests);
 }
