@@ -2,7 +2,7 @@ package us.mn.state.health.lims.patientidentitytype.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class PatientIdentityType extends BaseObject {
+public class PatientIdentityType extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 

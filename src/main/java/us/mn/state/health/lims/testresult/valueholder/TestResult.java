@@ -21,7 +21,7 @@ import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
 import us.mn.state.health.lims.scriptlet.valueholder.Scriptlet;
 import us.mn.state.health.lims.test.valueholder.Test;
 
-public class TestResult extends BaseObject{
+public class TestResult extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 	private String id;

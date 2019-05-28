@@ -18,6 +18,7 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
+import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
 
 public abstract class BaseObjectServiceImpl<T extends BaseObject> implements BaseObjectService<T> {
 
@@ -181,10 +182,13 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	@Override
 	@Transactional
 	public Serializable insert(T baseObject) {
+		
+		Serializable id = getBaseObjectDAO().insert(baseObject);
+		baseObject.setId(id);
 		if (auditTrailLog) {
 			auditTrailDAO.saveNewHistory(baseObject, baseObject.getSysUserId(), getBaseObjectDAO().getTableName());
 		}
-		return getBaseObjectDAO().insert(baseObject);
+		return id;
 	}
 
 	@Override
@@ -202,7 +206,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	public T save(T baseObject) {
 		if (auditTrailLog) {
 			Optional<T> oldObject = Optional.empty();
-			if (!GenericValidator.isBlankOrNull(baseObject.getId())) {
+			if (baseObject.getId() != null) {
 				oldObject = getBaseObjectDAO().get(baseObject.getId());
 			}
 
@@ -364,5 +368,4 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	protected void disableLogging() {
 		this.auditTrailLog = false;
 	}
-
 }

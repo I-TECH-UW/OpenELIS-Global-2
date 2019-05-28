@@ -17,7 +17,7 @@ package us.mn.state.health.lims.scriptlet.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class Scriptlet extends BaseObject {
+public class Scriptlet extends BaseObject<String> {
 
 	private String id;
 

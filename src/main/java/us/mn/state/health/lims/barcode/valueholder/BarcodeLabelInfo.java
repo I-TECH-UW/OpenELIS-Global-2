@@ -8,7 +8,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
  * @author Caleb
  *
  */
-public class BarcodeLabelInfo extends BaseObject {
+public class BarcodeLabelInfo extends BaseObject<String> {
 
   private static final long serialVersionUID = 1L;
 

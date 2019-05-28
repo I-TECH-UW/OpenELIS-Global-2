@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class HL7MessageOut extends BaseObject{
+public class HL7MessageOut extends BaseObject<String> {
 
 	public static String FAIL = "fail";
 	public static String SUCCESS = "success";

@@ -20,7 +20,7 @@ import org.apache.commons.validator.GenericValidator;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class OrganizationAddress extends BaseObject {
+public class OrganizationAddress extends BaseObject<AddressPK> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -38,14 +38,18 @@ public class OrganizationAddress extends BaseObject {
 		this.compoundId = compoundId;
 	}
 
-	@Override
-	public String getId() {
+	public String getStringId() {
 		return compoundId == null ? "0" : compoundId.getTargetId() + compoundId.getAddressPartId();
 	}
 
 	@Override
-	public void setId(String id) {
-		throw new UnsupportedOperationException("Use setCompoundId");
+	public void setId(AddressPK id) {
+		setCompoundId(id);
+	}
+
+	@Override
+	public AddressPK getId() {
+		return getCompoundId();
 	}
 
 	public void setOrganizationId(String organizationId) {

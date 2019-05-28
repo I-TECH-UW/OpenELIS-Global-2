@@ -18,7 +18,7 @@ package us.mn.state.health.lims.address.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class AddressPart extends BaseObject {
+public class AddressPart extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 

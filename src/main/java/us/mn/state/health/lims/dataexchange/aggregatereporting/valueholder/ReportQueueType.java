@@ -18,7 +18,7 @@ package us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class ReportQueueType extends BaseObject {
+public class ReportQueueType extends BaseObject<String> {
 	private String id;
 	private String name;
 	private String description;

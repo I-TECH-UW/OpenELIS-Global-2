@@ -2,7 +2,7 @@ package us.mn.state.health.lims.datasubmission.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class TypeOfDataIndicator extends BaseObject {
+public class TypeOfDataIndicator extends BaseObject<String> {
 	public enum Type {
 		TAT("Turnaround Time"),
 		VLCoverage("VL Coverage"),

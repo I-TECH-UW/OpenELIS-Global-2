@@ -19,7 +19,7 @@ package us.mn.state.health.lims.common.valueholder;
 
 import java.sql.Timestamp;
 
-public class DatabaseChangeLog extends BaseObject {
+public class DatabaseChangeLog extends BaseObject<String> {
 
 	private String id;
 	private String author;

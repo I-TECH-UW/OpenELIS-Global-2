@@ -17,7 +17,7 @@ package us.mn.state.health.lims.patientrelation.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class PatientRelation extends BaseObject {
+public class PatientRelation extends BaseObject<String> {
 
 	private String id;
 	private String patientIdSource;

@@ -17,7 +17,7 @@ package us.mn.state.health.lims.citystatezip.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class CityView extends BaseObject {
+public class CityView extends BaseObject<String> {
 
 	private String city;
 

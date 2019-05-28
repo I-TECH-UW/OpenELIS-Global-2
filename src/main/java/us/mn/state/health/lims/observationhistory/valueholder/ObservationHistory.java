@@ -28,7 +28,7 @@ import us.mn.state.health.lims.common.valueholder.SimpleBaseEntity;
  * @since 2010-04-16
  */
 
-public class ObservationHistory extends BaseObject implements SimpleBaseEntity<String>  {
+public class ObservationHistory extends BaseObject<String> implements SimpleBaseEntity<String>  {
 	private static final long serialVersionUID = 1L;
 
 	/**

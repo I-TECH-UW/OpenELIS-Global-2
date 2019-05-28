@@ -30,7 +30,7 @@ import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
  * @author benzd1
  * bugzilla 2510
  */
-public class SampleQaEventAction extends BaseObject {
+public class SampleQaEventAction extends BaseObject<String> {
 
 	private String id;
 

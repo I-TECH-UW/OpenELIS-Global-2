@@ -25,7 +25,7 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
  *  @author     Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  *  bugzilla 2203 fix to LazyInitializer error 11/07/2007
  */
-public class SystemUserSection extends BaseObject {
+public class SystemUserSection extends BaseObject<String> {
 
 	private String id;
 	private String hasView;

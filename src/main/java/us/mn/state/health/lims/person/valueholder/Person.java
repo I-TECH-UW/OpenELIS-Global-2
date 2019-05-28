@@ -20,7 +20,7 @@ import java.util.Set;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class Person extends BaseObject {
+public class Person extends BaseObject<String> {
 
 	private String id;
 

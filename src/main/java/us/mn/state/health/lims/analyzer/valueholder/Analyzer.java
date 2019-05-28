@@ -21,7 +21,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
 
 /*
  */
-public class Analyzer extends BaseObject {
+public class Analyzer extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 

@@ -26,7 +26,7 @@ import us.mn.state.health.lims.reports.valueholder.common.JRHibernateDataSource;
  *
  */
 //TODO should this be a BaseObject?
-public class ResultsReportTest extends BaseObject {
+public class ResultsReportTest extends BaseObject<String> {
 
 	private Analysis analysis;
 

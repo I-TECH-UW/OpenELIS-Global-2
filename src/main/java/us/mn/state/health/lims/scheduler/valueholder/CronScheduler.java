@@ -21,7 +21,7 @@ import java.sql.Timestamp;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class CronScheduler extends BaseObject{
+public class CronScheduler extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 

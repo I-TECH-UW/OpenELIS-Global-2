@@ -17,7 +17,7 @@ package us.mn.state.health.lims.common.valueholder;
 
 import us.mn.state.health.lims.common.action.IActionConstants;
 
-public abstract class EnumValueItemImpl extends BaseObject implements EnumValueItem {
+public abstract class EnumValueItemImpl extends BaseObject<String> implements EnumValueItem {
 
 	protected String name;
 

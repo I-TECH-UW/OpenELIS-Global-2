@@ -17,7 +17,7 @@ package us.mn.state.health.lims.program.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class Program extends BaseObject {
+public class Program extends BaseObject<String> {
 
 	private String code;
 

@@ -21,7 +21,7 @@ import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class Method extends BaseObject {
+public class Method extends BaseObject<String> {
 
 	private String id;
 

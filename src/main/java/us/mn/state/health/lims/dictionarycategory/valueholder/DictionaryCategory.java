@@ -17,7 +17,7 @@ package us.mn.state.health.lims.dictionarycategory.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class DictionaryCategory extends BaseObject {
+public class DictionaryCategory extends BaseObject<String> {
 
 	private String id;
 

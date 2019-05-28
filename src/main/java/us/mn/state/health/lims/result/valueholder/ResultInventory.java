@@ -17,7 +17,7 @@ package us.mn.state.health.lims.result.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class ResultInventory extends BaseObject {
+public class ResultInventory extends BaseObject<String> {
 
 	private static final long serialVersionUID = 1L;
 

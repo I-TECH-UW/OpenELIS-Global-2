@@ -20,7 +20,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
 /**
  *  @author     Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
-public class SystemModule extends BaseObject {
+public class SystemModule extends BaseObject<String> {
 
 	private String id;
 	private String systemModuleName;

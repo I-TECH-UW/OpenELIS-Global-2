@@ -20,7 +20,7 @@ package us.mn.state.health.lims.role.valueholder;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.systemusermodule.valueholder.PermissionAgent;
 
-public class Role extends BaseObject implements PermissionAgent{
+public class Role extends BaseObject<String> implements PermissionAgent{
 
 	private static final long serialVersionUID = 1L;
 

@@ -22,7 +22,7 @@ import us.mn.state.health.lims.common.valueholder.ValueHolderInterface;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.test.valueholder.Test;
 
-public class QaEvent extends BaseObject {
+public class QaEvent extends BaseObject<String> {
 
 	private String id;
 

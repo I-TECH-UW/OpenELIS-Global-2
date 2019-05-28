@@ -62,7 +62,9 @@ public class PanelCreateController extends BaseController {
 	TypeOfSamplePanelService typeOfSamplePanelService;
 	@Autowired
 	LocalizationService localizationService;
-
+	@Autowired
+	PanelTestConfigurationUtil panelTestConfigurationUtil;
+	
 	public static final String NAME_SEPARATOR = "$";
 
 	@RequestMapping(value = "/PanelCreate", method = RequestMethod.GET)
@@ -75,9 +77,9 @@ public class PanelCreateController extends BaseController {
 	}
 
 	private void setupDisplayItems(PanelCreateForm form) {
-		HashMap<String, List<Panel>> existingSampleTypePanelMap = PanelTestConfigurationUtil
+		HashMap<String, List<Panel>> existingSampleTypePanelMap = panelTestConfigurationUtil
 				.createTypeOfSamplePanelMap(true);
-		HashMap<String, List<Panel>> inactiveSampleTypePanelMap = PanelTestConfigurationUtil
+		HashMap<String, List<Panel>> inactiveSampleTypePanelMap = panelTestConfigurationUtil
 				.createTypeOfSamplePanelMap(false);
 		try {
 			PropertyUtils.setProperty(form, "existingSampleTypeList",

@@ -25,7 +25,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
  * @author benzd1 bugzilla 2501
  */
 //TODO should this be a BaseObject?
-public class Test_QaEvent_Actions extends BaseObject {
+public class Test_QaEvent_Actions extends BaseObject<String> {
 
 	private AnalysisQaEvent qaEvent;
 	private AnalysisQaEventAction[] actions;

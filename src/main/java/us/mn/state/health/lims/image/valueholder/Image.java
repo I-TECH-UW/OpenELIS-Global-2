@@ -20,7 +20,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
 
 /**
  */
-public class Image extends BaseObject {
+public class Image extends BaseObject<String> {
 	public static final int MAX_MEMORY_SIZE = 1024 * 1024 * 2;
 	private String id;
 	private String description;

@@ -5,7 +5,7 @@ import java.util.Set;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class SystemModuleParam extends BaseObject {
+public class SystemModuleParam extends BaseObject<String> {
 
 	private String id;
 	private String name;

@@ -18,7 +18,7 @@ package us.mn.state.health.lims.testcodes.valueholder;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class TestCodeType extends BaseObject {
+public class TestCodeType extends BaseObject<String> {
 
 	private static final long serialVersionUID = -6491155195722574015L;
 

@@ -11,7 +11,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.hibernate.Transaction;
 import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,15 +30,8 @@ import us.mn.state.health.lims.common.services.DisplayListService;
 import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.panel.dao.PanelDAO;
-import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
 import us.mn.state.health.lims.panel.valueholder.Panel;
-import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
-import us.mn.state.health.lims.panelitem.daoimpl.PanelItemDAOImpl;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestComparator;
 import us.mn.state.health.lims.testconfiguration.action.PanelTests;
@@ -83,8 +75,8 @@ public class PanelTestAssignController extends BaseController {
 
 		if (!GenericValidator.isBlankOrNull(form.getPanelId())) {
 
-			PanelDAO panelDAO = new PanelDAOImpl();
-			Panel panel = panelDAO.getPanelById(form.getPanelId());
+//			PanelDAO panelDAO = new PanelDAOImpl();
+			Panel panel = panelService.getPanelById(form.getPanelId());
 			IdValuePair panelPair = new IdValuePair(panel.getId(), panel.getLocalizedName());
 
 			List<IdValuePair> tests = new ArrayList<>();
@@ -112,12 +104,12 @@ public class PanelTestAssignController extends BaseController {
 		}
 	}
 
-	public static List<Test> getAllTestsByPanelId(String panelId) {
+	public List<Test> getAllTestsByPanelId(String panelId) {
 		List<Test> testList = new ArrayList<>();
-		PanelItemDAO panelItemDAO = new PanelItemDAOImpl();
+//		PanelItemDAO panelItemDAO = new PanelItemDAOImpl();
 
 		@SuppressWarnings("unchecked")
-		List<PanelItem> testLinks = panelItemDAO.getPanelItemsForPanel(panelId);
+		List<PanelItem> testLinks = panelItemService.getPanelItemsForPanel(panelId);
 
 		for (PanelItem link : testLinks) {
 			testList.add(link.getTest());
@@ -139,60 +131,20 @@ public class PanelTestAssignController extends BaseController {
 
 		String panelId = form.getString("panelId");
 		String currentUser = getSysUserId(request);
-		boolean updatepanel = false;
+		boolean updatePanel = false;
 
-//		Panel panel = new PanelDAOImpl().getPanelById(panelId);
 		Panel panel = panelService.getPanelById(panelId);
 
 		if (!GenericValidator.isBlankOrNull(panelId)) {
-//			PanelItemDAO panelItemDAO = new PanelItemDAOImpl();
 			List<PanelItem> panelItems = panelItemService.getPanelItemsForPanel(panelId);
 
 			List<String> newTests = (List<String>) form.get("currentTests");
 
-//			Transaction tx = HibernateUtil.getSession().beginTransaction();
 			try {
-				for (PanelItem oldPanelItem : panelItems) {
-					oldPanelItem.setSysUserId(currentUser);
-				}
-//				panelItemDAO.deleteData(panelItems);
-				panelItemService.delete(panelItems);
-
-				for (String testId : newTests) {
-					PanelItem panelItem = new PanelItem();
-					panelItem.setPanel(panel);
-					TestDAO testDAO = new TestDAOImpl();
-					panelItem.setTest(testDAO.getTestById(testId));
-					panelItem.setLastupdatedFields();
-					panelItem.setSysUserId(getSysUserId(request));
-					new PanelItemDAOImpl().insertData(panelItem);
-				}
-
-				if ("N".equals(panel.getIsActive())) {
-					panel.setIsActive("Y");
-					panel.setSysUserId(currentUser);
-					updatepanel = true;
-
-				}
-
-				if (updatepanel == true) {
-					new PanelDAOImpl().updateData(panel);
-				}
-
-//				tx.commit();
+				panelItemService.updatePanelItems(panelItems, panel, updatePanel, currentUser, newTests);
 			} catch (LIMSRuntimeException lre) {
-//				tx.rollback();
 				lre.printStackTrace();
 			} 
-//			finally {
-//				HibernateUtil.closeSession();
-//			}
-		}
-
-		if (updatepanel == false) {
-			panel.setIsActive("N");
-			panel.setSysUserId(currentUser);
-			new PanelDAOImpl().updateData(panel);
 		}
 
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);
@@ -201,6 +153,8 @@ public class PanelTestAssignController extends BaseController {
 		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}
+	
+
 
 	@Override
 	protected String findLocalForward(String forward) {

@@ -22,7 +22,7 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.common.valueholder.ValueHolder;
 import us.mn.state.health.lims.localization.valueholder.Localization;
 
-public class TypeOfSample extends BaseObject {
+public class TypeOfSample extends BaseObject<String> {
 
 	/**
 	 * 

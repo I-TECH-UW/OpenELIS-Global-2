@@ -19,9 +19,10 @@ package us.mn.state.health.lims.userrole.valueholder;
 
 import org.apache.commons.validator.GenericValidator;
 
+import us.mn.state.health.lims.address.valueholder.AddressPK;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public class UserRole extends BaseObject {
+public class UserRole extends BaseObject<UserRolePK> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -29,11 +30,6 @@ public class UserRole extends BaseObject {
 	private String userName;
 	private String roleName;
 	private String uniqueIdentifyer;
-
-	@Override
-	public void setId(String id) {
-		throw new UnsupportedOperationException();
-	}
 
 	public void setCompoundId(UserRolePK compoundId) {
 		uniqueIdentifyer = null;
@@ -44,8 +40,7 @@ public class UserRole extends BaseObject {
 		return compoundId;
 	}
 
-	@Override
-	public String getId() {
+	public String getStringId() {
 		return compoundId == null ? "0" : compoundId.getSystemUserId() + compoundId.getRoleId();
 	}
 
@@ -92,6 +87,16 @@ public class UserRole extends BaseObject {
 			uniqueIdentifyer = getSystemUserId() + "-" + getRoleId();
 		}
 		return uniqueIdentifyer;
+	}
+	
+	@Override
+	public void setId(UserRolePK id) {
+		setCompoundId(id);
+	}
+
+	@Override
+	public UserRolePK getId() {
+		return getCompoundId();
 	}
 
 }
