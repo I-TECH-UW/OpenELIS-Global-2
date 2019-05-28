@@ -8,20 +8,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import spring.service.panel.PanelService;
-import spring.service.test.TestService;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
+import us.mn.state.health.lims.test.valueholder.Test;
 
 @Service
 public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem> implements PanelItemService {
 	@Autowired
 	protected PanelItemDAO baseObjectDAO;
-	@Autowired
-	TestService testService;
 	@Autowired
 	PanelService panelService;
 
@@ -161,30 +159,31 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem> imple
 
 		return pi;
 	}
-	
+
 	@Override
 	@Transactional
-	public void updatePanelItems(List<PanelItem> panelItems, Panel panel, boolean updatePanel, String currentUser, List<String> newTests) {
-	
-	    for (PanelItem oldPanelItem : panelItems) {
-	    	oldPanelItem.setSysUserId(currentUser);
-	    }
-	    delete(panelItems);
-        
-	    for (String testId : newTests) {
-	    	PanelItem panelItem = new PanelItem();
-	    	panelItem.setPanel(panel);
-	    	panelItem.setTest(testService.getTestById(testId));
-	    	panelItem.setLastupdatedFields();
-	    	panelItem.setSysUserId(currentUser);
-	    	insert(panelItem);
-	    }
-        
-	    if ("N".equals(panel.getIsActive())) {
-	    	panel.setIsActive("Y");
-	    	panel.setSysUserId(currentUser);
-	    	panelService.update(panel);
-	    } else {
+	public void updatePanelItems(List<PanelItem> panelItems, Panel panel, boolean updatePanel, String currentUser,
+			List<Test> newTests) {
+
+		for (PanelItem oldPanelItem : panelItems) {
+			oldPanelItem.setSysUserId(currentUser);
+		}
+		delete(panelItems);
+
+		for (Test test : newTests) {
+			PanelItem panelItem = new PanelItem();
+			panelItem.setPanel(panel);
+			panelItem.setTest(test);
+			panelItem.setLastupdatedFields();
+			panelItem.setSysUserId(currentUser);
+			insert(panelItem);
+		}
+
+		if ("N".equals(panel.getIsActive())) {
+			panel.setIsActive("Y");
+			panel.setSysUserId(currentUser);
+			panelService.update(panel);
+		} else {
 			panel.setIsActive("N");
 			panel.setSysUserId(currentUser);
 			panelService.update(panel);

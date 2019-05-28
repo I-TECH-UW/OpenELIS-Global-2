@@ -6,6 +6,7 @@ import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
+import us.mn.state.health.lims.test.valueholder.Test;
 
 public interface PanelItemService extends BaseObjectService<PanelItem> {
 	void getData(PanelItem panelItem);
@@ -41,5 +42,5 @@ public interface PanelItemService extends BaseObjectService<PanelItem> {
 	List<PanelItem> getPanelItemsForPanel(String panelId);
 
 	void updatePanelItems(List<PanelItem> panelItems, Panel panel, boolean updatePanel, String currentUser,
-			List<String> newTests);
+			List<Test> newTests);
 }
