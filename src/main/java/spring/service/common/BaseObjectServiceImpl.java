@@ -16,9 +16,7 @@ import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
-import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
 
 public abstract class BaseObjectServiceImpl<T extends BaseObject> implements BaseObjectService<T> {
 
@@ -182,7 +180,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 	@Override
 	@Transactional
 	public Serializable insert(T baseObject) {
-		
+
 		Serializable id = getBaseObjectDAO().insert(baseObject);
 		baseObject.setId(id);
 		if (auditTrailLog) {

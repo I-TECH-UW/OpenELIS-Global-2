@@ -25,7 +25,6 @@ public class AnalyzerTestMapping extends BaseObject<AnalyzerTestMappingPK> {
 
 	private static final long serialVersionUID = 1L;
 
-	private String id = "1"; // not this is not used but it is needed in the audit trail
 	private AnalyzerTestMappingPK compoundId = new AnalyzerTestMappingPK();
 	private String testId;
 	private String uniqueIdentifyer;
@@ -37,6 +36,11 @@ public class AnalyzerTestMapping extends BaseObject<AnalyzerTestMappingPK> {
 
 	public AnalyzerTestMappingPK getCompoundId() {
 		return compoundId;
+	}
+
+	@Override
+	public String getStringId() {
+		return compoundId == null ? "0" : compoundId.getAnalyzerId();
 	}
 
 	public void setAnalyzerId(String analyzerId) {
