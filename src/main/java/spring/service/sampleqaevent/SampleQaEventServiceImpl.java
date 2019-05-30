@@ -27,54 +27,54 @@ public class SampleQaEventServiceImpl extends BaseObjectServiceImpl<SampleQaEven
 
 	@Override
 	public List<SampleQaEvent> getSampleQaEventsBySample(Sample sample) {
-		return baseObjectDAO.getAllMatching("aqe.sample", sample.getId());
+		return baseObjectDAO.getAllMatching("sample.id", sample.getId());
 	}
 
 	@Override
 	public void getData(SampleQaEvent sampleQaEvent) {
-        getBaseObjectDAO().getData(sampleQaEvent);
+		getBaseObjectDAO().getData(sampleQaEvent);
 
 	}
 
 	@Override
 	public SampleQaEvent getData(String sampleQaEventId) {
-        return getBaseObjectDAO().getData(sampleQaEventId);
+		return getBaseObjectDAO().getData(sampleQaEventId);
 	}
 
 	@Override
 	public void deleteData(List sampleQaEvents) {
-        getBaseObjectDAO().deleteData(sampleQaEvents);
+		getBaseObjectDAO().deleteData(sampleQaEvents);
 
 	}
 
 	@Override
 	public void updateData(SampleQaEvent sampleQaEvent) {
-        getBaseObjectDAO().updateData(sampleQaEvent);
+		getBaseObjectDAO().updateData(sampleQaEvent);
 
 	}
 
 	@Override
 	public boolean insertData(SampleQaEvent sampleQaEvent) {
-        return getBaseObjectDAO().insertData(sampleQaEvent);
+		return getBaseObjectDAO().insertData(sampleQaEvent);
 	}
 
 	@Override
 	public List<SampleQaEvent> getAllUncompleatedEvents() {
-        return getBaseObjectDAO().getAllUncompleatedEvents();
+		return getBaseObjectDAO().getAllUncompleatedEvents();
 	}
 
 	@Override
 	public List getSampleQaEventsBySample(SampleQaEvent sampleQaEvent) {
-        return getBaseObjectDAO().getSampleQaEventsBySample(sampleQaEvent);
+		return getBaseObjectDAO().getSampleQaEventsBySample(sampleQaEvent);
 	}
 
 	@Override
 	public List<SampleQaEvent> getSampleQaEventsByUpdatedDate(Date lowDate, Date highDate) {
-        return getBaseObjectDAO().getSampleQaEventsByUpdatedDate(lowDate,highDate);
+		return getBaseObjectDAO().getSampleQaEventsByUpdatedDate(lowDate, highDate);
 	}
 
 	@Override
 	public SampleQaEvent getSampleQaEventBySampleAndQaEvent(SampleQaEvent sampleQaEvent) {
-        return getBaseObjectDAO().getSampleQaEventBySampleAndQaEvent(sampleQaEvent);
+		return getBaseObjectDAO().getSampleQaEventBySampleAndQaEvent(sampleQaEvent);
 	}
 }

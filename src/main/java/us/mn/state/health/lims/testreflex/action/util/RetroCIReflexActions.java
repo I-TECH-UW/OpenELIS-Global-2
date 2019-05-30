@@ -49,7 +49,7 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
 public class RetroCIReflexActions extends ReflexAction {
 
-    private static TestDAO testDAO = new TestDAOImpl();
+	private static TestDAO testDAO = new TestDAOImpl();
 	private static final String HIV_D = "HIV D";
 	private static final String HIV_2 = "HIV 2";
 	private static final String HIV_1 = "HIV 1";
@@ -57,9 +57,9 @@ public class RetroCIReflexActions extends ReflexAction {
 	private static final String HIV_INDETERMINATE = "HIV Indeterminate";
 	private static final String HIV_INVALID = "HIV Invalid";
 	private static final String HIV_NAME = "hivStatus";
-    private static final String VIRONOSTIKA = "Vironostika";
-    private static final String INNOLIA = "Innolia";
-    private static final String VIRONOSTIKA_OR_INNOLIA = "Vir. or Innolia";
+	private static final String VIRONOSTIKA = "Vironostika";
+	private static final String INNOLIA = "Innolia";
+	private static final String VIRONOSTIKA_OR_INNOLIA = "Vir. or Innolia";
 	private static String OBSERVATION_HIV_STATUS_ID;
 	private static Analyte ANALYTE_CONCLUSION;
 	private static Analyte ANALYTE_CD4_CT_GENERATED;
@@ -76,7 +76,7 @@ public class RetroCIReflexActions extends ReflexAction {
 		ObservationHistoryType observationHistoryType = typeDAO.getByName(HIV_NAME);
 		OBSERVATION_HIV_STATUS_ID = observationHistoryType == null ? null : observationHistoryType.getId();
 
-		hivStatusToDictonaryIDMap = new HashMap<String, String>();
+		hivStatusToDictonaryIDMap = new HashMap<>();
 
 		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
 
@@ -102,16 +102,20 @@ public class RetroCIReflexActions extends ReflexAction {
 		Analyte analyte = new Analyte();
 		analyte.setAnalyteName("Conclusion");
 		ANALYTE_CONCLUSION = analyteDAO.getAnalyteByName(analyte, false);
+		analyte = new Analyte();
 		analyte.setAnalyteName("CD4 percentage count Result");
 		ANALYTE_CD4_PER_RESULT = analyteDAO.getAnalyteByName(analyte, false);
+		analyte = new Analyte();
 		analyte.setAnalyteName("GB Result");
 		ANALYTE_GB_RESULT = analyteDAO.getAnalyteByName(analyte, false);
+		analyte = new Analyte();
 		analyte.setAnalyteName("Lymph % Result");
 		ANALYTE_LYMPH_PER_RESULT = analyteDAO.getAnalyteByName(analyte, false);
+		analyte = new Analyte();
 		analyte.setAnalyteName("generated CD4 Count");
 		ANALYTE_CD4_CT_GENERATED = analyteDAO.getAnalyteByName(analyte, false);
 
-		CD4_RESULT_TEST_DEPENDANCIES = new ArrayList<Integer>();
+		CD4_RESULT_TEST_DEPENDANCIES = new ArrayList<>();
 
 		Test test = testDAO.getTestByName("GB");
 		CD4_RESULT_TEST_DEPENDANCIES.add(Integer.parseInt(test.getId()));
@@ -123,10 +127,9 @@ public class RetroCIReflexActions extends ReflexAction {
 
 		TestResultDAO testResultDAO = new TestResultDAOImpl();
 		@SuppressWarnings("unchecked")
-		List<TestResult> resultList = testResultDAO.getAllActiveTestResultsPerTest( test );
+		List<TestResult> resultList = testResultDAO.getAllActiveTestResultsPerTest(test);
 		TEST_RESULT_CD4_CALCULATED = resultList.get(0);
 	}
-
 
 	@Override
 	protected void handleScriptletAction(Scriptlet scriptlet) {
@@ -143,23 +146,23 @@ public class RetroCIReflexActions extends ReflexAction {
 
 			} else if (action.equals("Calc CD4")) {
 				finalResult = getCD4CalculationResult(result.getAnalysis().getSampleItem().getSample());
-			} else if( action.equals(VIRONOSTIKA_OR_INNOLIA)){
-                Test test = testDAO.getTestByName(VIRONOSTIKA);
-                if( !test.isActive()){
-                    test = testDAO.getTestByName(INNOLIA);
-                }
-                createReflexedAnalysis(test);
-            }
+			} else if (action.equals(VIRONOSTIKA_OR_INNOLIA)) {
+				Test test = testDAO.getTestByName(VIRONOSTIKA);
+				if (!test.isActive()) {
+					test = testDAO.getTestByName(INNOLIA);
+				}
+				createReflexedAnalysis(test);
+			}
 		}
 
 	}
 
-
 	public Result getCD4CalculationResult(Sample sample) {
 		Result calculatedResult = null;
-		List<Analysis> analysisList = ANALYSIS_DAO.getAnalysisBySampleAndTestIds(sample.getId(), CD4_RESULT_TEST_DEPENDANCIES);
+		List<Analysis> analysisList = ANALYSIS_DAO.getAnalysisBySampleAndTestIds(sample.getId(),
+				CD4_RESULT_TEST_DEPENDANCIES);
 
-		List<Integer> analysisIDList = new ArrayList<Integer>();
+		List<Integer> analysisIDList = new ArrayList<>();
 		for (Analysis analysis : analysisList) {
 			analysisIDList.add(Integer.parseInt(analysis.getId()));
 		}
@@ -168,38 +171,39 @@ public class RetroCIReflexActions extends ReflexAction {
 
 		Result CD4Result = resultDAO.getResultForAnalyteInAnalysisSet(ANALYTE_CD4_PER_RESULT.getId(), analysisIDList);
 		Result GBResult = resultDAO.getResultForAnalyteInAnalysisSet(ANALYTE_GB_RESULT.getId(), analysisIDList);
-		Result LymphResult = resultDAO.getResultForAnalyteInAnalysisSet(ANALYTE_LYMPH_PER_RESULT.getId(), analysisIDList);
+		Result LymphResult = resultDAO.getResultForAnalyteInAnalysisSet(ANALYTE_LYMPH_PER_RESULT.getId(),
+				analysisIDList);
 
 		if (CD4Result != null && GBResult != null && LymphResult != null) {
 			try {
-				double result = Double.parseDouble(CD4Result.getValue()) * 
-								Double.parseDouble(GBResult.getValue()) * 
-								Double.parseDouble(LymphResult.getValue()) * 0.1;
+				double result = Double.parseDouble(CD4Result.getValue()) * Double.parseDouble(GBResult.getValue())
+						* Double.parseDouble(LymphResult.getValue()) * 0.1;
 				result = Math.rint(result);
 
-				calculatedResult = resultDAO.getResultForAnalyteInAnalysisSet(ANALYTE_CD4_CT_GENERATED.getId(), analysisIDList);
-				if( calculatedResult == null){
+				calculatedResult = resultDAO.getResultForAnalyteInAnalysisSet(ANALYTE_CD4_CT_GENERATED.getId(),
+						analysisIDList);
+				if (calculatedResult == null) {
 					calculatedResult = new Result();
 					calculatedResult.setResultType("N");
 					calculatedResult.setIsReportable("T");
 					calculatedResult.setTestResult(TEST_RESULT_CD4_CALCULATED);
 					calculatedResult.setAnalyte(ANALYTE_CD4_CT_GENERATED);
 					calculatedResult.setAnalysis(CD4Result.getAnalysis());
-					calculatedResult.setSortOrder( nextSortOrder(CD4Result));
+					calculatedResult.setSortOrder(nextSortOrder(CD4Result));
 				}
-				
+
 				calculatedResult.setValue(String.valueOf(result));
-				
+
 			} catch (NumberFormatException e) {
-				//no op final result should be null.  Handles the case of "XXXX"
+				// no op final result should be null. Handles the case of "XXXX"
 			}
 		}
-		
+
 		return calculatedResult;
 	}
 
 	private String nextSortOrder(Result result) {
-		if( result == null || GenericValidator.isBlankOrNull(result.getSortOrder())){
+		if (result == null || GenericValidator.isBlankOrNull(result.getSortOrder())) {
 			return "0";
 		}
 

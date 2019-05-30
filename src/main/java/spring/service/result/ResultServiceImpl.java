@@ -89,7 +89,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements 
 	@Override
 	@Transactional
 	public List<Result> getResultsByAnalysis(Analysis analysis) {
-		return baseObjectDAO.getAllMatchingOrdered("analysis", analysis.getId(), "id", false);
+		return baseObjectDAO.getAllMatchingOrdered("analysis.id", analysis.getId(), "id", false);
 	}
 
 	public String getLabSectionName() {

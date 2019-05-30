@@ -30,17 +30,22 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.result.form.AnalyzerResultsForm;
+import spring.service.analysis.AnalysisService;
 import spring.service.analyzerresults.AnalyzerResultsService;
 import spring.service.dictionary.DictionaryService;
 import spring.service.localization.LocalizationServiceImpl;
+import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl;
+import spring.service.result.ResultService;
 import spring.service.resultlimit.ResultLimitServiceImpl;
+import spring.service.sample.SampleService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.sampleitem.SampleItemService;
 import spring.service.sampleqaevent.SampleQaEventService;
 import spring.service.test.TestService;
 import spring.service.testreflex.TestReflexService;
 import spring.service.testresult.TestResultService;
+import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.service.typeofsample.TypeOfSampleTestService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
@@ -109,7 +114,7 @@ public class AnalyzerResultsController extends BaseController {
 	}
 
 	@Autowired
-	private spring.service.note.NoteService noteService;
+	private NoteService noteService;
 	@Autowired
 	private SampleHumanService sampleHumanService;
 	@Autowired
@@ -119,7 +124,7 @@ public class AnalyzerResultsController extends BaseController {
 	@Autowired
 	private TypeOfSampleTestService typeOfSampleTestService;
 	@Autowired
-	private spring.service.typeofsample.TypeOfSampleService typeOfSampleService;
+	private TypeOfSampleService typeOfSampleService;
 	@Autowired
 	private AnalyzerResultsService analyzerResultsService;
 	@Autowired
@@ -127,15 +132,15 @@ public class AnalyzerResultsController extends BaseController {
 	@Autowired
 	private TestResultService testResultService;
 	@Autowired
-	private spring.service.sample.SampleService sampleService;
+	private SampleService sampleService;
 	@Autowired
 	private TypeOfSampleTestService sampleTypeTestService;
 	@Autowired
-	private spring.service.analysis.AnalysisService analysisService;
+	private AnalysisService analysisService;
 	@Autowired
 	private TestReflexService testReflexService;
 	@Autowired
-	private spring.service.result.ResultService resultService;
+	private ResultService resultService;
 	@Autowired
 	private SampleQaEventService sampleQaEventService;
 

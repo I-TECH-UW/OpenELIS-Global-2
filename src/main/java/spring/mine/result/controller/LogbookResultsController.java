@@ -36,6 +36,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.result.form.LogbookResultsForm;
 import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl;
 import spring.service.note.NoteServiceImpl.NoteType;
 import spring.service.referral.ReferralResultService;
@@ -45,9 +46,11 @@ import spring.service.result.ResultInventoryService;
 import spring.service.result.ResultService;
 import spring.service.result.ResultSignatureService;
 import spring.service.resultlimit.ResultLimitService;
+import spring.service.sample.SampleService;
 import spring.service.sample.SampleServiceImpl;
 import spring.service.test.TestSectionService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
@@ -103,9 +106,9 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 	@Autowired
 	private ResultInventoryService resultInventoryService;
 	@Autowired
-	private spring.service.note.NoteService noteService;
+	private NoteService noteService;
 	@Autowired
-	private spring.service.sample.SampleService sampleService;
+	private SampleService sampleService;
 	@Autowired
 	private ReferralService referralService;
 	@Autowired
@@ -113,9 +116,9 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 	@Autowired
 	private ResultLimitService resultLimitService;
 	@Autowired
-	TestSectionService testSectionService;
+	private TestSectionService testSectionService;
 	@Autowired
-	ReferralTypeService referralTypeService;
+	private ReferralTypeService referralTypeService;
 
 	private static final String RESULT_SUBJECT = "Result Note";
 	private static String REFERRAL_CONFORMATION_ID;
@@ -173,7 +176,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
 		ResultsPaging paging = new ResultsPaging();
 		List<InventoryKitItem> inventoryList = new ArrayList<>();
-		ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility(getSysUserId(request));
+		ResultsLoadUtility resultsLoadUtility = SpringContext.getBean(ResultsLoadUtility.class);
+		resultsLoadUtility.setSysUser(getSysUserId(request));
 
 		if (GenericValidator.isBlankOrNull(requestedPage)) {
 

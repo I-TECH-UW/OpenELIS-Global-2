@@ -28,99 +28,102 @@ import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.analysis.AnalysisService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.servlet.validation.AjaxServlet;
 
 public class PendingAnalysisForTestProvider extends BaseQueryProvider {
 
+	private static final List<Integer> NOT_STARTED;
+	private static final List<Integer> TECH_REJECT;
+	private static final List<Integer> BIO_REJECT;
+	private static final List<Integer> NOT_VALIDATED;
+
 	protected AjaxServlet ajaxServlet = null;
-    private static AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-    private static final List<Integer> NOT_STARTED;
-    private static final List<Integer> TECH_REJECT;
-    private static final List<Integer> BIO_REJECT;
-    private static final List<Integer> NOT_VALIDATED;
+	private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
 
-    static{
-        StatusService statusService = StatusService.getInstance();
-        NOT_STARTED = new ArrayList<Integer>();
-        NOT_STARTED.add(Integer.parseInt(statusService.getStatusID(StatusService.AnalysisStatus.NotStarted)));
+	static {
+		StatusService statusService = StatusService.getInstance();
+		NOT_STARTED = new ArrayList<>();
+		NOT_STARTED.add(Integer.parseInt(statusService.getStatusID(StatusService.AnalysisStatus.NotStarted)));
 
-        TECH_REJECT = new ArrayList<Integer>();
-        TECH_REJECT.add(Integer.parseInt(statusService.getStatusID(StatusService.AnalysisStatus.TechnicalRejected)));
+		TECH_REJECT = new ArrayList<>();
+		TECH_REJECT.add(Integer.parseInt(statusService.getStatusID(StatusService.AnalysisStatus.TechnicalRejected)));
 
-        BIO_REJECT = new ArrayList<Integer>();
-        BIO_REJECT.add(Integer.parseInt(statusService.getStatusID(StatusService.AnalysisStatus.BiologistRejected)));
+		BIO_REJECT = new ArrayList<>();
+		BIO_REJECT.add(Integer.parseInt(statusService.getStatusID(StatusService.AnalysisStatus.BiologistRejected)));
 
-        NOT_VALIDATED = new ArrayList<Integer>();
-        NOT_VALIDATED.add(Integer.parseInt(statusService.getStatusID(StatusService.AnalysisStatus.TechnicalAcceptance)));
-    }
+		NOT_VALIDATED = new ArrayList<>();
+		NOT_VALIDATED
+				.add(Integer.parseInt(statusService.getStatusID(StatusService.AnalysisStatus.TechnicalAcceptance)));
+	}
 
-    @Override
-	public void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	@Override
+	public void processRequest(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
 		String testId = request.getParameter("testId");
 
-        String jResult;
-        JSONObject jsonResult = new JSONObject();
-        String jString;
+		String jResult;
+		JSONObject jsonResult = new JSONObject();
+		String jString;
 
-		if (GenericValidator.isBlankOrNull(testId) ){
+		if (GenericValidator.isBlankOrNull(testId)) {
 			jResult = INVALID;
 			jString = "Internal error, please contact Admin and file bug report";
 		} else {
-            jResult = createJsonGroupedAnalysis(testId, jsonResult);
-            StringWriter out = new StringWriter();
-            try{
-                jsonResult.writeJSONString( out );
-                jString = out.toString();
-            }catch( IOException e ){
-                e.printStackTrace();
-                jResult = INVALID;
-                jString = "Internal error, please contact Admin and file bug report";
-            }catch( IllegalStateException e ){
-                e.printStackTrace();
-                jResult = INVALID;
-                jString = "Internal error, please contact Admin and file bug report";
-            }
-        }
+			jResult = createJsonGroupedAnalysis(testId, jsonResult);
+			StringWriter out = new StringWriter();
+			try {
+				jsonResult.writeJSONString(out);
+				jString = out.toString();
+			} catch (IOException e) {
+				e.printStackTrace();
+				jResult = INVALID;
+				jString = "Internal error, please contact Admin and file bug report";
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+				jResult = INVALID;
+				jString = "Internal error, please contact Admin and file bug report";
+			}
+		}
 		ajaxServlet.sendData(jString, jResult, request, response);
 
 	}
 
-    @SuppressWarnings("unchecked")
-    private String createJsonGroupedAnalysis(String testId, JSONObject jsonResult)throws IllegalStateException{
-        createPendingList(testId, jsonResult,"notStarted", NOT_STARTED);
-        createPendingList(testId, jsonResult,"technicianRejection", TECH_REJECT);
-        createPendingList(testId, jsonResult,"biologistRejection", BIO_REJECT);
-        createPendingList(testId, jsonResult,"notValidated", NOT_VALIDATED);
-        return VALID;
-    }
+	@SuppressWarnings("unchecked")
+	private String createJsonGroupedAnalysis(String testId, JSONObject jsonResult) throws IllegalStateException {
+		createPendingList(testId, jsonResult, "notStarted", NOT_STARTED);
+		createPendingList(testId, jsonResult, "technicianRejection", TECH_REJECT);
+		createPendingList(testId, jsonResult, "biologistRejection", BIO_REJECT);
+		createPendingList(testId, jsonResult, "notValidated", NOT_VALIDATED);
+		return VALID;
+	}
 
-    private void createPendingList(String testId, JSONObject jsonResult, String tag, List<Integer> statusList) {
-        List<Analysis> notStartedAnalysis = analysisDAO.getAllAnalysisByTestAndStatus(testId, statusList);
+	private void createPendingList(String testId, JSONObject jsonResult, String tag, List<Integer> statusList) {
+		List<Analysis> notStartedAnalysis = analysisService.getAllAnalysisByTestAndStatus(testId, statusList);
 
-        JSONArray analysisArray = new JSONArray();
+		JSONArray analysisArray = new JSONArray();
 
-        for(Analysis analysis : notStartedAnalysis){
-            JSONObject analysisObject = new JSONObject();
-            analysisObject.put("labNo", analysis.getSampleItem().getSample().getAccessionNumber());
-            analysisObject.put("id", analysis.getId());
-            analysisArray.add(analysisObject);
-        }
-        jsonResult.put(tag, analysisArray);
-    }
+		for (Analysis analysis : notStartedAnalysis) {
+			JSONObject analysisObject = new JSONObject();
+			analysisObject.put("labNo", analysis.getSampleItem().getSample().getAccessionNumber());
+			analysisObject.put("id", analysis.getId());
+			analysisArray.add(analysisObject);
+		}
+		jsonResult.put(tag, analysisArray);
+	}
 
-    @Override
+	@Override
 	public void setServlet(AjaxServlet as) {
-		this.ajaxServlet = as;
+		ajaxServlet = as;
 	}
 
 	@Override
 	public AjaxServlet getServlet() {
-		return this.ajaxServlet;
+		return ajaxServlet;
 	}
 
 }

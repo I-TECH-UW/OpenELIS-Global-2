@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -33,7 +32,9 @@ import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.resultvalidation.form.ResultValidationForm;
 import spring.mine.resultvalidation.util.ResultValidationSaveService;
+import spring.service.analysis.AnalysisService;
 import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl;
 import spring.service.note.NoteServiceImpl.NoteType;
 import spring.service.referencetables.ReferenceTablesService;
@@ -46,6 +47,7 @@ import spring.service.systemuser.SystemUserService;
 import spring.service.test.TestSectionService;
 import spring.service.testresult.TestResultService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -78,37 +80,42 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
 @Controller
 public class ResultValidationController extends BaseResultValidationController {
 
-	@Autowired
-	private spring.service.analysis.AnalysisService analysisService;
-	@Autowired
+	private AnalysisService analysisService;
 	private SampleService sampleService;
-	@Autowired
 	private TestResultService testResultService;
-	@Autowired
 	private ResultService resultService;
-	@Autowired
-	private spring.service.note.NoteService noteService;
-	@Autowired
+	private NoteService noteService;
 	private SampleHumanService sampleHumanService;
-	@Autowired
 	private DocumentTrackService documentTrackService;
-	@Autowired
-	private ReferenceTablesService referenceTablesService;
-	@Autowired
-	private DocumentTypeService documentTypeService;
-	@Autowired
 	private TestSectionService testSectionService;
-	@Autowired
 	private SystemUserService systemUserService;
 
-	private static final String RESULT_SUBJECT = "Result Note";
-	private static String RESULT_TABLE_ID;
-	private static String RESULT_REPORT_ID;
+	private final String RESULT_SUBJECT = "Result Note";
+	private final String RESULT_TABLE_ID;
+	private final String RESULT_REPORT_ID;
+
+	public ResultValidationController(AnalysisService analysisService, SampleService sampleService,
+			TestResultService testResultService, ResultService resultService, NoteService noteService,
+			SampleHumanService sampleHumanService, DocumentTrackService documentTrackService,
+			TestSectionService testSectionService, SystemUserService systemUserService,
+			ReferenceTablesService referenceTablesService, DocumentTypeService documentTypeService) {
+
+		this.analysisService = analysisService;
+		this.sampleService = sampleService;
+		this.testResultService = testResultService;
+		this.resultService = resultService;
+		this.noteService = noteService;
+		this.sampleHumanService = sampleHumanService;
+		this.documentTrackService = documentTrackService;
+		this.testSectionService = testSectionService;
+		this.systemUserService = systemUserService;
+
+		RESULT_TABLE_ID = referenceTablesService.getReferenceTableByName("RESULT").getId();
+		RESULT_REPORT_ID = documentTypeService.getDocumentTypeByName("resultExport").getId();
+	}
 
 	@PostConstruct
 	private void initialize() {
-		RESULT_TABLE_ID = referenceTablesService.getReferenceTableByName("RESULT").getId();
-		RESULT_REPORT_ID = documentTypeService.getDocumentTypeByName("resultExport").getId();
 	}
 
 	@RequestMapping(value = "/ResultValidation", method = RequestMethod.GET)
@@ -138,7 +145,7 @@ public class ResultValidationController extends BaseResultValidationController {
 			}
 
 			List<AnalysisItem> resultList;
-			ResultsValidationUtility resultsValidationUtility = new ResultsValidationUtility();
+			ResultsValidationUtility resultsValidationUtility = SpringContext.getBean(ResultsValidationUtility.class);
 			setRequestType(ts == null ? MessageUtil.getMessage("workplan.unit.types") : ts.getLocalizedName());
 			if (!GenericValidator.isBlankOrNull(testSectionId)) {
 				resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(), testSectionId);

@@ -18,6 +18,7 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.result.form.PatientResultsForm;
 import spring.service.patient.PatientService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -41,14 +42,15 @@ public class PatientResultsController extends BaseController {
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		PatientResultsForm form = new PatientResultsForm();
 
-		ResultsLoadUtility resultsUtility = new ResultsLoadUtility(getSysUserId(request));
+		ResultsLoadUtility resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
+		resultsUtility.setSysUser(getSysUserId(request));
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
 		PropertyUtils.setProperty(form, "displayTestKit", Boolean.FALSE);
 		PropertyUtils.setProperty(form, "referralReasons",
 				DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-		PropertyUtils.setProperty(form, "rejectReasons",
-				DisplayListService.getInstance().getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+		PropertyUtils.setProperty(form, "rejectReasons", DisplayListService.getInstance()
+				.getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 		PatientSearch patientSearch = new PatientSearch();
 		patientSearch.setLoadFromServerWithPatient(true);
 		patientSearch.setSelectedPatientActionButtonText(MessageUtil.getMessage("resultsentry.patient.search"));

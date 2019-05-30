@@ -42,11 +42,16 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 
 	public AnalyteDAOImpl() {
 		super(Analyte.class);
+	}
+
+	@Override
+	public void delete(Analyte analyte) {
+		System.out.println("selete dao");
 	}
 
 	@Override
@@ -121,6 +126,11 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 	}
 
 	@Override
+	public Analyte save(Analyte analyte) {
+		return analyte;
+	}
+
+	@Override
 	public void updateData(Analyte analyte) throws LIMSRuntimeException {
 		// bugzilla 1482 throw Exception if record already exists
 		try {
@@ -164,7 +174,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 	@Override
 	public void getData(Analyte analyte) throws LIMSRuntimeException {
 		try {
-			Analyte anal = (Analyte) HibernateUtil.getSession().get(Analyte.class, analyte.getId());
+			Analyte anal = HibernateUtil.getSession().get(Analyte.class, analyte.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (anal != null) {
@@ -263,7 +273,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 	public Analyte readAnalyte(String idString) {
 		Analyte analyte = null;
 		try {
-			analyte = (Analyte) HibernateUtil.getSession().get(Analyte.class, idString);
+			analyte = HibernateUtil.getSession().get(Analyte.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
