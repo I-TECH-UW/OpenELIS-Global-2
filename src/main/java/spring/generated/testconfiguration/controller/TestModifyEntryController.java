@@ -14,7 +14,6 @@ import javax.validation.Valid;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -30,47 +29,39 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.TestModifyEntryForm;
 import spring.generated.testconfiguration.validator.TestModifyEntryFormValidator;
 import spring.mine.common.controller.BaseController;
+import spring.service.dictionary.DictionaryService;
+import spring.service.localization.LocalizationService;
 import spring.service.localization.LocalizationServiceImpl;
+import spring.service.panel.PanelService;
+import spring.service.panelitem.PanelItemService;
+import spring.service.resultlimit.ResultLimitService;
 import spring.service.resultlimit.ResultLimitServiceImpl;
 import spring.service.test.TestSectionServiceImpl;
+import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
+import spring.service.testresult.TestResultService;
+import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.service.typeofsample.TypeOfSampleTestService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
+import spring.service.unitofmeasure.UnitOfMeasureService;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
 import us.mn.state.health.lims.localization.valueholder.Localization;
-import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
 import us.mn.state.health.lims.panel.valueholder.Panel;
-import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
-import us.mn.state.health.lims.panelitem.daoimpl.PanelItemDAOImpl;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
-import us.mn.state.health.lims.resultlimits.dao.ResultLimitDAO;
-import us.mn.state.health.lims.resultlimits.daoimpl.ResultLimitDAOImpl;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 import us.mn.state.health.lims.testconfiguration.beans.ResultLimitBean;
 import us.mn.state.health.lims.testconfiguration.beans.TestCatalogBean;
-import us.mn.state.health.lims.testresult.dao.TestResultDAO;
-import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleTestDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
-import us.mn.state.health.lims.unitofmeasure.daoimpl.UnitOfMeasureDAOImpl;
 import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 @Controller
@@ -78,20 +69,37 @@ public class TestModifyEntryController extends BaseController {
 
 	@Autowired
 	TestModifyEntryFormValidator formValidator;
-
-	private DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-	private TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
+	@Autowired
+	DictionaryService dictionaryService;
+	@Autowired
+	PanelService panelService;
+	@Autowired
+	TypeOfSampleService typeOfSampleService;
+	@Autowired
+	TypeOfSampleTestService typeOfSampleTestService;
+	@Autowired
+	LocalizationService localizationService;
+	@Autowired
+	PanelItemService panelItemService;
+	@Autowired
+	TestService testService;
+	@Autowired
+	ResultLimitService resultLimitService;
+	@Autowired
+	TestResultService testResultService;
+	@Autowired
+	UnitOfMeasureService unitOfMeasureService;
 
 	@RequestMapping(value = "/TestModifyEntry", method = RequestMethod.GET)
 	public ModelAndView showTestModifyEntry(HttpServletRequest request) {
 
 		TestModifyEntryForm form = new TestModifyEntryForm();
-		setupDisaplyItems(form);
+		setupDisplayItems(form);
 
 		return findForward(FWD_SUCCESS, form);
 	}
 
-	private void setupDisaplyItems(TestModifyEntryForm form) {
+	private void setupDisplayItems(TestModifyEntryForm form) {
 
 		List<IdValuePair> allSampleTypesList = new ArrayList<>();
 		allSampleTypesList.addAll(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
@@ -137,7 +145,7 @@ public class TestModifyEntryController extends BaseController {
 	private List<TestCatalogBean> createTestCatBeanList() {
 		List<TestCatalogBean> beanList = new ArrayList<>();
 
-		List<Test> testList = new TestDAOImpl().getAllTests(false);
+		List<Test> testList = testService.getAllTests(false);
 
 		for (Test test : testList) {
 
@@ -252,7 +260,7 @@ public class TestModifyEntryController extends BaseController {
 	private String getDictionaryValue(TestResult testResult) {
 
 		if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
-			Dictionary dictionary = dictionaryDAO.getDataForId(testResult.getValue());
+			Dictionary dictionary = dictionaryService.getDataForId(testResult.getValue());
 			String displayValue = dictionary.getLocalizedName();
 
 			if ("unknown".equals(displayValue)) {
@@ -307,7 +315,7 @@ public class TestModifyEntryController extends BaseController {
 	private String getDictionaryId(TestResult testResult) {
 
 		if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
-			Dictionary dictionary = dictionaryDAO.getDataForId(testResult.getValue());
+			Dictionary dictionary = dictionaryService.getDataForId(testResult.getValue());
 			String displayId = dictionary.getId();
 
 			if ("unknown".equals(displayId)) {
@@ -353,7 +361,7 @@ public class TestModifyEntryController extends BaseController {
 
 	@SuppressWarnings("unchecked")
 	private List<TestResult> getSortedTestResults() {
-		List<TestResult> testResults = new TestResultDAOImpl().getAllTestResults();
+		List<TestResult> testResults = testResultService.getAllTestResults();
 
 		Collections.sort(testResults, new Comparator<TestResult>() {
 			@Override
@@ -400,11 +408,10 @@ public class TestModifyEntryController extends BaseController {
 
 	private List<List<IdValuePair>> getGroupedDictionaryPairs(HashSet<String> dictionaryIdGroups) {
 		List<List<IdValuePair>> groups = new ArrayList<>();
-		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
 		for (String group : dictionaryIdGroups) {
 			List<IdValuePair> dictionaryPairs = new ArrayList<>();
 			for (String id : group.split(",")) {
-				Dictionary dictionary = dictionaryDAO.getDictionaryById(id);
+				Dictionary dictionary = dictionaryService.getDictionaryById(id);
 				if (dictionary != null) {
 					dictionaryPairs.add(new IdValuePair(id, dictionary.getLocalizedName()));
 				}
@@ -427,7 +434,7 @@ public class TestModifyEntryController extends BaseController {
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {
 			saveErrors(result);
-			setupDisaplyItems(form);
+			setupDisplayItems(form);
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 		String currentUserId = getSysUserId(request);
@@ -448,35 +455,30 @@ public class TestModifyEntryController extends BaseController {
 		Localization reportingNameLocalization = createReportingNameLocalization(testAddParams);
 
 		List<TestSet> testSets = createTestSets(testAddParams);
-		TestDAO testDAO = new TestDAOImpl();
 
-		TypeOfSampleTestDAO typeOfSampleTestDAO = new TypeOfSampleTestDAOImpl();
-		PanelItemDAO panelItemDAO = new PanelItemDAOImpl();
-
-		TestResultDAO testResultDAO = new TestResultDAOImpl();
-		ResultLimitDAO resultLimitDAO = new ResultLimitDAOImpl();
-
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
-			List<TypeOfSampleTest> typeOfSampleTest = typeOfSampleTestDAO
+			List<TypeOfSampleTest> typeOfSampleTest = typeOfSampleTestService
 					.getTypeOfSampleTestsForTest(testAddParams.testId);
 			String[] typeOfSamplesTestIDs = new String[typeOfSampleTest.size()];
 			for (int i = 0; i < typeOfSampleTest.size(); i++) {
 				typeOfSamplesTestIDs[i] = typeOfSampleTest.get(i).getId();
+				typeOfSampleTestService.delete(typeOfSamplesTestIDs[i], currentUserId);
 			}
-			typeOfSampleTestDAO.deleteData(typeOfSamplesTestIDs, currentUserId);
+			
 
-			List<PanelItem> panelItems = panelItemDAO.getPanelItemByTestId(testAddParams.testId);
+			List<PanelItem> panelItems = panelItemService.getPanelItemByTestId(testAddParams.testId);
 			for (PanelItem item : panelItems) {
 				item.setSysUserId(currentUserId);
 			}
-			panelItemDAO.deleteData(panelItems);
+			panelItemService.delete(panelItems);
 
-			List<ResultLimit> resultLimitItems = resultLimitDAO.getAllResultLimitsForTest(testAddParams.testId);
+			List<ResultLimit> resultLimitItems = resultLimitService.getAllResultLimitsForTest(testAddParams.testId);
 			for (ResultLimit item : resultLimitItems) {
 				item.setSysUserId(currentUserId);
+				resultLimitService.delete(item);
 			}
-			resultLimitDAO.deleteData(resultLimitItems);
+//			resultLimitService.delete(resultLimitItems);
 
 			for (TestSet set : testSets) {
 				set.test.setSysUserId(currentUserId);
@@ -489,7 +491,7 @@ public class TestModifyEntryController extends BaseController {
 				for (Test test : set.sortedTests) {
 					test.setSysUserId(currentUserId);
 					// if (!test.getId().equals( set.test.getId() )) {
-					testDAO.updateData(test);
+					testService.update(test);
 					// }
 				}
 
@@ -499,38 +501,40 @@ public class TestModifyEntryController extends BaseController {
 
 				set.sampleTypeTest.setSysUserId(currentUserId);
 				set.sampleTypeTest.setTestId(set.test.getId());
-				typeOfSampleTestDAO.insertData(set.sampleTypeTest);
+				typeOfSampleTestService.insert(set.sampleTypeTest);
 
 				for (PanelItem item : set.panelItems) {
 					item.setSysUserId(currentUserId);
-					Test nonTransiantTest = testDAO.getTestById(set.test.getId());
+					Test nonTransiantTest = testService.getTestById(set.test.getId());
 					item.setTest(nonTransiantTest);
-					panelItemDAO.insertData(item);
+					panelItemService.insert(item);
 				}
 
 				for (TestResult testResult : set.testResults) {
 					testResult.setSysUserId(currentUserId);
-					Test nonTransiantTest = testDAO.getTestById(set.test.getId());
+					Test nonTransiantTest = testService.getTestById(set.test.getId());
 					testResult.setTest(nonTransiantTest);
-					testResultDAO.insertData(testResult);
+					testResultService.insert(testResult);
 				}
 
 				for (ResultLimit resultLimit : set.resultLimits) {
 					resultLimit.setSysUserId(currentUserId);
 					resultLimit.setTestId(set.test.getId());
-					resultLimitDAO.insertData(resultLimit);
+					resultLimitService.insert(resultLimit);
 				}
 			}
 
-			tx.commit();
-		} catch (HibernateException e) {
-			tx.rollback();
+//			tx.commit();
+		} catch (HibernateException lre) {
+//			tx.rollback();
+			lre.printStackTrace();
 			result.reject("error.hibernate.exception");
-			setupDisaplyItems(form);
+			setupDisplayItems(form);
 			return findForward(FWD_FAIL_INSERT, form);
-		} finally {
-			HibernateUtil.closeSession();
-		}
+		} 
+//		finally {
+//			HibernateUtil.closeSession();
+//		}
 
 		TestServiceImpl.refreshTestNames();
 		TypeOfSampleServiceImpl.getInstance().clearCache();
@@ -544,7 +548,7 @@ public class TestModifyEntryController extends BaseController {
 		if (test != null) {
 			test.setSysUserId(userId);
 			test.setLoinc(loinc);
-			new TestDAOImpl().updateData(test);
+			testService.update(test);
 		}
 	}
 
@@ -562,8 +566,8 @@ public class TestModifyEntryController extends BaseController {
 			reportingName.setFrench(reportNameFrench.trim());
 			reportingName.setSysUserId(userId);
 
-			new LocalizationDAOImpl().updateData(name);
-			new LocalizationDAOImpl().updateData(reportingName);
+			localizationService.updateData(name);
+			localizationService.updateData(reportingName);
 
 		}
 
@@ -573,10 +577,9 @@ public class TestModifyEntryController extends BaseController {
 	}
 
 	private void createPanelItems(ArrayList<PanelItem> panelItems, TestAddParams testAddParams) {
-		PanelDAOImpl panelDAO = new PanelDAOImpl();
 		for (String panelId : testAddParams.panelList) {
 			PanelItem panelItem = new PanelItem();
-			panelItem.setPanel(panelDAO.getPanelById(panelId));
+			panelItem.setPanel(panelService.getPanelById(panelId));
 			panelItems.add(panelItem);
 		}
 	}
@@ -629,7 +632,7 @@ public class TestModifyEntryController extends BaseController {
 		List<TestSet> testSets = new ArrayList<>();
 		UnitOfMeasure uom = null;
 		if (!GenericValidator.isBlankOrNull(testAddParams.uomId) || "0".equals(testAddParams.uomId)) {
-			uom = new UnitOfMeasureDAOImpl().getUnitOfMeasureById(testAddParams.uomId);
+			uom = unitOfMeasureService.getUnitOfMeasureById(testAddParams.uomId);
 		}
 		TestSection testSection = new TestSectionServiceImpl(testAddParams.testSectionId).getTestSection();
 
@@ -639,7 +642,7 @@ public class TestModifyEntryController extends BaseController {
 		}
 		// The number of test sets depend on the number of sampleTypes
 		for (int i = 0; i < testAddParams.sampleList.size(); i++) {
-			TypeOfSample typeOfSample = typeOfSampleDAO
+			TypeOfSample typeOfSample = typeOfSampleService
 					.getTypeOfSampleById(testAddParams.sampleList.get(i).sampleTypeId);
 			if (typeOfSample == null) {
 				continue;

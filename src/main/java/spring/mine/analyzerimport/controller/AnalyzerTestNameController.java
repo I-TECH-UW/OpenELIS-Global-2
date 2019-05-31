@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -25,18 +24,14 @@ import spring.mine.analyzerimport.validator.AnalyzerTestMappingValidator;
 import spring.mine.common.controller.BaseController;
 import spring.mine.common.form.BaseForm;
 import spring.mine.common.validator.BaseErrors;
-import us.mn.state.health.lims.analyzer.dao.AnalyzerDAO;
-import us.mn.state.health.lims.analyzer.daoimpl.AnalyzerDAOImpl;
+import spring.service.analyzer.AnalyzerService;
+import spring.service.analyzerimport.AnalyzerTestMappingService;
+import spring.service.test.TestService;
 import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
-import us.mn.state.health.lims.analyzerimport.dao.AnalyzerTestMappingDAO;
-import us.mn.state.health.lims.analyzerimport.daoimpl.AnalyzerTestMappingDAOImpl;
 import us.mn.state.health.lims.analyzerimport.util.AnalyzerTestNameCache;
 import us.mn.state.health.lims.analyzerimport.valueholder.AnalyzerTestMapping;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 @Controller
@@ -45,6 +40,12 @@ public class AnalyzerTestNameController extends BaseController {
 
 	@Autowired
 	AnalyzerTestMappingValidator analyzerTestMappingValidator;
+	@Autowired
+	AnalyzerTestMappingService analyzerTestMappingService;
+	@Autowired
+	AnalyzerService analyzerService;
+	@Autowired
+	TestService testService;
 
 	@ModelAttribute("form")
 	public AnalyzerTestNameForm initForm() {
@@ -87,13 +88,11 @@ public class AnalyzerTestNameController extends BaseController {
 	}
 
 	private List<Analyzer> getAllAnalyzers() {
-		AnalyzerDAO analyzerDAO = new AnalyzerDAOImpl();
-		return analyzerDAO.getAllAnalyzers();
+		return analyzerService.getAllAnalyzers();
 	}
 
 	private List<Test> getAllTests() {
-		TestDAO testDAO = new TestDAOImpl();
-		return testDAO.getAllActiveTests(false);
+		return testService.getAllActiveTests(false);
 	}
 
 	@RequestMapping(value = "/AnalyzerTestName", method = RequestMethod.POST)
@@ -134,12 +133,12 @@ public class AnalyzerTestNameController extends BaseController {
 			analyzerTestNameMapping.setAnalyzerId(analyzerId);
 			analyzerTestNameMapping.setAnalyzerTestName(analyzerTestName);
 			analyzerTestNameMapping.setTestId(testId);
+			analyzerTestNameMapping.setSysUserId(getSysUserId(request));;
 		} else {
 			analyzerTestNameMapping = getAnalyzerAndTestName(analyzerId, analyzerTestName, testId);
 		}
 
-		AnalyzerTestMappingDAO mappingDAO = new AnalyzerTestMappingDAOImpl();
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
 			if (newMapping) {
 				analyzerTestMappingValidator.preInsertValidate(analyzerTestNameMapping, errors);
@@ -147,18 +146,18 @@ public class AnalyzerTestNameController extends BaseController {
 					saveErrors(errors);
 					return FWD_FAIL_INSERT;
 				}
-				mappingDAO.insertData(analyzerTestNameMapping, getSysUserId(request));
+				analyzerTestMappingService.insert(analyzerTestNameMapping);
 			} else {
 				analyzerTestMappingValidator.preUpdateValidate(analyzerTestNameMapping, errors);
 				if (errors.hasErrors()) {
 					saveErrors(errors);
 					return FWD_FAIL_INSERT;
 				}
-				mappingDAO.updateMapping(analyzerTestNameMapping, getSysUserId(request));
+				analyzerTestMappingService.updateMapping(analyzerTestNameMapping, getSysUserId(request));
 			}
 
 		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
+//			tx.rollback();
 
 			String errorMsg = null;
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
@@ -171,12 +170,13 @@ public class AnalyzerTestNameController extends BaseController {
 
 			disableNavigationButtons(request);
 			forward = FWD_FAIL_INSERT;
-		} finally {
-			if (!tx.wasRolledBack()) {
-				tx.commit();
-			}
-			HibernateUtil.closeSession();
-		}
+		} 
+//		finally {
+//			if (!tx.wasRolledBack()) {
+//				tx.commit();
+//			}
+//			HibernateUtil.closeSession();
+//		}
 
 		AnalyzerTestNameCache.instance().reloadCache();
 
@@ -186,8 +186,7 @@ public class AnalyzerTestNameController extends BaseController {
 	private AnalyzerTestMapping getAnalyzerAndTestName(String analyzerId, String analyzerTestName, String testId) {
 
 		AnalyzerTestMapping existingMapping = null;
-		AnalyzerTestMappingDAO mappingDAO = new AnalyzerTestMappingDAOImpl();
-		List<AnalyzerTestMapping> testMappingList = mappingDAO.getAllAnalyzerTestMappings();
+		List<AnalyzerTestMapping> testMappingList = analyzerTestMappingService.getAllAnalyzerTestMappings();
 		for (AnalyzerTestMapping testMapping : testMappingList) {
 			if (analyzerId.equals(testMapping.getAnalyzerId())
 					&& analyzerTestName.equals(testMapping.getAnalyzerTestName())) {

@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -23,13 +22,11 @@ import spring.service.unitofmeasure.UnitOfMeasureService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.unitofmeasure.daoimpl.UnitOfMeasureDAOImpl;
 import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 @Controller
 public class UomCreateController extends BaseController {
-
+	
 	public static final String NAME_SEPARATOR = "$";
 
 	@Autowired
@@ -95,18 +92,19 @@ public class UomCreateController extends BaseController {
 
 		UnitOfMeasure unitOfMeasure = createUnitOfMeasure(identifyingName, userId);
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 		try {
-			new UnitOfMeasureDAOImpl().insertData(unitOfMeasure);
-			tx.commit();
+			unitOfMeasureService.insert(unitOfMeasure);
+//			tx.commit();
 
 		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
+//			tx.rollback();
 			lre.printStackTrace();
-		} finally {
-			HibernateUtil.closeSession();
-		}
+		} 
+//		finally {
+//			HibernateUtil.closeSession();
+//		}
 
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.UNIT_OF_MEASURE);
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.UNIT_OF_MEASURE_INACTIVE);

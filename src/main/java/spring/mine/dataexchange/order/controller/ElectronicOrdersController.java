@@ -5,7 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -17,17 +17,19 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.dataexchange.order.form.ElectronicOrderViewForm;
+import spring.service.dataexchange.order.ElectronicOrderService;
+import spring.service.statusofsample.StatusOfSampleService;
 import us.mn.state.health.lims.dataexchange.order.ElectronicOrderSortOrderCategoryConvertor;
-import us.mn.state.health.lims.dataexchange.order.dao.ElectronicOrderDAO;
-import us.mn.state.health.lims.dataexchange.order.daoimpl.ElectronicOrderDAOImpl;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.statusofsample.dao.StatusOfSampleDAO;
-import us.mn.state.health.lims.statusofsample.daoimpl.StatusOfSampleDAOImpl;
 import us.mn.state.health.lims.statusofsample.valueholder.StatusOfSample;
 
 @Controller
 public class ElectronicOrdersController extends BaseController {
+	
+	@Autowired
+	StatusOfSampleService statusOfSampleService;
+	@Autowired
+	ElectronicOrderService electronicOrderService;
 
 	@InitBinder
 	public void initBinder(final WebDataBinder webdataBinder) {
@@ -45,10 +47,9 @@ public class ElectronicOrdersController extends BaseController {
 			form.setPage(1);
 		}
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
-		ElectronicOrderDAO electronicOrderDAO = new ElectronicOrderDAOImpl();
-		List<ElectronicOrder> eOrders = electronicOrderDAO.getAllElectronicOrdersOrderedBy(form.getSortOrder());
-		tx.commit();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
+		List<ElectronicOrder> eOrders = electronicOrderService.getAllElectronicOrdersOrderedBy(form.getSortOrder());
+//		tx.commit();
 
 		// correct for proper bounds
 		int startIndex = (form.getPage() - 1) * 50;
@@ -62,15 +63,14 @@ public class ElectronicOrdersController extends BaseController {
 
 		// get section of list for display on current page
 		eOrders = eOrders.subList(startIndex, endIndex);
-		tx = HibernateUtil.getSession().beginTransaction();
-		StatusOfSampleDAO statusDAO = new StatusOfSampleDAOImpl();
+//		tx = HibernateUtil.getSession().beginTransaction();
 		for (ElectronicOrder eOrder : eOrders) {
 			StatusOfSample status = new StatusOfSample();
 			status.setId(eOrder.getStatusId());
-			statusDAO.getData(status);
+			statusOfSampleService.get(eOrder.getStatusId());
 			eOrder.setStatus(status);
 		}
-		tx.commit();
+//		tx.commit();
 		form.setEOrders(eOrders);
 
 		return findForward(FWD_SUCCESS, form);

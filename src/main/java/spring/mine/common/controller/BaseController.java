@@ -26,7 +26,6 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.login.dao.UserModuleService;
-import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
 
 @Component
@@ -40,6 +39,9 @@ public abstract class BaseController implements IActionConstants {
 	// Spring's dependency injection for accessing the request
 	@Autowired
 	protected HttpServletRequest request;
+	
+	@Autowired
+	UserModuleService userModuleService;
 
 	protected abstract String findLocalForward(String forward);
 
@@ -200,7 +202,6 @@ public abstract class BaseController implements IActionConstants {
 	}
 
 	protected boolean userHasPermissionForModule(HttpServletRequest request, String module) {
-		UserModuleService userModuleService = new UserModuleServiceImpl();
 		if (!userModuleService.isUserAdmin(request)
 				&& SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
 			@SuppressWarnings("rawtypes")
