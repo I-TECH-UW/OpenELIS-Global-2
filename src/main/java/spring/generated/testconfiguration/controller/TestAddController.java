@@ -29,45 +29,36 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.TestAddForm;
 import spring.generated.testconfiguration.validator.TestAddFormValidator;
 import spring.mine.common.controller.BaseController;
+import spring.service.dictionary.DictionaryService;
+import spring.service.localization.LocalizationService;
 import spring.service.localization.LocalizationServiceImpl;
+import spring.service.panel.PanelService;
+import spring.service.panelitem.PanelItemService;
+import spring.service.resultlimit.ResultLimitService;
 import spring.service.resultlimit.ResultLimitServiceImpl;
 import spring.service.test.TestSectionServiceImpl;
+import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
+import spring.service.testresult.TestResultService;
+import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.service.typeofsample.TypeOfSampleTestService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
+import spring.service.unitofmeasure.UnitOfMeasureService;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.localization.dao.LocalizationDAO;
-import us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl;
 import us.mn.state.health.lims.localization.valueholder.Localization;
-import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
-import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
-import us.mn.state.health.lims.panelitem.daoimpl.PanelItemDAOImpl;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
-import us.mn.state.health.lims.resultlimits.dao.ResultLimitDAO;
-import us.mn.state.health.lims.resultlimits.daoimpl.ResultLimitDAOImpl;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestSection;
-import us.mn.state.health.lims.testresult.dao.TestResultDAO;
-import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleTestDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
-import us.mn.state.health.lims.unitofmeasure.daoimpl.UnitOfMeasureDAOImpl;
 import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 @Controller
@@ -75,8 +66,26 @@ public class TestAddController extends BaseController {
 
 	@Autowired
 	TestAddFormValidator formValidator;
-
-	private TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
+	@Autowired
+	DictionaryService dictionaryService;
+	@Autowired
+	PanelService panelService;
+	@Autowired
+	TypeOfSampleService typeOfSampleService;
+	@Autowired
+	TypeOfSampleTestService typeOfSampleTestService;
+	@Autowired
+	LocalizationService localizationService;
+	@Autowired
+	PanelItemService panelItemService;
+	@Autowired
+	TestService testService;
+	@Autowired
+	ResultLimitService resultLimitService;
+	@Autowired
+	TestResultService testResultService;
+	@Autowired
+	UnitOfMeasureService unitOfMeasureService;
 
 	@RequestMapping(value = "/TestAdd", method = RequestMethod.GET)
 	public ModelAndView showTestAdd(HttpServletRequest request) {
@@ -136,61 +145,56 @@ public class TestAddController extends BaseController {
 		Localization nameLocalization = createNameLocalization(testAddParams);
 		Localization reportingNameLocalization = createReportingNameLocalization(testAddParams);
 
-		LocalizationDAO localizationDAO = new LocalizationDAOImpl();
-		TestDAO testDAO = new TestDAOImpl();
-		PanelItemDAO panelItemDAO = new PanelItemDAOImpl();
-		TestResultDAO testResultDAO = new TestResultDAOImpl();
-		TypeOfSampleTestDAO typeOfSampleTestDAO = new TypeOfSampleTestDAOImpl();
-		ResultLimitDAO resultLimitDAO = new ResultLimitDAOImpl();
-
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
 
 			nameLocalization.setSysUserId(currentUserId);
-			localizationDAO.insert(nameLocalization);
+			localizationService.insert(nameLocalization);
 			reportingNameLocalization.setSysUserId(currentUserId);
-			localizationDAO.insert(reportingNameLocalization);
+			localizationService.insert(reportingNameLocalization);
 
 			for (TestSet set : testSets) {
 				set.test.setSysUserId(currentUserId);
 				set.test.setLocalizedTestName(nameLocalization);
 				set.test.setLocalizedReportingName(reportingNameLocalization);
-				testDAO.insertData(set.test);
+				testService.insert(set.test);
 
 				for (Test test : set.sortedTests) {
 					test.setSysUserId(currentUserId);
-					testDAO.updateData(test);
+					testService.update(test);
 				}
 
 				set.sampleTypeTest.setSysUserId(currentUserId);
 				set.sampleTypeTest.setTestId(set.test.getId());
-				typeOfSampleTestDAO.insertData(set.sampleTypeTest);
+				typeOfSampleTestService.insert(set.sampleTypeTest);
 
 				for (PanelItem item : set.panelItems) {
 					item.setSysUserId(currentUserId);
 					item.setTest(set.test);
-					panelItemDAO.insertData(item);
+					panelItemService.insert(item);
 				}
 
 				for (TestResult testResult : set.testResults) {
 					testResult.setSysUserId(currentUserId);
 					testResult.setTest(set.test);
-					testResultDAO.insertData(testResult);
+					testResultService.insert(testResult);
 				}
 
 				for (ResultLimit resultLimit : set.resultLimits) {
 					resultLimit.setSysUserId(currentUserId);
 					resultLimit.setTestId(set.test.getId());
-					resultLimitDAO.insertData(resultLimit);
+					resultLimitService.insert(resultLimit);
 				}
 			}
 
-			tx.commit();
-		} catch (HibernateException e) {
-			tx.rollback();
-		} finally {
-			HibernateUtil.closeSession();
-		}
+//			tx.commit();
+		} catch (HibernateException lre) {
+//			tx.rollback();
+			lre.printStackTrace();
+		} 
+//		finally {
+//			HibernateUtil.closeSession();
+//		}
 
 		TestServiceImpl.refreshTestNames();
 		TypeOfSampleServiceImpl.getInstance().clearCache();
@@ -218,7 +222,7 @@ public class TestAddController extends BaseController {
 		List<TestSet> testSets = new ArrayList<>();
 		UnitOfMeasure uom = null;
 		if (!GenericValidator.isBlankOrNull(testAddParams.uomId) || "0".equals(testAddParams.uomId)) {
-			uom = new UnitOfMeasureDAOImpl().getUnitOfMeasureById(testAddParams.uomId);
+			uom = unitOfMeasureService.getUnitOfMeasureById(testAddParams.uomId);
 		}
 		TestSection testSection = new TestSectionServiceImpl(testAddParams.testSectionId).getTestSection();
 
@@ -228,8 +232,7 @@ public class TestAddController extends BaseController {
 		}
 		// The number of test sets depend on the number of sampleTypes
 		for (int i = 0; i < testAddParams.sampleList.size(); i++) {
-			TypeOfSample typeOfSample = typeOfSampleDAO
-					.getTypeOfSampleById(testAddParams.sampleList.get(i).sampleTypeId);
+			TypeOfSample typeOfSample = typeOfSampleService.getTypeOfSampleById(testAddParams.sampleList.get(i).sampleTypeId);
 			if (typeOfSample == null) {
 				continue;
 			}
@@ -307,10 +310,9 @@ public class TestAddController extends BaseController {
 	}
 
 	private void createPanelItems(ArrayList<PanelItem> panelItems, TestAddParams testAddParams) {
-		PanelDAOImpl panelDAO = new PanelDAOImpl();
 		for (String panelId : testAddParams.panelList) {
 			PanelItem panelItem = new PanelItem();
-			panelItem.setPanel(panelDAO.getPanelById(panelId));
+			panelItem.setPanel(panelService.getPanelById(panelId));
 			panelItems.add(panelItem);
 		}
 	}
@@ -453,7 +455,7 @@ public class TestAddController extends BaseController {
 
 	@SuppressWarnings("unchecked")
 	private List<TestResult> getSortedTestResults() {
-		List<TestResult> testResults = new TestResultDAOImpl().getAllTestResults();
+		List<TestResult> testResults = testResultService.getAllTestResults();
 
 		Collections.sort(testResults, new Comparator<TestResult>() {
 			@Override
@@ -499,11 +501,10 @@ public class TestAddController extends BaseController {
 
 	private List<List<IdValuePair>> getGroupedDictionaryPairs(HashSet<String> dictionaryIdGroups) {
 		List<List<IdValuePair>> groups = new ArrayList<>();
-		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
 		for (String group : dictionaryIdGroups) {
 			List<IdValuePair> dictionaryPairs = new ArrayList<>();
 			for (String id : group.split(",")) {
-				Dictionary dictionary = dictionaryDAO.getDictionaryById(id);
+				Dictionary dictionary = dictionaryService.getDictionaryById(id);
 				if (dictionary != null) {
 					dictionaryPairs.add(new IdValuePair(id, dictionary.getLocalizedName()));
 				}

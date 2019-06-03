@@ -8,7 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -24,20 +24,22 @@ import spring.mine.common.controller.BaseMenuController;
 import spring.mine.common.form.MenuForm;
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.analyzer.dao.AnalyzerDAO;
-import us.mn.state.health.lims.analyzer.daoimpl.AnalyzerDAOImpl;
+import spring.service.analyzer.AnalyzerService;
+import spring.service.analyzerimport.AnalyzerTestMappingService;
 import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
 import us.mn.state.health.lims.analyzerimport.action.beans.NamedAnalyzerTestMapping;
-import us.mn.state.health.lims.analyzerimport.dao.AnalyzerTestMappingDAO;
-import us.mn.state.health.lims.analyzerimport.daoimpl.AnalyzerTestMappingDAOImpl;
 import us.mn.state.health.lims.analyzerimport.util.AnalyzerTestNameCache;
 import us.mn.state.health.lims.analyzerimport.util.MappedTestName;
 import us.mn.state.health.lims.analyzerimport.valueholder.AnalyzerTestMapping;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Controller
 public class AnalyzerTestNameMenuController extends BaseMenuController {
+	
+	@Autowired
+	AnalyzerTestMappingService analyzerTestMappingService;
+	@Autowired
+	AnalyzerService analyzerService;
 
 	private static final int ANALYZER_NAME = 0;
 	private static final int ANALYZER_TEST = 1;
@@ -71,7 +73,6 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 
 		List<NamedAnalyzerTestMapping> mappedTestNameList = new ArrayList<>();
 		List<String> analyzerList = AnalyzerTestNameCache.instance().getAnalyzerNames();
-		AnalyzerDAO analyzerDAO = new AnalyzerDAOImpl();
 		Analyzer analyzer = new Analyzer();
 
 		for (String analyzerName : analyzerList) {
@@ -79,7 +80,7 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 					.getMappedTestsForAnalyzer(analyzerName).values();
 			if (mappedTestNames.size() > 0) {
 				analyzer.setId(((MappedTestName) mappedTestNames.toArray()[0]).getAnalyzerId());
-				analyzer = analyzerDAO.getAnalyzerById(analyzer);
+				analyzer = analyzerService.getAnalyzerById(analyzer);
 				mappedTestNameList.addAll(convertedToNamedList(mappedTestNames, analyzer.getName()));
 			}
 		}
@@ -154,28 +155,15 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 			AnalyzerTestMapping testMapping = new AnalyzerTestMapping();
 			testMapping.setAnalyzerId(AnalyzerTestNameCache.instance().getAnalyzerIdForName(ids[ANALYZER_NAME]));
 			testMapping.setAnalyzerTestName(ids[ANALYZER_TEST]);
+			testMapping.setSysUserId(getSysUserId(request));
 			testMappingList.add(testMapping);
-		}
-
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
-		try {
-
-			AnalyzerTestMappingDAO testMappingDAO = new AnalyzerTestMappingDAOImpl();
-			testMappingDAO.deleteData(testMappingList, getSysUserId(request));
-
-			tx.commit();
-		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
-			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
-				result.reject("errors.OptimisticLockException");
-			} else {
-				result.reject("errors.DeleteException");
+			try {
+				analyzerTestMappingService.delete(testMapping);
+			} catch (LIMSRuntimeException lre) {
+				lre.printStackTrace();
+				saveErrors(result);
+				return findForward(performMenuAction(form, request), form);
 			}
-			saveErrors(result);
-			return findForward(performMenuAction(form, request), form);
-
-		} finally {
-			HibernateUtil.closeSession();
 		}
 
 		AnalyzerTestNameCache.instance().reloadCache();

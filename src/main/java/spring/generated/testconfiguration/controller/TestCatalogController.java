@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,17 +17,16 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.TestCatalogForm;
 import spring.mine.common.controller.BaseController;
+import spring.service.dictionary.DictionaryService;
 import spring.service.localization.LocalizationServiceImpl;
 import spring.service.resultlimit.ResultLimitServiceImpl;
+import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestCatalog;
 import us.mn.state.health.lims.testconfiguration.beans.ResultLimitBean;
@@ -35,6 +35,11 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Controller
 public class TestCatalogController extends BaseController {
+	
+	@Autowired
+	TestService testService;
+	@Autowired
+	DictionaryService dictionaryService;
 
 	@RequestMapping(value = "/TestCatalog", method = RequestMethod.GET)
 	public ModelAndView showTestCatalog(HttpServletRequest request) {
@@ -76,7 +81,7 @@ public class TestCatalogController extends BaseController {
 	private List<TestCatalog> createTestList() {
 		List<TestCatalog> catalogList = new ArrayList<>();
 
-		List<Test> testList = new TestDAOImpl().getAllTests(false);
+		List<Test> testList = testService.getAllTests(false);
 
 		for (Test test : testList) {
 
@@ -161,12 +166,10 @@ public class TestCatalogController extends BaseController {
 		return dictionaryList;
 	}
 
-	private DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-
 	private String getDictionaryValue(TestResult testResult) {
 
 		if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
-			Dictionary dictionary = dictionaryDAO.getDataForId(testResult.getValue());
+			Dictionary dictionary = dictionaryService.getDataForId(testResult.getValue());
 			String displayValue = dictionary.getLocalizedName();
 
 			if ("unknown".equals(displayValue)) {

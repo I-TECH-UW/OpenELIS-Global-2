@@ -9,7 +9,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -25,10 +24,8 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.TestSectionOrderForm;
 import spring.generated.testconfiguration.validator.TestSectionOrderFormValidator;
 import spring.mine.common.controller.BaseController;
+import spring.service.test.TestSectionService;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.test.dao.TestSectionDAO;
-import us.mn.state.health.lims.test.daoimpl.TestSectionDAOImpl;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 
 @Controller
@@ -36,6 +33,8 @@ public class TestSectionOrderController extends BaseController {
 
 	@Autowired
 	TestSectionOrderFormValidator formValidator;
+	@Autowired
+	TestSectionService testSectionService;
 
 	@RequestMapping(value = "/TestSectionOrder", method = RequestMethod.GET)
 	public ModelAndView showTestSectionOrder(HttpServletRequest request) {
@@ -100,25 +99,26 @@ public class TestSectionOrderController extends BaseController {
 		List<TestSection> testSections = new ArrayList<>();
 
 		String currentUserId = getSysUserId(request);
-		TestSectionDAO testSectionDAO = new TestSectionDAOImpl();
 		for (ActivateSet sets : orderSet) {
-			TestSection testSection = testSectionDAO.getTestSectionById(sets.id);
+			TestSection testSection = testSectionService.getTestSectionById(sets.id);
 			testSection.setSortOrderInt(sets.sortOrder);
 			testSection.setSysUserId(currentUserId);
 			testSections.add(testSection);
 		}
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
 			for (TestSection testSection : testSections) {
-				testSectionDAO.updateData(testSection);
+				testSectionService.update(testSection);
 			}
-			tx.commit();
-		} catch (HibernateException e) {
-			tx.rollback();
-		} finally {
-			HibernateUtil.closeSession();
-		}
+//			tx.commit();
+		} catch (HibernateException lre) {
+//			tx.rollback();
+			lre.printStackTrace();
+		} 
+//		finally {
+//			HibernateUtil.closeSession();
+//		}
 
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION);
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);

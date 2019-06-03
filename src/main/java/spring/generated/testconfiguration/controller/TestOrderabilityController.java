@@ -10,7 +10,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -26,15 +25,13 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.TestOrderabilityForm;
 import spring.generated.testconfiguration.validator.TestOrderabilityFormValidator;
 import spring.mine.common.controller.BaseController;
+import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.test.beanItems.TestActivationBean;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 @Controller
@@ -42,6 +39,8 @@ public class TestOrderabilityController extends BaseController {
 
 	@Autowired
 	TestOrderabilityFormValidator formValidator;
+	@Autowired
+	TestService testService;
 
 	@Autowired
 	TypeOfSampleService typeOfSampleService;
@@ -152,21 +151,21 @@ public class TestOrderabilityController extends BaseController {
 		List<Test> tests = getTests(unorderableTestIds, false);
 		tests.addAll(getTests(orderableTestIds, true));
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
-		TestDAO testDAO = new TestDAOImpl();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 		try {
 			for (Test test : tests) {
-				testDAO.updateData(test);
+				testService.update(test);
 			}
 
-			tx.commit();
-		} catch (HibernateException e) {
-			tx.rollback();
-		} finally {
-			HibernateUtil.closeSession();
-		}
+//			tx.commit();
+		} catch (HibernateException lre) {
+//			tx.rollback();
+			lre.printStackTrace();
+		} 
+//		finally {
+//			HibernateUtil.closeSession();
+//		}
 
 		TypeOfSampleServiceImpl.getInstance().clearCache();
 

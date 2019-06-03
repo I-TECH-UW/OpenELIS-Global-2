@@ -14,12 +14,15 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
+import us.mn.state.health.lims.test.dao.TestDAO;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 @Service
 public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem> implements PanelItemService {
 	@Autowired
 	protected PanelItemDAO baseObjectDAO;
+	@Autowired
+	TestDAO testDAO;
 	@Autowired
 	PanelService panelService;
 

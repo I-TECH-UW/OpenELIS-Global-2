@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,15 +13,19 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.dev.form.WebTestInfoForm;
-import us.mn.state.health.lims.login.dao.LoginDAO;
-import us.mn.state.health.lims.login.daoimpl.LoginDAOImpl;
+import spring.service.login.LoginService;
+import spring.service.patient.PatientService;
 import us.mn.state.health.lims.login.valueholder.Login;
 import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
-import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 
 @Controller
 public class webtestInfoController extends BaseController {
+	
+	@Autowired
+	LoginService loginService;
+	@Autowired
+	PatientService patientService;
 
 	@RequestMapping(value = "/webtestInfo", method = RequestMethod.GET)
 	public ModelAndView showwebtestInfo(HttpServletRequest request)
@@ -50,9 +55,8 @@ public class webtestInfoController extends BaseController {
 	}
 
 	private void addUserInfo(StringBuilder xmlBuilder) {
-		LoginDAO loginDAO = new LoginDAOImpl();
 		// Login user = loginDAO.getUserProfile("user");
-		Login user = loginDAO.getUserProfile("webtest");
+		Login user = loginService.getUserProfile("webtest");
 		if (user != null) {
 			xmlBuilder.append("<webtestuser-id>");
 			xmlBuilder.append(user.getSystemUserId() + "-" + user.getId());
@@ -68,14 +72,14 @@ public class webtestInfoController extends BaseController {
 		}
 	}
 
-	private void addNumberOfPatients(StringBuilder xmlBuilder) {
-		int count = new PatientDAOImpl().getTotalCount("Patient", Patient.class);
-
-		xmlBuilder.append("<patient-count>");
-		xmlBuilder.append(String.valueOf(count));
-		xmlBuilder.append("</patient-count>");
-
-	}
+//	private void addNumberOfPatients(StringBuilder xmlBuilder) {
+//		int count = new PatientDAOImpl().getTotalCount("Patient", Patient.class);
+//
+//		xmlBuilder.append("<patient-count>");
+//		xmlBuilder.append(String.valueOf(count));
+//		xmlBuilder.append("</patient-count>");
+//
+//	}
 
 	private void addNumberOfSamples(StringBuilder xmlBuilder) {
 		int count = new PatientDAOImpl().getTotalCount("Sample", Sample.class);

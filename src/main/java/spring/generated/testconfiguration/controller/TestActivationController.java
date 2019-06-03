@@ -10,7 +10,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -26,18 +25,14 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.TestActivationForm;
 import spring.generated.testconfiguration.validator.TestActivationFormValidator;
 import spring.mine.common.controller.BaseController;
+import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.test.beanItems.TestActivationBean;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Controller
@@ -47,6 +42,8 @@ public class TestActivationController extends BaseController {
 	TestActivationFormValidator formValidator;
 	@Autowired
 	TypeOfSampleService typeOfSampleService;
+	@Autowired
+	TestService testService;
 
 	@RequestMapping(value = "/TestActivation", method = RequestMethod.GET)
 	public ModelAndView showTestActivation(HttpServletRequest request) {
@@ -156,38 +153,40 @@ public class TestActivationController extends BaseController {
 		List<TypeOfSample> deactivateSampleTypes = getDeactivatedSampleTypes(deactivateSampleIds);
 		List<TypeOfSample> activateSampleTypes = getActivatedSampleTypes(activateSampleSets);
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
-		TestDAO testDAO = new TestDAOImpl();
-		TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
+//		TestDAO testDAO = new TestDAOImpl();
+//		TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
 
 		try {
 			for (Test test : deactivateTests) {
-				testDAO.updateData(test);
+				testService.update(test);
 			}
 
 			for (Test test : activateTests) {
-				testDAO.updateData(test);
+				testService.update(test);
 			}
 
 			for (TypeOfSample typeOfSample : deactivateSampleTypes) {
-				typeOfSampleDAO.updateData(typeOfSample);
+				typeOfSampleService.update(typeOfSample);
 			}
 
 			for (TypeOfSample typeOfSample : activateSampleTypes) {
-				typeOfSampleDAO.updateData(typeOfSample);
+				typeOfSampleService.update(typeOfSample);
 			}
 
 			if (!deactivateSampleTypes.isEmpty() || !activateSampleTypes.isEmpty()) {
 				TypeOfSampleServiceImpl.getInstance().clearCache();
 			}
 
-			tx.commit();
-		} catch (HibernateException e) {
-			tx.rollback();
-		} finally {
-			HibernateUtil.closeSession();
-		}
+//			tx.commit();
+		} catch (HibernateException lre) {
+//			tx.rollback();
+			lre.printStackTrace();
+		} 
+//		finally {
+//			HibernateUtil.closeSession();
+//		}
 
 		List<TestActivationBean> activeTestList = createTestList(true, true);
 		List<TestActivationBean> inactiveTestList = createTestList(false, true);

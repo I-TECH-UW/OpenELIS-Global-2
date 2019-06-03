@@ -21,20 +21,17 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.datasubmission.form.DataSubmissionForm;
 import spring.mine.datasubmission.validator.DataSubmissionFormValidator;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.datasubmission.DataIndicatorService;
+import spring.service.datasubmission.TypeOfDataIndicatorService;
+import spring.service.siteinformation.SiteInformationService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.datasubmission.DataIndicatorFactory;
 import us.mn.state.health.lims.datasubmission.DataSubmitter;
-import us.mn.state.health.lims.datasubmission.dao.DataIndicatorDAO;
-import us.mn.state.health.lims.datasubmission.dao.TypeOfDataIndicatorDAO;
-import us.mn.state.health.lims.datasubmission.daoimpl.DataIndicatorDAOImpl;
-import us.mn.state.health.lims.datasubmission.daoimpl.TypeOfDataIndicatorDAOImpl;
 import us.mn.state.health.lims.datasubmission.valueholder.DataIndicator;
 import us.mn.state.health.lims.datasubmission.valueholder.TypeOfDataIndicator;
-import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 @Controller
@@ -42,6 +39,12 @@ public class DataSubmissionController extends BaseController {
 
 	@Autowired
 	DataSubmissionFormValidator formValidator;
+	@Autowired
+	SiteInformationService siteInformationService;
+	@Autowired
+	TypeOfDataIndicatorService typeOfDataIndicatorService;
+	@Autowired
+	DataIndicatorService dataIndicatorService;
 
 	@RequestMapping(value = "/DataSubmission", method = RequestMethod.GET)
 	public ModelAndView showDataSubmission(HttpServletRequest request) {
@@ -52,13 +55,10 @@ public class DataSubmissionController extends BaseController {
 		int year = GenericValidator.isBlankOrNull(request.getParameter("year")) ? DateUtil.getCurrentYear()
 				: Integer.parseInt(request.getParameter("year"));
 
-		DataIndicatorDAO indicatorDAO = new DataIndicatorDAOImpl();
-		TypeOfDataIndicatorDAO typeOfIndicatorDAO = new TypeOfDataIndicatorDAOImpl();
-
 		List<DataIndicator> indicators = new ArrayList<>();
-		List<TypeOfDataIndicator> typeOfIndicatorList = typeOfIndicatorDAO.getAllTypeOfDataIndicator();
+		List<TypeOfDataIndicator> typeOfIndicatorList = typeOfDataIndicatorService.getAllTypeOfDataIndicator();
 		for (TypeOfDataIndicator typeOfIndicator : typeOfIndicatorList) {
-			DataIndicator indicator = indicatorDAO.getIndicatorByTypeYearMonth(typeOfIndicator, year, month);
+			DataIndicator indicator = dataIndicatorService.getIndicatorByTypeYearMonth(typeOfIndicator, year, month);
 			if (indicator == null) {
 				indicator = DataIndicatorFactory.createBlankDataIndicatorForType(typeOfIndicator);
 			}
@@ -67,7 +67,7 @@ public class DataSubmissionController extends BaseController {
 			indicators.add(indicator);
 		}
 
-		form.setDataSubUrl(new SiteInformationDAOImpl().getSiteInformationByName("Data Sub URL"));
+		form.setDataSubUrl(siteInformationService.getSiteInformationByName("Data Sub URL"));
 		form.setIndicators(indicators);
 		form.setMonth(month);
 		form.setYear(year);
@@ -93,12 +93,10 @@ public class DataSubmissionController extends BaseController {
 		List<DataIndicator> indicators = (List<DataIndicator>) form.get("indicators");
 		boolean submit = "true".equalsIgnoreCase(request.getParameter("submit"));
 		SiteInformation dataSubUrl = (SiteInformation) form.get("dataSubUrl");
-		SiteInformationDAO siteInfoDAO = new SiteInformationDAOImpl();
-		dataSubUrl = (SiteInformation) siteInfoDAO.getSiteInformationByDomainName("Data Sub URL");
+		dataSubUrl = (SiteInformation) siteInformationService.getSiteInformationByDomainName("Data Sub URL");
 		dataSubUrl.setValue(form.getDataSubUrl().getValue());
 		dataSubUrl.setSysUserId(getSysUserId(request));
-		siteInfoDAO.updateData(dataSubUrl);
-		DataIndicatorDAO indicatorDAO = new DataIndicatorDAOImpl();
+		siteInformationService.updateData(dataSubUrl);
 		for (DataIndicator indicator : indicators) {
 			if (submit && indicator.isSendIndicator()) {
 				boolean success = DataSubmitter.sendDataIndicator(indicator);
@@ -113,13 +111,13 @@ public class DataSubmissionController extends BaseController {
 				}
 			}
 
-			DataIndicator databaseIndicator = indicatorDAO.getIndicatorByTypeYearMonth(indicator.getTypeOfIndicator(),
+			DataIndicator databaseIndicator = dataIndicatorService.getIndicatorByTypeYearMonth(indicator.getTypeOfIndicator(),
 					year, month);
 			if (databaseIndicator == null) {
-				indicatorDAO.insertData(indicator);
+				dataIndicatorService.insertData(indicator);
 			} else {
 				indicator.setId(databaseIndicator.getId());
-				indicatorDAO.updateData(indicator);
+				dataIndicatorService.updateData(indicator);
 			}
 		}
 
