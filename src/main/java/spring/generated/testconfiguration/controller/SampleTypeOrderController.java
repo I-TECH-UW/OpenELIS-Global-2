@@ -9,7 +9,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -25,10 +24,8 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.SampleTypeOrderForm;
 import spring.generated.testconfiguration.validator.SampleTypeOrderFormValidator;
 import spring.mine.common.controller.BaseController;
+import spring.service.typeofsample.TypeOfSampleService;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Controller
@@ -36,7 +33,9 @@ public class SampleTypeOrderController extends BaseController {
 
 	@Autowired
 	SampleTypeOrderFormValidator formValidator;
-
+	@Autowired
+	TypeOfSampleService typeOfSampleService;
+	
 	@RequestMapping(value = "/SampleTypeOrder", method = RequestMethod.GET)
 	public ModelAndView showSampleTypeOrder(HttpServletRequest request) {
 		SampleTypeOrderForm form = new SampleTypeOrderForm();
@@ -78,25 +77,26 @@ public class SampleTypeOrderController extends BaseController {
 		List<TypeOfSample> typeOfSamples = new ArrayList<>();
 
 		String currentUserId = getSysUserId(request);
-		TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
 		for (ActivateSet sets : orderSet) {
-			TypeOfSample typeOfSample = typeOfSampleDAO.getTypeOfSampleById(sets.id);
+			TypeOfSample typeOfSample = typeOfSampleService.getTypeOfSampleById(sets.id);
 			typeOfSample.setSortOrder(sets.sortOrder);
 			typeOfSample.setSysUserId(currentUserId);
 			typeOfSamples.add(typeOfSample);
 		}
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
 			for (TypeOfSample typeOfSample : typeOfSamples) {
-				typeOfSampleDAO.updateData(typeOfSample);
+				typeOfSampleService.update(typeOfSample);
 			}
-			tx.commit();
-		} catch (HibernateException e) {
-			tx.rollback();
-		} finally {
-			HibernateUtil.closeSession();
-		}
+//			tx.commit();
+		} catch (HibernateException lre) {
+//			tx.rollback();
+			lre.printStackTrace();
+		} 
+//			finally {
+//			HibernateUtil.closeSession();
+//		}
 
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);

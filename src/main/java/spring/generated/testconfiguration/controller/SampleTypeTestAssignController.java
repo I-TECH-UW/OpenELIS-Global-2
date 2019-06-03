@@ -24,13 +24,11 @@ import spring.mine.common.controller.BaseController;
 import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
+import spring.service.typeofsample.TypeOfSampleTestService;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleTestDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
@@ -39,6 +37,8 @@ public class SampleTypeTestAssignController extends BaseController {
 
 	@Autowired
 	TypeOfSampleService typeOfSampleService;
+	@Autowired
+	TypeOfSampleTestService typeOfSampleTestService;
 
 	@RequestMapping(value = "/SampleTypeTestAssign", method = RequestMethod.GET)
 	public ModelAndView showSampleTypeTestAssign(HttpServletRequest request) {
@@ -126,12 +126,12 @@ public class SampleTypeTestAssignController extends BaseController {
 			return findForward(FWD_SUCCESS_INSERT, form);
 		}
 
-		TypeOfSampleTest typeOfSampleTestOld = new TypeOfSampleTestDAOImpl().getTypeOfSampleTestForTest(testId);
+		TypeOfSampleTest typeOfSampleTestOld = typeOfSampleTestService.getTypeOfSampleTestForTest(testId);
 		boolean deleteExistingTypeOfSampleTest = false;
-		String[] typeOfSamplesTestIDs = new String[1];
+		String typeOfSamplesTestID = new String();
 
 		if (typeOfSampleTestOld != null) {
-			typeOfSamplesTestIDs[0] = typeOfSampleTestOld.getId();
+			typeOfSamplesTestID = typeOfSampleTestOld.getId();
 			deleteExistingTypeOfSampleTest = true;
 		}
 		// ---------------------------
@@ -154,14 +154,14 @@ public class SampleTypeTestAssignController extends BaseController {
 			deActivateTypeOfSample.setSysUserId(currentUser);
 		}
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
 			if (deleteExistingTypeOfSampleTest) {
-				new TypeOfSampleTestDAOImpl().deleteData(typeOfSamplesTestIDs, currentUser);
+				typeOfSampleTestService.delete(typeOfSamplesTestID, currentUser);
 			}
 
 			if (updateTypeOfSample) {
-				new TypeOfSampleDAOImpl().updateData(typeOfSample);
+				typeOfSampleService.update(typeOfSample);
 			}
 
 			TypeOfSampleTest typeOfSampleTest = new TypeOfSampleTest();
@@ -170,17 +170,19 @@ public class SampleTypeTestAssignController extends BaseController {
 			typeOfSampleTest.setSysUserId(currentUser);
 			typeOfSampleTest.setLastupdatedFields();
 
-			new TypeOfSampleTestDAOImpl().insertData(typeOfSampleTest);
+			typeOfSampleTestService.insert(typeOfSampleTest);
 
 			if (deActivateTypeOfSample != null) {
-				new TypeOfSampleDAOImpl().updateData(deActivateTypeOfSample);
+				typeOfSampleService.update(deActivateTypeOfSample);
 			}
-			tx.commit();
-		} catch (HibernateException e) {
-			tx.rollback();
-		} finally {
-			HibernateUtil.closeSession();
-		}
+//			tx.commit();
+		} catch (HibernateException lre) {
+//			tx.rollback();
+			lre.printStackTrace();
+		} 
+//			finally {
+//			HibernateUtil.closeSession();
+//		}
 
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);

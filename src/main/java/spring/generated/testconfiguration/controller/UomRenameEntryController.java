@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,14 +14,15 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.UomRenameEntryForm;
 import spring.mine.common.controller.BaseController;
+import spring.service.unitofmeasure.UnitOfMeasureService;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.unitofmeasure.dao.UnitOfMeasureDAO;
-import us.mn.state.health.lims.unitofmeasure.daoimpl.UnitOfMeasureDAOImpl;
 import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 @Controller
 public class UomRenameEntryController extends BaseController {
+	
+	@Autowired
+	UnitOfMeasureService unitOfMeasureService;
 
 	@RequestMapping(value = "/UomRenameEntry", method = RequestMethod.GET)
 	public ModelAndView showUomRenameEntry(HttpServletRequest request) {
@@ -62,8 +63,7 @@ public class UomRenameEntryController extends BaseController {
 	}
 
 	private void updateUomNames(String uomId, String nameEnglish, String userId) {
-		UnitOfMeasureDAO unitOfMeasureDAO = new UnitOfMeasureDAOImpl();
-		UnitOfMeasure unitOfMeasure = unitOfMeasureDAO.getUnitOfMeasureById(uomId);
+		UnitOfMeasure unitOfMeasure = unitOfMeasureService.getUnitOfMeasureById(uomId);
 
 		if (unitOfMeasure != null) {
 
@@ -78,19 +78,19 @@ public class UomRenameEntryController extends BaseController {
 			unitOfMeasure.setUnitOfMeasureName(nameEnglish.trim());
 			unitOfMeasure.setSysUserId(userId);
 
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
+//			Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 			try {
-//              new LocalizationDAOImpl().updateData( name );
-				// new
-				unitOfMeasureDAO.updateData(unitOfMeasure);
+				unitOfMeasureService.update(unitOfMeasure);
 
-				tx.commit();
-			} catch (HibernateException e) {
-				tx.rollback();
-			} finally {
-				HibernateUtil.closeSession();
-			}
+//				tx.commit();
+			} catch (HibernateException lre) {
+//				tx.rollback();
+				lre.printStackTrace();
+			} 
+//			finally {
+//				HibernateUtil.closeSession();
+//			}
 
 		}
 

@@ -15,13 +15,14 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
+import us.mn.state.health.lims.test.dao.TestDAO;
 
 @Service
 public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem> implements PanelItemService {
 	@Autowired
 	protected PanelItemDAO baseObjectDAO;
 	@Autowired
-	TestService testService;
+	TestDAO testDAO;
 	@Autowired
 	PanelService panelService;
 
@@ -174,7 +175,7 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem> imple
 	    for (String testId : newTests) {
 	    	PanelItem panelItem = new PanelItem();
 	    	panelItem.setPanel(panel);
-	    	panelItem.setTest(testService.getTestById(testId));
+	    	panelItem.setTest(testDAO.getTestById(testId));
 	    	panelItem.setLastupdatedFields();
 	    	panelItem.setSysUserId(currentUser);
 	    	insert(panelItem);

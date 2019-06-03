@@ -15,7 +15,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -27,10 +26,13 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.mine.barcode.form.PrintBarcodeForm;
 import spring.mine.common.controller.BaseController;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.analysis.AnalysisService;
 import spring.service.patient.PatientServiceImpl;
+import spring.service.sample.SampleService;
+import spring.service.samplehuman.SampleHumanService;
+import spring.service.sampleitem.SampleItemService;
 import spring.service.test.TestServiceImpl;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.typeofsample.TypeOfSampleService;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.IPatientService;
 import us.mn.state.health.lims.common.services.StatusService;
@@ -38,26 +40,18 @@ import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.StatusService.SampleStatus;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.sample.bean.SampleEditItem;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
-import us.mn.state.health.lims.sampleitem.dao.SampleItemDAO;
-import us.mn.state.health.lims.sampleitem.daoimpl.SampleItemDAOImpl;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Controller
 public class PrintBarcodeController extends BaseController {
 
-	private static final TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
-	private static final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
+//	private static final TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
+//	private static final AnalysisDAO analysisDAO = new AnalysisDAOImpl();
 	private static final SampleEditItemComparator testComparator = new SampleEditItemComparator();
 	private static final Set<Integer> excludedAnalysisStatusList = new HashSet<>();
 	private static final Set<Integer> ENTERED_STATUS_SAMPLE_LIST = new HashSet<>();
@@ -65,6 +59,17 @@ public class PrintBarcodeController extends BaseController {
 
 	@Autowired
 	StatusService statusService;
+	@Autowired
+	SampleService sampleService;
+	@Autowired
+	SampleItemService sampleItemService;
+	@Autowired
+	AnalysisService analysisService;
+	@Autowired
+	TypeOfSampleService typeOfSampleService;
+	@Autowired
+	SampleHumanService sampleHumanService;
+	
 
 	@PostConstruct
 	private void initialize() {
@@ -89,7 +94,7 @@ public class PrintBarcodeController extends BaseController {
 			return findForward(FWD_SUCCESS, displayObjects, form);
 		}
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		String accessionNumber = form.getAccessionNumber();
 		Sample sample = getSample(accessionNumber);
 		if (sample != null && !GenericValidator.isBlankOrNull(sample.getId())) {
@@ -98,7 +103,7 @@ public class PrintBarcodeController extends BaseController {
 			List<SampleEditItem> currentTestList = getCurrentTestInfo(sampleItemList, accessionNumber, false);
 			displayObjects.put("existingTests", currentTestList);
 		}
-		tx.commit();
+//		tx.commit();
 
 		addPatientSearch(displayObjects);
 		return findForward(FWD_SUCCESS, displayObjects, form);
@@ -140,8 +145,8 @@ public class PrintBarcodeController extends BaseController {
 	 * @return The sample belonging to accession number
 	 */
 	private Sample getSample(String accessionNumber) {
-		SampleDAO sampleDAO = new SampleDAOImpl();
-		return sampleDAO.getSampleByAccessionNumber(accessionNumber);
+//		SampleDAO sampleDAO = new SampleDAOImpl();
+		return sampleService.getSampleByAccessionNumber(accessionNumber);
 	}
 
 	/**
@@ -151,9 +156,9 @@ public class PrintBarcodeController extends BaseController {
 	 * @return The list of sample items belonging to sample
 	 */
 	private List<SampleItem> getSampleItems(Sample sample) {
-		SampleItemDAO sampleItemDAO = new SampleItemDAOImpl();
+//		SampleItemDAO sampleItemDAO = new SampleItemDAOImpl();
 
-		return sampleItemDAO.getSampleItemsBySampleIdAndStatus(sample.getId(), ENTERED_STATUS_SAMPLE_LIST);
+		return sampleItemService.getSampleItemsBySampleIdAndStatus(sample.getId(), ENTERED_STATUS_SAMPLE_LIST);
 	}
 
 	/**
@@ -185,8 +190,8 @@ public class PrintBarcodeController extends BaseController {
 
 		TypeOfSample typeOfSample = new TypeOfSample();
 		typeOfSample.setId(sampleItem.getTypeOfSampleId());
-		typeOfSampleDAO.getData(typeOfSample);
-		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleItemsExcludingByStatusIds(sampleItem,
+		typeOfSampleService.get(typeOfSample.getDescription());
+		List<Analysis> analysisList = analysisService.getAnalysesBySampleItemsExcludingByStatusIds(sampleItem,
 				excludedAnalysisStatusList);
 		List<SampleEditItem> analysisSampleItemList = new ArrayList<>();
 
@@ -231,7 +236,8 @@ public class PrintBarcodeController extends BaseController {
 	private void setPatientInfo(Map<String, Object> displayObjects, Sample sample)
 			throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
-		Patient patient = new SampleHumanDAOImpl().getPatientForSample(sample);
+//		Patient patient = new SampleHumanDAOImpl().getPatientForSample(sample);
+		Patient patient = sampleHumanService.getPatientForSample(sample);
 		IPatientService patientService = new PatientServiceImpl(patient);
 
 		displayObjects.put("patientName", patientService.getLastFirstName());

@@ -137,9 +137,7 @@ public class PanelTestAssignController extends BaseController {
 
 		if (!GenericValidator.isBlankOrNull(panelId)) {
 			List<PanelItem> panelItems = panelItemService.getPanelItemsForPanel(panelId);
-
 			List<String> newTests = (List<String>) form.get("currentTests");
-
 			try {
 				panelItemService.updatePanelItems(panelItems, panel, updatePanel, currentUser, newTests);
 			} catch (LIMSRuntimeException lre) {
