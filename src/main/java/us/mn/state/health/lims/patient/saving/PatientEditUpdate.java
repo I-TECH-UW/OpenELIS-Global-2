@@ -21,6 +21,9 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.patient.form.PatientEntryByProjectForm;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -29,6 +32,9 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
  * @author Paul A. Hill (pahill@uw.edu)
  * @since Jul 29, 2010
  */
+
+@Service
+@Scope("prototype")
 public class PatientEditUpdate extends PatientEntry {
 	/**
 	 * @param form
@@ -41,8 +47,17 @@ public class PatientEditUpdate extends PatientEntry {
 	 */
 	public PatientEditUpdate(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
 			throws Exception {
-		super(form, sysUserId, request);
+		this();
+		super.setFieldsFromForm(form);
+		super.setSysUserId(sysUserId);
+		super.setRequest(request);
 		// we are not updating the record status in either case
+		newPatientStatus = null;
+		newSampleStatus = null;
+	}
+
+	public PatientEditUpdate() {
+		super();
 		newPatientStatus = null;
 		newSampleStatus = null;
 	}

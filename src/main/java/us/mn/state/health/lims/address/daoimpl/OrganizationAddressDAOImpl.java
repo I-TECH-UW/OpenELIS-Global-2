@@ -16,7 +16,6 @@
 */
 package us.mn.state.health.lims.address.daoimpl;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +34,7 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional 
+@Transactional
 public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress> implements OrganizationAddressDAO {
 
 	public OrganizationAddressDAOImpl() {
@@ -62,18 +61,17 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress>
 		return null;
 	}
 
-	@Override
-	public Serializable insert(OrganizationAddress organizationAddress) throws LIMSRuntimeException {
-		try {
-			String id = (String) HibernateUtil.getSession().save(organizationAddress);
-			auditDAO.saveNewHistory(organizationAddress, organizationAddress.getSysUserId(), "organization_address");
-			// closeSession(); // CSL remove old
-			return id;
-		} catch (HibernateException e) {
-			handleException(e, "insert");
-		}
-		return null;
-	}
+//	@Override
+//	public Serializable insert(OrganizationAddress organizationAddress) throws LIMSRuntimeException {
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(organizationAddress);
+//			auditDAO.saveNewHistory(organizationAddress, organizationAddress.getSysUserId(), "organization_address");
+//			return id;
+//		} catch (HibernateException e) {
+//			handleException(e, "insert");
+//		}
+//		return null;
+//	}
 
 	@Override
 	public Optional<OrganizationAddress> update(OrganizationAddress organizationAddress) throws LIMSRuntimeException {

@@ -29,16 +29,28 @@ import static us.mn.state.health.lims.common.services.StatusService.RecordStatus
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
 import spring.mine.patient.form.PatientEntryByProjectForm;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.patient.util.PatientUtil;
 import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
 
+@Service
+@Scope("prototype")
 public class PatientEntryAfterAnalyzer extends PatientEntry {
 
 	public PatientEntryAfterAnalyzer(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
 			throws Exception {
-		super(form, sysUserId, request);
+		this();
+		super.setFieldsFromForm(form);
+		super.setSysUserId(sysUserId);
+		super.setRequest(request);
+	}
+
+	public PatientEntryAfterAnalyzer() {
+		super();
 		newPatientStatus = InitialRegistration;
 		newSampleStatus = NotRegistered;
 	}
@@ -59,7 +71,7 @@ public class PatientEntryAfterAnalyzer extends PatientEntry {
 	protected void populateSampleHuman() throws Exception {
 		sampleHuman = new SampleHuman();
 		sampleHuman.setSampleId(statusSet.getSampleId());
-		sampleHumanDAO.getDataBySample(sampleHuman);
+		sampleHumanService.getDataBySample(sampleHuman);
 	}
 
 	/**

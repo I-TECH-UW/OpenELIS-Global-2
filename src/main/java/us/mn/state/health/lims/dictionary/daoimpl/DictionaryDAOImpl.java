@@ -47,7 +47,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements DictionaryDAO {
 
 	public DictionaryDAOImpl() {
@@ -510,9 +510,9 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			String sql = null;
 			if (dictionary.getDictionaryCategory() != null) {
 				sql = "from Dictionary t where "
-						+ "((trim(lower(t.dictEntry)) = :param and trim(lower(t.dictionaryCategory.categoryName)) = :param2 and t.id != :dictId) "
+						+ "((trim(lower(t.dictEntry)) = :param and trim(lower(t.dictionaryCategory.categoryName)) = :param2 and t.id != :param3) "
 						+ "or "
-						+ "(trim(lower(t.localAbbreviation)) = :param4 and trim(lower(t.dictionaryCategory.categoryName)) = :param2 and t.id != :dictId)) ";
+						+ "(trim(lower(t.localAbbreviation)) = :param4 and trim(lower(t.dictionaryCategory.categoryName)) = :param2 and t.id != :param3)) ";
 
 			} else {
 				sql = "from Dictionary t where "
@@ -534,9 +534,9 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			if (!StringUtil.isNullorNill(dictionary.getId())) {
 				dictId = dictionary.getId();
 			}
-			query.setInteger("dictId", Integer.parseInt(dictId));
+			query.setInteger("param3", Integer.parseInt(dictId));
 
-			return query.list().isEmpty();
+			return !query.list().isEmpty();
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryDAOImpl", "duplicateDictionaryExists()", e.toString());

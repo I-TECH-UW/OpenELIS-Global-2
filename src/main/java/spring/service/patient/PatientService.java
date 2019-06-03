@@ -3,6 +3,7 @@ package spring.service.patient;
 import java.util.List;
 
 import spring.service.common.BaseObjectService;
+import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.person.valueholder.Person;
 
@@ -38,4 +39,6 @@ public interface PatientService extends BaseObjectService<Patient> {
 	Patient readPatient(String idString);
 
 	List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList, String study);
+
+	void persistPatientData(PatientManagementInfo patientInfo, Patient patient, String sysUserId);
 }

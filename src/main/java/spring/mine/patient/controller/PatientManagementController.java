@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -13,7 +12,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -32,8 +30,6 @@ import spring.service.patientidentity.PatientIdentityService;
 import spring.service.patienttype.PatientPatientTypeService;
 import spring.service.person.PersonService;
 import spring.service.search.SearchResultsService;
-import us.mn.state.health.lims.address.valueholder.AddressPart;
-import us.mn.state.health.lims.address.valueholder.PersonAddress;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.provider.query.PatientSearchResults;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -43,9 +39,6 @@ import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.action.bean.PatientSearch;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
-import us.mn.state.health.lims.patientidentitytype.util.PatientIdentityTypeMap;
-import us.mn.state.health.lims.patienttype.util.PatientTypeMap;
-import us.mn.state.health.lims.patienttype.valueholder.PatientPatientType;
 import us.mn.state.health.lims.person.valueholder.Person;
 
 @Controller
@@ -57,10 +50,6 @@ public class PatientManagementController extends BaseController {
 	private static final String AMBIGUOUS_DATE_CHAR = ConfigurationProperties.getInstance()
 			.getPropertyValue(ConfigurationProperties.Property.AmbiguousDateHolder);
 	private static final String AMBIGUOUS_DATE_HOLDER = AMBIGUOUS_DATE_CHAR + AMBIGUOUS_DATE_CHAR;
-
-	private static String ADDRESS_PART_VILLAGE_ID;
-	private static String ADDRESS_PART_COMMUNE_ID;
-	private static String ADDRESS_PART_DEPT_ID;
 
 	@Autowired
 	AddressPartService addressPartService;
@@ -76,20 +65,6 @@ public class PatientManagementController extends BaseController {
 	PersonAddressService personAddressService;
 	@Autowired
 	SearchResultsService searchService;
-
-	@PostConstruct
-	private void initialize() {
-		List<AddressPart> partList = addressPartService.getAll();
-		for (AddressPart addressPart : partList) {
-			if ("department".equals(addressPart.getPartName())) {
-				ADDRESS_PART_DEPT_ID = addressPart.getId();
-			} else if ("commune".equals(addressPart.getPartName())) {
-				ADDRESS_PART_COMMUNE_ID = addressPart.getId();
-			} else if ("village".equals(addressPart.getPartName())) {
-				ADDRESS_PART_VILLAGE_ID = addressPart.getId();
-			}
-		}
-	}
 
 	@RequestMapping(value = "/PatientManagement", method = RequestMethod.GET)
 	public ModelAndView showPatientManagement(HttpServletRequest request) {
@@ -127,7 +102,7 @@ public class PatientManagementController extends BaseController {
 				return findForward(FWD_FAIL_INSERT, form);
 			}
 			try {
-				persistPatientData(patientInfo, patient);
+				patientService.persistPatientData(patientInfo, patient, getSysUserId(request));
 			} catch (LIMSRuntimeException lre) {
 
 				if (lre.getException() instanceof StaleObjectStateException) {
@@ -277,174 +252,12 @@ public class PatientManagementController extends BaseController {
 		PropertyUtils.copyProperties(patient.getPerson(), patientInfo);
 	}
 
-	@Transactional
-	public void persistPatientData(PatientManagementInfo patientInfo, Patient patient) throws LIMSRuntimeException {
-		if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {
-			personService.insert(patient.getPerson());
-		} else if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {
-			personService.update(patient.getPerson());
-		}
-		patient.setPerson(patient.getPerson());
-
-		if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {
-			patientService.insert(patient);
-		} else if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {
-			patientService.update(patient);
-		}
-
-		persistPatientRelatedInformation(patientInfo, patient);
-	}
-
-	protected void persistPatientRelatedInformation(PatientManagementInfo patientInfo, Patient patient) {
-		persistIdentityTypes(patientInfo, patient);
-		persistExtraPatientAddressInfo(patientInfo, patient);
-		persistPatientType(patientInfo, patient);
-	}
-
-	protected void persistIdentityTypes(PatientManagementInfo patientInfo, Patient patient) {
-
-		persistIdentityType(patientInfo.getSTnumber(), "ST", patientInfo, patient);
-		persistIdentityType(patientInfo.getMothersName(), "MOTHER", patientInfo, patient);
-		persistIdentityType(patientInfo.getAka(), "AKA", patientInfo, patient);
-		persistIdentityType(patientInfo.getInsuranceNumber(), "INSURANCE", patientInfo, patient);
-		persistIdentityType(patientInfo.getOccupation(), "OCCUPATION", patientInfo, patient);
-		persistIdentityType(patientInfo.getSubjectNumber(), "SUBJECT", patientInfo, patient);
-		persistIdentityType(patientInfo.getMothersInitial(), "MOTHERS_INITIAL", patientInfo, patient);
-		persistIdentityType(patientInfo.getEducation(), "EDUCATION", patientInfo, patient);
-		persistIdentityType(patientInfo.getMaritialStatus(), "MARITIAL", patientInfo, patient);
-		persistIdentityType(patientInfo.getNationality(), "NATIONALITY", patientInfo, patient);
-		persistIdentityType(patientInfo.getHealthDistrict(), "HEALTH DISTRICT", patientInfo, patient);
-		persistIdentityType(patientInfo.getHealthRegion(), "HEALTH REGION", patientInfo, patient);
-		persistIdentityType(patientInfo.getOtherNationality(), "OTHER NATIONALITY", patientInfo, patient);
-	}
-
-	private void persistExtraPatientAddressInfo(PatientManagementInfo patientInfo, Patient patient) {
-		PersonAddress village = null;
-		PersonAddress commune = null;
-		PersonAddress dept = null;
-		List<PersonAddress> personAddressList = personAddressService
-				.getAddressPartsByPersonId(patient.getPerson().getId());
-
-		for (PersonAddress address : personAddressList) {
-			if (address.getAddressPartId().equals(ADDRESS_PART_COMMUNE_ID)) {
-				commune = address;
-				commune.setValue(patientInfo.getCommune());
-				commune.setSysUserId(getSysUserId(request));
-				personAddressService.update(commune);
-			} else if (address.getAddressPartId().equals(ADDRESS_PART_VILLAGE_ID)) {
-				village = address;
-				village.setValue(patientInfo.getCity());
-				village.setSysUserId(getSysUserId(request));
-				personAddressService.update(village);
-			} else if (address.getAddressPartId().equals(ADDRESS_PART_DEPT_ID)) {
-				dept = address;
-				if (!GenericValidator.isBlankOrNull(patientInfo.getAddressDepartment())
-						&& !patientInfo.getAddressDepartment().equals("0")) {
-					dept.setValue(patientInfo.getAddressDepartment());
-					dept.setType("D");
-					dept.setSysUserId(getSysUserId(request));
-					personAddressService.update(dept);
-				}
-			}
-		}
-
-		if (commune == null) {
-			insertNewPatientInfo(ADDRESS_PART_COMMUNE_ID, patientInfo.getCommune(), "T", patient);
-		}
-
-		if (village == null) {
-			insertNewPatientInfo(ADDRESS_PART_VILLAGE_ID, patientInfo.getCity(), "T", patient);
-		}
-
-		if (dept == null && patientInfo.getAddressDepartment() != null
-				&& !patientInfo.getAddressDepartment().equals("0")) {
-			insertNewPatientInfo(ADDRESS_PART_DEPT_ID, patientInfo.getAddressDepartment(), "D", patient);
-		}
-
-	}
-
 	private void setSystemUserID(PatientManagementInfo patientInfo, Patient patient) {
 		patient.setSysUserId(getSysUserId(request));
 		patient.getPerson().setSysUserId(getSysUserId(request));
 
 		for (PatientIdentity identity : patientInfo.getPatientIdentities()) {
 			identity.setSysUserId(getSysUserId(request));
-		}
-	}
-
-	private void insertNewPatientInfo(String partId, String value, String type, Patient patient) {
-		PersonAddress address;
-		address = new PersonAddress();
-		address.setPersonId(patient.getPerson().getId());
-		address.setAddressPartId(partId);
-		address.setType(type);
-		address.setValue(value);
-		address.setSysUserId(getSysUserId(request));
-		personAddressService.insert(address);
-	}
-
-	public void persistIdentityType(String paramValue, String type, PatientManagementInfo patientInfo, Patient patient)
-			throws LIMSRuntimeException {
-
-		Boolean newIdentityNeeded = true;
-		String typeID = PatientIdentityTypeMap.getInstance().getIDForType(type);
-
-		if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {
-
-			for (PatientIdentity listIdentity : patientInfo.getPatientIdentities()) {
-				if (listIdentity.getIdentityTypeId().equals(typeID)) {
-
-					newIdentityNeeded = false;
-
-					if ((listIdentity.getIdentityData() == null && !GenericValidator.isBlankOrNull(paramValue))
-							|| (listIdentity.getIdentityData() != null
-									&& !listIdentity.getIdentityData().equals(paramValue))) {
-						listIdentity.setIdentityData(paramValue);
-						patientIdentityService.update(listIdentity);
-					}
-
-					break;
-				}
-			}
-		}
-
-		if (newIdentityNeeded && !GenericValidator.isBlankOrNull(paramValue)) {
-			// either a new patient or a new identity item
-			PatientIdentity identity = new PatientIdentity();
-			identity.setPatientId(patient.getId());
-			identity.setIdentityTypeId(typeID);
-			identity.setSysUserId(getSysUserId(request));
-			identity.setIdentityData(paramValue);
-			identity.setLastupdatedFields();
-			patientIdentityService.insert(identity);
-		}
-	}
-
-	protected void persistPatientType(PatientManagementInfo patientInfo, Patient patient) {
-		String typeName = null;
-
-		try {
-			typeName = patientInfo.getPatientType();
-		} catch (Exception ignored) {
-		}
-
-		if (!GenericValidator.isBlankOrNull(typeName) && !"0".equals(typeName)) {
-			String typeID = PatientTypeMap.getInstance().getIDForType(typeName);
-
-			PatientPatientType patientPatientType = patientPatientTypeService
-					.getPatientPatientTypeForPatient(patient.getId());
-
-			if (patientPatientType == null) {
-				patientPatientType = new PatientPatientType();
-				patientPatientType.setSysUserId(getSysUserId(request));
-				patientPatientType.setPatientId(patient.getId());
-				patientPatientType.setPatientTypeId(typeID);
-				patientPatientTypeService.insert(patientPatientType);
-			} else {
-				patientPatientType.setSysUserId(getSysUserId(request));
-				patientPatientType.setPatientTypeId(typeID);
-				patientPatientTypeService.update(patientPatientType);
-			}
 		}
 	}
 

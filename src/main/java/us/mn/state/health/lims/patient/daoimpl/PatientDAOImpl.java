@@ -22,11 +22,11 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -42,8 +42,11 @@ import us.mn.state.health.lims.person.valueholder.Person;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
+
+	@Autowired
+	AuditTrailDAO auditDAO;
 
 	public PatientDAOImpl() {
 		super(Patient.class);
@@ -53,7 +56,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 	public void deleteData(List patients) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < patients.size(); i++) {
 				Patient data = (Patient) patients.get(i);
 
@@ -96,7 +99,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 			patient.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = patient.getSysUserId();
 			String tableName = "PATIENT";
 			auditDAO.saveNewHistory(patient, sysUserId, tableName);
@@ -119,7 +122,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 		Patient oldData = readPatient(patient.getId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = patient.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "PATIENT";
@@ -144,7 +147,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 	@Override
 	public Patient getData(String patientId) throws LIMSRuntimeException {
 		try {
-			Patient pat = (Patient) HibernateUtil.getSession().get(Patient.class, patientId);
+			Patient pat = HibernateUtil.getSession().get(Patient.class, patientId);
 			// closeSession(); // CSL remove old
 			if (pat != null) {
 				updateDisplayValues(pat);
@@ -160,7 +163,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 	@Override
 	public void getData(Patient patient) throws LIMSRuntimeException {
 		try {
-			Patient pat = (Patient) HibernateUtil.getSession().get(Patient.class, patient.getId());
+			Patient pat = HibernateUtil.getSession().get(Patient.class, patient.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (pat != null) {
@@ -236,7 +239,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 	public Patient readPatient(String idString) {
 		Patient pat = null;
 		try {
-			pat = (Patient) HibernateUtil.getSession().get(Patient.class, idString);
+			pat = HibernateUtil.getSession().get(Patient.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {

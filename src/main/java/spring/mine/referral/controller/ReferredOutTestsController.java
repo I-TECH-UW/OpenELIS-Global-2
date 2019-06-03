@@ -24,7 +24,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -41,10 +40,11 @@ import spring.service.note.NoteServiceImpl;
 import spring.service.organization.OrganizationService;
 import spring.service.referral.ReferralResultService;
 import spring.service.referral.ReferralService;
+import spring.service.referral.ReferralSetService;
 import spring.service.result.ResultServiceImpl;
 import spring.service.resultlimit.ResultLimitServiceImpl;
-import spring.service.sample.SampleService;
 import spring.service.samplehuman.SampleHumanService;
+import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import spring.service.testresult.TestResultService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
@@ -52,19 +52,16 @@ import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
-import us.mn.state.health.lims.common.services.StatusService;
-import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
-import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.note.valueholder.Note;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.referral.action.beanitems.IReferralResultTest;
 import us.mn.state.health.lims.referral.action.beanitems.ReferralItem;
 import us.mn.state.health.lims.referral.action.beanitems.ReferredTest;
 import us.mn.state.health.lims.referral.valueholder.Referral;
 import us.mn.state.health.lims.referral.valueholder.ReferralResult;
+import us.mn.state.health.lims.referral.valueholder.ReferralSet;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
 import us.mn.state.health.lims.sample.valueholder.Sample;
@@ -78,27 +75,21 @@ public class ReferredOutTestsController extends BaseController {
 	private static final String RESULT_SUBJECT = "Result Note";
 
 	@Autowired
-	ReferralService referralService;
+	private ReferralService referralService;
 	@Autowired
-	ReferralResultService referralResultService;
+	private ReferralResultService referralResultService;
 	@Autowired
-	OrganizationService organizationService;
+	private OrganizationService organizationService;
 	@Autowired
-	spring.service.result.ResultService resultService;
+	private TestResultService testResultService;
 	@Autowired
-	SampleService sampleService;
+	private TestService testService;
 	@Autowired
-	spring.service.analysis.AnalysisService analysisService;
+	private SampleHumanService sampleHumanService;
 	@Autowired
-	spring.service.note.NoteService noteService;
+	private DictionaryService dictionaryService;
 	@Autowired
-	TestResultService testResultService;
-	@Autowired
-	spring.service.test.TestService testService;
-	@Autowired
-	SampleHumanService sampleHumanService;
-	@Autowired
-	DictionaryService dictionaryService;
+	private ReferralSetService referralSetService;
 
 	@RequestMapping(value = "/ReferredOutTests", method = RequestMethod.GET)
 	public ModelAndView showReferredOutTests(HttpServletRequest request)
@@ -111,8 +102,8 @@ public class ReferredOutTestsController extends BaseController {
 		PropertyUtils.setProperty(form, "referralItems", referralItems);
 		PropertyUtils.setProperty(form, "referralReasons",
 				DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-		PropertyUtils.setProperty(form, "referralOrganizations",
-				DisplayListService.getInstance().getListWithLeadingBlank(DisplayListService.ListType.REFERRAL_ORGANIZATIONS));
+		PropertyUtils.setProperty(form, "referralOrganizations", DisplayListService.getInstance()
+				.getListWithLeadingBlank(DisplayListService.ListType.REFERRAL_ORGANIZATIONS));
 
 		fillInDictionaryValuesForReferralItems(referralItems);
 
@@ -199,8 +190,8 @@ public class ReferredOutTestsController extends BaseController {
 		TypeOfSample typeOfSample = analysisService.getTypeOfSample();
 		referralItem.setSampleType(typeOfSample.getLocalizedName());
 
-		referralItem
-				.setReferringTestName(TestServiceImpl.getUserLocalizedTestName(analysisService.getAnalysis().getTest()));
+		referralItem.setReferringTestName(
+				TestServiceImpl.getUserLocalizedTestName(analysisService.getAnalysis().getTest()));
 		List<Result> resultList = analysisService.getResults();
 		String resultString = "";
 
@@ -361,7 +352,8 @@ public class ReferredOutTestsController extends BaseController {
 	}
 
 	private List<IdValuePair> getTestsForTypeOfSample(TypeOfSample typeOfSample) {
-		List<Test> testList = TypeOfSampleServiceImpl.getInstance().getActiveTestsBySampleTypeId(typeOfSample.getId(), false);
+		List<Test> testList = TypeOfSampleServiceImpl.getInstance().getActiveTestsBySampleTypeId(typeOfSample.getId(),
+				false);
 
 		List<IdValuePair> valueList = new ArrayList<>();
 
@@ -392,12 +384,14 @@ public class ReferredOutTestsController extends BaseController {
 
 				nonNumericTests.testId = testId;
 				nonNumericTests.testType = testResultList.get(0).getTestResultType();
-				boolean isSelectList = TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(nonNumericTests.testType);
+				boolean isSelectList = TypeOfTestResultServiceImpl.ResultType
+						.isDictionaryVariant(nonNumericTests.testType);
 
 				if (isSelectList) {
 					List<IdValuePair> dictionaryValues = new ArrayList<>();
 					for (TestResult testResult : testResultList) {
-						if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
+						if (TypeOfTestResultServiceImpl.ResultType
+								.isDictionaryVariant(testResult.getTestResultType())) {
 							String resultName = dictionaryService.get(testResult.getValue()).getLocalizedName();
 							dictionaryValues.add(new IdValuePair(testResult.getValue(), resultName));
 						}
@@ -452,7 +446,8 @@ public class ReferredOutTestsController extends BaseController {
 		}
 
 		try {
-			updateRefreralSets(referralSetList, modifiedSamples, parentSamples, removableReferralResults);
+			referralSetService.updateRefreralSets(referralSetList, modifiedSamples, parentSamples,
+					removableReferralResults, getSysUserId(request));
 		} catch (LIMSRuntimeException lre) {
 			String errorMsg;
 			if (lre.getException() instanceof StaleObjectStateException) {
@@ -470,58 +465,6 @@ public class ReferredOutTestsController extends BaseController {
 
 		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 		return findForward(FWD_SUCCESS_INSERT, form);
-	}
-
-	@Transactional 
-	private void updateRefreralSets(List<ReferralSet> referralSetList, List<Sample> modifiedSamples,
-			Set<Sample> parentSamples, List<ReferralResult> removableReferralResults) {
-		for (ReferralSet referralSet : referralSetList) {
-			referralService.update(referralSet.referral);
-
-			for (ReferralResult referralResult : referralSet.updatableReferralResults) {
-				Result rResult = referralResult.getResult();
-				if (rResult != null) {
-					if (rResult.getId() == null) {
-						resultService.insert(rResult);
-					} else {
-						rResult.setSysUserId(getSysUserId(request));
-						resultService.update(rResult);
-					}
-				}
-
-				if (referralResult.getId() == null) {
-					referralResultService.insert(referralResult);
-				} else {
-					referralResultService.update(referralResult);
-				}
-			}
-
-			if (referralSet.note != null) {
-				if (referralSet.note.getId() == null) {
-					noteService.insert(referralSet.note);
-				} else {
-					noteService.update(referralSet.note);
-				}
-			}
-		}
-
-		for (ReferralResult referralResult : removableReferralResults) {
-
-			referralResult.setSysUserId(getSysUserId(request));
-			referralResultService.delete(referralResult);
-
-			if (referralResult.getResult() != null && referralResult.getResult().getId() != null) {
-				referralResult.getResult().setSysUserId(getSysUserId(request));
-				resultService.delete(referralResult.getResult());
-			}
-		}
-
-		setStatusOfParentSamples(modifiedSamples, parentSamples);
-
-		for (Sample sample : modifiedSamples) {
-			sampleService.update(sample);
-		}
-
 	}
 
 	private void selectModifiedAndCanceledItems(List<ReferralItem> referralItems, List<ReferralItem> modifiedItems,
@@ -597,7 +540,7 @@ public class ReferredOutTestsController extends BaseController {
 
 		Referral referral = referralService.get(item.getReferralId());
 
-		referralSet.referral = referral;
+		referralSet.setReferral(referral);
 		referral.setSysUserId(getSysUserId(request));
 		referral.setCanceled(true);
 
@@ -630,10 +573,10 @@ public class ReferredOutTestsController extends BaseController {
 		referral.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));
 		referral.setRequesterName(referralItem.getReferrer());
 		referral.setReferralReasonId(referralItem.getReferralReasonId());
-		referralSet.referral = referral;
+		referralSet.setReferral(referral);
 
-		referralSet.note = new NoteServiceImpl(referral.getAnalysis()).createSavableNote(NoteServiceImpl.NoteType.INTERNAL,
-				referralItem.getNote(), RESULT_SUBJECT, getSysUserId(request));
+		referralSet.setNote(new NoteServiceImpl(referral.getAnalysis()).createSavableNote(
+				NoteServiceImpl.NoteType.INTERNAL, referralItem.getNote(), RESULT_SUBJECT, getSysUserId(request)));
 
 		createReferralResults(referralItem, referralSet);
 
@@ -829,93 +772,6 @@ public class ReferredOutTestsController extends BaseController {
 		}
 
 		return newTestList;
-	}
-
-	private void setStatusOfParentSamples(List<Sample> modifiedSamples, Set<Sample> parentSamples) {
-		for (Sample sample : parentSamples) {
-			List<Analysis> analysisList = analysisService.getAnalysesBySampleId(sample.getId());
-
-			String finalizedId = StatusService.getInstance().getStatusID(AnalysisStatus.Finalized);
-			boolean allAnalysisFinished = true;
-
-			if (analysisList != null) {
-				for (Analysis childAnalysis : analysisList) {
-					Referral referral = referralService.getReferralByAnalysisId(childAnalysis.getId());
-					List<ReferralResult> referralResultList;
-
-					if (referral == null || referral.getId() == null) {
-						referralResultList = new ArrayList<>();
-					} else {
-						referralResultList = referralResultService.getReferralResultsForReferral(referral.getId());
-					}
-
-					if (referralResultList.isEmpty()) {
-						if (!finalizedId.equals(childAnalysis.getStatusId())) {
-							allAnalysisFinished = false;
-							break;
-						}
-					} else {
-						for (ReferralResult referralResult : referralResultList) {
-							if (referralResult.getResult() == null
-									|| GenericValidator.isBlankOrNull(referralResult.getResult().getValue())) {
-								if (!(referral.isCanceled() && finalizedId.equals(childAnalysis.getStatusId()))) {
-									allAnalysisFinished = false;
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
-
-			if (allAnalysisFinished) {
-				sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Finished));
-				sample.setSysUserId(getSysUserId(request));
-				modifiedSamples.add(sample);
-			}
-		}
-	}
-
-	static class ReferralSet {
-		Referral referral;
-		Note note;
-		List<ReferralResult> updatableReferralResults = new ArrayList<>();
-		private List<ReferralResult> existingReferralResults = new ArrayList<>();
-
-		public List<ReferralResult> getExistingReferralResults() {
-			return existingReferralResults;
-		}
-
-		public void setExistingReferralResults(List<ReferralResult> existingReferralResults) {
-			this.existingReferralResults = existingReferralResults;
-		}
-
-		ReferralResult getNextReferralResult() {
-			ReferralResult referralResult = existingReferralResults.isEmpty() ? new ReferralResult()
-					: existingReferralResults.remove(0);
-			updatableReferralResults.add(referralResult);
-
-			return referralResult;
-		}
-
-		public void updateTest(String oldTestId, String newTestId, String currentUserId) {
-			ReferralResult updatedReferralResult = null;
-			for (ReferralResult referralResult : existingReferralResults) {
-				if (referralResult.getTestId().equals(oldTestId)) {
-					Result result = referralResult.getResult();
-					result.setSysUserId(currentUserId);
-					if (updatedReferralResult == null) {
-						referralResult.setTestId(newTestId);
-						referralResult.setSysUserId(currentUserId);
-						result.setResultType(new TestServiceImpl(newTestId).getResultType());
-						result.setValue("");
-						updatedReferralResult = referralResult;
-						updatableReferralResults.add(referralResult);
-					}
-				}
-			}
-			existingReferralResults.remove(updatedReferralResult);
-		}
 	}
 
 	@Override

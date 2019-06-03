@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.patient.form.PatientEntryByProjectForm;
 import spring.mine.patient.validator.PatientEntryByProjectFormValidator;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.patient.saving.Accessioner;
 import us.mn.state.health.lims.patient.saving.PatientEditUpdate;
@@ -75,30 +76,45 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
 		}
 
 		String sysUserId = getSysUserId(request);
-		Accessioner accessioner;
 		addAllPatientFormLists(form);
-		accessioner = new PatientEditUpdate(form, sysUserId, request);
+		PatientEditUpdate patientEditUpdateAccessioner = SpringContext.getBean(PatientEditUpdate.class);
+		patientEditUpdateAccessioner.setRequest(request);
+		patientEditUpdateAccessioner.setFieldsFromForm(form);
+		patientEditUpdateAccessioner.setSysUserId(sysUserId);
 		String forward = FWD_FAIL_INSERT;
-		if (accessioner.canAccession()) {
-			forward = handleSave(request, accessioner);
+		if (patientEditUpdateAccessioner.canAccession()) {
+			forward = handleSave(request, patientEditUpdateAccessioner);
 		}
 
-		accessioner = new PatientSecondEntry(form, sysUserId, request);
-		if (accessioner.canAccession()) {
-			forward = handleSave(request, accessioner);
+		PatientSecondEntry patientSecondEntryAccessioner = SpringContext.getBean(PatientSecondEntry.class);
+		patientSecondEntryAccessioner.setRequest(request);
+		patientSecondEntryAccessioner.setFieldsFromForm(form);
+		patientSecondEntryAccessioner.setSysUserId(sysUserId);
+		if (patientSecondEntryAccessioner.canAccession()) {
+			forward = handleSave(request, patientSecondEntryAccessioner);
 		}
-
-		accessioner = new PatientEntry(form, sysUserId, request);
-		if (accessioner.canAccession()) {
-			forward = handleSave(request, accessioner);
+		PatientEntry patientEntryAccessioner = SpringContext.getBean("patientEntry");
+		patientEntryAccessioner.setRequest(request);
+		patientEntryAccessioner.setFieldsFromForm(form);
+		patientEntryAccessioner.setSysUserId(sysUserId);
+		if (patientEntryAccessioner.canAccession()) {
+			forward = handleSave(request, patientEntryAccessioner);
 		}
-		accessioner = new PatientEntryAfterSampleEntry(form, sysUserId, request);
-		if (accessioner.canAccession()) {
-			forward = handleSave(request, accessioner);
+		PatientEntryAfterSampleEntry patientEntryAfterSampleEntryAccessioner = SpringContext
+				.getBean(PatientEntryAfterSampleEntry.class);
+		patientEntryAfterSampleEntryAccessioner.setRequest(request);
+		patientEntryAfterSampleEntryAccessioner.setFieldsFromForm(form);
+		patientEntryAfterSampleEntryAccessioner.setSysUserId(sysUserId);
+		if (patientEntryAfterSampleEntryAccessioner.canAccession()) {
+			forward = handleSave(request, patientEntryAfterSampleEntryAccessioner);
 		}
-		accessioner = new PatientEntryAfterAnalyzer(form, sysUserId, request);
-		if (accessioner.canAccession()) {
-			forward = handleSave(request, accessioner);
+		PatientEntryAfterAnalyzer patientEntryAfterAnalyzerAccessioner = SpringContext
+				.getBean(PatientEntryAfterAnalyzer.class);
+		patientEntryAfterAnalyzerAccessioner.setRequest(request);
+		patientEntryAfterAnalyzerAccessioner.setFieldsFromForm(form);
+		patientEntryAfterAnalyzerAccessioner.setSysUserId(sysUserId);
+		if (patientEntryAfterAnalyzerAccessioner.canAccession()) {
+			forward = handleSave(request, patientEntryAfterAnalyzerAccessioner);
 		}
 		if (FWD_FAIL_INSERT.equals(forward) || forward == null) {
 			logAndAddMessage(request, "performAction", "errors.UpdateException");

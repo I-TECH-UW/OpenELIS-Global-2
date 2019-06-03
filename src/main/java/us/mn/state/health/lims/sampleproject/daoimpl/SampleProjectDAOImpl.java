@@ -23,11 +23,11 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -44,8 +44,11 @@ import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
  * @version $Revision$
  */
 @Component
-@Transactional 
+@Transactional
 public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements SampleProjectDAO {
+
+	@Autowired
+	AuditTrailDAO auditDAO;
 
 	public SampleProjectDAOImpl() {
 		super(SampleProject.class);
@@ -55,7 +58,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 	public void deleteData(List sampleProjs) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < sampleProjs.size(); i++) {
 				SampleProject data = (SampleProject) sampleProjs.get(i);
 
@@ -98,7 +101,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 			sampleProj.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = sampleProj.getSysUserId();
 			// bugzilla 2104 change to SAMPLE_PROJECTS instead of SAMPLE_PROJECT
 			String tableName = "SAMPLE_PROJECTS";
@@ -124,7 +127,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = sampleProj.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			// bugzilla 2104 change to SAMPLE_PROJECTS instead of SAMPLE_PROJECT
@@ -152,8 +155,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 	@Override
 	public void getData(SampleProject sampleProj) throws LIMSRuntimeException {
 		try {
-			SampleProject data = (SampleProject) HibernateUtil.getSession().get(SampleProject.class,
-					sampleProj.getId());
+			SampleProject data = HibernateUtil.getSession().get(SampleProject.class, sampleProj.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (data != null) {
@@ -171,7 +173,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 	public SampleProject readSampleProject(String idString) {
 		SampleProject sp = null;
 		try {
-			sp = (SampleProject) HibernateUtil.getSession().get(SampleProject.class, idString);
+			sp = HibernateUtil.getSession().get(SampleProject.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {

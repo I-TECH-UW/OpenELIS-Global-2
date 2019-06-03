@@ -20,11 +20,11 @@ import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -39,8 +39,11 @@ import us.mn.state.health.lims.provider.valueholder.Provider;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class ProviderDAOImpl extends BaseDAOImpl<Provider> implements ProviderDAO {
+
+	@Autowired
+	AuditTrailDAO auditDAO;
 
 	public ProviderDAOImpl() {
 		super(Provider.class);
@@ -50,7 +53,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider> implements ProviderDA
 	public void deleteData(List providers) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < providers.size(); i++) {
 				Provider data = (Provider) providers.get(i);
 
@@ -91,7 +94,6 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider> implements ProviderDA
 			String id = (String) HibernateUtil.getSession().save(provider);
 			provider.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = provider.getSysUserId();
 			String tableName = "PROVIDER";
 			auditDAO.saveNewHistory(provider, sysUserId, tableName);
@@ -115,7 +117,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider> implements ProviderDA
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = provider.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "PROVIDER";
@@ -142,7 +144,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider> implements ProviderDA
 	@Override
 	public void getData(Provider provider) throws LIMSRuntimeException {
 		try {
-			Provider prov = (Provider) HibernateUtil.getSession().get(Provider.class, provider.getId());
+			Provider prov = HibernateUtil.getSession().get(Provider.class, provider.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (prov != null) {
@@ -202,7 +204,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider> implements ProviderDA
 	public Provider readProvider(String idString) {
 		Provider provider = null;
 		try {
-			provider = (Provider) HibernateUtil.getSession().get(Provider.class, idString);
+			provider = HibernateUtil.getSession().get(Provider.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {

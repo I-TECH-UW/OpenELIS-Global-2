@@ -43,7 +43,9 @@ import spring.service.sampleproject.SampleProjectService;
 import spring.service.sampleqaevent.SampleQaEventService;
 import spring.service.test.TestSectionService;
 import spring.service.typeofsample.TypeOfSampleService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSInvalidConfigurationException;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -145,7 +147,8 @@ public class NonConformityController extends BaseController {
 		PropertyUtils.setProperty(form, "qaEventTypes", DisplayListService.getInstance().getList(ListType.QA_EVENTS));
 		PropertyUtils.setProperty(form, "qaEvents", getSampleQaEventItems(sample));
 
-		PropertyUtils.setProperty(form, "typeOfSamples", DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
+		PropertyUtils.setProperty(form, "typeOfSamples",
+				DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
 
 		PropertyUtils.setProperty(form, "readOnly", false);
 		PropertyUtils.setProperty(form, "siteList",
@@ -174,7 +177,8 @@ public class NonConformityController extends BaseController {
 			PropertyUtils.setProperty(form, "providerWorkPhone", "");
 		}
 
-		PropertyUtils.setProperty(form, "departments", DisplayListService.getInstance().getList(ListType.HAITI_DEPARTMENTS));
+		PropertyUtils.setProperty(form, "departments",
+				DisplayListService.getInstance().getList(ListType.HAITI_DEPARTMENTS));
 
 	}
 
@@ -375,7 +379,8 @@ public class NonConformityController extends BaseController {
 
 	private ObservationHistory getRefererObservation(List<ObservationHistory> observationHistoryList) {
 		for (ObservationHistory observation : observationHistoryList) {
-			if (observation.getObservationHistoryTypeId().equals(TableIdService.getInstance().DOCTOR_OBSERVATION_TYPE_ID)) {
+			if (observation.getObservationHistoryTypeId()
+					.equals(TableIdService.getInstance().DOCTOR_OBSERVATION_TYPE_ID)) {
 				return observation;
 			}
 		}
@@ -385,7 +390,8 @@ public class NonConformityController extends BaseController {
 
 	private ObservationHistory getServiceObservation(List<ObservationHistory> observationHistoryList) {
 		for (ObservationHistory observation : observationHistoryList) {
-			if (observation.getObservationHistoryTypeId().equals(TableIdService.getInstance().SERVICE_OBSERVATION_TYPE_ID)) {
+			if (observation.getObservationHistoryTypeId()
+					.equals(TableIdService.getInstance().SERVICE_OBSERVATION_TYPE_ID)) {
 				return observation;
 			}
 		}
@@ -438,15 +444,18 @@ public class NonConformityController extends BaseController {
 		}
 
 		NonConformityUpdateData data = new NonConformityUpdateData(form, getSysUserId(request));
-		NonConformityUpdateWorker worker = new NonConformityUpdateWorker(data);
-		String forward = worker.update();
-
-		if (FWD_FAIL_INSERT.equals(forward)) {
+//		NonConformityUpdateWorker worker = new NonConformityUpdateWorker(data);
+		NonConformityUpdateWorker worker = SpringContext.getBean(NonConformityUpdateWorker.class);
+		worker.setWebData(data);
+		try {
+			worker.update();
+		} catch (LIMSRuntimeException lre) {
 			saveErrors(worker.getErrors());
-		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+			return findForward(FWD_FAIL_INSERT, form);
 		}
-		return findForward(forward, form);
+		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+
+		return findForward(FWD_SUCCESS_INSERT, form);
 	}
 
 	@Override
