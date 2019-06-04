@@ -43,10 +43,12 @@ public class History extends BaseObject<String> {
 		this.sys_user_id = sys_user_id;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
+	@Override
 	public void setId(String id) {
 		this.id = id;
 	}

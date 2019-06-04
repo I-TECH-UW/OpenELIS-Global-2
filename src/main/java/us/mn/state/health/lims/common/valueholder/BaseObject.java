@@ -42,6 +42,18 @@ public abstract class BaseObject<T extends Serializable> implements Serializable
 
 	public abstract void setId(T id);
 
+	// used for audittrail
+	public String getStringId() {
+		if (getId() == null) {
+			return null;
+		} else if (getId().getClass().equals(String.class)) {
+			return (String) getId();
+		} else {
+			throw new UnsupportedOperationException(
+					"object must override getStringId() as its id is not of type String");
+		}
+	}
+
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();

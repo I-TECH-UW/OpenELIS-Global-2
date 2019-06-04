@@ -22,11 +22,11 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -46,8 +46,11 @@ import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
  * @version $Revision$
  */
 @Component
-@Transactional 
+@Transactional
 public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements SampleHumanDAO {
+
+	@Autowired
+	AuditTrailDAO auditDAO;
 
 	public SampleHumanDAOImpl() {
 		super(SampleHuman.class);
@@ -57,7 +60,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 	public void deleteData(List sampleHumans) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < sampleHumans.size(); i++) {
 				SampleHuman data = (SampleHuman) sampleHumans.get(i);
 
@@ -99,7 +102,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 			sampleHuman.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = sampleHuman.getSysUserId();
 			String tableName = "SAMPLE_HUMAN";
 			auditDAO.saveNewHistory(sampleHuman, sysUserId, tableName);
@@ -124,7 +127,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = sampleHuman.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "SAMPLE_HUMAN";

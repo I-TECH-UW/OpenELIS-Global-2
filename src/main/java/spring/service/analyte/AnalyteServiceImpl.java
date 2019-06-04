@@ -25,69 +25,69 @@ public class AnalyteServiceImpl extends BaseObjectServiceImpl<Analyte> implement
 
 	@Override
 	public void getData(Analyte analyte) {
-        getBaseObjectDAO().getData(analyte);
+		getBaseObjectDAO().getData(analyte);
 
 	}
 
 	@Override
 	public List getAnalytes(String filter) {
-        return getBaseObjectDAO().getAnalytes(filter);
+		return getBaseObjectDAO().getAnalytes(filter);
 	}
 
 	@Override
 	public Analyte getAnalyteByName(Analyte analyte, boolean ignoreCase) {
-        return getBaseObjectDAO().getAnalyteByName(analyte,ignoreCase);
+		return getBaseObjectDAO().getAnalyteByName(analyte, ignoreCase);
 	}
 
 	@Override
 	public List getAllAnalytes() {
-        return getBaseObjectDAO().getAllAnalytes();
+		return getBaseObjectDAO().getAllAnalytes();
 	}
 
 	@Override
 	public void deleteData(List analytes) {
-        getBaseObjectDAO().deleteData(analytes);
+		getBaseObjectDAO().deleteData(analytes);
 
 	}
 
 	@Override
 	public void updateData(Analyte analyte) {
-        getBaseObjectDAO().updateData(analyte);
+		getBaseObjectDAO().updateData(analyte);
 
 	}
 
 	@Override
 	public boolean insertData(Analyte analyte) {
-        return getBaseObjectDAO().insertData(analyte);
+		return getBaseObjectDAO().insertData(analyte);
 	}
 
 	@Override
 	public List getPageOfAnalytes(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfAnalytes(startingRecNo);
+		return getBaseObjectDAO().getPageOfAnalytes(startingRecNo);
 	}
 
 	@Override
 	public Integer getTotalAnalyteCount() {
-        return getBaseObjectDAO().getTotalAnalyteCount();
+		return getBaseObjectDAO().getTotalAnalyteCount();
 	}
 
 	@Override
 	public Integer getTotalSearchedAnalyteCount(String searchString) {
-        return getBaseObjectDAO().getTotalSearchedAnalyteCount(searchString);
+		return getBaseObjectDAO().getTotalSearchedAnalyteCount(searchString);
 	}
 
 	@Override
 	public List getPreviousAnalyteRecord(String id) {
-        return getBaseObjectDAO().getPreviousAnalyteRecord(id);
+		return getBaseObjectDAO().getPreviousAnalyteRecord(id);
 	}
 
 	@Override
 	public List getNextAnalyteRecord(String id) {
-        return getBaseObjectDAO().getNextAnalyteRecord(id);
+		return getBaseObjectDAO().getNextAnalyteRecord(id);
 	}
 
 	@Override
 	public List getPagesOfSearchedAnalytes(int startRecNo, String searchString) {
-        return getBaseObjectDAO().getPagesOfSearchedAnalytes(startRecNo,searchString);
+		return getBaseObjectDAO().getPagesOfSearchedAnalytes(startRecNo, searchString);
 	}
 }

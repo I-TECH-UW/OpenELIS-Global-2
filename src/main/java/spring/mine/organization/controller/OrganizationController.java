@@ -40,7 +40,6 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.organization.valueholder.OrganizationType;
 
@@ -291,6 +290,7 @@ public class OrganizationController extends BaseController {
 		}
 
 		String id = request.getParameter(ID);
+		form.setId(id);
 		Organization organization;
 		boolean isNew = (StringUtil.isNullorNill(id) || "0".equals(id));
 		if (isNew) {
@@ -349,9 +349,10 @@ public class OrganizationController extends BaseController {
 			request.setAttribute(NEXT_DISABLED, "true");
 			return findForward(FWD_FAIL_INSERT, form);
 
-		} finally {
-			HibernateUtil.closeSession();
 		}
+//		finally {
+//			HibernateUtil.closeSession();
+//		}
 		PropertyUtils.copyProperties(form, organization);
 
 		if (states != null) {

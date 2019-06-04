@@ -23,11 +23,11 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -41,8 +41,11 @@ import us.mn.state.health.lims.person.valueholder.Person;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
+
+	@Autowired
+	AuditTrailDAO auditDAO;
 
 	public PersonDAOImpl() {
 		super(Person.class);
@@ -52,7 +55,6 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 	public void deleteData(List persons) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			for (int i = 0; i < persons.size(); i++) {
 				Person data = (Person) persons.get(i);
 
@@ -94,7 +96,6 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 			person.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = person.getSysUserId();
 			String tableName = "PERSON";
 			auditDAO.saveNewHistory(person, sysUserId, tableName);
@@ -118,7 +119,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = person.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "PERSON";
@@ -145,7 +146,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 	@Override
 	public void getData(Person person) throws LIMSRuntimeException {
 		try {
-			Person pers = (Person) HibernateUtil.getSession().get(Person.class, person.getId());
+			Person pers = HibernateUtil.getSession().get(Person.class, person.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (pers != null) {
@@ -206,7 +207,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 	public Person readPerson(String idString) {
 		Person person = null;
 		try {
-			person = (Person) HibernateUtil.getSession().get(Person.class, idString);
+			person = HibernateUtil.getSession().get(Person.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {

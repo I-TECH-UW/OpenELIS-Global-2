@@ -109,7 +109,7 @@ public class NonConformityForm extends BaseForm {
 	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { NonConformity.class })
 	private String commentId = "";
 
-	@NotNull(groups = { NonConformity.class })
+//	@NotNull(groups = { NonConformity.class })
 	private Boolean commentNew;
 
 	@SafeHtml(groups = { NonConformity.class })

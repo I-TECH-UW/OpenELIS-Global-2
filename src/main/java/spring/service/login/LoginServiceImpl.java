@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
+import us.mn.state.health.lims.common.action.IActionConstants;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.login.dao.LoginDAO;
 import us.mn.state.health.lims.login.valueholder.Login;
@@ -28,6 +30,11 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login> implements Lo
 	@Override
 	protected LoginDAO getBaseObjectDAO() {
 		return baseObjectDAO;
+	}
+
+	@Override
+	public boolean isUserAdmin(Login login) throws LIMSRuntimeException {
+		return login.getIsAdmin().equalsIgnoreCase(IActionConstants.YES);
 	}
 
 	@Override
@@ -88,7 +95,8 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login> implements Lo
 		PasswordUtil passUtil = new PasswordUtil();
 		login.setPassword(passUtil.hashPassword(newPassword));
 		Calendar passwordExpiredDate = Calendar.getInstance();
-		passwordExpiredDate.add(Calendar.MONTH, Integer.parseInt(SystemConfiguration.getInstance().getLoginUserChangePasswordExpiredMonth()));
+		passwordExpiredDate.add(Calendar.MONTH,
+				Integer.parseInt(SystemConfiguration.getInstance().getLoginUserChangePasswordExpiredMonth()));
 		login.setPasswordExpiredDate(new Date(passwordExpiredDate.getTimeInMillis()));
 		login.setPasswordExpiredDayNo(baseObjectDAO.getPasswordExpiredDayNo(login));
 
@@ -96,85 +104,85 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login> implements Lo
 
 	@Override
 	public void getData(Login login) {
-        getBaseObjectDAO().getData(login);
+		getBaseObjectDAO().getData(login);
 
 	}
 
 	@Override
 	public void deleteData(List login) {
-        getBaseObjectDAO().deleteData(login);
+		getBaseObjectDAO().deleteData(login);
 
 	}
 
 	@Override
 	public void updateData(Login login, boolean passwordUpdated) {
-        getBaseObjectDAO().updateData(login,passwordUpdated);
+		getBaseObjectDAO().updateData(login, passwordUpdated);
 
 	}
 
 	@Override
 	public boolean insertData(Login login) {
-        return getBaseObjectDAO().insertData(login);
+		return getBaseObjectDAO().insertData(login);
 	}
 
 	@Override
 	public List getNextLoginUserRecord(String id) {
-        return getBaseObjectDAO().getNextLoginUserRecord(id);
+		return getBaseObjectDAO().getNextLoginUserRecord(id);
 	}
 
 	@Override
 	public List getPreviousLoginUserRecord(String id) {
-        return getBaseObjectDAO().getPreviousLoginUserRecord(id);
+		return getBaseObjectDAO().getPreviousLoginUserRecord(id);
 	}
 
 	@Override
 	public int getPasswordExpiredDayNo(Login login) {
-        return getBaseObjectDAO().getPasswordExpiredDayNo(login);
+		return getBaseObjectDAO().getPasswordExpiredDayNo(login);
 	}
 
 	@Override
 	public Integer getTotalLoginUserCount() {
-        return getBaseObjectDAO().getTotalLoginUserCount();
+		return getBaseObjectDAO().getTotalLoginUserCount();
 	}
 
 	@Override
 	public List getPageOfLoginUsers(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfLoginUsers(startingRecNo);
+		return getBaseObjectDAO().getPageOfLoginUsers(startingRecNo);
 	}
 
 	@Override
 	public boolean lockAccount(Login login) {
-        return getBaseObjectDAO().lockAccount(login);
+		return getBaseObjectDAO().lockAccount(login);
 	}
 
 	@Override
 	public Login getValidateLogin(Login login) {
-        return getBaseObjectDAO().getValidateLogin(login);
+		return getBaseObjectDAO().getValidateLogin(login);
 	}
 
 	@Override
 	public Login getUserProfile(String loginName) {
-        return getBaseObjectDAO().getUserProfile(loginName);
+		return getBaseObjectDAO().getUserProfile(loginName);
 	}
 
 	@Override
 	public boolean unlockAccount(Login login) {
-        return getBaseObjectDAO().unlockAccount(login);
+		return getBaseObjectDAO().unlockAccount(login);
 	}
 
 	@Override
 	public int getSystemUserId(Login login) {
-        return getBaseObjectDAO().getSystemUserId(login);
+		return getBaseObjectDAO().getSystemUserId(login);
 	}
 
 	@Override
 	public List getAllLoginUsers() {
-        return getBaseObjectDAO().getAllLoginUsers();
+		return getBaseObjectDAO().getAllLoginUsers();
 	}
 
 	@Override
 	public void updatePassword(Login login) {
-        getBaseObjectDAO().updatePassword(login);
+		getBaseObjectDAO().updatePassword(login);
 
 	}
 }

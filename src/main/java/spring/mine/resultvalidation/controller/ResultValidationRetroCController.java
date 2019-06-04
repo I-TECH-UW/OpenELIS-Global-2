@@ -25,6 +25,12 @@ import us.mn.state.health.lims.resultvalidation.util.ResultsValidationRetroCIUti
 @Controller
 public class ResultValidationRetroCController extends BaseResultValidationRetroCIController {
 
+	private ResultsValidationRetroCIUtility resultsValidationUtility;
+
+	public ResultValidationRetroCController(ResultsValidationRetroCIUtility resultsValidationUtility) {
+		this.resultsValidationUtility = resultsValidationUtility;
+	}
+
 	@RequestMapping(value = "/ResultValidationRetroC", method = RequestMethod.GET)
 	public ModelAndView showResultValidationRetroC(HttpServletRequest request)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -41,7 +47,6 @@ public class ResultValidationRetroCController extends BaseResultValidationRetroC
 			PropertyUtils.setProperty(form, "testSectionsByName", new ArrayList<IdValuePair>()); // required on jsp page
 			PropertyUtils.setProperty(form, "displayTestSections", false);
 
-			ResultsValidationRetroCIUtility resultsValidationUtility = new ResultsValidationRetroCIUtility();
 			setRequestType(testSectionName);
 
 			if (!GenericValidator.isBlankOrNull(testSectionName)) {

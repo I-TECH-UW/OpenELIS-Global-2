@@ -11,7 +11,8 @@ import us.mn.state.health.lims.requester.dao.SampleRequesterDAO;
 import us.mn.state.health.lims.requester.valueholder.SampleRequester;
 
 @Service
-public class SampleRequesterServiceImpl extends BaseObjectServiceImpl<SampleRequester> implements SampleRequesterService {
+public class SampleRequesterServiceImpl extends BaseObjectServiceImpl<SampleRequester>
+		implements SampleRequesterService {
 	@Autowired
 	protected SampleRequesterDAO baseObjectDAO;
 
@@ -27,23 +28,23 @@ public class SampleRequesterServiceImpl extends BaseObjectServiceImpl<SampleRequ
 	@Override
 	@Transactional
 	public List<SampleRequester> getRequestersForSampleId(String id) {
-		return baseObjectDAO.getAllMatching("sampleId", id);
+		return baseObjectDAO.getAllMatching("sampleId", Long.valueOf(id));
 	}
 
 	@Override
 	public void updateData(SampleRequester sampleRequester) {
-        getBaseObjectDAO().updateData(sampleRequester);
+		getBaseObjectDAO().updateData(sampleRequester);
 
 	}
 
 	@Override
 	public boolean insertData(SampleRequester sampleRequester) {
-        return getBaseObjectDAO().insertData(sampleRequester);
+		return getBaseObjectDAO().insertData(sampleRequester);
 	}
 
 	@Override
 	public void insertOrUpdateData(SampleRequester sampleRequester) {
-        getBaseObjectDAO().insertOrUpdateData(sampleRequester);
+		getBaseObjectDAO().insertOrUpdateData(sampleRequester);
 
 	}
 }

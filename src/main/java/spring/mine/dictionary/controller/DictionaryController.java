@@ -200,8 +200,12 @@ public class DictionaryController extends BaseController {
 
 	private Dictionary setupDictionary(DictionaryForm form)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-		Dictionary dictionary = dictionaryService.get(form.getId());
+		Dictionary dictionary;
+		if (form.getId() != null && !form.getId().equals("0")) {
+			dictionary = dictionaryService.get(form.getId());
+		} else {
+			dictionary = new Dictionary();
+		}
 		// get sysUserId from login module
 		UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
 		String sysUserId = String.valueOf(usd.getSystemUserId());

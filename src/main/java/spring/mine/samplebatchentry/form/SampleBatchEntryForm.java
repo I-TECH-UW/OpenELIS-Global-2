@@ -100,6 +100,8 @@ public class SampleBatchEntryForm extends BaseForm {
 
 	private boolean localDBOnly;
 
+	private boolean warning;
+
 	public SampleBatchEntryForm() {
 		setFormName("sampleBatchEntryForm");
 	}
@@ -302,6 +304,14 @@ public class SampleBatchEntryForm extends BaseForm {
 
 	public void setLocalDBOnly(boolean localDBOnly) {
 		this.localDBOnly = localDBOnly;
+	}
+
+	public boolean isWarning() {
+		return warning;
+	}
+
+	public void setWarning(boolean warning) {
+		this.warning = warning;
 	}
 
 }

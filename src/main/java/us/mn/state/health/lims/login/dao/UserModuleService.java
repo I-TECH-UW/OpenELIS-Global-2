@@ -42,4 +42,5 @@ public interface UserModuleService {
 	public void setupUserSessionTimeOut(HttpServletRequest request) throws LIMSRuntimeException;
 
 	public void enabledAdminButtons(HttpServletRequest request) throws LIMSRuntimeException;
+
 }

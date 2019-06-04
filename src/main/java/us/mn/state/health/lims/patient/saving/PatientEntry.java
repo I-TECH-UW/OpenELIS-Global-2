@@ -28,30 +28,54 @@ import java.sql.Timestamp;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.patient.form.PatientEntryByProjectForm;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.StatusService.RecordStatus;
 import us.mn.state.health.lims.common.util.DateUtil;
 
+@Service
+@Scope("prototype")
 public class PatientEntry extends Accessioner {
 
 	protected HttpServletRequest request;
 
 	public PatientEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
 			throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		super((String) form.get("labNo"), (String) form.get("subjectNumber"), (String) form.get("siteSubjectNumber"),
-				sysUserId);
+		this();
+		setFieldsFromForm(form);
+		setRequest(request);
+		setSysUserId(sysUserId);
+	}
 
+	public PatientEntry() {
+		super();
+		newPatientStatus = RecordStatus.InitialRegistration;
+		newSampleStatus = RecordStatus.NotRegistered;
+	}
+
+	public void setRequest(HttpServletRequest request) {
+		this.request = request;
+	}
+
+	public void setFieldsFromForm(PatientEntryByProjectForm form)
+			throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		setAccessionNumber((String) form.get("labNo"));
+		setPatientSiteSubjectNo((String) form.get("siteSubjectNumber"));
+		setPatientIdentifier((String) form.get("subjectNumber"));
+		setProjectFormMapperFromForm(form);
+	}
+
+	public void setProjectFormMapperFromForm(PatientEntryByProjectForm form)
+			throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		projectFormMapper = getProjectFormMapper(form);
 		projectFormMapper.setPatientForm(true);
 		projectForm = projectFormMapper.getProjectForm();
 		findStatusSet();
 
-		this.request = request;
-
-		newPatientStatus = RecordStatus.InitialRegistration;
-		newSampleStatus = RecordStatus.NotRegistered;
 	}
 
 	@Override

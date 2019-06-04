@@ -23,6 +23,7 @@ import spring.mine.result.form.StatusResultsForm;
 import spring.service.analysis.AnalysisService;
 import spring.service.sample.SampleService;
 import spring.service.sampleitem.SampleItemService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.StatusService;
@@ -67,7 +68,8 @@ public class StatusResultsController extends BaseController {
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		StatusResultsForm form = new StatusResultsForm();
 
-		resultsUtility = new ResultsLoadUtility(getSysUserId(request));
+		resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
+		resultsUtility.setSysUser(getSysUserId(request));
 
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
@@ -75,8 +77,8 @@ public class StatusResultsController extends BaseController {
 
 		PropertyUtils.setProperty(form, "referralReasons",
 				DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-		PropertyUtils.setProperty(form, "rejectReasons",
-				DisplayListService.getInstance().getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+		PropertyUtils.setProperty(form, "rejectReasons", DisplayListService.getInstance()
+				.getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
 		ResultsPaging paging = new ResultsPaging();
 

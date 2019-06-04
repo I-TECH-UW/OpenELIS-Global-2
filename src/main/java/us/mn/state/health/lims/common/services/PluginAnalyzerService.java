@@ -23,7 +23,6 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.analyzer.AnalyzerService;
 import spring.service.analyzerimport.AnalyzerTestMappingService;
@@ -87,7 +86,7 @@ public class PluginAnalyzerService {
 //		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 		try {
-			persistData(analyzer, testMappings);
+			analyzerService.persistData(analyzer, testMappings, existingMappings);
 //			tx.commit();
 
 			registerAanlyzerInCache(name, analyzer.getId());
@@ -97,33 +96,6 @@ public class PluginAnalyzerService {
 //
 //		registerAanlyzerInCache(name, analyzer.getId());
 		return analyzer.getId();
-	}
-
-	@Transactional
-	private void persistData(Analyzer analyzer, List<AnalyzerTestMapping> testMappings) {
-		if (analyzer.getId() == null) {
-			analyzerService.insertData(analyzer);
-		} else {
-			analyzerService.updateData(analyzer);
-		}
-
-		for (AnalyzerTestMapping mapping : testMappings) {
-			mapping.setAnalyzerId(analyzer.getId());
-			if (newMapping(mapping)) {
-				analyzerMappingService.insertData(mapping, "1");
-				existingMappings.add(mapping);
-			}
-		}
-	}
-
-	private boolean newMapping(AnalyzerTestMapping mapping) {
-		for (AnalyzerTestMapping existingMap : existingMappings) {
-			if (existingMap.getAnalyzerId().equals(mapping.getAnalyzerId())
-					&& existingMap.getAnalyzerTestName().equals(mapping.getAnalyzerTestName())) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	private List<AnalyzerTestMapping> createTestMappings(List<TestMapping> nameMappings) {

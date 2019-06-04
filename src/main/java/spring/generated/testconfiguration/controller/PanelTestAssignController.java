@@ -25,10 +25,10 @@ import spring.generated.testconfiguration.form.PanelTestAssignForm;
 import spring.mine.common.controller.BaseController;
 import spring.service.panel.PanelService;
 import spring.service.panelitem.PanelItemService;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.services.DisplayListService;
 import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
+import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
@@ -38,7 +38,7 @@ import us.mn.state.health.lims.testconfiguration.action.PanelTests;
 
 @Controller
 public class PanelTestAssignController extends BaseController {
-	
+
 	@Autowired
 	PanelService panelService;
 	@Autowired
@@ -137,12 +137,18 @@ public class PanelTestAssignController extends BaseController {
 
 		if (!GenericValidator.isBlankOrNull(panelId)) {
 			List<PanelItem> panelItems = panelItemService.getPanelItemsForPanel(panelId);
-			List<String> newTests = (List<String>) form.get("currentTests");
+
+			List<String> newTestIds = (List<String>) form.get("currentTests");
+			List<Test> newTests = new ArrayList<>();
+			for (String testId : newTestIds) {
+				newTests.add(testService.get(testId));
+			}
+
 			try {
 				panelItemService.updatePanelItems(panelItems, panel, updatePanel, currentUser, newTests);
 			} catch (LIMSRuntimeException lre) {
 				lre.printStackTrace();
-			} 
+			}
 		}
 
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);
@@ -151,8 +157,6 @@ public class PanelTestAssignController extends BaseController {
 		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 		return findForward(FWD_SUCCESS_INSERT, form);
 	}
-	
-
 
 	@Override
 	protected String findLocalForward(String forward) {

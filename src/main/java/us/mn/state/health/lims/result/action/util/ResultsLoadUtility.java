@@ -28,26 +28,40 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.analysis.AnalysisService;
 import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.analyte.AnalyteService;
+import spring.service.dictionary.DictionaryService;
 import spring.service.note.NoteServiceImpl;
 import spring.service.note.NoteServiceImpl.NoteType;
+import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.patient.PatientServiceImpl;
+import spring.service.referral.ReferralService;
+import spring.service.result.ResultInventoryService;
+import spring.service.result.ResultService;
 import spring.service.result.ResultServiceImpl;
+import spring.service.result.ResultSignatureService;
 import spring.service.resultlimit.ResultLimitServiceImpl;
 import spring.service.sample.SampleServiceImpl;
+import spring.service.samplehuman.SampleHumanService;
+import spring.service.sampleitem.SampleItemService;
+import spring.service.sampleqaevent.SampleQaEventService;
+import spring.service.systemuser.SystemUserService;
+import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
-import us.mn.state.health.lims.analyte.dao.AnalyteDAO;
-import us.mn.state.health.lims.analyte.daoimpl.AnalyteDAOImpl;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
@@ -60,55 +74,36 @@ import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
 import us.mn.state.health.lims.common.services.TestIdentityService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
-import us.mn.state.health.lims.common.util.DAOImplFactory;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.inventory.action.InventoryUtility;
 import us.mn.state.health.lims.inventory.form.InventoryKitItem;
-import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
-import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.patient.util.PatientUtil;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 import us.mn.state.health.lims.patientidentitytype.util.PatientIdentityTypeMap;
-import us.mn.state.health.lims.referral.dao.ReferralDAO;
-import us.mn.state.health.lims.referral.daoimpl.ReferralDAOImpl;
 import us.mn.state.health.lims.referral.valueholder.Referral;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.dao.ResultInventoryDAO;
-import us.mn.state.health.lims.result.dao.ResultSignatureDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultInventoryDAOImpl;
-import us.mn.state.health.lims.result.daoimpl.ResultSignatureDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultInventory;
 import us.mn.state.health.lims.result.valueholder.ResultSignature;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
-import us.mn.state.health.lims.sampleitem.dao.SampleItemDAO;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
-import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
-import us.mn.state.health.lims.sampleqaevent.daoimpl.SampleQaEventDAOImpl;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 import us.mn.state.health.lims.statusofsample.util.StatusRules;
-import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
-import us.mn.state.health.lims.systemuser.daoimpl.SystemUserDAOImpl;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 import us.mn.state.health.lims.test.beanItems.TestResultItem.ResultDisplayType;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 //import us.mn.state.health.lims.test.valueholder.TestSection;
 import us.mn.state.health.lims.testreflex.action.util.TestReflexUtil;
 import us.mn.state.health.lims.testreflex.valueholder.TestReflex;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
+@Service
+@Scope("prototype")
 public class ResultsLoadUtility {
 
 	private static final boolean SORT_FORWARD = true;
@@ -120,7 +115,6 @@ public class ResultsLoadUtility {
 
 	private List<Sample> samples;
 	private String currentDate = "";
-	private PatientServiceImpl patientService;
 	private Sample currSample;
 
 	private Set<Integer> excludedAnalysisStatus = new HashSet<>();
@@ -129,19 +123,41 @@ public class ResultsLoadUtility {
 
 	private List<InventoryKitItem> activeKits;
 
-	private final ResultDAO resultDAO = DAOImplFactory.getInstance().getResultDAOImpl();
-	private final DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-	private final ResultSignatureDAO resultSignatureDAO = new ResultSignatureDAOImpl();
-	private final ResultInventoryDAO resultInventoryDAO = new ResultInventoryDAOImpl();
-	private final ObservationHistoryDAO observationHistoryDAO = new ObservationHistoryDAOImpl();
-	private AnalysisDAO analysisDAO = new AnalysisDAOImpl();
+	private PatientServiceImpl patientServiceImpl;
+
+	@Autowired
+	private ResultService resultService;
+	@Autowired
+	private DictionaryService dictionaryService;
+	@Autowired
+	private ResultSignatureService resultSignatureService;
+	@Autowired
+	private ResultInventoryService resultInventoryService;
+	@Autowired
+	private ObservationHistoryService observationHistoryService;
+	@Autowired
+	private AnalysisService analysisService;
+	@Autowired
+	private ReferralService referralService;
+	@Autowired
+	private AnalyteService analyteService;
+	@Autowired
+	private SystemUserService systemUserService;
+	@Autowired
+	private SampleHumanService sampleHumanService;
+	@Autowired
+	private TestService testService;
+	@Autowired
+	private SampleItemService sampleItemService;
+	@Autowired
+	private SampleQaEventService sampleQaEventService;
 
 	private final StatusRules statusRules = new StatusRules();
 
 	private boolean inventoryNeeded = false;
 
-	private static String ANALYTE_CONCLUSION_ID;
-	private static String ANALYTE_CD4_CNT_CONCLUSION_ID;
+	private String ANALYTE_CONCLUSION_ID;
+	private String ANALYTE_CD4_CNT_CONCLUSION_ID;
 	private static final String NUMERIC_RESULT_TYPE = "N";
 	private static boolean depersonalize = FormFields.getInstance().useField(Field.DepersonalizedResults);
 	private boolean useTechSignature = ConfigurationProperties.getInstance()
@@ -151,37 +167,31 @@ public class ResultsLoadUtility {
 	private boolean useCurrentUserAsTechDefault = ConfigurationProperties.getInstance()
 			.isPropertyValueEqual(Property.autoFillTechNameUser, "true");
 	private String currentUserName = "";
-	private ReferralDAO referralDAO = new ReferralDAOImpl();
 	private int reflexGroup = 1;
 	private boolean lockCurrentResults = false;
 
-	static {
-
-		AnalyteDAO analyteDAO = new AnalyteDAOImpl();
+	@PostConstruct
+	public void initializeGlobalVariables() {
 		Analyte analyte = new Analyte();
 		analyte.setAnalyteName("Conclusion");
-		analyte = analyteDAO.getAnalyteByName(analyte, false);
+		analyte = analyteService.getAnalyteByName(analyte, false);
 		ANALYTE_CONCLUSION_ID = analyte == null ? "" : analyte.getId();
 		analyte = new Analyte();
 		analyte.setAnalyteName("generated CD4 Count");
-		analyte = analyteDAO.getAnalyteByName(analyte, false);
+		analyte = analyteService.getAnalyteByName(analyte, false);
 		ANALYTE_CD4_CNT_CONCLUSION_ID = analyte == null ? "" : analyte.getId();
 	}
 
-	public ResultsLoadUtility(String currentUserId) {
+	public void setSysUser(String currentUserId) {
 		if (useCurrentUserAsTechDefault) {
-			SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
 			SystemUser systemUser = new SystemUser();
 			systemUser.setId(currentUserId);
-			systemUserDAO.getData(systemUser);
+			systemUserService.getData(systemUser);
 
 			if (systemUser.getId() != null) {
 				currentUserName = systemUser.getFirstName() + " " + systemUser.getLastName();
 			}
 		}
-	}
-
-	public ResultsLoadUtility() {
 	}
 
 	/*
@@ -198,7 +208,7 @@ public class ResultsLoadUtility {
 			samples.add(sample);
 		}
 
-		patientService = new PatientServiceImpl(patient);
+		patientServiceImpl = new PatientServiceImpl(patient);
 
 		return getGroupedTestsForSamples();
 	}
@@ -208,10 +218,9 @@ public class ResultsLoadUtility {
 		activeKits = null;
 		inventoryNeeded = false;
 
-		patientService = new PatientServiceImpl(patient);
+		patientServiceImpl = new PatientServiceImpl(patient);
 
-		SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
-		samples = sampleHumanDAO.getSamplesForPatient(patient.getId());
+		samples = sampleHumanService.getSamplesForPatient(patient.getId());
 
 		return getGroupedTestsForSamples();
 	}
@@ -246,7 +255,7 @@ public class ResultsLoadUtility {
 
 	public List<TestResultItem> getUnfinishedTestResultItemsInTestSection(String testSectionId) {
 
-		List<Analysis> analysisList = analysisDAO.getAllAnalysisByTestSectionAndStatus(testSectionId,
+		List<Analysis> analysisList = analysisService.getAllAnalysisByTestSectionAndStatus(testSectionId,
 				analysisStatusList, sampleStatusList);
 
 		return getGroupedTestsForAnalysisList(analysisList, SORT_FORWARD);
@@ -262,18 +271,19 @@ public class ResultsLoadUtility {
 		List<TestResultItem> selectedTestList = new ArrayList<>();
 
 		for (Analysis analysis : filteredAnalysisList) {
-			patientService = new PatientServiceImpl(
+			patientServiceImpl = new PatientServiceImpl(
 					new SampleServiceImpl(analysis.getSampleItem().getSample()).getPatient());
 
 			String patientName = "";
 			String patientInfo;
-			String nationalId = patientService.getNationalId();
+			String nationalId = patientServiceImpl.getNationalId();
 			if (depersonalize) {
-				patientInfo = GenericValidator.isBlankOrNull(nationalId) ? patientService.getExternalId() : nationalId;
+				patientInfo = GenericValidator.isBlankOrNull(nationalId) ? patientServiceImpl.getExternalId()
+						: nationalId;
 			} else {
-				patientName = patientService.getLastFirstName();
-				patientInfo = nationalId + ", " + patientService.getGender() + ", "
-						+ patientService.getBirthdayForDisplay();
+				patientName = patientServiceImpl.getLastFirstName();
+				patientInfo = nationalId + ", " + patientServiceImpl.getGender() + ", "
+						+ patientServiceImpl.getBirthdayForDisplay();
 			}
 
 			currSample = analysis.getSampleItem().getSample();
@@ -370,8 +380,7 @@ public class ResultsLoadUtility {
 	@SuppressWarnings("unchecked")
 	public List<Test> getTestsInSection(String id) {
 
-		TestDAO testDAO = new TestDAOImpl();
-		return testDAO.getTestsByTestSection(id);
+		return testService.getTestsByTestSection(id);
 	}
 
 	private List<TestResultItem> getTestResultItemFromAnalysis(Analysis analysis, String patientName,
@@ -379,7 +388,7 @@ public class ResultsLoadUtility {
 		List<TestResultItem> testResultList = new ArrayList<>();
 
 		SampleItem sampleItem = analysis.getSampleItem();
-		List<Result> resultList = resultDAO.getResultsByAnalysis(analysis);
+		List<Result> resultList = resultService.getResultsByAnalysis(analysis);
 
 		ResultInventory testKit = null;
 
@@ -410,7 +419,7 @@ public class ResultsLoadUtility {
 
 			if (result != null) {
 				if (useTechSignature) {
-					List<ResultSignature> signatures = resultSignatureDAO.getResultSignaturesByResults(resultList);
+					List<ResultSignature> signatures = resultSignatureService.getResultSignaturesByResults(resultList);
 
 					for (ResultSignature signature : signatures) {
 						// we no longer use supervisor signature but there may be some in db
@@ -449,12 +458,12 @@ public class ResultsLoadUtility {
 
 	private String getInitialSampleConditionString(SampleItem sampleItem) {
 		if (useInitialSampleCondition) {
-			List<ObservationHistory> observationList = observationHistoryDAO
+			List<ObservationHistory> observationList = observationHistoryService
 					.getObservationHistoriesBySampleItemId(sampleItem.getId());
 			StringBuilder conditions = new StringBuilder();
 
 			for (ObservationHistory observation : observationList) {
-				Dictionary dictionary = dictionaryDAO.getDictionaryById(observation.getValue());
+				Dictionary dictionary = dictionaryService.getDictionaryById(observation.getValue());
 				if (dictionary != null) {
 					conditions.append(dictionary.getLocalizedName());
 					conditions.append(", ");
@@ -470,7 +479,7 @@ public class ResultsLoadUtility {
 	}
 
 	private ResultInventory getInventoryForResult(Result result) throws LIMSRuntimeException {
-		List<ResultInventory> inventoryList = resultInventoryDAO.getResultInventorysByResult(result);
+		List<ResultInventory> inventoryList = resultInventoryService.getResultInventorysByResult(result);
 
 		return inventoryList.size() > 0 ? inventoryList.get(0) : null;
 	}
@@ -586,12 +595,11 @@ public class ResultsLoadUtility {
 	}
 
 	private List<SampleItem> getSampleItemsForSample(Sample sample) {
-		SampleItemDAO sampleItemDAO = DAOImplFactory.getInstance().getSampleItemDAOImpl();
-		return sampleItemDAO.getSampleItemsBySampleId(sample.getId());
+		return sampleItemService.getSampleItemsBySampleId(sample.getId());
 	}
 
 	private List<Analysis> getAnalysisForSampleItem(SampleItem item) {
-		return analysisDAO.getAnalysesBySampleItemsExcludingByStatusIds(item, excludedAnalysisStatus);
+		return analysisService.getAnalysesBySampleItemsExcludingByStatusIds(item, excludedAnalysisStatus);
 	}
 
 	private TestResultItem createTestResultItem(AnalysisServiceImpl analysisService, ResultInventory testKit,
@@ -601,7 +609,7 @@ public class ResultsLoadUtility {
 
 		TestServiceImpl testService = new TestServiceImpl(analysisService.getTest());
 		ResultLimit resultLimit = new ResultLimitServiceImpl().getResultLimitForTestAndPatient(testService.getTest(),
-				patientService.getPatient());
+				patientServiceImpl.getPatient());
 
 		String receivedDate = currSample == null ? getCurrentDate() : currSample.getReceivedDateForDisplay();
 		String testMethodName = testService.getTestMethodName();
@@ -616,7 +624,7 @@ public class ResultsLoadUtility {
 			testKitId = testKit.getId();
 			testKitInventoryId = testKit.getInventoryLocationId();
 			testKitResult.setId(testKit.getResultId());
-			resultDAO.getData(testKitResult);
+			resultService.getData(testKitResult);
 			testKitInactive = kitNotInActiveKitList(testKitInventoryId);
 		}
 
@@ -641,7 +649,7 @@ public class ResultsLoadUtility {
 		boolean referralCanceled = false;
 		if (supportReferrals) {
 			if (analysisService.getAnalysis() != null) {
-				Referral referral = referralDAO.getReferralByAnalysisId(analysisService.getAnalysis().getId());
+				Referral referral = referralService.getReferralByAnalysisId(analysisService.getAnalysis().getId());
 				if (referral != null) {
 					referralCanceled = referral.isCanceled();
 					referralId = referral.getId();
@@ -785,7 +793,7 @@ public class ResultsLoadUtility {
 				if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
 					dictionary = new Dictionary();
 					dictionary.setId(testResult.getValue());
-					dictionaryDAO.getData(dictionary);
+					dictionaryService.getData(dictionary);
 					String displayValue = dictionary.getLocalizedName();
 
 					if ("unknown".equals(displayValue)) {
@@ -817,7 +825,7 @@ public class ResultsLoadUtility {
 
 	private void setQualifiedValues(TestResultItem testItem, Result result) {
 		if (result != null) {
-			List<Result> results = resultDAO.getChildResults(result.getId());
+			List<Result> results = resultService.getChildResults(result.getId());
 			if (!results.isEmpty()) {
 				Result childResult = results.get(0);
 				testItem.setQualifiedResultId(childResult.getId());
@@ -858,9 +866,9 @@ public class ResultsLoadUtility {
 
 			Dictionary dictionaryValue = new Dictionary();
 			dictionaryValue.setId(result.getValue());
-			dictionaryDAO.getData(dictionaryValue);
+			dictionaryService.getData(dictionaryValue);
 
-			List<Dictionary> dictionaryList = dictionaryDAO
+			List<Dictionary> dictionaryList = dictionaryService
 					.getDictionaryEntriesByCategoryId(dictionaryValue.getDictionaryCategory().getId());
 
 			for (Dictionary dictionary : dictionaryList) {
@@ -985,8 +993,7 @@ public class ResultsLoadUtility {
 	}
 
 	public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
-		SampleQaEventDAO sampleQaEventDAO = new SampleQaEventDAOImpl();
-		return sampleQaEventDAO.getSampleQaEventsBySample(sample);
+		return sampleQaEventService.getSampleQaEventsBySample(sample);
 	}
 
 }

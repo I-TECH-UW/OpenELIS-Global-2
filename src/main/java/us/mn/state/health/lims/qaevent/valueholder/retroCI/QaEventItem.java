@@ -34,15 +34,16 @@ import spring.mine.qaevent.form.NonConformityForm;
 public class QaEventItem implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { NonConformityForm.NonConformity.class })
+	@Pattern(regexp = "^NEW$|" + ValidationHelper.ID_REGEX, groups = { NonConformityForm.NonConformity.class })
 	private String id;
 
-	@NotBlank(groups = { NonConformityForm.NonConformity.class, Default.class })
+	@NotBlank(groups = { Default.class })
 	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { NonConformityForm.NonConformity.class, Default.class })
 	private String qaEvent;
 
 	@NotBlank(groups = { NonConformityForm.NonConformity.class, Default.class })
-	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { NonConformityForm.NonConformity.class, Default.class })
+	@Pattern(regexp = "^-1$|" + ValidationHelper.ID_REGEX, groups = { NonConformityForm.NonConformity.class,
+			Default.class })
 	private String sampleType;
 
 	@SafeHtml(groups = { NonConformityForm.NonConformity.class, Default.class })

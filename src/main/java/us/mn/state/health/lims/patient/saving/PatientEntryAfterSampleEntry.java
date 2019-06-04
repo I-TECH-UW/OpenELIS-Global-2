@@ -28,14 +28,25 @@ import static us.mn.state.health.lims.common.services.StatusService.RecordStatus
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
 import spring.mine.patient.form.PatientEntryByProjectForm;
 import us.mn.state.health.lims.common.services.StatusService.RecordStatus;
 
+@Service
+@Scope("prototype")
 public class PatientEntryAfterSampleEntry extends PatientEntry {
 
 	public PatientEntryAfterSampleEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
 			throws Exception {
-		super(form, sysUserId, request);
+		this();
+		super.setFieldsFromForm(form);
+		super.setSysUserId(sysUserId);
+		super.setRequest(request);
+	}
+
+	public PatientEntryAfterSampleEntry() {
 		newPatientStatus = RecordStatus.InitialRegistration;
 		newSampleStatus = null; // leave it be
 	}

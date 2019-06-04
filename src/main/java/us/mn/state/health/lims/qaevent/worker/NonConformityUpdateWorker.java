@@ -23,13 +23,32 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
-import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 
 import spring.mine.common.validator.BaseErrors;
+import spring.service.address.PersonAddressService;
+import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl;
-import us.mn.state.health.lims.address.dao.PersonAddressDAO;
-import us.mn.state.health.lims.address.daoimpl.PersonAddressDAOImpl;
+import spring.service.observationhistory.ObservationHistoryService;
+import spring.service.organization.OrganizationService;
+import spring.service.patient.PatientService;
+import spring.service.patientidentity.PatientIdentityService;
+import spring.service.person.PersonService;
+import spring.service.project.ProjectService;
+import spring.service.provider.ProviderService;
+import spring.service.qaevent.QaObservationService;
+import spring.service.requester.SampleRequesterService;
+import spring.service.sample.SampleService;
+import spring.service.samplehuman.SampleHumanService;
+import spring.service.sampleitem.SampleItemService;
+import spring.service.sampleproject.SampleProjectService;
+import spring.service.sampleqaevent.SampleQaEventService;
+import spring.service.systemuser.SystemUserService;
+import spring.service.typeofsample.TypeOfSampleService;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -42,64 +61,29 @@ import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
 import us.mn.state.health.lims.common.services.StatusService.SampleStatus;
 import us.mn.state.health.lims.common.services.TableIdService;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.note.dao.NoteDAO;
-import us.mn.state.health.lims.note.daoimpl.NoteDAOImpl;
 import us.mn.state.health.lims.note.valueholder.Note;
-import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
-import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory.ValueType;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.dao.OrganizationOrganizationTypeDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationOrganizationTypeDAOImpl;
 import us.mn.state.health.lims.organization.valueholder.Organization;
-import us.mn.state.health.lims.patient.dao.PatientDAO;
-import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
 import us.mn.state.health.lims.patient.util.PatientUtil;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.patientidentity.dao.PatientIdentityDAO;
-import us.mn.state.health.lims.patientidentity.daoimpl.PatientIdentityDAOImpl;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
-import us.mn.state.health.lims.person.dao.PersonDAO;
-import us.mn.state.health.lims.person.daoimpl.PersonDAOImpl;
 import us.mn.state.health.lims.person.valueholder.Person;
-import us.mn.state.health.lims.project.dao.ProjectDAO;
-import us.mn.state.health.lims.project.daoimpl.ProjectDAOImpl;
 import us.mn.state.health.lims.project.valueholder.Project;
-import us.mn.state.health.lims.provider.dao.ProviderDAO;
-import us.mn.state.health.lims.provider.daoimpl.ProviderDAOImpl;
 import us.mn.state.health.lims.provider.valueholder.Provider;
-import us.mn.state.health.lims.qaevent.dao.QaObservationDAO;
-import us.mn.state.health.lims.qaevent.daoimpl.QaObservationDAOImpl;
 import us.mn.state.health.lims.qaevent.valueholder.QaObservation;
 import us.mn.state.health.lims.qaevent.valueholder.retroCI.QaEventItem;
-import us.mn.state.health.lims.requester.dao.SampleRequesterDAO;
-import us.mn.state.health.lims.requester.daoimpl.SampleRequesterDAOImpl;
 import us.mn.state.health.lims.requester.valueholder.SampleRequester;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
 import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
-import us.mn.state.health.lims.sampleitem.dao.SampleItemDAO;
-import us.mn.state.health.lims.sampleitem.daoimpl.SampleItemDAOImpl;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
-import us.mn.state.health.lims.sampleproject.dao.SampleProjectDAO;
-import us.mn.state.health.lims.sampleproject.daoimpl.SampleProjectDAOImpl;
 import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
-import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
-import us.mn.state.health.lims.sampleqaevent.daoimpl.SampleQaEventDAOImpl;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
-import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
-import us.mn.state.health.lims.systemuser.daoimpl.SystemUserDAOImpl;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
+@Service
+@Scope("prototype")
 public class NonConformityUpdateWorker {
 
 	private Sample sample;
@@ -132,21 +116,46 @@ public class NonConformityUpdateWorker {
 	private boolean updateSampleHuman;
 
 	public static final String NOTE_SUBJECT = "QaEvent Note";
+	private final static boolean REJECT_IF_EMPTY = true;
 
-	private static final ObservationHistoryDAO observationDAO = new ObservationHistoryDAOImpl();
-	private static final SampleDAO sampleDAO = new SampleDAOImpl();
-	private static final PatientDAO patientDAO = new PatientDAOImpl();
-	private static final SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
-	private static final SampleItemDAO sampleItemDAO = new SampleItemDAOImpl();
-	private static final NoteDAO noteDAO = new NoteDAOImpl();
-	private static final SampleQaEventDAO sampleQaEventDAO = new SampleQaEventDAOImpl();
-	private static final SampleRequesterDAO sampleRequesterDAO = new SampleRequesterDAOImpl();
-	private static final TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
-	private static final QaObservationDAO qaObservationDAO = new QaObservationDAOImpl();
-	private static final OrganizationDAO orgDAO = new OrganizationDAOImpl();
-	private static final OrganizationOrganizationTypeDAO orgOrgTypeDAO = new OrganizationOrganizationTypeDAOImpl();
-	private static final PersonAddressDAO personAddressDAO = new PersonAddressDAOImpl();
-	private static final PatientIdentityDAO patientIdentityDAO = new PatientIdentityDAOImpl();
+	@Autowired
+	private ObservationHistoryService observationService;
+	@Autowired
+	private SampleService sampleService;
+	@Autowired
+	private PatientService patientService;
+	@Autowired
+	private SampleHumanService sampleHumanService;
+	@Autowired
+	private SampleItemService sampleItemService;
+	@Autowired
+	private NoteService noteService;
+	@Autowired
+	private SampleQaEventService sampleQaEventService;
+	@Autowired
+	private SampleRequesterService sampleRequesterService;
+	@Autowired
+	private TypeOfSampleService typeOfSampleService;
+	@Autowired
+	private QaObservationService qaObservationService;
+	@Autowired
+	private OrganizationService orgService;
+//	private  final OrganizationOrganizationTypeService orgOrgTypeService ;
+	@Autowired
+	private PersonAddressService personAddressService;
+	@Autowired
+	private PatientIdentityService patientIdentityService;
+	@Autowired
+	private ProviderService providerService;
+	@Autowired
+	private PersonService personService;
+	@Autowired
+	private ProjectService projectService;
+	@Autowired
+	private SampleProjectService sampleProjectService;
+	@Autowired
+	private SystemUserService systemUserService;
+
 	private Provider provider;
 	private Person providerPerson;
 	private boolean insertProvider = false;
@@ -155,13 +164,21 @@ public class NonConformityUpdateWorker {
 	private boolean insertNewOrganizaiton = false;
 	private SampleRequester sampleRequester = null;
 
-	private final NonConformityUpdateData webData;
-	private final static boolean REJECT_IF_EMPTY = true;
+	private NonConformityUpdateData webData;
 
 	public NonConformityUpdateWorker(NonConformityUpdateData data) {
 		webData = data;
 	}
 
+	public NonConformityUpdateWorker() {
+
+	}
+
+	public void setWebData(NonConformityUpdateData data) {
+		webData = data;
+	}
+
+	@Transactional
 	public String update() {
 		useFullProviderInfo = FormFields.getInstance().useField(FormFields.Field.QA_FULL_PROVIDER_INFO);
 
@@ -176,13 +193,13 @@ public class NonConformityUpdateWorker {
 			updateArtifacts();
 		}
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 		try {
 			if (insertPatient) {
-				patientDAO.insertData(patient);
+				patientService.insertData(patient);
 			} else if (updatePatient) {
-				patientDAO.updateData(patient);
+				patientService.updateData(patient);
 			}
 
 			if (insertProvider) {
@@ -192,30 +209,30 @@ public class NonConformityUpdateWorker {
 			if (subjectNoPatientIdentity != null) {
 				subjectNoPatientIdentity.setPatientId(patient.getId());
 				if (GenericValidator.isBlankOrNull(subjectNoPatientIdentity.getId())) {
-					patientIdentityDAO.insertData(subjectNoPatientIdentity);
+					patientIdentityService.insertData(subjectNoPatientIdentity);
 				} else {
-					patientIdentityDAO.updateData(subjectNoPatientIdentity);
+					patientIdentityService.updateData(subjectNoPatientIdentity);
 				}
 			}
 
 			if (STNoPatientIdentity != null) {
 				STNoPatientIdentity.setPatientId(patient.getId());
 				if (GenericValidator.isBlankOrNull(STNoPatientIdentity.getId())) {
-					patientIdentityDAO.insertData(STNoPatientIdentity);
+					patientIdentityService.insertData(STNoPatientIdentity);
 				} else {
-					patientIdentityDAO.updateData(STNoPatientIdentity);
+					patientIdentityService.updateData(STNoPatientIdentity);
 				}
 			}
 
 			if (isNewSample) {
-				sampleDAO.insertDataWithAccessionNumber(sample);
+				sampleService.insertDataWithAccessionNumber(sample);
 
 				sampleHuman.setPatientId(patient.getId());
 				sampleHuman.setSampleId(sample.getId());
 				sampleHuman.setProviderId((provider == null) ? null : provider.getId());
-				sampleHumanDAO.insertData(sampleHuman);
+				sampleHumanService.insertData(sampleHuman);
 			} else {
-				sampleDAO.updateData(sample);
+				sampleService.updateData(sample);
 			}
 
 			if (updateSampleHuman) {
@@ -223,35 +240,34 @@ public class NonConformityUpdateWorker {
 				sampleHuman.setSampleId(sample.getId());
 				sampleHuman.setPatientId(patient.getId());
 				sampleHuman.setSysUserId(webData.getCurrentSysUserId());
-				sampleHumanDAO.updateData(sampleHuman);
+				sampleHumanService.updateData(sampleHuman);
 			}
 
 			if (insertSampleItems) {
 				for (SampleItem si : sampleItemsByType.values()) {
-					sampleItemDAO.insertData(si);
+					sampleItemService.insertData(si);
 				}
 			}
 
 			if (insertSampleProject) {
-				SampleProjectDAO sampleProjectDAO = new SampleProjectDAOImpl();
-				sampleProjectDAO.insertData(sampleProject);
+				sampleProjectService.insertData(sampleProject);
 			}
 
 			if (insertDoctorObservation) {
 				doctorObservation.setPatientId(patient.getId());
 				doctorObservation.setSampleId(sample.getId());
-				observationDAO.insertData(doctorObservation);
+				observationService.insertData(doctorObservation);
 			}
 
 			if (insertServiceObservation) {
 				serviceObservation.setPatientId(patient.getId());
 				serviceObservation.setSampleId(sample.getId());
-				observationDAO.insertData(serviceObservation);
+				observationService.insertData(serviceObservation);
 			}
 
 			if (insertNewOrganizaiton) {
-				orgDAO.insertData(newOrganization);
-				orgOrgTypeDAO.linkOrganizationAndType(newOrganization, TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
+				orgService.insertData(newOrganization);
+				orgService.linkOrganizationAndType(newOrganization, TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
 			}
 
 			if (insertSampleRequester) {
@@ -259,12 +275,12 @@ public class NonConformityUpdateWorker {
 					sampleRequester.setRequesterId(newOrganization.getId());
 				}
 				sampleRequester.setSampleId(Long.parseLong(sample.getId()));
-				sampleRequesterDAO.insertData(sampleRequester);
+				sampleRequesterService.insertData(sampleRequester);
 			}
 
 			for (SampleQaEvent event : sampleQAEventInsertList) {
 				event.setSample(sample);
-				sampleQaEventDAO.insertData(event);
+				sampleQaEventService.insertData(event);
 			}
 
 			for (NoteSet noteSet : insertableNotes) {
@@ -275,40 +291,40 @@ public class NonConformityUpdateWorker {
 				} else {
 					continue;
 				}
-				noteDAO.insertData(noteSet.note);
+				noteService.insertData(noteSet.note);
 			}
 
 			for (Note note : updateableNotes) {
-				noteDAO.updateData(note);
+				noteService.updateData(note);
 			}
 
-			noteDAO.deleteData(deleteableNotes);
-			sampleQaEventDAO.deleteData(sampleQAEventDeleteList);
+			noteService.deleteData(deleteableNotes);
+			sampleQaEventService.deleteData(sampleQAEventDeleteList);
 
 			for (QaObservation qa : qaObservationMap.keySet()) {
 				if (qa.getId() == null) {
 					qa.setObservedId(qaObservationMap.get(qa).getId());
-					qaObservationDAO.insertData(qa);
+					qaObservationService.insertData(qa);
 				} else {
-					qaObservationDAO.updateData(qa);
+					qaObservationService.updateData(qa);
 				}
 			}
 
-			tx.commit();
+//			tx.commit();
 		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
+//			tx.rollback();
 			if (lre.getException() instanceof StaleObjectStateException) {
 				errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
 			} else {
 				lre.printStackTrace();
 				errors.reject("errors.UpdateException", "errors.UpdateException");
 			}
+			throw lre;
 
-			return IActionConstants.FWD_FAIL_INSERT;
-
-		} finally {
-			HibernateUtil.closeSession();
 		}
+//		finally {
+//			HibernateUtil.closeSession();
+//		}
 
 		return IActionConstants.FWD_SUCCESS_INSERT;
 	}
@@ -320,8 +336,7 @@ public class NonConformityUpdateWorker {
 	private void createSystemUser() {
 		SystemUser systemUser = new SystemUser();
 		systemUser.setId(webData.getCurrentSysUserId());
-		SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
-		systemUserDAO.getData(systemUser);
+		systemUserService.getData(systemUser);
 	}
 
 	private void clearMembers() {
@@ -368,8 +383,7 @@ public class NonConformityUpdateWorker {
 			Project project = new Project();
 			project.setId(webData.getProjectId());
 
-			ProjectDAO projectDAO = new ProjectDAOImpl();
-			projectDAO.getData(project);
+			projectService.getData(project);
 			sampleProject.setProject(project);
 			sampleProject.setSample(sample);
 			sampleProject.setSysUserId(webData.getCurrentSysUserId());
@@ -396,13 +410,13 @@ public class NonConformityUpdateWorker {
 	private void updateArtifacts() {
 		sample = new Sample();
 		sample.setId(webData.getSampleId());
-		sampleDAO.getData(sample);
+		sampleService.getData(sample);
 		sample.setSysUserId(webData.getCurrentSysUserId());
 		sample.setReferringId(webData.getRequesterSpecimanID());
 
 		sampleHuman = new SampleHuman();
 		sampleHuman.setSampleId(sample.getId());
-		sampleHumanDAO.getDataBySample(sampleHuman);
+		sampleHumanService.getDataBySample(sampleHuman);
 
 		String projectId = webData.getProjectId();
 		if (!GenericValidator.isBlankOrNull(projectId)) {
@@ -413,8 +427,7 @@ public class NonConformityUpdateWorker {
 				Project project = new Project();
 				project.setId(projectId);
 
-				ProjectDAO projectDAO = new ProjectDAOImpl();
-				projectDAO.getData(project);
+				projectService.getData(project);
 				sampleProject.setProject(project);
 				sampleProject.setSample(sample);
 				sampleProject.setSysUserId(webData.getCurrentSysUserId());
@@ -426,17 +439,17 @@ public class NonConformityUpdateWorker {
 
 		if (webData.getNewNationalId() && !GenericValidator.isBlankOrNull(webData.getNationalId())) { // number
 			updatePatient = true;
-			patient = sampleHumanDAO.getPatientForSample(sample);
+			patient = sampleHumanService.getPatientForSample(sample);
 			patient.setSysUserId(webData.getCurrentSysUserId());
 			patient.setNationalId(webData.getNationalId());
 		}
 
 		if (webData.getNewSubject() && !GenericValidator.isBlankOrNull(webData.getSubjectNo())) {
 			if (patient == null) {
-				patient = sampleHumanDAO.getPatientForSample(sample);
+				patient = sampleHumanService.getPatientForSample(sample);
 			}
 
-			subjectNoPatientIdentity = patientIdentityDAO.getPatitentIdentityForPatientAndType(patient.getId(),
+			subjectNoPatientIdentity = patientIdentityService.getPatitentIdentityForPatientAndType(patient.getId(),
 					TableIdService.getInstance().PATIENT_SUBJECT_IDENTITY);
 			if (subjectNoPatientIdentity == null) {
 				subjectNoPatientIdentity = new PatientIdentity();
@@ -449,10 +462,10 @@ public class NonConformityUpdateWorker {
 
 		if (webData.getNewSTNumber() && !GenericValidator.isBlankOrNull(webData.getSTNumber())) {
 			if (patient == null) {
-				patient = sampleHumanDAO.getPatientForSample(sample);
+				patient = sampleHumanService.getPatientForSample(sample);
 			}
 
-			STNoPatientIdentity = patientIdentityDAO.getPatitentIdentityForPatientAndType(patient.getId(),
+			STNoPatientIdentity = patientIdentityService.getPatitentIdentityForPatientAndType(patient.getId(),
 					TableIdService.getInstance().PATIENT_ST_IDENTITY);
 			if (STNoPatientIdentity == null) {
 				STNoPatientIdentity = new PatientIdentity();
@@ -475,23 +488,21 @@ public class NonConformityUpdateWorker {
 
 	private void persistProviderData() {
 		if (providerPerson != null) {
-			PersonDAO personDAO = new PersonDAOImpl();
 			providerPerson.setSysUserId(webData.getCurrentSysUserId());
-			personDAO.insertData(providerPerson);
+			personService.insertData(providerPerson);
 		}
 		if (provider != null) {
-			ProviderDAO providerDAO = new ProviderDAOImpl();
 			provider.setSysUserId(webData.getCurrentSysUserId());
 			if (providerPerson != null) {
 				provider.setPerson(providerPerson);
 			}
-			providerDAO.insertData(provider);
+			providerService.insertData(provider);
 		}
 
 		if (providerPerson != null) {
 			for (PersonAddress addressPart : addressPartList) {
 				addressPart.setPersonId(providerPerson.getId());
-				personAddressDAO.insert(addressPart);
+				personAddressService.insert(addressPart);
 			}
 		}
 	}
@@ -502,9 +513,9 @@ public class NonConformityUpdateWorker {
 	private void setPatient() {
 
 		if (!GenericValidator.isBlankOrNull(webData.getPatientId())) {
-			patient = patientDAO.readPatient(webData.getPatientId());
+			patient = patientService.readPatient(webData.getPatientId());
 		} else if (!GenericValidator.isBlankOrNull(webData.getNationalId())) {
-			patient = patientDAO.getPatientByNationalId(webData.getNationalId());
+			patient = patientService.getPatientByNationalId(webData.getNationalId());
 		}
 
 		if (patient == null) {
@@ -578,10 +589,12 @@ public class NonConformityUpdateWorker {
 			sampleHuman.setSysUserId(webData.getCurrentSysUserId());
 			insertProvider = true;
 
-			addAddressPart(webData.getRequesterCommune(), TableIdService.getInstance().ADDRESS_COMMUNE_ID, addressPartList, "T");
-			addAddressPart(webData.getRequesterVillage(), TableIdService.getInstance().ADDRESS_VILLAGE_ID, addressPartList, "T");
-			addAddressPart(webData.getRequesterDepartment(), TableIdService.getInstance().ADDRESS_DEPARTMENT_ID, addressPartList,
-					"D");
+			addAddressPart(webData.getRequesterCommune(), TableIdService.getInstance().ADDRESS_COMMUNE_ID,
+					addressPartList, "T");
+			addAddressPart(webData.getRequesterVillage(), TableIdService.getInstance().ADDRESS_VILLAGE_ID,
+					addressPartList, "T");
+			addAddressPart(webData.getRequesterDepartment(), TableIdService.getInstance().ADDRESS_DEPARTMENT_ID,
+					addressPartList, "D");
 		}
 
 	}
@@ -699,8 +712,8 @@ public class NonConformityUpdateWorker {
 			} else {
 				NoteSet noteSet = new NoteSet();
 				noteSet.referencedSample = sample;
-				noteSet.note = new NoteServiceImpl(sample).createSavableNote(NoteServiceImpl.NoteType.NON_CONFORMITY, noteText,
-						NOTE_SUBJECT, webData.getCurrentSysUserId());
+				noteSet.note = new NoteServiceImpl(sample).createSavableNote(NoteServiceImpl.NoteType.NON_CONFORMITY,
+						noteText, NOTE_SUBJECT, webData.getCurrentSysUserId());
 				insertableNotes.add(noteSet);
 			}
 		}
@@ -742,10 +755,10 @@ public class NonConformityUpdateWorker {
 		List<SampleItem> sampleItemsOfType = new ArrayList<>();
 		if (sampleItem == null) {
 
-			TypeOfSample typeOfSample = typeOfSampleDAO.getTypeOfSampleById(sampleTypeId);
+			TypeOfSample typeOfSample = typeOfSampleService.getTypeOfSampleById(sampleTypeId);
 
 			if (sample.getId() != null) {
-				sampleItemsOfType = sampleItemDAO.getSampleItemsBySampleIdAndType(sample.getId(), typeOfSample);
+				sampleItemsOfType = sampleItemService.getSampleItemsBySampleIdAndType(sample.getId(), typeOfSample);
 			}
 			if (sampleItemsOfType != null && sampleItemsOfType.size() > 0) {
 				// ignoring any sample which actually has more than one
@@ -772,7 +785,7 @@ public class NonConformityUpdateWorker {
 			return null;
 		}
 
-		List<Note> notes = noteDAO.getNoteByRefIAndRefTableAndSubject(sample.getId(),
+		List<Note> notes = noteService.getNoteByRefIAndRefTableAndSubject(sample.getId(),
 				NoteServiceImpl.getReferenceTableIdForNoteBinding(NoteServiceImpl.BoundTo.SAMPLE), NOTE_SUBJECT);
 		return notes.isEmpty() ? null : notes.get(0);
 	}
@@ -782,7 +795,7 @@ public class NonConformityUpdateWorker {
 			return null;
 		}
 
-		List<Note> notes = noteDAO.getNoteByRefIAndRefTableAndSubject(sampleQAEventId,
+		List<Note> notes = noteService.getNoteByRefIAndRefTableAndSubject(sampleQAEventId,
 				NoteServiceImpl.getReferenceTableIdForNoteBinding(NoteServiceImpl.BoundTo.QA_EVENT), NOTE_SUBJECT);
 		return notes.isEmpty() ? null : notes.get(0);
 	}
@@ -791,8 +804,8 @@ public class NonConformityUpdateWorker {
 		if (!GenericValidator.isBlankOrNull(noteText)) {
 			NoteSet noteSet = new NoteSet();
 			noteSet.referencedEvent = event;
-			noteSet.note = new NoteServiceImpl(event).createSavableNote(NoteServiceImpl.NoteType.NON_CONFORMITY, noteText,
-					NOTE_SUBJECT, webData.getCurrentSysUserId());
+			noteSet.note = new NoteServiceImpl(event).createSavableNote(NoteServiceImpl.NoteType.NON_CONFORMITY,
+					noteText, NOTE_SUBJECT, webData.getCurrentSysUserId());
 			insertableNotes.add(noteSet);
 		}
 	}
@@ -801,7 +814,7 @@ public class NonConformityUpdateWorker {
 		String sampleId = sample.getId();
 		int max = 0;
 		if (!GenericValidator.isBlankOrNull(sampleId)) {
-			List<SampleItem> sampleItems = sampleItemDAO.getSampleItemsBySampleId(sampleId);
+			List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(sampleId);
 			for (SampleItem sampleItem : sampleItems) {
 				Integer curr = Integer.valueOf(sampleItem.getSortOrder());
 				max = (curr > max) ? curr : max;

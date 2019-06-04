@@ -20,11 +20,11 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -42,8 +42,11 @@ import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization
  * @version $Revision$
  */
 @Component
-@Transactional 
+@Transactional
 public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization> implements SampleOrganizationDAO {
+
+	@Autowired
+	AuditTrailDAO auditDAO;
 
 	public SampleOrganizationDAOImpl() {
 		super(SampleOrganization.class);
@@ -53,7 +56,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization> i
 	public void deleteData(List sampleOrgss) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < sampleOrgss.size(); i++) {
 				SampleOrganization data = (SampleOrganization) sampleOrgss.get(i);
 
@@ -95,7 +98,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization> i
 			sampleOrg.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = sampleOrg.getSysUserId();
 			String tableName = "SAMPLE_ORGANIZATION";
 			auditDAO.saveNewHistory(sampleOrg, sysUserId, tableName);
@@ -120,7 +123,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization> i
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = sampleOrg.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "SAMPLE_ORGANIZATION";
@@ -147,8 +150,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization> i
 	@Override
 	public void getData(SampleOrganization sampleOrg) throws LIMSRuntimeException {
 		try {
-			SampleOrganization data = (SampleOrganization) HibernateUtil.getSession().get(SampleOrganization.class,
-					sampleOrg.getId());
+			SampleOrganization data = HibernateUtil.getSession().get(SampleOrganization.class, sampleOrg.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (data != null) {
@@ -166,7 +168,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization> i
 	public SampleOrganization readSampleOrganization(String idString) {
 		SampleOrganization so = null;
 		try {
-			so = (SampleOrganization) HibernateUtil.getSession().get(SampleOrganization.class, idString);
+			so = HibernateUtil.getSession().get(SampleOrganization.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {

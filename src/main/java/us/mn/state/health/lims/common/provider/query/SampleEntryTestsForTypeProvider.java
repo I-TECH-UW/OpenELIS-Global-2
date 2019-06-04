@@ -31,38 +31,45 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
 
+import spring.service.panel.PanelService;
+import spring.service.panelitem.PanelItemService;
+import spring.service.test.TestSectionService;
 import spring.service.test.TestServiceImpl;
+import spring.service.testdictionary.TestDictionaryService;
+import spring.service.typeofsample.TypeOfSamplePanelService;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.XMLUtil;
-import us.mn.state.health.lims.panel.dao.PanelDAO;
-import us.mn.state.health.lims.panel.daoimpl.PanelDAOImpl;
 import us.mn.state.health.lims.panel.valueholder.Panel;
-import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
-import us.mn.state.health.lims.panelitem.daoimpl.PanelItemDAOImpl;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
-import us.mn.state.health.lims.test.daoimpl.TestSectionDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.testdictionary.daoimpl.TestDictionaryDAOImpl;
 import us.mn.state.health.lims.testdictionary.valueholder.TestDictionary;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSamplePanelDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSamplePanelDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSamplePanel;
 
 public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
-	private PanelDAO panelDAO = new PanelDAOImpl();
-	private static final String USER_TEST_SECTION_ID;
-	private static final String VARIABLE_SAMPLE_TYPE_ID;
+	private static String USER_TEST_SECTION_ID;
+	private static String VARIABLE_SAMPLE_TYPE_ID;
+
+	private PanelService panelService = SpringContext.getBean(PanelService.class);
+	private TestSectionService testSectionService = SpringContext.getBean(TestSectionService.class);
+	private TestDictionaryService testDictionaryService = SpringContext.getBean(TestDictionaryService.class);
+	private TypeOfSamplePanelService samplePanelService = SpringContext.getBean(TypeOfSamplePanelService.class);
+	private PanelItemService panelItemService = SpringContext.getBean(PanelItemService.class);
+	private TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
+
 	private boolean isVariableTypeOfSample;
 
-	TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
+	public void initializeGlobalVariables() {
+		USER_TEST_SECTION_ID = testSectionService.getTestSectionByName("user").getId();
+		VARIABLE_SAMPLE_TYPE_ID = TypeOfSampleServiceImpl.getInstance()
+				.getTypeOfSampleIdForLocalAbbreviation("Variable");
+	}
 
-	static {
-		USER_TEST_SECTION_ID = new TestSectionDAOImpl().getTestSectionByName("user").getId();
-		VARIABLE_SAMPLE_TYPE_ID = TypeOfSampleServiceImpl.getInstance().getTypeOfSampleIdForLocalAbbreviation("Variable");
+	public SampleEntryTestsForTypeProvider() {
+		initializeGlobalVariables();
 	}
 
 	@Override
@@ -151,7 +158,7 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
 	}
 
 	private void addVariableSampleTypes(Test test, StringBuilder xml) {
-		TestDictionary testDictionary = new TestDictionaryDAOImpl().getTestDictionaryForTestId(test.getId());
+		TestDictionary testDictionary = testDictionaryService.getTestDictionaryForTestId(test.getId());
 		List<IdValuePair> pairs = DisplayListService.getInstance()
 				.getDictionaryListByCategory(testDictionary.getDictionaryCategory().getCategoryName());
 		xml.append("<variableSampleTypes ");
@@ -199,8 +206,7 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
 	}
 
 	private List<TypeOfSamplePanel> getPanelList(String sampleType) {
-		TypeOfSamplePanelDAO samplePanelDAO = new TypeOfSamplePanelDAOImpl();
-		return samplePanelDAO.getTypeOfSamplePanelsForSampleType(sampleType);
+		return samplePanelService.getTypeOfSamplePanelsForSampleType(sampleType);
 	}
 
 	private List<PanelTestMap> linkTestsToPanels(List<TypeOfSamplePanel> panelList, List<Test> tests) {
@@ -212,14 +218,13 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
 			testNameOrderMap.put(TestServiceImpl.getUserLocalizedTestName(tests.get(i)), i);
 		}
 
-		PanelItemDAO panelItemDAO = new PanelItemDAOImpl();
-
 		for (TypeOfSamplePanel samplePanel : panelList) {
-			Panel panel = panelDAO.getPanelById(samplePanel.getPanelId());
+			Panel panel = panelService.getPanelById(samplePanel.getPanelId());
 			if ("Y".equals(panel.getIsActive())) {
-				String matchTests = getTestIndexesForPanels(samplePanel.getPanelId(), testNameOrderMap, panelItemDAO);
+				String matchTests = getTestIndexesForPanels(samplePanel.getPanelId(), testNameOrderMap,
+						panelItemService);
 				if (!GenericValidator.isBlankOrNull(matchTests)) {
-					int panelOrder = panelDAO.getPanelById(samplePanel.getPanelId()).getSortOrderInt();
+					int panelOrder = panelService.getPanelById(samplePanel.getPanelId()).getSortOrderInt();
 					selected.add(new PanelTestMap(samplePanel.getPanelId(), panelOrder, panel.getLocalizedName(),
 							matchTests));
 				}
@@ -231,9 +236,9 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
 
 	@SuppressWarnings("unchecked")
 	private String getTestIndexesForPanels(String panelId, Map<String, Integer> testIdOrderMap,
-			PanelItemDAO panelItemDAO) {
+			PanelItemService panelItemService) {
 		StringBuilder indexes = new StringBuilder();
-		List<PanelItem> items = panelItemDAO.getPanelItemsForPanel(panelId);
+		List<PanelItem> items = panelItemService.getPanelItemsForPanel(panelId);
 
 		for (PanelItem item : items) {
 			String derivedNameFromPanel = getDerivedNameFromPanel(item);

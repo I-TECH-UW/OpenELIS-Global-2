@@ -80,15 +80,17 @@ public abstract class BasePatientEntryByProject extends BaseController {
 	 *                   fail is returned.
 	 */
 	protected String handleSave(HttpServletRequest request, Accessioner accessioner) throws Exception {
-		String forward = accessioner.save();
-		if (null != forward) {
+		String forward;
+		try {
+			forward = accessioner.save();
+		} catch (Exception e) {
 			Errors errors = accessioner.getMessages();
 			if (errors.hasErrors()) {
 				saveErrors(errors);
 			}
-			return forward;
+			return FWD_FAIL_INSERT;
 		}
-		return null;
+		return forward;
 	}
 
 	/**

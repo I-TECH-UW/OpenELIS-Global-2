@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.address.dao.OrganizationAddressDAO;
+import us.mn.state.health.lims.address.valueholder.AddressPK;
 import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
 import us.mn.state.health.lims.common.action.IActionConstants;
 
@@ -46,7 +47,7 @@ public class OrganizationAddressServiceImpl extends BaseObjectServiceImpl<Organi
 	}
 
 	@Override
-	public String insert(OrganizationAddress organizationAddress) {
-		return (String) super.insert(organizationAddress);
+	public AddressPK insert(OrganizationAddress organizationAddress) {
+		return (AddressPK) super.insert(organizationAddress);
 	}
 }

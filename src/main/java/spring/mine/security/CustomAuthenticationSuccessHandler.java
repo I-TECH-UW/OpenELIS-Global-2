@@ -23,6 +23,7 @@ import spring.service.systemusermodule.PermissionModuleService;
 import spring.service.userrole.UserRoleService;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
+import us.mn.state.health.lims.login.dao.UserModuleService;
 import us.mn.state.health.lims.login.valueholder.Login;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
@@ -41,6 +42,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 	PermissionModuleService<PermissionModule> permissionModuleService;
 	@Autowired
 	SystemUserService systemUserService;
+	@Autowired
+	UserModuleService userModuleService;
 
 	public static final int DEFAULT_SESSION_TIMEOUT_IN_MINUTES = 20;
 
@@ -77,6 +80,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		usd.setLoginName(loginInfo.getLoginName());
 		usd.setElisUserName(su.getNameForDisplay());
 		usd.setUserTimeOut(timeout * 60);
+		usd.setAdmin(loginService.isUserAdmin(loginInfo));
 		request.getSession().setAttribute(IActionConstants.USER_SESSION_DATA, usd);
 
 		// get permitted actions map (available modules for the current user)

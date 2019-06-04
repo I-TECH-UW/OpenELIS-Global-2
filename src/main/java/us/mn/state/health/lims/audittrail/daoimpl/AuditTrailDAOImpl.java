@@ -43,12 +43,12 @@ import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
 import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 
 @Component
-@Transactional 
+@Transactional
 public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrailDAO {
 
 	@Autowired
 	ReferenceTablesDAO referenceTablesDAO;
-	
+
 	public AuditTrailDAOImpl() {
 		super(History.class);
 	}
@@ -91,7 +91,7 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 		History hist = new History();
 
 		try {
-			Method m1 = newObject.getClass().getMethod("getId", new Class[0]);
+			Method m1 = newObject.getClass().getMethod("getStringId", new Class[0]);
 			String referenceId = (String) m1.invoke(newObject, (Object[]) new Class[0]);
 			hist.setReferenceId(referenceId);
 			hist.setSysUserId(sysUserId);
@@ -143,8 +143,8 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 					"System User ID is null in AuditTrailDAOImpl saveHistory() for table " + tableName);
 		}
 
-	    if ((newObject == null && IActionConstants.AUDIT_TRAIL_UPDATE.equals(event)) 
-	    		|| existingObject == null || event == null || tableName == null) {
+		if ((newObject == null && IActionConstants.AUDIT_TRAIL_UPDATE.equals(event)) || existingObject == null
+				|| event == null || tableName == null) {
 			// bugzilla 2154
 			LogEvent.logDebug("AuditTrailDAOImpl", "saveHistory()",
 					"NO CHANGES: EITHER OBJECTS or EVENT or TABLE NAME IS NULL");
@@ -287,16 +287,15 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 
 				// get new field values
 				try {
-					if(newObject != null) {
-					    Object objPropNewState = fields[ii].get(newObject);
-					    if (objPropNewState != null) {
-						  propertyNewState = objPropNewState.toString();
-					    } else {
-						  propertyNewState = "";
-					    }
-					}
-					else {
-						  propertyNewState = "";  
+					if (newObject != null) {
+						Object objPropNewState = fields[ii].get(newObject);
+						if (objPropNewState != null) {
+							propertyNewState = objPropNewState.toString();
+						} else {
+							propertyNewState = "";
+						}
+					} else {
+						propertyNewState = "";
 					}
 				} catch (Exception e) {
 					// buzilla 2154

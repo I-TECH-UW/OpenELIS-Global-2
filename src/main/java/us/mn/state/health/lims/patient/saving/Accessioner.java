@@ -44,14 +44,32 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 
 import spring.mine.common.form.BaseForm;
-import spring.mine.common.validator.BaseErrors;
+import spring.service.analysis.AnalysisService;
+import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.observationhistory.ObservationHistoryService;
+import spring.service.observationhistorytype.ObservationHistoryTypeService;
+import spring.service.observationhistorytype.ObservationHistoryTypeServiceImpl;
+import spring.service.organization.OrganizationService;
+import spring.service.patient.PatientService;
+import spring.service.patientidentity.PatientIdentityService;
+import spring.service.person.PersonService;
+import spring.service.project.ProjectService;
+import spring.service.referencetables.ReferenceTablesService;
+import spring.service.sample.SampleService;
+import spring.service.sample.SampleServiceImpl;
+import spring.service.samplehuman.SampleHumanService;
+import spring.service.sampleitem.SampleItemService;
+import spring.service.sampleorganization.SampleOrganizationService;
+import spring.service.sampleproject.SampleProjectService;
+import spring.service.test.TestService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.exception.LIMSInvalidConfigurationException;
@@ -69,37 +87,18 @@ import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.note.dao.NoteDAO;
-import us.mn.state.health.lims.note.daoimpl.NoteDAOImpl;
 import us.mn.state.health.lims.note.valueholder.Note;
-import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
-import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.observationhistorytype.ObservationHistoryTypeMap;
-import us.mn.state.health.lims.observationhistorytype.dao.ObservationHistoryTypeDAO;
-import us.mn.state.health.lims.observationhistorytype.daoimpl.ObservationHistoryTypeDAOImpl;
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
 import us.mn.state.health.lims.organization.valueholder.Organization;
-import us.mn.state.health.lims.patient.dao.PatientDAO;
-import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
 import us.mn.state.health.lims.patient.util.PatientUtil;
 import us.mn.state.health.lims.patient.valueholder.ObservationData;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.patientidentity.dao.PatientIdentityDAO;
-import us.mn.state.health.lims.patientidentity.daoimpl.PatientIdentityDAOImpl;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 import us.mn.state.health.lims.patientidentitytype.util.PatientIdentityTypeMap;
-import us.mn.state.health.lims.person.dao.PersonDAO;
-import us.mn.state.health.lims.person.daoimpl.PersonDAOImpl;
 import us.mn.state.health.lims.person.valueholder.Person;
-import us.mn.state.health.lims.project.dao.ProjectDAO;
-import us.mn.state.health.lims.project.daoimpl.ProjectDAOImpl;
 import us.mn.state.health.lims.project.valueholder.Project;
-import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.form.ProjectData;
 import us.mn.state.health.lims.sample.util.CI.BaseProjectFormMapper;
 import us.mn.state.health.lims.sample.util.CI.BaseProjectFormMapper.TypeOfSampleTests;
@@ -107,20 +106,10 @@ import us.mn.state.health.lims.sample.util.CI.IProjectFormMapper;
 import us.mn.state.health.lims.sample.util.CI.ProjectForm;
 import us.mn.state.health.lims.sample.util.CI.ProjectFormMapperFactory;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
 import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
-import us.mn.state.health.lims.sampleitem.dao.SampleItemDAO;
-import us.mn.state.health.lims.sampleitem.daoimpl.SampleItemDAOImpl;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
-import us.mn.state.health.lims.sampleorganization.dao.SampleOrganizationDAO;
-import us.mn.state.health.lims.sampleorganization.daoimpl.SampleOrganizationDAOImpl;
 import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization;
-import us.mn.state.health.lims.sampleproject.dao.SampleProjectDAO;
-import us.mn.state.health.lims.sampleproject.daoimpl.SampleProjectDAOImpl;
 import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
@@ -181,8 +170,8 @@ public abstract class Accessioner {
 	private static String SAMPLE_TABLE_ID = null;
 
 	static {
-		SAMPLE_TABLE_ID = new ReferenceTablesDAOImpl().getReferenceTableByName("sample").getId();
-//		OBSERVATION_HISTORY_YES_ID = new DictionaryDAOImpl().getDictionaryByDictEntry("Demographic Response Yes (in Yes or No)").getId();
+		SAMPLE_TABLE_ID = SpringContext.getBean(ReferenceTablesService.class).getReferenceTableByName("sample").getId();
+//		OBSERVATION_HISTORY_YES_ID = new DictionaryServiceImpl().getDictionaryByDictEntry("Demographic Response Yes (in Yes or No)").getId();
 	}
 
 	/**
@@ -231,7 +220,9 @@ public abstract class Accessioner {
 	protected String patientIdentifier;
 	protected String patientSiteSubjectNo;
 	protected StatusSet statusSet;
-	Errors messages = new BaseErrors();
+	@Autowired
+	@Qualifier("defaultErrors")
+	Errors messages;
 
 	protected java.sql.Date today;
 	protected String todayAsText;
@@ -254,20 +245,22 @@ public abstract class Accessioner {
 	protected RecordStatus newPatientStatus;
 	protected RecordStatus newSampleStatus;
 
-	protected PatientDAO patientDAO = new PatientDAOImpl();
-	protected PersonDAO personDAO = new PersonDAOImpl();
-	protected PatientIdentityDAO identityDAO = new PatientIdentityDAOImpl();
-	protected SampleDAO sampleDAO = new SampleDAOImpl();
-	protected SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
-	protected SampleProjectDAO sampleProjectDAO = new SampleProjectDAOImpl();
-	protected ObservationHistoryDAO observationHistoryDAO = new ObservationHistoryDAOImpl();
-	protected ProjectDAO projectDAO = new ProjectDAOImpl();
-	protected OrganizationDAO organizationDAO = new OrganizationDAOImpl();
-	protected SampleOrganizationDAO sampleOrganizationDAO = new SampleOrganizationDAOImpl();
-	protected SampleItemDAO sampleItemDAO = new SampleItemDAOImpl();
-	protected TestDAO testDAO = new TestDAOImpl();
-	protected AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-	private NoteDAO noteDAO = new NoteDAOImpl();
+	protected PatientService patientService = SpringContext.getBean(PatientService.class);
+	protected PersonService personService = SpringContext.getBean(PersonService.class);
+	protected PatientIdentityService identityService = SpringContext.getBean(PatientIdentityService.class);
+	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
+	protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+	protected SampleProjectService sampleProjectService = SpringContext.getBean(SampleProjectService.class);
+	protected ObservationHistoryService observationHistoryService = SpringContext
+			.getBean(ObservationHistoryService.class);
+	protected ProjectService projectService = SpringContext.getBean(ProjectService.class);
+	protected OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
+	protected SampleOrganizationService sampleOrganizationService = SpringContext
+			.getBean(SampleOrganizationService.class);
+	protected SampleItemService sampleItemService = SpringContext.getBean(SampleItemService.class);
+	protected TestService testService = SpringContext.getBean(TestService.class);
+	protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+	private NoteService noteService = SpringContext.getBean(NoteService.class);
 
 	protected boolean existingSample;
 	protected boolean existingPatient;
@@ -282,15 +275,31 @@ public abstract class Accessioner {
 
 	protected Accessioner(String sampleIdentifier, String patientIdentifier, String siteSubjectNo, String sysUserId) {
 		this();
-		accessionNumber = sampleIdentifier;
-		this.patientIdentifier = patientIdentifier;
-		patientSiteSubjectNo = siteSubjectNo;
-		this.sysUserId = sysUserId;
+		setAccessionNumber(sampleIdentifier);
+		setPatientIdentifier(patientIdentifier);
+		setPatientSiteSubjectNo(siteSubjectNo);
+		setSysUserId(sysUserId);
 	}
 
 	public Accessioner() {
 		today = new java.sql.Date(System.currentTimeMillis());
 		todayAsText = DateUtil.formatDateAsText(today);
+	}
+
+	public void setAccessionNumber(String sampleIdentifier) {
+		accessionNumber = sampleIdentifier;
+	}
+
+	public void setPatientIdentifier(String patientIdentifier) {
+		this.patientIdentifier = patientIdentifier;
+	}
+
+	public void setPatientSiteSubjectNo(String patientSiteSubjectNo) {
+		this.patientSiteSubjectNo = patientSiteSubjectNo;
+	}
+
+	public void setSysUserId(String sysUserId) {
+		this.sysUserId = sysUserId;
 	}
 
 	/**
@@ -301,8 +310,9 @@ public abstract class Accessioner {
 	 * @throws Exception
 	 * @throws Exception
 	 */
+	@Transactional // only works if this class is autowired in
 	public String save() throws Exception {
-		Transaction tx = null;
+//		Transaction tx = null;
 		try {
 			if (!canAccession()) {
 				return null;
@@ -324,7 +334,7 @@ public abstract class Accessioner {
 			populateSampleHuman();
 			populateObservationHistory();
 
-			tx = HibernateUtil.getSession().beginTransaction();
+//			tx = HibernateUtil.getSession().beginTransaction();
 			// all of the following methods are assumed to only write when
 			// necessary
 			persistPatient();
@@ -342,17 +352,18 @@ public abstract class Accessioner {
 			persistRecordStatus();
 			deleteOldPatient();
 			populateAndPersistUnderInvestigationNote();
-			tx.commit();
+//			tx.commit();
 			return IActionConstants.FWD_SUCCESS_INSERT;
 		} catch (Exception e) {
-			if (null != tx) {
-				tx.rollback();
-			}
+//			if (null != tx) {
+//				tx.rollback();
+//			}
 			logAndAddMessage("save()", "errors.InsertException", e);
-			return IActionConstants.FWD_FAIL_INSERT;
-		} finally {
-			HibernateUtil.closeSession();
+			throw e;
 		}
+//		finally {
+//			HibernateUtil.closeSession();
+//		}
 	}
 
 	private void populateAndPersistUnderInvestigationNote() {
@@ -371,7 +382,7 @@ public abstract class Accessioner {
 			note.setReferenceId(sample.getId());
 			note.setReferenceTableId(SAMPLE_TABLE_ID);
 
-			List<Note> noteList = noteDAO.getNotesByNoteTypeRefIdRefTable(note);
+			List<Note> noteList = noteService.getNotesByNoteTypeRefIdRefTable(note);
 
 			if (noteList != null && !noteList.isEmpty()) {
 				note = noteList.get(0);
@@ -386,9 +397,9 @@ public abstract class Accessioner {
 			note.setSystemUser(NoteServiceImpl.createSystemUser(sysUserId));
 
 			if (note.getId() == null) {
-				noteDAO.insertData(note);
+				noteService.insertData(note);
 			} else {
-				noteDAO.updateData(note);
+				noteService.updateData(note);
 			}
 		}
 	}
@@ -406,10 +417,10 @@ public abstract class Accessioner {
 	 * default
 	 */
 	private void persisteSampleItemsChanged() {
-		analysisDAO.deleteData(analysisToDelete);
-		sampleItemDAO.deleteData(sampleItemsToDelete);
+		analysisService.deleteData(analysisToDelete);
+		sampleItemService.deleteData(sampleItemsToDelete);
 		for (Analysis analysis : analysisToUpdate) {
-			analysisDAO.updateData(analysis);
+			analysisService.updateData(analysis);
 		}
 	}
 
@@ -468,11 +479,11 @@ public abstract class Accessioner {
 		}
 		// the patient is already associated with the existing sample and its
 		// not the unknown one
-		patientInDB = patientDAO.readPatient(patientId);
+		patientInDB = patientService.readPatient(patientId);
 		if (patientIdentifiersDoNotMatch()) {
 			Patient otherPatient = findPatientByIndentifiers();
 			if (otherPatient == null) { // unknown
-				int otherSamplesOnCurrentPatient = sampleHumanDAO.getSamplesForPatient(patientId).size() - 1;
+				int otherSamplesOnCurrentPatient = sampleHumanService.getSamplesForPatient(patientId).size() - 1;
 				if (otherSamplesOnCurrentPatient == 0) {
 					// stick with the existing patient of the sample, update it
 					return true;
@@ -518,10 +529,10 @@ public abstract class Accessioner {
 	private Patient findPatientByIndentifiers() {
 		Patient aPatient;
 		if (patientIdentifier != "") {
-			aPatient = patientDAO.getPatientByNationalId(patientIdentifier);
+			aPatient = patientService.getPatientByNationalId(patientIdentifier);
 		} else {
 			String externalId = projectFormMapper.getSiteSubjectNumber();
-			aPatient = patientDAO.getPatientByExternalId(externalId);
+			aPatient = patientService.getPatientByExternalId(externalId);
 		}
 		return aPatient;
 	}
@@ -542,7 +553,7 @@ public abstract class Accessioner {
 	 * @throws LIMSInvalidConfigurationException
 	 */
 	protected boolean findSample() throws LIMSRuntimeException, LIMSInvalidConfigurationException {
-		sample = sampleDAO.getSampleByAccessionNumber(accessionNumber);
+		sample = sampleService.getSampleByAccessionNumber(accessionNumber);
 		String sampleId = statusSet.getSampleId();
 		// if there is sample for the given acc. number is an existing sample it
 		// had better be same one we found when we loading the sampleSet
@@ -561,7 +572,7 @@ public abstract class Accessioner {
 								// use, not known sampleId provided
 			} else {
 				sample = knownSampleTemplate();
-				sampleDAO.getData(sample);
+				sampleService.getData(sample);
 				sample.setAccessionNumber(accessionNumber);
 				return true; // it existed previously, but we have a new
 								// (edited) accesionNumber
@@ -665,16 +676,16 @@ public abstract class Accessioner {
 			if (isNewPatient() || isADifferentPatient()) {
 				sampleHuman = new SampleHuman();
 				sampleHuman.setSampleId(sample.getId());
-				sampleHumanDAO.getDataBySample(sampleHuman);
+				sampleHumanService.getDataBySample(sampleHuman);
 			}
 		}
 		if (isADifferentPatient()) {
-			int size = sampleHumanDAO.getSamplesForPatient(statusSet.getPatientId()).size();
+			int size = sampleHumanService.getSamplesForPatient(statusSet.getPatientId()).size();
 			if (size == 1) {
 				// if there is only one sample on the OLD patient of this sample
 				// we can delete it.
 				patientToDelete = knownPatientTemplate();
-				patientDAO.getData(patientToDelete);
+				patientService.getData(patientToDelete);
 			}
 		}
 	}
@@ -724,7 +735,7 @@ public abstract class Accessioner {
 		if (isNewSample()) {
 			return false;
 		}
-		SampleProject oldSampleProject = sampleProjectDAO.getSampleProjectBySampleId(sample.getId());
+		SampleProject oldSampleProject = sampleProjectService.getSampleProjectBySampleId(sample.getId());
 		return oldSampleProject != null;
 	}
 
@@ -743,7 +754,7 @@ public abstract class Accessioner {
 
 		Organization org = new Organization();
 		org.setId(organizationId);
-		organizationDAO.getData(org);
+		organizationService.getData(org);
 
 		if (null == org.getId()) {
 			throw new LIMSRuntimeException("Undefined organization name = " + organizationId
@@ -754,7 +765,7 @@ public abstract class Accessioner {
 		if (!isNewSample()) {
 			oldSampleOrg = new SampleOrganization();
 			oldSampleOrg.setSample(sample);
-			sampleOrganizationDAO.getDataBySample(oldSampleOrg);
+			sampleOrganizationService.getDataBySample(oldSampleOrg);
 			if (oldSampleOrg.getOrganization() != null) { // there may not be an
 															// organiztion
 															// attached yet
@@ -894,12 +905,13 @@ public abstract class Accessioner {
 	 */
 	protected void persistSampleOrganization() {
 		for (SampleOrganization so : sampleOrganizations) {
-			sampleDAO.getData(sample);
+			// we are in the same transaction, we do not need to reload the sample
+//			sampleService.getData(sample);
 			so.setSample(sample);
 			if (so.getId() == null) {
-				sampleOrganizationDAO.insertData(so);
+				sampleOrganizationService.insertData(so);
 			} else {
-				sampleOrganizationDAO.updateData(so);
+				sampleOrganizationService.updateData(so);
 			}
 		}
 	}
@@ -925,7 +937,7 @@ public abstract class Accessioner {
 				item.setSortOrder(Integer.toString(nextSortOrder++));
 				item.setSysUserId(sysUserId);
 
-				sampleItemDAO.insertData(item);
+				sampleItemService.insertData(item);
 			} else {
 				sampleTestPair.item = item = existingSampleItem;
 			}
@@ -933,10 +945,10 @@ public abstract class Accessioner {
 			List<String> existingTests = findDefinedTestsForItem(item);
 			// insert any missing analysis
 			for (Test newTest : sampleTestPair.tests) {
-				testDAO.getData(newTest);
+				testService.getData(newTest);
 				if (!existingTests.contains(newTest.getId())) {
 					Analysis analysis = buildAnalysis(analysisRevision, sampleTestPair, newTest);
-					analysisDAO.insertData(analysis, false);
+					analysisService.insertData(analysis, false);
 					newAnalysis = true;
 				}
 			}
@@ -972,7 +984,7 @@ public abstract class Accessioner {
 	 * @return a list of test IDs
 	 */
 	private List<String> findDefinedTestsForItem(SampleItem item) {
-		List<Analysis> analysesForItem = analysisDAO.getAnalysesBySampleItem(item);
+		List<Analysis> analysesForItem = analysisService.getAnalysesBySampleItem(item);
 		List<String> testIds = new ArrayList<>();
 		for (Analysis analysis : analysesForItem) {
 			Test test = analysis.getTest();
@@ -982,7 +994,7 @@ public abstract class Accessioner {
 	}
 
 	private Map<String, SampleItem> findExistingSampleTypeItems() {
-		List<SampleItem> itemsForSample = sampleItemDAO.getSampleItemsBySampleId(sample.getId());
+		List<SampleItem> itemsForSample = sampleItemService.getSampleItemsBySampleId(sample.getId());
 		Map<String, SampleItem> itemsByType = new HashMap<>();
 		for (SampleItem sampleItem : itemsForSample) {
 			String id = sampleItem.getTypeOfSampleId();
@@ -1003,7 +1015,7 @@ public abstract class Accessioner {
 				.equals(sample.getStatus())) {
 			sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Finished));
 			sample.setSysUserId(sysUserId);
-			sampleDAO.updateData(sample);
+			sampleService.updateData(sample);
 		}
 	}
 
@@ -1012,7 +1024,7 @@ public abstract class Accessioner {
 	 * maybe we could move this to StatusService.getInstance()?
 	 */
 	private boolean isAllAnalysisDone() {
-		List<Analysis> analyses = analysisDAO.getAnalysesBySampleId(sample.getId());
+		List<Analysis> analyses = analysisService.getAnalysesBySampleId(sample.getId());
 		for (Analysis analysis : analyses) {
 			if (!analysisDone.contains(analysis.getStatusId())) {
 				return false;
@@ -1047,13 +1059,13 @@ public abstract class Accessioner {
 			person.setSysUserId(sysUserId);
 			patientInDB.setSysUserId(sysUserId);
 			if (patientInDB.getId() == null) {
-				personDAO.insertData(person);
-				patientDAO.insertData(patientInDB);
+				personService.insertData(person);
+				patientService.insertData(patientInDB);
 			} else {
 				// The reason for the explicit person update is to capture the
 				// history.
-				personDAO.updateData(person);
-				patientDAO.updateData(patientInDB);
+				personService.updateData(person);
+				patientService.updateData(patientInDB);
 			}
 		}
 	}
@@ -1071,7 +1083,7 @@ public abstract class Accessioner {
 		for (PatientIdentity identity : patientIdentities) {
 			identity.setPatientId(patientInDB.getId());
 			identity.setSysUserId(sysUserId);
-			identityDAO.insertData(identity);
+			identityService.insertData(identity);
 		}
 	}
 
@@ -1079,10 +1091,10 @@ public abstract class Accessioner {
 		if (null != sample) {
 			sample.setSysUserId(sysUserId);
 			if (sample.getId() != null) {
-				sampleDAO.updateData(sample);
+				sampleService.updateData(sample);
 				HibernateUtil.getSession().evict(sample);
 			} else {
-				sampleDAO.insertDataWithAccessionNumber(sample);
+				sampleService.insertDataWithAccessionNumber(sample);
 			}
 		}
 	}
@@ -1091,7 +1103,7 @@ public abstract class Accessioner {
 		if (null != sampleProject) {
 			sampleProject.setSample(sample);
 			sampleProject.setSysUserId(sysUserId);
-			sampleProjectDAO.insertData(sampleProject);
+			sampleProjectService.insertData(sampleProject);
 		}
 	}
 
@@ -1105,9 +1117,9 @@ public abstract class Accessioner {
 			// we do not store any doctor name as a provider in SampleHuman
 			sampleHuman.setSysUserId(sysUserId);
 			if (null == sampleHuman.getId()) {
-				sampleHumanDAO.insertData(sampleHuman);
+				sampleHumanService.insertData(sampleHuman);
 			} else {
-				sampleHumanDAO.updateData(sampleHuman);
+				sampleHumanService.updateData(sampleHuman);
 			}
 		}
 	}
@@ -1117,18 +1129,18 @@ public abstract class Accessioner {
 	 */
 	protected void persistObservationHistory() {
 		if (isADifferentPatient()) {
-			List<ObservationHistory> oldOHes = observationHistoryDAO.getAll(knownPatientTemplate(),
+			List<ObservationHistory> oldOHes = observationHistoryService.getAll(knownPatientTemplate(),
 					knownSampleTemplate());
 			for (ObservationHistory oldOh : oldOHes) {
 				oldOh.setSampleId(sample.getId());
 				oldOh.setPatientId(patientInDB.getId());
 				oldOh.setSysUserId(sysUserId);
-				observationHistoryDAO.updateData(oldOh);
+				observationHistoryService.updateData(oldOh);
 			}
 		}
 
 		for (ObservationHistory newOh : observationHistories) {
-			List<ObservationHistory> existingTypeOHes = observationHistoryDAO.getAll(patientInDB, sample,
+			List<ObservationHistory> existingTypeOHes = observationHistoryService.getAll(patientInDB, sample,
 					newOh.getObservationHistoryTypeId());
 			List<ObservationHistory> deleteTypeOHes = new ArrayList<>();
 			// delete any matching old ones, but only when there are both same
@@ -1145,13 +1157,13 @@ public abstract class Accessioner {
 				}
 			}
 			if (deleteTypeOHes.size() > 0) {
-				observationHistoryDAO.deleteAll(deleteTypeOHes);
+				observationHistoryService.deleteAll(deleteTypeOHes);
 			}
 
 			newOh.setSampleId(sample.getId());
 			newOh.setPatientId(patientInDB.getId());
 			newOh.setSysUserId(sysUserId);
-			observationHistoryDAO.insertData(newOh);
+			observationHistoryService.insertData(newOh);
 		}
 	}
 
@@ -1161,14 +1173,15 @@ public abstract class Accessioner {
 	/*
 	 * protected void persistObservationHistory() { if (isADifferentPatient()) {
 	 * List<ObservationHistory> oldOHes =
-	 * observationHistoryDAO.getAll(knownPatientTemplate(), knownSampleTemplate());
-	 * for (ObservationHistory oldOh : oldOHes) { oldOh.setSampleId(sample.getId());
-	 * oldOh.setPatientId(patientInDB.getId()); oldOh.setSysUserId(sysUserId);
-	 * observationHistoryDAO.updateData(oldOh); } }
+	 * observationHistoryService.getAll(knownPatientTemplate(),
+	 * knownSampleTemplate()); for (ObservationHistory oldOh : oldOHes) {
+	 * oldOh.setSampleId(sample.getId()); oldOh.setPatientId(patientInDB.getId());
+	 * oldOh.setSysUserId(sysUserId); observationHistoryService.updateData(oldOh); }
+	 * }
 	 *
 	 * for (ObservationHistory newOh : observationHistories) { boolean machedInDB =
 	 * false; List<ObservationHistory> existingTypeOHes =
-	 * observationHistoryDAO.getAll(patientInDB, sample,
+	 * observationHistoryService.getAll(patientInDB, sample,
 	 * newOh.getObservationHistoryTypeId()); List<ObservationHistory> deleteTypeOHes
 	 * = new ArrayList<ObservationHistory>(); // update any matching old ones, but
 	 * only when there are both same // Ob. History type AND the same value type.
@@ -1180,14 +1193,14 @@ public abstract class Accessioner {
 	 * (oh.getValueType().equals(newValueType)) { machedInDB = true; if
 	 * (oh.getValue() != null && !oh.getValue().equals(newOh.getValue())) {
 	 * oh.setSysUserId(sysUserId); oh.setValue(newOh.getValue());
-	 * observationHistoryDAO.updateData(oh);
+	 * observationHistoryService.updateData(oh);
 	 *
 	 * } } } // if (deleteTypeOHes.size() > 0) { //
-	 * observationHistoryDAO.delete(deleteTypeOHes); // }
+	 * observationHistoryService.delete(deleteTypeOHes); // }
 	 *
 	 * if (!machedInDB) { newOh.setSampleId(sample.getId());
 	 * newOh.setPatientId(patientInDB.getId()); newOh.setSysUserId(sysUserId);
-	 * observationHistoryDAO.insertData(newOh); } } }
+	 * observationHistoryService.insertData(newOh); } } }
 	 */
 	/**
 	 *
@@ -1210,7 +1223,7 @@ public abstract class Accessioner {
 			for (ObservationHistory oh : oldOHes.values()) {
 				oh.setSysUserId(sysUserId);
 			}
-			observationHistoryDAO.deleteAll(new ArrayList<>(oldOHes.values()));
+			observationHistoryService.deleteAll(new ArrayList<>(oldOHes.values()));
 
 			// insert the new
 			List<ObservationHistory> newOHes = observationHistoryLists.get(listType);
@@ -1221,7 +1234,7 @@ public abstract class Accessioner {
 				newOH.setPatientId(patientInDB.getId());
 				newOH.setSampleId(sample.getId());
 
-				observationHistoryDAO.insertData(newOH);
+				observationHistoryService.insertData(newOH);
 			}
 		}
 	}
@@ -1230,7 +1243,7 @@ public abstract class Accessioner {
 		Map<String, ObservationHistory> existing = new HashMap<>();
 
 		String ohTypeId = ObservationHistoryTypeMap.getInstance().getIDForType(nameKey);
-		List<ObservationHistory> existingOHes = observationHistoryDAO.getAll(patientInDB, sample, ohTypeId);
+		List<ObservationHistory> existingOHes = observationHistoryService.getAll(patientInDB, sample, ohTypeId);
 		for (ObservationHistory oh : existingOHes) {
 			existing.put(oh.getValue(), oh);
 		}
@@ -1249,15 +1262,16 @@ public abstract class Accessioner {
 
 	protected void deleteOldPatient() {
 		if (patientToDelete != null) {
-			List<PatientIdentity> oldIdentities = identityDAO.getPatientIdentitiesForPatient(patientToDelete.getId());
+			List<PatientIdentity> oldIdentities = identityService
+					.getPatientIdentitiesForPatient(patientToDelete.getId());
 			for (PatientIdentity listIdentity : oldIdentities) {
-				identityDAO.delete(listIdentity.getId(), sysUserId);
+				identityService.delete(listIdentity.getId(), sysUserId);
 			}
 			Person personToDelete = patientToDelete.getPerson();
 			patientToDelete.setSysUserId(sysUserId);
-			patientDAO.deleteData(Arrays.asList(patientToDelete));
+			patientService.deleteData(Arrays.asList(patientToDelete));
 			personToDelete.setSysUserId(sysUserId);
-			personDAO.deleteData(Arrays.asList(personToDelete));
+			personService.deleteData(Arrays.asList(personToDelete));
 		}
 	}
 
@@ -1265,8 +1279,8 @@ public abstract class Accessioner {
 		return observationHistories;
 	}
 
-	protected SampleDAO getSimpleSampleDAO() {
-		return new SampleDAOImpl();
+	protected SampleService getSimpleSampleService() {
+		return new SampleServiceImpl();
 	}
 
 	public Errors getMessages() {
@@ -1309,7 +1323,6 @@ public abstract class Accessioner {
 				String initialSampleConditionIdString = sampleItem.attributeValue("initialConditionIds");
 				String sampleItemId = sampleItem.attributeValue("sampleID");
 
-				ObservationHistoryDAO ohDAO = new ObservationHistoryDAOImpl();
 				ObservationHistory observation = new ObservationHistory();
 
 				if (!GenericValidator.isBlankOrNull(initialSampleConditionIdString)) {
@@ -1319,12 +1332,12 @@ public abstract class Accessioner {
 						observation.setValue(initialSampleConditionIds[j]);
 						observation.setValueType(ObservationHistory.ValueType.DICTIONARY);
 						observation.setObservationHistoryTypeId(getObservationHistoryTypeId(
-								new ObservationHistoryTypeDAOImpl(), "initialSampleCondition"));
+								new ObservationHistoryTypeServiceImpl(), "initialSampleCondition"));
 						observation.setSampleId(sample.getId());
 						observation.setSampleItemId(sampleItemId);
 						observation.setPatientId(patientInDB.getId());
 						observation.setSysUserId(sysUserId);
-						ohDAO.insertData(observation);
+						observationHistoryService.insertData(observation);
 					}
 				}
 			}
@@ -1336,9 +1349,9 @@ public abstract class Accessioner {
 
 	}
 
-	private static String getObservationHistoryTypeId(ObservationHistoryTypeDAO ohtDAO, String name) {
+	private static String getObservationHistoryTypeId(ObservationHistoryTypeService ohtService, String name) {
 		ObservationHistoryType oht;
-		oht = ohtDAO.getByName(name);
+		oht = ohtService.getByName(name);
 		if (oht != null) {
 			return oht.getId();
 		}

@@ -28,11 +28,11 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -47,8 +47,11 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
+
+	@Autowired
+	AuditTrailDAO auditDAO;
 
 	public SampleDAOImpl() {
 		super(Sample.class);
@@ -60,7 +63,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 	public void deleteData(List samples) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < samples.size(); i++) {
 				Sample data = (Sample) samples.get(i);
 
@@ -103,7 +106,6 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			String id = (String) HibernateUtil.getSession().save(sample);
 			sample.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = sample.getSysUserId();
 			String tableName = "SAMPLE";
 			auditDAO.saveNewHistory(sample, sysUserId, tableName);
@@ -134,7 +136,6 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			String id = (String) HibernateUtil.getSession().save(sample);
 			sample.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveNewHistory(sample, sample.getSysUserId(), "SAMPLE");
 
 			// HibernateUtil.getSession().flush(); // CSL remove old
@@ -156,7 +157,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = sample.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "SAMPLE";

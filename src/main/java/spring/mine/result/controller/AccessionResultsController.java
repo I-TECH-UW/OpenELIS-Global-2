@@ -20,6 +20,7 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.result.form.AccessionResultsForm;
 import spring.service.sample.SampleService;
 import spring.service.samplehuman.SampleHumanService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -67,8 +68,8 @@ public class AccessionResultsController extends BaseController {
 		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 		PropertyUtils.setProperty(form, "referralReasons",
 				DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-		PropertyUtils.setProperty(form, "rejectReasons",
-				DisplayListService.getInstance().getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+		PropertyUtils.setProperty(form, "rejectReasons", DisplayListService.getInstance()
+				.getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
 		ResultsPaging paging = new ResultsPaging();
 		String newPage = request.getParameter("page");
@@ -79,7 +80,8 @@ public class AccessionResultsController extends BaseController {
 
 			if (!GenericValidator.isBlankOrNull(accessionNumber)) {
 				Errors errors = new BeanPropertyBindingResult(form, "form");
-				ResultsLoadUtility resultsUtility = new ResultsLoadUtility(getSysUserId(request));
+				ResultsLoadUtility resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
+				resultsUtility.setSysUser(getSysUserId(request));
 				// This is for Haiti_LNSP if it gets more complicated use the status set stuff
 				resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
 				// resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Finalized);
