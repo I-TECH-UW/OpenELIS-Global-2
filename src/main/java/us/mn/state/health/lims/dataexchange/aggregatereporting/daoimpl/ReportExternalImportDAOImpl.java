@@ -35,7 +35,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional 
-public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImport> implements ReportExternalImportDAO {
+public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImport, String> implements ReportExternalImportDAO {
 
 	public ReportExternalImportDAOImpl() {
 		super(ReportExternalImport.class);
@@ -48,7 +48,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 		String sql = "from ReportExternalImport rq where rq.eventDate >= :lower and rq.eventDate <= :upper order by rq.sendingSite";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setTimestamp("lower", lower);
 			query.setTimestamp("upper", upper);
 
@@ -67,7 +67,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 	@Override
 	public void insertReportExternalImport(ReportExternalImport report) throws LIMSRuntimeException {
 		try {
-			String id = (String) HibernateUtil.getSession().save(report);
+			String id = (String) sessionFactory.getCurrentSession().save(report);
 			report.setId(id);
 			new AuditTrailDAOImpl().saveNewHistory(report, report.getSysUserId(), "REPORT_EXTERNAL_IMPORT");
 			// closeSession(); // CSL remove old
@@ -86,11 +86,11 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 			auditDAO.saveHistory(report, oldData, report.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
 					"REPORT_EXTERNAL_IMPORT");
 
-			HibernateUtil.getSession().merge(report);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(report);
-			// HibernateUtil.getSession().refresh // CSL remove old(report);
+			sessionFactory.getCurrentSession().merge(report);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(report);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(report);
 		} catch (Exception e) {
 			handleException(e, "updateReportExternalImport");
 		}
@@ -99,7 +99,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 	public ReportExternalImport readReportExternalImport(String idString) throws LIMSRuntimeException {
 
 		try {
-			ReportExternalImport data = (ReportExternalImport) HibernateUtil.getSession()
+			ReportExternalImport data = (ReportExternalImport) sessionFactory.getCurrentSession()
 					.get(ReportExternalImport.class, idString);
 			// closeSession(); // CSL remove old
 			return data;
@@ -114,7 +114,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 	public List<String> getUniqueSites() throws LIMSRuntimeException {
 		String sql = "select distinct sending_site from clinlims.report_external_import ";
 		try {
-			Query query = HibernateUtil.getSession().createSQLQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
 			List<String> sites = query.list();
 			// closeSession(); // CSL remove old
 			return sites;
@@ -132,7 +132,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 		String sql = "from ReportExternalImport rq where rq.eventDate >= :lower and rq.eventDate <= :upper and rq.sendingSite = :site order by rq.sendingSite";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setTimestamp("lower", lower);
 			query.setTimestamp("upper", upper);
 			query.setString("site", site);
@@ -156,7 +156,7 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 		String sql = "from ReportExternalImport rei where rei.eventDate = :eventDate and rei.sendingSite = :site and rei.reportType = :type";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setDate("eventDate", importReport.getEventDate());
 			query.setString("site", importReport.getSendingSite());
 			query.setString("type", importReport.getReportType());

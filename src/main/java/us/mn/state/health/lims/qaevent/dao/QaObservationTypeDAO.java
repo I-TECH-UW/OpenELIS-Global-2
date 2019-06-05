@@ -20,7 +20,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.qaevent.valueholder.QaObservationType;
 
-public interface QaObservationTypeDAO extends BaseDAO<QaObservationType> {
+public interface QaObservationTypeDAO extends BaseDAO<QaObservationType, String> {
 
 	public QaObservationType getQaObservationTypeByName(String typeName) throws LIMSRuntimeException;
 }

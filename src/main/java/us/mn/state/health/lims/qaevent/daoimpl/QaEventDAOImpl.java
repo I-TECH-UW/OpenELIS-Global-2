@@ -41,7 +41,7 @@ import us.mn.state.health.lims.qaevent.valueholder.QaEvent;
  */
 @Component
 @Transactional 
-public class QaEventDAOImpl extends BaseDAOImpl<QaEvent> implements QaEventDAO {
+public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEventDAO {
 
 	public QaEventDAOImpl() {
 		super(QaEvent.class);
@@ -74,11 +74,11 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent> implements QaEventDAO {
 				QaEvent data = (QaEvent) qaEvents.get(i);
 				QaEvent cloneData = readQaEvent(data.getId());
 
-				HibernateUtil.getSession().merge(cloneData);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
-				// HibernateUtil.getSession().evict // CSL remove old(cloneData);
-				// HibernateUtil.getSession().refresh // CSL remove old(cloneData);
+				sessionFactory.getCurrentSession().merge(cloneData);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
+				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -95,7 +95,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent> implements QaEventDAO {
 				throw new LIMSDuplicateRecordException("Duplicate record exists for " + qaEvent.getQaEventName());
 			}
 
-			String id = (String) HibernateUtil.getSession().save(qaEvent);
+			String id = (String) sessionFactory.getCurrentSession().save(qaEvent);
 			qaEvent.setId(id);
 
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
@@ -103,8 +103,8 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent> implements QaEventDAO {
 			String tableName = "QA_EVENT";
 			auditDAO.saveNewHistory(qaEvent, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -144,11 +144,11 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent> implements QaEventDAO {
 		}
 
 		try {
-			HibernateUtil.getSession().merge(qaEvent);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(qaEvent);
-			// HibernateUtil.getSession().refresh // CSL remove old(qaEvent);
+			sessionFactory.getCurrentSession().merge(qaEvent);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(qaEvent);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(qaEvent);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("QaEventDAOImpl", "updateData()", e.toString());
@@ -159,9 +159,9 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent> implements QaEventDAO {
 	@Override
 	public void getData(QaEvent qaEvent) throws LIMSRuntimeException {
 		try {
-			QaEvent qaEv = (QaEvent) HibernateUtil.getSession().get(QaEvent.class, qaEvent.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			QaEvent qaEv = (QaEvent) sessionFactory.getCurrentSession().get(QaEvent.class, qaEvent.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (qaEv != null) {
 				PropertyUtils.copyProperties(qaEvent, qaEv);
 
@@ -180,10 +180,10 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent> implements QaEventDAO {
 		List list;
 		try {
 			String sql = "from QaEvent qe order by qe.id";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("QaEventDAOImpl", "getAllQaEvents()", e.toString());
@@ -201,13 +201,13 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent> implements QaEventDAO {
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from QaEvent qe order by qe.qaEventName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -221,9 +221,9 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent> implements QaEventDAO {
 	public QaEvent readQaEvent(String idString) {
 		QaEvent qaEvent = null;
 		try {
-			qaEvent = (QaEvent) HibernateUtil.getSession().get(QaEvent.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			qaEvent = (QaEvent) sessionFactory.getCurrentSession().get(QaEvent.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("QaEventDAOImpl", "readQaEvent()", e.toString());
@@ -252,12 +252,12 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent> implements QaEventDAO {
 		List list = new Vector();
 		try {
 			String sql = "from QaEvent qe where upper(qe.qaEventName) like upper(:param) order by upper(qe.qaEventName)";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", filter + "%");
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("QaEventDAOImpl", "getQaEvents()", e.toString());
@@ -271,12 +271,12 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent> implements QaEventDAO {
 	public QaEvent getQaEventByName(QaEvent qaEvent) throws LIMSRuntimeException {
 		try {
 			String sql = "from QaEvent qe where qe.qaEventName = :param";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", qaEvent.getQaEventName());
 
 			List list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			QaEvent qe = null;
 			if (list.size() > 0) {
 				qe = (QaEvent) list.get(0);
@@ -302,7 +302,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent> implements QaEventDAO {
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.qaEventName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -323,7 +323,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent> implements QaEventDAO {
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t order by t.qaEventName desc where name <= " + enquote(id);
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -349,7 +349,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent> implements QaEventDAO {
 					+ "or "
 					+ "(trim(lower(t.description)) = :param4 and trim(lower(t.type)) = :param3 and t.id != :param2)) ";
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", qaEvent.getQaEventName().toLowerCase().trim());
 			query.setParameter("param3", qaEvent.getType());
 			query.setParameter("param4", qaEvent.getDescription().toLowerCase().trim());
@@ -362,8 +362,8 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent> implements QaEventDAO {
 			query.setParameter("param2", qaEventId);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;

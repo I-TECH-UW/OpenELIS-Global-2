@@ -43,7 +43,7 @@ import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
  */
 @Component
 @Transactional 
-public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte> implements TestAnalyteDAO {
+public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> implements TestAnalyteDAO {
 
 	public TestAnalyteDAOImpl() {
 		super(TestAnalyte.class);
@@ -76,9 +76,9 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte> implements Test
 				TestAnalyte data = (TestAnalyte) testAnalytes.get(i);
 				// bugzilla 2206
 				data = readTestAnalyte(data.getId());
-				HibernateUtil.getSession().delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(data);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -91,7 +91,7 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte> implements Test
 	public boolean insertData(TestAnalyte testAnalyte) throws LIMSRuntimeException {
 
 		try {
-			String id = (String) HibernateUtil.getSession().save(testAnalyte);
+			String id = (String) sessionFactory.getCurrentSession().save(testAnalyte);
 			testAnalyte.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
@@ -100,8 +100,8 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte> implements Test
 			String tableName = "TEST_ANALYTE";
 			auditDAO.saveNewHistory(testAnalyte, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -132,11 +132,11 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte> implements Test
 		}
 
 		try {
-			HibernateUtil.getSession().merge(testAnalyte);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(testAnalyte);
-			// HibernateUtil.getSession().refresh // CSL remove old(testAnalyte);
+			sessionFactory.getCurrentSession().merge(testAnalyte);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(testAnalyte);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(testAnalyte);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestAnalyteDAOImpl", "updateData()", e.toString());
@@ -147,9 +147,9 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte> implements Test
 	@Override
 	public TestAnalyte getData(TestAnalyte testAnalyte) throws LIMSRuntimeException {
 		try {
-			TestAnalyte anal = (TestAnalyte) HibernateUtil.getSession().get(TestAnalyte.class, testAnalyte.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			TestAnalyte anal = (TestAnalyte) sessionFactory.getCurrentSession().get(TestAnalyte.class, testAnalyte.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (anal != null) {
 				PropertyUtils.copyProperties(testAnalyte, anal);
 			} else {
@@ -169,10 +169,10 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte> implements Test
 		List list = new Vector();
 		try {
 			String sql = "from TestAnalyte";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestAnalyteDAOImpl", "getAllTestAnalytes()", e.toString());
@@ -190,13 +190,13 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte> implements Test
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from TestAnalyte t order by t.id";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestAnalyteDAOImpl", "getPageOfTestAnalytes()", e.toString());
@@ -209,9 +209,9 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte> implements Test
 	public TestAnalyte readTestAnalyte(String idString) {
 		TestAnalyte ta = null;
 		try {
-			ta = (TestAnalyte) HibernateUtil.getSession().get(TestAnalyte.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			ta = (TestAnalyte) sessionFactory.getCurrentSession().get(TestAnalyte.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestAnalyteDAOImpl", "readTestAnalyte()", e.toString());
@@ -269,9 +269,9 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte> implements Test
 	public TestAnalyte getTestAnalyteById(TestAnalyte testAnalyte) throws LIMSRuntimeException {
 		TestAnalyte newTestAnalyte;
 		try {
-			newTestAnalyte = (TestAnalyte) HibernateUtil.getSession().get(TestAnalyte.class, testAnalyte.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			newTestAnalyte = (TestAnalyte) sessionFactory.getCurrentSession().get(TestAnalyte.class, testAnalyte.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestAnalyteDAOImpl", "getTestAnalyteById()", e.toString());
@@ -292,12 +292,12 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte> implements Test
 
 		try {
 			String sql = "from TestAnalyte t where t.test = :testId order by t.sortOrder asc";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(test.getId()));
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("TestAnalyteDAOImpl", "getAllTestAnalytesPerTest()", e.toString());
 			throw new LIMSRuntimeException("Error in TestAnalyte getAllTestAnalytesPerTest()", e);

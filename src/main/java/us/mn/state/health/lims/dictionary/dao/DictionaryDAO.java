@@ -31,7 +31,7 @@ import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface DictionaryDAO extends BaseDAO<Dictionary> {
+public interface DictionaryDAO extends BaseDAO<Dictionary, String> {
 
 	public boolean insertData(Dictionary dictionary) throws LIMSRuntimeException;
 

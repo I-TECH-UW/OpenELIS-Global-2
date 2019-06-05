@@ -6,7 +6,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.datasubmission.valueholder.TypeOfDataIndicator;
 
-public interface TypeOfDataIndicatorDAO extends BaseDAO<TypeOfDataIndicator> {
+public interface TypeOfDataIndicatorDAO extends BaseDAO<TypeOfDataIndicator, String> {
 
 	public void getData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException;
 

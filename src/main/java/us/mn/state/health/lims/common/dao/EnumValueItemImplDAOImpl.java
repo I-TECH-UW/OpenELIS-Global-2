@@ -8,7 +8,7 @@ import us.mn.state.health.lims.common.valueholder.EnumValueItemImpl;
 
 @Component
 @Transactional 
-public class EnumValueItemImplDAOImpl extends BaseDAOImpl<EnumValueItemImpl> implements EnumValueItemImplDAO {
+public class EnumValueItemImplDAOImpl extends BaseDAOImpl<EnumValueItemImpl, String> implements EnumValueItemImplDAO {
   EnumValueItemImplDAOImpl() {
     super(EnumValueItemImpl.class);
   }

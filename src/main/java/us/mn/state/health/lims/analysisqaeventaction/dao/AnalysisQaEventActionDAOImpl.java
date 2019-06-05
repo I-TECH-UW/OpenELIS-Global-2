@@ -8,7 +8,7 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 
 @Component
 @Transactional 
-public class AnalysisQaEventActionDAOImpl extends BaseDAOImpl<AnalysisQaEventAction> implements AnalysisQaEventActionDAO {
+public class AnalysisQaEventActionDAOImpl extends BaseDAOImpl<AnalysisQaEventAction, String> implements AnalysisQaEventActionDAO {
   AnalysisQaEventActionDAOImpl() {
     super(AnalysisQaEventAction.class);
   }

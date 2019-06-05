@@ -29,7 +29,7 @@ import us.mn.state.health.lims.qaevent.valueholder.QaObservationType;
 
 @Component
 @Transactional 
-public class QaObservationTypeDAOImpl extends BaseDAOImpl<QaObservationType> implements QaObservationTypeDAO {
+public class QaObservationTypeDAOImpl extends BaseDAOImpl<QaObservationType, String> implements QaObservationTypeDAO {
 
 	public QaObservationTypeDAOImpl() {
 		super(QaObservationType.class);
@@ -40,7 +40,7 @@ public class QaObservationTypeDAOImpl extends BaseDAOImpl<QaObservationType> imp
 		String sql = "FROM QaObservationType where name = :name";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("name", typeName);
 			QaObservationType type = (QaObservationType) query.uniqueResult();
 			// closeSession(); // CSL remove old

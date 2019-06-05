@@ -8,7 +8,7 @@ import us.mn.state.health.lims.program.valueholder.Program;
 
 @Component
 @Transactional 
-public class ProgramDAOImpl extends BaseDAOImpl<Program> implements ProgramDAO {
+public class ProgramDAOImpl extends BaseDAOImpl<Program, String> implements ProgramDAO {
   ProgramDAOImpl() {
     super(Program.class);
   }

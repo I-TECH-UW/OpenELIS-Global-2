@@ -22,26 +22,24 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.Transaction;
-
+import spring.service.dataexchange.aggregatereporting.ReportExternalExportService;
+import spring.service.dataexchange.aggregatereporting.ReportQueueTypeService;
+import spring.service.dataexchange.orderresult.HL7MessageOutService;
+import spring.service.referencetables.ReferenceTablesService;
+import spring.service.reports.DocumentTrackService;
+import spring.service.reports.DocumentTypeService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
+import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.dataexchange.aggregatereporting.daoimpl.ReportExternalExportDAOImpl;
-import us.mn.state.health.lims.dataexchange.aggregatereporting.daoimpl.ReportQueueTypeDAOImpl;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalExport;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportQueueType;
 import us.mn.state.health.lims.dataexchange.common.ITransmissionResponseHandler;
 import us.mn.state.health.lims.dataexchange.common.ReportTransmission;
 import us.mn.state.health.lims.dataexchange.orderresult.OrderResponseWorker.Event;
-import us.mn.state.health.lims.dataexchange.orderresult.dao.HL7MessageOutDAOImpl;
 import us.mn.state.health.lims.dataexchange.orderresult.valueholder.HL7MessageOut;
 import us.mn.state.health.lims.dataexchange.resultreporting.beans.ResultReportXmit;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.referencetables.daoimpl.ReferenceTablesDAOImpl;
 import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
-import us.mn.state.health.lims.reports.dao.DocumentTrackDAO;
-import us.mn.state.health.lims.reports.daoimpl.DocumentTrackDAOImpl;
-import us.mn.state.health.lims.reports.daoimpl.DocumentTypeDAOImpl;
 import us.mn.state.health.lims.reports.valueholder.DocumentTrack;
 import us.mn.state.health.lims.reports.valueholder.DocumentType;
 import us.mn.state.health.lims.result.valueholder.Result;
@@ -53,12 +51,14 @@ public class ResultReportingTransfer {
 	private static String RESULT_REFERRANCE_TABLE_ID;
 
 	static {
-		DOCUMENT_TYPE = new DocumentTypeDAOImpl().getDocumentTypeByName("resultExport");
-		ReferenceTables referenceTable = new ReferenceTablesDAOImpl().getReferenceTableByName("RESULT");
+		DOCUMENT_TYPE = SpringContext.getBean(DocumentTypeService.class).getDocumentTypeByName("resultExport");
+		ReferenceTables referenceTable = SpringContext.getBean(ReferenceTablesService.class)
+				.getReferenceTableByName("RESULT");
 		if (referenceTable != null) {
 			RESULT_REFERRANCE_TABLE_ID = referenceTable.getId();
 		}
-		ReportQueueType queueType = new ReportQueueTypeDAOImpl().getReportQueueTypeByName("Results");
+		ReportQueueType queueType = SpringContext.getBean(ReportQueueTypeService.class)
+				.getReportQueueTypeByName("Results");
 		if (queueType != null) {
 			QUEUE_TYPE_ID = queueType.getId();
 		}
@@ -94,7 +94,7 @@ public class ResultReportingTransfer {
 		}
 
 		private void persistMessage(String msg, boolean success) {
-			HL7MessageOutDAOImpl messageOutDAO = new HL7MessageOutDAOImpl();
+			HL7MessageOutService messageOutService = SpringContext.getBean(HL7MessageOutService.class);
 			HL7MessageOut messageOut = new HL7MessageOut();
 			messageOut.setData(msg);
 			if (success) {
@@ -102,7 +102,7 @@ public class ResultReportingTransfer {
 			} else {
 				messageOut.setStatus(HL7MessageOut.FAIL);
 			}
-			messageOutDAO.insert(messageOut);
+			messageOutService.insert(messageOut);
 		}
 
 		private void bufferResults(String msg) {
@@ -115,15 +115,16 @@ public class ResultReportingTransfer {
 			report.setBookkeepingData(getResultIdListString() == null ? "" : getResultIdListString());
 			report.setSend(true);
 
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
+//			Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 			try {
-				new ReportExternalExportDAOImpl().insertReportExternalExport(report);
+				SpringContext.getBean(ReportExternalExportService.class).insertReportExternalExport(report);
 
-				tx.commit();
+//				tx.commit();
 
 			} catch (LIMSRuntimeException lre) {
-				tx.rollback();
+				LogEvent.logErrorStack(this.getClass().getSimpleName(), "bufferResults()", lre);
+//				tx.rollback();
 			}
 		}
 
@@ -159,19 +160,20 @@ public class ResultReportingTransfer {
 				}
 			}
 
-			DocumentTrackDAO trackDAO = new DocumentTrackDAOImpl();
+			DocumentTrackService trackService = SpringContext.getBean(DocumentTrackService.class);
 
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
+//			Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 			try {
+				trackService.insertAll(documents);
+//				for (DocumentTrack document : documents) {
+//					trackService.insertData(document);
+//				}
 
-				for (DocumentTrack document : documents) {
-					trackDAO.insertData(document);
-				}
-
-				tx.commit();
+//				tx.commit();
 			} catch (LIMSRuntimeException lre) {
-				tx.rollback();
+				LogEvent.logErrorStack(this.getClass().getSimpleName(), "markFinalResultsAsSent()", lre);
+//				tx.rollback();
 			}
 		}
 	}

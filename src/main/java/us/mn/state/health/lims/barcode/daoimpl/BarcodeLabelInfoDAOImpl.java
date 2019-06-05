@@ -25,7 +25,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  */
 @Component
 @Transactional 
-public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo> implements BarcodeLabelInfoDAO {
+public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, String> implements BarcodeLabelInfoDAO {
 
 	public BarcodeLabelInfoDAOImpl() {
 		super(BarcodeLabelInfo.class);
@@ -44,7 +44,7 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo> imple
 	@Override
 	public boolean insertData(BarcodeLabelInfo barcodeLabelInfo) throws LIMSRuntimeException {
 		try {
-			String id = (String) HibernateUtil.getSession().save(barcodeLabelInfo);
+			String id = (String) sessionFactory.getCurrentSession().save(barcodeLabelInfo);
 			barcodeLabelInfo.setId(id);
 
 			// add to audit trail
@@ -53,8 +53,8 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo> imple
 			String tableName = "BARCODE_LABEL_INFO";
 			auditDAO.saveNewHistory(barcodeLabelInfo, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("BarcodeLabelInfoDAOImpl", "insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in BarcodeLabelInfo insertData()", e);
@@ -88,11 +88,11 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo> imple
 		}
 
 		try {
-			HibernateUtil.getSession().merge(barcodeLabelInfo);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(barcodeLabelInfo);
-			// HibernateUtil.getSession().refresh // CSL remove old(barcodeLabelInfo);
+			sessionFactory.getCurrentSession().merge(barcodeLabelInfo);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(barcodeLabelInfo);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(barcodeLabelInfo);
 		} catch (Exception e) {
 			LogEvent.logError("BarcodeLabelInfoDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in BarcodeLabelInfo updateData()", e);
@@ -111,14 +111,14 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo> imple
 		BarcodeLabelInfo bli = null;
 		try {
 			String sql = "From BarcodeLabelInfo b where b.code = :param";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", code.trim());
 			list = query.list();
 			if (list != null && list.size() > 0) {
 				bli = (BarcodeLabelInfo) list.get(0);
 			}
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("BarcodeLabelInfoDAOImpl", "getDataByCode()", e.toString());
 			throw new LIMSRuntimeException("Error in getDataByCode()", e);
@@ -135,10 +135,10 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo> imple
 	public BarcodeLabelInfo readBarcodeLabelInfo(String idString) {
 		BarcodeLabelInfo recoveredBarcodeLabelInfo;
 		try {
-			recoveredBarcodeLabelInfo = (BarcodeLabelInfo) HibernateUtil.getSession().get(BarcodeLabelInfo.class,
+			recoveredBarcodeLabelInfo = (BarcodeLabelInfo) sessionFactory.getCurrentSession().get(BarcodeLabelInfo.class,
 					idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("BarcodeLabelInfoDAOImpl", "readBarcodeLabelInfo()", e.toString());
 			throw new LIMSRuntimeException("Error in BarcodeLabelInfo readBarcodeLabelInfo()", e);

@@ -23,7 +23,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.role.valueholder.Role;
 
-public interface RoleDAO extends BaseDAO<Role> {
+public interface RoleDAO extends BaseDAO<Role, String> {
 
 	public boolean insertData(Role role) throws LIMSRuntimeException;
 

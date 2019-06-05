@@ -8,7 +8,7 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 
 @Component
 @Transactional 
-public class StateViewDAOImpl extends BaseDAOImpl<StateView> implements StateViewDAO {
+public class StateViewDAOImpl extends BaseDAOImpl<StateView, String> implements StateViewDAO {
   StateViewDAOImpl() {
     super(StateView.class);
   }

@@ -29,7 +29,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional 
-public class ReportQueueTypeDAOImpl extends BaseDAOImpl<ReportQueueType> implements ReportQueueTypeDAO {
+public class ReportQueueTypeDAOImpl extends BaseDAOImpl<ReportQueueType, String> implements ReportQueueTypeDAO {
 
 	public ReportQueueTypeDAOImpl() {
 		super(ReportQueueType.class);
@@ -40,7 +40,7 @@ public class ReportQueueTypeDAOImpl extends BaseDAOImpl<ReportQueueType> impleme
 		String sql = "from ReportQueueType rqt where rqt.name = :name";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("name", name);
 			ReportQueueType type = (ReportQueueType) query.uniqueResult();
 			// closeSession(); // CSL remove old

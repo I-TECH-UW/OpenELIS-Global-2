@@ -33,7 +33,7 @@ import us.mn.state.health.lims.qaevent.valueholder.QaObservation;
 
 @Component
 @Transactional 
-public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation> implements QaObservationDAO {
+public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation, String> implements QaObservationDAO {
 
 	public QaObservationDAOImpl() {
 		super(QaObservation.class);
@@ -43,7 +43,7 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation> implements 
 	public void insertData(QaObservation qaObservation) throws LIMSRuntimeException {
 		try {
 
-			String id = (String) HibernateUtil.getSession().save(qaObservation);
+			String id = (String) sessionFactory.getCurrentSession().save(qaObservation);
 			qaObservation.setId(id);
 
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
@@ -69,11 +69,11 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation> implements 
 		}
 
 		try {
-			HibernateUtil.getSession().merge(qaObservation);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(qaObservation);
-			// HibernateUtil.getSession().refresh // CSL remove old(qaObservation);
+			sessionFactory.getCurrentSession().merge(qaObservation);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(qaObservation);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(qaObservation);
 		} catch (Exception e) {
 			handleException(e, "updateData");
 		}
@@ -85,7 +85,7 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation> implements 
 		String sql = "FROM QaObservation o where o.observationType.name = :observationName and o.observedType = :observedType and o.observedId = :observedId ";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("observationName", typeName);
 			query.setString("observedType", observedType);
 			query.setInteger("observedId", Integer.parseInt(observedId));
@@ -101,7 +101,7 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation> implements 
 	public QaObservation readQaObservation(String idString) {
 		QaObservation qaObservation = null;
 		try {
-			qaObservation = (QaObservation) HibernateUtil.getSession().get(QaObservation.class, idString);
+			qaObservation = (QaObservation) sessionFactory.getCurrentSession().get(QaObservation.class, idString);
 			// closeSession(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "readQaObservation");

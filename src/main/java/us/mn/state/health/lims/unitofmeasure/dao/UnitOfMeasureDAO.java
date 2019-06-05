@@ -21,7 +21,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
-public interface UnitOfMeasureDAO extends BaseDAO<UnitOfMeasure> {
+public interface UnitOfMeasureDAO extends BaseDAO<UnitOfMeasure, String> {
 
 	public boolean insertData(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException;
 

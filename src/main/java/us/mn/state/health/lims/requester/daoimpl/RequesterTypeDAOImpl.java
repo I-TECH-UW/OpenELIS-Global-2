@@ -30,7 +30,7 @@ import us.mn.state.health.lims.requester.valueholder.RequesterType;
  */
 @Component
 @Transactional 
-public class RequesterTypeDAOImpl extends BaseDAOImpl<RequesterType> implements RequesterTypeDAO {
+public class RequesterTypeDAOImpl extends BaseDAOImpl<RequesterType, String> implements RequesterTypeDAO {
 
 	public RequesterTypeDAOImpl() {
 		super(RequesterType.class);

@@ -3,7 +3,6 @@ package spring.mine.resultvalidation.form;
 import java.util.List;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -40,7 +39,6 @@ public class ResultValidationForm extends BaseForm {
 	// for display
 	private List<IdValuePair> testSectionsByName;
 
-	@NotBlank(groups = { ResultValidation.class })
 	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ResultValidation.class })
 	private String testSectionId;
 

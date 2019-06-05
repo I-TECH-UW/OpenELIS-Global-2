@@ -8,7 +8,7 @@ import us.mn.state.health.lims.result.valueholder.TestResult_AddedReflexTests;
 
 @Component
 @Transactional 
-public class TestResult_AddedReflexTestsDAOImpl extends BaseDAOImpl<TestResult_AddedReflexTests> implements TestResult_AddedReflexTestsDAO {
+public class TestResult_AddedReflexTestsDAOImpl extends BaseDAOImpl<TestResult_AddedReflexTests, String> implements TestResult_AddedReflexTestsDAO {
   TestResult_AddedReflexTestsDAOImpl() {
     super(TestResult_AddedReflexTests.class);
   }

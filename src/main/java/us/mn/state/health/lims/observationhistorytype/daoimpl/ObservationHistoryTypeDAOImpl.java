@@ -9,13 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.observationhistorytype.dao.ObservationHistoryTypeDAO;
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
- 
+
 @Component
-@Transactional 
-public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistoryType>
+@Transactional
+public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistoryType, String>
 		implements ObservationHistoryTypeDAO {
 
 	public ObservationHistoryTypeDAOImpl() {
@@ -29,11 +28,11 @@ public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistor
 
 		try {
 			String sql = "from ObservationHistoryType oht where oht.typeName = :name";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("name", name);
 			historyTypeList = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return historyTypeList.size() > 0 ? historyTypeList.get(0) : null;
 
@@ -52,7 +51,7 @@ public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistor
 		List<ObservationHistoryType> entities;
 		try {
 			String sql = "from ObservationHistoryType";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			entities = query.list();
 		} catch (Exception e) {
 			e.printStackTrace();

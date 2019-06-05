@@ -8,7 +8,7 @@ import us.mn.state.health.lims.sampledomain.valueholder.SampleDomain;
 
 @Component
 @Transactional 
-public class SampleDomainDAOImpl extends BaseDAOImpl<SampleDomain> implements SampleDomainDAO {
+public class SampleDomainDAOImpl extends BaseDAOImpl<SampleDomain, String> implements SampleDomainDAO {
   SampleDomainDAOImpl() {
     super(SampleDomain.class);
   }

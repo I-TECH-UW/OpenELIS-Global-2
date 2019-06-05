@@ -8,7 +8,7 @@ import us.mn.state.health.lims.patienttype.valueholder.BasePatientType;
 
 @Component
 @Transactional 
-public class BasePatientTypeDAOImpl extends BaseDAOImpl<BasePatientType> implements BasePatientTypeDAO {
+public class BasePatientTypeDAOImpl extends BaseDAOImpl<BasePatientType, String> implements BasePatientTypeDAO {
   BasePatientTypeDAOImpl() {
     super(BasePatientType.class);
   }

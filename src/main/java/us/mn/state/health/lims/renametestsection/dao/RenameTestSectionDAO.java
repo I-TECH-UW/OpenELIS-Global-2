@@ -29,7 +29,7 @@ import us.mn.state.health.lims.renametestsection.valueholder.RenameTestSection;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface RenameTestSectionDAO extends BaseDAO<RenameTestSection> {
+public interface RenameTestSectionDAO extends BaseDAO<RenameTestSection, String> {
 
 	public boolean insertData(RenameTestSection testSection) throws LIMSRuntimeException;
 

@@ -25,7 +25,7 @@ import java.util.Scanner;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.common.log.LogEvent;
 
-public abstract class BaseObject<T extends Serializable> implements Serializable, Cloneable {
+public abstract class BaseObject<PK extends Serializable> implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -38,9 +38,9 @@ public abstract class BaseObject<T extends Serializable> implements Serializable
 	public BaseObject() {
 	}
 
-	public abstract T getId();
+	public abstract PK getId();
 
-	public abstract void setId(T id);
+	public abstract void setId(PK id);
 
 	// used for audittrail
 	public String getStringId() {

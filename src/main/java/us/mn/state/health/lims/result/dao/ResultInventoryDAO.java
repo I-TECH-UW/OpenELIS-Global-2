@@ -22,7 +22,7 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultInventory;
 
-public interface ResultInventoryDAO extends BaseDAO<ResultInventory> {
+public interface ResultInventoryDAO extends BaseDAO<ResultInventory, String> {
 
 	public boolean insertData(ResultInventory resultInventory) throws LIMSRuntimeException;
 

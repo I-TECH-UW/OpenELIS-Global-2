@@ -29,7 +29,7 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface TestSectionDAO extends BaseDAO<TestSection> {
+public interface TestSectionDAO extends BaseDAO<TestSection, String> {
 
 	public boolean insertData(TestSection testSection) throws LIMSRuntimeException;
 

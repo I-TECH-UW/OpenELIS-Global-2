@@ -21,7 +21,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
-public interface TypeOfSampleTestDAO extends BaseDAO<TypeOfSampleTest> {
+public interface TypeOfSampleTestDAO extends BaseDAO<TypeOfSampleTest, String> {
 
 	public boolean insertData(TypeOfSampleTest typeOfSample) throws LIMSRuntimeException;
 

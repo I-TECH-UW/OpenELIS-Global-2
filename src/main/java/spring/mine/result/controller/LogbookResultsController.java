@@ -6,10 +6,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
-import org.hibernate.Transaction;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -36,17 +33,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.result.form.LogbookResultsForm;
 import spring.service.analysis.AnalysisServiceImpl;
-import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl;
 import spring.service.note.NoteServiceImpl.NoteType;
-import spring.service.referral.ReferralResultService;
 import spring.service.referral.ReferralService;
 import spring.service.referral.ReferralTypeService;
+import spring.service.result.LogbookResultsPersistService;
 import spring.service.result.ResultInventoryService;
-import spring.service.result.ResultService;
 import spring.service.result.ResultSignatureService;
 import spring.service.resultlimit.ResultLimitService;
-import spring.service.sample.SampleService;
 import spring.service.sample.SampleServiceImpl;
 import spring.service.test.TestSectionService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
@@ -60,7 +54,6 @@ import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.services.ResultSaveService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
-import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
 import us.mn.state.health.lims.common.services.beanAdapters.ResultSaveBeanAdapter;
 import us.mn.state.health.lims.common.services.registration.ResultUpdateRegister;
 import us.mn.state.health.lims.common.services.registration.interfaces.IResultUpdate;
@@ -69,14 +62,10 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.IdValuePair;
-import us.mn.state.health.lims.dataexchange.orderresult.OrderResponseWorker.Event;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.inventory.action.InventoryUtility;
 import us.mn.state.health.lims.inventory.form.InventoryKitItem;
-import us.mn.state.health.lims.note.valueholder.Note;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.referral.valueholder.Referral;
-import us.mn.state.health.lims.referral.valueholder.ReferralResult;
 import us.mn.state.health.lims.referral.valueholder.ReferralType;
 import us.mn.state.health.lims.result.action.util.ResultSet;
 import us.mn.state.health.lims.result.action.util.ResultUtil;
@@ -87,38 +76,27 @@ import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultInventory;
 import us.mn.state.health.lims.result.valueholder.ResultSignature;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
-import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.statusofsample.util.StatusRules;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
 import us.mn.state.health.lims.test.valueholder.TestSection;
-import us.mn.state.health.lims.testreflex.action.util.TestReflexBean;
-import us.mn.state.health.lims.testreflex.action.util.TestReflexUtil;
 
 @Controller
 public class LogbookResultsController extends LogbookResultsBaseController {
 
 	@Autowired
-	private spring.service.analysis.AnalysisService analysisService;
-	@Autowired
-	private ResultService resultService;
-	@Autowired
 	private ResultSignatureService resultSigService;
 	@Autowired
 	private ResultInventoryService resultInventoryService;
 	@Autowired
-	private NoteService noteService;
-	@Autowired
-	private SampleService sampleService;
-	@Autowired
 	private ReferralService referralService;
-	@Autowired
-	private ReferralResultService referralResultService;
 	@Autowired
 	private ResultLimitService resultLimitService;
 	@Autowired
 	private TestSectionService testSectionService;
 	@Autowired
 	private ReferralTypeService referralTypeService;
+	@Autowired
+	private LogbookResultsPersistService logbookPersistService;
 
 	private static final String RESULT_SUBJECT = "Result Note";
 	private static String REFERRAL_CONFORMATION_ID;
@@ -267,75 +245,15 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 		createResultsFromItems(actionDataSet);
 		createAnalysisOnlyUpdates(actionDataSet);
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 		try {
-			for (Note note : actionDataSet.getNoteList()) {
-				noteService.insert(note);
-			}
+			logbookPersistService.persistDataSet(actionDataSet, updaters, getSysUserId(request));
 
-			for (ResultSet resultSet : actionDataSet.getNewResults()) {
-				resultSet.result.setResultEvent(Event.PRELIMINARY_RESULT);
-				resultService.insert(resultSet.result);
-				if (resultSet.signature != null) {
-					resultSet.signature.setResultId(resultSet.result.getId());
-					resultSigService.insert(resultSet.signature);
-				}
-
-				if (resultSet.testKit != null && resultSet.testKit.getInventoryLocationId() != null) {
-					resultSet.testKit.setResultId(resultSet.result.getId());
-					resultInventoryService.insert(resultSet.testKit);
-				}
-			}
-
-			for (Referral referral : actionDataSet.getSavableReferrals()) {
-				if (referral != null) {
-					saveReferralsWithRequiredObjects(referral);
-				}
-			}
-
-			for (ResultSet resultSet : actionDataSet.getModifiedResults()) {
-				resultSet.result.setResultEvent(Event.RESULT);
-				resultService.update(resultSet.result);
-
-				if (resultSet.signature != null) {
-					resultSet.signature.setResultId(resultSet.result.getId());
-					if (resultSet.alwaysInsertSignature) {
-						resultSigService.insert(resultSet.signature);
-					} else {
-						resultSigService.update(resultSet.signature);
-					}
-				}
-
-				if (resultSet.testKit != null && resultSet.testKit.getInventoryLocationId() != null) {
-					resultSet.testKit.setResultId(resultSet.result.getId());
-					if (resultSet.testKit.getId() == null) {
-						resultInventoryService.insert(resultSet.testKit);
-					} else {
-						resultInventoryService.update(resultSet.testKit);
-					}
-				}
-			}
-
-			for (Analysis analysis : actionDataSet.getModifiedAnalysis()) {
-				analysisService.update(analysis);
-			}
-
-			ResultSaveService.removeDeletedResultsInTransaction(actionDataSet.getDeletableResults(),
-					getSysUserId(request));
-
-			setTestReflexes(actionDataSet);
-
-			setSampleStatus(actionDataSet);
-
-			for (IResultUpdate updater : updaters) {
-				updater.transactionalUpdate(actionDataSet);
-			}
-
-			tx.commit();
+//			tx.commit();
 
 		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
+//			tx.rollback();
 
 			String errorMsg;
 			if (lre.getException() instanceof StaleObjectStateException) {
@@ -362,77 +280,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 			Map<String, String> params = new HashMap<>();
 			params.put("type", form.getString("logbookType"));
 			return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
-		}
-	}
-
-	private void saveReferralsWithRequiredObjects(Referral referral) {
-		if (referral.getId() != null) {
-			referralService.update(referral);
-		} else {
-			referralService.insert(referral);
-			ReferralResult referralResult = new ReferralResult();
-			referralResult.setReferralId(referral.getId());
-			referralResult.setSysUserId(getSysUserId(request));
-			referralResultService.insert(referralResult);
-		}
-	}
-
-	protected void setTestReflexes(ResultsUpdateDataSet actionDataSet) {
-		TestReflexUtil testReflexUtil = new TestReflexUtil();
-		testReflexUtil.setCurrentUserId(getSysUserId(request));
-		testReflexUtil.addNewTestsToDBForReflexTests(convertToTestReflexBeanList(actionDataSet.getNewResults()));
-		testReflexUtil.updateModifiedReflexes(convertToTestReflexBeanList(actionDataSet.getModifiedResults()));
-	}
-
-	private List<TestReflexBean> convertToTestReflexBeanList(List<ResultSet> resultSetList) {
-		List<TestReflexBean> reflexBeanList = new ArrayList<>();
-
-		for (ResultSet resultSet : resultSetList) {
-			TestReflexBean reflex = new TestReflexBean();
-			reflex.setPatient(resultSet.patient);
-
-			if (resultSet.triggersToSelectedReflexesMap.size() > 0 && resultSet.multipleResultsForAnalysis) {
-				for (String trigger : resultSet.triggersToSelectedReflexesMap.keySet()) {
-					if (trigger.equals(resultSet.result.getValue())) {
-						HashMap<String, List<String>> reducedMap = new HashMap<>(1);
-						reducedMap.put(trigger, resultSet.triggersToSelectedReflexesMap.get(trigger));
-						reflex.setTriggersToSelectedReflexesMap(reducedMap);
-					}
-				}
-				if (reflex.getTriggersToSelectedReflexesMap() == null) {
-					reflex.setTriggersToSelectedReflexesMap(new HashMap<String, List<String>>());
-				}
-			} else {
-				reflex.setTriggersToSelectedReflexesMap(resultSet.triggersToSelectedReflexesMap);
-			}
-
-			reflex.setResult(resultSet.result);
-			reflex.setSample(resultSet.sample);
-			reflexBeanList.add(reflex);
-		}
-
-		return reflexBeanList;
-	}
-
-	private void setSampleStatus(ResultsUpdateDataSet actionDataSet) {
-		Set<Sample> sampleSet = new HashSet<>();
-
-		for (ResultSet resultSet : actionDataSet.getNewResults()) {
-			sampleSet.add(resultSet.sample);
-		}
-
-		String sampleTestingStartedId = StatusService.getInstance().getStatusID(OrderStatus.Started);
-		String sampleNonConformingId = StatusService.getInstance().getStatusID(OrderStatus.NonConforming_depricated);
-
-		for (Sample sample : sampleSet) {
-			if (!(sample.getStatusId().equals(sampleNonConformingId)
-					|| sample.getStatusId().equals(sampleTestingStartedId))) {
-				Sample newSample = sampleService.get(sample.getId());
-
-				newSample.setStatusId(sampleTestingStartedId);
-				newSample.setSysUserId(getSysUserId(request));
-				sampleService.update(newSample);
-			}
 		}
 	}
 

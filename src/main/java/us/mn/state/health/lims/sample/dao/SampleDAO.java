@@ -22,7 +22,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 
-public interface SampleDAO extends BaseDAO<Sample> {
+public interface SampleDAO extends BaseDAO<Sample, String> {
 
 	public boolean insertData(Sample sample) throws LIMSRuntimeException;
 

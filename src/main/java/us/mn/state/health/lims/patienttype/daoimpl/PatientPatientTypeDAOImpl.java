@@ -38,7 +38,7 @@ import us.mn.state.health.lims.patienttype.valueholder.PatientType;
 
 @Component
 @Transactional 
-public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType> implements PatientPatientTypeDAO {
+public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, String> implements PatientPatientTypeDAO {
 
 	public PatientPatientTypeDAOImpl() {
 		super(PatientPatientType.class);
@@ -47,7 +47,7 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType> i
 	@Override
 	public boolean insertData(PatientPatientType patientType) throws LIMSRuntimeException {
 		try {
-			String id = (String) HibernateUtil.getSession().save(patientType);
+			String id = (String) sessionFactory.getCurrentSession().save(patientType);
 			patientType.setId(id);
 
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
@@ -55,8 +55,8 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType> i
 			String tableName = "PATIENT_PATIENT_TYPE";
 			auditDAO.saveNewHistory(patientType, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("PatientPatientTypeDAOImpl", "insertData()", e.toString());
@@ -83,11 +83,11 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType> i
 		}
 
 		try {
-			HibernateUtil.getSession().merge(patientType);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(patientType);
-			// HibernateUtil.getSession().refresh // CSL remove old(patientType);
+			sessionFactory.getCurrentSession().merge(patientType);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(patientType);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(patientType);
 		} catch (Exception e) {
 			LogEvent.logError("patientPatientTypeDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in patientPatientType updateData()", e);
@@ -97,9 +97,9 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType> i
 	public PatientPatientType getCurrentPatientPatientType(String id) {
 		PatientPatientType current = null;
 		try {
-			current = (PatientPatientType) HibernateUtil.getSession().get(PatientPatientType.class, id);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			current = (PatientPatientType) sessionFactory.getCurrentSession().get(PatientPatientType.class, id);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PatientPatientTypeDAOImpl", "getCurrentPatientPatientType()", e.toString());
 			throw new LIMSRuntimeException("Error in PatientPatientType getCurrentPatientPatientType()", e);
@@ -132,13 +132,13 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType> i
 
 		try {
 			String sql = "from PatientPatientType pi where pi.patientId = :patientId";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("patientId", new Integer(patientId));
 
 			patientTypes = query.list();
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (HibernateException he) {
 			LogEvent.logError("PatientIdentityDAOImpl", "getPatientPatientTypeForPatient()", he.toString());

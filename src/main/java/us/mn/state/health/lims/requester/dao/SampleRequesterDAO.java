@@ -22,7 +22,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.requester.valueholder.SampleRequester;
 
-public interface SampleRequesterDAO extends BaseDAO<SampleRequester> {
+public interface SampleRequesterDAO extends BaseDAO<SampleRequester, String> {
 
 	public boolean insertData(SampleRequester sampleRequester) throws LIMSRuntimeException;
 
@@ -32,5 +32,6 @@ public interface SampleRequesterDAO extends BaseDAO<SampleRequester> {
 
 	void insertOrUpdateData(SampleRequester sampleRequester) throws LIMSRuntimeException;
 
+	@Override
 	void delete(SampleRequester sampleRequester) throws LIMSRuntimeException;
 }

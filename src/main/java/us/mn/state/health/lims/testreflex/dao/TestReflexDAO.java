@@ -32,7 +32,7 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface TestReflexDAO extends BaseDAO<TestReflex> {
+public interface TestReflexDAO extends BaseDAO<TestReflex, String> {
 
 	/**
 	 * @param testReflex
@@ -111,7 +111,7 @@ public interface TestReflexDAO extends BaseDAO<TestReflex> {
 
 	/**
 	 * bugzilla 1798
-	 * 
+	 *
 	 * @param analysis
 	 * @throws LIMSRuntimeException
 	 */
@@ -119,7 +119,7 @@ public interface TestReflexDAO extends BaseDAO<TestReflex> {
 
 	/**
 	 * Gets the ReflexTest for the analysis if there is one, otherwise returns null.
-	 * 
+	 *
 	 * @param analysis
 	 * @throws LIMSRuntimeException
 	 */
@@ -132,7 +132,7 @@ public interface TestReflexDAO extends BaseDAO<TestReflex> {
 	 * is.
 	 *
 	 * @param testId The testId for which we want the reflexes
-	 * 
+	 *
 	 * @param flag The value of the flag field. May be null
 	 */
 	public List<TestReflex> getTestReflexsByTestAndFlag(String testId, String flag) throws LIMSRuntimeException;

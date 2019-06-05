@@ -3,8 +3,7 @@
 			us.mn.state.health.lims.common.util.ConfigurationProperties,
 			us.mn.state.health.lims.common.formfields.AdminFormFields,
 			us.mn.state.health.lims.common.formfields.AdminFormFields.Field,
-			us.mn.state.health.lims.siteinformation.valueholder.SiteInformation,
-			us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl"%>
+			us.mn.state.health.lims.siteinformation.valueholder.SiteInformation"%>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>

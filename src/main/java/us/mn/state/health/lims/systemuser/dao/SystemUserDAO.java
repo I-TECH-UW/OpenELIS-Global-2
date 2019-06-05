@@ -29,7 +29,7 @@ import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface SystemUserDAO extends BaseDAO<SystemUser> {
+public interface SystemUserDAO extends BaseDAO<SystemUser, String> {
 
 	public boolean insertData(SystemUser systemUser) throws LIMSRuntimeException;
 

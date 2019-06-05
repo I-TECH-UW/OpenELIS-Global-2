@@ -21,7 +21,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSamplePanel;
 
-public interface TypeOfSamplePanelDAO extends BaseDAO<TypeOfSamplePanel> {
+public interface TypeOfSamplePanelDAO extends BaseDAO<TypeOfSamplePanel, String> {
 
 	public boolean insertData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException;
 

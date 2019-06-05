@@ -23,13 +23,13 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -46,8 +46,11 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
  * @author diane benz
  */
 @Component
-@Transactional 
-public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
+@Transactional
+public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements ResultDAO {
+
+	@Autowired
+	AuditTrailDAO auditDAO;
 
 	public ResultDAOImpl() {
 		super(Result.class);
@@ -57,7 +60,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 	public void deleteData(List results) throws LIMSRuntimeException {
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (Object result : results) {
 				Result data = (Result) result;
 				Result oldData = readResult(data.getId());
@@ -77,9 +80,9 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 			for (Object result : results) {
 				Result data = (Result) result;
 				data = readResult(data.getId());
-				HibernateUtil.getSession().delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(data);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 
@@ -93,7 +96,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		Result oldData = readResult(result.getId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			auditDAO.saveHistory(new Result(), oldData, result.getSysUserId(), IActionConstants.AUDIT_TRAIL_DELETE,
 					"RESULT");
 		} catch (HibernateException e) {
@@ -101,7 +104,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		}
 
 		try {
-			HibernateUtil.getSession().delete(oldData);
+			sessionFactory.getCurrentSession().delete(oldData);
 			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "deleteData");
@@ -112,17 +115,17 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 	public boolean insertData(Result result) throws LIMSRuntimeException {
 
 		try {
-			String id = (String) HibernateUtil.getSession().save(result);
+			String id = (String) sessionFactory.getCurrentSession().save(result);
 			result.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = result.getSysUserId();
 			String tableName = "RESULT";
 			auditDAO.saveNewHistory(result, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 
@@ -139,7 +142,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		Result oldData = readResult(result.getId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = result.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "RESULT";
@@ -151,11 +154,11 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		}
 
 		try {
-			HibernateUtil.getSession().merge(result);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(result);
-			// HibernateUtil.getSession().refresh // CSL remove old(result);
+			sessionFactory.getCurrentSession().merge(result);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(result);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(result);
 		} catch (Exception e) {
 
 			LogEvent.logError("ResultDAOImpl", "updateData()", e.toString());
@@ -166,9 +169,9 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 	@Override
 	public void getData(Result result) throws LIMSRuntimeException {
 		try {
-			Result re = (Result) HibernateUtil.getSession().get(Result.class, result.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			Result re = sessionFactory.getCurrentSession().get(Result.class, result.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (re != null) {
 				PropertyUtils.copyProperties(result, re);
 			} else {
@@ -189,13 +192,13 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 			Analyte analyte = ta.getAnalyte();
 
 			String sql = "from Result r where r.analysis = :analysisId and r.analyte = :analyteId";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("analysisId", Integer.parseInt(analysis.getId()));
 			query.setInteger("analyteId", Integer.parseInt(analyte.getId()));
 
 			results = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			Result thisResult;
 			if (results != null && results.size() > 0) {
@@ -222,12 +225,12 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		try {
 
 			String sql = "from Result r where r.analysis = :analysisId order by r.id";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("analysisId", Integer.parseInt(analysis.getId()));
 
 			List<Result> results = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return results;
 
@@ -249,12 +252,12 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		List results;
 		try {
 			String sql = "from Result r where r.testResult = :testResultId";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("testResultId", Integer.parseInt(testResult.getId()));
 
 			results = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			Result thisResult;
 			if (results != null && results.size() > 0) {
@@ -280,10 +283,10 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		List results;
 		try {
 			String sql = "from Result";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			results = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("ResultDAOImpl", "getAllResults()", e.toString());
@@ -301,13 +304,13 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from Result r order by r.id";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			results = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("ResultDAOImpl", "getPageOfResults()", e.toString());
@@ -320,9 +323,9 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 	public Result readResult(String idString) {
 		Result data;
 		try {
-			data = (Result) HibernateUtil.getSession().get(Result.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			data = sessionFactory.getCurrentSession().get(Result.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("ResultDAOImpl", "readResult()", e.toString());
@@ -353,7 +356,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 	@Override
 	public Result getResultById(String resultId) throws LIMSRuntimeException {
 		try {
-			Result result = (Result) HibernateUtil.getSession().get(Result.class, resultId);
+			Result result = sessionFactory.getCurrentSession().get(Result.class, resultId);
 
 			// closeSession(); // CSL remove old
 
@@ -371,12 +374,12 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		try {
 
 			String sql = "from Result r where r.analysis = :param1 and r.isReportable = " + enquote(YES);
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param1", analysis);
 
 			List<Result> results = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return results;
 
@@ -394,7 +397,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		try {
 
 			String sql = "from Result r where r.analyte = :analyteId and r.analysis in (:analysisIdList)";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("analyteId", Integer.parseInt(analyteId));
 			query.setParameterList("analysisIdList", analysisIDList);
 
@@ -421,7 +424,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 			// "from Result r where r.analyte.id = :analyteId and r.analysis.sampleItem.id =
 			// :sampleItemId)";
 			String sql = "from Result r where r.analyte.id = :analyteId and r.analysis.sampleItem.id = :sampleItemId";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("analyteId", Integer.parseInt(analyteId));
 			query.setInteger("sampleItemId", Integer.parseInt(sampleItemId));
 
@@ -449,7 +452,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		String sql = "from Result r where r.analysis IN (:analysisList)";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameterList("analysisList", analysisIdList);
 
 			List<Result> resultList = query.list();
@@ -471,7 +474,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		String sql = "FROM Result r WHERE r.analysis.sampleItem.sample.id = :sampleId AND r.testResult.test.id = :testId";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("testId", Integer.valueOf(testId));
 			query.setParameter("sampleId", Integer.valueOf(sampleId));
 
@@ -492,7 +495,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		String sql = "From Result r where r.analysis.sampleItem.sample.id = :sampleId";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sample.getId()));
 			List<Result> results = query.list();
 			// closeSession(); // CSL remove old
@@ -510,7 +513,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		String sql = "From Result r where r.parentResult.id = :parentId";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("parentId", Integer.parseInt(resultId));
 			List<Result> results = query.list();
 			// closeSession(); // CSL remove old
@@ -529,7 +532,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		String sql = "FROM Result r WHERE r.analysis.test.id = :testId AND r.lastupdated BETWEEN :lowDate AND :highDate";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("testId", Integer.valueOf(testId));
 			query.setDate("lowDate", startDate);
 			query.setDate("highDate", endDate);
@@ -552,7 +555,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		String sql = "FROM Result r WHERE r.analysis.panel.id = :panelId AND r.lastupdated BETWEEN :lowDate AND :highDate order by r.id";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("panelId", Integer.valueOf(panelId));
 			query.setDate("lowDate", lowDate);
 			query.setDate("highDate", highDate);
@@ -575,7 +578,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		String sql = "FROM Result r WHERE r.analysis.testSection.id = :testSectionId AND r.lastupdated BETWEEN :lowDate AND :highDate";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("testSectionId", Integer.valueOf(testSectionId));
 			query.setDate("lowDate", lowDate);
 			query.setDate("highDate", highDate);

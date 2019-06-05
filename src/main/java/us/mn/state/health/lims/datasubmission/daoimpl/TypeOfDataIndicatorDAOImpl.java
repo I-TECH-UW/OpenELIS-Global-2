@@ -18,7 +18,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional 
-public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator> implements TypeOfDataIndicatorDAO {
+public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator, String> implements TypeOfDataIndicatorDAO {
 
 	public TypeOfDataIndicatorDAOImpl() {
 		super(TypeOfDataIndicator.class);
@@ -27,10 +27,10 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator>
 	@Override
 	public void getData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException {
 		try {
-			TypeOfDataIndicator typeOfIndicatorClone = (TypeOfDataIndicator) HibernateUtil.getSession()
+			TypeOfDataIndicator typeOfIndicatorClone = (TypeOfDataIndicator) sessionFactory.getCurrentSession()
 					.get(TypeOfDataIndicator.class, typeOfIndicator.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (typeOfIndicatorClone != null) {
 				PropertyUtils.copyProperties(typeOfIndicator, typeOfIndicatorClone);
 			} else {
@@ -48,10 +48,10 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator>
 		List<TypeOfDataIndicator> list;
 		try {
 			String sql = "from TypeOfDataIndicator";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("TypeOfDataIndicator", "getAllTypeOfDataIndicator()", e.toString());
 			throw new LIMSRuntimeException("Error in TypeOfDataIndicator getAllTypeOfDataIndicator()", e);
@@ -63,10 +63,10 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator>
 	@Override
 	public TypeOfDataIndicator getTypeOfDataIndicator(String id) throws LIMSRuntimeException {
 		try {
-			TypeOfDataIndicator dataValue = (TypeOfDataIndicator) HibernateUtil.getSession()
+			TypeOfDataIndicator dataValue = (TypeOfDataIndicator) sessionFactory.getCurrentSession()
 					.get(TypeOfDataIndicator.class, id);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			return dataValue;
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -79,7 +79,7 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator>
 	public boolean insertData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException {
 
 		try {
-			String id = (String) HibernateUtil.getSession().save(typeOfIndicator);
+			String id = (String) sessionFactory.getCurrentSession().save(typeOfIndicator);
 			typeOfIndicator.setId(id);
 
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
@@ -87,8 +87,8 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator>
 			String tableName = "TYPE_OF_DATA_INDICATOR";
 			auditDAO.saveNewHistory(typeOfIndicator, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -116,11 +116,11 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator>
 		}
 
 		try {
-			HibernateUtil.getSession().merge(typeOfIndicator);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(typeOfIndicator);
-			// HibernateUtil.getSession().refresh // CSL remove old(typeOfIndicator);
+			sessionFactory.getCurrentSession().merge(typeOfIndicator);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(typeOfIndicator);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(typeOfIndicator);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TypeOfDataIndicatorDAOImpl", "updateData()", e.toString());

@@ -16,33 +16,33 @@
 */
 package us.mn.state.health.lims.address.daoimpl;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.address.dao.PersonAddressDAO;
+import us.mn.state.health.lims.address.valueholder.AddressPK;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional 
-public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements PersonAddressDAO {
+@Transactional
+public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress, AddressPK> implements PersonAddressDAO {
 
 	public PersonAddressDAOImpl() {
 		super(PersonAddress.class);
 	}
 
-	private static AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+	@Autowired
+	private AuditTrailDAO auditDAO;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -62,9 +62,9 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 	}
 
 	@Override
-	public Serializable insert(PersonAddress personAddress) throws LIMSRuntimeException {
+	public AddressPK insert(PersonAddress personAddress) throws LIMSRuntimeException {
 		try {
-			String id = (String) HibernateUtil.getSession().save(personAddress);
+			AddressPK id = (AddressPK) sessionFactory.getCurrentSession().save(personAddress);
 			auditDAO.saveNewHistory(personAddress, personAddress.getSysUserId(), "person_address");
 			// closeSession(); // CSL remove old
 			return id;
@@ -83,10 +83,10 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 			auditDAO.saveHistory(personAddress, oldData, personAddress.getSysUserId(),
 					IActionConstants.AUDIT_TRAIL_UPDATE, "person_address");
 
-			HibernateUtil.getSession().merge(personAddress);
+			sessionFactory.getCurrentSession().merge(personAddress);
 			// closeSession(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(personAddress);
-			// HibernateUtil.getSession().refresh // CSL remove old(personAddress);
+			// sessionFactory.getCurrentSession().evict // CSL remove old(personAddress);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(personAddress);
 		} catch (HibernateException e) {
 			handleException(e, "update");
 		}
@@ -95,7 +95,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 
 	public PersonAddress readPersonAddress(PersonAddress personAddress) {
 		try {
-			PersonAddress oldPersonAddress = HibernateUtil.getSession().get(PersonAddress.class,
+			PersonAddress oldPersonAddress = sessionFactory.getCurrentSession().get(PersonAddress.class,
 					personAddress.getCompoundId());
 			// closeSession(); // CSL remove old
 
@@ -112,7 +112,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 		String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId and pa.compoundId.addressPartId = :partId";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("personId", Integer.parseInt(personId));
 			query.setInteger("partId", Integer.parseInt(addressPartId));
 			PersonAddress addressPart = (PersonAddress) query.uniqueResult();

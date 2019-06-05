@@ -29,7 +29,7 @@ import us.mn.state.health.lims.statusofsample.valueholder.StatusOfSample;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface StatusOfSampleDAO extends BaseDAO<StatusOfSample> {
+public interface StatusOfSampleDAO extends BaseDAO<StatusOfSample, String> {
 
 	// bugzilla 1942
 	public StatusOfSample getDataByStatusTypeAndStatusCode(StatusOfSample statusofsample) throws LIMSRuntimeException;

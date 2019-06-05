@@ -33,7 +33,7 @@ import us.mn.state.health.lims.referral.valueholder.ReferralReason;
  */
 @Component
 @Transactional 
-public class ReferralReasonDAOImpl extends BaseDAOImpl<ReferralReason> implements ReferralReasonDAO {
+public class ReferralReasonDAOImpl extends BaseDAOImpl<ReferralReason, String> implements ReferralReasonDAO {
 	public ReferralReasonDAOImpl() {
 		super(ReferralReason.class);
 	}
@@ -44,7 +44,7 @@ public class ReferralReasonDAOImpl extends BaseDAOImpl<ReferralReason> implement
 		String sql = "from ReferralReason";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			List<ReferralReason> reasons = query.list();
 			// closeSession(); // CSL remove old
 			return reasons;

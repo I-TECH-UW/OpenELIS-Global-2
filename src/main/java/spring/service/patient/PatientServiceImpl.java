@@ -20,6 +20,7 @@ import spring.service.gender.GenderService;
 import spring.service.patientidentity.PatientIdentityService;
 import spring.service.patientidentitytype.PatientIdentityTypeService;
 import spring.service.patienttype.PatientPatientTypeService;
+import spring.service.person.PersonService;
 import spring.service.person.PersonServiceImpl;
 import spring.service.samplehuman.SampleHumanService;
 import spring.util.SpringContext;
@@ -96,9 +97,9 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient> implement
 	@Autowired
 	private static PatientPatientTypeService patientPatientTypeService = SpringContext
 			.getBean(PatientPatientTypeService.class);
+	private PersonService personService = SpringContext.getBean(PersonService.class);
 
 	private Patient patient;
-	private PersonServiceImpl personService;
 
 	public synchronized void initializeGlobalVariables() {
 

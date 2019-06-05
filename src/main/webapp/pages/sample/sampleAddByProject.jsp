@@ -2,7 +2,7 @@
          import="us.mn.state.health.lims.common.action.IActionConstants,
 				us.mn.state.health.lims.login.valueholder.UserSessionData,
 	            us.mn.state.health.lims.common.util.*, spring.mine.internationalization.MessageUtil,
-	            us.mn.state.health.lims.common.util.ConfigurationProperties.Property,us.mn.state.health.lims.login.dao.UserModuleService,us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl,java.util.HashSet,org.owasp.encoder.Encode"%>
+	            us.mn.state.health.lims.common.util.ConfigurationProperties.Property,java.util.HashSet,org.owasp.encoder.Encode"%>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>

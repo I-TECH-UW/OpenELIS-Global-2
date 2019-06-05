@@ -29,7 +29,7 @@ import us.mn.state.health.lims.qaevent.valueholder.QaEvent;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface QaEventDAO extends BaseDAO<QaEvent> {
+public interface QaEventDAO extends BaseDAO<QaEvent, String> {
 
 	public boolean insertData(QaEvent qaEvent) throws LIMSRuntimeException;
 

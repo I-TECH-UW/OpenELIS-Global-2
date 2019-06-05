@@ -103,7 +103,7 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 
 			for (Entity data : entities) {
 				data = readEntity(data.getId());
-				HibernateUtil.getSession().delete(data);
+				sessionFactory.getCurrentSession().delete(data);
 				flushAndClear();
 			}
 		} catch (Exception e) {
@@ -115,8 +115,8 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 	 * Just because I hate to say the same thing many times.
 	 */
 	protected void flushAndClear() {
-		// HibernateUtil.getSession().flush(); // CSL remove old
-		// HibernateUtil.getSession().clear(); // CSL remove old
+		// sessionFactory.getCurrentSession().flush(); // CSL remove old
+		// sessionFactory.getCurrentSession().clear(); // CSL remove old
 	}
 
 	/**
@@ -128,7 +128,7 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 		List<Entity> entities;
 		try {
 			String sql = "from " + this.entityName;
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			entities = query.list();
 			flushAndClear();
 		} catch (Exception e) {
@@ -147,7 +147,7 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 		List<Entity> entities;
 		try {
 			String sql = "from " + this.entityName + " ORDER BY " + columnName;
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			entities = query.list();
 			flushAndClear();
 		} catch (Exception e) {
@@ -164,7 +164,7 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 	@SuppressWarnings("unchecked")
 	public Entity getById(Entity entity) throws LIMSRuntimeException {
 		try {
-			Entity re = (Entity) HibernateUtil.getSession().get(entityClass, entity.getId());
+			Entity re = (Entity) sessionFactory.getCurrentSession().get(entityClass, entity.getId());
 			flushAndClear();
 			return re;
 		} catch (Exception e) {
@@ -197,7 +197,7 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 	@SuppressWarnings("unchecked")
 	public boolean insertData(Entity entity) throws LIMSRuntimeException {
 		try {
-			Key id = (Key) HibernateUtil.getSession().save(entity);
+			Key id = (Key) sessionFactory.getCurrentSession().save(entity);
 			entity.setId(id);
 
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
@@ -227,10 +227,10 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 
-			HibernateUtil.getSession().merge(entity);
+			sessionFactory.getCurrentSession().merge(entity);
 			flushAndClear();
-			// HibernateUtil.getSession().evict // CSL remove old(entity);
-			// HibernateUtil.getSession().refresh // CSL remove old(entity);
+			// sessionFactory.getCurrentSession().evict // CSL remove old(entity);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(entity);
 		} catch (Exception e) {
 			throw createAndLogException("updateData()", e);
 		}
@@ -244,7 +244,7 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 	public Entity readEntity(Key id) throws LIMSRuntimeException {
 		Entity data = null;
 		try {
-			data = (Entity) HibernateUtil.getSession().get(entityClass, id);
+			data = (Entity) sessionFactory.getCurrentSession().get(entityClass, id);
 			flushAndClear();
 		} catch (Exception e) {
 			throw createAndLogException("readEntity()", e);
@@ -261,7 +261,7 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 	public List<Entity> readByExample(Entity entity) throws LIMSRuntimeException {
 		List<Entity> results;
 		try {
-			results = HibernateUtil.getSession().createCriteria(entityClass).add(Example.create(entity)).list();
+			results = sessionFactory.getCurrentSession().createCriteria(entityClass).add(Example.create(entity)).list();
 		} catch (Exception e) {
 			throw createAndLogException("readByExample()", e);
 		}
@@ -282,15 +282,15 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 	 */
 	protected List<Entity> readByHQL(String hql, String[] fieldValues) throws LIMSRuntimeException {
 		try {
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(hql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(hql);
 			for (int i = 0; i <= fieldValues.length; i++) {
 				query.setParameter("param1", fieldValues[i]);
 			}
 
 			@SuppressWarnings("unchecked")
 			List<Entity> list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return list;
 
@@ -315,8 +315,8 @@ public abstract class GenericDAOImpl<Key extends Serializable, Entity extends Si
 	}
 
 	protected void closeSession() {
-		// HibernateUtil.getSession().flush(); // CSL remove old
-		// HibernateUtil.getSession().clear(); // CSL remove old
+		// sessionFactory.getCurrentSession().flush(); // CSL remove old
+		// sessionFactory.getCurrentSession().clear(); // CSL remove old
 	}
 
 	protected void handleException(Exception e, String method) throws LIMSRuntimeException {

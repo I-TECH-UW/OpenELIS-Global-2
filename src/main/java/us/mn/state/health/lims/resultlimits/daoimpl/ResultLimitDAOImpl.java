@@ -38,7 +38,7 @@ import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
 
 @Component
 @Transactional 
-public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit> implements ResultLimitDAO {
+public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> implements ResultLimitDAO {
 
 	public ResultLimitDAOImpl() {
 		super(ResultLimit.class);
@@ -69,9 +69,9 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit> implements Resu
 			for (Object resultLimit : resultLimits) {
 				ResultLimit data = (ResultLimit) resultLimit;
 				data = readResultLimit(data.getId());
-				HibernateUtil.getSession().delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(data);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			LogEvent.logError("ResultLimitsDAOImpl", "deleteData()", e.toString());
@@ -83,7 +83,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit> implements Resu
 	public boolean insertData(ResultLimit resultLimit) throws LIMSRuntimeException {
 
 		try {
-			String id = (String) HibernateUtil.getSession().save(resultLimit);
+			String id = (String) sessionFactory.getCurrentSession().save(resultLimit);
 			resultLimit.setId(id);
 
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
@@ -91,8 +91,8 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit> implements Resu
 			String tableName = "RESULT_LIMITS";
 			auditDAO.saveNewHistory(resultLimit, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("ResultLimitsDAOImpl", "insertData()", e.toString());
@@ -119,11 +119,11 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit> implements Resu
 		}
 
 		try {
-			HibernateUtil.getSession().merge(resultLimit);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(resultLimit);
-			// HibernateUtil.getSession().refresh // CSL remove old(resultLimit);
+			sessionFactory.getCurrentSession().merge(resultLimit);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(resultLimit);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(resultLimit);
 		} catch (Exception e) {
 			LogEvent.logError("ResultLimitsDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in ResultLimit updateData()", e);
@@ -133,9 +133,9 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit> implements Resu
 	@Override
 	public void getData(ResultLimit resultLimit) throws LIMSRuntimeException {
 		try {
-			ResultLimit tmpLimit = (ResultLimit) HibernateUtil.getSession().get(ResultLimit.class, resultLimit.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			ResultLimit tmpLimit = (ResultLimit) sessionFactory.getCurrentSession().get(ResultLimit.class, resultLimit.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (tmpLimit != null) {
 				PropertyUtils.copyProperties(resultLimit, tmpLimit);
 			} else {
@@ -152,10 +152,10 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit> implements Resu
 		List list;
 		try {
 			String sql = "from ResultLimit";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("ResultLimitsDAOImpl", "getAllResultLimits()", e.toString());
 			throw new LIMSRuntimeException("Error in ResultLimit getAllResultLimits()", e);
@@ -172,13 +172,13 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit> implements Resu
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from ResultLimit t order by t.id";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("ResultLimitsDAOImpl", "getPageOfResultLimits()", e.toString());
 			throw new LIMSRuntimeException("Error in ResultLimit getPageOfResultLimits()", e);
@@ -190,9 +190,9 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit> implements Resu
 	public ResultLimit readResultLimit(String idString) {
 		ResultLimit recoveredLimit;
 		try {
-			recoveredLimit = (ResultLimit) HibernateUtil.getSession().get(ResultLimit.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			recoveredLimit = (ResultLimit) sessionFactory.getCurrentSession().get(ResultLimit.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("ResultLimitDAOImpl", "readResultLimit()", e.toString());
 			throw new LIMSRuntimeException("Error in ResultLimit readResultLimit()", e);
@@ -221,7 +221,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit> implements Resu
 
 		try {
 			String sql = "from ResultLimit rl where rl.testId = :test_id";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("test_id", Integer.parseInt(testId));
 
 			List<ResultLimit> list = query.list();
@@ -237,7 +237,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit> implements Resu
 	@Override
 	public ResultLimit getResultLimitById(String resultLimitId) throws LIMSRuntimeException {
 		try {
-			ResultLimit resultLimit = (ResultLimit) HibernateUtil.getSession().get(ResultLimit.class, resultLimitId);
+			ResultLimit resultLimit = (ResultLimit) sessionFactory.getCurrentSession().get(ResultLimit.class, resultLimitId);
 			// closeSession(); // CSL remove old
 			return resultLimit;
 		} catch (Exception e) {

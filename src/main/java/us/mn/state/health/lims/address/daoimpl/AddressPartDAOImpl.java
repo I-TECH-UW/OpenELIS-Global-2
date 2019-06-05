@@ -31,7 +31,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional 
-public class AddressPartDAOImpl extends BaseDAOImpl<AddressPart> implements AddressPartDAO {
+public class AddressPartDAOImpl extends BaseDAOImpl<AddressPart, String> implements AddressPartDAO {
 
 	public AddressPartDAOImpl() {
 		super(AddressPart.class);
@@ -42,7 +42,7 @@ public class AddressPartDAOImpl extends BaseDAOImpl<AddressPart> implements Addr
 	public List<AddressPart> getAll() throws LIMSRuntimeException {
 		String sql = "from AddressPart";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			List<AddressPart> addressPartList = query.list();
 
@@ -61,7 +61,7 @@ public class AddressPartDAOImpl extends BaseDAOImpl<AddressPart> implements Addr
 		String sql = "from AddressPart ap where ap.partName = :name";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("name", name);
 			AddressPart part = (AddressPart) query.uniqueResult();
 			// closeSession(); // CSL remove old

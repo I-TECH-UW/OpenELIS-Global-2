@@ -17,10 +17,11 @@ import us.mn.state.health.lims.scheduler.LateStartScheduler;
 public final class StartStopListener implements ServletContextListener {
 
 	private ServletContext context = null;
-	private IndependentThreadStarter threadStarter;
 
 	@Autowired
-	LateStartScheduler lateStartScheduler;
+	private IndependentThreadStarter threadStarter;
+	@Autowired
+	private LateStartScheduler lateStartScheduler;
 
 	public StartStopListener() {
 
@@ -68,7 +69,6 @@ public final class StartStopListener implements ServletContextListener {
 
 		System.out.println("Scheduler started");
 
-		threadStarter = new IndependentThreadStarter();
 		threadStarter.startThreads();
 
 		System.out.println("Threads started");

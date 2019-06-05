@@ -18,7 +18,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional 
-public class DataResourceDAOImpl extends BaseDAOImpl<DataResource> implements DataResourceDAO {
+public class DataResourceDAOImpl extends BaseDAOImpl<DataResource, String> implements DataResourceDAO {
 
 	public DataResourceDAOImpl() {
 		super(DataResource.class);
@@ -27,10 +27,10 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource> implements Da
 	@Override
 	public void getData(DataResource resource) throws LIMSRuntimeException {
 		try {
-			DataResource resourceClone = (DataResource) HibernateUtil.getSession().get(DataResource.class,
+			DataResource resourceClone = (DataResource) sessionFactory.getCurrentSession().get(DataResource.class,
 					resource.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (resourceClone != null) {
 				PropertyUtils.copyProperties(resource, resourceClone);
 			} else {
@@ -46,9 +46,9 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource> implements Da
 	@Override
 	public DataResource getDataResource(String id) throws LIMSRuntimeException {
 		try {
-			DataResource resource = (DataResource) HibernateUtil.getSession().get(DataResource.class, id);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			DataResource resource = (DataResource) sessionFactory.getCurrentSession().get(DataResource.class, id);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			return resource;
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -61,7 +61,7 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource> implements Da
 	public boolean insertData(DataResource resource) throws LIMSRuntimeException {
 
 		try {
-			String id = (String) HibernateUtil.getSession().save(resource);
+			String id = (String) sessionFactory.getCurrentSession().save(resource);
 			resource.setId(id);
 
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
@@ -69,8 +69,8 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource> implements Da
 			String tableName = "DATA_VALUE";
 			auditDAO.saveNewHistory(resource, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -98,11 +98,11 @@ public class DataResourceDAOImpl extends BaseDAOImpl<DataResource> implements Da
 		}
 
 		try {
-			HibernateUtil.getSession().merge(resource);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(resource);
-			// HibernateUtil.getSession().refresh // CSL remove old(resource);
+			sessionFactory.getCurrentSession().merge(resource);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(resource);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(resource);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DataResourceDAOImpl", "updateData()", e.toString());

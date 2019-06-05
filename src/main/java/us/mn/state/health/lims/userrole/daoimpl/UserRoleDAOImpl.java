@@ -35,14 +35,13 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.userrole.dao.UserRoleDAO;
 import us.mn.state.health.lims.userrole.valueholder.UserRole;
 import us.mn.state.health.lims.userrole.valueholder.UserRolePK;
 
 @Component
-@Transactional 
-public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDAO {
+@Transactional
+public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implements UserRoleDAO {
 
 	public UserRoleDAOImpl() {
 		super(UserRole.class);
@@ -72,9 +71,9 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 		try {
 			for (UserRole data : roles) {
 				data = readUserRole(data.getCompoundId());
-				HibernateUtil.getSession().delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(data);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			LogEvent.logError("UserRolesDAOImpl", "deleteData()", e.toString());
@@ -86,7 +85,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 	public boolean insertData(UserRole role) throws LIMSRuntimeException {
 
 		try {
-			UserRolePK id = (UserRolePK) HibernateUtil.getSession().save(role);
+			UserRolePK id = (UserRolePK) sessionFactory.getCurrentSession().save(role);
 			role.setCompoundId(id);
 
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
@@ -94,8 +93,8 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 			String tableName = "SYSTEM_USER_ROLE";
 			auditDAO.saveNewHistory(role, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (ConstraintViolationException cve) {
 			LogEvent.logError("UserRolesDAOImpl", "insertData()-- duplicate record", cve.toString());
@@ -125,11 +124,11 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 		}
 
 		try {
-			HibernateUtil.getSession().merge(role);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(role);
-			// HibernateUtil.getSession().refresh // CSL remove old(role);
+			sessionFactory.getCurrentSession().merge(role);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(role);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(role);
 		} catch (Exception e) {
 			LogEvent.logError("UserRolesDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in UserRole updateData()", e);
@@ -139,9 +138,9 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 	@Override
 	public void getData(UserRole role) throws LIMSRuntimeException {
 		try {
-			UserRole tmpUserRole = HibernateUtil.getSession().get(UserRole.class, role.getCompoundId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			UserRole tmpUserRole = sessionFactory.getCurrentSession().get(UserRole.class, role.getCompoundId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (tmpUserRole != null) {
 				PropertyUtils.copyProperties(role, tmpUserRole);
 			} else {
@@ -158,10 +157,10 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 		List list;
 		try {
 			String sql = "from UserRole";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("UserRolesDAOImpl", "getAllUserRoles()", e.toString());
 			throw new LIMSRuntimeException("Error in UserRole getAllUserRoles()", e);
@@ -178,13 +177,13 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from UserRole r order by r.id.systemUserId";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("UserRolesDAOImpl", "getPageOfUserRoles()", e.toString());
 			throw new LIMSRuntimeException("Error in UserRole getPageOfUserRoles()", e);
@@ -196,9 +195,9 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 	public UserRole readUserRole(UserRolePK userRolePK) {
 		UserRole recoveredUserRole;
 		try {
-			recoveredUserRole = HibernateUtil.getSession().get(UserRole.class, userRolePK);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			recoveredUserRole = sessionFactory.getCurrentSession().get(UserRole.class, userRolePK);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("UserRoleDAOImpl", "readUserRole()", e.toString());
 			throw new LIMSRuntimeException("Error in UserRole readUserRole()", e);
@@ -262,7 +261,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole> implements UserRoleDA
 		try {
 			String sql = "select count(*) from system_user_role sur " + "join system_role as sr on sr.id = sur.role_id "
 					+ "where sur.system_user_id = :userId and sr.name in (:roleNames)";
-			Query query = HibernateUtil.getSession().createSQLQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
 			query.setInteger("userId", Integer.parseInt(userId));
 			query.setParameterList("roleNames", roleNames);
 			int result = ((BigInteger) query.uniqueResult()).intValue();

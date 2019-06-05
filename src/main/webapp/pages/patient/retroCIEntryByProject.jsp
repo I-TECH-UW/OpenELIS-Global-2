@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants,
 			us.mn.state.health.lims.login.valueholder.UserSessionData,
-            us.mn.state.health.lims.common.util.Versioning,us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl,us.mn.state.health.lims.login.dao.UserModuleService,java.util.HashSet,org.owasp.encoder.Encode"%>
+            us.mn.state.health.lims.common.util.Versioning,java.util.HashSet,org.owasp.encoder.Encode"%>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>

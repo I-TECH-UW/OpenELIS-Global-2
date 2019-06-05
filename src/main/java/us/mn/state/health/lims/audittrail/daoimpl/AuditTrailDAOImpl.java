@@ -44,7 +44,7 @@ import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 
 @Component
 @Transactional
-public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrailDAO {
+public class AuditTrailDAOImpl extends BaseDAOImpl<History, String> implements AuditTrailDAO {
 
 	@Autowired
 	ReferenceTablesDAO referenceTablesDAO;
@@ -1215,7 +1215,7 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 	 */
 	@Override
 	public String getXML(String table, String id) throws LIMSRuntimeException {
-//		org.hibernate.Session session = HibernateUtil.getSession();
+//		org.hibernate.Session session = sessionFactory.getCurrentSession();
 //		org.hibernate.Session dom4jSession = session.getSession(org.hibernate.EntityMode.DOM4J);
 //
 //		Element elem = (Element) dom4jSession.createQuery("from " + table + " where id=" + id).uniqueResult();
@@ -1286,13 +1286,13 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 		try {
 
 			String sql = "from History h where h.referenceId = :refId and h.referenceTable = :tableId order by h.timestamp desc, h.activity desc";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("refId", Integer.parseInt(refId));
 			query.setInteger("tableId", Integer.parseInt(tableId));
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (HibernateException e) {
 			LogEvent.logError("AuditTrailDAOImpl", "getHistoryByRefIdAndRefTableId()", e.toString());
 			throw new LIMSRuntimeException("Error in AuditTrail getHistoryByRefIdAndRefTableId()", e);
@@ -1308,7 +1308,7 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 
 		try {
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("tableId", Integer.parseInt(referenceTableId));
 			query.setTimestamp("start", start);
 			query.setTimestamp("end", end);
@@ -1365,7 +1365,7 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 					}
 				}
 			}
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			if (!StringUtil.isNullorNill(history.getReferenceTable())) {
 				query.setParameter("param1", history.getReferenceTable());
@@ -1379,8 +1379,8 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 			}
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			LogEvent.logDebug("AuditTrailDAOImpl", "getHistoryBySystemUserAndDateAndRefTableId()",
 					"getting History List");
 
@@ -1401,7 +1401,7 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 	public String retrieveBlobData(String id) throws LIMSRuntimeException {
 		byte[] bindata = new byte[1024];
 		try {
-			History history = HibernateUtil.getSession().get(History.class, id);
+			History history = sessionFactory.getCurrentSession().get(History.class, id);
 			if (history != null) {
 				bindata = history.getChanges();
 			}
@@ -1420,10 +1420,10 @@ public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrai
 	 */
 	private void insertData(History history) throws LIMSRuntimeException {
 		try {
-			String id = (String) HibernateUtil.getSession().save(history);
+			String id = (String) sessionFactory.getCurrentSession().save(history);
 			history.setId(id);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("AuditTrailDAOImpl", "insertData()", e.toString());

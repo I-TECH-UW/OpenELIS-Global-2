@@ -22,7 +22,7 @@ import us.mn.state.health.lims.address.valueholder.AddressPart;
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
-public interface AddressPartDAO extends BaseDAO<AddressPart> {
+public interface AddressPartDAO extends BaseDAO<AddressPart, String> {
 	@Override
 	public List<AddressPart> getAll() throws LIMSRuntimeException;
 

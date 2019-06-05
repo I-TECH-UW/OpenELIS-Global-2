@@ -24,9 +24,9 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
 
 /**
- * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
+ * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us) .
  */
-public interface PermissionModuleDAO<T extends PermissionModule> extends BaseDAO<T> {
+public interface PermissionModuleDAO<T extends PermissionModule> extends BaseDAO<T, String> {
 
 	public static final String SUPERVISOR = "Supervisor";
 

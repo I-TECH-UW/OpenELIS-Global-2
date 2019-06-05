@@ -12,12 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -34,14 +32,12 @@ import spring.mine.resultvalidation.form.ResultValidationForm;
 import spring.mine.resultvalidation.util.ResultValidationSaveService;
 import spring.service.analysis.AnalysisService;
 import spring.service.analysis.AnalysisServiceImpl;
-import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl;
 import spring.service.note.NoteServiceImpl.NoteType;
 import spring.service.referencetables.ReferenceTablesService;
 import spring.service.reports.DocumentTrackService;
 import spring.service.reports.DocumentTypeService;
-import spring.service.result.ResultService;
-import spring.service.sample.SampleService;
+import spring.service.resultvalidation.ResultValidationService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.service.systemuser.SystemUserService;
 import spring.service.test.TestSectionService;
@@ -50,20 +46,19 @@ import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
+import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.services.IResultSaveService;
 import us.mn.state.health.lims.common.services.ResultSaveService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
-import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
 import us.mn.state.health.lims.common.services.beanAdapters.ResultSaveBeanAdapter;
 import us.mn.state.health.lims.common.services.registration.ValidationUpdateRegister;
 import us.mn.state.health.lims.common.services.registration.interfaces.IResultUpdate;
 import us.mn.state.health.lims.common.services.serviceBeans.ResultSaveBean;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.dataexchange.orderresult.OrderResponseWorker.Event;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.note.valueholder.Note;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.reports.valueholder.DocumentTrack;
@@ -81,41 +76,33 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
 public class ResultValidationController extends BaseResultValidationController {
 
 	private AnalysisService analysisService;
-	private SampleService sampleService;
 	private TestResultService testResultService;
-	private ResultService resultService;
-	private NoteService noteService;
 	private SampleHumanService sampleHumanService;
 	private DocumentTrackService documentTrackService;
 	private TestSectionService testSectionService;
 	private SystemUserService systemUserService;
+	private ResultValidationService resultValidationService;
 
 	private final String RESULT_SUBJECT = "Result Note";
 	private final String RESULT_TABLE_ID;
 	private final String RESULT_REPORT_ID;
 
-	public ResultValidationController(AnalysisService analysisService, SampleService sampleService,
-			TestResultService testResultService, ResultService resultService, NoteService noteService,
+	public ResultValidationController(AnalysisService analysisService, TestResultService testResultService,
 			SampleHumanService sampleHumanService, DocumentTrackService documentTrackService,
 			TestSectionService testSectionService, SystemUserService systemUserService,
-			ReferenceTablesService referenceTablesService, DocumentTypeService documentTypeService) {
+			ReferenceTablesService referenceTablesService, DocumentTypeService documentTypeService,
+			ResultValidationService resultValidationService) {
 
 		this.analysisService = analysisService;
-		this.sampleService = sampleService;
 		this.testResultService = testResultService;
-		this.resultService = resultService;
-		this.noteService = noteService;
 		this.sampleHumanService = sampleHumanService;
 		this.documentTrackService = documentTrackService;
 		this.testSectionService = testSectionService;
 		this.systemUserService = systemUserService;
+		this.resultValidationService = resultValidationService;
 
 		RESULT_TABLE_ID = referenceTablesService.getReferenceTableByName("RESULT").getId();
 		RESULT_REPORT_ID = documentTypeService.getDocumentTypeByName("resultExport").getId();
-	}
-
-	@PostConstruct
-	private void initialize() {
 	}
 
 	@RequestMapping(value = "/ResultValidation", method = RequestMethod.GET)
@@ -226,50 +213,17 @@ public class ResultValidationController extends BaseResultValidationController {
 					resultSaveService, areListeners);
 		}
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 		try {
-			ResultSaveService.removeDeletedResultsInTransaction(deletableList, getSysUserId(request));
+			resultValidationService.persistdata(deletableList, analysisUpdateList, resultUpdateList, resultItemList,
+					sampleUpdateList, noteUpdateList, resultSaveService, updaters, getSysUserId(request));
 
-			// update analysis
-			for (Analysis analysis : analysisUpdateList) {
-				analysisService.update(analysis);
-			}
-
-			for (Result resultUpdate : resultUpdateList) {
-				if (resultUpdate.getId() != null) {
-					resultService.update(resultUpdate);
-				} else {
-					resultService.insert(resultUpdate);
-				}
-			}
-
-			checkIfSamplesFinished(resultItemList, sampleUpdateList);
-
-			// update finished samples
-			for (Sample sample : sampleUpdateList) {
-				sampleService.update(sample);
-			}
-
-			// create or update notes
-			for (Note note : noteUpdateList) {
-				if (note != null) {
-					if (note.getId() == null) {
-						noteService.insert(note);
-					} else {
-						noteService.update(note);
-					}
-				}
-			}
-
-			for (IResultUpdate updater : updaters) {
-				updater.transactionalUpdate(resultSaveService);
-			}
-
-			tx.commit();
+//			tx.commit();
 
 		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
+			LogEvent.logErrorStack(this.getClass().getSimpleName(), "showResultValidationSave()", lre);
+//			tx.rollback();
 		}
 
 		for (IResultUpdate updater : updaters) {
@@ -512,41 +466,6 @@ public class ResultValidationController extends BaseResultValidationController {
 		return analysisList;
 	}
 
-	private void checkIfSamplesFinished(List<AnalysisItem> resultItemList, List<Sample> sampleUpdateList) {
-		String currentSampleId = "";
-		boolean sampleFinished = true;
-		List<Integer> sampleFinishedStatus = getSampleFinishedStatuses();
-
-		for (AnalysisItem analysisItem : resultItemList) {
-
-			String analysisSampleId = sampleService.getSampleByAccessionNumber(analysisItem.getAccessionNumber())
-					.getId();
-			if (!analysisSampleId.equals(currentSampleId)) {
-
-				currentSampleId = analysisSampleId;
-
-				List<Analysis> analysisList = analysisService.getAnalysesBySampleId(currentSampleId);
-
-				for (Analysis analysis : analysisList) {
-					if (!sampleFinishedStatus.contains(Integer.parseInt(analysis.getStatusId()))) {
-						sampleFinished = false;
-						break;
-					}
-				}
-
-				if (sampleFinished) {
-					Sample sample = sampleService.get(currentSampleId);
-					sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Finished));
-					sampleUpdateList.add(sample);
-				}
-
-				sampleFinished = true;
-
-			}
-
-		}
-	}
-
 	private Analysis getAnalysisFromId(String id) {
 		Analysis analysis = analysisService.get(id);
 		analysis.setSysUserId(getSysUserId(request));
@@ -595,15 +514,6 @@ public class ResultValidationController extends BaseResultValidationController {
 
 	private SystemUser createSystemUser() {
 		return systemUserService.get(getSysUserId(request));
-	}
-
-	private List<Integer> getSampleFinishedStatuses() {
-		ArrayList<Integer> sampleFinishedStatus = new ArrayList<>();
-		sampleFinishedStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Finalized)));
-		sampleFinishedStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled)));
-		sampleFinishedStatus.add(
-				Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.NonConforming_depricated)));
-		return sampleFinishedStatus;
 	}
 
 	@Override

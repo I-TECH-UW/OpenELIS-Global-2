@@ -45,7 +45,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 /**
  * @author Caleb
@@ -55,7 +54,8 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  */
 @Component
 @Transactional
-public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionConstants {
+public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializable>
+		implements BaseDAO<T, PK>, IActionConstants {
 
 	protected static final int DEFAULT_PAGE_SIZE = SystemConfiguration.getInstance().getDefaultPageSize();
 	private static final int RANDOM_ALIAS_LENGTH = 5;
@@ -72,7 +72,7 @@ public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, I
 	}
 
 	@Override
-	public Optional<T> get(Serializable id) {
+	public Optional<T> get(PK id) {
 		Session session = sessionFactory.getCurrentSession();
 		T object = session.get(classType, id);
 		return Optional.ofNullable(object);
@@ -501,9 +501,9 @@ public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, I
 	}
 
 	@Override
-	public Serializable insert(T object) {
+	public PK insert(T object) {
 		Session session = sessionFactory.getCurrentSession();
-		return session.save(object);
+		return (PK) session.save(object);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -606,7 +606,7 @@ public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, I
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t where id >= " + start + " order by t.id";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -629,7 +629,7 @@ public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, I
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t order by t.id desc where id <= " + start;
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -650,11 +650,11 @@ public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, I
 		Integer count = null;
 		try {
 			String sql = "select count(*) from " + table;
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			List results = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			if (results != null && results.get(0) != null) {
 				if (results.get(0) != null) {
@@ -694,7 +694,7 @@ public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, I
 
 	@Deprecated
 	protected void closeSession() {
-		// HibernateUtil.getSession().flush(); // CSL remove old
-		// HibernateUtil.getSession().clear(); // CSL remove old
+		// sessionFactory.getCurrentSession().flush(); // CSL remove old
+		// sessionFactory.getCurrentSession().clear(); // CSL remove old
 	}
 }

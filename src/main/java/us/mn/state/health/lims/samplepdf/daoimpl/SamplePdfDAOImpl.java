@@ -32,7 +32,7 @@ import us.mn.state.health.lims.samplepdf.valueholder.SamplePdf;
  */
 @Component
 @Transactional 
-public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf> implements SamplePdfDAO {
+public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf, String> implements SamplePdfDAO {
 
 	public SamplePdfDAOImpl() {
 		super(SamplePdf.class);
@@ -43,14 +43,14 @@ public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf> implements SamplePd
 		Boolean isFound = false;
 		try {
 			String sql = "from SamplePdf s where s.accessionNumber = :param and s.allowView='Y'";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", accessionNumber);
 			List list = query.list();
 			if ((list != null) && !list.isEmpty()) {
 				isFound = true;
 			}
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SamplePdfDAOImpl", "isAccessionNumberFound()", e.toString());
@@ -65,7 +65,7 @@ public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf> implements SamplePd
 	public SamplePdf getSamplePdfByAccessionNumber(SamplePdf samplePdf) throws LIMSRuntimeException {
 		try {
 			String sql = "from SamplePdf s where s.accessionNumber = :param";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", samplePdf.getAccessionNumber());
 
 			List list = query.list();
@@ -73,8 +73,8 @@ public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf> implements SamplePd
 				samplePdf = (SamplePdf) list.get(0);
 			}
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("SamplePdfDAOImpl", "getSamplePdfByAccessionNumber()", e.toString());

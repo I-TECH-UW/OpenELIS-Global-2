@@ -8,7 +8,7 @@ import us.mn.state.health.lims.region.valueholder.Region;
 
 @Component
 @Transactional 
-public class RegionDAOImpl extends BaseDAOImpl<Region> implements RegionDAO {
+public class RegionDAOImpl extends BaseDAOImpl<Region, String> implements RegionDAO {
   RegionDAOImpl() {
     super(Region.class);
   }

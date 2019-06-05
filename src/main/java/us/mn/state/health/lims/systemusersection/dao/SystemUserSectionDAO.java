@@ -24,7 +24,7 @@ import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
-public interface SystemUserSectionDAO extends BaseDAO<SystemUserSection> {
+public interface SystemUserSectionDAO extends BaseDAO<SystemUserSection, String> {
 
 	public boolean insertData(SystemUserSection systemUserSection) throws LIMSRuntimeException;
 

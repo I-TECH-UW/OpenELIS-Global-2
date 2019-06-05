@@ -30,7 +30,7 @@ import us.mn.state.health.lims.note.valueholder.Note;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface NoteDAO extends BaseDAO<Note> {
+public interface NoteDAO extends BaseDAO<Note, String> {
 
 	public boolean insertData(Note note) throws LIMSRuntimeException;
 

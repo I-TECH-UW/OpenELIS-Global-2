@@ -27,6 +27,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 import spring.mine.common.validator.ValidationHelper;
 import spring.mine.sample.form.SamplePatientEntryForm;
+import spring.mine.sample.form.SamplePatientEntryForm.SamplePatientEntryBatch;
 import spring.mine.validation.annotations.OptionalNotBlank;
 import spring.mine.validation.annotations.ValidDate;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -46,7 +47,8 @@ public class PatientManagementInfo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@ValidDate(relative = DateRelation.TODAY, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@ValidDate(relative = DateRelation.TODAY, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+			SamplePatientEntryBatch.class })
 	private String currentDate;
 
 	// TODO removable?
@@ -56,75 +58,89 @@ public class PatientManagementInfo implements Serializable {
 
 	private PatientUpdateStatus patientUpdateStatus;
 
-	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+			SamplePatientEntryBatch.class })
 	private String patientPK;
-	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+			SamplePatientEntryBatch.class })
 	private String STnumber;
-	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+			SamplePatientEntryBatch.class })
 	private String subjectNumber;
-	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+			SamplePatientEntryBatch.class })
 	private String nationalId;
-	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+			SamplePatientEntryBatch.class })
 	private String guid;
 
 	@OptionalNotBlank(formFields = { Field.PatientNameRequired }, groups = {
 			SamplePatientEntryForm.SamplePatientEntry.class })
-	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+			SamplePatientEntryBatch.class })
 	private String lastName;
 	@OptionalNotBlank(formFields = { Field.PatientNameRequired }, groups = {
 			SamplePatientEntryForm.SamplePatientEntry.class })
-	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+			SamplePatientEntryBatch.class })
 	private String firstName;
-	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+			SamplePatientEntryBatch.class })
 	private String aka;
 
-	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+			SamplePatientEntryBatch.class })
 	private String mothersName;
 	@Size(max = 1)
 	private String mothersInitial;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
 	private String streetAddress;
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
 	private String city;
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
 	private String commune;
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
 	private String addressDepartment;
 
 	@NotBlank(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
-	@Pattern(regexp = ValidationHelper.GENDER_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@Pattern(regexp = ValidationHelper.GENDER_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+			SamplePatientEntryBatch.class })
 	private String gender;
 	@NotBlank(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
-	@Size(max = 3, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
-	@Pattern(regexp = "^[0-9]*$", groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@Size(max = 3, groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
+	@Pattern(regexp = "^[0-9]*$", groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+			SamplePatientEntryBatch.class })
 	private String age;
-	@ValidDate(relative = DateRelation.PAST, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@ValidDate(relative = DateRelation.PAST, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+			SamplePatientEntryBatch.class })
 	private String birthDateForDisplay = "";
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+			SamplePatientEntryBatch.class })
 	private String patientType = "";
 
 	// for display
 	private static List<PatientType> patientTypes;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
 	private String insuranceNumber;
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
 	private String occupation;
-	@Pattern(regexp = ValidationHelper.PHONE_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@Pattern(regexp = ValidationHelper.PHONE_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+			SamplePatientEntryBatch.class })
 	private String phone;
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
 	private String healthRegion;
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
 	private String education;
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
 	private String maritialStatus;
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
 	private String nationality;
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
 	private String healthDistrict;
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
 	private String otherNationality;
 
 	// for display

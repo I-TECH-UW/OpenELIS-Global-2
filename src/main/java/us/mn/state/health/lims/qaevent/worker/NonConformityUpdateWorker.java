@@ -227,7 +227,7 @@ public class NonConformityUpdateWorker {
 			if (isNewSample) {
 				sampleService.insertDataWithAccessionNumber(sample);
 
-				sampleHuman.setPatientId(patient.getId());
+				sampleHuman.setPatient(patient);
 				sampleHuman.setSampleId(sample.getId());
 				sampleHuman.setProviderId((provider == null) ? null : provider.getId());
 				sampleHumanService.insertData(sampleHuman);
@@ -238,7 +238,7 @@ public class NonConformityUpdateWorker {
 			if (updateSampleHuman) {
 				sampleHuman.setProviderId(provider.getId());
 				sampleHuman.setSampleId(sample.getId());
-				sampleHuman.setPatientId(patient.getId());
+				sampleHuman.setPatient(patient);
 				sampleHuman.setSysUserId(webData.getCurrentSysUserId());
 				sampleHumanService.updateData(sampleHuman);
 			}
@@ -416,7 +416,7 @@ public class NonConformityUpdateWorker {
 
 		sampleHuman = new SampleHuman();
 		sampleHuman.setSampleId(sample.getId());
-		sampleHumanService.getDataBySample(sampleHuman);
+		sampleHuman = sampleHumanService.getDataBySample(sampleHuman);
 
 		String projectId = webData.getProjectId();
 		if (!GenericValidator.isBlankOrNull(projectId)) {

@@ -46,7 +46,7 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> implements AnalysisService {
 
 	@Autowired
-	protected AnalysisDAO baseObjectDAO;
+	protected AnalysisDAO baseObjectDAO = SpringContext.getBean(AnalysisDAO.class);
 
 	@Autowired
 	private DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);

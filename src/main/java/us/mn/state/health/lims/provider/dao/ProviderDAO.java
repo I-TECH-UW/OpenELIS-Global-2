@@ -30,7 +30,7 @@ import us.mn.state.health.lims.provider.valueholder.Provider;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface ProviderDAO extends BaseDAO<Provider> {
+public interface ProviderDAO extends BaseDAO<Provider, String> {
 
 	public boolean insertData(Provider provider) throws LIMSRuntimeException;
 

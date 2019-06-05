@@ -16,18 +16,17 @@
 
 package us.mn.state.health.lims.localization.dao;
 
-import java.io.Serializable;
-
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.localization.valueholder.Localization;
 
 /**
  */
-public interface LocalizationDAO extends BaseDAO<Localization> {
+public interface LocalizationDAO extends BaseDAO<Localization, String> {
 	public Localization getLocalizationById(String id) throws LIMSRuntimeException;
 
 	public void updateData(Localization localization) throws LIMSRuntimeException;
 
-	public Serializable insert(Localization localization) throws LIMSRuntimeException;
+	@Override
+	public String insert(Localization localization) throws LIMSRuntimeException;
 }

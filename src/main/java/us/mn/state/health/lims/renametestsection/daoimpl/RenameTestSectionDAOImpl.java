@@ -38,7 +38,7 @@ import us.mn.state.health.lims.renametestsection.valueholder.RenameTestSection;
 
 @Component
 @Transactional 
-public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> implements RenameTestSectionDAO {
+public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, String> implements RenameTestSectionDAO {
 
 	public RenameTestSectionDAOImpl() {
 		super(RenameTestSection.class);
@@ -71,9 +71,9 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 				RenameTestSection data = (RenameTestSection) testSections.get(i);
 				// bugzilla 2206
 				data = readTestSection(data.getId());
-				HibernateUtil.getSession().delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(data);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -91,7 +91,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 						"Duplicate record exists for " + testSection.getTestSectionName());
 			}
 
-			String id = (String) HibernateUtil.getSession().save(testSection);
+			String id = (String) sessionFactory.getCurrentSession().save(testSection);
 			testSection.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
@@ -100,8 +100,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 			String tableName = "TEST_SECTION";
 			auditDAO.saveNewHistory(testSection, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestSectionDAOImpl", "insertData()", e.toString());
@@ -142,11 +142,11 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 		}
 
 		try {
-			HibernateUtil.getSession().merge(testSection);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(testSection);
-			// HibernateUtil.getSession().refresh // CSL remove old(testSection);
+			sessionFactory.getCurrentSession().merge(testSection);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(testSection);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(testSection);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
@@ -157,10 +157,10 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 	@Override
 	public void getData(RenameTestSection testSection) throws LIMSRuntimeException {
 		try {
-			RenameTestSection uom = (RenameTestSection) HibernateUtil.getSession().get(RenameTestSection.class,
+			RenameTestSection uom = (RenameTestSection) sessionFactory.getCurrentSession().get(RenameTestSection.class,
 					testSection.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (uom != null) {
 				PropertyUtils.copyProperties(testSection, uom);
 			} else {
@@ -178,12 +178,12 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 		List list = new Vector();
 		try {
 			String sql = "from TestSection";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestSectionDAOImpl", "getAllTestSections()", e.toString());
@@ -202,13 +202,13 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 
 			// bugzilla 1399
 			String sql = "from TestSection t order by t.testSectionName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestSectionDAOImpl", "getPageOfTestSections()", e.toString());
@@ -221,9 +221,9 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 	public RenameTestSection readTestSection(String idString) {
 		RenameTestSection tr = null;
 		try {
-			tr = (RenameTestSection) HibernateUtil.getSession().get(RenameTestSection.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			tr = (RenameTestSection) sessionFactory.getCurrentSession().get(RenameTestSection.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestSectionDAOImpl", "readTestSection()", e.toString());
@@ -250,12 +250,12 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 	public RenameTestSection getTestSectionByName(RenameTestSection testSection) throws LIMSRuntimeException {
 		try {
 			String sql = "from TestSection t where t.testSectionName = :param";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", testSection.getTestSectionName());
 
 			List list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			RenameTestSection t = null;
 			if (list.size() > 0) {
 				t = (RenameTestSection) list.get(0);
@@ -276,12 +276,12 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 		List list = new Vector();
 		try {
 			String sql = "from TestSection t where upper(t.testSectionName) like upper(:param) order by upper(t.testSectionName)";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", filter + "%");
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestSectionDAOImpl", "getTestSections()", e.toString());
@@ -292,7 +292,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 
 	public RenameTestSection getTestSectionById(String testSectionId) throws LIMSRuntimeException {
 		try {
-			RenameTestSection ts = (RenameTestSection) HibernateUtil.getSession().get(RenameTestSection.class,
+			RenameTestSection ts = (RenameTestSection) sessionFactory.getCurrentSession().get(RenameTestSection.class,
 					testSectionId);
 			// closeSession(); // CSL remove old
 			return ts;
@@ -316,7 +316,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.testSectionName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -338,7 +338,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t order by t.testSectionName desc where name <= " + enquote(id);
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -361,7 +361,7 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 			// not case sensitive hemolysis and Hemolysis are considered
 			// duplicates
 			String sql = "from TestSection t where trim(lower(t.testSectionName)) = :param and t.id != :param2";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", testSection.getTestSectionName().toLowerCase().trim());
 
 			// initialize with 0 (for new records where no id has been generated
@@ -373,8 +373,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> imp
 			query.setParameter("param2", testSectionId);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;

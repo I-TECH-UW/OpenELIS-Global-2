@@ -8,7 +8,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModuleUrl;
 
-public interface SystemModuleUrlDAO extends BaseDAO<SystemModuleUrl> {
+public interface SystemModuleUrlDAO extends BaseDAO<SystemModuleUrl, String> {
 
 	public List<SystemModuleUrl> getByRequest(HttpServletRequest request);
 

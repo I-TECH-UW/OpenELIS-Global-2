@@ -45,7 +45,7 @@ import us.mn.state.health.lims.systemusermodule.valueholder.SystemUserModule;
 @Component
 @Transactional
 @Qualifier(value = "SystemUserModuleDAO")
-public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule> implements SystemUserModuleDAO {
+public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, String> implements SystemUserModuleDAO {
 
 	public SystemUserModuleDAOImpl() {
 		super(SystemUserModule.class);
@@ -78,9 +78,9 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule> imple
 				SystemUserModule data = (SystemUserModule) systemUserModules.get(i);
 				// bugzilla 2206
 				data = readSystemUserModule(data.getId());
-				HibernateUtil.getSession().delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(data);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -98,7 +98,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule> imple
 						"Duplicate record exists for " + systemUserModule.getPermissionAgentId());
 			}
 
-			String id = (String) HibernateUtil.getSession().save(systemUserModule);
+			String id = (String) sessionFactory.getCurrentSession().save(systemUserModule);
 			systemUserModule.setId(id);
 
 			// add to audit trail
@@ -107,8 +107,8 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule> imple
 			String tableName = "SYSTEM_USER_MODULE";
 			auditDAO.saveNewHistory(systemUserModule, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("systemUserModuleDAOImpl", "insertData()", e.toString());
@@ -149,11 +149,11 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule> imple
 		}
 
 		try {
-			HibernateUtil.getSession().merge(systemUserModule);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(systemUserModule);
-			// HibernateUtil.getSession().refresh // CSL remove old(systemUserModule);
+			sessionFactory.getCurrentSession().merge(systemUserModule);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(systemUserModule);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(systemUserModule);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("systemUserModuleDAOImpl", "updateData()", e.toString());
@@ -164,10 +164,10 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule> imple
 	@Override
 	public void getData(SystemUserModule systemUserModule) throws LIMSRuntimeException {
 		try {
-			SystemUserModule sysUserModule = HibernateUtil.getSession().get(SystemUserModule.class,
+			SystemUserModule sysUserModule = sessionFactory.getCurrentSession().get(SystemUserModule.class,
 					systemUserModule.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (sysUserModule != null) {
 				PropertyUtils.copyProperties(systemUserModule, sysUserModule);
 			} else {
@@ -185,10 +185,10 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule> imple
 		List list = new Vector();
 		try {
 			String sql = "from SystemUserModule";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("systemUserModuleDAOImpl", "getAllSystemModules()", e.toString());
@@ -224,13 +224,13 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule> imple
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from SystemUserModule s order by s.systemUser.id";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("systemUserModuleDAOImpl", "getPageOfSystemUserModules()", e.toString());
@@ -243,9 +243,9 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule> imple
 	public SystemUserModule readSystemUserModule(String idString) {
 		SystemUserModule sysUserModule = null;
 		try {
-			sysUserModule = HibernateUtil.getSession().get(SystemUserModule.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			sysUserModule = sessionFactory.getCurrentSession().get(SystemUserModule.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("systemUserModuleDAOImpl", "readSystemUserModule()", e.toString());
@@ -281,13 +281,13 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule> imple
 		int rrn = 0;
 		try {
 			String sql = "select sum.id from SystemUserModule sum order by sum.systemUser.id";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -308,13 +308,13 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule> imple
 		int rrn = 0;
 		try {
 			String sql = "select sum.id from SystemUserModule sum order by sum.systemUser.id";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -332,7 +332,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule> imple
 			List list = new ArrayList();
 
 			String sql = "from SystemUserModule s where s.systemUser.id = :param and s.systemModule.id = :param2 and s.id != :param3";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", systemUserModule.getSystemUser().getId());
 			query.setParameter("param2", systemUserModule.getSystemModule().getId());
 
@@ -343,8 +343,8 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule> imple
 			query.setParameter("param3", systemUserModuleId);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;
@@ -365,13 +365,13 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule> imple
 			List list = new ArrayList();
 
 			String sql = "from SystemUserModule as sum join fetch sum.systemModule as sm where sum.systemUser.id = :id and sm.systemModuleName = :name";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("id", Integer.parseInt(id));
 			query.setParameter("name", name);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return list.size() > 0;
 		} catch (Exception e) {

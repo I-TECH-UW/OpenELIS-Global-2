@@ -25,6 +25,7 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import spring.mine.common.validator.ValidationHelper;
+import spring.mine.sample.form.SamplePatientEntryForm.SamplePatientEntryBatch;
 import spring.mine.samplebatchentry.form.SampleBatchEntryForm;
 import us.mn.state.health.lims.common.util.IdValuePair;
 
@@ -33,100 +34,124 @@ public class PatientClinicalInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private static final String YES_NO_UNKNOWN_REGEX = "^yes$|^no|^unknown$";
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String tbExtraPulmanary;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String tbCerebral;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String tbMenigitis;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String tbPrurigol;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String tbDiarrhae;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String stdColonCancer;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String stdCandidiasis;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String stdKaposi;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String stdZona;
 
-	@SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class, SamplePatientEntryBatch.class })
 	private String stdOther;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String arvProphyaxixReceiving;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String arvProphyaxixType;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String arvTreatmentReceiving;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String arvTreatmentRemembered;
 
-	@SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class, SamplePatientEntryBatch.class })
 	private String arvTreatment1;
 
-	@SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class, SamplePatientEntryBatch.class })
 	private String arvTreatment2;
 
-	@SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class, SamplePatientEntryBatch.class })
 	private String arvTreatment3;
 
-	@SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class, SamplePatientEntryBatch.class })
 	private String arvTreatment4;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String cotrimoxazoleReceiving;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String cotrimoxazoleType;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String infectionExtraPulmanary;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String infectionCerebral;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String infectionMeningitis;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String infectionPrurigol;
 
-	@SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class, SamplePatientEntryBatch.class })
 	private String infectionOther;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String stdInfectionColon;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String stdInfectionCandidiasis;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String stdInfectionKaposi;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String stdInfectionZona;
 
-	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+			SamplePatientEntryBatch.class })
 	private String infectionUnderTreatment;
 
-	@SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class, SamplePatientEntryBatch.class })
 	private String weight;
 
-	@SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class })
+	@SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class, SamplePatientEntryBatch.class })
 	private String karnofskyScore;
 
 	// for display

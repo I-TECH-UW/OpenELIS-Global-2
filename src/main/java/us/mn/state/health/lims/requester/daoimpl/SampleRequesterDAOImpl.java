@@ -37,7 +37,7 @@ import us.mn.state.health.lims.requester.valueholder.SampleRequester;
  */
 @Component
 @Transactional 
-public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> implements SampleRequesterDAO {
+public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String> implements SampleRequesterDAO {
 
 	public SampleRequesterDAOImpl() {
 		super(SampleRequester.class);
@@ -46,11 +46,11 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> impleme
 	@Override
 	public boolean insertData(SampleRequester sampleRequester) throws LIMSRuntimeException {
 		try {
-			HibernateUtil.getSession().save(sampleRequester);
+			sessionFactory.getCurrentSession().save(sampleRequester);
 
 			new AuditTrailDAOImpl().saveNewHistory(sampleRequester, sampleRequester.getSysUserId(), "SAMPLE_REQUESTER");
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("SampleRequesterDAOImpl", "insertData()", e.toString());
@@ -76,11 +76,11 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> impleme
 		}
 
 		try {
-			HibernateUtil.getSession().merge(sampleRequester);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(sampleRequester);
-			// HibernateUtil.getSession().refresh // CSL remove old(sampleRequester);
+			sessionFactory.getCurrentSession().merge(sampleRequester);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(sampleRequester);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(sampleRequester);
 		} catch (Exception e) {
 			LogEvent.logError("SampleRequesterDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleRequester updateData()", e);
@@ -98,7 +98,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> impleme
 
 	@Override
 	public void delete(SampleRequester sampleRequester) throws LIMSRuntimeException {
-		HibernateUtil.getSession().delete(sampleRequester);
+		sessionFactory.getCurrentSession().delete(sampleRequester);
 		// closeSession(); // CSL remove old
 	}
 
@@ -108,7 +108,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> impleme
 		String sql = "From SampleRequester sr where sr.sampleId = :sampleId";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setLong("sampleId", Long.parseLong(sampleId));
 			List<SampleRequester> requester = query.list();
 
@@ -125,7 +125,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester> impleme
 	public SampleRequester readOld(long sampleId, long requesterTypeId) {
 		String sql = "From SampleRequester sr where sr.sampleId = :sampleId and sr.requesterTypeId = :requesterTypeId";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setLong("sampleId", sampleId);
 			query.setLong("requesterTypeId", requesterTypeId);
 			SampleRequester requester = (SampleRequester) query.uniqueResult();

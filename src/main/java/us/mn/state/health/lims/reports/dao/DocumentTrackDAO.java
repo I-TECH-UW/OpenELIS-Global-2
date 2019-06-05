@@ -22,7 +22,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.reports.valueholder.DocumentTrack;
 
-public interface DocumentTrackDAO extends BaseDAO<DocumentTrack> {
+public interface DocumentTrackDAO extends BaseDAO<DocumentTrack, String> {
 
 	public List<DocumentTrack> getByTypeRecordAndTable(String typeId, String tableId, String recordId)
 			throws LIMSRuntimeException;

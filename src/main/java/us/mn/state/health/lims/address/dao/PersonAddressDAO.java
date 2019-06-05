@@ -16,19 +16,19 @@
 */
 package us.mn.state.health.lims.address.dao;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
+import us.mn.state.health.lims.address.valueholder.AddressPK;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
-public interface PersonAddressDAO extends BaseDAO<PersonAddress> {
+public interface PersonAddressDAO extends BaseDAO<PersonAddress, AddressPK> {
 	public List<PersonAddress> getAddressPartsByPersonId(String personId) throws LIMSRuntimeException;
 
 	@Override
-	public Serializable insert(PersonAddress personAddress) throws LIMSRuntimeException;
+	public AddressPK insert(PersonAddress personAddress) throws LIMSRuntimeException;
 
 	public Optional<PersonAddress> update(PersonAddress personAddress) throws LIMSRuntimeException;
 

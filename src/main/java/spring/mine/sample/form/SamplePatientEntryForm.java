@@ -18,10 +18,14 @@ import us.mn.state.health.lims.sample.bean.SampleOrderItem;
 
 public class SamplePatientEntryForm extends BaseForm {
 
+	public interface SamplePatientEntryBatch {
+
+	}
+
 	public interface SamplePatientEntry {
 	}
 
-	@ValidDate(relative = DateRelation.TODAY, groups = { SamplePatientEntry.class })
+	@ValidDate(relative = DateRelation.TODAY, groups = { SamplePatientEntry.class, SamplePatientEntryBatch.class })
 	private String currentDate = "";
 
 	@Valid

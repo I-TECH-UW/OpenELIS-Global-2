@@ -35,7 +35,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional 
-public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDAO {
+public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements AnalyzerDAO {
 
 	public AnalyzerDAOImpl() {
 		super(Analyzer.class);
@@ -59,9 +59,9 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDA
 			for (Analyzer data : analyzers) {
 
 				data = readAnalyzer(data.getId());
-				HibernateUtil.getSession().delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(data);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerDAOImpl", "deleteData()", e.toString());
@@ -75,10 +75,10 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDA
 		List<Analyzer> analyzer;
 		try {
 			String sql = "from Analyzer";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			analyzer = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerDAOImpl", "getAllAnalyzerItems()", e.toString());
 			throw new LIMSRuntimeException("Error in Analyzer getAllAnalyzer()", e);
@@ -90,9 +90,9 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDA
 	@Override
 	public Analyzer getAnalyzerById(Analyzer analyzer) throws LIMSRuntimeException {
 		try {
-			Analyzer re = (Analyzer) HibernateUtil.getSession().get(Analyzer.class, analyzer.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			Analyzer re = (Analyzer) sessionFactory.getCurrentSession().get(Analyzer.class, analyzer.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			return re;
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerDAOImpl", "getAnalyzerById()", e.toString());
@@ -104,7 +104,7 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDA
 	public Analyzer getAnalyzerByName(String name) throws LIMSRuntimeException {
 		String sql = "From Analyzer a where a.name = :name";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("name", name);
 			Analyzer analyzer = (Analyzer) query.uniqueResult();
 			// closeSession(); // CSL remove old
@@ -118,9 +118,9 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDA
 	@Override
 	public void getData(Analyzer analyzer) throws LIMSRuntimeException {
 		try {
-			Analyzer tmpAnalyzer = (Analyzer) HibernateUtil.getSession().get(Analyzer.class, analyzer.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			Analyzer tmpAnalyzer = (Analyzer) sessionFactory.getCurrentSession().get(Analyzer.class, analyzer.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (tmpAnalyzer != null) {
 				PropertyUtils.copyProperties(analyzer, tmpAnalyzer);
 			} else {
@@ -135,7 +135,7 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDA
 	@Override
 	public boolean insertData(Analyzer analyzer) throws LIMSRuntimeException {
 		try {
-			String id = (String) HibernateUtil.getSession().save(analyzer);
+			String id = (String) sessionFactory.getCurrentSession().save(analyzer);
 			analyzer.setId(id);
 
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
@@ -143,8 +143,8 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDA
 			String tableName = "ANALYZER";
 			auditDAO.saveNewHistory(analyzer, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("analyzerDAOImpl", "insertData()", e.toString());
@@ -167,11 +167,11 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDA
 			String tableName = "ANALYZER";
 			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 
-			HibernateUtil.getSession().merge(analyzer);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(analyzer);
-			// HibernateUtil.getSession().refresh // CSL remove old(analyzer);
+			sessionFactory.getCurrentSession().merge(analyzer);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(analyzer);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(analyzer);
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in Analyzer updateData()", e);
@@ -182,9 +182,9 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDA
 	public Analyzer readAnalyzer(String idString) throws LIMSRuntimeException {
 		Analyzer data = null;
 		try {
-			data = (Analyzer) HibernateUtil.getSession().get(Analyzer.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			data = (Analyzer) sessionFactory.getCurrentSession().get(Analyzer.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerDAOImpl", "readAnalyzer()", e.toString());
 			throw new LIMSRuntimeException("Error in Analyzer readAnalyzer()", e);

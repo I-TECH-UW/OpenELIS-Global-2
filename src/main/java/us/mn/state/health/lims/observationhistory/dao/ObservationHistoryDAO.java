@@ -33,7 +33,7 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
  * @author pahill
  * @since 2010-04-16
  */
-public interface ObservationHistoryDAO extends BaseDAO<ObservationHistory> {
+public interface ObservationHistoryDAO extends BaseDAO<ObservationHistory, String> {
 
 	public boolean insertData(ObservationHistory observation) throws LIMSRuntimeException;
 

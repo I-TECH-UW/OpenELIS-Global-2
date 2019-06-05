@@ -45,7 +45,7 @@ import us.mn.state.health.lims.project.valueholder.Project;
  */
 @Component
 @Transactional 
-public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
+public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements ProjectDAO {
 
 	public ProjectDAOImpl() {
 		super(Project.class);
@@ -80,11 +80,11 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 
 				// Make the change to the object.
 				cloneData.setIsActive(IActionConstants.NO);
-				HibernateUtil.getSession().merge(cloneData);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
-				// HibernateUtil.getSession().evict // CSL remove old(cloneData);
-				// HibernateUtil.getSession().refresh // CSL remove old(cloneData);
+				sessionFactory.getCurrentSession().merge(cloneData);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
+				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -102,7 +102,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 				throw new LIMSDuplicateRecordException("Duplicate record exists for " + project.getProjectName());
 			}
 
-			String id = (String) HibernateUtil.getSession().save(project);
+			String id = (String) sessionFactory.getCurrentSession().save(project);
 			project.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
@@ -111,8 +111,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 			String tableName = "PROJECT";
 			auditDAO.saveNewHistory(project, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -153,11 +153,11 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 		}
 
 		try {
-			HibernateUtil.getSession().merge(project);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(project);
-			// HibernateUtil.getSession().refresh // CSL remove old(project);
+			sessionFactory.getCurrentSession().merge(project);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(project);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(project);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ProjectDAOImpl", "updateData()", e.toString());
@@ -168,9 +168,9 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 	@Override
 	public void getData(Project project) throws LIMSRuntimeException {
 		try {
-			Project proj = (Project) HibernateUtil.getSession().get(Project.class, project.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			Project proj = (Project) sessionFactory.getCurrentSession().get(Project.class, project.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			if (proj != null) {
 				if (proj.getStartedDate() != null) {
@@ -195,10 +195,10 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 		List list = new Vector();
 		try {
 			String sql = "from Project";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ProjectDAOImpl", "getAllProjects()", e.toString());
@@ -218,13 +218,13 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 			// bugzilla 1399
 			// bugzilla 2438 order by local abbreviation
 			String sql = "from Project p order by p.localAbbreviation desc";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ProjectDAOImpl", "getPageOfProjects()", e.toString());
@@ -237,9 +237,9 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 	public Project readProject(String idString) {
 		Project pro = null;
 		try {
-			pro = (Project) HibernateUtil.getSession().get(Project.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			pro = (Project) sessionFactory.getCurrentSession().get(Project.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ProjectDAOImpl", "readProject()", e.toString());
@@ -282,7 +282,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 					sql = "from Project p where p.projectName = :param";
 				}
 			}
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			if (ignoreCase) {
 				query.setParameter("param", project.getProjectName().toLowerCase().trim());
 			} else {
@@ -290,8 +290,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 			}
 
 			List list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			Project pro = null;
 			if (list.size() > 0) {
 				pro = (Project) list.get(0);
@@ -317,12 +317,12 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 			} else {
 				sql = "from Project p where upper(p.projectName) like upper(:param) order by upper(p.projectName)";
 			}
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", filter + "%");
 
 			List list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			return list;
 
 		} catch (Exception e) {
@@ -345,7 +345,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.projectName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -367,7 +367,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t order by t.projectName desc where name <= " + enquote(id);
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -392,7 +392,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 
 			// bugzilla 2438 adding local abbreviation to duplicate check
 			String sql = "from Project t where ((trim(lower(t.projectName)) = :param and t.id != :param2) or (trim(lower(t.localAbbreviation)) = :param3 and t.id != :param2))";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", project.getProjectName().toLowerCase().trim());
 			query.setParameter("param3", project.getLocalAbbreviation().toLowerCase().trim());
 
@@ -404,8 +404,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 			query.setParameter("param2", projId);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;
@@ -430,11 +430,11 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 			} else {
 				sql = "from Project p where trim(lower(p.localAbbreviation)) = :param";
 			}
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", project.getLocalAbbreviation().toLowerCase().trim());
 			List list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			Project pro = null;
 			if (list.size() > 0) {
 				pro = (Project) list.get(0);
@@ -453,7 +453,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project> implements ProjectDAO {
 	public Project getProjectById(String id) throws LIMSRuntimeException {
 		if (!GenericValidator.isBlankOrNull(id)) {
 			try {
-				Query query = HibernateUtil.getSession().createQuery("from Project p where p.id = :id");
+				Query query = sessionFactory.getCurrentSession().createQuery("from Project p where p.id = :id");
 				query.setInteger("id", Integer.parseInt(id));
 				Project project = (Project) query.uniqueResult();
 

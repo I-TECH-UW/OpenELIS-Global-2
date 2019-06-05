@@ -37,7 +37,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional 
-public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> implements AnalyzerResultsDAO {
+public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String> implements AnalyzerResultsDAO {
 
 	public AnalyzerResultsDAOImpl() {
 		super(AnalyzerResults.class);
@@ -51,13 +51,13 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> impleme
 		try {
 			String sql = "from AnalyzerResults ar where ar.analyzerId = :analyzerId order by ar.id";
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("analyzerId", Integer.parseInt(analyzerId));
 
 			results = query.list();
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return results;
 
@@ -99,7 +99,7 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> impleme
 
 				if (previousResults == null || duplicateByAccessionAndTestOnly) {
 
-					String id = (String) HibernateUtil.getSession().save(result);
+					String id = (String) sessionFactory.getCurrentSession().save(result);
 					result.setId(id);
 
 					if (duplicateByAccessionAndTestOnly) {
@@ -116,8 +116,8 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> impleme
 				}
 			}
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerResultDAOImpl", "insertAnalyzerResult()", e.toString());
 			throw new LIMSRuntimeException("Error in AnalyzerResult insertAnalyzerResult()", e);
@@ -133,14 +133,14 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> impleme
 
 			String sql = "from AnalyzerResults a where a.analyzerId = :analyzerId and "
 					+ "a.accessionNumber = :assessionNumber and " + "a.testName = :testName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("analyzerId", Integer.parseInt(result.getAnalyzerId()));
 			query.setString("assessionNumber", result.getAccessionNumber());
 			query.setString("testName", result.getTestName());
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return list.size() > 0 ? list : null;
 
@@ -161,11 +161,11 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> impleme
 			auditDAO.saveHistory(newData, oldData, results.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
 					"ANALYZER_RESULTS");
 
-			HibernateUtil.getSession().merge(results);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(results);
-			// HibernateUtil.getSession().refresh // CSL remove old(results);
+			sessionFactory.getCurrentSession().merge(results);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(results);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(results);
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerResultsImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in AnalyzerResults updateData()", e);
@@ -176,9 +176,9 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> impleme
 	public AnalyzerResults readAnalyzerResults(String idString) throws LIMSRuntimeException {
 		AnalyzerResults data = null;
 		try {
-			data = (AnalyzerResults) HibernateUtil.getSession().get(AnalyzerResults.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			data = (AnalyzerResults) sessionFactory.getCurrentSession().get(AnalyzerResults.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerResultsDAOImpl", "readAnalyzerResults()", e.toString());
 			throw new LIMSRuntimeException("Error in AnalyzerResults readAnalyzerResults()", e);
@@ -190,10 +190,10 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> impleme
 	public void getData(AnalyzerResults analyzerResults) throws LIMSRuntimeException {
 
 		try {
-			AnalyzerResults analyzerResultsClone = (AnalyzerResults) HibernateUtil.getSession()
+			AnalyzerResults analyzerResultsClone = (AnalyzerResults) sessionFactory.getCurrentSession()
 					.get(AnalyzerResults.class, analyzerResults.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (analyzerResultsClone != null) {
 				PropertyUtils.copyProperties(analyzerResults, analyzerResultsClone);
 			} else {
@@ -211,9 +211,9 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults> impleme
 			for (AnalyzerResults result : analyzerResults) {
 				result = readAnalyzerResults(result.getId());
 
-				HibernateUtil.getSession().delete(result);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(result);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			}
 		} catch (HibernateException se) {

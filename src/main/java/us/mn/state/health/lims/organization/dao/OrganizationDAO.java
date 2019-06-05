@@ -30,7 +30,7 @@ import us.mn.state.health.lims.organization.valueholder.Organization;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface OrganizationDAO extends BaseDAO<Organization> {
+public interface OrganizationDAO extends BaseDAO<Organization, String> {
 
 	public boolean insertData(Organization organization) throws LIMSRuntimeException;
 
@@ -64,7 +64,7 @@ public interface OrganizationDAO extends BaseDAO<Organization> {
 
 	/**
 	 * Find all organizations which are associated with a particular project.
-	 * 
+	 *
 	 * @param projectName project.projectName to match
 	 * @return a Set of organizations.
 	 */

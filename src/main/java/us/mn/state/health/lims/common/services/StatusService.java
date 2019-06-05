@@ -533,7 +533,7 @@ public class StatusService {
 		if ("H".equals(sample.getDomain())) {
 			SampleHuman sampleHuman = new SampleHuman();
 			sampleHuman.setSampleId(sample.getId());
-			sampleHumanService.getDataBySample(sampleHuman);
+			sampleHuman = sampleHumanService.getDataBySample(sampleHuman);
 
 			String patientId = sampleHuman.getPatientId();
 

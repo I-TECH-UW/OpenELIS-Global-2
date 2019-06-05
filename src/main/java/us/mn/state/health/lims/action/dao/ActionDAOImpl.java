@@ -7,9 +7,9 @@ import us.mn.state.health.lims.action.valueholder.Action;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 
 @Component
-@Transactional 
-public class ActionDAOImpl extends BaseDAOImpl<Action> implements ActionDAO {
-  ActionDAOImpl() {
-    super(Action.class);
-  }
+@Transactional
+public class ActionDAOImpl extends BaseDAOImpl<Action, String> implements ActionDAO {
+	ActionDAOImpl() {
+		super(Action.class);
+	}
 }

@@ -29,7 +29,7 @@ import us.mn.state.health.lims.testdictionary.valueholder.TestDictionary;
 
 @Component
 @Transactional 
-public class TestDictionaryDAOImpl extends BaseDAOImpl<TestDictionary> implements TestDictionaryDAO {
+public class TestDictionaryDAOImpl extends BaseDAOImpl<TestDictionary, String> implements TestDictionaryDAO {
 
 	public TestDictionaryDAOImpl() {
 		super(TestDictionary.class);
@@ -39,7 +39,7 @@ public class TestDictionaryDAOImpl extends BaseDAOImpl<TestDictionary> implement
 	public TestDictionary getTestDictionaryForTestId(String testId) throws LIMSRuntimeException {
 		String sql = "FROM TestDictionary td where td.testId = :testId";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(testId));
 			TestDictionary testDictionary = (TestDictionary) query.uniqueResult();
 			// closeSession(); // CSL remove old

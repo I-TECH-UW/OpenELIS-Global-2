@@ -17,7 +17,7 @@ import us.mn.state.health.lims.systemmodule.valueholder.SystemModuleUrl;
 
 @Component
 @Transactional 
-public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl> implements SystemModuleUrlDAO {
+public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String> implements SystemModuleUrlDAO {
 
 	public SystemModuleUrlDAOImpl() {
 		super(SystemModuleUrl.class);
@@ -57,11 +57,11 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl> impleme
 
 		try {
 
-			String id = (String) HibernateUtil.getSession().save(systemModuleUrl);
+			String id = (String) sessionFactory.getCurrentSession().save(systemModuleUrl);
 			systemModuleUrl.setId(id);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			// closeSession(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154

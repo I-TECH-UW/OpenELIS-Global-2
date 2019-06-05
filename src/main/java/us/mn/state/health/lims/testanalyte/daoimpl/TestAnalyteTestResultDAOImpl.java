@@ -60,7 +60,7 @@ public class TestAnalyteTestResultDAOImpl implements TestAnalyteTestResultDAO {
 		Session session = null;
 
 		try {
-			session = HibernateUtil.getSession();
+			session = sessionFactory.getCurrentSession();
 			tx = session.beginTransaction();
 
 			long maxNum = getMaximumResultGroupForTest(test);
@@ -120,7 +120,7 @@ public class TestAnalyteTestResultDAOImpl implements TestAnalyteTestResultDAO {
 		Session session = null;
 
 		try {
-			session = HibernateUtil.getSession();
+			session = sessionFactory.getCurrentSession();
 			tx = session.beginTransaction();
 
 			// this stores all testResult Ids (test results can be shared
@@ -344,7 +344,7 @@ public class TestAnalyteTestResultDAOImpl implements TestAnalyteTestResultDAO {
 
 		List list = new Vector();
 		try {
-			session = HibernateUtil.getSession();
+			session = sessionFactory.getCurrentSession();
 			tx = session.beginTransaction();
 
 			String testId = test.getId();
@@ -386,7 +386,7 @@ public class TestAnalyteTestResultDAOImpl implements TestAnalyteTestResultDAO {
 		}
 
 		try {
-			session = HibernateUtil.getSession();
+			session = sessionFactory.getCurrentSession();
 			tx = session.beginTransaction();
 
 			// calculate maxRow to be one more than the page size
@@ -434,7 +434,7 @@ public class TestAnalyteTestResultDAOImpl implements TestAnalyteTestResultDAO {
 
 		TestAnalyte ta = null;
 		try {
-			session = HibernateUtil.getSession();
+			session = sessionFactory.getCurrentSession();
 			tx = session.beginTransaction();
 
 			ta = (TestAnalyte) session.get(TestAnalyte.class, idString);
@@ -460,7 +460,7 @@ public class TestAnalyteTestResultDAOImpl implements TestAnalyteTestResultDAO {
 
 		TestResult tr = null;
 		try {
-			session = HibernateUtil.getSession();
+			session = sessionFactory.getCurrentSession();
 			tx = session.beginTransaction();
 
 			tr = (TestResult) session.get(TestResult.class, idString);
@@ -524,7 +524,7 @@ public class TestAnalyteTestResultDAOImpl implements TestAnalyteTestResultDAO {
 
 		long maxNumber = 0;
 		try {
-			session = HibernateUtil.getSession();
+			session = sessionFactory.getCurrentSession();
 			tx = session.beginTransaction();
 
 			String sql = "from TestAnalyte t where t.test = :param order by t.resultGroup desc";

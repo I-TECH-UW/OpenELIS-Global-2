@@ -8,7 +8,7 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 
 @Component
 @Transactional 
-public class CityViewDAOImpl extends BaseDAOImpl<CityView> implements CityViewDAO {
+public class CityViewDAOImpl extends BaseDAOImpl<CityView, String> implements CityViewDAO {
   CityViewDAOImpl() {
     super(CityView.class);
   }

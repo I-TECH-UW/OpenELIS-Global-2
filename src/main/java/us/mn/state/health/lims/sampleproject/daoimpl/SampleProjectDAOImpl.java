@@ -45,7 +45,7 @@ import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
  */
 @Component
 @Transactional
-public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements SampleProjectDAO {
+public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> implements SampleProjectDAO {
 
 	@Autowired
 	AuditTrailDAO auditDAO;
@@ -82,9 +82,9 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 				SampleProject data = (SampleProject) sampleProjs.get(i);
 				// bugzilla 2206
 				data = readSampleProject(data.getId());
-				HibernateUtil.getSession().delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(data);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -97,7 +97,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 	public boolean insertData(SampleProject sampleProj) throws LIMSRuntimeException {
 
 		try {
-			String id = (String) HibernateUtil.getSession().save(sampleProj);
+			String id = (String) sessionFactory.getCurrentSession().save(sampleProj);
 			sampleProj.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
@@ -107,8 +107,8 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 			String tableName = "SAMPLE_PROJECTS";
 			auditDAO.saveNewHistory(sampleProj, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -140,11 +140,11 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 		}
 
 		try {
-			HibernateUtil.getSession().merge(sampleProj);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(sampleProj);
-			// HibernateUtil.getSession().refresh // CSL remove old(sampleProj);
+			sessionFactory.getCurrentSession().merge(sampleProj);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(sampleProj);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(sampleProj);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SampleProjectDAOImpl", "updateData()", e.toString());
@@ -155,9 +155,9 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 	@Override
 	public void getData(SampleProject sampleProj) throws LIMSRuntimeException {
 		try {
-			SampleProject data = HibernateUtil.getSession().get(SampleProject.class, sampleProj.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			SampleProject data = sessionFactory.getCurrentSession().get(SampleProject.class, sampleProj.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (data != null) {
 				PropertyUtils.copyProperties(sampleProj, data);
 			} else {
@@ -173,9 +173,9 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 	public SampleProject readSampleProject(String idString) {
 		SampleProject sp = null;
 		try {
-			sp = HibernateUtil.getSession().get(SampleProject.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			sp = sessionFactory.getCurrentSession().get(SampleProject.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SampleProjectDAOImpl", "readSampleProject()", e.toString());
@@ -193,12 +193,12 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 
 		try {
 			String sql = "from SampleProject sp where sp.project = :param";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", projId);
 
 			sampleProjects = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return sampleProjects;
 
@@ -216,7 +216,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 
 		try {
 			String sql = "from SampleProject sp where sp.sample.id = :sampleId";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(id));
 
 			sampleProjects = query.list();
@@ -238,7 +238,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 			String sql = "FROM SampleProject as sp "
 					+ " WHERE sp.project.projectName = :projectName AND sp.sample.id IN (SELECT so.sample.id FROM SampleOrganization as so WHERE so.sample.receivedTimestamp >= :dateLow AND so.sample.receivedTimestamp <= :dateHigh "
 					+ " AND   so.organization.id = :organizationId ) ";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			query.setString("projectName", projectName);
 			query.setDate("dateLow", lowReceivedDate);

@@ -23,13 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.siteinformation.dao.SiteInformationDomainDAO;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformationDomain;
 
 @Component
-@Transactional 
-public class SiteInformationDomainDAOImpl extends BaseDAOImpl<SiteInformationDomain>
+@Transactional
+public class SiteInformationDomainDAOImpl extends BaseDAOImpl<SiteInformationDomain, String>
 		implements SiteInformationDomainDAO {
 
 	public SiteInformationDomainDAOImpl() {
@@ -41,7 +40,7 @@ public class SiteInformationDomainDAOImpl extends BaseDAOImpl<SiteInformationDom
 		String sql = "from SiteInformationDomain sid where sid.name = :name";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("name", name);
 			SiteInformationDomain domain = (SiteInformationDomain) query.uniqueResult();
 			// closeSession(); // CSL remove old

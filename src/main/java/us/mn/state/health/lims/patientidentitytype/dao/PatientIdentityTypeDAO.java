@@ -23,7 +23,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.patientidentitytype.valueholder.PatientIdentityType;
 
-public interface PatientIdentityTypeDAO extends BaseDAO<PatientIdentityType> {
+public interface PatientIdentityTypeDAO extends BaseDAO<PatientIdentityType, String> {
 
 	public void insertData(PatientIdentityType patientIdenityType) throws LIMSRuntimeException;
 

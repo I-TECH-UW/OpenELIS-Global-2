@@ -22,7 +22,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.referral.valueholder.ReferralReason;
 
-public interface ReferralReasonDAO extends BaseDAO<ReferralReason> {
+public interface ReferralReasonDAO extends BaseDAO<ReferralReason, String> {
 	public List<ReferralReason> getAllReferralReasons() throws LIMSRuntimeException;
 
 	public void getData(ReferralReason entity);

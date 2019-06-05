@@ -21,7 +21,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
 
-public interface ResultLimitDAO extends BaseDAO<ResultLimit> {
+public interface ResultLimitDAO extends BaseDAO<ResultLimit, String> {
 
 	boolean insertData(ResultLimit resultLimit) throws LIMSRuntimeException;
 

@@ -29,7 +29,7 @@ import us.mn.state.health.lims.gender.valueholder.Gender;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface GenderDAO extends BaseDAO<Gender> {
+public interface GenderDAO extends BaseDAO<Gender, String> {
 
 	public boolean insertData(Gender gender) throws LIMSRuntimeException;
 

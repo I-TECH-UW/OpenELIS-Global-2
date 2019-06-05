@@ -20,7 +20,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.requester.valueholder.RequesterType;
 
-public interface RequesterTypeDAO extends BaseDAO<RequesterType> {
+public interface RequesterTypeDAO extends BaseDAO<RequesterType, String> {
 
 	public RequesterType getRequesterTypeByName(String typeName) throws LIMSRuntimeException;
 

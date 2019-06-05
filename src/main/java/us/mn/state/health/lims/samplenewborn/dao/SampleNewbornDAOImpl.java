@@ -8,7 +8,7 @@ import us.mn.state.health.lims.samplenewborn.valueholder.SampleNewborn;
 
 @Component
 @Transactional 
-public class SampleNewbornDAOImpl extends BaseDAOImpl<SampleNewborn> implements SampleNewbornDAO {
+public class SampleNewbornDAOImpl extends BaseDAOImpl<SampleNewborn, String> implements SampleNewbornDAO {
   SampleNewbornDAOImpl() {
     super(SampleNewborn.class);
   }

@@ -48,7 +48,7 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
  */
 @Component
 @Transactional
-public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
+public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements SampleDAO {
 
 	@Autowired
 	AuditTrailDAO auditDAO;
@@ -86,9 +86,9 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 				Sample data = (Sample) samples.get(i);
 				// bugzilla 2206
 				data = readSample(data.getId());
-				HibernateUtil.getSession().delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(data);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -103,15 +103,15 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 
 		try {
 			sample.setAccessionNumber(getNextAccessionNumber());
-			String id = (String) HibernateUtil.getSession().save(sample);
+			String id = (String) sessionFactory.getCurrentSession().save(sample);
 			sample.setId(id);
 
 			String sysUserId = sample.getSysUserId();
 			String tableName = "SAMPLE";
 			auditDAO.saveNewHistory(sample, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("SampleDAOImpl", "insertData()", e.toString());
@@ -133,13 +133,13 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 	public boolean insertDataWithAccessionNumber(Sample sample) throws LIMSRuntimeException {
 		try {
 
-			String id = (String) HibernateUtil.getSession().save(sample);
+			String id = (String) sessionFactory.getCurrentSession().save(sample);
 			sample.setId(id);
 
 			auditDAO.saveNewHistory(sample, sample.getSysUserId(), "SAMPLE");
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -169,11 +169,11 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 		}
 
 		try {
-			HibernateUtil.getSession().merge(sample);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(sample);
-			// HibernateUtil.getSession().refresh // CSL remove old(sample);
+			sessionFactory.getCurrentSession().merge(sample);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(sample);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(sample);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SampleDAOImpl", "updateData()", e.toString());
@@ -184,17 +184,17 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 	@Override
 	public void getData(Sample sample) throws LIMSRuntimeException {
 		try {
-			Sample samp = HibernateUtil.getSession().get(Sample.class, sample.getId());
+			Sample samp = sessionFactory.getCurrentSession().get(Sample.class, sample.getId());
 
 			if (samp != null) {
 
 				// set sample projects
 				String sql = "from SampleProject sp where samp_id = :sampleId";
-				Query query = HibernateUtil.getSession().createQuery(sql);
+				Query query = sessionFactory.getCurrentSession().createQuery(sql);
 				query.setParameter("sampleId", Integer.parseInt(samp.getId()));
 				List list = query.list();
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 				samp.setSampleProjects(list);
 
@@ -218,13 +218,13 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from Sample s order by s.id";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			samples = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			Sample samp;
 
@@ -249,11 +249,11 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 	public void getSampleByAccessionNumber(Sample sample) throws LIMSRuntimeException {
 		try {
 			String sql = "from Sample s where s.accessionNumber = :param";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", sample.getAccessionNumber());
 			List list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			Sample samp = null;
 			if (list.size() > 0) {
@@ -263,11 +263,11 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			if (samp != null) {
 				// set sample projects
 				sql = "from SampleProject sp where samp_id = :param";
-				query = HibernateUtil.getSession().createQuery(sql);
+				query = sessionFactory.getCurrentSession().createQuery(sql);
 				query.setInteger("param", Integer.parseInt(samp.getId()));
 				List sp = query.list();
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 				samp.setSampleProjects(sp);
 
 				PropertyUtils.copyProperties(sample, samp);
@@ -284,9 +284,9 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 	public Sample readSample(String idString) {
 		Sample samp = null;
 		try {
-			samp = HibernateUtil.getSession().get(Sample.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			samp = sessionFactory.getCurrentSession().get(Sample.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SampleDAOImpl", "readSample()", e.toString());
@@ -305,11 +305,11 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 
 		try {
 			String sql = "select max(s.accessionNumber) from Sample s";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			List reports = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			if (reports != null && reports.get(0) != null) {
 				if (reports.get(0) != null) {
@@ -398,7 +398,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 		Sample sample = null;
 		try {
 			String sql = "from Sample s where accession_number = :param";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			query.setParameter("param", accessionNumber);
 			List<Sample> list = query.list();
@@ -418,12 +418,12 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 		List list = new Vector();
 		try {
 			String sql = "from Sample s where status in (:param1) and domain = :param2";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameterList("param1", statuses);
 			query.setParameter("param2", domain);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			// bugzilla 2154
@@ -496,7 +496,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 				}
 			}
 
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			if (filterByDomain) {
 				query.setParameter("param", sample.getDomain());
 			}
@@ -508,8 +508,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
 			query.setParameterList("param3", statusesToExclude);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("SampleDAOImpl", "getSamplesWithPendingQaEvents()", e.toString());
 			throw new LIMSRuntimeException("Error in Sample getSamplesWithPendingQaEvents()", e);
@@ -567,11 +567,11 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 
 		try {
 			String sql = "from Sample as sample where sample.collectionDate = :date";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setCalendarDate("date", calendar);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (HibernateException he) {
 			LogEvent.logError("SampleDAOImpl", "getSamplesRecievedOn()", he.toString());
@@ -600,7 +600,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 				+ "s.accessionNumber >= :minAccess and s.accessionNumber <= :maxAccess and "
 				+ "s.id in (select sp.sample.id from SampleProject sp where sp.project.id in (:projectId))";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameterList("statusList", inclusiveStatusIdList);
 			query.setParameterList("projectId", inclusiveProjectIdList);
 			query.setString("minAccess", minAccession);
@@ -627,7 +627,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 				+ "s.accessionNumber >= :minAccess and s.accessionNumber <= :maxAccess and "
 				+ "s.id in (select sp.sample.id from SampleProject sp where sp.project.id = :projectId)";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameterList("statusList", inclusiveStatusIdList);
 			query.setInteger("projectId", Integer.parseInt(projectId));
 			query.setString("minAccess", minAccession);
@@ -652,7 +652,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 
 		String sql = "from Sample s where s.accessionNumber >= :minAccess and s.accessionNumber <= :maxAccess";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("minAccess", minAccession);
 			query.setString("maxAccess", maxAccession);
 
@@ -674,7 +674,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 
 		try {
 			String sql = "select max(s.accessionNumber) from Sample s";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			greatestAccessionNumber = (String) query.uniqueResult();
 
@@ -692,7 +692,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 
 		try {
 			String sql = "select max(s.accessionNumber) from Sample s where s.accessionNumber like :prefix";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("prefix", prefix + "%");
 			greatestAccessionNumber = (String) query.uniqueResult();
 		} catch (Exception e) {
@@ -711,7 +711,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 
 		try {
 			String sql = "select max(s.accessionNumber) from Sample s where s.accessionNumber LIKE :starts and length(s.accessionNumber) = :numberSize";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("starts", startingWith + "%");
 			query.setInteger("numberSize", accessionSize);
 			greatestAccessionNumber = (String) query.uniqueResult();
@@ -728,7 +728,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 		String sql = "Select sqa.sample From SampleQaEvent sqa where sqa.sample.id IN (select sa.sample.id from SampleOrganization sa where sa.organization.id = :serviceId) ";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("serviceId", Integer.parseInt(serviceId));
 			List<Sample> samples = query.list();
 			// closeSession(); // CSL remove old
@@ -745,7 +745,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 			throws LIMSRuntimeException {
 		String sql = "from Sample s where s.isConfirmation = true and s.receivedTimestamp BETWEEN :lowDate AND :highDate";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setDate("lowDate", receivedDateStart);
 			query.setDate("highDate", receivedDateEnd);
 
@@ -764,7 +764,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 
 		String sql = "from Sample s where s.id in (select si.sample.id from SampleItem si where si.id = :sampleitemId)";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("sampleitemId", sampleitemId);
 			List<Sample> sampleList = query.list();
 
@@ -783,7 +783,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 
 		String sql = "from Sample s where s.referringId = :referringId";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("referringId", referringId);
 			Sample sample = (Sample) query.uniqueResult();
 
