@@ -52,9 +52,9 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 
 				auditDAO.saveHistory(new TypeOfSampleTest(), data, currentUserId, IActionConstants.AUDIT_TRAIL_DELETE,
 						"SAMPLETYPE_TEST");
-				HibernateUtil.getSession().delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(data);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			}
 
 		} catch (Exception e) {
@@ -69,12 +69,12 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 
 		try {
 
-			String id = (String) HibernateUtil.getSession().save(typeOfSampleTest);
+			String id = (String) sessionFactory.getCurrentSession().save(typeOfSampleTest);
 			typeOfSampleTest.setId(id);
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveNewHistory(typeOfSampleTest, typeOfSampleTest.getSysUserId(), "SAMPLETYPE_TEST");
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("TypeOfSampleTestDAOImpl", "insertData()", e.toString());
 			throw new LIMSRuntimeException("Error in TypeOfSampleTest insertData()", e);
@@ -86,9 +86,9 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 	@Override
 	public void getData(TypeOfSampleTest typeOfSample) throws LIMSRuntimeException {
 		try {
-			TypeOfSampleTest tos = HibernateUtil.getSession().get(TypeOfSampleTest.class, typeOfSample.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			TypeOfSampleTest tos = sessionFactory.getCurrentSession().get(TypeOfSampleTest.class, typeOfSample.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (tos != null) {
 				PropertyUtils.copyProperties(typeOfSample, tos);
 			} else {
@@ -109,12 +109,12 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 
 		try {
 			String sql = "from TypeOfSampleTest";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("TypeOfSampleDAOImpl", "getAllTypeOfSamples()", e.toString());
@@ -132,12 +132,12 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 			int endingRecNo = startingRecNo + DEFAULT_PAGE_SIZE + 1;
 
 			String sql = "from TypeOfSampleTest t order by t.typeOfSampleId, t.testId";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("TypeOfSampleDAOImpl", "getPageOfTypeOfSamples()", e.toString());
 			throw new LIMSRuntimeException("Error in TypeOfSampleTest getPageOfTypeOfSamples()", e);
@@ -149,9 +149,9 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 	public TypeOfSampleTest readTypeOfSample(String idString) {
 		TypeOfSampleTest tos;
 		try {
-			tos = HibernateUtil.getSession().get(TypeOfSampleTest.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			tos = sessionFactory.getCurrentSession().get(TypeOfSampleTest.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("TypeOfSampleDAOImpl", "readTypeOfSample()", e.toString());
@@ -194,13 +194,13 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 			// record with id = currentId
 			String sql = "select tos.id from TypeOfSampleTest tos " + " order by tos.domain, tos.description";
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -222,13 +222,13 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 		int rrn;
 		try {
 			String sql = "select tos.id from TypeOfSampleTest tos " + " order by tos.domain desc, tos.description desc";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -250,7 +250,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 				// so parseInt doesn't throw
 				sampleTypeId = "0";
 			}
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sampleTypeId));
 			List<TypeOfSampleTest> list = query.list();
 			// closeSession(); // CSL remove old
@@ -269,7 +269,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 		String sql = "from TypeOfSampleTest tt where tt.testId = :testId";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(testId));
 			List<TypeOfSampleTest> list = query.list();
 			// closeSession(); // CSL remove old
@@ -288,7 +288,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest> imple
 		String sql = "from TypeOfSampleTest tt where tt.testId = :testId";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(testId));
 			List<TypeOfSampleTest> list = query.list();
 			// closeSession(); // CSL remove old

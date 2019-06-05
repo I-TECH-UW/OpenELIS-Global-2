@@ -82,11 +82,11 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 				Analyte cloneData = readAnalyte(data.getId());
 
 				cloneData.setIsActive(IActionConstants.NO);
-				HibernateUtil.getSession().merge(cloneData);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
-				// HibernateUtil.getSession().evict // CSL remove old(cloneData);
-				// HibernateUtil.getSession().refresh // CSL remove old(cloneData);
+				sessionFactory.getCurrentSession().merge(cloneData);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
+				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
 			}
 		} catch (Exception e) {
 			// buzilla 2154
@@ -104,7 +104,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 			if (duplicateAnalyteExists(analyte)) {
 				throw new LIMSDuplicateRecordException("Duplicate record exists for " + analyte.getAnalyteName());
 			}
-			String id = (String) HibernateUtil.getSession().save(analyte);
+			String id = (String) sessionFactory.getCurrentSession().save(analyte);
 			analyte.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
@@ -113,8 +113,8 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 			String tableName = "ANALYTE";
 			auditDAO.saveNewHistory(analyte, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// buzilla 2154
@@ -159,11 +159,11 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 		}
 
 		try {
-			HibernateUtil.getSession().merge(analyte);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(analyte);
-			// HibernateUtil.getSession().refresh // CSL remove old(analyte);
+			sessionFactory.getCurrentSession().merge(analyte);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(analyte);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(analyte);
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("AnalyteDAOImpl", "updateData()", e.toString());
@@ -174,9 +174,9 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 	@Override
 	public void getData(Analyte analyte) throws LIMSRuntimeException {
 		try {
-			Analyte anal = HibernateUtil.getSession().get(Analyte.class, analyte.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			Analyte anal = sessionFactory.getCurrentSession().get(Analyte.class, analyte.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (anal != null) {
 				PropertyUtils.copyProperties(analyte, anal);
 			} else {
@@ -194,11 +194,11 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 		List list = new Vector();
 		try {
 			String sql = "from Analyte";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("AnalyteDAOImpl", "getAllAnalytes()", e.toString());
@@ -217,13 +217,13 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 
 			// bugzilla 1399
 			String sql = "from Analyte a order by a.analyteName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("AnalyteDAOImpl", "getPageOfAnalytes()", e.toString());
@@ -253,14 +253,14 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 				newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
 				sql = "from Analyte a where trim(lower (a.analyteName)) like :param  order by a.analyteName";
 			}
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", newSearchStr);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in AnalyteDAOImpl getPagesOfSearchedAnalytes()", e);
@@ -273,9 +273,9 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 	public Analyte readAnalyte(String idString) {
 		Analyte analyte = null;
 		try {
-			analyte = HibernateUtil.getSession().get(Analyte.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			analyte = sessionFactory.getCurrentSession().get(Analyte.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("AnalyteDAOImpl", "readAnalyte()", e.toString());
@@ -291,11 +291,11 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 		List list = new Vector();
 		try {
 			String sql = "from Analyte a where upper(a.analyteName) like upper(:param) and a.isActive='Y' order by upper(a.analyteName)";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", filter + "%");
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// buzilla 2154
 			LogEvent.logError("AnalyteDAOImpl", "getAnalytes()", e.toString());
@@ -330,7 +330,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 			} else {
 				sql = "from Analyte a where a.analyteName = :param and a.isActive='Y'";
 			}
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			if (ignoreCase) {
 				query.setString("param", analyte.getAnalyteName().trim().toLowerCase());
@@ -339,8 +339,8 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 			}
 
 			List list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			Analyte ana = null;
 			if (list.size() > 0) {
@@ -369,7 +369,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.analyteName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -391,7 +391,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t order by t.analyteName desc where name <= " + enquote(id);
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -423,7 +423,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 				sql = "from Analyte a where trim(lower(a.analyteName)) = :name and a.id != :id";
 			}
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("name", analyte.getAnalyteName().toLowerCase().trim());
 			// bugzilla 2432
 			if (analyte.getLocalAbbreviation() != null) {
@@ -435,8 +435,8 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 			query.setInteger("id", Integer.parseInt(analyteId));
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return list.size() > 0;
 
@@ -468,12 +468,12 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte> implements AnalyteDAO {
 				newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
 				sql = "select count (*) from Analyte a where trim(lower (a.analyteName)) like :param ";
 			}
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", newSearchStr);
 
 			List results = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			if (results != null && results.get(0) != null) {
 				if (results.get(0) != null) {

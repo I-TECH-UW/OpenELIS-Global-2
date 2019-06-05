@@ -42,7 +42,7 @@ public class ReferralTypeDAOImpl extends BaseDAOImpl<ReferralType> implements Re
 		String sql = "From ReferralType rt where rt.name = :name";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("name", name);
 			ReferralType referralType = (ReferralType) query.uniqueResult();
 			// closeSession(); // CSL remove old

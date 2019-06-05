@@ -44,7 +44,7 @@ public class DocumentTrackDAOImpl extends BaseDAOImpl<DocumentTrack> implements 
 		String sql = "From DocumentTrack dt where dt.documentTypeId = :typeId and dt.tableId = :tableId and dt.recordId = :recordId order by dt.reportTime";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("typeId", Integer.parseInt(typeId));
 			query.setInteger("tableId", Integer.parseInt(tableId));
 			query.setInteger("recordId", Integer.parseInt(recordId));
@@ -65,7 +65,7 @@ public class DocumentTrackDAOImpl extends BaseDAOImpl<DocumentTrack> implements 
 		String sql = "From DocumentTrack dt where dt.documentTypeId = :typeId and dt.tableId = :tableId and dt.recordId = :recordId and dt.documentName = :name order by dt.reportTime";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("typeId", Integer.parseInt(reportTypeId));
 			query.setInteger("tableId", Integer.parseInt(tableId));
 			query.setInteger("recordId", Integer.parseInt(recordId));

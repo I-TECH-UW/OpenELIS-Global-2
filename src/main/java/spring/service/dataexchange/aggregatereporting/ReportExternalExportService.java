@@ -8,7 +8,8 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.Repor
 
 public interface ReportExternalExportService extends BaseObjectService<ReportExternalExport> {
 
-	void delete(ReportExternalExport report);
+	@Override
+	public void delete(ReportExternalExport report);
 
 	Timestamp getLastCollectedTimestamp();
 

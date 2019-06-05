@@ -66,7 +66,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 	@Override
 	public Serializable insert(PersonAddress personAddress) throws LIMSRuntimeException {
 		try {
-			AddressPK id = (AddressPK) HibernateUtil.getSession().save(personAddress);
+			AddressPK id = (AddressPK) sessionFactory.getCurrentSession().save(personAddress);
 			auditDAO.saveNewHistory(personAddress, personAddress.getSysUserId(), "person_address");
 			// closeSession(); // CSL remove old
 			return id;
@@ -85,10 +85,10 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 			auditDAO.saveHistory(personAddress, oldData, personAddress.getSysUserId(),
 					IActionConstants.AUDIT_TRAIL_UPDATE, "person_address");
 
-			HibernateUtil.getSession().merge(personAddress);
+			sessionFactory.getCurrentSession().merge(personAddress);
 			// closeSession(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(personAddress);
-			// HibernateUtil.getSession().refresh // CSL remove old(personAddress);
+			// sessionFactory.getCurrentSession().evict // CSL remove old(personAddress);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(personAddress);
 		} catch (HibernateException e) {
 			handleException(e, "update");
 		}
@@ -97,7 +97,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 
 	public PersonAddress readPersonAddress(PersonAddress personAddress) {
 		try {
-			PersonAddress oldPersonAddress = HibernateUtil.getSession().get(PersonAddress.class,
+			PersonAddress oldPersonAddress = sessionFactory.getCurrentSession().get(PersonAddress.class,
 					personAddress.getCompoundId());
 			// closeSession(); // CSL remove old
 
@@ -114,7 +114,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 		String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId and pa.compoundId.addressPartId = :partId";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("personId", Integer.parseInt(personId));
 			query.setInteger("partId", Integer.parseInt(addressPartId));
 			PersonAddress addressPart = (PersonAddress) query.uniqueResult();

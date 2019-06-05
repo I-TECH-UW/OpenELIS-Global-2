@@ -40,7 +40,7 @@ public class DocumentTypeDAOImpl extends BaseDAOImpl<DocumentType> implements Do
 		String sql = "Select from DocumentType dt where name = :name";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("name", name);
 			DocumentType docType = (DocumentType) query.uniqueResult();
 			// closeSession(); // CSL remove old
@@ -55,7 +55,7 @@ public class DocumentTypeDAOImpl extends BaseDAOImpl<DocumentType> implements Do
 		String sql = "From DocumentType dt where dt.name = :name";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("name", name);
 			DocumentType document = (DocumentType) query.setMaxResults(1).uniqueResult();
 			// closeSession(); // CSL remove old

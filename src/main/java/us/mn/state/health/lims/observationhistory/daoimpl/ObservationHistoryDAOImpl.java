@@ -69,7 +69,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory> i
 
 		try {
 
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("value", dictionaryValue);
 
 			observationList = query.list();
@@ -90,7 +90,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory> i
 		String sql = "from ObservationHistory oh where oh.sampleItemId = :sampleItemId";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("sampleItemId", Integer.parseInt(sampleItemId));
 
 			List<ObservationHistory> observationList = query.list();
@@ -110,7 +110,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory> i
 		String sql = "from ObservationHistory oh where oh.sampleId = :sampleId";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sampleId));
 
 			List<ObservationHistory> observationList = query.list();
@@ -130,7 +130,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory> i
 		String sql = "from ObservationHistory oh where oh.patientId = :patientId and oh.observationHistoryTypeId = :ohTypeId order by oh.lastupdated desc";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("patientId", Integer.parseInt(patientId));
 			query.setInteger("ohTypeId", Integer.parseInt(observationHistoryTypeId));
 
@@ -153,7 +153,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory> i
 		String sql = "from ObservationHistory oh where oh.sampleId = :sampleId and oh.observationHistoryTypeId = :ohTypeId";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("sampleId", Integer.parseInt(sampleId));
 			query.setInteger("ohTypeId", Integer.parseInt(observationHistoryTypeId));
 
@@ -175,7 +175,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory> i
 		String sql = "from ObservationHistory oh where oh.value = :value and oh.observationHistoryTypeId = :typeId and oh.valueType = :valueType";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("typeId", Integer.parseInt(typeId));
 			query.setString("value", value);
 			query.setString("valueType", valueType);

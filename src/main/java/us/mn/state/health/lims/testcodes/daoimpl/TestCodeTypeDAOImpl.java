@@ -40,7 +40,7 @@ public class TestCodeTypeDAOImpl extends BaseDAOImpl<TestCodeType> implements Te
 		String sql = "from TestCodeType et where et.schemaName = :name";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("name", name);
 			TestCodeType et = (TestCodeType) query.uniqueResult();
 			// closeSession(); // CSL remove old
@@ -56,7 +56,7 @@ public class TestCodeTypeDAOImpl extends BaseDAOImpl<TestCodeType> implements Te
 		String sql = "from TestCodeType et where et.id = :id";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("id", id);
 			TestCodeType et = (TestCodeType) query.uniqueResult();
 			// closeSession(); // CSL remove old

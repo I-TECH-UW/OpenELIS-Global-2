@@ -39,7 +39,7 @@ public class TestDictionaryDAOImpl extends BaseDAOImpl<TestDictionary> implement
 	public TestDictionary getTestDictionaryForTestId(String testId) throws LIMSRuntimeException {
 		String sql = "FROM TestDictionary td where td.testId = :testId";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("testId", Integer.parseInt(testId));
 			TestDictionary testDictionary = (TestDictionary) query.uniqueResult();
 			// closeSession(); // CSL remove old

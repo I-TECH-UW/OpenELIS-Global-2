@@ -83,11 +83,11 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 
 				// Make the change to the object.
 				cloneData.setIsActive(IActionConstants.NO);
-				HibernateUtil.getSession().merge(cloneData);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
-				// HibernateUtil.getSession().evict // CSL remove old(cloneData);
-				// HibernateUtil.getSession().refresh // CSL remove old(cloneData);
+				sessionFactory.getCurrentSession().merge(cloneData);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
+				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -105,7 +105,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 						"Duplicate record or abrevation exists for " + dictionary.getDictEntry());
 			}
 
-			String id = (String) HibernateUtil.getSession().save(dictionary);
+			String id = (String) sessionFactory.getCurrentSession().save(dictionary);
 			dictionary.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
@@ -114,8 +114,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			String tableName = "DICTIONARY";
 			auditDAO.saveNewHistory(dictionary, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryDAOImpl", "insertData()", e.toString());
@@ -174,10 +174,10 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 
 		try {
 			session.merge(dictionary);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(dictionary);
-			// HibernateUtil.getSession().refresh // CSL remove old(dictionary);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(dictionary);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(dictionary);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryDAOImpl", "updateData()", e.toString());
@@ -188,9 +188,9 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 	@Override
 	public void getData(Dictionary dictionary) throws LIMSRuntimeException {
 		try {
-			Dictionary d = HibernateUtil.getSession().get(Dictionary.class, dictionary.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			Dictionary d = sessionFactory.getCurrentSession().get(Dictionary.class, dictionary.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (d != null) {
 				PropertyUtils.copyProperties(dictionary, d);
 			} else {
@@ -208,13 +208,13 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 		List list = new Vector();
 		try {
 			String sql = "from Dictionary";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryDAOImpl", "getAllDictionarys()", e.toString());
@@ -233,13 +233,13 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 
 			// bugzilla 1399
 			String sql = "from Dictionary d order by d.dictionaryCategory.categoryName, d.dictEntry";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryDAOImpl", "getPageOfDictionarys()", e.toString());
@@ -269,14 +269,14 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 				newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
 				sql = "from Dictionary d where trim(lower (d.dictEntry)) like :param  order by d.dictionaryCategory.categoryName, d.dictEntry";
 			}
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", newSearchStr);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in Dictionary getPageOfSearchedDictionarys()", e);
@@ -290,9 +290,9 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 	public Dictionary readDictionary(String idString) {
 		Dictionary dictionary = null;
 		try {
-			dictionary = HibernateUtil.getSession().get(Dictionary.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			dictionary = sessionFactory.getCurrentSession().get(Dictionary.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryDAOImpl", "readDictionary()", e.toString());
@@ -353,7 +353,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			}
 
 			sql += " order by d.dictEntry asc";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param1", filter + "%");
 			if (!StringUtil.isNullorNill(categoryFilter)) {
 				query.setParameter("param2", categoryFilter);
@@ -361,8 +361,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 
 			@SuppressWarnings("unchecked")
 			List<Dictionary> list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return list;
 
@@ -409,7 +409,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			} else {
 				sql += " order by d.sortOrder asc";
 			}
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param1", fieldValue);
 
 			@SuppressWarnings("unchecked")
@@ -445,13 +445,13 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			// instead get the list in this sortorder and determine the index of
 			// record with id = currentId
 			String sql = "select d.id from Dictionary d" + " order by d.dictionaryCategory.categoryName, d.dictEntry";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -478,13 +478,13 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			// record with id = currentId
 			String sql = "select d.id from Dictionary d"
 					+ " order by d.dictionaryCategory.categoryName desc, d.dictEntry desc";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -553,12 +553,12 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 
 			sql = "from Dictionary d where (d.localAbbreviation = :param) and d.isActive= " + enquote(YES);
 
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", dictionary.getLocalAbbreviation());
 
 			List list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				d = (Dictionary) list.get(0);
@@ -593,7 +593,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 						+ " || trim(d.dictEntry) = :param and d.localAbbreviation is not null))" + " and d.isActive= "
 						+ enquote(YES);
 			}
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			if (ignoreCase) {
 				query.setParameter("param", dictionary.getDictEntry().toLowerCase().trim());
@@ -602,8 +602,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 			}
 
 			List list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				d = (Dictionary) list.get(0);
@@ -671,12 +671,12 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 				newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
 				sql = "select count (*) from Dictionary d where trim(lower (d.dictEntry)) like :param ";
 			}
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", newSearchStr);
 
 			List results = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			if (results != null && results.get(0) != null) {
 				if (results.get(0) != null) {
@@ -699,7 +699,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 		String sql = "From Dictionary d where d.dictionaryCategory.id = :categoryId";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("categoryId", Integer.parseInt(categoryId));
 			List<Dictionary> queryResults = query.list();
 
@@ -716,7 +716,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 	@Override
 	public Dictionary getDictionaryById(String dictionaryId) throws LIMSRuntimeException {
 		try {
-			Dictionary dictionary = HibernateUtil.getSession().get(Dictionary.class, dictionaryId);
+			Dictionary dictionary = sessionFactory.getCurrentSession().get(Dictionary.class, dictionaryId);
 			// closeSession(); // CSL remove old
 			return dictionary;
 		} catch (Exception e) {
@@ -732,7 +732,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 		String sql = "From Dictionary d where d.dictEntry = :dictionaryEntry and d.dictionaryCategory.description = :description";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("dictionaryEntry", dictionaryName);
 			query.setParameter("description", categoryDescription);
 
@@ -752,7 +752,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 		String sql = "from Dictionary d where d.dictEntry = :dictionaryEntry";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("dictionaryEntry", dictEntry);
 			Dictionary dictionary = (Dictionary) query.uniqueResult();
 			// closeSession(); // CSL remove old
@@ -768,7 +768,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary> implements Dictio
 	public Dictionary getDataForId(String dictionaryId) throws LIMSRuntimeException {
 		String sql = "from Dictionary d where d.id = :id";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("id", Integer.parseInt(dictionaryId));
 			Dictionary dictionary = (Dictionary) query.uniqueResult();
 			// closeSession(); // CSL remove old

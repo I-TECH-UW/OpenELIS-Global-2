@@ -37,13 +37,13 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 
 		try {
 			String sql = "from PatientIdentity pi where pi.patientId = :Id";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("Id", new Integer(id));
 
 			identities = query.list();
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("PatientIdentityDAOImpl", "getPatientIdentitiesForPatient()", e.toString());
@@ -56,15 +56,15 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 	@Override
 	public boolean insertData(PatientIdentity patientIdentity) throws LIMSRuntimeException {
 		try {
-			String id = (String) HibernateUtil.getSession().save(patientIdentity);
+			String id = (String) sessionFactory.getCurrentSession().save(patientIdentity);
 			patientIdentity.setId(id);
 
 			String sysUserId = patientIdentity.getSysUserId();
 			String tableName = "PATIENT_IDENTITY";
 			auditDAO.saveNewHistory(patientIdentity, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("PatientIdentityDAOImpl", "insertData()", e.toString());
@@ -91,11 +91,11 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 		}
 
 		try {
-			HibernateUtil.getSession().merge(patientIdentity);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(patientIdentity);
-			// HibernateUtil.getSession().refresh // CSL remove old(patientIdentity);
+			sessionFactory.getCurrentSession().merge(patientIdentity);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(patientIdentity);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(patientIdentity);
 		} catch (Exception e) {
 			LogEvent.logError("patientIdentityDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in patientIdentity updateData()", e);
@@ -105,9 +105,9 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 	public PatientIdentity getCurrentPatientIdentity(String id) {
 		PatientIdentity current = null;
 		try {
-			current = HibernateUtil.getSession().get(PatientIdentity.class, id);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			current = sessionFactory.getCurrentSession().get(PatientIdentity.class, id);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PatientIdentityDAOImpl", "readSampleHuman()", e.toString());
 			throw new LIMSRuntimeException("Error in PatientIdentity getCurrentPatientIdentity()", e);
@@ -127,9 +127,9 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 			String tableName = "PATIENT_IDENTITY";
 			auditDAO.saveHistory(newData, oldData, activeUserId, event, tableName);
 
-			HibernateUtil.getSession().delete(oldData);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			sessionFactory.getCurrentSession().delete(oldData);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 
@@ -142,9 +142,9 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 
 		PatientIdentity patientIdentity = null;
 		try {
-			patientIdentity = HibernateUtil.getSession().get(PatientIdentity.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			patientIdentity = sessionFactory.getCurrentSession().get(PatientIdentity.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PatientIdentityDAOImpl", "readPatientIdentity()", e.toString());
 			throw new LIMSRuntimeException("Error in PatientIdentity readPatientIdentity()", e);
@@ -160,14 +160,14 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 		String sql = "From PatientIdentity pi where pi.identityData = :value and pi.identityTypeId = :identityType";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("value", value);
 			query.setInteger("identityType", Integer.parseInt(identityType));
 
 			List<PatientIdentity> identities = query.list();
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return identities;
 		} catch (Exception e) {
@@ -183,7 +183,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 		String sql = "from PatientIdentity pi where pi.patientId = :patientId and pi.identityTypeId = :typeId";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("patientId", Integer.parseInt(patientId));
 			query.setInteger("typeId", Integer.parseInt(identityTypeId));
 

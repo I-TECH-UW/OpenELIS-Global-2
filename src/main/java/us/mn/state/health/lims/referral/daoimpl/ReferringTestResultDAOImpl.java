@@ -46,7 +46,7 @@ public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult>
 	@Override
 	public boolean insertData(ReferringTestResult referringTestResult) throws LIMSRuntimeException {
 		try {
-			String id = (String) HibernateUtil.getSession().save(referringTestResult);
+			String id = (String) sessionFactory.getCurrentSession().save(referringTestResult);
 			referringTestResult.setId(id);
 
 			auditDAO.saveNewHistory(referringTestResult, referringTestResult.getSysUserId(), "REFERRING_TEST_RESULT");
@@ -64,7 +64,7 @@ public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult>
 			throws LIMSRuntimeException {
 		String sql = "from ReferringTestResult rtr where rtr.sampleItemId = :sampleItemId";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("sampleItemId", Integer.parseInt(sampleItemId));
 			List<ReferringTestResult> list = query.list();
 			// closeSession(); // CSL remove old
@@ -79,7 +79,7 @@ public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult>
 	public List<ReferringTestResult> getResultsInDateRange(Date lowDate, Date highDate) throws LIMSRuntimeException {
 		String sql = "from ReferringTestResult rtr where rtr.lastupdated BETWEEN :lowDate AND :highDate";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setDate("lowDate", lowDate);
 			query.setDate("highDate", highDate);
 

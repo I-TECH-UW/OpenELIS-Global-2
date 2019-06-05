@@ -74,9 +74,9 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer> implements Test
 				TestTrailer data = (TestTrailer) testTrailers.get(i);
 				// bugzilla 2206
 				data = readTestTrailer(data.getId());
-				HibernateUtil.getSession().delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(data);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -94,7 +94,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer> implements Test
 						"Duplicate record exists for " + testTrailer.getTestTrailerName());
 			}
 
-			String id = (String) HibernateUtil.getSession().save(testTrailer);
+			String id = (String) sessionFactory.getCurrentSession().save(testTrailer);
 			testTrailer.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
@@ -103,8 +103,8 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer> implements Test
 			String tableName = "TEST_TRAILER";
 			auditDAO.saveNewHistory(testTrailer, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestTrailerDAOImpl", "insertData()", e.toString());
@@ -145,11 +145,11 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer> implements Test
 		}
 
 		try {
-			HibernateUtil.getSession().merge(testTrailer);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(testTrailer);
-			// HibernateUtil.getSession().refresh // CSL remove old(testTrailer);
+			sessionFactory.getCurrentSession().merge(testTrailer);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(testTrailer);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(testTrailer);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestTrailerDAOImpl", "updateData()", e.toString());
@@ -160,9 +160,9 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer> implements Test
 	@Override
 	public void getData(TestTrailer testTrailer) throws LIMSRuntimeException {
 		try {
-			TestTrailer uom = (TestTrailer) HibernateUtil.getSession().get(TestTrailer.class, testTrailer.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			TestTrailer uom = (TestTrailer) sessionFactory.getCurrentSession().get(TestTrailer.class, testTrailer.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (uom != null) {
 				PropertyUtils.copyProperties(testTrailer, uom);
 			} else {
@@ -180,12 +180,12 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer> implements Test
 		List list = new Vector();
 		try {
 			String sql = "from TestTrailer";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestTrailerDAOImpl", "getAllTestTrailers()", e.toString());
@@ -204,13 +204,13 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer> implements Test
 
 			// bugzilla 1399
 			String sql = "from TestTrailer t order by t.testTrailerName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestTrailerDAOImpl", "getPageOfTestTrailers()", e.toString());
@@ -223,9 +223,9 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer> implements Test
 	public TestTrailer readTestTrailer(String idString) {
 		TestTrailer tr = null;
 		try {
-			tr = (TestTrailer) HibernateUtil.getSession().get(TestTrailer.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			tr = (TestTrailer) sessionFactory.getCurrentSession().get(TestTrailer.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestTrailerDAOImpl", "readTestTrailer()", e.toString());
@@ -252,12 +252,12 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer> implements Test
 	public TestTrailer getTestTrailerByName(TestTrailer testTrailer) throws LIMSRuntimeException {
 		try {
 			String sql = "from TestTrailer t where t.testTrailerName = :param";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", testTrailer.getTestTrailerName());
 
 			List list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			TestTrailer t = null;
 			if (list.size() > 0) {
 				t = (TestTrailer) list.get(0);
@@ -278,12 +278,12 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer> implements Test
 		List list = new Vector();
 		try {
 			String sql = "from TestTrailer t where upper(t.testTrailerName) like upper(:param) order by upper(t.testTrailerName)";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", filter + "%");
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestTrailerDAOImpl", "getTestTrailers()", e.toString());
@@ -305,7 +305,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer> implements Test
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.testTrailerName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -327,7 +327,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer> implements Test
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t order by t.testTrailerName desc where name <= " + enquote(id);
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -350,7 +350,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer> implements Test
 			// not case sensitive hemolysis and Hemolysis are considered
 			// duplicates
 			String sql = "from TestTrailer t where trim(lower(t.testTrailerName)) = :param and t.id != :param2";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", testTrailer.getTestTrailerName().toLowerCase().trim());
 
 			// initialize with 0 (for new records where no id has been generated
@@ -362,8 +362,8 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer> implements Test
 			query.setParameter("param2", testTrailerId);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;

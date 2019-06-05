@@ -75,9 +75,9 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 			for (Object note : notes) {
 				Note data = (Note) note;
 				data = readNote(data.getId());
-				HibernateUtil.getSession().delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(data);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 
@@ -90,7 +90,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 	public boolean insertData(Note note) throws LIMSRuntimeException {
 
 		try {
-			String id = (String) HibernateUtil.getSession().save(note);
+			String id = (String) sessionFactory.getCurrentSession().save(note);
 			note.setId(id);
 
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
@@ -98,8 +98,8 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 			String tableName = "NOTE";
 			auditDAO.saveNewHistory(note, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 
@@ -137,11 +137,11 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 		}
 
 		try {
-			HibernateUtil.getSession().merge(note);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(note);
-			// HibernateUtil.getSession().refresh // CSL remove old(note);
+			sessionFactory.getCurrentSession().merge(note);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(note);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(note);
 		} catch (Exception e) {
 			LogEvent.logError("NoteDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in Note updateData()", e);
@@ -151,9 +151,9 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 	@Override
 	public void getData(Note note) throws LIMSRuntimeException {
 		try {
-			Note nt = (Note) HibernateUtil.getSession().get(Note.class, note.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			Note nt = (Note) sessionFactory.getCurrentSession().get(Note.class, note.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (nt != null) {
 				PropertyUtils.copyProperties(note, nt);
 
@@ -170,7 +170,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 	@Override
 	public Note getData(String noteId) throws LIMSRuntimeException {
 		try {
-			Note note = (Note) HibernateUtil.getSession().get(Note.class, noteId);
+			Note note = (Note) sessionFactory.getCurrentSession().get(Note.class, noteId);
 			// closeSession(); // CSL remove old
 			return note;
 		} catch (Exception e) {
@@ -186,10 +186,10 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 		List<Note> list;
 		try {
 			String sql = "from Note";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("NoteDAOImpl", "getAllNotes()", e.toString());
@@ -207,13 +207,13 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 			// bugzilla 2571 go through ReferenceTablesDAO to get reference tables info
 			String sql = "from Note nt order by nt.referenceTableId, nt.referenceId,nt.noteType";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 
@@ -227,9 +227,9 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 	public Note readNote(String idString) {
 		Note note;
 		try {
-			note = (Note) HibernateUtil.getSession().get(Note.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			note = (Note) sessionFactory.getCurrentSession().get(Note.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 
 			LogEvent.logError("NoteDAOImpl", "readNote()", e.toString());
@@ -257,14 +257,14 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 		try {
 
 			String sql = "from Note n where n.referenceId = :refId and n.referenceTableId = :refTableId order by n.noteType desc, n.lastupdated desc";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("refId", Integer.parseInt(note.getReferenceId()));
 
 			query.setInteger("refTableId", Integer.parseInt(note.getReferenceTableId()));
 
 			List list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			return list;
 
 		} catch (Exception e) {
@@ -278,15 +278,15 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 	public List<Note> getNotesByNoteTypeRefIdRefTable(Note note) throws LIMSRuntimeException {
 		try {
 			String sql = "from Note n where n.referenceId = :refId and n.referenceTableId = :refTableId and n.noteType = :noteType order by n.lastupdated";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("refId", Integer.parseInt(note.getReferenceId()));
 
 			query.setInteger("refTableId", Integer.parseInt(note.getReferenceTableId()));
 			query.setParameter("noteType", note.getNoteType());
 
 			List<Note> list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			return list;
 
 		} catch (Exception e) {
@@ -310,13 +310,13 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 		try {
 			String sql = "select n.id from Note n " + " order by n.referenceTableId, n.referenceId, n.noteType";
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -339,13 +339,13 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 			String sql = "select n.id from Note n "
 					+ " order by n.referenceTableId desc, n.referenceId desc, n.noteType desc";
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -364,7 +364,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 			List<Note> list;
 
 			String sql = "from Note t where trim(lower(t.noteType)) = :noteType and t.referenceId = :referenceId and t.referenceTableId = :referenceTableId and trim(lower(t.text)) = :param4 and trim(lower(t.subject)) = :param5 and t.id != :noteId";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("noteType", note.getNoteType().toLowerCase().trim());
 			query.setInteger("referenceId", Integer.parseInt(note.getReferenceId()));
 
@@ -377,8 +377,8 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 			query.setInteger("noteId", noteId);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return list.size() > 0;
 
@@ -395,7 +395,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 		String sql = "FROM Note n where n.referenceId = :refId and n.referenceTableId = :tableId and  n.subject = :subject";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("refId", Integer.parseInt(refId));
 			query.setInteger("tableId", Integer.parseInt(table_id));
 			query.setString("subject", subject);
@@ -418,7 +418,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 		String sql = "FROM Note n where n.referenceId = :refId and n.referenceTableId = :tableId order by n.lastupdated asc";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("refId", Integer.parseInt(refId));
 			query.setInteger("tableId", Integer.parseInt(table_id));
 
@@ -440,7 +440,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 		String sql = "FROM Note n where n.referenceId = :refId and n.referenceTableId = :tableId and n.noteType in ( :filter ) order by n.lastupdated asc";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("refId", Integer.parseInt(objectId));
 			query.setInteger("tableId", Integer.parseInt(tableId));
 			query.setParameterList("filter", filter);
@@ -462,7 +462,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note> implements NoteDAO {
 		String sql = "FROM Note n where n.noteType = :type and n.referenceTableId = :referenceTableId and n.lastupdated between :lowDate and :highDate";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("type", noteType);
 			query.setInteger("referenceTableId", Integer.parseInt(referenceTableId));
 			query.setDate("lowDate", lowDate);

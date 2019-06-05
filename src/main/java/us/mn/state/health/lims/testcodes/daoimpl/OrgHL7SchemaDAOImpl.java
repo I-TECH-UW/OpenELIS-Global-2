@@ -40,7 +40,7 @@ public class OrgHL7SchemaDAOImpl extends BaseDAOImpl<OrganizationHL7Schema> impl
 		String sql = "from OrganizationHL7Schema hs where hs.compoundId.organizationId = :id";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("id", orgId);
 			OrganizationHL7Schema hs = (OrganizationHL7Schema) query.uniqueResult();
 			// closeSession(); // CSL remove old

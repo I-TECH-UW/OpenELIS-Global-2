@@ -47,7 +47,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder> impleme
 		String sql = "from ElectronicOrder eo where eo.externalId = :externalid order by id";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("externalid", id);
 			@SuppressWarnings("unchecked")
 			List<ElectronicOrder> eOrders = query.list();
@@ -65,7 +65,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder> impleme
 		String sql = "from ElectronicOrder eo where eo.patient.id = :patientid";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			query.setString("patientid", id);
 			List<ElectronicOrder> eorders = query.list();
@@ -81,7 +81,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder> impleme
 	@Override
 	public void insertData(ElectronicOrder eOrder) throws LIMSRuntimeException {
 		try {
-			String id = (String) HibernateUtil.getSession().save(eOrder);
+			String id = (String) sessionFactory.getCurrentSession().save(eOrder);
 			eOrder.setId(id);
 
 			new AuditTrailDAOImpl().saveNewHistory(eOrder, eOrder.getSysUserId(), "ELECTROINIC_ORDER");
@@ -102,11 +102,11 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder> impleme
 			auditDAO.saveHistory(eOrder, oldOrder, eOrder.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
 					"ELECTROINIC_ORDER");
 
-			HibernateUtil.getSession().merge(eOrder);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(eOrder);
-			// HibernateUtil.getSession().refresh // CSL remove old(eOrder);
+			sessionFactory.getCurrentSession().merge(eOrder);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(eOrder);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(eOrder);
 		} catch (HibernateException e) {
 			handleException(e, "updateData");
 		}
@@ -114,7 +114,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder> impleme
 
 	public ElectronicOrder readOrder(String idString) {
 		try {
-			ElectronicOrder eOrder = (ElectronicOrder) HibernateUtil.getSession().get(ElectronicOrder.class, idString);
+			ElectronicOrder eOrder = (ElectronicOrder) sessionFactory.getCurrentSession().get(ElectronicOrder.class, idString);
 			// closeSession(); // CSL remove old
 			return eOrder;
 		} catch (HibernateException e) {
@@ -130,10 +130,10 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder> impleme
 		List<ElectronicOrder> list = new Vector<>();
 		try {
 			String sql = "from ElectronicOrder";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "getAllElectronicOrders");
 		}
@@ -148,15 +148,15 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder> impleme
 		List<ElectronicOrder> list = new Vector<>();
 		try {
 			if (order.equals(ElectronicOrder.SortOrder.LAST_UPDATED)) {
-				list = HibernateUtil.getSession().createCriteria(ElectronicOrder.class)
+				list = sessionFactory.getCurrentSession().createCriteria(ElectronicOrder.class)
 						.addOrder(Order.desc("lastupdated")).list();
 			} else {
 
-				list = HibernateUtil.getSession().createCriteria(ElectronicOrder.class)
+				list = sessionFactory.getCurrentSession().createCriteria(ElectronicOrder.class)
 						.addOrder(Order.asc(order.getValue())).addOrder(Order.desc("lastupdated")).list();
 			}
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "getAllElectronicOrdersOrderedBy");
 		}

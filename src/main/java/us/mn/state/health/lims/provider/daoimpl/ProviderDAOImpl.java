@@ -76,9 +76,9 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider> implements ProviderDA
 				Provider data = (Provider) providers.get(i);
 				// bugzilla 2206
 				data = readProvider(data.getId());
-				HibernateUtil.getSession().delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(data);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -98,8 +98,8 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider> implements ProviderDA
 			String tableName = "PROVIDER";
 			auditDAO.saveNewHistory(provider, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("ProviderDAOImpl", "insertData()", e.toString());
@@ -129,11 +129,11 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider> implements ProviderDA
 		}
 
 		try {
-			HibernateUtil.getSession().merge(provider);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(provider);
-			// HibernateUtil.getSession().refresh // CSL remove old(provider);
+			sessionFactory.getCurrentSession().merge(provider);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(provider);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(provider);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ProviderDAOImpl", "updateData()", e.toString());
@@ -144,9 +144,9 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider> implements ProviderDA
 	@Override
 	public void getData(Provider provider) throws LIMSRuntimeException {
 		try {
-			Provider prov = HibernateUtil.getSession().get(Provider.class, provider.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			Provider prov = sessionFactory.getCurrentSession().get(Provider.class, provider.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (prov != null) {
 				PropertyUtils.copyProperties(provider, prov);
 			} else {
@@ -164,10 +164,10 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider> implements ProviderDA
 		List list = new Vector();
 		try {
 			String sql = "from Provider";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ProviderDAOImpl", "getAllProviders()", e.toString());
@@ -185,13 +185,13 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider> implements ProviderDA
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from Provider p order by p.id";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ProviderDAOImpl", "getPageOfProviders()", e.toString());
@@ -204,9 +204,9 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider> implements ProviderDA
 	public Provider readProvider(String idString) {
 		Provider provider = null;
 		try {
-			provider = HibernateUtil.getSession().get(Provider.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			provider = sessionFactory.getCurrentSession().get(Provider.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ProviderDAOImpl", "readProvider()", e.toString());
@@ -236,12 +236,12 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider> implements ProviderDA
 		List<Provider> list = null;
 		try {
 			String sql = "from Provider p where p.person.id = :personId";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("personId", Integer.parseInt(person.getId()));
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("ProviderDAOImpl", "getProviderByPerson()", e.toString());
 			throw new LIMSRuntimeException("Error in Provider getProviderByPerson()", e);

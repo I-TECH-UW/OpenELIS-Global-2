@@ -74,9 +74,9 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements 
 				UnitOfMeasure data = (UnitOfMeasure) unitOfMeasure;
 
 				data = readUnitOfMeasure(data.getId());
-				HibernateUtil.getSession().delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(data);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -95,7 +95,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements 
 						"Duplicate record exists for " + unitOfMeasure.getUnitOfMeasureName());
 			}
 
-			String id = (String) HibernateUtil.getSession().save(unitOfMeasure);
+			String id = (String) sessionFactory.getCurrentSession().save(unitOfMeasure);
 			unitOfMeasure.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
@@ -104,8 +104,8 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements 
 			String tableName = "UNIT_OF_MEASURE";
 			auditDAO.saveNewHistory(unitOfMeasure, "1", tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("UnitOfMeasureDAOImpl", "insertData()", e.toString());
@@ -142,11 +142,11 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements 
 		}
 
 		try {
-			HibernateUtil.getSession().merge(unitOfMeasure);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(unitOfMeasure);
-			// HibernateUtil.getSession().refresh // CSL remove old(unitOfMeasure);
+			sessionFactory.getCurrentSession().merge(unitOfMeasure);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(unitOfMeasure);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(unitOfMeasure);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("UnitOfMeasureDAOImpl", "updateData()", e.toString());
@@ -158,7 +158,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements 
 	public UnitOfMeasure getUnitOfMeasureById(String uomId) throws LIMSRuntimeException {
 		String sql = "from UnitOfMeasure uom where id = :id";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("id", Integer.parseInt(uomId));
 			UnitOfMeasure uom = (UnitOfMeasure) query.uniqueResult();
 			// closeSession(); // CSL remove old
@@ -173,10 +173,10 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements 
 	@Override
 	public void getData(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException {
 		try {
-			UnitOfMeasure uom = (UnitOfMeasure) HibernateUtil.getSession().get(UnitOfMeasure.class,
+			UnitOfMeasure uom = (UnitOfMeasure) sessionFactory.getCurrentSession().get(UnitOfMeasure.class,
 					unitOfMeasure.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (uom != null) {
 				PropertyUtils.copyProperties(unitOfMeasure, uom);
 			} else {
@@ -194,12 +194,12 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements 
 		List list;
 		try {
 			String sql = "from UnitOfMeasure";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("UnitOfMeasureDAOImpl", "getAllUnitOfMeasures()", e.toString());
@@ -213,12 +213,12 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements 
 		List list;
 		try {
 			String sql = "from UnitOfMeasure";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("UnitOfMeasureDAOImpl", "getAllUnitOfMeasures()", e.toString());
@@ -230,7 +230,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements 
 //		String sql = "from TestSection t where t.isActive = 'Y' order by t.sortOrderInt";
 //
 //		try {
-//			Query query = HibernateUtil.getSession().createQuery(sql);
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 //			@SuppressWarnings("unchecked")
 //			List<TestSection> sections = query.list();
 //			// closeSession(); // CSL remove old
@@ -250,13 +250,13 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements 
 
 			// bugzilla 1399
 			String sql = "from UnitOfMeasure u order by u.unitOfMeasureName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("UnitOfMeasureDAOImpl", "getPageOfUnitOfMeasures()", e.toString());
@@ -269,9 +269,9 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements 
 	public UnitOfMeasure readUnitOfMeasure(String idString) {
 		UnitOfMeasure data;
 		try {
-			data = (UnitOfMeasure) HibernateUtil.getSession().get(UnitOfMeasure.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			data = (UnitOfMeasure) sessionFactory.getCurrentSession().get(UnitOfMeasure.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("UnitOfMeasureDAOImpl", "readUnitOfMeasure()", e.toString());
@@ -298,12 +298,12 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements 
 	public UnitOfMeasure getUnitOfMeasureByName(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException {
 		try {
 			String sql = "from UnitOfMeasure u where u.unitOfMeasureName = :param";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", unitOfMeasure.getUnitOfMeasureName());
 
 			List list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			UnitOfMeasure data = null;
 			if (list.size() > 0) {
 				data = (UnitOfMeasure) list.get(0);
@@ -331,7 +331,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements 
 		List list;
 		try {
 			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.unitOfMeasureName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -353,7 +353,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements 
 		List list;
 		try {
 			String sql = "from " + table + " t order by t.unitOfMeasureName desc where name <= " + enquote(id);
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -375,7 +375,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements 
 			// not case sensitive hemolysis and Hemolysis are considered
 			// duplicates
 			String sql = "from UnitOfMeasure t where trim(lower(t.unitOfMeasureName)) = :param and t.id != :param2";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", unitOfMeasure.getUnitOfMeasureName().toLowerCase().trim());
 
 			// initialize with 0 (for new records where no id has been generated
@@ -387,8 +387,8 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements 
 			query.setInteger("param2", Integer.parseInt(unitOfMeasureId));
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return !list.isEmpty();
 

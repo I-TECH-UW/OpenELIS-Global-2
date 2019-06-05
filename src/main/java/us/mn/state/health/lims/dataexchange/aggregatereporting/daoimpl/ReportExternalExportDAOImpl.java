@@ -79,7 +79,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 		String sql = "from ReportExternalExport rq where rq.sentDate >= :lower and rq.sentDate <= :upper";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setTimestamp("lower", lower);
 			query.setTimestamp("upper", upper);
 			List<ReportExternalExport> reports = query.list();
@@ -97,7 +97,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 	@Override
 	public void insertReportExternalExport(ReportExternalExport report) throws LIMSRuntimeException {
 		try {
-			String id = (String) HibernateUtil.getSession().save(report);
+			String id = (String) sessionFactory.getCurrentSession().save(report);
 			report.setId(id);
 			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
@@ -109,11 +109,11 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 	public void updateReportExternalExport(ReportExternalExport report) throws LIMSRuntimeException {
 
 		try {
-			HibernateUtil.getSession().merge(report);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(report);
-			// HibernateUtil.getSession().refresh // CSL remove old(report);
+			sessionFactory.getCurrentSession().merge(report);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(report);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(report);
 		} catch (Exception e) {
 			handleException(e, "updateReportExternalExport");
 		}
@@ -123,7 +123,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 	public ReportExternalExport readReportExternalExport(String idString) throws LIMSRuntimeException {
 
 		try {
-			ReportExternalExport data = (ReportExternalExport) HibernateUtil.getSession()
+			ReportExternalExport data = (ReportExternalExport) sessionFactory.getCurrentSession()
 					.get(ReportExternalExport.class, idString);
 			// closeSession(); // CSL remove old
 			return data;
@@ -136,7 +136,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 	@SuppressWarnings("unchecked")
 	private List<ReportExternalExport> handleListResultWithTypeId(String sql, String typeId) {
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger(TYPE_PARAM, Integer.parseInt(typeId));
 			List<ReportExternalExport> reports = query.list();
 
@@ -152,7 +152,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 
 	private ReportExternalExport handleMaxResultWithTypeId(String typeId, String sql) {
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger(TYPE_PARAM, Integer.parseInt(typeId));
 			ReportExternalExport report = (ReportExternalExport) query.setMaxResults(1).uniqueResult();
 
@@ -171,7 +171,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 		String sql = "From ReportExternalExport ree where ree.sentDate IS NOT NULL order by ree.sentDate DESC";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			ReportExternalExport report = (ReportExternalExport) query.setMaxResults(1).uniqueResult();
 			// closeSession(); // CSL remove old
 			if (report != null) {
@@ -188,7 +188,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 		String sql = "From ReportExternalExport ree order by ree.collectionDate DESC";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			ReportExternalExport report = (ReportExternalExport) query.setMaxResults(1).uniqueResult();
 			// closeSession(); // CSL remove old
 			if (report != null) {
@@ -205,7 +205,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 		String sql = "From ReportExternalExport ree where ree.eventDate >= :eventDate and ree.eventDate < :nextDay and ree.typeId = :typeId";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setDate("eventDate", report.getEventDate());
 			query.setDate("nextDay", new Timestamp(report.getEventDate().getTime() + DAY_IN_MILLSEC));
 			query.setInteger("typeId", Integer.parseInt(report.getTypeId()));
@@ -227,7 +227,7 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 	@Override
 	public void delete(ReportExternalExport report) throws LIMSRuntimeException {
 		try {
-			HibernateUtil.getSession().delete(readReportExternalExport(report.getId()));
+			sessionFactory.getCurrentSession().delete(readReportExternalExport(report.getId()));
 			// closeSession(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "delete");

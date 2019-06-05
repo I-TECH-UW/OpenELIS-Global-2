@@ -45,10 +45,10 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType> imple
 		List<OrganizationType> list = null;
 		try {
 			String sql = "from OrganizationType";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("OrganizationTypeDAOImpl", "getAllOrganizationTypess()", e.toString());
 			throw new LIMSRuntimeException("Error in Organization getAllOrganizationTypes()", e);
@@ -62,14 +62,14 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType> imple
 		String sql = null;
 		try {
 			sql = "from OrganizationType o where o.name = :name";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			query.setString("name", name);
 
 			@SuppressWarnings("unchecked")
 			List<OrganizationType> list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return list.size() > 0 ? list.get(0) : null;
 
@@ -85,7 +85,7 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType> imple
 		String sql = null;
 		try {
 			sql = "from OrganizationType ot WHERE ot.name IN (:names) ";
-			Session session = HibernateUtil.getSession();
+			Session session = sessionFactory.getCurrentSession();
 			org.hibernate.Query query = session.createQuery(sql).setParameterList("names", names);
 			@SuppressWarnings("unchecked")
 			OrganizationType ot = ((List<OrganizationType>) query.list()).get(0);

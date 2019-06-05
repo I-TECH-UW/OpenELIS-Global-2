@@ -82,10 +82,10 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress>
 			auditDAO.saveHistory(organizationAddress, oldData, organizationAddress.getSysUserId(),
 					IActionConstants.AUDIT_TRAIL_UPDATE, "organization_address");
 
-			HibernateUtil.getSession().merge(organizationAddress);
+			sessionFactory.getCurrentSession().merge(organizationAddress);
 			// closeSession(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(organizationAddress);
-			// HibernateUtil.getSession().refresh // CSL remove old(organizationAddress);
+			// sessionFactory.getCurrentSession().evict // CSL remove old(organizationAddress);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(organizationAddress);
 		} catch (HibernateException e) {
 			handleException(e, "update");
 		}
@@ -94,7 +94,7 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress>
 
 	public OrganizationAddress readOrganizationAddress(OrganizationAddress organizationAddress) {
 		try {
-			OrganizationAddress oldOrganizationAddress = HibernateUtil.getSession().get(OrganizationAddress.class,
+			OrganizationAddress oldOrganizationAddress = sessionFactory.getCurrentSession().get(OrganizationAddress.class,
 					organizationAddress.getCompoundId());
 			// closeSession(); // CSL remove old
 

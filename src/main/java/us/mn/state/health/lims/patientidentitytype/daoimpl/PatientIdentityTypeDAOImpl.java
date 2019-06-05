@@ -51,11 +51,11 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType>
 		List<PatientIdentityType> list = null;
 		try {
 			String sql = "from PatientIdentityType";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "getAllPatientIdenityTypes");
 		}
@@ -72,14 +72,14 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType>
 						"Duplicate record exists for " + patientIdentityType.getIdentityType());
 			}
 
-			String id = (String) HibernateUtil.getSession().save(patientIdentityType);
+			String id = (String) sessionFactory.getCurrentSession().save(patientIdentityType);
 			patientIdentityType.setId(id);
 
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveNewHistory(patientIdentityType, patientIdentityType.getSysUserId(), "PATIENT_IDENTITY_TYPE");
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (HibernateException e) {
 			handleException(e, "insertData");
 		} catch (LIMSDuplicateRecordException e) {
@@ -92,7 +92,7 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType>
 			throws LIMSRuntimeException {
 		try {
 			String sql = "from PatientIdentityType t where upper(t.identityType) = :identityType";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			query.setString("identityType", patientIdentityType.getIdentityType().toUpperCase());
 
@@ -113,7 +113,7 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType>
 		String sql = "from PatientIdentityType t where t.identityType = :identityType";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("identityType", name);
 			PatientIdentityType pit = (PatientIdentityType) query.uniqueResult();
 			// closeSession(); // CSL remove old

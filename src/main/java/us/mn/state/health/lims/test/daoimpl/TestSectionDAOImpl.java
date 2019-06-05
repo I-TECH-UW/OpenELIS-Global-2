@@ -78,9 +78,9 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 				TestSection data = (TestSection) testSections.get(i);
 				// bugzilla 2206
 				data = readTestSection(data.getId());
-				HibernateUtil.getSession().delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(data);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -98,13 +98,13 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 						"Duplicate record exists for " + testSection.getTestSectionName());
 			}
 
-			String id = (String) HibernateUtil.getSession().save(testSection);
+			String id = (String) sessionFactory.getCurrentSession().save(testSection);
 			testSection.setId(id);
 
 			new AuditTrailDAOImpl().saveNewHistory(testSection, testSection.getSysUserId(), "TEST_SECTION");
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -146,11 +146,11 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 		}
 
 		try {
-			HibernateUtil.getSession().merge(testSection);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(testSection);
-			// HibernateUtil.getSession().refresh // CSL remove old(testSection);
+			sessionFactory.getCurrentSession().merge(testSection);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(testSection);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(testSection);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
@@ -161,9 +161,9 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 	@Override
 	public void getData(TestSection testSection) throws LIMSRuntimeException {
 		try {
-			TestSection testSec = (TestSection) HibernateUtil.getSession().get(TestSection.class, testSection.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			TestSection testSec = (TestSection) sessionFactory.getCurrentSession().get(TestSection.class, testSection.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (testSec != null) {
 				PropertyUtils.copyProperties(testSection, testSec);
 			} else {
@@ -181,10 +181,10 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 		List<TestSection> list = null;
 		try {
 			String sql = "from TestSection";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("TestSectionDAOImpl", "getAllTestSections()", e.toString());
 			throw new LIMSRuntimeException("Error in TestSection getAllTestSections()", e);
@@ -219,10 +219,10 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 				return list;
 			}
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestSectionDAOImpl", "getAllTestSectionsBySysUserId()", e.toString());
@@ -240,13 +240,13 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 
 			// bugzilla 1399
 			String sql = "from TestSection t order by t.organization.organizationName, t.testSectionName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestSectionDAOImpl", "getPageOfTestSections()", e.toString());
@@ -259,9 +259,9 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 	public TestSection readTestSection(String idString) {
 		TestSection ts = null;
 		try {
-			ts = (TestSection) HibernateUtil.getSession().get(TestSection.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			ts = (TestSection) sessionFactory.getCurrentSession().get(TestSection.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestSectionDAOImpl", "readCity()", e.toString());
@@ -277,11 +277,11 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 		List list = new Vector();
 		try {
 			String sql = "from TestSection t where upper(t.testSectionName) like upper(:param) order by upper(t.testSectionName)";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", filter + "%");
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestSectionDAOImpl", "getTestSections()", e.toString());
@@ -313,11 +313,11 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 				return list;
 			}
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", filter + "%");
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestSectionDAOImpl", "getTestSectionsBySysUserId()", e.toString());
@@ -345,12 +345,12 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 	public TestSection getTestSectionByName(TestSection testSection) throws LIMSRuntimeException {
 		try {
 			String sql = "from TestSection t where t.testSectionName = :param";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", testSection.getTestSectionName());
 
 			List<TestSection> list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			if (!list.isEmpty()) {
 				return list.get(0);
@@ -386,13 +386,13 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 			String sql = "select ts.id from TestSection ts "
 					+ " order by ts.organization.organizationName, ts.testSectionName";
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -420,13 +420,13 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 			String sql = "select ts.id from TestSection ts "
 					+ " order by ts.organization.organizationName desc, ts.testSectionName desc";
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -442,7 +442,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 		try {
 
 			String sql = "from TestSection t where trim(lower(t.testSectionName)) = :name and t.id != :id";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 
 			query.setParameter("name", testSection.getTestSectionName().toLowerCase().trim());
 
@@ -453,8 +453,8 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 			query.setInteger("id", Integer.parseInt(testSectionId));
 
 			List list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return !list.isEmpty();
 
@@ -469,7 +469,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 		String sql = "from TestSection t where t.isActive = 'Y' order by t.sortOrderInt";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			@SuppressWarnings("unchecked")
 			List<TestSection> sections = query.list();
 			// closeSession(); // CSL remove old
@@ -485,7 +485,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 		String sql = "from TestSection t where t.isActive = 'N' order by t.sortOrderInt";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			List<TestSection> sections = query.list();
 			// closeSession(); // CSL remove old
 			return sections;
@@ -500,7 +500,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 	public TestSection getTestSectionByName(String testSection) throws LIMSRuntimeException {
 		try {
 			String sql = "from TestSection t where t.testSectionName = :name order by t.sortOrderInt";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("name", testSection);
 
 			List<TestSection> list = query.list();
@@ -521,7 +521,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection> implements Test
 	@Override
 	public TestSection getTestSectionById(String testSectionId) {
 		try {
-			TestSection testSection = (TestSection) HibernateUtil.getSession().get(TestSection.class, testSectionId);
+			TestSection testSection = (TestSection) sessionFactory.getCurrentSession().get(TestSection.class, testSectionId);
 			// closeSession(); // CSL remove old
 			return testSection;
 		} catch (HibernateException e) {

@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
 *
 */
@@ -23,27 +23,30 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.service.menu.MenuService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.PluginMenuService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
-import us.mn.state.health.lims.menu.daoimpl.MenuDAOImpl;
 import us.mn.state.health.lims.menu.valueholder.Menu;
 
 public class MenuUtil {
 
 	private static List<MenuItem> root;
-	private static final List<Menu> insertedMenus = new ArrayList<Menu>();
-    private static final PluginMenuService pluginMenuService = PluginMenuService.getInstance();
+	private static final List<Menu> insertedMenus = new ArrayList<>();
+	private static final PluginMenuService pluginMenuService = PluginMenuService.getInstance();
+	private static final MenuService menuService = SpringContext.getBean(MenuService.class);
 
 	/**
-	 * The intent of this method is to allow menu items to be added outside of the database.  Typically
-	 * plugins
+	 * The intent of this method is to allow menu items to be added outside of the
+	 * database. Typically plugins
+	 *
 	 * @param menu The menu item to be added
 	 */
 	public static void addMenu(Menu menu) {
 		insertedMenus.add(menu);
 	}
 
-	public static void forceRebuild(){
+	public static void forceRebuild() {
 		root = null;
 	}
 
@@ -51,14 +54,14 @@ public class MenuUtil {
 		if (root == null) {
 			createTree();
 		}
-		
+
 		return root;
 	}
 
 	private static void createTree() {
-		List<Menu> menuList = new MenuDAOImpl().getAllActiveMenus();
+		List<Menu> menuList = menuService.getAllActiveMenus();
 
-		Map<String, Menu> idToMenuMap = new HashMap<String, Menu>();
+		Map<String, Menu> idToMenuMap = new HashMap<>();
 
 		for (Menu menu : menuList) {
 			idToMenuMap.put(menu.getId(), menu);
@@ -78,7 +81,7 @@ public class MenuUtil {
 
 		menuList.addAll(insertedMenus);
 
-		Map<Menu, MenuItem> menuToMenuItemMap = new HashMap<Menu, MenuItem>();
+		Map<Menu, MenuItem> menuToMenuItemMap = new HashMap<>();
 
 		for (Menu menu : menuList) {
 			createMenuItems(menuToMenuItemMap, menu);
@@ -94,8 +97,8 @@ public class MenuUtil {
 			}
 		}
 
-		sortChildren( rootWrapper);
-		
+		sortChildren(rootWrapper);
+
 		root = rootWrapper.getChildMenus();
 	}
 
@@ -105,99 +108,101 @@ public class MenuUtil {
 		menuToMenuItemMap.put(menu, menuItem);
 	}
 
-	public static String getMenuAsHTML( String contextPath){
+	public static String getMenuAsHTML(String contextPath) {
 		StringBuffer html = new StringBuffer();
 		html.append("<ul class=\"nav-menu\" id=\"main-nav\" >\n");
 		addChildMenuItems(html, getMenuTree(), contextPath, true);
 		html.append("</ul>");
 		return html.toString();
 	}
-	
-	private static void addChildMenuItems(StringBuffer html, List<MenuItem> menuTree, String contextPath, boolean topLevel) {
-		String locale = ConfigurationProperties.getInstance().getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
+
+	private static void addChildMenuItems(StringBuffer html, List<MenuItem> menuTree, String contextPath,
+			boolean topLevel) {
+		String locale = ConfigurationProperties.getInstance()
+				.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
 		int topLevelCount = 0;
-		for(MenuItem menuItem : menuTree){
+		for (MenuItem menuItem : menuTree) {
 			Menu menu = menuItem.getMenu();
-			
-			if( topLevel ){
-				if( topLevelCount == 0){
-					html.append("\t<li id=\"nav-first\" >\n");	
-				}else if(topLevelCount == menuTree.size() - 1){
-					html.append("\t<li id=\"nav-last\" >\n");	
-				}else{
+
+			if (topLevel) {
+				if (topLevelCount == 0) {
+					html.append("\t<li id=\"nav-first\" >\n");
+				} else if (topLevelCount == menuTree.size() - 1) {
+					html.append("\t<li id=\"nav-last\" >\n");
+				} else {
 					html.append("\t<li>\n");
 				}
-				
+
 				topLevelCount++;
-			}else{
+			} else {
 				html.append("\t<li>\n");
 			}
-		
-			
+
 			html.append("\t\t<a ");
 			html.append("id=\"");
 			html.append(menu.getElementId());
 			html.append("\" ");
-			
-			if( !GenericValidator.isBlankOrNull(menu.getLocalizedTooltip())){
+
+			if (!GenericValidator.isBlankOrNull(menu.getLocalizedTooltip())) {
 				html.append(" title=\"");
 				html.append(getTooltip(menu, locale));
 				html.append("\" ");
 			}
-			
-			if( menu.isOpenInNewWindow()){
+
+			if (menu.isOpenInNewWindow()) {
 				html.append(" target=\"_blank\" ");
 			}
-			
-			if( GenericValidator.isBlankOrNull(menu.getActionURL()) && GenericValidator.isBlankOrNull(menu.getClickAction())){
+
+			if (GenericValidator.isBlankOrNull(menu.getActionURL())
+					&& GenericValidator.isBlankOrNull(menu.getClickAction())) {
 				html.append(" class=\"no-link\" >");
-			}else{
+			} else {
 				html.append(" href=\"");
 				html.append(contextPath);
 				html.append(menu.getActionURL());
-				html.append("\" >"); 
+				html.append("\" >");
 			}
-						
-			html.append( getLabel(menu, locale));
-			html.append("</a>\n"); 
-			
-			if( !menuItem.getChildMenus().isEmpty()){
+
+			html.append(getLabel(menu, locale));
+			html.append("</a>\n");
+
+			if (!menuItem.getChildMenus().isEmpty()) {
 				html.append("<ul>\n");
-				addChildMenuItems(html,menuItem.getChildMenus(), contextPath, false );
+				addChildMenuItems(html, menuItem.getChildMenus(), contextPath, false);
 				html.append("</ul>\n");
 			}
-			
+
 			html.append("\t</li>\n");
 		}
-		
+
 	}
 
-    private static String getTooltip(Menu menu, String locale) {
-        String key = menu.getToolTipKey();
-        String value = pluginMenuService.getMenuLabel(locale, key);
-        if( key != value){
-            return value;
-        }
-
-        return menu.getLocalizedTooltip();
-    }
-
-    private static String getLabel(Menu menu, String locale) {
-        String key = menu.getDisplayKey();
-        String value = pluginMenuService.getMenuLabel(locale, key);
-        if( key != value){
-            return value;
-        }
-
-        return menu.getLocalizedTitle();
-    }
-
-    private static void sortChildren(MenuItem menuItem) {
-		menuItem.sortChildren();
-		
-		for( MenuItem child : menuItem.getChildMenus()){
-			sortChildren( child);
+	private static String getTooltip(Menu menu, String locale) {
+		String key = menu.getToolTipKey();
+		String value = pluginMenuService.getMenuLabel(locale, key);
+		if (key != value) {
+			return value;
 		}
-		
+
+		return menu.getLocalizedTooltip();
+	}
+
+	private static String getLabel(Menu menu, String locale) {
+		String key = menu.getDisplayKey();
+		String value = pluginMenuService.getMenuLabel(locale, key);
+		if (key != value) {
+			return value;
+		}
+
+		return menu.getLocalizedTitle();
+	}
+
+	private static void sortChildren(MenuItem menuItem) {
+		menuItem.sortChildren();
+
+		for (MenuItem child : menuItem.getChildMenus()) {
+			sortChildren(child);
+		}
+
 	}
 }

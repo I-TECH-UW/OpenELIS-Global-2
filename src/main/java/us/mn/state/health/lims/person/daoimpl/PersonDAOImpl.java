@@ -77,9 +77,9 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 				Person data = (Person) persons.get(i);
 				// bugzilla 2206
 				data = readPerson(data.getId());
-				HibernateUtil.getSession().delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(data);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -100,8 +100,8 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 			String tableName = "PERSON";
 			auditDAO.saveNewHistory(person, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("PersonDAOImpl", "insertData()", e.toString());
@@ -131,11 +131,11 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 		}
 
 		try {
-			HibernateUtil.getSession().merge(person);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(person);
-			// HibernateUtil.getSession().refresh // CSL remove old(person);
+			sessionFactory.getCurrentSession().merge(person);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(person);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(person);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("PersonDAOImpl", "updateData()", e.toString());
@@ -146,9 +146,9 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 	@Override
 	public void getData(Person person) throws LIMSRuntimeException {
 		try {
-			Person pers = HibernateUtil.getSession().get(Person.class, person.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			Person pers = sessionFactory.getCurrentSession().get(Person.class, person.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (pers != null) {
 				PropertyUtils.copyProperties(person, pers);
 			} else {
@@ -167,10 +167,10 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 		List list = new Vector();
 		try {
 			String sql = "from Person";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("PersonDAOImpl", "getAllPersons()", e.toString());
@@ -188,13 +188,13 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sql = "from Person t order by t.id";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("PersonDAOImpl", "getPageOfPersons()", e.toString());
@@ -207,9 +207,9 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 	public Person readPerson(String idString) {
 		Person person = null;
 		try {
-			person = HibernateUtil.getSession().get(Person.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			person = sessionFactory.getCurrentSession().get(Person.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("PersonDAOImpl", "readPerson()", e.toString());
@@ -238,12 +238,12 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 		List<Person> list = null;
 		try {
 			String sql = "from Person p where p.lastName = :lastName";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("lastName", lastName);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			LogEvent.logError("PersonDAOImpl", "getPersonByLastName()", e.toString());
 			throw new LIMSRuntimeException("Error in Person getPersonByLastName()", e);
@@ -260,7 +260,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 	public Person getPersonById(String personId) throws LIMSRuntimeException {
 		String sql = "From Person p where id = :personId";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("personId", Integer.parseInt(personId));
 			Person person = (Person) query.uniqueResult();
 			// closeSession(); // CSL remove old

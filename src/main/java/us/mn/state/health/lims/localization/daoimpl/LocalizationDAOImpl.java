@@ -44,7 +44,7 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements Lo
 	@Override
 	public Localization getLocalizationById(String id) throws LIMSRuntimeException {
 		try {
-			Localization localization = HibernateUtil.getSession().get(Localization.class, id);
+			Localization localization = sessionFactory.getCurrentSession().get(Localization.class, id);
 			// closeSession(); // CSL remove old
 			return localization;
 		} catch (HibernateException e) {
@@ -66,11 +66,11 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements Lo
 		}
 
 		try {
-			HibernateUtil.getSession().merge(localization);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(localization);
-			// HibernateUtil.getSession().refresh // CSL remove old(localization);
+			sessionFactory.getCurrentSession().merge(localization);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(localization);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(localization);
 		} catch (HibernateException e) {
 			handleException(e, "updateData");
 		}
@@ -78,9 +78,9 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization> implements Lo
 
 	public Localization readLocalization(String idString) {
 		try {
-			Localization localization = HibernateUtil.getSession().get(Localization.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			Localization localization = sessionFactory.getCurrentSession().get(Localization.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			return localization;
 		} catch (Exception e) {
 			handleException(e, "readLocalization");

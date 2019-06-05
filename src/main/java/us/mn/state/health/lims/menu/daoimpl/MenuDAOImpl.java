@@ -44,10 +44,10 @@ public class MenuDAOImpl extends BaseDAOImpl<Menu> implements MenuDAO {
 
 		try {
 			String sql = "from Menu";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			List<Menu> menus = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return menus;
 		} catch (HibernateException e) {
@@ -62,10 +62,10 @@ public class MenuDAOImpl extends BaseDAOImpl<Menu> implements MenuDAO {
 
 		try {
 			String sql = "from Menu m where m.isActive = true";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			List<Menu> menus = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return menus;
 		} catch (HibernateException e) {
@@ -78,11 +78,11 @@ public class MenuDAOImpl extends BaseDAOImpl<Menu> implements MenuDAO {
 	public Menu getMenuByElementId(String elementId) throws LIMSRuntimeException {
 		String sql = "From Menu m where m.elementId = :elementId";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("elementId", elementId);
 			Menu menu = (Menu) query.uniqueResult();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			return menu;
 		} catch (HibernateException e) {
 			LogEvent.logError("MenuDAOImpl", "getMenuByElementId()", e.toString());
@@ -94,11 +94,11 @@ public class MenuDAOImpl extends BaseDAOImpl<Menu> implements MenuDAO {
 	@Override
 	public void updateData(Menu menu) throws LIMSRuntimeException {
 		try {
-			HibernateUtil.getSession().merge(menu);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(menu);
-			// HibernateUtil.getSession().refresh // CSL remove old(menu);
+			sessionFactory.getCurrentSession().merge(menu);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(menu);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(menu);
 		} catch (Exception e) {
 
 			LogEvent.logError("Menu.DAOImpl", "updateData()", e.toString());

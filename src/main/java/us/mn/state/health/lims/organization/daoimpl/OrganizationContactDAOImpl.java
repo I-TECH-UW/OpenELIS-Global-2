@@ -47,7 +47,7 @@ public class OrganizationContactDAOImpl extends BaseDAOImpl<OrganizationContact>
 	public List<OrganizationContact> getListForOrganizationId(String orgId) throws LIMSRuntimeException {
 		String sql = "From OrganizationContact oc where oc.organizationId = :orgId";
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("orgId", Integer.parseInt(orgId));
 			List<OrganizationContact> contactList = query.list();
 			// closeSession(); // CSL remove old
@@ -63,7 +63,7 @@ public class OrganizationContactDAOImpl extends BaseDAOImpl<OrganizationContact>
 	public Serializable insert(OrganizationContact contact) throws LIMSRuntimeException {
 		String id = null;
 		try {
-			id = (String) HibernateUtil.getSession().save(contact);
+			id = (String) sessionFactory.getCurrentSession().save(contact);
 			contact.setId(id);
 			auditDAO.saveNewHistory(contact, contact.getSysUserId(), "organization_contact");
 			// closeSession(); // CSL remove old

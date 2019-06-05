@@ -41,7 +41,7 @@ public class SiteInformationDomainDAOImpl extends BaseDAOImpl<SiteInformationDom
 		String sql = "from SiteInformationDomain sid where sid.name = :name";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setString("name", name);
 			SiteInformationDomain domain = (SiteInformationDomain) query.uniqueResult();
 			// closeSession(); // CSL remove old

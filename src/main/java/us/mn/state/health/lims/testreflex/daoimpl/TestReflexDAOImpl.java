@@ -80,9 +80,9 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 				TestReflex data = (TestReflex) testReflexs.get(i);
 				// bugzilla 2206
 				data = readTestReflex(data.getId());
-				HibernateUtil.getSession().delete(data);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				sessionFactory.getCurrentSession().delete(data);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -103,7 +103,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 								+ TestServiceImpl.getUserLocalizedTestName(testReflex.getAddedTest()));
 			}
 
-			String id = (String) HibernateUtil.getSession().save(testReflex);
+			String id = (String) sessionFactory.getCurrentSession().save(testReflex);
 			testReflex.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
@@ -112,8 +112,8 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 			String tableName = "TEST_REFLEX";
 			auditDAO.saveNewHistory(testReflex, sysUserId, tableName);
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestReflexDAOImpl", "insertData()", e.toString());
@@ -157,11 +157,11 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 		}
 
 		try {
-			HibernateUtil.getSession().merge(testReflex);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(testReflex);
-			// HibernateUtil.getSession().refresh // CSL remove old(testReflex);
+			sessionFactory.getCurrentSession().merge(testReflex);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(testReflex);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(testReflex);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestReflexDAOImpl", "updateData()", e.toString());
@@ -172,9 +172,9 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 	@Override
 	public void getData(TestReflex testReflex) throws LIMSRuntimeException {
 		try {
-			TestReflex tr = (TestReflex) HibernateUtil.getSession().get(TestReflex.class, testReflex.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			TestReflex tr = (TestReflex) sessionFactory.getCurrentSession().get(TestReflex.class, testReflex.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (tr != null) {
 				PropertyUtils.copyProperties(testReflex, tr);
 			} else {
@@ -192,12 +192,12 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 		List list = null;
 		try {
 			String sql = "from TestReflex t order by t.test.testName, t.testAnalyte.analyte.analyteName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			// query.setMaxResults(10);
 			// query.setFirstResult(3);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestReflexDAOImpl", "getAllTestReflexs()", e.toString());
@@ -218,13 +218,13 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 			// column) for dictionary values - requires further step of getting
 			// value from dictionary table before sorting
 			String sql = "from TestReflex t order by t.test.testName, t.testAnalyte.analyte.analyteName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestReflexDAOImpl", "getPageOfTestReflexs()", e.toString());
@@ -246,12 +246,12 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 	public List getTestReflexesByTestResult(TestResult testResult) throws LIMSRuntimeException {
 		try {
 			String sql = "from TestReflex t where t.testResult.id = :testResultId";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("testResultId", Integer.parseInt(testResult.getId()));
 
 			List list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return list;
 
@@ -276,13 +276,13 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 		try {
 			// bugzilla 1404 testResultId is mapped as testResult.id now
 			String sql = "from TestReflex t where t.testResult.id = :param and t.testAnalyte.id = :param2";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", testResult.getId());
 			query.setParameter("param2", testAnalyte.getId());
 
 			List list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			return list;
 
@@ -309,15 +309,15 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 
 			if (analysis.getParentAnalysis() != null && analysis.getParentResult() != null) {
 				String sql = "from TestReflex t where t.testResult.id = :param and t.testAnalyte.analyte.id = :param2 and t.test.id = :param3 and t.addedTest.id = :param4";
-				org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 				query.setParameter("param", analysis.getParentResult().getTestResult().getId());
 				query.setParameter("param2", analysis.getParentResult().getAnalyte().getId());
 				query.setParameter("param3", analysis.getParentAnalysis().getTest().getId());
 				query.setParameter("param4", analysis.getTest().getId());
 
 				list = query.list();
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			}
 
 			return list != null && list.size() > 0;
@@ -339,14 +339,14 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 				List<TestReflex> list = null;
 
 				String sql = "from TestReflex t where t.testResult.id = :testResultId and t.testAnalyte.analyte.id = :analyteId and t.test.id = :testId";
-				org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 				query.setInteger("testResultId", Integer.parseInt(testResultId));
 				query.setInteger("analyteId", Integer.parseInt(analyteId));
 				query.setInteger("testId", Integer.parseInt(testId));
 
 				list = query.list();
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 				return list;
 			} catch (Exception e) {
@@ -362,9 +362,9 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 	public TestReflex readTestReflex(String idString) {
 		TestReflex tr = null;
 		try {
-			tr = (TestReflex) HibernateUtil.getSession().get(TestReflex.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			tr = (TestReflex) sessionFactory.getCurrentSession().get(TestReflex.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TestReflexDAOImpl", "readTestReflex()", e.toString());
@@ -408,13 +408,13 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 			String sql = "select tr.id from TestReflex tr "
 					+ " order by tr.test.testName, tr.testAnalyte.analyte.analyteName";
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -442,13 +442,13 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 			String sql = "select tr.id from TestReflex tr "
 					+ " order by tr.test.testName desc, tr.testAnalyte.analyte.analyteName desc";
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			rrn = list.indexOf(String.valueOf(currentId));
 
-			list = HibernateUtil.getSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 					.setMaxResults(2).list();
 
 		} catch (Exception e) {
@@ -472,7 +472,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 					+ "trim(lower(t.testAnalyte.analyte.analyteName)) = :analyteName and "
 					+ "t.testResult.id = :resultId and " + "t.addedTest.localizedTestName = :addedTestNameId or "
 					+ "trim(lower(t.actionScriptlet.scriptletName)) = :scriptletName  ) and " + " t.id != :testId";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("localizedTestName",
 					Integer.parseInt(testReflex.getTest().getLocalizedTestName().getId()));
 			query.setString("analyteName",
@@ -488,8 +488,8 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 			query.setInteger("testId", Integer.parseInt(testReflexId));
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			if (list.size() > 0) {
 				return true;
@@ -516,18 +516,18 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 			Query query = null;
 			if (GenericValidator.isBlankOrNull(flag)) {
 				String sql = "from TestReflex tr where tr.testResult.test.id = :id";
-				query = HibernateUtil.getSession().createQuery(sql);
+				query = sessionFactory.getCurrentSession().createQuery(sql);
 				query.setInteger("id", Integer.parseInt(testId));
 			} else {
 				String sql = "from TestReflex tr where tr.testResult.test.id = :id and tr.flags = :flag";
-				query = HibernateUtil.getSession().createQuery(sql);
+				query = sessionFactory.getCurrentSession().createQuery(sql);
 				query.setInteger("id", Integer.parseInt(testId));
 				query.setString("flag", flag);
 			}
 			reflexList = query.list();
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			handleException(e, "getTestReflexsByTestAndFlag()");
@@ -546,7 +546,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex> implements TestRe
 
 		try {
 			String sql = "from TestReflex t where t.testResult.id = :testResultId and t.flags = :flag";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("testResultId", Integer.parseInt(testResult.getId()));
 			query.setString("flag", flag);
 			List<TestReflex> list = query.list();

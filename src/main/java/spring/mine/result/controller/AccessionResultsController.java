@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.result.form.AccessionResultsForm;
+import spring.service.role.RoleService;
 import spring.service.sample.SampleService;
 import spring.service.samplehuman.SampleHumanService;
 import spring.util.SpringContext;
@@ -27,11 +29,9 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.inventory.action.InventoryUtility;
 import us.mn.state.health.lims.inventory.form.InventoryKitItem;
-import us.mn.state.health.lims.login.dao.UserModuleService;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.result.action.util.ResultsLoadUtility;
 import us.mn.state.health.lims.result.action.util.ResultsPaging;
-import us.mn.state.health.lims.role.daoimpl.RoleDAOImpl;
 import us.mn.state.health.lims.role.valueholder.Role;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
@@ -41,6 +41,8 @@ import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
 @Controller
 public class AccessionResultsController extends BaseController {
 
+	private static String RESULT_EDIT_ROLE_ID;
+
 	private String accessionNumber;
 	private Sample sample;
 	private InventoryUtility inventoryUtility = new InventoryUtility();
@@ -49,11 +51,11 @@ public class AccessionResultsController extends BaseController {
 	@Autowired
 	private SampleHumanService sampleHumanService;
 	@Autowired
-	private UserModuleService userModuleService;
-	private static String RESULT_EDIT_ROLE_ID;
+	private RoleService roleService;
 
-	static {
-		Role editRole = new RoleDAOImpl().getRoleByName("Results modifier");
+	@PostConstruct
+	private void initializeGlobalVariables() {
+		Role editRole = roleService.getRoleByName("Results modifier");
 
 		if (editRole != null) {
 			RESULT_EDIT_ROLE_ID = editRole.getId();

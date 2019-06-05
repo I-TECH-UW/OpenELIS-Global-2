@@ -84,11 +84,11 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 
 				// Make the change to the object.
 				cloneData.setIsActive(IActionConstants.NO);
-				HibernateUtil.getSession().merge(cloneData);
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
-				// HibernateUtil.getSession().evict // CSL remove old(cloneData);
-				// HibernateUtil.getSession().refresh // CSL remove old(cloneData);
+				sessionFactory.getCurrentSession().merge(cloneData);
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
+				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
 			}
 		} catch (Exception e) {
 			// bugzilla 2154
@@ -106,14 +106,14 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 						"Duplicate record exists for " + organization.getOrganizationName());
 			}
 
-			String id = (String) HibernateUtil.getSession().save(organization);
+			String id = (String) sessionFactory.getCurrentSession().save(organization);
 			organization.setId(id);
 
 			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveNewHistory(organization, organization.getSysUserId(), "ORGANIZATION");
 
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 		} catch (Exception e) {
 			LogEvent.logError("OrganizationDAOImpl", "insertData()", e.toString());
@@ -154,11 +154,11 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 		}
 
 		try {
-			HibernateUtil.getSession().merge(organization);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
-			// HibernateUtil.getSession().evict // CSL remove old(organization);
-			// HibernateUtil.getSession().refresh // CSL remove old(organization);
+			sessionFactory.getCurrentSession().merge(organization);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().evict // CSL remove old(organization);
+			// sessionFactory.getCurrentSession().refresh // CSL remove old(organization);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("OrganizationDAOImpl", "updateData()", e.toString());
@@ -169,9 +169,9 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 	@Override
 	public void getData(Organization organization) throws LIMSRuntimeException {
 		try {
-			Organization org = HibernateUtil.getSession().get(Organization.class, organization.getId());
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			Organization org = sessionFactory.getCurrentSession().get(Organization.class, organization.getId());
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (org != null) {
 				PropertyUtils.copyProperties(organization, org);
 			} else {
@@ -190,10 +190,10 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 		List list = new Vector();
 		try {
 			String sql = "from Organization";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("OrganizationDAOImpl", "getAllOrganizations()", e.toString());
@@ -212,13 +212,13 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 
 			// bugzilla 1399
 			String sql = "from Organization o order by o.organizationName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("OrganizationDAOImpl", "getPageOfOrganizations()", e.toString());
@@ -248,14 +248,14 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 				newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
 				sql = "from Organization o where trim(lower (o.organizationName)) like :param  order by o.organizationName";
 			}
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", newSearchStr);
 			query.setFirstResult(startingRecNo - 1);
 			query.setMaxResults(endingRecNo - 1);
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new LIMSRuntimeException("Error in OrganizationDAOImpl getPageOfSearchedOrganizations()", e);
@@ -268,9 +268,9 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 	public Organization readOrganization(String idString) {
 		Organization org = null;
 		try {
-			org = HibernateUtil.getSession().get(Organization.class, idString);
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			org = sessionFactory.getCurrentSession().get(Organization.class, idString);
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("OrganizationDAOImpl", "readOrganization()", e.toString());
@@ -286,12 +286,12 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 		List list = new Vector();
 		try {
 			String sql = "from Organization o where upper(o.organizationName) like upper(:param) and o.isActive='Y' order by upper(o.organizationName)";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", filter + "%");
 
 			list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("OrganizationDAOImpl", "getOrganizations()", e.toString());
@@ -334,8 +334,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 			}
 
 			List list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			Organization org = null;
 			if (list.size() > 0) {
 				org = (Organization) list.get(0);
@@ -362,7 +362,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 				sql = "from Organization o where o.organizationLocalAbbreviation = :param and o.isActive='Y'";
 			}
 
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			if (ignoreCase) {
 				query.setParameter("param", organization.getOrganizationLocalAbbreviation().trim().toLowerCase());
 			} else {
@@ -370,8 +370,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 			}
 
 			List list = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			Organization org = null;
 			if (list.size() > 0) {
 				org = (Organization) list.get(0);
@@ -399,7 +399,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.organizationName";
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -421,7 +421,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 		List list = new Vector();
 		try {
 			String sql = "from " + table + " t order by t.organizationName desc where name <= " + enquote(id);
-			org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setFirstResult(1);
 			query.setMaxResults(2);
 
@@ -447,7 +447,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 				String sql = "from Organization o where ((trim(lower(o.organizationName))) = :orgName and o.isActive='Y' and o.id != :orgId)"
 						+ " or "
 						+ "((trim(lower(o.organizationLocalAbbreviation))) = :orgAbrv and o.isActive='Y' and o.id != :orgId)";
-				org.hibernate.Query query = HibernateUtil.getSession().createQuery(sql);
+				org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
 				query.setParameter("orgName", organization.getOrganizationName().toLowerCase().trim());
 
 				// initialize with 0 (for new records where no id has been generated yet
@@ -464,8 +464,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 				query.setParameter("orgAbrv", organizationLocalAbbrev);
 
 				list = query.list();
-				// HibernateUtil.getSession().flush(); // CSL remove old
-				// HibernateUtil.getSession().clear(); // CSL remove old
+				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+				// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			}
 
@@ -503,12 +503,12 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 				newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
 				sql = "select count (*) from Organization o where trim(lower (o.organizationName)) like :param ";
 			}
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("param", newSearchStr);
 
 			List results = query.list();
-			// HibernateUtil.getSession().flush(); // CSL remove old
-			// HibernateUtil.getSession().clear(); // CSL remove old
+			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
 			if (results != null && results.get(0) != null) {
 				if (results.get(0) != null) {
@@ -548,7 +548,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 			if (null != orderByProperty) {
 				sql += " ORDER BY o." + orderByProperty;
 			}
-			Session session = HibernateUtil.getSession();
+			Session session = sessionFactory.getCurrentSession();
 			Query query = session.createQuery(sql).setParameterList("names", typeNames);
 			@SuppressWarnings("unchecked")
 			List<Organization> orgs = query.list();
@@ -569,7 +569,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 		try {
 			String sql = "SELECT o FROM Organization AS o INNER JOIN o.organizationTypes AS ot WHERE ot.name = :typeName "
 					+ " AND o.isActive = 'Y' AND upper(o.organizationName) like upper(:partialName) order by upper(o.organizationName)";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setParameter("typeName", typeName);
 			query.setParameter("partialName", partialName + "%");
 			@SuppressWarnings("unchecked")
@@ -590,7 +590,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 			String sql = "from Organization o where o.id = :organizationId";
 
 			try {
-				Query query = HibernateUtil.getSession().createQuery(sql);
+				Query query = sessionFactory.getCurrentSession().createQuery(sql);
 				query.setInteger("organizationId", Integer.parseInt(organizationId));
 				Organization organization = (Organization) query.uniqueResult();
 
@@ -626,7 +626,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements Or
 		String sql = "from Organization o where o.organization.id = :parentId order by o.id";
 
 		try {
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("parentId", Integer.parseInt(parentId));
 			List<Organization> orgs = query.list();
 
