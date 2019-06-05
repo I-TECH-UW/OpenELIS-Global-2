@@ -8,8 +8,7 @@ import us.mn.state.health.lims.observationhistorytype.dao.ObservationHistoryType
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
 
 @Service
-public class ObservationHistoryTypeServiceImpl extends BaseObjectServiceImpl<ObservationHistoryType>
-		implements ObservationHistoryTypeService {
+public class ObservationHistoryTypeServiceImpl extends BaseObjectServiceImpl<ObservationHistoryType, String> implements ObservationHistoryTypeService {
 	@Autowired
 	protected ObservationHistoryTypeDAO baseObjectDAO;
 

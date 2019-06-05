@@ -8,7 +8,7 @@ import us.mn.state.health.lims.systemmodule.dao.SystemModuleParamDAO;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModuleParam;
 
 @Service
-public class SystemModuleParamServiceImpl extends BaseObjectServiceImpl<SystemModuleParam> implements SystemModuleParamService {
+public class SystemModuleParamServiceImpl extends BaseObjectServiceImpl<SystemModuleParam, String> implements SystemModuleParamService {
 	@Autowired
 	protected SystemModuleParamDAO baseObjectDAO;
 

@@ -8,7 +8,7 @@ import us.mn.state.health.lims.qaevent.dao.QaObservationDAO;
 import us.mn.state.health.lims.qaevent.valueholder.QaObservation;
 
 @Service
-public class QaObservationServiceImpl extends BaseObjectServiceImpl<QaObservation> implements QaObservationService {
+public class QaObservationServiceImpl extends BaseObjectServiceImpl<QaObservation, String> implements QaObservationService {
 	@Autowired
 	protected QaObservationDAO baseObjectDAO;
 

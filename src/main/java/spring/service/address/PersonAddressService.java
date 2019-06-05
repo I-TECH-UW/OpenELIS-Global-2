@@ -6,7 +6,7 @@ import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.address.valueholder.AddressPK;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
 
-public interface PersonAddressService extends BaseObjectService<PersonAddress> {
+public interface PersonAddressService extends BaseObjectService<PersonAddress, AddressPK> {
 
 	@Override
 	AddressPK insert(PersonAddress personAddress);

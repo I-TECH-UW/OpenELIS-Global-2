@@ -8,7 +8,7 @@ import us.mn.state.health.lims.action.dao.ActionDAO;
 import us.mn.state.health.lims.action.valueholder.Action;
 
 @Service
-public class ActionServiceImpl extends BaseObjectServiceImpl<Action> implements ActionService {
+public class ActionServiceImpl extends BaseObjectServiceImpl<Action, String> implements ActionService {
 	@Autowired
 	protected ActionDAO baseObjectDAO;
 

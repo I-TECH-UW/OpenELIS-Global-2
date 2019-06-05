@@ -13,7 +13,7 @@ import us.mn.state.health.lims.reports.dao.DocumentTrackDAO;
 import us.mn.state.health.lims.reports.valueholder.DocumentTrack;
 
 @Service
-public class DocumentTrackServiceImpl extends BaseObjectServiceImpl<DocumentTrack> implements DocumentTrackService {
+public class DocumentTrackServiceImpl extends BaseObjectServiceImpl<DocumentTrack, String> implements DocumentTrackService {
 	@Autowired
 	protected DocumentTrackDAO baseObjectDAO;
 

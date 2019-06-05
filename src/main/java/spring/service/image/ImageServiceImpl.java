@@ -11,7 +11,7 @@ import us.mn.state.health.lims.image.dao.ImageDAO;
 import us.mn.state.health.lims.image.valueholder.Image;
 
 @Service
-public class ImageServiceImpl extends BaseObjectServiceImpl<Image> implements ImageService {
+public class ImageServiceImpl extends BaseObjectServiceImpl<Image, String> implements ImageService {
 	@Autowired
 	protected ImageDAO baseObjectDAO;
 

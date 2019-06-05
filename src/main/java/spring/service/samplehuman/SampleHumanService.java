@@ -8,7 +8,7 @@ import us.mn.state.health.lims.provider.valueholder.Provider;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
 
-public interface SampleHumanService extends BaseObjectService<SampleHuman> {
+public interface SampleHumanService extends BaseObjectService<SampleHuman, String> {
 	void getData(SampleHuman sampleHuman);
 
 	void deleteData(List sampleHumans);

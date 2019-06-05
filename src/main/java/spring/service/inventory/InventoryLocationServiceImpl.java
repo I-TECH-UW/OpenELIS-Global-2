@@ -10,7 +10,7 @@ import us.mn.state.health.lims.inventory.dao.InventoryLocationDAO;
 import us.mn.state.health.lims.inventory.valueholder.InventoryLocation;
 
 @Service
-public class InventoryLocationServiceImpl extends BaseObjectServiceImpl<InventoryLocation> implements InventoryLocationService {
+public class InventoryLocationServiceImpl extends BaseObjectServiceImpl<InventoryLocation, String> implements InventoryLocationService {
 	@Autowired
 	protected InventoryLocationDAO baseObjectDAO;
 

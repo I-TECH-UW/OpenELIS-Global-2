@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.gender.valueholder.Gender;
 
-public interface GenderService extends BaseObjectService<Gender> {
+public interface GenderService extends BaseObjectService<Gender, String> {
 	void getData(Gender gender);
 
 	void deleteData(List genders);

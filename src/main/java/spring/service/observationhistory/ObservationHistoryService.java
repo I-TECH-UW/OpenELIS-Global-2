@@ -8,7 +8,7 @@ import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 
-public interface ObservationHistoryService extends BaseObjectService<ObservationHistory> {
+public interface ObservationHistoryService extends BaseObjectService<ObservationHistory, String> {
 	ObservationHistory getById(ObservationHistory observation);
 
 	void updateData(ObservationHistory observation);

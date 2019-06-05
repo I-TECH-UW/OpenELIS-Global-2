@@ -12,7 +12,8 @@ import us.mn.state.health.lims.address.valueholder.AddressPK;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
 
 @Service
-public class PersonAddressServiceImpl extends BaseObjectServiceImpl<PersonAddress> implements PersonAddressService {
+public class PersonAddressServiceImpl extends BaseObjectServiceImpl<PersonAddress, AddressPK>
+		implements PersonAddressService {
 	@Autowired
 	protected PersonAddressDAO baseObjectDAO;
 
@@ -38,6 +39,6 @@ public class PersonAddressServiceImpl extends BaseObjectServiceImpl<PersonAddres
 
 	@Override
 	public AddressPK insert(PersonAddress personAddress) {
-		return (AddressPK) super.insert(personAddress);
+		return super.insert(personAddress);
 	}
 }

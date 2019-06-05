@@ -4,20 +4,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import spring.service.common.BaseObjectServiceImpl;
-import us.mn.state.health.lims.common.dao.BaseDAO;
+import us.mn.state.health.lims.label.dao.LabelDAO;
 import us.mn.state.health.lims.label.valueholder.Label;
 
 @Service
-public class LabelServiceImpl extends BaseObjectServiceImpl<Label> implements LabelService {
+public class LabelServiceImpl extends BaseObjectServiceImpl<Label, String> implements LabelService {
 	@Autowired
-	protected BaseDAO<Label> baseObjectDAO;
+	protected LabelDAO baseObjectDAO;
 
 	LabelServiceImpl() {
 		super(Label.class);
 	}
 
 	@Override
-	protected BaseDAO<Label> getBaseObjectDAO() {
+	protected LabelDAO getBaseObjectDAO() {
 		return baseObjectDAO;
 	}
 }

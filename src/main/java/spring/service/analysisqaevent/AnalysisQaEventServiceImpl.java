@@ -8,7 +8,7 @@ import us.mn.state.health.lims.analysisqaevent.dao.AnalysisQaEventDAO;
 import us.mn.state.health.lims.analysisqaevent.valueholder.AnalysisQaEvent;
 
 @Service
-public class AnalysisQaEventServiceImpl extends BaseObjectServiceImpl<AnalysisQaEvent> implements AnalysisQaEventService {
+public class AnalysisQaEventServiceImpl extends BaseObjectServiceImpl<AnalysisQaEvent, String> implements AnalysisQaEventService {
 	@Autowired
 	protected AnalysisQaEventDAO baseObjectDAO;
 

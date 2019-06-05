@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
-public interface UnitOfMeasureService extends BaseObjectService<UnitOfMeasure> {
+public interface UnitOfMeasureService extends BaseObjectService<UnitOfMeasure, String> {
 	void getData(UnitOfMeasure unitOfMeasure);
 
 	void deleteData(List unitOfMeasures);

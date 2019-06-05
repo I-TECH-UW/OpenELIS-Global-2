@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
 
-public interface PermissionModuleService<T extends PermissionModule> extends BaseObjectService<T> {
+public interface PermissionModuleService<T extends PermissionModule> extends BaseObjectService<T, String> {
 	void getData(T permissionModule);
 
 	void deleteData(List permissionModules);

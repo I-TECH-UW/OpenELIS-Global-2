@@ -16,7 +16,7 @@ import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 
 @Service
-public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary> implements DictionaryService {
+public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary, String> implements DictionaryService {
 	@Autowired
 	protected DictionaryDAO baseObjectDAO;
 

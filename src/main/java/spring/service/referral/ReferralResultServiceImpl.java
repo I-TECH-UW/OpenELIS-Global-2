@@ -11,7 +11,7 @@ import us.mn.state.health.lims.referral.dao.ReferralResultDAO;
 import us.mn.state.health.lims.referral.valueholder.ReferralResult;
 
 @Service
-public class ReferralResultServiceImpl extends BaseObjectServiceImpl<ReferralResult> implements ReferralResultService {
+public class ReferralResultServiceImpl extends BaseObjectServiceImpl<ReferralResult, String> implements ReferralResultService {
 	@Autowired
 	protected ReferralResultDAO baseObjectDAO;
 

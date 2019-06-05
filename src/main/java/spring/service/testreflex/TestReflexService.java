@@ -8,7 +8,7 @@ import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
 import us.mn.state.health.lims.testreflex.valueholder.TestReflex;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
-public interface TestReflexService extends BaseObjectService<TestReflex> {
+public interface TestReflexService extends BaseObjectService<TestReflex, String> {
 	void getData(TestReflex testReflex);
 
 	void deleteData(List testReflexs);

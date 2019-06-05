@@ -6,7 +6,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalExport;
 
-public interface ReportExternalExportService extends BaseObjectService<ReportExternalExport> {
+public interface ReportExternalExportService extends BaseObjectService<ReportExternalExport, String> {
 
 	@Override
 	public void delete(ReportExternalExport report);

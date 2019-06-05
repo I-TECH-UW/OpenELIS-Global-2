@@ -8,7 +8,7 @@ import us.mn.state.health.lims.sampleqaeventaction.dao.SampleQaEventActionDAO;
 import us.mn.state.health.lims.sampleqaeventaction.valueholder.SampleQaEventAction;
 
 @Service
-public class SampleQaEventActionServiceImpl extends BaseObjectServiceImpl<SampleQaEventAction> implements SampleQaEventActionService {
+public class SampleQaEventActionServiceImpl extends BaseObjectServiceImpl<SampleQaEventAction, String> implements SampleQaEventActionService {
 	@Autowired
 	protected SampleQaEventActionDAO baseObjectDAO;
 

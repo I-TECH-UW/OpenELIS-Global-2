@@ -41,7 +41,7 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 @Service
 @DependsOn({ "springContext" })
 @Scope("prototype")
-public class ResultServiceImpl extends BaseObjectServiceImpl<Result> implements ResultService {
+public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> implements ResultService {
 
 	public static String TABLE_REFERENCE_ID;
 

@@ -8,7 +8,7 @@ import us.mn.state.health.lims.testcodes.dao.TestCodeTypeDAO;
 import us.mn.state.health.lims.testcodes.valueholder.TestCodeType;
 
 @Service
-public class TestCodeTypeServiceImpl extends BaseObjectServiceImpl<TestCodeType> implements TestCodeTypeService {
+public class TestCodeTypeServiceImpl extends BaseObjectServiceImpl<TestCodeType, String> implements TestCodeTypeService {
 	@Autowired
 	protected TestCodeTypeDAO baseObjectDAO;
 

@@ -47,7 +47,7 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 @Service
 @DependsOn({ "springContext" })
 @Scope("prototype")
-public class PatientServiceImpl extends BaseObjectServiceImpl<Patient> implements PatientService, IPatientService {
+public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> implements PatientService, IPatientService {
 
 	public static final String ADDRESS_STREET = "Street";
 	public static final String ADDRESS_STATE = "State";

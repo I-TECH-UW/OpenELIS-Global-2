@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.reports.valueholder.DocumentTrack;
 
-public interface DocumentTrackService extends BaseObjectService<DocumentTrack> {
+public interface DocumentTrackService extends BaseObjectService<DocumentTrack, String> {
 	void insertData(DocumentTrack docTrack);
 
 	List<DocumentTrack> getByTypeRecordAndTableAndName(String reportTypeId, String referenceTable, String id,

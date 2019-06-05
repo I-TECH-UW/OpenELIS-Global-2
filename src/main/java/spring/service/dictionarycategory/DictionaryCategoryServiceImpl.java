@@ -10,7 +10,7 @@ import us.mn.state.health.lims.dictionarycategory.dao.DictionaryCategoryDAO;
 import us.mn.state.health.lims.dictionarycategory.valueholder.DictionaryCategory;
 
 @Service
-public class DictionaryCategoryServiceImpl extends BaseObjectServiceImpl<DictionaryCategory> implements DictionaryCategoryService {
+public class DictionaryCategoryServiceImpl extends BaseObjectServiceImpl<DictionaryCategory, String> implements DictionaryCategoryService {
 	@Autowired
 	protected DictionaryCategoryDAO baseObjectDAO;
 

@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 
-public interface DictionaryService extends BaseObjectService<Dictionary> {
+public interface DictionaryService extends BaseObjectService<Dictionary, String> {
 	void getData(Dictionary dictionary);
 
 	void deleteData(List dictionarys);

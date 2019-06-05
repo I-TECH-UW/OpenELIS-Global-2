@@ -10,7 +10,7 @@ import us.mn.state.health.lims.systemusersection.dao.SystemUserSectionDAO;
 import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
 
 @Service
-public class SystemUserSectionServiceImpl extends BaseObjectServiceImpl<SystemUserSection> implements SystemUserSectionService {
+public class SystemUserSectionServiceImpl extends BaseObjectServiceImpl<SystemUserSection, String> implements SystemUserSectionService {
 	@Autowired
 	protected SystemUserSectionDAO baseObjectDAO;
 

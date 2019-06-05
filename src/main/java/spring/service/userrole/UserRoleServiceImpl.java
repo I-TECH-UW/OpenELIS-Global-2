@@ -10,9 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.userrole.dao.UserRoleDAO;
 import us.mn.state.health.lims.userrole.valueholder.UserRole;
+import us.mn.state.health.lims.userrole.valueholder.UserRolePK;
 
 @Service
-public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole> implements UserRoleService {
+public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole, UserRolePK> implements UserRoleService {
 	@Autowired
 	protected UserRoleDAO baseObjectDAO;
 
@@ -46,49 +47,49 @@ public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole> impleme
 
 	@Override
 	public void getData(UserRole userRole) {
-        getBaseObjectDAO().getData(userRole);
+		getBaseObjectDAO().getData(userRole);
 
 	}
 
 	@Override
 	public void deleteData(List<UserRole> userRoles) {
-        getBaseObjectDAO().deleteData(userRoles);
+		getBaseObjectDAO().deleteData(userRoles);
 
 	}
 
 	@Override
 	public void updateData(UserRole userRole) {
-        getBaseObjectDAO().updateData(userRole);
+		getBaseObjectDAO().updateData(userRole);
 
 	}
 
 	@Override
 	public boolean insertData(UserRole userRole) {
-        return getBaseObjectDAO().insertData(userRole);
+		return getBaseObjectDAO().insertData(userRole);
 	}
 
 	@Override
 	public List getPageOfUserRoles(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfUserRoles(startingRecNo);
+		return getBaseObjectDAO().getPageOfUserRoles(startingRecNo);
 	}
 
 	@Override
 	public List getNextUserRoleRecord(String id) {
-        return getBaseObjectDAO().getNextUserRoleRecord(id);
+		return getBaseObjectDAO().getNextUserRoleRecord(id);
 	}
 
 	@Override
 	public List getPreviousUserRoleRecord(String id) {
-        return getBaseObjectDAO().getPreviousUserRoleRecord(id);
+		return getBaseObjectDAO().getPreviousUserRoleRecord(id);
 	}
 
 	@Override
 	public boolean userInRole(String userId, String roleName) {
-        return getBaseObjectDAO().userInRole(userId,roleName);
+		return getBaseObjectDAO().userInRole(userId, roleName);
 	}
 
 	@Override
 	public List getAllUserRoles() {
-        return getBaseObjectDAO().getAllUserRoles();
+		return getBaseObjectDAO().getAllUserRoles();
 	}
 }

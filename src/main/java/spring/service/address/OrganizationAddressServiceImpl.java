@@ -14,7 +14,7 @@ import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
 import us.mn.state.health.lims.common.action.IActionConstants;
 
 @Service
-public class OrganizationAddressServiceImpl extends BaseObjectServiceImpl<OrganizationAddress>
+public class OrganizationAddressServiceImpl extends BaseObjectServiceImpl<OrganizationAddress, AddressPK>
 		implements OrganizationAddressService {
 	@Autowired
 	protected OrganizationAddressDAO baseObjectDAO;
@@ -48,6 +48,6 @@ public class OrganizationAddressServiceImpl extends BaseObjectServiceImpl<Organi
 
 	@Override
 	public AddressPK insert(OrganizationAddress organizationAddress) {
-		return (AddressPK) super.insert(organizationAddress);
+		return super.insert(organizationAddress);
 	}
 }

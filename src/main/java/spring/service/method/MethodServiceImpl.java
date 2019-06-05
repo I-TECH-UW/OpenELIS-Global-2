@@ -10,7 +10,7 @@ import us.mn.state.health.lims.method.dao.MethodDAO;
 import us.mn.state.health.lims.method.valueholder.Method;
 
 @Service
-public class MethodServiceImpl extends BaseObjectServiceImpl<Method> implements MethodService {
+public class MethodServiceImpl extends BaseObjectServiceImpl<Method, String> implements MethodService {
 	@Autowired
 	protected MethodDAO baseObjectDAO;
 

@@ -11,7 +11,7 @@ import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultSignature;
 
 @Service
-public class ResultSignatureServiceImpl extends BaseObjectServiceImpl<ResultSignature> implements ResultSignatureService {
+public class ResultSignatureServiceImpl extends BaseObjectServiceImpl<ResultSignature, String> implements ResultSignatureService {
 	@Autowired
 	protected ResultSignatureDAO baseObjectDAO;
 

@@ -25,8 +25,7 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 @Service
 @DependsOn({ "springContext" })
 @Scope("prototype")
-public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection>
-		implements TestSectionService, LocaleChangeListener {
+public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, String> implements TestSectionService, LocaleChangeListener {
 
 	private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()
 			.getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);

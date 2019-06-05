@@ -8,7 +8,7 @@ import us.mn.state.health.lims.citystatezip.dao.CityViewDAO;
 import us.mn.state.health.lims.citystatezip.valueholder.CityView;
 
 @Service
-public class CityViewServiceImpl extends BaseObjectServiceImpl<CityView> implements CityViewService {
+public class CityViewServiceImpl extends BaseObjectServiceImpl<CityView, String> implements CityViewService {
 	@Autowired
 	protected CityViewDAO baseObjectDAO;
 

@@ -8,7 +8,7 @@ import us.mn.state.health.lims.samplepdf.dao.SamplePdfDAO;
 import us.mn.state.health.lims.samplepdf.valueholder.SamplePdf;
 
 @Service
-public class SamplePdfServiceImpl extends BaseObjectServiceImpl<SamplePdf> implements SamplePdfService {
+public class SamplePdfServiceImpl extends BaseObjectServiceImpl<SamplePdf, String> implements SamplePdfService {
 	@Autowired
 	protected SamplePdfDAO baseObjectDAO;
 

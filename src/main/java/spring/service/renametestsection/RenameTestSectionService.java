@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.renametestsection.valueholder.RenameTestSection;
 
-public interface RenameTestSectionService extends BaseObjectService<RenameTestSection> {
+public interface RenameTestSectionService extends BaseObjectService<RenameTestSection, String> {
 	void getData(RenameTestSection testSection);
 
 	void deleteData(List testSections);

@@ -10,7 +10,7 @@ import us.mn.state.health.lims.qaevent.dao.QaEventDAO;
 import us.mn.state.health.lims.qaevent.valueholder.QaEvent;
 
 @Service
-public class QaEventServiceImpl extends BaseObjectServiceImpl<QaEvent> implements QaEventService {
+public class QaEventServiceImpl extends BaseObjectServiceImpl<QaEvent, String> implements QaEventService {
 	@Autowired
 	protected QaEventDAO baseObjectDAO;
 

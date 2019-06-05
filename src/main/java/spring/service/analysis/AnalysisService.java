@@ -16,7 +16,7 @@ import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
-public interface AnalysisService extends BaseObjectService<Analysis> {
+public interface AnalysisService extends BaseObjectService<Analysis, String> {
 	void getData(Analysis analysis);
 
 	Analysis getAnalysisById(String analysisId);

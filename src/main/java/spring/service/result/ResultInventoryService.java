@@ -6,7 +6,7 @@ import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultInventory;
 
-public interface ResultInventoryService extends BaseObjectService<ResultInventory> {
+public interface ResultInventoryService extends BaseObjectService<ResultInventory, String> {
 	void getData(ResultInventory resultInventory);
 
 	void deleteData(List results);

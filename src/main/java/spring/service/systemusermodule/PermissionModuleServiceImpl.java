@@ -1,6 +1,5 @@
 package spring.service.systemusermodule;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -194,14 +193,14 @@ public class PermissionModuleServiceImpl implements PermissionModuleService<Perm
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
-	public Serializable insert(PermissionModule baseObject) {
-		return getActivePermissionModule().insert(baseObject);
+	public String insert(PermissionModule baseObject) {
+		return (String) getActivePermissionModule().insert(baseObject);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
-	public List<Serializable> insertAll(List<PermissionModule> baseObjects) {
+	public List<String> insertAll(List<PermissionModule> baseObjects) {
 		return getActivePermissionModule().insertAll(baseObjects);
 	}
 

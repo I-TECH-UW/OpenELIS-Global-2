@@ -7,7 +7,7 @@ import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
-public interface SampleItemService extends BaseObjectService<SampleItem> {
+public interface SampleItemService extends BaseObjectService<SampleItem, String> {
 	void getData(SampleItem sampleItem);
 
 	SampleItem getData(String sampleItemId);

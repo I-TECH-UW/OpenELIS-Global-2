@@ -27,7 +27,7 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 @Service
 @DependsOn({ "springContext" })
-public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample> implements TypeOfSampleService {
+public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample, String> implements TypeOfSampleService {
 
 	private static TypeOfSampleService INSTANCE;
 

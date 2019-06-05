@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
 
-public interface SystemUserSectionService extends BaseObjectService<SystemUserSection> {
+public interface SystemUserSectionService extends BaseObjectService<SystemUserSection, String> {
 	void getData(SystemUserSection systemUserSection);
 
 	void deleteData(List systemUserSection);

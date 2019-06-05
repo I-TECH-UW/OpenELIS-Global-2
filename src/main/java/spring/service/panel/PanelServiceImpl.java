@@ -11,7 +11,7 @@ import us.mn.state.health.lims.panel.dao.PanelDAO;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 
 @Service
-public class PanelServiceImpl extends BaseObjectServiceImpl<Panel> implements PanelService {
+public class PanelServiceImpl extends BaseObjectServiceImpl<Panel, String> implements PanelService {
 
 	@Autowired
 	protected PanelDAO baseObjectDAO;

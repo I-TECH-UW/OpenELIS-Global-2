@@ -7,7 +7,7 @@ import us.mn.state.health.lims.common.dao.DatabaseChangeLogDAO;
 import us.mn.state.health.lims.common.valueholder.DatabaseChangeLog;
 
 @Service
-public class DatabaseChangeLogServiceImpl extends BaseObjectServiceImpl<DatabaseChangeLog> implements DatabaseChangeLogService {
+public class DatabaseChangeLogServiceImpl extends BaseObjectServiceImpl<DatabaseChangeLog, String> implements DatabaseChangeLogService {
 	@Autowired
 	protected DatabaseChangeLogDAO baseObjectDAO;
 

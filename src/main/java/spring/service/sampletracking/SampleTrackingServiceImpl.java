@@ -8,7 +8,7 @@ import us.mn.state.health.lims.sampletracking.dao.SampleTrackingDAO;
 import us.mn.state.health.lims.sampletracking.valueholder.SampleTracking;
 
 @Service
-public class SampleTrackingServiceImpl extends BaseObjectServiceImpl<SampleTracking> implements SampleTrackingService {
+public class SampleTrackingServiceImpl extends BaseObjectServiceImpl<SampleTracking, String> implements SampleTrackingService {
 	@Autowired
 	protected SampleTrackingDAO baseObjectDAO;
 

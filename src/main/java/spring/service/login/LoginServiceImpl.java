@@ -19,7 +19,7 @@ import us.mn.state.health.lims.login.valueholder.Login;
 import us.mn.state.health.lims.security.PasswordUtil;
 
 @Service
-public class LoginServiceImpl extends BaseObjectServiceImpl<Login> implements LoginService {
+public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> implements LoginService {
 	@Autowired
 	protected LoginDAO baseObjectDAO;
 

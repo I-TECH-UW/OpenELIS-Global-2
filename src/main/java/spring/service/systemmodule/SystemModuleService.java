@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
 
-public interface SystemModuleService extends BaseObjectService<SystemModule> {
+public interface SystemModuleService extends BaseObjectService<SystemModule, String> {
 
 	void getData(SystemModule systemModule);
 

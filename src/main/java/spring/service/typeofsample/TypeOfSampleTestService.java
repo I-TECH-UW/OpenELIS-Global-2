@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
-public interface TypeOfSampleTestService extends BaseObjectService<TypeOfSampleTest> {
+public interface TypeOfSampleTestService extends BaseObjectService<TypeOfSampleTest, String> {
 	void getData(TypeOfSampleTest typeOfSampleTest);
 
 	void deleteData(String[] typeOfSampleTestIds, String currentUserId);

@@ -8,7 +8,7 @@ import us.mn.state.health.lims.result.dao.TestResult_AddedReflexTestsDAO;
 import us.mn.state.health.lims.result.valueholder.TestResult_AddedReflexTests;
 
 @Service
-public class TestResult_AddedReflexTestsServiceImpl extends BaseObjectServiceImpl<TestResult_AddedReflexTests> implements TestResult_AddedReflexTestsService {
+public class TestResult_AddedReflexTestsServiceImpl extends BaseObjectServiceImpl<TestResult_AddedReflexTests, String> implements TestResult_AddedReflexTestsService {
 	@Autowired
 	protected TestResult_AddedReflexTestsDAO baseObjectDAO;
 

@@ -8,7 +8,7 @@ import us.mn.state.health.lims.samplenewborn.dao.SampleNewbornDAO;
 import us.mn.state.health.lims.samplenewborn.valueholder.SampleNewborn;
 
 @Service
-public class SampleNewbornServiceImpl extends BaseObjectServiceImpl<SampleNewborn> implements SampleNewbornService {
+public class SampleNewbornServiceImpl extends BaseObjectServiceImpl<SampleNewborn, String> implements SampleNewbornService {
 	@Autowired
 	protected SampleNewbornDAO baseObjectDAO;
 

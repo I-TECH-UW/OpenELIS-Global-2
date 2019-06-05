@@ -5,8 +5,9 @@ import java.util.List;
 
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.userrole.valueholder.UserRole;
+import us.mn.state.health.lims.userrole.valueholder.UserRolePK;
 
-public interface UserRoleService extends BaseObjectService<UserRole> {
+public interface UserRoleService extends BaseObjectService<UserRole, UserRolePK> {
 	void getData(UserRole userRole);
 
 	void deleteData(List<UserRole> userRoles);

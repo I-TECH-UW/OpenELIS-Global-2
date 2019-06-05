@@ -1,19 +1,17 @@
 package spring.service.rolemodule;
 
-import java.io.Serializable;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import spring.service.common.BaseObjectServiceImpl;
-import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.systemusermodule.dao.RoleModuleDAO;
 import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
 
 @Service
-public class RoleModuleServiceImpl extends BaseObjectServiceImpl<RoleModule> implements RoleModuleService {
+public class RoleModuleServiceImpl extends BaseObjectServiceImpl<RoleModule, String> implements RoleModuleService {
 
 	@Autowired
 	RoleModuleDAO baseObjectDAO;
@@ -23,7 +21,7 @@ public class RoleModuleServiceImpl extends BaseObjectServiceImpl<RoleModule> imp
 	}
 
 	@Override
-	protected BaseDAO<RoleModule> getBaseObjectDAO() {
+	protected RoleModuleDAO getBaseObjectDAO() {
 		return baseObjectDAO;
 	}
 
@@ -48,7 +46,7 @@ public class RoleModuleServiceImpl extends BaseObjectServiceImpl<RoleModule> imp
 	}
 
 	@Override
-	public Serializable insert(RoleModule roleModule) {
+	public String insert(RoleModule roleModule) {
 		if (baseObjectDAO.duplicateRoleModuleExists(roleModule)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + roleModule.getPermissionAgentId());
 		}

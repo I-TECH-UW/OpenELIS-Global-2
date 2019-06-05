@@ -10,7 +10,7 @@ import us.mn.state.health.lims.testtrailer.dao.TestTrailerDAO;
 import us.mn.state.health.lims.testtrailer.valueholder.TestTrailer;
 
 @Service
-public class TestTrailerServiceImpl extends BaseObjectServiceImpl<TestTrailer> implements TestTrailerService {
+public class TestTrailerServiceImpl extends BaseObjectServiceImpl<TestTrailer, String> implements TestTrailerService {
 	@Autowired
 	protected TestTrailerDAO baseObjectDAO;
 

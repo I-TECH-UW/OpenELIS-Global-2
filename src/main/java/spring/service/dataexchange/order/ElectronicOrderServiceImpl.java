@@ -11,7 +11,7 @@ import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder.SortOrder;
 
 @Service
-public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<ElectronicOrder> implements ElectronicOrderService {
+public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<ElectronicOrder, String> implements ElectronicOrderService {
 	@Autowired
 	protected ElectronicOrderDAO baseObjectDAO;
 

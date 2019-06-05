@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.testtrailer.valueholder.TestTrailer;
 
-public interface TestTrailerService extends BaseObjectService<TestTrailer> {
+public interface TestTrailerService extends BaseObjectService<TestTrailer, String> {
 	void getData(TestTrailer testTrailer);
 
 	void deleteData(List testTrailers);

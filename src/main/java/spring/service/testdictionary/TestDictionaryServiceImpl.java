@@ -8,7 +8,7 @@ import us.mn.state.health.lims.testdictionary.dao.TestDictionaryDAO;
 import us.mn.state.health.lims.testdictionary.valueholder.TestDictionary;
 
 @Service
-public class TestDictionaryServiceImpl extends BaseObjectServiceImpl<TestDictionary> implements TestDictionaryService {
+public class TestDictionaryServiceImpl extends BaseObjectServiceImpl<TestDictionary, String> implements TestDictionaryService {
 	@Autowired
 	protected TestDictionaryDAO baseObjectDAO;
 

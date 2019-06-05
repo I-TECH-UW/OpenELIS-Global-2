@@ -10,7 +10,7 @@ import us.mn.state.health.lims.gender.dao.GenderDAO;
 import us.mn.state.health.lims.gender.valueholder.Gender;
 
 @Service
-public class GenderServiceImpl extends BaseObjectServiceImpl<Gender> implements GenderService {
+public class GenderServiceImpl extends BaseObjectServiceImpl<Gender, String> implements GenderService {
 	@Autowired
 	protected GenderDAO baseObjectDAO;
 

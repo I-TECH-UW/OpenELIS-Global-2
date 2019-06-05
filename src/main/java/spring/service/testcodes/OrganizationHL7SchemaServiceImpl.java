@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.testcodes.dao.OrganizationHL7SchemaDAO;
 import us.mn.state.health.lims.testcodes.valueholder.OrganizationHL7Schema;
+import us.mn.state.health.lims.testcodes.valueholder.OrganizationSchemaPK;
 
 @Service
-public class OrganizationHL7SchemaServiceImpl extends BaseObjectServiceImpl<OrganizationHL7Schema> implements OrganizationHL7SchemaService {
+public class OrganizationHL7SchemaServiceImpl extends BaseObjectServiceImpl<OrganizationHL7Schema, OrganizationSchemaPK>
+		implements OrganizationHL7SchemaService {
 	@Autowired
 	protected OrganizationHL7SchemaDAO baseObjectDAO;
 

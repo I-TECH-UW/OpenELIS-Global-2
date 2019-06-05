@@ -10,7 +10,7 @@ import us.mn.state.health.lims.renametestsection.dao.RenameTestSectionDAO;
 import us.mn.state.health.lims.renametestsection.valueholder.RenameTestSection;
 
 @Service
-public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTestSection> implements RenameTestSectionService {
+public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTestSection, String> implements RenameTestSectionService {
 	@Autowired
 	protected RenameTestSectionDAO baseObjectDAO;
 

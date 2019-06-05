@@ -13,7 +13,7 @@ import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 @Service
-public class SampleItemServiceImpl extends BaseObjectServiceImpl<SampleItem> implements SampleItemService {
+public class SampleItemServiceImpl extends BaseObjectServiceImpl<SampleItem, String> implements SampleItemService {
 	@Autowired
 	protected SampleItemDAO baseObjectDAO;
 

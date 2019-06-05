@@ -11,8 +11,7 @@ import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 @Service
-public class TypeOfSampleTestServiceImpl extends BaseObjectServiceImpl<TypeOfSampleTest>
-		implements TypeOfSampleTestService {
+public class TypeOfSampleTestServiceImpl extends BaseObjectServiceImpl<TypeOfSampleTest, String> implements TypeOfSampleTestService {
 	@Autowired
 	protected TypeOfSampleTestDAO baseObjectDAO;
 

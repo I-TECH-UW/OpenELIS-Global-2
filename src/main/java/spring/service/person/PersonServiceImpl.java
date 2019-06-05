@@ -23,7 +23,7 @@ import us.mn.state.health.lims.person.valueholder.Person;
 @Service
 @DependsOn({ "springContext" })
 @Scope("prototype")
-public class PersonServiceImpl extends BaseObjectServiceImpl<Person> implements PersonService {
+public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> implements PersonService {
 
 	private static Map<String, String> addressPartIdToNameMap;
 

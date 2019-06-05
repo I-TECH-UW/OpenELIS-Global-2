@@ -10,7 +10,7 @@ import us.mn.state.health.lims.analyte.dao.AnalyteDAO;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
 
 @Service
-public class AnalyteServiceImpl extends BaseObjectServiceImpl<Analyte> implements AnalyteService {
+public class AnalyteServiceImpl extends BaseObjectServiceImpl<Analyte, String> implements AnalyteService {
 	@Autowired
 	protected AnalyteDAO baseObjectDAO;
 

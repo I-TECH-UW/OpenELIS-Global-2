@@ -11,7 +11,7 @@ import us.mn.state.health.lims.patientidentity.dao.PatientIdentityDAO;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 
 @Service
-public class PatientIdentityServiceImpl extends BaseObjectServiceImpl<PatientIdentity> implements PatientIdentityService {
+public class PatientIdentityServiceImpl extends BaseObjectServiceImpl<PatientIdentity, String> implements PatientIdentityService {
 	@Autowired
 	protected PatientIdentityDAO baseObjectDAO;
 

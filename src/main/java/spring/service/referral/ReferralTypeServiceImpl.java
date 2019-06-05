@@ -9,7 +9,7 @@ import us.mn.state.health.lims.referral.dao.ReferralTypeDAO;
 import us.mn.state.health.lims.referral.valueholder.ReferralType;
 
 @Service
-public class ReferralTypeServiceImpl extends BaseObjectServiceImpl<ReferralType> implements ReferralTypeService {
+public class ReferralTypeServiceImpl extends BaseObjectServiceImpl<ReferralType, String> implements ReferralTypeService {
 	@Autowired
 	protected ReferralTypeDAO baseObjectDAO;
 

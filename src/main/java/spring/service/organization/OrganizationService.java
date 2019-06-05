@@ -6,7 +6,7 @@ import java.util.Set;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 
-public interface OrganizationService extends BaseObjectService<Organization> {
+public interface OrganizationService extends BaseObjectService<Organization, String> {
 	void getData(Organization organization);
 
 	void deleteData(List organizations);

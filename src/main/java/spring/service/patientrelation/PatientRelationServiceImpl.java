@@ -8,7 +8,7 @@ import us.mn.state.health.lims.patientrelation.dao.PatientRelationDAO;
 import us.mn.state.health.lims.patientrelation.valueholder.PatientRelation;
 
 @Service
-public class PatientRelationServiceImpl extends BaseObjectServiceImpl<PatientRelation> implements PatientRelationService {
+public class PatientRelationServiceImpl extends BaseObjectServiceImpl<PatientRelation, String> implements PatientRelationService {
 	@Autowired
 	protected PatientRelationDAO baseObjectDAO;
 

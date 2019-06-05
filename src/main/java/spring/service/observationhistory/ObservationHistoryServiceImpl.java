@@ -24,8 +24,7 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 
 @Service
 @DependsOn({ "springContext" })
-public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<ObservationHistory>
-		implements ObservationHistoryService {
+public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<ObservationHistory, String> implements ObservationHistoryService {
 
 	public enum ObservationType {
 		INITIAL_SAMPLE_CONDITION("initialSampleCondition"), PAYMENT_STATUS("paymentStatus"),

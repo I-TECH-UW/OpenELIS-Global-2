@@ -10,7 +10,7 @@ import us.mn.state.health.lims.inventory.dao.InventoryReceiptDAO;
 import us.mn.state.health.lims.inventory.valueholder.InventoryReceipt;
 
 @Service
-public class InventoryReceiptServiceImpl extends BaseObjectServiceImpl<InventoryReceipt> implements InventoryReceiptService {
+public class InventoryReceiptServiceImpl extends BaseObjectServiceImpl<InventoryReceipt, String> implements InventoryReceiptService {
 	@Autowired
 	protected InventoryReceiptDAO baseObjectDAO;
 

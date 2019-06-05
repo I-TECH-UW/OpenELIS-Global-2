@@ -11,7 +11,7 @@ import us.mn.state.health.lims.provider.dao.ProviderDAO;
 import us.mn.state.health.lims.provider.valueholder.Provider;
 
 @Service
-public class ProviderServiceImpl extends BaseObjectServiceImpl<Provider> implements ProviderService {
+public class ProviderServiceImpl extends BaseObjectServiceImpl<Provider, String> implements ProviderService {
 	@Autowired
 	protected ProviderDAO baseObjectDAO;
 

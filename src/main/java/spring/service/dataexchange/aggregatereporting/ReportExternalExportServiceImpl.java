@@ -11,7 +11,7 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportExterna
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalExport;
 
 @Service
-public class ReportExternalExportServiceImpl extends BaseObjectServiceImpl<ReportExternalExport> implements ReportExternalExportService {
+public class ReportExternalExportServiceImpl extends BaseObjectServiceImpl<ReportExternalExport, String> implements ReportExternalExportService {
 	@Autowired
 	protected ReportExternalExportDAO baseObjectDAO;
 

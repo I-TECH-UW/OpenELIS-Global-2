@@ -8,7 +8,7 @@ import us.mn.state.health.lims.projectorganization.dao.ProjectOrganizationDAO;
 import us.mn.state.health.lims.projectorganization.valueholder.ProjectOrganization;
 
 @Service
-public class ProjectOrganizationServiceImpl extends BaseObjectServiceImpl<ProjectOrganization> implements ProjectOrganizationService {
+public class ProjectOrganizationServiceImpl extends BaseObjectServiceImpl<ProjectOrganization, String> implements ProjectOrganizationService {
 	@Autowired
 	protected ProjectOrganizationDAO baseObjectDAO;
 

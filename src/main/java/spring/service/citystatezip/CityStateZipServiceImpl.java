@@ -11,7 +11,7 @@ import us.mn.state.health.lims.citystatezip.dao.CityStateZipDAO;
 import us.mn.state.health.lims.citystatezip.valueholder.CityStateZip;
 
 @Service
-public class CityStateZipServiceImpl extends BaseObjectServiceImpl<CityStateZip> implements CityStateZipService {
+public class CityStateZipServiceImpl extends BaseObjectServiceImpl<CityStateZip, String> implements CityStateZipService {
 	@Autowired
 	protected CityStateZipDAO baseObjectDAO;
 
