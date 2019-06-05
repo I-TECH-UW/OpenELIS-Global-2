@@ -24,11 +24,11 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -50,6 +50,9 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 		super(Panel.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	private static Map<String, String> ID_NAME_MAP = null;
 	private static Map<String, String> ID_DESCRIPTION_MAP = null;
 	private static Map<String, String> NAME_ID_MAP = null;
@@ -58,7 +61,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 	public void deleteData(List panels) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < panels.size(); i++) {
 				Panel data = (Panel) panels.get(i);
 
@@ -128,7 +131,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 			panel.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = panel.getSysUserId();
 			String tableName = "PANEL";
 			auditDAO.saveNewHistory(panel, sysUserId, tableName);
@@ -168,7 +171,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 //		Panel newData = panel;
 //
 //		try {
-//			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+//
 //			String sysUserId = panel.getSysUserId();
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "PANEL";

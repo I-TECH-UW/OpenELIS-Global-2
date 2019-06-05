@@ -21,11 +21,11 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -33,7 +33,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.systemusersection.dao.SystemUserSectionDAO;
 import us.mn.state.health.lims.systemusersection.daoimpl.SystemUserSectionDAOImpl;
 import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
@@ -44,18 +43,21 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> implements TestSectionDAO {
 
 	public TestSectionDAOImpl() {
 		super(TestSection.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List testSections) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < testSections.size(); i++) {
 				TestSection data = (TestSection) testSections.get(i);
 
@@ -101,7 +103,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 			String id = (String) sessionFactory.getCurrentSession().save(testSection);
 			testSection.setId(id);
 
-			new AuditTrailDAOImpl().saveNewHistory(testSection, testSection.getSysUserId(), "TEST_SECTION");
+			auditDAO.saveNewHistory(testSection, testSection.getSysUserId(), "TEST_SECTION");
 
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
@@ -134,7 +136,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = testSection.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "TEST_SECTION";
@@ -161,7 +163,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 	@Override
 	public void getData(TestSection testSection) throws LIMSRuntimeException {
 		try {
-			TestSection testSec = (TestSection) sessionFactory.getCurrentSession().get(TestSection.class, testSection.getId());
+			TestSection testSec = sessionFactory.getCurrentSession().get(TestSection.class, testSection.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (testSec != null) {
@@ -194,7 +196,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
 	/**
 	 * Get all the test sections assigned to this specific user
-	 * 
+	 *
 	 * @param sysUserId the user system id
 	 * @return list of tests
 	 */
@@ -259,7 +261,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 	public TestSection readTestSection(String idString) {
 		TestSection ts = null;
 		try {
-			ts = (TestSection) sessionFactory.getCurrentSession().get(TestSection.class, idString);
+			ts = sessionFactory.getCurrentSession().get(TestSection.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -521,7 +523,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 	@Override
 	public TestSection getTestSectionById(String testSectionId) {
 		try {
-			TestSection testSection = (TestSection) sessionFactory.getCurrentSession().get(TestSection.class, testSectionId);
+			TestSection testSection = sessionFactory.getCurrentSession().get(TestSection.class, testSectionId);
 			// closeSession(); // CSL remove old
 			return testSection;
 		} catch (HibernateException e) {

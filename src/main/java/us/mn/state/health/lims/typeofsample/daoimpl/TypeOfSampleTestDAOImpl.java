@@ -21,32 +21,34 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleTestDAO;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 @Component
-@Transactional 
+@Transactional
 public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, String> implements TypeOfSampleTestDAO {
 
 	public TypeOfSampleTestDAOImpl() {
 		super(TypeOfSampleTest.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(String[] typeOfSamplesTestIDs, String currentUserId) throws LIMSRuntimeException {
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (String id : typeOfSamplesTestIDs) {
 				TypeOfSampleTest data = readTypeOfSample(id);
 
@@ -71,7 +73,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 
 			String id = (String) sessionFactory.getCurrentSession().save(typeOfSampleTest);
 			typeOfSampleTest.setId(id);
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			auditDAO.saveNewHistory(typeOfSampleTest, typeOfSampleTest.getSysUserId(), "SAMPLETYPE_TEST");
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old

@@ -50,7 +50,7 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
 @Component
-@Transactional 
+@Transactional
 public class UserTestSectionDAOImpl extends BaseDAOImpl<TestSection, String> implements UserTestSectionDAO {
 
 	public UserTestSectionDAOImpl() {

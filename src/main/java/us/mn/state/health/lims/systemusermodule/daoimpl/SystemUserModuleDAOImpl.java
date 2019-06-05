@@ -22,12 +22,12 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -35,7 +35,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.systemusermodule.dao.SystemUserModuleDAO;
 import us.mn.state.health.lims.systemusermodule.valueholder.SystemUserModule;
 
@@ -51,11 +50,14 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 		super(SystemUserModule.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List systemUserModules) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < systemUserModules.size(); i++) {
 				SystemUserModule data = (SystemUserModule) systemUserModules.get(i);
 
@@ -102,7 +104,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 			systemUserModule.setId(id);
 
 			// add to audit trail
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = systemUserModule.getSysUserId();
 			String tableName = "SYSTEM_USER_MODULE";
 			auditDAO.saveNewHistory(systemUserModule, sysUserId, tableName);
@@ -137,7 +139,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = systemUserModule.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "SYSTEM_USER_MODULE";
@@ -153,7 +155,8 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			// sessionFactory.getCurrentSession().evict // CSL remove old(systemUserModule);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(systemUserModule);
+			// sessionFactory.getCurrentSession().refresh // CSL remove
+			// old(systemUserModule);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("systemUserModuleDAOImpl", "updateData()", e.toString());

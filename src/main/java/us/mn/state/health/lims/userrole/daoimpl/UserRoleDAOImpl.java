@@ -25,11 +25,11 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -47,11 +47,13 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 		super(UserRole.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List<UserRole> roles) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 
 			for (UserRole data : roles) {
 
@@ -88,7 +90,6 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 			UserRolePK id = (UserRolePK) sessionFactory.getCurrentSession().save(role);
 			role.setCompoundId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = role.getSysUserId();
 			String tableName = "SYSTEM_USER_ROLE";
 			auditDAO.saveNewHistory(role, sysUserId, tableName);
@@ -113,7 +114,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 		UserRole oldData = readUserRole(role.getCompoundId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = role.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "SYSTEM_USER_ROLE";

@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -32,7 +32,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.qaevent.dao.QaEventDAO;
 import us.mn.state.health.lims.qaevent.valueholder.QaEvent;
 
@@ -40,18 +39,21 @@ import us.mn.state.health.lims.qaevent.valueholder.QaEvent;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEventDAO {
 
 	public QaEventDAOImpl() {
 		super(QaEvent.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List qaEvents) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < qaEvents.size(); i++) {
 				QaEvent data = (QaEvent) qaEvents.get(i);
 
@@ -98,7 +100,6 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 			String id = (String) sessionFactory.getCurrentSession().save(qaEvent);
 			qaEvent.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = qaEvent.getSysUserId();
 			String tableName = "QA_EVENT";
 			auditDAO.saveNewHistory(qaEvent, sysUserId, tableName);
@@ -132,7 +133,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = qaEvent.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "QA_EVENT";
@@ -159,7 +160,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 	@Override
 	public void getData(QaEvent qaEvent) throws LIMSRuntimeException {
 		try {
-			QaEvent qaEv = (QaEvent) sessionFactory.getCurrentSession().get(QaEvent.class, qaEvent.getId());
+			QaEvent qaEv = sessionFactory.getCurrentSession().get(QaEvent.class, qaEvent.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (qaEv != null) {
@@ -221,7 +222,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 	public QaEvent readQaEvent(String idString) {
 		QaEvent qaEvent = null;
 		try {
-			qaEvent = (QaEvent) sessionFactory.getCurrentSession().get(QaEvent.class, idString);
+			qaEvent = sessionFactory.getCurrentSession().get(QaEvent.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

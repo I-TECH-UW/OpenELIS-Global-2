@@ -20,11 +20,11 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -32,7 +32,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.unitofmeasure.dao.UnitOfMeasureDAO;
 import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
@@ -40,18 +39,21 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> implements UnitOfMeasureDAO {
 
 	public UnitOfMeasureDAOImpl() {
 		super(UnitOfMeasure.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List unitOfMeasures) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (Object unitOfMeasure : unitOfMeasures) {
 				UnitOfMeasure data = (UnitOfMeasure) unitOfMeasure;
 
@@ -99,7 +101,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 			unitOfMeasure.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = unitOfMeasure.getSysUserId();
 			String tableName = "UNIT_OF_MEASURE";
 			auditDAO.saveNewHistory(unitOfMeasure, "1", tableName);
@@ -133,7 +135,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			auditDAO.saveHistory(unitOfMeasure, oldData, unitOfMeasure.getSysUserId(),
 					IActionConstants.AUDIT_TRAIL_UPDATE, "UNIT_OF_MEASURE");
 		} catch (Exception e) {
@@ -173,8 +175,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 	@Override
 	public void getData(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException {
 		try {
-			UnitOfMeasure uom = (UnitOfMeasure) sessionFactory.getCurrentSession().get(UnitOfMeasure.class,
-					unitOfMeasure.getId());
+			UnitOfMeasure uom = sessionFactory.getCurrentSession().get(UnitOfMeasure.class, unitOfMeasure.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (uom != null) {
@@ -209,6 +210,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 		return list;
 	}
 
+	@Override
 	public List<UnitOfMeasure> getAllActiveUnitOfMeasures() {
 		List list;
 		try {
@@ -269,7 +271,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 	public UnitOfMeasure readUnitOfMeasure(String idString) {
 		UnitOfMeasure data;
 		try {
-			data = (UnitOfMeasure) sessionFactory.getCurrentSession().get(UnitOfMeasure.class, idString);
+			data = sessionFactory.getCurrentSession().get(UnitOfMeasure.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

@@ -27,12 +27,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -40,7 +40,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.login.dao.UserModuleService;
 import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
@@ -58,18 +57,21 @@ import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 	public TestDAOImpl() {
 		super(Test.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List tests) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < tests.size(); i++) {
 				Test data = (Test) tests.get(i);
 
@@ -116,7 +118,6 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 			String id = (String) sessionFactory.getCurrentSession().save(test);
 			test.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = test.getSysUserId();
 			String tableName = "TEST";
 			auditDAO.saveNewHistory(test, sysUserId, tableName);
@@ -148,7 +149,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 		Test oldData = readTest(test.getId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = test.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "TEST";

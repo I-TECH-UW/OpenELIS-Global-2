@@ -23,11 +23,11 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -35,7 +35,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.note.dao.NoteDAO;
 import us.mn.state.health.lims.note.valueholder.Note;
 
@@ -43,17 +42,20 @@ import us.mn.state.health.lims.note.valueholder.Note;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 
 	public NoteDAOImpl() {
 		super(Note.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List notes) throws LIMSRuntimeException {
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (Object note : notes) {
 				Note data = (Note) note;
 
@@ -93,7 +95,6 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 			String id = (String) sessionFactory.getCurrentSession().save(note);
 			note.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = note.getSysUserId();
 			String tableName = "NOTE";
 			auditDAO.saveNewHistory(note, sysUserId, tableName);
@@ -126,7 +127,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 		Note oldData = readNote(note.getId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = note.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "NOTE";
@@ -151,7 +152,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 	@Override
 	public void getData(Note note) throws LIMSRuntimeException {
 		try {
-			Note nt = (Note) sessionFactory.getCurrentSession().get(Note.class, note.getId());
+			Note nt = sessionFactory.getCurrentSession().get(Note.class, note.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (nt != null) {
@@ -170,7 +171,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 	@Override
 	public Note getData(String noteId) throws LIMSRuntimeException {
 		try {
-			Note note = (Note) sessionFactory.getCurrentSession().get(Note.class, noteId);
+			Note note = sessionFactory.getCurrentSession().get(Note.class, noteId);
 			// closeSession(); // CSL remove old
 			return note;
 		} catch (Exception e) {
@@ -227,7 +228,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 	public Note readNote(String idString) {
 		Note note;
 		try {
-			note = (Note) sessionFactory.getCurrentSession().get(Note.class, idString);
+			note = sessionFactory.getCurrentSession().get(Note.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

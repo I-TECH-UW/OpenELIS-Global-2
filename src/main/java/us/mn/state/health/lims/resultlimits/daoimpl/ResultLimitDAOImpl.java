@@ -22,33 +22,34 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.resultlimits.dao.ResultLimitDAO;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
 
 @Component
-@Transactional 
+@Transactional
 public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> implements ResultLimitDAO {
 
 	public ResultLimitDAOImpl() {
 		super(ResultLimit.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List resultLimits) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 
 			for (Object limitObj : resultLimits) {
 				ResultLimit data = (ResultLimit) limitObj;
@@ -86,7 +87,6 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 			String id = (String) sessionFactory.getCurrentSession().save(resultLimit);
 			resultLimit.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = resultLimit.getSysUserId();
 			String tableName = "RESULT_LIMITS";
 			auditDAO.saveNewHistory(resultLimit, sysUserId, tableName);
@@ -108,7 +108,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 		ResultLimit oldData = readResultLimit(resultLimit.getId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = resultLimit.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "RESULT_LIMITS";
@@ -133,7 +133,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 	@Override
 	public void getData(ResultLimit resultLimit) throws LIMSRuntimeException {
 		try {
-			ResultLimit tmpLimit = (ResultLimit) sessionFactory.getCurrentSession().get(ResultLimit.class, resultLimit.getId());
+			ResultLimit tmpLimit = sessionFactory.getCurrentSession().get(ResultLimit.class, resultLimit.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (tmpLimit != null) {
@@ -190,7 +190,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 	public ResultLimit readResultLimit(String idString) {
 		ResultLimit recoveredLimit;
 		try {
-			recoveredLimit = (ResultLimit) sessionFactory.getCurrentSession().get(ResultLimit.class, idString);
+			recoveredLimit = sessionFactory.getCurrentSession().get(ResultLimit.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -237,7 +237,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 	@Override
 	public ResultLimit getResultLimitById(String resultLimitId) throws LIMSRuntimeException {
 		try {
-			ResultLimit resultLimit = (ResultLimit) sessionFactory.getCurrentSession().get(ResultLimit.class, resultLimitId);
+			ResultLimit resultLimit = sessionFactory.getCurrentSession().get(ResultLimit.class, resultLimitId);
 			// closeSession(); // CSL remove old
 			return resultLimit;
 		} catch (Exception e) {

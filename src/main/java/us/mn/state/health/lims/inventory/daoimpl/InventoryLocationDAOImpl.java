@@ -18,26 +18,28 @@ package us.mn.state.health.lims.inventory.daoimpl;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.inventory.dao.InventoryLocationDAO;
 import us.mn.state.health.lims.inventory.valueholder.InventoryLocation;
 
 @Component
-@Transactional 
+@Transactional
 public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, String> implements InventoryLocationDAO {
 
 	public InventoryLocationDAOImpl() {
 		super(InventoryLocation.class);
 	}
+
+	@Autowired
+	private AuditTrailDAO auditDAO;
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -60,7 +62,7 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 	@Override
 	public void deleteData(List<InventoryLocation> inventoryItems) throws LIMSRuntimeException {
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (InventoryLocation data : inventoryItems) {
 
 				InventoryLocation oldData = readInventoryLocation(data.getId());
@@ -91,7 +93,6 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 			String id = (String) sessionFactory.getCurrentSession().save(inventoryItem);
 			inventoryItem.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = inventoryItem.getSysUserId();
 			String tableName = "INVENTORY_ITEM";
 			auditDAO.saveNewHistory(inventoryItem, sysUserId, tableName);
@@ -114,7 +115,7 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = inventoryItem.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "INVENTORY_ITEM";
@@ -134,8 +135,8 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 	@Override
 	public void getData(InventoryLocation inventoryItem) throws LIMSRuntimeException {
 		try {
-			InventoryLocation tmpInventoryLocation = (InventoryLocation) sessionFactory.getCurrentSession()
-					.get(InventoryLocation.class, inventoryItem.getId());
+			InventoryLocation tmpInventoryLocation = sessionFactory.getCurrentSession().get(InventoryLocation.class,
+					inventoryItem.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (tmpInventoryLocation != null) {
@@ -152,7 +153,7 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 	public InventoryLocation readInventoryLocation(String idString) throws LIMSRuntimeException {
 		InventoryLocation data = null;
 		try {
-			data = (InventoryLocation) sessionFactory.getCurrentSession().get(InventoryLocation.class, idString);
+			data = sessionFactory.getCurrentSession().get(InventoryLocation.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -166,7 +167,7 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
 	@Override
 	public InventoryLocation getInventoryLocationById(InventoryLocation inventoryItem) throws LIMSRuntimeException {
 		try {
-			InventoryLocation re = (InventoryLocation) sessionFactory.getCurrentSession().get(InventoryLocation.class,
+			InventoryLocation re = sessionFactory.getCurrentSession().get(InventoryLocation.class,
 					inventoryItem.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old

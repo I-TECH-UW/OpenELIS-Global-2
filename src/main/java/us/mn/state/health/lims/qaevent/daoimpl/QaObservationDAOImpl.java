@@ -18,26 +18,28 @@ package us.mn.state.health.lims.qaevent.daoimpl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.qaevent.dao.QaObservationDAO;
 import us.mn.state.health.lims.qaevent.valueholder.QaObservation;
 
 @Component
-@Transactional 
+@Transactional
 public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation, String> implements QaObservationDAO {
 
 	public QaObservationDAOImpl() {
 		super(QaObservation.class);
 	}
+
+	@Autowired
+	private AuditTrailDAO auditDAO;
 
 	@Override
 	public void insertData(QaObservation qaObservation) throws LIMSRuntimeException {
@@ -46,7 +48,6 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation, String> imp
 			String id = (String) sessionFactory.getCurrentSession().save(qaObservation);
 			qaObservation.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveNewHistory(qaObservation, qaObservation.getSysUserId(), "QA_OBSERVATION");
 
 			// closeSession(); // CSL remove old
@@ -60,7 +61,7 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation, String> imp
 		QaObservation oldData = readQaObservation(qaObservation.getId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			auditDAO.saveHistory(qaObservation, oldData, qaObservation.getSysUserId(),
 					IActionConstants.AUDIT_TRAIL_UPDATE, "QA_OBSERVATION");
 		} catch (HibernateException e) {
@@ -101,7 +102,7 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation, String> imp
 	public QaObservation readQaObservation(String idString) {
 		QaObservation qaObservation = null;
 		try {
-			qaObservation = (QaObservation) sessionFactory.getCurrentSession().get(QaObservation.class, idString);
+			qaObservation = sessionFactory.getCurrentSession().get(QaObservation.class, idString);
 			// closeSession(); // CSL remove old
 		} catch (Exception e) {
 			handleException(e, "readQaObservation");

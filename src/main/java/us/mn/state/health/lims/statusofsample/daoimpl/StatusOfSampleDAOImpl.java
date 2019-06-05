@@ -20,11 +20,11 @@ import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -32,7 +32,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.statusofsample.dao.StatusOfSampleDAO;
 import us.mn.state.health.lims.statusofsample.valueholder.StatusOfSample;
 
@@ -40,12 +39,15 @@ import us.mn.state.health.lims.statusofsample.valueholder.StatusOfSample;
  * @author bill mcgough
  */
 @Component
-@Transactional 
+@Transactional
 public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> implements StatusOfSampleDAO {
 
 	public StatusOfSampleDAOImpl() {
 		super(StatusOfSample.class);
 	}
+
+	@Autowired
+	private AuditTrailDAO auditDAO;
 
 	// bugzilla 1942
 	@Override
@@ -104,7 +106,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 			statusOfSample.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = statusOfSample.getSysUserId();
 			String tableName = "STATUS_OF_SAMPLE";
 			auditDAO.saveNewHistory(statusOfSample, sysUserId, tableName);
@@ -152,7 +154,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = statusOfSample.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "STATUS_OF_SAMPLE";
@@ -186,8 +188,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 	public void getData(StatusOfSample statusOfSample) throws LIMSRuntimeException {
 
 		try {
-			StatusOfSample sos = (StatusOfSample) sessionFactory.getCurrentSession().get(StatusOfSample.class,
-					statusOfSample.getId());
+			StatusOfSample sos = sessionFactory.getCurrentSession().get(StatusOfSample.class, statusOfSample.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (sos != null) {
@@ -272,7 +273,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 
 		StatusOfSample sos = null;
 		try {
-			sos = (StatusOfSample) sessionFactory.getCurrentSession().get(StatusOfSample.class, idString);
+			sos = sessionFactory.getCurrentSession().get(StatusOfSample.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

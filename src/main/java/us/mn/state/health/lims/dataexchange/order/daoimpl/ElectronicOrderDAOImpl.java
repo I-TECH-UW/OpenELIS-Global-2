@@ -22,25 +22,27 @@ import java.util.Vector;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.dataexchange.order.dao.ElectronicOrderDAO;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional 
+@Transactional
 public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String> implements ElectronicOrderDAO {
 
 	public ElectronicOrderDAOImpl() {
 		super(ElectronicOrder.class);
 	}
+
+	@Autowired
+	private AuditTrailDAO auditDAO;
 
 	@Override
 	public List<ElectronicOrder> getElectronicOrdersByExternalId(String id) throws LIMSRuntimeException {
@@ -84,7 +86,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 			String id = (String) sessionFactory.getCurrentSession().save(eOrder);
 			eOrder.setId(id);
 
-			new AuditTrailDAOImpl().saveNewHistory(eOrder, eOrder.getSysUserId(), "ELECTROINIC_ORDER");
+			auditDAO.saveNewHistory(eOrder, eOrder.getSysUserId(), "ELECTROINIC_ORDER");
 
 			// closeSession(); // CSL remove old
 		} catch (HibernateException e) {
@@ -98,7 +100,6 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 		ElectronicOrder oldOrder = readOrder(eOrder.getId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveHistory(eOrder, oldOrder, eOrder.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
 					"ELECTROINIC_ORDER");
 
@@ -114,7 +115,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 
 	public ElectronicOrder readOrder(String idString) {
 		try {
-			ElectronicOrder eOrder = (ElectronicOrder) sessionFactory.getCurrentSession().get(ElectronicOrder.class, idString);
+			ElectronicOrder eOrder = sessionFactory.getCurrentSession().get(ElectronicOrder.class, idString);
 			// closeSession(); // CSL remove old
 			return eOrder;
 		} catch (HibernateException e) {

@@ -22,13 +22,13 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.analyte.dao.AnalyteDAO;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -36,7 +36,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 /**
  * @author diane benz
@@ -49,6 +48,9 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 		super(Analyte.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void delete(Analyte analyte) {
 		System.out.println("selete dao");
@@ -58,7 +60,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 	public void deleteData(List analytes) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < analytes.size(); i++) {
 				Analyte data = (Analyte) analytes.get(i);
 
@@ -108,7 +110,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 			analyte.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = analyte.getSysUserId();
 			String tableName = "ANALYTE";
 			auditDAO.saveNewHistory(analyte, sysUserId, tableName);
@@ -147,7 +149,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = analyte.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "ANALYTE";

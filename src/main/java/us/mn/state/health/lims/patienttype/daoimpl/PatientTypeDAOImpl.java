@@ -14,28 +14,30 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.patienttype.dao.PatientTypeDAO;
 import us.mn.state.health.lims.patienttype.valueholder.PatientType;
 
 @Component
-@Transactional 
+@Transactional
 public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> implements PatientTypeDAO {
 
 	public PatientTypeDAOImpl() {
 		super(PatientType.class);
 	}
+
+	@Autowired
+	private AuditTrailDAO auditDAO;
 
 	@SuppressWarnings("unused")
 	private static Log log = LogFactory.getLog(PatientTypeDAOImpl.class);
@@ -44,7 +46,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 	public void deleteData(List patientTypes) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < patientTypes.size(); i++) {
 				PatientType data = (PatientType) patientTypes.get(i);
 
@@ -84,7 +86,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 
 			String id = (String) sessionFactory.getCurrentSession().save(patientType);
 			patientType.setId(id);
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = patientType.getSysUserId();
 			String tableName = "PATIENT_TYPE";
 			auditDAO.saveNewHistory(patientType, sysUserId, tableName);
@@ -115,7 +117,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = patientTypes.getId().toString();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "PATIENT_TYPE";
@@ -140,7 +142,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 	@Override
 	public void getData(PatientType patientType) throws LIMSRuntimeException {
 		try {
-			PatientType cityvns = (PatientType) sessionFactory.getCurrentSession().get(PatientType.class, patientType.getId());
+			PatientType cityvns = sessionFactory.getCurrentSession().get(PatientType.class, patientType.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (cityvns != null) {
@@ -199,7 +201,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 	public PatientType readPatientType(String idString) {
 		PatientType patientType = null;
 		try {
-			patientType = (PatientType) sessionFactory.getCurrentSession().get(PatientType.class, idString);
+			patientType = sessionFactory.getCurrentSession().get(PatientType.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

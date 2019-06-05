@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -32,7 +32,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 
@@ -40,18 +39,21 @@ import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implements SystemUserDAO {
 
 	public SystemUserDAOImpl() {
 		super(SystemUser.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List systemUsers) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < systemUsers.size(); i++) {
 				SystemUser data = (SystemUser) systemUsers.get(i);
 
@@ -102,7 +104,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 			systemUser.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = systemUser.getSysUserId();
 			String tableName = "SYSTEM_USER";
 			auditDAO.saveNewHistory(systemUser, sysUserId, tableName);
@@ -142,7 +144,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = systemUser.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "SYSTEM_USER";
@@ -169,7 +171,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 	@Override
 	public void getData(SystemUser systemUser) throws LIMSRuntimeException {
 		try {
-			SystemUser sysUser = (SystemUser) sessionFactory.getCurrentSession().get(SystemUser.class, systemUser.getId());
+			SystemUser sysUser = sessionFactory.getCurrentSession().get(SystemUser.class, systemUser.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
@@ -233,7 +235,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 	public SystemUser readSystemUser(String idString) {
 		SystemUser su = null;
 		try {
-			su = (SystemUser) sessionFactory.getCurrentSession().get(SystemUser.class, idString);
+			su = sessionFactory.getCurrentSession().get(SystemUser.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -389,7 +391,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 	@Override
 	public SystemUser getUserById(String userId) throws LIMSRuntimeException {
 		try {
-			SystemUser sysUser = (SystemUser) sessionFactory.getCurrentSession().get(SystemUser.class, userId);
+			SystemUser sysUser = sessionFactory.getCurrentSession().get(SystemUser.class, userId);
 			// closeSession(); // CSL remove old
 			return sysUser;
 		} catch (Exception e) {

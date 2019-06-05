@@ -22,11 +22,11 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -34,7 +34,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
 import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 
@@ -49,11 +48,14 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 		super(ReferenceTables.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List referenceTableses) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < referenceTableses.size(); i++) {
 
 				ReferenceTables data = (ReferenceTables) referenceTableses.get(i);
@@ -118,7 +120,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 			referenceTables.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = referenceTables.getSysUserId();
 			String tableName = "REFERENCE_TABLES";
 			auditDAO.saveNewHistory(referenceTables, sysUserId, tableName);
@@ -173,7 +175,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 		// oldData.getTableName());
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = referenceTables.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "REFERENCE_TABLES";
@@ -189,7 +191,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			// sessionFactory.getCurrentSession().evict // CSL remove old(referenceTables);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(referenceTables);
+			// sessionFactory.getCurrentSession().refresh // CSL remove
+			// old(referenceTables);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("ReferenceTablesDAOImpl", "updateData()", e.toString());
@@ -200,7 +203,8 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 	@Override
 	public void getData(ReferenceTables referenceTables) throws LIMSRuntimeException {
 		try {
-			ReferenceTables reftbl = sessionFactory.getCurrentSession().get(ReferenceTables.class, referenceTables.getId());
+			ReferenceTables reftbl = sessionFactory.getCurrentSession().get(ReferenceTables.class,
+					referenceTables.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (reftbl != null) {

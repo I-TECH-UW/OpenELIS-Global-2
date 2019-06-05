@@ -18,26 +18,28 @@ package us.mn.state.health.lims.inventory.daoimpl;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.inventory.dao.InventoryItemDAO;
 import us.mn.state.health.lims.inventory.valueholder.InventoryItem;
 
 @Component
-@Transactional 
+@Transactional
 public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> implements InventoryItemDAO {
 
 	public InventoryItemDAOImpl() {
 		super(InventoryItem.class);
 	}
+
+	@Autowired
+	private AuditTrailDAO auditDAO;
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -60,7 +62,7 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
 	@Override
 	public void deleteData(List<InventoryItem> inventoryItems) throws LIMSRuntimeException {
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (InventoryItem data : inventoryItems) {
 
 				InventoryItem oldData = readInventoryItem(data.getId());
@@ -91,7 +93,6 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
 			String id = (String) sessionFactory.getCurrentSession().save(inventoryItem);
 			inventoryItem.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = inventoryItem.getSysUserId();
 			String tableName = "INVENTORY_ITEM";
 			auditDAO.saveNewHistory(inventoryItem, sysUserId, tableName);
@@ -114,7 +115,7 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = inventoryItem.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "INVENTORY_ITEM";
@@ -134,7 +135,7 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
 	@Override
 	public void getData(InventoryItem inventoryItem) throws LIMSRuntimeException {
 		try {
-			InventoryItem tmpInventoryItem = (InventoryItem) sessionFactory.getCurrentSession().get(InventoryItem.class,
+			InventoryItem tmpInventoryItem = sessionFactory.getCurrentSession().get(InventoryItem.class,
 					inventoryItem.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
@@ -153,7 +154,7 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
 	public InventoryItem readInventoryItem(String idString) throws LIMSRuntimeException {
 		InventoryItem data = null;
 		try {
-			data = (InventoryItem) sessionFactory.getCurrentSession().get(InventoryItem.class, idString);
+			data = sessionFactory.getCurrentSession().get(InventoryItem.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -167,8 +168,7 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
 	@Override
 	public InventoryItem getInventoryItemById(InventoryItem inventoryItem) throws LIMSRuntimeException {
 		try {
-			InventoryItem re = (InventoryItem) sessionFactory.getCurrentSession().get(InventoryItem.class,
-					inventoryItem.getId());
+			InventoryItem re = sessionFactory.getCurrentSession().get(InventoryItem.class, inventoryItem.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			return re;

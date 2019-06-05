@@ -20,31 +20,33 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.analyzer.dao.AnalyzerDAO;
 import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional 
+@Transactional
 public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements AnalyzerDAO {
 
 	public AnalyzerDAOImpl() {
 		super(Analyzer.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List<Analyzer> analyzers) throws LIMSRuntimeException {
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (Analyzer data : analyzers) {
 
 				Analyzer oldData = readAnalyzer(data.getId());
@@ -90,7 +92,7 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 	@Override
 	public Analyzer getAnalyzerById(Analyzer analyzer) throws LIMSRuntimeException {
 		try {
-			Analyzer re = (Analyzer) sessionFactory.getCurrentSession().get(Analyzer.class, analyzer.getId());
+			Analyzer re = sessionFactory.getCurrentSession().get(Analyzer.class, analyzer.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			return re;
@@ -118,7 +120,7 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 	@Override
 	public void getData(Analyzer analyzer) throws LIMSRuntimeException {
 		try {
-			Analyzer tmpAnalyzer = (Analyzer) sessionFactory.getCurrentSession().get(Analyzer.class, analyzer.getId());
+			Analyzer tmpAnalyzer = sessionFactory.getCurrentSession().get(Analyzer.class, analyzer.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (tmpAnalyzer != null) {
@@ -138,7 +140,6 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 			String id = (String) sessionFactory.getCurrentSession().save(analyzer);
 			analyzer.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = analyzer.getSysUserId();
 			String tableName = "ANALYZER";
 			auditDAO.saveNewHistory(analyzer, sysUserId, tableName);
@@ -161,7 +162,7 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = analyzer.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "ANALYZER";
@@ -182,7 +183,7 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 	public Analyzer readAnalyzer(String idString) throws LIMSRuntimeException {
 		Analyzer data = null;
 		try {
-			data = (Analyzer) sessionFactory.getCurrentSession().get(Analyzer.class, idString);
+			data = sessionFactory.getCurrentSession().get(Analyzer.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

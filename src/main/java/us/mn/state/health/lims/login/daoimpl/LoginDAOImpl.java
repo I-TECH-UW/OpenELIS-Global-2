@@ -22,11 +22,11 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -34,7 +34,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.login.dao.LoginDAO;
 import us.mn.state.health.lims.login.valueholder.Login;
 import us.mn.state.health.lims.security.PasswordUtil;
@@ -43,18 +42,21 @@ import us.mn.state.health.lims.security.PasswordUtil;
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
 @Component
-@Transactional 
+@Transactional
 public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO {
 
 	public LoginDAOImpl() {
 		super(Login.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List logins) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < logins.size(); i++) {
 				Login data = (Login) logins.get(i);
 
@@ -104,7 +106,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 			login.setPassword(passUtil.hashPassword(login.getPassword()));
 
 			// add to audit trail
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = login.getSysUserId();
 			String tableName = "LOGIN_USER";
 			auditDAO.saveNewHistory(login, sysUserId, tableName);
@@ -145,7 +147,7 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = login.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "LOGIN_USER";
@@ -513,7 +515,6 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 			// login.setPassword(crypto.getEncrypt(login.getPassword()));
 			login.setPassword(passUtil.hashPassword(login.getPassword()));
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveHistory(login, readLoginUser(login.getId()), login.getSysUserId(),
 					IActionConstants.AUDIT_TRAIL_UPDATE, "LOGIN_USER");
 

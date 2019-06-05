@@ -21,26 +21,28 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.inventory.dao.InventoryReceiptDAO;
 import us.mn.state.health.lims.inventory.valueholder.InventoryReceipt;
 
 @Component
-@Transactional 
+@Transactional
 public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, String> implements InventoryReceiptDAO {
 
 	public InventoryReceiptDAOImpl() {
 		super(InventoryReceipt.class);
 	}
+
+	@Autowired
+	private AuditTrailDAO auditDAO;
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -63,7 +65,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
 	@Override
 	public void deleteData(List<InventoryReceipt> inventoryReceipts) throws LIMSRuntimeException {
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (InventoryReceipt data : inventoryReceipts) {
 
 				InventoryReceipt oldData = getInventoryReceiptById(data.getId());
@@ -94,7 +96,6 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
 			String id = (String) sessionFactory.getCurrentSession().save(inventoryReceipt);
 			inventoryReceipt.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = inventoryReceipt.getSysUserId();
 			String tableName = "INVENTORY_RECEIPT";
 			auditDAO.saveNewHistory(inventoryReceipt, sysUserId, tableName);
@@ -117,7 +118,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = inventoryReceipt.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "INVENTORY_RECEIPT";
@@ -127,7 +128,8 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			// sessionFactory.getCurrentSession().evict // CSL remove old(inventoryReceipt);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(inventoryReceipt);
+			// sessionFactory.getCurrentSession().refresh // CSL remove
+			// old(inventoryReceipt);
 		} catch (Exception e) {
 			LogEvent.logError("InventoryReceiptDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in InventoryReceipt updateData()", e);
@@ -137,8 +139,8 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
 	@Override
 	public void getData(InventoryReceipt inventoryReceipt) throws LIMSRuntimeException {
 		try {
-			InventoryReceipt tmpInventoryReceipt = (InventoryReceipt) sessionFactory.getCurrentSession()
-					.get(InventoryReceipt.class, inventoryReceipt.getId());
+			InventoryReceipt tmpInventoryReceipt = sessionFactory.getCurrentSession().get(InventoryReceipt.class,
+					inventoryReceipt.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (tmpInventoryReceipt != null) {
@@ -156,7 +158,7 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
 	public InventoryReceipt getInventoryReceiptById(String idString) throws LIMSRuntimeException {
 		InventoryReceipt data = null;
 		try {
-			data = (InventoryReceipt) sessionFactory.getCurrentSession().get(InventoryReceipt.class, idString);
+			data = sessionFactory.getCurrentSession().get(InventoryReceipt.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

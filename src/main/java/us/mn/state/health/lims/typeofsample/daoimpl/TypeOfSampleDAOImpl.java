@@ -26,11 +26,11 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -38,7 +38,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
@@ -47,12 +46,15 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> implements TypeOfSampleDAO {
 
 	public TypeOfSampleDAOImpl() {
 		super(TypeOfSample.class);
 	}
+
+	@Autowired
+	private AuditTrailDAO auditDAO;
 
 	private static Map<String, String> ID_NAME_MAP = null;
 
@@ -60,7 +62,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 	public void deleteData(List typeOfSamples) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < typeOfSamples.size(); i++) {
 				TypeOfSample data = (TypeOfSample) typeOfSamples.get(i);
 
@@ -109,7 +111,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 			typeOfSample.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = typeOfSample.getSysUserId();
 			String tableName = "TYPE_OF_SAMPLE";
 			auditDAO.saveNewHistory(typeOfSample, sysUserId, tableName);
@@ -133,7 +135,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 		TypeOfSample oldData = readTypeOfSample(typeOfSample.getId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			auditDAO.saveHistory(typeOfSample, oldData, typeOfSample.getSysUserId(),
 					IActionConstants.AUDIT_TRAIL_UPDATE, "TYPE_OF_SAMPLE");
 		} catch (Exception e) {

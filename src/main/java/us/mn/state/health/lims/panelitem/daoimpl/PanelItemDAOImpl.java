@@ -22,11 +22,11 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -34,7 +34,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
@@ -46,18 +45,21 @@ import us.mn.state.health.lims.test.valueholder.Test;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements PanelItemDAO {
 
 	public PanelItemDAOImpl() {
 		super(PanelItem.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List panelItems) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < panelItems.size(); i++) {
 				PanelItem data = (PanelItem) panelItems.get(i);
 
@@ -99,7 +101,6 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 			String id = (String) sessionFactory.getCurrentSession().save(panelItem);
 			panelItem.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = panelItem.getSysUserId();
 			String tableName = "PANEL_ITEM";
 			auditDAO.saveNewHistory(panelItem, sysUserId, tableName);
@@ -129,7 +130,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 		PanelItem oldData = readPanelItem(panelItem.getId());
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = panelItem.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "PANEL_ITEM";
@@ -154,7 +155,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 	@Override
 	public void getData(PanelItem panelItem) throws LIMSRuntimeException {
 		try {
-			PanelItem data = (PanelItem) sessionFactory.getCurrentSession().get(PanelItem.class, panelItem.getId());
+			PanelItem data = sessionFactory.getCurrentSession().get(PanelItem.class, panelItem.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (data != null) {
@@ -211,7 +212,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 	public PanelItem readPanelItem(String idString) {
 		PanelItem pi;
 		try {
-			pi = (PanelItem) sessionFactory.getCurrentSession().get(PanelItem.class, idString);
+			pi = sessionFactory.getCurrentSession().get(PanelItem.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

@@ -3,31 +3,33 @@ package us.mn.state.health.lims.datasubmission.daoimpl;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.datasubmission.dao.DataValueDAO;
 import us.mn.state.health.lims.datasubmission.valueholder.DataValue;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional 
+@Transactional
 public class DataValueDAOImpl extends BaseDAOImpl<DataValue, String> implements DataValueDAO {
 
 	public DataValueDAOImpl() {
 		super(DataValue.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void getData(DataValue dataValue) throws LIMSRuntimeException {
 		try {
-			DataValue dataValueClone = (DataValue) sessionFactory.getCurrentSession().get(DataValue.class, dataValue.getId());
+			DataValue dataValueClone = sessionFactory.getCurrentSession().get(DataValue.class, dataValue.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (dataValueClone != null) {
@@ -45,7 +47,7 @@ public class DataValueDAOImpl extends BaseDAOImpl<DataValue, String> implements 
 	@Override
 	public DataValue getDataValue(String id) throws LIMSRuntimeException {
 		try {
-			DataValue dataValue = (DataValue) sessionFactory.getCurrentSession().get(DataValue.class, id);
+			DataValue dataValue = sessionFactory.getCurrentSession().get(DataValue.class, id);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			return dataValue;
@@ -63,7 +65,6 @@ public class DataValueDAOImpl extends BaseDAOImpl<DataValue, String> implements 
 			String id = (String) sessionFactory.getCurrentSession().save(dataValue);
 			dataValue.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = dataValue.getSysUserId();
 			String tableName = "DATA_VALUE";
 			auditDAO.saveNewHistory(dataValue, sysUserId, tableName);
@@ -86,7 +87,7 @@ public class DataValueDAOImpl extends BaseDAOImpl<DataValue, String> implements 
 		DataValue oldData = getDataValue(dataValue.getId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = dataValue.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "DATA_VALUE";

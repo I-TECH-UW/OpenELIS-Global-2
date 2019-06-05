@@ -17,11 +17,11 @@
 package us.mn.state.health.lims.localization.daoimpl;
 
 import org.hibernate.HibernateException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -37,6 +37,9 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization, String> imple
 	public LocalizationDAOImpl() {
 		super(Localization.class);
 	}
+
+	@Autowired
+	private AuditTrailDAO auditDAO;
 
 	@Override
 	public Localization getLocalizationById(String id) throws LIMSRuntimeException {
@@ -55,7 +58,7 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization, String> imple
 		Localization oldData = readLocalization(localization.getId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			auditDAO.saveHistory(localization, oldData, localization.getSysUserId(),
 					IActionConstants.AUDIT_TRAIL_UPDATE, "LOCALIZATION");
 		} catch (Exception e) {

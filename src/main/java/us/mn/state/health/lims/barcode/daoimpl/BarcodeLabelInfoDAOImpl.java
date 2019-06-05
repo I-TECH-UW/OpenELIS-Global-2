@@ -2,18 +2,17 @@ package us.mn.state.health.lims.barcode.daoimpl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.barcode.dao.BarcodeLabelInfoDAO;
 import us.mn.state.health.lims.barcode.valueholder.BarcodeLabelInfo;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 /**
  * Class for inserting, updating, and retrieving
@@ -24,19 +23,22 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  *
  */
 @Component
-@Transactional 
+@Transactional
 public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, String> implements BarcodeLabelInfoDAO {
 
 	public BarcodeLabelInfoDAOImpl() {
 		super(BarcodeLabelInfo.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@SuppressWarnings("rawtypes")
 	List list;
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * us.mn.state.health.lims.barcode.dao.BarcodeLabelInfoDAO#insertData(us.mn.
 	 * state.health.lims.barcode.valueholder.BarcodeLabelInfo)
@@ -48,7 +50,7 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 			barcodeLabelInfo.setId(id);
 
 			// add to audit trail
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = barcodeLabelInfo.getSysUserId();
 			String tableName = "BARCODE_LABEL_INFO";
 			auditDAO.saveNewHistory(barcodeLabelInfo, sysUserId, tableName);
@@ -64,7 +66,7 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * us.mn.state.health.lims.barcode.dao.BarcodeLabelInfoDAO#updateData(us.mn.
 	 * state.health.lims.barcode.valueholder.BarcodeLabelInfo)
@@ -76,7 +78,7 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = barcodeLabelInfo.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "BARCODE_LABEL_INFO";
@@ -92,7 +94,8 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			// sessionFactory.getCurrentSession().evict // CSL remove old(barcodeLabelInfo);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(barcodeLabelInfo);
+			// sessionFactory.getCurrentSession().refresh // CSL remove
+			// old(barcodeLabelInfo);
 		} catch (Exception e) {
 			LogEvent.logError("BarcodeLabelInfoDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in BarcodeLabelInfo updateData()", e);
@@ -101,7 +104,7 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * us.mn.state.health.lims.barcode.dao.BarcodeLabelInfoDAO#getDataByCode(java.
 	 * lang.String)
@@ -128,15 +131,14 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 
 	/**
 	 * Get BarcodeLabelInfo by id
-	 * 
+	 *
 	 * @param idString PK of the BarcodeLabelInfo to be retrieved
 	 * @return The persisted BarcodeLabelInfo
 	 */
 	public BarcodeLabelInfo readBarcodeLabelInfo(String idString) {
 		BarcodeLabelInfo recoveredBarcodeLabelInfo;
 		try {
-			recoveredBarcodeLabelInfo = (BarcodeLabelInfo) sessionFactory.getCurrentSession().get(BarcodeLabelInfo.class,
-					idString);
+			recoveredBarcodeLabelInfo = sessionFactory.getCurrentSession().get(BarcodeLabelInfo.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

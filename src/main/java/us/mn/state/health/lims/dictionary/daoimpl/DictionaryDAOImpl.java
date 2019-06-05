@@ -25,11 +25,11 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -41,7 +41,6 @@ import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 /**
  * @author diane benz
@@ -54,11 +53,14 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 		super(Dictionary.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List dictionarys) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < dictionarys.size(); i++) {
 				Dictionary data = (Dictionary) dictionarys.get(i);
 
@@ -109,7 +111,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 			dictionary.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = dictionary.getSysUserId();
 			String tableName = "DICTIONARY";
 			auditDAO.saveNewHistory(dictionary, sysUserId, tableName);
@@ -161,7 +163,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = dictionary.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "DICTIONARY";

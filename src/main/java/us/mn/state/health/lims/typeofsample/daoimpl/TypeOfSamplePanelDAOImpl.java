@@ -23,33 +23,35 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSamplePanelDAO;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSamplePanel;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 @Component
-@Transactional 
+@Transactional
 public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, String> implements TypeOfSamplePanelDAO {
 
 	public TypeOfSamplePanelDAOImpl() {
 		super(TypeOfSamplePanel.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(String[] typeOfSamplesPanelIDs, String currentUserId) throws LIMSRuntimeException {
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (String id : typeOfSamplesPanelIDs) {
 				TypeOfSamplePanel data = readTypeOfSamplePanel(id);
 
@@ -73,7 +75,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 			String id = (String) sessionFactory.getCurrentSession().save(typeOfSamplePanel);
 
 			typeOfSamplePanel.setId(id);
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			auditDAO.saveNewHistory(typeOfSamplePanel, typeOfSamplePanel.getSysUserId(), "SAMPLETYPE_PANEL");
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
@@ -89,7 +91,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 	public void getData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException {
 
 		try {
-			TypeOfSamplePanel tos = (TypeOfSamplePanel) sessionFactory.getCurrentSession().get(TypeOfSamplePanel.class,
+			TypeOfSamplePanel tos = sessionFactory.getCurrentSession().get(TypeOfSamplePanel.class,
 					typeOfSamplePanel.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
@@ -151,7 +153,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 	public TypeOfSamplePanel readTypeOfSamplePanel(String idString) {
 		TypeOfSamplePanel tos = null;
 		try {
-			tos = (TypeOfSamplePanel) sessionFactory.getCurrentSession().get(TypeOfSamplePanel.class, idString);
+			tos = sessionFactory.getCurrentSession().get(TypeOfSamplePanel.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

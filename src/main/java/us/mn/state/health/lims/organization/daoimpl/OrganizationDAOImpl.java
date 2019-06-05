@@ -25,11 +25,11 @@ import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -54,11 +54,14 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 		super(Organization.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List organizations) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < organizations.size(); i++) {
 				Organization data = (Organization) organizations.get(i);
 
@@ -108,7 +111,6 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 			String id = (String) sessionFactory.getCurrentSession().save(organization);
 			organization.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveNewHistory(organization, organization.getSysUserId(), "ORGANIZATION");
 
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
@@ -141,7 +143,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = organization.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "ORGANIZATION";

@@ -23,12 +23,12 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -36,7 +36,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.systemusermodule.dao.RoleModuleDAO;
 import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
 import us.mn.state.health.lims.userrole.dao.UserRoleDAO;
@@ -54,11 +53,14 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 		super(RoleModule.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List roleModules) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < roleModules.size(); i++) {
 				RoleModule data = (RoleModule) roleModules.get(i);
 
@@ -103,7 +105,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 			permissionModule.setId(id);
 
 			// add to audit trail
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = permissionModule.getSysUserId();
 			String tableName = "SYSTEM_ROLE_MODULE";
 			auditDAO.saveNewHistory(permissionModule, sysUserId, tableName);
@@ -136,7 +138,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = roleModule.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "SYSTEM_ROLE_MODULE";
@@ -161,7 +163,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 	@Override
 	public void getData(RoleModule systemUserModule) throws LIMSRuntimeException {
 		try {
-			RoleModule sysUserModule = sessionFactory.getCurrentSession().get(RoleModule.class, systemUserModule.getId());
+			RoleModule sysUserModule = sessionFactory.getCurrentSession().get(RoleModule.class,
+					systemUserModule.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (sysUserModule != null) {
@@ -343,7 +346,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 
 			String sql = "from RoleModule s where s.role.id = :param and s.systemModule.id = :param2 and s.id != :param3";
 			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setInteger("param", Integer.parseInt( ((RoleModule) roleModule).getRole().getId()));
+			query.setInteger("param", Integer.parseInt(roleModule.getRole().getId()));
 			query.setInteger("param2", Integer.parseInt(roleModule.getSystemModule().getId()));
 
 			String systemUserModuleId = "0";

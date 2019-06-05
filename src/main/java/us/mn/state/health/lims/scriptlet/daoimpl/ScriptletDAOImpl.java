@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -32,7 +32,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.scriptlet.dao.ScriptletDAO;
 import us.mn.state.health.lims.scriptlet.valueholder.Scriptlet;
 
@@ -40,18 +39,21 @@ import us.mn.state.health.lims.scriptlet.valueholder.Scriptlet;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements ScriptletDAO {
 
 	public ScriptletDAOImpl() {
 		super(Scriptlet.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List scriptlets) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < scriptlets.size(); i++) {
 				Scriptlet data = (Scriptlet) scriptlets.get(i);
 
@@ -97,7 +99,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 			scriptlet.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = scriptlet.getSysUserId();
 			String tableName = "SCRIPTLET";
 			auditDAO.saveNewHistory(scriptlet, sysUserId, tableName);
@@ -131,7 +133,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = scriptlet.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "SCRIPTLET";
@@ -158,7 +160,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 	@Override
 	public void getData(Scriptlet scriptlet) throws LIMSRuntimeException {
 		try {
-			Scriptlet sc = (Scriptlet) sessionFactory.getCurrentSession().get(Scriptlet.class, scriptlet.getId());
+			Scriptlet sc = sessionFactory.getCurrentSession().get(Scriptlet.class, scriptlet.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (sc != null) {
@@ -221,7 +223,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 	public Scriptlet readScriptlet(String idString) {
 		Scriptlet scriptlet = null;
 		try {
-			scriptlet = (Scriptlet) sessionFactory.getCurrentSession().get(Scriptlet.class, idString);
+			scriptlet = sessionFactory.getCurrentSession().get(Scriptlet.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -378,7 +380,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 	@Override
 	public Scriptlet getScriptletById(String scriptletId) throws LIMSRuntimeException {
 		try {
-			Scriptlet scriptlet = (Scriptlet) sessionFactory.getCurrentSession().get(Scriptlet.class, scriptletId);
+			Scriptlet scriptlet = sessionFactory.getCurrentSession().get(Scriptlet.class, scriptletId);
 			// closeSession(); // CSL remove old
 			return scriptlet;
 		} catch (Exception e) {

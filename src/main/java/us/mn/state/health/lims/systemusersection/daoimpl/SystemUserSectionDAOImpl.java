@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -32,7 +32,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.systemusersection.dao.SystemUserSectionDAO;
 import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
 
@@ -40,18 +39,21 @@ import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
 @Component
-@Transactional 
+@Transactional
 public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, String> implements SystemUserSectionDAO {
 
 	public SystemUserSectionDAOImpl() {
 		super(SystemUserSection.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List systemUserSections) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < systemUserSections.size(); i++) {
 				SystemUserSection data = (SystemUserSection) systemUserSections.get(i);
 
@@ -98,7 +100,7 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
 			systemUserSection.setId(id);
 
 			// add to audit trail
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = systemUserSection.getSysUserId();
 			String tableName = "SYSTEM_USER_SECTION";
 			auditDAO.saveNewHistory(systemUserSection, sysUserId, tableName);
@@ -133,7 +135,7 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = systemUserSection.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "SYSTEM_USER_SECTION";
@@ -148,8 +150,10 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
 			sessionFactory.getCurrentSession().merge(systemUserSection);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(systemUserSection);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(systemUserSection);
+			// sessionFactory.getCurrentSession().evict // CSL remove
+			// old(systemUserSection);
+			// sessionFactory.getCurrentSession().refresh // CSL remove
+			// old(systemUserSection);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("SystemUserSectionDAOImpl", "updateData()", e.toString());
@@ -160,8 +164,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
 	@Override
 	public void getData(SystemUserSection systemUserSection) throws LIMSRuntimeException {
 		try {
-			SystemUserSection sysUserSection = (SystemUserSection) sessionFactory.getCurrentSession()
-					.get(SystemUserSection.class, systemUserSection.getId());
+			SystemUserSection sysUserSection = sessionFactory.getCurrentSession().get(SystemUserSection.class,
+					systemUserSection.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (sysUserSection != null) {
@@ -240,7 +244,7 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
 	public SystemUserSection readSystemUserSection(String idString) {
 		SystemUserSection sysUserSection = null;
 		try {
-			sysUserSection = (SystemUserSection) sessionFactory.getCurrentSession().get(SystemUserSection.class, idString);
+			sysUserSection = sessionFactory.getCurrentSession().get(SystemUserSection.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

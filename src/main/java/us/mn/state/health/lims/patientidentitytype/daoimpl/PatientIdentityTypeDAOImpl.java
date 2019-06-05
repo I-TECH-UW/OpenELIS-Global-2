@@ -22,25 +22,28 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.patientidentitytype.dao.PatientIdentityTypeDAO;
 import us.mn.state.health.lims.patientidentitytype.valueholder.PatientIdentityType;
 
 @Component
-@Transactional 
-public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType, String> implements PatientIdentityTypeDAO {
+@Transactional
+public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType, String>
+		implements PatientIdentityTypeDAO {
 
 	public PatientIdentityTypeDAOImpl() {
 		super(PatientIdentityType.class);
 	}
+
+	@Autowired
+	private AuditTrailDAO auditDAO;
 
 	@SuppressWarnings("unused")
 	private static Log log = LogFactory.getLog(PatientIdentityTypeDAOImpl.class);
@@ -75,7 +78,6 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType,
 			String id = (String) sessionFactory.getCurrentSession().save(patientIdentityType);
 			patientIdentityType.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveNewHistory(patientIdentityType, patientIdentityType.getSysUserId(), "PATIENT_IDENTITY_TYPE");
 
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old

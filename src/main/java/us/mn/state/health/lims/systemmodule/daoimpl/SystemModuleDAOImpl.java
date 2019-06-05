@@ -20,11 +20,11 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -32,7 +32,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.systemmodule.dao.SystemModuleDAO;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
 
@@ -47,11 +46,14 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 		super(SystemModule.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List systemModules) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < systemModules.size(); i++) {
 				SystemModule data = (SystemModule) systemModules.get(i);
 
@@ -94,7 +96,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 			String id = (String) sessionFactory.getCurrentSession().save(systemModule);
 			systemModule.setId(id);
 
-//			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+//
 //			String sysUserId = systemModule.getSysUserId();
 //			String tableName = "SYSTEM_MODULE";
 //			auditDAO.saveNewHistory(systemModule, sysUserId, tableName);
@@ -126,7 +128,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			auditDAO.saveHistory(systemModule, oldData, systemModule.getSysUserId(),
 					IActionConstants.AUDIT_TRAIL_UPDATE, "SYSTEM_MODULE");
 		} catch (Exception e) {

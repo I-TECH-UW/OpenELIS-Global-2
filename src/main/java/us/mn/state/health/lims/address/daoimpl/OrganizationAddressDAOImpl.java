@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +29,6 @@ import us.mn.state.health.lims.address.dao.OrganizationAddressDAO;
 import us.mn.state.health.lims.address.valueholder.AddressPK;
 import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -42,7 +42,8 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress,
 		super(OrganizationAddress.class);
 	}
 
-	private static AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+	@Autowired
+	private AuditTrailDAO auditDAO;
 
 	@SuppressWarnings("unchecked")
 	@Override

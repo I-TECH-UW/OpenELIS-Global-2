@@ -24,33 +24,34 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.role.dao.RoleDAO;
 import us.mn.state.health.lims.role.valueholder.Role;
 
 @Component
-@Transactional 
+@Transactional
 public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 
 	public RoleDAOImpl() {
 		super(Role.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List<Role> roles) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 
 			for (Role data : roles) {
 
@@ -87,7 +88,6 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 			String id = (String) sessionFactory.getCurrentSession().save(role);
 			role.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = role.getSysUserId();
 			String tableName = "SYSTEM_ROLE";
 			auditDAO.saveNewHistory(role, sysUserId, tableName);
@@ -110,7 +110,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 		Role newData = role;
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = role.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "SYSTEM_ROLE";
@@ -135,7 +135,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 	@Override
 	public void getData(Role role) throws LIMSRuntimeException {
 		try {
-			Role tmpRole = (Role) sessionFactory.getCurrentSession().get(Role.class, role.getId());
+			Role tmpRole = sessionFactory.getCurrentSession().get(Role.class, role.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (tmpRole != null) {
@@ -208,7 +208,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 	public Role readRole(String idString) {
 		Role recoveredRole = null;
 		try {
-			recoveredRole = (Role) sessionFactory.getCurrentSession().get(Role.class, idString);
+			recoveredRole = sessionFactory.getCurrentSession().get(Role.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

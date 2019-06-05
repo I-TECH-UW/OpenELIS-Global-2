@@ -25,11 +25,11 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
 import org.hibernate.criterion.Example;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -39,24 +39,27 @@ import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.dictionarycategory.dao.DictionaryCategoryDAO;
 import us.mn.state.health.lims.dictionarycategory.valueholder.DictionaryCategory;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 /**
  * @author diane benz bugzilla 2061-2063
  */
 @Component
-@Transactional 
-public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, String> implements DictionaryCategoryDAO {
+@Transactional
+public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, String>
+		implements DictionaryCategoryDAO {
 
 	public DictionaryCategoryDAOImpl() {
 		super(DictionaryCategory.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List dictionaryCategorys) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < dictionaryCategorys.size(); i++) {
 				DictionaryCategory data = (DictionaryCategory) dictionaryCategorys.get(i);
 
@@ -104,7 +107,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 			dictionaryCategory.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = dictionaryCategory.getSysUserId();
 			String tableName = "DICTIONARY_CATEGORY";
 			auditDAO.saveNewHistory(dictionaryCategory, sysUserId, tableName);
@@ -140,7 +143,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = dictionaryCategory.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "DICTIONARY_CATEGORY";
@@ -155,8 +158,10 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 			sessionFactory.getCurrentSession().merge(dictionaryCategory);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(dictionaryCategory);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(dictionaryCategory);
+			// sessionFactory.getCurrentSession().evict // CSL remove
+			// old(dictionaryCategory);
+			// sessionFactory.getCurrentSession().refresh // CSL remove
+			// old(dictionaryCategory);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("DictionaryCategoryDAOImpl", "updateData()", e.toString());
@@ -167,7 +172,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 	@Override
 	public void getData(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException {
 		try {
-			DictionaryCategory cc = (DictionaryCategory) sessionFactory.getCurrentSession().get(DictionaryCategory.class,
+			DictionaryCategory cc = sessionFactory.getCurrentSession().get(DictionaryCategory.class,
 					dictionaryCategory.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
@@ -232,7 +237,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 	public DictionaryCategory readDictionaryCategory(String idString) {
 		DictionaryCategory dc = null;
 		try {
-			dc = (DictionaryCategory) sessionFactory.getCurrentSession().get(DictionaryCategory.class, idString);
+			dc = sessionFactory.getCurrentSession().get(DictionaryCategory.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -380,8 +385,8 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 	public List<DictionaryCategory> readByExample(DictionaryCategory entity) throws LIMSRuntimeException {
 		List<DictionaryCategory> results;
 		try {
-			results = sessionFactory.getCurrentSession().createCriteria(DictionaryCategory.class).add(Example.create(entity))
-					.list();
+			results = sessionFactory.getCurrentSession().createCriteria(DictionaryCategory.class)
+					.add(Example.create(entity)).list();
 		} catch (Exception e) {
 			LogEvent.logError("DictionaryCategoryDAOImpl", "readByExample()", e.toString());
 			throw new LIMSRuntimeException("Error in readByExample()", e);

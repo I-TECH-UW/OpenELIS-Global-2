@@ -23,11 +23,11 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -36,7 +36,6 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.project.dao.ProjectDAO;
 import us.mn.state.health.lims.project.valueholder.Project;
 
@@ -44,18 +43,21 @@ import us.mn.state.health.lims.project.valueholder.Project;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements ProjectDAO {
 
 	public ProjectDAOImpl() {
 		super(Project.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List projects) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < projects.size(); i++) {
 				Project data = (Project) projects.get(i);
 
@@ -106,7 +108,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 			project.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = project.getSysUserId();
 			String tableName = "PROJECT";
 			auditDAO.saveNewHistory(project, sysUserId, tableName);
@@ -141,7 +143,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = project.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "PROJECT";
@@ -168,7 +170,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 	@Override
 	public void getData(Project project) throws LIMSRuntimeException {
 		try {
-			Project proj = (Project) sessionFactory.getCurrentSession().get(Project.class, project.getId());
+			Project proj = sessionFactory.getCurrentSession().get(Project.class, project.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
@@ -237,7 +239,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 	public Project readProject(String idString) {
 		Project pro = null;
 		try {
-			pro = (Project) sessionFactory.getCurrentSession().get(Project.class, idString);
+			pro = sessionFactory.getCurrentSession().get(Project.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

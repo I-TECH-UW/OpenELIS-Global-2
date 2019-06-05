@@ -22,26 +22,28 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.analyzerresults.dao.AnalyzerResultsDAO;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional 
+@Transactional
 public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String> implements AnalyzerResultsDAO {
 
 	public AnalyzerResultsDAOImpl() {
 		super(AnalyzerResults.class);
 	}
+
+	@Autowired
+	private AuditTrailDAO auditDAO;
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -107,7 +109,6 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 						previousResult.setSysUserId(sysUserId);
 					}
 
-					AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 					auditDAO.saveNewHistory(result, sysUserId, "analyzer_results");
 
 					if (duplicateByAccessionAndTestOnly) {
@@ -157,7 +158,7 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 		AnalyzerResults newData = results;
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			auditDAO.saveHistory(newData, oldData, results.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
 					"ANALYZER_RESULTS");
 
@@ -176,7 +177,7 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 	public AnalyzerResults readAnalyzerResults(String idString) throws LIMSRuntimeException {
 		AnalyzerResults data = null;
 		try {
-			data = (AnalyzerResults) sessionFactory.getCurrentSession().get(AnalyzerResults.class, idString);
+			data = sessionFactory.getCurrentSession().get(AnalyzerResults.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -190,8 +191,8 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 	public void getData(AnalyzerResults analyzerResults) throws LIMSRuntimeException {
 
 		try {
-			AnalyzerResults analyzerResultsClone = (AnalyzerResults) sessionFactory.getCurrentSession()
-					.get(AnalyzerResults.class, analyzerResults.getId());
+			AnalyzerResults analyzerResultsClone = sessionFactory.getCurrentSession().get(AnalyzerResults.class,
+					analyzerResults.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (analyzerResultsClone != null) {

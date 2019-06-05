@@ -20,11 +20,11 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -32,7 +32,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.typeoftestresult.dao.TypeOfTestResultDAO;
 import us.mn.state.health.lims.typeoftestresult.valueholder.TypeOfTestResult;
 
@@ -40,18 +39,21 @@ import us.mn.state.health.lims.typeoftestresult.valueholder.TypeOfTestResult;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, String> implements TypeOfTestResultDAO {
 
 	public TypeOfTestResultDAOImpl() {
 		super(TypeOfTestResult.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List typeOfTestResults) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < typeOfTestResults.size(); i++) {
 				TypeOfTestResult data = (TypeOfTestResult) typeOfTestResults.get(i);
 
@@ -96,7 +98,7 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 			typeOfTestResult.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = typeOfTestResult.getSysUserId();
 			String tableName = "TYPE_OF_TEST_RESULT";
 			auditDAO.saveNewHistory(typeOfTestResult, sysUserId, tableName);
@@ -129,7 +131,7 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 		TypeOfTestResult oldData = readTypeOfTestResult(typeOfTestResult.getId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = typeOfTestResult.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "TYPE_OF_TEST_RESULT";
@@ -144,7 +146,8 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			// sessionFactory.getCurrentSession().evict // CSL remove old(typeOfTestResult);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(typeOfTestResult);
+			// sessionFactory.getCurrentSession().refresh // CSL remove
+			// old(typeOfTestResult);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TypeOfTestResultDAOImpl", "updateData()", e.toString());
@@ -155,7 +158,7 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 	@Override
 	public void getData(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException {
 		try {
-			TypeOfTestResult sc = (TypeOfTestResult) sessionFactory.getCurrentSession().get(TypeOfTestResult.class,
+			TypeOfTestResult sc = sessionFactory.getCurrentSession().get(TypeOfTestResult.class,
 					typeOfTestResult.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
@@ -218,7 +221,7 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
 	public TypeOfTestResult readTypeOfTestResult(String idString) {
 		TypeOfTestResult data;
 		try {
-			data = (TypeOfTestResult) sessionFactory.getCurrentSession().get(TypeOfTestResult.class, idString);
+			data = sessionFactory.getCurrentSession().get(TypeOfTestResult.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

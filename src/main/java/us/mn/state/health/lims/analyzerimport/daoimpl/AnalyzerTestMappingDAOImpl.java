@@ -20,6 +20,7 @@ package us.mn.state.health.lims.analyzerimport.daoimpl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +29,6 @@ import us.mn.state.health.lims.analyzerimport.dao.AnalyzerTestMappingDAO;
 import us.mn.state.health.lims.analyzerimport.valueholder.AnalyzerTestMapping;
 import us.mn.state.health.lims.analyzerimport.valueholder.AnalyzerTestMappingPK;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -43,6 +43,9 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping,
 		super(AnalyzerTestMapping.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List<AnalyzerTestMapping> analyzerTestMappingList, String currentUserId)
 			throws LIMSRuntimeException {
@@ -51,7 +54,6 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping,
 			for (AnalyzerTestMapping analyzerTestMapping : analyzerTestMappingList) {
 				analyzerTestMapping = readAnalyzerTestMapping(analyzerTestMapping.getCompoundId());
 
-				AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 				auditDAO.saveHistory(new Analysis(), analyzerTestMapping, currentUserId,
 						IActionConstants.AUDIT_TRAIL_DELETE, "ANALYZER_TEST_MAP");
 
@@ -104,7 +106,6 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping,
 		try {
 			sessionFactory.getCurrentSession().save(analyzerTestMapping);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			auditDAO.saveNewHistory(analyzerTestMapping, currentUserId, "ANALYZER_TEST_MAP");
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old

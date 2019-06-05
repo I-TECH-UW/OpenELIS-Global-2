@@ -3,32 +3,35 @@ package us.mn.state.health.lims.datasubmission.daoimpl;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.datasubmission.dao.TypeOfDataIndicatorDAO;
 import us.mn.state.health.lims.datasubmission.valueholder.TypeOfDataIndicator;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional 
-public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator, String> implements TypeOfDataIndicatorDAO {
+@Transactional
+public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator, String>
+		implements TypeOfDataIndicatorDAO {
 
 	public TypeOfDataIndicatorDAOImpl() {
 		super(TypeOfDataIndicator.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void getData(TypeOfDataIndicator typeOfIndicator) throws LIMSRuntimeException {
 		try {
-			TypeOfDataIndicator typeOfIndicatorClone = (TypeOfDataIndicator) sessionFactory.getCurrentSession()
-					.get(TypeOfDataIndicator.class, typeOfIndicator.getId());
+			TypeOfDataIndicator typeOfIndicatorClone = sessionFactory.getCurrentSession().get(TypeOfDataIndicator.class,
+					typeOfIndicator.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (typeOfIndicatorClone != null) {
@@ -63,8 +66,7 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 	@Override
 	public TypeOfDataIndicator getTypeOfDataIndicator(String id) throws LIMSRuntimeException {
 		try {
-			TypeOfDataIndicator dataValue = (TypeOfDataIndicator) sessionFactory.getCurrentSession()
-					.get(TypeOfDataIndicator.class, id);
+			TypeOfDataIndicator dataValue = sessionFactory.getCurrentSession().get(TypeOfDataIndicator.class, id);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			return dataValue;
@@ -82,7 +84,6 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 			String id = (String) sessionFactory.getCurrentSession().save(typeOfIndicator);
 			typeOfIndicator.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = typeOfIndicator.getSysUserId();
 			String tableName = "TYPE_OF_DATA_INDICATOR";
 			auditDAO.saveNewHistory(typeOfIndicator, sysUserId, tableName);
@@ -105,7 +106,7 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 		TypeOfDataIndicator oldData = getTypeOfDataIndicator(typeOfIndicator.getId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = typeOfIndicator.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "TYPE_OF_DATA_INDICATOR";
@@ -120,7 +121,8 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			// sessionFactory.getCurrentSession().evict // CSL remove old(typeOfIndicator);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(typeOfIndicator);
+			// sessionFactory.getCurrentSession().refresh // CSL remove
+			// old(typeOfIndicator);
 		} catch (Exception e) {
 			// bugzilla 2154
 			LogEvent.logError("TypeOfDataIndicatorDAOImpl", "updateData()", e.toString());

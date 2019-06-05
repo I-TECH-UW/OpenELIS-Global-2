@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -32,7 +32,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.testtrailer.dao.TestTrailerDAO;
 import us.mn.state.health.lims.testtrailer.valueholder.TestTrailer;
 
@@ -40,18 +39,21 @@ import us.mn.state.health.lims.testtrailer.valueholder.TestTrailer;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> implements TestTrailerDAO {
 
 	public TestTrailerDAOImpl() {
 		super(TestTrailer.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List testTrailers) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < testTrailers.size(); i++) {
 				TestTrailer data = (TestTrailer) testTrailers.get(i);
 
@@ -98,7 +100,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 			testTrailer.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = testTrailer.getSysUserId();
 			String tableName = "TEST_TRAILER";
 			auditDAO.saveNewHistory(testTrailer, sysUserId, tableName);
@@ -133,7 +135,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = testTrailer.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "TEST_TRAILER";
@@ -160,7 +162,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 	@Override
 	public void getData(TestTrailer testTrailer) throws LIMSRuntimeException {
 		try {
-			TestTrailer uom = (TestTrailer) sessionFactory.getCurrentSession().get(TestTrailer.class, testTrailer.getId());
+			TestTrailer uom = sessionFactory.getCurrentSession().get(TestTrailer.class, testTrailer.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (uom != null) {
@@ -223,7 +225,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 	public TestTrailer readTestTrailer(String idString) {
 		TestTrailer tr = null;
 		try {
-			tr = (TestTrailer) sessionFactory.getCurrentSession().get(TestTrailer.class, idString);
+			tr = sessionFactory.getCurrentSession().get(TestTrailer.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

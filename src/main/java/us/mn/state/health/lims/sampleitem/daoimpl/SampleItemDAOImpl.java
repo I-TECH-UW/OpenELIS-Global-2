@@ -24,17 +24,16 @@ import java.util.Set;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.sampleitem.dao.SampleItemDAO;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
 import us.mn.state.health.lims.sourceofsample.valueholder.SourceOfSample;
@@ -44,18 +43,21 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implements SampleItemDAO {
 
 	public SampleItemDAOImpl() {
 		super(SampleItem.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List<SampleItem> sampleItems) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < sampleItems.size(); i++) {
 				SampleItem data = sampleItems.get(i);
 
@@ -98,7 +100,6 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 			String id = (String) sessionFactory.getCurrentSession().save(sampleItem);
 			sampleItem.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = sampleItem.getSysUserId();
 			String tableName = "SAMPLE_ITEM";
 			auditDAO.saveNewHistory(sampleItem, sysUserId, tableName);
@@ -121,7 +122,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 		SampleItem newData = sampleItem;
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = sampleItem.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "SAMPLE_ITEM";

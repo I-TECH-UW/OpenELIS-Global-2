@@ -20,11 +20,11 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -34,23 +34,25 @@ import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.gender.dao.GenderDAO;
 import us.mn.state.health.lims.gender.valueholder.Gender;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 /**
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements GenderDAO {
 
 	public GenderDAOImpl() {
 		super(Gender.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List genders) throws LIMSRuntimeException {
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (Object gender : genders) {
 				Gender data = (Gender) gender;
 
@@ -94,7 +96,6 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 			String id = (String) sessionFactory.getCurrentSession().save(gender);
 			gender.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = gender.getSysUserId();
 			String tableName = "GENDER";
 			auditDAO.saveNewHistory(gender, sysUserId, tableName);
@@ -125,7 +126,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = gender.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "GENDER";
@@ -152,7 +153,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 	@Override
 	public void getData(Gender gender) throws LIMSRuntimeException {
 		try {
-			Gender gen = (Gender) sessionFactory.getCurrentSession().get(Gender.class, gender.getId());
+			Gender gen = sessionFactory.getCurrentSession().get(Gender.class, gender.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (gen != null) {
@@ -215,7 +216,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 	public Gender readGender(String idString) {
 		Gender gender;
 		try {
-			gender = (Gender) sessionFactory.getCurrentSession().get(Gender.class, idString);
+			gender = sessionFactory.getCurrentSession().get(Gender.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -33,7 +33,6 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.method.dao.MethodDAO;
 import us.mn.state.health.lims.method.valueholder.Method;
 
@@ -41,18 +40,21 @@ import us.mn.state.health.lims.method.valueholder.Method;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements MethodDAO {
 
 	public MethodDAOImpl() {
 		super(Method.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List methods) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < methods.size(); i++) {
 				Method data = (Method) methods.get(i);
 
@@ -103,7 +105,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 			method.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = method.getSysUserId();
 			String tableName = "METHOD";
 			auditDAO.saveNewHistory(method, sysUserId, tableName);
@@ -138,7 +140,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = method.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "METHOD";
@@ -165,7 +167,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 	@Override
 	public void getData(Method method) throws LIMSRuntimeException {
 		try {
-			Method meth = (Method) sessionFactory.getCurrentSession().get(Method.class, method.getId());
+			Method meth = sessionFactory.getCurrentSession().get(Method.class, method.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (meth != null) {
@@ -236,7 +238,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 	public Method readMethod(String idString) {
 		Method method = null;
 		try {
-			method = (Method) sessionFactory.getCurrentSession().get(Method.class, idString);
+			method = sessionFactory.getCurrentSession().get(Method.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

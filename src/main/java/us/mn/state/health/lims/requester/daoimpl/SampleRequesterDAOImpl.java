@@ -20,35 +20,37 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.requester.dao.SampleRequesterDAO;
 import us.mn.state.health.lims.requester.valueholder.SampleRequester;
 
 /*
  */
 @Component
-@Transactional 
+@Transactional
 public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String> implements SampleRequesterDAO {
 
 	public SampleRequesterDAOImpl() {
 		super(SampleRequester.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public boolean insertData(SampleRequester sampleRequester) throws LIMSRuntimeException {
 		try {
 			sessionFactory.getCurrentSession().save(sampleRequester);
 
-			new AuditTrailDAOImpl().saveNewHistory(sampleRequester, sampleRequester.getSysUserId(), "SAMPLE_REQUESTER");
+			auditDAO.saveNewHistory(sampleRequester, sampleRequester.getSysUserId(), "SAMPLE_REQUESTER");
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 
@@ -65,7 +67,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
 		SampleRequester oldData = readOld(sampleRequester.getSampleId(), sampleRequester.getRequesterTypeId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = sampleRequester.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "SAMPLE_REQUESTER";
@@ -80,7 +82,8 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			// sessionFactory.getCurrentSession().evict // CSL remove old(sampleRequester);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(sampleRequester);
+			// sessionFactory.getCurrentSession().refresh // CSL remove
+			// old(sampleRequester);
 		} catch (Exception e) {
 			LogEvent.logError("SampleRequesterDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in SampleRequester updateData()", e);

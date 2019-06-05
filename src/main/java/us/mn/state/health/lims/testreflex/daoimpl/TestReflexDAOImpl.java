@@ -22,13 +22,13 @@ import java.util.Vector;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.test.TestServiceImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -36,7 +36,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
 import us.mn.state.health.lims.testreflex.dao.TestReflexDAO;
 import us.mn.state.health.lims.testreflex.valueholder.TestReflex;
@@ -46,18 +45,21 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
  * @author diane benz 11/17/2007 instead of printing StackTrace log error
  */
 @Component
-@Transactional 
+@Transactional
 public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implements TestReflexDAO {
 
 	public TestReflexDAOImpl() {
 		super(TestReflex.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List testReflexs) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < testReflexs.size(); i++) {
 				TestReflex data = (TestReflex) testReflexs.get(i);
 
@@ -107,7 +109,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 			testReflex.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = testReflex.getSysUserId();
 			String tableName = "TEST_REFLEX";
 			auditDAO.saveNewHistory(testReflex, sysUserId, tableName);
@@ -145,7 +147,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = testReflex.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "TEST_REFLEX";
@@ -172,7 +174,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 	@Override
 	public void getData(TestReflex testReflex) throws LIMSRuntimeException {
 		try {
-			TestReflex tr = (TestReflex) sessionFactory.getCurrentSession().get(TestReflex.class, testReflex.getId());
+			TestReflex tr = sessionFactory.getCurrentSession().get(TestReflex.class, testReflex.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			if (tr != null) {
@@ -362,7 +364,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 	public TestReflex readTestReflex(String idString) {
 		TestReflex tr = null;
 		try {
-			tr = (TestReflex) sessionFactory.getCurrentSession().get(TestReflex.class, idString);
+			tr = sessionFactory.getCurrentSession().get(TestReflex.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {

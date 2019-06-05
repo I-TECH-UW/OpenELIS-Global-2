@@ -23,32 +23,34 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.result.dao.ResultSignatureDAO;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultSignature;
 
 @Component
-@Transactional 
+@Transactional
 public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String> implements ResultSignatureDAO {
 
 	public ResultSignatureDAOImpl() {
 		super(ResultSignature.class);
 	}
 
+	@Autowired
+	private AuditTrailDAO auditDAO;
+
 	@Override
 	public void deleteData(List<ResultSignature> resultSignatures) throws LIMSRuntimeException {
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (ResultSignature resultSig : resultSignatures) {
 
 				ResultSignature oldData = readResultSignature(resultSig.getId());
@@ -85,7 +87,6 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 			String id = (String) sessionFactory.getCurrentSession().save(resultSignature);
 			resultSignature.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = resultSignature.getSysUserId();
 			String tableName = "RESULT_SIGNATURE";
 			auditDAO.saveNewHistory(resultSignature, sysUserId, tableName);
@@ -108,7 +109,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = resultSignature.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "RESULT_SIGNATURE";
@@ -123,7 +124,8 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			// sessionFactory.getCurrentSession().evict // CSL remove old(resultSignature);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(resultSignature);
+			// sessionFactory.getCurrentSession().refresh // CSL remove
+			// old(resultSignature);
 		} catch (Exception e) {
 			LogEvent.logError("ResultSignatureDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in ResultSignature updateData()", e);
@@ -133,7 +135,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 	@Override
 	public void getData(ResultSignature resultSignature) throws LIMSRuntimeException {
 		try {
-			ResultSignature tmpResultSignature = (ResultSignature) sessionFactory.getCurrentSession().get(ResultSignature.class,
+			ResultSignature tmpResultSignature = sessionFactory.getCurrentSession().get(ResultSignature.class,
 					resultSignature.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
@@ -173,7 +175,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 	public ResultSignature readResultSignature(String idString) {
 		ResultSignature data = null;
 		try {
-			data = (ResultSignature) sessionFactory.getCurrentSession().get(ResultSignature.class, idString);
+			data = sessionFactory.getCurrentSession().get(ResultSignature.class, idString);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -187,8 +189,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 	@Override
 	public ResultSignature getResultSignatureById(ResultSignature resultSignature) throws LIMSRuntimeException {
 		try {
-			ResultSignature re = (ResultSignature) sessionFactory.getCurrentSession().get(ResultSignature.class,
-					resultSignature.getId());
+			ResultSignature re = sessionFactory.getCurrentSession().get(ResultSignature.class, resultSignature.getId());
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
 			return re;

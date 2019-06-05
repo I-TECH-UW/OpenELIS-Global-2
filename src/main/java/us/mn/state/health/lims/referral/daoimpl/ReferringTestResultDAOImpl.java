@@ -20,28 +20,29 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.referral.dao.ReferringTestResultDAO;
 import us.mn.state.health.lims.referral.valueholder.ReferringTestResult;
 
 /*
  */
 @Component
-@Transactional 
-public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult, String> implements ReferringTestResultDAO {
+@Transactional
+public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult, String>
+		implements ReferringTestResultDAO {
 
 	public ReferringTestResultDAOImpl() {
 		super(ReferringTestResult.class);
 	}
 
-	private AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+	@Autowired
+	private AuditTrailDAO auditDAO;
 
 	@Override
 	public boolean insertData(ReferringTestResult referringTestResult) throws LIMSRuntimeException {

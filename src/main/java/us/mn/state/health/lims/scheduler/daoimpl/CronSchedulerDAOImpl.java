@@ -21,11 +21,11 @@ import java.util.Optional;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -39,6 +39,9 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler, String> imp
 	public CronSchedulerDAOImpl() {
 		super(CronScheduler.class);
 	}
+
+	@Autowired
+	private AuditTrailDAO auditDAO;
 
 	@Override
 	public List<CronScheduler> getAllCronSchedules() throws LIMSRuntimeException {
@@ -79,7 +82,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler, String> imp
 		try {
 			String id = (String) sessionFactory.getCurrentSession().save(cronSchedule);
 			cronSchedule.setId(id);
-			new AuditTrailDAOImpl().saveNewHistory(cronSchedule, cronSchedule.getSysUserId(), "QUARTZ_CRON_SCHEDULER");
+			auditDAO.saveNewHistory(cronSchedule, cronSchedule.getSysUserId(), "QUARTZ_CRON_SCHEDULER");
 			// closeSession(); // CSL remove old
 			return id;
 		} catch (HibernateException e) {
@@ -93,7 +96,6 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler, String> imp
 		CronScheduler oldData = readCronScheduler(cronSchedule.getId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 
 			auditDAO.saveHistory(cronSchedule, oldData, cronSchedule.getSysUserId(),
 					IActionConstants.AUDIT_TRAIL_UPDATE, "QUARTZ_CRON_SCHEDULER");
