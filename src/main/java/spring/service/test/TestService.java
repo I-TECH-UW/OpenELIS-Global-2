@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.test.valueholder.Test;
 
-public interface TestService extends BaseObjectService<Test> {
+public interface TestService extends BaseObjectService<Test, String> {
 
 	void getData(Test test);
 

@@ -8,7 +8,7 @@ import us.mn.state.health.lims.requester.dao.RequesterTypeDAO;
 import us.mn.state.health.lims.requester.valueholder.RequesterType;
 
 @Service
-public class RequesterTypeServiceImpl extends BaseObjectServiceImpl<RequesterType> implements RequesterTypeService {
+public class RequesterTypeServiceImpl extends BaseObjectServiceImpl<RequesterType, String> implements RequesterTypeService {
 	@Autowired
 	protected RequesterTypeDAO baseObjectDAO;
 

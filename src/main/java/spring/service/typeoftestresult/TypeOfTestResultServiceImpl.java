@@ -17,8 +17,7 @@ import us.mn.state.health.lims.typeoftestresult.valueholder.TypeOfTestResult;
 
 @Service
 @DependsOn({ "springContext" })
-public class TypeOfTestResultServiceImpl extends BaseObjectServiceImpl<TypeOfTestResult>
-		implements TypeOfTestResultService {
+public class TypeOfTestResultServiceImpl extends BaseObjectServiceImpl<TypeOfTestResult, String> implements TypeOfTestResultService {
 
 	public enum ResultType {
 		REMARK("R"), DICTIONARY("D"), TITER("T"), NUMERIC("N"), ALPHA("A"), MULTISELECT("M"),

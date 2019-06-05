@@ -13,7 +13,7 @@ import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
 import us.mn.state.health.lims.analyzerimport.valueholder.AnalyzerTestMapping;
 
 @Service
-public class AnalyzerServiceImpl extends BaseObjectServiceImpl<Analyzer> implements AnalyzerService {
+public class AnalyzerServiceImpl extends BaseObjectServiceImpl<Analyzer, String> implements AnalyzerService {
 	@Autowired
 	protected AnalyzerDAO baseObjectDAO;
 	@Autowired

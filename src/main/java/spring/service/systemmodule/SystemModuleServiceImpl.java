@@ -1,6 +1,5 @@
 package spring.service.systemmodule;
 
-import java.io.Serializable;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,8 @@ import us.mn.state.health.lims.systemmodule.dao.SystemModuleDAO;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
 
 @Service
-public class SystemModuleServiceImpl extends BaseObjectServiceImpl<SystemModule> implements SystemModuleService {
+public class SystemModuleServiceImpl extends BaseObjectServiceImpl<SystemModule, String>
+		implements SystemModuleService {
 	@Autowired
 	protected SystemModuleDAO baseObjectDAO;
 
@@ -49,7 +49,7 @@ public class SystemModuleServiceImpl extends BaseObjectServiceImpl<SystemModule>
 	}
 
 	@Override
-	public Serializable insert(SystemModule systemModule) {
+	public String insert(SystemModule systemModule) {
 		if (baseObjectDAO.duplicateSystemModuleExists(systemModule)) {
 			throw new LIMSDuplicateRecordException("Duplicate record exists for " + systemModule.getSystemModuleName());
 		}

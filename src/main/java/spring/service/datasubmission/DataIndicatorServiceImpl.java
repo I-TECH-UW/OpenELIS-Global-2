@@ -11,7 +11,7 @@ import us.mn.state.health.lims.datasubmission.valueholder.DataIndicator;
 import us.mn.state.health.lims.datasubmission.valueholder.TypeOfDataIndicator;
 
 @Service
-public class DataIndicatorServiceImpl extends BaseObjectServiceImpl<DataIndicator> implements DataIndicatorService {
+public class DataIndicatorServiceImpl extends BaseObjectServiceImpl<DataIndicator, String> implements DataIndicatorService {
 	@Autowired
 	protected DataIndicatorDAO baseObjectDAO;
 

@@ -10,7 +10,7 @@ import us.mn.state.health.lims.statusofsample.dao.StatusOfSampleDAO;
 import us.mn.state.health.lims.statusofsample.valueholder.StatusOfSample;
 
 @Service
-public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSample> implements StatusOfSampleService {
+public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSample, String> implements StatusOfSampleService {
 	@Autowired
 	protected StatusOfSampleDAO baseObjectDAO;
 

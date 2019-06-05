@@ -16,7 +16,7 @@ import us.mn.state.health.lims.testresult.dao.TestResultDAO;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
 @Service
-public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult> implements TestResultService {
+public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult, String> implements TestResultService {
 	@Autowired
 	protected TestResultDAO baseObjectDAO;
 

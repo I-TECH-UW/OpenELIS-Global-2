@@ -6,7 +6,7 @@ import java.util.Map;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.person.valueholder.Person;
 
-public interface PersonService extends BaseObjectService<Person> {
+public interface PersonService extends BaseObjectService<Person, String> {
 	void getData(Person person);
 
 	void deleteData(List persons);

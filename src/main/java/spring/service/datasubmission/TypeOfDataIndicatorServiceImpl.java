@@ -10,7 +10,7 @@ import us.mn.state.health.lims.datasubmission.dao.TypeOfDataIndicatorDAO;
 import us.mn.state.health.lims.datasubmission.valueholder.TypeOfDataIndicator;
 
 @Service
-public class TypeOfDataIndicatorServiceImpl extends BaseObjectServiceImpl<TypeOfDataIndicator> implements TypeOfDataIndicatorService {
+public class TypeOfDataIndicatorServiceImpl extends BaseObjectServiceImpl<TypeOfDataIndicator, String> implements TypeOfDataIndicatorService {
 	@Autowired
 	protected TypeOfDataIndicatorDAO baseObjectDAO;
 

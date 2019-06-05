@@ -8,7 +8,7 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportQueueTy
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportQueueType;
 
 @Service
-public class ReportQueueTypeServiceImpl extends BaseObjectServiceImpl<ReportQueueType> implements ReportQueueTypeService {
+public class ReportQueueTypeServiceImpl extends BaseObjectServiceImpl<ReportQueueType, String> implements ReportQueueTypeService {
 	@Autowired
 	protected ReportQueueTypeDAO baseObjectDAO;
 

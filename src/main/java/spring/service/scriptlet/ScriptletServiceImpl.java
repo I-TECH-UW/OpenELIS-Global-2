@@ -10,7 +10,7 @@ import us.mn.state.health.lims.scriptlet.dao.ScriptletDAO;
 import us.mn.state.health.lims.scriptlet.valueholder.Scriptlet;
 
 @Service
-public class ScriptletServiceImpl extends BaseObjectServiceImpl<Scriptlet> implements ScriptletService {
+public class ScriptletServiceImpl extends BaseObjectServiceImpl<Scriptlet, String> implements ScriptletService {
 	@Autowired
 	protected ScriptletDAO baseObjectDAO;
 

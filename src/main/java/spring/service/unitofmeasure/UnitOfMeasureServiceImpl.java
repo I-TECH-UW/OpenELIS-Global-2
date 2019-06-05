@@ -22,8 +22,7 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 @Service
 @DependsOn({ "springContext" })
 @Scope("prototype")
-public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasure>
-		implements UnitOfMeasureService, LocaleChangeListener {
+public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasure, String> implements UnitOfMeasureService, LocaleChangeListener {
 
 	private static UnitOfMeasureServiceImpl INSTANCE;
 

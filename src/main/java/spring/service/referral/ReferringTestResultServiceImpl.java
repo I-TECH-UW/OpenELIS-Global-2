@@ -8,7 +8,7 @@ import us.mn.state.health.lims.referral.dao.ReferringTestResultDAO;
 import us.mn.state.health.lims.referral.valueholder.ReferringTestResult;
 
 @Service
-public class ReferringTestResultServiceImpl extends BaseObjectServiceImpl<ReferringTestResult> implements ReferringTestResultService {
+public class ReferringTestResultServiceImpl extends BaseObjectServiceImpl<ReferringTestResult, String> implements ReferringTestResultService {
 	@Autowired
 	protected ReferringTestResultDAO baseObjectDAO;
 

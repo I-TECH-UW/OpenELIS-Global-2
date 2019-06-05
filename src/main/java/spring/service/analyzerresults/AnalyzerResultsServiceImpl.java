@@ -29,8 +29,7 @@ import us.mn.state.health.lims.testreflex.action.util.TestReflexBean;
 import us.mn.state.health.lims.testreflex.action.util.TestReflexUtil;
 
 @Service
-public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerResults>
-		implements AnalyzerResultsService {
+public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerResults, String> implements AnalyzerResultsService {
 	@Autowired
 	protected AnalyzerResultsDAO baseObjectDAO;
 

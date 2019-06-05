@@ -7,7 +7,7 @@ import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
-public interface TypeOfSampleService extends BaseObjectService<TypeOfSample> {
+public interface TypeOfSampleService extends BaseObjectService<TypeOfSample, String> {
 	void getData(TypeOfSample typeOfSample);
 
 	void deleteData(List typeOfSamples);

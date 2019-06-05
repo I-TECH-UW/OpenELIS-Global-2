@@ -11,7 +11,7 @@ import us.mn.state.health.lims.testanalyte.dao.TestAnalyteDAO;
 import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
 
 @Service
-public class TestAnalyteServiceImpl extends BaseObjectServiceImpl<TestAnalyte> implements TestAnalyteService {
+public class TestAnalyteServiceImpl extends BaseObjectServiceImpl<TestAnalyte, String> implements TestAnalyteService {
 	@Autowired
 	protected TestAnalyteDAO baseObjectDAO;
 

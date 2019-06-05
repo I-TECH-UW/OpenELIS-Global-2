@@ -7,7 +7,7 @@ import us.mn.state.health.lims.common.dao.EnumValueItemImplDAO;
 import us.mn.state.health.lims.common.valueholder.EnumValueItemImpl;
 
 @Service
-public class EnumValueItemImplServiceImpl extends BaseObjectServiceImpl<EnumValueItemImpl> implements EnumValueItemImplService {
+public class EnumValueItemImplServiceImpl extends BaseObjectServiceImpl<EnumValueItemImpl, String> implements EnumValueItemImplService {
 	@Autowired
 	protected EnumValueItemImplDAO baseObjectDAO;
 

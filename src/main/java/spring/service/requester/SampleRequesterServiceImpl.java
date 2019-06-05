@@ -11,8 +11,7 @@ import us.mn.state.health.lims.requester.dao.SampleRequesterDAO;
 import us.mn.state.health.lims.requester.valueholder.SampleRequester;
 
 @Service
-public class SampleRequesterServiceImpl extends BaseObjectServiceImpl<SampleRequester>
-		implements SampleRequesterService {
+public class SampleRequesterServiceImpl extends BaseObjectServiceImpl<SampleRequester, String> implements SampleRequesterService {
 	@Autowired
 	protected SampleRequesterDAO baseObjectDAO;
 

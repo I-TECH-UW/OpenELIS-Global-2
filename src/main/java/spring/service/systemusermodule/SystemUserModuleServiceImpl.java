@@ -6,12 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import spring.service.common.BaseObjectServiceImpl;
-import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.systemusermodule.dao.SystemUserModuleDAO;
 import us.mn.state.health.lims.systemusermodule.valueholder.SystemUserModule;
 
 @Service
-public class SystemUserModuleServiceImpl extends BaseObjectServiceImpl<SystemUserModule>
+public class SystemUserModuleServiceImpl extends BaseObjectServiceImpl<SystemUserModule, String>
 		implements SystemUserModuleService {
 
 	@Autowired
@@ -22,7 +21,7 @@ public class SystemUserModuleServiceImpl extends BaseObjectServiceImpl<SystemUse
 	}
 
 	@Override
-	protected BaseDAO<SystemUserModule> getBaseObjectDAO() {
+	protected SystemUserModuleDAO getBaseObjectDAO() {
 		// TODO Auto-generated method stub
 		return null;
 	}

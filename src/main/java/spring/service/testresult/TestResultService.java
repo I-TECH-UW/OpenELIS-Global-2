@@ -7,7 +7,7 @@ import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
-public interface TestResultService extends BaseObjectService<TestResult> {
+public interface TestResultService extends BaseObjectService<TestResult, String> {
 	void getData(TestResult testResult);
 
 	void deleteData(List testResults);

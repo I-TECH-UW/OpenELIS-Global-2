@@ -13,7 +13,7 @@ import us.mn.state.health.lims.testreflex.valueholder.TestReflex;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
 @Service
-public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex> implements TestReflexService {
+public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, String> implements TestReflexService {
 	@Autowired
 	protected TestReflexDAO baseObjectDAO;
 

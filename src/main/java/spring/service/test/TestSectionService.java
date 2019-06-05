@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 
-public interface TestSectionService extends BaseObjectService<TestSection> {
+public interface TestSectionService extends BaseObjectService<TestSection, String> {
 	void getData(TestSection testSection);
 
 	void deleteData(List testSections);

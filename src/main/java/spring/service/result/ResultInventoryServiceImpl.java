@@ -11,7 +11,7 @@ import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultInventory;
 
 @Service
-public class ResultInventoryServiceImpl extends BaseObjectServiceImpl<ResultInventory> implements ResultInventoryService {
+public class ResultInventoryServiceImpl extends BaseObjectServiceImpl<ResultInventory, String> implements ResultInventoryService {
 	@Autowired
 	protected ResultInventoryDAO baseObjectDAO;
 

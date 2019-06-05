@@ -12,7 +12,7 @@ import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 
 @Service
-public class SampleQaEventServiceImpl extends BaseObjectServiceImpl<SampleQaEvent> implements SampleQaEventService {
+public class SampleQaEventServiceImpl extends BaseObjectServiceImpl<SampleQaEvent, String> implements SampleQaEventService {
 	@Autowired
 	protected SampleQaEventDAO baseObjectDAO;
 

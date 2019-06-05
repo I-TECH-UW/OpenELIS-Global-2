@@ -8,7 +8,8 @@ import us.mn.state.health.lims.dataexchange.orderresult.dao.HL7MessageOutDAO;
 import us.mn.state.health.lims.dataexchange.orderresult.valueholder.HL7MessageOut;
 
 @Service
-public class HL7MessageOutServiceImpl extends BaseObjectServiceImpl<HL7MessageOut> implements HL7MessageOutService {
+public class HL7MessageOutServiceImpl extends BaseObjectServiceImpl<HL7MessageOut, String>
+		implements HL7MessageOutService {
 	@Autowired
 	protected HL7MessageOutDAO baseObjectDAO;
 
@@ -19,5 +20,11 @@ public class HL7MessageOutServiceImpl extends BaseObjectServiceImpl<HL7MessageOu
 	@Override
 	protected HL7MessageOutDAO getBaseObjectDAO() {
 		return baseObjectDAO;
+	}
+
+	@Override
+	public HL7MessageOut getByData(String msg) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -9,8 +9,7 @@ import us.mn.state.health.lims.siteinformation.dao.SiteInformationDomainDAO;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformationDomain;
 
 @Service
-public class SiteInformationDomainServiceImpl extends BaseObjectServiceImpl<SiteInformationDomain>
-		implements SiteInformationDomainService {
+public class SiteInformationDomainServiceImpl extends BaseObjectServiceImpl<SiteInformationDomain, String> implements SiteInformationDomainService {
 	@Autowired
 	protected SiteInformationDomainDAO baseObjectDAO;
 

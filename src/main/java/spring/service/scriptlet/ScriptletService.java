@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.scriptlet.valueholder.Scriptlet;
 
-public interface ScriptletService extends BaseObjectService<Scriptlet> {
+public interface ScriptletService extends BaseObjectService<Scriptlet, String> {
 	void getData(Scriptlet scriptlet);
 
 	void deleteData(List scriptlets);

@@ -37,7 +37,7 @@ import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 @Service
 @DependsOn({ "springContext" })
 @Scope("prototype")
-public class NoteServiceImpl extends BaseObjectServiceImpl<Note> implements NoteService {
+public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> implements NoteService {
 
 	public enum NoteType {
 		EXTERNAL(Note.EXTERNAL), INTERNAL(Note.INTERNAL), REJECTION_REASON(Note.REJECT_REASON),

@@ -10,7 +10,7 @@ import us.mn.state.health.lims.referral.dao.ReferralReasonDAO;
 import us.mn.state.health.lims.referral.valueholder.ReferralReason;
 
 @Service
-public class ReferralReasonServiceImpl extends BaseObjectServiceImpl<ReferralReason> implements ReferralReasonService {
+public class ReferralReasonServiceImpl extends BaseObjectServiceImpl<ReferralReason, String> implements ReferralReasonService {
 	@Autowired
 	protected ReferralReasonDAO baseObjectDAO;
 

@@ -8,7 +8,7 @@ import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
 import us.mn.state.health.lims.test.valueholder.Test;
 
-public interface PanelItemService extends BaseObjectService<PanelItem> {
+public interface PanelItemService extends BaseObjectService<PanelItem, String> {
 	void getData(PanelItem panelItem);
 
 	void deleteData(List panelItems);

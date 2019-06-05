@@ -9,7 +9,7 @@ import us.mn.state.health.lims.reports.dao.DocumentTypeDAO;
 import us.mn.state.health.lims.reports.valueholder.DocumentType;
 
 @Service
-public class DocumentTypeServiceImpl extends BaseObjectServiceImpl<DocumentType> implements DocumentTypeService {
+public class DocumentTypeServiceImpl extends BaseObjectServiceImpl<DocumentType, String> implements DocumentTypeService {
 	@Autowired
 	protected DocumentTypeDAO baseObjectDAO;
 

@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.datasubmission.valueholder.TypeOfDataIndicator;
 
-public interface TypeOfDataIndicatorService extends BaseObjectService<TypeOfDataIndicator> {
+public interface TypeOfDataIndicatorService extends BaseObjectService<TypeOfDataIndicator, String> {
 	void getData(TypeOfDataIndicator typeOfIndicator);
 
 	void updateData(TypeOfDataIndicator typeOfIndicator);

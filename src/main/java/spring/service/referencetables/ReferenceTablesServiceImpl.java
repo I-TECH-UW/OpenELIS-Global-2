@@ -11,7 +11,7 @@ import us.mn.state.health.lims.referencetables.dao.ReferenceTablesDAO;
 import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 
 @Service
-public class ReferenceTablesServiceImpl extends BaseObjectServiceImpl<ReferenceTables> implements ReferenceTablesService {
+public class ReferenceTablesServiceImpl extends BaseObjectServiceImpl<ReferenceTables, String> implements ReferenceTablesService {
 	@Autowired
 	protected ReferenceTablesDAO baseObjectDAO;
 

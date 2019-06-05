@@ -11,7 +11,7 @@ import us.mn.state.health.lims.systemuser.dao.SystemUserDAO;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 
 @Service
-public class SystemUserServiceImpl extends BaseObjectServiceImpl<SystemUser> implements SystemUserService {
+public class SystemUserServiceImpl extends BaseObjectServiceImpl<SystemUser, String> implements SystemUserService {
 	@Autowired
 	protected SystemUserDAO baseObjectDAO;
 

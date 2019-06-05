@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 
-public interface ReferenceTablesService extends BaseObjectService<ReferenceTables> {
+public interface ReferenceTablesService extends BaseObjectService<ReferenceTables, String> {
 	void getData(ReferenceTables referenceTables);
 
 	void deleteData(List referenceTableses);

@@ -8,7 +8,7 @@ import us.mn.state.health.lims.sourceofsample.dao.SourceOfSampleDAO;
 import us.mn.state.health.lims.sourceofsample.valueholder.SourceOfSample;
 
 @Service
-public class SourceOfSampleServiceImpl extends BaseObjectServiceImpl<SourceOfSample> implements SourceOfSampleService {
+public class SourceOfSampleServiceImpl extends BaseObjectServiceImpl<SourceOfSample, String> implements SourceOfSampleService {
 	@Autowired
 	protected SourceOfSampleDAO baseObjectDAO;
 

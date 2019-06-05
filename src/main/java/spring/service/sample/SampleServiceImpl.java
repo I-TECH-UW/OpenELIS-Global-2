@@ -40,7 +40,7 @@ import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 @Service
 @DependsOn({ "springContext" })
 @Scope("prototype")
-public class SampleServiceImpl extends BaseObjectServiceImpl<Sample> implements SampleService {
+public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> implements SampleService {
 
 	public static String TABLE_REFERENCE_ID;
 	private static Long PERSON_REQUESTER_TYPE_ID;

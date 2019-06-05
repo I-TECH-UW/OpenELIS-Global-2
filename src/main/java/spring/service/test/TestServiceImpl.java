@@ -40,7 +40,7 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 @Service
 @DependsOn({ "springContext" })
 @Scope("prototype")
-public class TestServiceImpl extends BaseObjectServiceImpl<Test> implements TestService, LocaleChangeListener {
+public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> implements TestService, LocaleChangeListener {
 
 	public enum Entity {
 		TEST_NAME, TEST_AUGMENTED_NAME, TEST_REPORTING_NAME

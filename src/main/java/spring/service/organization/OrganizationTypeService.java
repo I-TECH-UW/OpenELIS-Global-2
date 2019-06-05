@@ -6,7 +6,7 @@ import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.organization.valueholder.OrganizationType;
 
-public interface OrganizationTypeService extends BaseObjectService<OrganizationType> {
+public interface OrganizationTypeService extends BaseObjectService<OrganizationType, String> {
 	List<Organization> getOrganizationsByTypeName(String orderByCol, String[] names);
 
 	List<OrganizationType> getAllOrganizationTypes();

@@ -8,7 +8,7 @@ import us.mn.state.health.lims.audittrail.dao.HistoryDAO;
 import us.mn.state.health.lims.audittrail.valueholder.History;
 
 @Service
-public class HistoryServiceImpl extends BaseObjectServiceImpl<History> implements HistoryService {
+public class HistoryServiceImpl extends BaseObjectServiceImpl<History, String> implements HistoryService {
 	@Autowired
 	protected HistoryDAO baseObjectDAO;
 

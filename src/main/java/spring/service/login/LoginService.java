@@ -7,7 +7,7 @@ import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.login.valueholder.Login;
 
-public interface LoginService extends BaseObjectService<Login> {
+public interface LoginService extends BaseObjectService<Login, String> {
 	boolean isUserAdmin(Login login) throws LIMSRuntimeException;
 
 	void getData(Login login);

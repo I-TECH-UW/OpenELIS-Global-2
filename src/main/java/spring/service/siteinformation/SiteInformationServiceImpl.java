@@ -11,8 +11,7 @@ import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 @Service
-public class SiteInformationServiceImpl extends BaseObjectServiceImpl<SiteInformation>
-		implements SiteInformationService {
+public class SiteInformationServiceImpl extends BaseObjectServiceImpl<SiteInformation, String> implements SiteInformationService {
 
 	@Autowired
 	private SiteInformationDAO siteInformationDAO;

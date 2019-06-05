@@ -14,7 +14,7 @@ import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
 import us.mn.state.health.lims.samplehuman.valueholder.SampleHuman;
 
 @Service
-public class SampleHumanServiceImpl extends BaseObjectServiceImpl<SampleHuman> implements SampleHumanService {
+public class SampleHumanServiceImpl extends BaseObjectServiceImpl<SampleHuman, String> implements SampleHumanService {
 	@Autowired
 	protected SampleHumanDAO baseObjectDAO;
 

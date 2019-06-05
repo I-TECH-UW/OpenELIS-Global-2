@@ -8,7 +8,7 @@ import us.mn.state.health.lims.datasubmission.dao.DataResourceDAO;
 import us.mn.state.health.lims.datasubmission.valueholder.DataResource;
 
 @Service
-public class DataResourceServiceImpl extends BaseObjectServiceImpl<DataResource> implements DataResourceService {
+public class DataResourceServiceImpl extends BaseObjectServiceImpl<DataResource, String> implements DataResourceService {
 	@Autowired
 	protected DataResourceDAO baseObjectDAO;
 

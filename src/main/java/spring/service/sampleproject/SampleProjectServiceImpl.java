@@ -12,7 +12,7 @@ import us.mn.state.health.lims.sampleproject.dao.SampleProjectDAO;
 import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
 
 @Service
-public class SampleProjectServiceImpl extends BaseObjectServiceImpl<SampleProject> implements SampleProjectService {
+public class SampleProjectServiceImpl extends BaseObjectServiceImpl<SampleProject, String> implements SampleProjectService {
 	@Autowired
 	protected SampleProjectDAO baseObjectDAO;
 

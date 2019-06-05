@@ -18,7 +18,7 @@ import us.mn.state.health.lims.test.dao.TestDAO;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 @Service
-public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem> implements PanelItemService {
+public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, String> implements PanelItemService {
 	@Autowired
 	protected PanelItemDAO baseObjectDAO;
 	@Autowired

@@ -10,7 +10,7 @@ import us.mn.state.health.lims.typeofsample.dao.TypeOfSamplePanelDAO;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSamplePanel;
 
 @Service
-public class TypeOfSamplePanelServiceImpl extends BaseObjectServiceImpl<TypeOfSamplePanel> implements TypeOfSamplePanelService {
+public class TypeOfSamplePanelServiceImpl extends BaseObjectServiceImpl<TypeOfSamplePanel, String> implements TypeOfSamplePanelService {
 	@Autowired
 	protected TypeOfSamplePanelDAO baseObjectDAO;
 

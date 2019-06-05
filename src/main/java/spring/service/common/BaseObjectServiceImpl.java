@@ -18,7 +18,8 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
 
-public abstract class BaseObjectServiceImpl<T extends BaseObject> implements BaseObjectService<T> {
+public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends Serializable>
+		implements BaseObjectService<T, PK> {
 
 	@Autowired
 	protected AuditTrailDAO auditTrailDAO;
@@ -31,11 +32,11 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 		classType = clazz;
 	}
 
-	protected abstract BaseDAO<T> getBaseObjectDAO();
+	protected abstract BaseDAO<T, PK> getBaseObjectDAO();
 
 	@Override
 	@Transactional(readOnly = true)
-	public T get(String id) {
+	public T get(PK id) {
 		return getBaseObjectDAO().get(id).orElseThrow(() -> new ObjectNotFoundException(id, classType.getName()));
 
 	}
@@ -179,9 +180,9 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 
 	@Override
 	@Transactional
-	public Serializable insert(T baseObject) {
+	public PK insert(T baseObject) {
 
-		Serializable id = getBaseObjectDAO().insert(baseObject);
+		PK id = getBaseObjectDAO().insert(baseObject);
 		baseObject.setId(id);
 		if (auditTrailLog) {
 			auditTrailDAO.saveNewHistory(baseObject, baseObject.getSysUserId(), getBaseObjectDAO().getTableName());
@@ -191,8 +192,8 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 
 	@Override
 	@Transactional
-	public List<Serializable> insertAll(List<T> baseObjects) {
-		List<Serializable> ids = new ArrayList<>();
+	public List<PK> insertAll(List<T> baseObjects) {
+		List<PK> ids = new ArrayList<>();
 		for (T baseObject : baseObjects) {
 			ids.add(insert(baseObject));
 		}
@@ -266,7 +267,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 
 	@Override
 	@Transactional
-	public void delete(String id, String sysUserId) {
+	public void delete(PK id, String sysUserId) {
 		T oldObject = getBaseObjectDAO().get(id)
 				.orElseThrow(() -> new ObjectNotFoundException(id, classType.getName()));
 		if (auditTrailLog) {
@@ -286,8 +287,8 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject> implements Bas
 
 	@Override
 	@Transactional
-	public void deleteAll(List<String> ids, String sysUserId) {
-		for (String id : ids) {
+	public void deleteAll(List<PK> ids, String sysUserId) {
+		for (PK id : ids) {
 			delete(id, sysUserId);
 		}
 

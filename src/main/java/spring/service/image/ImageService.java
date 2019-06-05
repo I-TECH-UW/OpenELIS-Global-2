@@ -6,7 +6,7 @@ import java.io.ByteArrayOutputStream;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.image.valueholder.Image;
 
-public interface ImageService extends BaseObjectService<Image> {
+public interface ImageService extends BaseObjectService<Image, String> {
 	ByteArrayOutputStream retrieveImageOutputStream(String id);
 
 	ByteArrayInputStream retrieveImageInputStream(String id);

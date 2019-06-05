@@ -8,7 +8,7 @@ import us.mn.state.health.lims.program.dao.ProgramDAO;
 import us.mn.state.health.lims.program.valueholder.Program;
 
 @Service
-public class ProgramServiceImpl extends BaseObjectServiceImpl<Program> implements ProgramService {
+public class ProgramServiceImpl extends BaseObjectServiceImpl<Program, String> implements ProgramService {
 	@Autowired
 	protected ProgramDAO baseObjectDAO;
 

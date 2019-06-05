@@ -12,7 +12,7 @@ import us.mn.state.health.lims.systemmodule.dao.SystemModuleUrlDAO;
 import us.mn.state.health.lims.systemmodule.valueholder.SystemModuleUrl;
 
 @Service
-public class SystemModuleUrlServiceImpl extends BaseObjectServiceImpl<SystemModuleUrl> implements SystemModuleUrlService {
+public class SystemModuleUrlServiceImpl extends BaseObjectServiceImpl<SystemModuleUrl, String> implements SystemModuleUrlService {
 	@Autowired
 	protected SystemModuleUrlDAO baseObjectDAO;
 

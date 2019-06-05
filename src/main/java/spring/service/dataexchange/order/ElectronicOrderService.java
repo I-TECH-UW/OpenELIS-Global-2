@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
 
-public interface ElectronicOrderService extends BaseObjectService<ElectronicOrder> {
+public interface ElectronicOrderService extends BaseObjectService<ElectronicOrder, String> {
 	void updateData(ElectronicOrder eOrder);
 
 	void insertData(ElectronicOrder eOrder);

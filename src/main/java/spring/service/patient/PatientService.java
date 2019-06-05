@@ -8,7 +8,7 @@ import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 import us.mn.state.health.lims.person.valueholder.Person;
 
-public interface PatientService extends BaseObjectService<Patient> {
+public interface PatientService extends BaseObjectService<Patient, String> {
 	void getData(Patient patient);
 
 	Patient getData(String patientId);

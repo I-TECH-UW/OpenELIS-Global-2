@@ -9,7 +9,7 @@ import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.resultlimits.valueholder.ResultLimit;
 import us.mn.state.health.lims.test.valueholder.Test;
 
-public interface ResultLimitService extends BaseObjectService<ResultLimit> {
+public interface ResultLimitService extends BaseObjectService<ResultLimit, String> {
 
 	boolean insertData(ResultLimit resultLimit) throws LIMSRuntimeException;
 

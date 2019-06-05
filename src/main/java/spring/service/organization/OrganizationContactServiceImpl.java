@@ -10,8 +10,7 @@ import us.mn.state.health.lims.organization.dao.OrganizationContactDAO;
 import us.mn.state.health.lims.organization.valueholder.OrganizationContact;
 
 @Service
-public class OrganizationContactServiceImpl extends BaseObjectServiceImpl<OrganizationContact>
-		implements OrganizationContactService {
+public class OrganizationContactServiceImpl extends BaseObjectServiceImpl<OrganizationContact, String> implements OrganizationContactService {
 	@Autowired
 	protected OrganizationContactDAO baseObjectDAO;
 

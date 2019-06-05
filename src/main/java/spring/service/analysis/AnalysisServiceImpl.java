@@ -43,7 +43,7 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 @Service
 @DependsOn({ "springContext" })
 @Scope("prototype")
-public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis> implements AnalysisService {
+public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String> implements AnalysisService {
 
 	@Autowired
 	protected AnalysisDAO baseObjectDAO = SpringContext.getBean(AnalysisDAO.class);

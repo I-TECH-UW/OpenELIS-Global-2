@@ -8,7 +8,7 @@ import us.mn.state.health.lims.address.dao.AddressPartDAO;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
 
 @Service
-public class AddressPartServiceImpl extends BaseObjectServiceImpl<AddressPart> implements AddressPartService {
+public class AddressPartServiceImpl extends BaseObjectServiceImpl<AddressPart, String> implements AddressPartService {
 	@Autowired
 	protected AddressPartDAO baseObjectDAO;
 

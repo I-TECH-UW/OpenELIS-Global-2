@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
-public interface SiteInformationService extends BaseObjectService<SiteInformation> {
+public interface SiteInformationService extends BaseObjectService<SiteInformation, String> {
 	void getData(SiteInformation siteInformation);
 
 	void deleteData(String siteInformationId, String currentUserId);

@@ -11,7 +11,7 @@ import us.mn.state.health.lims.sampleorganization.dao.SampleOrganizationDAO;
 import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization;
 
 @Service
-public class SampleOrganizationServiceImpl extends BaseObjectServiceImpl<SampleOrganization> implements SampleOrganizationService {
+public class SampleOrganizationServiceImpl extends BaseObjectServiceImpl<SampleOrganization, String> implements SampleOrganizationService {
 	@Autowired
 	protected SampleOrganizationDAO baseObjectDAO;
 

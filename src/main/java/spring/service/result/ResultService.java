@@ -10,7 +10,7 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
-public interface ResultService extends BaseObjectService<Result> {
+public interface ResultService extends BaseObjectService<Result, String> {
 	void getData(Result result);
 
 	void deleteData(Result result);

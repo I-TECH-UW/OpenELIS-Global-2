@@ -10,7 +10,7 @@ import us.mn.state.health.lims.scheduler.dao.CronSchedulerDAO;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
 
 @Service
-public class CronSchedulerServiceImpl extends BaseObjectServiceImpl<CronScheduler> implements CronSchedulerService {
+public class CronSchedulerServiceImpl extends BaseObjectServiceImpl<CronScheduler, String> implements CronSchedulerService {
 	@Autowired
 	protected CronSchedulerDAO baseObjectDAO;
 

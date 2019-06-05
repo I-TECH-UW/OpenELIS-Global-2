@@ -11,7 +11,7 @@ import us.mn.state.health.lims.role.dao.RoleDAO;
 import us.mn.state.health.lims.role.valueholder.Role;
 
 @Service
-public class RoleServiceImpl extends BaseObjectServiceImpl<Role> implements RoleService {
+public class RoleServiceImpl extends BaseObjectServiceImpl<Role, String> implements RoleService {
 	@Autowired
 	protected RoleDAO baseObjectDAO;
 

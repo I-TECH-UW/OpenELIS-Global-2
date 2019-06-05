@@ -32,7 +32,7 @@ import us.mn.state.health.lims.test.valueholder.Test;
 
 @Service
 @DependsOn({ "springContext" })
-public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit> implements ResultLimitService {
+public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, String> implements ResultLimitService {
 
 	private static ResultLimitServiceImpl INSTANCE;
 

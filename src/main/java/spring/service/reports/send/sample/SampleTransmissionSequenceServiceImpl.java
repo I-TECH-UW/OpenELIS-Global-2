@@ -8,7 +8,7 @@ import us.mn.state.health.lims.reports.send.sample.dao.SampleTransmissionSequenc
 import us.mn.state.health.lims.reports.send.sample.valueholder.SampleTransmissionSequence;
 
 @Service
-public class SampleTransmissionSequenceServiceImpl extends BaseObjectServiceImpl<SampleTransmissionSequence> implements SampleTransmissionSequenceService {
+public class SampleTransmissionSequenceServiceImpl extends BaseObjectServiceImpl<SampleTransmissionSequence, String> implements SampleTransmissionSequenceService {
 	@Autowired
 	protected SampleTransmissionSequenceDAO baseObjectDAO;
 

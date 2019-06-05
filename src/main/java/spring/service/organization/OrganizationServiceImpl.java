@@ -15,7 +15,7 @@ import us.mn.state.health.lims.organization.dao.OrganizationOrganizationTypeDAO;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 
 @Service
-public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization> implements OrganizationService {
+public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization, String> implements OrganizationService {
 	@Autowired
 	protected OrganizationDAO baseObjectDAO;
 	@Autowired

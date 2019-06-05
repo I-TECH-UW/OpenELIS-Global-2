@@ -8,7 +8,7 @@ import us.mn.state.health.lims.barcode.dao.BarcodeLabelInfoDAO;
 import us.mn.state.health.lims.barcode.valueholder.BarcodeLabelInfo;
 
 @Service
-public class BarcodeLabelInfoServiceImpl extends BaseObjectServiceImpl<BarcodeLabelInfo> implements BarcodeLabelInfoService {
+public class BarcodeLabelInfoServiceImpl extends BaseObjectServiceImpl<BarcodeLabelInfo, String> implements BarcodeLabelInfoService {
 	@Autowired
 	protected BarcodeLabelInfoDAO baseObjectDAO;
 

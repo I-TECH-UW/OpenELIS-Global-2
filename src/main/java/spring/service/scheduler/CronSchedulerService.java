@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
 
-public interface CronSchedulerService extends BaseObjectService<CronScheduler> {
+public interface CronSchedulerService extends BaseObjectService<CronScheduler, String> {
 
 	String insert(CronScheduler cronScheduler);
 

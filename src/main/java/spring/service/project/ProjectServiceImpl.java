@@ -10,7 +10,7 @@ import us.mn.state.health.lims.project.dao.ProjectDAO;
 import us.mn.state.health.lims.project.valueholder.Project;
 
 @Service
-public class ProjectServiceImpl extends BaseObjectServiceImpl<Project> implements ProjectService {
+public class ProjectServiceImpl extends BaseObjectServiceImpl<Project, String> implements ProjectService {
 	@Autowired
 	protected ProjectDAO baseObjectDAO;
 

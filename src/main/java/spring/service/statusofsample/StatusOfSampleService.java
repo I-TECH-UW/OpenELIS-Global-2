@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.statusofsample.valueholder.StatusOfSample;
 
-public interface StatusOfSampleService extends BaseObjectService<StatusOfSample> {
+public interface StatusOfSampleService extends BaseObjectService<StatusOfSample, String> {
 	void getData(StatusOfSample sourceOfSample);
 
 	void updateData(StatusOfSample sourceOfSample);

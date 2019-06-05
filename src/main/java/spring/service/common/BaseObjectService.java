@@ -6,15 +6,14 @@ import java.util.Map;
 import java.util.Optional;
 
 import us.mn.state.health.lims.common.valueholder.BaseObject;
-import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
 
-public interface BaseObjectService<T extends BaseObject> {
+public interface BaseObjectService<T extends BaseObject<PK>, PK extends Serializable> {
 
 	/**
 	 * @param id
 	 * @return the baseObject corresponding with the id or a new object s
 	 */
-	T get(String id);
+	T get(PK id);
 
 	Optional<T> getMatch(String propertyName, Object propertyValue);
 
@@ -203,13 +202,13 @@ public interface BaseObjectService<T extends BaseObject> {
 	 * @param baseObject the data to insert
 	 * @return the id of the inserted baseObject
 	 */
-	Serializable insert(T baseObject);
+	PK insert(T baseObject);
 
 	/**
 	 * @param baseObjects the data to insert
 	 * @return the ids of the inserted baseObjects
 	 */
-	List<Serializable> insertAll(List<T> baseObjects);
+	List<PK> insertAll(List<T> baseObjects);
 
 	/**
 	 * @param baseObject the new data to update the database with. Will insert if it
@@ -245,7 +244,7 @@ public interface BaseObjectService<T extends BaseObject> {
 	 */
 	void delete(T baseObject);
 
-	void delete(String id, String sysUserId);
+	void delete(PK id, String sysUserId);
 
 	/**
 	 * @param baseObjects List of all baseObjects to delete from the database. Must
@@ -253,7 +252,7 @@ public interface BaseObjectService<T extends BaseObject> {
 	 */
 	void deleteAll(List<T> baseObjects);
 
-	void deleteAll(List<String> ids, String sysUserId);
+	void deleteAll(List<PK> ids, String sysUserId);
 
 	/**
 	 * @return the number of rows

@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.project.valueholder.Project;
 
-public interface ProjectService extends BaseObjectService<Project> {
+public interface ProjectService extends BaseObjectService<Project, String> {
 	void getData(Project project);
 
 	void deleteData(List projects);

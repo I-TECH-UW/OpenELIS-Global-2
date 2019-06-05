@@ -5,7 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 
-public interface PatientIdentityService extends BaseObjectService<PatientIdentity> {
+public interface PatientIdentityService extends BaseObjectService<PatientIdentity, String> {
 	void delete(String patientIdentityId, String activeUserId);
 
 	void updateData(PatientIdentity patientIdentity);
