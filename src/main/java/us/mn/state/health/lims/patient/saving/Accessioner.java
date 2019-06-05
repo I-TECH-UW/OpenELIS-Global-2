@@ -1112,7 +1112,7 @@ public abstract class Accessioner {
 	 */
 	protected void persistSampleHuman() {
 		if (sampleHuman != null) {
-			sampleHuman.setPatientId(patientInDB.getId());
+			sampleHuman.setPatient(patientInDB);
 			sampleHuman.setSampleId(sample.getId());
 			// we do not store any doctor name as a provider in SampleHuman
 			sampleHuman.setSysUserId(sysUserId);

@@ -29,6 +29,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 import spring.mine.common.validator.ValidationHelper;
 import spring.mine.sample.form.SampleEditForm;
 import spring.mine.sample.form.SamplePatientEntryForm;
+import spring.mine.sample.form.SamplePatientEntryForm.SamplePatientEntryBatch;
 import spring.mine.samplebatchentry.form.SampleBatchEntryForm;
 import spring.mine.validation.annotations.OptionalNotBlank;
 import spring.mine.validation.annotations.ValidAccessionNumber;
@@ -41,7 +42,8 @@ public class SampleOrderItem implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@SafeHtml(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
-			SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+			SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+			SampleEditForm.SampleEdit.class })
 	private String newRequesterName;
 
 	// for display
@@ -50,115 +52,134 @@ public class SampleOrderItem implements Serializable {
 	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String orderType;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
 	private String externalOrderNumber;
 
-	@NotBlank(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
-	@ValidAccessionNumber(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+	@NotBlank(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
+	@ValidAccessionNumber(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+			SampleEditForm.SampleEdit.class })
 	private String labNo;
 
 	@OptionalNotBlank(formFields = { Field.SampleEntryUseRequestDate }, groups = {
 			SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
 	@ValidDate(relative = DateRelation.PAST, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SampleEditForm.SampleEdit.class })
+			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
 	private String requestDate;
 
 	@NotBlank(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
-			SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+			SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+			SampleEditForm.SampleEdit.class })
 	@ValidDate(relative = DateRelation.PAST, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
-			SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+			SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+			SampleEditForm.SampleEdit.class })
 	private String receivedDateForDisplay;
 
 	@ValidTime(groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
-			SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+			SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+			SampleEditForm.SampleEdit.class })
 	private String receivedTime;
 
 	@ValidDate(relative = DateRelation.FUTURE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SampleEditForm.SampleEdit.class })
+			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
 	private String nextVisitDate;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+			SampleEditForm.SampleEdit.class })
 	private String requesterSampleID;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+			SampleEditForm.SampleEdit.class })
 	private String referringPatientNumber;
 
 	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SampleEditForm.SampleEdit.class })
+			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
 	private String referringSiteId;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+			SampleEditForm.SampleEdit.class })
 	private String referringSiteCode;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+			SampleEditForm.SampleEdit.class })
 	private String referringSiteName;
 
 	// for display
 	private Collection referringSiteList;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+			SamplePatientEntryBatch.class })
 	private String providerId;
 
 	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SampleEditForm.SampleEdit.class })
+			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
 	private String providerFirstName;
 
 	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SampleEditForm.SampleEdit.class })
+			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
 	private String providerLastName;
 
 	@Pattern(regexp = ValidationHelper.PHONE_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SampleEditForm.SampleEdit.class })
+			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
 	private String providerWorkPhone;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+			SampleEditForm.SampleEdit.class })
 	private String providerFax;
 
-	@Email(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+	@Email(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+			SampleEditForm.SampleEdit.class })
 	private String providerEmail;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+			SampleEditForm.SampleEdit.class })
 	private String facilityAddressStreet;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+			SampleEditForm.SampleEdit.class })
 	private String facilityAddressCommune;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+			SampleEditForm.SampleEdit.class })
 	private String facilityPhone;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+			SampleEditForm.SampleEdit.class })
 	private String facilityFax;
 
 	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SampleEditForm.SampleEdit.class })
+			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
 	private String paymentOptionSelection;
 
 	// for display
 	private Collection paymentOptions;
 
-	@NotNull(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+	@NotNull(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+			SampleEditForm.SampleEdit.class })
 	private Boolean modified = false;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+			SamplePatientEntryBatch.class })
 	private String sampleId;
 
 	private boolean readOnly = false;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+			SampleEditForm.SampleEdit.class })
 	private String billingReferenceNumber;
 
 	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SampleEditForm.SampleEdit.class })
+			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
 	private String testLocationCode;
 
-	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SampleEditForm.SampleEdit.class })
+	@SafeHtml(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
+			SampleEditForm.SampleEdit.class })
 	private String otherLocationCode;
 
 	// for display
 	private Collection testLocationCodeList;
 
 	@Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-			SampleEditForm.SampleEdit.class })
+			SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
 	private String program;
 
 	// for display

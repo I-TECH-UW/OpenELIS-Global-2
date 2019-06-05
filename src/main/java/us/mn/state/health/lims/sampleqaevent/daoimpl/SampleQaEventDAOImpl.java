@@ -24,11 +24,11 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -46,8 +46,11 @@ import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
  * @version $Revision$ bugzilla 2510
  */
 @Component
-@Transactional 
+@Transactional
 public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements SampleQaEventDAO {
+
+	@Autowired
+	AuditTrailDAO auditDAO;
 
 	public SampleQaEventDAOImpl() {
 		super(SampleQaEvent.class);
@@ -57,7 +60,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements 
 	public void deleteData(List sampleQaEvents) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < sampleQaEvents.size(); i++) {
 				SampleQaEvent data = (SampleQaEvent) sampleQaEvents.get(i);
 
@@ -98,7 +101,6 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements 
 			String id = (String) HibernateUtil.getSession().save(sampleQaEvent);
 			sampleQaEvent.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = sampleQaEvent.getSysUserId();
 			String tableName = "SAMPLE_QAEVENT";
 			auditDAO.saveNewHistory(sampleQaEvent, sysUserId, tableName);
@@ -123,7 +125,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements 
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = sampleQaEvent.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "SAMPLE_QAEVENT";
@@ -150,7 +152,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements 
 	@Override
 	public SampleQaEvent getData(String sampleQaEventId) throws LIMSRuntimeException {
 		try {
-			SampleQaEvent data = (SampleQaEvent) HibernateUtil.getSession().get(SampleQaEvent.class, sampleQaEventId);
+			SampleQaEvent data = HibernateUtil.getSession().get(SampleQaEvent.class, sampleQaEventId);
 			// closeSession(); // CSL remove old
 			return data;
 		} catch (Exception e) {
@@ -162,8 +164,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements 
 	@Override
 	public void getData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException {
 		try {
-			SampleQaEvent data = (SampleQaEvent) HibernateUtil.getSession().get(SampleQaEvent.class,
-					sampleQaEvent.getId());
+			SampleQaEvent data = HibernateUtil.getSession().get(SampleQaEvent.class, sampleQaEvent.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (data != null) {
@@ -181,7 +182,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements 
 	public SampleQaEvent readSampleQaEvent(String idString) {
 		SampleQaEvent sp = null;
 		try {
-			sp = (SampleQaEvent) HibernateUtil.getSession().get(SampleQaEvent.class, idString);
+			sp = HibernateUtil.getSession().get(SampleQaEvent.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {

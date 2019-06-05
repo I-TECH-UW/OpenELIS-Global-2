@@ -23,13 +23,13 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -46,8 +46,11 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
+
+	@Autowired
+	AuditTrailDAO auditDAO;
 
 	public ResultDAOImpl() {
 		super(Result.class);
@@ -57,7 +60,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 	public void deleteData(List results) throws LIMSRuntimeException {
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (Object result : results) {
 				Result data = (Result) result;
 				Result oldData = readResult(data.getId());
@@ -93,7 +96,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		Result oldData = readResult(result.getId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			auditDAO.saveHistory(new Result(), oldData, result.getSysUserId(), IActionConstants.AUDIT_TRAIL_DELETE,
 					"RESULT");
 		} catch (HibernateException e) {
@@ -116,7 +119,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 			result.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = result.getSysUserId();
 			String tableName = "RESULT";
 			auditDAO.saveNewHistory(result, sysUserId, tableName);
@@ -139,7 +142,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 		Result oldData = readResult(result.getId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = result.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "RESULT";
@@ -166,7 +169,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 	@Override
 	public void getData(Result result) throws LIMSRuntimeException {
 		try {
-			Result re = (Result) HibernateUtil.getSession().get(Result.class, result.getId());
+			Result re = HibernateUtil.getSession().get(Result.class, result.getId());
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			if (re != null) {
@@ -320,7 +323,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 	public Result readResult(String idString) {
 		Result data;
 		try {
-			data = (Result) HibernateUtil.getSession().get(Result.class, idString);
+			data = HibernateUtil.getSession().get(Result.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -353,7 +356,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result> implements ResultDAO {
 	@Override
 	public Result getResultById(String resultId) throws LIMSRuntimeException {
 		try {
-			Result result = (Result) HibernateUtil.getSession().get(Result.class, resultId);
+			Result result = HibernateUtil.getSession().get(Result.class, resultId);
 
 			// closeSession(); // CSL remove old
 

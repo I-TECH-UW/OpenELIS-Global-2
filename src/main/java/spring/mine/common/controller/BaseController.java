@@ -39,9 +39,9 @@ public abstract class BaseController implements IActionConstants {
 	// Spring's dependency injection into methods for accessing the request
 	@Autowired
 	protected HttpServletRequest request;
-	
+
 	@Autowired
-	UserModuleService userModuleService;
+	protected UserModuleService userModuleService;
 
 	protected abstract String findLocalForward(String forward);
 

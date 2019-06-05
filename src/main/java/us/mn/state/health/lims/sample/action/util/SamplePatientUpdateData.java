@@ -24,6 +24,8 @@ import org.springframework.validation.Errors;
 
 import spring.service.observationhistory.ObservationHistoryServiceImpl;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
+import spring.service.patient.PatientService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
@@ -77,6 +79,7 @@ public class SamplePatientUpdateData {
 
 	private boolean useReceiveDateForCollectionDate = !FormFields.getInstance().useField(Field.CollectionDate);
 	private String collectionDateFromReceiveDate = null;
+	private PatientService patientService = SpringContext.getBean(PatientService.class);
 	private OrganizationDAO orgDAO = new OrganizationDAOImpl();
 
 	private ElectronicOrderDAO electronicOrderDAO = new ElectronicOrderDAOImpl();
@@ -337,7 +340,7 @@ public class SamplePatientUpdateData {
 	public void buildSampleHuman() {
 		sampleHuman.setSysUserId(currentUserId);
 		sampleHuman.setSampleId(sample.getId());
-		sampleHuman.setPatientId(patientId);
+		sampleHuman.setPatient(patientService.get(patientId));
 		if (provider != null) {
 			sampleHuman.setProviderId(provider.getId());
 		}

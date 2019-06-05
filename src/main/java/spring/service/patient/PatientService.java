@@ -5,6 +5,7 @@ import java.util.List;
 import spring.service.common.BaseObjectService;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
 import us.mn.state.health.lims.patient.valueholder.Patient;
+import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 import us.mn.state.health.lims.person.valueholder.Person;
 
 public interface PatientService extends BaseObjectService<Patient> {
@@ -41,4 +42,22 @@ public interface PatientService extends BaseObjectService<Patient> {
 	List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList, String study);
 
 	void persistPatientData(PatientManagementInfo patientInfo, Patient patient, String sysUserId);
+
+	Person getPerson();
+
+	String getBirthdayForDisplay();
+
+	List<PatientIdentity> getIdentityList();
+
+	String getLastFirstName();
+
+	String getFirstName();
+
+	String getLastName();
+
+	String getPatientId();
+
+	String getGender();
+
+	String getNationalId();
 }

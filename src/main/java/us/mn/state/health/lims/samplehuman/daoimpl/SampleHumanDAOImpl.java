@@ -98,7 +98,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 	public boolean insertData(SampleHuman sampleHuman) throws LIMSRuntimeException {
 
 		try {
-			String id = (String) HibernateUtil.getSession().save(sampleHuman);
+			String id = (String) sessionFactory.getCurrentSession().save(sampleHuman);
 			sampleHuman.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
@@ -139,7 +139,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 		}
 
 		try {
-			HibernateUtil.getSession().merge(sampleHuman);
+			sessionFactory.getCurrentSession().merge(sampleHuman);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 			// HibernateUtil.getSession().evict // CSL remove old(sampleHuman);
@@ -172,7 +172,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 	public SampleHuman readSampleHuman(String idString) {
 		SampleHuman sh = null;
 		try {
-			sh = HibernateUtil.getSession().get(SampleHuman.class, idString);
+			sh = sessionFactory.getCurrentSession().get(SampleHuman.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -189,7 +189,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman> implements Samp
 
 		try {
 			String sql = "from SampleHuman sh where samp_id = :param";
-			Query query = HibernateUtil.getSession().createQuery(sql);
+			Query query = sessionFactory.getCurrentSession().createQuery(sql);
 			query.setInteger("param", Integer.parseInt(sampleHuman.getSampleId()));
 			List list = query.list();
 			// HibernateUtil.getSession().flush(); // CSL remove old

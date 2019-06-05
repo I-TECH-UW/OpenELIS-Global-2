@@ -47,7 +47,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample> implements 
 	private static Long ORGANIZATION_REQUESTER_TYPE_ID;
 
 	@Autowired
-	protected SampleDAO sampleDAO;
+	protected SampleDAO sampleDAO = SpringContext.getBean(SampleDAO.class);
 	@Autowired
 	private static final AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
 	@Autowired

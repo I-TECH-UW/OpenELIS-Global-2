@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
 import spring.mine.resultreporting.form.ResultReportingConfigurationForm;
+import spring.service.resultreporting.ResultReportingConfigurationService;
 import spring.service.scheduler.CronSchedulerService;
 import spring.service.siteinformation.SiteInformationService;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -36,8 +37,12 @@ import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 @Controller
 public class ResultReportingConfigurationController extends BaseController {
 
+	@Autowired
 	private SiteInformationService siteInformationService;
+	@Autowired
 	private CronSchedulerService schedulerService;
+	@Autowired
+	private ResultReportingConfigurationService resultReportingConfigurationService;
 	private static final String NEVER = "never";
 	private static final String CRON_POSTFIX = "? * *";
 	private static final String CRON_PREFIX = "0 ";
@@ -88,7 +93,7 @@ public class ResultReportingConfigurationController extends BaseController {
 		}
 
 		try {
-			updateInformationAndSchedulers(informationList, scheduleList);
+			resultReportingConfigurationService.updateInformationAndSchedulers(informationList, scheduleList);
 		} catch (HibernateException e) {
 			return findForward(FWD_FAIL_INSERT, form);
 		}
@@ -98,20 +103,6 @@ public class ResultReportingConfigurationController extends BaseController {
 
 		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 		return findForward(FWD_SUCCESS_INSERT, form);
-	}
-
-	@Transactional 
-	private void updateInformationAndSchedulers(List<SiteInformation> informationList,
-			List<CronScheduler> scheduleList) {
-		for (SiteInformation info : informationList) {
-			siteInformationService.update(info);
-		}
-
-		for (CronScheduler scheduler : scheduleList) {
-			schedulerService.update(scheduler);
-		}
-
-		ConfigurationProperties.forceReload();
 	}
 
 	private CronScheduler setScheduleInformationFor(ReportingConfiguration config) {

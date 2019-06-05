@@ -74,7 +74,7 @@ public class BatchTestReassignmentFormValidator implements Validator {
 
 			JSONArray noChangesBioReject = JSONUtils.getAsArray(batchTest.get("noChangeBioReject"));
 			for (int i = 0; i < noChangesBioReject.size(); ++i) {
-				ValidationHelper.validateIdField(String.valueOf(changesBioReject.get(i)), "JsonWad",
+				ValidationHelper.validateIdField(String.valueOf(noChangesBioReject.get(i)), "JsonWad",
 						"noChangeBioReject[" + i + "]", errors, true);
 			}
 
@@ -86,7 +86,7 @@ public class BatchTestReassignmentFormValidator implements Validator {
 
 			JSONArray noChangesNotValidated = JSONUtils.getAsArray(batchTest.get("noChangeNotValidated"));
 			for (int i = 0; i < noChangesNotValidated.size(); ++i) {
-				ValidationHelper.validateIdField(String.valueOf(changesNotValidated.get(i)), "JsonWad",
+				ValidationHelper.validateIdField(String.valueOf(noChangesNotValidated.get(i)), "JsonWad",
 						"noChangeNotValidated[" + i + "]", errors, true);
 			}
 

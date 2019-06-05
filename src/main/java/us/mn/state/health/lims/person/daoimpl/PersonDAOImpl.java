@@ -92,7 +92,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person> implements PersonDAO {
 	public boolean insertData(Person person) throws LIMSRuntimeException {
 
 		try {
-			String id = (String) HibernateUtil.getSession().save(person);
+			String id = (String) sessionFactory.getCurrentSession().save(person);
 			person.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table

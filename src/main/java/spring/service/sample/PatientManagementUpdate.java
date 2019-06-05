@@ -1,22 +1,28 @@
-package spring.mine.sample.controller;
+package spring.service.sample;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 
 import spring.mine.common.validator.BaseErrors;
 import spring.mine.sample.form.SamplePatientEntryForm;
-import us.mn.state.health.lims.address.dao.AddressPartDAO;
-import us.mn.state.health.lims.address.dao.PersonAddressDAO;
-import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
-import us.mn.state.health.lims.address.daoimpl.PersonAddressDAOImpl;
+import spring.service.address.AddressPartService;
+import spring.service.address.PersonAddressService;
+import spring.service.patient.PatientService;
+import spring.service.patientidentity.PatientIdentityService;
+import spring.service.patienttype.PatientPatientTypeService;
+import spring.service.person.PersonService;
+import spring.service.search.SearchResultsService;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
 import us.mn.state.health.lims.common.action.IActionConstants;
@@ -26,23 +32,14 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
 import us.mn.state.health.lims.patient.action.IPatientUpdate;
 import us.mn.state.health.lims.patient.action.bean.PatientManagementInfo;
-import us.mn.state.health.lims.patient.dao.PatientDAO;
-import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.patientidentity.dao.PatientIdentityDAO;
-import us.mn.state.health.lims.patientidentity.daoimpl.PatientIdentityDAOImpl;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 import us.mn.state.health.lims.patientidentitytype.util.PatientIdentityTypeMap;
-import us.mn.state.health.lims.patienttype.dao.PatientPatientTypeDAO;
-import us.mn.state.health.lims.patienttype.daoimpl.PatientPatientTypeDAOImpl;
 import us.mn.state.health.lims.patienttype.util.PatientTypeMap;
 import us.mn.state.health.lims.patienttype.valueholder.PatientPatientType;
-import us.mn.state.health.lims.person.dao.PersonDAO;
-import us.mn.state.health.lims.person.daoimpl.PersonDAOImpl;
 import us.mn.state.health.lims.person.valueholder.Person;
-import us.mn.state.health.lims.sample.dao.SearchResultsDAO;
-import us.mn.state.health.lims.sample.daoimpl.SearchResultsDAOImp;
 
+@Service
 public class PatientManagementUpdate implements IPatientUpdate {
 
 	private String currentUserId;
@@ -50,21 +47,32 @@ public class PatientManagementUpdate implements IPatientUpdate {
 	protected Person person;
 	private List<PatientIdentity> patientIdentities;
 	private String patientID = "";
-	private static PatientIdentityDAO identityDAO = new PatientIdentityDAOImpl();
-	private static PatientDAO patientDAO = new PatientDAOImpl();
-	private static PersonAddressDAO personAddressDAO = new PersonAddressDAOImpl();
-	private static final String AMBIGUOUS_DATE_CHAR = ConfigurationProperties.getInstance()
+	@Autowired
+	private PatientIdentityService identityService;
+	@Autowired
+	private PatientService patientService;
+	@Autowired
+	private PersonAddressService personAddressService;
+	@Autowired
+	private PersonService personService;
+	@Autowired
+	private AddressPartService addressPartService;
+	@Autowired
+	private PatientPatientTypeService patientPatientTypeService;
+	@Autowired
+	private SearchResultsService search;
+	private final String AMBIGUOUS_DATE_CHAR = ConfigurationProperties.getInstance()
 			.getPropertyValue(ConfigurationProperties.Property.AmbiguousDateHolder);
-	private static final String AMBIGUOUS_DATE_HOLDER = AMBIGUOUS_DATE_CHAR + AMBIGUOUS_DATE_CHAR;
+	private final String AMBIGUOUS_DATE_HOLDER = AMBIGUOUS_DATE_CHAR + AMBIGUOUS_DATE_CHAR;
 	protected PatientUpdateStatus patientUpdateStatus = PatientUpdateStatus.NO_ACTION;
 
-	private static String ADDRESS_PART_VILLAGE_ID;
-	private static String ADDRESS_PART_COMMUNE_ID;
-	private static String ADDRESS_PART_DEPT_ID;
+	private String ADDRESS_PART_VILLAGE_ID;
+	private String ADDRESS_PART_COMMUNE_ID;
+	private String ADDRESS_PART_DEPT_ID;
 
-	static {
-		AddressPartDAO addressPartDAO = new AddressPartDAOImpl();
-		List<AddressPart> partList = addressPartDAO.getAll();
+	@PostConstruct
+	public void initializeGlobalVariables() {
+		List<AddressPart> partList = addressPartService.getAll();
 
 		for (AddressPart addressPart : partList) {
 			if ("department".equals(addressPart.getPartName())) {
@@ -98,7 +106,6 @@ public class PatientManagementUpdate implements IPatientUpdate {
 			String newNationalId = GenericValidator.isBlankOrNull(patientInfo.getNationalId()) ? null
 					: patientInfo.getNationalId();
 
-			SearchResultsDAO search = new SearchResultsDAOImp();
 			List<PatientSearchResults> results = search.getSearchResults(null, null, newSTNumber, newSubjectNumber,
 					newNationalId, null, null, null);
 
@@ -134,10 +141,10 @@ public class PatientManagementUpdate implements IPatientUpdate {
 	private void loadForUpdate(PatientManagementInfo patientInfo) {
 
 		patientID = patientInfo.getPatientPK();
-		patient = patientDAO.readPatient(patientID);
+		patient = patientService.readPatient(patientID);
 		person = patient.getPerson();
 
-		patientIdentities = identityDAO.getPatientIdentitiesForPatient(patient.getId());
+		patientIdentities = identityService.getPatientIdentitiesForPatient(patient.getId());
 	}
 
 	private void validateBirthdateFormat(PatientManagementInfo patientInfo, Errors errors) {
@@ -216,19 +223,19 @@ public class PatientManagementUpdate implements IPatientUpdate {
 		PersonAddress village = null;
 		PersonAddress commune = null;
 		PersonAddress dept = null;
-		List<PersonAddress> personAddressList = personAddressDAO.getAddressPartsByPersonId(person.getId());
+		List<PersonAddress> personAddressList = personAddressService.getAddressPartsByPersonId(person.getId());
 
 		for (PersonAddress address : personAddressList) {
 			if (address.getAddressPartId().equals(ADDRESS_PART_COMMUNE_ID)) {
 				commune = address;
 				commune.setValue(patientInfo.getCommune());
 				commune.setSysUserId(currentUserId);
-				personAddressDAO.update(commune);
+				personAddressService.update(commune);
 			} else if (address.getAddressPartId().equals(ADDRESS_PART_VILLAGE_ID)) {
 				village = address;
 				village.setValue(patientInfo.getCity());
 				village.setSysUserId(currentUserId);
-				personAddressDAO.update(village);
+				personAddressService.update(village);
 			} else if (address.getAddressPartId().equals(ADDRESS_PART_DEPT_ID)) {
 				dept = address;
 				if (!GenericValidator.isBlankOrNull(patientInfo.getAddressDepartment())
@@ -236,7 +243,7 @@ public class PatientManagementUpdate implements IPatientUpdate {
 					dept.setValue(patientInfo.getAddressDepartment());
 					dept.setType("D");
 					dept.setSysUserId(currentUserId);
-					personAddressDAO.update(dept);
+					personAddressService.update(dept);
 				}
 			}
 		}
@@ -264,7 +271,7 @@ public class PatientManagementUpdate implements IPatientUpdate {
 		address.setType(type);
 		address.setValue(value);
 		address.setSysUserId(currentUserId);
-		personAddressDAO.insert(address);
+		personAddressService.insert(address);
 	}
 
 	public void persistIdentityType(String paramValue, String type) throws LIMSRuntimeException {
@@ -283,7 +290,7 @@ public class PatientManagementUpdate implements IPatientUpdate {
 							|| (listIdentity.getIdentityData() != null
 									&& !listIdentity.getIdentityData().equals(paramValue))) {
 						listIdentity.setIdentityData(paramValue);
-						identityDAO.updateData(listIdentity);
+						identityService.updateData(listIdentity);
 					}
 
 					break;
@@ -299,13 +306,11 @@ public class PatientManagementUpdate implements IPatientUpdate {
 			identity.setSysUserId(currentUserId);
 			identity.setIdentityData(paramValue);
 			identity.setLastupdatedFields();
-			identityDAO.insertData(identity);
+			identityService.insertData(identity);
 		}
 	}
 
 	protected void persistPatientType(PatientManagementInfo patientInfo) {
-
-		PatientPatientTypeDAO patientPatientTypeDAO = new PatientPatientTypeDAOImpl();
 
 		String typeName = null;
 
@@ -318,7 +323,7 @@ public class PatientManagementUpdate implements IPatientUpdate {
 		if (!GenericValidator.isBlankOrNull(typeName) && !"0".equals(typeName)) {
 			String typeID = PatientTypeMap.getInstance().getIDForType(typeName);
 
-			PatientPatientType patientPatientType = patientPatientTypeDAO
+			PatientPatientType patientPatientType = patientPatientTypeService
 					.getPatientPatientTypeForPatient(patient.getId());
 
 			if (patientPatientType == null) {
@@ -326,11 +331,11 @@ public class PatientManagementUpdate implements IPatientUpdate {
 				patientPatientType.setSysUserId(currentUserId);
 				patientPatientType.setPatientId(patient.getId());
 				patientPatientType.setPatientTypeId(typeID);
-				patientPatientTypeDAO.insertData(patientPatientType);
+				patientPatientTypeService.insertData(patientPatientType);
 			} else {
 				patientPatientType.setSysUserId(currentUserId);
 				patientPatientType.setPatientTypeId(typeID);
-				patientPatientTypeDAO.updateData(patientPatientType);
+				patientPatientTypeService.updateData(patientPatientType);
 			}
 		}
 	}
@@ -363,7 +368,7 @@ public class PatientManagementUpdate implements IPatientUpdate {
 		patientUpdateStatus = patientInfo.getPatientUpdateStatus();
 		/*
 		 * String status = patientInfo.getPatientProcessingStatus();
-		 * 
+		 *
 		 * if ("noAction".equals(status)) { patientUpdateStatus =
 		 * PatientUpdateStatus.NO_ACTION; } else if ("update".equals(status)) {
 		 * patientUpdateStatus = PatientUpdateStatus.UPDATE; } else {
@@ -378,19 +383,18 @@ public class PatientManagementUpdate implements IPatientUpdate {
 
 	@Override
 	public void persistPatientData(PatientManagementInfo patientInfo) throws LIMSRuntimeException {
-		PersonDAO personDAO = new PersonDAOImpl();
 
 		if (patientUpdateStatus == PatientUpdateStatus.ADD) {
-			personDAO.insertData(person);
+			personService.insertData(person);
 		} else if (patientUpdateStatus == PatientUpdateStatus.UPDATE) {
-			personDAO.updateData(person);
+			personService.updateData(person);
 		}
 		patient.setPerson(person);
 
 		if (patientUpdateStatus == PatientUpdateStatus.ADD) {
-			patientDAO.insertData(patient);
+			patientService.insertData(patient);
 		} else if (patientUpdateStatus == PatientUpdateStatus.UPDATE) {
-			patientDAO.updateData(patient);
+			patientService.updateData(patient);
 		}
 
 		persistPatientRelatedInformation(patientInfo);

@@ -14,7 +14,7 @@
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
         <property name="referralId" column="referral_id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType" />
         <property name="testId" column="test_id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType" />
-		<many-to-one name="result" class="us.mn.state.health.lims.result.valueholder.Result" >
+		<many-to-one name="result" class="us.mn.state.health.lims.result.valueholder.Result" lazy="false" >
 			<column name="result_id" />
 		</many-to-one>
 		<property name="referralReportDate" column="referral_report_date" type="timestamp" />

@@ -21,7 +21,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.SafeHtml;
@@ -31,6 +30,7 @@ import spring.mine.result.form.LogbookResultsForm;
 import spring.mine.validation.annotations.ValidAccessionNumber;
 import spring.mine.validation.annotations.ValidDate;
 import spring.mine.workplan.form.WorkplanForm;
+import us.mn.state.health.lims.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.validator.CustomDateValidator.DateRelation;
 import us.mn.state.health.lims.result.action.util.ResultItem;
@@ -40,7 +40,8 @@ public class TestResultItem implements ResultItem, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@ValidAccessionNumber(groups = { WorkplanForm.PrintWorkplan.class, LogbookResultsForm.LogbookResults.class })
+	@ValidAccessionNumber(format = AccessionFormat.ANY, groups = { WorkplanForm.PrintWorkplan.class,
+			LogbookResultsForm.LogbookResults.class })
 	private String accessionNumber;
 	private String sequenceNumber;
 	private boolean showSampleDetails = true;
@@ -73,10 +74,10 @@ public class TestResultItem implements ResultItem, Serializable {
 
 	private String sampleSource;
 
-	@ValidDate(relative = DateRelation.PAST, groups = { LogbookResultsForm.LogbookResults.class })
+	@ValidDate(relative = DateRelation.PAST, acceptTime = true, groups = { LogbookResultsForm.LogbookResults.class })
 	private String testDate;
 
-	@ValidDate(relative = DateRelation.PAST, groups = { WorkplanForm.PrintWorkplan.class })
+	@ValidDate(relative = DateRelation.PAST, acceptTime = true, groups = { WorkplanForm.PrintWorkplan.class })
 	private String receivedDate;
 	/*
 	 * N.B. test method is the type of test it is (HIV etc). analysisMethod is the
@@ -119,7 +120,6 @@ public class TestResultItem implements ResultItem, Serializable {
 	private boolean reportable;
 	private String patientName;
 
-	@NotBlank(groups = { WorkplanForm.PrintWorkplan.class })
 	@SafeHtml(groups = { WorkplanForm.PrintWorkplan.class })
 	private String patientInfo;
 	private String nationalId;

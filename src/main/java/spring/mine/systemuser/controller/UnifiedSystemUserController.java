@@ -35,6 +35,7 @@ import spring.mine.systemuser.validator.UnifiedSystemUserFormValidator;
 import spring.service.login.LoginService;
 import spring.service.role.RoleService;
 import spring.service.systemuser.SystemUserService;
+import spring.service.systemuser.UserService;
 import spring.service.userrole.UserRoleService;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -48,7 +49,6 @@ import us.mn.state.health.lims.role.action.bean.DisplayRole;
 import us.mn.state.health.lims.role.valueholder.Role;
 import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
 import us.mn.state.health.lims.systemuser.valueholder.UnifiedSystemUser;
-import us.mn.state.health.lims.userrole.valueholder.UserRole;
 
 @Controller
 public class UnifiedSystemUserController extends BaseController {
@@ -66,6 +66,8 @@ public class UnifiedSystemUserController extends BaseController {
 	private SystemUserService systemUserService;
 	@Autowired
 	private UserModuleService userModuleService;
+	@Autowired
+	private UserService userService;
 	private static final String RESERVED_ADMIN_NAME = "admin";
 
 	private static final String MAINTENANCE_ADMIN = "Maintenance Admin";
@@ -360,6 +362,8 @@ public class UnifiedSystemUserController extends BaseController {
 	}
 
 	@RequestMapping(value = "/UnifiedSystemUser", method = RequestMethod.POST)
+	@Transactional // TODO remove this transactional and rely on services transactionals (which
+					// doesn't work right now)
 	public ModelAndView showUpdateUnifiedSystemUser(HttpServletRequest request,
 			@ModelAttribute("form") @Valid UnifiedSystemUserForm form, BindingResult result,
 			RedirectAttributes redirectAttributes) {
@@ -401,7 +405,6 @@ public class UnifiedSystemUserController extends BaseController {
 		}
 	}
 
-	@Transactional
 	public String validateAndUpdateSystemUser(HttpServletRequest request, UnifiedSystemUserForm form) {
 		String forward = FWD_SUCCESS_INSERT;
 		String loginUserId = form.getLoginUserId();
@@ -429,7 +432,8 @@ public class UnifiedSystemUserController extends BaseController {
 		List<String> selectedRoles = form.getSelectedRoles();
 
 		try {
-			updateLoginUser(loginUser, loginUserNew, systemUser, systemUserNew, selectedRoles, loggedOnUserId);
+			userService.updateLoginUser(loginUser, loginUserNew, systemUser, systemUserNew, selectedRoles,
+					loggedOnUserId);
 		} catch (LIMSRuntimeException lre) {
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
 				errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
@@ -447,51 +451,6 @@ public class UnifiedSystemUserController extends BaseController {
 		selectedRoles = new ArrayList<>();
 
 		return forward;
-	}
-
-	@Transactional
-	private void updateLoginUser(Login loginUser, boolean loginUserNew, SystemUser systemUser, boolean systemUserNew,
-			List<String> selectedRoles, String loggedOnUserId) {
-		if (loginUserNew) {
-			loginService.updatePassword(loginUser, loginUser.getPassword());
-			loginService.insert(loginUser);
-		} else {
-			loginService.updatePassword(loginUser, loginUser.getPassword());
-			loginService.update(loginUser);
-		}
-
-		if (systemUserNew) {
-			systemUserService.insert(systemUser);
-		} else {
-			systemUserService.update(systemUser);
-		}
-
-		List<String> currentUserRoles = userRoleService.getRoleIdsForUser(systemUser.getId());
-		List<UserRole> deletedUserRoles = new ArrayList<>();
-
-		for (int i = 0; i < selectedRoles.size(); i++) {
-			if (!currentUserRoles.contains(selectedRoles.get(i))) {
-				UserRole userRole = new UserRole();
-				userRole.setSystemUserId(systemUser.getId());
-				userRole.setRoleId(selectedRoles.get(i));
-				userRole.setSysUserId(loggedOnUserId);
-				userRoleService.insert(userRole);
-			} else {
-				currentUserRoles.remove(selectedRoles.get(i));
-			}
-		}
-
-		for (String roleId : currentUserRoles) {
-			UserRole userRole = new UserRole();
-			userRole.setSystemUserId(systemUser.getId());
-			userRole.setRoleId(roleId);
-			userRole.setSysUserId(loggedOnUserId);
-			deletedUserRoles.add(userRole);
-		}
-
-		if (deletedUserRoles.size() > 0) {
-			userRoleService.deleteAll(deletedUserRoles);
-		}
 	}
 
 	private boolean passwordHasBeenUpdated(boolean loginUserNew, UnifiedSystemUserForm form) {
@@ -600,7 +559,7 @@ public class UnifiedSystemUserController extends BaseController {
 		SystemUser systemUser = new SystemUser();
 
 		if (!systemUserNew) {
-			systemUser.setId(systemUserId);
+			systemUser = systemUserService.get(systemUserId);
 		}
 
 		systemUser.setFirstName(form.getUserFirstName());

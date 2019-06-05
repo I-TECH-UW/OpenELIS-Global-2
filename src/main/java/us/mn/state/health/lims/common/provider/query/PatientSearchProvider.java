@@ -29,6 +29,9 @@ import org.apache.commons.validator.GenericValidator;
 import spring.service.observationhistory.ObservationHistoryServiceImpl;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
 import spring.service.patient.PatientServiceImpl;
+import spring.service.sample.SampleService;
+import spring.service.samplehuman.SampleHumanService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.provider.query.workerObjects.PatientSearchLocalAndClinicWorker;
 import us.mn.state.health.lims.common.provider.query.workerObjects.PatientSearchLocalWorker;
@@ -38,15 +41,14 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
 
 public class PatientSearchProvider extends BaseQueryProvider {
 
 	protected AjaxServlet ajaxServlet = null;
+
+	SampleService sampleService = SpringContext.getBean(SampleService.class);
+	SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
 
 	@Override
 	public void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -105,12 +107,10 @@ public class PatientSearchProvider extends BaseQueryProvider {
 
 	private Patient getPatientForLabNumber(String labNumber) {
 
-		SampleDAO sampleDAO = new SampleDAOImpl();
-		Sample sample = sampleDAO.getSampleByAccessionNumber(labNumber);
+		Sample sample = sampleService.getSampleByAccessionNumber(labNumber);
 
 		if (sample != null && !GenericValidator.isBlankOrNull(sample.getId())) {
-			SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
-			return sampleHumanDAO.getPatientForSample(sample);
+			return sampleHumanService.getPatientForSample(sample);
 		}
 
 		return new Patient();

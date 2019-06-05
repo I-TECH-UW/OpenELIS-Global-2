@@ -94,7 +94,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization> i
 	public boolean insertData(SampleOrganization sampleOrg) throws LIMSRuntimeException {
 
 		try {
-			String id = (String) HibernateUtil.getSession().save(sampleOrg);
+			String id = (String) sessionFactory.getCurrentSession().save(sampleOrg);
 			sampleOrg.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table

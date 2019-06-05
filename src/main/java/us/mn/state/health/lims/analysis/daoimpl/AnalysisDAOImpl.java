@@ -28,13 +28,13 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
@@ -59,8 +59,11 @@ import us.mn.state.health.lims.test.valueholder.Test;
  * @author diane benz
  */
 @Component
-@Transactional 
+@Transactional
 public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDAO {
+
+	@Autowired
+	AuditTrailDAO auditDAO;
 
 	public AnalysisDAOImpl() {
 		super(Analysis.class);
@@ -71,7 +74,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 	public void deleteData(List analyses) throws LIMSRuntimeException {
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			for (int i = 0; i < analyses.size(); i++) {
 				Analysis data = (Analysis) analyses.get(i);
 
@@ -127,7 +130,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 			analysis.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = analysis.getSysUserId();
 			String tableName = "ANALYSIS";
 			auditDAO.saveNewHistory(analysis, sysUserId, tableName);
@@ -151,7 +154,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDA
 
 		if (!skipAuditTrail) {
 			try {
-				AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 				String sysUserId = analysis.getSysUserId();
 				String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 				String tableName = "ANALYSIS";

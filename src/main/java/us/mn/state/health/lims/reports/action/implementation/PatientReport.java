@@ -35,75 +35,60 @@ import org.hibernate.Transaction;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.address.AddressPartService;
+import spring.service.address.PersonAddressService;
+import spring.service.analysis.AnalysisService;
 import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.dictionary.DictionaryService;
+import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl;
 import spring.service.note.NoteServiceImpl.NoteType;
+import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.observationhistory.ObservationHistoryServiceImpl;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
+import spring.service.patient.PatientService;
 import spring.service.patient.PatientServiceImpl;
+import spring.service.patientidentity.PatientIdentityService;
+import spring.service.person.PersonService;
 import spring.service.person.PersonServiceImpl;
+import spring.service.provider.ProviderService;
+import spring.service.referral.ReferralReasonService;
+import spring.service.referral.ReferralResultService;
+import spring.service.referral.ReferralService;
 import spring.service.result.ResultServiceImpl;
+import spring.service.sample.SampleService;
 import spring.service.sample.SampleServiceImpl;
+import spring.service.samplehuman.SampleHumanService;
+import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
-import us.mn.state.health.lims.address.dao.PersonAddressDAO;
-import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
-import us.mn.state.health.lims.address.daoimpl.PersonAddressDAOImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
 import us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator;
-import us.mn.state.health.lims.common.services.IPatientService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.services.TestIdentityService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.note.dao.NoteDAO;
-import us.mn.state.health.lims.note.daoimpl.NoteDAOImpl;
-import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
-import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
 import us.mn.state.health.lims.organization.valueholder.Organization;
-import us.mn.state.health.lims.patient.dao.PatientDAO;
-import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.patientidentity.dao.PatientIdentityDAO;
-import us.mn.state.health.lims.patientidentity.daoimpl.PatientIdentityDAOImpl;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
-import us.mn.state.health.lims.person.dao.PersonDAO;
-import us.mn.state.health.lims.person.daoimpl.PersonDAOImpl;
 import us.mn.state.health.lims.person.valueholder.Person;
-import us.mn.state.health.lims.provider.dao.ProviderDAO;
-import us.mn.state.health.lims.provider.daoimpl.ProviderDAOImpl;
 import us.mn.state.health.lims.provider.valueholder.Provider;
-import us.mn.state.health.lims.referral.dao.ReferralDAO;
-import us.mn.state.health.lims.referral.dao.ReferralReasonDAO;
-import us.mn.state.health.lims.referral.dao.ReferralResultDAO;
-import us.mn.state.health.lims.referral.daoimpl.ReferralDAOImpl;
-import us.mn.state.health.lims.referral.daoimpl.ReferralReasonDAOImpl;
-import us.mn.state.health.lims.referral.daoimpl.ReferralResultDAOImpl;
 import us.mn.state.health.lims.referral.valueholder.ReferralResult;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ClinicalPatientData;
 import us.mn.state.health.lims.result.valueholder.Result;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.util.AccessionNumberUtil;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.dao.SampleHumanDAO;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 public abstract class PatientReport extends Report {
@@ -114,20 +99,21 @@ public abstract class PatientReport extends Report {
 	protected String currentContactInfo = "";
 	protected String currentSiteInfo = "";
 
-	protected SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
-	protected DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-	protected SampleDAO sampleDAO = new SampleDAOImpl();
-	protected PatientDAO patientDAO = new PatientDAOImpl();
-	protected PersonDAO personDAO = new PersonDAOImpl();
-	protected ProviderDAO providerDAO = new ProviderDAOImpl();
-	protected TestDAO testDAO = new TestDAOImpl();
-	protected ReferralReasonDAO referralReasonDAO = new ReferralReasonDAOImpl();
-	protected ReferralDAO referralDao = new ReferralDAOImpl();
-	protected ReferralResultDAO referralResultDAO = new ReferralResultDAOImpl();
-	protected ObservationHistoryDAO observationDAO = new ObservationHistoryDAOImpl();
-	protected AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-	protected NoteDAO noteDAO = new NoteDAOImpl();
-	protected PersonAddressDAO addressDAO = new PersonAddressDAOImpl();
+	protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+	protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+	protected SampleService sampleService = SpringContext.getBean(SampleService.class);
+	protected PatientService patientService = SpringContext.getBean(PatientService.class);
+	protected PersonService personService = SpringContext.getBean(PersonService.class);
+	protected ProviderService providerService = SpringContext.getBean(ProviderService.class);
+	protected TestService testService = SpringContext.getBean(TestService.class);
+	protected ReferralReasonService referralReasonService = SpringContext.getBean(ReferralReasonService.class);
+	protected ReferralService referralService = SpringContext.getBean(ReferralService.class);
+	protected ReferralResultService referralResultService = SpringContext.getBean(ReferralResultService.class);
+	protected ObservationHistoryService observationService = SpringContext.getBean(ObservationHistoryService.class);
+	protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+	protected NoteService noteService = SpringContext.getBean(NoteService.class);
+	protected PersonAddressService addressService = SpringContext.getBean(PersonAddressService.class);
+	protected static AddressPartService addressPartService = SpringContext.getBean(AddressPartService.class);
 	private List<String> handledOrders;
 	private List<Analysis> updatedAnalysis = new ArrayList<>();
 
@@ -144,7 +130,6 @@ public abstract class PatientReport extends Report {
 	protected String patientDept = null;
 	protected String patientCommune = null;
 
-	protected IPatientService patientService;
 	protected Provider currentProvider;
 	protected AnalysisServiceImpl currentAnalysisService;
 	protected String reportReferralResultValue;
@@ -158,7 +143,7 @@ public abstract class PatientReport extends Report {
 	protected Map<String, Boolean> sampleCorrectedMap;
 
 	static {
-		List<AddressPart> partList = new AddressPartDAOImpl().getAll();
+		List<AddressPart> partList = addressPartService.getAll();
 		for (AddressPart part : partList) {
 			if ("department".equals(part.getPartName())) {
 				ADDRESS_DEPT_ID = part.getId();
@@ -261,7 +246,7 @@ public abstract class PatientReport extends Report {
 
 			try {
 				for (Analysis analysis : updatedAnalysis) {
-					analysisDAO.updateData(analysis, true);
+					analysisService.updateData(analysis, true);
 				}
 				tx.commit();
 
@@ -285,16 +270,16 @@ public abstract class PatientReport extends Report {
 		patientDept = "";
 		patientCommune = "";
 		if (ADDRESS_DEPT_ID != null) {
-			PersonAddress deptAddress = addressDAO.getByPersonIdAndPartId(patientService.getPerson().getId(),
+			PersonAddress deptAddress = addressService.getByPersonIdAndPartId(patientService.getPerson().getId(),
 					ADDRESS_DEPT_ID);
 
 			if (deptAddress != null && !GenericValidator.isBlankOrNull(deptAddress.getValue())) {
-				patientDept = dictionaryDAO.getDictionaryById(deptAddress.getValue()).getDictEntry();
+				patientDept = dictionaryService.getDictionaryById(deptAddress.getValue()).getDictEntry();
 			}
 		}
 
 		if (ADDRESS_COMMUNE_ID != null) {
-			PersonAddress deptAddress = addressDAO.getByPersonIdAndPartId(patientService.getPerson().getId(),
+			PersonAddress deptAddress = addressService.getByPersonIdAndPartId(patientService.getPerson().getId(),
 					ADDRESS_COMMUNE_ID);
 
 			if (deptAddress != null) {
@@ -317,21 +302,21 @@ public abstract class PatientReport extends Report {
 		Person person = currentSampleService.getPersonRequester();
 		if (person != null) {
 			currentContactInfo = new PersonServiceImpl(person).getLastFirstName();
-			currentProvider = providerDAO.getProviderByPerson(person);
+			currentProvider = providerService.getProviderByPerson(person);
 		}
 	}
 
 	private boolean findPatientByPatientNumber(String patientNumber, List<Patient> patientList) {
 		patientService = null;
-		PatientIdentityDAO patientIdentityDAO = new PatientIdentityDAOImpl();
-		patientList.addAll(patientDAO.getPatientsByNationalId(patientNumber));
+		PatientIdentityService patientIdentityService = SpringContext.getBean(PatientIdentityService.class);
+		patientList.addAll(patientService.getPatientsByNationalId(patientNumber));
 
 		if (patientList.isEmpty()) {
-			List<PatientIdentity> identities = patientIdentityDAO.getPatientIdentitiesByValueAndType(patientNumber,
+			List<PatientIdentity> identities = patientIdentityService.getPatientIdentitiesByValueAndType(patientNumber,
 					PatientServiceImpl.PATIENT_ST_IDENTITY);
 
 			if (identities.isEmpty()) {
-				identities = patientIdentityDAO.getPatientIdentitiesByValueAndType(patientNumber,
+				identities = patientIdentityService.getPatientIdentitiesByValueAndType(patientNumber,
 						PatientServiceImpl.PATIENT_SUBJECT_IDENTITY);
 			}
 
@@ -341,7 +326,7 @@ public abstract class PatientReport extends Report {
 					String reportPatientId = patientIdentity.getPatientId();
 					Patient patient = new Patient();
 					patient.setId(reportPatientId);
-					patientDAO.getData(patient);
+					patientService.getData(patient);
 					patientList.add(patient);
 				}
 			}
@@ -353,7 +338,7 @@ public abstract class PatientReport extends Report {
 	private List<Sample> findReportSamplesForReportPatient(List<Patient> patientList) {
 		List<Sample> sampleList = new ArrayList<>();
 		for (Patient searchPatient : patientList) {
-			sampleList.addAll(sampleHumanDAO.getSamplesForPatient(searchPatient.getId()));
+			sampleList.addAll(sampleHumanService.getSamplesForPatient(searchPatient.getId()));
 		}
 
 		return sampleList;
@@ -391,12 +376,12 @@ public abstract class PatientReport extends Report {
 	}
 
 	private List<Sample> findReportSamples(String lowerNumber, String upperNumber) {
-		List<Sample> sampleList = sampleDAO.getSamplesByAccessionRange(lowerNumber, upperNumber);
+		List<Sample> sampleList = sampleService.getSamplesByAccessionRange(lowerNumber, upperNumber);
 		return sampleList == null ? new ArrayList<>() : sampleList;
 	}
 
 	protected void findPatientFromSample() {
-		Patient patient = sampleHumanDAO.getPatientForSample(currentSampleService.getSample());
+		Patient patient = sampleHumanService.getPatientForSample(currentSampleService.getSample());
 
 		if (patientService == null || !patient.getId().equals(patientService.getPatientId())) {
 			STNumber = null;
@@ -602,7 +587,7 @@ public abstract class PatientReport extends Report {
 				if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
 					Dictionary dictionary = new Dictionary();
 					dictionary.setId(result.getValue());
-					dictionaryDAO.getData(dictionary);
+					dictionaryService.getData(dictionary);
 					data.setAbnormalResult(new ResultServiceImpl(result).isAbnormalDictionaryResult());
 
 					if (result.getAnalyte() != null && "Conclusion".equals(result.getAnalyte().getAnalyteName())) {
@@ -639,7 +624,7 @@ public abstract class PatientReport extends Report {
 					Dictionary dictionary = new Dictionary();
 					for (Result sibResult : dictionaryResults) {
 						dictionary.setId(sibResult.getValue());
-						dictionaryDAO.getData(dictionary);
+						dictionaryService.getData(dictionary);
 						if (sibResult.getAnalyte() != null
 								&& "Conclusion".equals(sibResult.getAnalyte().getAnalyteName())) {
 							currentConclusion = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
@@ -681,7 +666,7 @@ public abstract class PatientReport extends Report {
 							multiResult.append("-------\n");
 						}
 						dictionary.setId(subResult.getValue());
-						dictionaryDAO.getData(dictionary);
+						dictionaryService.getData(dictionary);
 
 						if (dictionary.getId() != null) {
 							multiResult.append(dictionary.getLocalizedName());
@@ -899,7 +884,7 @@ public abstract class PatientReport extends Report {
 			if (result.getValue() != null && !"null".equals(result.getValue())) {
 				Dictionary dictionary = new Dictionary();
 				dictionary.setId(result.getValue());
-				dictionaryDAO.getData(dictionary);
+				dictionaryService.getData(dictionary);
 				reportResult = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
 			}
 		} else {

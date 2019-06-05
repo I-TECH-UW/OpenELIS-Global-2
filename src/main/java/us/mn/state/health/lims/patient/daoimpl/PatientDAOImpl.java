@@ -95,7 +95,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
 	public boolean insertData(Patient patient) throws LIMSRuntimeException {
 
 		try {
-			String id = (String) HibernateUtil.getSession().save(patient);
+			String id = (String) sessionFactory.getCurrentSession().save(patient);
 			patient.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table

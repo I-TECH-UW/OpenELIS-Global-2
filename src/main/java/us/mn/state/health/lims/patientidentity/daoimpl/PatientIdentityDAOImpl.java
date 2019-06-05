@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -19,8 +19,11 @@ import us.mn.state.health.lims.patientidentity.dao.PatientIdentityDAO;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 
 @Component
-@Transactional 
+@Transactional
 public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> implements PatientIdentityDAO {
+
+	@Autowired
+	AuditTrailDAO auditDAO;
 
 	public PatientIdentityDAOImpl() {
 		super(PatientIdentity.class);
@@ -56,7 +59,6 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 			String id = (String) HibernateUtil.getSession().save(patientIdentity);
 			patientIdentity.setId(id);
 
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 			String sysUserId = patientIdentity.getSysUserId();
 			String tableName = "PATIENT_IDENTITY";
 			auditDAO.saveNewHistory(patientIdentity, sysUserId, tableName);
@@ -78,7 +80,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 
 		// add to audit trail
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			String sysUserId = patientIdentity.getSysUserId();
 			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 			String tableName = "PATIENT_IDENTITY";
@@ -103,7 +105,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 	public PatientIdentity getCurrentPatientIdentity(String id) {
 		PatientIdentity current = null;
 		try {
-			current = (PatientIdentity) HibernateUtil.getSession().get(PatientIdentity.class, id);
+			current = HibernateUtil.getSession().get(PatientIdentity.class, id);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {
@@ -117,7 +119,6 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 	@Override
 	public void delete(String patientIdentityId, String activeUserId) throws LIMSRuntimeException {
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
 
 			PatientIdentity oldData = readPatientIdentity(patientIdentityId);
 			Patient newData = new Patient();
@@ -141,7 +142,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> impleme
 
 		PatientIdentity patientIdentity = null;
 		try {
-			patientIdentity = (PatientIdentity) HibernateUtil.getSession().get(PatientIdentity.class, idString);
+			patientIdentity = HibernateUtil.getSession().get(PatientIdentity.class, idString);
 			// HibernateUtil.getSession().flush(); // CSL remove old
 			// HibernateUtil.getSession().clear(); // CSL remove old
 		} catch (Exception e) {

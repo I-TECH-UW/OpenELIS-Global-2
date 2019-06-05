@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="us.mn.state.health.lims.systemuser.valueholder.SystemUser" table="SYSTEM_USER" optimistic-lock="version" dynamic-update="true" >
+    <class name="us.mn.state.health.lims.systemuser.valueholder.SystemUser" table="SYSTEM_USER" optimistic-lock="version" dynamic-update="false" >
         <id name="id" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="ID" precision="10" scale="0" />
 			<generator class="us.mn.state.health.lims.hibernate.resources.StringSequenceGenerator">

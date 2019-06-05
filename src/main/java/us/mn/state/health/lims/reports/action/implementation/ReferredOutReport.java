@@ -29,13 +29,13 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import spring.service.analysis.AnalysisServiceImpl;
+import spring.service.organization.OrganizationService;
 import spring.service.sample.SampleServiceImpl;
 import spring.service.test.TestServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.referral.valueholder.Referral;
 import us.mn.state.health.lims.referral.valueholder.ReferralReason;
@@ -44,6 +44,7 @@ import us.mn.state.health.lims.reports.action.implementation.reportBeans.Clinica
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.test.valueholder.Test;
+
 /**
  * @author Paul A. Hill (pahill@uw.edu)
  * @since Feb 18, 2011
@@ -51,191 +52,210 @@ import us.mn.state.health.lims.test.valueholder.Test;
 
 public class ReferredOutReport extends PatientReport implements IReportParameterSetter, IReportCreator {
 
-    private String lowDateStr;
-    private String highDateStr;
-    private String locationId;
-    private DateRange dateRange;
+	private String lowDateStr;
+	private String highDateStr;
+	private String locationId;
+	private DateRange dateRange;
 
-    OrganizationDAO organizationDAO = new OrganizationDAOImpl();
-    private Organization reportLocation;
+	private OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
+	private Organization reportLocation;
 
-    @Override
-    protected String reportFileName(){
-    	return "ReferredOutBySite";
-    }
-    /**
-     * @see us.mn.state.health.lims.reports.action.implementation.IReportParameterSetter#setRequestParameters(us.mn.state.health.lims.common.action.BaseActionForm)
-     */
-    @Override
-    public void setRequestParameters(BaseForm form) {
-        try {
-            List<Organization> list = organizationDAO.getOrganizationsByTypeName("organizationName", "referralLab");
-            PropertyUtils.setProperty(form, "reportName", getReportNameForParameterPage());
-            PropertyUtils.setProperty(form, "useLocationCode", true);
-            PropertyUtils.setProperty(form, "locationCodeList", list);
-            PropertyUtils.setProperty(form, "useLowerDateRange", true);
-            PropertyUtils.setProperty(form, "useUpperDateRange", true);
-            PropertyUtils.setProperty(form, "instructions", MessageUtil.getMessage("instructions.report.referral"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	@Override
+	protected String reportFileName() {
+		return "ReferredOutBySite";
+	}
 
-    /**
-     * @see us.mn.state.health.lims.reports.action.implementation.IReportCreator#initializeReport(us.mn.state.health.lims.common.action.BaseActionForm)
-     */
-    @Override
-    public void initializeReport(BaseForm form) {
-        super.initializeReport();
-        lowDateStr = form.getString("lowerDateRange");
-        highDateStr = form.getString("upperDateRange");
-        locationId = form.getString("locationCode");
-        dateRange = new DateRange(lowDateStr, highDateStr);
-        reportLocation = getValidOrganization(locationId);
-        
-        errorFound = !validateSubmitParameters();
+	/**
+	 * @see us.mn.state.health.lims.reports.action.implementation.IReportParameterSetter#setRequestParameters(us.mn.state.health.lims.common.action.BaseActionForm)
+	 */
+	@Override
+	public void setRequestParameters(BaseForm form) {
+		try {
+			List<Organization> list = organizationService.getOrganizationsByTypeName("organizationName", "referralLab");
+			PropertyUtils.setProperty(form, "reportName", getReportNameForParameterPage());
+			PropertyUtils.setProperty(form, "useLocationCode", true);
+			PropertyUtils.setProperty(form, "locationCodeList", list);
+			PropertyUtils.setProperty(form, "useLowerDateRange", true);
+			PropertyUtils.setProperty(form, "useUpperDateRange", true);
+			PropertyUtils.setProperty(form, "instructions", MessageUtil.getMessage("instructions.report.referral"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-        createReportParameters();
+	/**
+	 * @see us.mn.state.health.lims.reports.action.implementation.IReportCreator#initializeReport(us.mn.state.health.lims.common.action.BaseActionForm)
+	 */
+	@Override
+	public void initializeReport(BaseForm form) {
+		super.initializeReport();
+		lowDateStr = form.getString("lowerDateRange");
+		highDateStr = form.getString("upperDateRange");
+		locationId = form.getString("locationCode");
+		dateRange = new DateRange(lowDateStr, highDateStr);
+		reportLocation = getValidOrganization(locationId);
 
-        if ( errorFound ) {
-            return;
-        }
+		errorFound = !validateSubmitParameters();
 
-        initializeReportItems();
-        createReportItems();
-        if ( this.reportItems.size() == 0 ) {
-            add1LineErrorMessage("report.error.message.noPrintableItems");
-        }
-        Collections.sort(reportItems, new ReportItemsComparator() );
-        return;
-    }
-    
-    static class ReportItemsComparator implements Comparator<ClinicalPatientData>{
-        /**
-         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-         * left.get().compareTo(right.get());
-         */
-        @Override
-        public int compare(ClinicalPatientData left, ClinicalPatientData right) {
-            int compare = left.getAccessionNumber().compareTo(right.getAccessionNumber());
-            if (compare != 0) return compare;
-            compare = left.getTestName().compareTo(right.getTestName());
-            if (compare != 0) return compare;
-            compare = left.getResult().compareTo(right.getResult());
-            if (compare != 0) return compare;
-            compare = left.getReferralTestName().compareTo(right.getReferralTestName());
-            if (compare != 0) return compare;
-            compare = left.getReferralResult().compareTo(right.getReferralResult());
-            return compare;
-        }
-    }
+		createReportParameters();
 
-    /**
-     * check everything
-     */
-    private boolean validateSubmitParameters() {
-        return (dateRange.validateHighLowDate("report.error.message.date.received.missing") && reportLocation != null );
-    }
+		if (errorFound) {
+			return;
+		}
 
-    protected void createReportParameters() {
-        super.createReportParameters();
-        reportParameters.put("reportPeriod", MessageUtil.getMessage("reports.label.referral.title")
-             + " " + lowDateStr + " - " + highDateStr);
-        reportParameters.put("reportTitle", reportLocation == null ? "" : MessageUtil.getMessage("report.test.status.referredOut") + ": " + reportLocation.getOrganizationName());
-        reportParameters.put("referralSiteName", reportLocation == null ? "" : reportLocation.getOrganizationName());
-    	reportParameters.put("directorName", ConfigurationProperties.getInstance().getPropertyValue(Property.labDirectorName));
+		initializeReportItems();
+		createReportItems();
+		if (reportItems.size() == 0) {
+			add1LineErrorMessage("report.error.message.noPrintableItems");
+		}
+		Collections.sort(reportItems, new ReportItemsComparator());
+		return;
+	}
+
+	static class ReportItemsComparator implements Comparator<ClinicalPatientData> {
+		/**
+		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+		 *      left.get().compareTo(right.get());
+		 */
+		@Override
+		public int compare(ClinicalPatientData left, ClinicalPatientData right) {
+			int compare = left.getAccessionNumber().compareTo(right.getAccessionNumber());
+			if (compare != 0) {
+				return compare;
+			}
+			compare = left.getTestName().compareTo(right.getTestName());
+			if (compare != 0) {
+				return compare;
+			}
+			compare = left.getResult().compareTo(right.getResult());
+			if (compare != 0) {
+				return compare;
+			}
+			compare = left.getReferralTestName().compareTo(right.getReferralTestName());
+			if (compare != 0) {
+				return compare;
+			}
+			compare = left.getReferralResult().compareTo(right.getReferralResult());
+			return compare;
+		}
+	}
+
+	/**
+	 * check everything
+	 */
+	private boolean validateSubmitParameters() {
+		return (dateRange.validateHighLowDate("report.error.message.date.received.missing") && reportLocation != null);
+	}
+
+	@Override
+	protected void createReportParameters() {
+		super.createReportParameters();
+		reportParameters.put("reportPeriod",
+				MessageUtil.getMessage("reports.label.referral.title") + " " + lowDateStr + " - " + highDateStr);
+		reportParameters.put("reportTitle",
+				reportLocation == null ? ""
+						: MessageUtil.getMessage("report.test.status.referredOut") + ": "
+								+ reportLocation.getOrganizationName());
+		reportParameters.put("referralSiteName", reportLocation == null ? "" : reportLocation.getOrganizationName());
+		reportParameters.put("directorName",
+				ConfigurationProperties.getInstance().getPropertyValue(Property.labDirectorName));
 		reportParameters.put("labName1", MessageUtil.getContextualMessage("report.labName.one"));
 		reportParameters.put("labName2", MessageUtil.getContextualMessage("report.labName.two"));
-    }
+	}
 
-    @Override
-    protected String getHeaderName(){
-        return "GeneralHeader.jasper";
-    }
+	@Override
+	protected String getHeaderName() {
+		return "GeneralHeader.jasper";
+	}
 
-    @Override
-    protected void createReportItems() {
-        List<Referral> referrals =  referralDao.getAllReferralsByOrganization(locationId,
-        																	  dateRange.getLowDate(),
-        		                                                              dateRange.getHighDateAtEndOfDay());
+	@Override
+	protected void createReportItems() {
+		List<Referral> referrals = referralService.getAllReferralsByOrganization(locationId, dateRange.getLowDate(),
+				dateRange.getHighDateAtEndOfDay());
 
-        for (Referral referral : referrals) {
-        	if( !referral.isCanceled()){
-        		reportReferral(referral);
-        	}
-        }
-    }
+		for (Referral referral : referrals) {
+			if (!referral.isCanceled()) {
+				reportReferral(referral);
+			}
+		}
+	}
 
-    /**
+	/**
 	 * Report the local and the referralResults for the given referral.
-	 * 
+	 *
 	 * @param referral
 	 */
 	private void reportReferral(Referral referral) {
-        currentAnalysisService = new AnalysisServiceImpl( referral.getAnalysis() );
-		Sample sample = referralDao.getReferralById(referral.getId()).getAnalysis().getSampleItem().getSample();
+		currentAnalysisService = new AnalysisServiceImpl(referral.getAnalysis());
+		Sample sample = referralService.getReferralById(referral.getId()).getAnalysis().getSampleItem().getSample();
 		currentSampleService = new SampleServiceImpl(sample);
 		findPatientFromSample();
 
-        String note =  currentAnalysisService.getNotesAsString( false, true, "<br/>", false  );
-		List<ReferralResult> referralResults = referralResultDAO.getReferralResultsForReferral(referral.getId());
+		String note = currentAnalysisService.getNotesAsString(false, true, "<br/>", false);
+		List<ReferralResult> referralResults = referralResultService.getReferralResultsForReferral(referral.getId());
 		for (int i = 0; i < referralResults.size(); i++) {
 			i = reportReferralResultValue(referralResults, i);
 			ReferralResult referralResult = referralResults.get(i);
-			ClinicalPatientData data = buildClinicalPatientData( false );
-			data.setReferralSentDate((referral != null && referral.getSentDate() != null) ? DateUtil.formatDateAsText(referral.getSentDate()) : "");
+			ClinicalPatientData data = buildClinicalPatientData(false);
+			data.setReferralSentDate((referral != null && referral.getSentDate() != null)
+					? DateUtil.formatDateAsText(referral.getSentDate())
+					: "");
 			data.setReferralResult(reportReferralResultValue);
 			data.setReferralNote(note);
 			String testId = referralResult.getTestId();
 			if (!GenericValidator.isBlankOrNull(testId)) {
 				Test test = new Test();
 				test.setId(testId);
-				testDAO.getData(test);
-				data.setReferralTestName( TestServiceImpl.getUserLocalizedReportingTestName( test ) );
-				
-				String uom = getUnitOfMeasure( test);
+				testService.getData(test);
+				data.setReferralTestName(TestServiceImpl.getUserLocalizedReportingTestName(test));
+
+				String uom = getUnitOfMeasure(test);
 				if (reportReferralResultValue != null) {
 					data.setReferralResult(addIfNotEmpty(reportReferralResultValue, uom));
 				}
 				data.setReferralRefRange(addIfNotEmpty(getRange(referralResult.getResult()), uom));
-				data.setTestSortOrder(GenericValidator.isBlankOrNull(test.getSortOrder()) ? Integer.MAX_VALUE : Integer.parseInt(test.getSortOrder()));
-				data.setSectionSortOrder( currentAnalysisService.getTestSection().getSortOrderInt() );
-				data.setTestSection( currentAnalysisService.getTestSection().getLocalizedName() );
+				data.setTestSortOrder(GenericValidator.isBlankOrNull(test.getSortOrder()) ? Integer.MAX_VALUE
+						: Integer.parseInt(test.getSortOrder()));
+				data.setSectionSortOrder(currentAnalysisService.getTestSection().getSortOrderInt());
+				data.setTestSection(currentAnalysisService.getTestSection().getLocalizedName());
 			}
 			Timestamp referralReportDate = referralResult.getReferralReportDate();
-			data.setReferralResultReportDate((referralReportDate == null) ? null : DateUtil.formatDateAsText(referralReportDate));
+			data.setReferralResultReportDate(
+					(referralReportDate == null) ? null : DateUtil.formatDateAsText(referralReportDate));
 			ReferralReason reason = new ReferralReason();
 			reason.setId(referral.getReferralReasonId());
-			referralReasonDAO.getData(reason);
+			referralReasonService.getData(reason);
 			data.setReferralReason(reason.getLocalizedName());
 
 			reportItems.add(data);
 		}
 	}
 
-    /**
-     * @see PatientReport#getReportNameForParameterPage()
-     */
-    @Override
-    protected String getReportNameForParameterPage() {
-        return MessageUtil.getMessage("openreports.referredOutHaitiReport");
-    }
+	/**
+	 * @see PatientReport#getReportNameForParameterPage()
+	 */
+	@Override
+	protected String getReportNameForParameterPage() {
+		return MessageUtil.getMessage("openreports.referredOutHaitiReport");
+	}
 
-    public JRDataSource getReportDataSource() throws IllegalStateException {
-        if (!initialized) {
-            throw new IllegalStateException("initializeReport not called first");
-        }
+	@Override
+	public JRDataSource getReportDataSource() throws IllegalStateException {
+		if (!initialized) {
+			throw new IllegalStateException("initializeReport not called first");
+		}
 
-         return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(reportItems);
-    }
+		return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(reportItems);
+	}
 
 	@Override
 	protected void postSampleBuild() {
 		// TODO Auto-generated method stub
-		
+
 	}
+
 	@Override
 	protected void setReferredResult(ClinicalPatientData data, Result result) {
-		data.setResult(data.getResult() );
+		data.setResult(data.getResult());
 	}
 }

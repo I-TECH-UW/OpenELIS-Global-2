@@ -22,11 +22,11 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -37,14 +37,15 @@ import us.mn.state.health.lims.referral.valueholder.ReferralResult;
 /*
  */
 @Component
-@Transactional 
+@Transactional
 public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult> implements ReferralResultDAO {
 
 	public ReferralResultDAOImpl() {
 		super(ReferralResult.class);
 	}
 
-	protected AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+	@Autowired
+	protected AuditTrailDAO auditDAO;
 
 	@Override
 	public boolean insertData(ReferralResult referralResult) throws LIMSRuntimeException {
@@ -65,8 +66,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult> implement
 	public ReferralResult getReferralResultById(String referralResultId) throws LIMSRuntimeException {
 		if (!GenericValidator.isBlankOrNull(referralResultId)) {
 			try {
-				ReferralResult referralResult = (ReferralResult) HibernateUtil.getSession().get(ReferralResult.class,
-						referralResultId);
+				ReferralResult referralResult = HibernateUtil.getSession().get(ReferralResult.class, referralResultId);
 				// closeSession(); // CSL remove old
 				return referralResult;
 			} catch (HibernateException e) {
@@ -102,8 +102,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult> implement
 	private ReferralResult readReferralResult(String referralResultId) {
 		if (!GenericValidator.isBlankOrNull(referralResultId)) {
 			try {
-				ReferralResult referralResult = (ReferralResult) HibernateUtil.getSession().get(ReferralResult.class,
-						referralResultId);
+				ReferralResult referralResult = HibernateUtil.getSession().get(ReferralResult.class, referralResultId);
 				// closeSession(); // CSL remove old
 				return referralResult;
 			} catch (HibernateException e) {
@@ -142,7 +141,7 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult> implement
 		ReferralResult oldData = readReferralResult(referralResult.getId());
 
 		try {
-			AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+
 			auditDAO.saveHistory(new ReferralResult(), oldData, referralResult.getSysUserId(),
 					IActionConstants.AUDIT_TRAIL_DELETE, "referral_result");
 		} catch (HibernateException e) {

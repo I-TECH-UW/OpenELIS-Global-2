@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -27,14 +26,12 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.mine.common.controller.BaseController;
-import spring.mine.common.validator.BaseErrors;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.result.form.AnalyzerResultsForm;
 import spring.service.analysis.AnalysisService;
 import spring.service.analyzerresults.AnalyzerResultsService;
 import spring.service.dictionary.DictionaryService;
 import spring.service.localization.LocalizationServiceImpl;
-import spring.service.note.NoteService;
 import spring.service.note.NoteServiceImpl;
 import spring.service.result.ResultService;
 import spring.service.resultlimit.ResultLimitServiceImpl;
@@ -71,7 +68,6 @@ import us.mn.state.health.lims.common.services.StatusSet;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.note.valueholder.Note;
 import us.mn.state.health.lims.patient.util.PatientUtil;
 import us.mn.state.health.lims.patient.valueholder.Patient;
@@ -84,7 +80,6 @@ import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
-import us.mn.state.health.lims.testreflex.action.util.TestReflexBean;
 import us.mn.state.health.lims.testreflex.action.util.TestReflexUtil;
 import us.mn.state.health.lims.testreflex.valueholder.TestReflex;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
@@ -113,8 +108,6 @@ public class AnalyzerResultsController extends BaseController {
 		}
 	}
 
-	@Autowired
-	private NoteService noteService;
 	@Autowired
 	private SampleHumanService sampleHumanService;
 	@Autowired
@@ -688,21 +681,13 @@ public class AnalyzerResultsController extends BaseController {
 
 		createResultsFromItems(actionableResults, sampleGroupList);
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
+//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 		try {
-			removeHandledResultsFromAnalyzerResults(deletableAnalyzerResults);
+			analyzerResultsService.persistAnalyzerResults(deletableAnalyzerResults, sampleGroupList,
+					getSysUserId(request));
 
-			boolean saveSuccess = insertResults(request, sampleGroupList);
-
-			if (saveSuccess) {
-				tx.commit();
-			} else {
-				tx.rollback();
-				return findForward(FWD_VALIDATION_ERROR, form);
-			}
 		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
 			String errorMsg = "errors.UpdateException";
 			result.reject(errorMsg);
 			saveErrors(result);
@@ -735,97 +720,6 @@ public class AnalyzerResultsController extends BaseController {
 		}
 
 		return errors;
-	}
-
-	private boolean insertResults(HttpServletRequest request, List<SampleGrouping> sampleGroupList) {
-		for (SampleGrouping grouping : sampleGroupList) {
-			if (grouping.addSample) {
-				try {
-					sampleService.insertDataWithAccessionNumber(grouping.sample);
-				} catch (LIMSRuntimeException lre) {
-					Errors errors = new BaseErrors();
-					String errorMsg = "warning.duplicate.accession";
-					errors.reject(errorMsg, new String[] { grouping.sample.getAccessionNumber() }, errorMsg);
-					saveErrors(errors);
-					return false;
-				}
-			} else if (grouping.updateSample) {
-				sampleService.update(grouping.sample);
-			}
-
-			String sampleId = grouping.sample.getId();
-
-			if (grouping.addSample) {
-				grouping.sampleHuman.setSampleId(sampleId);
-				sampleHumanService.insert(grouping.sampleHuman);
-
-				RecordStatus patientStatus = grouping.statusSet.getPatientRecordStatus() == null
-						? RecordStatus.NotRegistered
-						: null;
-				RecordStatus sampleStatus = grouping.statusSet.getSampleRecordStatus() == null
-						? RecordStatus.NotRegistered
-						: null;
-				StatusService.getInstance().persistRecordStatusForSample(grouping.sample, sampleStatus,
-						grouping.patient, patientStatus, getSysUserId(request));
-			}
-
-			if (grouping.addSampleItem) {
-				grouping.sampleItem.setSample(grouping.sample);
-				sampleItemService.insert(grouping.sampleItem);
-			}
-
-			for (int i = 0; i < grouping.analysisList.size(); i++) {
-
-				Analysis analysis = grouping.analysisList.get(i);
-				if (GenericValidator.isBlankOrNull(analysis.getId())) {
-					analysis.setSampleItem(grouping.sampleItem);
-					analysisService.insert(analysis, false);
-				} else {
-					analysisService.update(analysis);
-				}
-
-				Result result = grouping.resultList.get(i);
-				if (GenericValidator.isBlankOrNull(result.getId())) {
-					result.setAnalysis(analysis);
-					setAnalyte(result);
-					resultService.insert(result);
-				} else {
-					resultService.update(result);
-				}
-
-				Note note = grouping.noteList.get(i);
-
-				if (note != null) {
-					note.setReferenceId(result.getId());
-					noteService.insert(note);
-				}
-			}
-		}
-
-		TestReflexUtil testReflexUtil = new TestReflexUtil();
-		testReflexUtil.setCurrentUserId(getSysUserId(request));
-		testReflexUtil.addNewTestsToDBForReflexTests(convertGroupListToTestReflexBeans(sampleGroupList));
-
-		return true;
-	}
-
-	private List<TestReflexBean> convertGroupListToTestReflexBeans(List<SampleGrouping> sampleGroupList) {
-		List<TestReflexBean> reflexBeanList = new ArrayList<>();
-
-		for (SampleGrouping sampleGroup : sampleGroupList) {
-			if (sampleGroup.accepted) {
-				for (Result result : sampleGroup.resultList) {
-					TestReflexBean reflex = new TestReflexBean();
-					reflex.setPatient(sampleGroup.patient);
-					reflex.setTriggersToSelectedReflexesMap(sampleGroup.triggersToSelectedReflexesMap);
-					reflex.setResult(result);
-					reflex.setSample(sampleGroup.sample);
-					reflexBeanList.add(reflex);
-				}
-			}
-		}
-
-		return reflexBeanList;
 	}
 
 	private void createResultsFromItems(List<AnalyzerResultItem> actionableResults,
@@ -1159,7 +1053,7 @@ public class AnalyzerResultsController extends BaseController {
 		sample.setReceivedDate(new Date(new java.util.Date().getTime()));
 		sample.setSysUserId(getSysUserId(request));
 
-		sampleHuman.setPatientId(PatientUtil.getUnknownPatient().getId());
+		sampleHuman.setPatient(PatientUtil.getUnknownPatient());
 		sampleHuman.setSysUserId(getSysUserId(request));
 
 		Patient patient = PatientUtil.getUnknownPatient();
@@ -1354,10 +1248,6 @@ public class AnalyzerResultsController extends BaseController {
 
 	}
 
-	private void removeHandledResultsFromAnalyzerResults(List<AnalyzerResults> deletableAnalyzerResults) {
-		analyzerResultsService.deleteAll(deletableAnalyzerResults);
-	}
-
 	private List<AnalyzerResults> getRemovableAnalyzerResults(List<AnalyzerResultItem> actionableResults,
 			List<AnalyzerResultItem> childlessControls) {
 
@@ -1484,18 +1374,18 @@ public class AnalyzerResultsController extends BaseController {
 	public class SampleGrouping {
 		public boolean accepted = true;
 		public Sample sample;
-		private SampleHuman sampleHuman;
+		public SampleHuman sampleHuman;
 		public Patient patient;
-		private List<Note> noteList;
-		private SampleItem sampleItem;
-		private List<Analysis> analysisList;
+		public List<Note> noteList;
+		public SampleItem sampleItem;
+		public List<Analysis> analysisList;
 		public List<Result> resultList;
 		public Map<String, List<String>> triggersToSelectedReflexesMap;
-		private StatusSet statusSet;
-		private boolean addSample = false; // implies adding patient
-		private boolean updateSample = false;
-		private boolean addSampleItem = false;
-		private Map<Result, String> resultToUserserSelectionMap;
+		public StatusSet statusSet;
+		public boolean addSample = false; // implies adding patient
+		public boolean updateSample = false;
+		public boolean addSampleItem = false;
+		public Map<Result, String> resultToUserserSelectionMap;
 
 	}
 }

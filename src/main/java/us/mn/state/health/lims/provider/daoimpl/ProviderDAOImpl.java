@@ -91,7 +91,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider> implements ProviderDA
 	public boolean insertData(Provider provider) throws LIMSRuntimeException {
 
 		try {
-			String id = (String) HibernateUtil.getSession().save(provider);
+			String id = (String) sessionFactory.getCurrentSession().save(provider);
 			provider.setId(id);
 
 			String sysUserId = provider.getSysUserId();

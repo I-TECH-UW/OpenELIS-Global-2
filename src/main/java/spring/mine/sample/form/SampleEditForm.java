@@ -3,7 +3,6 @@ package spring.mine.sample.form;
 import java.util.List;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -38,11 +37,9 @@ public class SampleEditForm extends BaseForm {
 	@Pattern(regexp = ValidationHelper.NAME_REGEX, groups = { SampleEdit.class })
 	private String patientName = "";
 
-	@NotBlank(groups = { SampleEdit.class })
 	@ValidDate(relative = DateRelation.PAST)
 	private String dob = "";
 
-	@NotBlank(groups = { SampleEdit.class })
 	@Pattern(regexp = ValidationHelper.GENDER_REGEX, groups = { SampleEdit.class })
 	private String gender = "";
 

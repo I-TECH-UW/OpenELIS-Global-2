@@ -21,10 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import spring.service.siteinformation.SiteInformationService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 public class DefaultConfigurationProperties extends ConfigurationProperties {
@@ -36,25 +36,25 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
 	private boolean databaseLoaded = false;
 
 	{
-		//config from SystemConfiguration.properties
-		propertiesFileMap  = new HashMap<ConfigurationProperties.Property, KeyDefaultPair>();
-		propertiesFileMap.put(Property.AmbiguousDateValue, new KeyDefaultPair("date.ambiguous.date.value", "01") );
-		propertiesFileMap.put(Property.AmbiguousDateHolder , new KeyDefaultPair("date.ambiguous.date.holder", "X") );
-		propertiesFileMap.put(Property.ReferingLabParentOrg , new KeyDefaultPair("organization.reference.lab.parent", null) );
-		propertiesFileMap.put(Property.resultsResendTime , new KeyDefaultPair("results.send.retry.time", "30") );
+		// config from SystemConfiguration.properties
+		propertiesFileMap = new HashMap<>();
+		propertiesFileMap.put(Property.AmbiguousDateValue, new KeyDefaultPair("date.ambiguous.date.value", "01"));
+		propertiesFileMap.put(Property.AmbiguousDateHolder, new KeyDefaultPair("date.ambiguous.date.holder", "X"));
+		propertiesFileMap.put(Property.ReferingLabParentOrg,
+				new KeyDefaultPair("organization.reference.lab.parent", null));
+		propertiesFileMap.put(Property.resultsResendTime, new KeyDefaultPair("results.send.retry.time", "30"));
 //		propertiesFileMap.put(Property. , new KeyDefaultPair() );
 
-
-		//config from site_information table
-		dbNamePropertiesMap  = new HashMap<String, ConfigurationProperties.Property>();
-		setDBPropertyMappingAndDefault(Property.SiteCode, "siteNumber", "" );
+		// config from site_information table
+		dbNamePropertiesMap = new HashMap<>();
+		setDBPropertyMappingAndDefault(Property.SiteCode, "siteNumber", "");
 		setDBPropertyMappingAndDefault(Property.TrainingInstallation, "TrainingInstallation", "false");
-		setDBPropertyMappingAndDefault(Property.PatientSearchURL, "patientSearchURL" , "");
-		setDBPropertyMappingAndDefault(Property.PatientSearchUserName, "patientSearchLogOnUser" , "" );
-		setDBPropertyMappingAndDefault(Property.PatientSearchPassword, "patientSearchPassword", "" );
-		setDBPropertyMappingAndDefault(Property.UseExternalPatientInfo, "useExternalPatientSource" , "false");
-		setDBPropertyMappingAndDefault(Property.labDirectorName, "lab director" , "");
-		setDBPropertyMappingAndDefault(Property.languageSwitch, "allowLanguageChange", "true" );
+		setDBPropertyMappingAndDefault(Property.PatientSearchURL, "patientSearchURL", "");
+		setDBPropertyMappingAndDefault(Property.PatientSearchUserName, "patientSearchLogOnUser", "");
+		setDBPropertyMappingAndDefault(Property.PatientSearchPassword, "patientSearchPassword", "");
+		setDBPropertyMappingAndDefault(Property.UseExternalPatientInfo, "useExternalPatientSource", "false");
+		setDBPropertyMappingAndDefault(Property.labDirectorName, "lab director", "");
+		setDBPropertyMappingAndDefault(Property.languageSwitch, "allowLanguageChange", "true");
 		setDBPropertyMappingAndDefault(Property.resultReportingURL, "resultReportingURL", "");
 		setDBPropertyMappingAndDefault(Property.reportResults, "resultReporting", "false");
 		setDBPropertyMappingAndDefault(Property.malariaSurveillanceReportURL, "malariaSurURL", "");
@@ -63,8 +63,8 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
 		setDBPropertyMappingAndDefault(Property.malariaCaseReportURL, "malariaCaseURL", "");
 		setDBPropertyMappingAndDefault(Property.testUsageReportingURL, "testUsageAggregationUrl", "");
 		setDBPropertyMappingAndDefault(Property.testUsageReporting, "testUsageReporting", "false");
-		setDBPropertyMappingAndDefault(Property.roleRequiredForModifyResults, "modify results role" , "false");
-		setDBPropertyMappingAndDefault(Property.notesRequiredForModifyResults, "modify results note required", "false" );
+		setDBPropertyMappingAndDefault(Property.roleRequiredForModifyResults, "modify results role", "false");
+		setDBPropertyMappingAndDefault(Property.notesRequiredForModifyResults, "modify results note required", "false");
 		setDBPropertyMappingAndDefault(Property.resultTechnicianName, "ResultTechnicianName", "false");
 		setDBPropertyMappingAndDefault(Property.allowResultRejection, "allowResultRejection", "false");
 		setDBPropertyMappingAndDefault(Property.restrictFreeTextRefSiteEntry, "restrictFreeTextRefSiteEntry", "false");
@@ -72,12 +72,14 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
 		setDBPropertyMappingAndDefault(Property.autoFillTechNameUser, "autoFillTechNameUser", "false");
 		setDBPropertyMappingAndDefault(Property.failedValidationMarker, "showValidationFailureIcon", "true");
 		setDBPropertyMappingAndDefault(Property.SiteName, "SiteName", "");
-		setDBPropertyMappingAndDefault(Property.PasswordRequirments , "passwordRequirements", "MINN");
-		setDBPropertyMappingAndDefault(Property.FormFieldSet , "setFieldForm", IActionConstants.FORM_FIELD_SET_CI_GENERAL);
-		setDBPropertyMappingAndDefault(Property.StringContext , "stringContext","");
-		setDBPropertyMappingAndDefault(Property.StatusRules , "statusRules", "CI");
-		setDBPropertyMappingAndDefault(Property.ReflexAction , "reflexAction", "Haiti");
-		setDBPropertyMappingAndDefault(Property.AccessionFormat , "acessionFormat", "SITEYEARNUM"); //spelled wrong in DB
+		setDBPropertyMappingAndDefault(Property.PasswordRequirments, "passwordRequirements", "MINN");
+		setDBPropertyMappingAndDefault(Property.FormFieldSet, "setFieldForm",
+				IActionConstants.FORM_FIELD_SET_CI_GENERAL);
+		setDBPropertyMappingAndDefault(Property.StringContext, "stringContext", "");
+		setDBPropertyMappingAndDefault(Property.StatusRules, "statusRules", "CI");
+		setDBPropertyMappingAndDefault(Property.ReflexAction, "reflexAction", "Haiti");
+		setDBPropertyMappingAndDefault(Property.AccessionFormat, "acessionFormat", "SITEYEARNUM"); // spelled wrong in
+																									// DB
 		setDBPropertyMappingAndDefault(Property.TRACK_PATIENT_PAYMENT, "trackPayment", "false");
 		setDBPropertyMappingAndDefault(Property.ALERT_FOR_INVALID_RESULTS, "alertWhenInvalidResult", "false");
 		setDBPropertyMappingAndDefault(Property.DEFAULT_DATE_LOCALE, "default date locale", "fr-FR");
@@ -92,37 +94,40 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
 		setDBPropertyMappingAndDefault(Property.SUBJECT_ON_WORKPLAN, "subject on workplan", "false");
 		setDBPropertyMappingAndDefault(Property.NEXT_VISIT_DATE_ON_WORKPLAN, "next visit on workplan", "false");
 		setDBPropertyMappingAndDefault(Property.ACCEPT_EXTERNAL_ORDERS, "external orders", "false");
-		setDBPropertyMappingAndDefault(Property.SIGNATURES_ON_NONCONFORMITY_REPORTS, "non-conformity signature", "false");
+		setDBPropertyMappingAndDefault(Property.SIGNATURES_ON_NONCONFORMITY_REPORTS, "non-conformity signature",
+				"false");
 		setDBPropertyMappingAndDefault(Property.AUTOFILL_COLLECTION_DATE, "auto-fill collection date/time", "true");
 		setDBPropertyMappingAndDefault(Property.RESULTS_ON_WORKPLAN, "results on workplan", "false");
 		setDBPropertyMappingAndDefault(Property.NONCONFORMITY_RECEPTION_AS_UNIT, "Reception as unit", "true");
 		setDBPropertyMappingAndDefault(Property.NONCONFORMITY_SAMPLE_COLLECTION_AS_UNIT, "Collection as unit", "false");
-        setDBPropertyMappingAndDefault(Property.ACCESSION_NUMBER_PREFIX, "Accession number prefix", "");
-        setDBPropertyMappingAndDefault(Property.NOTE_EXTERNAL_ONLY_FOR_VALIDATION, "validationOnlyNotesAreExternal", "false");
-        setDBPropertyMappingAndDefault(Property.PHONE_FORMAT, "phone format", "(ddd) dddd-dddd");
-        setDBPropertyMappingAndDefault(Property.VALIDATE_PHONE_FORMAT, "validate phone format", "true");
-        setDBPropertyMappingAndDefault( Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "Allow duplicate subject number", "true" );
-        setDBPropertyMappingAndDefault( Property.VALIDATE_REJECTED_TESTS, "validateTechnicalRejection", "false" );
-        setDBPropertyMappingAndDefault( Property.TEST_NAME_AUGMENTED, "augmentTestNameWithType", "true" );
-        setDBPropertyMappingAndDefault( Property.USE_BILLING_REFERENCE_NUMBER, "billingRefNumber", "false" );
-        setDBPropertyMappingAndDefault( Property.BILLING_REFERENCE_NUMBER_LABEL, "billingRefNumberLocalization", "-1" );
-        setDBPropertyMappingAndDefault( Property.ORDER_PROGRAM, "Program", "true" );
-        setDBPropertyMappingAndDefault( Property.BANNER_TEXT, "bannerHeading", "-1" );
-        setDBPropertyMappingAndDefault( Property.CLOCK_24, "24 hour clock", "true" );
-		setDBPropertyMappingAndDefault( Property.PATIENT_NATIONALITY, "supportPatientNationality", "false");
-		setDBPropertyMappingAndDefault( Property.PATIENT_ID_REQUIRED, "Patient ID required", "true");
-		setDBPropertyMappingAndDefault( Property.PATIENT_SUBJECT_NUMBER_REQUIRED, "Subject number required", "true");
-		setDBPropertyMappingAndDefault( Property.QA_SAMPLE_ID_REQUIRED, "sample id required", "false");
-		setDBPropertyMappingAndDefault( Property.MAX_ORDER_PRINTED, "numOrderLabels", "10");
-		setDBPropertyMappingAndDefault( Property.MAX_SPECIMEN_PRINTED, "numSpecimenLabels", "1");
-		setDBPropertyMappingAndDefault( Property.MAX_ALIQUOT_PRINTED, "numAliquotLabels", "1");
-		setDBPropertyMappingAndDefault( Property.ORDER_BARCODE_HEIGHT, "heightOrderLabels", "25.4");
-		setDBPropertyMappingAndDefault( Property.ORDER_BARCODE_WIDTH, "widthOrderLabels", "76.2");
-		setDBPropertyMappingAndDefault( Property.SPECIMEN_BARCODE_HEIGHT, "heightSpecimenLabels", "25.4");
-		setDBPropertyMappingAndDefault( Property.SPECIMEN_BARCODE_WIDTH, "widthSpecimenLabels", "76.2");
-		setDBPropertyMappingAndDefault( Property.SPECIMEN_FIELD_DATE, "collectionDateCheck", "true");
-		setDBPropertyMappingAndDefault( Property.SPECIMEN_FIELD_SEX, "patientSexCheck", "true");
-		setDBPropertyMappingAndDefault( Property.SPECIMEN_FIELD_TESTS, "testsCheck", "true");
+		setDBPropertyMappingAndDefault(Property.ACCESSION_NUMBER_PREFIX, "Accession number prefix", "");
+		setDBPropertyMappingAndDefault(Property.NOTE_EXTERNAL_ONLY_FOR_VALIDATION, "validationOnlyNotesAreExternal",
+				"false");
+		setDBPropertyMappingAndDefault(Property.PHONE_FORMAT, "phone format", "(ddd) dddd-dddd");
+		setDBPropertyMappingAndDefault(Property.VALIDATE_PHONE_FORMAT, "validate phone format", "true");
+		setDBPropertyMappingAndDefault(Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "Allow duplicate subject number",
+				"true");
+		setDBPropertyMappingAndDefault(Property.VALIDATE_REJECTED_TESTS, "validateTechnicalRejection", "false");
+		setDBPropertyMappingAndDefault(Property.TEST_NAME_AUGMENTED, "augmentTestNameWithType", "true");
+		setDBPropertyMappingAndDefault(Property.USE_BILLING_REFERENCE_NUMBER, "billingRefNumber", "false");
+		setDBPropertyMappingAndDefault(Property.BILLING_REFERENCE_NUMBER_LABEL, "billingRefNumberLocalization", "-1");
+		setDBPropertyMappingAndDefault(Property.ORDER_PROGRAM, "Program", "true");
+		setDBPropertyMappingAndDefault(Property.BANNER_TEXT, "bannerHeading", "-1");
+		setDBPropertyMappingAndDefault(Property.CLOCK_24, "24 hour clock", "true");
+		setDBPropertyMappingAndDefault(Property.PATIENT_NATIONALITY, "supportPatientNationality", "false");
+		setDBPropertyMappingAndDefault(Property.PATIENT_ID_REQUIRED, "Patient ID required", "true");
+		setDBPropertyMappingAndDefault(Property.PATIENT_SUBJECT_NUMBER_REQUIRED, "Subject number required", "true");
+		setDBPropertyMappingAndDefault(Property.QA_SAMPLE_ID_REQUIRED, "sample id required", "false");
+		setDBPropertyMappingAndDefault(Property.MAX_ORDER_PRINTED, "numOrderLabels", "10");
+		setDBPropertyMappingAndDefault(Property.MAX_SPECIMEN_PRINTED, "numSpecimenLabels", "1");
+		setDBPropertyMappingAndDefault(Property.MAX_ALIQUOT_PRINTED, "numAliquotLabels", "1");
+		setDBPropertyMappingAndDefault(Property.ORDER_BARCODE_HEIGHT, "heightOrderLabels", "25.4");
+		setDBPropertyMappingAndDefault(Property.ORDER_BARCODE_WIDTH, "widthOrderLabels", "76.2");
+		setDBPropertyMappingAndDefault(Property.SPECIMEN_BARCODE_HEIGHT, "heightSpecimenLabels", "25.4");
+		setDBPropertyMappingAndDefault(Property.SPECIMEN_BARCODE_WIDTH, "widthSpecimenLabels", "76.2");
+		setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_DATE, "collectionDateCheck", "true");
+		setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_SEX, "patientSexCheck", "true");
+		setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_TESTS, "testsCheck", "true");
 	}
 
 	private void setDBPropertyMappingAndDefault(Property property, String dbName, String defaultValue) {
@@ -130,25 +135,25 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
 		propertiesValueMap.put(property, defaultValue);
 	}
 
-	protected DefaultConfigurationProperties(){
+	protected DefaultConfigurationProperties() {
 		loadFromPropertiesFile();
 		loadSpecial();
 	}
 
-
-	protected void loadIfPropertyValueNeeded(Property property){
-		if( !databaseLoaded && dbNamePropertiesMap.containsValue(property)){
+	@Override
+	protected void loadIfPropertyValueNeeded(Property property) {
+		if (!databaseLoaded && dbNamePropertiesMap.containsValue(property)) {
 			loadFromDatabase();
 		}
 	}
 
 	protected void loadFromDatabase() {
-		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
-		List<SiteInformation> siteInformationList = siteInformationDAO.getAllSiteInformation();
+		SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
+		List<SiteInformation> siteInformationList = siteInformationService.getAllSiteInformation();
 
-		for( SiteInformation siteInformation : siteInformationList){
+		for (SiteInformation siteInformation : siteInformationList) {
 			Property property = dbNamePropertiesMap.get(siteInformation.getName());
-			if( property != null){
+			if (property != null) {
 				propertiesValueMap.put(property, siteInformation.getValue());
 			}
 		}
@@ -168,36 +173,36 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
 			properties.load(propertyStream);
 
 		} catch (Exception e) {
-			LogEvent.logError("DefaultConfigurationProperties","",e.toString());
+			LogEvent.logError("DefaultConfigurationProperties", "", e.toString());
 		} finally {
 			if (null != propertyStream) {
 				try {
 					propertyStream.close();
 					propertyStream = null;
 				} catch (Exception e) {
-			        LogEvent.logError("DefaultConfigurationProperties","",e.toString());
+					LogEvent.logError("DefaultConfigurationProperties", "", e.toString());
 				}
 			}
 
 		}
 
-		for( Property property : propertiesFileMap.keySet()){
+		for (Property property : propertiesFileMap.keySet()) {
 			KeyDefaultPair pair = propertiesFileMap.get(property);
-			String value = properties.getProperty( pair.key, pair.defaultValue);
+			String value = properties.getProperty(pair.key, pair.defaultValue);
 			propertiesValueMap.put(property, value);
 		}
 	}
-	
+
 	private void loadSpecial() {
 		propertiesValueMap.put(Property.releaseNumber, Versioning.getReleaseNumber());
 		propertiesValueMap.put(Property.buildNumber, Versioning.getBuildNumber());
 	}
 
-	protected class KeyDefaultPair{
+	protected class KeyDefaultPair {
 		public final String key;
 		public final String defaultValue;
 
-		public KeyDefaultPair( String key, String defaultValue){
+		public KeyDefaultPair(String key, String defaultValue) {
 			this.key = key;
 			this.defaultValue = defaultValue;
 		}

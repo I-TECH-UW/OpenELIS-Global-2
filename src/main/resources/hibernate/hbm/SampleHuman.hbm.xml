@@ -18,8 +18,7 @@
         <property name="sampleId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
             <column name="SAMP_ID" precision="10" scale="0" not-null="true" />
         </property>
-        <property name="patientId" type="us.mn.state.health.lims.hibernate.resources.usertype.LIMSStringNumberUserType">
-            <column name="PATIENT_ID" precision="10" scale="0" />
-        </property>
+        <one-to-one name="patient" class="us.mn.state.health.lims.patient.valueholder.Patient" constrained="true" cascade="save-update">
+        </one-to-one>
     </class>
 </hibernate-mapping>

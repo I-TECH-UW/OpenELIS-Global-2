@@ -27,7 +27,7 @@
         <property name="isReportable" type="java.lang.String">
             <column name="IS_REPORTABLE" length="1" />
         </property>
-        <property name="resultType" type="java.lang.String">
+        <property name="resultType" type="java.lang.String" lazy="false">
             <column name="RESULT_TYPE" length="1" />
         </property>
         <property name="value" type="java.lang.String">

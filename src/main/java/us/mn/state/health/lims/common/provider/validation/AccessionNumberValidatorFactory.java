@@ -24,7 +24,7 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 public class AccessionNumberValidatorFactory {
 
 	public enum AccessionFormat {
-		DEFAULT, SITE_YEAR, PROGRAM, YEAR_NUM_SIX, YEAR_NUM_DASH, YEAR_NUM_SEVEN
+		DEFAULT, SITE_YEAR, PROGRAM, YEAR_NUM_SIX, YEAR_NUM_DASH, YEAR_NUM_SEVEN, ANY
 	}
 
 	private IAccessionNumberValidator validator;

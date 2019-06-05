@@ -97,7 +97,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements 
 	public boolean insertData(SampleProject sampleProj) throws LIMSRuntimeException {
 
 		try {
-			String id = (String) HibernateUtil.getSession().save(sampleProj);
+			String id = (String) sessionFactory.getCurrentSession().save(sampleProj);
 			sampleProj.setId(id);
 
 			// bugzilla 1824 inserts will be logged in history table

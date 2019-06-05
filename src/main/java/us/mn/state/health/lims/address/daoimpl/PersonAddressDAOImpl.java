@@ -22,27 +22,29 @@ import java.util.Optional;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.address.dao.PersonAddressDAO;
+import us.mn.state.health.lims.address.valueholder.AddressPK;
 import us.mn.state.health.lims.address.valueholder.PersonAddress;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional 
+@Transactional
 public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements PersonAddressDAO {
 
 	public PersonAddressDAOImpl() {
 		super(PersonAddress.class);
 	}
 
-	private static AuditTrailDAO auditDAO = new AuditTrailDAOImpl();
+	@Autowired
+	private AuditTrailDAO auditDAO;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -64,7 +66,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 	@Override
 	public Serializable insert(PersonAddress personAddress) throws LIMSRuntimeException {
 		try {
-			String id = (String) HibernateUtil.getSession().save(personAddress);
+			AddressPK id = (AddressPK) HibernateUtil.getSession().save(personAddress);
 			auditDAO.saveNewHistory(personAddress, personAddress.getSysUserId(), "person_address");
 			// closeSession(); // CSL remove old
 			return id;

@@ -103,7 +103,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 
 		try {
 			sample.setAccessionNumber(getNextAccessionNumber());
-			String id = (String) HibernateUtil.getSession().save(sample);
+			String id = (String) sessionFactory.getCurrentSession().save(sample);
 			sample.setId(id);
 
 			String sysUserId = sample.getSysUserId();
@@ -133,7 +133,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample> implements SampleDAO {
 	public boolean insertDataWithAccessionNumber(Sample sample) throws LIMSRuntimeException {
 		try {
 
-			String id = (String) HibernateUtil.getSession().save(sample);
+			String id = (String) sessionFactory.getCurrentSession().save(sample);
 			sample.setId(id);
 
 			auditDAO.saveNewHistory(sample, sample.getSysUserId(), "SAMPLE");
