@@ -22,7 +22,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.menu.valueholder.Menu;
 
-public interface MenuDAO extends BaseDAO<Menu> {
+public interface MenuDAO extends BaseDAO<Menu, String> {
 	List<Menu> getAllMenus() throws LIMSRuntimeException;
 
 	List<Menu> getAllActiveMenus() throws LIMSRuntimeException;

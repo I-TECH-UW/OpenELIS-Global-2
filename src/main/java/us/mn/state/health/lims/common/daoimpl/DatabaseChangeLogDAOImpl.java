@@ -31,7 +31,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional
-public class DatabaseChangeLogDAOImpl extends BaseDAOImpl<DatabaseChangeLog> implements DatabaseChangeLogDAO {
+public class DatabaseChangeLogDAOImpl extends BaseDAOImpl<DatabaseChangeLog, String> implements DatabaseChangeLogDAO {
 
 	public DatabaseChangeLogDAOImpl() {
 		super(DatabaseChangeLog.class);

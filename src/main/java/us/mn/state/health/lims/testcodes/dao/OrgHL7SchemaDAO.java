@@ -20,7 +20,8 @@ package us.mn.state.health.lims.testcodes.dao;
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.testcodes.valueholder.OrganizationHL7Schema;
+import us.mn.state.health.lims.testcodes.valueholder.OrganizationSchemaPK;
 
-public interface OrgHL7SchemaDAO extends BaseDAO<OrganizationHL7Schema> {
+public interface OrgHL7SchemaDAO extends BaseDAO<OrganizationHL7Schema, OrganizationSchemaPK> {
 	public OrganizationHL7Schema getOrganizationHL7SchemaByOrgId(String orgId) throws LIMSRuntimeException;
 }

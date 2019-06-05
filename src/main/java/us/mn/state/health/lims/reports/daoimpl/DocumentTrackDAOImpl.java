@@ -31,7 +31,7 @@ import us.mn.state.health.lims.reports.valueholder.DocumentTrack;
 
 @Component
 @Transactional 
-public class DocumentTrackDAOImpl extends BaseDAOImpl<DocumentTrack> implements DocumentTrackDAO {
+public class DocumentTrackDAOImpl extends BaseDAOImpl<DocumentTrack, String> implements DocumentTrackDAO {
 
 	public DocumentTrackDAOImpl() {
 		super(DocumentTrack.class);

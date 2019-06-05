@@ -40,7 +40,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  */
 @Component
 @Transactional 
-public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip> implements CityStateZipDAO {
+public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> implements CityStateZipDAO {
 
 	public CityStateZipDAOImpl() {
 		super(CityStateZip.class);

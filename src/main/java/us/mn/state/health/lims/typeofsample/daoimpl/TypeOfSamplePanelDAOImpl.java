@@ -39,7 +39,7 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSampleTest;
 
 @Component
 @Transactional 
-public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel> implements TypeOfSamplePanelDAO {
+public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, String> implements TypeOfSamplePanelDAO {
 
 	public TypeOfSamplePanelDAOImpl() {
 		super(TypeOfSamplePanel.class);

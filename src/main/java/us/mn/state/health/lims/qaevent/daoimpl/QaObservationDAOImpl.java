@@ -33,7 +33,7 @@ import us.mn.state.health.lims.qaevent.valueholder.QaObservation;
 
 @Component
 @Transactional 
-public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation> implements QaObservationDAO {
+public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation, String> implements QaObservationDAO {
 
 	public QaObservationDAOImpl() {
 		super(QaObservation.class);

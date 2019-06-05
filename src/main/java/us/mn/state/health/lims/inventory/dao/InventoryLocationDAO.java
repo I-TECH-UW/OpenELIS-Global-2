@@ -21,7 +21,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.inventory.valueholder.InventoryLocation;
 
-public interface InventoryLocationDAO extends BaseDAO<InventoryLocation> {
+public interface InventoryLocationDAO extends BaseDAO<InventoryLocation, String> {
 
 	public boolean insertData(InventoryLocation inventoryLocation) throws LIMSRuntimeException;
 

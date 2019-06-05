@@ -41,7 +41,7 @@ import us.mn.state.health.lims.testtrailer.valueholder.TestTrailer;
  */
 @Component
 @Transactional 
-public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer> implements TestTrailerDAO {
+public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> implements TestTrailerDAO {
 
 	public TestTrailerDAOImpl() {
 		super(TestTrailer.class);

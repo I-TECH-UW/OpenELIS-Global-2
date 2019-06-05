@@ -29,7 +29,7 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface AnalyteDAO extends BaseDAO<Analyte> {
+public interface AnalyteDAO extends BaseDAO<Analyte, String> {
 
 	public boolean insertData(Analyte analyte) throws LIMSRuntimeException;
 

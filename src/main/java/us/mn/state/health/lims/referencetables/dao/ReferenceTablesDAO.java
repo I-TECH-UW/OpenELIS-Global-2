@@ -29,7 +29,7 @@ import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface ReferenceTablesDAO extends BaseDAO<ReferenceTables> {
+public interface ReferenceTablesDAO extends BaseDAO<ReferenceTables, String> {
 
 	public boolean insertData(ReferenceTables referenceTables) throws LIMSRuntimeException;
 

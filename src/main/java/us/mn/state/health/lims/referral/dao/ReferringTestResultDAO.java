@@ -22,7 +22,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.referral.valueholder.ReferringTestResult;
 
-public interface ReferringTestResultDAO extends BaseDAO<ReferringTestResult> {
+public interface ReferringTestResultDAO extends BaseDAO<ReferringTestResult, String> {
 
 	public boolean insertData(ReferringTestResult referringTestResult) throws LIMSRuntimeException;
 

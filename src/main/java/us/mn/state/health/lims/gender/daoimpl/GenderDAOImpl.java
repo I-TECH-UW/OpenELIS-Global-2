@@ -41,7 +41,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  */
 @Component
 @Transactional 
-public class GenderDAOImpl extends BaseDAOImpl<Gender> implements GenderDAO {
+public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements GenderDAO {
 
 	public GenderDAOImpl() {
 		super(Gender.class);

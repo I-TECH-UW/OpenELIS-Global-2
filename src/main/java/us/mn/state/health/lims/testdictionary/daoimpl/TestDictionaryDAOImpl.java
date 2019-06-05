@@ -29,7 +29,7 @@ import us.mn.state.health.lims.testdictionary.valueholder.TestDictionary;
 
 @Component
 @Transactional 
-public class TestDictionaryDAOImpl extends BaseDAOImpl<TestDictionary> implements TestDictionaryDAO {
+public class TestDictionaryDAOImpl extends BaseDAOImpl<TestDictionary, String> implements TestDictionaryDAO {
 
 	public TestDictionaryDAOImpl() {
 		super(TestDictionary.class);

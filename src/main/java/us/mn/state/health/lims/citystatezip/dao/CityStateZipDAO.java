@@ -29,7 +29,7 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface CityStateZipDAO extends BaseDAO<CityStateZip> {
+public interface CityStateZipDAO extends BaseDAO<CityStateZip, String> {
 
 	public List getCities(String filter) throws LIMSRuntimeException;
 

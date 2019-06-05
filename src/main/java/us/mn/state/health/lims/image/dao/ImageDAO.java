@@ -26,7 +26,7 @@ import us.mn.state.health.lims.image.valueholder.Image;
  * @author Hung Nguyen
  * @date created 09/12/2006
  */
-public interface ImageDAO extends BaseDAO<Image> {
+public interface ImageDAO extends BaseDAO<Image, String> {
 
 	public String saveImage(Image image) throws LIMSRuntimeException;
 

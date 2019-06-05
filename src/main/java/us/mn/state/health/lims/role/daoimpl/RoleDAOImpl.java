@@ -40,7 +40,7 @@ import us.mn.state.health.lims.role.valueholder.Role;
 
 @Component
 @Transactional 
-public class RoleDAOImpl extends BaseDAOImpl<Role> implements RoleDAO {
+public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 
 	public RoleDAOImpl() {
 		super(Role.class);

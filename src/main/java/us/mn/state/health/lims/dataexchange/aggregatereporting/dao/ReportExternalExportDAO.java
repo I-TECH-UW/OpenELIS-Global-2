@@ -23,7 +23,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalExport;
 
-public interface ReportExternalExportDAO extends BaseDAO<ReportExternalExport> {
+public interface ReportExternalExportDAO extends BaseDAO<ReportExternalExport, String> {
 	public List<ReportExternalExport> getRecalculateReportExports(String reportQueueTypeId) throws LIMSRuntimeException;
 
 	public List<ReportExternalExport> getUnsentReportExports(String reportQueueTypeId) throws LIMSRuntimeException;

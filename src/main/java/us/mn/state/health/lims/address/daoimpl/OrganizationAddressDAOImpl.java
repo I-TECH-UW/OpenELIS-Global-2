@@ -25,17 +25,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.address.dao.OrganizationAddressDAO;
+import us.mn.state.health.lims.address.valueholder.AddressPK;
 import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional
-public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress> implements OrganizationAddressDAO {
+public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress, AddressPK>
+		implements OrganizationAddressDAO {
 
 	public OrganizationAddressDAOImpl() {
 		super(OrganizationAddress.class);
@@ -84,8 +85,10 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress>
 
 			sessionFactory.getCurrentSession().merge(organizationAddress);
 			// closeSession(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(organizationAddress);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(organizationAddress);
+			// sessionFactory.getCurrentSession().evict // CSL remove
+			// old(organizationAddress);
+			// sessionFactory.getCurrentSession().refresh // CSL remove
+			// old(organizationAddress);
 		} catch (HibernateException e) {
 			handleException(e, "update");
 		}
@@ -94,8 +97,8 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress>
 
 	public OrganizationAddress readOrganizationAddress(OrganizationAddress organizationAddress) {
 		try {
-			OrganizationAddress oldOrganizationAddress = sessionFactory.getCurrentSession().get(OrganizationAddress.class,
-					organizationAddress.getCompoundId());
+			OrganizationAddress oldOrganizationAddress = sessionFactory.getCurrentSession()
+					.get(OrganizationAddress.class, organizationAddress.getCompoundId());
 			// closeSession(); // CSL remove old
 
 			return oldOrganizationAddress;

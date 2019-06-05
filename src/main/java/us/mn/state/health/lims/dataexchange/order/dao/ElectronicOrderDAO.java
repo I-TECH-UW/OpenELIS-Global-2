@@ -22,7 +22,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
 
-public interface ElectronicOrderDAO extends BaseDAO<ElectronicOrder> {
+public interface ElectronicOrderDAO extends BaseDAO<ElectronicOrder, String> {
 
 	public List<ElectronicOrder> getElectronicOrdersByExternalId(String id) throws LIMSRuntimeException;
 

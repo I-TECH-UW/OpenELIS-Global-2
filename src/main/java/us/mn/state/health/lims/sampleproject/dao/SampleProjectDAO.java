@@ -31,7 +31,7 @@ import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
  * @date created 08/04/2006
  * @version $Revision$ // AIS - bugzilla 1851 //bugzilla 1920 standards
  */
-public interface SampleProjectDAO extends BaseDAO<SampleProject> {
+public interface SampleProjectDAO extends BaseDAO<SampleProject, String> {
 
 	public boolean insertData(SampleProject sampleProj) throws LIMSRuntimeException;
 

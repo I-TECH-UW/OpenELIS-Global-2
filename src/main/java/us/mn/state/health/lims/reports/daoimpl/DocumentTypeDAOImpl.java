@@ -29,7 +29,7 @@ import us.mn.state.health.lims.reports.valueholder.DocumentType;
 
 @Component
 @Transactional 
-public class DocumentTypeDAOImpl extends BaseDAOImpl<DocumentType> implements DocumentTypeDAO {
+public class DocumentTypeDAOImpl extends BaseDAOImpl<DocumentType, String> implements DocumentTypeDAO {
 
 	public DocumentTypeDAOImpl() {
 		super(DocumentType.class);

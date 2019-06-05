@@ -18,7 +18,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional 
-public class DataResourceDAOImpl extends BaseDAOImpl<DataResource> implements DataResourceDAO {
+public class DataResourceDAOImpl extends BaseDAOImpl<DataResource, String> implements DataResourceDAO {
 
 	public DataResourceDAOImpl() {
 		super(DataResource.class);

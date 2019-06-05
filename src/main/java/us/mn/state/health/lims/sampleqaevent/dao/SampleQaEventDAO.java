@@ -32,7 +32,7 @@ import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
  * @date created 06/12/2008
  * @version $Revision$ bugzilla 2510
  */
-public interface SampleQaEventDAO extends BaseDAO<SampleQaEvent> {
+public interface SampleQaEventDAO extends BaseDAO<SampleQaEvent, String> {
 
 	public boolean insertData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
 

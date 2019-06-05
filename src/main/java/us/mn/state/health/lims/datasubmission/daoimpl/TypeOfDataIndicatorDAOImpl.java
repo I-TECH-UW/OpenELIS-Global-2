@@ -18,7 +18,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional 
-public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator> implements TypeOfDataIndicatorDAO {
+public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator, String> implements TypeOfDataIndicatorDAO {
 
 	public TypeOfDataIndicatorDAOImpl() {
 		super(TypeOfDataIndicator.class);

@@ -8,7 +8,7 @@ import us.mn.state.health.lims.county.valueholder.County;
 
 @Component
 @Transactional 
-public class CountyDAOImpl extends BaseDAOImpl<County> implements CountyDAO {
+public class CountyDAOImpl extends BaseDAOImpl<County, String> implements CountyDAO {
   CountyDAOImpl() {
     super(County.class);
   }

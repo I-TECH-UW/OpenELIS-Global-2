@@ -20,6 +20,6 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportQueueType;
 
-public interface ReportQueueTypeDAO extends BaseDAO<ReportQueueType> {
+public interface ReportQueueTypeDAO extends BaseDAO<ReportQueueType, String> {
 	public ReportQueueType getReportQueueTypeByName(String name) throws LIMSRuntimeException;
 }

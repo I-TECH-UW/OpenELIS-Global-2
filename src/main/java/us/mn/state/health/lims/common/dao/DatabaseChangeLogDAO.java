@@ -20,6 +20,6 @@ package us.mn.state.health.lims.common.dao;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.valueholder.DatabaseChangeLog;
 
-public interface DatabaseChangeLogDAO extends BaseDAO<DatabaseChangeLog> {
+public interface DatabaseChangeLogDAO extends BaseDAO<DatabaseChangeLog, String> {
 	public DatabaseChangeLog getLastExecutedChange() throws LIMSRuntimeException;
 }

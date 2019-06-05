@@ -4,7 +4,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
 
-public interface ObservationHistoryTypeDAO extends BaseDAO<ObservationHistoryType> {
+public interface ObservationHistoryTypeDAO extends BaseDAO<ObservationHistoryType, String> {
 
 	ObservationHistoryType getByName(String name) throws LIMSRuntimeException;
 	// insert additional method unique to Demo. History Type here.

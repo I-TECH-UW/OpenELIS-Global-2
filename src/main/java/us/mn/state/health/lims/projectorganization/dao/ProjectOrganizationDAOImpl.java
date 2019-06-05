@@ -8,7 +8,7 @@ import us.mn.state.health.lims.projectorganization.valueholder.ProjectOrganizati
 
 @Component
 @Transactional 
-public class ProjectOrganizationDAOImpl extends BaseDAOImpl<ProjectOrganization> implements ProjectOrganizationDAO {
+public class ProjectOrganizationDAOImpl extends BaseDAOImpl<ProjectOrganization, String> implements ProjectOrganizationDAO {
   ProjectOrganizationDAOImpl() {
     super(ProjectOrganization.class);
   }

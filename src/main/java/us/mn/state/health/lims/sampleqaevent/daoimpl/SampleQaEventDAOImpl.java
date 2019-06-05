@@ -47,7 +47,7 @@ import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
  */
 @Component
 @Transactional
-public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent> implements SampleQaEventDAO {
+public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> implements SampleQaEventDAO {
 
 	@Autowired
 	AuditTrailDAO auditDAO;

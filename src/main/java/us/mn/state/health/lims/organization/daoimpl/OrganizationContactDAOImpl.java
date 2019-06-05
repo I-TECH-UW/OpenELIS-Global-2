@@ -16,7 +16,6 @@
 */
 package us.mn.state.health.lims.organization.daoimpl;
 
-import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -28,13 +27,13 @@ import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.organization.dao.OrganizationContactDAO;
 import us.mn.state.health.lims.organization.valueholder.OrganizationContact;
 
 @Component
-@Transactional 
-public class OrganizationContactDAOImpl extends BaseDAOImpl<OrganizationContact> implements OrganizationContactDAO {
+@Transactional
+public class OrganizationContactDAOImpl extends BaseDAOImpl<OrganizationContact, String>
+		implements OrganizationContactDAO {
 
 	public OrganizationContactDAOImpl() {
 		super(OrganizationContact.class);
@@ -60,7 +59,7 @@ public class OrganizationContactDAOImpl extends BaseDAOImpl<OrganizationContact>
 	}
 
 	@Override
-	public Serializable insert(OrganizationContact contact) throws LIMSRuntimeException {
+	public String insert(OrganizationContact contact) throws LIMSRuntimeException {
 		String id = null;
 		try {
 			id = (String) sessionFactory.getCurrentSession().save(contact);

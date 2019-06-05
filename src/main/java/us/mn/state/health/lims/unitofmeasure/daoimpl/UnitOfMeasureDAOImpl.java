@@ -41,7 +41,7 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
  */
 @Component
 @Transactional 
-public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure> implements UnitOfMeasureDAO {
+public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> implements UnitOfMeasureDAO {
 
 	public UnitOfMeasureDAOImpl() {
 		super(UnitOfMeasure.class);

@@ -43,7 +43,7 @@ import us.mn.state.health.lims.person.valueholder.Person;
  */
 @Component
 @Transactional
-public class PatientDAOImpl extends BaseDAOImpl<Patient> implements PatientDAO {
+public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements PatientDAO {
 
 	@Autowired
 	AuditTrailDAO auditDAO;

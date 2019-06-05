@@ -35,7 +35,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional 
-public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer> implements AnalyzerDAO {
+public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements AnalyzerDAO {
 
 	public AnalyzerDAOImpl() {
 		super(Analyzer.class);

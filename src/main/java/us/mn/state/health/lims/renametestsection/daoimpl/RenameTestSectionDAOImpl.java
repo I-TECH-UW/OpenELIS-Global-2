@@ -38,7 +38,7 @@ import us.mn.state.health.lims.renametestsection.valueholder.RenameTestSection;
 
 @Component
 @Transactional 
-public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection> implements RenameTestSectionDAO {
+public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, String> implements RenameTestSectionDAO {
 
 	public RenameTestSectionDAOImpl() {
 		super(RenameTestSection.class);

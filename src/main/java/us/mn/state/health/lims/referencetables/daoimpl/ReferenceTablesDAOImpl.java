@@ -43,7 +43,7 @@ import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
  */
 @Component
 @Transactional
-public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables> implements ReferenceTablesDAO {
+public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String> implements ReferenceTablesDAO {
 
 	public ReferenceTablesDAOImpl() {
 		super(ReferenceTables.class);

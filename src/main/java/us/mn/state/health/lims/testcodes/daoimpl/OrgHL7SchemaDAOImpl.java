@@ -23,13 +23,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.testcodes.dao.OrgHL7SchemaDAO;
 import us.mn.state.health.lims.testcodes.valueholder.OrganizationHL7Schema;
+import us.mn.state.health.lims.testcodes.valueholder.OrganizationSchemaPK;
 
 @Component
-@Transactional 
-public class OrgHL7SchemaDAOImpl extends BaseDAOImpl<OrganizationHL7Schema> implements OrgHL7SchemaDAO {
+@Transactional
+public class OrgHL7SchemaDAOImpl extends BaseDAOImpl<OrganizationHL7Schema, OrganizationSchemaPK>
+		implements OrgHL7SchemaDAO {
 
 	public OrgHL7SchemaDAOImpl() {
 		super(OrganizationHL7Schema.class);

@@ -4,6 +4,7 @@
 				us.mn.state.health.lims.common.util.ConfigurationProperties,
 				us.mn.state.health.lims.common.util.ConfigurationProperties.Property,
 	            us.mn.state.health.lims.common.util.Versioning,
+                us.mn.state.health.lims.login.valueholder.UserSessionData,
 		        java.util.HashSet,
 		       	org.owasp.encoder.Encode"%>
 
@@ -21,15 +22,12 @@
 <bean:define id="genericDomain" value='' />
 
 <!-- sampleAddVLProject -->
-<%@page import="us.mn.state.health.lims.login.dao.UserModuleService"%>
-<%@page import="us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl"%>
 <%!String basePath = "";
-	UserModuleService userModuleDAO = new UserModuleServiceImpl();%>
 <%
 	String path = request.getContextPath();
 	basePath = request.getScheme() + "://" + request.getServerName() + ":"	+ request.getServerPort() + path + "/";
 	HashSet accessMap = (HashSet)request.getSession().getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
-	boolean isAdmin = userModuleDAO.isUserAdmin(request);
+	boolean isAdmin = ((UserSessionData) request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA)).isAdmin();
 	// no one should edit patient numbers at this time.  PAH 11/05/2010
 	boolean canEditPatientSubjectNos =  isAdmin || accessMap.contains(IActionConstants.MODULE_ACCESS_PATIENT_SUBJECTNOS_EDIT);
 	boolean canEditAccessionNo = isAdmin || accessMap.contains(IActionConstants.MODULE_ACCESS_SAMPLE_ACCESSIONNO_EDIT);

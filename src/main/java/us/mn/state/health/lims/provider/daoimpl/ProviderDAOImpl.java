@@ -40,7 +40,7 @@ import us.mn.state.health.lims.provider.valueholder.Provider;
  */
 @Component
 @Transactional
-public class ProviderDAOImpl extends BaseDAOImpl<Provider> implements ProviderDAO {
+public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements ProviderDAO {
 
 	@Autowired
 	AuditTrailDAO auditDAO;

@@ -20,7 +20,7 @@ import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 
 @Component
 @Transactional
-public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity> implements PatientIdentityDAO {
+public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String> implements PatientIdentityDAO {
 
 	@Autowired
 	AuditTrailDAO auditDAO;

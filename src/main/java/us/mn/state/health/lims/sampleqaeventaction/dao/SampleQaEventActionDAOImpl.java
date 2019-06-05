@@ -8,7 +8,7 @@ import us.mn.state.health.lims.sampleqaeventaction.valueholder.SampleQaEventActi
 
 @Component
 @Transactional 
-public class SampleQaEventActionDAOImpl extends BaseDAOImpl<SampleQaEventAction> implements SampleQaEventActionDAO {
+public class SampleQaEventActionDAOImpl extends BaseDAOImpl<SampleQaEventAction, String> implements SampleQaEventActionDAO {
   SampleQaEventActionDAOImpl() {
     super(SampleQaEventAction.class);
   }

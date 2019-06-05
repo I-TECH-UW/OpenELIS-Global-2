@@ -4,7 +4,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.datasubmission.valueholder.DataResource;
 
-public interface DataResourceDAO extends BaseDAO<DataResource> {
+public interface DataResourceDAO extends BaseDAO<DataResource, String> {
 
 	public void getData(DataResource resource) throws LIMSRuntimeException;
 

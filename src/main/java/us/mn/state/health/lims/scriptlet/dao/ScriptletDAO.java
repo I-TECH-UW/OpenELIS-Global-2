@@ -29,7 +29,7 @@ import us.mn.state.health.lims.scriptlet.valueholder.Scriptlet;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface ScriptletDAO extends BaseDAO<Scriptlet> {
+public interface ScriptletDAO extends BaseDAO<Scriptlet, String> {
 
 	public boolean insertData(Scriptlet scriptlet) throws LIMSRuntimeException;
 

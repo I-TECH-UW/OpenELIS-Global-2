@@ -45,7 +45,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.common.valueholder.BaseObject;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 /**
  * @author Caleb
@@ -55,7 +54,8 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  */
 @Component
 @Transactional
-public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, IActionConstants {
+public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializable>
+		implements BaseDAO<T, PK>, IActionConstants {
 
 	protected static final int DEFAULT_PAGE_SIZE = SystemConfiguration.getInstance().getDefaultPageSize();
 	private static final int RANDOM_ALIAS_LENGTH = 5;
@@ -72,7 +72,7 @@ public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, I
 	}
 
 	@Override
-	public Optional<T> get(Serializable id) {
+	public Optional<T> get(PK id) {
 		Session session = sessionFactory.getCurrentSession();
 		T object = session.get(classType, id);
 		return Optional.ofNullable(object);
@@ -501,9 +501,9 @@ public abstract class BaseDAOImpl<T extends BaseObject> implements BaseDAO<T>, I
 	}
 
 	@Override
-	public Serializable insert(T object) {
+	public PK insert(T object) {
 		Session session = sessionFactory.getCurrentSession();
-		return session.save(object);
+		return (PK) session.save(object);
 	}
 
 	@SuppressWarnings("unchecked")

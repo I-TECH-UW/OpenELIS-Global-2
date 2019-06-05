@@ -37,7 +37,6 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.organization.dao.OrganizationDAO;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.project.dao.ProjectDAO;
@@ -48,8 +47,8 @@ import us.mn.state.health.lims.project.valueholder.Project;
  * @author diane benz
  */
 @Component
-@Transactional 
-public class OrganizationDAOImpl extends BaseDAOImpl<Organization> implements OrganizationDAO {
+@Transactional
+public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> implements OrganizationDAO {
 
 	public OrganizationDAOImpl() {
 		super(Organization.class);

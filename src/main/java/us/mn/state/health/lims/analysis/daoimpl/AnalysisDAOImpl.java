@@ -60,7 +60,7 @@ import us.mn.state.health.lims.test.valueholder.Test;
  */
 @Component
 @Transactional
-public class AnalysisDAOImpl extends BaseDAOImpl<Analysis> implements AnalysisDAO {
+public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements AnalysisDAO {
 
 	@Autowired
 	AuditTrailDAO auditDAO;

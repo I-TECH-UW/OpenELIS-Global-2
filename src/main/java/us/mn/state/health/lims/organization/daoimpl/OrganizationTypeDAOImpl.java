@@ -33,7 +33,7 @@ import us.mn.state.health.lims.organization.valueholder.OrganizationType;
 
 @Component
 @Transactional 
-public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType> implements OrganizationTypeDAO {
+public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, String> implements OrganizationTypeDAO {
 
 	public OrganizationTypeDAOImpl() {
 		super(OrganizationType.class);

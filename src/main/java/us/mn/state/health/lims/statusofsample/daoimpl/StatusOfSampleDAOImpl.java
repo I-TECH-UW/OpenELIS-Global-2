@@ -41,7 +41,7 @@ import us.mn.state.health.lims.statusofsample.valueholder.StatusOfSample;
  */
 @Component
 @Transactional 
-public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample> implements StatusOfSampleDAO {
+public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> implements StatusOfSampleDAO {
 
 	public StatusOfSampleDAOImpl() {
 		super(StatusOfSample.class);

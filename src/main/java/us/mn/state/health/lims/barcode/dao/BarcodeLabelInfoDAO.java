@@ -4,11 +4,11 @@ import us.mn.state.health.lims.barcode.valueholder.BarcodeLabelInfo;
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
-public interface BarcodeLabelInfoDAO extends BaseDAO<BarcodeLabelInfo> {
+public interface BarcodeLabelInfoDAO extends BaseDAO<BarcodeLabelInfo, String> {
 
 	/**
 	 * Persists the object in the database. updates object with PK from insert
-	 * 
+	 *
 	 * @param barcodeLabelInfo The object to persist
 	 * @return If insertion was success
 	 * @throws LIMSRuntimeException
@@ -17,7 +17,7 @@ public interface BarcodeLabelInfoDAO extends BaseDAO<BarcodeLabelInfo> {
 
 	/**
 	 * Persists changes on the object based on PK
-	 * 
+	 *
 	 * @param barcodeLabelInfo The object to update
 	 * @throws LIMSRuntimeException
 	 */
@@ -25,7 +25,7 @@ public interface BarcodeLabelInfoDAO extends BaseDAO<BarcodeLabelInfo> {
 
 	/**
 	 * Get object by code instead of PK
-	 * 
+	 *
 	 * @param code Code of the object
 	 * @return the corresponding object
 	 * @throws LIMSRuntimeException

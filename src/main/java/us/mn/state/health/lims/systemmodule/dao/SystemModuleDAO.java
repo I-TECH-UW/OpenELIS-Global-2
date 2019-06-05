@@ -24,7 +24,7 @@ import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
-public interface SystemModuleDAO extends BaseDAO<SystemModule> {
+public interface SystemModuleDAO extends BaseDAO<SystemModule, String> {
 
 	public boolean insertData(SystemModule systemModule) throws LIMSRuntimeException;
 

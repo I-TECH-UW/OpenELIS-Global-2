@@ -23,13 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.siteinformation.dao.SiteInformationDomainDAO;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformationDomain;
 
 @Component
-@Transactional 
-public class SiteInformationDomainDAOImpl extends BaseDAOImpl<SiteInformationDomain>
+@Transactional
+public class SiteInformationDomainDAOImpl extends BaseDAOImpl<SiteInformationDomain, String>
 		implements SiteInformationDomainDAO {
 
 	public SiteInformationDomainDAOImpl() {

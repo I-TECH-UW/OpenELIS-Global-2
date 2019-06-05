@@ -36,7 +36,7 @@ import us.mn.state.health.lims.inventory.valueholder.InventoryReceipt;
 
 @Component
 @Transactional 
-public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt> implements InventoryReceiptDAO {
+public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, String> implements InventoryReceiptDAO {
 
 	public InventoryReceiptDAOImpl() {
 		super(InventoryReceipt.class);

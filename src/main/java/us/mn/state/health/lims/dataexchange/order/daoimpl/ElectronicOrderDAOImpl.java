@@ -36,7 +36,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional 
-public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder> implements ElectronicOrderDAO {
+public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String> implements ElectronicOrderDAO {
 
 	public ElectronicOrderDAOImpl() {
 		super(ElectronicOrder.class);

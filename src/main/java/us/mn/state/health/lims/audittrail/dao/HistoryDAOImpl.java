@@ -8,7 +8,7 @@ import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 
 @Component
 @Transactional 
-public class HistoryDAOImpl extends BaseDAOImpl<History> implements HistoryDAO {
+public class HistoryDAOImpl extends BaseDAOImpl<History, String> implements HistoryDAO {
   HistoryDAOImpl() {
     super(History.class);
   }

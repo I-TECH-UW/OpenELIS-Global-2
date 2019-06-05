@@ -29,7 +29,7 @@ import us.mn.state.health.lims.project.valueholder.Project;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface ProjectDAO extends BaseDAO<Project> {
+public interface ProjectDAO extends BaseDAO<Project, String> {
 
 	public boolean insertData(Project project) throws LIMSRuntimeException;
 

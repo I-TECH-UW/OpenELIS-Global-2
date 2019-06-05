@@ -43,7 +43,7 @@ import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization
  */
 @Component
 @Transactional
-public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization> implements SampleOrganizationDAO {
+public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, String> implements SampleOrganizationDAO {
 
 	@Autowired
 	AuditTrailDAO auditDAO;

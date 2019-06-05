@@ -41,7 +41,7 @@ import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
  */
 @Component
 @Transactional 
-public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection> implements SystemUserSectionDAO {
+public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, String> implements SystemUserSectionDAO {
 
 	public SystemUserSectionDAOImpl() {
 		super(SystemUserSection.class);

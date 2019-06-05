@@ -20,7 +20,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformationDomain;
 
-public interface SiteInformationDomainDAO extends BaseDAO<SiteInformationDomain> {
+public interface SiteInformationDomainDAO extends BaseDAO<SiteInformationDomain, String> {
 
 	public SiteInformationDomain getByName(String name) throws LIMSRuntimeException;
 }

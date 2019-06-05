@@ -41,7 +41,7 @@ import us.mn.state.health.lims.systemuser.valueholder.SystemUser;
  */
 @Component
 @Transactional 
-public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser> implements SystemUserDAO {
+public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implements SystemUserDAO {
 
 	public SystemUserDAOImpl() {
 		super(SystemUser.class);

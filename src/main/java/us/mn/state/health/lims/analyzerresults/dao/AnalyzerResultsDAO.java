@@ -23,7 +23,7 @@ import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
-public interface AnalyzerResultsDAO extends BaseDAO<AnalyzerResults> {
+public interface AnalyzerResultsDAO extends BaseDAO<AnalyzerResults, String> {
 
 	public List<AnalyzerResults> getResultsbyAnalyzer(String analyzerId) throws LIMSRuntimeException;
 

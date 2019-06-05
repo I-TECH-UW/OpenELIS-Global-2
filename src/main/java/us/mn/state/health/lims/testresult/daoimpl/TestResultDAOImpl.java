@@ -43,7 +43,7 @@ import us.mn.state.health.lims.testresult.valueholder.TestResult;
  */
 @Component
 @Transactional 
-public class TestResultDAOImpl extends BaseDAOImpl<TestResult> implements TestResultDAO {
+public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implements TestResultDAO {
 
 	public TestResultDAOImpl() {
 		super(TestResult.class);

@@ -41,7 +41,7 @@ import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
  */
 @Component
 @Transactional
-public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule> implements SystemModuleDAO {
+public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> implements SystemModuleDAO {
 
 	public SystemModuleDAOImpl() {
 		super(SystemModule.class);

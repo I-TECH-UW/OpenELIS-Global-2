@@ -46,7 +46,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
  */
 @Component
 @Transactional 
-public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory> implements DictionaryCategoryDAO {
+public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, String> implements DictionaryCategoryDAO {
 
 	public DictionaryCategoryDAOImpl() {
 		super(DictionaryCategory.class);

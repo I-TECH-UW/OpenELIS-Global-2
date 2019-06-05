@@ -33,11 +33,11 @@ import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
-@Transactional 
-public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping> implements AnalyzerTestMappingDAO {
+@Transactional
+public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping, AnalyzerTestMappingPK>
+		implements AnalyzerTestMappingDAO {
 
 	public AnalyzerTestMappingDAOImpl() {
 		super(AnalyzerTestMapping.class);
@@ -69,7 +69,7 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping>
 	private AnalyzerTestMapping readAnalyzerTestMapping(AnalyzerTestMappingPK mappingPK) {
 		AnalyzerTestMapping mapping = null;
 		try {
-			mapping = (AnalyzerTestMapping) sessionFactory.getCurrentSession().get(AnalyzerTestMapping.class, mappingPK);
+			mapping = sessionFactory.getCurrentSession().get(AnalyzerTestMapping.class, mappingPK);
 
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
@@ -122,8 +122,10 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping>
 			sessionFactory.getCurrentSession().merge(analyzerTestNameMapping);
 			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(analyzerTestNameMapping);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(analyzerTestNameMapping);
+			// sessionFactory.getCurrentSession().evict // CSL remove
+			// old(analyzerTestNameMapping);
+			// sessionFactory.getCurrentSession().refresh // CSL remove
+			// old(analyzerTestNameMapping);
 		} catch (Exception e) {
 			LogEvent.logError("AnalyzerTestMappingDAOImpl", "updateData()", e.toString());
 			throw new LIMSRuntimeException("Error in AnalyzerTestMapping updateData()", e);

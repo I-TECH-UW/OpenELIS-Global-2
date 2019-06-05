@@ -32,7 +32,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional 
-public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExport> implements ReportExternalExportDAO {
+public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExport, String> implements ReportExternalExportDAO {
 	public ReportExternalExportDAOImpl() {
 		super(ReportExternalExport.class);
 	}

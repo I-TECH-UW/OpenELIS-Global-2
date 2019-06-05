@@ -31,7 +31,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional 
-public class AddressPartDAOImpl extends BaseDAOImpl<AddressPart> implements AddressPartDAO {
+public class AddressPartDAOImpl extends BaseDAOImpl<AddressPart, String> implements AddressPartDAO {
 
 	public AddressPartDAOImpl() {
 		super(AddressPart.class);

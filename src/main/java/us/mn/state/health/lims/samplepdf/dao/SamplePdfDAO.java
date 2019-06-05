@@ -22,7 +22,7 @@ import us.mn.state.health.lims.samplepdf.valueholder.SamplePdf;
 /**
  * @author Hung Nguyen
  */
-public interface SamplePdfDAO extends BaseDAO<SamplePdf> {
+public interface SamplePdfDAO extends BaseDAO<SamplePdf, String> {
 
 	public boolean isAccessionNumberFound(int accessionNumber) throws LIMSRuntimeException;
 

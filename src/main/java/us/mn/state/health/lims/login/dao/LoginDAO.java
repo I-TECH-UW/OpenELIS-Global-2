@@ -24,7 +24,7 @@ import us.mn.state.health.lims.login.valueholder.Login;
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
-public interface LoginDAO extends BaseDAO<Login> {
+public interface LoginDAO extends BaseDAO<Login, String> {
 
 	public Login getValidateLogin(Login login) throws LIMSRuntimeException;
 

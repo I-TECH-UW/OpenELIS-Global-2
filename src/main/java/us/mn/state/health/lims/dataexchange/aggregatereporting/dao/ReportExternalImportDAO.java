@@ -23,7 +23,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalImport;
 
-public interface ReportExternalImportDAO extends BaseDAO<ReportExternalImport> {
+public interface ReportExternalImportDAO extends BaseDAO<ReportExternalImport, String> {
 	public List<ReportExternalImport> getReportsInDateRangeSorted(Timestamp lower, Timestamp upper)
 			throws LIMSRuntimeException;
 

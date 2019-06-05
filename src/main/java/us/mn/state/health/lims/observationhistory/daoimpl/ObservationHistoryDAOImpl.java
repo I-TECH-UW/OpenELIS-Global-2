@@ -20,7 +20,7 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 
 @Component
 @Transactional 
-public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory> implements ObservationHistoryDAO {
+public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, String> implements ObservationHistoryDAO {
 
 	public ObservationHistoryDAOImpl() {
 		super(ObservationHistory.class);

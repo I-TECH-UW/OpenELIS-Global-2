@@ -20,10 +20,11 @@ package us.mn.state.health.lims.analyzerimport.dao;
 import java.util.List;
 
 import us.mn.state.health.lims.analyzerimport.valueholder.AnalyzerTestMapping;
+import us.mn.state.health.lims.analyzerimport.valueholder.AnalyzerTestMappingPK;
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
-public interface AnalyzerTestMappingDAO extends BaseDAO<AnalyzerTestMapping> {
+public interface AnalyzerTestMappingDAO extends BaseDAO<AnalyzerTestMapping, AnalyzerTestMappingPK> {
 
 	List<AnalyzerTestMapping> getAllAnalyzerTestMappings() throws LIMSRuntimeException;
 

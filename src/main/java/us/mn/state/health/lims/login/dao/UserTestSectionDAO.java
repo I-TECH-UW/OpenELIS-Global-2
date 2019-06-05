@@ -27,7 +27,7 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
-public interface UserTestSectionDAO extends BaseDAO<TestSection> {
+public interface UserTestSectionDAO extends BaseDAO<TestSection, String> {
 
 	public List<Object> getAllUserTestSectionsByName(HttpServletRequest request, String testSectionName)
 			throws LIMSRuntimeException;

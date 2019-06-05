@@ -30,7 +30,7 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface TypeOfSampleDAO extends BaseDAO<TypeOfSample> {
+public interface TypeOfSampleDAO extends BaseDAO<TypeOfSample, String> {
 
 	public enum SampleDomain {
 		HUMAN, ANIMAL, ENVIRONMENTAL

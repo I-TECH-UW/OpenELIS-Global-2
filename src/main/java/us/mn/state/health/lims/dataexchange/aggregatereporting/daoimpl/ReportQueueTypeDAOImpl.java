@@ -29,7 +29,7 @@ import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional 
-public class ReportQueueTypeDAOImpl extends BaseDAOImpl<ReportQueueType> implements ReportQueueTypeDAO {
+public class ReportQueueTypeDAOImpl extends BaseDAOImpl<ReportQueueType, String> implements ReportQueueTypeDAO {
 
 	public ReportQueueTypeDAOImpl() {
 		super(ReportQueueType.class);

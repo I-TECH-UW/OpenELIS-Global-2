@@ -1,10 +1,8 @@
 <%@ page language="java"
 	contentType="text/html; charset=utf-8"
 	import="us.mn.state.health.lims.common.action.IActionConstants,
-			us.mn.state.health.lims.localization.daoimpl.LocalizationDAOImpl,
 			us.mn.state.health.lims.localization.valueholder.Localization,
 			us.mn.state.health.lims.siteinformation.valueholder.SiteInformation,
-			us.mn.state.health.lims.localization.dao.LocalizationDAO,
 			org.owasp.encoder.Encode" %>
 
 <%@ page isELIgnored="false" %>
@@ -16,13 +14,6 @@
 
  
 
-<%!
-    LocalizationDAO localizationDAO;
-%>
-
-<%
-    localizationDAO = new LocalizationDAOImpl();
-%>
 
 <table width="80%" border="2">
 	<tr>
@@ -65,9 +56,6 @@
 	   		         
 	   		</td>
 	   		</c:when><c:when test="${site.tag == 'localization'}">
-	   		<% 
-	   		SiteInformation site = (SiteInformation) pageContext.getAttribute("site");
-	   		Localization localization = localizationDAO.getLocalizationById( site.getValue() ); %>
 	   			<td class='textcontent'> <c:out value="${site.englishValue}"/>/<c:out value="${site.frenchValue}"/> </td>
             </c:when><c:otherwise>
 	   		<td class="textcontent">

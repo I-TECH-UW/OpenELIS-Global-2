@@ -22,7 +22,7 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.result.valueholder.ResultSignature;
 
-public interface ResultSignatureDAO extends BaseDAO<ResultSignature> {
+public interface ResultSignatureDAO extends BaseDAO<ResultSignature, String> {
 
 	public boolean insertData(ResultSignature resultSignature) throws LIMSRuntimeException;
 

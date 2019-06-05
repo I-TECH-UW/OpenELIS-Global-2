@@ -32,7 +32,7 @@ import us.mn.state.health.lims.samplepdf.valueholder.SamplePdf;
  */
 @Component
 @Transactional 
-public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf> implements SamplePdfDAO {
+public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf, String> implements SamplePdfDAO {
 
 	public SamplePdfDAOImpl() {
 		super(SamplePdf.class);

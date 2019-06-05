@@ -41,7 +41,7 @@ import us.mn.state.health.lims.qaevent.valueholder.QaEvent;
  */
 @Component
 @Transactional 
-public class QaEventDAOImpl extends BaseDAOImpl<QaEvent> implements QaEventDAO {
+public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEventDAO {
 
 	public QaEventDAOImpl() {
 		super(QaEvent.class);

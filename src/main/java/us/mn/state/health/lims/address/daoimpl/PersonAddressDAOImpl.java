@@ -16,7 +16,6 @@
 */
 package us.mn.state.health.lims.address.daoimpl;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,11 +32,10 @@ import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional
-public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements PersonAddressDAO {
+public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress, AddressPK> implements PersonAddressDAO {
 
 	public PersonAddressDAOImpl() {
 		super(PersonAddress.class);
@@ -64,7 +62,7 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress> implements 
 	}
 
 	@Override
-	public Serializable insert(PersonAddress personAddress) throws LIMSRuntimeException {
+	public AddressPK insert(PersonAddress personAddress) throws LIMSRuntimeException {
 		try {
 			AddressPK id = (AddressPK) sessionFactory.getCurrentSession().save(personAddress);
 			auditDAO.saveNewHistory(personAddress, personAddress.getSysUserId(), "person_address");

@@ -44,7 +44,7 @@ import us.mn.state.health.lims.security.PasswordUtil;
  */
 @Component
 @Transactional 
-public class LoginDAOImpl extends BaseDAOImpl<Login> implements LoginDAO {
+public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO {
 
 	public LoginDAOImpl() {
 		super(Login.class);

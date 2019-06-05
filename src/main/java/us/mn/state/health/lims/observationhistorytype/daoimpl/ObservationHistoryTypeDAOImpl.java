@@ -9,13 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.observationhistorytype.dao.ObservationHistoryTypeDAO;
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
- 
+
 @Component
-@Transactional 
-public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistoryType>
+@Transactional
+public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistoryType, String>
 		implements ObservationHistoryTypeDAO {
 
 	public ObservationHistoryTypeDAOImpl() {

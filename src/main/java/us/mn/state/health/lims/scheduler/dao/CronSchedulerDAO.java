@@ -16,7 +16,6 @@
 */
 package us.mn.state.health.lims.scheduler.dao;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,13 +23,13 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
 
-public interface CronSchedulerDAO extends BaseDAO<CronScheduler> {
+public interface CronSchedulerDAO extends BaseDAO<CronScheduler, String> {
 	public List<CronScheduler> getAllCronSchedules() throws LIMSRuntimeException;
 
 	public CronScheduler getCronScheduleByJobName(String jobName) throws LIMSRuntimeException;
 
 	@Override
-	public Serializable insert(CronScheduler cronScheduler) throws LIMSRuntimeException;
+	public String insert(CronScheduler cronScheduler) throws LIMSRuntimeException;
 
 	public Optional<CronScheduler> update(CronScheduler cronScheduler) throws LIMSRuntimeException;
 

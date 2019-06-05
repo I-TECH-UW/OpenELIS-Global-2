@@ -23,8 +23,9 @@ import java.util.List;
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.userrole.valueholder.UserRole;
+import us.mn.state.health.lims.userrole.valueholder.UserRolePK;
 
-public interface UserRoleDAO extends BaseDAO<UserRole> {
+public interface UserRoleDAO extends BaseDAO<UserRole, UserRolePK> {
 
 	public boolean insertData(UserRole userRole) throws LIMSRuntimeException;
 

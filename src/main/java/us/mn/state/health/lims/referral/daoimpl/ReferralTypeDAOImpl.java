@@ -31,7 +31,7 @@ import us.mn.state.health.lims.referral.valueholder.ReferralType;
  */
 @Component
 @Transactional 
-public class ReferralTypeDAOImpl extends BaseDAOImpl<ReferralType> implements ReferralTypeDAO {
+public class ReferralTypeDAOImpl extends BaseDAOImpl<ReferralType, String> implements ReferralTypeDAO {
 
 	public ReferralTypeDAOImpl() {
 		super(ReferralType.class);

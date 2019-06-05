@@ -29,7 +29,7 @@ import us.mn.state.health.lims.panel.valueholder.Panel;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface PanelDAO extends BaseDAO<Panel> {
+public interface PanelDAO extends BaseDAO<Panel, String> {
 
 	public boolean insertData(Panel panel) throws LIMSRuntimeException;
 

@@ -21,7 +21,7 @@ import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.testcodes.valueholder.TestCodeType;
 
-public interface TestCodeTypeDAO extends BaseDAO<TestCodeType> {
+public interface TestCodeTypeDAO extends BaseDAO<TestCodeType, String> {
 	public TestCodeType getTestCodeTypeByName(String name) throws LIMSRuntimeException;
 
 	public TestCodeType getTestCodeTypeById(String id) throws LIMSRuntimeException;

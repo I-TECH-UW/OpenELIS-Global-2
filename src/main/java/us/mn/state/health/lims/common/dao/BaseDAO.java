@@ -28,13 +28,13 @@ import us.mn.state.health.lims.common.valueholder.BaseObject;
  *
  * @param <T> the type of data object that this returns
  */
-public interface BaseDAO<T extends BaseObject> {
+public interface BaseDAO<T extends BaseObject<PK>, PK extends Serializable> {
 
 	/**
 	 * @param id
 	 * @return the object corresponding with the id
 	 */
-	Optional<T> get(Serializable id);
+	Optional<T> get(PK id);
 
 	/**
 	 * @return all data type for the object type
@@ -266,7 +266,7 @@ public interface BaseDAO<T extends BaseObject> {
 	 * @param object the data to insert
 	 * @return the id of the inserted object
 	 */
-	Serializable insert(T object);
+	PK insert(T object);
 
 	/**
 	 * @param object the new data to update the database with. Will insert if it

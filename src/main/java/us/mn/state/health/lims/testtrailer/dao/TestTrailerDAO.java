@@ -29,7 +29,7 @@ import us.mn.state.health.lims.testtrailer.valueholder.TestTrailer;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface TestTrailerDAO extends BaseDAO<TestTrailer> {
+public interface TestTrailerDAO extends BaseDAO<TestTrailer, String> {
 
 	public boolean insertData(TestTrailer testTrailer) throws LIMSRuntimeException;
 

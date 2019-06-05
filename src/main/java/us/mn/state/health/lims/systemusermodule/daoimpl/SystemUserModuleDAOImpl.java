@@ -45,7 +45,7 @@ import us.mn.state.health.lims.systemusermodule.valueholder.SystemUserModule;
 @Component
 @Transactional
 @Qualifier(value = "SystemUserModuleDAO")
-public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule> implements SystemUserModuleDAO {
+public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, String> implements SystemUserModuleDAO {
 
 	public SystemUserModuleDAOImpl() {
 		super(SystemUserModule.class);

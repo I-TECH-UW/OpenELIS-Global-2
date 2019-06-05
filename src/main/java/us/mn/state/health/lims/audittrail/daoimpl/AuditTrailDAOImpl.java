@@ -44,7 +44,7 @@ import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 
 @Component
 @Transactional
-public class AuditTrailDAOImpl extends BaseDAOImpl<History> implements AuditTrailDAO {
+public class AuditTrailDAOImpl extends BaseDAOImpl<History, String> implements AuditTrailDAO {
 
 	@Autowired
 	ReferenceTablesDAO referenceTablesDAO;

@@ -26,7 +26,7 @@ import us.mn.state.health.lims.systemusermodule.valueholder.PermissionModule;
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
  */
-public interface PermissionAgentModuleDAO extends BaseDAO<PermissionModule> {
+public interface PermissionAgentModuleDAO extends BaseDAO<PermissionModule, String> {
 
 	public static final String SUPERVISOR = "Supervisor";
 

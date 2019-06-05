@@ -24,7 +24,7 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.organization.valueholder.OrganizationType;
 
-public interface OrganizationTypeDAO extends BaseDAO<OrganizationType> {
+public interface OrganizationTypeDAO extends BaseDAO<OrganizationType, String> {
 
 	public List<OrganizationType> getAllOrganizationTypes() throws LIMSRuntimeException;
 
@@ -37,7 +37,7 @@ public interface OrganizationTypeDAO extends BaseDAO<OrganizationType> {
 
 	/**
 	 * Find the organizations which belong to a certain organization type.
-	 * 
+	 *
 	 * @param names name of organization type
 	 * @return a list (possibly empty) of all the organizations associated with the
 	 *         type.

@@ -16,7 +16,6 @@
 */
 package us.mn.state.health.lims.scheduler.daoimpl;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,13 +29,12 @@ import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.scheduler.dao.CronSchedulerDAO;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
 
 @Component
-@Transactional 
-public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements CronSchedulerDAO {
+@Transactional
+public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler, String> implements CronSchedulerDAO {
 
 	public CronSchedulerDAOImpl() {
 		super(CronScheduler.class);
@@ -77,7 +75,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements 
 	}
 
 	@Override
-	public Serializable insert(CronScheduler cronSchedule) throws LIMSRuntimeException {
+	public String insert(CronScheduler cronSchedule) throws LIMSRuntimeException {
 		try {
 			String id = (String) sessionFactory.getCurrentSession().save(cronSchedule);
 			cronSchedule.setId(id);
@@ -114,7 +112,7 @@ public class CronSchedulerDAOImpl extends BaseDAOImpl<CronScheduler> implements 
 	public CronScheduler readCronScheduler(String idString) throws LIMSRuntimeException {
 
 		try {
-			CronScheduler data = (CronScheduler) sessionFactory.getCurrentSession().get(CronScheduler.class, idString);
+			CronScheduler data = sessionFactory.getCurrentSession().get(CronScheduler.class, idString);
 			// closeSession(); // CSL remove old
 			return data;
 		} catch (HibernateException e) {

@@ -32,7 +32,7 @@ import us.mn.state.health.lims.menu.valueholder.Menu;
 
 @Component
 @Transactional 
-public class MenuDAOImpl extends BaseDAOImpl<Menu> implements MenuDAO {
+public class MenuDAOImpl extends BaseDAOImpl<Menu, String> implements MenuDAO {
 
 	public MenuDAOImpl() {
 		super(Menu.class);

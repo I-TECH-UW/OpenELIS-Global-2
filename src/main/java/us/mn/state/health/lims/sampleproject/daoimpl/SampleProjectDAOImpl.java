@@ -45,7 +45,7 @@ import us.mn.state.health.lims.sampleproject.valueholder.SampleProject;
  */
 @Component
 @Transactional
-public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject> implements SampleProjectDAO {
+public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> implements SampleProjectDAO {
 
 	@Autowired
 	AuditTrailDAO auditDAO;
