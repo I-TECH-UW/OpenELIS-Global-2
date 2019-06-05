@@ -24,6 +24,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
@@ -40,6 +42,8 @@ import us.mn.state.health.lims.sample.util.CI.ProjectForm;
 import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
+@Service
+@Scope("prototype")
 public class SampleEntry extends Accessioner {
 
 	protected BaseForm form;
@@ -111,7 +115,7 @@ public class SampleEntry extends Accessioner {
 	 * checked and see what analysis WOULD be generated combined with any test. If
 	 * there are any of those, we then try to find some sampleItems to delete and
 	 * update along with appropriate analysis.
-	 * 
+	 *
 	 * @param projectFormMapper
 	 */
 	// TODO PAHill this code relies on the correct spelling of the
@@ -155,15 +159,15 @@ public class SampleEntry extends Accessioner {
 
 	/**
 	 * Check if particular
-	 * 
+	 *
 	 * @param sampleId
 	 * @param typeName
 	 */
 	private void cleanupSampleAndAnalysis(String sampleId, String typeName) {
 		TypeOfSample typeOfSample = BaseProjectFormMapper.getTypeOfSampleByDescription(typeName);
-		List<SampleItem> sampleItems = sampleItemDAO.getSampleItemsBySampleIdAndType(sampleId, typeOfSample);
+		List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleIdAndType(sampleId, typeOfSample);
 		for (SampleItem sampleItem : sampleItems) {
-			List<Analysis> analyses = analysisDAO.getAnalysesBySampleItem(sampleItem);
+			List<Analysis> analyses = analysisService.getAnalysesBySampleItem(sampleItem);
 			if (cleanupExistingAnalysis(analyses).size() != 0) {
 				sampleItem.setSysUserId(sysUserId);
 				sampleItemsToDelete.add(sampleItem);
@@ -176,7 +180,7 @@ public class SampleEntry extends Accessioner {
 	 * in the projectdata. update list of analysisToDelete, analysisToSave Called
 	 * with tests checked that are NOT wanted, so we can find those analysis and
 	 * check to delete them
-	 * 
+	 *
 	 * @param projectFormId - the name of form from the UI (typically the unique DIV
 	 *                      id)
 	 * @param sampleId      some sample
@@ -233,7 +237,7 @@ public class SampleEntry extends Accessioner {
 	/**
 	 * Creates a new projectData object with all Test which are NOT checked in the
 	 * submitted projectData now checked in the object returned
-	 * 
+	 *
 	 * @param ProjectData - nothing but some Test properties are set in this object.
 	 */
 	private ProjectData buildProjectDataTestsReversed(ProjectData submitted) {
@@ -276,7 +280,7 @@ public class SampleEntry extends Accessioner {
 	 * where the base class returning empty lists for all those without values and
 	 * then the persist coding deleting all sublists blindly and then rewriting them
 	 * would be broken, so be careful if it comes to that.
-	 * 
+	 *
 	 * @see us.mn.state.health.lims.patient.saving.Accessioner#persistObservationHistoryLists()
 	 */
 	@Override

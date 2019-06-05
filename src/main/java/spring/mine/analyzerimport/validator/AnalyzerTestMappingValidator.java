@@ -48,7 +48,7 @@ public class AnalyzerTestMappingValidator implements Validator {
 	public void preUpdateValidate(AnalyzerTestMapping analyzerTestMapping, Errors errors) {
 		validate(analyzerTestMapping, errors);
 
-		ValidationHelper.validateIdField(analyzerTestMapping.getId(), "id", errors, true);
+		ValidationHelper.validateIdField(analyzerTestMapping.getStringId(), "id", errors, true);
 
 	}
 
