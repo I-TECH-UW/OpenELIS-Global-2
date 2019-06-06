@@ -103,7 +103,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 //			String id = (String) sessionFactory.getCurrentSession().save(panel);
 //			panel.setId(id);
 //
-//			new AuditTrailDAOImpl().saveNewHistory(panel, panel.getSysUserId(), "PANEL");
+//			AuditTrailDAOImpl().saveNewHistory(panel, panel.getSysUserId(), "PANEL");
 //
 //			// sessionFactory.getCurrentSession().flush(); // CSL remove old
 //			// sessionFactory.getCurrentSession().clear(); // CSL remove old

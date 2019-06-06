@@ -2,15 +2,15 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
@@ -32,6 +32,7 @@ import org.exolab.castor.xml.Marshaller;
 import org.xml.sax.InputSource;
 
 import ca.uhn.hl7v2.HL7Exception;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.resources.ResourceLocator;
@@ -39,13 +40,12 @@ import us.mn.state.health.lims.dataexchange.orderresult.OrderResponseWorker;
 import us.mn.state.health.lims.dataexchange.resultreporting.beans.ResultReportXmit;
 
 public class ReportTransmission {
-	public enum HTTP_TYPE{
-		GET,
-		POST
+	public enum HTTP_TYPE {
+		GET, POST
 	}
-	
+
 	public void sendHL7Report(ResultReportXmit resultReport, String url, ITransmissionResponseHandler responseHandler) {
-		OrderResponseWorker orWorker = new OrderResponseWorker();
+		OrderResponseWorker orWorker = SpringContext.getBean(OrderResponseWorker.class);
 		try {
 			orWorker.createReport(resultReport);
 			sendRawReport(orWorker.getHl7Message().encode(), url, true, responseHandler, HTTP_TYPE.POST);
@@ -55,10 +55,10 @@ public class ReportTransmission {
 			LogEvent.logError("ReportTransmission ", "sendHL7Report()", e.toString());
 		}
 	}
-	
+
 	public void sendReport(Object reportObject, String castorPropertyName, String url, boolean sendAsychronously,
 			ITransmissionResponseHandler responseHandler) {
-		
+
 		String xmlString = null;
 		String castorMappingName = getCastorMappingName(castorPropertyName);
 
@@ -74,11 +74,11 @@ public class ReportTransmission {
 			marshaller.setWriter(writer);
 			marshaller.marshal(reportObject);
 			xmlString = writer.toString();
-			 
+
 			sendRawReport(xmlString, url, sendAsychronously, responseHandler, HTTP_TYPE.POST);
-			
-		}catch (UnknownHostException he) {
-			List<String> errors = new ArrayList<String>();
+
+		} catch (UnknownHostException he) {
+			List<String> errors = new ArrayList<>();
 			errors.add(he.toString());
 			responseHandler.handleResponse(HttpServletResponse.SC_BAD_REQUEST, errors, xmlString);
 		} catch (Exception e) {
@@ -87,10 +87,11 @@ public class ReportTransmission {
 
 	}
 
-	public void sendRawReport(String contents, String url, boolean sendAsychronously, ITransmissionResponseHandler responseHandler, HTTP_TYPE httpType) {
+	public void sendRawReport(String contents, String url, boolean sendAsychronously,
+			ITransmissionResponseHandler responseHandler, HTTP_TYPE httpType) {
 		try {
 			IExternalSender sender;
-			 //System.out.println(contents );
+			// System.out.println(contents );
 			switch (httpType) {
 			case GET:
 				sender = new HttpGetSender();
@@ -103,11 +104,12 @@ public class ReportTransmission {
 				sender = new HttpPostSender();
 				break;
 			}
-			
+
 			sender.setURI(url);
 
 			if (sendAsychronously) {
-				AsynchronousExternalSender asynchSender = new AsynchronousExternalSender(sender, responseHandler, contents);
+				AsynchronousExternalSender asynchSender = new AsynchronousExternalSender(sender, responseHandler,
+						contents);
 				asynchSender.sendMessage();
 			} else {
 				sender.sendMessage();

@@ -22,8 +22,10 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.validation.Errors;
 
+import spring.service.dataexchange.order.ElectronicOrderService;
 import spring.service.observationhistory.ObservationHistoryServiceImpl;
 import spring.service.observationhistory.ObservationHistoryServiceImpl.ObservationType;
+import spring.service.organization.OrganizationService;
 import spring.service.patient.PatientService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.address.valueholder.OrganizationAddress;
@@ -41,13 +43,9 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.dataexchange.order.dao.ElectronicOrderDAO;
-import us.mn.state.health.lims.dataexchange.order.daoimpl.ElectronicOrderDAOImpl;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory.ValueType;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.patient.util.PatientUtil;
 import us.mn.state.health.lims.person.valueholder.Person;
@@ -79,10 +77,11 @@ public class SamplePatientUpdateData {
 
 	private boolean useReceiveDateForCollectionDate = !FormFields.getInstance().useField(Field.CollectionDate);
 	private String collectionDateFromReceiveDate = null;
-	private PatientService patientService = SpringContext.getBean(PatientService.class);
-	private OrganizationDAO orgDAO = new OrganizationDAOImpl();
 
-	private ElectronicOrderDAO electronicOrderDAO = new ElectronicOrderDAOImpl();
+	private PatientService patientService = SpringContext.getBean(PatientService.class);
+	private OrganizationService orgService = SpringContext.getBean(OrganizationService.class);
+	private ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
+
 	private List<ObservationHistory> observations = new ArrayList<>();
 	private List<OrganizationAddress> orgAddressExtra = new ArrayList<>();
 	private final String currentUserId;
@@ -295,7 +294,7 @@ public class SamplePatientUpdateData {
 		electronicOrder = null;
 		String externalOrderNumber = sampleOrder.getExternalOrderNumber();
 		if (!GenericValidator.isBlankOrNull(externalOrderNumber)) {
-			List<ElectronicOrder> orders = electronicOrderDAO.getElectronicOrdersByExternalId(externalOrderNumber);
+			List<ElectronicOrder> orders = electronicOrderService.getElectronicOrdersByExternalId(externalOrderNumber);
 			if (!orders.isEmpty()) {
 				electronicOrder = orders.get(orders.size() - 1);
 				electronicOrder.setStatusId(StatusService.getInstance().getStatusID(ExternalOrderStatus.Realized));
@@ -360,7 +359,7 @@ public class SamplePatientUpdateData {
 	}
 
 	public void updateCurrentOrgIfNeeded(String code, String orgId) {
-		currentOrganization = orgDAO.getOrganizationById(orgId);
+		currentOrganization = orgService.getOrganizationById(orgId);
 		if (StringUtil.compareWithNulls(code, currentOrganization.getCode()) != 0) {
 			currentOrganization.setCode(code);
 			currentOrganization.setSysUserId(currentUserId);
@@ -408,7 +407,7 @@ public class SamplePatientUpdateData {
 			} else {
 				Organization organization = new Organization();
 				organization.setOrganizationName(orderItem.getNewRequesterName());
-				organization = orgDAO.getOrganizationByName(organization, true);
+				organization = orgService.getOrganizationByName(organization, true);
 				orgId = organization.getId();
 
 				if (!GenericValidator.isBlankOrNull(orgId)) {
@@ -430,7 +429,7 @@ public class SamplePatientUpdateData {
 		boolean newName = true;
 		Organization organization = new Organization();
 		organization.setOrganizationName(requesterName);
-		organization = orgDAO.getOrganizationByName(organization, true);
+		organization = orgService.getOrganizationByName(organization, true);
 
 		if (organization == null) {
 			newName = true;

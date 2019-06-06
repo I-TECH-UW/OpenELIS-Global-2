@@ -21,7 +21,7 @@ import java.util.List;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 
-public class PatientARVInitialVersion1Report extends PatientARVReport implements  IReportCreator {
+public class PatientARVInitialVersion1Report extends PatientARVReport implements IReportCreator {
 	@Override
 	protected void createReportParameters() {
 		super.createReportParameters();
@@ -30,19 +30,22 @@ public class PatientARVInitialVersion1Report extends PatientARVReport implements
 	}
 
 	@Override
-    protected String reportFileName(){
-    	return "Patient_ARV_Version1";
-    }
+	protected String reportFileName() {
+		return "Patient_ARV_Version1";
+	}
 
-	protected String getReportNameForReport(){
+	@Override
+	protected String getReportNameForReport() {
 		return MessageUtil.getMessage("sample.entry.project.initialARV.title");
 	}
 
-	protected boolean allowSample(){
-		List<ObservationHistory> historyList = observationHistoryDAO.getAll(reportPatient, reportSample, OBSERVATION_PROJECT_ID);
+	@Override
+	protected boolean allowSample() {
+		List<ObservationHistory> historyList = observationHistoryService.getAll(reportPatient, reportSample,
+				OBSERVATION_PROJECT_ID);
 
-		for( ObservationHistory history : historyList){
-			if( "InitialARV_Id".equals(history.getValue())){
+		for (ObservationHistory history : historyList) {
+			if ("InitialARV_Id".equals(history.getValue())) {
 				return true;
 			}
 		}
@@ -50,6 +53,7 @@ public class PatientARVInitialVersion1Report extends PatientARVReport implements
 		return false;
 	}
 
+	@Override
 	protected String getProjectId() {
 		return ANTIRETROVIRAL_STUDY_ID;
 	}

@@ -38,7 +38,6 @@ import us.mn.state.health.lims.panel.valueholder.Panel;
 import us.mn.state.health.lims.panelitem.dao.PanelItemDAO;
 import us.mn.state.health.lims.panelitem.valueholder.PanelItem;
 import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 /**
@@ -54,6 +53,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 
 	@Autowired
 	private AuditTrailDAO auditDAO;
+	@Autowired
+	private TestDAO testDAO;
 
 	@Override
 	public void deleteData(List panelItems) throws LIMSRuntimeException {
@@ -408,8 +409,6 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 			query.setParameter("param", panel);
 
 			List list = query.list();
-
-			TestDAO testDAO = new TestDAOImpl();
 
 			if (onlyTestsFullySetup && list != null && list.size() > 0) {
 				Iterator panelItemIterator = list.iterator();

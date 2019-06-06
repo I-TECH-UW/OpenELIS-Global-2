@@ -51,7 +51,7 @@ public class StatusResultsController extends BaseController {
 	@Autowired
 	SampleItemService sampleItemService;
 	private ResultsLoadUtility resultsUtility;
-	private final InventoryUtility inventoryUtility = new InventoryUtility();
+	private final InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
 	private static final ConfigurationProperties configProperties = ConfigurationProperties.getInstance();
 
 	private static Set<Integer> excludedStatusIds;

@@ -2,15 +2,15 @@
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/ 
- * 
+ * http://www.mozilla.org/MPL/
+ *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations under
  * the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
@@ -33,8 +33,13 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.service.analysis.AnalysisService;
+import spring.service.dictionary.DictionaryService;
+import spring.service.result.ResultService;
+import spring.service.scheduler.CronSchedulerService;
+import spring.service.test.TestService;
+import spring.service.testresult.TestResultService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.StatusService;
@@ -45,21 +50,11 @@ import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dataexchange.common.ITransmissionResponseHandler;
 import us.mn.state.health.lims.dataexchange.common.ReportTransmission;
 import us.mn.state.health.lims.dataexchange.common.ReportTransmission.HTTP_TYPE;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
-import us.mn.state.health.lims.scheduler.dao.CronSchedulerDAO;
-import us.mn.state.health.lims.scheduler.daoimpl.CronSchedulerDAOImpl;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
-import us.mn.state.health.lims.test.dao.TestDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.testresult.dao.TestResultDAO;
-import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
 public class MalariaSurveilanceJob implements Job {
@@ -74,18 +69,21 @@ public class MalariaSurveilanceJob implements Job {
 	private static final String FINISHED_STATUS_ID = StatusService.getInstance().getStatusID(AnalysisStatus.Finalized);
 
 	private StringBuffer buffer;
-	private AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-	private CronSchedulerDAO cronSchedulerDAO = new CronSchedulerDAOImpl();
-	private ResultDAO resultDAO = new ResultDAOImpl();
 
-	static {
+	private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+	private CronSchedulerService cronSchedulerService = SpringContext.getBean(CronSchedulerService.class);
+	private ResultService resultService = SpringContext.getBean(ResultService.class);
+	private TestService testService = SpringContext.getBean(TestService.class);
+	private TestResultService testResultService = SpringContext.getBean(TestResultService.class);
+	private DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 
-		TestDAO testDAO = new TestDAOImpl();
-		RAPID_TEST_IDS = new HashSet<String>();
-		MALARIA_DICTIONARY_ID_VALUE_MAP = new HashMap<String, String>();
-		RAPID_DICTIONARY_ID_VALUE_MAP = new HashMap<String, String>();
-		MALARIA_TEST_NAMES = new ArrayList<String>();
-		RAPID_TEST_NAMES = new ArrayList<String>();
+	public MalariaSurveilanceJob() {
+
+		RAPID_TEST_IDS = new HashSet<>();
+		MALARIA_DICTIONARY_ID_VALUE_MAP = new HashMap<>();
+		RAPID_DICTIONARY_ID_VALUE_MAP = new HashMap<>();
+		MALARIA_TEST_NAMES = new ArrayList<>();
+		RAPID_TEST_NAMES = new ArrayList<>();
 
 		// N.B. This should be discoverable from the DB, not hard coded by name
 		MALARIA_TEST_NAMES.add("Recherche de plasmodiun - Especes(Sang)");
@@ -94,33 +92,30 @@ public class MalariaSurveilanceJob implements Job {
 		RAPID_TEST_NAMES.add("Malaria Test Rapide(Sang)");
 
 		for (String name : MALARIA_TEST_NAMES) {
-			Test test = testDAO.getTestByDescription(name);
+			Test test = testService.getTestByDescription(name);
 			if (test != null && test.getId() != null) {
 				MALARIA_TEST_ID = test.getId();
 			}
 		}
 
 		for (String name : RAPID_TEST_NAMES) {
-			addRapidTest(testDAO, name);
+			addRapidTest(testService, name);
 		}
 
-		TestResultDAO testResultDAO = new TestResultDAOImpl();
-		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
-
-		List<TestResult> malariaResults = testResultDAO.getActiveTestResultsByTest( MALARIA_TEST_ID );
+		List<TestResult> malariaResults = testResultService.getActiveTestResultsByTest(MALARIA_TEST_ID);
 
 		for (TestResult testResult : malariaResults) {
-			Dictionary dictionary = dictionaryDAO.getDictionaryById(testResult.getValue());
+			Dictionary dictionary = dictionaryService.getDictionaryById(testResult.getValue());
 			if (dictionary != null) {
 				MALARIA_DICTIONARY_ID_VALUE_MAP.put(dictionary.getId(), dictionary.getDictEntry());
 			}
 		}
 
 		for (String rapidTestId : RAPID_TEST_IDS) {
-			List<TestResult> rapidResults = testResultDAO.getActiveTestResultsByTest( rapidTestId );
+			List<TestResult> rapidResults = testResultService.getActiveTestResultsByTest(rapidTestId);
 
 			for (TestResult testResult : rapidResults) {
-				Dictionary dictionary = dictionaryDAO.getDictionaryById(testResult.getValue());
+				Dictionary dictionary = dictionaryService.getDictionaryById(testResult.getValue());
 				if (dictionary != null && RAPID_DICTIONARY_ID_VALUE_MAP.get(dictionary.getId()) == null) {
 					RAPID_DICTIONARY_ID_VALUE_MAP.put(dictionary.getId(), dictionary.getDictEntry());
 				}
@@ -128,8 +123,8 @@ public class MalariaSurveilanceJob implements Job {
 		}
 	}
 
-	private static void addRapidTest(TestDAO testDAO, String description) {
-		Test test = testDAO.getTestByDescription(description);
+	private void addRapidTest(TestService testService, String description) {
+		Test test = testService.getTestByDescription(description);
 		if (test != null && test.getId() != null) {
 			RAPID_TEST_IDS.add(test.getId());
 		}
@@ -138,7 +133,8 @@ public class MalariaSurveilanceJob implements Job {
 	@Override
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		System.out.println("MalariaSurveilance triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
-		LogEvent.logInfo("MalariaSurveilance", "execute()", "Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
+		LogEvent.logInfo("MalariaSurveilance", "execute()",
+				"Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
 
 		boolean sendReport = true;
 		Timestamp latestCollectionDate = getLatestCollectionDate();
@@ -156,7 +152,7 @@ public class MalariaSurveilanceJob implements Job {
 		buffer.append("<reports date='");
 		buffer.append(DateUtil.getCurrentDateAsText());
 		buffer.append("'>\n");
-		
+
 		Timestamp nowTimestamp = DateUtil.getNowAsTimestamp();
 		if (latestCollectionDate == null) {
 			for (int i = 120; i > 0; i--) {
@@ -175,27 +171,26 @@ public class MalariaSurveilanceJob implements Job {
 
 		buffer.append("</reports>\n");
 		buffer.append("</OpenElisServeillance>\n");
-		
-		if(sendReport){
+
+		if (sendReport) {
 			boolean sendAsychronously = false;
 			String url = ConfigurationProperties.getInstance().getPropertyValue(Property.malariaSurveillanceReportURL);
 			ResponseHandler responseHandler = new ResponseHandler();
 			responseHandler.setRunTime(nowTimestamp);
-			
-		    new ReportTransmission().sendRawReport(buffer.toString(), url, sendAsychronously, responseHandler, HTTP_TYPE.POST);
+
+			new ReportTransmission().sendRawReport(buffer.toString(), url, sendAsychronously, responseHandler,
+					HTTP_TYPE.POST);
 
 		}
 
-
 	}
 
-
 	private void writeReportForDayPeriod(int daysAgo) {
-		Timestamp dayOne = DateUtil.getTimestampAtMidnightForDaysAgo(daysAgo );
+		Timestamp dayOne = DateUtil.getTimestampAtMidnightForDaysAgo(daysAgo);
 		Timestamp dayTwo = DateUtil.getTimestampAtMidnightForDaysAgo(daysAgo - 1);
 
-		Map<String, Integer> malairaBucket = new HashMap<String, Integer>();
-		Map<String, Integer> rapidBucket = new HashMap<String, Integer>();
+		Map<String, Integer> malairaBucket = new HashMap<>();
+		Map<String, Integer> rapidBucket = new HashMap<>();
 
 		buffer.append("<report type='Malaria' startDate='");
 		buffer.append(DateUtil.convertTimestampToStringDate(dayOne));
@@ -225,24 +220,25 @@ public class MalariaSurveilanceJob implements Job {
 		buffer.append("</indicator>\n");
 	}
 
-	private void fillMalariaBuckets(Timestamp dayOne, Timestamp dayTwo, List<String> testNames, Map<String, Integer> bucket,
-			Map<String, String> idValueMap) {
+	private void fillMalariaBuckets(Timestamp dayOne, Timestamp dayTwo, List<String> testNames,
+			Map<String, Integer> bucket, Map<String, String> idValueMap) {
 
 		java.sql.Date sqlDayOne = DateUtil.convertTimestampToSqlDate(dayOne);
 		java.sql.Date sqlDayTwo = DateUtil.convertTimestampToSqlDate(dayTwo);
-		List<Analysis> analysisList = analysisDAO.getAnalysisByTestDescriptionAndCompletedDateRange(testNames, sqlDayOne , sqlDayTwo);
+		List<Analysis> analysisList = analysisService.getAnalysisByTestDescriptionAndCompletedDateRange(testNames,
+				sqlDayOne, sqlDayTwo);
 
 		for (String key : idValueMap.keySet()) {
 			bucket.put(key, 0);
 		}
 
-		List<Integer> analysisIdList = new ArrayList<Integer>();
+		List<Integer> analysisIdList = new ArrayList<>();
 		for (Analysis analysis : analysisList) {
 			if (FINISHED_STATUS_ID.equals(analysis.getStatusId())) {
 				analysisIdList.add(Integer.parseInt(analysis.getId()));
 			}
 		}
-		List<Result> results = resultDAO.getResultsForAnalysisIdList(analysisIdList);
+		List<Result> results = resultService.getResultsForAnalysisIdList(analysisIdList);
 
 		if (results != null) {
 			for (Result result : results) {
@@ -259,45 +255,45 @@ public class MalariaSurveilanceJob implements Job {
 	}
 
 	private Timestamp getLatestCollectionDate() {
-		return cronSchedulerDAO.getCronScheduleByJobName(CRON_MALARIA_SCHEDULER).getLastRun();
+		return cronSchedulerService.getCronScheduleByJobName(CRON_MALARIA_SCHEDULER).getLastRun();
 	}
-	
+
 	class ResponseHandler implements ITransmissionResponseHandler {
 		private Timestamp runTime;
-		
-		public void setRunTime(Timestamp runTime){
+
+		public void setRunTime(Timestamp runTime) {
 			this.runTime = runTime;
 		}
-		
+
 		@Override
 		public void handleResponse(int httpReturnStatus, List<String> errors, String msg) {
-			if( httpReturnStatus == HttpServletResponse.SC_OK){
-				
+			if (httpReturnStatus == HttpServletResponse.SC_OK) {
+
 			}
 			switch (httpReturnStatus) {
 			case HttpServletResponse.SC_OK:
 				setJobTimestamp(runTime);
 				break;
 			default:
-				System.out.println(errors );
+				System.out.println(errors);
 			}
 		}
-		
+
 		private void setJobTimestamp(Timestamp nowTimestamp) {
-			CronScheduler gatherScheduler = cronSchedulerDAO.getCronScheduleByJobName(CRON_MALARIA_SCHEDULER);
+			CronScheduler gatherScheduler = cronSchedulerService.getCronScheduleByJobName(CRON_MALARIA_SCHEDULER);
 			gatherScheduler.setLastRun(nowTimestamp);
 			gatherScheduler.setSysUserId("1");
 
 			Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 			try {
-				cronSchedulerDAO.update(gatherScheduler);
+				cronSchedulerService.update(gatherScheduler);
 				tx.commit();
 			} catch (HibernateException e) {
 				LogEvent.logError("AggregateGatherJob", "execute", e.toString());
 			}
 		}
-		
+
 	}
-	
+
 }

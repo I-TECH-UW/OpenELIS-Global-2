@@ -16,21 +16,17 @@
 */
 package us.mn.state.health.lims.reports.action.implementation;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 import spring.mine.common.form.BaseForm;
-import us.mn.state.health.lims.analyte.dao.AnalyteDAO;
-import us.mn.state.health.lims.analyte.daoimpl.AnalyteDAOImpl;
+import spring.service.analyte.AnalyteService;
+import spring.service.observationhistory.ObservationHistoryService;
+import spring.service.observationhistorytype.ObservationHistoryTypeService;
+import spring.service.project.ProjectService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
-import us.mn.state.health.lims.observationhistory.dao.ObservationHistoryDAO;
-import us.mn.state.health.lims.observationhistory.daoimpl.ObservationHistoryDAOImpl;
-import us.mn.state.health.lims.observationhistorytype.dao.ObservationHistoryTypeDAO;
-import us.mn.state.health.lims.observationhistorytype.daoimpl.ObservationHistoryTypeDAOImpl;
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
-import us.mn.state.health.lims.project.dao.ProjectDAO;
-import us.mn.state.health.lims.project.daoimpl.ProjectDAOImpl;
 import us.mn.state.health.lims.project.valueholder.Project;
 
 public abstract class RetroCIReport extends Report implements IReportCreator {
@@ -54,57 +50,56 @@ public abstract class RetroCIReport extends Report implements IReportCreator {
 	protected static String OBSERVATION_PROJECT_ID;
 	protected static String OBSERVATION_WHICH_PCR_ID;
 	protected static String OBSERVATION_UNDER_INVESTIGATION_ID;
-	protected static List<Integer> ANTIRETROVIRAL_ID= new ArrayList<Integer>();
-
+	protected static List<Integer> ANTIRETROVIRAL_ID = new ArrayList<>();
 
 	protected static String CONCLUSION_ID;
 	protected static String CD4_CNT_CONCLUSION;
 
-	protected static ObservationHistoryDAO observationHistoryDAO = new ObservationHistoryDAOImpl();
+	protected static ObservationHistoryService observationHistoryService = SpringContext
+			.getBean(ObservationHistoryService.class);
 
-
-	static{
-		ObservationHistoryTypeDAO observationTypeDAO = new ObservationHistoryTypeDAOImpl();
-		ObservationHistoryType
-		observationType = observationTypeDAO.getByName("nameOfDoctor");
+	static {
+		ObservationHistoryTypeService observationTypeService = SpringContext
+				.getBean(ObservationHistoryTypeService.class);
+		ObservationHistoryType observationType = observationTypeService.getByName("nameOfDoctor");
 		OBSERVATION_DOCTOR_ID = observationType.getId();
-		observationType = observationTypeDAO.getByName("nameOfRequestor");
+		observationType = observationTypeService.getByName("nameOfRequestor");
 		OBSERVATION_REQUESTOR_ID = observationType.getId();
-		observationType = observationTypeDAO.getByName("hospital");
+		observationType = observationTypeService.getByName("hospital");
 		OBSERVATION_HOSPITAL_ID = observationType.getId();
-		observationType = observationTypeDAO.getByName("service");
+		observationType = observationTypeService.getByName("service");
 		OBSERVATION_SERVICE_ID = observationType.getId();
-		observationType = observationTypeDAO.getByName("projectFormName");
+		observationType = observationTypeService.getByName("projectFormName");
 		OBSERVATION_PROJECT_ID = observationType.getId();
-		observationType = observationTypeDAO.getByName("whichPCR");
+		observationType = observationTypeService.getByName("whichPCR");
 		OBSERVATION_WHICH_PCR_ID = observationType.getId();
-		observationType = observationTypeDAO.getByName("underInvestigation");
-		OBSERVATION_UNDER_INVESTIGATION_ID = observationType.getId(); 
-		
-		AnalyteDAO analyteDAO = new AnalyteDAOImpl();
+		observationType = observationTypeService.getByName("underInvestigation");
+		OBSERVATION_UNDER_INVESTIGATION_ID = observationType.getId();
+
+		AnalyteService analyteService = SpringContext.getBean(AnalyteService.class);
 		Analyte analyte = new Analyte();
 		analyte.setAnalyteName("Conclusion");
-		analyte = analyteDAO.getAnalyteByName( analyte, false);
+		analyte = analyteService.getAnalyteByName(analyte, false);
 		CONCLUSION_ID = analyte.getId();
 		analyte.setAnalyteName("generated CD4 Count");
-		analyte = analyteDAO.getAnalyteByName( analyte, false);
+		analyte = analyteService.getAnalyteByName(analyte, false);
 		CD4_CNT_CONCLUSION = analyte.getId();
 
-		ProjectDAO projectDAO = new ProjectDAOImpl();
-		List<Project> projectList = projectDAO.getAllProjects();
+		ProjectService projectService = SpringContext.getBean(ProjectService.class);
+		List<Project> projectList = projectService.getAllProjects();
 
-		for(Project project : projectList){
-			if( ANTIRETROVIRAL_STUDY.equals(project.getProjectName())){
+		for (Project project : projectList) {
+			if (ANTIRETROVIRAL_STUDY.equals(project.getProjectName())) {
 				ANTIRETROVIRAL_STUDY_ID = project.getId();
-			}else if(ANTIRETROVIRAL_FOLLOW_UP_STUDY.equals(project.getProjectName())){
+			} else if (ANTIRETROVIRAL_FOLLOW_UP_STUDY.equals(project.getProjectName())) {
 				ANTIRETROVIRAL_FOLLOW_UP_STUDY_ID = project.getId();
-			}else if( VL_STUDY.equals(project.getProjectName())){
+			} else if (VL_STUDY.equals(project.getProjectName())) {
 				VL_STUDY_ID = project.getId();
-			}else if( EID_STUDY.equals(project.getProjectName())){
+			} else if (EID_STUDY.equals(project.getProjectName())) {
 				EID_STUDY_ID = project.getId();
-			}else if( INDETERMINATE_STUDY.equals(project.getProjectName())){
+			} else if (INDETERMINATE_STUDY.equals(project.getProjectName())) {
 				INDETERMINATE_STUDY_ID = project.getId();
-			}else if( SPECIAL_REQUEST_STUDY.equals(project.getProjectName())){
+			} else if (SPECIAL_REQUEST_STUDY.equals(project.getProjectName())) {
 				SPECIAL_REQUEST_STUDY_ID = project.getId();
 			}
 		}
@@ -113,9 +108,9 @@ public abstract class RetroCIReport extends Report implements IReportCreator {
 		ANTIRETROVIRAL_ID.add(Integer.parseInt(VL_STUDY_ID));
 	}
 
-    /**
-     * @see us.mn.state.health.lims.reports.action.implementation.IReportCreator#initializeReport(us.mn.state.health.lims.common.action.BaseActionForm)
-     */
-    @Override
-    abstract public void initializeReport(BaseForm form);
+	/**
+	 * @see us.mn.state.health.lims.reports.action.implementation.IReportCreator#initializeReport(us.mn.state.health.lims.common.action.BaseActionForm)
+	 */
+	@Override
+	abstract public void initializeReport(BaseForm form);
 }

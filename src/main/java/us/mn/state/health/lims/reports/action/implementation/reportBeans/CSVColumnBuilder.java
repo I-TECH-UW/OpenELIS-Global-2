@@ -33,28 +33,25 @@ import java.util.Map;
 
 import org.hibernate.Session;
 
+import spring.service.analyte.AnalyteService;
+import spring.service.observationhistorytype.ObservationHistoryTypeService;
+import spring.service.project.ProjectService;
+import spring.service.result.ResultService;
+import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
+import spring.service.testresult.TestResultService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
-import us.mn.state.health.lims.analyte.dao.AnalyteDAO;
-import us.mn.state.health.lims.analyte.daoimpl.AnalyteDAOImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.OrderStatus;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.hibernate.HibernateUtil;
-import us.mn.state.health.lims.observationhistorytype.dao.ObservationHistoryTypeDAO;
-import us.mn.state.health.lims.observationhistorytype.daoimpl.ObservationHistoryTypeDAOImpl;
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
-import us.mn.state.health.lims.project.dao.ProjectDAO;
-import us.mn.state.health.lims.project.daoimpl.ProjectDAOImpl;
 import us.mn.state.health.lims.project.valueholder.Project;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
 import us.mn.state.health.lims.testresult.valueholder.TestResult;
 
 /**
@@ -114,7 +111,13 @@ abstract public class CSVColumnBuilder {
 
 	protected String eol = System.getProperty("line.separator");
 
-	protected ResultDAO resultDAO = new ResultDAOImpl();
+	private static ProjectService projectService = SpringContext.getBean(ProjectService.class);
+
+	protected ResultService resultService = SpringContext.getBean(ResultService.class);
+	private ObservationHistoryTypeService ohtService = SpringContext.getBean(ObservationHistoryTypeService.class);
+	private AnalyteService analyteService = SpringContext.getBean(AnalyteService.class);
+	private TestService testService = SpringContext.getBean(TestService.class);
+	private TestResultService testResultService = SpringContext.getBean(TestResultService.class);
 
 	// This is the largest value possible for a postgres column name. The code will
 	// convert the
@@ -129,11 +132,11 @@ abstract public class CSVColumnBuilder {
 	@SuppressWarnings("unchecked")
 	protected void defineAllTestsAndResults() {
 		if (allTests == null) {
-			allTests = new TestDAOImpl().getAllOrderBy("name");
+			allTests = testService.getAllOrderBy("name");
 		}
 		if (testResultsByTestName == null) {
 			testResultsByTestName = new HashMap<>();
-			List<TestResult> allTestResults = new TestResultDAOImpl().getAllTestResults();
+			List<TestResult> allTestResults = testResultService.getAllTestResults();
 			for (TestResult testResult : allTestResults) {
 				String key = TestServiceImpl.getLocalizedTestNameWithType(testResult.getTest());
 				testResultsByTestName.put(key, testResult);
@@ -151,8 +154,7 @@ abstract public class CSVColumnBuilder {
 	}
 
 	public static void defineAllProjectTags() {
-		ProjectDAO projectDAO = new ProjectDAOImpl();
-		List<Project> allProjects = projectDAO.getAllProjects();
+		List<Project> allProjects = projectService.getAllProjects();
 		for (Project project : allProjects) {
 			String projectTag;
 			// Watch the order on these 1st 2!
@@ -368,7 +370,7 @@ abstract public class CSVColumnBuilder {
 
 		private String translateGendResult(String gendResultAnalyteId, String sampleItemId) {
 			// 'generated CD4 Count'
-			Result gendCD4Result = resultDAO.getResultForAnalyteAndSampleItem(gendResultAnalyteId, sampleItemId);
+			Result gendCD4Result = resultService.getResultForAnalyteAndSampleItem(gendResultAnalyteId, sampleItemId);
 			if (gendCD4Result == null) {
 				return "";
 			}
@@ -435,7 +437,7 @@ abstract public class CSVColumnBuilder {
 		 */
 		private String findMultiSelectItemsForTest(String testId) throws SQLException {
 			String sampleId = resultSet.getString("sample_id");
-			List<Result> results = resultDAO.getResultsForTestAndSample(sampleId, testId);
+			List<Result> results = resultService.getResultsForTestAndSample(sampleId, testId);
 			StringBuilder multi = new StringBuilder();
 			for (Result result : results) {
 				multi.append(ResourceTranslator.DictionaryTranslator.getInstance().translateRaw(result.getValue()));
@@ -453,8 +455,7 @@ abstract public class CSVColumnBuilder {
 	abstract public void makeSQL();
 
 	protected void defineAllObservationHistoryTypes() {
-		ObservationHistoryTypeDAO ohtDao = new ObservationHistoryTypeDAOImpl();
-		allObHistoryTypes = ohtDao.getAllOrdered("type_name", false);
+		allObHistoryTypes = ohtService.getAllOrdered("type_name", false);
 	}
 
 	/**
@@ -656,10 +657,9 @@ abstract public class CSVColumnBuilder {
 
 	protected String getGendCD4CountAnalyteId() {
 		if (gendCD4CountAnalyteId == null) {
-			AnalyteDAO analyteDAO = new AnalyteDAOImpl();
 			Analyte a = new Analyte();
 			a.setAnalyteName("generated CD4 Count");
-			gendCD4CountAnalyteId = analyteDAO.getAnalyteByName(a, false).getId();
+			gendCD4CountAnalyteId = analyteService.getAnalyteByName(a, false).getId();
 		}
 		return gendCD4CountAnalyteId;
 	}

@@ -45,12 +45,10 @@ import us.mn.state.health.lims.login.daoimpl.UserModuleServiceImpl;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
 import us.mn.state.health.lims.method.valueholder.Method;
 import us.mn.state.health.lims.systemusersection.dao.SystemUserSectionDAO;
-import us.mn.state.health.lims.systemusersection.daoimpl.SystemUserSectionDAOImpl;
 import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
 import us.mn.state.health.lims.test.dao.TestDAO;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.testanalyte.dao.TestAnalyteDAO;
-import us.mn.state.health.lims.testanalyte.daoimpl.TestAnalyteDAOImpl;
 import us.mn.state.health.lims.testanalyte.valueholder.TestAnalyte;
 
 /**
@@ -66,6 +64,10 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 	@Autowired
 	private AuditTrailDAO auditDAO;
+	@Autowired
+	private SystemUserSectionDAO systemUserSectionDAO;
+	@Autowired
+	private TestAnalyteDAO testAnalyteDAO;
 
 	@Override
 	public void deleteData(List tests) throws LIMSRuntimeException {
@@ -270,8 +272,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 		String sql;
 
 		try {
-			SystemUserSectionDAO systemUserSectionDao = new SystemUserSectionDAOImpl();
-			List userTestSectionList = systemUserSectionDao.getAllSystemUserSectionsBySystemUserId(sysUserId);
+			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
 			for (int i = 0; i < userTestSectionList.size(); i++) {
 				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
 				sectionIdList += sus.getTestSection().getId() + ",";
@@ -379,8 +380,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 			String sectionIdList = "";
 			String sql;
 
-			SystemUserSectionDAO systemUserSectionDao = new SystemUserSectionDAOImpl();
-			List userTestSectionList = systemUserSectionDao.getAllSystemUserSectionsBySystemUserId(sysUserId);
+			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
 			for (int i = 0; i < userTestSectionList.size(); i++) {
 				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
 				sectionIdList += sus.getTestSection().getId() + ",";
@@ -428,10 +428,9 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
 			String sectionIdList = "";
-			SystemUserSectionDAO systemUserSectionDao = new SystemUserSectionDAOImpl();
 
 			@SuppressWarnings("unchecked")
-			List<SystemUserSection> userTestSectionList = systemUserSectionDao
+			List<SystemUserSection> userTestSectionList = systemUserSectionDAO
 					.getAllSystemUserSectionsBySystemUserId(sysUserId);
 
 			for (int i = 0; i < userTestSectionList.size(); i++) {
@@ -808,9 +807,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
 		try {
 			String sectionIdList = "";
-			SystemUserSectionDAO systemUserSectionDao = new SystemUserSectionDAOImpl();
 
-			List userTestSectionList = systemUserSectionDao.getAllSystemUserSectionsBySystemUserId(sysUserId);
+			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
 
 			for (int i = 0; i < userTestSectionList.size(); i++) {
 				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
@@ -864,19 +862,18 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	public Integer getAllSearchedTotalTestCount(HttpServletRequest request, String searchString)
 			throws LIMSRuntimeException {
 		Integer count;
-		TestDAO testDAO = new TestDAOImpl();
 
 		try {
 			if (SystemConfiguration.getInstance().getEnableUserTestSection().equals(NO)) {
-				count = testDAO.getTotalSearchedTestCount(searchString);
+				count = getTotalSearchedTestCount(searchString);
 			} else {
 				UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
 
 				UserModuleService userModuleService = new UserModuleServiceImpl();
 				if (!userModuleService.isUserAdmin(request)) {
-					count = testDAO.getTotalSearchedTestCountBySysUserId(usd.getSystemUserId(), searchString);
+					count = getTotalSearchedTestCountBySysUserId(usd.getSystemUserId(), searchString);
 				} else {
-					count = testDAO.getTotalSearchedTestCount(searchString);
+					count = getTotalSearchedTestCount(searchString);
 
 				}
 			}
@@ -995,7 +992,6 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	@Override
 	public boolean isTestFullySetup(Test test) throws LIMSRuntimeException {
 		try {
-			TestAnalyteDAO testAnalyteDAO = new TestAnalyteDAOImpl();
 			List testAnalytesByTest = testAnalyteDAO.getAllTestAnalytesPerTest(test);
 			boolean result = true;
 			if (testAnalytesByTest == null || testAnalytesByTest.size() == 0) {

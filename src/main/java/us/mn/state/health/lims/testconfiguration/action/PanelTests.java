@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import spring.service.typeofsample.TypeOfSamplePanelService;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSamplePanelDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSamplePanelDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSamplePanel;
 
@@ -21,16 +19,16 @@ public class PanelTests {
 	private List<IdValuePair> availableTests = new ArrayList<>();
 
 	TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
+	TypeOfSamplePanelService typeOfSamplePanelService = SpringContext.getBean(TypeOfSamplePanelService.class);
 
 	public PanelTests(IdValuePair panelPair) {
 		panelIdValuePair = panelPair;
 		List<TypeOfSample> typeOfSamples = new ArrayList<>();
-		TypeOfSamplePanelDAO typeOfSamplePanelDAO = new TypeOfSamplePanelDAOImpl();
-		List<TypeOfSamplePanel> typeOfSamplePanels = typeOfSamplePanelDAO
+		List<TypeOfSamplePanel> typeOfSamplePanels = typeOfSamplePanelService
 				.getTypeOfSamplePanelsForPanel(panelPair.getId());
 
 		for (TypeOfSamplePanel typeOfSamplePanel : typeOfSamplePanels) {
-			typeOfSamples.add(new TypeOfSampleDAOImpl().getTypeOfSampleById(typeOfSamplePanel.getTypeOfSampleId()));
+			typeOfSamples.add(typeOfSampleService.getTypeOfSampleById(typeOfSamplePanel.getTypeOfSampleId()));
 		}
 		if (typeOfSamples != null && typeOfSamples.size() > 0) {
 			TypeOfSample typeOfSample = typeOfSamples.get(0);

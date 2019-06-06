@@ -34,7 +34,6 @@ import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.systemusersection.dao.SystemUserSectionDAO;
-import us.mn.state.health.lims.systemusersection.daoimpl.SystemUserSectionDAOImpl;
 import us.mn.state.health.lims.systemusersection.valueholder.SystemUserSection;
 import us.mn.state.health.lims.test.dao.TestSectionDAO;
 import us.mn.state.health.lims.test.valueholder.TestSection;
@@ -52,6 +51,8 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
 	@Autowired
 	private AuditTrailDAO auditDAO;
+	@Autowired
+	private SystemUserSectionDAO systemUserSectionDAO;
 
 	@Override
 	public void deleteData(List testSections) throws LIMSRuntimeException {
@@ -208,8 +209,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 		String sql = "";
 
 		try {
-			SystemUserSectionDAO systemUserSectionDao = new SystemUserSectionDAOImpl();
-			List userTestSectionList = systemUserSectionDao.getAllSystemUserSectionsBySystemUserId(sysUserId);
+			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
 			for (int i = 0; i < userTestSectionList.size(); i++) {
 				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
 				sectionIdList += sus.getTestSection().getId() + ",";
@@ -301,8 +301,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 		String sql = "";
 
 		try {
-			SystemUserSectionDAO systemUserSectionDao = new SystemUserSectionDAOImpl();
-			List userTestSectionList = systemUserSectionDao.getAllSystemUserSectionsBySystemUserId(sysUserId);
+			List userTestSectionList = systemUserSectionDAO.getAllSystemUserSectionsBySystemUserId(sysUserId);
 			for (int i = 0; i < userTestSectionList.size(); i++) {
 				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
 				sectionIdList += sus.getTestSection().getId() + ",";

@@ -68,7 +68,7 @@ public class TestReflexUtil {
 	private static AnalyteService analyteService = SpringContext.getBean(AnalyteService.class);
 	private static ScriptletService scriptletService = SpringContext.getBean(ScriptletService.class);
 
-	private TestReflexResolver reflexResolver = new TestReflexResolver();
+	private TestReflexResolver reflexResolver = SpringContext.getBean(TestReflexResolver.class);
 
 	private String currentUserId;
 

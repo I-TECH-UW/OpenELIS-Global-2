@@ -29,6 +29,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import spring.mine.common.form.BaseForm;
+import spring.service.test.TestService;
+import spring.service.typeofsample.TypeOfSampleService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
 import us.mn.state.health.lims.dictionary.ObservationHistoryList;
@@ -38,10 +41,7 @@ import us.mn.state.health.lims.observationhistorytype.ObservationHistoryTypeMap;
 import us.mn.state.health.lims.patient.valueholder.AdverseEffect;
 import us.mn.state.health.lims.patient.valueholder.ObservationData;
 import us.mn.state.health.lims.sample.form.ProjectData;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
-import us.mn.state.health.lims.typeofsample.dao.TypeOfSampleDAO;
-import us.mn.state.health.lims.typeofsample.daoimpl.TypeOfSampleDAOImpl;
 import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 
 public abstract class BaseProjectFormMapper implements IProjectFormMapper {
@@ -67,6 +67,9 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
 
 	protected boolean patientForm;
 
+	private TestService testService = SpringContext.getBean(TestService.class);
+	private static TypeOfSampleService typeofsampleService = SpringContext.getBean(TypeOfSampleService.class);
+
 	@Override
 	public ProjectForm getProjectForm() {
 		return ProjectForm.findProjectFormByFormId(projectFormId);
@@ -90,7 +93,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
 	}
 
 	protected Test createTest(String testName, boolean orderableOnly) {
-		Test test = new TestDAOImpl().getTestByName(testName);
+		Test test = testService.getTestByName(testName);
 		if (test == null) {
 			throw new LIMSRuntimeException("Unable to find test '" + testName + "'");
 		}
@@ -116,10 +119,10 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
 
 	// TODO PAHill Maybe should move to some utility class
 	public static TypeOfSample getTypeOfSampleByDescription(String typeName) {
-		TypeOfSampleDAO typeofsampleDAO = new TypeOfSampleDAOImpl();
 		TypeOfSample typeofsample = new TypeOfSample();
 		typeofsample.setDescription(typeName);
-		typeofsample = typeofsampleDAO.getTypeOfSampleByDescriptionAndDomain(typeofsample, true); // true = ignoreCase
+		typeofsample = typeofsampleService.getTypeOfSampleByDescriptionAndDomain(typeofsample, true); // true =
+																										// ignoreCase
 
 		return typeofsample;
 	}

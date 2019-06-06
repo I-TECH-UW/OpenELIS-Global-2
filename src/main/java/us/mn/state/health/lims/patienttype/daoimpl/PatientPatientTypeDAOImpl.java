@@ -46,6 +46,8 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
 
 	@Autowired
 	private AuditTrailDAO auditDAO;
+	@Autowired
+	private PatientTypeDAO patientTypeDAO;
 
 	@Override
 	public boolean insertData(PatientPatientType patientType) throws LIMSRuntimeException {
@@ -116,7 +118,6 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
 		PatientPatientType patientPatientType = getPatientPatientTypeForPatient(id);
 
 		if (patientPatientType != null) {
-			PatientTypeDAO patientTypeDAO = new PatientTypeDAOImpl();
 			PatientType patientType = new PatientType();
 			patientType.setId(patientPatientType.getPatientTypeId());
 			patientTypeDAO.getData(patientType);

@@ -24,25 +24,27 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.analysis.AnalysisService;
+import spring.service.dictionary.DictionaryService;
+import spring.service.result.ResultService;
+import spring.service.sampleorganization.SampleOrganizationService;
 import spring.service.test.TestServiceImpl;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
-import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.IndeterminateReportData;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
-import us.mn.state.health.lims.sampleorganization.dao.SampleOrganizationDAO;
-import us.mn.state.health.lims.sampleorganization.daoimpl.SampleOrganizationDAOImpl;
 import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization;
 
 public abstract class PatientIndeterminateReport extends RetroCIPatientReport {
 
 	protected List<IndeterminateReportData> reportItems;
+
+	private SampleOrganizationService orgService = SpringContext.getBean(SampleOrganizationService.class);
+	private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+	private DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+	private ResultService resultService = SpringContext.getBean(ResultService.class);
 
 	@Override
 	protected String getReportNameForReport() {
@@ -71,8 +73,6 @@ public abstract class PatientIndeterminateReport extends RetroCIPatientReport {
 
 	protected void setPatientInfo(IndeterminateReportData data) {
 
-		SampleOrganizationDAO orgDAO = new SampleOrganizationDAOImpl();
-
 		String subjectNumber = reportPatient.getNationalId();
 		if (GenericValidator.isBlankOrNull(subjectNumber)) {
 			subjectNumber = reportPatient.getExternalId();
@@ -87,7 +87,7 @@ public abstract class PatientIndeterminateReport extends RetroCIPatientReport {
 
 		SampleOrganization sampleOrg = new SampleOrganization();
 		sampleOrg.setSample(reportSample);
-		orgDAO.getDataBySample(sampleOrg);
+		orgService.getDataBySample(sampleOrg);
 		data.setOrgname(sampleOrg.getId() == null ? "" : sampleOrg.getOrganization().getOrganizationName());
 
 		data.setDoctor(getObservationValues(OBSERVATION_DOCTOR_ID));
@@ -96,16 +96,14 @@ public abstract class PatientIndeterminateReport extends RetroCIPatientReport {
 
 	protected void setTestInfo(IndeterminateReportData data) {
 		boolean atLeastOneAnalysisNotValidated = false;
-		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleId(reportSample.getId());
-		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
+
+		List<Analysis> analysisList = analysisService.getAnalysesBySampleId(reportSample.getId());
 		String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
-		ResultDAO resultDAO = new ResultDAOImpl();
 
 		for (Analysis analysis : analysisList) {
 			String testName = TestServiceImpl.getUserLocalizedTestName(analysis.getTest());
 
-			List<Result> resultList = resultDAO.getResultsByAnalysis(analysis);
+			List<Result> resultList = resultService.getResultsByAnalysis(analysis);
 			String resultValue = null;
 
 			boolean valid = ANALYSIS_FINALIZED_STATUS_ID.equals(analysis.getStatusId());
@@ -122,7 +120,7 @@ public abstract class PatientIndeterminateReport extends RetroCIPatientReport {
 
 					Dictionary dictionary = new Dictionary();
 					dictionary.setId(result.getValue());
-					dictionaryDAO.getData(dictionary);
+					dictionaryService.getData(dictionary);
 
 					if (result.getAnalyte() != null && result.getAnalyte().getId().equals(CONCLUSION_ID)) {
 						data.setFinalResult(valid ? dictionary.getDictEntry() : invalidValue);
@@ -133,7 +131,7 @@ public abstract class PatientIndeterminateReport extends RetroCIPatientReport {
 			} else if (valid && resultList.size() > 0) {
 				Dictionary dictionary = new Dictionary();
 				dictionary.setId(resultList.get(0).getValue());
-				dictionaryDAO.getData(dictionary);
+				dictionaryService.getData(dictionary);
 				resultValue = dictionary.getDictEntry();
 			}
 

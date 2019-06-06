@@ -45,6 +45,8 @@ public class DataSubmissionController extends BaseController {
 	TypeOfDataIndicatorService typeOfDataIndicatorService;
 	@Autowired
 	DataIndicatorService dataIndicatorService;
+	@Autowired
+	DataSubmitter dataSubmitter;
 
 	@RequestMapping(value = "/DataSubmission", method = RequestMethod.GET)
 	public ModelAndView showDataSubmission(HttpServletRequest request) {
@@ -99,7 +101,7 @@ public class DataSubmissionController extends BaseController {
 		siteInformationService.updateData(dataSubUrl);
 		for (DataIndicator indicator : indicators) {
 			if (submit && indicator.isSendIndicator()) {
-				boolean success = DataSubmitter.sendDataIndicator(indicator);
+				boolean success = dataSubmitter.sendDataIndicator(indicator);
 				indicator.setStatus(DataIndicator.SENT);
 				if (success) {
 					indicator.setStatus(DataIndicator.RECEIVED);
@@ -111,8 +113,8 @@ public class DataSubmissionController extends BaseController {
 				}
 			}
 
-			DataIndicator databaseIndicator = dataIndicatorService.getIndicatorByTypeYearMonth(indicator.getTypeOfIndicator(),
-					year, month);
+			DataIndicator databaseIndicator = dataIndicatorService
+					.getIndicatorByTypeYearMonth(indicator.getTypeOfIndicator(), year, month);
 			if (databaseIndicator == null) {
 				dataIndicatorService.insertData(indicator);
 			} else {

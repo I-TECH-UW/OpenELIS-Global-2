@@ -20,8 +20,8 @@ package us.mn.state.health.lims.common.util;
 import java.io.InputStream;
 import java.util.Properties;
 
-import us.mn.state.health.lims.common.dao.DatabaseChangeLogDAO;
-import us.mn.state.health.lims.common.daoimpl.DatabaseChangeLogDAOImpl;
+import spring.service.common.DatabaseChangeLogService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.valueholder.DatabaseChangeLog;
 
@@ -30,7 +30,6 @@ public class Versioning {
 	private static final String PROPERTY_FILE = "/build.properties";
 	private static String buildNumber = "Not set";
 	private static String releaseNumber = " ";
-
 
 	static {
 		InputStream propertyStream = null;
@@ -44,38 +43,38 @@ public class Versioning {
 			properties.load(propertyStream);
 
 		} catch (Exception e) {
-			LogEvent.logError("Versioning","",e.toString());
+			LogEvent.logError("Versioning", "", e.toString());
 		} finally {
 			if (null != propertyStream) {
 				try {
 					propertyStream.close();
 					propertyStream = null;
 				} catch (Exception e) {
-			        LogEvent.logError("Versioning","static initializer",e.toString());
+					LogEvent.logError("Versioning", "static initializer", e.toString());
 				}
 			}
 		}
-		if( properties != null){
+		if (properties != null) {
 			releaseNumber = properties.getProperty("release", " ");
 			buildNumber = properties.getProperty("build", "Not set");
 		}
 	}
 
-	public static String getDatabaseVersion(){
-		DatabaseChangeLogDAO databaseChangeLogDAO = new DatabaseChangeLogDAOImpl();
-		DatabaseChangeLog changeLog = databaseChangeLogDAO.getLastExecutedChange();
+	public static String getDatabaseVersion() {
+		DatabaseChangeLogService databaseChangeLogService = SpringContext.getBean(DatabaseChangeLogService.class);
+		DatabaseChangeLog changeLog = databaseChangeLogService.getLastExecutedChange();
 
-		if( changeLog != null){
+		if (changeLog != null) {
 			return changeLog.getAuthor() + "/" + changeLog.getId() + "/" + changeLog.getFileName();
 		}
 
 		return "";
 	}
 
-	public static String getBuildNumber(){
+	public static String getBuildNumber() {
 		return buildNumber;
 	}
-	
+
 	public static String getReleaseNumber() {
 		return releaseNumber;
 	}

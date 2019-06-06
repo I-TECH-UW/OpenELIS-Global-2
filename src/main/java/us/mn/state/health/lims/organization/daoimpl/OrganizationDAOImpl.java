@@ -40,7 +40,6 @@ import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.organization.dao.OrganizationDAO;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.project.dao.ProjectDAO;
-import us.mn.state.health.lims.project.daoimpl.ProjectDAOImpl;
 import us.mn.state.health.lims.project.valueholder.Project;
 
 /**
@@ -56,6 +55,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
 	@Autowired
 	private AuditTrailDAO auditDAO;
+	@Autowired
+	private ProjectDAO projectDAO;
 
 	@Override
 	public void deleteData(List organizations) throws LIMSRuntimeException {
@@ -530,7 +531,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 	public Set<Organization> getOrganizationsByProjectName(String projectName) {
 		Project p = new Project();
 		p.setProjectName(projectName);
-		p = ((ProjectDAO) new ProjectDAOImpl()).getProjectByName(p, false, true);
+		p = projectDAO.getProjectByName(p, false, true);
 		Set<Organization> orgs = p.getOrganizations();
 		return orgs;
 	}

@@ -61,6 +61,7 @@ import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -960,7 +961,7 @@ public class ResultsLoadUtility {
 
 	private List<InventoryKitItem> getActiveKits() {
 		if (activeKits == null) {
-			InventoryUtility inventoryUtil = new InventoryUtility();
+			InventoryUtility inventoryUtil = SpringContext.getBean(InventoryUtility.class);
 			activeKits = inventoryUtil.getExistingActiveInventory();
 		}
 

@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,12 +39,9 @@ import us.mn.state.health.lims.login.valueholder.UserSessionData;
 import us.mn.state.health.lims.result.valueholder.Sample_TestAnalyte;
 import us.mn.state.health.lims.result.valueholder.Test_TestAnalyte;
 import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.test.dao.TestDAO;
 import us.mn.state.health.lims.test.dao.TestSectionDAO;
-import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
-import us.mn.state.health.lims.test.daoimpl.TestSectionDAOImpl;
 import us.mn.state.health.lims.test.valueholder.TestSection;
 
 /**
@@ -57,11 +55,17 @@ public class UserTestSectionDAOImpl extends BaseDAOImpl<TestSection, String> imp
 		super(TestSection.class);
 	}
 
+	@Autowired
+	private TestSectionDAO testSectionDAO;
+	@Autowired
+	private TestDAO testDAO;
+	@Autowired
+	private SampleDAO sampleDAO;
+
 	@Override
 	public List<Object> getAllUserTestSectionsByName(HttpServletRequest request, String testSectionName)
 			throws LIMSRuntimeException {
 
-		TestSectionDAO testSectionDAO = new TestSectionDAOImpl();
 		List<Object> list = new ArrayList<>();
 
 		try {
@@ -91,7 +95,6 @@ public class UserTestSectionDAOImpl extends BaseDAOImpl<TestSection, String> imp
 			String searchStr) throws LIMSRuntimeException {
 
 		List list = new ArrayList();
-		TestDAO testDAO = new TestDAOImpl();
 
 		try {
 			if (SystemConfiguration.getInstance().getEnableUserTestSection().equals(NO)) {
@@ -136,7 +139,6 @@ public class UserTestSectionDAOImpl extends BaseDAOImpl<TestSection, String> imp
 	public List getAllUserTestSections(HttpServletRequest request) throws LIMSRuntimeException {
 
 		List list = new ArrayList();
-		TestSectionDAO testSectDAO = new TestSectionDAOImpl();
 
 		try {
 			if (SystemConfiguration.getInstance().getEnableUserTestSection().equals(NO)) {
@@ -163,7 +165,6 @@ public class UserTestSectionDAOImpl extends BaseDAOImpl<TestSection, String> imp
 	@Override
 	public List getAllUserTests(HttpServletRequest request, boolean onlyTestsFullySetup) throws LIMSRuntimeException {
 		List list = new ArrayList();
-		TestDAO testDAO = new TestDAOImpl();
 
 		try {
 			if (SystemConfiguration.getInstance().getEnableUserTestSection().equals(NO)) {
@@ -224,7 +225,6 @@ public class UserTestSectionDAOImpl extends BaseDAOImpl<TestSection, String> imp
 			throws LIMSRuntimeException {
 
 		List samplePdfList = new java.util.ArrayList();
-		SampleDAO sampleDAO = new SampleDAOImpl();
 
 		try {
 			List statuses = new ArrayList();

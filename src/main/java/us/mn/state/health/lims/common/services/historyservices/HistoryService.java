@@ -28,12 +28,12 @@ import java.util.Map;
 import org.apache.commons.validator.GenericValidator;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import us.mn.state.health.lims.audittrail.action.workers.AuditTrailItem;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.audittrail.daoimpl.AuditTrailDAOImpl;
 import us.mn.state.health.lims.audittrail.valueholder.History;
 import us.mn.state.health.lims.common.services.StatusService;
-import us.mn.state.health.lims.common.services.TypeOfTestResultService;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
@@ -193,7 +193,7 @@ public abstract class HistoryService {
 	}
 
 	protected String getViewableValue(String value, Result result) {
-		if (TypeOfTestResultService.ResultType.isDictionaryVariant(result.getResultType())
+		if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())
 				&& !GenericValidator.isBlankOrNull(value) && org.apache.commons.lang.StringUtils.isNumeric(value)) {
 			Dictionary dictionaryValue = dictDAO.getDictionaryById(value);
 			value = dictionaryValue != null ? dictionaryValue.getDictEntry()

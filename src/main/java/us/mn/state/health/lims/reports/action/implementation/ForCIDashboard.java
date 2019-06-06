@@ -32,8 +32,8 @@ import org.jfree.util.Log;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
-import us.mn.state.health.lims.project.dao.ProjectDAO;
-import us.mn.state.health.lims.project.daoimpl.ProjectDAOImpl;
+import spring.service.project.ProjectService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.project.valueholder.Project;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.CSVColumnBuilder;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ForCIDashboardColumnBuilder;
@@ -43,25 +43,26 @@ import us.mn.state.health.lims.reports.action.implementation.reportBeans.ForCIDa
  * @since Jan 26, 2011
  */
 public class ForCIDashboard extends CSVSampleExportReport implements IReportParameterSetter, IReportCreator {
-	protected final ProjectDAO projectDAO = new ProjectDAOImpl();
+	protected final ProjectService projectService = SpringContext.getBean(ProjectService.class);
 	private String projectStr;
 	private Project project;
 	private String indicStr;
 	protected static final SimpleDateFormat postgresDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	//private String indicLabel;
-	
+	// private String indicLabel;
+
 	@Override
-	protected String reportFileName(){
-		//return indicLabel;
+	protected String reportFileName() {
+		// return indicLabel;
 		return "ForCIDashboard";
 	}
 
+	@Override
 	public void setRequestParameters(BaseForm form) {
 		try {
 			PropertyUtils.setProperty(form, "reportName", getReportNameForParameterPage());
 			PropertyUtils.setProperty(form, "useLowerDateRange", Boolean.TRUE);
 			PropertyUtils.setProperty(form, "useUpperDateRange", Boolean.TRUE);
-			//PropertyUtils.setProperty(form, "useProjectCode", Boolean.TRUE);
+			// PropertyUtils.setProperty(form, "useProjectCode", Boolean.TRUE);
 			PropertyUtils.setProperty(form, "useDashboard", Boolean.TRUE);
 			PropertyUtils.setProperty(form, "projectCodeList", getProjectList());
 		} catch (Exception e) {
@@ -70,19 +71,20 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
 	}
 
 	protected String getReportNameForParameterPage() {
-		return MessageUtil.getMessage("reports.label.project.export") + " "
-				+ "Date d'impression du rapport";//MessageUtil.getContextualMessage("sample.collectionDate");
+		return MessageUtil.getMessage("reports.label.project.export") + " " + "Date d'impression du rapport";// MessageUtil.getContextualMessage("sample.collectionDate");
 	}
 
+	@Override
 	protected void createReportParameters() {
 		super.createReportParameters();
 		reportParameters.put("studyName", (project == null) ? null : project.getLocalizedName());
 	}
 
+	@Override
 	public void initializeReport(BaseForm form) {
 		super.initializeReport();
 		errorFound = false;
-		
+
 		indicStr = form.getString("projectCode");
 
 		lowDateStr = form.getString("lowerDateRange");
@@ -90,16 +92,16 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
 		projectStr = form.getString("projectCode");
 		dateRange = new DateRange(lowDateStr, highDateStr);
 		String[] splitline = form.getString("projectCode").split(":");
-		
+
 		projectStr = splitline[0];
-		//indicLabel = splitline[1];
+		// indicLabel = splitline[1];
 		createReportParameters();
-		
+
 		errorFound = !validateSubmitParameters();
 		if (errorFound) {
 			return;
 		}
-		
+
 		createReportItems();
 	}
 
@@ -111,16 +113,15 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
 	}
 
 	/**
-	 * @return true, if location is not blank or "0" is is found in the DB;
-	 *         false otherwise
+	 * @return true, if location is not blank or "0" is is found in the DB; false
+	 *         otherwise
 	 */
 	private boolean validateProject() {
 		if (isBlankOrNull(projectStr) || "0".equals(Integer.getInteger(projectStr))) {
 			add1LineErrorMessage("report.error.message.project.missing");
 			return false;
 		}
-		ProjectDAO dao = new ProjectDAOImpl();
-		project = dao.getProjectById(projectStr);
+		project = projectService.getProjectById(projectStr);
 		if (project == null) {
 			add1LineErrorMessage("report.error.message.project.missing");
 			return false;
@@ -141,63 +142,62 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
 		}
 	}
 
-	protected void writeResultsToBuffer(ByteArrayOutputStream buffer) throws Exception, IOException, UnsupportedEncodingException {
-	
-        String currentAccessionNumber = null;
-        String[] splitBase = null;
-        while (csvColumnBuilder.next()) {
-            String line = csvColumnBuilder.nextLine();
-            String[] splitLine = line.split(",");
+	@Override
+	protected void writeResultsToBuffer(ByteArrayOutputStream buffer)
+			throws Exception, IOException, UnsupportedEncodingException {
 
-            if (splitLine[0].equals(currentAccessionNumber)) {
-                merge(splitBase, splitLine);
-            } else {
-                if (currentAccessionNumber != null && writeAble(splitBase[16].trim())) {
-                    
-                                   
-                    writeConsolidatedBaseToBuffer(buffer, splitBase);
-                }
-                splitBase = splitLine;
-                currentAccessionNumber = splitBase[0];
-                }
-        }
-        if (writeAble(splitBase[16].trim()))
-            writeConsolidatedBaseToBuffer(buffer, splitBase);
-           }
+		String currentAccessionNumber = null;
+		String[] splitBase = null;
+		while (csvColumnBuilder.next()) {
+			String line = csvColumnBuilder.nextLine();
+			String[] splitLine = line.split(",");
 
-	
-	
+			if (splitLine[0].equals(currentAccessionNumber)) {
+				merge(splitBase, splitLine);
+			} else {
+				if (currentAccessionNumber != null && writeAble(splitBase[16].trim())) {
+
+					writeConsolidatedBaseToBuffer(buffer, splitBase);
+				}
+				splitBase = splitLine;
+				currentAccessionNumber = splitBase[0];
+			}
+		}
+		if (writeAble(splitBase[16].trim())) {
+			writeConsolidatedBaseToBuffer(buffer, splitBase);
+		}
+	}
+
 	private boolean writeAble(String result) throws ParseException {
-		
-		       
-        String workingResult = result.split("\\(")[0].trim();
-       // System.out.println("result=" + result + " / workingResult= " + workingResult);
-        String[] splitLine = indicStr.split(":");
-        String indic = splitLine[1];
-        if (indic.equals("Unsuppressed VL"))
-            return workingResult.contains("Log7")|| !workingResult.contains("L") && !workingResult.contains("X") && !workingResult.contains("<") && workingResult.length()>0 
-                    && Double.parseDouble(workingResult) >= 1000;// workingResult.length()>=4 &&
-                                                                    // !workingResult.contains("L") &&
-                                                                    // !workingResult.contains("X") ;
-        else if (indic.equals("Suppressed VL"))
-            return workingResult.contains("L") || workingResult.contains("<") 
-                    || (workingResult.length()>0 && !workingResult.contains("X") && Double.parseDouble(workingResult) < 1000);
 
-        return false;
-    }
-	
-	
+		String workingResult = result.split("\\(")[0].trim();
+		// System.out.println("result=" + result + " / workingResult= " +
+		// workingResult);
+		String[] splitLine = indicStr.split(":");
+		String indic = splitLine[1];
+		if (indic.equals("Unsuppressed VL")) {
+			return workingResult.contains("Log7")
+					|| !workingResult.contains("L") && !workingResult.contains("X") && !workingResult.contains("<")
+							&& workingResult.length() > 0 && Double.parseDouble(workingResult) >= 1000;// workingResult.length()>=4
+																										// &&
+		} else if (indic.equals("Suppressed VL")) {
+			return workingResult.contains("L") || workingResult.contains("<") || (workingResult.length() > 0
+					&& !workingResult.contains("X") && Double.parseDouble(workingResult) < 1000);
+		}
+
+		return false;
+	}
 
 	private void merge(String[] base, String[] line) {
-		for( int i = 0; i < base.length; ++i){
-			if( GenericValidator.isBlankOrNull(base[i])){
+		for (int i = 0; i < base.length; ++i) {
+			if (GenericValidator.isBlankOrNull(base[i])) {
 				base[i] = line[i];
 			}
 		}
 	}
 
-	protected void writeConsolidatedBaseToBuffer(ByteArrayOutputStream buffer, String[] splitBase) throws IOException,
-			UnsupportedEncodingException {
+	protected void writeConsolidatedBaseToBuffer(ByteArrayOutputStream buffer, String[] splitBase)
+			throws IOException, UnsupportedEncodingException {
 
 		if (splitBase != null) {
 			StringBuffer consolidatedLine = new StringBuffer();
@@ -212,55 +212,50 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
 	}
 
 	private CSVColumnBuilder getColumnBuilder(String projectId) {
-		//String projectTag = CIColumnBuilder.translateProjectId(projectId);
+		// String projectTag = CIColumnBuilder.translateProjectId(projectId);
 		return new ForCIDashboardColumnBuilder(dateRange, projectStr);
-		
-	}
-		
-		
-		/*
-		if (projectTag.equals("ARVB")) {
-			return new ARVInitialColumnBuilder(dateRange, projectStr);
-		} else if (projectTag.equals("ARVS")) {
-			return new ARVFollowupColumnBuilder(dateRange, projectStr);
-		} else if (projectTag.equalsIgnoreCase("DBS")) {
-			return new EIDColumnBuilder(dateRange, projectStr);
-		} else if (projectTag.equalsIgnoreCase("VLS")) {
-			return new VLColumnBuilder(dateRange, projectStr);
-		} else if (projectTag.equalsIgnoreCase("RTN")) {
-			return new RTNColumnBuilder(dateRange, projectStr);
-		} else if (projectTag.equalsIgnoreCase("IND")) {
-			return new RTNColumnBuilder(dateRange, projectStr);
-		}
-		throw new IllegalArgumentException();
+
 	}
 
-	
-	
-	
-	
-	
-	/**
+	/*
+	 * if (projectTag.equals("ARVB")) { return new
+	 * ARVInitialColumnBuilder(dateRange, projectStr); } else if
+	 * (projectTag.equals("ARVS")) { return new ARVFollowupColumnBuilder(dateRange,
+	 * projectStr); } else if (projectTag.equalsIgnoreCase("DBS")) { return new
+	 * EIDColumnBuilder(dateRange, projectStr); } else if
+	 * (projectTag.equalsIgnoreCase("VLS")) { return new VLColumnBuilder(dateRange,
+	 * projectStr); } else if (projectTag.equalsIgnoreCase("RTN")) { return new
+	 * RTNColumnBuilder(dateRange, projectStr); } else if
+	 * (projectTag.equalsIgnoreCase("IND")) { return new RTNColumnBuilder(dateRange,
+	 * projectStr); } throw new IllegalArgumentException(); }
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 * /**
+	 *
 	 * @return a list of the correct projects for display
 	 */
 	protected List<Project> getProjectList() {
-		List<Project> projects = new ArrayList<Project>();
+		List<Project> projects = new ArrayList<>();
 		Project project = new Project();
 		/*
-		project.setProjectName("Antiretroviral Study");
-		projects.add(projectDAO.getProjectByName(project, false, false));
-		project.setProjectName("Antiretroviral Followup Study");
-		projects.add(projectDAO.getProjectByName(project, false, false));
-		project.setProjectName("Routine HIV Testing");
-		projects.add(projectDAO.getProjectByName(project, false, false));
-		project.setProjectName("Early Infant Diagnosis for HIV Study");
-		projects.add(projectDAO.getProjectByName(project, false, false));
-		project.setProjectName("Viral Load Results");
-		projects.add(projectDAO.getProjectByName(project, false, false));
-		project.setProjectName("Indeterminate Results");
-		projects.add(projectDAO.getProjectByName(project, false, false));
-		*/
-		
+		 * project.setProjectName("Antiretroviral Study");
+		 * projects.add(projectService.getProjectByName(project, false, false));
+		 * project.setProjectName("Antiretroviral Followup Study");
+		 * projects.add(projectService.getProjectByName(project, false, false));
+		 * project.setProjectName("Routine HIV Testing");
+		 * projects.add(projectService.getProjectByName(project, false, false));
+		 * project.setProjectName("Early Infant Diagnosis for HIV Study");
+		 * projects.add(projectService.getProjectByName(project, false, false));
+		 * project.setProjectName("Viral Load Results");
+		 * projects.add(projectService.getProjectByName(project, false, false));
+		 * project.setProjectName("Indeterminate Results");
+		 * projects.add(projectService.getProjectByName(project, false, false));
+		 */
+
 		project.setId("28:Unsuppressed VL");
 		project.setProjectName("Unsuppressed VL");
 		projects.add(project);
@@ -268,9 +263,7 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
 		project.setId("28:Suppressed VL");
 		project.setProjectName("Suppressed VL");
 		projects.add(project);
-		
-		
-		
+
 		return projects;
 	}
 }

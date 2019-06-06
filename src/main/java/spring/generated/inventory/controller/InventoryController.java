@@ -96,7 +96,7 @@ public class InventoryController extends BaseController {
 		request.setAttribute(NEXT_DISABLED, "true");
 		request.getSession().setAttribute(SAVE_DISABLED, FALSE);
 
-		InventoryUtility utility = new InventoryUtility();
+		InventoryUtility utility = SpringContext.getBean(InventoryUtility.class);
 		List<InventoryKitItem> list = utility.getExistingInventory();
 		List<String> kitTypes = getTestKitTypes();
 		List<IdValuePair> sources = getSources();

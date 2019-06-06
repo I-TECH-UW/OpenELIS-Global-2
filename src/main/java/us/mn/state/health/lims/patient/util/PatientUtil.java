@@ -20,87 +20,83 @@ package us.mn.state.health.lims.patient.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import us.mn.state.health.lims.gender.daoimpl.GenderDAOImpl;
+import spring.service.gender.GenderService;
+import spring.service.patient.PatientService;
+import spring.service.patientidentity.PatientIdentityService;
+import spring.service.person.PersonService;
+import spring.service.provider.ProviderService;
+import spring.service.samplehuman.SampleHumanService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.gender.valueholder.Gender;
-import us.mn.state.health.lims.patient.dao.PatientDAO;
-import us.mn.state.health.lims.patient.daoimpl.PatientDAOImpl;
 import us.mn.state.health.lims.patient.valueholder.Patient;
-import us.mn.state.health.lims.patientidentity.dao.PatientIdentityDAO;
-import us.mn.state.health.lims.patientidentity.daoimpl.PatientIdentityDAOImpl;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
-import us.mn.state.health.lims.person.dao.PersonDAO;
-import us.mn.state.health.lims.person.daoimpl.PersonDAOImpl;
 import us.mn.state.health.lims.person.valueholder.Person;
-import us.mn.state.health.lims.provider.dao.ProviderDAO;
-import us.mn.state.health.lims.provider.daoimpl.ProviderDAOImpl;
 import us.mn.state.health.lims.provider.valueholder.Provider;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.samplehuman.daoimpl.SampleHumanDAOImpl;
 
 public class PatientUtil {
 
 	private static Patient UNKNOWN_PATIENT;
 	private static Person UNKNOWN_PERSON;
 	private static Provider UNKNOWN_PROVIDER;
-	private static PatientDAO patientDAO = new PatientDAOImpl();
-	
+	private static PatientService patientService = SpringContext.getBean(PatientService.class);
+
 	private static void initializeUnknowns() {
-		PersonDAO personDAO = new PersonDAOImpl();
-		UNKNOWN_PERSON = personDAO.getPersonByLastName("UNKNOWN_");
+		PersonService personService = SpringContext.getBean(PersonService.class);
+		UNKNOWN_PERSON = personService.getPersonByLastName("UNKNOWN_");
 		if (UNKNOWN_PERSON == null) {
 			UNKNOWN_PERSON = new Person();
 			UNKNOWN_PERSON.setSysUserId("1");
 			UNKNOWN_PERSON.setLastName("UNKNOWN_");
-			personDAO.insertData(UNKNOWN_PERSON);
+			personService.insertData(UNKNOWN_PERSON);
 		}
 
-		ProviderDAO providerDAO = new ProviderDAOImpl();
-		UNKNOWN_PROVIDER = providerDAO.getProviderByPerson(UNKNOWN_PERSON);
+		ProviderService providerService = SpringContext.getBean(ProviderService.class);
+		UNKNOWN_PROVIDER = providerService.getProviderByPerson(UNKNOWN_PERSON);
 
 		if (UNKNOWN_PROVIDER == null) {
 			UNKNOWN_PROVIDER = new Provider();
 			UNKNOWN_PROVIDER.setSysUserId("1");
 			UNKNOWN_PROVIDER.setPerson(UNKNOWN_PERSON);
-			providerDAO.insertData(UNKNOWN_PROVIDER);
+			providerService.insertData(UNKNOWN_PROVIDER);
 		}
 
-
-		UNKNOWN_PATIENT = patientDAO.getPatientByPerson(UNKNOWN_PERSON);
+		UNKNOWN_PATIENT = patientService.getPatientByPerson(UNKNOWN_PERSON);
 
 		if (UNKNOWN_PATIENT == null) {
 			UNKNOWN_PATIENT = new Patient();
 			UNKNOWN_PATIENT.setSysUserId("1");
 			UNKNOWN_PATIENT.setPerson(UNKNOWN_PERSON);
-			patientDAO.insertData(UNKNOWN_PATIENT);
+			patientService.insertData(UNKNOWN_PATIENT);
 		}
 	}
 
 	public static String getDisplayDOBForPatient(String patientId, String defaultValue) {
-		Patient patient = patientDAO.getData(patientId);
-		if( patient != null){
+		Patient patient = patientService.getData(patientId);
+		if (patient != null) {
 			return patient.getBirthDateForDisplay();
 		}
-		
+
 		return defaultValue;
 	}
 
 	public static List<PatientIdentity> getIdentityListForPatient(String patientId) {
-		PatientIdentityDAO identityDAO = new PatientIdentityDAOImpl();
-		return identityDAO.getPatientIdentitiesForPatient(patientId);
+		PatientIdentityService identityService = SpringContext.getBean(PatientIdentityService.class);
+		return identityService.getPatientIdentitiesForPatient(patientId);
 	}
 
 	@SuppressWarnings("unchecked")
 	public static List<Gender> findGenders() {
-		return (List<Gender>) new GenderDAOImpl().getAllGenders();
+		return SpringContext.getBean(GenderService.class).getAllGenders();
 	}
 
 	public static List<PatientIdentity> getIdentityListForPatient(Patient patient) {
-        if( patient != null){
-            PatientIdentityDAO identityDAO = new PatientIdentityDAOImpl();
-            return identityDAO.getPatientIdentitiesForPatient( patient.getId() );
-        }else{
-            return new ArrayList<PatientIdentity>(  );
-        }
+		if (patient != null) {
+			PatientIdentityService identityService = SpringContext.getBean(PatientIdentityService.class);
+			return identityService.getPatientIdentitiesForPatient(patient.getId());
+		} else {
+			return new ArrayList<>();
+		}
 	}
 
 	public static void invalidateUnknownPatients() {
@@ -110,37 +106,37 @@ public class PatientUtil {
 	}
 
 	public static Patient getUnknownPatient() {
-		if( UNKNOWN_PATIENT == null){
+		if (UNKNOWN_PATIENT == null) {
 			initializeUnknowns();
 		}
 		return UNKNOWN_PATIENT;
 	}
 
 	public static Person getUnknownPerson() {
-		if( UNKNOWN_PERSON == null){
+		if (UNKNOWN_PERSON == null) {
 			initializeUnknowns();
 		}
 		return UNKNOWN_PERSON;
 	}
 
 	public static Provider getUnownProvider() {
-		if( UNKNOWN_PROVIDER == null){
+		if (UNKNOWN_PROVIDER == null) {
 			initializeUnknowns();
 		}
 		return UNKNOWN_PROVIDER;
 	}
-	
-	public static Patient getPatientByIdentificationNumber( String id){
-		Patient patient = patientDAO.getPatientByNationalId(id);
-		
-		if( patient == null){
-			patient = patientDAO.getPatientByExternalId(id);
+
+	public static Patient getPatientByIdentificationNumber(String id) {
+		Patient patient = patientService.getPatientByNationalId(id);
+
+		if (patient == null) {
+			patient = patientService.getPatientByExternalId(id);
 		}
-		
+
 		return patient;
 	}
-	
-	public static Patient getPatientForSample(Sample sample){
-		return new SampleHumanDAOImpl().getPatientForSample(sample);
+
+	public static Patient getPatientForSample(Sample sample) {
+		return SpringContext.getBean(SampleHumanService.class).getPatientForSample(sample);
 	}
 }

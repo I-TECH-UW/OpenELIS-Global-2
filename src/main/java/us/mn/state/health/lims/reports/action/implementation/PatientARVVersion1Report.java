@@ -21,48 +21,51 @@ import java.util.List;
 import spring.mine.internationalization.MessageUtil;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 
-public class PatientARVVersion1Report extends PatientARVReport implements  IReportCreator {
+public class PatientARVVersion1Report extends PatientARVReport implements IReportCreator {
 
 	@Override
 	protected void createReportParameters() {
 		super.createReportParameters();
 		reportParameters.put("showSerologie", Boolean.FALSE);
-		reportParameters.put("showVirologie", Boolean.TRUE);	
+		reportParameters.put("showVirologie", Boolean.TRUE);
 	}
 
 	@Override
-    protected String reportFileName(){
-    	return "Patient_ARV_Version1";
-    }
-
-	protected String getReportNameForReport(){
-		//assume that we'll not get this
-		return "Bilan-Suivi";
-			
+	protected String reportFileName() {
+		return "Patient_ARV_Version1";
 	}
 
-	protected boolean allowSample(){
-		List<ObservationHistory> historyList = observationHistoryDAO.getAll(reportPatient, reportSample, OBSERVATION_PROJECT_ID);
-		
-		for( ObservationHistory history : historyList){
-			if("FollowUpARV_Id".equals(history.getValue())){
+	@Override
+	protected String getReportNameForReport() {
+		// assume that we'll not get this
+		return "Bilan-Suivi";
+
+	}
+
+	@Override
+	protected boolean allowSample() {
+		List<ObservationHistory> historyList = observationHistoryService.getAll(reportPatient, reportSample,
+				OBSERVATION_PROJECT_ID);
+
+		for (ObservationHistory history : historyList) {
+			if ("FollowUpARV_Id".equals(history.getValue())) {
 				reportParameters.put("studyName", MessageUtil.getMessage("reports.label.patient.ARV.followup"));
 				return true;
-			}else if("InitialARV_Id".equals(history.getValue())){
-				reportParameters.put("studyName", MessageUtil.getMessage("reports.label.patient.ARV.initial"));	
+			} else if ("InitialARV_Id".equals(history.getValue())) {
+				reportParameters.put("studyName", MessageUtil.getMessage("reports.label.patient.ARV.initial"));
 				return true;
-			}
-			else if("VL_Id".equals(history.getValue())){
-				reportParameters.put("studyName", MessageUtil.getMessage("reports.label.patient.VL"));	
+			} else if ("VL_Id".equals(history.getValue())) {
+				reportParameters.put("studyName", MessageUtil.getMessage("reports.label.patient.VL"));
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
+	@Override
 	protected String getProjectId() {
-		return ANTIRETROVIRAL_STUDY_ID+":"+ANTIRETROVIRAL_FOLLOW_UP_STUDY_ID+":"+VL_STUDY_ID;
+		return ANTIRETROVIRAL_STUDY_ID + ":" + ANTIRETROVIRAL_FOLLOW_UP_STUDY_ID + ":" + VL_STUDY_ID;
 	}
 
 }

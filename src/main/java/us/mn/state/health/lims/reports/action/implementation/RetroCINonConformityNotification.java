@@ -31,6 +31,10 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
 import spring.mine.qaevent.service.NonConformityHelper;
+import spring.service.sample.SampleService;
+import spring.service.sampleorganization.SampleOrganizationService;
+import spring.service.sampleqaevent.SampleQaEventService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.QAService;
 import us.mn.state.health.lims.common.services.QAService.QAObservationType;
 import us.mn.state.health.lims.common.util.DateUtil;
@@ -40,21 +44,16 @@ import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.project.valueholder.Project;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.NonConformityReportData;
 import us.mn.state.health.lims.reports.action.util.ReportUtil;
-import us.mn.state.health.lims.sample.dao.SampleDAO;
-import us.mn.state.health.lims.sample.daoimpl.SampleDAOImpl;
 import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.sampleorganization.dao.SampleOrganizationDAO;
-import us.mn.state.health.lims.sampleorganization.daoimpl.SampleOrganizationDAOImpl;
 import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization;
-import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
-import us.mn.state.health.lims.sampleqaevent.daoimpl.SampleQaEventDAOImpl;
 import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
 
 public class RetroCINonConformityNotification extends RetroCIReport implements IReportCreator, IReportParameterSetter {
 
-	private static SampleQaEventDAO sampleQADAO = new SampleQaEventDAOImpl();
-	private static SampleOrganizationDAO sampleOrgDAO = new SampleOrganizationDAOImpl();
-	private static SampleDAO sampleDAO = new SampleDAOImpl();
+	private static SampleQaEventService sampleQAService = SpringContext.getBean(SampleQaEventService.class);
+	private static SampleOrganizationService sampleOrgService = SpringContext.getBean(SampleOrganizationService.class);
+	private static SampleService sampleService = SpringContext.getBean(SampleService.class);
+
 	private List<NonConformityReportData> reportItems;
 	private String requestedAccessionNumber;
 	private List<String> sampleQaEventIds;
@@ -84,12 +83,12 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 
 		Set<String> orgIds = new HashSet<>();
 		List<Organization> services = new ArrayList<>();
-		List<SampleQaEvent> events = sampleQADAO.getAllUncompleatedEvents();
+		List<SampleQaEvent> events = sampleQAService.getAllUncompleatedEvents();
 
 		events = filterReportedEvents(events);
 
 		for (SampleQaEvent event : events) {
-			SampleOrganization sampleOrg = sampleOrgDAO.getDataBySample(event.getSample());
+			SampleOrganization sampleOrg = sampleOrgService.getDataBySample(event.getSample());
 			if (sampleOrg != null) {
 				if (!orgIds.contains(sampleOrg.getOrganization().getId())) {
 					orgIds.add(sampleOrg.getOrganization().getId());
@@ -154,7 +153,7 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 		}
 
 		if (!GenericValidator.isBlankOrNull(requestedAccessionNumber)) {
-			Sample sample = sampleDAO.getSampleByAccessionNumber(requestedAccessionNumber);
+			Sample sample = sampleService.getSampleByAccessionNumber(requestedAccessionNumber);
 			if (sample == null) {
 				add1LineErrorMessage("report.error.message.accession.not.valid");
 				return false;
@@ -181,11 +180,11 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 
 		if (!GenericValidator.isBlankOrNull(requestedAccessionNumber)) {
 			// we've already checked to make sure there is a sample for the accessionNumber
-			samples.add(sampleDAO.getSampleByAccessionNumber(requestedAccessionNumber));
+			samples.add(sampleService.getSampleByAccessionNumber(requestedAccessionNumber));
 		}
 
 		if (!GenericValidator.isBlankOrNull(serviceId)) {
-			List<Sample> sampleList = sampleDAO.getSamplesWithPendingQaEventsByService(serviceId);
+			List<Sample> sampleList = sampleService.getSamplesWithPendingQaEventsByService(serviceId);
 			samples.addAll(sampleList);
 		}
 
@@ -227,12 +226,12 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
 		String doctor = ReportUtil.findDoctorForSample(sample);
 
 		String orgName = "";
-		SampleOrganization sampleOrg = sampleOrgDAO.getDataBySample(sample);
+		SampleOrganization sampleOrg = sampleOrgService.getDataBySample(sample);
 		if (sampleOrg != null && sampleOrg.getOrganization() != null) {
 			orgName = sampleOrg.getOrganization().getOrganizationName();
 		}
 
-		List<SampleQaEvent> sampleQaEvents = sampleQADAO.getSampleQaEventsBySample(sample);
+		List<SampleQaEvent> sampleQaEvents = sampleQAService.getSampleQaEventsBySample(sample);
 
 		for (SampleQaEvent event : sampleQaEvents) {
 			if (eventPrintable(sampleAccessionNumber, event)) {

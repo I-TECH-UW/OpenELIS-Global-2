@@ -29,25 +29,24 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperRunManager;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.image.ImageService;
+import spring.service.organization.OrganizationService;
+import spring.service.siteinformation.SiteInformationService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
-import us.mn.state.health.lims.image.dao.ImageDAO;
-import us.mn.state.health.lims.image.daoimpl.ImageDAOImpl;
-import us.mn.state.health.lims.organization.dao.OrganizationDAO;
-import us.mn.state.health.lims.organization.daoimpl.OrganizationDAOImpl;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.ErrorMessages;
-import us.mn.state.health.lims.siteinformation.dao.SiteInformationDAO;
-import us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
 public abstract class Report implements IReportCreator {
 
-	public static ImageDAO imageDAO = new ImageDAOImpl();
-	public static SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
+	public static ImageService imageService = SpringContext.getBean(ImageService.class);
+	public static SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
+	private OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
 	public static final String ERROR_REPORT = "NoticeOfReportError";
 
 	protected static final String CSV = "csv";
@@ -108,9 +107,9 @@ public abstract class Report implements IReportCreator {
 
 	@Deprecated
 	private Object getImage(String siteName) {
-		SiteInformation siteInformation = siteInformationDAO.getSiteInformationByName(siteName);
+		SiteInformation siteInformation = siteInformationService.getSiteInformationByName(siteName);
 		return GenericValidator.isBlankOrNull(siteInformation.getValue()) ? null
-				: imageDAO.retrieveImageInputStream(siteInformation.getValue());
+				: imageService.retrieveImageInputStream(siteInformation.getValue());
 	}
 
 	/**
@@ -297,8 +296,7 @@ public abstract class Report implements IReportCreator {
 			add1LineErrorMessage("report.error.message.location.missing");
 			return null;
 		}
-		OrganizationDAO dao = new OrganizationDAOImpl();
-		Organization org = dao.getOrganizationById(locationStr);
+		Organization org = organizationService.getOrganizationById(locationStr);
 		if (org == null) {
 			add1LineErrorMessage("report.error.message.location.missing");
 			return null;

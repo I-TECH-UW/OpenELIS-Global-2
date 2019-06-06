@@ -30,6 +30,7 @@ import spring.mine.internationalization.MessageUtil;
 import spring.mine.siteinformation.form.SiteInformationForm;
 import spring.mine.siteinformation.validator.SiteInformationFormValidator;
 import spring.service.dictionary.DictionaryService;
+import spring.service.localization.LocalizationService;
 import spring.service.sample.SampleService;
 import spring.service.siteinformation.SiteInformationDomainService;
 import spring.service.siteinformation.SiteInformationService;
@@ -51,13 +52,15 @@ public class SiteInformationController extends BaseController {
 	@Autowired
 	SiteInformationService siteInformationService;
 	@Autowired
-	spring.service.localization.LocalizationService localizationService;
+	LocalizationService localizationService;
 	@Autowired
 	SiteInformationDomainService siteInformationDomainService;
 	@Autowired
 	DictionaryService dictionaryService;
 	@Autowired
 	SampleService sampleService;
+	@Autowired
+	ConfigurationSideEffects configurationSideEffects;
 
 	@ModelAttribute("form")
 	public SiteInformationForm form(HttpServletRequest request) {
@@ -347,7 +350,7 @@ public class SiteInformationController extends BaseController {
 //				siteInformationDAO.updateData(siteInformation);
 			}
 
-			new ConfigurationSideEffects().siteInformationChanged(siteInformation);
+			configurationSideEffects.siteInformationChanged(siteInformation);
 
 //			tx.commit();
 		} catch (LIMSRuntimeException lre) {

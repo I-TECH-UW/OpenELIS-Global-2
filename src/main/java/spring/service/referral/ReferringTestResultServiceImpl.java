@@ -1,5 +1,7 @@
 package spring.service.referral;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +10,8 @@ import us.mn.state.health.lims.referral.dao.ReferringTestResultDAO;
 import us.mn.state.health.lims.referral.valueholder.ReferringTestResult;
 
 @Service
-public class ReferringTestResultServiceImpl extends BaseObjectServiceImpl<ReferringTestResult, String> implements ReferringTestResultService {
+public class ReferringTestResultServiceImpl extends BaseObjectServiceImpl<ReferringTestResult, String>
+		implements ReferringTestResultService {
 	@Autowired
 	protected ReferringTestResultDAO baseObjectDAO;
 
@@ -19,5 +22,10 @@ public class ReferringTestResultServiceImpl extends BaseObjectServiceImpl<Referr
 	@Override
 	protected ReferringTestResultDAO getBaseObjectDAO() {
 		return baseObjectDAO;
+	}
+
+	@Override
+	public List<ReferringTestResult> getReferringTestResultsForSampleItem(String id) {
+		return baseObjectDAO.getReferringTestResultsForSampleItem(id);
 	}
 }

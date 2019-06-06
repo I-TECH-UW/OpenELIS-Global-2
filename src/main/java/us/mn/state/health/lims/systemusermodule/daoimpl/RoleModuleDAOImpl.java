@@ -39,7 +39,6 @@ import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.systemusermodule.dao.RoleModuleDAO;
 import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
 import us.mn.state.health.lims.userrole.dao.UserRoleDAO;
-import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
 
 /**
  *
@@ -55,6 +54,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 
 	@Autowired
 	private AuditTrailDAO auditDAO;
+	@Autowired
+	private UserRoleDAO userRoleDAO;
 
 	@Override
 	public void deleteData(List roleModules) throws LIMSRuntimeException {
@@ -369,7 +370,6 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 
 	@Override
 	public boolean isAgentAllowedAccordingToName(String id, String name) throws LIMSRuntimeException {
-		UserRoleDAO userRoleDAO = new UserRoleDAOImpl();
 		return userRoleDAO.userInRole(id, name);
 	}
 

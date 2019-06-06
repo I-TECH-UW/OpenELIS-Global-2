@@ -10,20 +10,18 @@ import org.apache.commons.validator.GenericValidator;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import spring.mine.internationalization.MessageUtil;
+import spring.service.analysis.AnalysisService;
+import spring.service.result.ResultService;
+import spring.service.sampleorganization.SampleOrganizationService;
 import spring.service.test.TestServiceImpl;
-import us.mn.state.health.lims.analysis.dao.AnalysisDAO;
-import us.mn.state.health.lims.analysis.daoimpl.AnalysisDAOImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.ReportTrackingService;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.reports.action.implementation.reportBeans.VLReportData;
-import us.mn.state.health.lims.result.dao.ResultDAO;
-import us.mn.state.health.lims.result.daoimpl.ResultDAOImpl;
 import us.mn.state.health.lims.result.valueholder.Result;
-import us.mn.state.health.lims.sampleorganization.dao.SampleOrganizationDAO;
-import us.mn.state.health.lims.sampleorganization.daoimpl.SampleOrganizationDAOImpl;
 import us.mn.state.health.lims.sampleorganization.valueholder.SampleOrganization;
 
 public abstract class PatientVLReport extends RetroCIPatientReport {
@@ -32,6 +30,10 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 	protected static final long THREE_YEARS = YEAR * 3L;
 	protected static final long WEEK = YEAR / 52L;
 	protected static final long MONTH = YEAR / 12L;
+
+	private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+	private ResultService resultService = SpringContext.getBean(ResultService.class);
+	private SampleOrganizationService orgService = SpringContext.getBean(SampleOrganizationService.class);
 
 	protected List<VLReportData> reportItems;
 	private String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
@@ -67,13 +69,10 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 
 	protected void setTestInfo(VLReportData data) {
 		boolean atLeastOneAnalysisNotValidated = false;
-		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-		List<Analysis> analysisList = analysisDAO.getAnalysesBySampleId(reportSample.getId());
-//		DictionaryDAO dictionaryDAO = new DictionaryDAOImpl();
+		List<Analysis> analysisList = analysisService.getAnalysesBySampleId(reportSample.getId());
 		Timestamp lastReport = ReportTrackingService.getInstance().getTimeOfLastNamedReport(reportSample,
 				ReportTrackingService.ReportType.PATIENT, requestedReport);
 		Boolean mayBeDuplicate = lastReport != null;
-		ResultDAO resultDAO = new ResultDAOImpl();
 
 		Date maxCompleationDate = null;
 		long maxCompleationTime = 0L;
@@ -91,7 +90,7 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 
 			String testName = TestServiceImpl.getUserLocalizedTestName(analysis.getTest());
 
-			List<Result> resultList = resultDAO.getResultsByAnalysis(analysis);
+			List<Result> resultList = resultService.getResultsByAnalysis(analysis);
 
 			boolean valid = ANALYSIS_FINALIZED_STATUS_ID.equals(analysis.getStatusId());
 			if (!valid) {
@@ -143,8 +142,6 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 
 	protected void setPatientInfo(VLReportData data) {
 
-		SampleOrganizationDAO orgDAO = new SampleOrganizationDAOImpl();
-
 		data.setSubjectno(reportPatient.getNationalId());
 		data.setSitesubjectno(reportPatient.getExternalId());
 		data.setBirth_date(reportPatient.getBirthDateForDisplay());
@@ -153,7 +150,7 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 		data.setCollectiondate(DateUtil.convertTimestampToStringDateAndTime(reportSample.getCollectionDate()));
 		SampleOrganization sampleOrg = new SampleOrganization();
 		sampleOrg.setSample(reportSample);
-		orgDAO.getDataBySample(sampleOrg);
+		orgService.getDataBySample(sampleOrg);
 		data.setServicename(sampleOrg.getId() == null ? "" : sampleOrg.getOrganization().getOrganizationName());
 		data.setDoctor(getObservationValues(OBSERVATION_DOCTOR_ID));
 		data.setAccession_number(reportSample.getAccessionNumber());

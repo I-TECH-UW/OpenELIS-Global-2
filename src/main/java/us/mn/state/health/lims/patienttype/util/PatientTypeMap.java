@@ -6,52 +6,51 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 
+import spring.service.patient.PatientTypeService;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
-import us.mn.state.health.lims.patienttype.dao.PatientTypeDAO;
-import us.mn.state.health.lims.patienttype.daoimpl.PatientTypeDAOImpl;
 import us.mn.state.health.lims.patienttype.valueholder.PatientType;
 
 public class PatientTypeMap {
 
 	private static PatientTypeMap s_instance = null;
 	private Map<String, String> m_map;
-	
-	
-	public static PatientTypeMap getInstance(){
-		
-		if( s_instance == null){
+
+	PatientTypeService patientTypeService = SpringContext.getBean(PatientTypeService.class);
+
+	public static PatientTypeMap getInstance() {
+
+		if (s_instance == null) {
 			s_instance = new PatientTypeMap();
 		}
-		
+
 		return s_instance;
 	}
-	
+
 	/*
-	 * Will force the a new fetch of the map and any new PatientIdentityTypes in the DB will be picked up
-	 * 
+	 * Will force the a new fetch of the map and any new PatientIdentityTypes in the
+	 * DB will be picked up
+	 *
 	 * Expected user will be the code which inserts new types into the DB
 	 */
-	public static void reset(){
+	public static void reset() {
 		s_instance = null;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private PatientTypeMap(){
-		m_map = new HashMap<String, String>();
-		
-		PatientTypeDAO patientTypeDAO = new PatientTypeDAOImpl();
+	private PatientTypeMap() {
+		m_map = new HashMap<>();
+		List<PatientType> patientTypes = patientTypeService.getAllPatientTypes();
 
-		List<PatientType> patientTypes = patientTypeDAO.getAllPatientTypes();
-
-		for( PatientType patientType : patientTypes){
+		for (PatientType patientType : patientTypes) {
 			m_map.put(patientType.getType(), patientType.getId());
 		}
 	}
-	
-	public String getIDForType( String type){
+
+	public String getIDForType(String type) {
 		return m_map.get(type);
 	}
-	
+
 	public String getIdentityValue(List<PatientIdentity> identityList, String type) {
 
 		String id = getIDForType(type);

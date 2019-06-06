@@ -19,60 +19,62 @@ package us.mn.state.health.lims.patient.action.bean;
 import java.util.List;
 import java.util.Map;
 
+import spring.service.address.AddressPartService;
 import spring.service.patient.PatientServiceImpl;
-import us.mn.state.health.lims.address.dao.AddressPartDAO;
-import us.mn.state.health.lims.address.daoimpl.AddressPartDAOImpl;
+import spring.util.SpringContext;
 import us.mn.state.health.lims.address.valueholder.AddressPart;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 
 /**
  */
-public class PatientManagementBridge{
+public class PatientManagementBridge {
 
-    public static String ADDRESS_PART_VILLAGE_ID;
-    public static String ADDRESS_PART_COMMUNE_ID;
-    public static String ADDRESS_PART_DEPT_ID;
+	public String ADDRESS_PART_VILLAGE_ID;
+	public String ADDRESS_PART_COMMUNE_ID;
+	public String ADDRESS_PART_DEPT_ID;
 
-    static{
-        AddressPartDAO addressPartDAO = new AddressPartDAOImpl();
-        List<AddressPart> partList = addressPartDAO.getAll();
+	AddressPartService addressPartService = SpringContext.getBean(AddressPartService.class);
 
-        for( AddressPart addressPart : partList){
-            if( "department".equals(addressPart.getPartName())){
-                ADDRESS_PART_DEPT_ID = addressPart.getId();
-            }else if( "commune".equals(addressPart.getPartName())){
-                ADDRESS_PART_COMMUNE_ID = addressPart.getId();
-            }else if( "village".equals(addressPart.getPartName())){
-                ADDRESS_PART_VILLAGE_ID = addressPart.getId();
-            }
-        }
-    }
+	public PatientManagementBridge() {
+		List<AddressPart> partList = addressPartService.getAll();
 
-    public PatientManagementInfo getPatientManagementInfoFor( Patient patient, boolean readOnly){
-        PatientManagementInfo info = new PatientManagementInfo();
-        info.setReadOnly( readOnly );
+		for (AddressPart addressPart : partList) {
+			if ("department".equals(addressPart.getPartName())) {
+				ADDRESS_PART_DEPT_ID = addressPart.getId();
+			} else if ("commune".equals(addressPart.getPartName())) {
+				ADDRESS_PART_COMMUNE_ID = addressPart.getId();
+			} else if ("village".equals(addressPart.getPartName())) {
+				ADDRESS_PART_VILLAGE_ID = addressPart.getId();
+			}
+		}
+	}
 
-        if( patient != null){
-            PatientServiceImpl patientService = new PatientServiceImpl( patient );
-            Map<String, String> addressComponents = patientService.getAddressComponents();
-            info.setFirstName( patientService.getFirstName() );
-            info.setLastName( patientService.getLastName() );
-            info.setAddressDepartment( addressComponents.get( PatientServiceImpl.ADDRESS_DEPT ) );
-            info.setCommune( addressComponents.get( PatientServiceImpl.ADDRESS_COMMUNE ) );
-            info.setCity( addressComponents.get( PatientServiceImpl.ADDRESS_CITY ) );
-            info.setStreetAddress( addressComponents.get( PatientServiceImpl.ADDRESS_STREET ) );
-            info.setGender( readOnly ? patientService.getLocalizedGender() : patientService.getGender() );
-            info.setBirthDateForDisplay( patientService.getBirthdayForDisplay() );
-            info.setNationalId( patientService.getNationalId() );
-            info.setSTnumber( patientService.getSTNumber() );
-            info.setMothersInitial( patientService.getMothersInitial() );
-            if(readOnly){
-                info.setAge( DateUtil.getCurrentAgeForDate( DateUtil.convertStringDateStringTimeToTimestamp( patientService.getBirthdayForDisplay(), null ),
-                        DateUtil.convertStringDateStringTimeToTimestamp(DateUtil.getCurrentDateAsText(), null )));
-            }
-        }
+	public PatientManagementInfo getPatientManagementInfoFor(Patient patient, boolean readOnly) {
+		PatientManagementInfo info = new PatientManagementInfo();
+		info.setReadOnly(readOnly);
 
-        return info;
-    }
+		if (patient != null) {
+			PatientServiceImpl patientService = new PatientServiceImpl(patient);
+			Map<String, String> addressComponents = patientService.getAddressComponents();
+			info.setFirstName(patientService.getFirstName());
+			info.setLastName(patientService.getLastName());
+			info.setAddressDepartment(addressComponents.get(PatientServiceImpl.ADDRESS_DEPT));
+			info.setCommune(addressComponents.get(PatientServiceImpl.ADDRESS_COMMUNE));
+			info.setCity(addressComponents.get(PatientServiceImpl.ADDRESS_CITY));
+			info.setStreetAddress(addressComponents.get(PatientServiceImpl.ADDRESS_STREET));
+			info.setGender(readOnly ? patientService.getLocalizedGender() : patientService.getGender());
+			info.setBirthDateForDisplay(patientService.getBirthdayForDisplay());
+			info.setNationalId(patientService.getNationalId());
+			info.setSTnumber(patientService.getSTNumber());
+			info.setMothersInitial(patientService.getMothersInitial());
+			if (readOnly) {
+				info.setAge(DateUtil.getCurrentAgeForDate(
+						DateUtil.convertStringDateStringTimeToTimestamp(patientService.getBirthdayForDisplay(), null),
+						DateUtil.convertStringDateStringTimeToTimestamp(DateUtil.getCurrentDateAsText(), null)));
+			}
+		}
+
+		return info;
+	}
 }

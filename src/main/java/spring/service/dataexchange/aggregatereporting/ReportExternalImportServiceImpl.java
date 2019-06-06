@@ -11,11 +11,12 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportExterna
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalImport;
 
 @Service
-public class ReportExternalImportServiceImpl extends BaseObjectServiceImpl<ReportExternalImport, String> implements ReportExternalImportService {
+public class ReportExternalImportServiceImpl extends BaseObjectServiceImpl<ReportExternalImport, String>
+		implements ReportExternalImportService {
 	@Autowired
 	protected ReportExternalImportDAO baseObjectDAO;
 
-	ReportExternalImportServiceImpl() {
+	public ReportExternalImportServiceImpl() {
 		super(ReportExternalImport.class);
 	}
 
@@ -25,34 +26,35 @@ public class ReportExternalImportServiceImpl extends BaseObjectServiceImpl<Repor
 	}
 
 	@Override
-	public List<ReportExternalImport> getReportsInDateRangeSortedForSite(Timestamp beginning, Timestamp end, String site) {
-        return getBaseObjectDAO().getReportsInDateRangeSortedForSite(beginning,end,site);
+	public List<ReportExternalImport> getReportsInDateRangeSortedForSite(Timestamp beginning, Timestamp end,
+			String site) {
+		return getBaseObjectDAO().getReportsInDateRangeSortedForSite(beginning, end, site);
 	}
 
 	@Override
 	public List<ReportExternalImport> getReportsInDateRangeSorted(Timestamp lower, Timestamp upper) {
-        return getBaseObjectDAO().getReportsInDateRangeSorted(lower,upper);
+		return getBaseObjectDAO().getReportsInDateRangeSorted(lower, upper);
 	}
 
 	@Override
 	public ReportExternalImport getReportByEventDateSiteType(ReportExternalImport importReport) {
-        return getBaseObjectDAO().getReportByEventDateSiteType(importReport);
+		return getBaseObjectDAO().getReportByEventDateSiteType(importReport);
 	}
 
 	@Override
 	public void updateReportExternalImport(ReportExternalImport report) {
-        getBaseObjectDAO().updateReportExternalImport(report);
+		getBaseObjectDAO().updateReportExternalImport(report);
 
 	}
 
 	@Override
 	public void insertReportExternalImport(ReportExternalImport report) {
-        getBaseObjectDAO().insertReportExternalImport(report);
+		getBaseObjectDAO().insertReportExternalImport(report);
 
 	}
 
 	@Override
 	public List<String> getUniqueSites() {
-        return getBaseObjectDAO().getUniqueSites();
+		return getBaseObjectDAO().getUniqueSites();
 	}
 }

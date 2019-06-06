@@ -125,7 +125,7 @@ public class PatientResultsAction extends BaseAction {
 
 	private void addInventory(DynaActionForm dynaForm)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		InventoryUtility inventoryUtility = new InventoryUtility();
+		InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
 		List<InventoryKitItem> list = inventoryUtility.getExistingActiveInventory();
 		PropertyUtils.setProperty(dynaForm, "inventoryItems", list);
 	}

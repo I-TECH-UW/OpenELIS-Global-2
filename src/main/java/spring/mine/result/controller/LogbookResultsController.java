@@ -186,7 +186,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 			boolean isHaitiClinical = ConfigurationProperties.getInstance()
 					.isPropertyValueEqual(Property.configurationName, "Haiti Clinical");
 			if (resultsLoadUtility.inventoryNeeded() || (isHaitiClinical && ("VCT").equals(ts.getTestSectionName()))) {
-				InventoryUtility inventoryUtility = new InventoryUtility();
+				InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
 				inventoryList = inventoryUtility.getExistingActiveInventory();
 
 				PropertyUtils.setProperty(form, "displayTestKit", true);
