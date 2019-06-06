@@ -28,9 +28,9 @@ import us.mn.state.health.lims.analyzerimport.util.AnalyzerTestNameCache;
 import us.mn.state.health.lims.analyzerimport.util.MappedTestName;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.util.HibernateProxy;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
+import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.test.dao.TestDAO;
 import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
@@ -92,7 +92,7 @@ public class EvolisReader extends AnalyzerLineInserter {
 
 		if (results.size() > 0) {
 
-			Transaction tx = HibernateProxy.beginTransaction();
+			Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 			try {
 
@@ -104,7 +104,7 @@ public class EvolisReader extends AnalyzerLineInserter {
 				tx.rollback();
 				successful = false;
 			} finally {
-				HibernateProxy.closeSession();
+				HibernateUtil.closeSession();
 			}
 		}
 

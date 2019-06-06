@@ -36,8 +36,6 @@ import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.login.dao.UserModuleService;
 import us.mn.state.health.lims.login.dao.UserTestSectionDAO;
 import us.mn.state.health.lims.login.valueholder.UserSessionData;
-import us.mn.state.health.lims.result.valueholder.Sample_TestAnalyte;
-import us.mn.state.health.lims.result.valueholder.Test_TestAnalyte;
 import us.mn.state.health.lims.sample.dao.SampleDAO;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.test.dao.TestDAO;
@@ -142,15 +140,15 @@ public class UserTestSectionDAOImpl extends BaseDAOImpl<TestSection, String> imp
 
 		try {
 			if (SystemConfiguration.getInstance().getEnableUserTestSection().equals(NO)) {
-				list = testSectDAO.getAllTestSections();
+				list = testSectionDAO.getAllTestSections();
 			} else {
 				UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
 				// bugzilla 2160
 				UserModuleService userModuleService = new UserModuleServiceImpl();
 				if (!userModuleService.isUserAdmin(request)) {
-					list = testSectDAO.getAllTestSectionsBySysUserId(usd.getSystemUserId());
+					list = testSectionDAO.getAllTestSectionsBySysUserId(usd.getSystemUserId());
 				} else {
-					list = testSectDAO.getAllTestSections();
+					list = testSectionDAO.getAllTestSections();
 				}
 			}
 		} catch (Exception e) {
@@ -187,38 +185,38 @@ public class UserTestSectionDAOImpl extends BaseDAOImpl<TestSection, String> imp
 		return list;
 	}
 
-	@Override
-	public List getSampleTestAnalytes(HttpServletRequest request, List sample_Tas, List testSections)
-			throws LIMSRuntimeException {
-
-		try {
-			if (SystemConfiguration.getInstance().getEnableUserTestSection().equals(NO)) {
-				return sample_Tas;
-			} else {
-				// bugzilla 2160
-				UserModuleService userModuleService = new UserModuleServiceImpl();
-				if (!userModuleService.isUserAdmin(request)) {
-					for (int i = 0; i < sample_Tas.size(); i++) {
-						Sample_TestAnalyte sample_ta = (Sample_TestAnalyte) sample_Tas.get(i);
-						Test_TestAnalyte test = sample_ta.getTestTestAnalyte();
-						for (int j = 0; j < testSections.size(); j++) {
-							TestSection testSection = (TestSection) testSections.get(j);
-							if (!test.getTest().getTestSection().getId().equals(testSection.getId())) {
-								if (sample_Tas.size() > 0) {
-									sample_Tas.remove(i);
-								}
-							}
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("UserTestSectionDAOImpl", "getSampleTestAnalytes()", e.toString());
-			throw new LIMSRuntimeException("Error in UserTestSectionDAOImpl getSampleTestAnalytes()", e);
-		}
-		return sample_Tas;
-	}
+//	@Override
+//	public List getSampleTestAnalytes(HttpServletRequest request, List sample_Tas, List testSections)
+//			throws LIMSRuntimeException {
+//
+//		try {
+//			if (SystemConfiguration.getInstance().getEnableUserTestSection().equals(NO)) {
+//				return sample_Tas;
+//			} else {
+//				// bugzilla 2160
+//				UserModuleService userModuleService = new UserModuleServiceImpl();
+//				if (!userModuleService.isUserAdmin(request)) {
+//					for (int i = 0; i < sample_Tas.size(); i++) {
+//						Sample_TestAnalyte sample_ta = (Sample_TestAnalyte) sample_Tas.get(i);
+//						Test_TestAnalyte test = sample_ta.getTestTestAnalyte();
+//						for (int j = 0; j < testSections.size(); j++) {
+//							TestSection testSection = (TestSection) testSections.get(j);
+//							if (!test.getTest().getTestSection().getId().equals(testSection.getId())) {
+//								if (sample_Tas.size() > 0) {
+//									sample_Tas.remove(i);
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("UserTestSectionDAOImpl", "getSampleTestAnalytes()", e.toString());
+//			throw new LIMSRuntimeException("Error in UserTestSectionDAOImpl getSampleTestAnalytes()", e);
+//		}
+//		return sample_Tas;
+//	}
 
 	@Override
 	public List getSamplePdfList(HttpServletRequest request, Locale locale, String sampStatus, String humanDomain)

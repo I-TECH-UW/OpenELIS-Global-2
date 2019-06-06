@@ -25,7 +25,7 @@ import us.mn.state.health.lims.analyzerresults.dao.AnalyzerResultsDAO;
 import us.mn.state.health.lims.analyzerresults.daoimpl.AnalyzerResultsDAOImpl;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.util.HibernateProxy;
+import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 public abstract class AnalyzerLineInserter {
 	private static AnalyzerResultsDAO analyzerResultDAO = null;
@@ -44,7 +44,7 @@ public abstract class AnalyzerLineInserter {
                 }
             }
 
-            Transaction tx = HibernateProxy.beginTransaction();
+            Transaction tx = HibernateUtil.getSession().beginTransaction();
 
             try {
 
@@ -56,7 +56,7 @@ public abstract class AnalyzerLineInserter {
                 tx.rollback();
                 return false;
             } finally {
-                HibernateProxy.closeSession();
+                HibernateUtil.closeSession();
             }
         }
         return true;

@@ -33,6 +33,7 @@ import spring.service.referral.ReferralResultService;
 import spring.service.result.ResultService;
 import spring.service.result.ResultSignatureService;
 import spring.service.testresult.TestResultService;
+import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.services.serviceBeans.ResultSaveBean;
@@ -77,8 +78,8 @@ public class ResultSaveService {
 		List<Result> results = new ArrayList<>();
 		boolean isQualifiedResult = serviceBean.isHasQualifiedResult();
 
-		if (TypeOfTestResultService.ResultType.MULTISELECT.matches(serviceBean.getResultType())
-				|| TypeOfTestResultService.ResultType.CASCADING_MULTISELECT.matches(serviceBean.getResultType())) {
+		if (TypeOfTestResultServiceImpl.ResultType.MULTISELECT.matches(serviceBean.getResultType())
+				|| TypeOfTestResultServiceImpl.ResultType.CASCADING_MULTISELECT.matches(serviceBean.getResultType())) {
 
 			if (!GenericValidator.isBlankOrNull(serviceBean.getMultiSelectResultValues())) {
 				JSONParser parser = new JSONParser();
@@ -115,7 +116,7 @@ public class ResultSaveService {
 				}
 			}
 
-			if (TypeOfTestResultService.ResultType.DICTIONARY.matches(serviceBean.getResultType())
+			if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(serviceBean.getResultType())
 					|| isQualifiedResult) {
 				setTestResultsForDictionaryResult(serviceBean.getTestId(), serviceBean.getResultValue(), result); // support
 																													// qualified

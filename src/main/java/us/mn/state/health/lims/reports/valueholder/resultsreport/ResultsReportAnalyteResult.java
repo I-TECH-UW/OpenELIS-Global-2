@@ -16,15 +16,13 @@
 package us.mn.state.health.lims.reports.valueholder.resultsreport;
 
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
-import us.mn.state.health.lims.common.valueholder.BaseObject;
 import us.mn.state.health.lims.result.valueholder.Result;
 
 /**
  * @author benzd1 bugzilla 2264
  *
  */
-//TODO should this be a BaseObject?
-public class ResultsReportAnalyteResult extends BaseObject<String> {
+public class ResultsReportAnalyteResult {
 
 	private Analyte analyte;
 

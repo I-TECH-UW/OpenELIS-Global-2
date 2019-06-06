@@ -27,7 +27,6 @@ import us.mn.state.health.lims.common.dao.DatabaseChangeLogDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.valueholder.DatabaseChangeLog;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 @Component
 @Transactional

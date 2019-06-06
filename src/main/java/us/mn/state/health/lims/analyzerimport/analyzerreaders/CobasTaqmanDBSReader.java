@@ -26,10 +26,10 @@ import us.mn.state.health.lims.analyzerimport.util.MappedTestName;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.HibernateProxy;
 import us.mn.state.health.lims.dictionary.dao.DictionaryDAO;
 import us.mn.state.health.lims.dictionary.daoimpl.DictionaryDAOImpl;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
+import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 import us.mn.state.health.lims.testresult.daoimpl.TestResultDAOImpl;
@@ -94,7 +94,7 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 		}
 
 		if (results.size() > 0) {
-			Transaction tx = HibernateProxy.beginTransaction();
+			Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 			try {
 				persistResults(results, currentUserId);
@@ -104,7 +104,7 @@ public class CobasTaqmanDBSReader extends AnalyzerLineInserter {
 				error = "Cobas Taqman DBS analyzer: Unable to save to database";
 				successful = false;
 			} finally {
-				HibernateProxy.closeSession();
+				HibernateUtil.closeSession();
 			}
 		}
 

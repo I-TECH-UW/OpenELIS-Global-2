@@ -28,8 +28,8 @@ import us.mn.state.health.lims.analyzerimport.util.MappedTestName;
 import us.mn.state.health.lims.analyzerresults.valueholder.AnalyzerResults;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.common.util.HibernateProxy;
 import us.mn.state.health.lims.common.util.StringUtil;
+import us.mn.state.health.lims.hibernate.HibernateUtil;
 
 public class FACSCantoReader extends AnalyzerLineInserter {
 
@@ -64,7 +64,7 @@ public class FACSCantoReader extends AnalyzerLineInserter {
 
 		if (results.size() > 0) {
 
-			Transaction tx = HibernateProxy.beginTransaction();
+			Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 			try {
 
@@ -76,7 +76,7 @@ public class FACSCantoReader extends AnalyzerLineInserter {
 				tx.rollback();
 				successful = false;
 			} finally {
-				HibernateProxy.closeSession();
+				HibernateUtil.closeSession();
 			}
 		}
 

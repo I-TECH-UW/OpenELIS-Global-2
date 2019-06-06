@@ -21,7 +21,7 @@ import us.mn.state.health.lims.sample.valueholder.Sample;
 
 @Controller
 public class webtestInfoController extends BaseController {
-	
+
 	@Autowired
 	LoginService loginService;
 	@Autowired
@@ -46,7 +46,7 @@ public class webtestInfoController extends BaseController {
 
 		addUserInfo(xmlBuilder);
 		// addUserLocked(xmlBuilder);
-		addNumberOfPatients(xmlBuilder);
+//		addNumberOfPatients(xmlBuilder);
 		addNumberOfSamples(xmlBuilder);
 
 		xmlBuilder.append("</webTestInfo>");
