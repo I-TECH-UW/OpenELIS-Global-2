@@ -31,14 +31,14 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.validator.GenericValidator;
-import org.hibernate.Transaction;
 
 import spring.mine.internationalization.MessageUtil;
+import spring.service.common.servlet.reports.LogoUploadService;
 import spring.service.image.ImageService;
 import spring.service.siteinformation.SiteInformationService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
+import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.image.valueholder.Image;
 import us.mn.state.health.lims.login.dao.UserModuleService;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
@@ -49,7 +49,8 @@ public class LogoUploadServlet extends HttpServlet {
 
 	private ImageService imageService = SpringContext.getBean(ImageService.class);
 	private SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
-	UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
+	private UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
+	private LogoUploadService logoUploadService = SpringContext.getBean(LogoUploadService.class);
 	private static final String PREVIEW_FILE_PATH = File.separator + "images" + File.separator;
 
 	@Override
@@ -99,17 +100,10 @@ public class LogoUploadServlet extends HttpServlet {
 		if (!GenericValidator.isBlankOrNull(imageId)) {
 			Image image = imageService.getImage(imageId);
 
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 			try {
-				imageService.deleteImage(image);
-				logoInformation.setValue("");
-				logoInformation.setSysUserId("1");
-				siteInformationService.updateData(logoInformation);
-
-				tx.commit();
+				logoUploadService.removeImage(image, logoInformation);
 			} catch (LIMSRuntimeException lre) {
-				tx.rollback();
+				LogEvent.logErrorStack(this.getClass().getSimpleName(), "removeImage()", lre);
 			}
 
 		}
@@ -174,27 +168,14 @@ public class LogoUploadServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		Image image = new Image();
 		image.setImage(imageData);
 		image.setDescription(logoName);
 
 		try {
-			if (!newImage) {
-				// The reason the old image is deleted and a new one added is because updating
-				// the image
-				// doesn't work.
-				imageService.deleteImage(imageService.getImage(imageId));
-			}
-			imageService.saveImage(image);
-
-			logoInformation.setValue(image.getId());
-			logoInformation.setSysUserId("1");
-			siteInformationService.updateData(logoInformation);
-
-			tx.commit();
+			logoUploadService.saveImage(image, newImage, imageId, logoInformation);
 		} catch (LIMSRuntimeException lre) {
-			tx.rollback();
+			LogEvent.logErrorStack(this.getClass().getSimpleName(), "writeToDatabase()", lre);
 		}
 	}
 

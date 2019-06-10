@@ -7,7 +7,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -146,16 +145,13 @@ public class OrganizationMenuController extends BaseMenuController {
 			organizations.add(organization);
 		}
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
 			// System.out.println("Going to delete Organization");
 			organizationService.deleteAll(organizations);
 			// System.out.println("Just deleted Organization");
-			tx.commit();
 		} catch (LIMSRuntimeException lre) {
 			// bugzilla 2154
 			LogEvent.logError("OrganizationDeleteAction", "performAction()", lre.toString());
-			tx.rollback();
 
 			String errorMsg;
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {

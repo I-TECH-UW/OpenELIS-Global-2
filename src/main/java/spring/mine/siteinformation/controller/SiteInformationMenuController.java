@@ -182,18 +182,14 @@ public class SiteInformationMenuController extends BaseMenuController {
 		}
 
 		List<String> selectedIDs = (List<String>) form.get("selectedIDs");
-//		SiteInformationDAO siteInformationDAO = new SiteInformationDAOImpl();
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
-
-			for (String siteInformationId : selectedIDs) {
+			siteInformationService.deleteAll(selectedIDs, getSysUserId(request));
+//			for (String siteInformationId : selectedIDs) {
 //				siteInformationDAO.deleteData(siteInformationId, getSysUserId(request));
-				siteInformationService.delete(siteInformationId, getSysUserId(request));
-			}
+//				siteInformationService.delete(siteInformationId, getSysUserId(request));
+//			}
 
-//			tx.commit();
 		} catch (LIMSRuntimeException lre) {
-//			tx.rollback();
 
 			String errorMsg;
 			if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
@@ -206,9 +202,6 @@ public class SiteInformationMenuController extends BaseMenuController {
 			return findForward(FWD_FAIL_DELETE, form);
 
 		}
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
 
 		ConfigurationProperties.forceReload();
 

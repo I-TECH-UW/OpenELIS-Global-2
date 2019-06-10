@@ -25,7 +25,7 @@ import us.mn.state.health.lims.statusofsample.valueholder.StatusOfSample;
 
 @Controller
 public class ElectronicOrdersController extends BaseController {
-	
+
 	@Autowired
 	StatusOfSampleService statusOfSampleService;
 	@Autowired
@@ -47,9 +47,7 @@ public class ElectronicOrdersController extends BaseController {
 			form.setPage(1);
 		}
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		List<ElectronicOrder> eOrders = electronicOrderService.getAllElectronicOrdersOrderedBy(form.getSortOrder());
-//		tx.commit();
 
 		// correct for proper bounds
 		int startIndex = (form.getPage() - 1) * 50;
@@ -63,14 +61,12 @@ public class ElectronicOrdersController extends BaseController {
 
 		// get section of list for display on current page
 		eOrders = eOrders.subList(startIndex, endIndex);
-//		tx = HibernateUtil.getSession().beginTransaction();
 		for (ElectronicOrder eOrder : eOrders) {
 			StatusOfSample status = new StatusOfSample();
 			status.setId(eOrder.getStatusId());
 			statusOfSampleService.get(eOrder.getStatusId());
 			eOrder.setStatus(status);
 		}
-//		tx.commit();
 		form.setEOrders(eOrders);
 
 		return findForward(FWD_SUCCESS, form);

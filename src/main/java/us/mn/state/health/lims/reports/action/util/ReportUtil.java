@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.service.observationhistory.ObservationHistoryService;
@@ -34,8 +33,8 @@ import spring.service.samplehuman.SampleHumanService;
 import spring.service.sampleproject.SampleProjectService;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.util.SpringContext;
+import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
 import us.mn.state.health.lims.observationhistorytype.valueholder.ObservationHistoryType;
 import us.mn.state.health.lims.patient.valueholder.Patient;
@@ -145,16 +144,14 @@ public class ReportUtil {
 			documents.add(document);
 		}
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
-			for (DocumentTrack document : documents) {
-				documentTrackService.insertData(document);
-			}
+			documentTrackService.insertAll(documents);
+//			for (DocumentTrack document : documents) {
+//				documentTrackService.insertData(document);
+//			}
 
-			tx.commit();
 		} catch (HibernateException e) {
-			tx.rollback();
+			LogEvent.logErrorStack("ReportUtil", "markDocumentsAsPrinted()", e);
 		}
 	}
 

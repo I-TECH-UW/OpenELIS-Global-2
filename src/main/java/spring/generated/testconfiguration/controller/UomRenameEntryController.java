@@ -20,7 +20,7 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 @Controller
 public class UomRenameEntryController extends BaseController {
-	
+
 	@Autowired
 	UnitOfMeasureService unitOfMeasureService;
 
@@ -78,19 +78,11 @@ public class UomRenameEntryController extends BaseController {
 			unitOfMeasure.setUnitOfMeasureName(nameEnglish.trim());
 			unitOfMeasure.setSysUserId(userId);
 
-//			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 			try {
 				unitOfMeasureService.update(unitOfMeasure);
-
-//				tx.commit();
 			} catch (HibernateException lre) {
-//				tx.rollback();
 				lre.printStackTrace();
-			} 
-//			finally {
-//				HibernateUtil.closeSession();
-//			}
+			}
 
 		}
 

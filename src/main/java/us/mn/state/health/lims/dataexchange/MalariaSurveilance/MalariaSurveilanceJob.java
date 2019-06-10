@@ -28,7 +28,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -51,7 +50,6 @@ import us.mn.state.health.lims.dataexchange.common.ITransmissionResponseHandler;
 import us.mn.state.health.lims.dataexchange.common.ReportTransmission;
 import us.mn.state.health.lims.dataexchange.common.ReportTransmission.HTTP_TYPE;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.result.valueholder.Result;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
 import us.mn.state.health.lims.test.valueholder.Test;
@@ -284,11 +282,8 @@ public class MalariaSurveilanceJob implements Job {
 			gatherScheduler.setLastRun(nowTimestamp);
 			gatherScheduler.setSysUserId("1");
 
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 			try {
 				cronSchedulerService.update(gatherScheduler);
-				tx.commit();
 			} catch (HibernateException e) {
 				LogEvent.logError("AggregateGatherJob", "execute", e.toString());
 			}

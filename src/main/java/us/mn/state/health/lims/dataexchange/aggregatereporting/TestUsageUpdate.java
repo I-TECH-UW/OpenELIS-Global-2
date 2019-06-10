@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
@@ -41,7 +40,6 @@ import us.mn.state.health.lims.common.services.registration.interfaces.IResultUp
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalExport;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportQueueType;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.result.action.util.ResultSet;
 import us.mn.state.health.lims.result.valueholder.Result;
 
@@ -182,19 +180,16 @@ public class TestUsageUpdate implements IResultUpdate {
 	}
 
 	private void applyUpdatesToDB(List<ReportExternalExport> exports) {
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
-			for (ReportExternalExport export : exports) {
-				if (export.getId() == null) {
-					queueService.insertReportExternalExport(export);
-				} else {
-					queueService.updateReportExternalExport(export);
-				}
-			}
-			tx.commit();
+			queueService.saveAll(exports);
+//			for (ReportExternalExport export : exports) {
+//				if (export.getId() == null) {
+//					queueService.insertReportExternalExport(export);
+//				} else {
+//					queueService.updateReportExternalExport(export);
+//				}
+//			}
 		} catch (HibernateException e) {
-			tx.rollback();
 			LogEvent.logError("TestUsageUpdate", "applyUpdatesToDB", e.toString());
 		}
 	}

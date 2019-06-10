@@ -30,19 +30,16 @@ import spring.generated.testconfiguration.form.TestModifyEntryForm;
 import spring.generated.testconfiguration.validator.TestModifyEntryFormValidator;
 import spring.mine.common.controller.BaseController;
 import spring.service.dictionary.DictionaryService;
-import spring.service.localization.LocalizationService;
 import spring.service.localization.LocalizationServiceImpl;
 import spring.service.panel.PanelService;
-import spring.service.panelitem.PanelItemService;
-import spring.service.resultlimit.ResultLimitService;
 import spring.service.resultlimit.ResultLimitServiceImpl;
 import spring.service.test.TestSectionServiceImpl;
 import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
+import spring.service.testconfiguration.TestModifyService;
 import spring.service.testresult.TestResultService;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
-import spring.service.typeofsample.TypeOfSampleTestService;
 import spring.service.typeoftestresult.TypeOfTestResultServiceImpl;
 import spring.service.unitofmeasure.UnitOfMeasureService;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -68,27 +65,21 @@ import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 public class TestModifyEntryController extends BaseController {
 
 	@Autowired
-	TestModifyEntryFormValidator formValidator;
+	private TestModifyEntryFormValidator formValidator;
 	@Autowired
-	DictionaryService dictionaryService;
+	private DictionaryService dictionaryService;
 	@Autowired
-	PanelService panelService;
+	private PanelService panelService;
 	@Autowired
-	TypeOfSampleService typeOfSampleService;
+	private TypeOfSampleService typeOfSampleService;
 	@Autowired
-	TypeOfSampleTestService typeOfSampleTestService;
+	private TestService testService;
 	@Autowired
-	LocalizationService localizationService;
+	private TestResultService testResultService;
 	@Autowired
-	PanelItemService panelItemService;
+	private UnitOfMeasureService unitOfMeasureService;
 	@Autowired
-	TestService testService;
-	@Autowired
-	ResultLimitService resultLimitService;
-	@Autowired
-	TestResultService testResultService;
-	@Autowired
-	UnitOfMeasureService unitOfMeasureService;
+	private TestModifyService testModifyService;
 
 	@RequestMapping(value = "/TestModifyEntry", method = RequestMethod.GET)
 	public ModelAndView showTestModifyEntry(HttpServletRequest request) {
@@ -456,124 +447,20 @@ public class TestModifyEntryController extends BaseController {
 
 		List<TestSet> testSets = createTestSets(testAddParams);
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
-			List<TypeOfSampleTest> typeOfSampleTest = typeOfSampleTestService
-					.getTypeOfSampleTestsForTest(testAddParams.testId);
-			String[] typeOfSamplesTestIDs = new String[typeOfSampleTest.size()];
-			for (int i = 0; i < typeOfSampleTest.size(); i++) {
-				typeOfSamplesTestIDs[i] = typeOfSampleTest.get(i).getId();
-				typeOfSampleTestService.delete(typeOfSamplesTestIDs[i], currentUserId);
-			}
-			
-
-			List<PanelItem> panelItems = panelItemService.getPanelItemByTestId(testAddParams.testId);
-			for (PanelItem item : panelItems) {
-				item.setSysUserId(currentUserId);
-			}
-			panelItemService.delete(panelItems);
-
-			List<ResultLimit> resultLimitItems = resultLimitService.getAllResultLimitsForTest(testAddParams.testId);
-			for (ResultLimit item : resultLimitItems) {
-				item.setSysUserId(currentUserId);
-				resultLimitService.delete(item);
-			}
-//			resultLimitService.delete(resultLimitItems);
-
-			for (TestSet set : testSets) {
-				set.test.setSysUserId(currentUserId);
-				set.test.setLocalizedTestName(nameLocalization);
-				set.test.setLocalizedReportingName(reportingNameLocalization);
-
-//	gnr: based on testAddUpdate,
-//  added existing testId to process in createTestSets using testAddParams.testId, delete then insert to modify for most elements
-
-				for (Test test : set.sortedTests) {
-					test.setSysUserId(currentUserId);
-					// if (!test.getId().equals( set.test.getId() )) {
-					testService.update(test);
-					// }
-				}
-
-				updateTestNames(testAddParams.testId, nameLocalization.getEnglish(), nameLocalization.getFrench(),
-						reportingNameLocalization.getEnglish(), reportingNameLocalization.getFrench(), currentUserId);
-				updateTestEntities(testAddParams.testId, testAddParams.loinc, currentUserId);
-
-				set.sampleTypeTest.setSysUserId(currentUserId);
-				set.sampleTypeTest.setTestId(set.test.getId());
-				typeOfSampleTestService.insert(set.sampleTypeTest);
-
-				for (PanelItem item : set.panelItems) {
-					item.setSysUserId(currentUserId);
-					Test nonTransiantTest = testService.getTestById(set.test.getId());
-					item.setTest(nonTransiantTest);
-					panelItemService.insert(item);
-				}
-
-				for (TestResult testResult : set.testResults) {
-					testResult.setSysUserId(currentUserId);
-					Test nonTransiantTest = testService.getTestById(set.test.getId());
-					testResult.setTest(nonTransiantTest);
-					testResultService.insert(testResult);
-				}
-
-				for (ResultLimit resultLimit : set.resultLimits) {
-					resultLimit.setSysUserId(currentUserId);
-					resultLimit.setTestId(set.test.getId());
-					resultLimitService.insert(resultLimit);
-				}
-			}
-
-//			tx.commit();
+			testModifyService.updateTestSets(testSets, testAddParams, nameLocalization, reportingNameLocalization,
+					currentUserId);
 		} catch (HibernateException lre) {
-//			tx.rollback();
 			lre.printStackTrace();
 			result.reject("error.hibernate.exception");
 			setupDisplayItems(form);
 			return findForward(FWD_FAIL_INSERT, form);
-		} 
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
+		}
 
 		TestServiceImpl.refreshTestNames();
 		TypeOfSampleServiceImpl.getInstance().clearCache();
 
 		return findForward(FWD_SUCCESS_INSERT, form);
-	}
-
-	private void updateTestEntities(String testId, String loinc, String userId) {
-		Test test = new TestServiceImpl(testId).getTest();
-
-		if (test != null) {
-			test.setSysUserId(userId);
-			test.setLoinc(loinc);
-			testService.update(test);
-		}
-	}
-
-	private void updateTestNames(String testId, String nameEnglish, String nameFrench, String reportNameEnglish,
-			String reportNameFrench, String userId) {
-		Test test = new TestServiceImpl(testId).getTest();
-
-		if (test != null) {
-			Localization name = test.getLocalizedTestName();
-			Localization reportingName = test.getLocalizedReportingName();
-			name.setEnglish(nameEnglish.trim());
-			name.setFrench(nameFrench.trim());
-			name.setSysUserId(userId);
-			reportingName.setEnglish(reportNameEnglish.trim());
-			reportingName.setFrench(reportNameFrench.trim());
-			reportingName.setSysUserId(userId);
-
-			localizationService.updateData(name);
-			localizationService.updateData(reportingName);
-
-		}
-
-		// Refresh test names
-		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ALL_TESTS);
-		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ORDERABLE_TESTS);
 	}
 
 	private void createPanelItems(ArrayList<PanelItem> panelItems, TestAddParams testAddParams) {
@@ -847,7 +734,7 @@ public class TestModifyEntryController extends BaseController {
 	}
 
 	public class TestAddParams {
-		String testId;
+		public String testId;
 		public String testNameEnglish;
 		public String testNameFrench;
 		public String testReportNameEnglish;
@@ -855,7 +742,7 @@ public class TestModifyEntryController extends BaseController {
 		String testSectionId;
 		ArrayList<String> panelList = new ArrayList<>();
 		String uomId;
-		String loinc;
+		public String loinc;
 		String resultTypeId;
 		ArrayList<SampleTypeListAndTestOrder> sampleList = new ArrayList<>();
 		String active;
@@ -883,12 +770,12 @@ public class TestModifyEntryController extends BaseController {
 	}
 
 	public class TestSet {
-		Test test;
-		TypeOfSampleTest sampleTypeTest;
-		ArrayList<Test> sortedTests = new ArrayList<>();
-		ArrayList<PanelItem> panelItems = new ArrayList<>();
-		ArrayList<TestResult> testResults = new ArrayList<>();
-		ArrayList<ResultLimit> resultLimits = new ArrayList<>();
+		public Test test;
+		public TypeOfSampleTest sampleTypeTest;
+		public ArrayList<Test> sortedTests = new ArrayList<>();
+		public ArrayList<PanelItem> panelItems = new ArrayList<>();
+		public ArrayList<TestResult> testResults = new ArrayList<>();
+		public ArrayList<ResultLimit> resultLimits = new ArrayList<>();
 	}
 
 	public class DictionaryParams {

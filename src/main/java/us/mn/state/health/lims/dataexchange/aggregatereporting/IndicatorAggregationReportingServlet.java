@@ -32,14 +32,13 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.hibernate.Transaction;
 
 import spring.service.dataexchange.aggregatereporting.ReportExternalImportService;
 import spring.service.login.LoginService;
 import spring.util.SpringContext;
+import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalImport;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.login.valueholder.Login;
 
 public class IndicatorAggregationReportingServlet extends HttpServlet {
@@ -119,20 +118,11 @@ public class IndicatorAggregationReportingServlet extends HttpServlet {
 
 	private void updateReports(List<ReportExternalImport> insertableImportReports,
 			List<ReportExternalImport> updatableImportReports) {
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 		try {
-			for (ReportExternalImport importReport : insertableImportReports) {
-				reportImportService.insertReportExternalImport(importReport);
-			}
-
-			for (ReportExternalImport importReport : updatableImportReports) {
-				reportImportService.updateReportExternalImport(importReport);
-			}
-
-			tx.commit();
+			reportImportService.updateReports(insertableImportReports, updatableImportReports);
 		} catch (Exception e) {
-			tx.rollback();
+			LogEvent.logErrorStack(this.getClass().getSimpleName(), "updateReports()", e);
 		}
 	}
 

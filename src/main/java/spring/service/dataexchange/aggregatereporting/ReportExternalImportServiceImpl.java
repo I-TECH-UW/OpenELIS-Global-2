@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.dao.ReportExternalImportDAO;
@@ -56,5 +57,18 @@ public class ReportExternalImportServiceImpl extends BaseObjectServiceImpl<Repor
 	@Override
 	public List<String> getUniqueSites() {
 		return getBaseObjectDAO().getUniqueSites();
+	}
+
+	@Override
+	@Transactional
+	public void updateReports(List<ReportExternalImport> insertableImportReports,
+			List<ReportExternalImport> updatableImportReports) {
+		for (ReportExternalImport importReport : insertableImportReports) {
+			insertReportExternalImport(importReport);
+		}
+
+		for (ReportExternalImport importReport : updatableImportReports) {
+			updateReportExternalImport(importReport);
+		}
 	}
 }

@@ -22,9 +22,9 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.dataexchange.order.ElectronicOrderService;
 import spring.service.patient.PatientService;
@@ -33,11 +33,11 @@ import spring.service.patientidentity.PatientIdentityService;
 import spring.service.patientidentitytype.PatientIdentityTypeService;
 import spring.service.person.PersonService;
 import spring.service.systemuser.SystemUserService;
+import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.ExternalOrderStatus;
 import us.mn.state.health.lims.common.util.StringUtil;
 import us.mn.state.health.lims.dataexchange.order.valueholder.ElectronicOrder;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
 import us.mn.state.health.lims.patientidentitytype.valueholder.PatientIdentityType;
@@ -240,16 +240,15 @@ public class DBOrderPersister implements IOrderPersister {
 	}
 
 	@Override
+	@Transactional
 	public void persist(MessagePatient orderPatient, ElectronicOrder eOrder) {
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
 			persist(orderPatient);
 			eOrder.setPatient(patient);
 			eOrderService.insertData(eOrder);
-			tx.commit();
 		} catch (Exception e) {
-			tx.rollback();
+			LogEvent.logErrorStack(this.getClass().getSimpleName(), "persist()", e);
+			throw e;
 		}
 	}
 
@@ -267,13 +266,10 @@ public class DBOrderPersister implements IOrderPersister {
 				ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
 				eOrder.setStatusId(StatusService.getInstance().getStatusID(ExternalOrderStatus.Cancelled));
 				eOrder.setSysUserId(SERVICE_USER_ID);
-				Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 				try {
 					eOrderService.updateData(eOrder);
-					tx.commit();
 				} catch (Exception e) {
-					tx.rollback();
+					LogEvent.logErrorStack(this.getClass().getSimpleName(), "cancelOrder()", e);
 				}
 
 			}

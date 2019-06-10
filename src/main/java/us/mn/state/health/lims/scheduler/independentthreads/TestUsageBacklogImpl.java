@@ -145,7 +145,6 @@ public class TestUsageBacklogImpl extends Thread implements TestUsageBacklog {
 		report.setCollectionDate(DateUtil.getNowAsTimestamp());
 		report.setSysUserId("1");
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
 			if (report.getId() == null) {
 				reportExternalExportService.insertReportExternalExport(report);
@@ -153,9 +152,7 @@ public class TestUsageBacklogImpl extends Thread implements TestUsageBacklog {
 				reportExternalExportService.updateReportExternalExport(report);
 			}
 
-//			tx.commit();
 		} catch (LIMSRuntimeException e) {
-//			tx.rollback();
 			LogEvent.logErrorStack(this.getClass().getSimpleName(), "writeReportForDayPeriod()", e);
 			throw e;
 		}

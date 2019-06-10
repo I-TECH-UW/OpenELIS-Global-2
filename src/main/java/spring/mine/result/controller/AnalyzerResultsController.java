@@ -681,8 +681,6 @@ public class AnalyzerResultsController extends BaseController {
 
 		createResultsFromItems(actionableResults, sampleGroupList);
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
 			analyzerResultsService.persistAnalyzerResults(deletableAnalyzerResults, sampleGroupList,
 					getSysUserId(request));

@@ -25,8 +25,8 @@ import org.springframework.web.servlet.ModelAndView;
 import spring.generated.testconfiguration.form.TestActivationForm;
 import spring.generated.testconfiguration.validator.TestActivationFormValidator;
 import spring.mine.common.controller.BaseController;
-import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
+import spring.service.testconfiguration.TestActivationService;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.service.typeofsample.TypeOfSampleServiceImpl;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -39,11 +39,11 @@ import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSample;
 public class TestActivationController extends BaseController {
 
 	@Autowired
-	TestActivationFormValidator formValidator;
+	private TestActivationFormValidator formValidator;
 	@Autowired
-	TypeOfSampleService typeOfSampleService;
+	private TypeOfSampleService typeOfSampleService;
 	@Autowired
-	TestService testService;
+	private TestActivationService testActivationService;
 
 	@RequestMapping(value = "/TestActivation", method = RequestMethod.GET)
 	public ModelAndView showTestActivation(HttpServletRequest request) {
@@ -153,40 +153,11 @@ public class TestActivationController extends BaseController {
 		List<TypeOfSample> deactivateSampleTypes = getDeactivatedSampleTypes(deactivateSampleIds);
 		List<TypeOfSample> activateSampleTypes = getActivatedSampleTypes(activateSampleSets);
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
-//		TestDAO testDAO = new TestDAOImpl();
-//		TypeOfSampleDAO typeOfSampleDAO = new TypeOfSampleDAOImpl();
-
 		try {
-			for (Test test : deactivateTests) {
-				testService.update(test);
-			}
-
-			for (Test test : activateTests) {
-				testService.update(test);
-			}
-
-			for (TypeOfSample typeOfSample : deactivateSampleTypes) {
-				typeOfSampleService.update(typeOfSample);
-			}
-
-			for (TypeOfSample typeOfSample : activateSampleTypes) {
-				typeOfSampleService.update(typeOfSample);
-			}
-
-			if (!deactivateSampleTypes.isEmpty() || !activateSampleTypes.isEmpty()) {
-				TypeOfSampleServiceImpl.getInstance().clearCache();
-			}
-
-//			tx.commit();
+			testActivationService.updateAll(deactivateTests, activateTests, deactivateSampleTypes, activateSampleTypes);
 		} catch (HibernateException lre) {
-//			tx.rollback();
 			lre.printStackTrace();
-		} 
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
+		}
 
 		List<TestActivationBean> activeTestList = createTestList(true, true);
 		List<TestActivationBean> inactiveTestList = createTestList(false, true);

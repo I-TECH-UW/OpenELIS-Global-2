@@ -23,6 +23,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.analyzer.AnalyzerService;
 import spring.service.analyzerimport.AnalyzerTestMappingService;
@@ -62,6 +63,7 @@ public class PluginAnalyzerService {
 		AnalyzerLineReader.registerAnalyzerPlugin(analyzer);
 	}
 
+	@Transactional
 	public String addAnalyzerDatabaseParts(String name, String description, List<TestMapping> nameMappings) {
 		Analyzer analyzer = analyzerService.getAnalyzerByName(name);
 		if (analyzer != null && analyzer.getId() != null) {
@@ -83,18 +85,12 @@ public class PluginAnalyzerService {
 
 		analyzer.setSysUserId("1");
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
 			analyzerService.persistData(analyzer, testMappings, existingMappings);
-//			tx.commit();
-
 			registerAanlyzerInCache(name, analyzer.getId());
 		} catch (Exception lre) {
 			LogEvent.logErrorStack(this.getClass().getSimpleName(), "addAnalyzerDatabaseParts", lre);
 		}
-//
-//		registerAanlyzerInCache(name, analyzer.getId());
 		return analyzer.getId();
 	}
 

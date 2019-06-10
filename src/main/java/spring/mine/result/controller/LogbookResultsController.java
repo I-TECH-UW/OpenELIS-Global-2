@@ -245,16 +245,9 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 		createResultsFromItems(actionDataSet);
 		createAnalysisOnlyUpdates(actionDataSet);
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
 			logbookPersistService.persistDataSet(actionDataSet, updaters, getSysUserId(request));
-
-//			tx.commit();
-
 		} catch (LIMSRuntimeException lre) {
-//			tx.rollback();
-
 			String errorMsg;
 			if (lre.getException() instanceof StaleObjectStateException) {
 				errorMsg = "errors.OptimisticLockException";

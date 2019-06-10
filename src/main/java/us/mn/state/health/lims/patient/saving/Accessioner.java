@@ -312,7 +312,6 @@ public abstract class Accessioner {
 	 */
 	@Transactional // only works if this class is autowired in
 	public String save() throws Exception {
-//		Transaction tx = null;
 		try {
 			if (!canAccession()) {
 				return null;
@@ -334,7 +333,6 @@ public abstract class Accessioner {
 			populateSampleHuman();
 			populateObservationHistory();
 
-//			tx = HibernateUtil.getSession().beginTransaction();
 			// all of the following methods are assumed to only write when
 			// necessary
 			persistPatient();
@@ -352,18 +350,11 @@ public abstract class Accessioner {
 			persistRecordStatus();
 			deleteOldPatient();
 			populateAndPersistUnderInvestigationNote();
-//			tx.commit();
 			return IActionConstants.FWD_SUCCESS_INSERT;
 		} catch (Exception e) {
-//			if (null != tx) {
-//				tx.rollback();
-//			}
 			logAndAddMessage("save()", "errors.InsertException", e);
 			throw e;
 		}
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
 	}
 
 	private void populateAndPersistUnderInvestigationNote() {

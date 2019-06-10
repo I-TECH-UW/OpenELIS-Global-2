@@ -6,7 +6,6 @@ import javax.validation.Valid;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -92,7 +91,7 @@ public class TestRenameEntryController extends BaseController {
 			reportingName.setSysUserId(userId);
 
 			try {
-				updateTestNames(name, reportingName);
+				localizationService.updateTestNames(name, reportingName);
 			} catch (HibernateException e) {
 				LogEvent.logErrorStack(this.getClass().getSimpleName(), "updateTestNames()", e);
 			}
@@ -102,12 +101,6 @@ public class TestRenameEntryController extends BaseController {
 		// Refresh test names
 		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ALL_TESTS);
 		DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ORDERABLE_TESTS);
-	}
-
-	@Transactional 
-	public void updateTestNames(Localization name, Localization reportingName) {
-		localizationService.update(name);
-		localizationService.update(reportingName);
 	}
 
 	@Override

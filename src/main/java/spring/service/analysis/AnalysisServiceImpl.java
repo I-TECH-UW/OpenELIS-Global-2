@@ -623,4 +623,12 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 	public List getNextAnalysisRecord(String id) {
 		return getBaseObjectDAO().getNextAnalysisRecord(id);
 	}
+
+	@Override
+	@Transactional
+	public void updateAllData(List<Analysis> updatedAnalysis, boolean skipAuditTrail) {
+		for (Analysis analysis : updatedAnalysis) {
+			updateData(analysis, skipAuditTrail);
+		}
+	}
 }

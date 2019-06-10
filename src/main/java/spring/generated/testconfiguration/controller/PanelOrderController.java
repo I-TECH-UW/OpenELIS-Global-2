@@ -44,7 +44,6 @@ public class PanelOrderController extends BaseController {
 	@Autowired
 	PanelTestConfigurationUtil panelTestConfigurationUtil;
 
-
 	@RequestMapping(value = "/PanelOrder", method = RequestMethod.GET)
 	public ModelAndView showPanelOrder(HttpServletRequest request) {
 		PanelOrderForm form = new PanelOrderForm();
@@ -75,7 +74,8 @@ public class PanelOrderController extends BaseController {
 		List<SampleTypePanel> sampleTypePanelsExists = new ArrayList<>();
 		List<SampleTypePanel> sampleTypePanelsInactive = new ArrayList<>();
 
-		for (IdValuePair typeOfSample : DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE)) {
+		for (IdValuePair typeOfSample : DisplayListService.getInstance()
+				.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE)) {
 			SampleTypePanel sampleTypePanel = new SampleTypePanel(typeOfSample.getValue());
 			sampleTypePanel.setPanels(existingSampleTypePanelMap.get(typeOfSample.getValue()));
 			if (sampleTypePanel.getPanels() != null && sampleTypePanel.getPanels().size() > 0) {
@@ -127,19 +127,11 @@ public class PanelOrderController extends BaseController {
 			panels.add(panel);
 		}
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
-			for (Panel panel : panels) {
-				panelService.update(panel);
-			}
-//			tx.commit();
+			panelService.updateAll(panels);
 		} catch (HibernateException e) {
-//			tx.rollback();
 			e.printStackTrace();
-		} 
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
+		}
 
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS_INACTIVE);

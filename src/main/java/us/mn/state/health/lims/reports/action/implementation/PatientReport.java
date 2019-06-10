@@ -31,7 +31,6 @@ import java.util.Set;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.hibernate.Transaction;
 
 import spring.mine.common.form.BaseForm;
 import spring.mine.internationalization.MessageUtil;
@@ -69,6 +68,7 @@ import us.mn.state.health.lims.analysis.valueholder.Analysis;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.formfields.FormFields;
 import us.mn.state.health.lims.common.formfields.FormFields.Field;
+import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.provider.validation.IAccessionNumberValidator;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -77,7 +77,6 @@ import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.organization.valueholder.Organization;
 import us.mn.state.health.lims.patient.valueholder.Patient;
 import us.mn.state.health.lims.patientidentity.valueholder.PatientIdentity;
@@ -242,17 +241,15 @@ public abstract class PatientReport extends Report {
 		}
 
 		if (!updatedAnalysis.isEmpty()) {
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
 
 			try {
-				for (Analysis analysis : updatedAnalysis) {
-					analysisService.updateData(analysis, true);
-				}
-				tx.commit();
+				analysisService.updateAllData(updatedAnalysis, true);
+//				for (Analysis analysis : updatedAnalysis) {
+//					analysisService.updateData(analysis, true);
+//				}
 
 			} catch (LIMSRuntimeException lre) {
-				tx.rollback();
-
+				LogEvent.logErrorStack(this.getClass().getSimpleName(), "initializeReport()", lre);
 			}
 		}
 	}

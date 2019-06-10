@@ -106,19 +106,11 @@ public class TestSectionOrderController extends BaseController {
 			testSections.add(testSection);
 		}
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
-			for (TestSection testSection : testSections) {
-				testSectionService.update(testSection);
-			}
-//			tx.commit();
+			testSectionService.updateAll(testSections);
 		} catch (HibernateException lre) {
-//			tx.rollback();
 			lre.printStackTrace();
-		} 
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
+		}
 
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION);
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);

@@ -17,11 +17,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.SampleTypeCreateForm;
 import spring.mine.common.controller.BaseController;
-import spring.service.localization.LocalizationService;
 import spring.service.localization.LocalizationServiceImpl;
 import spring.service.role.RoleService;
-import spring.service.rolemodule.RoleModuleService;
-import spring.service.systemmodule.SystemModuleService;
+import spring.service.testconfiguration.SampleTypeCreateService;
 import spring.service.typeofsample.TypeOfSampleService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
@@ -38,17 +36,11 @@ public class SampleTypeCreateController extends BaseController {
 	public static final String NAME_SEPARATOR = "$";
 
 	@Autowired
-	TypeOfSampleService typeOfSampleService;
+	private TypeOfSampleService typeOfSampleService;
 	@Autowired
-	RoleService roleService;
+	private RoleService roleService;
 	@Autowired
-	RoleModuleService roleModuleService;
-	@Autowired
-	SystemModuleService systemModuleService;
-	@Autowired
-	LocalizationService localizationService;
-
-
+	private SampleTypeCreateService sampleTypeCreateService;
 
 	@RequestMapping(value = "/SampleTypeCreate", method = RequestMethod.GET)
 	public ModelAndView showSampleTypeCreate(HttpServletRequest request) {
@@ -117,28 +109,12 @@ public class SampleTypeCreateController extends BaseController {
 		RoleModule resultResultModule = createRoleModule(userId, resultModule, resultsEntryRole);
 		RoleModule validationValidationModule = createRoleModule(userId, validationModule, validationRole);
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
-			localizationService.insert(localization);
-			typeOfSample.setLocalization(localization);
-			typeOfSampleService.insert(typeOfSample);
-			systemModuleService.insert(workplanModule);
-			systemModuleService.insert(resultModule);
-			systemModuleService.insert(validationModule);
-			roleModuleService.insert(workplanResultModule);
-			roleModuleService.insert(resultResultModule);
-			roleModuleService.insert(validationValidationModule);
-
-//			tx.commit();
-
+			sampleTypeCreateService.createAndInsertSampleType(localization, typeOfSample, workplanModule, resultModule,
+					validationModule, workplanResultModule, resultResultModule, validationValidationModule);
 		} catch (LIMSRuntimeException lre) {
-//			tx.rollback();
 			lre.printStackTrace();
-		} 
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
+		}
 
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);

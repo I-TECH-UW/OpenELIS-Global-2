@@ -29,4 +29,6 @@ public interface SiteInformationService extends BaseObjectService<SiteInformatio
 	List<SiteInformation> getPreviousSiteInformationRecord(String id);
 
 	List<SiteInformation> getPageOfSiteInformationByDomainName(int startingRecNo, String domainName);
+
+	void persistData(SiteInformation siteInformation, boolean newSiteInformation);
 }

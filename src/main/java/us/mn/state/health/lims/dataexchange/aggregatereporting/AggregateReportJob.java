@@ -22,10 +22,12 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.mine.internationalization.MessageUtil;
 import spring.service.dataexchange.aggregatereporting.ReportExternalExportService;
@@ -41,7 +43,6 @@ import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.Repor
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportQueueType;
 import us.mn.state.health.lims.dataexchange.common.ITransmissionResponseHandler;
 import us.mn.state.health.lims.dataexchange.common.ReportTransmission;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.scheduler.valueholder.CronScheduler;
 import us.mn.state.health.lims.siteinformation.valueholder.SiteInformation;
 
@@ -95,7 +96,7 @@ public class AggregateReportJob implements Job {
 					+ "/IndicatorAggregation";//
 
 			boolean sendAsychronously = false;
-			ResponseHandler responseHandler = new ResponseHandler();
+			ResponseHandler responseHandler = SpringContext.getBean("aggregateResponseHandler");
 			responseHandler.setReports(sendableReports);
 			responseHandler.setReAttemptTry(wrapper, castorPropertyName, url);
 
@@ -137,16 +138,15 @@ public class AggregateReportJob implements Job {
 		reportScheduler.setLastRun(DateUtil.getNowAsTimestamp());
 		reportScheduler.setSysUserId("1");
 
-		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
 			cronSchedulerService.update(reportScheduler);
-			tx.commit();
 		} catch (HibernateException e) {
-			tx.rollback();
+			LogEvent.logErrorStack(this.getClass().getSimpleName(), "updateRunTimestamp()", e);
 		}
 	}
 
+	@Service("aggregateResponseHandler")
+	@Scope("prototype")
 	class ResponseHandler implements ITransmissionResponseHandler {
 
 		private static final long MAX_DELAY = 256; // Anything past this will be
@@ -173,6 +173,7 @@ public class AggregateReportJob implements Job {
 		}
 
 		@Override
+		@Transactional
 		public void handleResponse(int httpReturnStatus, List<String> errors, String msg) {
 
 			switch (httpReturnStatus) {
@@ -198,8 +199,6 @@ public class AggregateReportJob implements Job {
 
 		private void handleSuccess() {
 
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 			try {
 				for (ReportExternalExport report : sendableReports) {
 					report = reportExternalExportService.loadReport(report);
@@ -216,9 +215,9 @@ public class AggregateReportJob implements Job {
 					siteInfoService.updateData(sendInfo);
 				}
 
-				tx.commit();
 			} catch (HibernateException e) {
-				tx.rollback();
+				LogEvent.logErrorStack(this.getClass().getSimpleName(), "handleSuccess()", e);
+				throw e;
 			}
 
 		}
@@ -273,8 +272,6 @@ public class AggregateReportJob implements Job {
 		}
 
 		private void writeSendStatus(String status) {
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 			try {
 				SiteInformation sendInfo = siteInfoService.getSiteInformationByName("testUsageSendStatus");
 				if (sendInfo != null) {
@@ -282,9 +279,8 @@ public class AggregateReportJob implements Job {
 					sendInfo.setSysUserId("1");
 					siteInfoService.updateData(sendInfo);
 				}
-				tx.commit();
 			} catch (HibernateException e) {
-				tx.rollback();
+				LogEvent.logErrorStack(this.getClass().getSimpleName(), "writeSendStatus()", e);
 			}
 		}
 

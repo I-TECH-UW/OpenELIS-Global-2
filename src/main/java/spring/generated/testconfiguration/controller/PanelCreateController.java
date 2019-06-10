@@ -19,14 +19,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.PanelCreateForm;
 import spring.mine.common.controller.BaseController;
-import spring.service.localization.LocalizationService;
 import spring.service.localization.LocalizationServiceImpl;
 import spring.service.panel.PanelService;
 import spring.service.role.RoleService;
-import spring.service.rolemodule.RoleModuleService;
-import spring.service.systemmodule.SystemModuleService;
-import spring.service.typeofsample.TypeOfSamplePanelService;
-import spring.service.typeofsample.TypeOfSampleService;
+import spring.service.testconfiguration.PanelCreateService;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
@@ -38,28 +34,19 @@ import us.mn.state.health.lims.systemmodule.valueholder.SystemModule;
 import us.mn.state.health.lims.systemusermodule.valueholder.RoleModule;
 import us.mn.state.health.lims.testconfiguration.action.PanelTestConfigurationUtil;
 import us.mn.state.health.lims.testconfiguration.action.SampleTypePanel;
-import us.mn.state.health.lims.typeofsample.valueholder.TypeOfSamplePanel;
 
 @Controller
 public class PanelCreateController extends BaseController {
-	
+
 	@Autowired
-	PanelService panelService;
+	private PanelService panelService;
 	@Autowired
-	RoleService roleService;
+	private RoleService roleService;
 	@Autowired
-	RoleModuleService roleModuleService;
+	private PanelTestConfigurationUtil panelTestConfigurationUtil;
 	@Autowired
-	SystemModuleService systemModuleService;
-	@Autowired
-	TypeOfSampleService typeOfSampleService;
-	@Autowired
-	TypeOfSamplePanelService typeOfSamplePanelService;
-	@Autowired
-	LocalizationService localizationService;
-	@Autowired
-	PanelTestConfigurationUtil panelTestConfigurationUtil;
-	
+	private PanelCreateService panelCreateService;
+
 	public static final String NAME_SEPARATOR = "$";
 
 	@RequestMapping(value = "/PanelCreate", method = RequestMethod.GET)
@@ -97,7 +84,8 @@ public class PanelCreateController extends BaseController {
 		List<SampleTypePanel> sampleTypePanelsExists = new ArrayList<>();
 		List<SampleTypePanel> sampleTypePanelsInactive = new ArrayList<>();
 
-		for (IdValuePair typeOfSample : DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE)) {
+		for (IdValuePair typeOfSample : DisplayListService.getInstance()
+				.getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE)) {
 			SampleTypePanel sampleTypePanel = new SampleTypePanel(typeOfSample.getValue());
 			sampleTypePanel.setPanels(existingSampleTypePanelMap.get(typeOfSample.getValue()));
 			sampleTypePanelsExists.add(sampleTypePanel);
@@ -138,48 +126,29 @@ public class PanelCreateController extends BaseController {
 //		SystemModuleDAO systemModuleDAO = new SystemModuleDAOImpl();
 		String identifyingName = form.getString("panelEnglishName");
 		String sampleTypeId = form.getString("sampleTypeId");
-		String userId = getSysUserId(request);
+		String systemUserId = getSysUserId(request);
 
-		Localization localization = createLocalization(form.getString("panelFrenchName"), identifyingName, userId);
+		Localization localization = createLocalization(form.getString("panelFrenchName"), identifyingName,
+				systemUserId);
 
-		Panel panel = createPanel(identifyingName, userId);
-		SystemModule workplanModule = createSystemModule("Workplan", identifyingName, userId);
-		SystemModule resultModule = createSystemModule("LogbookResults", identifyingName, userId);
-		SystemModule validationModule = createSystemModule("ResultValidation", identifyingName, userId);
+		Panel panel = createPanel(identifyingName, systemUserId);
+		SystemModule workplanModule = createSystemModule("Workplan", identifyingName, systemUserId);
+		SystemModule resultModule = createSystemModule("LogbookResults", identifyingName, systemUserId);
+		SystemModule validationModule = createSystemModule("ResultValidation", identifyingName, systemUserId);
 
 		Role resultsEntryRole = roleService.getRoleByName("Results entry");
 		Role validationRole = roleService.getRoleByName("Validator");
 
-		RoleModule workplanResultModule = createRoleModule(userId, workplanModule, resultsEntryRole);
-		RoleModule resultResultModule = createRoleModule(userId, resultModule, resultsEntryRole);
-		RoleModule validationValidationModule = createRoleModule(userId, validationModule, validationRole);
-
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
+		RoleModule workplanResultModule = createRoleModule(systemUserId, workplanModule, resultsEntryRole);
+		RoleModule resultResultModule = createRoleModule(systemUserId, resultModule, resultsEntryRole);
+		RoleModule validationValidationModule = createRoleModule(systemUserId, validationModule, validationRole);
 
 		try {
-			localizationService.insert(localization);
-			panel.setLocalization(localization);
-			panelService.insert(panel);
-
-			TypeOfSamplePanel typeOfSamplePanel = createTypeOfSamplePanel(sampleTypeId, panel, userId);
-			typeOfSamplePanelService.insert(typeOfSamplePanel);
-
-			systemModuleService.insert(workplanModule);
-			systemModuleService.insert(resultModule);
-			systemModuleService.insert(validationModule);
-			roleModuleService.insert(workplanResultModule);
-			roleModuleService.insert(resultResultModule);
-			roleModuleService.insert(validationValidationModule);
-
-//			tx.commit();
-
+			panelCreateService.insert(localization, panel, workplanModule, resultModule, validationModule,
+					workplanResultModule, resultResultModule, validationValidationModule, sampleTypeId, systemUserId);
 		} catch (LIMSRuntimeException lre) {
-//			tx.rollback();
 			lre.printStackTrace();
-		} 
-//			finally {
-//			HibernateUtil.closeSession();
-//		}
+		}
 
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS_INACTIVE);
@@ -216,14 +185,6 @@ public class PanelCreateController extends BaseController {
 		panel.setSortOrderInt(Integer.MAX_VALUE);
 		panel.setSysUserId(userId);
 		return panel;
-	}
-
-	private TypeOfSamplePanel createTypeOfSamplePanel(String sampleTypeId, Panel panel, String userId) {
-		TypeOfSamplePanel sampleTypePanel = new TypeOfSamplePanel();
-		sampleTypePanel.setPanelId(panel.getId());
-		sampleTypePanel.setTypeOfSampleId(sampleTypeId);
-		sampleTypePanel.setSysUserId(userId);
-		return sampleTypePanel;
 	}
 
 	private SystemModule createSystemModule(String menuItem, String identifyingName, String userId) {

@@ -22,8 +22,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.Transaction;
-
 import spring.service.dataexchange.aggregatereporting.ReportExternalExportService;
 import spring.service.dataexchange.aggregatereporting.ReportQueueTypeService;
 import spring.service.referencetables.ReferenceTablesService;
@@ -31,13 +29,13 @@ import spring.service.reports.DocumentTrackService;
 import spring.service.reports.DocumentTypeService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
+import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportExternalExport;
 import us.mn.state.health.lims.dataexchange.aggregatereporting.valueholder.ReportQueueType;
 import us.mn.state.health.lims.dataexchange.common.ITransmissionResponseHandler;
 import us.mn.state.health.lims.dataexchange.common.ReportTransmission;
 import us.mn.state.health.lims.dataexchange.resultreporting.beans.ResultReportXmit;
-import us.mn.state.health.lims.hibernate.HibernateUtil;
 import us.mn.state.health.lims.referencetables.valueholder.ReferenceTables;
 import us.mn.state.health.lims.reports.valueholder.DocumentTrack;
 import us.mn.state.health.lims.reports.valueholder.DocumentType;
@@ -116,15 +114,10 @@ public class MalariaReportingTransfer {
 			report.setBookkeepingData(getResultIdListString());
 			report.setSend(true);
 
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 			try {
 				reportExternalExportService.insertReportExternalExport(report);
-
-				tx.commit();
-
 			} catch (LIMSRuntimeException lre) {
-				tx.rollback();
+				LogEvent.logErrorStack(this.getClass().getSimpleName(), "bufferResults()", lre);
 			}
 		}
 
@@ -158,17 +151,13 @@ public class MalariaReportingTransfer {
 				documents.add(document);
 			}
 
-			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 			try {
-
-				for (DocumentTrack document : documents) {
-					trackService.insertData(document);
-				}
-
-				tx.commit();
+				trackService.insertAll(documents);
+//				for (DocumentTrack document : documents) {
+//					trackService.insertData(document);
+//				}
 			} catch (LIMSRuntimeException lre) {
-				tx.rollback();
+				LogEvent.logErrorStack(this.getClass().getSimpleName(), "markResultsAsSent()", lre);
 			}
 		}
 	}

@@ -88,9 +88,7 @@ public class PluginPermissionService {
 		if (role == null || module == null) {
 			return false;
 		}
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 
-//		try {
 		if (role.getId() == null) {
 			role.setActive(true);
 			roleService.insertData(role);
@@ -116,12 +114,6 @@ public class PluginPermissionService {
 			roleModuleService.insertData(roleModule);
 		}
 
-//			tx.commit();
-//
-//		} catch (LIMSRuntimeException lre) {
-//			tx.rollback();
-//			return false;
-//		}
 		return true;
 	}
 }

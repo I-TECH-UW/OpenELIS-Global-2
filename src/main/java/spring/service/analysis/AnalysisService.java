@@ -182,4 +182,6 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
 	List<Result> getResults();
 
+	void updateAllData(List<Analysis> updatedAnalysis, boolean skipAuditTrail);
+
 }

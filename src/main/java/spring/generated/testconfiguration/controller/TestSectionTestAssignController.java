@@ -20,10 +20,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spring.generated.testconfiguration.form.TestSectionTestAssignForm;
 import spring.mine.common.controller.BaseController;
-import spring.service.test.TestSectionService;
 import spring.service.test.TestSectionServiceImpl;
-import spring.service.test.TestService;
 import spring.service.test.TestServiceImpl;
+import spring.service.testconfiguration.TestSectionTestAssignService;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.util.IdValuePair;
 import us.mn.state.health.lims.common.util.validator.GenericValidator;
@@ -32,11 +31,9 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
 
 @Controller
 public class TestSectionTestAssignController extends BaseController {
-	
+
 	@Autowired
-	TestService testService;
-	@Autowired
-	TestSectionService testSectionService;
+	private TestSectionTestAssignService testSectionTestAssignService;
 
 	@RequestMapping(value = "/TestSectionTestAssign", method = RequestMethod.GET)
 	public ModelAndView showTestSectionTestAssign(HttpServletRequest request) {
@@ -138,25 +135,12 @@ public class TestSectionTestAssignController extends BaseController {
 			deActivateTestSection.setSysUserId(currentUser);
 		}
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
-			testService.update(test);
-
-			if (updateTestSection) {
-				testSectionService.update(testSection);
-			}
-
-			if (deActivateTestSection != null) {
-				testSectionService.update(deActivateTestSection);
-			}
-//			tx.commit();
+			testSectionTestAssignService.updateTestAndTestSections(test, testSection, deActivateTestSection,
+					updateTestSection);
 		} catch (HibernateException lre) {
-//			tx.rollback();
 			lre.printStackTrace();
-		} 
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
+		}
 
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION);
 		DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);

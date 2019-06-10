@@ -193,8 +193,6 @@ public class NonConformityUpdateWorker {
 			updateArtifacts();
 		}
 
-//		Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 		try {
 			if (insertPatient) {
 				patientService.insertData(patient);
@@ -310,9 +308,7 @@ public class NonConformityUpdateWorker {
 				}
 			}
 
-//			tx.commit();
 		} catch (LIMSRuntimeException lre) {
-//			tx.rollback();
 			if (lre.getException() instanceof StaleObjectStateException) {
 				errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
 			} else {
@@ -322,9 +318,6 @@ public class NonConformityUpdateWorker {
 			throw lre;
 
 		}
-//		finally {
-//			HibernateUtil.closeSession();
-//		}
 
 		return IActionConstants.FWD_SUCCESS_INSERT;
 	}

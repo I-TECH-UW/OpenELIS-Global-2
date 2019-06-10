@@ -18,4 +18,7 @@ public interface ReportExternalImportService extends BaseObjectService<ReportExt
 	void insertReportExternalImport(ReportExternalImport report);
 
 	List<String> getUniqueSites();
+
+	void updateReports(List<ReportExternalImport> insertableImportReports,
+			List<ReportExternalImport> updatableImportReports);
 }

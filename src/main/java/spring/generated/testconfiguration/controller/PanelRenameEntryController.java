@@ -22,12 +22,11 @@ import us.mn.state.health.lims.panel.valueholder.Panel;
 
 @Controller
 public class PanelRenameEntryController extends BaseController {
-	
+
 	@Autowired
 	PanelService panelService;
 	@Autowired
 	LocalizationService localizationService;
-	
 
 	@RequestMapping(value = "/PanelRenameEntry", method = RequestMethod.GET)
 	public ModelAndView showPanelRenameEntry(HttpServletRequest request) {
@@ -80,19 +79,11 @@ public class PanelRenameEntryController extends BaseController {
 			name.setFrench(nameFrench.trim());
 			name.setSysUserId(userId);
 
-//			Transaction tx = HibernateUtil.getSession().beginTransaction();
-
 			try {
-//				new LocalizationDAOImpl().updateData(name);
 				localizationService.update(name);
-//				tx.commit();
 			} catch (HibernateException e) {
-//				tx.rollback();
 				e.printStackTrace();
-			} 
-//			finally {
-//				HibernateUtil.closeSession();
-//			}
+			}
 
 		}
 

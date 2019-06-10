@@ -21,7 +21,8 @@ import us.mn.state.health.lims.localization.valueholder.Localization;
 @Service
 @DependsOn({ "springContext" })
 @Scope("prototype")
-public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization, String> implements LocalizationService, LocaleChangeListener {
+public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization, String>
+		implements LocalizationService, LocaleChangeListener {
 
 	public enum LocalizationType {
 		TEST_NAME("test name"), REPORTING_TEST_NAME("test report name"), BANNER_LABEL("Site information banner test"),
@@ -181,6 +182,13 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization,
 
 	@Override
 	public String insert(Localization localization) {
-		return (String) super.insert(localization);
+		return super.insert(localization);
+	}
+
+	@Override
+	@Transactional
+	public void updateTestNames(Localization name, Localization reportingName) {
+		update(name);
+		update(reportingName);
 	}
 }
