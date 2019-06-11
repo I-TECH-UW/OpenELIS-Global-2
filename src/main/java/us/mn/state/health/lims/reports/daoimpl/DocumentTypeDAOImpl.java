@@ -16,54 +16,51 @@
 */
 package us.mn.state.health.lims.reports.daoimpl;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.reports.dao.DocumentTypeDAO;
 import us.mn.state.health.lims.reports.valueholder.DocumentType;
 
 @Component
-@Transactional 
+@Transactional
 public class DocumentTypeDAOImpl extends BaseDAOImpl<DocumentType, String> implements DocumentTypeDAO {
 
 	public DocumentTypeDAOImpl() {
 		super(DocumentType.class);
 	}
 
-	@Override
-	public DocumentType getDocumentTypeByName(String name) throws LIMSRuntimeException {
-		String sql = "Select from DocumentType dt where name = :name";
+//	@Override
+//	public DocumentType getDocumentTypeByName(String name) throws LIMSRuntimeException {
+//		String sql = "Select from DocumentType dt where name = :name";
+//
+//		try {
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setString("name", name);
+//			DocumentType docType = (DocumentType) query.uniqueResult();
+//			// closeSession(); // CSL remove old
+//			return docType;
+//		} catch (HibernateException e) {
+//			handleException(e, "getDocumentTypeByName");
+//		}
+//		return null;
+//	}
 
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setString("name", name);
-			DocumentType docType = (DocumentType) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return docType;
-		} catch (HibernateException e) {
-			handleException(e, "getDocumentTypeByName");
-		}
-		return null;
-	}
-
-	public DocumentType getByName(String name) {
-		String sql = "From DocumentType dt where dt.name = :name";
-
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setString("name", name);
-			DocumentType document = (DocumentType) query.setMaxResults(1).uniqueResult();
-			// closeSession(); // CSL remove old
-			return document;
-		} catch (HibernateException e) {
-			handleException(e, "getByName");
-		}
-
-		return null;
-	}
+//	public DocumentType getByName(String name) {
+//		String sql = "From DocumentType dt where dt.name = :name";
+//
+//		try {
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setString("name", name);
+//			DocumentType document = (DocumentType) query.setMaxResults(1).uniqueResult();
+//			// closeSession(); // CSL remove old
+//			return document;
+//		} catch (HibernateException e) {
+//			handleException(e, "getByName");
+//		}
+//
+//		return null;
+//	}
 
 }

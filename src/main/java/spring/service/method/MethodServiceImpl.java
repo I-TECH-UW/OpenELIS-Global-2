@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import spring.service.common.BaseObjectServiceImpl;
+import us.mn.state.health.lims.common.action.IActionConstants;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.method.dao.MethodDAO;
 import us.mn.state.health.lims.method.valueholder.Method;
 
@@ -25,59 +27,38 @@ public class MethodServiceImpl extends BaseObjectServiceImpl<Method, String> imp
 
 	@Override
 	public List getMethods(String filter) {
-        return getBaseObjectDAO().getMethods(filter);
+		return getBaseObjectDAO().getMethods(filter);
 	}
 
 	@Override
-	public void getData(Method method) {
-        getBaseObjectDAO().getData(method);
-
+	public void delete(Method method) {
+		Method oldMethod = get(method.getId());
+		oldMethod.setIsActive(IActionConstants.NO);
+		update(oldMethod);
 	}
 
 	@Override
-	public void deleteData(List methods) {
-        getBaseObjectDAO().deleteData(methods);
-
+	public String insert(Method method) {
+		if (getBaseObjectDAO().duplicateMethodExists(method)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + method.getMethodName());
+		}
+		return super.insert(method);
 	}
 
 	@Override
-	public void updateData(Method method) {
-        getBaseObjectDAO().updateData(method);
-
+	public Method save(Method method) {
+		if (getBaseObjectDAO().duplicateMethodExists(method)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + method.getMethodName());
+		}
+		return super.save(method);
 	}
 
 	@Override
-	public boolean insertData(Method method) {
-        return getBaseObjectDAO().insertData(method);
+	public Method update(Method method) {
+		if (getBaseObjectDAO().duplicateMethodExists(method)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + method.getMethodName());
+		}
+		return super.update(method);
 	}
 
-	@Override
-	public List getNextMethodRecord(String id) {
-        return getBaseObjectDAO().getNextMethodRecord(id);
-	}
-
-	@Override
-	public List getPreviousMethodRecord(String id) {
-        return getBaseObjectDAO().getPreviousMethodRecord(id);
-	}
-
-	@Override
-	public Integer getTotalMethodCount() {
-        return getBaseObjectDAO().getTotalMethodCount();
-	}
-
-	@Override
-	public List getAllMethods() {
-        return getBaseObjectDAO().getAllMethods();
-	}
-
-	@Override
-	public Method getMethodByName(Method method) {
-        return getBaseObjectDAO().getMethodByName(method);
-	}
-
-	@Override
-	public List getPageOfMethods(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfMethods(startingRecNo);
-	}
 }

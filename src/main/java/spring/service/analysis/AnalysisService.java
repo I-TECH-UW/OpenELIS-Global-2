@@ -21,17 +21,11 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
 	Analysis getAnalysisById(String analysisId);
 
-	void deleteData(List analysiss);
-
-	List getAllAnalyses();
+//	void deleteData(List analysiss);
 
 	void updateData(Analysis analysis);
 
 	void updateData(Analysis analysis, boolean skipAuditTrail);
-
-	List getAnalyses(String filter);
-
-	boolean insertData(Analysis analysis, boolean duplicateCheck);
 
 	List<Analysis> getAnalysisByTestDescriptionAndCompletedDateRange(List<String> descriptions, Date sqlDayOne,
 			Date sqlDayTwo);
@@ -121,21 +115,11 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
 	List<Analysis> getAnalysisCollectedOn(Date collectionDate);
 
-	List getAllAnalysesPerTest(Test test);
-
 	List getAllAnalysisByTestAndStatus(String testId, List<Integer> statusIdList);
-
-	List getPreviousAnalysisRecord(String id);
 
 	List<Analysis> getAnalysesBySampleItem(SampleItem sampleItem);
 
-	List getPageOfAnalyses(int startingRecNo);
-
-	List getNextAnalysisRecord(String id);
-
 	List getAllAnalysisByTestsAndStatus(List<String> testIdList, List<Integer> statusIdList);
-
-	void insert(Analysis analysis, boolean duplicateCheck);
 
 	String getCompletedDateForDisplay();
 

@@ -29,7 +29,8 @@ import us.mn.state.health.lims.testreflex.action.util.TestReflexBean;
 import us.mn.state.health.lims.testreflex.action.util.TestReflexUtil;
 
 @Service
-public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerResults, String> implements AnalyzerResultsService {
+public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerResults, String>
+		implements AnalyzerResultsService {
 	@Autowired
 	protected AnalyzerResultsDAO baseObjectDAO;
 
@@ -59,12 +60,6 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
 	@Transactional
 	public List<AnalyzerResults> getResultsbyAnalyzer(String analyzerId) {
 		return baseObjectDAO.getAllMatchingOrdered("analyzerId", analyzerId, "id", false);
-	}
-
-	@Override
-	public void getData(AnalyzerResults results) {
-		getBaseObjectDAO().getData(results);
-
 	}
 
 	@Override
@@ -140,7 +135,7 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
 				Analysis analysis = grouping.analysisList.get(i);
 				if (GenericValidator.isBlankOrNull(analysis.getId())) {
 					analysis.setSampleItem(grouping.sampleItem);
-					analysisService.insert(analysis, false);
+					analysisService.insert(analysis);
 				} else {
 					analysisService.update(analysis);
 				}

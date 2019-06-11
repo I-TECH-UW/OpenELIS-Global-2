@@ -46,15 +46,6 @@ public class RoleModuleServiceImpl extends BaseObjectServiceImpl<RoleModule, Str
 	}
 
 	@Override
-	public String insert(RoleModule roleModule) {
-		if (baseObjectDAO.duplicateRoleModuleExists(roleModule)) {
-			throw new LIMSDuplicateRecordException("Duplicate record exists for " + roleModule.getPermissionAgentId());
-		}
-		return super.insert(roleModule);
-
-	}
-
-	@Override
 	public List getAllPermissionModules() {
 		return baseObjectDAO.getAllPermissionModules();
 	}
@@ -97,6 +88,30 @@ public class RoleModuleServiceImpl extends BaseObjectServiceImpl<RoleModule, Str
 	@Override
 	public RoleModule getRoleModuleByRoleAndModuleId(String roleId, String moduleId) {
 		return baseObjectDAO.getRoleModuleByRoleAndModuleId(roleId, moduleId);
+	}
+
+	@Override
+	public String insert(RoleModule roleModule) {
+		if (getBaseObjectDAO().duplicateRoleModuleExists(roleModule)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + roleModule.getPermissionAgentId());
+		}
+		return super.insert(roleModule);
+	}
+
+	@Override
+	public RoleModule save(RoleModule roleModule) {
+		if (getBaseObjectDAO().duplicateRoleModuleExists(roleModule)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + roleModule.getPermissionAgentId());
+		}
+		return super.save(roleModule);
+	}
+
+	@Override
+	public RoleModule update(RoleModule roleModule) {
+		if (getBaseObjectDAO().duplicateRoleModuleExists(roleModule)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + roleModule.getPermissionAgentId());
+		}
+		return super.update(roleModule);
 	}
 
 }

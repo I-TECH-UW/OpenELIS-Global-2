@@ -98,7 +98,7 @@ public class LogoUploadServlet extends HttpServlet {
 		String imageId = logoInformation.getValue();
 
 		if (!GenericValidator.isBlankOrNull(imageId)) {
-			Image image = imageService.getImage(imageId);
+			Image image = imageService.get(imageId);
 
 			try {
 				logoUploadService.removeImage(image, logoInformation);

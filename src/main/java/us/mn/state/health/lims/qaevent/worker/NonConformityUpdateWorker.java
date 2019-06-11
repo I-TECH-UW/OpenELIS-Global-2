@@ -289,14 +289,14 @@ public class NonConformityUpdateWorker {
 				} else {
 					continue;
 				}
-				noteService.insertData(noteSet.note);
+				noteService.insert(noteSet.note);
 			}
 
 			for (Note note : updateableNotes) {
 				noteService.updateData(note);
 			}
 
-			noteService.deleteData(deleteableNotes);
+			noteService.deleteAll(deleteableNotes);
 			sampleQaEventService.deleteData(sampleQAEventDeleteList);
 
 			for (QaObservation qa : qaObservationMap.keySet()) {

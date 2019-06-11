@@ -131,8 +131,8 @@ public class TestModifyServiceImpl implements TestModifyService {
 			reportingName.setFrench(reportNameFrench.trim());
 			reportingName.setSysUserId(userId);
 
-			localizationService.updateData(name);
-			localizationService.updateData(reportingName);
+			localizationService.update(name);
+			localizationService.update(reportingName);
 
 		}
 

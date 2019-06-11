@@ -29,44 +29,6 @@ public class AnalyzerServiceImpl extends BaseObjectServiceImpl<Analyzer, String>
 	}
 
 	@Override
-	public void getData(Analyzer analyzer) {
-		getBaseObjectDAO().getData(analyzer);
-
-	}
-
-	@Override
-	public Analyzer getAnalyzerById(Analyzer analyzer) {
-		return getBaseObjectDAO().getAnalyzerById(analyzer);
-	}
-
-	@Override
-	public List<Analyzer> getAllAnalyzers() {
-		return getBaseObjectDAO().getAllAnalyzers();
-	}
-
-	@Override
-	public Analyzer readAnalyzer(String idString) {
-		return getBaseObjectDAO().readAnalyzer(idString);
-	}
-
-	@Override
-	public void deleteData(List<Analyzer> results) {
-		getBaseObjectDAO().deleteData(results);
-
-	}
-
-	@Override
-	public void updateData(Analyzer analyzer) {
-		update(analyzer);
-
-	}
-
-	@Override
-	public boolean insertData(Analyzer analyzer) {
-		return insert(analyzer) != null;
-	}
-
-	@Override
 	public Analyzer getAnalyzerByName(String name) {
 		return getMatch("name", name).orElse(null);
 	}
@@ -76,9 +38,9 @@ public class AnalyzerServiceImpl extends BaseObjectServiceImpl<Analyzer, String>
 	public void persistData(Analyzer analyzer, List<AnalyzerTestMapping> testMappings,
 			List<AnalyzerTestMapping> existingMappings) {
 		if (analyzer.getId() == null) {
-			insertData(analyzer);
+			insert(analyzer);
 		} else {
-			updateData(analyzer);
+			update(analyzer);
 		}
 
 		for (AnalyzerTestMapping mapping : testMappings) {

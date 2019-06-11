@@ -15,8 +15,6 @@
 */
 package us.mn.state.health.lims.analyte.dao;
 
-import java.util.List;
-
 import us.mn.state.health.lims.analyte.valueholder.Analyte;
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -31,34 +29,36 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
  */
 public interface AnalyteDAO extends BaseDAO<Analyte, String> {
 
-	public boolean insertData(Analyte analyte) throws LIMSRuntimeException;
+//	public boolean insertData(Analyte analyte) throws LIMSRuntimeException;
 
-	public void deleteData(List analytes) throws LIMSRuntimeException;
+//	public void deleteData(List analytes) throws LIMSRuntimeException;
 
-	public List getAllAnalytes() throws LIMSRuntimeException;
+//	public List getAllAnalytes() throws LIMSRuntimeException;
 
-	public List getPageOfAnalytes(int startingRecNo) throws LIMSRuntimeException;
+//	public List getPageOfAnalytes(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(Analyte analyte) throws LIMSRuntimeException;
+//	public void getData(Analyte analyte) throws LIMSRuntimeException;
 
-	public void updateData(Analyte analyte) throws LIMSRuntimeException;
+//	public void updateData(Analyte analyte) throws LIMSRuntimeException;
 
-	public List getAnalytes(String filter) throws LIMSRuntimeException;
+//	public List getAnalytes(String filter) throws LIMSRuntimeException;
 
-	public List getNextAnalyteRecord(String id) throws LIMSRuntimeException;
-
-	public List getPreviousAnalyteRecord(String id) throws LIMSRuntimeException;
+//	public List getNextAnalyteRecord(String id) throws LIMSRuntimeException;
+//
+//	public List getPreviousAnalyteRecord(String id) throws LIMSRuntimeException;
 
 	// bugzilla 1367 added boolean param
 	public Analyte getAnalyteByName(Analyte analyte, boolean ignoreCase) throws LIMSRuntimeException;
 
+	boolean duplicateAnalyteExists(Analyte analyte);
+
 	// bugzilla 1411
-	public Integer getTotalAnalyteCount() throws LIMSRuntimeException;
+//	public Integer getTotalAnalyteCount() throws LIMSRuntimeException;
 
 	// bugzilla 2370
-	public List getPagesOfSearchedAnalytes(int startRecNo, String searchString) throws LIMSRuntimeException;
+//	public List getPagesOfSearchedAnalytes(int startRecNo, String searchString) throws LIMSRuntimeException;
 
 	// bugzilla 2370
-	public Integer getTotalSearchedAnalyteCount(String searchString) throws LIMSRuntimeException;
+//	public Integer getTotalSearchedAnalyteCount(String searchString) throws LIMSRuntimeException;
 
 }

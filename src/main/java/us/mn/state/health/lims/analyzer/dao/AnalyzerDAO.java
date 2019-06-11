@@ -15,25 +15,23 @@
 */
 package us.mn.state.health.lims.analyzer.dao;
 
-import java.util.List;
-
 import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
 public interface AnalyzerDAO extends BaseDAO<Analyzer, String> {
 
-	public boolean insertData(Analyzer analyzer) throws LIMSRuntimeException;
+//	public boolean insertData(Analyzer analyzer) throws LIMSRuntimeException;
 
-	public void deleteData(List<Analyzer> results) throws LIMSRuntimeException;
+//	public void deleteData(List<Analyzer> results) throws LIMSRuntimeException;
 
-	public List<Analyzer> getAllAnalyzers() throws LIMSRuntimeException;
+//	public List<Analyzer> getAllAnalyzers() throws LIMSRuntimeException;
 
-	public Analyzer readAnalyzer(String idString) throws LIMSRuntimeException;
+//	public Analyzer readAnalyzer(String idString) throws LIMSRuntimeException;
 
-	public void getData(Analyzer analyzer) throws LIMSRuntimeException;
+//	public void getData(Analyzer analyzer) throws LIMSRuntimeException;
 
-	public void updateData(Analyzer analyzer) throws LIMSRuntimeException;
+//	public void updateData(Analyzer analyzer) throws LIMSRuntimeException;
 
 	public Analyzer getAnalyzerById(Analyzer analyzer) throws LIMSRuntimeException;
 

@@ -36,7 +36,7 @@ public class AnalyzerTestMappingValidator implements Validator {
 		validate(analyzerTestMapping, errors);
 
 		AnalyzerTestMappingDAO mappingDAO = new AnalyzerTestMappingDAOImpl();
-		List<AnalyzerTestMapping> testMappingList = mappingDAO.getAllAnalyzerTestMappings();
+		List<AnalyzerTestMapping> testMappingList = mappingDAO.getAll();
 		for (AnalyzerTestMapping testMapping : testMappingList) {
 			if (analyzerTestMapping.getAnalyzerId().equals(testMapping.getAnalyzerId())
 					&& analyzerTestMapping.getAnalyzerTestName().equals(testMapping.getAnalyzerTestName())) {

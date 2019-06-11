@@ -83,8 +83,7 @@ public class ResultReportingCollator {
 		ST_IDENTITY_TYPE = patientIdentityTypeService.getNamedIdentityType("ST").getId();
 
 		resultTypeToHL7TypeMap = new HashMap<>();
-		@SuppressWarnings("unchecked")
-		List<TypeOfTestResult> typeOfResultList = typeOfTestResultService.getAllTypeOfTestResults();
+		List<TypeOfTestResult> typeOfResultList = typeOfTestResultService.getAll();
 
 		for (TypeOfTestResult type : typeOfResultList) {
 			resultTypeToHL7TypeMap.put(type.getTestResultType(), type.getHl7Value());

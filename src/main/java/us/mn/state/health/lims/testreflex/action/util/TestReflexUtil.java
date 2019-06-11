@@ -455,7 +455,7 @@ public class TestReflexUtil {
 				currentAnalysis.setSysUserId(currentUserId);
 				currentAnalysis.setTriggeredReflex(Boolean.TRUE);
 
-				analysisService.insertData(newAnalysis, false);
+				analysisService.insert(newAnalysis);
 				analysisService.updateData(currentAnalysis);
 			}
 		}

@@ -16,6 +16,7 @@ public class MenuServiceImpl extends BaseObjectServiceImpl<Menu, String> impleme
 
 	MenuServiceImpl() {
 		super(Menu.class);
+		disableLogging();
 	}
 
 	@Override
@@ -24,23 +25,12 @@ public class MenuServiceImpl extends BaseObjectServiceImpl<Menu, String> impleme
 	}
 
 	@Override
-	public void updateData(Menu menu) {
-        getBaseObjectDAO().updateData(menu);
-
-	}
-
-	@Override
 	public Menu getMenuByElementId(String elementId) {
-        return getBaseObjectDAO().getMenuByElementId(elementId);
+		return getMatch("elementId", elementId).orElse(null);
 	}
 
 	@Override
 	public List<Menu> getAllActiveMenus() {
-        return getBaseObjectDAO().getAllActiveMenus();
-	}
-
-	@Override
-	public List<Menu> getAllMenus() {
-        return getBaseObjectDAO().getAllMenus();
+		return getAllMatching("isActive", true);
 	}
 }

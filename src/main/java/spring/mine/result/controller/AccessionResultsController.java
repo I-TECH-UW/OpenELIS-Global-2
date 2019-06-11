@@ -22,6 +22,7 @@ import spring.mine.result.form.AccessionResultsForm;
 import spring.service.role.RoleService;
 import spring.service.sample.SampleService;
 import spring.service.samplehuman.SampleHumanService;
+import spring.service.userrole.UserRoleService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -35,8 +36,6 @@ import us.mn.state.health.lims.result.action.util.ResultsPaging;
 import us.mn.state.health.lims.role.valueholder.Role;
 import us.mn.state.health.lims.sample.valueholder.Sample;
 import us.mn.state.health.lims.test.beanItems.TestResultItem;
-import us.mn.state.health.lims.userrole.dao.UserRoleDAO;
-import us.mn.state.health.lims.userrole.daoimpl.UserRoleDAOImpl;
 
 @Controller
 public class AccessionResultsController extends BaseController {
@@ -52,6 +51,8 @@ public class AccessionResultsController extends BaseController {
 	private SampleHumanService sampleHumanService;
 	@Autowired
 	private RoleService roleService;
+	@Autowired
+	private UserRoleService userRoleService;
 
 	@PostConstruct
 	private void initializeGlobalVariables() {
@@ -141,9 +142,7 @@ public class AccessionResultsController extends BaseController {
 			return false;
 		}
 
-		UserRoleDAO userRoleDAO = new UserRoleDAOImpl();
-
-		List<String> roleIds = userRoleDAO.getRoleIdsForUser(getSysUserId(request));
+		List<String> roleIds = userRoleService.getRoleIdsForUser(getSysUserId(request));
 
 		return !roleIds.contains(RESULT_EDIT_ROLE_ID);
 	}

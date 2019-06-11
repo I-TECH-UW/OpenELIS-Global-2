@@ -19,21 +19,14 @@ package us.mn.state.health.lims.login.daoimpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
-import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.login.dao.LoginDAO;
 import us.mn.state.health.lims.login.valueholder.Login;
 import us.mn.state.health.lims.security.PasswordUtil;
@@ -49,279 +42,277 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 		super(Login.class);
 	}
 
-	@Autowired
-	private AuditTrailDAO auditDAO;
+//	@Override
+//	public void deleteData(List logins) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < logins.size(); i++) {
+//				Login data = (Login) logins.get(i);
+//
+//				Login oldData = readLoginUser(data.getId());
+//				Login newData = new Login();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "LOGIN_USER";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("LoginDAOImpl", "AuditTrail deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Login AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < logins.size(); i++) {
+//				Login data = (Login) logins.get(i);
+//				// bugzilla 2206
+//				data = readLoginUser(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("LoginDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Login deleteData()", e);
+//		}
+//	}
 
-	@Override
-	public void deleteData(List logins) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
-
-			for (int i = 0; i < logins.size(); i++) {
-				Login data = (Login) logins.get(i);
-
-				Login oldData = readLoginUser(data.getId());
-				Login newData = new Login();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "LOGIN_USER";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "AuditTrail deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Login AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < logins.size(); i++) {
-				Login data = (Login) logins.get(i);
-				// bugzilla 2206
-				data = readLoginUser(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Login deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(Login login) throws LIMSRuntimeException {
-
-		try {
-			if (duplicateLoginNameExists(login)) {
-				throw new LIMSDuplicateRecordException("Duplicate record exists for " + login.getLoginName());
-			}
-
-			// Crypto crypto = new Crypto();
-			PasswordUtil passUtil = new PasswordUtil();
-			String id = (String) sessionFactory.getCurrentSession().save(login);
-			login.setId(id);
-			// login.setPassword(crypto.getEncrypt(login.getPassword()));
-			login.setPassword(passUtil.hashPassword(login.getPassword()));
-
-			// add to audit trail
-
-			String sysUserId = login.getSysUserId();
-			String tableName = "LOGIN_USER";
-			auditDAO.saveNewHistory(login, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in Login insertData()", e);
-		}
-
-		return true;
-	}
+//	@Override
+//	public boolean insertData(Login login) throws LIMSRuntimeException {
+//
+//		try {
+//			if (duplicateLoginNameExists(login)) {
+//				throw new LIMSDuplicateRecordException("Duplicate record exists for " + login.getLoginName());
+//			}
+//
+//			// Crypto crypto = new Crypto();
+//			PasswordUtil passUtil = new PasswordUtil();
+//			String id = (String) sessionFactory.getCurrentSession().save(login);
+//			login.setId(id);
+//			// login.setPassword(crypto.getEncrypt(login.getPassword()));
+//			login.setPassword(passUtil.hashPassword(login.getPassword()));
+//
+//			// add to audit trail
+//
+//			String sysUserId = login.getSysUserId();
+//			String tableName = "LOGIN_USER";
+//			auditDAO.saveNewHistory(login, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("LoginDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Login insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
 	// Update login data, keep old password unless flag set
+//	@Override
+//	public void updateData(Login login, boolean passwordUpdated) throws LIMSRuntimeException {
+//		try {
+//			if (duplicateLoginNameExists(login)) {
+//				throw new LIMSDuplicateRecordException("Duplicate record exists for " + login.getLoginName());
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("LoginDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Login updateData()", e);
+//		}
+//
+//		Login oldData = readLoginUser(login.getId());
+//		// Crypto crypto = new Crypto();
+//
+//		Login newData = login;
+//		// newData.setPassword(crypto.getEncrypt(login.getPassword()));
+//		if (passwordUpdated) {
+//			PasswordUtil passUtil = new PasswordUtil();
+//			newData.setPassword(passUtil.hashPassword(login.getPassword()));
+//		}
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = login.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "LOGIN_USER";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("LoginDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Login AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(login);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(login);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(login);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("LoginDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Login updateData()", e);
+//		}
+//	}
+
+//	@Override
+//	public void getData(Login login) throws LIMSRuntimeException {
+//		try {
+//			Login l = sessionFactory.getCurrentSession().get(Login.class, login.getId());
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			if (l != null) {
+//				// Crypto crypto = new Crypto();
+//				// l.setPassword(crypto.getDecrypt(l.getPassword()));
+//				PropertyUtils.copyProperties(login, l);
+//			} else {
+//				login.setId(null);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("LoginDAOImpl", "getData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Login getData()", e);
+//		}
+//	}
+
+//	@Override
+//	public List getAllLoginUsers() throws LIMSRuntimeException {
+//		List list = new Vector();
+//		try {
+//			String sql = "from Login";
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("LoginDAOImpl", "getAllLogins()", e.toString());
+//			throw new LIMSRuntimeException("Error in Login getAllLogins()", e);
+//		}
+//
+//		return list;
+//	}
+
+//	@Override
+//	public List getPageOfLoginUsers(int startingRecNo) throws LIMSRuntimeException {
+//		List list = new Vector();
+//		try {
+//			// calculate maxRow to be one more than the page size
+//			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+//
+//			String sql = "from Login l order by l.loginName";
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setFirstResult(startingRecNo - 1);
+//			query.setMaxResults(endingRecNo - 1);
+//
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("LoginDAOImpl", "getPageOfLogins()", e.toString());
+//			throw new LIMSRuntimeException("Error in Login getPageOfLogins()", e);
+//		}
+//
+//		return list;
+//	}
+
+//	public Login readLoginUser(String idString) {
+//		Login l = null;
+//		try {
+//			l = sessionFactory.getCurrentSession().get(Login.class, idString);
+//			// Crypto crypto = new Crypto();
+//			// l.setPassword(crypto.getDecrypt(l.getPassword()));
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("LoginDAOImpl", "readLoginUser()", e.toString());
+//			throw new LIMSRuntimeException("Error in Login readLoginUser(idString)", e);
+//		}
+//
+//		return l;
+//	}
+
+//	@Override
+//	public List getNextLoginUserRecord(String id) throws LIMSRuntimeException {
+//
+//		return getNextRecord(id, "Login", Login.class);
+//	}
+
+//	@Override
+//	public List getPreviousLoginUserRecord(String id) throws LIMSRuntimeException {
+//
+//		return getPreviousRecord(id, "Login", Login.class);
+//	}
+
+//	@Override
+//	public Integer getTotalLoginUserCount() throws LIMSRuntimeException {
+//		return getTotalCount("Login", Login.class);
+//	}
+
+//	@Override
+//	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+//		int currentId = (Integer.valueOf(id)).intValue();
+//		String tablePrefix = getTablePrefix(table);
+//
+//		List list = new Vector();
+//		int rrn = 0;
+//		try {
+//			String sql = "select l.id from Login l order by l.loginName";
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			rrn = list.indexOf(String.valueOf(currentId));
+//
+//			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+//					.setMaxResults(2).list();
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("LoginDAOImpl", "getNextRecord()", e.toString());
+//			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
+//		}
+//
+//		return list;
+//	}
+
+//	@Override
+//	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+//		int currentId = (Integer.valueOf(id)).intValue();
+//		String tablePrefix = getTablePrefix(table);
+//
+//		List list = new Vector();
+//		int rrn = 0;
+//		try {
+//			String sql = "select l.id from Login l order by l.loginName";
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			rrn = list.indexOf(String.valueOf(currentId));
+//
+//			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+//					.setMaxResults(2).list();
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("LoginDAOImpl", "getPreviousRecord()", e.toString());
+//			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
+//		}
+//
+//		return list;
+//	}
+
 	@Override
-	public void updateData(Login login, boolean passwordUpdated) throws LIMSRuntimeException {
-		try {
-			if (duplicateLoginNameExists(login)) {
-				throw new LIMSDuplicateRecordException("Duplicate record exists for " + login.getLoginName());
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Login updateData()", e);
-		}
-
-		Login oldData = readLoginUser(login.getId());
-		// Crypto crypto = new Crypto();
-
-		Login newData = login;
-		// newData.setPassword(crypto.getEncrypt(login.getPassword()));
-		if (passwordUpdated) {
-			PasswordUtil passUtil = new PasswordUtil();
-			newData.setPassword(passUtil.hashPassword(login.getPassword()));
-		}
-
-		// add to audit trail
-		try {
-
-			String sysUserId = login.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "LOGIN_USER";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Login AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(login);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(login);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(login);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Login updateData()", e);
-		}
-	}
-
-	@Override
-	public void getData(Login login) throws LIMSRuntimeException {
-		try {
-			Login l = sessionFactory.getCurrentSession().get(Login.class, login.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			if (l != null) {
-				// Crypto crypto = new Crypto();
-				// l.setPassword(crypto.getDecrypt(l.getPassword()));
-				PropertyUtils.copyProperties(login, l);
-			} else {
-				login.setId(null);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in Login getData()", e);
-		}
-	}
-
-	@Override
-	public List getAllLoginUsers() throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			String sql = "from Login";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "getAllLogins()", e.toString());
-			throw new LIMSRuntimeException("Error in Login getAllLogins()", e);
-		}
-
-		return list;
-	}
-
-	@Override
-	public List getPageOfLoginUsers(int startingRecNo) throws LIMSRuntimeException {
-		List list = new Vector();
-		try {
-			// calculate maxRow to be one more than the page size
-			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
-
-			String sql = "from Login l order by l.loginName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setFirstResult(startingRecNo - 1);
-			query.setMaxResults(endingRecNo - 1);
-
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "getPageOfLogins()", e.toString());
-			throw new LIMSRuntimeException("Error in Login getPageOfLogins()", e);
-		}
-
-		return list;
-	}
-
-	public Login readLoginUser(String idString) {
-		Login l = null;
-		try {
-			l = sessionFactory.getCurrentSession().get(Login.class, idString);
-			// Crypto crypto = new Crypto();
-			// l.setPassword(crypto.getDecrypt(l.getPassword()));
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "readLoginUser()", e.toString());
-			throw new LIMSRuntimeException("Error in Login readLoginUser(idString)", e);
-		}
-
-		return l;
-	}
-
-	@Override
-	public List getNextLoginUserRecord(String id) throws LIMSRuntimeException {
-
-		return getNextRecord(id, "Login", Login.class);
-	}
-
-	@Override
-	public List getPreviousLoginUserRecord(String id) throws LIMSRuntimeException {
-
-		return getPreviousRecord(id, "Login", Login.class);
-	}
-
-	@Override
-	public Integer getTotalLoginUserCount() throws LIMSRuntimeException {
-		return getTotalCount("Login", Login.class);
-	}
-
-	@Override
-	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-		int currentId = (Integer.valueOf(id)).intValue();
-		String tablePrefix = getTablePrefix(table);
-
-		List list = new Vector();
-		int rrn = 0;
-		try {
-			String sql = "select l.id from Login l order by l.loginName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			rrn = list.indexOf(String.valueOf(currentId));
-
-			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
-					.setMaxResults(2).list();
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "getNextRecord()", e.toString());
-			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-		}
-
-		return list;
-	}
-
-	@Override
-	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-		int currentId = (Integer.valueOf(id)).intValue();
-		String tablePrefix = getTablePrefix(table);
-
-		List list = new Vector();
-		int rrn = 0;
-		try {
-			String sql = "select l.id from Login l order by l.loginName";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			rrn = list.indexOf(String.valueOf(currentId));
-
-			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
-					.setMaxResults(2).list();
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "getPreviousRecord()", e.toString());
-			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-		}
-
-		return list;
-	}
-
-	private boolean duplicateLoginNameExists(Login login) throws LIMSRuntimeException {
+	public boolean duplicateLoginNameExists(Login login) throws LIMSRuntimeException {
 		try {
 
 			List list = new ArrayList();
@@ -414,35 +405,35 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 	 * @param loginName the user login name
 	 * @return login object
 	 */
-	@Override
-	public Login getUserProfile(String loginName) throws LIMSRuntimeException {
-
-		Login login = null;
-		try {
-			List list = new ArrayList();
-			String sql = "from Login l where l.loginName = :param";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setParameter("param", loginName);
-
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-			if (list.size() > 0) {
-				login = (Login) list.get(0);
-				int passwordExpiredDayNo = getPasswordExpiredDayNo(login);
-				int systemUserId = getSystemUserId(login);
-				login.setPasswordExpiredDayNo(passwordExpiredDayNo);
-				login.setSystemUserId(systemUserId);
-			}
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "getUserProfile()", e.toString());
-			throw new LIMSRuntimeException("Error in Login getUserProfile()", e);
-		}
-		return login;
-	}
+//	@Override
+//	public Login getUserProfile(String loginName) throws LIMSRuntimeException {
+//
+//		Login login = null;
+//		try {
+//			List list = new ArrayList();
+//			String sql = "from Login l where l.loginName = :param";
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setParameter("param", loginName);
+//
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//			if (list.size() > 0) {
+//				login = (Login) list.get(0);
+//				int passwordExpiredDayNo = getPasswordExpiredDayNo(login);
+//				int systemUserId = getSystemUserId(login);
+//				login.setPasswordExpiredDayNo(passwordExpiredDayNo);
+//				login.setSystemUserId(systemUserId);
+//			}
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("LoginDAOImpl", "getUserProfile()", e.toString());
+//			throw new LIMSRuntimeException("Error in Login getUserProfile()", e);
+//		}
+//		return login;
+//	}
 
 	/**
 	 * Get the password expiration day
@@ -504,32 +495,32 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 	 * @param login the login object
 	 * @return true if success, false otherwise
 	 */
-	@Override
-	public void updatePassword(Login login) throws LIMSRuntimeException {
-
-		// Crypto crypto = new Crypto();
-		PasswordUtil passUtil = new PasswordUtil();
-
-		try {
-			String password = login.getPassword();
-			// login.setPassword(crypto.getEncrypt(login.getPassword()));
-			login.setPassword(passUtil.hashPassword(login.getPassword()));
-
-			auditDAO.saveHistory(login, readLoginUser(login.getId()), login.getSysUserId(),
-					IActionConstants.AUDIT_TRAIL_UPDATE, "LOGIN_USER");
-
-			sessionFactory.getCurrentSession().merge(login);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(login);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(login);
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "updatePassword()", e.toString());
-			throw new LIMSRuntimeException("Error in Login updatePassword()", e);
-		}
-	}
+//	@Override
+//	public void updatePassword(Login login) throws LIMSRuntimeException {
+//
+//		// Crypto crypto = new Crypto();
+//		PasswordUtil passUtil = new PasswordUtil();
+//
+//		try {
+//			String password = login.getPassword();
+//			// login.setPassword(crypto.getEncrypt(login.getPassword()));
+//			login.setPassword(passUtil.hashPassword(login.getPassword()));
+//
+//			auditDAO.saveHistory(login, readLoginUser(login.getId()), login.getSysUserId(),
+//					IActionConstants.AUDIT_TRAIL_UPDATE, "LOGIN_USER");
+//
+//			sessionFactory.getCurrentSession().merge(login);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(login);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(login);
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("LoginDAOImpl", "updatePassword()", e.toString());
+//			throw new LIMSRuntimeException("Error in Login updatePassword()", e);
+//		}
+//	}
 
 	/**
 	 * bugzilla 2286 Lock the user account after number of failed attempt
@@ -537,23 +528,23 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 	 * @param login the login object
 	 * @return true if success, false otherwise
 	 */
-	@Override
-	public boolean lockAccount(Login login) throws LIMSRuntimeException {
-		boolean isSuccess = false;
-		try {
-			sessionFactory.getCurrentSession().merge(login);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(login);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(login);
-			isSuccess = true;
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "lockAccount()", e.toString());
-			throw new LIMSRuntimeException("Error in Login lockAccount()", e);
-		}
-		return isSuccess;
-	}
+//	@Override
+//	public boolean lockAccount(Login login) throws LIMSRuntimeException {
+//		boolean isSuccess = false;
+//		try {
+//			sessionFactory.getCurrentSession().merge(login);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(login);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(login);
+//			isSuccess = true;
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("LoginDAOImpl", "lockAccount()", e.toString());
+//			throw new LIMSRuntimeException("Error in Login lockAccount()", e);
+//		}
+//		return isSuccess;
+//	}
 
 	/**
 	 * bugzilla 2286 unlock the user account after number of minutes
@@ -561,21 +552,21 @@ public class LoginDAOImpl extends BaseDAOImpl<Login, String> implements LoginDAO
 	 * @param login the login object
 	 * @return true if success, false otherwise
 	 */
-	@Override
-	public boolean unlockAccount(Login login) throws LIMSRuntimeException {
-		boolean isSuccess = false;
-		try {
-			sessionFactory.getCurrentSession().merge(login);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(login);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(login);
-			isSuccess = true;
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("LoginDAOImpl", "unlockAccount()", e.toString());
-			throw new LIMSRuntimeException("Error in Login unlockAccount()", e);
-		}
-		return isSuccess;
-	}
+//	@Override
+//	public boolean unlockAccount(Login login) throws LIMSRuntimeException {
+//		boolean isSuccess = false;
+//		try {
+//			sessionFactory.getCurrentSession().merge(login);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(login);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(login);
+//			isSuccess = true;
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("LoginDAOImpl", "unlockAccount()", e.toString());
+//			throw new LIMSRuntimeException("Error in Login unlockAccount()", e);
+//		}
+//		return isSuccess;
+//	}
 }

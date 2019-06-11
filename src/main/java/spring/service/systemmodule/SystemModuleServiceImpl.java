@@ -49,14 +49,6 @@ public class SystemModuleServiceImpl extends BaseObjectServiceImpl<SystemModule,
 	}
 
 	@Override
-	public String insert(SystemModule systemModule) {
-		if (baseObjectDAO.duplicateSystemModuleExists(systemModule)) {
-			throw new LIMSDuplicateRecordException("Duplicate record exists for " + systemModule.getSystemModuleName());
-		}
-		return super.insert(systemModule);
-	}
-
-	@Override
 	public Integer getTotalSystemModuleCount() {
 		return getBaseObjectDAO().getTotalSystemModuleCount();
 	}
@@ -84,5 +76,29 @@ public class SystemModuleServiceImpl extends BaseObjectServiceImpl<SystemModule,
 	@Override
 	public SystemModule getSystemModuleByName(String name) {
 		return getBaseObjectDAO().getSystemModuleByName(name);
+	}
+
+	@Override
+	public String insert(SystemModule systemModule) {
+		if (getBaseObjectDAO().duplicateSystemModuleExists(systemModule)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + systemModule.getSystemModuleName());
+		}
+		return super.insert(systemModule);
+	}
+
+	@Override
+	public SystemModule save(SystemModule systemModule) {
+		if (getBaseObjectDAO().duplicateSystemModuleExists(systemModule)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + systemModule.getSystemModuleName());
+		}
+		return super.save(systemModule);
+	}
+
+	@Override
+	public SystemModule update(SystemModule systemModule) {
+		if (getBaseObjectDAO().duplicateSystemModuleExists(systemModule)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + systemModule.getSystemModuleName());
+		}
+		return super.update(systemModule);
 	}
 }

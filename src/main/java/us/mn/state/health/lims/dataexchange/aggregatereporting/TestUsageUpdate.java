@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.HibernateException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
@@ -189,7 +188,7 @@ public class TestUsageUpdate implements IResultUpdate {
 //					queueService.updateReportExternalExport(export);
 //				}
 //			}
-		} catch (HibernateException e) {
+		} catch (LIMSRuntimeException e) {
 			LogEvent.logError("TestUsageUpdate", "applyUpdatesToDB", e.toString());
 		}
 	}

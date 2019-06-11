@@ -21,25 +21,4 @@ public class DataValueServiceImpl extends BaseObjectServiceImpl<DataValue, Strin
 		return baseObjectDAO;
 	}
 
-	@Override
-	public void getData(DataValue dataValue) {
-        getBaseObjectDAO().getData(dataValue);
-
-	}
-
-	@Override
-	public void updateData(DataValue dataValue) {
-        getBaseObjectDAO().updateData(dataValue);
-
-	}
-
-	@Override
-	public boolean insertData(DataValue dataValue) {
-        return getBaseObjectDAO().insertData(dataValue);
-	}
-
-	@Override
-	public DataValue getDataValue(String id) {
-        return getBaseObjectDAO().getDataValue(id);
-	}
 }

@@ -20,8 +20,6 @@ package us.mn.state.health.lims.analyzerresults.daoimpl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,30 +43,30 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 	@Autowired
 	private AuditTrailDAO auditDAO;
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<AnalyzerResults> getResultsbyAnalyzer(String analyzerId) throws LIMSRuntimeException {
-
-		List<AnalyzerResults> results = null;
-		try {
-			String sql = "from AnalyzerResults ar where ar.analyzerId = :analyzerId order by ar.id";
-
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setInteger("analyzerId", Integer.parseInt(analyzerId));
-
-			results = query.list();
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-			return results;
-
-		} catch (Exception e) {
-			LogEvent.logError("AnalyzerResultsDAOImpl", "getResultsbyAnalyzer()", e.toString());
-			throw new LIMSRuntimeException("Error in AnalyzerResults getResultsbyAnalyzer()", e);
-		}
-
-	}
+//	@Override
+//	@SuppressWarnings("unchecked")
+//	public List<AnalyzerResults> getResultsbyAnalyzer(String analyzerId) throws LIMSRuntimeException {
+//
+//		List<AnalyzerResults> results = null;
+//		try {
+//			String sql = "from AnalyzerResults ar where ar.analyzerId = :analyzerId order by ar.id";
+//
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setInteger("analyzerId", Integer.parseInt(analyzerId));
+//
+//			results = query.list();
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//			return results;
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("AnalyzerResultsDAOImpl", "getResultsbyAnalyzer()", e.toString());
+//			throw new LIMSRuntimeException("Error in AnalyzerResults getResultsbyAnalyzer()", e);
+//		}
+//
+//	}
 
 	@Override
 	public void insertAnalyzerResults(List<AnalyzerResults> results, String sysUserId) throws LIMSRuntimeException {
@@ -187,40 +185,40 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 		return data;
 	}
 
-	@Override
-	public void getData(AnalyzerResults analyzerResults) throws LIMSRuntimeException {
+//	@Override
+//	public void getData(AnalyzerResults analyzerResults) throws LIMSRuntimeException {
+//
+//		try {
+//			AnalyzerResults analyzerResultsClone = sessionFactory.getCurrentSession().get(AnalyzerResults.class,
+//					analyzerResults.getId());
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			if (analyzerResultsClone != null) {
+//				PropertyUtils.copyProperties(analyzerResults, analyzerResultsClone);
+//			} else {
+//				analyzerResults.setId(null);
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("AnalyzerResultsDAOImpl", "getData()", e.toString());
+//			throw new LIMSRuntimeException("Error in AnalyzerResults getData()", e);
+//		}
+//	}
 
-		try {
-			AnalyzerResults analyzerResultsClone = sessionFactory.getCurrentSession().get(AnalyzerResults.class,
-					analyzerResults.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			if (analyzerResultsClone != null) {
-				PropertyUtils.copyProperties(analyzerResults, analyzerResultsClone);
-			} else {
-				analyzerResults.setId(null);
-			}
-		} catch (Exception e) {
-			LogEvent.logError("AnalyzerResultsDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in AnalyzerResults getData()", e);
-		}
-	}
-
-	@Override
-	public void deleteAll(List<AnalyzerResults> analyzerResults) throws LIMSRuntimeException {
-		try {
-			for (AnalyzerResults result : analyzerResults) {
-				result = readAnalyzerResults(result.getId());
-
-				sessionFactory.getCurrentSession().delete(result);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-			}
-		} catch (HibernateException se) {
-			LogEvent.logError("AnalyzerResultsDAOImpl", "delete()", se.toString());
-			throw new LIMSRuntimeException("Error in AnalyzerResults delete()", se);
-		}
-
-	}
+//	@Override
+//	public void deleteAll(List<AnalyzerResults> analyzerResults) throws LIMSRuntimeException {
+//		try {
+//			for (AnalyzerResults result : analyzerResults) {
+//				result = readAnalyzerResults(result.getId());
+//
+//				sessionFactory.getCurrentSession().delete(result);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//			}
+//		} catch (HibernateException se) {
+//			LogEvent.logError("AnalyzerResultsDAOImpl", "delete()", se.toString());
+//			throw new LIMSRuntimeException("Error in AnalyzerResults delete()", se);
+//		}
+//
+//	}
 }

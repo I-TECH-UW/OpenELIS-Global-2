@@ -17,14 +17,12 @@
  */
 package us.mn.state.health.lims.dictionary.daoimpl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,8 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
-import us.mn.state.health.lims.common.exception.LIMSFrozenRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.StringUtil;
@@ -56,136 +52,136 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 	@Autowired
 	private AuditTrailDAO auditDAO;
 
-	@Override
-	public void deleteData(List dictionarys) throws LIMSRuntimeException {
-		// add to audit trail
-		try {
+//	@Override
+//	public void deleteData(List dictionarys) throws LIMSRuntimeException {
+//		// add to audit trail
+//		try {
+//
+//			for (int i = 0; i < dictionarys.size(); i++) {
+//				Dictionary data = (Dictionary) dictionarys.get(i);
+//
+//				Dictionary oldData = readDictionary(data.getId());
+//				Dictionary newData = new Dictionary();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "DICTIONARY";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("DictionaryDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Dictionary AuditTrail deleteData()", e);
+//		}
+//
+//		try {
+//			for (int i = 0; i < dictionarys.size(); i++) {
+//				Dictionary data = (Dictionary) dictionarys.get(i);
+//				Dictionary cloneData = readDictionary(data.getId());
+//
+//				// Make the change to the object.
+//				cloneData.setIsActive(IActionConstants.NO);
+//				sessionFactory.getCurrentSession().merge(cloneData);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
+//				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("DictionaryDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Dictionary deleteData()", e);
+//		}
+//	}
 
-			for (int i = 0; i < dictionarys.size(); i++) {
-				Dictionary data = (Dictionary) dictionarys.get(i);
-
-				Dictionary oldData = readDictionary(data.getId());
-				Dictionary newData = new Dictionary();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "DICTIONARY";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DictionaryDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Dictionary AuditTrail deleteData()", e);
-		}
-
-		try {
-			for (int i = 0; i < dictionarys.size(); i++) {
-				Dictionary data = (Dictionary) dictionarys.get(i);
-				Dictionary cloneData = readDictionary(data.getId());
-
-				// Make the change to the object.
-				cloneData.setIsActive(IActionConstants.NO);
-				sessionFactory.getCurrentSession().merge(cloneData);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-				// sessionFactory.getCurrentSession().evict // CSL remove old(cloneData);
-				// sessionFactory.getCurrentSession().refresh // CSL remove old(cloneData);
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DictionaryDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Dictionary deleteData()", e);
-		}
-	}
-
-	@Override
-	public boolean insertData(Dictionary dictionary) throws LIMSRuntimeException {
-		try {
-			// bugzilla 1386 throw Exception if record already exists
-			if (duplicateDictionaryExists(dictionary)) {
-				throw new LIMSDuplicateRecordException(
-						"Duplicate record or abrevation exists for " + dictionary.getDictEntry());
-			}
-
-			String id = (String) sessionFactory.getCurrentSession().save(dictionary);
-			dictionary.setId(id);
-
-			// bugzilla 1824 inserts will be logged in history table
-
-			String sysUserId = dictionary.getSysUserId();
-			String tableName = "DICTIONARY";
-			auditDAO.saveNewHistory(dictionary, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DictionaryDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in Dictionary insertData()", e);
-		}
-
-		return true;
-	}
+//	@Override
+//	public boolean insertData(Dictionary dictionary) throws LIMSRuntimeException {
+//		try {
+//			// bugzilla 1386 throw Exception if record already exists
+//			if (duplicateDictionaryExists(dictionary)) {
+//				throw new LIMSDuplicateRecordException(
+//						"Duplicate record or abrevation exists for " + dictionary.getDictEntry());
+//			}
+//
+//			String id = (String) sessionFactory.getCurrentSession().save(dictionary);
+//			dictionary.setId(id);
+//
+//			// bugzilla 1824 inserts will be logged in history table
+//
+//			String sysUserId = dictionary.getSysUserId();
+//			String tableName = "DICTIONARY";
+//			auditDAO.saveNewHistory(dictionary, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("DictionaryDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Dictionary insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
 	// modified for bugzilla 2061-2063
-	@Override
-	public void updateData(Dictionary dictionary, boolean isDictionaryFrozenCheckRequired) throws LIMSRuntimeException {
-		Session session = sessionFactory.getCurrentSession();
-
-		// bugzilla 1386 throw Exception if record already exists
-		try {
-			if (duplicateDictionaryExists(dictionary)) {
-				throw new LIMSDuplicateRecordException("Duplicate record exists for " + dictionary.getDictEntry());
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DictionaryDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Dictionary updateData()", e);
-		}
-
-		// bugzilla 1482 throw Exception if dictionary is already referenced in
-		// the system
-		try {
-			if (isDictionaryFrozenCheckRequired) {
-				if (isDictionaryFrozen(dictionary)) {
-					throw new LIMSFrozenRecordException("Dictionary Entry is referenced " + dictionary.getDictEntry());
-				}
-			}
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DictionaryDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Dictionary updateData()", e);
-		}
-
-		Dictionary oldData = readDictionary(dictionary.getId());
-		Dictionary newData = dictionary;
-		newData.setLastupdated(oldData.getLastupdated());
-
-		// add to audit trail
-		try {
-
-			String sysUserId = dictionary.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "DICTIONARY";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DictionaryDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Dictionary AuditTrail updateData()", e);
-		}
-
-		try {
-			session.merge(dictionary);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(dictionary);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(dictionary);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DictionaryDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Dictionary updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(Dictionary dictionary, boolean isDictionaryFrozenCheckRequired) throws LIMSRuntimeException {
+//		Session session = sessionFactory.getCurrentSession();
+//
+//		// bugzilla 1386 throw Exception if record already exists
+//		try {
+//			if (duplicateDictionaryExists(dictionary)) {
+//				throw new LIMSDuplicateRecordException("Duplicate record exists for " + dictionary.getDictEntry());
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("DictionaryDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Dictionary updateData()", e);
+//		}
+//
+//		// bugzilla 1482 throw Exception if dictionary is already referenced in
+//		// the system
+//		try {
+//			if (isDictionaryFrozenCheckRequired) {
+//				if (isDictionaryFrozen(dictionary)) {
+//					throw new LIMSFrozenRecordException("Dictionary Entry is referenced " + dictionary.getDictEntry());
+//				}
+//			}
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("DictionaryDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Dictionary updateData()", e);
+//		}
+//
+//		Dictionary oldData = readDictionary(dictionary.getId());
+//		Dictionary newData = dictionary;
+//		newData.setLastupdated(oldData.getLastupdated());
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = dictionary.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "DICTIONARY";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("DictionaryDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Dictionary AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			session.merge(dictionary);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(dictionary);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(dictionary);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("DictionaryDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Dictionary updateData()", e);
+//		}
+//	}
 
 	@Override
 	public void getData(Dictionary dictionary) throws LIMSRuntimeException {
@@ -226,96 +222,96 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 		return list;
 	}
 
-	@Override
-	public List getPageOfDictionarys(int startingRecNo) throws LIMSRuntimeException {
-		List list = new Vector();
-
-		try {
-			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
-
-			// bugzilla 1399
-			String sql = "from Dictionary d order by d.dictionaryCategory.categoryName, d.dictEntry";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setFirstResult(startingRecNo - 1);
-			query.setMaxResults(endingRecNo - 1);
-
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DictionaryDAOImpl", "getPageOfDictionarys()", e.toString());
-			throw new LIMSRuntimeException("Error in Dictionary getPageOfDictionarys()", e);
-		}
-
-		return list;
-	}
+//	@Override
+//	public List getPageOfDictionarys(int startingRecNo) throws LIMSRuntimeException {
+//		List list = new Vector();
+//
+//		try {
+//			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+//
+//			// bugzilla 1399
+//			String sql = "from Dictionary d order by d.dictionaryCategory.categoryName, d.dictEntry";
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setFirstResult(startingRecNo - 1);
+//			query.setMaxResults(endingRecNo - 1);
+//
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("DictionaryDAOImpl", "getPageOfDictionarys()", e.toString());
+//			throw new LIMSRuntimeException("Error in Dictionary getPageOfDictionarys()", e);
+//		}
+//
+//		return list;
+//	}
 
 	// bugzilla 1413
-	@Override
-	public List getPagesOfSearchedDictionarys(int startingRecNo, String searchString) throws LIMSRuntimeException {
-		List list = new Vector();
-		String wildCard = "*";
-		String newSearchStr;
-		String sql;
-
-		try {
-			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
-			int wCdPosition = searchString.indexOf(wildCard);
-
-			if (wCdPosition == -1) // no wild card looking for exact match
-			{
-				newSearchStr = searchString.toLowerCase().trim();
-				sql = "from Dictionary d where trim(lower (d.dictEntry)) = :param  order by d.dictionaryCategory.categoryName, d.dictEntry";
-			} else {
-				newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
-				sql = "from Dictionary d where trim(lower (d.dictEntry)) like :param  order by d.dictionaryCategory.categoryName, d.dictEntry";
-			}
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setParameter("param", newSearchStr);
-			query.setFirstResult(startingRecNo - 1);
-			query.setMaxResults(endingRecNo - 1);
-
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new LIMSRuntimeException("Error in Dictionary getPageOfSearchedDictionarys()", e);
-		}
-
-		return list;
-	}
+//	@Override
+//	public List getPagesOfSearchedDictionarys(int startingRecNo, String searchString) throws LIMSRuntimeException {
+//		List list = new Vector();
+//		String wildCard = "*";
+//		String newSearchStr;
+//		String sql;
+//
+//		try {
+//			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+//			int wCdPosition = searchString.indexOf(wildCard);
+//
+//			if (wCdPosition == -1) // no wild card looking for exact match
+//			{
+//				newSearchStr = searchString.toLowerCase().trim();
+//				sql = "from Dictionary d where trim(lower (d.dictEntry)) = :param  order by d.dictionaryCategory.categoryName, d.dictEntry";
+//			} else {
+//				newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
+//				sql = "from Dictionary d where trim(lower (d.dictEntry)) like :param  order by d.dictionaryCategory.categoryName, d.dictEntry";
+//			}
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setParameter("param", newSearchStr);
+//			query.setFirstResult(startingRecNo - 1);
+//			query.setMaxResults(endingRecNo - 1);
+//
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			throw new LIMSRuntimeException("Error in Dictionary getPageOfSearchedDictionarys()", e);
+//		}
+//
+//		return list;
+//	}
 
 	// end bugzilla 1413
 
-	public Dictionary readDictionary(String idString) {
-		Dictionary dictionary = null;
-		try {
-			dictionary = sessionFactory.getCurrentSession().get(Dictionary.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DictionaryDAOImpl", "readDictionary()", e.toString());
-			throw new LIMSRuntimeException("Error in Dictionary readDictionary()", e);
-		}
+//	public Dictionary readDictionary(String idString) {
+//		Dictionary dictionary = null;
+//		try {
+//			dictionary = sessionFactory.getCurrentSession().get(Dictionary.class, idString);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("DictionaryDAOImpl", "readDictionary()", e.toString());
+//			throw new LIMSRuntimeException("Error in Dictionary readDictionary()", e);
+//		}
+//
+//		return dictionary;
+//	}
 
-		return dictionary;
-	}
-
-	@Override
-	public List getNextDictionaryRecord(String id) throws LIMSRuntimeException {
-
-		return getNextRecord(id, "Dictionary", Dictionary.class);
-
-	}
-
-	@Override
-	public List getPreviousDictionaryRecord(String id) throws LIMSRuntimeException {
-
-		return getPreviousRecord(id, "Dictionary", Dictionary.class);
-	}
+//	@Override
+//	public List getNextDictionaryRecord(String id) throws LIMSRuntimeException {
+//
+//		return getNextRecord(id, "Dictionary", Dictionary.class);
+//
+//	}
+//
+//	@Override
+//	public List getPreviousDictionaryRecord(String id) throws LIMSRuntimeException {
+//
+//		return getPreviousRecord(id, "Dictionary", Dictionary.class);
+//	}
 
 	// this is for autocomplete
 	// modified for 2062
@@ -378,11 +374,11 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 
 	// bugzilla 2063 - this is when we know the category (local_abbrev) and we
 	// need list of entries
-	@Override
-	public List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String categoryFilter)
-			throws LIMSRuntimeException {
-		return getDictionaryEntrysByCategoryAbbreviation("localAbbreviation", categoryFilter, true);
-	}
+//	@Override
+//	public List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String categoryFilter)
+//			throws LIMSRuntimeException {
+//		return getDictionaryEntrysByCategoryAbbreviation("localAbbreviation", categoryFilter, true);
+//	}
 
 	@Override
 	public List<Dictionary> getDictionaryEntrysByCategoryNameLocalizedSort(String categoryName)
@@ -427,76 +423,76 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 	}
 
 	// bugzilla 1411
-	@Override
-	public Integer getTotalDictionaryCount() throws LIMSRuntimeException {
-		return getTotalCount("Dictionary", Dictionary.class);
-	}
+//	@Override
+//	public Integer getTotalDictionaryCount() throws LIMSRuntimeException {
+//		return getTotalCount("Dictionary", Dictionary.class);
+//	}
 
 	// bugzilla 1427
-	@Override
-	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-		int currentId = (Integer.valueOf(id)).intValue();
-		String tablePrefix = getTablePrefix(table);
-
-		List list = new Vector();
-		// bugzilla 1908
-		int rrn = 0;
-		try {
-			// bugzilla 1908 cannot use named query for postgres because of
-			// oracle ROWNUM
-			// instead get the list in this sortorder and determine the index of
-			// record with id = currentId
-			String sql = "select d.id from Dictionary d" + " order by d.dictionaryCategory.categoryName, d.dictEntry";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			rrn = list.indexOf(String.valueOf(currentId));
-
-			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
-					.setMaxResults(2).list();
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DictionaryDAOImpl", "getNextRecord()", e.toString());
-			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-		}
-
-		return list;
-	}
+//	@Override
+//	public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+//		int currentId = (Integer.valueOf(id)).intValue();
+//		String tablePrefix = getTablePrefix(table);
+//
+//		List list = new Vector();
+//		// bugzilla 1908
+//		int rrn = 0;
+//		try {
+//			// bugzilla 1908 cannot use named query for postgres because of
+//			// oracle ROWNUM
+//			// instead get the list in this sortorder and determine the index of
+//			// record with id = currentId
+//			String sql = "select d.id from Dictionary d" + " order by d.dictionaryCategory.categoryName, d.dictEntry";
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			rrn = list.indexOf(String.valueOf(currentId));
+//
+//			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
+//					.setMaxResults(2).list();
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("DictionaryDAOImpl", "getNextRecord()", e.toString());
+//			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
+//		}
+//
+//		return list;
+//	}
 
 	// bugzilla 1427
-	@Override
-	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-		int currentId = (Integer.valueOf(id)).intValue();
-		String tablePrefix = getTablePrefix(table);
-
-		List list = new Vector();
-		int rrn = 0;
-		try {
-			// bugzilla 1908 cannot use named query for postgres because of
-			// oracle ROWNUM
-			// instead get the list in this sortorder and determine the index of
-			// record with id = currentId
-			String sql = "select d.id from Dictionary d"
-					+ " order by d.dictionaryCategory.categoryName desc, d.dictEntry desc";
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			rrn = list.indexOf(String.valueOf(currentId));
-
-			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
-					.setMaxResults(2).list();
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DictionaryDAOImpl", "getPreviousRecord()", e.toString());
-			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-		}
-
-		return list;
-	}
+//	@Override
+//	public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
+//		int currentId = (Integer.valueOf(id)).intValue();
+//		String tablePrefix = getTablePrefix(table);
+//
+//		List list = new Vector();
+//		int rrn = 0;
+//		try {
+//			// bugzilla 1908 cannot use named query for postgres because of
+//			// oracle ROWNUM
+//			// instead get the list in this sortorder and determine the index of
+//			// record with id = currentId
+//			String sql = "select d.id from Dictionary d"
+//					+ " order by d.dictionaryCategory.categoryName desc, d.dictEntry desc";
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			rrn = list.indexOf(String.valueOf(currentId));
+//
+//			list = sessionFactory.getCurrentSession().getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
+//					.setMaxResults(2).list();
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("DictionaryDAOImpl", "getPreviousRecord()", e.toString());
+//			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
+//		}
+//
+//		return list;
+//	}
 
 	/*
 	 * note 1: The case of no category will throw a conversion error for postgres
@@ -546,87 +542,83 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 		}
 	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public Dictionary getDictionaryByLocalAbbrev(Dictionary dictionary) throws LIMSRuntimeException {
-		try {
-			String sql = null;
-			Dictionary d = null;
+//	@Override
+//	@SuppressWarnings("unchecked")
+//	public Dictionary getDictionaryByLocalAbbrev(Dictionary dictionary) throws LIMSRuntimeException {
+//		try {
+//			String sql = null;
+//			Dictionary d = null;
+//
+//			sql = "from Dictionary d where (d.localAbbreviation = :param) and d.isActive= " + enquote(YES);
+//
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setParameter("param", dictionary.getLocalAbbreviation());
+//
+//			List list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//			if (list.size() > 0) {
+//				d = (Dictionary) list.get(0);
+//			}
+//
+//			return d;
+//
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("DictionaryDAOImpl", "getDictionaryByDictEntry()", e.toString());
+//			throw new LIMSRuntimeException("Error in Test getDictionaryByDictEntry()", e);
+//		}
+//	}
 
-			sql = "from Dictionary d where (d.localAbbreviation = :param) and d.isActive= " + enquote(YES);
-
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setParameter("param", dictionary.getLocalAbbreviation());
-
-			List list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-			if (list.size() > 0) {
-				d = (Dictionary) list.get(0);
-			}
-
-			return d;
-
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("DictionaryDAOImpl", "getDictionaryByDictEntry()", e.toString());
-			throw new LIMSRuntimeException("Error in Test getDictionaryByDictEntry()", e);
-		}
-	}
-
-	@Override
-	public Dictionary getDictionaryByDictEntry(Dictionary dictionary, boolean ignoreCase) throws LIMSRuntimeException {
-		try {
-			String sql = null;
-			Dictionary d = null;
-
-			if (ignoreCase) {
-				sql = "from Dictionary d where "
-						+ "((trim(lower(d.dictEntry)) = :param and d.localAbbreviation is null) OR (trim(lower(d.localAbbreviation)) || "
-						+ enquote(IActionConstants.LOCAL_CODE_DICT_ENTRY_SEPARATOR_STRING)
-						+ " || trim(lower(d.dictEntry)) = :param and d.localAbbreviation is not null))"
-						+ " and d.isActive= " + enquote(YES);
-
-			} else {
-				sql = "from Dictionary d where "
-						+ "((trim(d.dictEntry) = :param and d.localAbbreviation is null) OR (trim(d.localAbbreviation) = || "
-						+ enquote(IActionConstants.LOCAL_CODE_DICT_ENTRY_SEPARATOR_STRING)
-						+ " || trim(d.dictEntry) = :param and d.localAbbreviation is not null))" + " and d.isActive= "
-						+ enquote(YES);
-			}
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-
-			if (ignoreCase) {
-				query.setParameter("param", dictionary.getDictEntry().toLowerCase().trim());
-			} else {
-				query.setParameter("param", dictionary.getDictEntry().trim());
-			}
-
-			List list = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-			if (list.size() > 0) {
-				d = (Dictionary) list.get(0);
-			}
-
-			return d;
-
-		} catch (Exception e) {
-			LogEvent.logError("DictionaryDAOImpl", "getDictionaryByDictEntry()", e.toString());
-			throw new LIMSRuntimeException("Error in DictionaryDAOImpl getDictionaryByDictEntry()", e);
-		}
-	}
+//	@Override
+//	public Dictionary getDictionaryByDictEntry(Dictionary dictionary, boolean ignoreCase) throws LIMSRuntimeException {
+//		try {
+//			String sql = null;
+//			Dictionary d = null;
+//
+//			if (ignoreCase) {
+//				sql = "from Dictionary d where "
+//						+ "((trim(lower(d.dictEntry)) = :param and d.localAbbreviation is null) OR (trim(lower(d.localAbbreviation)) || "
+//						+ enquote(IActionConstants.LOCAL_CODE_DICT_ENTRY_SEPARATOR_STRING)
+//						+ " || trim(lower(d.dictEntry)) = :param and d.localAbbreviation is not null))"
+//						+ " and d.isActive= " + enquote(YES);
+//
+//			} else {
+//				sql = "from Dictionary d where "
+//						+ "((trim(d.dictEntry) = :param and d.localAbbreviation is null) OR (trim(d.localAbbreviation) = || "
+//						+ enquote(IActionConstants.LOCAL_CODE_DICT_ENTRY_SEPARATOR_STRING)
+//						+ " || trim(d.dictEntry) = :param and d.localAbbreviation is not null))" + " and d.isActive= "
+//						+ enquote(YES);
+//			}
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//
+//			if (ignoreCase) {
+//				query.setParameter("param", dictionary.getDictEntry().toLowerCase().trim());
+//			} else {
+//				query.setParameter("param", dictionary.getDictEntry().trim());
+//			}
+//
+//			List list = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//			if (list.size() > 0) {
+//				d = (Dictionary) list.get(0);
+//			}
+//
+//			return d;
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("DictionaryDAOImpl", "getDictionaryByDictEntry()", e.toString());
+//			throw new LIMSRuntimeException("Error in DictionaryDAOImpl getDictionaryByDictEntry()", e);
+//		}
+//	}
 
 	// bugzilla 2061-2063
 	@Override
 	public boolean isDictionaryFrozen(Dictionary dictionary) throws LIMSRuntimeException {
 		try {
-			List list = new ArrayList();
-
-			Dictionary oldData = readDictionary(dictionary.getId());
-
 			String sql = "";
 			// TODO: when we add other tables that reference dictionary we need
 			// to check those here
@@ -653,67 +645,67 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 		}
 	}
 
-	@Override
-	public Integer getTotalSearchedDictionaryCount(String searchString) throws LIMSRuntimeException {
+//	@Override
+//	public Integer getTotalSearchedDictionaryCount(String searchString) throws LIMSRuntimeException {
+//
+//		String wildCard = "*";
+//		String newSearchStr;
+//		String sql;
+//		Integer count = null;
+//
+//		try {
+//
+//			int wCdPosition = searchString.indexOf(wildCard);
+//
+//			if (wCdPosition == -1) // no wild card looking for exact match
+//			{
+//				newSearchStr = searchString.toLowerCase().trim();
+//				sql = "select count (*) from Dictionary d where trim(lower (d.dictEntry)) = :param ";
+//			} else {
+//				newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
+//				sql = "select count (*) from Dictionary d where trim(lower (d.dictEntry)) like :param ";
+//			}
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setParameter("param", newSearchStr);
+//
+//			List results = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//			if (results != null && results.get(0) != null) {
+//				if (results.get(0) != null) {
+//					count = ((Long) results.get(0)).intValue();
+//				}
+//			}
+//
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			throw new LIMSRuntimeException("Error in Dictionary getTotalSearchedDictionarys()", e);
+//		}
+//
+//		return count;
+//
+//	}
 
-		String wildCard = "*";
-		String newSearchStr;
-		String sql;
-		Integer count = null;
-
-		try {
-
-			int wCdPosition = searchString.indexOf(wildCard);
-
-			if (wCdPosition == -1) // no wild card looking for exact match
-			{
-				newSearchStr = searchString.toLowerCase().trim();
-				sql = "select count (*) from Dictionary d where trim(lower (d.dictEntry)) = :param ";
-			} else {
-				newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
-				sql = "select count (*) from Dictionary d where trim(lower (d.dictEntry)) like :param ";
-			}
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setParameter("param", newSearchStr);
-
-			List results = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-			if (results != null && results.get(0) != null) {
-				if (results.get(0) != null) {
-					count = ((Long) results.get(0)).intValue();
-				}
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new LIMSRuntimeException("Error in Dictionary getTotalSearchedDictionarys()", e);
-		}
-
-		return count;
-
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<Dictionary> getDictionaryEntriesByCategoryId(String categoryId) throws LIMSRuntimeException {
-		String sql = "From Dictionary d where d.dictionaryCategory.id = :categoryId";
-
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setInteger("categoryId", Integer.parseInt(categoryId));
-			List<Dictionary> queryResults = query.list();
-
-			// closeSession(); // CSL remove old
-
-			return queryResults;
-		} catch (Exception e) {
-			handleException(e, "getDictonaryEntriesByCategoryId");
-		}
-
-		return null;
-	}
+//	@Override
+//	@SuppressWarnings("unchecked")
+//	public List<Dictionary> getDictionaryEntriesByCategoryId(String categoryId) throws LIMSRuntimeException {
+//		String sql = "From Dictionary d where d.dictionaryCategory.id = :categoryId";
+//
+//		try {
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setInteger("categoryId", Integer.parseInt(categoryId));
+//			List<Dictionary> queryResults = query.list();
+//
+//			// closeSession(); // CSL remove old
+//
+//			return queryResults;
+//		} catch (Exception e) {
+//			handleException(e, "getDictonaryEntriesByCategoryId");
+//		}
+//
+//		return null;
+//	}
 
 	@Override
 	public Dictionary getDictionaryById(String dictionaryId) throws LIMSRuntimeException {
@@ -728,43 +720,43 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 		return null;
 	}
 
-	@Override
-	public Dictionary getDictionaryEntrysByNameAndCategoryDescription(String dictionaryName, String categoryDescription)
-			throws LIMSRuntimeException {
-		String sql = "From Dictionary d where d.dictEntry = :dictionaryEntry and d.dictionaryCategory.description = :description";
+//	@Override
+//	public Dictionary getDictionaryEntrysByNameAndCategoryDescription(String dictionaryName, String categoryDescription)
+//			throws LIMSRuntimeException {
+//		String sql = "From Dictionary d where d.dictEntry = :dictionaryEntry and d.dictionaryCategory.description = :description";
+//
+//		try {
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setParameter("dictionaryEntry", dictionaryName);
+//			query.setParameter("description", categoryDescription);
+//
+//			Dictionary dictionary = (Dictionary) query.uniqueResult();
+//
+//			// closeSession(); // CSL remove old
+//
+//			return dictionary;
+//		} catch (HibernateException e) {
+//			handleException(e, "getDictionaryEntrysByNameAndCategoryDescription");
+//		}
+//		return null;
+//	}
 
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setParameter("dictionaryEntry", dictionaryName);
-			query.setParameter("description", categoryDescription);
-
-			Dictionary dictionary = (Dictionary) query.uniqueResult();
-
-			// closeSession(); // CSL remove old
-
-			return dictionary;
-		} catch (HibernateException e) {
-			handleException(e, "getDictionaryEntrysByNameAndCategoryDescription");
-		}
-		return null;
-	}
-
-	@Override
-	public Dictionary getDictionaryByDictEntry(String dictEntry) throws LIMSRuntimeException {
-		String sql = "from Dictionary d where d.dictEntry = :dictionaryEntry";
-
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setString("dictionaryEntry", dictEntry);
-			Dictionary dictionary = (Dictionary) query.uniqueResult();
-			// closeSession(); // CSL remove old
-			return dictionary;
-		} catch (HibernateException e) {
-			handleException(e, "getDictioanryByDictEntry");
-		}
-
-		return null;
-	}
+//	@Override
+//	public Dictionary getDictionaryByDictEntry(String dictEntry) throws LIMSRuntimeException {
+//		String sql = "from Dictionary d where d.dictEntry = :dictionaryEntry";
+//
+//		try {
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setString("dictionaryEntry", dictEntry);
+//			Dictionary dictionary = (Dictionary) query.uniqueResult();
+//			// closeSession(); // CSL remove old
+//			return dictionary;
+//		} catch (HibernateException e) {
+//			handleException(e, "getDictioanryByDictEntry");
+//		}
+//
+//		return null;
+//	}
 
 	@Override
 	public Dictionary getDataForId(String dictionaryId) throws LIMSRuntimeException {

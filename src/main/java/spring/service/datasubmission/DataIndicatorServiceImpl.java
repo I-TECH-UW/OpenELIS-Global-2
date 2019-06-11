@@ -1,6 +1,8 @@
 package spring.service.datasubmission;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +13,8 @@ import us.mn.state.health.lims.datasubmission.valueholder.DataIndicator;
 import us.mn.state.health.lims.datasubmission.valueholder.TypeOfDataIndicator;
 
 @Service
-public class DataIndicatorServiceImpl extends BaseObjectServiceImpl<DataIndicator, String> implements DataIndicatorService {
+public class DataIndicatorServiceImpl extends BaseObjectServiceImpl<DataIndicator, String>
+		implements DataIndicatorService {
 	@Autowired
 	protected DataIndicatorDAO baseObjectDAO;
 
@@ -25,34 +28,16 @@ public class DataIndicatorServiceImpl extends BaseObjectServiceImpl<DataIndicato
 	}
 
 	@Override
-	public void getData(DataIndicator indicator) {
-        getBaseObjectDAO().getData(indicator);
-
-	}
-
-	@Override
-	public void updateData(DataIndicator dataIndicator) {
-        getBaseObjectDAO().updateData(dataIndicator);
-
-	}
-
-	@Override
-	public boolean insertData(DataIndicator dataIndicator) {
-        return getBaseObjectDAO().insertData(dataIndicator);
-	}
-
-	@Override
-	public DataIndicator getIndicator(String id) {
-        return getBaseObjectDAO().getIndicator(id);
-	}
-
-	@Override
 	public DataIndicator getIndicatorByTypeYearMonth(TypeOfDataIndicator type, int year, int month) {
-        return getBaseObjectDAO().getIndicatorByTypeYearMonth(type,year,month);
+		Map<String, Object> properties = new HashMap<>();
+		properties.put("typeOfDataIndicator.id", type.getId());
+		properties.put("year", year);
+		properties.put("month", month);
+		return getMatch(properties).orElse(null);
 	}
 
 	@Override
 	public List<DataIndicator> getIndicatorsByStatus(String status) {
-        return getBaseObjectDAO().getIndicatorsByStatus(status);
+		return getBaseObjectDAO().getAllMatching("status", status);
 	}
 }

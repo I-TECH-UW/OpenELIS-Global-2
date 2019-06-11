@@ -245,7 +245,7 @@ public class DBOrderPersister implements IOrderPersister {
 		try {
 			persist(orderPatient);
 			eOrder.setPatient(patient);
-			eOrderService.insertData(eOrder);
+			eOrderService.insert(eOrder);
 		} catch (Exception e) {
 			LogEvent.logErrorStack(this.getClass().getSimpleName(), "persist()", e);
 			throw e;
@@ -267,7 +267,7 @@ public class DBOrderPersister implements IOrderPersister {
 				eOrder.setStatusId(StatusService.getInstance().getStatusID(ExternalOrderStatus.Cancelled));
 				eOrder.setSysUserId(SERVICE_USER_ID);
 				try {
-					eOrderService.updateData(eOrder);
+					eOrderService.update(eOrder);
 				} catch (Exception e) {
 					LogEvent.logErrorStack(this.getClass().getSimpleName(), "cancelOrder()", e);
 				}

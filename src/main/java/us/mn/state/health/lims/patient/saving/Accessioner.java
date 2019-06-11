@@ -388,9 +388,9 @@ public abstract class Accessioner {
 			note.setSystemUser(NoteServiceImpl.createSystemUser(sysUserId));
 
 			if (note.getId() == null) {
-				noteService.insertData(note);
+				noteService.insert(note);
 			} else {
-				noteService.updateData(note);
+				noteService.update(note);
 			}
 		}
 	}
@@ -408,7 +408,8 @@ public abstract class Accessioner {
 	 * default
 	 */
 	private void persisteSampleItemsChanged() {
-		analysisService.deleteData(analysisToDelete);
+//		analysisService.deleteData(analysisToDelete);
+		analysisService.deleteAll(analysisToDelete);
 		sampleItemService.deleteData(sampleItemsToDelete);
 		for (Analysis analysis : analysisToUpdate) {
 			analysisService.updateData(analysis);
@@ -939,7 +940,7 @@ public abstract class Accessioner {
 				testService.getData(newTest);
 				if (!existingTests.contains(newTest.getId())) {
 					Analysis analysis = buildAnalysis(analysisRevision, sampleTestPair, newTest);
-					analysisService.insertData(analysis, false);
+					analysisService.insert(analysis);
 					newAnalysis = true;
 				}
 			}

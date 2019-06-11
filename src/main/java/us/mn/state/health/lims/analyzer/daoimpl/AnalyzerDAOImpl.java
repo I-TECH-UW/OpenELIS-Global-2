@@ -15,19 +15,13 @@
 */
 package us.mn.state.health.lims.analyzer.daoimpl;
 
-import java.util.List;
-
-import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.analyzer.dao.AnalyzerDAO;
 import us.mn.state.health.lims.analyzer.valueholder.Analyzer;
-import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
@@ -40,54 +34,51 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 		super(Analyzer.class);
 	}
 
-	@Autowired
-	private AuditTrailDAO auditDAO;
+//	@Override
+//	public void deleteData(List<Analyzer> analyzers) throws LIMSRuntimeException {
+//		try {
+//
+//			for (Analyzer data : analyzers) {
+//
+//				Analyzer oldData = readAnalyzer(data.getId());
+//				Analyzer newData = new Analyzer();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "ANALYZER";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//
+//			for (Analyzer data : analyzers) {
+//
+//				data = readAnalyzer(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("AnalyzerDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Analyzer deleteData()", e);
+//		}
+//	}
 
-	@Override
-	public void deleteData(List<Analyzer> analyzers) throws LIMSRuntimeException {
-		try {
-
-			for (Analyzer data : analyzers) {
-
-				Analyzer oldData = readAnalyzer(data.getId());
-				Analyzer newData = new Analyzer();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "ANALYZER";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-
-			for (Analyzer data : analyzers) {
-
-				data = readAnalyzer(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			LogEvent.logError("AnalyzerDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in Analyzer deleteData()", e);
-		}
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<Analyzer> getAllAnalyzers() throws LIMSRuntimeException {
-		List<Analyzer> analyzer;
-		try {
-			String sql = "from Analyzer";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			analyzer = query.list();
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("AnalyzerDAOImpl", "getAllAnalyzerItems()", e.toString());
-			throw new LIMSRuntimeException("Error in Analyzer getAllAnalyzer()", e);
-		}
-
-		return analyzer;
-	}
+//	@Override
+//	@SuppressWarnings("unchecked")
+//	public List<Analyzer> getAllAnalyzers() throws LIMSRuntimeException {
+//		List<Analyzer> analyzer;
+//		try {
+//			String sql = "from Analyzer";
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			analyzer = query.list();
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			LogEvent.logError("AnalyzerDAOImpl", "getAllAnalyzerItems()", e.toString());
+//			throw new LIMSRuntimeException("Error in Analyzer getAllAnalyzer()", e);
+//		}
+//
+//		return analyzer;
+//	}
 
 	@Override
 	public Analyzer getAnalyzerById(Analyzer analyzer) throws LIMSRuntimeException {
@@ -117,80 +108,80 @@ public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements An
 		return null;
 	}
 
-	@Override
-	public void getData(Analyzer analyzer) throws LIMSRuntimeException {
-		try {
-			Analyzer tmpAnalyzer = sessionFactory.getCurrentSession().get(Analyzer.class, analyzer.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			if (tmpAnalyzer != null) {
-				PropertyUtils.copyProperties(analyzer, tmpAnalyzer);
-			} else {
-				analyzer.setId(null);
-			}
-		} catch (Exception e) {
-			LogEvent.logError("AnalyzerDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in Analyzer getData()", e);
-		}
-	}
+//	@Override
+//	public void getData(Analyzer analyzer) throws LIMSRuntimeException {
+//		try {
+//			Analyzer tmpAnalyzer = sessionFactory.getCurrentSession().get(Analyzer.class, analyzer.getId());
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			if (tmpAnalyzer != null) {
+//				PropertyUtils.copyProperties(analyzer, tmpAnalyzer);
+//			} else {
+//				analyzer.setId(null);
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("AnalyzerDAOImpl", "getData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Analyzer getData()", e);
+//		}
+//	}
 
-	@Override
-	public boolean insertData(Analyzer analyzer) throws LIMSRuntimeException {
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(analyzer);
-			analyzer.setId(id);
+//	@Override
+//	public boolean insertData(Analyzer analyzer) throws LIMSRuntimeException {
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(analyzer);
+//			analyzer.setId(id);
+//
+//			String sysUserId = analyzer.getSysUserId();
+//			String tableName = "ANALYZER";
+//			auditDAO.saveNewHistory(analyzer, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//
+//		} catch (Exception e) {
+//			LogEvent.logError("analyzerDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in analyzer insertData()", e);
+//		}
+//
+//		return true;
+//	}
 
-			String sysUserId = analyzer.getSysUserId();
-			String tableName = "ANALYZER";
-			auditDAO.saveNewHistory(analyzer, sysUserId, tableName);
+//	@Override
+//	public void updateData(Analyzer analyzer) throws LIMSRuntimeException {
+//		Analyzer oldData = readAnalyzer(analyzer.getId());
+//		Analyzer newData = analyzer;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = analyzer.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "ANALYZER";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//
+//			sessionFactory.getCurrentSession().merge(analyzer);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(analyzer);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove old(analyzer);
+//		} catch (Exception e) {
+//			LogEvent.logError("AnalyzerDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Analyzer updateData()", e);
+//		}
+//	}
 
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-
-		} catch (Exception e) {
-			LogEvent.logError("analyzerDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in analyzer insertData()", e);
-		}
-
-		return true;
-	}
-
-	@Override
-	public void updateData(Analyzer analyzer) throws LIMSRuntimeException {
-		Analyzer oldData = readAnalyzer(analyzer.getId());
-		Analyzer newData = analyzer;
-
-		// add to audit trail
-		try {
-
-			String sysUserId = analyzer.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "ANALYZER";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-
-			sessionFactory.getCurrentSession().merge(analyzer);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(analyzer);
-			// sessionFactory.getCurrentSession().refresh // CSL remove old(analyzer);
-		} catch (Exception e) {
-			LogEvent.logError("AnalyzerDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Analyzer updateData()", e);
-		}
-	}
-
-	@Override
-	public Analyzer readAnalyzer(String idString) throws LIMSRuntimeException {
-		Analyzer data = null;
-		try {
-			data = sessionFactory.getCurrentSession().get(Analyzer.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("AnalyzerDAOImpl", "readAnalyzer()", e.toString());
-			throw new LIMSRuntimeException("Error in Analyzer readAnalyzer()", e);
-		}
-
-		return data;
-	}
+//	@Override
+//	public Analyzer readAnalyzer(String idString) throws LIMSRuntimeException {
+//		Analyzer data = null;
+//		try {
+//			data = sessionFactory.getCurrentSession().get(Analyzer.class, idString);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			LogEvent.logError("AnalyzerDAOImpl", "readAnalyzer()", e.toString());
+//			throw new LIMSRuntimeException("Error in Analyzer readAnalyzer()", e);
+//		}
+//
+//		return data;
+//	}
 }

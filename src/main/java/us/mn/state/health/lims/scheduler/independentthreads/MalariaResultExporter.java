@@ -147,7 +147,7 @@ public class MalariaResultExporter extends Thread {
 
 				try {
 					for (DocumentTrack document : documents) {
-						documentTrackService.insertData(document);
+						documentTrackService.insert(document);
 					}
 					reportExternalExportService.delete(report);
 

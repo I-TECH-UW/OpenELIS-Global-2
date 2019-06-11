@@ -8,12 +8,6 @@ import us.mn.state.health.lims.dictionary.valueholder.Dictionary;
 public interface DictionaryService extends BaseObjectService<Dictionary, String> {
 	void getData(Dictionary dictionary);
 
-	void deleteData(List dictionarys);
-
-	void updateData(Dictionary dictionary, boolean isDictionaryFrozenCheckRequired);
-
-	boolean insertData(Dictionary dictionary);
-
 	Dictionary getDictionaryByLocalAbbrev(Dictionary dictionary);
 
 	Dictionary getDictionaryById(String dictionaryId);
@@ -24,25 +18,7 @@ public interface DictionaryService extends BaseObjectService<Dictionary, String>
 
 	boolean isDictionaryFrozen(Dictionary dictionary);
 
-	List getNextDictionaryRecord(String id);
-
-	List getPreviousDictionaryRecord(String id);
-
 	List<Dictionary> getDictionaryEntriesByCategoryId(String categoryId);
-
-	List getPagesOfSearchedDictionarys(int startRecNo, String searchString);
-
-	Dictionary getDictionaryByDictEntry(String dictEntry);
-
-	Dictionary getDictionaryByDictEntry(Dictionary dictionary, boolean ignoreCase);
-
-	Integer getTotalDictionaryCount();
-
-	Integer getTotalSearchedDictionaryCount(String searchString);
-
-	List getPageOfDictionarys(int startingRecNo);
-
-	List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String dictionaryCategory);
 
 	List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String fieldName, String fieldValue,
 			boolean orderByDictEntry);

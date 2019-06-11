@@ -68,7 +68,7 @@ public class ConfigurationSideEffects {
 			Menu parentMenu = menuService.getMenuByElementId("menu_nonconformity");
 			if (parentMenu != null) {
 				parentMenu.setIsActive(active);
-				menuService.updateData(parentMenu);
+				menuService.update(parentMenu);
 			}
 
 			MenuUtil.forceRebuild();
@@ -81,48 +81,48 @@ public class ConfigurationSideEffects {
 			Menu parentMenu = menuService.getMenuByElementId("menu_patient");
 			if (parentMenu != null) {
 				parentMenu.setIsActive(active);
-				menuService.updateData(parentMenu);
+				menuService.update(parentMenu);
 			}
 
 			Menu menu = menuService.getMenuByElementId("menu_patient_add_or_edit");
 			if (menu != null) {
 				menu.setIsActive(active);
-				menuService.updateData(menu);
+				menuService.update(menu);
 			}
 
 			Menu parentmenustudy = menuService.getMenuByElementId("menu_patient_study");
 			if (parentmenustudy != null) {
 				parentmenustudy.setIsActive(active);
-				menuService.updateData(parentmenustudy);
+				menuService.update(parentmenustudy);
 			}
 
 			Menu menustudycreate = menuService.getMenuByElementId("menu_patient_create");
 			if (menustudycreate != null) {
 				menustudycreate.setIsActive(active);
-				menuService.updateData(menustudycreate);
+				menuService.update(menustudycreate);
 			}
 
 			Menu menustudycreateinitial = menuService.getMenuByElementId("menu_patient_create_initial");
 			if (menustudycreateinitial != null) {
 				menustudycreateinitial.setIsActive(active);
-				menuService.updateData(menustudycreateinitial);
+				menuService.update(menustudycreateinitial);
 			}
 
 			Menu menustudycreatedouble = menuService.getMenuByElementId("menu_patient_create_double");
 			if (menustudycreatedouble != null) {
 				menustudycreatedouble.setIsActive(active);
-				menuService.updateData(menustudycreatedouble);
+				menuService.update(menustudycreatedouble);
 			}
 
 			Menu menustudyedit = menuService.getMenuByElementId("menu_patient_edit");
 			if (menustudyedit != null) {
 				menustudyedit.setIsActive(active);
-				menuService.updateData(menustudyedit);
+				menuService.update(menustudyedit);
 			}
 			Menu menustudyconsult = menuService.getMenuByElementId("menu_patient_consult");
 			if (menustudyconsult != null) {
 				menustudyconsult.setIsActive(active);
-				menuService.updateData(menustudyconsult);
+				menuService.update(menustudyconsult);
 			}
 
 			MenuUtil.forceRebuild();
@@ -137,25 +137,25 @@ public class ConfigurationSideEffects {
 			Menu parentMenuStudy = menuService.getMenuByElementId("menu_sample_create");
 			if (parentMenuStudy != null) {
 				parentMenuStudy.setIsActive(active);
-				menuService.updateData(parentMenuStudy);
+				menuService.update(parentMenuStudy);
 			}
 
 			Menu menusamplecreateinitial = menuService.getMenuByElementId("menu_sample_create_initial");
 			if (menusamplecreateinitial != null) {
 				menusamplecreateinitial.setIsActive(active);
-				menuService.updateData(menusamplecreateinitial);
+				menuService.update(menusamplecreateinitial);
 			}
 
 			Menu menusamplecreatedouble = menuService.getMenuByElementId("menu_sample_create_double");
 			if (menusamplecreatedouble != null) {
 				menusamplecreatedouble.setIsActive(active);
-				menuService.updateData(menusamplecreatedouble);
+				menuService.update(menusamplecreatedouble);
 			}
 
 			Menu menusampleconsult = menuService.getMenuByElementId("menu_sample_consult");
 			if (menusampleconsult != null) {
 				menusampleconsult.setIsActive(active);
-				menuService.updateData(menusampleconsult);
+				menuService.update(menusampleconsult);
 			}
 
 			// ------Patient----
@@ -163,225 +163,225 @@ public class ConfigurationSideEffects {
 			Menu menustudycreate2 = menuService.getMenuByElementId("menu_patient_create");
 			if (menustudycreate2 != null) {
 				menustudycreate2.setIsActive(active);
-				menuService.updateData(menustudycreate2);
+				menuService.update(menustudycreate2);
 			}
 
 			Menu menustudycreateinitial2 = menuService.getMenuByElementId("menu_patient_create_initial");
 			if (menustudycreateinitial2 != null) {
 				menustudycreateinitial2.setIsActive(active);
-				menuService.updateData(menustudycreateinitial2);
+				menuService.update(menustudycreateinitial2);
 			}
 
 			Menu menustudycreatedouble2 = menuService.getMenuByElementId("menu_patient_create_double");
 			if (menustudycreatedouble2 != null) {
 				menustudycreatedouble2.setIsActive(active);
-				menuService.updateData(menustudycreatedouble2);
+				menuService.update(menustudycreatedouble2);
 			}
 
 			Menu menustudyedit2 = menuService.getMenuByElementId("menu_patient_edit");
 			if (menustudyedit2 != null) {
 				menustudyedit2.setIsActive(active);
-				menuService.updateData(menustudyedit2);
+				menuService.update(menustudyedit2);
 			}
 
 			Menu menustudyconsult2 = menuService.getMenuByElementId("menu_patient_consult");
 			if (menustudyconsult2 != null) {
 				menustudyconsult2.setIsActive(active);
-				menuService.updateData(menustudyconsult2);
+				menuService.update(menustudyconsult2);
 			}
 			// ------report----
 
 			Menu menureportstudy = menuService.getMenuByElementId("menu_reports_study");
 			if (menureportstudy != null) {
 				menureportstudy.setIsActive(active);
-				menuService.updateData(menureportstudy);
+				menuService.update(menureportstudy);
 			}
 
 			Menu menureportspatients = menuService.getMenuByElementId("menu_reports_patients");
 			if (menureportspatients != null) {
 				menureportspatients.setIsActive(active);
-				menuService.updateData(menureportspatients);
+				menuService.update(menureportspatients);
 			}
 
 			Menu menureportsarv = menuService.getMenuByElementId("menu_reports_arv");
 			if (menureportsarv != null) {
 				menureportsarv.setIsActive(active);
-				menuService.updateData(menureportsarv);
+				menuService.update(menureportsarv);
 			}
 
 			Menu menureportsarvinitial1 = menuService.getMenuByElementId("menu_reports_arv_initial1");
 			if (menureportsarvinitial1 != null) {
 				menureportsarvinitial1.setIsActive(active);
-				menuService.updateData(menureportsarvinitial1);
+				menuService.update(menureportsarvinitial1);
 			}
 
 			Menu menureportsarvinitial2 = menuService.getMenuByElementId("menu_reports_arv_initial2");
 			if (menureportsarvinitial2 != null) {
 				menureportsarvinitial2.setIsActive(active);
-				menuService.updateData(menureportsarvinitial2);
+				menuService.update(menureportsarvinitial2);
 			}
 
 			Menu menureportarvfollowup1 = menuService.getMenuByElementId("menu_reports_arv_followup1");
 			if (menureportarvfollowup1 != null) {
 				menureportarvfollowup1.setIsActive(active);
-				menuService.updateData(menureportarvfollowup1);
+				menuService.update(menureportarvfollowup1);
 			}
 
 			Menu menureportarvfollowup2 = menuService.getMenuByElementId("menu_reports_arv_followup2");
 			if (menureportarvfollowup2 != null) {
 				menureportarvfollowup2.setIsActive(active);
-				menuService.updateData(menureportarvfollowup2);
+				menuService.update(menureportarvfollowup2);
 			}
 
 			Menu menureportseid = menuService.getMenuByElementId("menu_reports_eid");
 			if (menureportseid != null) {
 				menureportseid.setIsActive(active);
-				menuService.updateData(menureportseid);
+				menuService.update(menureportseid);
 			}
 
 			Menu menureporteidversion1 = menuService.getMenuByElementId("menu_reports_eid_version1");
 			if (menureporteidversion1 != null) {
 				menureporteidversion1.setIsActive(active);
-				menuService.updateData(menureporteidversion1);
+				menuService.update(menureporteidversion1);
 			}
 
 			Menu menureporteidversion2 = menuService.getMenuByElementId("menu_reports_eid_version2");
 			if (menureporteidversion2 != null) {
 				menureporteidversion2.setIsActive(active);
-				menuService.updateData(menureporteidversion2);
+				menuService.update(menureporteidversion2);
 			}
 
 			Menu menureportsindeterminate = menuService.getMenuByElementId("menu_reports_indeterminate");
 			if (menureportsindeterminate != null) {
 				menureportsindeterminate.setIsActive(active);
-				menuService.updateData(menureportsindeterminate);
+				menuService.update(menureportsindeterminate);
 			}
 
 			Menu menureportsindeterminateversion1 = menuService
 					.getMenuByElementId("menu_reports_indeterminate_version1");
 			if (menureportsindeterminateversion1 != null) {
 				menureportsindeterminateversion1.setIsActive(active);
-				menuService.updateData(menureportsindeterminateversion1);
+				menuService.update(menureportsindeterminateversion1);
 			}
 
 			Menu menureportsindeterminateversion2 = menuService
 					.getMenuByElementId("menu_reports_indeterminate_version2");
 			if (menureportsindeterminateversion2 != null) {
 				menureportsindeterminateversion2.setIsActive(active);
-				menuService.updateData(menureportsindeterminateversion2);
+				menuService.update(menureportsindeterminateversion2);
 			}
 
 			Menu menureportsindeterminatelocation = menuService
 					.getMenuByElementId("menu_reports_indeterminate_location");
 			if (menureportsindeterminatelocation != null) {
 				menureportsindeterminatelocation.setIsActive(active);
-				menuService.updateData(menureportsindeterminatelocation);
+				menuService.update(menureportsindeterminatelocation);
 			}
 
 			Menu menureportspecial = menuService.getMenuByElementId("menu_reports_special");
 			if (menureportspecial != null) {
 				menureportspecial.setIsActive(active);
-				menuService.updateData(menureportspecial);
+				menuService.update(menureportspecial);
 			}
 
 			Menu menureportspatientcollection = menuService.getMenuByElementId("menu_reports_patient_collection");
 			if (menureportspatientcollection != null) {
 				menureportspatientcollection.setIsActive(active);
-				menuService.updateData(menureportspatientcollection);
+				menuService.update(menureportspatientcollection);
 			}
 
 			Menu menureportsassociated = menuService.getMenuByElementId("menu_reports_patient_associated");
 			if (menureportsassociated != null) {
 				menureportsassociated.setIsActive(active);
-				menuService.updateData(menureportsassociated);
+				menuService.update(menureportsassociated);
 			}
 
 			Menu menureportsindicator = menuService.getMenuByElementId("menu_reports_indicator");
 			if (menureportsindicator != null) {
 				menureportsindicator.setIsActive(active);
-				menuService.updateData(menureportsindicator);
+				menuService.update(menureportsindicator);
 			}
 
 			Menu menureportsindicatorperformance = menuService.getMenuByElementId("menu_reports_indicator_performance");
 			if (menureportsindicatorperformance != null) {
 				menureportsindicatorperformance.setIsActive(active);
-				menuService.updateData(menureportsindicatorperformance);
+				menuService.update(menureportsindicatorperformance);
 			}
 
 			Menu menureportsvalidationbacklog = menuService.getMenuByElementId("menu_reports_validation_backlog.study");
 			if (menureportsvalidationbacklog != null) {
 				menureportsvalidationbacklog.setIsActive(active);
-				menuService.updateData(menureportsvalidationbacklog);
+				menuService.update(menureportsvalidationbacklog);
 			}
 
 			Menu menureportsnonconformitystudy = menuService.getMenuByElementId("menu_reports_nonconformity.study");
 			if (menureportsnonconformitystudy != null) {
 				menureportsnonconformitystudy.setIsActive(active);
-				menuService.updateData(menureportsnonconformitystudy);
+				menuService.update(menureportsnonconformitystudy);
 			}
 
 			Menu menureportnonconformitydatestudy = menuService
 					.getMenuByElementId("menu_reports_nonconformity_date.study");
 			if (menureportnonconformitydatestudy != null) {
 				menureportnonconformitydatestudy.setIsActive(active);
-				menuService.updateData(menureportnonconformitydatestudy);
+				menuService.update(menureportnonconformitydatestudy);
 			}
 
 			Menu menureportsnonconformitysection = menuService
 					.getMenuByElementId("menu_reports_nonconformity_section.study");
 			if (menureportsnonconformitysection != null) {
 				menureportsnonconformitysection.setIsActive(active);
-				menuService.updateData(menureportsnonconformitysection);
+				menuService.update(menureportsnonconformitysection);
 			}
 
 			Menu menureportsnonconformitynotification = menuService
 					.getMenuByElementId("menu_reports_nonconformity_notification.study");
 			if (menureportsnonconformitynotification != null) {
 				menureportsnonconformitynotification.setIsActive(active);
-				menuService.updateData(menureportsnonconformitynotification);
+				menuService.update(menureportsnonconformitynotification);
 			}
 
 			Menu menureportsfolowrequired = menuService
 					.getMenuByElementId("menu_reports_followupRequired_ByLocation.study");
 			if (menureportsfolowrequired != null) {
 				menureportsfolowrequired.setIsActive(active);
-				menuService.updateData(menureportsfolowrequired);
+				menuService.update(menureportsfolowrequired);
 			}
 
 			Menu menureportsexport = menuService.getMenuByElementId("menu_reports_export");
 			if (menureportsexport != null) {
 				menureportsexport.setIsActive(active);
-				menuService.updateData(menureportsexport);
+				menuService.update(menureportsexport);
 			}
 
 			Menu menureportsauditTrail = menuService.getMenuByElementId("menu_reports_auditTrail.study");
 			if (menureportsauditTrail != null) {
 				menureportsauditTrail.setIsActive(active);
-				menuService.updateData(menureportsauditTrail);
+				menuService.update(menureportsauditTrail);
 			}
 
 			Menu menureportsarvall = menuService.getMenuByElementId("menu_reports_arv_all");
 			if (menureportsarvall != null) {
 				menureportsarvall.setIsActive(active);
-				menuService.updateData(menureportsarvall);
+				menuService.update(menureportsarvall);
 			}
 
 			Menu menureportsvl = menuService.getMenuByElementId("menu_reports_vl");
 			if (menureportsvl != null) {
 				menureportsvl.setIsActive(active);
-				menuService.updateData(menureportsvl);
+				menuService.update(menureportsvl);
 			}
 
 			Menu menureportsvlversion1 = menuService.getMenuByElementId("menu_reports_vl_version1");
 			if (menureportsvlversion1 != null) {
 				menureportsvlversion1.setIsActive(active);
-				menuService.updateData(menureportsvlversion1);
+				menuService.update(menureportsvlversion1);
 			}
 
 			Menu menunonconformitylabno = menuService.getMenuByElementId("menu_reports_nonconformity.Labno");
 			if (menunonconformitylabno != null) {
 				menunonconformitylabno.setIsActive(active);
-				menuService.updateData(menunonconformitylabno);
+				menuService.update(menunonconformitylabno);
 			}
 
 			// ------validation----
@@ -389,49 +389,49 @@ public class ConfigurationSideEffects {
 			Menu menuvalidationstudy = menuService.getMenuByElementId("menu_resultvalidation_study");
 			if (menuvalidationstudy != null) {
 				menuvalidationstudy.setIsActive(active);
-				menuService.updateData(menuvalidationstudy);
+				menuService.update(menuvalidationstudy);
 			}
 
 			Menu menuvalidationimmuno = menuService.getMenuByElementId("menu_resultvalidation_immunology");
 			if (menuvalidationimmuno != null) {
 				menuvalidationimmuno.setIsActive(active);
-				menuService.updateData(menuvalidationimmuno);
+				menuService.update(menuvalidationimmuno);
 			}
 
 			Menu menuvalidationbio = menuService.getMenuByElementId("menu_resultvalidation_biochemistry");
 			if (menuvalidationbio != null) {
 				menuvalidationbio.setIsActive(active);
-				menuService.updateData(menuvalidationbio);
+				menuService.update(menuvalidationbio);
 			}
 
 			Menu menuvalidationsero = menuService.getMenuByElementId("menu_resultvalidation_serology");
 			if (menuvalidationsero != null) {
 				menuvalidationsero.setIsActive(active);
-				menuService.updateData(menuvalidationsero);
+				menuService.update(menuvalidationsero);
 			}
 
 			Menu menuvalidationdnapcr = menuService.getMenuByElementId("menu_resultvalidation_dnapcr");
 			if (menuvalidationdnapcr != null) {
 				menuvalidationdnapcr.setIsActive(active);
-				menuService.updateData(menuvalidationdnapcr);
+				menuService.update(menuvalidationdnapcr);
 			}
 
 			Menu menuvalidationvirology = menuService.getMenuByElementId("menu_resultvalidation_virology");
 			if (menuvalidationvirology != null) {
 				menuvalidationvirology.setIsActive(active);
-				menuService.updateData(menuvalidationvirology);
+				menuService.update(menuvalidationvirology);
 			}
 
 			Menu menuvalidationVL = menuService.getMenuByElementId("menu_resultvalidation_viralload");
 			if (menuvalidationVL != null) {
 				menuvalidationVL.setIsActive(active);
-				menuService.updateData(menuvalidationVL);
+				menuService.update(menuvalidationVL);
 			}
 
 			Menu menuvalidationgeno = menuService.getMenuByElementId("menu_resultvalidation_genotyping");
 			if (menuvalidationgeno != null) {
 				menuvalidationgeno.setIsActive(active);
-				menuService.updateData(menuvalidationgeno);
+				menuService.update(menuvalidationgeno);
 			}
 
 			MenuUtil.forceRebuild();

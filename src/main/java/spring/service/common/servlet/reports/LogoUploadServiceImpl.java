@@ -20,7 +20,7 @@ public class LogoUploadServiceImpl implements LogoUploadService {
 	@Override
 	@Transactional
 	public void removeImage(Image image, SiteInformation logoInformation) {
-		imageService.deleteImage(image);
+		imageService.delete(image);
 		logoInformation.setValue("");
 		logoInformation.setSysUserId("1");
 		siteInformationService.updateData(logoInformation);
@@ -31,11 +31,10 @@ public class LogoUploadServiceImpl implements LogoUploadService {
 	public void saveImage(Image image, boolean newImage, String imageId, SiteInformation logoInformation) {
 		if (!newImage) {
 			// The reason the old image is deleted and a new one added is because updating
-			// the image
-			// doesn't work.
-			imageService.deleteImage(imageService.getImage(imageId));
+			// the image doesn't work.
+			imageService.delete(imageService.get(imageId));
 		}
-		imageService.saveImage(image);
+		imageService.save(image);
 
 		logoInformation.setValue(image.getId());
 		logoInformation.setSysUserId("1");

@@ -149,7 +149,7 @@ public class SampleEditServiceImpl implements SampleEditService {
 
 		for (Analysis analysis : addAnalysisList) {
 			if (analysis.getId() == null) {
-				analysisService.insert(analysis, false); // don't check for duplicates
+				analysisService.insert(analysis);
 			} else {
 				analysisService.update(analysis);
 			}
@@ -178,7 +178,7 @@ public class SampleEditServiceImpl implements SampleEditService {
 
 				Analysis analysis = populateAnalysis(sampleTestCollection, test,
 						sampleTestCollection.testIdToUserSectionMap.get(test.getId()), sampleAddService);
-				analysisService.insert(analysis, false); // false--do not check for duplicates
+				analysisService.insert(analysis);
 			}
 
 			if (sampleTestCollection.initialSampleConditionIdList != null) {

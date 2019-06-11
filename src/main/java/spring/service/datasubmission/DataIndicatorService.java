@@ -7,13 +7,6 @@ import us.mn.state.health.lims.datasubmission.valueholder.DataIndicator;
 import us.mn.state.health.lims.datasubmission.valueholder.TypeOfDataIndicator;
 
 public interface DataIndicatorService extends BaseObjectService<DataIndicator, String> {
-	void getData(DataIndicator indicator);
-
-	void updateData(DataIndicator dataIndicator);
-
-	boolean insertData(DataIndicator dataIndicator);
-
-	DataIndicator getIndicator(String id);
 
 	DataIndicator getIndicatorByTypeYearMonth(TypeOfDataIndicator type, int year, int month);
 

@@ -15,105 +15,62 @@
  */
 package us.mn.state.health.lims.image.daoimpl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import org.hibernate.HibernateException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.image.dao.ImageDAO;
 import us.mn.state.health.lims.image.valueholder.Image;
 
 @Component
-@Transactional 
+@Transactional
 public class ImageDAOImpl extends BaseDAOImpl<Image, String> implements ImageDAO {
 
 	public ImageDAOImpl() {
 		super(Image.class);
 	}
 
-	@Override
-	public String saveImage(Image image) throws LIMSRuntimeException {
-		String id = image.getId();
-		try {
-			if (id == null) {
-				id = (String) sessionFactory.getCurrentSession().save(image);
-				// closeSession(); // CSL remove old
-			} else { // this part does not seem to work so we are deleting and then adding as a work
-						// around
-				sessionFactory.getCurrentSession().merge(image);
-				// closeSession(); // CSL remove old
-				// sessionFactory.getCurrentSession().evict // CSL remove old(image);
-				// sessionFactory.getCurrentSession().refresh // CSL remove old(image);
-			}
-		} catch (HibernateException e) {
-			handleException(e, "saveImage");
-		}
+//	@Override
+//	public String saveImage(Image image) throws LIMSRuntimeException {
+//		String id = image.getId();
+//		try {
+//			if (id == null) {
+//				id = (String) sessionFactory.getCurrentSession().save(image);
+//				// closeSession(); // CSL remove old
+//			} else { // this part does not seem to work so we are deleting and then adding as a work
+//						// around
+//				sessionFactory.getCurrentSession().merge(image);
+//				// closeSession(); // CSL remove old
+//				// sessionFactory.getCurrentSession().evict // CSL remove old(image);
+//				// sessionFactory.getCurrentSession().refresh // CSL remove old(image);
+//			}
+//		} catch (HibernateException e) {
+//			handleException(e, "saveImage");
+//		}
+//
+//		return id;
+//	}
 
-		return id;
-	}
+//	@Override
+//	public void deleteImage(Image image) throws LIMSRuntimeException {
+//		try {
+//			sessionFactory.getCurrentSession().delete(image);
+//			// closeSession(); // CSL remove old
+//		} catch (Exception e) {
+//			handleException(e, "deleteImage");
+//		}
+//	}
 
-	@Override
-	public Image getImage(String imageId) throws LIMSRuntimeException {
-		try {
-			Image image = (Image) sessionFactory.getCurrentSession().get(Image.class, imageId);
-			// closeSession(); // CSL remove old
-			return image;
-		} catch (HibernateException e) {
-			handleException(e, "getImage");
-		}
-
-		return null;
-	}
-
-	@Override
-	public void deleteImage(Image image) throws LIMSRuntimeException {
-		try {
-			sessionFactory.getCurrentSession().delete(image);
-			// closeSession(); // CSL remove old
-		} catch (Exception e) {
-			handleException(e, "deleteImage");
-		}
-	}
-
-	@Override
-	@Deprecated
-	public ByteArrayOutputStream retrieveImageOutputStream(String id) throws LIMSRuntimeException {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(Image.MAX_MEMORY_SIZE);
-		try {
-			Image image = getImage(id);
-
-			outputStream.write(image.getImage());
-
-		} catch (HibernateException e) {
-			handleException(e, "retrieveImageOutputStream");
-		} catch (IOException e) {
-			handleException(e, "retrieveImageOutputStream");
-		}
-
-		return outputStream;
-	}
-
-	@Override
-	@Deprecated
-	public ByteArrayInputStream retrieveImageInputStream(String id) throws LIMSRuntimeException {
-		return new ByteArrayInputStream(retrieveImageOutputStream(id).toByteArray());
-	}
-
-	public Image readImage(String idString) {
-		try {
-			Image image = (Image) sessionFactory.getCurrentSession().get(Image.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			return image;
-		} catch (Exception e) {
-			handleException(e, "readImage");
-		}
-
-		return null;
-	}
+//	public Image readImage(String idString) {
+//		try {
+//			Image image = sessionFactory.getCurrentSession().get(Image.class, idString);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			return image;
+//		} catch (Exception e) {
+//			handleException(e, "readImage");
+//		}
+//
+//		return null;
+//	}
 }

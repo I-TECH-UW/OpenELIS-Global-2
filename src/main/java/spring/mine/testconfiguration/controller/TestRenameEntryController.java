@@ -3,7 +3,6 @@ package spring.mine.testconfiguration.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -17,6 +16,7 @@ import spring.mine.common.controller.BaseController;
 import spring.mine.testconfiguration.form.TestRenameEntryForm;
 import spring.service.localization.LocalizationService;
 import spring.service.test.TestServiceImpl;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.localization.valueholder.Localization;
@@ -92,7 +92,7 @@ public class TestRenameEntryController extends BaseController {
 
 			try {
 				localizationService.updateTestNames(name, reportingName);
-			} catch (HibernateException e) {
+			} catch (LIMSRuntimeException e) {
 				LogEvent.logErrorStack(this.getClass().getSimpleName(), "updateTestNames()", e);
 			}
 

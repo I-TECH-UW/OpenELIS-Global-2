@@ -80,7 +80,7 @@ public class PluginAnalyzerService {
 
 		List<AnalyzerTestMapping> testMappings = createTestMappings(nameMappings);
 		if (!testMappings.isEmpty() && existingMappings == null) {
-			existingMappings = analyzerMappingService.getAllAnalyzerTestMappings();
+			existingMappings = analyzerMappingService.getAll();
 		}
 
 		analyzer.setSysUserId("1");

@@ -9,10 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import us.mn.state.health.lims.audittrail.dao.AuditTrailDAO;
 import us.mn.state.health.lims.barcode.dao.BarcodeLabelInfoDAO;
 import us.mn.state.health.lims.barcode.valueholder.BarcodeLabelInfo;
-import us.mn.state.health.lims.common.action.IActionConstants;
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
-import us.mn.state.health.lims.common.log.LogEvent;
 
 /**
  * Class for inserting, updating, and retrieving
@@ -37,32 +34,30 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 	List list;
 
 	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * us.mn.state.health.lims.barcode.dao.BarcodeLabelInfoDAO#insertData(us.mn.
-	 * state.health.lims.barcode.valueholder.BarcodeLabelInfo)
+	 * // * (non-Javadoc) // * // * @see // *
+	 * us.mn.state.health.lims.barcode.dao.BarcodeLabelInfoDAO#insertData(us.mn. //
+	 * * state.health.lims.barcode.valueholder.BarcodeLabelInfo) //
 	 */
-	@Override
-	public boolean insertData(BarcodeLabelInfo barcodeLabelInfo) throws LIMSRuntimeException {
-		try {
-			String id = (String) sessionFactory.getCurrentSession().save(barcodeLabelInfo);
-			barcodeLabelInfo.setId(id);
-
-			// add to audit trail
-
-			String sysUserId = barcodeLabelInfo.getSysUserId();
-			String tableName = "BARCODE_LABEL_INFO";
-			auditDAO.saveNewHistory(barcodeLabelInfo, sysUserId, tableName);
-
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("BarcodeLabelInfoDAOImpl", "insertData()", e.toString());
-			throw new LIMSRuntimeException("Error in BarcodeLabelInfo insertData()", e);
-		}
-		return true;
-	}
+//	@Override
+//	public boolean insertData(BarcodeLabelInfo barcodeLabelInfo) throws LIMSRuntimeException {
+//		try {
+//			String id = (String) sessionFactory.getCurrentSession().save(barcodeLabelInfo);
+//			barcodeLabelInfo.setId(id);
+//
+//			// add to audit trail
+//
+//			String sysUserId = barcodeLabelInfo.getSysUserId();
+//			String tableName = "BARCODE_LABEL_INFO";
+//			auditDAO.saveNewHistory(barcodeLabelInfo, sysUserId, tableName);
+//
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			LogEvent.logError("BarcodeLabelInfoDAOImpl", "insertData()", e.toString());
+//			throw new LIMSRuntimeException("Error in BarcodeLabelInfo insertData()", e);
+//		}
+//		return true;
+//	}
 
 	/*
 	 * (non-Javadoc)
@@ -71,36 +66,36 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 	 * us.mn.state.health.lims.barcode.dao.BarcodeLabelInfoDAO#updateData(us.mn.
 	 * state.health.lims.barcode.valueholder.BarcodeLabelInfo)
 	 */
-	@Override
-	public void updateData(BarcodeLabelInfo barcodeLabelInfo) throws LIMSRuntimeException {
-		BarcodeLabelInfo oldData = readBarcodeLabelInfo(barcodeLabelInfo.getId());
-		BarcodeLabelInfo newData = barcodeLabelInfo;
-
-		// add to audit trail
-		try {
-
-			String sysUserId = barcodeLabelInfo.getSysUserId();
-			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-			String tableName = "BARCODE_LABEL_INFO";
-			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-		} catch (Exception e) {
-			// bugzilla 2154
-			LogEvent.logError("BarcodeLabelInfoDAOImpl", "AuditTrail updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in Login AuditTrail updateData()", e);
-		}
-
-		try {
-			sessionFactory.getCurrentSession().merge(barcodeLabelInfo);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			// sessionFactory.getCurrentSession().evict // CSL remove old(barcodeLabelInfo);
-			// sessionFactory.getCurrentSession().refresh // CSL remove
-			// old(barcodeLabelInfo);
-		} catch (Exception e) {
-			LogEvent.logError("BarcodeLabelInfoDAOImpl", "updateData()", e.toString());
-			throw new LIMSRuntimeException("Error in BarcodeLabelInfo updateData()", e);
-		}
-	}
+//	@Override
+//	public void updateData(BarcodeLabelInfo barcodeLabelInfo) throws LIMSRuntimeException {
+//		BarcodeLabelInfo oldData = readBarcodeLabelInfo(barcodeLabelInfo.getId());
+//		BarcodeLabelInfo newData = barcodeLabelInfo;
+//
+//		// add to audit trail
+//		try {
+//
+//			String sysUserId = barcodeLabelInfo.getSysUserId();
+//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//			String tableName = "BARCODE_LABEL_INFO";
+//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//		} catch (Exception e) {
+//			// bugzilla 2154
+//			LogEvent.logError("BarcodeLabelInfoDAOImpl", "AuditTrail updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in Login AuditTrail updateData()", e);
+//		}
+//
+//		try {
+//			sessionFactory.getCurrentSession().merge(barcodeLabelInfo);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			// sessionFactory.getCurrentSession().evict // CSL remove old(barcodeLabelInfo);
+//			// sessionFactory.getCurrentSession().refresh // CSL remove
+//			// old(barcodeLabelInfo);
+//		} catch (Exception e) {
+//			LogEvent.logError("BarcodeLabelInfoDAOImpl", "updateData()", e.toString());
+//			throw new LIMSRuntimeException("Error in BarcodeLabelInfo updateData()", e);
+//		}
+//	}
 
 	/*
 	 * (non-Javadoc)
@@ -109,25 +104,25 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 	 * us.mn.state.health.lims.barcode.dao.BarcodeLabelInfoDAO#getDataByCode(java.
 	 * lang.String)
 	 */
-	@Override
-	public BarcodeLabelInfo getDataByCode(String code) throws LIMSRuntimeException {
-		BarcodeLabelInfo bli = null;
-		try {
-			String sql = "From BarcodeLabelInfo b where b.code = :param";
-			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setParameter("param", code.trim());
-			list = query.list();
-			if (list != null && list.size() > 0) {
-				bli = (BarcodeLabelInfo) list.get(0);
-			}
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("BarcodeLabelInfoDAOImpl", "getDataByCode()", e.toString());
-			throw new LIMSRuntimeException("Error in getDataByCode()", e);
-		}
-		return bli;
-	}
+//	@Override
+//	public BarcodeLabelInfo getDataByCode(String code) throws LIMSRuntimeException {
+//		BarcodeLabelInfo bli = null;
+//		try {
+//			String sql = "From BarcodeLabelInfo b where b.code = :param";
+//			org.hibernate.Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setParameter("param", code.trim());
+//			list = query.list();
+//			if (list != null && list.size() > 0) {
+//				bli = (BarcodeLabelInfo) list.get(0);
+//			}
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			LogEvent.logError("BarcodeLabelInfoDAOImpl", "getDataByCode()", e.toString());
+//			throw new LIMSRuntimeException("Error in getDataByCode()", e);
+//		}
+//		return bli;
+//	}
 
 	/**
 	 * Get BarcodeLabelInfo by id
@@ -135,17 +130,17 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
 	 * @param idString PK of the BarcodeLabelInfo to be retrieved
 	 * @return The persisted BarcodeLabelInfo
 	 */
-	public BarcodeLabelInfo readBarcodeLabelInfo(String idString) {
-		BarcodeLabelInfo recoveredBarcodeLabelInfo;
-		try {
-			recoveredBarcodeLabelInfo = sessionFactory.getCurrentSession().get(BarcodeLabelInfo.class, idString);
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-		} catch (Exception e) {
-			LogEvent.logError("BarcodeLabelInfoDAOImpl", "readBarcodeLabelInfo()", e.toString());
-			throw new LIMSRuntimeException("Error in BarcodeLabelInfo readBarcodeLabelInfo()", e);
-		}
-		return recoveredBarcodeLabelInfo;
-	}
+//	public BarcodeLabelInfo readBarcodeLabelInfo(String idString) {
+//		BarcodeLabelInfo recoveredBarcodeLabelInfo;
+//		try {
+//			recoveredBarcodeLabelInfo = sessionFactory.getCurrentSession().get(BarcodeLabelInfo.class, idString);
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//		} catch (Exception e) {
+//			LogEvent.logError("BarcodeLabelInfoDAOImpl", "readBarcodeLabelInfo()", e.toString());
+//			throw new LIMSRuntimeException("Error in BarcodeLabelInfo readBarcodeLabelInfo()", e);
+//		}
+//		return recoveredBarcodeLabelInfo;
+//	}
 
 }

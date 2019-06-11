@@ -336,7 +336,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 		return list;
 	}
 
-	private boolean duplicatePanelItemExists(PanelItem panelItem) throws LIMSRuntimeException {
+	@Override
+	public boolean duplicatePanelItemExists(PanelItem panelItem) throws LIMSRuntimeException {
 		try {
 			List list;
 

@@ -62,4 +62,6 @@ public interface PanelItemDAO extends BaseDAO<PanelItem, String> {
 
 	public List<PanelItem> getPanelItemsForPanelAndItemList(String panelId, List<Integer> testList)
 			throws LIMSRuntimeException;
+
+	boolean duplicatePanelItemExists(PanelItem panelItem) throws LIMSRuntimeException;
 }

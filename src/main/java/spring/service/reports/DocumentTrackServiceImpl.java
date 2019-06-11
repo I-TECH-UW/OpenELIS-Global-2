@@ -13,7 +13,8 @@ import us.mn.state.health.lims.reports.dao.DocumentTrackDAO;
 import us.mn.state.health.lims.reports.valueholder.DocumentTrack;
 
 @Service
-public class DocumentTrackServiceImpl extends BaseObjectServiceImpl<DocumentTrack, String> implements DocumentTrackService {
+public class DocumentTrackServiceImpl extends BaseObjectServiceImpl<DocumentTrack, String>
+		implements DocumentTrackService {
 	@Autowired
 	protected DocumentTrackDAO baseObjectDAO;
 
@@ -37,18 +38,14 @@ public class DocumentTrackServiceImpl extends BaseObjectServiceImpl<DocumentTrac
 	}
 
 	@Override
-	public void insertData(DocumentTrack docTrack) {
-        getBaseObjectDAO().insertData(docTrack);
-
+	public List<DocumentTrack> getByTypeRecordAndTableAndName(String reportTypeId, String tableId, String recordId,
+			String name) {
+		Map<String, Object> propertyValues = new HashMap<>();
+		propertyValues.put("documentTypeId", reportTypeId);
+		propertyValues.put("tableId", tableId);
+		propertyValues.put("recordId", recordId);
+		propertyValues.put("documentName", name);
+		return baseObjectDAO.getAllMatchingOrdered(propertyValues, "reportTime", false);
 	}
 
-	@Override
-	public List<DocumentTrack> getByTypeRecordAndTableAndName(String reportTypeId, String referenceTable, String id, String name) {
-        return getBaseObjectDAO().getByTypeRecordAndTableAndName(reportTypeId,referenceTable,id,name);
-	}
-
-	@Override
-	public DocumentTrack readEntity(String id) {
-        return getBaseObjectDAO().readEntity(id);
-	}
 }

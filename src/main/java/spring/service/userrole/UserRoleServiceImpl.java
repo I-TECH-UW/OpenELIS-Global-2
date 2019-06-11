@@ -1,5 +1,6 @@
 package spring.service.userrole;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,14 +30,12 @@ public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole, UserRol
 	@Override
 	@Transactional
 	public List<String> getRoleIdsForUser(String userId) {
-		// doesn't work for composite-ids
-//		List<UserRole> userRoles = baseObjectDAO.getAllMatching("compoundId.systemUserId", userId);
-//		List<String> userRoleIds = new ArrayList<>();
-//		for (UserRole userRole : userRoles) {
-//			userRoleIds.add(userRole.getId());
-//		}
-//		return userRoleIds;
-		return baseObjectDAO.getRoleIdsForUser(userId);
+		List<UserRole> userRoles = baseObjectDAO.getAllMatching("compoundId.systemUserId", userId);
+		List<String> userRoleIds = new ArrayList<>();
+		for (UserRole userRole : userRoles) {
+			userRoleIds.add(userRole.getId().getRoleId());
+		}
+		return userRoleIds;
 	}
 
 	@Override
@@ -46,50 +45,7 @@ public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole, UserRol
 	}
 
 	@Override
-	public void getData(UserRole userRole) {
-		getBaseObjectDAO().getData(userRole);
-
-	}
-
-	@Override
-	public void deleteData(List<UserRole> userRoles) {
-		getBaseObjectDAO().deleteData(userRoles);
-
-	}
-
-	@Override
-	public void updateData(UserRole userRole) {
-		getBaseObjectDAO().updateData(userRole);
-
-	}
-
-	@Override
-	public boolean insertData(UserRole userRole) {
-		return getBaseObjectDAO().insertData(userRole);
-	}
-
-	@Override
-	public List getPageOfUserRoles(int startingRecNo) {
-		return getBaseObjectDAO().getPageOfUserRoles(startingRecNo);
-	}
-
-	@Override
-	public List getNextUserRoleRecord(String id) {
-		return getBaseObjectDAO().getNextUserRoleRecord(id);
-	}
-
-	@Override
-	public List getPreviousUserRoleRecord(String id) {
-		return getBaseObjectDAO().getPreviousUserRoleRecord(id);
-	}
-
-	@Override
 	public boolean userInRole(String userId, String roleName) {
 		return getBaseObjectDAO().userInRole(userId, roleName);
-	}
-
-	@Override
-	public List getAllUserRoles() {
-		return getBaseObjectDAO().getAllUserRoles();
 	}
 }

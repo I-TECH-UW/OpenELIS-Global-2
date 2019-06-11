@@ -35,7 +35,7 @@ import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 
 @Controller
 public class AnalyzerTestNameMenuController extends BaseMenuController {
-	
+
 	@Autowired
 	AnalyzerTestMappingService analyzerTestMappingService;
 	@Autowired
@@ -80,7 +80,7 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
 					.getMappedTestsForAnalyzer(analyzerName).values();
 			if (mappedTestNames.size() > 0) {
 				analyzer.setId(((MappedTestName) mappedTestNames.toArray()[0]).getAnalyzerId());
-				analyzer = analyzerService.getAnalyzerById(analyzer);
+				analyzer = analyzerService.get(analyzer.getId());
 				mappedTestNameList.addAll(convertedToNamedList(mappedTestNames, analyzer.getName()));
 			}
 		}

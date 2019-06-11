@@ -116,10 +116,10 @@ public class DataSubmissionController extends BaseController {
 			DataIndicator databaseIndicator = dataIndicatorService
 					.getIndicatorByTypeYearMonth(indicator.getTypeOfIndicator(), year, month);
 			if (databaseIndicator == null) {
-				dataIndicatorService.insertData(indicator);
+				dataIndicatorService.insert(indicator);
 			} else {
 				indicator.setId(databaseIndicator.getId());
-				dataIndicatorService.updateData(indicator);
+				dataIndicatorService.update(indicator);
 			}
 		}
 

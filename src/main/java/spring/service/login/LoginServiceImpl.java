@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import spring.service.common.BaseObjectServiceImpl;
 import us.mn.state.health.lims.common.action.IActionConstants;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.util.SystemConfiguration;
 import us.mn.state.health.lims.login.dao.LoginDAO;
@@ -91,7 +92,7 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 
 	@Override
 	@Transactional
-	public void updatePassword(Login login, String newPassword) {
+	public void hashPassword(Login login, String newPassword) {
 		PasswordUtil passUtil = new PasswordUtil();
 		login.setPassword(passUtil.hashPassword(newPassword));
 		Calendar passwordExpiredDate = Calendar.getInstance();
@@ -103,36 +104,30 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 	}
 
 	@Override
-	public void getData(Login login) {
-		getBaseObjectDAO().getData(login);
-
+	public String insert(Login login) {
+		if (getBaseObjectDAO().duplicateLoginNameExists(login)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + login.getLoginName());
+		}
+		// TODO csl check to make sure password is a valid hash
+		return super.insert(login);
 	}
 
 	@Override
-	public void deleteData(List login) {
-		getBaseObjectDAO().deleteData(login);
-
+	public Login save(Login login) {
+		if (getBaseObjectDAO().duplicateLoginNameExists(login)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + login.getLoginName());
+		}
+		// TODO csl check to make sure password is a valid hash
+		return super.save(login);
 	}
 
 	@Override
-	public void updateData(Login login, boolean passwordUpdated) {
-		getBaseObjectDAO().updateData(login, passwordUpdated);
-
-	}
-
-	@Override
-	public boolean insertData(Login login) {
-		return getBaseObjectDAO().insertData(login);
-	}
-
-	@Override
-	public List getNextLoginUserRecord(String id) {
-		return getBaseObjectDAO().getNextLoginUserRecord(id);
-	}
-
-	@Override
-	public List getPreviousLoginUserRecord(String id) {
-		return getBaseObjectDAO().getPreviousLoginUserRecord(id);
+	public Login update(Login login) {
+		if (getBaseObjectDAO().duplicateLoginNameExists(login)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + login.getLoginName());
+		}
+		// TODO csl check to make sure password is a valid hash
+		return super.update(login);
 	}
 
 	@Override
@@ -141,33 +136,14 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 	}
 
 	@Override
-	public Integer getTotalLoginUserCount() {
-		return getBaseObjectDAO().getTotalLoginUserCount();
-	}
-
-	@Override
-	public List getPageOfLoginUsers(int startingRecNo) {
-		return getBaseObjectDAO().getPageOfLoginUsers(startingRecNo);
-	}
-
-	@Override
-	public boolean lockAccount(Login login) {
-		return getBaseObjectDAO().lockAccount(login);
-	}
-
-	@Override
 	public Login getValidateLogin(Login login) {
 		return getBaseObjectDAO().getValidateLogin(login);
 	}
 
 	@Override
+	@Transactional
 	public Login getUserProfile(String loginName) {
-		return getBaseObjectDAO().getUserProfile(loginName);
-	}
-
-	@Override
-	public boolean unlockAccount(Login login) {
-		return getBaseObjectDAO().unlockAccount(login);
+		return getMatch("loginName", loginName).orElse(null);
 	}
 
 	@Override
@@ -175,14 +151,4 @@ public class LoginServiceImpl extends BaseObjectServiceImpl<Login, String> imple
 		return getBaseObjectDAO().getSystemUserId(login);
 	}
 
-	@Override
-	public List getAllLoginUsers() {
-		return getBaseObjectDAO().getAllLoginUsers();
-	}
-
-	@Override
-	public void updatePassword(Login login) {
-		getBaseObjectDAO().updatePassword(login);
-
-	}
 }

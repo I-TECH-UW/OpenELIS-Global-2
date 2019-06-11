@@ -153,7 +153,7 @@ public class ResultExporter extends Thread {
 						hl7MessageService.update(hl7Message);
 					}
 					for (DocumentTrack document : documents) {
-						trackService.insertData(document);
+						trackService.insert(document);
 					}
 					reportExternalExportService.delete(report);
 

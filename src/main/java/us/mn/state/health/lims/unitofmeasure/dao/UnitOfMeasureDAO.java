@@ -15,35 +15,36 @@
 */
 package us.mn.state.health.lims.unitofmeasure.dao;
 
-import java.util.List;
-
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.unitofmeasure.valueholder.UnitOfMeasure;
 
 public interface UnitOfMeasureDAO extends BaseDAO<UnitOfMeasure, String> {
 
-	public boolean insertData(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException;
+//	public boolean insertData(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException;
 
-	public void deleteData(List unitOfMeasures) throws LIMSRuntimeException;
+//	public void deleteData(List unitOfMeasures) throws LIMSRuntimeException;
 
-	public List getAllUnitOfMeasures() throws LIMSRuntimeException;
+//	public List getAllUnitOfMeasures() throws LIMSRuntimeException;
 
-	public List getPageOfUnitOfMeasures(int startingRecNo) throws LIMSRuntimeException;
+//	public List getPageOfUnitOfMeasures(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException;
+//	public void getData(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException;
 
-	public void updateData(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException;
+//	public void updateData(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException;
+//
+//	public List getNextUnitOfMeasureRecord(String id) throws LIMSRuntimeException;
+//
+//	public List getPreviousUnitOfMeasureRecord(String id) throws LIMSRuntimeException;
 
-	public List getNextUnitOfMeasureRecord(String id) throws LIMSRuntimeException;
+//	public UnitOfMeasure getUnitOfMeasureByName(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException;
 
-	public List getPreviousUnitOfMeasureRecord(String id) throws LIMSRuntimeException;
-
-	public UnitOfMeasure getUnitOfMeasureByName(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException;
-
-	public Integer getTotalUnitOfMeasureCount() throws LIMSRuntimeException;
+//	public Integer getTotalUnitOfMeasureCount() throws LIMSRuntimeException;
 
 	public UnitOfMeasure getUnitOfMeasureById(String uomId) throws LIMSRuntimeException;
 
-	public List<UnitOfMeasure> getAllActiveUnitOfMeasures();
+	boolean duplicateUnitOfMeasureExists(UnitOfMeasure unitOfMeasure) throws LIMSRuntimeException;
+
+//	public List<UnitOfMeasure> getAllActiveUnitOfMeasures();
+
 }

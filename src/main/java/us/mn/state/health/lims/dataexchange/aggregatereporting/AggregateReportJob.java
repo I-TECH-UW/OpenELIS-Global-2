@@ -21,7 +21,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.HibernateException;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -35,6 +34,7 @@ import spring.service.dataexchange.aggregatereporting.ReportQueueTypeService;
 import spring.service.scheduler.CronSchedulerService;
 import spring.service.siteinformation.SiteInformationService;
 import spring.util.SpringContext;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.ConfigurationProperties;
 import us.mn.state.health.lims.common.util.ConfigurationProperties.Property;
@@ -140,7 +140,7 @@ public class AggregateReportJob implements Job {
 
 		try {
 			cronSchedulerService.update(reportScheduler);
-		} catch (HibernateException e) {
+		} catch (LIMSRuntimeException e) {
 			LogEvent.logErrorStack(this.getClass().getSimpleName(), "updateRunTimestamp()", e);
 		}
 	}
@@ -215,7 +215,7 @@ public class AggregateReportJob implements Job {
 					siteInfoService.updateData(sendInfo);
 				}
 
-			} catch (HibernateException e) {
+			} catch (LIMSRuntimeException e) {
 				LogEvent.logErrorStack(this.getClass().getSimpleName(), "handleSuccess()", e);
 				throw e;
 			}
@@ -279,7 +279,7 @@ public class AggregateReportJob implements Job {
 					sendInfo.setSysUserId("1");
 					siteInfoService.updateData(sendInfo);
 				}
-			} catch (HibernateException e) {
+			} catch (LIMSRuntimeException e) {
 				LogEvent.logErrorStack(this.getClass().getSimpleName(), "writeSendStatus()", e);
 			}
 		}

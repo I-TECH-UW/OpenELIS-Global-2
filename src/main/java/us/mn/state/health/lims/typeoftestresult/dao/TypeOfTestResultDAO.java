@@ -15,8 +15,6 @@
 */
 package us.mn.state.health.lims.typeoftestresult.dao;
 
-import java.util.List;
-
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.typeoftestresult.valueholder.TypeOfTestResult;
@@ -31,25 +29,27 @@ import us.mn.state.health.lims.typeoftestresult.valueholder.TypeOfTestResult;
  */
 public interface TypeOfTestResultDAO extends BaseDAO<TypeOfTestResult, String> {
 
-	public boolean insertData(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException;
+//	public boolean insertData(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException;
 
-	public void deleteData(List typeOfTestResults) throws LIMSRuntimeException;
+//	public void deleteData(List typeOfTestResults) throws LIMSRuntimeException;
 
-	public List getAllTypeOfTestResults() throws LIMSRuntimeException;
+//	public List getAllTypeOfTestResults() throws LIMSRuntimeException;
 
-	public List getPageOfTypeOfTestResults(int startingRecNo) throws LIMSRuntimeException;
+//	public List getPageOfTypeOfTestResults(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException;
+//	public void getData(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException;
 
-	public void updateData(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException;
+//	public void updateData(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException;
 
-	public List getNextTypeOfTestResultRecord(String id) throws LIMSRuntimeException;
+//	public List getNextTypeOfTestResultRecord(String id) throws LIMSRuntimeException;
+//
+//	public List getPreviousTypeOfTestResultRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousTypeOfTestResultRecord(String id) throws LIMSRuntimeException;
-
-	public Integer getTotalTypeOfTestResultCount() throws LIMSRuntimeException;
+//	public Integer getTotalTypeOfTestResultCount() throws LIMSRuntimeException;
 
 	public TypeOfTestResult getTypeOfTestResultByType(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException;
 
-	public TypeOfTestResult getTypeOfTestResultByType(String type) throws LIMSRuntimeException;
+//	public TypeOfTestResult getTypeOfTestResultByType(String type) throws LIMSRuntimeException;
+
+	boolean duplicateTypeOfTestResultExists(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException;
 }

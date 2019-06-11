@@ -85,9 +85,8 @@ public class PatientUtil {
 		return identityService.getPatientIdentitiesForPatient(patientId);
 	}
 
-	@SuppressWarnings("unchecked")
 	public static List<Gender> findGenders() {
-		return SpringContext.getBean(GenderService.class).getAllGenders();
+		return SpringContext.getBean(GenderService.class).getAll();
 	}
 
 	public static List<PatientIdentity> getIdentityListForPatient(Patient patient) {

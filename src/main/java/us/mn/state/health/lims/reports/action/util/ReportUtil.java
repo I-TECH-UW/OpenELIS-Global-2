@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.HibernateException;
-
 import spring.mine.internationalization.MessageUtil;
 import spring.service.observationhistory.ObservationHistoryService;
 import spring.service.observationhistorytype.ObservationHistoryTypeService;
@@ -33,6 +31,7 @@ import spring.service.samplehuman.SampleHumanService;
 import spring.service.sampleproject.SampleProjectService;
 import spring.service.typeofsample.TypeOfSampleService;
 import spring.util.SpringContext;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.util.DateUtil;
 import us.mn.state.health.lims.observationhistory.valueholder.ObservationHistory;
@@ -150,7 +149,7 @@ public class ReportUtil {
 //				documentTrackService.insertData(document);
 //			}
 
-		} catch (HibernateException e) {
+		} catch (LIMSRuntimeException e) {
 			LogEvent.logErrorStack("ReportUtil", "markDocumentsAsPrinted()", e);
 		}
 	}

@@ -1,7 +1,9 @@
 package spring.service.dictionary;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +39,16 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary, Str
 		} else {
 			return super.update(dictionary);
 		}
+	}
 
+	@Override
+	@Transactional
+	public String insert(Dictionary dictionary) {
+		if (baseObjectDAO.duplicateDictionaryExists(dictionary)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + dictionary.getDictEntry());
+		} else {
+			return super.insert(dictionary);
+		}
 	}
 
 	@Override
@@ -49,7 +60,8 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary, Str
 	@Override
 	@Transactional
 	public void delete(String id, String sysUserId) {
-		Dictionary oldData = baseObjectDAO.get(id).orElseThrow(() -> new ObjectNotFoundException(id, Dictionary.class.getName()));
+		Dictionary oldData = baseObjectDAO.get(id)
+				.orElseThrow(() -> new ObjectNotFoundException(id, Dictionary.class.getName()));
 		oldData.setIsActive(IActionConstants.NO);
 		oldData.setSysUserId(sysUserId);
 		super.update(oldData);
@@ -100,7 +112,8 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary, Str
 
 	@Override
 	@Transactional
-	public List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String fieldName, String fieldValue, boolean orderByDictEntry) {
+	public List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String fieldName, String fieldValue,
+			boolean orderByDictEntry) {
 		return baseObjectDAO.getDictionaryEntrysByCategoryAbbreviation(fieldName, fieldValue, orderByDictEntry);
 	}
 
@@ -112,114 +125,59 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary, Str
 
 	@Override
 	public void getData(Dictionary dictionary) {
-        getBaseObjectDAO().getData(dictionary);
+		getBaseObjectDAO().getData(dictionary);
 
-	}
-
-	@Override
-	public void deleteData(List dictionarys) {
-        getBaseObjectDAO().deleteData(dictionarys);
-
-	}
-
-	@Override
-	public void updateData(Dictionary dictionary, boolean isDictionaryFrozenCheckRequired) {
-        getBaseObjectDAO().updateData(dictionary,isDictionaryFrozenCheckRequired);
-
-	}
-
-	@Override
-	public boolean insertData(Dictionary dictionary) {
-        return getBaseObjectDAO().insertData(dictionary);
 	}
 
 	@Override
 	public Dictionary getDictionaryByLocalAbbrev(Dictionary dictionary) {
-        return getBaseObjectDAO().getDictionaryByLocalAbbrev(dictionary);
+		Map<String, Object> properties = new HashMap<>();
+		properties.put("localAbbreviation", dictionary.getLocalAbbreviation());
+		properties.put("isActive", IActionConstants.YES);
+		return getMatch(properties).orElse(null);
 	}
 
 	@Override
 	public Dictionary getDictionaryById(String dictionaryId) {
-        return getBaseObjectDAO().getDictionaryById(dictionaryId);
+		return getBaseObjectDAO().getDictionaryById(dictionaryId);
 	}
 
 	@Override
 	public boolean duplicateDictionaryExists(Dictionary dictionary) {
-        return getBaseObjectDAO().duplicateDictionaryExists(dictionary);
+		return getBaseObjectDAO().duplicateDictionaryExists(dictionary);
 	}
 
 	@Override
 	public List getAllDictionarys() {
-        return getBaseObjectDAO().getAllDictionarys();
+		return getBaseObjectDAO().getAllDictionarys();
 	}
 
 	@Override
 	public boolean isDictionaryFrozen(Dictionary dictionary) {
-        return getBaseObjectDAO().isDictionaryFrozen(dictionary);
-	}
-
-	@Override
-	public List getNextDictionaryRecord(String id) {
-        return getBaseObjectDAO().getNextDictionaryRecord(id);
-	}
-
-	@Override
-	public List getPreviousDictionaryRecord(String id) {
-        return getBaseObjectDAO().getPreviousDictionaryRecord(id);
-	}
-
-	@Override
-	public List getPagesOfSearchedDictionarys(int startRecNo, String searchString) {
-        return getBaseObjectDAO().getPagesOfSearchedDictionarys(startRecNo,searchString);
-	}
-
-	@Override
-	public Dictionary getDictionaryByDictEntry(String dictEntry) {
-        return getBaseObjectDAO().getDictionaryByDictEntry(dictEntry);
-	}
-
-	@Override
-	public Dictionary getDictionaryByDictEntry(Dictionary dictionary, boolean ignoreCase) {
-        return getBaseObjectDAO().getDictionaryByDictEntry(dictionary,ignoreCase);
-	}
-
-	@Override
-	public Integer getTotalDictionaryCount() {
-        return getBaseObjectDAO().getTotalDictionaryCount();
-	}
-
-	@Override
-	public Integer getTotalSearchedDictionaryCount(String searchString) {
-        return getBaseObjectDAO().getTotalSearchedDictionaryCount(searchString);
-	}
-
-	@Override
-	public List getPageOfDictionarys(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfDictionarys(startingRecNo);
-	}
-
-	@Override
-	public List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String dictionaryCategory) {
-        return getBaseObjectDAO().getDictionaryEntrysByCategoryAbbreviation(dictionaryCategory);
+		return getBaseObjectDAO().isDictionaryFrozen(dictionary);
 	}
 
 	@Override
 	public List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String filter, String dictionaryCategory) {
-        return getBaseObjectDAO().getDictionaryEntrysByCategoryAbbreviation(filter,dictionaryCategory);
+		return getBaseObjectDAO().getDictionaryEntrysByCategoryAbbreviation(filter, dictionaryCategory);
 	}
 
 	@Override
-	public Dictionary getDictionaryEntrysByNameAndCategoryDescription(String dictionaryName, String categoryDescription) {
-        return getBaseObjectDAO().getDictionaryEntrysByNameAndCategoryDescription(dictionaryName,categoryDescription);
+	public Dictionary getDictionaryEntrysByNameAndCategoryDescription(String dictionaryName,
+			String categoryDescription) {
+		Map<String, Object> properties = new HashMap<>();
+		properties.put("dictEntry", dictionaryName);
+		properties.put("dictionaryCategory.description", categoryDescription);
+		return getMatch(properties).orElse(null);
 	}
 
 	@Override
 	public List<Dictionary> getDictionaryEntrysByCategoryNameLocalizedSort(String dictionaryCategoryName) {
-        return getBaseObjectDAO().getDictionaryEntrysByCategoryNameLocalizedSort(dictionaryCategoryName);
+		return getBaseObjectDAO().getDictionaryEntrysByCategoryNameLocalizedSort(dictionaryCategoryName);
 	}
 
 	@Override
 	public Dictionary getDataForId(String dictId) {
-        return getBaseObjectDAO().getDataForId(dictId);
+		return getBaseObjectDAO().getDataForId(dictId);
 	}
 }

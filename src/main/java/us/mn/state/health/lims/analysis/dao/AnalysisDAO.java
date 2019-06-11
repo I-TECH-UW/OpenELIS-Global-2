@@ -41,32 +41,32 @@ import us.mn.state.health.lims.test.valueholder.Test;
  */
 public interface AnalysisDAO extends BaseDAO<Analysis, String> {
 
-	boolean insertData(Analysis analysis, boolean duplicateCheck) throws LIMSRuntimeException;
+//	boolean insertData(Analysis analysis, boolean duplicateCheck) throws LIMSRuntimeException;
 
-	@SuppressWarnings("rawtypes")
-	void deleteData(List analysiss) throws LIMSRuntimeException;
+//	@SuppressWarnings("rawtypes")
+//	void deleteData(List analysiss) throws LIMSRuntimeException;
 
-	@SuppressWarnings("rawtypes")
-	List getAllAnalyses() throws LIMSRuntimeException;
+//	@SuppressWarnings("rawtypes")
+//	List getAllAnalyses() throws LIMSRuntimeException;
 
-	@SuppressWarnings("rawtypes")
-	List getPageOfAnalyses(int startingRecNo) throws LIMSRuntimeException;
+//	@SuppressWarnings("rawtypes")
+//	List getPageOfAnalyses(int startingRecNo) throws LIMSRuntimeException;
 
 	void getData(Analysis analysis) throws LIMSRuntimeException;
 
 	void updateData(Analysis analysis) throws LIMSRuntimeException;
 
-	@SuppressWarnings("rawtypes")
-	List getAnalyses(String filter) throws LIMSRuntimeException;
+//	@SuppressWarnings("rawtypes")
+//	List getAnalyses(String filter) throws LIMSRuntimeException;
 
-	@SuppressWarnings("rawtypes")
-	List getNextAnalysisRecord(String id) throws LIMSRuntimeException;
+//	@SuppressWarnings("rawtypes")
+//	List getNextAnalysisRecord(String id) throws LIMSRuntimeException;
+//
+//	@SuppressWarnings("rawtypes")
+//	List getPreviousAnalysisRecord(String id) throws LIMSRuntimeException;
 
-	@SuppressWarnings("rawtypes")
-	List getPreviousAnalysisRecord(String id) throws LIMSRuntimeException;
-
-	@SuppressWarnings("rawtypes")
-	List getAllAnalysesPerTest(Test test) throws LIMSRuntimeException;
+//	@SuppressWarnings("rawtypes")
+//	List getAllAnalysesPerTest(Test test) throws LIMSRuntimeException;
 
 	@SuppressWarnings("rawtypes")
 	List getAllAnalysisByTestAndStatus(String testId, List<Integer> statusIdList) throws LIMSRuntimeException;

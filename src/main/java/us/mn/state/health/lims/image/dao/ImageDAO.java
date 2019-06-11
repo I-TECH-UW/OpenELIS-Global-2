@@ -15,11 +15,7 @@
  */
 package us.mn.state.health.lims.image.dao;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 import us.mn.state.health.lims.common.dao.BaseDAO;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.image.valueholder.Image;
 
 /**
@@ -28,13 +24,6 @@ import us.mn.state.health.lims.image.valueholder.Image;
  */
 public interface ImageDAO extends BaseDAO<Image, String> {
 
-	public String saveImage(Image image) throws LIMSRuntimeException;
+//	public String saveImage(Image image) throws LIMSRuntimeException;
 
-	public Image getImage(String imageId) throws LIMSRuntimeException;
-
-	public void deleteImage(Image image) throws LIMSRuntimeException;
-
-	public ByteArrayOutputStream retrieveImageOutputStream(String id) throws LIMSRuntimeException;
-
-	public ByteArrayInputStream retrieveImageInputStream(String id) throws LIMSRuntimeException;
 }

@@ -181,7 +181,6 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 	@Override
 	@Transactional
 	public PK insert(T baseObject) {
-
 		PK id = getBaseObjectDAO().insert(baseObject);
 		baseObject.setId(id);
 		if (auditTrailLog) {
@@ -362,9 +361,5 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 	@Transactional(readOnly = true)
 	public boolean hasPrevious(String id) {
 		return getBaseObjectDAO().getPrevious(id).isPresent();
-	}
-
-	protected void disableLogging() {
-		this.auditTrailLog = false;
 	}
 }

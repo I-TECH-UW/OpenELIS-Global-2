@@ -18,7 +18,6 @@
 package us.mn.state.health.lims.userrole.dao;
 
 import java.util.Collection;
-import java.util.List;
 
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
@@ -27,25 +26,26 @@ import us.mn.state.health.lims.userrole.valueholder.UserRolePK;
 
 public interface UserRoleDAO extends BaseDAO<UserRole, UserRolePK> {
 
-	public boolean insertData(UserRole userRole) throws LIMSRuntimeException;
+//	public boolean insertData(UserRole userRole) throws LIMSRuntimeException;
 
-	public void deleteData(List<UserRole> userRoles) throws LIMSRuntimeException;
+//	public void deleteData(List<UserRole> userRoles) throws LIMSRuntimeException;
 
-	public List getAllUserRoles() throws LIMSRuntimeException;
+//	public List getAllUserRoles() throws LIMSRuntimeException;
 
-	public List getPageOfUserRoles(int startingRecNo) throws LIMSRuntimeException;
+//	public List getPageOfUserRoles(int startingRecNo) throws LIMSRuntimeException;
 
-	public void getData(UserRole userRole) throws LIMSRuntimeException;
+//	public void getData(UserRole userRole) throws LIMSRuntimeException;
 
-	public void updateData(UserRole userRole) throws LIMSRuntimeException;
+//	public void updateData(UserRole userRole) throws LIMSRuntimeException;
 
-	public List getNextUserRoleRecord(String id) throws LIMSRuntimeException;
+//	public List getNextUserRoleRecord(String id) throws LIMSRuntimeException;
 
-	public List getPreviousUserRoleRecord(String id) throws LIMSRuntimeException;
+//	public List getPreviousUserRoleRecord(String id) throws LIMSRuntimeException;
 
-	public List<String> getRoleIdsForUser(String userId) throws LIMSRuntimeException;
+//	public List<String> getRoleIdsForUser(String userId) throws LIMSRuntimeException;
 
 	public boolean userInRole(String userId, String roleName) throws LIMSRuntimeException;
 
 	public boolean userInRole(String userId, Collection<String> roleNames) throws LIMSRuntimeException;
+
 }

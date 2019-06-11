@@ -43,7 +43,7 @@ public class InventoryUtility {
 	public List<InventoryKitItem> getExistingInventory() {
 		List<InventoryKitItem> list = new ArrayList<>();
 
-		List<InventoryLocation> inventoryList = locationService.getAllInventoryLocations();
+		List<InventoryLocation> inventoryList = locationService.getAll();
 
 		for (InventoryLocation location : inventoryList) {
 

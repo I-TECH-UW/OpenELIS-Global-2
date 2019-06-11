@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -24,6 +23,7 @@ import spring.mine.resultreporting.form.ResultReportingConfigurationForm;
 import spring.service.resultreporting.ResultReportingConfigurationService;
 import spring.service.scheduler.CronSchedulerService;
 import spring.service.siteinformation.SiteInformationService;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.services.DisplayListService;
 import us.mn.state.health.lims.common.services.DisplayListService.ListType;
 import us.mn.state.health.lims.common.services.ExchangeConfigurationService;
@@ -94,7 +94,7 @@ public class ResultReportingConfigurationController extends BaseController {
 
 		try {
 			resultReportingConfigurationService.updateInformationAndSchedulers(informationList, scheduleList);
-		} catch (HibernateException e) {
+		} catch (LIMSRuntimeException e) {
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 

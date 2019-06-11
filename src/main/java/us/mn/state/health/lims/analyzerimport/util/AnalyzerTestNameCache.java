@@ -35,154 +35,155 @@ import us.mn.state.health.lims.test.daoimpl.TestDAOImpl;
 import us.mn.state.health.lims.test.valueholder.Test;
 
 public class AnalyzerTestNameCache {
-    public static final String SYSMEX_XT2000_NAME = "Sysmex XT 2000";
-    public static final String COBAS_INTEGRA400_NAME = "Cobas Integra";
-    public static final String FACSCALIBUR = "Facscalibur";
-    public static final String EVOLIS = "Evolis";
-    public static final String COBAS_TAQMAN = "Cobas Taqman";
-    public static final String FACSCANTO = "FacsCanto";
-    public static final String COBAS_DBS = "CobasDBS";
-    public static final String COBAS_C311 = "Cobas C311";
-    private static final Object lock = new Object();
-    private static final HashMap<String, Map<String, MappedTestName>> analyzerNameToTestNameMap = new HashMap<String, Map<String, MappedTestName>>();
-    private static AnalyzerTestNameCache instance;
-    private static Map<String, String> analyzerNameToIdMap;
-    private static Map<String, String> requestTODBName = new HashMap<String, String>();
-    private static boolean isMapped = false;
+	public static final String SYSMEX_XT2000_NAME = "Sysmex XT 2000";
+	public static final String COBAS_INTEGRA400_NAME = "Cobas Integra";
+	public static final String FACSCALIBUR = "Facscalibur";
+	public static final String EVOLIS = "Evolis";
+	public static final String COBAS_TAQMAN = "Cobas Taqman";
+	public static final String FACSCANTO = "FacsCanto";
+	public static final String COBAS_DBS = "CobasDBS";
+	public static final String COBAS_C311 = "Cobas C311";
+	private static final Object lock = new Object();
+	private static final HashMap<String, Map<String, MappedTestName>> analyzerNameToTestNameMap = new HashMap<>();
+	private static AnalyzerTestNameCache instance;
+	private static Map<String, String> analyzerNameToIdMap;
+	private static Map<String, String> requestTODBName = new HashMap<>();
+	private static boolean isMapped = false;
 
-    static{
-        requestTODBName.put("sysmex", SYSMEX_XT2000_NAME);
-        requestTODBName.put("cobas_integra", COBAS_INTEGRA400_NAME );
-        requestTODBName.put("facscalibur", FACSCALIBUR );
-        requestTODBName.put("evolis", EVOLIS );
-        requestTODBName.put("cobas_taqman", COBAS_TAQMAN );
-        requestTODBName.put("facscanto", FACSCANTO );
-        requestTODBName.put("cobasDBS", COBAS_DBS );
-        requestTODBName.put("cobasc311", COBAS_C311 );
-    }
-    public static AnalyzerTestNameCache instance() {
-        synchronized (lock) {
-            if (instance == null) {
-                instance = new AnalyzerTestNameCache();
-            }
-        }
-        return instance;
-    }
+	static {
+		requestTODBName.put("sysmex", SYSMEX_XT2000_NAME);
+		requestTODBName.put("cobas_integra", COBAS_INTEGRA400_NAME);
+		requestTODBName.put("facscalibur", FACSCALIBUR);
+		requestTODBName.put("evolis", EVOLIS);
+		requestTODBName.put("cobas_taqman", COBAS_TAQMAN);
+		requestTODBName.put("facscanto", FACSCANTO);
+		requestTODBName.put("cobasDBS", COBAS_DBS);
+		requestTODBName.put("cobasc311", COBAS_C311);
+	}
 
-    public static void setTestInstance(AnalyzerTestNameCache cache) {
-        instance = cache;
-    }
+	public static AnalyzerTestNameCache instance() {
+		synchronized (lock) {
+			if (instance == null) {
+				instance = new AnalyzerTestNameCache();
+			}
+		}
+		return instance;
+	}
 
-    public String getDBNameForActionName(String actionName){
-        return requestTODBName.get(actionName);
-    }
+	public static void setTestInstance(AnalyzerTestNameCache cache) {
+		instance = cache;
+	}
 
-    public List<String> getAnalyzerNames(){
-        insureMapsLoaded();
-        List<String> nameList = new ArrayList<String>();
-        nameList.addAll(analyzerNameToIdMap.keySet());
-        return nameList;
-    }
-    public MappedTestName getMappedTest(String analyzerName, String analyzerTestName) {
-        //This will look for a mapping for the analyzer and if it is found will then
-        //look for a mapping for the test name
-        Map<String, MappedTestName> testMap = getMappedTestsForAnalyzer(analyzerName);
+	public String getDBNameForActionName(String actionName) {
+		return requestTODBName.get(actionName);
+	}
 
-        if (testMap != null) {
-            return testMap.get(analyzerTestName);
-        }
+	public List<String> getAnalyzerNames() {
+		insureMapsLoaded();
+		List<String> nameList = new ArrayList<>();
+		nameList.addAll(analyzerNameToIdMap.keySet());
+		return nameList;
+	}
 
-        return null;
-    }
+	public MappedTestName getMappedTest(String analyzerName, String analyzerTestName) {
+		// This will look for a mapping for the analyzer and if it is found will then
+		// look for a mapping for the test name
+		Map<String, MappedTestName> testMap = getMappedTestsForAnalyzer(analyzerName);
 
-    public void registerPluginAnalyzer( String analyzerName, String analyzerId){
-        requestTODBName.put(analyzerName, analyzerName);
-        if(isMapped){
-            analyzerNameToIdMap.put(analyzerName,analyzerId);
-        }
-    }
+		if (testMap != null) {
+			return testMap.get(analyzerTestName);
+		}
 
-    private synchronized void insureMapsLoaded() {
-        if (!isMapped) {
-            loadMaps();
-            isMapped = true;
-        }
-    }
+		return null;
+	}
 
-    public Map<String, MappedTestName> getMappedTestsForAnalyzer(String analyzerName) {
-        insureMapsLoaded();
-        return analyzerNameToTestNameMap.get(analyzerName);
-    }
+	public void registerPluginAnalyzer(String analyzerName, String analyzerId) {
+		requestTODBName.put(analyzerName, analyzerName);
+		if (isMapped) {
+			analyzerNameToIdMap.put(analyzerName, analyzerId);
+		}
+	}
 
-    public synchronized void reloadCache() {
-        isMapped = false;
-    }
+	private synchronized void insureMapsLoaded() {
+		if (!isMapped) {
+			loadMaps();
+			isMapped = true;
+		}
+	}
 
-    private void loadMaps() {
-        AnalyzerDAO analyzerDAO = new AnalyzerDAOImpl();
-        List<Analyzer> analyzerList = analyzerDAO.getAllAnalyzers();
-        analyzerNameToTestNameMap.clear();
+	public Map<String, MappedTestName> getMappedTestsForAnalyzer(String analyzerName) {
+		insureMapsLoaded();
+		return analyzerNameToTestNameMap.get(analyzerName);
+	}
 
-        analyzerNameToIdMap = new HashMap<String, String>();
+	public synchronized void reloadCache() {
+		isMapped = false;
+	}
 
-        for (Analyzer analyzer : analyzerList) {
-            analyzerNameToIdMap.put(analyzer.getName(), analyzer.getId());
-            analyzerNameToTestNameMap.put(analyzer.getName(), new HashMap<String, MappedTestName>());
-        }
+	private void loadMaps() {
+		AnalyzerDAO analyzerDAO = new AnalyzerDAOImpl();
+		List<Analyzer> analyzerList = analyzerDAO.getAll();
+		analyzerNameToTestNameMap.clear();
 
-        AnalyzerTestMappingDAO analyzerTestMappingDAO = new AnalyzerTestMappingDAOImpl();
-        List<AnalyzerTestMapping> mappingList = analyzerTestMappingDAO.getAllAnalyzerTestMappings();
+		analyzerNameToIdMap = new HashMap<>();
 
-        TestDAO testDAO = new TestDAOImpl();
-        for (AnalyzerTestMapping mapping : mappingList) {
-            MappedTestName mappedTestName = createMappedTestName(testDAO, mapping);
+		for (Analyzer analyzer : analyzerList) {
+			analyzerNameToIdMap.put(analyzer.getName(), analyzer.getId());
+			analyzerNameToTestNameMap.put(analyzer.getName(), new HashMap<String, MappedTestName>());
+		}
 
-            Analyzer analyzer = new Analyzer();
-            analyzer.setId(mapping.getAnalyzerId());
-            analyzer = new AnalyzerDAOImpl().getAnalyzerById(analyzer);
+		AnalyzerTestMappingDAO analyzerTestMappingDAO = new AnalyzerTestMappingDAOImpl();
+		List<AnalyzerTestMapping> mappingList = analyzerTestMappingDAO.getAll();
 
-            Map<String, MappedTestName> testMap = analyzerNameToTestNameMap.get(analyzer.getName());
-            if (testMap != null) {
-                testMap.put(mapping.getAnalyzerTestName(), mappedTestName);
-            }
-        }
+		TestDAO testDAO = new TestDAOImpl();
+		for (AnalyzerTestMapping mapping : mappingList) {
+			MappedTestName mappedTestName = createMappedTestName(testDAO, mapping);
 
-    }
+			Analyzer analyzer = new Analyzer();
+			analyzer.setId(mapping.getAnalyzerId());
+			analyzer = new AnalyzerDAOImpl().getAnalyzerById(analyzer);
 
-    private MappedTestName createMappedTestName(TestDAO testDAO, AnalyzerTestMapping mapping) {
+			Map<String, MappedTestName> testMap = analyzerNameToTestNameMap.get(analyzer.getName());
+			if (testMap != null) {
+				testMap.put(mapping.getAnalyzerTestName(), mappedTestName);
+			}
+		}
 
-        MappedTestName mappedTest = new MappedTestName();
-        mappedTest.setAnalyzerTestName(mapping.getAnalyzerTestName());
-        mappedTest.setTestId(mapping.getTestId());
-        mappedTest.setAnalyzerId(mapping.getAnalyzerId());
-        if( mapping.getTestId() != null){
-            Test test = new Test();
-            test.setId(mapping.getTestId());
-            testDAO.getData(test);
-            mappedTest.setOpenElisTestName( TestServiceImpl.getUserLocalizedTestName( test ));
-        }else{
-            mappedTest.setTestId("-1");
-            mappedTest.setOpenElisTestName(MessageUtil.getMessage("warning.configuration.needed"));
-        }
+	}
 
+	private MappedTestName createMappedTestName(TestDAO testDAO, AnalyzerTestMapping mapping) {
 
-        return mappedTest;
-    }
+		MappedTestName mappedTest = new MappedTestName();
+		mappedTest.setAnalyzerTestName(mapping.getAnalyzerTestName());
+		mappedTest.setTestId(mapping.getTestId());
+		mappedTest.setAnalyzerId(mapping.getAnalyzerId());
+		if (mapping.getTestId() != null) {
+			Test test = new Test();
+			test.setId(mapping.getTestId());
+			testDAO.getData(test);
+			mappedTest.setOpenElisTestName(TestServiceImpl.getUserLocalizedTestName(test));
+		} else {
+			mappedTest.setTestId("-1");
+			mappedTest.setOpenElisTestName(MessageUtil.getMessage("warning.configuration.needed"));
+		}
 
-    public MappedTestName getEmptyMappedTestName(String analyzerName, String analyzerTestName) {
-        insureMapsLoaded();
-        MappedTestName mappedTest = new MappedTestName();
-        mappedTest.setAnalyzerTestName(analyzerTestName);
-        mappedTest.setTestId(null);
-        mappedTest.setOpenElisTestName(analyzerTestName);
-        mappedTest.setAnalyzerId(analyzerNameToIdMap.get(analyzerName));
+		return mappedTest;
+	}
 
-        return mappedTest;
-    }
+	public MappedTestName getEmptyMappedTestName(String analyzerName, String analyzerTestName) {
+		insureMapsLoaded();
+		MappedTestName mappedTest = new MappedTestName();
+		mappedTest.setAnalyzerTestName(analyzerTestName);
+		mappedTest.setTestId(null);
+		mappedTest.setOpenElisTestName(analyzerTestName);
+		mappedTest.setAnalyzerId(analyzerNameToIdMap.get(analyzerName));
 
-    public String getAnalyzerIdForName(String analyzerName) {
-        insureMapsLoaded();
+		return mappedTest;
+	}
 
-        return analyzerNameToIdMap.get(analyzerName);
-    }
+	public String getAnalyzerIdForName(String analyzerName) {
+		insureMapsLoaded();
+
+		return analyzerNameToIdMap.get(analyzerName);
+	}
 }

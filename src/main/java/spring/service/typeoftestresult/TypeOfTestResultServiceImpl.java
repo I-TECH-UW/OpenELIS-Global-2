@@ -1,7 +1,6 @@
 package spring.service.typeoftestresult;
 
 import java.util.EnumSet;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 
@@ -12,12 +11,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import spring.service.common.BaseObjectServiceImpl;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.typeoftestresult.dao.TypeOfTestResultDAO;
 import us.mn.state.health.lims.typeoftestresult.valueholder.TypeOfTestResult;
 
 @Service
 @DependsOn({ "springContext" })
-public class TypeOfTestResultServiceImpl extends BaseObjectServiceImpl<TypeOfTestResult, String> implements TypeOfTestResultService {
+public class TypeOfTestResultServiceImpl extends BaseObjectServiceImpl<TypeOfTestResult, String>
+		implements TypeOfTestResultService {
 
 	public enum ResultType {
 		REMARK("R"), DICTIONARY("D"), TITER("T"), NUMERIC("N"), ALPHA("A"), MULTISELECT("M"),
@@ -122,60 +123,36 @@ public class TypeOfTestResultServiceImpl extends BaseObjectServiceImpl<TypeOfTes
 	}
 
 	@Override
-	public void getData(TypeOfTestResult typeOfTestResult) {
-		getBaseObjectDAO().getData(typeOfTestResult);
-
-	}
-
-	@Override
-	public void deleteData(List typeOfTestResults) {
-		getBaseObjectDAO().deleteData(typeOfTestResults);
-
-	}
-
-	@Override
-	public void updateData(TypeOfTestResult typeOfTestResult) {
-		getBaseObjectDAO().updateData(typeOfTestResult);
-
-	}
-
-	@Override
-	public boolean insertData(TypeOfTestResult typeOfTestResult) {
-		return getBaseObjectDAO().insertData(typeOfTestResult);
-	}
-
-	@Override
-	public Integer getTotalTypeOfTestResultCount() {
-		return getBaseObjectDAO().getTotalTypeOfTestResultCount();
-	}
-
-	@Override
-	public List getNextTypeOfTestResultRecord(String id) {
-		return getBaseObjectDAO().getNextTypeOfTestResultRecord(id);
-	}
-
-	@Override
-	public List getPageOfTypeOfTestResults(int startingRecNo) {
-		return getBaseObjectDAO().getPageOfTypeOfTestResults(startingRecNo);
-	}
-
-	@Override
-	public List getAllTypeOfTestResults() {
-		return getBaseObjectDAO().getAllTypeOfTestResults();
-	}
-
-	@Override
 	public TypeOfTestResult getTypeOfTestResultByType(TypeOfTestResult typeOfTestResult) {
 		return getBaseObjectDAO().getTypeOfTestResultByType(typeOfTestResult);
 	}
 
 	@Override
 	public TypeOfTestResult getTypeOfTestResultByType(String type) {
-		return getBaseObjectDAO().getTypeOfTestResultByType(type);
+		return getMatch("testResultType", type).orElse(null);
 	}
 
 	@Override
-	public List getPreviousTypeOfTestResultRecord(String id) {
-		return getBaseObjectDAO().getPreviousTypeOfTestResultRecord(id);
+	public String insert(TypeOfTestResult typeOfTestResult) {
+		if (getBaseObjectDAO().duplicateTypeOfTestResultExists(typeOfTestResult)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + typeOfTestResult.getDescription());
+		}
+		return super.insert(typeOfTestResult);
+	}
+
+	@Override
+	public TypeOfTestResult save(TypeOfTestResult typeOfTestResult) {
+		if (getBaseObjectDAO().duplicateTypeOfTestResultExists(typeOfTestResult)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + typeOfTestResult.getDescription());
+		}
+		return super.save(typeOfTestResult);
+	}
+
+	@Override
+	public TypeOfTestResult update(TypeOfTestResult typeOfTestResult) {
+		if (getBaseObjectDAO().duplicateTypeOfTestResultExists(typeOfTestResult)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + typeOfTestResult.getDescription());
+		}
+		return super.update(typeOfTestResult);
 	}
 }

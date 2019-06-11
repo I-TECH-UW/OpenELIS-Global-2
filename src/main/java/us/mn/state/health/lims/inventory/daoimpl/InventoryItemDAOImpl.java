@@ -17,7 +17,6 @@ package us.mn.state.health.lims.inventory.daoimpl;
 
 import java.util.List;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,33 +58,33 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
 		return inventoryItems;
 	}
 
-	@Override
-	public void deleteData(List<InventoryItem> inventoryItems) throws LIMSRuntimeException {
-		try {
-
-			for (InventoryItem data : inventoryItems) {
-
-				InventoryItem oldData = readInventoryItem(data.getId());
-				InventoryItem newData = new InventoryItem();
-
-				String sysUserId = data.getSysUserId();
-				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-				String tableName = "INVENTORY_ITEM";
-				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-			}
-
-			for (InventoryItem data : inventoryItems) {
-
-				data = readInventoryItem(data.getId());
-				sessionFactory.getCurrentSession().delete(data);
-				// sessionFactory.getCurrentSession().flush(); // CSL remove old
-				// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			}
-		} catch (Exception e) {
-			LogEvent.logError("InventoryItemDAOImpl", "deleteData()", e.toString());
-			throw new LIMSRuntimeException("Error in InventoryItem deleteData()", e);
-		}
-	}
+//	@Override
+//	public void deleteData(List<InventoryItem> inventoryItems) throws LIMSRuntimeException {
+//		try {
+//
+//			for (InventoryItem data : inventoryItems) {
+//
+//				InventoryItem oldData = readInventoryItem(data.getId());
+//				InventoryItem newData = new InventoryItem();
+//
+//				String sysUserId = data.getSysUserId();
+//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//				String tableName = "INVENTORY_ITEM";
+//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//			}
+//
+//			for (InventoryItem data : inventoryItems) {
+//
+//				data = readInventoryItem(data.getId());
+//				sessionFactory.getCurrentSession().delete(data);
+//				// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//				// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("InventoryItemDAOImpl", "deleteData()", e.toString());
+//			throw new LIMSRuntimeException("Error in InventoryItem deleteData()", e);
+//		}
+//	}
 
 	@Override
 	public boolean insertData(InventoryItem inventoryItem) throws LIMSRuntimeException {
@@ -132,23 +131,23 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
 		}
 	}
 
-	@Override
-	public void getData(InventoryItem inventoryItem) throws LIMSRuntimeException {
-		try {
-			InventoryItem tmpInventoryItem = sessionFactory.getCurrentSession().get(InventoryItem.class,
-					inventoryItem.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			if (tmpInventoryItem != null) {
-				PropertyUtils.copyProperties(inventoryItem, tmpInventoryItem);
-			} else {
-				inventoryItem.setId(null);
-			}
-		} catch (Exception e) {
-			LogEvent.logError("InventoryItemDAOImpl", "getData()", e.toString());
-			throw new LIMSRuntimeException("Error in InventoryItem getData()", e);
-		}
-	}
+//	@Override
+//	public void getData(InventoryItem inventoryItem) throws LIMSRuntimeException {
+//		try {
+//			InventoryItem tmpInventoryItem = sessionFactory.getCurrentSession().get(InventoryItem.class,
+//					inventoryItem.getId());
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			if (tmpInventoryItem != null) {
+//				PropertyUtils.copyProperties(inventoryItem, tmpInventoryItem);
+//			} else {
+//				inventoryItem.setId(null);
+//			}
+//		} catch (Exception e) {
+//			LogEvent.logError("InventoryItemDAOImpl", "getData()", e.toString());
+//			throw new LIMSRuntimeException("Error in InventoryItem getData()", e);
+//		}
+//	}
 
 	@Override
 	public InventoryItem readInventoryItem(String idString) throws LIMSRuntimeException {
@@ -165,17 +164,17 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
 		return data;
 	}
 
-	@Override
-	public InventoryItem getInventoryItemById(InventoryItem inventoryItem) throws LIMSRuntimeException {
-		try {
-			InventoryItem re = sessionFactory.getCurrentSession().get(InventoryItem.class, inventoryItem.getId());
-			// sessionFactory.getCurrentSession().flush(); // CSL remove old
-			// sessionFactory.getCurrentSession().clear(); // CSL remove old
-			return re;
-		} catch (Exception e) {
-			LogEvent.logError("InventoryItemDAOImpl", "getInventoryItemById()", e.toString());
-			throw new LIMSRuntimeException("Error in InventoryItem getInventoryItemById()", e);
-		}
-	}
+//	@Override
+//	public InventoryItem getInventoryItemById(InventoryItem inventoryItem) throws LIMSRuntimeException {
+//		try {
+//			InventoryItem re = sessionFactory.getCurrentSession().get(InventoryItem.class, inventoryItem.getId());
+//			// sessionFactory.getCurrentSession().flush(); // CSL remove old
+//			// sessionFactory.getCurrentSession().clear(); // CSL remove old
+//			return re;
+//		} catch (Exception e) {
+//			LogEvent.logError("InventoryItemDAOImpl", "getInventoryItemById()", e.toString());
+//			throw new LIMSRuntimeException("Error in InventoryItem getInventoryItemById()", e);
+//		}
+//	}
 
 }

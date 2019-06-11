@@ -16,78 +16,73 @@
 */
 package us.mn.state.health.lims.reports.daoimpl;
 
-import java.util.List;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import us.mn.state.health.lims.common.daoimpl.BaseDAOImpl;
-import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.reports.dao.DocumentTrackDAO;
 import us.mn.state.health.lims.reports.valueholder.DocumentTrack;
 
 @Component
-@Transactional 
+@Transactional
 public class DocumentTrackDAOImpl extends BaseDAOImpl<DocumentTrack, String> implements DocumentTrackDAO {
 
 	public DocumentTrackDAOImpl() {
 		super(DocumentTrack.class);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<DocumentTrack> getByTypeRecordAndTable(String typeId, String tableId, String recordId)
-			throws LIMSRuntimeException {
-		String sql = "From DocumentTrack dt where dt.documentTypeId = :typeId and dt.tableId = :tableId and dt.recordId = :recordId order by dt.reportTime";
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	public List<DocumentTrack> getByTypeRecordAndTable(String typeId, String tableId, String recordId)
+//			throws LIMSRuntimeException {
+//		String sql = "From DocumentTrack dt where dt.documentTypeId = :typeId and dt.tableId = :tableId and dt.recordId = :recordId order by dt.reportTime";
+//
+//		try {
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setInteger("typeId", Integer.parseInt(typeId));
+//			query.setInteger("tableId", Integer.parseInt(tableId));
+//			query.setInteger("recordId", Integer.parseInt(recordId));
+//			List<DocumentTrack> documents = query.list();
+//			// closeSession(); // CSL remove old
+//			return documents;
+//
+//		} catch (HibernateException e) {
+//			handleException(e, "getByTypeRecordAndTable");
+//		}
+//
+//		return null;
+//	}
 
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setInteger("typeId", Integer.parseInt(typeId));
-			query.setInteger("tableId", Integer.parseInt(tableId));
-			query.setInteger("recordId", Integer.parseInt(recordId));
-			List<DocumentTrack> documents = query.list();
-			// closeSession(); // CSL remove old
-			return documents;
+//	@Override
+//	public List<DocumentTrack> getByTypeRecordAndTableAndName(String reportTypeId, String tableId, String recordId,
+//			String name) throws LIMSRuntimeException {
+//		String sql = "From DocumentTrack dt where dt.documentTypeId = :typeId and dt.tableId = :tableId and dt.recordId = :recordId and dt.documentName = :name order by dt.reportTime";
+//
+//		try {
+//			Query query = sessionFactory.getCurrentSession().createQuery(sql);
+//			query.setInteger("typeId", Integer.parseInt(reportTypeId));
+//			query.setInteger("tableId", Integer.parseInt(tableId));
+//			query.setInteger("recordId", Integer.parseInt(recordId));
+//			query.setString("name", name);
+//			List<DocumentTrack> documents = query.list();
+//			// closeSession(); // CSL remove old
+//			return documents;
+//
+//		} catch (HibernateException e) {
+//			handleException(e, "getByTypeRecordAndTableAndName");
+//		}
+//
+//		return null;
+//	}
 
-		} catch (HibernateException e) {
-			handleException(e, "getByTypeRecordAndTable");
-		}
+//	@Override
+//	public void insertData(DocumentTrack docTrack) {
+//		insert(docTrack);
+//	}
 
-		return null;
-	}
-
-	@Override
-	public List<DocumentTrack> getByTypeRecordAndTableAndName(String reportTypeId, String tableId, String recordId,
-			String name) throws LIMSRuntimeException {
-		String sql = "From DocumentTrack dt where dt.documentTypeId = :typeId and dt.tableId = :tableId and dt.recordId = :recordId and dt.documentName = :name order by dt.reportTime";
-
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(sql);
-			query.setInteger("typeId", Integer.parseInt(reportTypeId));
-			query.setInteger("tableId", Integer.parseInt(tableId));
-			query.setInteger("recordId", Integer.parseInt(recordId));
-			query.setString("name", name);
-			List<DocumentTrack> documents = query.list();
-			// closeSession(); // CSL remove old
-			return documents;
-
-		} catch (HibernateException e) {
-			handleException(e, "getByTypeRecordAndTableAndName");
-		}
-
-		return null;
-	}
-
-	@Override
-	public void insertData(DocumentTrack docTrack) {
-		insert(docTrack);
-	}
-
-	@Override
-	public DocumentTrack readEntity(String id) {
-		return get(id).get();
-	}
+//	@Override
+//	public DocumentTrack readEntity(String id) {
+//		return get(id).get();
+//	}
 
 }

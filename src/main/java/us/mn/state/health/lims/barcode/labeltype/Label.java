@@ -321,10 +321,10 @@ public abstract class Label {
 //		org.hibernate.Transaction tx = HibernateUtil.getSession().beginTransaction();
 		try {
 			if (newInfo) {
-				barcodeLabelService.insertData(labelInfo);
+				barcodeLabelService.insert(labelInfo);
 				newInfo = false;
 			} else {
-				barcodeLabelService.updateData(labelInfo);
+				barcodeLabelService.update(labelInfo);
 			}
 //			tx.commit();
 		} catch (LIMSRuntimeException lre) {

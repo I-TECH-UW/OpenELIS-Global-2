@@ -51,7 +51,7 @@ public class UomCreateController extends BaseController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		List<UnitOfMeasure> uoms = unitOfMeasureService.getAllUnitOfMeasures();
+		List<UnitOfMeasure> uoms = unitOfMeasureService.getAll();
 		try {
 			PropertyUtils.setProperty(form, "existingEnglishNames",
 					getExistingUomNames(uoms, ConfigurationProperties.LOCALE.ENGLISH));

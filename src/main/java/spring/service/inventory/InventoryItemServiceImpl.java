@@ -10,7 +10,8 @@ import us.mn.state.health.lims.inventory.dao.InventoryItemDAO;
 import us.mn.state.health.lims.inventory.valueholder.InventoryItem;
 
 @Service
-public class InventoryItemServiceImpl extends BaseObjectServiceImpl<InventoryItem, String> implements InventoryItemService {
+public class InventoryItemServiceImpl extends BaseObjectServiceImpl<InventoryItem, String>
+		implements InventoryItemService {
 	@Autowired
 	protected InventoryItemDAO baseObjectDAO;
 
@@ -24,40 +25,24 @@ public class InventoryItemServiceImpl extends BaseObjectServiceImpl<InventoryIte
 	}
 
 	@Override
-	public void getData(InventoryItem inventoryItem) {
-        getBaseObjectDAO().getData(inventoryItem);
-
-	}
-
-	@Override
-	public void deleteData(List<InventoryItem> results) {
-        getBaseObjectDAO().deleteData(results);
-
-	}
-
-	@Override
 	public void updateData(InventoryItem inventoryItem) {
-        getBaseObjectDAO().updateData(inventoryItem);
+		getBaseObjectDAO().updateData(inventoryItem);
 
 	}
 
 	@Override
 	public boolean insertData(InventoryItem InventoryItem) {
-        return getBaseObjectDAO().insertData(InventoryItem);
+		return getBaseObjectDAO().insertData(InventoryItem);
 	}
 
 	@Override
 	public InventoryItem readInventoryItem(String idString) {
-        return getBaseObjectDAO().readInventoryItem(idString);
+		return getBaseObjectDAO().readInventoryItem(idString);
 	}
 
 	@Override
 	public List<InventoryItem> getAllInventoryItems() {
-        return getBaseObjectDAO().getAllInventoryItems();
+		return getBaseObjectDAO().getAllInventoryItems();
 	}
 
-	@Override
-	public InventoryItem getInventoryItemById(InventoryItem inventoryItem) {
-        return getBaseObjectDAO().getInventoryItemById(inventoryItem);
-	}
 }

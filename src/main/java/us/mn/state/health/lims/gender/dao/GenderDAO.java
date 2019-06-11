@@ -15,8 +15,6 @@
 */
 package us.mn.state.health.lims.gender.dao;
 
-import java.util.List;
-
 import us.mn.state.health.lims.common.dao.BaseDAO;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.gender.valueholder.Gender;
@@ -31,24 +29,24 @@ import us.mn.state.health.lims.gender.valueholder.Gender;
  */
 public interface GenderDAO extends BaseDAO<Gender, String> {
 
-	public boolean insertData(Gender gender) throws LIMSRuntimeException;
+//	public boolean insertData(Gender gender) throws LIMSRuntimeException;
 
-	public void deleteData(List genders) throws LIMSRuntimeException;
+//	public List getAllGenders() throws LIMSRuntimeException;
 
-	public List getAllGenders() throws LIMSRuntimeException;
+//	public List getPageOfGenders(int startingRecNo) throws LIMSRuntimeException;
 
-	public List getPageOfGenders(int startingRecNo) throws LIMSRuntimeException;
+//	public void getData(Gender gender) throws LIMSRuntimeException;
 
-	public void getData(Gender gender) throws LIMSRuntimeException;
+//	public void updateData(Gender gender) throws LIMSRuntimeException;
 
-	public void updateData(Gender gender) throws LIMSRuntimeException;
-
-	public List getNextGenderRecord(String id) throws LIMSRuntimeException;
+//	public List getNextGenderRecord(String id) throws LIMSRuntimeException;
 
 	public Gender getGenderByType(String type) throws LIMSRuntimeException;
 
-	public List getPreviousGenderRecord(String id) throws LIMSRuntimeException;
+//	public List getPreviousGenderRecord(String id) throws LIMSRuntimeException;
 
-	public Integer getTotalGenderCount() throws LIMSRuntimeException;
+//	public Integer getTotalGenderCount() throws LIMSRuntimeException;
+
+	boolean duplicateGenderExists(Gender gender) throws LIMSRuntimeException;
 
 }

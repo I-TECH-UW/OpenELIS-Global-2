@@ -27,7 +27,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.HibernateException;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -40,6 +39,7 @@ import spring.service.test.TestService;
 import spring.service.testresult.TestResultService;
 import spring.util.SpringContext;
 import us.mn.state.health.lims.analysis.valueholder.Analysis;
+import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.common.services.StatusService;
 import us.mn.state.health.lims.common.services.StatusService.AnalysisStatus;
@@ -284,7 +284,7 @@ public class MalariaSurveilanceJob implements Job {
 
 			try {
 				cronSchedulerService.update(gatherScheduler);
-			} catch (HibernateException e) {
+			} catch (LIMSRuntimeException e) {
 				LogEvent.logError("AggregateGatherJob", "execute", e.toString());
 			}
 		}

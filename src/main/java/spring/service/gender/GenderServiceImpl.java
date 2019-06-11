@@ -1,11 +1,10 @@
 package spring.service.gender;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import spring.service.common.BaseObjectServiceImpl;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.gender.dao.GenderDAO;
 import us.mn.state.health.lims.gender.valueholder.Gender;
 
@@ -24,55 +23,32 @@ public class GenderServiceImpl extends BaseObjectServiceImpl<Gender, String> imp
 	}
 
 	@Override
-	public void getData(Gender gender) {
-        getBaseObjectDAO().getData(gender);
-
+	public String insert(Gender gender) {
+		if (getBaseObjectDAO().duplicateGenderExists(gender)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + gender.getGenderType());
+		}
+		return super.insert(gender);
 	}
 
 	@Override
-	public void deleteData(List genders) {
-        getBaseObjectDAO().deleteData(genders);
-
+	public Gender save(Gender gender) {
+		if (getBaseObjectDAO().duplicateGenderExists(gender)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + gender.getGenderType());
+		}
+		return super.save(gender);
 	}
 
 	@Override
-	public void updateData(Gender gender) {
-        getBaseObjectDAO().updateData(gender);
-
-	}
-
-	@Override
-	public boolean insertData(Gender gender) {
-        return getBaseObjectDAO().insertData(gender);
-	}
-
-	@Override
-	public List getNextGenderRecord(String id) {
-        return getBaseObjectDAO().getNextGenderRecord(id);
-	}
-
-	@Override
-	public Integer getTotalGenderCount() {
-        return getBaseObjectDAO().getTotalGenderCount();
-	}
-
-	@Override
-	public List getPreviousGenderRecord(String id) {
-        return getBaseObjectDAO().getPreviousGenderRecord(id);
-	}
-
-	@Override
-	public List getAllGenders() {
-        return getBaseObjectDAO().getAllGenders();
+	public Gender update(Gender gender) {
+		if (getBaseObjectDAO().duplicateGenderExists(gender)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + gender.getGenderType());
+		}
+		return super.update(gender);
 	}
 
 	@Override
 	public Gender getGenderByType(String type) {
-        return getBaseObjectDAO().getGenderByType(type);
+		return getMatch("genderType", type).orElse(null);
 	}
 
-	@Override
-	public List getPageOfGenders(int startingRecNo) {
-        return getBaseObjectDAO().getPageOfGenders(startingRecNo);
-	}
 }

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.service.common.BaseObjectServiceImpl;
 import spring.service.panel.PanelService;
 import us.mn.state.health.lims.common.action.IActionConstants;
+import us.mn.state.health.lims.common.exception.LIMSDuplicateRecordException;
 import us.mn.state.health.lims.common.exception.LIMSRuntimeException;
 import us.mn.state.health.lims.common.log.LogEvent;
 import us.mn.state.health.lims.panel.valueholder.Panel;
@@ -110,6 +111,30 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 	@Override
 	public List getPanelItems(String filter) {
 		return getBaseObjectDAO().getPanelItems(filter);
+	}
+
+	@Override
+	public String insert(PanelItem panelItem) {
+		if (getBaseObjectDAO().duplicatePanelItemExists(panelItem)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + panelItem.getPanelName());
+		}
+		return super.insert(panelItem);
+	}
+
+	@Override
+	public PanelItem save(PanelItem panelItem) {
+		if (getBaseObjectDAO().duplicatePanelItemExists(panelItem)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + panelItem.getPanelName());
+		}
+		return super.save(panelItem);
+	}
+
+	@Override
+	public PanelItem update(PanelItem panelItem) {
+		if (getBaseObjectDAO().duplicatePanelItemExists(panelItem)) {
+			throw new LIMSDuplicateRecordException("Duplicate record exists for " + panelItem.getPanelName());
+		}
+		return super.update(panelItem);
 	}
 
 	@Override

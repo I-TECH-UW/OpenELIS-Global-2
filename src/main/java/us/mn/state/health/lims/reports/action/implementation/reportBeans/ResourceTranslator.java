@@ -129,9 +129,8 @@ public class ResourceTranslator<T extends BaseObject> {
 			return super.translate(id);
 		}
 
-		@SuppressWarnings("unchecked")
 		private GenderTranslator() {
-			super(SpringContext.getBean(GenderService.class).getAllGenders());
+			super(SpringContext.getBean(GenderService.class).getAll());
 		}
 
 		@Override
